@@ -9,6 +9,10 @@ final class BrandMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textPrimary = theme.colorScheme.onSurface;
+    final textSecondary = theme.colorScheme.onSurface.withValues(alpha: 0.7);
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -39,7 +43,7 @@ final class BrandMark extends StatelessWidget {
         ),
         if (!compact) ...[
           const SizedBox(width: 12),
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -50,7 +54,7 @@ final class BrandMark extends StatelessWidget {
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                   letterSpacing: -0.5,
-                  color: Color(0xFF081A4B),
+                  color: textPrimary,
                 ),
               ),
               Text(
@@ -59,7 +63,7 @@ final class BrandMark extends StatelessWidget {
                   fontFamily: 'Manrope',
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF64748B),
+                  color: textSecondary,
                 ),
               ),
             ],

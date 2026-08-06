@@ -69,7 +69,7 @@ final class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     return AuthFormShell(
       title: 'Create your account',
-      subtitle: 'Start a secure i Book company workspace.',
+      subtitle: 'Start a secure Jentra OS company workspace.',
       footer: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -146,6 +146,12 @@ final class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Text('Create account'),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () => context.go('/company/select'),
+              icon: const Icon(Icons.explore_outlined, size: 18),
+              label: const Text('Explore Demo Workspace'),
             ),
           ],
         ),

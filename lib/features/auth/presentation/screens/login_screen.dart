@@ -59,7 +59,7 @@ final class _LoginScreenState extends ConsumerState<LoginScreen> {
       footer: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text('New to i Book?'),
+          const Text('New to Jentra OS?'),
           TextButton(
             onPressed: authState.isLoading
                 ? null
@@ -126,6 +126,12 @@ final class _LoginScreenState extends ConsumerState<LoginScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Text('Sign in'),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () => context.go('/company/select'),
+              icon: const Icon(Icons.explore_outlined, size: 18),
+              label: const Text('Explore Demo Workspace'),
             ),
           ],
         ),

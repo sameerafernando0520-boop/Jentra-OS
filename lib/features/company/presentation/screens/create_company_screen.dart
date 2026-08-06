@@ -109,7 +109,7 @@ final class _CreateCompanyScreenState
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'You will become the owner. i Book will prepare the '
+                    'You will become the owner. Jentra OS will prepare the '
                     'company membership, default branch, roles, and document '
                     'settings automatically.',
                     style: TextStyle(

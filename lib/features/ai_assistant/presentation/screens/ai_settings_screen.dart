@@ -49,7 +49,7 @@ final class _AiSettingsScreenState extends ConsumerState<AiSettingsScreen> {
                   ),
                   const SizedBox(height: 8),
                   const Text(
-                    'i Book AI operates under strict tenant boundary rules. Customer data from other companies is completely inaccessible.',
+                    'Jentra OS AI Assistant operates under strict tenant boundary rules. Customer data from other companies is completely inaccessible.',
                     style: TextStyle(color: Colors.grey, fontSize: 13),
                   ),
                 ],

@@ -113,7 +113,7 @@ final class _OnboardingContent extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'i Book keeps every customer, invoice, stock movement, '
+                        'Jentra OS keeps every customer, invoice, stock movement, '
                         'and report inside the company you select.',
                         style: textTheme.bodyLarge?.copyWith(
                           color: colors.onSurfaceVariant,
