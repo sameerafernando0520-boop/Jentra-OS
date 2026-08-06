@@ -384,7 +384,7 @@ final class _RecentActivityCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               const Text(
-                'Activity will appear here as your team works in i Book.',
+                'Activity will appear here as your team works in Jentra OS.',
                 textAlign: TextAlign.center,
               ),
             ],

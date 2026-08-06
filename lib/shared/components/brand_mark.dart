@@ -9,18 +9,32 @@ final class BrandMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         DecoratedBox(
           decoration: BoxDecoration(
-            color: colors.primary,
-            borderRadius: BorderRadius.circular(12),
+            gradient: const LinearGradient(
+              colors: [Color(0xFF14C6C7), Color(0xFF33E1B3)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF14C6C7).withValues(alpha: 0.25),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(9),
-            child: Icon(Icons.menu_book_rounded, color: colors.onPrimary),
+          child: const Padding(
+            padding: EdgeInsets.all(8),
+            child: Icon(
+              Icons.auto_awesome_rounded,
+              color: Color(0xFF081A4B),
+              size: 20,
+            ),
           ),
         ),
         if (!compact) ...[
@@ -31,9 +45,23 @@ final class BrandMark extends StatelessWidget {
             children: [
               Text(
                 AppConstants.appName,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                  fontFamily: 'Manrope',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.5,
+                  color: Color(0xFF081A4B),
+                ),
               ),
-              Text(AppConstants.appTagline, style: TextStyle(fontSize: 11)),
+              Text(
+                AppConstants.appTagline,
+                style: TextStyle(
+                  fontFamily: 'Manrope',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF64748B),
+                ),
+              ),
             ],
           ),
         ],

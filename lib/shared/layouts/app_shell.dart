@@ -40,20 +40,33 @@ final class AppShell extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(currentModule.label),
+        title: Text(
+          currentModule.label,
+          style: const TextStyle(
+            fontFamily: 'Manrope',
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.2,
+          ),
+        ),
         actions: [
           if (isDesktop)
             Padding(
-              padding: const EdgeInsets.only(right: 4),
+              padding: const EdgeInsets.only(right: 8),
               child: OutlinedButton.icon(
                 onPressed: () => context.go('/company/select'),
-                icon: const Icon(Icons.business_outlined, size: 18),
+                icon: const Icon(Icons.business_outlined, size: 16),
                 label: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 180),
                   child: Text(
                     selectedCompany?.name ?? 'Select company',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontFamily: 'Manrope',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -67,7 +80,7 @@ final class AppShell extends ConsumerWidget {
               icon: const Icon(Icons.business_outlined),
             ),
           Padding(
-            padding: const EdgeInsets.only(right: 12),
+            padding: const EdgeInsets.only(right: 16),
             child: IconButton(
               tooltip: 'Sign out',
               onPressed: authState.isLoading
@@ -78,7 +91,7 @@ final class AppShell extends ConsumerWidget {
                       dimension: 18,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Icon(Icons.logout),
+                  : const Icon(Icons.logout_rounded, size: 20),
             ),
           ),
         ],
@@ -87,8 +100,8 @@ final class AppShell extends ConsumerWidget {
       body: isDesktop
           ? Row(
               children: [
-                SizedBox(width: 276, child: navigation),
-                const VerticalDivider(width: 1),
+                SizedBox(width: 260, child: navigation),
+                const VerticalDivider(width: 1, color: Color(0xFFE2E8F0)),
                 Expanded(child: child),
               ],
             )
@@ -122,14 +135,30 @@ final class _ModuleNavigation extends StatelessWidget {
           child: BrandMark(),
         ),
         const Padding(
-          padding: EdgeInsets.fromLTRB(28, 8, 16, 8),
-          child: Text('WORKSPACE'),
+          padding: EdgeInsets.fromLTRB(24, 8, 16, 12),
+          child: Text(
+            'ENTERPRISE MODULES',
+            style: TextStyle(
+              fontFamily: 'Manrope',
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.1,
+              color: Color(0xFF64748B),
+            ),
+          ),
         ),
         for (final module in AppModule.values)
           NavigationDrawerDestination(
-            icon: Icon(module.icon),
-            selectedIcon: Icon(module.icon, fill: 1),
-            label: Text(module.label),
+            icon: Icon(module.icon, size: 20),
+            selectedIcon: Icon(module.icon, size: 20),
+            label: Text(
+              module.label,
+              style: const TextStyle(
+                fontFamily: 'Manrope',
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
       ],
     );
