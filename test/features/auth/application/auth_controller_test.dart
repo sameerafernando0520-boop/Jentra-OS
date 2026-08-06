@@ -74,5 +74,8 @@ final class _FakeAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<void> signInWithGoogle() async {}
+
+  @override
   Stream<AuthSession?> sessionChanges() => const Stream.empty();
 }

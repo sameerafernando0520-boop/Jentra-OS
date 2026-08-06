@@ -65,6 +65,14 @@ final class SupabaseAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<void> signInWithGoogle() {
+    return _guard(
+      _AuthOperation.login,
+      () => _service.signInWithGoogle(),
+    );
+  }
+
+  @override
   Future<void> logout() {
     return _guard(_AuthOperation.logout, _service.logout);
   }

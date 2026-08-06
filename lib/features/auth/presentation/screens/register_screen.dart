@@ -7,6 +7,7 @@ import '../../application/auth_models.dart';
 import '../../application/auth_validators.dart';
 import '../widgets/auth_feedback.dart';
 import '../widgets/auth_form_shell.dart';
+import '../widgets/google_sign_in_button.dart';
 
 final class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -146,6 +147,36 @@ final class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Text('Create account'),
+            ),
+            const SizedBox(height: 16),
+            const Row(
+              children: [
+                Expanded(child: Divider(color: Color(0xFFE2E8F0))),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  child: Text(
+                    'OR',
+                    style: TextStyle(
+                      fontFamily: 'Manrope',
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF64748B),
+                    ),
+                  ),
+                ),
+                Expanded(child: Divider(color: Color(0xFFE2E8F0))),
+              ],
+            ),
+            const SizedBox(height: 16),
+            GoogleSignInButton(
+              isLoading: authState.isLoading,
+              label: 'Sign up with Google',
+              onPressed: () async {
+                final result = await ref
+                    .read(authControllerProvider.notifier)
+                    .signInWithGoogle();
+                if (result != null && context.mounted) context.go('/auth-gate');
+              },
             ),
             const SizedBox(height: 12),
             OutlinedButton.icon(

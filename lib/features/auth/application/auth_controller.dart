@@ -50,6 +50,13 @@ final class AuthController extends AsyncNotifier<AuthActionResult?> {
     });
   }
 
+  Future<AuthActionResult?> signInWithGoogle() {
+    return _run(() async {
+      await ref.read(authRepositoryProvider).signInWithGoogle();
+      return const AuthActionResult(action: AuthActionType.login);
+    });
+  }
+
   Future<AuthActionResult?> logout() {
     return _run(() async {
       await ref.read(authRepositoryProvider).logout();

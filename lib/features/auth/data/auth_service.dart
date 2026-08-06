@@ -37,6 +37,10 @@ final class AuthService {
     return _client.auth.resetPasswordForEmail(email);
   }
 
+  Future<bool> signInWithGoogle() {
+    return _client.auth.signInWithOAuth(OAuthProvider.google);
+  }
+
   Future<void> logout() => _client.auth.signOut();
 
   Stream<Session?> sessionChanges() {
