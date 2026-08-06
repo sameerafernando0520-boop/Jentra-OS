@@ -12,13 +12,18 @@ final class EnvConfig {
   factory EnvConfig.fromEnvironment() {
     const publishableKey = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
     const legacyAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+    const url = String.fromEnvironment('SUPABASE_URL');
 
-    return const EnvConfig(
-      name: String.fromEnvironment('APP_ENV', defaultValue: 'development'),
-      supabaseUrl: String.fromEnvironment('SUPABASE_URL'),
-      // New projects should use SUPABASE_PUBLISHABLE_KEY. The legacy
-      // SUPABASE_ANON_KEY name remains supported for existing projects.
-      supabaseAnonKey: publishableKey != '' ? publishableKey : legacyAnonKey,
+    final activeKey = publishableKey != ''
+        ? publishableKey
+        : (legacyAnonKey != ''
+            ? legacyAnonKey
+            : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImplbnRyYS1vcy1kZXYiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTcxOTAwMDAwMCwiZXhwIjoyMDM0NTYwMDAwfQ.demo_publishable_key');
+
+    return EnvConfig(
+      name: const String.fromEnvironment('APP_ENV', defaultValue: 'development'),
+      supabaseUrl: url != '' ? url : 'https://jentra-os-dev.supabase.co',
+      supabaseAnonKey: activeKey,
     );
   }
 
