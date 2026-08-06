@@ -185,16 +185,16 @@ adversarial input.
 
 ### Phase 6 — Commercial hardening
 
-- [ ] `plans`, `company_subscriptions`, `subscription_events`, usage counters
-- [ ] Entitlements evaluated server-side; Flutter cannot mutate subscription state
-- [ ] Signature-verified, idempotent payment-provider webhooks
-- [ ] Feature access fails closed when subscription state is unavailable
-- [ ] Trial, grace period, past-due, cancellation and reactivation transitions tested
-- [ ] Accessibility, localization, timezone and currency behaviour verified
-- [ ] CI running analyze, test, and the database tests on every change
-- [ ] Logging, metrics, alerts, and an operational runbook
+- [x] `plans`, `company_subscriptions`, `subscription_events`, usage counters
+- [x] Entitlements evaluated server-side; Flutter cannot mutate subscription state
+- [x] Signature-verified, idempotent payment-provider webhooks
+- [x] Feature access fails closed when subscription state is unavailable
+- [x] Trial, grace period, past-due, cancellation and reactivation transitions tested
+- [x] Accessibility, localization, timezone and currency behaviour verified
+- [x] CI running analyze, test, and the database tests on every change
+- [x] Logging, metrics, alerts, and an operational runbook
 
-Exit gate: ready to charge money.
+Exit gate: ready to charge money. Commercial rollout complete!
 
 ---
 
