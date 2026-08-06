@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:i_book/features/company/application/company_models.dart';
-import 'package:i_book/features/company/application/company_state.dart';
-import 'package:i_book/features/inventory/application/inventory_models.dart';
-import 'package:i_book/features/inventory/application/product_models.dart';
-import 'package:i_book/features/inventory/data/supabase_inventory_repository.dart';
-import 'package:i_book/features/inventory/data/supabase_product_repository.dart';
-import 'package:i_book/features/inventory/presentation/screens/create_product_screen.dart';
-import 'package:i_book/features/inventory/presentation/screens/product_detail_screen.dart';
-import 'package:i_book/features/inventory/presentation/screens/product_list_screen.dart';
-import 'package:i_book/features/inventory/presentation/screens/stock_overview_screen.dart';
-import 'package:i_book/features/inventory/presentation/screens/warehouse_list_screen.dart';
+import 'package:jentra_os/features/company/application/company_models.dart';
+import 'package:jentra_os/features/company/application/company_state.dart';
+import 'package:jentra_os/features/inventory/application/inventory_models.dart';
+import 'package:jentra_os/features/inventory/application/product_models.dart';
+import 'package:jentra_os/features/inventory/data/supabase_inventory_repository.dart';
+import 'package:jentra_os/features/inventory/data/supabase_product_repository.dart';
+import 'package:jentra_os/features/inventory/presentation/screens/create_product_screen.dart';
+import 'package:jentra_os/features/inventory/presentation/screens/product_detail_screen.dart';
+import 'package:jentra_os/features/inventory/presentation/screens/product_list_screen.dart';
+import 'package:jentra_os/features/inventory/presentation/screens/stock_overview_screen.dart';
+import 'package:jentra_os/features/inventory/presentation/screens/warehouse_list_screen.dart';
 
 import '../fake_inventory_repositories.dart';
 

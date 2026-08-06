@@ -1,6 +1,6 @@
-import 'package:i_book/features/sales/application/invoice_models.dart';
-import 'package:i_book/features/sales/application/invoice_repository.dart';
-import 'package:i_book/features/sales/domain/invoice_calculation_service.dart';
+import 'package:jentra_os/features/sales/application/invoice_models.dart';
+import 'package:jentra_os/features/sales/application/invoice_repository.dart';
+import 'package:jentra_os/features/sales/domain/invoice_calculation_service.dart';
 
 final class FakeInvoiceRepository implements InvoiceRepository {
   FakeInvoiceRepository({List<Invoice> invoices = const <Invoice>[]})

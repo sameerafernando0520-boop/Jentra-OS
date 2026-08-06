@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:i_book/features/company/application/company_state.dart';
-import 'package:i_book/features/finance/application/payment_failure.dart';
-import 'package:i_book/features/finance/application/payment_models.dart';
-import 'package:i_book/features/finance/application/payment_state.dart';
-import 'package:i_book/features/finance/data/supabase_payment_repository.dart';
+import 'package:jentra_os/features/company/application/company_state.dart';
+import 'package:jentra_os/features/finance/application/payment_failure.dart';
+import 'package:jentra_os/features/finance/application/payment_models.dart';
+import 'package:jentra_os/features/finance/application/payment_state.dart';
+import 'package:jentra_os/features/finance/data/supabase_payment_repository.dart';
 
 import '../fake_payment_repository.dart';
 

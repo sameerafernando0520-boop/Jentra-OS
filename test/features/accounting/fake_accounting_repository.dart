@@ -1,5 +1,5 @@
-import 'package:i_book/features/accounting/application/accounting_models.dart';
-import 'package:i_book/features/accounting/application/accounting_repository.dart';
+import 'package:jentra_os/features/accounting/application/accounting_models.dart';
+import 'package:jentra_os/features/accounting/application/accounting_repository.dart';
 
 final class FakeAccountingRepository implements AccountingRepository {
   FakeAccountingRepository({

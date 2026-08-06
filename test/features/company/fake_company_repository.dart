@@ -1,5 +1,5 @@
-import 'package:i_book/features/company/application/company_models.dart';
-import 'package:i_book/features/company/application/company_repository.dart';
+import 'package:jentra_os/features/company/application/company_models.dart';
+import 'package:jentra_os/features/company/application/company_repository.dart';
 
 /// In-memory company boundary used by controller and widget tests.
 ///

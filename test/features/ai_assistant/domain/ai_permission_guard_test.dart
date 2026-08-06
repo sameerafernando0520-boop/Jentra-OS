@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:i_book/features/ai_assistant/application/ai_failure.dart';
-import 'package:i_book/features/ai_assistant/domain/ai_permission_guard.dart';
+import 'package:jentra_os/features/ai_assistant/application/ai_failure.dart';
+import 'package:jentra_os/features/ai_assistant/domain/ai_permission_guard.dart';
 
 void main() {
   group('AiPermissionGuard', () {

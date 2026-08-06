@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:i_book/features/sales/application/invoice_validators.dart';
+import 'package:jentra_os/features/sales/application/invoice_validators.dart';
 
 void main() {
   group('InvoiceValidators', () {

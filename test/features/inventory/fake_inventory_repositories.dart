@@ -1,7 +1,7 @@
-import 'package:i_book/features/inventory/application/inventory_models.dart';
-import 'package:i_book/features/inventory/application/inventory_repository.dart';
-import 'package:i_book/features/inventory/application/product_models.dart';
-import 'package:i_book/features/inventory/application/product_repository.dart';
+import 'package:jentra_os/features/inventory/application/inventory_models.dart';
+import 'package:jentra_os/features/inventory/application/inventory_repository.dart';
+import 'package:jentra_os/features/inventory/application/product_models.dart';
+import 'package:jentra_os/features/inventory/application/product_repository.dart';
 
 final class FakeProductRepository implements ProductRepository {
   FakeProductRepository({

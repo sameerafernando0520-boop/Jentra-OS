@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:i_book/features/finance/application/payment_validators.dart';
+import 'package:jentra_os/features/finance/application/payment_validators.dart';
 
 void main() {
   group('PaymentValidators', () {

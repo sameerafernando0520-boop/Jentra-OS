@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:i_book/features/ai_assistant/application/ai_assistant_state.dart';
-import 'package:i_book/features/ai_assistant/application/ai_failure.dart';
-import 'package:i_book/features/ai_assistant/data/supabase_ai_assistant_repository.dart';
-import 'package:i_book/features/company/application/company_state.dart';
+import 'package:jentra_os/features/ai_assistant/application/ai_assistant_state.dart';
+import 'package:jentra_os/features/ai_assistant/application/ai_failure.dart';
+import 'package:jentra_os/features/ai_assistant/data/supabase_ai_assistant_repository.dart';
+import 'package:jentra_os/features/company/application/company_state.dart';
 
 import '../fake_ai_assistant_repository.dart';
 

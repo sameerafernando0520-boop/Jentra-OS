@@ -1,6 +1,6 @@
-import 'package:i_book/features/ai_assistant/application/ai_assistant_repository.dart';
-import 'package:i_book/features/ai_assistant/application/ai_models.dart';
-import 'package:i_book/features/ai_assistant/domain/business_context_builder.dart';
+import 'package:jentra_os/features/ai_assistant/application/ai_assistant_repository.dart';
+import 'package:jentra_os/features/ai_assistant/application/ai_models.dart';
+import 'package:jentra_os/features/ai_assistant/domain/business_context_builder.dart';
 
 final class FakeAiAssistantRepository implements AiAssistantRepository {
   FakeAiAssistantRepository({

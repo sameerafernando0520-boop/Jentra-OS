@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:i_book/core/config/env_config.dart';
+import 'package:jentra_os/core/config/env_config.dart';
 
 void main() {
   group('EnvConfig', () {

@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:i_book/app/app.dart';
-import 'package:i_book/core/config/app_providers.dart';
-import 'package:i_book/core/config/env_config.dart';
+import 'package:jentra_os/app/app.dart';
+import 'package:jentra_os/core/config/app_providers.dart';
+import 'package:jentra_os/core/config/env_config.dart';
 
 void main() {
   testWidgets('shows safe setup guidance when configuration is absent', (
@@ -21,7 +21,7 @@ void main() {
           supabaseClientProvider.overrideWithValue(null),
           startupFailureProvider.overrideWithValue(null),
         ],
-        child: const IBookApp(),
+        child: const JentraOSApp(),
       ),
     );
     await tester.pumpAndSettle();

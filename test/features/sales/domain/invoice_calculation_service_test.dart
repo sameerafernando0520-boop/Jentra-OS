@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:i_book/features/sales/application/invoice_models.dart';
-import 'package:i_book/features/sales/domain/invoice_calculation_service.dart';
+import 'package:jentra_os/features/sales/application/invoice_models.dart';
+import 'package:jentra_os/features/sales/domain/invoice_calculation_service.dart';
 
 void main() {
   group('InvoiceCalculationService', () {

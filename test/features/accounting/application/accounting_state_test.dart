@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:i_book/features/accounting/application/accounting_state.dart';
-import 'package:i_book/features/accounting/data/supabase_accounting_repository.dart';
-import 'package:i_book/features/company/application/company_state.dart';
+import 'package:jentra_os/features/accounting/application/accounting_state.dart';
+import 'package:jentra_os/features/accounting/data/supabase_accounting_repository.dart';
+import 'package:jentra_os/features/company/application/company_state.dart';
 
 import '../fake_accounting_repository.dart';
 

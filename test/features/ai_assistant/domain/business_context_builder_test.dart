@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:i_book/features/ai_assistant/application/ai_models.dart';
-import 'package:i_book/features/ai_assistant/domain/business_context_builder.dart';
+import 'package:jentra_os/features/ai_assistant/application/ai_models.dart';
+import 'package:jentra_os/features/ai_assistant/domain/business_context_builder.dart';
 
 void main() {
   group('BusinessContextBuilder', () {

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:i_book/features/inventory/application/product_validators.dart';
+import 'package:jentra_os/features/inventory/application/product_validators.dart';
 
 void main() {
   group('ProductValidators', () {

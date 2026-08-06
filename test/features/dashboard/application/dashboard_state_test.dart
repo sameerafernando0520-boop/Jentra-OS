@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:i_book/features/company/application/company_models.dart';
-import 'package:i_book/features/company/application/company_state.dart';
-import 'package:i_book/features/dashboard/application/dashboard_failure.dart';
-import 'package:i_book/features/dashboard/application/dashboard_models.dart';
-import 'package:i_book/features/dashboard/application/dashboard_state.dart';
-import 'package:i_book/features/dashboard/data/supabase_dashboard_repository.dart';
+import 'package:jentra_os/features/company/application/company_models.dart';
+import 'package:jentra_os/features/company/application/company_state.dart';
+import 'package:jentra_os/features/dashboard/application/dashboard_failure.dart';
+import 'package:jentra_os/features/dashboard/application/dashboard_models.dart';
+import 'package:jentra_os/features/dashboard/application/dashboard_state.dart';
+import 'package:jentra_os/features/dashboard/data/supabase_dashboard_repository.dart';
 
 import '../fake_dashboard_repository.dart';
 

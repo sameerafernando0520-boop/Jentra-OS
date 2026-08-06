@@ -1,5 +1,5 @@
-import 'package:i_book/features/finance/application/payment_models.dart';
-import 'package:i_book/features/finance/application/payment_repository.dart';
+import 'package:jentra_os/features/finance/application/payment_models.dart';
+import 'package:jentra_os/features/finance/application/payment_repository.dart';
 
 final class FakePaymentRepository implements PaymentRepository {
   FakePaymentRepository({

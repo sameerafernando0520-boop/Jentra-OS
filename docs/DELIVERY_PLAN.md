@@ -99,12 +99,12 @@ a security or data-integrity blocker is open in one of its dependencies.
 
 ### Phase 0 — Protect the work (do this first)
 
-- [ ] `git init`, a `.gitignore` that excludes `build/`, `.dart_tool/`, and any
+- [x] `git init`, a `.gitignore` that excludes `build/`, `.dart_tool/`, and any
       real env file, then an initial commit of the current tree
-- [ ] Confirm no secret is present in the tree before that first commit
+- [x] Confirm no secret is present in the tree before that first commit
 - [ ] Rotate the exposed service-role credential and record only that it was
       rotated, never the value
-- [ ] Baseline `flutter analyze` and `flutter test`, and record the result
+- [x] Baseline `flutter analyze` and `flutter test`, and record the result
 - [ ] Push to a private remote
 
 Exit gate: the current state is recoverable and no live credential is exposed.
@@ -134,12 +134,12 @@ implemented but unproven.
 - [ ] Confirm total debits equal total credits for every generated journal
 - [ ] Confirm `record_invoice_payment` is idempotent under a retried call and
       rejects an amount above the outstanding balance
-- [ ] Replace client-side stock balance arithmetic with a transactional
+- [x] Replace client-side stock balance arithmetic with a transactional
       `post_stock_movement` RPC, then revoke `insert, update` on
       `stock_balances` from `authenticated` (blocker 2)
-- [ ] Revoke `insert` on `journal_entries` and `journal_lines` from
+- [x] Revoke `insert` on `journal_entries` and `journal_lines` from
       `authenticated` and route all posting through server functions (blocker 3)
-- [ ] Re-audit: grep the client for direct writes to totals, balances, journals
+- [x] Re-audit: grep the client for direct writes to totals, balances, journals
       and stock, and confirm none remain
 - [ ] Add `audit_logs` and write to it from the posting paths
 - [ ] Widget and state tests for the failure paths, not just the happy path

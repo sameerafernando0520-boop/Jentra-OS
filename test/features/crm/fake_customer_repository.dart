@@ -1,5 +1,5 @@
-import 'package:i_book/features/crm/application/customer_models.dart';
-import 'package:i_book/features/crm/application/customer_repository.dart';
+import 'package:jentra_os/features/crm/application/customer_models.dart';
+import 'package:jentra_os/features/crm/application/customer_repository.dart';
 
 final class CustomerListRequest {
   const CustomerListRequest({

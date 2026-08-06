@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:i_book/features/crm/application/customer_validators.dart';
+import 'package:jentra_os/features/crm/application/customer_validators.dart';
 
 void main() {
   test('customer name is required', () {

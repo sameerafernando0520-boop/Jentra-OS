@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:i_book/features/auth/application/auth_controller.dart';
-import 'package:i_book/features/auth/application/auth_models.dart';
-import 'package:i_book/features/auth/application/auth_repository.dart';
-import 'package:i_book/features/auth/data/supabase_auth_repository.dart';
+import 'package:jentra_os/features/auth/application/auth_controller.dart';
+import 'package:jentra_os/features/auth/application/auth_models.dart';
+import 'package:jentra_os/features/auth/application/auth_repository.dart';
+import 'package:jentra_os/features/auth/data/supabase_auth_repository.dart';
 
 void main() {
   test('login delegates to the repository and reports success', () async {

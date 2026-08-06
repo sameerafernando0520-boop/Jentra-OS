@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:i_book/features/auth/application/auth_models.dart';
-import 'package:i_book/features/auth/application/auth_state_provider.dart';
-import 'package:i_book/features/company/application/company_failure.dart';
-import 'package:i_book/features/company/application/company_models.dart';
-import 'package:i_book/features/company/application/company_state.dart';
-import 'package:i_book/features/company/data/supabase_company_repository.dart';
+import 'package:jentra_os/features/auth/application/auth_models.dart';
+import 'package:jentra_os/features/auth/application/auth_state_provider.dart';
+import 'package:jentra_os/features/company/application/company_failure.dart';
+import 'package:jentra_os/features/company/application/company_models.dart';
+import 'package:jentra_os/features/company/application/company_state.dart';
+import 'package:jentra_os/features/company/data/supabase_company_repository.dart';
 
 import '../fake_company_repository.dart';
 

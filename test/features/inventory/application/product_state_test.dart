@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:i_book/features/company/application/company_models.dart';
-import 'package:i_book/features/company/application/company_state.dart';
-import 'package:i_book/features/inventory/application/inventory_failure.dart';
-import 'package:i_book/features/inventory/application/product_models.dart';
-import 'package:i_book/features/inventory/application/product_state.dart';
-import 'package:i_book/features/inventory/data/supabase_product_repository.dart';
+import 'package:jentra_os/features/company/application/company_models.dart';
+import 'package:jentra_os/features/company/application/company_state.dart';
+import 'package:jentra_os/features/inventory/application/inventory_failure.dart';
+import 'package:jentra_os/features/inventory/application/product_models.dart';
+import 'package:jentra_os/features/inventory/application/product_state.dart';
+import 'package:jentra_os/features/inventory/data/supabase_product_repository.dart';
 
 import '../fake_inventory_repositories.dart';
 

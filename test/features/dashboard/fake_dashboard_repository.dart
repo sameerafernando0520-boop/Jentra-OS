@@ -1,5 +1,5 @@
-import 'package:i_book/features/dashboard/application/dashboard_models.dart';
-import 'package:i_book/features/dashboard/application/dashboard_repository.dart';
+import 'package:jentra_os/features/dashboard/application/dashboard_models.dart';
+import 'package:jentra_os/features/dashboard/application/dashboard_repository.dart';
 
 final class FakeDashboardRepository implements DashboardRepository {
   FakeDashboardRepository({required this.snapshot, this.error});

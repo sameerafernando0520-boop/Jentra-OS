@@ -154,7 +154,6 @@ final class InventoryService {
     return rows;
   }
 
-  // Stock movements posting (StockService logic)
   Future<void> recordStockMovement({
     required String companyId,
     required String productId,
@@ -167,47 +166,20 @@ final class InventoryService {
     String? notes,
   }) async {
     requireSession();
-    // 1. Create movement record
-    await _client.from('stock_movements').insert({
-      'company_id': companyId,
-      'product_id': productId,
-      'warehouse_id': warehouseId,
-      'movement_type': movementType,
-      'quantity': quantity,
-      'unit_cost': unitCost,
-      'reference_type': referenceType,
-      'reference_id': referenceId,
-      'notes': notes,
-    });
-
-    // 2. Fetch current balance row
-    final existingBalance = await _client
-        .from('stock_balances')
-        .select('id, quantity_on_hand')
-        .eq('company_id', companyId)
-        .eq('product_id', productId)
-        .eq('warehouse_id', warehouseId)
-        .maybeSingle();
-
-    final delta = (movementType == 'out') ? -quantity.abs() : quantity;
-
-    if (existingBalance == null) {
-      await _client.from('stock_balances').insert({
-        'company_id': companyId,
-        'product_id': productId,
-        'warehouse_id': warehouseId,
-        'quantity_on_hand': delta,
-        'quantity_allocated': 0,
-      });
-    } else {
-      final currentQty =
-          (existingBalance['quantity_on_hand'] as num?)?.toDouble() ?? 0.0;
-      final newQty = currentQty + delta;
-      await _client
-          .from('stock_balances')
-          .update({'quantity_on_hand': newQty})
-          .eq('id', existingBalance['id']);
-    }
+    await _client.rpc(
+      'post_stock_movement',
+      params: {
+        'p_company_id': companyId,
+        'p_product_id': productId,
+        'p_warehouse_id': warehouseId,
+        'p_movement_type': movementType,
+        'p_quantity': quantity,
+        'p_unit_cost': unitCost,
+        'p_reference_type': referenceType,
+        'p_reference_id': referenceId,
+        'p_notes': notes,
+      },
+    );
   }
 
   String? _optional(String? value) {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:i_book/features/company/application/company_state.dart';
-import 'package:i_book/features/finance/data/supabase_payment_repository.dart';
-import 'package:i_book/features/sales/application/invoice_models.dart';
-import 'package:i_book/features/sales/presentation/widgets/record_payment_dialog.dart';
+import 'package:jentra_os/features/company/application/company_state.dart';
+import 'package:jentra_os/features/finance/data/supabase_payment_repository.dart';
+import 'package:jentra_os/features/sales/application/invoice_models.dart';
+import 'package:jentra_os/features/sales/presentation/widgets/record_payment_dialog.dart';
 
 import '../../finance/fake_payment_repository.dart';
 
