@@ -128,11 +128,11 @@ Exit gate: the tenant boundary is proven, not assumed.
 The chain invoice → payment → journal entry is the product's core claim. It is
 implemented but unproven.
 
-- [ ] Reconcile: create an invoice, record a partial payment, then a second
+- [x] Reconcile: create an invoice, record a partial payment, then a second
       payment, and confirm `balance_due`, `paid_amount`, and the resulting
       journal lines are correct and balanced
-- [ ] Confirm total debits equal total credits for every generated journal
-- [ ] Confirm `record_invoice_payment` is idempotent under a retried call and
+- [x] Confirm total debits equal total credits for every generated journal
+- [x] Confirm `record_invoice_payment` is idempotent under a retried call and
       rejects an amount above the outstanding balance
 - [x] Replace client-side stock balance arithmetic with a transactional
       `post_stock_movement` RPC, then revoke `insert, update` on
@@ -142,7 +142,7 @@ implemented but unproven.
 - [x] Re-audit: grep the client for direct writes to totals, balances, journals
       and stock, and confirm none remain
 - [x] Add `audit_logs` and write to it from the posting paths
-- [ ] Widget and state tests for the failure paths, not just the happy path
+- [x] Widget and state tests for the failure paths, not just the happy path
 
 Exit gate: an accountant could trust the numbers.
 
