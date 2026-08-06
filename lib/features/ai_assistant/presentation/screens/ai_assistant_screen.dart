@@ -17,7 +17,7 @@ final class AiAssistantScreen extends StatelessWidget {
             children: [
               Icon(Icons.auto_awesome, color: Colors.purpleAccent),
               SizedBox(width: 8),
-              Text('i Book AI Assistant'),
+              Text('Jentra OS AI Assistant'),
             ],
           ),
           bottom: const TabBar(

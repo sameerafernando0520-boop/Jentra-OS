@@ -262,7 +262,7 @@ final class _MessageBubble extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  isUser ? 'You' : 'i Book AI',
+                  isUser ? 'You' : 'Jentra OS AI',
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
@@ -336,7 +336,7 @@ final class _EmptyChatView extends StatelessWidget {
     ];
 
     return Center(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -347,7 +347,7 @@ final class _EmptyChatView extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'i Book AI Assistant',
+              'Jentra OS AI Assistant',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),

@@ -43,7 +43,7 @@ void main() {
       await tester.pumpWidget(buildTestWidget(const AiAssistantScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('i Book AI Assistant'), findsOneWidget);
+      expect(find.text('Jentra OS AI Assistant'), findsWidgets);
       expect(find.text('AI Chat'), findsOneWidget);
       expect(find.text('Insights Inbox'), findsOneWidget);
       expect(find.text('AI Settings'), findsOneWidget);

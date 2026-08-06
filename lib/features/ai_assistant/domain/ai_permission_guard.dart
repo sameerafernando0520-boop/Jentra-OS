@@ -30,11 +30,23 @@ abstract final class AiPermissionGuard {
     }
 
     final lower = trimmed.toLowerCase();
+
+    // SQL Injection Guard
     if (lower.contains('drop table') ||
         lower.contains('delete from') ||
-        lower.contains('select * from pg_') ||
-        lower.contains('information_schema')) {
+        lower.contains('select * from') ||
+        lower.contains('information_schema') ||
+        lower.contains('pg_catalog')) {
       throw const AiFailure('Direct SQL execution or schema inspection is restricted.');
+    }
+
+    // Prompt Injection Guard
+    if (lower.contains('ignore previous instructions') ||
+        lower.contains('ignore system prompt') ||
+        lower.contains('override system') ||
+        lower.contains('jailbreak') ||
+        lower.contains('bypass authorization')) {
+      throw const AiFailure('System instruction override or prompt injection attempt blocked.');
     }
 
     return trimmed;

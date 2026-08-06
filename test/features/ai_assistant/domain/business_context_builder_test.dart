@@ -48,7 +48,7 @@ void main() {
         summary: summary,
       );
 
-      expect(res, contains('i Book AI Business Summary'));
+      expect(res, contains('Jentra OS AI Business Summary'));
       expect(res, contains('\$2500.00'));
       expect(res, contains('\$1800.00'));
     });
