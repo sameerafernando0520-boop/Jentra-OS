@@ -173,11 +173,11 @@ Exit gate: an SME could run a full month of trading in the product.
 
 ### Phase 5 — AI assistant with a real provider
 
-- [ ] Edge Function gateway holding the provider key; no key in Flutter
-- [ ] Allow-listed, company-scoped read-only tools; no arbitrary SQL from user text
-- [ ] Prompt-injection tests using both user input and stored business text
-- [ ] Answers cite their evidence and state data freshness
-- [ ] Read-only first; mutating actions only later, behind explicit preview,
+- [x] Edge Function gateway holding the provider key; no key in Flutter
+- [x] Allow-listed, company-scoped read-only tools; no arbitrary SQL from user text
+- [x] Prompt-injection tests using both user input and stored business text
+- [x] Answers cite their evidence and state data freshness
+- [x] Read-only first; mutating actions only later, behind explicit preview,
       confirmation, idempotency keys, and audit records
 
 Exit gate: the assistant cannot read or change another company's data under
