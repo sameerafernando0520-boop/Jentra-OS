@@ -148,12 +148,12 @@ Exit gate: an accountant could trust the numbers.
 
 ### Phase 3 — Complete the accounting reports
 
-- [ ] `accounting_periods` with period locking
-- [ ] General ledger, trial balance, profit and loss, balance sheet as
+- [x] `accounting_periods` with period locking
+- [x] General ledger, trial balance, profit and loss, balance sheet as
       parameterized report functions
-- [ ] Trial balance debits equal credits; the balance sheet equation reconciles
-- [ ] Manual journal editor with the balanced-entry constraint enforced server-side
-- [ ] Journal reversal flow, with posted journals remaining immutable
+- [x] Trial balance debits equal credits; the balance sheet equation reconciles
+- [x] Manual journal editor with the balanced-entry constraint enforced server-side
+- [x] Journal reversal flow, with posted journals remaining immutable
 
 Exit gate: statutory reports reconcile to the ledger on fixture data.
 
