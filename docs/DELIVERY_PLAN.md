@@ -141,7 +141,7 @@ implemented but unproven.
       `authenticated` and route all posting through server functions (blocker 3)
 - [x] Re-audit: grep the client for direct writes to totals, balances, journals
       and stock, and confirm none remain
-- [ ] Add `audit_logs` and write to it from the posting paths
+- [x] Add `audit_logs` and write to it from the posting paths
 - [ ] Widget and state tests for the failure paths, not just the happy path
 
 Exit gate: an accountant could trust the numbers.
