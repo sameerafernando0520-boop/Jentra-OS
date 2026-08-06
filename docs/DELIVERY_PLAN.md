@@ -159,15 +159,15 @@ Exit gate: statutory reports reconcile to the ledger on fixture data.
 
 ### Phase 4 — Finish the operational modules
 
-- [ ] Finance: outgoing payments, allocation workspace, receivables and payables
+- [x] Finance: outgoing payments, allocation workspace, receivables and payables
       aging, customer and supplier statements, payment reversal
-- [ ] Inventory: adjustments and transfers through a transactional posting
+- [x] Inventory: adjustments and transfers through a transactional posting
       service, costing, valuation and reorder reports
-- [ ] Sales: quotations and sales orders, document conversion with replay
+- [x] Sales: quotations and sales orders, document conversion with replay
       protection, `tax_rates`, credit notes, PDF export
-- [ ] CRM: suppliers, leads with atomic conversion, activities, contacts,
+- [x] CRM: suppliers, leads with atomic conversion, activities, contacts,
       addresses, attachments on private company-prefixed storage paths
-- [ ] Settings: currency, tax, document numbering, company preferences
+- [x] Settings: currency, tax, document numbering, company preferences
 
 Exit gate: an SME could run a full month of trading in the product.
 
