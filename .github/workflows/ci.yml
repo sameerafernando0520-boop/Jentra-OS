@@ -1,0 +1,140 @@
+name: Jentra OS CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - "codex/**"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jentra-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: 3.44.7
+  SUPABASE_CLI_VERSION: 2.114.0
+
+jobs:
+  flutter-quality:
+    name: Format, analyze, and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          pub-cache: true
+
+      - name: Resolve locked dependencies and advisories
+        run: flutter pub get --enforce-lockfile
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed apps packages
+
+      - name: Analyze workspace
+        run: flutter analyze
+
+      - name: Test domain contracts
+        working-directory: packages/jentra_domain
+        run: dart test
+
+      - name: Test design system
+        working-directory: packages/jentra_design_system
+        run: flutter test --no-pub -r expanded
+
+      - name: Test platform adapters
+        working-directory: packages/jentra_platform
+        run: flutter test --no-pub -r expanded
+
+      - name: Test desktop shell and goldens
+        working-directory: apps/jentra_desktop
+        run: flutter test --no-pub -r expanded
+
+  database:
+    name: Migrations, lint, and pgTAP
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: ${{ env.SUPABASE_CLI_VERSION }}
+
+      - name: Start isolated Supabase stack
+        run: supabase start
+
+      - name: Lint local database
+        run: supabase db lint --local --level warning
+
+      - name: Run pgTAP security suite
+        run: supabase test db
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out complete history
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Scan source and history with Gitleaks
+        run: >-
+          docker run --rm
+          -v "${{ github.workspace }}:/repo"
+          ghcr.io/gitleaks/gitleaks:v8.30.1
+          git /repo --redact --no-banner --verbose
+
+  windows-release:
+    name: Windows release build
+    needs:
+      - flutter-quality
+      - database
+      - secret-scan
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          pub-cache: true
+
+      - name: Enable Windows desktop
+        run: flutter config --enable-windows-desktop
+
+      - name: Resolve locked dependencies and advisories
+        run: flutter pub get --enforce-lockfile
+
+      - name: Build unsigned Windows release
+        working-directory: apps/jentra_desktop
+        run: flutter build windows --release --no-pub
+
+      - name: Upload Windows bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: jentra-os-windows-unsigned
+          path: apps/jentra_desktop/build/windows/x64/runner/Release/
+          if-no-files-found: error
+          retention-days: 14

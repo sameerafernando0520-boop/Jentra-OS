@@ -1,71 +1,28 @@
-# i Book
+# Jentra OS
 
-i Book is an AI Business Operating System for SMEs, built as a multi-company
-Flutter + Supabase SaaS platform.
+Jentra OS is a Windows-first, multi-tenant operating platform for growing Sri
+Lankan businesses. This repository is a deliberate greenfield implementation;
+legacy application code and visual assets are not part of the product.
 
-## Current implementation phase
+## Workspace
 
-Phase 1 establishes the authentication and tenant boundary:
+- `apps/jentra_desktop` — Flutter desktop application.
+- `packages/jentra_design_system` — semantic tokens and enterprise UI kit.
+- `packages/jentra_domain` — framework-free contracts and business primitives.
+- `packages/jentra_platform` — Supabase, local storage, connectivity, and OS adapters.
+- `docs/blueprint` — approved product, architecture, security, UX, and delivery dossier.
+- `supabase` — versioned database migrations, Edge Functions, and pgTAP tests.
 
-- user profiles linked to `auth.users`
-- companies and branches
-- roles and permissions
-- company memberships and branch assignments
-- company settings
-- automatic owner/company initialization
-- explicit Data API grants and Row Level Security
-- composite tenant foreign keys for cross-company integrity
+## Development configuration
 
-The CRM, sales, purchasing, inventory, finance, HR, projects, AI, storage, and
-subscription modules remain intentionally pending until the tenant foundation
-passes local and live security tests.
-
-## Flutter application
-
-The Flutter client uses feature-based clean architecture with Riverpod for
-dependency injection/application state, GoRouter for mobile/web navigation, and
-repository-backed Supabase access.
-
-### Required environment variables
-
-- `SUPABASE_URL`: the project URL from Supabase project settings.
-- `SUPABASE_PUBLISHABLE_KEY`: the preferred client-side key for new projects.
-- `SUPABASE_ANON_KEY`: supported as a legacy alternative when the project still
-  uses an anonymous JWT key. Provide either this or the publishable key, not both.
-- `APP_ENV`: optional environment name; defaults to `development`.
-
-### Run the app
-
-Pass public configuration at compile time:
+Copy `.env.example` values into secure launch configuration or pass them as
+`--dart-define` values. No privileged Supabase secret belongs in the client.
 
 ```powershell
-flutter run `
-  --dart-define=APP_ENV=development `
-  --dart-define=SUPABASE_URL=https://your-project.supabase.co `
-  --dart-define=SUPABASE_PUBLISHABLE_KEY=your-publishable-key
+flutter pub get
+flutter run -d windows --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_PUBLISHABLE_KEY=...
 ```
 
-If the public values are omitted, the app opens a safe configuration screen
-instead of attempting to initialize Supabase.
-
-## Secrets
-
-Only the Supabase project URL and a client-safe publishable/anonymous key may be
-provided to Flutter. The client key is not a replacement for Row Level Security.
-Never place a `service_role`, legacy service-role JWT, or `sb_secret` key in the
-repository or frontend application.
-
-The service-role credential previously stored in the external project notes must
-be rotated before deployment.
-
-## Database workflow
-
-```powershell
-supabase start
-supabase db reset
-supabase test db
-supabase db push --dry-run
-```
-
-Do not push migrations to the hosted project until the local reset and security
-checks pass.
+The app can launch without backend configuration in design preview mode. Any
+authoritative business command remains unavailable until a live development
+backend is configured and confirms the operation.

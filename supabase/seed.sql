@@ -1,0 +1,3 @@
+-- Intentionally empty. Wave 1 tests create isolated synthetic fixtures inside
+-- transactions; shared development seed data will be introduced with an
+-- approved feature specification.

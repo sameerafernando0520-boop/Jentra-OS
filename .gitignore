@@ -1,89 +1,34 @@
-# ---------------------------------------------------------------------------
-# Environment and secrets — never commit a real environment file.
-# .env.example is the only environment file that stays tracked.
-# ---------------------------------------------------------------------------
-.env
-.env.*
-*.env
-!.env.example
-secrets.json
-*.pem
-*.p12
-*.jks
-*.keystore
-key.properties
-
-# ---------------------------------------------------------------------------
-# Supabase
-# ---------------------------------------------------------------------------
-supabase/.temp/
-supabase/.branches/
-.supabase/
-
-# ---------------------------------------------------------------------------
-# Flutter and Dart tooling
-# ---------------------------------------------------------------------------
-build/
+# Dart and Flutter
 .dart_tool/
-.dart-appdata/
 .packages
-.pub-cache/
-.pub/
 .flutter-plugins
 .flutter-plugins-dependencies
+.pub-cache/
+build/
 coverage/
-doc/api/
-*.log
+pubspec_overrides.yaml
 
-# ---------------------------------------------------------------------------
-# IDE and editor
-# ---------------------------------------------------------------------------
+# Editors and operating systems
 .idea/
+.vscode/
 *.iml
-*.ipr
-*.iws
-.vscode/*
-!.vscode/settings.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
-# ---------------------------------------------------------------------------
-# Android
-# ---------------------------------------------------------------------------
-android/.gradle/
-android/.cxx/
-android/captures/
-android/local.properties
-android/app/debug/
-android/app/profile/
-android/app/release/
-android/**/GeneratedPluginRegistrant.java
-
-# ---------------------------------------------------------------------------
-# iOS / macOS
-# ---------------------------------------------------------------------------
-ios/Flutter/ephemeral/
-ios/Flutter/App.framework
-ios/Flutter/Flutter.framework
-ios/Flutter/Flutter.podspec
-ios/Flutter/Generated.xcconfig
-ios/Flutter/flutter_export_environment.sh
-ios/Pods/
-ios/.symlinks/
-ios/ServiceDefinitions.json
-ios/Runner/GeneratedPluginRegistrant.*
-**/DerivedData/
-**/xcuserdata/
-*.moved-aside
-
-# ---------------------------------------------------------------------------
-# Web
-# ---------------------------------------------------------------------------
-web/flutter_service_worker.js
-
-# ---------------------------------------------------------------------------
-# OS noise
-# ---------------------------------------------------------------------------
 .DS_Store
 Thumbs.db
-desktop.ini
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.cer
+
+# Generated Windows output
+apps/jentra_desktop/windows/flutter/ephemeral/
+apps/jentra_desktop/windows/flutter/generated_plugin_registrant.cc
+apps/jentra_desktop/windows/flutter/generated_plugin_registrant.h
+apps/jentra_desktop/windows/flutter/generated_plugins.cmake
+
+# Supabase local state
+supabase/.branches/
+supabase/.temp/
