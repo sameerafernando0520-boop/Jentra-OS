@@ -19,6 +19,7 @@ class JentraShell extends ConsumerWidget {
     final currentPath = GoRouterState.of(context).uri.path;
     final gateway = ref.watch(foundationGatewayProvider);
     final tenants = ref.watch(tenantListProvider).value;
+    final capabilities = ref.watch(businessCapabilitiesProvider).value;
     final mfaRequired =
         gateway != null &&
         (tenants?.isNotEmpty ?? false) &&
@@ -37,7 +38,11 @@ class JentraShell extends ConsumerWidget {
             child: Scaffold(
               body: Row(
                 children: [
-                  _Sidebar(collapsed: collapsed, currentPath: currentPath),
+                  _Sidebar(
+                    collapsed: collapsed,
+                    currentPath: currentPath,
+                    destinations: visibleJentraDestinations(capabilities),
+                  ),
                   Expanded(
                     child: Column(
                       children: [
@@ -66,10 +71,15 @@ class JentraShell extends ConsumerWidget {
 }
 
 class _Sidebar extends StatelessWidget {
-  const _Sidebar({required this.collapsed, required this.currentPath});
+  const _Sidebar({
+    required this.collapsed,
+    required this.currentPath,
+    required this.destinations,
+  });
 
   final bool collapsed;
   final String currentPath;
+  final List<JentraDestination> destinations;
 
   @override
   Widget build(BuildContext context) => AnimatedContainer(
@@ -87,9 +97,9 @@ class _Sidebar extends StatelessWidget {
                 horizontal: JentraSpacing.x2,
                 vertical: JentraSpacing.x3,
               ),
-              itemCount: jentraDestinations.length,
+              itemCount: destinations.length,
               itemBuilder: (context, index) {
-                final item = jentraDestinations[index];
+                final item = destinations[index];
                 final active = currentPath == item.path;
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -620,19 +630,22 @@ class _QuickAction extends StatelessWidget {
   );
 }
 
-class _CommandPalette extends StatefulWidget {
+class _CommandPalette extends ConsumerStatefulWidget {
   const _CommandPalette();
 
   @override
-  State<_CommandPalette> createState() => _CommandPaletteState();
+  ConsumerState<_CommandPalette> createState() => _CommandPaletteState();
 }
 
-class _CommandPaletteState extends State<_CommandPalette> {
+class _CommandPaletteState extends ConsumerState<_CommandPalette> {
   String query = '';
 
   @override
   Widget build(BuildContext context) {
-    final matches = jentraDestinations
+    final destinations = visibleJentraDestinations(
+      ref.watch(businessCapabilitiesProvider).value,
+    );
+    final matches = destinations
         .where((item) => item.label.toLowerCase().contains(query.toLowerCase()))
         .toList();
     return Dialog(

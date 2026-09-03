@@ -595,17 +595,517 @@ class EncryptedDraftsCompanion extends UpdateCompanion<EncryptedDraft> {
   }
 }
 
+class $ReferenceCacheEntriesTable extends ReferenceCacheEntries
+    with TableInfo<$ReferenceCacheEntriesTable, ReferenceCacheEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ReferenceCacheEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _tenantIdMeta = const VerificationMeta(
+    'tenantId',
+  );
+  @override
+  late final GeneratedColumn<String> tenantId = GeneratedColumn<String>(
+    'tenant_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _resourceMeta = const VerificationMeta(
+    'resource',
+  );
+  @override
+  late final GeneratedColumn<String> resource = GeneratedColumn<String>(
+    'resource',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _recordIdMeta = const VerificationMeta(
+    'recordId',
+  );
+  @override
+  late final GeneratedColumn<String> recordId = GeneratedColumn<String>(
+    'record_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _legalEntityIdMeta = const VerificationMeta(
+    'legalEntityId',
+  );
+  @override
+  late final GeneratedColumn<String> legalEntityId = GeneratedColumn<String>(
+    'legal_entity_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _encryptedPayloadMeta = const VerificationMeta(
+    'encryptedPayload',
+  );
+  @override
+  late final GeneratedColumn<Uint8List> encryptedPayload =
+      GeneratedColumn<Uint8List>(
+        'encrypted_payload',
+        aliasedName,
+        false,
+        type: DriftSqlType.blob,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _serverVersionMeta = const VerificationMeta(
+    'serverVersion',
+  );
+  @override
+  late final GeneratedColumn<int> serverVersion = GeneratedColumn<int>(
+    'server_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _cachedAtMeta = const VerificationMeta(
+    'cachedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> cachedAt = GeneratedColumn<DateTime>(
+    'cached_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    tenantId,
+    resource,
+    recordId,
+    legalEntityId,
+    encryptedPayload,
+    serverVersion,
+    cachedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'reference_cache_entries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ReferenceCacheEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('tenant_id')) {
+      context.handle(
+        _tenantIdMeta,
+        tenantId.isAcceptableOrUnknown(data['tenant_id']!, _tenantIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_tenantIdMeta);
+    }
+    if (data.containsKey('resource')) {
+      context.handle(
+        _resourceMeta,
+        resource.isAcceptableOrUnknown(data['resource']!, _resourceMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_resourceMeta);
+    }
+    if (data.containsKey('record_id')) {
+      context.handle(
+        _recordIdMeta,
+        recordId.isAcceptableOrUnknown(data['record_id']!, _recordIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_recordIdMeta);
+    }
+    if (data.containsKey('legal_entity_id')) {
+      context.handle(
+        _legalEntityIdMeta,
+        legalEntityId.isAcceptableOrUnknown(
+          data['legal_entity_id']!,
+          _legalEntityIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('encrypted_payload')) {
+      context.handle(
+        _encryptedPayloadMeta,
+        encryptedPayload.isAcceptableOrUnknown(
+          data['encrypted_payload']!,
+          _encryptedPayloadMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_encryptedPayloadMeta);
+    }
+    if (data.containsKey('server_version')) {
+      context.handle(
+        _serverVersionMeta,
+        serverVersion.isAcceptableOrUnknown(
+          data['server_version']!,
+          _serverVersionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_serverVersionMeta);
+    }
+    if (data.containsKey('cached_at')) {
+      context.handle(
+        _cachedAtMeta,
+        cachedAt.isAcceptableOrUnknown(data['cached_at']!, _cachedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cachedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {tenantId, resource, recordId};
+  @override
+  ReferenceCacheEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReferenceCacheEntry(
+      tenantId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}tenant_id'],
+      )!,
+      resource: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}resource'],
+      )!,
+      recordId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}record_id'],
+      )!,
+      legalEntityId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}legal_entity_id'],
+      ),
+      encryptedPayload: attachedDatabase.typeMapping.read(
+        DriftSqlType.blob,
+        data['${effectivePrefix}encrypted_payload'],
+      )!,
+      serverVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}server_version'],
+      )!,
+      cachedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}cached_at'],
+      )!,
+    );
+  }
+
+  @override
+  $ReferenceCacheEntriesTable createAlias(String alias) {
+    return $ReferenceCacheEntriesTable(attachedDatabase, alias);
+  }
+}
+
+class ReferenceCacheEntry extends DataClass
+    implements Insertable<ReferenceCacheEntry> {
+  final String tenantId;
+  final String resource;
+  final String recordId;
+  final String? legalEntityId;
+  final Uint8List encryptedPayload;
+  final int serverVersion;
+  final DateTime cachedAt;
+  const ReferenceCacheEntry({
+    required this.tenantId,
+    required this.resource,
+    required this.recordId,
+    this.legalEntityId,
+    required this.encryptedPayload,
+    required this.serverVersion,
+    required this.cachedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['tenant_id'] = Variable<String>(tenantId);
+    map['resource'] = Variable<String>(resource);
+    map['record_id'] = Variable<String>(recordId);
+    if (!nullToAbsent || legalEntityId != null) {
+      map['legal_entity_id'] = Variable<String>(legalEntityId);
+    }
+    map['encrypted_payload'] = Variable<Uint8List>(encryptedPayload);
+    map['server_version'] = Variable<int>(serverVersion);
+    map['cached_at'] = Variable<DateTime>(cachedAt);
+    return map;
+  }
+
+  ReferenceCacheEntriesCompanion toCompanion(bool nullToAbsent) {
+    return ReferenceCacheEntriesCompanion(
+      tenantId: Value(tenantId),
+      resource: Value(resource),
+      recordId: Value(recordId),
+      legalEntityId: legalEntityId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(legalEntityId),
+      encryptedPayload: Value(encryptedPayload),
+      serverVersion: Value(serverVersion),
+      cachedAt: Value(cachedAt),
+    );
+  }
+
+  factory ReferenceCacheEntry.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReferenceCacheEntry(
+      tenantId: serializer.fromJson<String>(json['tenantId']),
+      resource: serializer.fromJson<String>(json['resource']),
+      recordId: serializer.fromJson<String>(json['recordId']),
+      legalEntityId: serializer.fromJson<String?>(json['legalEntityId']),
+      encryptedPayload: serializer.fromJson<Uint8List>(
+        json['encryptedPayload'],
+      ),
+      serverVersion: serializer.fromJson<int>(json['serverVersion']),
+      cachedAt: serializer.fromJson<DateTime>(json['cachedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'tenantId': serializer.toJson<String>(tenantId),
+      'resource': serializer.toJson<String>(resource),
+      'recordId': serializer.toJson<String>(recordId),
+      'legalEntityId': serializer.toJson<String?>(legalEntityId),
+      'encryptedPayload': serializer.toJson<Uint8List>(encryptedPayload),
+      'serverVersion': serializer.toJson<int>(serverVersion),
+      'cachedAt': serializer.toJson<DateTime>(cachedAt),
+    };
+  }
+
+  ReferenceCacheEntry copyWith({
+    String? tenantId,
+    String? resource,
+    String? recordId,
+    Value<String?> legalEntityId = const Value.absent(),
+    Uint8List? encryptedPayload,
+    int? serverVersion,
+    DateTime? cachedAt,
+  }) => ReferenceCacheEntry(
+    tenantId: tenantId ?? this.tenantId,
+    resource: resource ?? this.resource,
+    recordId: recordId ?? this.recordId,
+    legalEntityId: legalEntityId.present
+        ? legalEntityId.value
+        : this.legalEntityId,
+    encryptedPayload: encryptedPayload ?? this.encryptedPayload,
+    serverVersion: serverVersion ?? this.serverVersion,
+    cachedAt: cachedAt ?? this.cachedAt,
+  );
+  ReferenceCacheEntry copyWithCompanion(ReferenceCacheEntriesCompanion data) {
+    return ReferenceCacheEntry(
+      tenantId: data.tenantId.present ? data.tenantId.value : this.tenantId,
+      resource: data.resource.present ? data.resource.value : this.resource,
+      recordId: data.recordId.present ? data.recordId.value : this.recordId,
+      legalEntityId: data.legalEntityId.present
+          ? data.legalEntityId.value
+          : this.legalEntityId,
+      encryptedPayload: data.encryptedPayload.present
+          ? data.encryptedPayload.value
+          : this.encryptedPayload,
+      serverVersion: data.serverVersion.present
+          ? data.serverVersion.value
+          : this.serverVersion,
+      cachedAt: data.cachedAt.present ? data.cachedAt.value : this.cachedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReferenceCacheEntry(')
+          ..write('tenantId: $tenantId, ')
+          ..write('resource: $resource, ')
+          ..write('recordId: $recordId, ')
+          ..write('legalEntityId: $legalEntityId, ')
+          ..write('encryptedPayload: $encryptedPayload, ')
+          ..write('serverVersion: $serverVersion, ')
+          ..write('cachedAt: $cachedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    tenantId,
+    resource,
+    recordId,
+    legalEntityId,
+    $driftBlobEquality.hash(encryptedPayload),
+    serverVersion,
+    cachedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReferenceCacheEntry &&
+          other.tenantId == this.tenantId &&
+          other.resource == this.resource &&
+          other.recordId == this.recordId &&
+          other.legalEntityId == this.legalEntityId &&
+          $driftBlobEquality.equals(
+            other.encryptedPayload,
+            this.encryptedPayload,
+          ) &&
+          other.serverVersion == this.serverVersion &&
+          other.cachedAt == this.cachedAt);
+}
+
+class ReferenceCacheEntriesCompanion
+    extends UpdateCompanion<ReferenceCacheEntry> {
+  final Value<String> tenantId;
+  final Value<String> resource;
+  final Value<String> recordId;
+  final Value<String?> legalEntityId;
+  final Value<Uint8List> encryptedPayload;
+  final Value<int> serverVersion;
+  final Value<DateTime> cachedAt;
+  final Value<int> rowid;
+  const ReferenceCacheEntriesCompanion({
+    this.tenantId = const Value.absent(),
+    this.resource = const Value.absent(),
+    this.recordId = const Value.absent(),
+    this.legalEntityId = const Value.absent(),
+    this.encryptedPayload = const Value.absent(),
+    this.serverVersion = const Value.absent(),
+    this.cachedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ReferenceCacheEntriesCompanion.insert({
+    required String tenantId,
+    required String resource,
+    required String recordId,
+    this.legalEntityId = const Value.absent(),
+    required Uint8List encryptedPayload,
+    required int serverVersion,
+    required DateTime cachedAt,
+    this.rowid = const Value.absent(),
+  }) : tenantId = Value(tenantId),
+       resource = Value(resource),
+       recordId = Value(recordId),
+       encryptedPayload = Value(encryptedPayload),
+       serverVersion = Value(serverVersion),
+       cachedAt = Value(cachedAt);
+  static Insertable<ReferenceCacheEntry> custom({
+    Expression<String>? tenantId,
+    Expression<String>? resource,
+    Expression<String>? recordId,
+    Expression<String>? legalEntityId,
+    Expression<Uint8List>? encryptedPayload,
+    Expression<int>? serverVersion,
+    Expression<DateTime>? cachedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (tenantId != null) 'tenant_id': tenantId,
+      if (resource != null) 'resource': resource,
+      if (recordId != null) 'record_id': recordId,
+      if (legalEntityId != null) 'legal_entity_id': legalEntityId,
+      if (encryptedPayload != null) 'encrypted_payload': encryptedPayload,
+      if (serverVersion != null) 'server_version': serverVersion,
+      if (cachedAt != null) 'cached_at': cachedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ReferenceCacheEntriesCompanion copyWith({
+    Value<String>? tenantId,
+    Value<String>? resource,
+    Value<String>? recordId,
+    Value<String?>? legalEntityId,
+    Value<Uint8List>? encryptedPayload,
+    Value<int>? serverVersion,
+    Value<DateTime>? cachedAt,
+    Value<int>? rowid,
+  }) {
+    return ReferenceCacheEntriesCompanion(
+      tenantId: tenantId ?? this.tenantId,
+      resource: resource ?? this.resource,
+      recordId: recordId ?? this.recordId,
+      legalEntityId: legalEntityId ?? this.legalEntityId,
+      encryptedPayload: encryptedPayload ?? this.encryptedPayload,
+      serverVersion: serverVersion ?? this.serverVersion,
+      cachedAt: cachedAt ?? this.cachedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (tenantId.present) {
+      map['tenant_id'] = Variable<String>(tenantId.value);
+    }
+    if (resource.present) {
+      map['resource'] = Variable<String>(resource.value);
+    }
+    if (recordId.present) {
+      map['record_id'] = Variable<String>(recordId.value);
+    }
+    if (legalEntityId.present) {
+      map['legal_entity_id'] = Variable<String>(legalEntityId.value);
+    }
+    if (encryptedPayload.present) {
+      map['encrypted_payload'] = Variable<Uint8List>(encryptedPayload.value);
+    }
+    if (serverVersion.present) {
+      map['server_version'] = Variable<int>(serverVersion.value);
+    }
+    if (cachedAt.present) {
+      map['cached_at'] = Variable<DateTime>(cachedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReferenceCacheEntriesCompanion(')
+          ..write('tenantId: $tenantId, ')
+          ..write('resource: $resource, ')
+          ..write('recordId: $recordId, ')
+          ..write('legalEntityId: $legalEntityId, ')
+          ..write('encryptedPayload: $encryptedPayload, ')
+          ..write('serverVersion: $serverVersion, ')
+          ..write('cachedAt: $cachedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$JentraLocalDatabase extends GeneratedDatabase {
   _$JentraLocalDatabase(QueryExecutor e) : super(e);
   $JentraLocalDatabaseManager get managers => $JentraLocalDatabaseManager(this);
   late final $EncryptedDraftsTable encryptedDrafts = $EncryptedDraftsTable(
     this,
   );
+  late final $ReferenceCacheEntriesTable referenceCacheEntries =
+      $ReferenceCacheEntriesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [encryptedDrafts];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    encryptedDrafts,
+    referenceCacheEntries,
+  ];
 }
 
 typedef $$EncryptedDraftsTableCreateCompanionBuilder =
@@ -904,10 +1404,275 @@ typedef $$EncryptedDraftsTableProcessedTableManager =
       EncryptedDraft,
       PrefetchHooks Function()
     >;
+typedef $$ReferenceCacheEntriesTableCreateCompanionBuilder =
+    ReferenceCacheEntriesCompanion Function({
+      required String tenantId,
+      required String resource,
+      required String recordId,
+      Value<String?> legalEntityId,
+      required Uint8List encryptedPayload,
+      required int serverVersion,
+      required DateTime cachedAt,
+      Value<int> rowid,
+    });
+typedef $$ReferenceCacheEntriesTableUpdateCompanionBuilder =
+    ReferenceCacheEntriesCompanion Function({
+      Value<String> tenantId,
+      Value<String> resource,
+      Value<String> recordId,
+      Value<String?> legalEntityId,
+      Value<Uint8List> encryptedPayload,
+      Value<int> serverVersion,
+      Value<DateTime> cachedAt,
+      Value<int> rowid,
+    });
+
+class $$ReferenceCacheEntriesTableFilterComposer
+    extends Composer<_$JentraLocalDatabase, $ReferenceCacheEntriesTable> {
+  $$ReferenceCacheEntriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get tenantId => $composableBuilder(
+    column: $table.tenantId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get resource => $composableBuilder(
+    column: $table.resource,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get recordId => $composableBuilder(
+    column: $table.recordId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get legalEntityId => $composableBuilder(
+    column: $table.legalEntityId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<Uint8List> get encryptedPayload => $composableBuilder(
+    column: $table.encryptedPayload,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get serverVersion => $composableBuilder(
+    column: $table.serverVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get cachedAt => $composableBuilder(
+    column: $table.cachedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ReferenceCacheEntriesTableOrderingComposer
+    extends Composer<_$JentraLocalDatabase, $ReferenceCacheEntriesTable> {
+  $$ReferenceCacheEntriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get tenantId => $composableBuilder(
+    column: $table.tenantId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get resource => $composableBuilder(
+    column: $table.resource,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get recordId => $composableBuilder(
+    column: $table.recordId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get legalEntityId => $composableBuilder(
+    column: $table.legalEntityId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<Uint8List> get encryptedPayload => $composableBuilder(
+    column: $table.encryptedPayload,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get serverVersion => $composableBuilder(
+    column: $table.serverVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get cachedAt => $composableBuilder(
+    column: $table.cachedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ReferenceCacheEntriesTableAnnotationComposer
+    extends Composer<_$JentraLocalDatabase, $ReferenceCacheEntriesTable> {
+  $$ReferenceCacheEntriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get tenantId =>
+      $composableBuilder(column: $table.tenantId, builder: (column) => column);
+
+  GeneratedColumn<String> get resource =>
+      $composableBuilder(column: $table.resource, builder: (column) => column);
+
+  GeneratedColumn<String> get recordId =>
+      $composableBuilder(column: $table.recordId, builder: (column) => column);
+
+  GeneratedColumn<String> get legalEntityId => $composableBuilder(
+    column: $table.legalEntityId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<Uint8List> get encryptedPayload => $composableBuilder(
+    column: $table.encryptedPayload,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get serverVersion => $composableBuilder(
+    column: $table.serverVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get cachedAt =>
+      $composableBuilder(column: $table.cachedAt, builder: (column) => column);
+}
+
+class $$ReferenceCacheEntriesTableTableManager
+    extends
+        RootTableManager<
+          _$JentraLocalDatabase,
+          $ReferenceCacheEntriesTable,
+          ReferenceCacheEntry,
+          $$ReferenceCacheEntriesTableFilterComposer,
+          $$ReferenceCacheEntriesTableOrderingComposer,
+          $$ReferenceCacheEntriesTableAnnotationComposer,
+          $$ReferenceCacheEntriesTableCreateCompanionBuilder,
+          $$ReferenceCacheEntriesTableUpdateCompanionBuilder,
+          (
+            ReferenceCacheEntry,
+            BaseReferences<
+              _$JentraLocalDatabase,
+              $ReferenceCacheEntriesTable,
+              ReferenceCacheEntry
+            >,
+          ),
+          ReferenceCacheEntry,
+          PrefetchHooks Function()
+        > {
+  $$ReferenceCacheEntriesTableTableManager(
+    _$JentraLocalDatabase db,
+    $ReferenceCacheEntriesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ReferenceCacheEntriesTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$ReferenceCacheEntriesTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$ReferenceCacheEntriesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> tenantId = const Value.absent(),
+                Value<String> resource = const Value.absent(),
+                Value<String> recordId = const Value.absent(),
+                Value<String?> legalEntityId = const Value.absent(),
+                Value<Uint8List> encryptedPayload = const Value.absent(),
+                Value<int> serverVersion = const Value.absent(),
+                Value<DateTime> cachedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ReferenceCacheEntriesCompanion(
+                tenantId: tenantId,
+                resource: resource,
+                recordId: recordId,
+                legalEntityId: legalEntityId,
+                encryptedPayload: encryptedPayload,
+                serverVersion: serverVersion,
+                cachedAt: cachedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String tenantId,
+                required String resource,
+                required String recordId,
+                Value<String?> legalEntityId = const Value.absent(),
+                required Uint8List encryptedPayload,
+                required int serverVersion,
+                required DateTime cachedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => ReferenceCacheEntriesCompanion.insert(
+                tenantId: tenantId,
+                resource: resource,
+                recordId: recordId,
+                legalEntityId: legalEntityId,
+                encryptedPayload: encryptedPayload,
+                serverVersion: serverVersion,
+                cachedAt: cachedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ReferenceCacheEntriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$JentraLocalDatabase,
+      $ReferenceCacheEntriesTable,
+      ReferenceCacheEntry,
+      $$ReferenceCacheEntriesTableFilterComposer,
+      $$ReferenceCacheEntriesTableOrderingComposer,
+      $$ReferenceCacheEntriesTableAnnotationComposer,
+      $$ReferenceCacheEntriesTableCreateCompanionBuilder,
+      $$ReferenceCacheEntriesTableUpdateCompanionBuilder,
+      (
+        ReferenceCacheEntry,
+        BaseReferences<
+          _$JentraLocalDatabase,
+          $ReferenceCacheEntriesTable,
+          ReferenceCacheEntry
+        >,
+      ),
+      ReferenceCacheEntry,
+      PrefetchHooks Function()
+    >;
 
 class $JentraLocalDatabaseManager {
   final _$JentraLocalDatabase _db;
   $JentraLocalDatabaseManager(this._db);
   $$EncryptedDraftsTableTableManager get encryptedDrafts =>
       $$EncryptedDraftsTableTableManager(_db, _db.encryptedDrafts);
+  $$ReferenceCacheEntriesTableTableManager get referenceCacheEntries =>
+      $$ReferenceCacheEntriesTableTableManager(_db, _db.referenceCacheEntries);
 }

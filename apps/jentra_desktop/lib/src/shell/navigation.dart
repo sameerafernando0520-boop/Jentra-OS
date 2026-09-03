@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jentra_domain/jentra_domain.dart';
 
 final class JentraDestination {
   const JentraDestination({
@@ -23,6 +24,13 @@ const jentraDestinations = <JentraDestination>[
     icon: Icons.space_dashboard_outlined,
     section: 'WORKSPACE',
     shortcut: 'G D',
+  ),
+  JentraDestination(
+    label: 'Business setup',
+    path: '/setup',
+    icon: Icons.tune_outlined,
+    section: 'FOUNDATION',
+    shortcut: 'G S',
   ),
   JentraDestination(
     label: 'CRM & Revenue',
@@ -78,3 +86,14 @@ const jentraDestinations = <JentraDestination>[
     icon: Icons.admin_panel_settings_outlined,
   ),
 ];
+
+List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
+  final canOpenSetup =
+      capabilities != null &&
+      BusinessSetupResource.values.any(
+        (resource) => capabilities.contains(resource.viewPermission),
+      );
+  return jentraDestinations
+      .where((item) => item.path != '/setup' || canOpenSetup)
+      .toList(growable: false);
+}

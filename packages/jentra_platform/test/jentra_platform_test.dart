@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:cryptography/cryptography.dart';
+import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_platform.dart';
 
 final class _MemoryKeyStore implements SecretKeyStore {
@@ -48,6 +50,143 @@ void main() {
     expect(
       () => cipher.decrypt(encrypted),
       throwsA(isA<SecretBoxAuthenticationError>()),
+    );
+  });
+
+  test(
+    'partial encrypted drafts survive restart and retain conflict versions — AC-217',
+    () async {
+      final database = JentraLocalDatabase(NativeDatabase.memory());
+      addTearDown(database.close);
+      final cipher = DraftCipher(keyStore: _MemoryKeyStore());
+      final firstSession = EncryptedDraftRepository(database, cipher);
+
+      await firstSession.save(
+        id: 'account-draft-1',
+        tenantId: 'tenant-a',
+        entityType: BusinessSetupResource.accounts.name,
+        payload: const {'code': '1010', 'name': ''},
+        localVersion: 2,
+        serverVersion: 7,
+      );
+
+      final restartedSession = EncryptedDraftRepository(database, cipher);
+      final restored = await restartedSession.find('account-draft-1');
+      expect(restored?.payload, const {'code': '1010', 'name': ''});
+      expect(restored?.syncState, DraftSyncState.localOnly);
+
+      await restartedSession.markConflict(
+        id: 'account-draft-1',
+        serverVersion: 9,
+      );
+      final conflicted = await restartedSession.find('account-draft-1');
+      expect(conflicted?.localVersion, 2);
+      expect(conflicted?.serverVersion, 9);
+      expect(conflicted?.syncState, DraftSyncState.conflicted);
+    },
+  );
+
+  test(
+    'reference cache is tenant-scoped, encrypted, and replaceable — AC-217',
+    () async {
+      final database = JentraLocalDatabase(NativeDatabase.memory());
+      addTearDown(database.close);
+      final repository = EncryptedReferenceCacheRepository(
+        database,
+        DraftCipher(keyStore: _MemoryKeyStore()),
+      );
+      final timestamp = DateTime.utc(2026, 9);
+      final source = SetupRecord(
+        resource: BusinessSetupResource.accounts,
+        id: 'account-1000',
+        tenantId: 'tenant-a',
+        legalEntityId: 'entity-a',
+        code: '1000',
+        name: 'Cash and cash equivalents',
+        status: 'active',
+        version: 3,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        fields: const {'account_type': 'asset'},
+      );
+
+      await repository.replaceResource(
+        tenantId: 'tenant-a',
+        resource: BusinessSetupResource.accounts,
+        records: [source],
+      );
+
+      final raw = await database.select(database.referenceCacheEntries).get();
+      expect(raw, hasLength(1));
+      expect(
+        utf8.decode(raw.single.encryptedPayload, allowMalformed: true),
+        isNot(contains('Cash and cash equivalents')),
+      );
+      expect(
+        await repository.readResource(
+          tenantId: 'tenant-b',
+          resource: BusinessSetupResource.accounts,
+        ),
+        isEmpty,
+      );
+      final cached = await repository.readResource(
+        tenantId: 'tenant-a',
+        resource: BusinessSetupResource.accounts,
+        legalEntityId: 'entity-a',
+      );
+      expect(cached.single.code, '1000');
+      expect(cached.single.version, 3);
+
+      await repository.replaceResource(
+        tenantId: 'tenant-a',
+        resource: BusinessSetupResource.accounts,
+        records: const [],
+      );
+      expect(
+        await repository.readResource(
+          tenantId: 'tenant-a',
+          resource: BusinessSetupResource.accounts,
+        ),
+        isEmpty,
+      );
+    },
+  );
+
+  test('reference cache rejects a cross-tenant record — NFR-210', () async {
+    final database = JentraLocalDatabase(NativeDatabase.memory());
+    addTearDown(database.close);
+    final repository = EncryptedReferenceCacheRepository(
+      database,
+      DraftCipher(keyStore: _MemoryKeyStore()),
+    );
+    final timestamp = DateTime.utc(2026, 9);
+
+    expect(
+      () => repository.replaceResource(
+        tenantId: 'tenant-a',
+        resource: BusinessSetupResource.units,
+        records: [
+          SetupRecord(
+            resource: BusinessSetupResource.units,
+            id: 'unit-1',
+            tenantId: 'tenant-b',
+            code: 'EA',
+            name: 'Each',
+            status: 'active',
+            version: 1,
+            createdAt: timestamp,
+            updatedAt: timestamp,
+            fields: const {},
+          ),
+        ],
+      ),
+      throwsA(
+        isA<DomainError>().having(
+          (error) => error.code,
+          'code',
+          'CACHE_TENANT_MISMATCH',
+        ),
+      ),
     );
   });
 }

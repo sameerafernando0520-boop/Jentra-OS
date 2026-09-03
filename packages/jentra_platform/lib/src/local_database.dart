@@ -22,7 +22,21 @@ class EncryptedDrafts extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
-@DriftDatabase(tables: [EncryptedDrafts])
+/// Encrypted, tenant-scoped snapshots used for read-only offline setup pages.
+class ReferenceCacheEntries extends Table {
+  TextColumn get tenantId => text()();
+  TextColumn get resource => text()();
+  TextColumn get recordId => text()();
+  TextColumn get legalEntityId => text().nullable()();
+  BlobColumn get encryptedPayload => blob()();
+  IntColumn get serverVersion => integer()();
+  DateTimeColumn get cachedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {tenantId, resource, recordId};
+}
+
+@DriftDatabase(tables: [EncryptedDrafts, ReferenceCacheEntries])
 class JentraLocalDatabase extends _$JentraLocalDatabase {
   JentraLocalDatabase(super.executor);
 
@@ -36,5 +50,15 @@ class JentraLocalDatabase extends _$JentraLocalDatabase {
   );
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (migrator) => migrator.createAll(),
+    onUpgrade: (migrator, from, to) async {
+      if (from < 2) {
+        await migrator.createTable(referenceCacheEntries);
+      }
+    },
+  );
 }

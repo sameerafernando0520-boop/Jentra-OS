@@ -8,6 +8,7 @@ import 'app_providers.dart';
 import 'features/auth/login_screen.dart';
 import 'features/catalogue/component_catalogue_screen.dart';
 import 'features/dashboard/dashboard_screen.dart';
+import 'features/setup/business_setup_screen.dart';
 import 'features/tenant/accept_invitation_screen.dart';
 import 'features/shared/module_placeholder_screen.dart';
 import 'shell/jentra_shell.dart';
@@ -47,6 +48,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/dashboard',
             builder: (context, state) => const DashboardScreen(),
+          ),
+          GoRoute(
+            path: '/setup',
+            builder: (context, state) => const BusinessSetupScreen(),
           ),
           for (final module in const [
             ('crm', 'CRM & Revenue', 'Build trusted customer relationships.'),

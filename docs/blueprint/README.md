@@ -1,7 +1,7 @@
 # Jentra OS Blueprint Dossier
 
-**Status:** Approved for Wave 1 implementation  
-**Approved:** 2026-09-01  
+**Status:** Approved through Wave 2 implementation
+**Approved:** 2026-09-01
 **Product:** Jentra OS — Windows-first business operating system for Sri Lankan SMEs
 
 This dossier is the implementation contract for the greenfield Jentra OS product. The
@@ -17,6 +17,8 @@ documents.
 4. [03_DATA_SECURITY.md](03_DATA_SECURITY.md) — tenant hierarchy, data contracts, RLS matrix, audit, and RPC rules.
 5. [04_DESIGN_SYSTEM.md](04_DESIGN_SYSTEM.md) — corporate desktop visual tokens, layout, components, and accessibility.
 6. [05_TEST_AND_DELIVERY.md](05_TEST_AND_DELIVERY.md) — test layers, release waves, rollout gates, and operations.
+7. [06_WAVE2_SHARED_FOUNDATION_SPEC.md](06_WAVE2_SHARED_FOUNDATION_SPEC.md) — approved Wave 2 requirements, contracts, acceptance criteria, edge cases, and traceability.
+8. [07_WAVE2_VERIFICATION.md](07_WAVE2_VERIFICATION.md) — stage-by-stage Wave 2 test, database, performance, Windows, visual, and residual-gate evidence.
 
 ## Change control
 

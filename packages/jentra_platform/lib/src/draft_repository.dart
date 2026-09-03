@@ -86,6 +86,10 @@ final class EncryptedDraftRepository {
         ),
       );
 
+  Future<void> delete(String id) => (_database.delete(
+    _database.encryptedDrafts,
+  )..where((item) => item.id.equals(id))).go();
+
   Future<LocalDraft> _decode(EncryptedDraft row) async {
     final cleartext = await _cipher.decrypt(row.encryptedPayload);
     return LocalDraft(

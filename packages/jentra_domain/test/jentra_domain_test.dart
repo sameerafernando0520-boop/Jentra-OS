@@ -55,6 +55,17 @@ void main() {
         ),
         isTrue,
       );
+      expect(
+        DocumentLifecycle.canTransition(
+          DocumentStatus.posted,
+          DocumentStatus.reversed,
+        ),
+        isTrue,
+      );
+      expect(
+        DocumentLifecycle.requiresOnlineConfirmation(DocumentStatus.reversed),
+        isTrue,
+      );
     });
   });
 

@@ -8,6 +8,7 @@ enum DocumentStatus {
   fulfilled,
   closed,
   cancelled,
+  reversed,
 }
 
 /// Canonical transition rules. Posted documents require corrective documents.
@@ -25,11 +26,13 @@ abstract final class DocumentLifecycle {
       DocumentStatus.settled,
       DocumentStatus.fulfilled,
       DocumentStatus.closed,
+      DocumentStatus.reversed,
     },
     DocumentStatus.settled: {DocumentStatus.closed},
     DocumentStatus.fulfilled: {DocumentStatus.closed},
     DocumentStatus.closed: {},
     DocumentStatus.cancelled: {},
+    DocumentStatus.reversed: {},
   };
 
   static bool canTransition(DocumentStatus from, DocumentStatus to) =>
@@ -46,5 +49,6 @@ abstract final class DocumentLifecycle {
       target == DocumentStatus.posted ||
       target == DocumentStatus.settled ||
       target == DocumentStatus.fulfilled ||
-      target == DocumentStatus.closed;
+      target == DocumentStatus.closed ||
+      target == DocumentStatus.reversed;
 }

@@ -41,6 +41,67 @@ final class TenantSummary {
   );
 }
 
+final class LegalEntitySummary {
+  const LegalEntitySummary({
+    required this.id,
+    required this.tenantId,
+    required this.name,
+    required this.code,
+    required this.currencyCode,
+    required this.timezone,
+    required this.status,
+  });
+
+  final String id;
+  final String tenantId;
+  final String name;
+  final String code;
+  final String currencyCode;
+  final String timezone;
+  final String status;
+
+  factory LegalEntitySummary.fromJson(Map<String, Object?> json) =>
+      LegalEntitySummary(
+        id: json['id']! as String,
+        tenantId: json['tenant_id']! as String,
+        name: json['name']! as String,
+        code: json['code']! as String,
+        currencyCode: json['currency_code']! as String,
+        timezone: json['timezone']! as String,
+        status: json['status']! as String,
+      );
+}
+
+final class BranchSummary {
+  const BranchSummary({
+    required this.id,
+    required this.tenantId,
+    required this.legalEntityId,
+    required this.name,
+    required this.code,
+    required this.timezone,
+    required this.status,
+  });
+
+  final String id;
+  final String tenantId;
+  final String legalEntityId;
+  final String name;
+  final String code;
+  final String timezone;
+  final String status;
+
+  factory BranchSummary.fromJson(Map<String, Object?> json) => BranchSummary(
+    id: json['id']! as String,
+    tenantId: json['tenant_id']! as String,
+    legalEntityId: json['legal_entity_id']! as String,
+    name: json['name']! as String,
+    code: json['code']! as String,
+    timezone: json['timezone']! as String,
+    status: json['status']! as String,
+  );
+}
+
 /// The only desktop boundary for foundation authentication and tenant RPCs.
 final class SupabaseFoundationGateway {
   SupabaseFoundationGateway(this._client);
@@ -112,6 +173,45 @@ final class SupabaseFoundationGateway {
     return rows
         .cast<Map<String, Object?>>()
         .map(TenantSummary.fromJson)
+        .toList(growable: false);
+  }
+
+  Future<List<LegalEntitySummary>> listLegalEntities(String tenantId) async {
+    final rows =
+        await _client
+                .schema('api')
+                .from('legal_entities')
+                .select()
+                .eq('tenant_id', tenantId)
+                .eq('status', 'active')
+                .order('name')
+            as List;
+    return rows
+        .map(
+          (row) =>
+              LegalEntitySummary.fromJson((row as Map).cast<String, Object?>()),
+        )
+        .toList(growable: false);
+  }
+
+  Future<List<BranchSummary>> listBranches({
+    required String tenantId,
+    required String legalEntityId,
+  }) async {
+    final rows =
+        await _client
+                .schema('api')
+                .from('branches')
+                .select()
+                .eq('tenant_id', tenantId)
+                .eq('legal_entity_id', legalEntityId)
+                .eq('status', 'active')
+                .order('name')
+            as List;
+    return rows
+        .map(
+          (row) => BranchSummary.fromJson((row as Map).cast<String, Object?>()),
+        )
         .toList(growable: false);
   }
 
