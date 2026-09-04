@@ -2,8 +2,8 @@
 
 **Author:** Jentra OS Engineering  
 **Date:** 2026-09-03  
-**Status:** In Review  
-**Reviewer:** Product owner  
+**Status:** Approved
+**Reviewer:** Product owner (approved 2026-09-04)
 **Related specs:** `00_PRODUCT_SPEC.md`, `01_ARCHITECTURE.md`, `02_DOMAIN_AND_PROCESS.md`,
 `03_DATA_SECURITY.md`, `04_DESIGN_SYSTEM.md`, `05_TEST_AND_DELIVERY.md`,
 `06_WAVE2_SHARED_FOUNDATION_SPEC.md`, `07_WAVE2_VERIFICATION.md`
@@ -1006,7 +1006,7 @@ scale is explicitly required; exchange rates use at least `numeric(20,10)`.
 
 ### Approval gate
 
-This specification is **In Review**. Wave 3 implementation is blocked until the product owner
-approves this scope or records amendments. Approval authorizes implementation in the existing
-synthetic-data development boundary only; it does not authorize deployment, real data, external
-providers, payment execution, production secrets, or statutory claims.
+This specification was **Approved** by the product owner on 2026-09-04. Approval authorizes
+implementation in the existing synthetic-data development boundary only; it does not authorize
+deployment, real data, external providers, payment execution, production secrets, or statutory
+claims.

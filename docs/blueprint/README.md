@@ -1,6 +1,6 @@
 # Jentra OS Blueprint Dossier
 
-**Status:** Approved through Wave 2 implementation; Wave 3 specification in review
+**Status:** Approved through Wave 2 implementation; Wave 3 specification approved and foundation implementation in progress
 **Approved:** 2026-09-01
 **Product:** Jentra OS — Windows-first business operating system for Sri Lankan SMEs
 
@@ -19,7 +19,7 @@ documents.
 6. [05_TEST_AND_DELIVERY.md](05_TEST_AND_DELIVERY.md) — test layers, release waves, rollout gates, and operations.
 7. [06_WAVE2_SHARED_FOUNDATION_SPEC.md](06_WAVE2_SHARED_FOUNDATION_SPEC.md) — approved Wave 2 requirements, contracts, acceptance criteria, edge cases, and traceability.
 8. [07_WAVE2_VERIFICATION.md](07_WAVE2_VERIFICATION.md) — stage-by-stage Wave 2 test, database, performance, Windows, visual, and residual-gate evidence.
-9. [08_WAVE3_INTEGRATED_COMMERCE_FINANCE_SPEC.md](08_WAVE3_INTEGRATED_COMMERCE_FINANCE_SPEC.md) — in-review Wave 3 requirements, operational and ledger contracts, acceptance criteria, edge cases, and traceability.
+9. [08_WAVE3_INTEGRATED_COMMERCE_FINANCE_SPEC.md](08_WAVE3_INTEGRATED_COMMERCE_FINANCE_SPEC.md) — approved Wave 3 requirements, operational and ledger contracts, acceptance criteria, edge cases, and traceability.
 
 ## Change control
 
