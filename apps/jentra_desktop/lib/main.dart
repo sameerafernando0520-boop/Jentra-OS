@@ -15,6 +15,7 @@ Future<void> main() async {
   final businessSetupGateway = client == null
       ? null
       : SupabaseBusinessSetupGateway(client);
+  final crmRepository = client == null ? null : SupabaseCrmGateway(client);
 
   runApp(
     ProviderScope(
@@ -22,6 +23,7 @@ Future<void> main() async {
         runtimeConfigProvider.overrideWithValue(config),
         foundationGatewayProvider.overrideWithValue(foundationGateway),
         businessSetupGatewayProvider.overrideWithValue(businessSetupGateway),
+        crmRepositoryProvider.overrideWithValue(crmRepository),
       ],
       child: const JentraApp(),
     ),

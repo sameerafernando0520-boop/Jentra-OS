@@ -8,6 +8,8 @@ export 'src/reference_cache_repository.dart';
 export 'src/runtime_config.dart';
 export 'src/setup_file_service.dart';
 export 'src/supabase_business_setup_gateway.dart';
+export 'src/supabase_crm_gateway.dart';
 export 'src/supabase_foundation_gateway.dart';
+export 'src/supabase_lead_to_cash_gateway.dart';
 export 'src/supabase_platform.dart';
 export 'src/tabular_codec.dart';

@@ -194,42 +194,6 @@ class _LoginBrand extends StatelessWidget {
   const _LoginBrand();
 
   @override
-  Widget build(BuildContext context) => const Row(
-    children: [
-      _BrandTile(),
-      SizedBox(width: JentraSpacing.x3),
-      Text(
-        'JENTRA OS',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 1.5,
-        ),
-      ),
-    ],
-  );
-}
-
-class _BrandTile extends StatelessWidget {
-  const _BrandTile();
-
-  @override
-  Widget build(BuildContext context) => Container(
-    width: 36,
-    height: 36,
-    alignment: Alignment.center,
-    decoration: BoxDecoration(
-      color: JentraColors.green500,
-      borderRadius: BorderRadius.circular(9),
-    ),
-    child: const Text(
-      'J',
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: 20,
-        fontWeight: FontWeight.w700,
-      ),
-    ),
-  );
+  Widget build(BuildContext context) =>
+      const JentraBrandLockup(size: 52, inverse: true, showTagline: true);
 }

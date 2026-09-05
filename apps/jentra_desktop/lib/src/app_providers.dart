@@ -19,6 +19,8 @@ final businessSetupGatewayProvider = Provider<SupabaseBusinessSetupGateway?>(
   (ref) => null,
 );
 
+final crmRepositoryProvider = Provider<CrmRepository?>((ref) => null);
+
 final localDatabaseProvider = Provider<JentraLocalDatabase>((ref) {
   final database = JentraLocalDatabase.open();
   ref.onDispose(() => unawaited(database.close()));

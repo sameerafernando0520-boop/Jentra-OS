@@ -18,10 +18,10 @@ class JentraPanel extends StatelessWidget {
   Widget build(BuildContext context) => Semantics(
     container: true,
     label: semanticsLabel,
-    child: DecoratedBox(
-      decoration: BoxDecoration(
-        color: context.jentraColors.panel,
-        border: Border.all(color: context.jentraColors.border),
+    child: Material(
+      color: context.jentraColors.panel,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: context.jentraColors.border),
         borderRadius: BorderRadius.circular(JentraRadii.card),
       ),
       child: Padding(padding: padding, child: child),
@@ -46,9 +46,19 @@ class JentraPrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final child = loading
-        ? const SizedBox.square(
-            dimension: 16,
-            child: CircularProgressIndicator(strokeWidth: 2),
+        ? Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox.square(
+                dimension: 15,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: context.jentraColors.textSecondary,
+                ),
+              ),
+              const SizedBox(width: JentraSpacing.x2),
+              Text(label),
+            ],
           )
         : Text(label);
     if (icon != null && !loading) {
@@ -58,7 +68,14 @@ class JentraPrimaryButton extends StatelessWidget {
         label: child,
       );
     }
-    return FilledButton(onPressed: onPressed, child: child);
+    return Semantics(
+      liveRegion: loading,
+      label: loading ? '$label, in progress' : null,
+      excludeSemantics: loading,
+      button: loading,
+      enabled: loading ? false : null,
+      child: FilledButton(onPressed: loading ? null : onPressed, child: child),
+    );
   }
 }
 
@@ -81,28 +98,28 @@ class JentraStatusBadge extends StatelessWidget {
     final colors = context.jentraColors;
     final (foreground, background, fallbackIcon) = switch (tone) {
       JentraStatusTone.success => (
-        JentraColors.success,
+        colors.success,
         colors.successSurface,
         Icons.check_circle_outline,
       ),
       JentraStatusTone.warning => (
-        JentraColors.warning,
+        colors.warning,
         colors.warningSurface,
         Icons.warning_amber_rounded,
       ),
       JentraStatusTone.danger => (
-        JentraColors.danger,
+        colors.danger,
         colors.dangerSurface,
         Icons.error_outline,
       ),
       JentraStatusTone.info => (
-        JentraColors.info,
+        colors.info,
         colors.infoSurface,
         Icons.info_outline,
       ),
       JentraStatusTone.neutral => (
         colors.textSecondary,
-        colors.border.withValues(alpha: 0.35),
+        colors.neutralSurface,
         Icons.circle_outlined,
       ),
     };
@@ -114,7 +131,7 @@ class JentraStatusBadge extends StatelessWidget {
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: background,
-          borderRadius: BorderRadius.circular(999),
+          borderRadius: BorderRadius.circular(6),
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
@@ -159,40 +176,56 @@ class JentraKpiCard extends StatelessWidget {
   final JentraStatusTone tone;
 
   @override
-  Widget build(BuildContext context) => JentraPanel(
-    semanticsLabel: '$label: $value, $helper',
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: 38,
-          height: 38,
-          decoration: BoxDecoration(
-            color: context.jentraColors.infoSurface,
-            borderRadius: BorderRadius.circular(JentraRadii.control),
-          ),
-          child: Icon(icon, size: 19, color: JentraColors.navy700),
-        ),
-        const SizedBox(width: JentraSpacing.x3),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+  Widget build(BuildContext context) => Semantics(
+    label: '$label: $value, $helper',
+    excludeSemantics: true,
+    child: JentraPanel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
             children: [
-              Text(label, style: Theme.of(context).textTheme.labelMedium),
-              const SizedBox(height: JentraSpacing.x1),
-              Text(
-                value,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontFamily: JentraTypography.monoFamily,
-                  fontFeatures: const [FontFeature.tabularFigures()],
+              Expanded(
+                child: Text(
+                  label,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: context.jentraColors.textSecondary,
+                  ),
                 ),
               ),
-              const SizedBox(height: JentraSpacing.x2),
-              JentraStatusBadge(label: helper, tone: tone),
+              const SizedBox(width: JentraSpacing.x2),
+              Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: context.jentraColors.infoSurface,
+                  borderRadius: BorderRadius.circular(JentraRadii.control),
+                ),
+                child: Icon(icon, size: 17, color: context.jentraColors.info),
+              ),
             ],
           ),
-        ),
-      ],
+          const SizedBox(height: JentraSpacing.x2),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              value,
+              maxLines: 1,
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontFamily: JentraTypography.monoFamily,
+                fontSize: 26,
+                fontWeight: FontWeight.w600,
+                letterSpacing: -0.8,
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
+            ),
+          ),
+          const SizedBox(height: JentraSpacing.x3),
+          JentraStatusBadge(label: helper, tone: tone),
+        ],
+      ),
     ),
   );
 }
@@ -258,7 +291,7 @@ class JentraEmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 36, color: JentraColors.navy700),
+            Icon(icon, size: 36, color: context.jentraColors.action),
             const SizedBox(height: JentraSpacing.x4),
             Text(
               title,

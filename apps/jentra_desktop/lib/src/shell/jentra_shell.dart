@@ -26,8 +26,9 @@ class JentraShell extends ConsumerWidget {
         gateway.currentAssurance() != MfaAssurance.aal2;
     return LayoutBuilder(
       builder: (context, constraints) {
-        final collapsed = constraints.maxWidth < 1220;
-        final showInspector = constraints.maxWidth >= 1740;
+        final enlargedText = MediaQuery.textScalerOf(context).scale(1) > 1.4;
+        final collapsed = constraints.maxWidth < 1220 || enlargedText;
+        final showInspector = constraints.maxWidth >= 1740 && !enlargedText;
         return CallbackShortcuts(
           bindings: {
             const SingleActivator(LogicalKeyboardKey.keyK, control: true): () =>
@@ -83,132 +84,170 @@ class _Sidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AnimatedContainer(
-    duration: JentraMotion.standard,
+    duration: MediaQuery.disableAnimationsOf(context)
+        ? Duration.zero
+        : JentraMotion.standard,
     width: collapsed ? 72 : 248,
     color: JentraColors.navy900,
-    child: SafeArea(
-      child: Column(
-        children: [
-          _SidebarBrand(collapsed: collapsed),
-          const Divider(color: JentraColors.darkBorder, height: 1),
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(
-                horizontal: JentraSpacing.x2,
-                vertical: JentraSpacing.x3,
-              ),
-              itemCount: destinations.length,
-              itemBuilder: (context, index) {
-                final item = destinations[index];
-                final active = currentPath == item.path;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (!collapsed && item.section != null)
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(
-                          JentraSpacing.x3,
-                          index == 0 ? JentraSpacing.x1 : JentraSpacing.x4,
-                          JentraSpacing.x3,
-                          JentraSpacing.x2,
-                        ),
-                        child: Text(
-                          item.section!,
-                          style: const TextStyle(
-                            color: Color(0xFF8195A9),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.1,
+    child: Material(
+      color: Colors.transparent,
+      child: SafeArea(
+        child: Column(
+          children: [
+            _SidebarBrand(collapsed: collapsed),
+            const Divider(color: JentraColors.darkBorder, height: 1),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: JentraSpacing.x2,
+                  vertical: JentraSpacing.x3,
+                ),
+                itemCount: destinations.length,
+                itemBuilder: (context, index) {
+                  final item = destinations[index];
+                  final active = currentPath == item.path;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (!collapsed && item.section != null)
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                            JentraSpacing.x3,
+                            index == 0 ? JentraSpacing.x1 : JentraSpacing.x4,
+                            JentraSpacing.x3,
+                            JentraSpacing.x2,
                           ),
-                        ),
-                      ),
-                    Tooltip(
-                      message: collapsed ? item.label : '',
-                      child: Semantics(
-                        selected: active,
-                        button: true,
-                        label: item.label,
-                        child: InkWell(
-                          onTap: () => context.go(item.path),
-                          borderRadius: BorderRadius.circular(
-                            JentraRadii.control,
-                          ),
-                          child: AnimatedContainer(
-                            duration: JentraMotion.fast,
-                            height: 40,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: collapsed
-                                  ? JentraSpacing.x3
-                                  : JentraSpacing.x3,
+                          child: Text(
+                            item.section!,
+                            style: const TextStyle(
+                              color: JentraColors.darkTextSecondary,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 1.1,
                             ),
-                            decoration: BoxDecoration(
-                              color: active
-                                  ? JentraColors.navy800
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(
-                                JentraRadii.control,
+                          ),
+                        ),
+                      Tooltip(
+                        message: collapsed ? item.label : '',
+                        child: Semantics(
+                          selected: active,
+                          button: true,
+                          label: item.label,
+                          child: InkWell(
+                            onTap: () => context.go(item.path),
+                            borderRadius: BorderRadius.circular(
+                              JentraRadii.control,
+                            ),
+                            child: AnimatedContainer(
+                              duration: MediaQuery.disableAnimationsOf(context)
+                                  ? Duration.zero
+                                  : JentraMotion.fast,
+                              height: 40,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: collapsed
+                                    ? JentraSpacing.x3
+                                    : JentraSpacing.x3,
                               ),
-                              border: active
-                                  ? const Border(
-                                      left: BorderSide(
-                                        color: JentraColors.green400,
-                                        width: 3,
-                                      ),
-                                    )
-                                  : null,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: collapsed
-                                  ? MainAxisAlignment.center
-                                  : MainAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  item.icon,
-                                  size: 19,
-                                  color: active
-                                      ? Colors.white
-                                      : JentraColors.darkTextSecondary,
+                              decoration: BoxDecoration(
+                                color: active
+                                    ? JentraColors.navy800
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(
+                                  JentraRadii.control,
                                 ),
-                                if (!collapsed) ...[
-                                  const SizedBox(width: JentraSpacing.x3),
-                                  Expanded(
-                                    child: Text(
-                                      item.label,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: active
-                                            ? Colors.white
-                                            : JentraColors.darkTextSecondary,
-                                        fontSize: 13,
-                                        fontWeight: active
-                                            ? FontWeight.w600
-                                            : FontWeight.w500,
-                                      ),
-                                    ),
+                                border: active
+                                    ? const Border(
+                                        left: BorderSide(
+                                          color: JentraColors.cyan500,
+                                          width: 3,
+                                        ),
+                                      )
+                                    : null,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: collapsed
+                                    ? MainAxisAlignment.center
+                                    : MainAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    item.icon,
+                                    size: 19,
+                                    color: active
+                                        ? Colors.white
+                                        : JentraColors.darkTextSecondary,
                                   ),
-                                  if (item.shortcut != null)
-                                    Text(
-                                      item.shortcut!,
-                                      style: const TextStyle(
-                                        color: Color(0xFF71879C),
-                                        fontSize: 10,
+                                  if (!collapsed) ...[
+                                    const SizedBox(width: JentraSpacing.x3),
+                                    Expanded(
+                                      child: Text(
+                                        item.label,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: active
+                                              ? Colors.white
+                                              : JentraColors.darkTextSecondary,
+                                          fontSize: 13,
+                                          fontWeight: active
+                                              ? FontWeight.w600
+                                              : FontWeight.w500,
+                                        ),
                                       ),
                                     ),
+                                    if (item.shortcut != null)
+                                      Text(
+                                        item.shortcut!,
+                                        style: const TextStyle(
+                                          color: JentraColors.darkTextSecondary,
+                                          fontSize: 10,
+                                        ),
+                                      ),
+                                  ],
                                 ],
-                              ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 2),
-                  ],
-                );
-              },
+                      const SizedBox(height: 2),
+                    ],
+                  );
+                },
+              ),
             ),
-          ),
-          _SidebarFooter(collapsed: collapsed),
-        ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Tooltip(
+                message: 'Design system',
+                child: TextButton(
+                  onPressed: () => context.go('/catalogue'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: JentraColors.darkTextSecondary,
+                    backgroundColor: currentPath == '/catalogue'
+                        ? JentraColors.navy800
+                        : Colors.transparent,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: collapsed ? 0 : 12,
+                    ),
+                    minimumSize: const Size(double.infinity, 40),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: collapsed
+                        ? MainAxisAlignment.center
+                        : MainAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.design_services_outlined, size: 18),
+                      if (!collapsed) ...[
+                        const SizedBox(width: 12),
+                        const Text('Design system'),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            _SidebarFooter(collapsed: collapsed),
+          ],
+        ),
       ),
     ),
   );
@@ -221,7 +260,7 @@ class _SidebarBrand extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    height: 72,
+    height: 88,
     child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: JentraSpacing.x4),
       child: Row(
@@ -229,50 +268,14 @@ class _SidebarBrand extends StatelessWidget {
             ? MainAxisAlignment.center
             : MainAxisAlignment.start,
         children: [
-          Container(
-            width: 36,
-            height: 36,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: JentraColors.green500,
-              borderRadius: BorderRadius.circular(9),
-            ),
-            child: const Text(
-              'J',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-              ),
+          Flexible(
+            child: JentraBrandLockup(
+              size: collapsed ? 34 : 40,
+              compact: collapsed,
+              inverse: true,
+              showTagline: !collapsed,
             ),
           ),
-          if (!collapsed) ...[
-            const SizedBox(width: JentraSpacing.x3),
-            const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'JENTRA',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.4,
-                  ),
-                ),
-                Text(
-                  'OPERATING SYSTEM',
-                  style: TextStyle(
-                    color: Color(0xFF7F95AA),
-                    fontSize: 8,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.1,
-                  ),
-                ),
-              ],
-            ),
-          ],
         ],
       ),
     ),
@@ -320,7 +323,10 @@ class _SidebarFooter extends StatelessWidget {
                     ),
                     Text(
                       'Preview data',
-                      style: TextStyle(color: Color(0xFF8195A9), fontSize: 10),
+                      style: TextStyle(
+                        color: JentraColors.darkTextSecondary,
+                        fontSize: 10,
+                      ),
                     ),
                   ],
                 ),
@@ -642,9 +648,17 @@ class _CommandPaletteState extends ConsumerState<_CommandPalette> {
 
   @override
   Widget build(BuildContext context) {
-    final destinations = visibleJentraDestinations(
-      ref.watch(businessCapabilitiesProvider).value,
-    );
+    final destinations = [
+      ...visibleJentraDestinations(
+        ref.watch(businessCapabilitiesProvider).value,
+      ),
+      const JentraDestination(
+        label: 'Design system',
+        path: '/catalogue',
+        icon: Icons.design_services_outlined,
+        section: 'SYSTEM',
+      ),
+    ];
     final matches = destinations
         .where((item) => item.label.toLowerCase().contains(query.toLowerCase()))
         .toList();
@@ -743,7 +757,7 @@ class _ContextInspector extends StatelessWidget {
           children: [
             JentraSectionHeader(
               title: 'Context',
-              description: 'Live operating scope',
+              description: 'Illustrative workspace scope',
             ),
             SizedBox(height: JentraSpacing.x5),
             _ContextRow(label: 'Tenant', value: 'Jentra Holdings'),
@@ -756,8 +770,8 @@ class _ContextInspector extends StatelessWidget {
             _ContextRow(label: 'Time zone', value: 'Asia/Colombo'),
             SizedBox(height: JentraSpacing.x5),
             JentraStatusBadge(
-              label: 'Online confirmation ready',
-              tone: JentraStatusTone.success,
+              label: 'Preview context',
+              tone: JentraStatusTone.info,
             ),
             Spacer(),
             Text(

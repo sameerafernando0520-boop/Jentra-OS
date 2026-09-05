@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'app_providers.dart';
 import 'features/auth/login_screen.dart';
 import 'features/catalogue/component_catalogue_screen.dart';
+import 'features/crm/crm_screen.dart';
 import 'features/dashboard/dashboard_screen.dart';
 import 'features/setup/business_setup_screen.dart';
 import 'features/tenant/accept_invitation_screen.dart';
@@ -53,8 +54,8 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/setup',
             builder: (context, state) => const BusinessSetupScreen(),
           ),
+          GoRoute(path: '/crm', builder: (context, state) => const CrmScreen()),
           for (final module in const [
-            ('crm', 'CRM & Revenue', 'Build trusted customer relationships.'),
             (
               'sales',
               'Sales',

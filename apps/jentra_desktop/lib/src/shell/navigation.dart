@@ -93,7 +93,32 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
       BusinessSetupResource.values.any(
         (resource) => capabilities.contains(resource.viewPermission),
       );
-  return jentraDestinations
-      .where((item) => item.path != '/setup' || canOpenSetup)
-      .toList(growable: false);
+  final canOpenCrm =
+      capabilities != null &&
+      const {
+        'crm.leads.view',
+        'crm.leads.manage',
+        'crm.opportunities.view',
+        'crm.opportunities.manage',
+      }.any(capabilities.contains);
+  final visible = <JentraDestination>[];
+  String? pendingSection;
+  for (final item in jentraDestinations) {
+    pendingSection = item.section ?? pendingSection;
+    final permitted =
+        (item.path != '/setup' || canOpenSetup) &&
+        (item.path != '/crm' || canOpenCrm);
+    if (!permitted) continue;
+    visible.add(
+      JentraDestination(
+        label: item.label,
+        path: item.path,
+        icon: item.icon,
+        section: pendingSection,
+        shortcut: item.shortcut,
+      ),
+    );
+    pendingSection = null;
+  }
+  return List.unmodifiable(visible);
 }

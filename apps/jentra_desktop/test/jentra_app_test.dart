@@ -35,7 +35,7 @@ void main() {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'IBM Plex Sans · Jentra operating system',
+                          'Manrope · Jentra operating system',
                           style: TextStyle(
                             fontFamily: JentraTypography.sansFamily,
                           ),
@@ -589,9 +589,9 @@ void main() {
 Future<void> _loadTestFonts() async {
   const fontRoot = 'packages/jentra_design_system/assets/fonts';
   final sans = FontLoader(JentraTypography.sansFamily)
-    ..addFont(rootBundle.load('$fontRoot/IBMPlexSans-Regular.ttf'))
-    ..addFont(rootBundle.load('$fontRoot/IBMPlexSans-Medium.ttf'))
-    ..addFont(rootBundle.load('$fontRoot/IBMPlexSans-SemiBold.ttf'));
+    ..addFont(rootBundle.load('$fontRoot/Manrope-Regular.ttf'))
+    ..addFont(rootBundle.load('$fontRoot/Manrope-Medium.ttf'))
+    ..addFont(rootBundle.load('$fontRoot/Manrope-SemiBold.ttf'));
   final mono = FontLoader(JentraTypography.monoFamily)
     ..addFont(rootBundle.load('$fontRoot/IBMPlexMono-Regular.ttf'));
   final sinhala = FontLoader(JentraTypography.fallbackFamilies.first)

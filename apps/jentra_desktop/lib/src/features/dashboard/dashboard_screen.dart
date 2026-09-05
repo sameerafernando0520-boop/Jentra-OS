@@ -40,7 +40,11 @@ class _DashboardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SingleChildScrollView(
-    padding: const EdgeInsets.all(JentraSpacing.x6),
+    padding: EdgeInsets.all(
+      MediaQuery.sizeOf(context).width < 700
+          ? JentraSpacing.x4
+          : JentraSpacing.x6,
+    ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -50,7 +54,8 @@ class _DashboardContent extends StatelessWidget {
         const SizedBox(height: JentraSpacing.x5),
         LayoutBuilder(
           builder: (context, constraints) {
-            final stacked = constraints.maxWidth < 960;
+            final textScale = MediaQuery.textScalerOf(context).scale(14) / 14;
+            final stacked = constraints.maxWidth < 1020 * textScale;
             final chart = const _CashPositionPanel();
             final approvals = const _ApprovalQueue();
             if (stacked) {
@@ -86,50 +91,88 @@ class _DashboardHeader extends StatelessWidget {
   const _DashboardHeader();
 
   @override
-  Widget build(BuildContext context) => Row(
-    crossAxisAlignment: CrossAxisAlignment.end,
-    children: [
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Wrap(
-              spacing: JentraSpacing.x3,
-              runSpacing: JentraSpacing.x2,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Text(
-                  'Good morning, Shehan',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const JentraStatusBadge(
-                  label: 'Preview metrics',
-                  tone: JentraStatusTone.info,
-                ),
-              ],
-            ),
-            const SizedBox(height: JentraSpacing.x2),
-            Text(
-              'Here is the operating pulse across your business today.',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: context.jentraColors.textSecondary,
-              ),
-            ),
-          ],
+  Widget build(BuildContext context) => Container(
+    clipBehavior: Clip.antiAlias,
+    decoration: BoxDecoration(
+      color: JentraColors.brandNavy,
+      borderRadius: BorderRadius.circular(JentraRadii.card),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(
+          height: 3,
+          child: DecoratedBox(
+            decoration: BoxDecoration(gradient: JentraColors.brandGradient),
+          ),
         ),
-      ),
-      OutlinedButton.icon(
-        onPressed: () {},
-        icon: const Icon(Icons.calendar_today_outlined, size: 16),
-        label: const Text('01 Aug – 31 Aug 2026'),
-      ),
-      const SizedBox(width: JentraSpacing.x2),
-      IconButton.outlined(
-        tooltip: 'Refresh dashboard',
-        onPressed: () {},
-        icon: const Icon(Icons.refresh, size: 18),
-      ),
-    ],
+        Padding(
+          padding: const EdgeInsets.all(JentraSpacing.x6),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final textScale = MediaQuery.textScalerOf(context).scale(14) / 14;
+              return Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'YOUR BUSINESS, IN PERSPECTIVE',
+                          style: Theme.of(context).textTheme.labelMedium
+                              ?.copyWith(
+                                color: JentraColors.darkTextSecondary,
+                                letterSpacing: 1.8,
+                              ),
+                        ),
+                        const SizedBox(height: JentraSpacing.x3),
+                        Text(
+                          'Good morning, Shehan',
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(color: Colors.white),
+                        ),
+                        const SizedBox(height: JentraSpacing.x2),
+                        Text(
+                          'One connected view of cash, decisions, and daily operations.',
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(color: JentraColors.darkTextSecondary),
+                        ),
+                        const SizedBox(height: JentraSpacing.x5),
+                        Wrap(
+                          spacing: JentraSpacing.x3,
+                          runSpacing: JentraSpacing.x3,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            const JentraStatusBadge(
+                              label: 'Preview metrics',
+                              tone: JentraStatusTone.info,
+                            ),
+                            Text(
+                              'Sample data · 01 Aug – 31 Aug 2026',
+                              style: Theme.of(context).textTheme.labelMedium
+                                  ?.copyWith(
+                                    color: JentraColors.darkTextSecondary,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (constraints.maxWidth > 700 * textScale) ...[
+                    const SizedBox(width: JentraSpacing.x8),
+                    const ExcludeSemantics(
+                      child: JentraBrandMark(size: 88, inverse: true),
+                    ),
+                    const SizedBox(width: JentraSpacing.x3),
+                  ],
+                ],
+              );
+            },
+          ),
+        ),
+      ],
+    ),
   );
 }
 
@@ -139,7 +182,12 @@ class _KpiGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
-      final columns = constraints.maxWidth >= 1000 ? 4 : 2;
+      final textScale = MediaQuery.textScalerOf(context).scale(14) / 14;
+      final columns = constraints.maxWidth >= 1000 * textScale
+          ? 4
+          : constraints.maxWidth >= 480 * textScale
+          ? 2
+          : 1;
       const gap = JentraSpacing.x4;
       final width = (constraints.maxWidth - gap * (columns - 1)) / columns;
       return Wrap(
@@ -200,86 +248,120 @@ class _CashPositionPanel extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        JentraSectionHeader(
+        const JentraSectionHeader(
           title: 'Cash position',
-          description: '13-week actual and forecast',
-          trailing: PopupMenuButton<String>(
-            tooltip: 'Chart options',
-            itemBuilder: (_) => const [
-              PopupMenuItem(value: 'cash', child: Text('Cash position')),
-              PopupMenuItem(value: 'revenue', child: Text('Revenue trend')),
-            ],
-            child: const JentraStatusBadge(
-              label: 'LKR',
-              tone: JentraStatusTone.neutral,
+          description: '13-week actual and forecast · sample series',
+          trailing: JentraStatusBadge(
+            label: 'LKR',
+            tone: JentraStatusTone.neutral,
+          ),
+        ),
+        const SizedBox(height: JentraSpacing.x5),
+        Semantics(
+          label:
+              'Illustrative cash position in LKR millions. '
+              'Solid blue shows actual values through week 8. '
+              'Dashed teal shows the forecast from week 8 to week 13. '
+              'This is sample data, not a live business forecast.',
+          child: ExcludeSemantics(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
+                final labels = constraints.maxWidth < 500 * scale
+                    ? const ['W1', 'W7', 'W13']
+                    : const ['W1', 'W3', 'W5', 'W7', 'W9', 'W11', 'W13'];
+                return Column(
+                  children: [
+                    SizedBox(
+                      height: 190 + 24 * scale,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              for (final label in const [
+                                '8M',
+                                '6M',
+                                '4M',
+                                '2M',
+                                '0',
+                              ])
+                                Text(
+                                  label,
+                                  style: Theme.of(context).textTheme.labelMedium
+                                      ?.copyWith(
+                                        color:
+                                            context.jentraColors.textSecondary,
+                                        fontFamily: JentraTypography.monoFamily,
+                                      ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(width: JentraSpacing.x3),
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 7 * scale,
+                              ),
+                              child: CustomPaint(
+                                painter: _CashChartPainter(
+                                  lineColor: context.jentraColors.action,
+                                  forecastColor:
+                                      Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? JentraColors.cyan500
+                                      : JentraColors.teal600,
+                                  gridColor: context.jentraColors.border,
+                                  fillColor: context.jentraColors.action
+                                      .withValues(alpha: .14),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: JentraSpacing.x3),
+                    Padding(
+                      padding: EdgeInsets.only(left: 32 * scale),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          for (final label in labels)
+                            Text(
+                              label,
+                              style: Theme.of(context).textTheme.labelMedium
+                                  ?.copyWith(
+                                    color: context.jentraColors.textSecondary,
+                                  ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ),
         const SizedBox(height: JentraSpacing.x5),
-        SizedBox(
-          height: 222,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  for (final label in const ['8M', '6M', '4M', '2M', '0'])
-                    Text(
-                      label,
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: context.jentraColors.textSecondary,
-                        fontFamily: JentraTypography.monoFamily,
-                      ),
-                    ),
-                ],
-              ),
-              const SizedBox(width: JentraSpacing.x3),
-              Expanded(
-                child: CustomPaint(
-                  painter: _CashChartPainter(
-                    lineColor: JentraColors.green500,
-                    gridColor: context.jentraColors.border,
-                    fillColor: JentraColors.green400.withValues(alpha: 0.16),
-                  ),
-                  child: const Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 2),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('W1'),
-                          Text('W3'),
-                          Text('W5'),
-                          Text('W7'),
-                          Text('W9'),
-                          Text('W11'),
-                          Text('W13'),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: JentraSpacing.x3),
         Wrap(
-          spacing: JentraSpacing.x3,
+          spacing: JentraSpacing.x5,
           runSpacing: JentraSpacing.x2,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            const _Legend(color: JentraColors.green500, label: 'Actual'),
+            _Legend(color: context.jentraColors.action, label: 'Actual'),
             _Legend(
-              color: context.jentraColors.textSecondary,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? JentraColors.cyan500
+                  : JentraColors.teal600,
               label: 'Forecast',
               dashed: true,
             ),
             Text(
-              'Forecast updated 08:32',
+              'Illustrative forecast',
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
                 color: context.jentraColors.textSecondary,
               ),
@@ -294,11 +376,13 @@ class _CashPositionPanel extends StatelessWidget {
 class _CashChartPainter extends CustomPainter {
   const _CashChartPainter({
     required this.lineColor,
+    required this.forecastColor,
     required this.gridColor,
     required this.fillColor,
   });
 
   final Color lineColor;
+  final Color forecastColor;
   final Color gridColor;
   final Color fillColor;
 
@@ -320,21 +404,24 @@ class _CashChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final graphHeight = size.height - 28;
-    final gridPaint = Paint()..color = gridColor.withValues(alpha: .7);
+    final gridPaint = Paint()..color = gridColor;
     for (var i = 0; i < 5; i++) {
-      final y = graphHeight * i / 4;
+      final y = size.height * i / 4;
       canvas.drawLine(Offset(0, y), Offset(size.width, y), gridPaint);
     }
-    final path = Path();
-    for (var i = 0; i < values.length; i++) {
-      final x = size.width * i / (values.length - 1);
-      final y = graphHeight * (1 - values[i]);
-      i == 0 ? path.moveTo(x, y) : path.lineTo(x, y);
+
+    Offset point(int index) => Offset(
+      size.width * index / (values.length - 1),
+      size.height * (1 - values[index]),
+    );
+
+    final actual = Path()..moveTo(point(0).dx, point(0).dy);
+    for (var i = 1; i <= 7; i++) {
+      actual.lineTo(point(i).dx, point(i).dy);
     }
-    final fill = Path.from(path)
-      ..lineTo(size.width, graphHeight)
-      ..lineTo(0, graphHeight)
+    final fill = Path.from(actual)
+      ..lineTo(point(7).dx, size.height)
+      ..lineTo(0, size.height)
       ..close();
     canvas.drawPath(
       fill,
@@ -343,37 +430,44 @@ class _CashChartPainter extends CustomPainter {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [fillColor, fillColor.withValues(alpha: 0)],
-        ).createShader(Rect.fromLTWH(0, 0, size.width, graphHeight)),
+        ).createShader(Offset.zero & size),
     );
     canvas.drawPath(
-      path,
+      actual,
       Paint()
         ..color = lineColor
-        ..strokeWidth = 2.4
+        ..strokeWidth = 2.6
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round
         ..strokeJoin = StrokeJoin.round,
     );
-    final forecastPaint = Paint()
-      ..color = gridColor
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-    final start = Offset(size.width * .67, graphHeight * .37);
-    final end = Offset(size.width, graphHeight * .18);
-    for (var x = start.dx; x < end.dx; x += 9) {
-      final ratio = (x - start.dx) / (end.dx - start.dx);
-      final y = start.dy + (end.dy - start.dy) * ratio;
-      canvas.drawLine(
-        Offset(x, y),
-        Offset(math.min(x + 5, end.dx), y - 1),
-        forecastPaint,
-      );
+
+    final forecast = Path()..moveTo(point(7).dx, point(7).dy);
+    for (var i = 8; i < values.length; i++) {
+      forecast.lineTo(point(i).dx, point(i).dy);
     }
+    final forecastPaint = Paint()
+      ..color = forecastColor
+      ..strokeWidth = 2.6
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+    for (final metric in forecast.computeMetrics()) {
+      for (var distance = 0.0; distance < metric.length; distance += 11) {
+        canvas.drawPath(
+          metric.extractPath(distance, math.min(distance + 5, metric.length)),
+          forecastPaint,
+        );
+      }
+    }
+    canvas.drawCircle(point(7), 4, Paint()..color = lineColor);
   }
 
   @override
   bool shouldRepaint(covariant _CashChartPainter oldDelegate) =>
-      oldDelegate.lineColor != lineColor || oldDelegate.gridColor != gridColor;
+      oldDelegate.lineColor != lineColor ||
+      oldDelegate.forecastColor != forecastColor ||
+      oldDelegate.gridColor != gridColor ||
+      oldDelegate.fillColor != fillColor;
 }
 
 class _Legend extends StatelessWidget {
@@ -391,12 +485,23 @@ class _Legend extends StatelessWidget {
   Widget build(BuildContext context) => Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Container(
-        width: 18,
-        height: dashed ? 2 : 3,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(2),
+      SizedBox(
+        width: 20,
+        child: Row(
+          children: [
+            for (var i = 0; i < (dashed ? 3 : 1); i++) ...[
+              if (i > 0) const SizedBox(width: 3),
+              Expanded(
+                child: Container(
+                  height: 3,
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
       ),
       const SizedBox(width: JentraSpacing.x2),
@@ -415,7 +520,7 @@ class _ApprovalQueue extends StatelessWidget {
       children: [
         const JentraSectionHeader(
           title: 'Needs your attention',
-          description: '7 approvals and exceptions',
+          description: 'Example approvals and exceptions',
           trailing: JentraStatusBadge(
             label: '7 open',
             tone: JentraStatusTone.warning,
@@ -454,12 +559,11 @@ class _ApprovalQueue extends StatelessWidget {
             amount: item.$3,
             icon: item.$4,
           ),
-        const SizedBox(height: JentraSpacing.x2),
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton(
-            onPressed: () {},
-            child: const Text('Open approval centre'),
+        const SizedBox(height: JentraSpacing.x3),
+        Text(
+          'Preview queue · 4 of 7 example items',
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: context.jentraColors.textSecondary,
           ),
         ),
       ],
@@ -481,48 +585,61 @@ class _ApprovalItem extends StatelessWidget {
   final IconData icon;
 
   @override
-  Widget build(BuildContext context) => InkWell(
-    onTap: () {},
-    borderRadius: BorderRadius.circular(JentraRadii.control),
-    child: Padding(
-      padding: const EdgeInsets.symmetric(vertical: JentraSpacing.x3),
-      child: Row(
-        children: [
-          Container(
-            width: 34,
-            height: 34,
-            decoration: BoxDecoration(
-              color: context.jentraColors.infoSurface,
-              borderRadius: BorderRadius.circular(JentraRadii.control),
-            ),
-            child: Icon(icon, size: 17, color: JentraColors.navy700),
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(vertical: JentraSpacing.x3),
+    decoration: BoxDecoration(
+      border: Border(bottom: BorderSide(color: context.jentraColors.border)),
+    ),
+    child: LayoutBuilder(
+      builder: (context, constraints) {
+        final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
+        final stackAmount = constraints.maxWidth < 410 * scale;
+        final amountLabel = Text(
+          amount,
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+            fontFamily: JentraTypography.monoFamily,
           ),
-          const SizedBox(width: JentraSpacing.x3),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(type, style: Theme.of(context).textTheme.labelLarge),
-                Text(
-                  reference,
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: context.jentraColors.textSecondary,
-                    fontFamily: JentraTypography.monoFamily,
+        );
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: context.jentraColors.infoSurface,
+                borderRadius: BorderRadius.circular(JentraRadii.control),
+              ),
+              child: Icon(icon, size: 18, color: context.jentraColors.info),
+            ),
+            const SizedBox(width: JentraSpacing.x3),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(type, style: Theme.of(context).textTheme.labelLarge),
+                  const SizedBox(height: 2),
+                  Text(
+                    reference,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: context.jentraColors.textSecondary,
+                      fontFamily: JentraTypography.monoFamily,
+                    ),
                   ),
-                ),
-              ],
+                  if (stackAmount) ...[
+                    const SizedBox(height: JentraSpacing.x1),
+                    amountLabel,
+                  ],
+                ],
+              ),
             ),
-          ),
-          Text(
-            amount,
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              fontFamily: JentraTypography.monoFamily,
-            ),
-          ),
-          const SizedBox(width: JentraSpacing.x2),
-          const Icon(Icons.chevron_right, size: 17),
-        ],
-      ),
+            if (!stackAmount) ...[
+              const SizedBox(width: JentraSpacing.x3),
+              amountLabel,
+            ],
+          ],
+        );
+      },
     ),
   );
 }
@@ -538,19 +655,27 @@ class _OperatingFlows extends StatelessWidget {
         const JentraSectionHeader(
           title: 'Operating flows',
           description:
-              'P50 cycle time and handoff health across canonical processes',
+              'Median cycle time and handoff health across the business',
           trailing: JentraStatusBadge(
-            label: 'Live model',
-            tone: JentraStatusTone.success,
+            label: 'Sample model',
+            tone: JentraStatusTone.neutral,
           ),
         ),
         const SizedBox(height: JentraSpacing.x5),
         LayoutBuilder(
           builder: (context, constraints) {
-            final width = (constraints.maxWidth - JentraSpacing.x6) / 4;
+            final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
+            final columns = constraints.maxWidth >= 1000 * scale
+                ? 4
+                : constraints.maxWidth >= 480 * scale
+                ? 2
+                : 1;
+            const gap = JentraSpacing.x3;
+            final width =
+                (constraints.maxWidth - gap * (columns - 1)) / columns;
             return Wrap(
-              spacing: JentraSpacing.x2,
-              runSpacing: JentraSpacing.x3,
+              spacing: gap,
+              runSpacing: gap,
               children: [
                 for (final flow in const [
                   ('Lead to cash', '4.8 days', '92%', JentraStatusTone.success),
@@ -574,7 +699,7 @@ class _OperatingFlows extends StatelessWidget {
                   ),
                 ])
                   SizedBox(
-                    width: math.max(width, 210),
+                    width: width,
                     child: _FlowTile(
                       label: flow.$1,
                       time: flow.$2,
@@ -631,6 +756,31 @@ class _FlowTile extends StatelessWidget {
             JentraStatusBadge(label: health, tone: tone),
           ],
         ),
+        const SizedBox(height: JentraSpacing.x3),
+        Text(
+          'Successful handoffs',
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: context.jentraColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: JentraSpacing.x2),
+        Semantics(
+          label: '$label successful handoffs',
+          value: health,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(3),
+            child: LinearProgressIndicator(
+              value: double.parse(health.replaceAll('%', '')) / 100,
+              minHeight: 4,
+              backgroundColor: context.jentraColors.border,
+              color: switch (tone) {
+                JentraStatusTone.warning => context.jentraColors.warning,
+                JentraStatusTone.info => context.jentraColors.info,
+                _ => context.jentraColors.success,
+              },
+            ),
+          ),
+        ),
       ],
     ),
   );
@@ -649,9 +799,10 @@ class _RecentActivity extends StatelessWidget {
           padding: EdgeInsets.all(JentraSpacing.x5),
           child: JentraSectionHeader(
             title: 'Recent business activity',
-            description: 'Attributable, scoped events across the workspace',
+            description:
+                'A preview of how activity connects across your workspace',
             trailing: JentraStatusBadge(
-              label: 'Audit linked',
+              label: 'Sample events',
               tone: JentraStatusTone.neutral,
             ),
           ),
@@ -714,20 +865,41 @@ class _ActivityHeader extends StatelessWidget {
   const _ActivityHeader();
 
   @override
-  Widget build(BuildContext context) => Container(
-    height: 36,
-    padding: const EdgeInsets.symmetric(horizontal: JentraSpacing.x5),
-    color: Theme.of(context).scaffoldBackgroundColor,
-    child: const Row(
-      children: [
-        SizedBox(width: 146, child: Text('REFERENCE')),
-        Expanded(flex: 3, child: Text('EVENT')),
-        Expanded(flex: 2, child: Text('PARTY / SOURCE')),
-        SizedBox(width: 134, child: Text('VALUE')),
-        SizedBox(width: 110, child: Text('ACTOR')),
-        SizedBox(width: 58, child: Text('TIME')),
-      ],
-    ),
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
+      if (constraints.maxWidth < 1000 * scale) return const SizedBox.shrink();
+      return Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: JentraSpacing.x5,
+          vertical: JentraSpacing.x3,
+        ),
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: DefaultTextStyle(
+          style: Theme.of(context).textTheme.labelMedium!.copyWith(
+            color: context.jentraColors.textSecondary,
+            letterSpacing: .8,
+          ),
+          child: const Row(
+            children: [
+              Expanded(flex: 18, child: Text('REFERENCE')),
+              Expanded(flex: 25, child: Text('EVENT')),
+              Expanded(flex: 21, child: Text('PARTY / SOURCE')),
+              Expanded(
+                flex: 16,
+                child: Text('VALUE', textAlign: TextAlign.right),
+              ),
+              SizedBox(width: JentraSpacing.x5),
+              Expanded(flex: 14, child: Text('ACTOR')),
+              Expanded(
+                flex: 6,
+                child: Text('TIME', textAlign: TextAlign.right),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
   );
 }
 
@@ -751,54 +923,98 @@ class _ActivityRow extends StatelessWidget {
   final JentraStatusTone tone;
 
   @override
-  Widget build(BuildContext context) => Container(
-    height: 44,
-    padding: const EdgeInsets.symmetric(horizontal: JentraSpacing.x5),
-    decoration: BoxDecoration(
-      border: Border(bottom: BorderSide(color: context.jentraColors.border)),
-    ),
-    child: Row(
-      children: [
-        SizedBox(
-          width: 146,
-          child: Text(
-            reference,
-            style: const TextStyle(
-              fontFamily: JentraTypography.monoFamily,
-              fontSize: 12,
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
+      final compact = constraints.maxWidth < 1000 * scale;
+      final referenceText = Text(
+        reference,
+        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+          color: context.jentraColors.textSecondary,
+          fontFamily: JentraTypography.monoFamily,
+        ),
+      );
+      final amountText = Text(
+        value,
+        textAlign: compact ? TextAlign.start : TextAlign.right,
+        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+          fontFamily: JentraTypography.monoFamily,
+        ),
+      );
+      final eventText = Row(
+        children: [
+          Container(
+            width: 7,
+            height: 7,
+            decoration: BoxDecoration(
+              color: switch (tone) {
+                JentraStatusTone.warning => context.jentraColors.warning,
+                JentraStatusTone.info => context.jentraColors.info,
+                _ => context.jentraColors.success,
+              },
+              shape: BoxShape.circle,
             ),
           ),
+          const SizedBox(width: JentraSpacing.x2),
+          Expanded(child: Text(event)),
+        ],
+      );
+      return Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: JentraSpacing.x5,
+          vertical: JentraSpacing.x4,
         ),
-        Expanded(
-          flex: 3,
-          child: Row(
-            children: [
-              Container(
-                width: 7,
-                height: 7,
-                decoration: BoxDecoration(
-                  color: tone == JentraStatusTone.warning
-                      ? JentraColors.warning
-                      : JentraColors.green500,
-                  shape: BoxShape.circle,
-                ),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: context.jentraColors.border),
+          ),
+        ),
+        child: compact
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  referenceText,
+                  const SizedBox(height: JentraSpacing.x2),
+                  eventText,
+                  const SizedBox(height: JentraSpacing.x2),
+                  Wrap(
+                    spacing: JentraSpacing.x4,
+                    runSpacing: JentraSpacing.x2,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Text(party),
+                      amountText,
+                      Text(
+                        '$actor · $time',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: context.jentraColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              )
+            : Row(
+                children: [
+                  Expanded(flex: 18, child: referenceText),
+                  Expanded(
+                    flex: 25,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: JentraSpacing.x3),
+                      child: eventText,
+                    ),
+                  ),
+                  Expanded(flex: 21, child: Text(party)),
+                  Expanded(flex: 16, child: amountText),
+                  const SizedBox(width: JentraSpacing.x5),
+                  Expanded(flex: 14, child: Text(actor)),
+                  Expanded(
+                    flex: 6,
+                    child: Text(time, textAlign: TextAlign.right),
+                  ),
+                ],
               ),
-              const SizedBox(width: JentraSpacing.x2),
-              Flexible(child: Text(event, overflow: TextOverflow.ellipsis)),
-            ],
-          ),
-        ),
-        Expanded(flex: 2, child: Text(party, overflow: TextOverflow.ellipsis)),
-        SizedBox(
-          width: 134,
-          child: Text(
-            value,
-            style: const TextStyle(fontFamily: JentraTypography.monoFamily),
-          ),
-        ),
-        SizedBox(width: 110, child: Text(actor)),
-        SizedBox(width: 58, child: Text(time)),
-      ],
-    ),
+      );
+    },
   );
 }
