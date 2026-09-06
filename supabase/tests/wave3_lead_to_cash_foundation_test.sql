@@ -492,7 +492,7 @@ insert into workflow.workflow_definitions (
   '25000000-0000-0000-0000-000000000001',
   '35000000-0000-0000-0000-000000000001',
   'sales_quotation', 'Quotation approval', 3,
-  '{"states":["draft","submitted","approved","rejected","posted","settled","fulfilled","closed","cancelled","reversed"],"transitions":[["draft","submitted"],["draft","cancelled"],["submitted","approved"],["submitted","rejected"],["submitted","cancelled"],["rejected","draft"],["rejected","cancelled"],["approved","posted"],["approved","cancelled"],["posted","closed"],["posted","reversed"]]}',
+  '{"states":["draft","submitted","approved","rejected","posted","settled","fulfilled","closed","cancelled","reversed"],"transitions":[["draft","submitted"],["draft","cancelled"],["submitted","approved"],["submitted","rejected"],["submitted","cancelled"],["rejected","draft"],["rejected","cancelled"],["approved","posted"],["approved","cancelled"],["posted","closed"],["posted","reversed"]],"quotation_transitions":[["submitted","draft"],["approved","draft"],["approved","accepted"],["submitted","accepted"],["submitted","expired"],["approved","expired"],["expired","draft"],["expired","cancelled"],["accepted","cancelled"]]}',
   'active',
   '15000000-0000-0000-0000-000000000001',
   '15000000-0000-0000-0000-000000000001'

@@ -12,6 +12,7 @@ export 'src/errors.dart';
 export 'src/exact_decimal.dart';
 export 'src/lead_to_cash.dart';
 export 'src/lead_to_cash_repository.dart';
+export 'src/quotation_workspace.dart';
 export 'src/money.dart';
 export 'src/pagination.dart';
 export 'src/permissions.dart';

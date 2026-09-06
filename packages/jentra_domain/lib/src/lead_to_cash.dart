@@ -14,6 +14,7 @@ enum OperationalDocumentAction {
   submit('submit'),
   accept('accept'),
   expire('expire'),
+  recall('recall'),
   confirm('confirm'),
   cancel('cancel');
 
@@ -855,6 +856,15 @@ final class OperationalDocumentTransition {
         const ValidationIssue(
           field: 'override_reason',
           message: 'Credit override reason is required.',
+        ),
+      );
+    }
+    if (action == OperationalDocumentAction.recall &&
+        (reason?.trim().isEmpty ?? true)) {
+      issues.add(
+        const ValidationIssue(
+          field: 'reason',
+          message: 'A recall reason is required.',
         ),
       );
     }

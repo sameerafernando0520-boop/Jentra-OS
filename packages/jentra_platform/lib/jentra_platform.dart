@@ -4,6 +4,7 @@ export 'src/connectivity_service.dart';
 export 'src/draft_cipher.dart';
 export 'src/draft_repository.dart';
 export 'src/local_database.dart';
+export 'src/quotation_draft_store.dart';
 export 'src/reference_cache_repository.dart';
 export 'src/runtime_config.dart';
 export 'src/setup_file_service.dart';

@@ -1,0 +1,303 @@
+{
+  "tables": {
+    "sales.quotations": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "column_checks": null
+        },
+        "notes": {
+          "type": "text",
+          "nullable": true,
+          "column_checks": [
+            "CHECK (((notes IS NULL) OR ((length(TRIM(BOTH FROM notes)) >= 1) AND (length(TRIM(BOTH FROM notes)) <= 4000))))"
+          ]
+        },
+        "status": {
+          "type": "text",
+          "nullable": false,
+          "column_checks": [
+            "CHECK ((status = ANY (ARRAY['draft'::text, 'submitted'::text, 'pending_approval'::text, 'approved'::text, 'rejected'::text, 'accepted'::text, 'expired'::text, 'cancelled'::text, 'converted'::text])))"
+          ]
+        },
+        "version": {
+          "type": "bigint",
+          "nullable": false,
+          "column_checks": [
+            "CHECK ((version > 0))"
+          ]
+        },
+        "subtotal": {
+          "type": "numeric(20,6)",
+          "nullable": false,
+          "column_checks": [
+            "CHECK ((subtotal >= (0)::numeric))"
+          ]
+        },
+        "branch_id": {
+          "type": "uuid",
+          "nullable": false,
+          "column_checks": null
+        },
+        "rate_date": {
+          "type": "date",
+          "nullable": false,
+          "column_checks": null
+        },
+        "tax_total": {
+          "type": "numeric(20,6)",
+          "nullable": false,
+          "column_checks": [
+            "CHECK ((tax_total >= (0)::numeric))"
+          ]
+        },
+        "tenant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "column_checks": null
+        },
+        "base_total": {
+          "type": "numeric(20,6)",
+          "nullable": false,
+          "column_checks": [
+            "CHECK ((base_total >= (0)::numeric))"
+          ]
+        },
+        "command_id": {
+          "type": "uuid",
+          "nullable": false,
+          "column_checks": null
+        },
+        "contact_id": {
+          "type": "uuid",
+          "nullable": true,
+          "column_checks": null
+        },
+        "created_at": {
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "column_checks": null
+        },
+        "created_by": {
+          "type": "uuid",
+          "nullable": false,
+          "column_checks": null
+        },
+        "expired_at": {
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "column_checks": null
+        },
+        "request_id": {
+          "type": "uuid",
+          "nullable": false,
+          "column_checks": null
+        },
+        "updated_at": {
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "column_checks": null
+        },
+        "updated_by": {
+          "type": "uuid",
+          "nullable": false,
+          "column_checks": null
+        },
+        "accepted_at": {
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "column_checks": null
+        },
+        "approved_at": {
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "column_checks": null
+        },
+        "customer_id": {
+          "type": "uuid",
+          "nullable": false,
+          "column_checks": null
+        },
+        "grand_total": {
+          "type": "numeric(20,6)",
+          "nullable": false,
+          "column_checks": [
+            "CHECK ((grand_total >= (0)::numeric))"
+          ]
+        },
+        "rejected_at": {
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "column_checks": null
+        },
+        "valid_until": {
+          "type": "date",
+          "nullable": false,
+          "column_checks": null
+        },
+        "cancelled_at": {
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "column_checks": null
+        },
+        "submitted_at": {
+          "type": "timestamp with time zone",
+          "nullable": true,
+          "column_checks": null
+        },
+        "currency_code": {
+          "type": "text",
+          "nullable": false,
+          "column_checks": null
+        },
+        "exchange_rate": {
+          "type": "numeric(20,10)",
+          "nullable": false,
+          "column_checks": [
+            "CHECK ((exchange_rate > (0)::numeric))"
+          ]
+        },
+        "correlation_id": {
+          "type": "uuid",
+          "nullable": false,
+          "column_checks": null
+        },
+        "delivery_terms": {
+          "type": "text",
+          "nullable": true,
+          "column_checks": [
+            "CHECK (((delivery_terms IS NULL) OR ((length(TRIM(BOTH FROM delivery_terms)) >= 1) AND (length(TRIM(BOTH FROM delivery_terms)) <= 1000))))"
+          ]
+        },
+        "discount_total": {
+          "type": "numeric(20,6)",
+          "nullable": false,
+          "column_checks": [
+            "CHECK ((discount_total >= (0)::numeric))"
+          ]
+        },
+        "opportunity_id": {
+          "type": "uuid",
+          "nullable": true,
+          "column_checks": null
+        },
+        "quotation_date": {
+          "type": "date",
+          "nullable": false,
+          "column_checks": null
+        },
+        "salesperson_id": {
+          "type": "uuid",
+          "nullable": false,
+          "column_checks": null
+        },
+        "source_context": {
+          "type": "jsonb",
+          "nullable": false,
+          "column_checks": [
+            "CHECK ((jsonb_typeof(source_context) = 'object'::text))"
+          ]
+        },
+        "document_number": {
+          "type": "text",
+          "nullable": true,
+          "column_checks": null
+        },
+        "legal_entity_id": {
+          "type": "uuid",
+          "nullable": false,
+          "column_checks": null
+        },
+        "revision_reason": {
+          "type": "text",
+          "nullable": true,
+          "column_checks": [
+            "CHECK (((revision_reason IS NULL) OR ((length(TRIM(BOTH FROM revision_reason)) >= 1) AND (length(TRIM(BOTH FROM revision_reason)) <= 1000))))"
+          ]
+        },
+        "client_timestamp": {
+          "type": "timestamp with time zone",
+          "nullable": false,
+          "column_checks": null
+        },
+        "current_revision": {
+          "type": "integer",
+          "nullable": false,
+          "column_checks": [
+            "CHECK ((current_revision > 0))"
+          ]
+        },
+        "exchange_rate_id": {
+          "type": "uuid",
+          "nullable": true,
+          "column_checks": null
+        },
+        "workflow_revision": {
+          "type": "integer",
+          "nullable": true,
+          "column_checks": [
+            "CHECK (((workflow_revision IS NULL) OR (workflow_revision > 0)))"
+          ]
+        },
+        "base_currency_code": {
+          "type": "text",
+          "nullable": false,
+          "column_checks": null
+        },
+        "payment_terms_days": {
+          "type": "integer",
+          "nullable": false,
+          "column_checks": [
+            "CHECK (((payment_terms_days >= 0) AND (payment_terms_days <= 3650)))"
+          ]
+        },
+        "line_discount_total": {
+          "type": "numeric(20,6)",
+          "nullable": false,
+          "column_checks": [
+            "CHECK ((line_discount_total >= (0)::numeric))"
+          ]
+        },
+        "header_discount_total": {
+          "type": "numeric(20,6)",
+          "nullable": false,
+          "column_checks": [
+            "CHECK ((header_discount_total >= (0)::numeric))"
+          ]
+        },
+        "header_discount_amount": {
+          "type": "numeric(20,6)",
+          "nullable": false,
+          "column_checks": [
+            "CHECK ((header_discount_amount >= (0)::numeric))"
+          ]
+        },
+        "workflow_definition_id": {
+          "type": "uuid",
+          "nullable": true,
+          "column_checks": null
+        },
+        "header_discount_percent": {
+          "type": "numeric(12,6)",
+          "nullable": true,
+          "column_checks": [
+            "CHECK (((header_discount_percent >= (0)::numeric) AND (header_discount_percent <= (100)::numeric)))"
+          ]
+        }
+      },
+      "constraints": {
+        "check": [
+          "CHECK ((valid_until >= quotation_date))",
+          "CHECK (((workflow_definition_id IS NULL) = (workflow_revision IS NULL)))",
+          "CHECK (((header_discount_amount = (0)::numeric) OR (header_discount_percent IS NULL)))",
+          "CHECK (((line_discount_total + header_discount_total) = discount_total))",
+          "CHECK ((header_discount_total <= (subtotal - line_discount_total)))",
+          "CHECK ((((currency_code = base_currency_code) AND (exchange_rate = (1)::numeric)) OR (currency_code <> base_currency_code)))"
+        ]
+      }
+    }
+  },
+  "database": "Jentra development AC303",
+  "schema_version": "1.0"
+}

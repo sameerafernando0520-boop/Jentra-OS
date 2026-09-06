@@ -2,10 +2,114 @@ import 'package:jentra_domain/jentra_domain.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Supabase adapter for the Wave 3 quotation-to-reservation contracts.
-final class SupabaseLeadToCashGateway implements LeadToCashRepository {
+final class SupabaseLeadToCashGateway
+    implements LeadToCashRepository, QuotationWorkspaceRepository {
   SupabaseLeadToCashGateway(this._client);
 
   final SupabaseClient _client;
+
+  @override
+  Future<CursorPage<SalesQuotation>> pageQuotations({
+    required TenantContext context,
+    required QuotationListQuery query,
+  }) => _readQuotation(() async {
+    var builder = _quotationRead(context, 'sales_quotations');
+    if (query.cursor != null) builder = builder.gt('id', query.cursor!);
+    if (query.status != null) builder = builder.eq('status', query.status!);
+    if (query.search.isNotEmpty) {
+      final literal = query.search
+          .replaceAll(r'\', r'\\')
+          .replaceAll('%', r'\%')
+          .replaceAll('_', r'\_');
+      builder = builder.ilike('document_number', '%$literal%');
+    }
+    final rows = _jsonRows(
+      await builder.order('id', ascending: true).limit(query.limit),
+      'quotations',
+    );
+    final items = rows.map(SalesQuotation.fromJson).toList(growable: false);
+    return CursorPage(
+      items: items,
+      limit: query.limit,
+      nextCursor: items.length == query.limit ? items.last.id : null,
+    );
+  });
+
+  @override
+  Future<QuotationDetail?> loadQuotationDetail({
+    required TenantContext context,
+    required String id,
+  }) => _find(
+    context: context,
+    view: 'sales_quotation_details',
+    id: id,
+    decode: QuotationDetail.fromJson,
+  );
+
+  @override
+  Future<List<SalesQuotationRevision>> quotationRevisions({
+    required TenantContext context,
+    required String id,
+    int beforeRevision = 2147483647,
+  }) => _readQuotation(() async {
+    final rows = await _quotationRead(context, 'sales_quotation_revisions')
+        .eq('quotation_id', id)
+        .lt('revision_number', beforeRevision)
+        .order('revision_number', ascending: false)
+        .limit(100);
+    return _jsonRows(
+      rows,
+      'quotation revisions',
+    ).map(SalesQuotationRevision.fromJson).toList(growable: false);
+  });
+
+  @override
+  Future<List<Map<String, Object?>>> quotationDecisions({
+    required TenantContext context,
+    required String id,
+    String? beforeId,
+  }) => _readQuotation(() async {
+    var builder = _quotationRead(
+      context,
+      'sales_quotation_decisions',
+    ).eq('quotation_id', id);
+    if (beforeId != null) builder = builder.lt('id', beforeId);
+    return _jsonRows(
+      await builder.order('id', ascending: false).limit(100),
+      'quotation decisions',
+    );
+  });
+
+  PostgrestFilterBuilder<List<Map<String, dynamic>>> _quotationRead(
+    TenantContext context,
+    String view,
+  ) {
+    _requireLegalEntity(context, 'loading quotations');
+    var builder = _client
+        .schema('api')
+        .from(view)
+        .select()
+        .eq('tenant_id', context.tenantId)
+        .eq('legal_entity_id', context.legalEntityId!);
+    if (context.branchId != null) {
+      builder = builder.eq('branch_id', context.branchId!);
+    }
+    return builder;
+  }
+
+  Future<T> _readQuotation<T>(Future<T> Function() read) async {
+    try {
+      return await read();
+    } on PostgrestException catch (error) {
+      throw _mapPostgrestError(error);
+    } on FormatException catch (error) {
+      throw DomainError(
+        code: 'CONTRACT_ERROR',
+        message: 'Quotation data did not match its exact contract.',
+        fieldDetails: {'_details': error.message},
+      );
+    }
+  }
 
   @override
   Future<List<SalesQuotation>> listQuotations({
