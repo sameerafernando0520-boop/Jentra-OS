@@ -3,10 +3,137 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Supabase adapter for the Wave 3 quotation-to-reservation contracts.
 final class SupabaseLeadToCashGateway
-    implements LeadToCashRepository, QuotationWorkspaceRepository {
+    implements
+        LeadToCashRepository,
+        QuotationWorkspaceRepository,
+        SalesOrderWorkspaceRepository,
+        QuotationReferenceRepository {
   SupabaseLeadToCashGateway(this._client);
 
   final SupabaseClient _client;
+
+  @override
+  Future<CursorPage<QuotationReference>> pageReferences({
+    required TenantContext context,
+    required QuotationReferenceKind kind,
+    required QuotationReferenceQuery query,
+  }) => _readQuotation(() async {
+    _requireLegalEntity(context, 'loading quotation references');
+    if (kind == QuotationReferenceKind.contact && query.customerId == null) {
+      return CursorPage(items: [], limit: query.limit);
+    }
+    final view = switch (kind) {
+      QuotationReferenceKind.customer => 'parties',
+      QuotationReferenceKind.contact => 'contacts',
+      QuotationReferenceKind.currency => 'currencies',
+      QuotationReferenceKind.exchangeRate => 'exchange_rates',
+      QuotationReferenceKind.product => 'products',
+      QuotationReferenceKind.unit => 'units',
+      QuotationReferenceKind.tax => 'tax_definitions',
+      QuotationReferenceKind.opportunity => 'crm_opportunities',
+      QuotationReferenceKind.warehouse => 'warehouses',
+    };
+    var builder = _client.schema('api').from(view).select();
+    if (kind != QuotationReferenceKind.currency) {
+      builder = builder.eq('tenant_id', context.tenantId);
+    }
+    if ({
+      QuotationReferenceKind.exchangeRate,
+      QuotationReferenceKind.product,
+      QuotationReferenceKind.tax,
+      QuotationReferenceKind.opportunity,
+      QuotationReferenceKind.warehouse,
+    }.contains(kind)) {
+      builder = builder.eq('legal_entity_id', context.legalEntityId!);
+    }
+    if (kind == QuotationReferenceKind.warehouse) {
+      if (!context.hasOperationalScope) {
+        throw const DomainError(
+          code: 'BRANCH_REQUIRED',
+          message: 'Choose a branch.',
+        );
+      }
+      builder = builder.eq('branch_id', context.branchId!);
+    }
+    if (kind == QuotationReferenceKind.opportunity) {
+      if (context.branchId != null) {
+        builder = builder.or(
+          'branch_id.is.null,branch_id.eq.${context.branchId}',
+        );
+      }
+      if (query.customerId != null) {
+        builder = builder.eq('party_id', query.customerId!);
+      }
+    } else {
+      builder = builder.eq('status', 'active');
+    }
+    if (kind == QuotationReferenceKind.customer) {
+      builder = builder.inFilter('kind', ['customer', 'both']);
+    }
+    if (kind == QuotationReferenceKind.contact) {
+      builder = builder.eq('party_id', query.customerId!);
+    }
+    if (kind == QuotationReferenceKind.product) {
+      builder = builder.eq('can_sell', true);
+    }
+    if (kind == QuotationReferenceKind.exchangeRate) {
+      if (query.fromCurrency != null) {
+        builder = builder.eq('source_currency_code', query.fromCurrency!);
+      }
+      if (query.toCurrency != null) {
+        builder = builder.eq('target_currency_code', query.toCurrency!);
+      }
+    }
+    if (query.id != null) builder = builder.eq('id', query.id!);
+    if (query.cursor != null) builder = builder.gt('id', query.cursor!);
+    if (query.search.isNotEmpty) {
+      final literal = query.search
+          .replaceAll(r'\', r'\\')
+          .replaceAll('%', r'\%')
+          .replaceAll('_', r'\_')
+          .replaceAll('"', r'\"');
+      final name = kind == QuotationReferenceKind.opportunity
+          ? 'prospect_name'
+          : 'name';
+      builder = builder.or('code.ilike."%$literal%",$name.ilike."%$literal%"');
+    }
+    final rows = _jsonRows(
+      await builder.order('id', ascending: true).limit(query.limit + 1),
+      view,
+    );
+    final items = rows.take(query.limit).map((row) {
+      if (row['id'] is! String || row['code'] is! String) {
+        throw const FormatException('Invalid reference identity.');
+      }
+      if ({
+        QuotationReferenceKind.exchangeRate,
+        QuotationReferenceKind.tax,
+      }.contains(kind)) {
+        final rate = row['rate'];
+        final scale = kind == QuotationReferenceKind.exchangeRate ? 10 : 6;
+        if (rate is! String ||
+            !RegExp('^[0-9]+(?:\\.[0-9]{1,$scale})?\$').hasMatch(rate)) {
+          throw const FormatException('Rate must be an exact decimal string.');
+        }
+      }
+      final name =
+          row[kind == QuotationReferenceKind.opportunity
+              ? 'prospect_name'
+              : 'name'] ??
+          row['code'];
+      return QuotationReference(
+        id: row['id']! as String,
+        label:
+            '${row['code']} · $name${kind == QuotationReferenceKind.exchangeRate ? ' · ${row['rate']}' : ''}',
+        values: row,
+      );
+    }).toList();
+    return CursorPage(
+      items: items,
+      limit: query.limit,
+      nextCursor: rows.length > query.limit ? items.last.id : null,
+    );
+  });
 
   @override
   Future<CursorPage<SalesQuotation>> pageQuotations({
@@ -232,6 +359,212 @@ final class SupabaseLeadToCashGateway
     encodePayload: (payload) => payload.toJson(),
     decodeEntity: SalesOrder.fromJson,
   );
+
+  PostgrestFilterBuilder<List<Map<String, dynamic>>> _orderRead(
+    TenantContext context,
+    String view,
+  ) {
+    if (!context.hasOperationalScope) {
+      throw const DomainError(
+        code: 'BRANCH_REQUIRED',
+        message: 'Choose a legal entity and branch.',
+      );
+    }
+    return _quotationRead(context, view);
+  }
+
+  @override
+  Future<CursorPage<SalesOrder>> pageOrders({
+    required TenantContext context,
+    required SalesOrderListQuery query,
+  }) => _readQuotation(() async {
+    var builder = _orderRead(context, 'sales_orders');
+    if (query.sourceQuotationId != null) {
+      builder = builder.eq('source_quotation_id', query.sourceQuotationId!);
+    }
+    if (query.cursor != null) builder = builder.gt('id', query.cursor!);
+    if (query.status != null) builder = builder.eq('status', query.status!);
+    if (query.search.isNotEmpty) {
+      final literal = query.search
+          .replaceAll(r'\', r'\\')
+          .replaceAll('%', r'\%')
+          .replaceAll('_', r'\_');
+      builder = builder.ilike('document_number', '%$literal%');
+    }
+    final rows = _jsonRows(
+      await builder.order('id').limit(query.limit + 1),
+      'sales orders',
+    );
+    final items = rows.take(query.limit).map(SalesOrder.fromJson).toList();
+    return CursorPage(
+      items: items,
+      limit: query.limit,
+      nextCursor: rows.length > query.limit ? items.last.id : null,
+    );
+  });
+
+  @override
+  Future<SalesOrderDetail?> loadOrder({
+    required TenantContext context,
+    required String id,
+  }) => _readQuotation(() async {
+    final raw = await _orderRead(
+      context,
+      'sales_order_details',
+    ).eq('id', id).maybeSingle();
+    return raw == null ? null : SalesOrderDetail.fromJson(raw);
+  });
+
+  @override
+  Future<SalesOrderCreditPreview> creditPreview({
+    required TenantContext context,
+    required String id,
+  }) => _readQuotation(() async {
+    _orderRead(context, 'sales_orders');
+    final raw = await _client
+        .schema('api')
+        .rpc(
+          'get_sales_order_credit_preview',
+          params: {
+            'p_tenant_id': context.tenantId,
+            'p_legal_entity_id': context.legalEntityId,
+            'p_branch_id': context.branchId,
+            'p_sales_order_id': id,
+          },
+        );
+    return SalesOrderCreditPreview.fromJson(_jsonObject(raw, 'credit preview'));
+  });
+
+  @override
+  Future<List<Map<String, Object?>>> creditDecisions({
+    required TenantContext context,
+    required String id,
+    String? beforeId,
+  }) => _readQuotation(() async {
+    var builder = _orderRead(
+      context,
+      'sales_credit_decisions',
+    ).eq('sales_order_id', id);
+    if (beforeId != null) builder = builder.lt('id', beforeId);
+    final rows = _jsonRows(
+      await builder.order('id', ascending: false).limit(100),
+      'credit decisions',
+    );
+    for (final row in rows) {
+      for (final key in [
+        'credit_limit',
+        'due_exposure',
+        'overdue_exposure',
+        'existing_order_exposure',
+        'current_order_exposure',
+        'total_exposure',
+      ]) {
+        final value = row[key];
+        if (value is! String ||
+            !RegExp(r'^[0-9]+(?:\.[0-9]{1,6})?$').hasMatch(value)) {
+          throw FormatException('Invalid exact credit decision $key.');
+        }
+      }
+      if (row['override_applied'] is! bool || row['currency_code'] is! String) {
+        throw const FormatException('Invalid credit decision metadata.');
+      }
+    }
+    return rows;
+  });
+
+  @override
+  Future<List<Map<String, Object?>>> reservations({
+    required TenantContext context,
+    required String id,
+    String? afterId,
+  }) => _readQuotation(() async {
+    var builder = _orderRead(
+      context,
+      'stock_reservations',
+    ).eq('sales_order_id', id);
+    if (afterId != null) builder = builder.gt('id', afterId);
+    final rows = _jsonRows(
+      await builder.order('id').limit(100),
+      'reservations',
+    );
+    for (final row in rows) {
+      final quantity = row['base_quantity'];
+      if (quantity is! String ||
+          !RegExp(r'^[0-9]+(?:\.[0-9]{1,6})?$').hasMatch(quantity)) {
+        throw const FormatException('Invalid exact reservation quantity.');
+      }
+    }
+    return rows;
+  });
+
+  @override
+  Future<List<Map<String, Object?>>> availability({
+    required TenantContext context,
+    required String warehouseId,
+    required List<String> productIds,
+  }) => _readQuotation(() async {
+    if (productIds.length > 100) {
+      throw const DomainError(
+        code: 'VALIDATION_ERROR',
+        message: 'Load at most 100 products at a time.',
+      );
+    }
+    if (productIds.isEmpty) return [];
+    final rows = _jsonRows(
+      await _orderRead(context, 'stock_availability')
+          .eq('warehouse_id', warehouseId)
+          .inFilter('product_id', productIds)
+          .limit(100),
+      'stock availability',
+    );
+    for (final row in rows) {
+      for (final key in [
+        'on_hand_quantity',
+        'allocated_quantity',
+        'available_quantity',
+      ]) {
+        final value = row[key];
+        if (value is! String ||
+            !RegExp(r'^-?[0-9]+(?:\.[0-9]{1,6})?$').hasMatch(value)) {
+          throw FormatException('Invalid exact $key.');
+        }
+      }
+    }
+    return rows;
+  });
+
+  @override
+  Future<CommandResult<SalesOrder>> executeOrder(
+    String verb,
+    CommandEnvelope<Map<String, Object?>> command,
+  ) {
+    final function = switch (verb) {
+      'save' => 'upsert_sales_order',
+      'convert' => 'convert_quotation_to_order',
+      'fulfillment' => 'update_sales_order_fulfillment',
+      'confirm' || 'cancel' => 'transition_operational_document',
+      'reserve' => 'reserve_sales_order_stock',
+      _ => null,
+    };
+    if (function == null) {
+      return Future.value(
+        CommandResult.failure(
+          requestId: command.idempotencyKey,
+          error: const DomainError(
+            code: 'VALIDATION_ERROR',
+            message: 'Unknown order command.',
+          ),
+        ),
+      );
+    }
+    return _runCommand(
+      function: function,
+      command: command,
+      validation: ValidationResult.valid(),
+      encodePayload: (payload) => payload,
+      decodeEntity: SalesOrder.fromJson,
+    );
+  }
 
   Future<List<T>> _list<T>({
     required TenantContext context,

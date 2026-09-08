@@ -1,0 +1,309 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+set local search_path = public, extensions;
+select no_plan();
+
+select has_function('api','post_delivery',
+  array['uuid','uuid','uuid','uuid','uuid','timestamp with time zone','jsonb','bigint'],
+  'AC-305 delivery posts through a named scoped command');
+select has_function('api','upsert_sales_invoice',
+  array['uuid','uuid','uuid','uuid','uuid','timestamp with time zone','jsonb','bigint'],
+  'AC-306 invoice draft has a named versioned command');
+select has_function('api','post_sales_invoice',
+  array['uuid','uuid','uuid','uuid','uuid','timestamp with time zone','jsonb','bigint'],
+  'AC-306 invoice posting has a named command');
+select has_function('api','post_customer_receipt',
+  array['uuid','uuid','uuid','uuid','uuid','timestamp with time zone','jsonb','bigint'],
+  'AC-307 receipt posts through a named command');
+select has_function('api','allocate_customer_receipt',
+  array['uuid','uuid','uuid','uuid','uuid','timestamp with time zone','jsonb','bigint'],
+  'AC-307 allocation has a separate permission checked command');
+select has_function('api','post_sales_return',
+  array['uuid','uuid','uuid','uuid','uuid','timestamp with time zone','jsonb','bigint'],
+  'AC-308 return and credit have a named command');
+
+create function pg_temp.fid(p text) returns uuid language sql immutable as $$select md5('ac305-308:'||p)::uuid$$;
+create function pg_temp.call(p_rpc text,p_payload jsonb,p_version bigint default null,p_key text default null)
+returns jsonb language plpgsql as $$declare v_result jsonb;v_key uuid:=coalesce(case when p_key is null then null else pg_temp.fid(p_key) end,gen_random_uuid());begin
+ execute format('select api.%I($1,$2,$3,$4,$5,$6,$7,$8)',p_rpc) into v_result
+ using pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),v_key,v_key,'2026-09-07T00:00:00Z'::timestamptz,p_payload,p_version;
+ return v_result;end $$;
+create function pg_temp.line(p_name text,p_product text,p_q text,p_price text default '100',p_extra jsonb default '{}')
+returns jsonb language sql as $$select jsonb_build_object('line_id',pg_temp.fid(p_name),'product_id',pg_temp.fid(p_product),
+ 'description',p_product,'unit_id',pg_temp.fid('unit'),'quantity',p_q,'base_quantity',p_q,
+ 'conversion_numerator','1','conversion_denominator','1','unit_price',p_price)||p_extra$$;
+create function pg_temp.header(p_name text,p_date date default '2026-09-01',p_currency text default 'LKR')
+returns jsonb language sql as $$select jsonb_build_object('id',pg_temp.fid(p_name),'customer_id',pg_temp.fid('customer'),
+ 'document_date',p_date,'due_date',p_date,'currency_code',p_currency)$$;
+create temporary table flow_results(name text primary key,result jsonb);
+create function pg_temp.save_submit(p_kind text,p_name text,p_payload jsonb)
+returns jsonb language plpgsql as $$declare v_result jsonb;v_rpc text;begin
+ v_rpc:=case p_kind when 'delivery' then 'upsert_delivery' when 'sales_invoice' then 'upsert_sales_invoice'
+ when 'customer_receipt' then 'upsert_customer_receipt' else 'upsert_sales_return' end;
+ v_result:=pg_temp.call(v_rpc,p_payload);
+ insert into flow_results values(p_name||'.draft',v_result);
+ v_result:=pg_temp.call('transition_operational_document',jsonb_build_object('document_type',p_kind,'document_id',v_result#>>'{entity,id}','action','submit'),(v_result#>>'{entity,version}')::bigint);
+ insert into flow_results values(p_name||'.submitted',v_result);return v_result;end $$;
+create function pg_temp.post(p_kind text,p_name text) returns jsonb language plpgsql as $$declare v_result jsonb;v_rpc text;begin
+ select result into v_result from flow_results where name=p_name||'.submitted';
+ v_rpc:=case p_kind when 'delivery' then 'post_delivery' when 'sales_invoice' then 'post_sales_invoice'
+ when 'customer_receipt' then 'post_customer_receipt' else 'post_sales_return' end;
+ v_result:=pg_temp.call(v_rpc,jsonb_build_object('document_id',v_result#>>'{entity,id}'),(v_result#>>'{entity,version}')::bigint,p_name||'.post');
+ insert into flow_results values(p_name||'.posted',v_result);return v_result;end $$;
+
+insert into auth.users(id,instance_id,aud,role,email,encrypted_password,email_confirmed_at,created_at,updated_at)
+select pg_temp.fid(x),'00000000-0000-0000-0000-000000000000','authenticated','authenticated',x||'@flow.jentra.test','',now(),now(),now()
+from unnest(array['actor','approver','foreign_actor']) x;
+insert into core.tenants(id,name,slug,created_by) values(pg_temp.fid('tenant'),'Flow Test','ac305-308-fixture',pg_temp.fid('actor'));
+insert into core.legal_entities(id,tenant_id,name,code,currency_code,rounding_scale,created_by)
+values(pg_temp.fid('entity'),pg_temp.fid('tenant'),'Flow Entity','FLOW','LKR',2,pg_temp.fid('actor'));
+insert into core.branches(id,tenant_id,legal_entity_id,name,code,created_by)
+values(pg_temp.fid('branch'),pg_temp.fid('tenant'),pg_temp.fid('entity'),'Flow Branch','FLOW',pg_temp.fid('actor'));
+insert into core.warehouses(id,tenant_id,legal_entity_id,branch_id,name,code,created_by)
+values(pg_temp.fid('warehouse'),pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),'Flow Warehouse','FLOW',pg_temp.fid('actor'));
+insert into core.memberships(id,tenant_id,user_id,status) select pg_temp.fid(x||'.membership'),pg_temp.fid('tenant'),pg_temp.fid(x),'active' from unnest(array['actor','approver']) x;
+insert into core.roles(id,tenant_id,code,name,requires_mfa) select pg_temp.fid(x||'.role'),pg_temp.fid('tenant'),x,x||' role',true from unnest(array['actor','approver']) x;
+insert into core.role_permissions(tenant_id,role_id,permission_code)
+select pg_temp.fid('tenant'),pg_temp.fid('actor.role'),code from core.permissions where code<>'finance.receipts.adjust';
+insert into core.role_permissions(tenant_id,role_id,permission_code) values(pg_temp.fid('tenant'),pg_temp.fid('approver.role'),'workflow.approvals.decide');
+insert into core.role_assignments(tenant_id,membership_id,role_id,legal_entity_id,branch_id,created_by)
+select pg_temp.fid('tenant'),pg_temp.fid(x||'.membership'),pg_temp.fid(x||'.role'),pg_temp.fid('entity'),pg_temp.fid('branch'),pg_temp.fid('actor') from unnest(array['actor','approver']) x;
+insert into crm.parties(id,tenant_id,code,legal_name,display_name,kind,credit_limit,created_by,updated_by)
+values(pg_temp.fid('customer'),pg_temp.fid('tenant'),'FLOW-CUSTOMER','Flow Customer','Flow Customer','customer',1000000,pg_temp.fid('actor'),pg_temp.fid('actor'));
+insert into finance.accounts(id,tenant_id,legal_entity_id,code,name,account_type,normal_balance,created_by,updated_by)
+select pg_temp.fid(x),pg_temp.fid('tenant'),pg_temp.fid('entity'),upper(x),x||' account',
+ case when x in ('receivable_control','inventory','cash') then 'asset' when x='output_tax' then 'liability'
+ when x in ('revenue','exchange_gain') then 'revenue' else 'expense' end,
+ case when x in ('revenue','exchange_gain','output_tax') then 'credit' else 'debit' end,pg_temp.fid('actor'),pg_temp.fid('actor')
+from unnest(array['receivable_control','inventory','cash','revenue','cogs','output_tax','rounding','exchange_gain','exchange_loss','write_off','settlement_discount']) x;
+insert into finance.posting_mappings(tenant_id,legal_entity_id,purpose,account_id,created_by,updated_by)
+select pg_temp.fid('tenant'),pg_temp.fid('entity'),x,pg_temp.fid(x),pg_temp.fid('actor'),pg_temp.fid('actor')
+from unnest(array['receivable_control','output_tax','rounding','exchange_gain','exchange_loss','write_off','settlement_discount']) x;
+insert into finance.cash_bank_accounts(id,tenant_id,legal_entity_id,branch_id,code,name,account_kind,account_id,currency_code,created_by,updated_by)
+select pg_temp.fid('bank.'||x),pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),x,'Test '||x,'bank',pg_temp.fid('cash'),x,pg_temp.fid('actor'),pg_temp.fid('actor') from unnest(array['LKR','USD']) x;
+insert into finance.fiscal_periods(id,tenant_id,legal_entity_id,name,start_date,end_date,created_by,updated_by)
+values(pg_temp.fid('period'),pg_temp.fid('tenant'),pg_temp.fid('entity'),'September','2026-09-01','2026-09-30',pg_temp.fid('actor'),pg_temp.fid('actor'));
+insert into finance.exchange_rates(id,tenant_id,legal_entity_id,source_currency_code,target_currency_code,rate,effective_date,created_by,updated_by)
+values(pg_temp.fid('rate300'),pg_temp.fid('tenant'),pg_temp.fid('entity'),'USD','LKR',300,'2026-09-01',pg_temp.fid('actor'),pg_temp.fid('actor')),
+ (pg_temp.fid('rate310'),pg_temp.fid('tenant'),pg_temp.fid('entity'),'USD','LKR',310,'2026-09-05',pg_temp.fid('actor'),pg_temp.fid('actor'));
+insert into inventory.units(id,tenant_id,code,name,symbol,category,precision,created_by,updated_by)
+values(pg_temp.fid('unit'),pg_temp.fid('tenant'),'UNIT','Unit','ea','quantity',6,pg_temp.fid('actor'),pg_temp.fid('actor'));
+insert into inventory.products(id,tenant_id,legal_entity_id,sku,name,kind,base_unit_id,tracking_mode,revenue_account_id,inventory_account_id,cogs_account_id,created_by,updated_by)
+select pg_temp.fid(x),pg_temp.fid('tenant'),pg_temp.fid('entity'),upper(x),x||' product',case when x='service' then 'service' else 'stocked' end,pg_temp.fid('unit'),
+ case when x='lot' then 'lot' when x='serial' then 'serial' else 'none' end,pg_temp.fid('revenue'),pg_temp.fid('inventory'),pg_temp.fid('cogs'),pg_temp.fid('actor'),pg_temp.fid('actor')
+from unnest(array['stock','lot','serial','service']) x;
+insert into core.document_sequences(tenant_id,legal_entity_id,branch_id,document_type,prefix,created_by,updated_by)
+select pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),x,x||'-',pg_temp.fid('actor'),pg_temp.fid('actor')
+from unnest(array['sales_order','delivery','sales_invoice','customer_receipt','sales_return','journal_entry']) x;
+insert into workflow.workflow_definitions(id,tenant_id,legal_entity_id,document_type,name,status,lifecycle,created_by,updated_by)
+select pg_temp.fid(x||'.workflow'),pg_temp.fid('tenant'),pg_temp.fid('entity'),x,x||' workflow','active',
+ '{"states":["draft","submitted","approved","rejected","posted","settled","fulfilled","closed","cancelled","reversed"],"transitions":[["draft","submitted"],["submitted","approved"],["submitted","rejected"],["approved","posted"],["rejected","draft"],["draft","cancelled"],["submitted","cancelled"]],"posting_transitions":[["submitted","posted"],["submitted","draft"],["approved","draft"]],"requires_approval":false}',pg_temp.fid('actor'),pg_temp.fid('actor')
+from unnest(array['delivery','sales_invoice','customer_receipt','sales_return']) x;
+select set_config('request.jwt.claims',jsonb_build_object('sub',pg_temp.fid('actor'),'role','authenticated','aal','aal2')::text,true);
+select set_config('request.jwt.claim.sub',pg_temp.fid('actor')::text,true);
+
+-- Exercise AC-304's real order and reservation contracts, not mock order records.
+insert into flow_results select 'order.draft',pg_temp.call('upsert_sales_order',jsonb_build_object('id',pg_temp.fid('order'),
+ 'customer_id',pg_temp.fid('customer'),'order_date','2026-09-01','promised_date','2026-09-07','warehouse_id',pg_temp.fid('warehouse'),
+ 'ship_to',jsonb_build_object('address','Synthetic warehouse'),'currency_code','LKR','exchange_rate','1.0000000000','rate_date','2026-09-01',
+ 'salesperson_id',pg_temp.fid('actor'),'lines',jsonb_build_array(pg_temp.line('order.stock','stock','10'),pg_temp.line('order.service','service','4'))));
+insert into flow_results select 'order.confirmed',pg_temp.call('transition_operational_document',jsonb_build_object('document_type','sales_order',
+ 'document_id',pg_temp.fid('order'),'action','confirm'),(result#>>'{entity,version}')::bigint) from flow_results where name='order.draft';
+insert into inventory.stock_balances(id,tenant_id,legal_entity_id,branch_id,warehouse_id,product_id,on_hand_quantity,created_by,updated_by)
+values(pg_temp.fid('stock.balance'),pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),pg_temp.fid('warehouse'),pg_temp.fid('stock'),10,pg_temp.fid('actor'),pg_temp.fid('actor'));
+insert into inventory.stock_valuations(tenant_id,legal_entity_id,branch_id,stock_balance_id,carrying_value,created_by,updated_by)
+values(pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),pg_temp.fid('stock.balance'),600,pg_temp.fid('actor'),pg_temp.fid('actor'));
+insert into flow_results select 'order.reserved',pg_temp.call('reserve_sales_order_stock',jsonb_build_object('sales_order_id',pg_temp.fid('order'),
+ 'expires_at',now()+interval '30 days','lines',jsonb_build_array(jsonb_build_object('sales_order_line_id',pg_temp.fid('order.stock'),'requested_base_quantity','10'))),
+ (result#>>'{entity,version}')::bigint) from flow_results where name='order.confirmed';
+select lives_ok($$select pg_temp.save_submit('delivery','delivery1',pg_temp.header('delivery1')||jsonb_build_object('sales_order_id',pg_temp.fid('order'),
+ 'warehouse_id',pg_temp.fid('warehouse'),'lines',jsonb_build_array(jsonb_build_object('line_id',pg_temp.fid('delivery1.stock'),
+ 'sales_order_line_id',pg_temp.fid('order.stock'),'base_quantity','3'),jsonb_build_object('line_id',pg_temp.fid('delivery1.service'),
+ 'sales_order_line_id',pg_temp.fid('order.service'),'base_quantity','1'))))$$,'AC-305 delivery draft and workflow accept partial stocked/service lines');
+select lives_ok($$select pg_temp.post('delivery','delivery1')$$,'AC-305 partial delivery posts atomically');
+select is((select on_hand_quantity from inventory.stock_balances where id=pg_temp.fid('stock.balance')),7::numeric,'AC-305 on-hand stock reduced exactly');
+select is((select allocated_quantity from inventory.stock_balances where id=pg_temp.fid('stock.balance')),7::numeric,'AC-305 reservation projection consumed exactly');
+select is((select carrying_value from inventory.stock_valuations where stock_balance_id=pg_temp.fid('stock.balance')),420::numeric,'AC-305 issue uses original carrying cost');
+select is((select delivered_quantity from sales.sales_order_lines where id=pg_temp.fid('order.stock')),3::numeric,'AC-305 delivered order quantity is three');
+select is((select delivered_quantity from sales.sales_order_lines where id=pg_temp.fid('order.service')),1::numeric,'AC-305 service fulfillment creates no stock');
+select is((select count(*) from inventory.stock_movement_lines where source_line_id=pg_temp.fid('delivery1.service')),0::bigint,'AC-305 service line has no movement');
+select is(pg_temp.call('post_delivery',jsonb_build_object('document_id',pg_temp.fid('delivery1')),
+ (select (result#>>'{entity,version}')::bigint from flow_results where name='delivery1.submitted'),'delivery1.post'),
+ (select result from flow_results where name='delivery1.posted'),'AC-305 identical post replays original receipt');
+select throws_ok($$select pg_temp.call('upsert_delivery',pg_temp.header('too.much')||jsonb_build_object('sales_order_id',pg_temp.fid('order'),
+ 'warehouse_id',pg_temp.fid('warehouse'),'lines',jsonb_build_array(jsonb_build_object('line_id',pg_temp.fid('too.much.line'),
+ 'sales_order_line_id',pg_temp.fid('order.stock'),'base_quantity','8'))))$$,'22023','SOURCE_QUANTITY_EXCEEDED','AC-305 over-delivery rejected');
+select lives_ok($$select pg_temp.save_submit('sales_invoice','invoice1',pg_temp.header('invoice1')||jsonb_build_object('lines',jsonb_build_array(
+ jsonb_build_object('line_id',pg_temp.fid('invoice1.stock'),'delivery_line_id',pg_temp.fid('delivery1.stock'),'base_quantity','3'))))$$,'AC-306 invoice takes price and quantity from delivered source');
+select lives_ok($$select pg_temp.post('sales_invoice','invoice1')$$,'AC-306 invoice posts one AR item and journal');
+select is((select original_amount from finance.open_items where source_id=pg_temp.fid('invoice1')),300::numeric,'AC-306 invoice residual starts at exact source value');
+select is((select due_exposure from sales.customer_credit_exposures where customer_id=pg_temp.fid('customer')),300::numeric,'AC-306 AC-304 credit projection reflects receivable');
+select is((api.get_sales_order_credit_preview(pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),pg_temp.fid('order'))->>'current_order_exposure')::numeric,
+ 1100::numeric,'invoiced order portion no longer remains in order exposure');
+select is((api.get_sales_order_credit_preview(pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),pg_temp.fid('order'))->>'total_exposure')::numeric,
+ 1400::numeric,'order credit exposure does not double count invoice AR');
+select throws_ok($$select pg_temp.call('upsert_sales_invoice',pg_temp.header('direct.stock')||jsonb_build_object('lines',jsonb_build_array(pg_temp.line('direct.stock.line','stock','1'))))$$,
+ '22023','STOCKED_INVOICE_REQUIRES_DELIVERY','AC-306 direct stocked invoice rejected');
+select throws_ok($$update sales.sales_invoices set notes='tamper' where id=pg_temp.fid('invoice1')$$,
+ '55000','POSTED_DOCUMENT_IMMUTABLE','AC-306 posted invoice is immutable');
+
+select lives_ok($$select pg_temp.save_submit('sales_invoice','usd1',pg_temp.header('usd1','2026-09-01','USD')||jsonb_build_object('exchange_rate_id',pg_temp.fid('rate300'),
+ 'lines',jsonb_build_array(pg_temp.line('usd1.line','service','1'))))$$,'AC-307 first foreign invoice saves and submits');
+select lives_ok($$select pg_temp.post('sales_invoice','usd1')$$,'AC-307 first foreign invoice posts');
+select lives_ok($$select pg_temp.save_submit('sales_invoice','usd2',pg_temp.header('usd2','2026-09-01','USD')||jsonb_build_object('exchange_rate_id',pg_temp.fid('rate300'),
+ 'lines',jsonb_build_array(pg_temp.line('usd2.line','service','1'))))$$,'AC-307 second foreign invoice saves and submits');
+select lives_ok($$select pg_temp.post('sales_invoice','usd2')$$,'AC-307 second foreign invoice posts');
+insert into flow_results select 'aging.before',api.customer_statement(pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),pg_temp.fid('customer'),'USD','2026-09-02');
+select lives_ok($$select pg_temp.save_submit('customer_receipt','receipt',pg_temp.header('receipt','2026-09-05','USD')||jsonb_build_object('exchange_rate_id',pg_temp.fid('rate310'),
+ 'cash_bank_account_id',pg_temp.fid('bank.USD'),'amount','180','external_reference','SYNTHETIC-RECEIPT'))$$,'AC-307 receipt has governed FX and bank account');
+select lives_ok($$select pg_temp.post('customer_receipt','receipt')$$,'AC-307 receipt posts cash/bank and AR');
+select lives_ok($$insert into flow_results select 'allocation',pg_temp.call('allocate_customer_receipt',jsonb_build_object('source_open_item_id',
+ (select id from finance.open_items where source_id=pg_temp.fid('receipt')),'posting_date','2026-09-05','allocations',jsonb_build_array(
+ jsonb_build_object('target_open_item_id',(select id from finance.open_items where source_id=pg_temp.fid('usd1')),'source_amount','100','transaction_amount','100'),
+ jsonb_build_object('target_open_item_id',(select id from finance.open_items where source_id=pg_temp.fid('usd2')),'source_amount','50','transaction_amount','50'))))$$,
+ 'AC-307 one receipt allocates to multiple invoices');
+select is((finance.flow_residual(pg_temp.fid('tenant'),(select id from finance.open_items where source_id=pg_temp.fid('receipt')))->>'amount')::numeric,-30::numeric,'AC-307 unapplied receipt is thirty');
+select is((finance.flow_residual(pg_temp.fid('tenant'),(select id from finance.open_items where source_id=pg_temp.fid('usd2')))->>'amount')::numeric,50::numeric,'AC-307 invoice residual is fifty');
+select is((select sum(exchange_difference) from finance.open_item_allocations),1500::numeric,'AC-307 realized exchange gain uses original carrying bases');
+select is((select result#>>'{entity,reconciliation_status}' from flow_results where name='receipt.posted'),'unreconciled','AC-307 receipt is never prematurely bank reconciled');
+select throws_ok($$select pg_temp.call('allocate_customer_receipt',jsonb_build_object('source_open_item_id',(select id from finance.open_items where source_id=pg_temp.fid('receipt')),
+ 'posting_date','2026-09-05','allocations',jsonb_build_array(jsonb_build_object('target_open_item_id',(select id from finance.open_items where source_id=pg_temp.fid('usd2')),
+ 'source_amount','40','transaction_amount','40'))))$$,'22023','ALLOCATION_EXCEEDED','AC-307 over-allocation rejected');
+select throws_ok($$select pg_temp.call('allocate_customer_receipt',jsonb_build_object('source_open_item_id',(select id from finance.open_items where source_id=pg_temp.fid('receipt')),
+ 'posting_date','2026-09-05','allocations',jsonb_build_array(jsonb_build_object('target_open_item_id',(select id from finance.open_items where source_id=pg_temp.fid('usd2')),
+ 'source_amount','20','transaction_amount','20','write_off','30','reason','test'))))$$,'42501','Permission denied or multi-factor authentication required.','AC-307 unauthorized write-off rejected');
+select is(api.customer_statement(pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),pg_temp.fid('customer'),'USD','2026-09-02'),
+ (select result from flow_results where name='aging.before'),'AC-308 later receipt and allocation preserve historical aging');
+
+select lives_ok($$select pg_temp.save_submit('sales_return','return1',pg_temp.header('return1','2026-09-06')||jsonb_build_object('reason','Synthetic return',
+ 'lines',jsonb_build_array(jsonb_build_object('line_id',pg_temp.fid('return1.line'),'sales_invoice_line_id',pg_temp.fid('invoice1.stock'),
+ 'base_quantity','1','disposition','saleable'))))$$,'AC-308 one-unit return references original invoice');
+select lives_ok($$select pg_temp.post('sales_return','return1')$$,'AC-308 return posts stock and credit effects');
+select is((select on_hand_quantity from inventory.stock_balances where id=pg_temp.fid('stock.balance')),8::numeric,'AC-308 saleable return restores one unit');
+select is((select carrying_value from inventory.stock_valuations where stock_balance_id=pg_temp.fid('stock.balance')),480::numeric,'AC-308 return restores original issued cost');
+select is((select grand_total from sales.sales_invoices where id=pg_temp.fid('invoice1')),300::numeric,'AC-308 original invoice remains unchanged');
+select is((select original_amount from finance.open_items where source_id=pg_temp.fid('return1')),-100::numeric,'AC-308 credit has correct eligible value');
+select throws_ok($$select pg_temp.call('upsert_sales_return',pg_temp.header('over.return','2026-09-06')||jsonb_build_object('reason','excess',
+ 'lines',jsonb_build_array(jsonb_build_object('line_id',pg_temp.fid('over.return.line'),'sales_invoice_line_id',pg_temp.fid('invoice1.stock'),
+ 'base_quantity','3','disposition','saleable'))))$$,'22023','SOURCE_QUANTITY_EXCEEDED','AC-308 excess credit/return rejected');
+
+-- Failure after stock and accounting writes must roll back the whole command.
+select pg_temp.save_submit('delivery','late.failure',pg_temp.header('late.failure')||jsonb_build_object('sales_order_id',pg_temp.fid('order'),
+ 'warehouse_id',pg_temp.fid('warehouse'),'lines',jsonb_build_array(jsonb_build_object('line_id',pg_temp.fid('late.failure.line'),
+ 'sales_order_line_id',pg_temp.fid('order.stock'),'base_quantity','1'))));
+create function pg_temp.fail_outbox() returns trigger language plpgsql as $$begin raise exception using errcode='P0001',message='SYNTHETIC_OUTBOX_FAILURE';end$$;
+create trigger synthetic_outbox_failure before insert on core.outbox_events for each row execute function pg_temp.fail_outbox();
+select throws_ok($$select pg_temp.post('delivery','late.failure')$$,'P0001','SYNTHETIC_OUTBOX_FAILURE','late outbox failure aborts posting');
+drop trigger synthetic_outbox_failure on core.outbox_events;
+select is((select on_hand_quantity from inventory.stock_balances where id=pg_temp.fid('stock.balance')),8::numeric,'late failure rolls back stock');
+select is((select status from sales.deliveries where id=pg_temp.fid('late.failure')),'submitted','late failure rolls back document status');
+select is((select count(*) from finance.journal_entries where source_id=pg_temp.fid('late.failure')),0::bigint,'late failure leaves no journal');
+select is((select count(*) from inventory.stock_movements where source_id=pg_temp.fid('late.failure')),0::bigint,'late failure leaves no movement');
+select throws_ok($$select pg_temp.call('post_delivery',jsonb_build_object('document_id',pg_temp.fid('late.failure')),0)$$,
+ '40001',null,'stale version is rejected');
+update finance.fiscal_periods set state='soft_locked' where id=pg_temp.fid('period');
+select throws_ok($$select pg_temp.post('delivery','late.failure')$$,'55000',null,'closed period blocks delivery posting');
+update finance.fiscal_periods set state='open' where id=pg_temp.fid('period');
+select throws_ok($$select pg_temp.call('upsert_sales_return',pg_temp.header('missing.disposition')||jsonb_build_object('reason','test',
+ 'lines',jsonb_build_array(jsonb_build_object('line_id',gen_random_uuid(),'sales_invoice_line_id',pg_temp.fid('invoice1.stock'),'base_quantity','1'))))$$,
+ '22023','RETURN_REASON_DISPOSITION_REQUIRED','missing return disposition fails closed');
+select throws_ok($$select pg_temp.call('upsert_sales_return',pg_temp.header('changed.rate','2026-09-06','USD')||jsonb_build_object('reason','test',
+ 'exchange_rate_id',pg_temp.fid('rate310'),'lines',jsonb_build_array(jsonb_build_object('line_id',gen_random_uuid(),
+ 'sales_invoice_line_id',pg_temp.fid('usd1.line'),'base_quantity','1','disposition','no_restock'))))$$,
+ '22023','RETURN_ORIGINAL_RATE_REQUIRED','credit preserves original invoice rate');
+
+-- Lot selection is checked at posting, including expiry and available quantity.
+insert into flow_results select 'tracked.draft',pg_temp.call('upsert_sales_order',jsonb_build_object('id',pg_temp.fid('tracked.order'),
+ 'customer_id',pg_temp.fid('customer'),'order_date','2026-09-01','promised_date','2026-09-07','warehouse_id',pg_temp.fid('warehouse'),
+ 'ship_to',jsonb_build_object('address','Synthetic'),'currency_code','LKR','exchange_rate','1.0000000000','rate_date','2026-09-01',
+ 'salesperson_id',pg_temp.fid('actor'),'lines',jsonb_build_array(pg_temp.line('tracked.lot','lot','2'),pg_temp.line('tracked.serial','serial','2'))));
+insert into flow_results select 'tracked.confirmed',pg_temp.call('transition_operational_document',jsonb_build_object('document_type','sales_order',
+ 'document_id',pg_temp.fid('tracked.order'),'action','confirm'),(result#>>'{entity,version}')::bigint) from flow_results where name='tracked.draft';
+insert into inventory.stock_balances(id,tenant_id,legal_entity_id,branch_id,warehouse_id,product_id,on_hand_quantity,created_by,updated_by)
+select pg_temp.fid(x||'.balance'),pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),pg_temp.fid('warehouse'),pg_temp.fid(x),2,pg_temp.fid('actor'),pg_temp.fid('actor') from unnest(array['lot','serial']) x;
+insert into inventory.stock_valuations(tenant_id,legal_entity_id,branch_id,stock_balance_id,carrying_value,created_by,updated_by)
+select pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),pg_temp.fid(x||'.balance'),120,pg_temp.fid('actor'),pg_temp.fid('actor') from unnest(array['lot','serial']) x;
+insert into inventory.lots(id,tenant_id,legal_entity_id,product_id,code,expiry_date,created_by,updated_by)
+values(pg_temp.fid('batch'),pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('lot'),'BATCH',current_date-1,pg_temp.fid('actor'),pg_temp.fid('actor'));
+insert into inventory.lot_balances(tenant_id,legal_entity_id,branch_id,warehouse_id,product_id,lot_id,on_hand_quantity,created_by,updated_by)
+values(pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),pg_temp.fid('warehouse'),pg_temp.fid('lot'),pg_temp.fid('batch'),2,pg_temp.fid('actor'),pg_temp.fid('actor'));
+insert into inventory.serials(id,tenant_id,legal_entity_id,branch_id,warehouse_id,product_id,code,created_by,updated_by)
+select pg_temp.fid(x),pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),pg_temp.fid('warehouse'),pg_temp.fid('serial'),x,pg_temp.fid('actor'),pg_temp.fid('actor') from unnest(array['serial.1','serial.2']) x;
+select pg_temp.call('reserve_sales_order_stock',jsonb_build_object('sales_order_id',pg_temp.fid('tracked.order'),'expires_at',now()+interval '30 days',
+ 'lines',jsonb_build_array(jsonb_build_object('sales_order_line_id',pg_temp.fid('tracked.lot'),'requested_base_quantity','2'),
+ jsonb_build_object('sales_order_line_id',pg_temp.fid('tracked.serial'),'requested_base_quantity','2'))),
+ (select (result#>>'{entity,version}')::bigint from flow_results where name='tracked.confirmed'));
+select pg_temp.save_submit('delivery','tracked.delivery',pg_temp.header('tracked.delivery')||jsonb_build_object('sales_order_id',pg_temp.fid('tracked.order'),
+ 'warehouse_id',pg_temp.fid('warehouse'),'lines',jsonb_build_array(jsonb_build_object('line_id',pg_temp.fid('lot.delivery.line'),
+ 'sales_order_line_id',pg_temp.fid('tracked.lot'),'base_quantity','1','tracking',jsonb_build_object('lot_id',pg_temp.fid('batch'))),
+ jsonb_build_object('line_id',pg_temp.fid('serial.delivery.line'),'sales_order_line_id',pg_temp.fid('tracked.serial'),'base_quantity','1',
+ 'tracking',jsonb_build_object('serial_ids',jsonb_build_array(pg_temp.fid('serial.1')))))));
+select throws_ok($$select pg_temp.post('delivery','tracked.delivery')$$,'22023','LOT_NOT_SALEABLE','expired lot rejects entire tracked delivery');
+select is((select on_hand_quantity from inventory.stock_balances where id=pg_temp.fid('lot.balance')),2::numeric,'invalid lot leaves stock untouched');
+update inventory.lots set expiry_date=current_date+365 where id=pg_temp.fid('batch');
+update inventory.serials set status='quarantine' where id=pg_temp.fid('serial.1');
+select throws_ok($$select pg_temp.post('delivery','tracked.delivery')$$,'22023','SERIAL_CONFLICT','quarantined serial rejected');
+select is((select on_hand_quantity from inventory.lot_balances where lot_id=pg_temp.fid('batch')),2::numeric,'serial failure rolls back earlier lot line');
+update inventory.serials set status='available' where id=pg_temp.fid('serial.1');
+select lives_ok($$select pg_temp.post('delivery','tracked.delivery')$$,'valid lot and serial issue atomically');
+select is((select status from inventory.serials where id=pg_temp.fid('serial.1')),'issued','serial traceability records issued state');
+select is((select on_hand_quantity from inventory.lot_balances where lot_id=pg_temp.fid('batch')),1::numeric,'lot residual exact');
+select is((select base_quantity from inventory.stock_reservations where sales_order_line_id=pg_temp.fid('tracked.lot') and status='active'),1::numeric,'tracked reservation residual exact');
+
+select lives_ok($$select pg_temp.call('upsert_receivables_setup',jsonb_build_object('resource','cash_bank_account','id',pg_temp.fid('new.bank'),
+ 'code','NEW-CASH','name','New cash drawer','account_kind','cash','account_id',pg_temp.fid('cash'),'currency_code','LKR'))$$,'cash/bank prerequisites have a governed setup command');
+select throws_ok($$select pg_temp.call('upsert_receivables_setup',jsonb_build_object('resource','posting_mapping','purpose','receivable_control',
+ 'account_id',pg_temp.fid('cash')),(select version from finance.posting_mappings where purpose='receivable_control'))$$,
+ '55000','POSTING_MAPPING_IN_USE','posted AR control mapping cannot silently change');
+
+insert into finance.exchange_rates(id,tenant_id,legal_entity_id,source_currency_code,target_currency_code,rate,effective_date,created_by,updated_by)
+values(pg_temp.fid('rounding.fx'),pg_temp.fid('tenant'),pg_temp.fid('entity'),'USD','LKR',300.005,'2026-08-31',pg_temp.fid('actor'),pg_temp.fid('actor'));
+select pg_temp.save_submit('sales_invoice','rounding.invoice',pg_temp.header('rounding.invoice','2026-09-01','USD')||jsonb_build_object('exchange_rate_id',pg_temp.fid('rounding.fx'),
+ 'lines',jsonb_build_array(pg_temp.line('rounding.invoice.line','service','3','1'))));
+select pg_temp.post('sales_invoice','rounding.invoice');
+do $$declare n integer;begin for n in 1..3 loop
+ perform pg_temp.save_submit('sales_return','rounding.credit.'||n,pg_temp.header('rounding.credit.'||n,'2026-09-06','USD')||jsonb_build_object('exchange_rate_id',pg_temp.fid('rounding.fx'),
+ 'reason','Rounding regression','lines',jsonb_build_array(jsonb_build_object('line_id',pg_temp.fid('rounding.credit.line.'||n),
+ 'sales_invoice_line_id',pg_temp.fid('rounding.invoice.line'),'base_quantity','1','disposition','no_restock'))));
+ perform pg_temp.post('sales_return','rounding.credit.'||n);
+end loop;end $$;
+select is((select sum(base_total) from sales.sales_returns where id in (pg_temp.fid('rounding.credit.1'),pg_temp.fid('rounding.credit.2'),pg_temp.fid('rounding.credit.3'))),
+ (select base_total from sales.sales_invoices where id=pg_temp.fid('rounding.invoice')),'successive partial credits reverse the exact original carrying base');
+select is((select base_total from sales.sales_returns where id=pg_temp.fid('rounding.credit.2')),300::numeric,'middle partial credit carries cumulative rounding correction');
+
+update workflow.workflow_definitions set lifecycle=jsonb_set(lifecycle,'{requires_approval}','true') where id=pg_temp.fid('sales_invoice.workflow');
+insert into workflow.approval_matrix_steps(id,tenant_id,workflow_definition_id,role_id,step_order,created_by,updated_by)
+values(pg_temp.fid('approval.step'),pg_temp.fid('tenant'),pg_temp.fid('sales_invoice.workflow'),pg_temp.fid('approver.role'),1,pg_temp.fid('actor'),pg_temp.fid('actor'));
+select lives_ok($$select pg_temp.save_submit('sales_invoice','approval.invoice',pg_temp.header('approval.invoice')||jsonb_build_object('lines',jsonb_build_array(
+ pg_temp.line('approval.line','service','1','100',jsonb_build_object('discount_amount','12.34')))))$$,'discounted direct invoice revalidates under approval workflow');
+select is((select grand_total from sales.sales_invoices where id=pg_temp.fid('approval.invoice')),87.66::numeric,'direct fixed discount retained exactly');
+select is((select subtotal from sales.sales_invoices where id=pg_temp.fid('approval.invoice')),100::numeric,'invoice subtotal retains gross before discounts');
+select is((select discount_total from sales.sales_invoices where id=pg_temp.fid('approval.invoice')),12.34::numeric,'invoice discount summary matches lines');
+select is((select status from sales.sales_invoices where id=pg_temp.fid('approval.invoice')),'pending_approval','required approval cannot be skipped');
+select throws_ok($$select pg_temp.post('sales_invoice','approval.invoice')$$,'55000','DOCUMENT_NOT_APPROVED','unapproved invoice cannot post');
+select throws_ok($$select pg_temp.call('decide_operational_approval',jsonb_build_object('document_type','sales_invoice','document_id',pg_temp.fid('approval.invoice'),
+ 'decision','approved'),(select version from sales.sales_invoices where id=pg_temp.fid('approval.invoice')))$$,'42501','SEGREGATION_OF_DUTIES_VIOLATION','submitter cannot approve own invoice');
+select set_config('request.jwt.claims',jsonb_build_object('sub',pg_temp.fid('approver'),'role','authenticated','aal','aal2')::text,true);
+select set_config('request.jwt.claim.sub',pg_temp.fid('approver')::text,true);
+select lives_ok($$select pg_temp.call('decide_operational_approval',jsonb_build_object('document_type','sales_invoice','document_id',pg_temp.fid('approval.invoice'),
+ 'decision','approved'),(select version from sales.sales_invoices where id=pg_temp.fid('approval.invoice')))$$,'separate assigned approver decides pinned workflow');
+select is((select status from sales.sales_invoices where id=pg_temp.fid('approval.invoice')),'approved','invoice is approved only after decision');
+select set_config('request.jwt.claims',jsonb_build_object('sub',pg_temp.fid('actor'),'role','authenticated','aal','aal2')::text,true);
+select set_config('request.jwt.claim.sub',pg_temp.fid('actor')::text,true);
+select lives_ok($$select pg_temp.call('post_sales_invoice',jsonb_build_object('document_id',pg_temp.fid('approval.invoice')),
+ (select version from sales.sales_invoices where id=pg_temp.fid('approval.invoice')))$$,'approved discounted invoice posts');
+
+select ok(not exists(select journal_entry_id from finance.journal_lines group by journal_entry_id having sum(base_debit)<>sum(base_credit) or count(*)<2),'all posted journals balance exactly');
+select is((select sum(base_debit-base_credit) from finance.journal_lines where account_id=pg_temp.fid('receivable_control')),
+ (select sum((finance.flow_residual(tenant_id,id)->>'base_amount')::numeric) from finance.open_items),'AR control equals residual subledger');
+select is((select count(*) from sales.deliveries where status='posted'),2::bigint,'replay and failed attempts created no duplicate delivery');
+select ok(not has_table_privilege('authenticated','sales.deliveries','INSERT') and not has_table_privilege('authenticated','finance.open_items','UPDATE'),'direct client mutations are denied');
+set local role authenticated;
+select is((select count(*) from api.sales_invoices),5::bigint,'caller-RLS views expose permitted invoices');
+select set_config('request.jwt.claims',jsonb_build_object('sub',pg_temp.fid('foreign_actor'),'role','authenticated','aal','aal2')::text,true);
+select set_config('request.jwt.claim.sub',pg_temp.fid('foreign_actor')::text,true);
+select is((select count(*) from api.sales_invoices),0::bigint,'foreign actor sees no invoices');
+reset role;
+set constraints all immediate;
+select * from finish(true);
+rollback;

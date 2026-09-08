@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_platform/jentra_platform.dart';
+import 'package:jentra_platform/jentra_receivables_platform.dart';
 
 import 'src/app.dart';
 import 'src/app_providers.dart';
+import 'src/features/receivables/receivables_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +18,7 @@ Future<void> main() async {
       ? null
       : SupabaseBusinessSetupGateway(client);
   final crmRepository = client == null ? null : SupabaseCrmGateway(client);
+  final quotations = client == null ? null : SupabaseLeadToCashGateway(client);
 
   runApp(
     ProviderScope(
@@ -24,6 +27,13 @@ Future<void> main() async {
         foundationGatewayProvider.overrideWithValue(foundationGateway),
         businessSetupGatewayProvider.overrideWithValue(businessSetupGateway),
         crmRepositoryProvider.overrideWithValue(crmRepository),
+        leadToCashRepositoryProvider.overrideWithValue(quotations),
+        quotationWorkspaceRepositoryProvider.overrideWithValue(quotations),
+        salesOrderRepositoryProvider.overrideWithValue(quotations),
+        quotationReferenceRepositoryProvider.overrideWithValue(quotations),
+        receivablesRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabaseReceivablesGateway(client),
+        ),
       ],
       child: const JentraApp(),
     ),

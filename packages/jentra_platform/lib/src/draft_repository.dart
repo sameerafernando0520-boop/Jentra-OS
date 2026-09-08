@@ -75,6 +75,33 @@ final class EncryptedDraftRepository {
     return row == null ? null : _decode(row);
   }
 
+  /// Bounded metadata page. Callers can verify scope before decrypting a row.
+  Future<List<String>> pageIds({
+    required String tenantId,
+    required String entityType,
+    String? afterId,
+    int limit = 100,
+  }) async {
+    if (limit < 1 || limit > 200) {
+      throw RangeError.range(limit, 1, 200, 'limit');
+    }
+    final query = _database.selectOnly(_database.encryptedDrafts)
+      ..addColumns([_database.encryptedDrafts.id])
+      ..where(
+        _database.encryptedDrafts.tenantId.equals(tenantId) &
+            _database.encryptedDrafts.entityType.equals(entityType),
+      );
+    if (afterId != null) {
+      query.where(_database.encryptedDrafts.id.isBiggerThanValue(afterId));
+    }
+    query
+      ..orderBy([OrderingTerm.asc(_database.encryptedDrafts.id)])
+      ..limit(limit);
+    return (await query.get())
+        .map((row) => row.read(_database.encryptedDrafts.id)!)
+        .toList();
+  }
+
   Future<void> markConflict({required String id, required int serverVersion}) =>
       (_database.update(
         _database.encryptedDrafts,

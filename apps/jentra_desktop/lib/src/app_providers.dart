@@ -21,6 +21,37 @@ final businessSetupGatewayProvider = Provider<SupabaseBusinessSetupGateway?>(
 
 final crmRepositoryProvider = Provider<CrmRepository?>((ref) => null);
 
+final leadToCashRepositoryProvider = Provider<LeadToCashRepository?>(
+  (ref) => null,
+);
+final quotationWorkspaceRepositoryProvider =
+    Provider<QuotationWorkspaceRepository?>((ref) => null);
+final salesOrderRepositoryProvider = Provider<SalesOrderWorkspaceRepository?>(
+  (ref) => null,
+);
+final salesOrderDraftStoreProvider = Provider<QuotationDraftStore>(
+  (ref) =>
+      QuotationDraftStore.orders(ref.watch(encryptedDraftRepositoryProvider)),
+);
+final quotationReferenceRepositoryProvider =
+    Provider<QuotationReferenceRepository?>((ref) => null);
+final quotationDraftStoreProvider = Provider<QuotationDraftStore>(
+  (ref) => QuotationDraftStore(ref.watch(encryptedDraftRepositoryProvider)),
+);
+
+// Actor changes must invalidate scope-bound state even when the tenant stays selected.
+final authenticatedActorProvider = StreamProvider<String?>((ref) async* {
+  final gateway = ref.watch(foundationGatewayProvider);
+  if (gateway == null) {
+    yield 'preview-actor';
+    return;
+  }
+  yield gateway.currentUser?.id;
+  await for (final _ in gateway.authChanges) {
+    yield gateway.currentUser?.id;
+  }
+});
+
 final localDatabaseProvider = Provider<JentraLocalDatabase>((ref) {
   final database = JentraLocalDatabase.open();
   ref.onDispose(() => unawaited(database.close()));
@@ -345,8 +376,8 @@ final class BusinessScopeController extends AsyncNotifier<BusinessScopeState> {
 final activeTenantContextProvider = Provider<TenantContext?>((ref) {
   final scope = ref.watch(businessScopeProvider).value;
   if (scope == null) return null;
-  final actorId =
-      ref.watch(foundationGatewayProvider)?.currentUser?.id ?? 'preview-actor';
+  final actorId = ref.watch(authenticatedActorProvider).value;
+  if (actorId == null) return null;
   return scope.toContext(actorId);
 });
 
@@ -356,6 +387,8 @@ final businessCapabilitiesProvider = FutureProvider<Set<String>>((ref) async {
   final gateway = ref.watch(foundationGatewayProvider);
   if (gateway != null) return gateway.getCapabilities(context.tenantId);
   return {
+    // Preview navigation only; the quotation controller still requires a backend.
+    'sales.quotations.view',
     for (final resource in BusinessSetupResource.values) ...{
       resource.viewPermission,
       resource.managePermission,

@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jentra_domain/jentra_domain.dart';
@@ -22,14 +25,101 @@ void main() {
   );
   late JentraLocalDatabase database;
   late EncryptedDraftRepository encrypted;
+  var sharedDatabaseOpen = false;
   setUp(() {
     database = JentraLocalDatabase(NativeDatabase.memory());
+    sharedDatabaseOpen = true;
     encrypted = EncryptedDraftRepository(
       database,
       DraftCipher(keyStore: MemoryKeys()),
     );
   });
-  tearDown(() => database.close());
+  tearDown(() async {
+    if (sharedDatabaseOpen) await database.close();
+  });
+
+  test(
+    'AC-303 encrypted retry survives closing and reopening SQLite on disk',
+    () async {
+      await database.close();
+      sharedDatabaseOpen = false;
+      final scratch = await Directory.systemTemp.createTemp(
+        'jentra-ac303-recovery-',
+      );
+      final file = File(
+        '${scratch.path}${Platform.pathSeparator}drafts.sqlite',
+      );
+      final keys = MemoryKeys();
+      var disk = JentraLocalDatabase(NativeDatabase(file));
+      var diskOpen = true;
+      try {
+        var store = QuotationDraftStore(
+          EncryptedDraftRepository(disk, DraftCipher(keyStore: keys)),
+        );
+        const form = {
+          'notes': 'Private persisted customer offer',
+          'unit_price': '90071992547409.123456',
+        };
+        await store.save(scope, 'new', form, expectedVersion: 7);
+        final original = await store.prepare(
+          scope,
+          'new',
+          verb: 'save',
+          payload: form,
+          expectedVersion: 7,
+        );
+        await disk.close();
+        diskOpen = false;
+        final bytes = latin1.decode(await file.readAsBytes());
+        expect(bytes, isNot(contains(form['notes'])));
+        expect(bytes, isNot(contains(form['unit_price'])));
+        disk = JentraLocalDatabase(NativeDatabase(file));
+        diskOpen = true;
+        store = QuotationDraftStore(
+          EncryptedDraftRepository(disk, DraftCipher(keyStore: keys)),
+        );
+        final recovered = (await store.pageDrafts(scope)).items.single.draft;
+        expect(recovered.form, form);
+        expect(recovered.expectedVersion, 7);
+        expect(recovered.pending!.toJson(), original.toJson());
+        expect(
+          (await store.pageDrafts(scope.copyWith(actorId: 'another'))).items,
+          isEmpty,
+        );
+        final replay = await store.prepare(
+          scope,
+          'new',
+          verb: 'save',
+          payload: form,
+          expectedVersion: 7,
+        );
+        expect(replay.toJson(), original.toJson());
+      } finally {
+        if (diskOpen) await disk.close();
+        if (await file.exists()) await file.delete();
+        await scratch.delete();
+      }
+    },
+  );
+
+  test(
+    'AC-303 bounded recovery discovery exposes only exact actor and business scope',
+    () async {
+      final store = QuotationDraftStore(encrypted);
+      await store.save(scope, 'quotation:one', {
+        'notes': 'own draft',
+      }, expectedVersion: 7);
+      await store.save(
+        scope.copyWith(actorId: 'someone-else'),
+        'quotation:two',
+        {'notes': 'private'},
+      );
+      final page = await store.pageDrafts(scope);
+      expect(page.items.map((entry) => entry.slot), ['quotation:one']);
+      expect(page.items.single.draft.expectedVersion, 7);
+      expect(page.items.single.draft.form['notes'], 'own draft');
+    },
+  );
 
   test(
     'AC-303 pending envelope survives restart and cannot be silently replaced',

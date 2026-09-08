@@ -20,7 +20,7 @@ void main() {
 
     expect(visible.any((item) => item.path == '/crm'), isFalse);
     expect(
-      visible.firstWhere((item) => item.path == '/sales').section,
+      visible.firstWhere((item) => item.path == '/procurement').section,
       'OPERATIONS',
     );
   });
@@ -224,6 +224,7 @@ void main() {
 const _viewCapabilities = <String>{'crm.leads.view', 'crm.opportunities.view'};
 
 const _manageCapabilities = <String>{
+  'sales.quotations.view',
   'crm.leads.view',
   'crm.leads.manage',
   'crm.leads.convert',

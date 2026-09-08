@@ -46,18 +46,64 @@ final class QuotationLocalDraft {
   final String? errorCode;
 }
 
+final class QuotationRecoveryEntry {
+  const QuotationRecoveryEntry({required this.slot, required this.draft});
+  final String slot;
+  final QuotationLocalDraft draft;
+}
+
 /// Raw editor fields may be incomplete; only prepare receives validated command
 /// input. No automatic network sync or conflict merge is performed here.
 final class QuotationDraftStore {
-  QuotationDraftStore(this._repository);
+  QuotationDraftStore(this._repository) : _orders = false;
+  QuotationDraftStore.orders(this._repository) : _orders = true;
   final EncryptedDraftRepository _repository;
+  final bool _orders;
+  String get _prefix => _orders ? 'order:' : 'quotation:';
+  String get _entityType => _orders ? 'sales.order' : 'sales.quotation';
   static const _uuid = Uuid();
   // Serialize store instances sharing a database too. This guards double-clicks
   // and overlapping editor instances in one application process.
   static final _queues = <String, Future<void>>{};
 
+  Future<CursorPage<QuotationRecoveryEntry>> pageDrafts(
+    TenantContext context, {
+    String? afterId,
+  }) async {
+    final ids = await _repository.pageIds(
+      tenantId: context.tenantId,
+      entityType: _entityType,
+      afterId: afterId,
+    );
+    final entries = <QuotationRecoveryEntry>[];
+    for (final id in ids) {
+      if (!id.startsWith(_prefix)) continue;
+      final identity =
+          jsonDecode(
+                utf8.decode(base64Url.decode(id.substring(_prefix.length))),
+              )
+              as List;
+      if (TenantContext.fromJson(
+            (identity[0] as Map).cast<String, Object?>(),
+          ) !=
+          context) {
+        continue;
+      }
+      final slot = identity[1] as String;
+      final draft = await load(context, slot);
+      if (draft != null) {
+        entries.add(QuotationRecoveryEntry(slot: slot, draft: draft));
+      }
+    }
+    return CursorPage(
+      items: entries,
+      limit: 100,
+      nextCursor: ids.length == 100 ? ids.last : null,
+    );
+  }
+
   String _key(TenantContext context, String slot) =>
-      'quotation:${base64Url.encode(utf8.encode(jsonEncode([context.toJson(), slot])))}';
+      '$_prefix${base64Url.encode(utf8.encode(jsonEncode([context.toJson(), slot])))}';
 
   Future<T> _locked<T>(String key, Future<T> Function() action) async {
     final previous = _queues[key] ?? Future<void>.value();
@@ -78,7 +124,7 @@ final class QuotationDraftStore {
     if (row == null) return null;
     final data = row.payload;
     if (row.tenantId != context.tenantId ||
-        row.entityType != 'sales.quotation' ||
+        row.entityType != _entityType ||
         TenantContext.fromJson(
               (data['scope']! as Map).cast<String, Object?>(),
             ) !=
@@ -108,7 +154,7 @@ final class QuotationDraftStore {
   ) => _repository.save(
     id: _key(context, slot),
     tenantId: context.tenantId,
-    entityType: 'sales.quotation',
+    entityType: _entityType,
     payload: {
       'scope': context.toJson(),
       'form': state.form,
@@ -152,19 +198,29 @@ final class QuotationDraftStore {
     required Map<String, Object?> payload,
     int? expectedVersion,
   }) => _locked(_key(context, slot), () async {
-    if (!const {
-      'save',
-      'submit',
-      'recall',
-      'accept',
-      'expire',
-      'cancel',
-      'approve',
-      'reject',
-    }.contains(verb)) {
+    if (!(_orders
+            ? const {
+                'save',
+                'convert',
+                'fulfillment',
+                'confirm',
+                'cancel',
+                'reserve',
+              }
+            : const {
+                'save',
+                'submit',
+                'recall',
+                'accept',
+                'expire',
+                'cancel',
+                'approve',
+                'reject',
+              })
+        .contains(verb)) {
       throw const DomainError(
         code: 'VALIDATION_ERROR',
-        message: 'Unknown quotation command.',
+        message: 'Unknown document command.',
       );
     }
     final old = await load(context, slot);
@@ -244,6 +300,22 @@ final class QuotationDraftStore {
       'QUOTATION_NOT_CANCELLABLE',
       'APPROVAL_NOT_PENDING',
       'APPROVAL_REQUEST_NOT_FOUND',
+      'CUSTOMER_INACTIVE',
+      'CREDIT_CURRENCY_MISMATCH',
+      'WAREHOUSE_INACTIVE',
+      'PRODUCT_NOT_RESERVABLE',
+      'SALES_ORDER_NOT_EDITABLE',
+      'SALES_ORDER_NOT_CONFIRMABLE',
+      'SALES_ORDER_NOT_CANCELLABLE',
+      'FULFILLED_ORDER_NOT_CANCELLABLE',
+      'SALES_ORDER_NOT_RESERVABLE',
+      'ORDER_NOT_EDITABLE',
+      'ORDER_NOT_CONFIRMABLE',
+      'ORDER_NOT_CANCELLABLE',
+      'ORDER_ALREADY_FULFILLED',
+      'ORDER_NOT_RESERVABLE',
+      'CONVERTED_ORDER_SOURCE_IMMUTABLE',
+      'FULFILLMENT_FIELDS_ONLY',
     }.contains(error.code);
     await _write(
       context,

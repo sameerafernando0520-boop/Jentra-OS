@@ -1,0 +1,70 @@
+00:00 +0: loading test\jentra_domain_test.dart
+00:00 +0: test\jentra_domain_test.dart: Money — FR-15 / AC-8 keeps six-decimal precision without binary floating point
+00:00 +1: test\jentra_domain_test.dart: Money — FR-15 / AC-8 rounds excess precision half away from zero
+00:00 +2: test\jentra_domain_test.dart: Money — FR-15 / AC-8 rejects cross-currency arithmetic
+00:00 +3: test\jentra_domain_test.dart: Money — FR-15 / AC-8 uses exact rational multiplication for tax
+00:00 +4: test\jentra_domain_test.dart: DocumentLifecycle — FR-14 / AC-8 / EC-8 prevents direct posted mutation and deletion
+00:00 +5: test\jentra_domain_test.dart: DocumentLifecycle — FR-14 / AC-8 / EC-8 permits the canonical approval path
+00:00 +6: test\jentra_domain_test.dart: TenantContext exposes accounting and operational scope — FR-2
+00:00 +7: test\jentra_domain_test.dart: authoritative commands are blocked offline — FR-12 / AC-5
+00:00 +8: test\wave2_business_setup_test.dart: ExactDecimal — FR-208 / FR-210 / NFR-206 preserves configured fixed scale without binary floating point
+00:00 +9: test\wave2_business_setup_test.dart: ExactDecimal — FR-208 / FR-210 / NFR-206 rounds excess precision half away from zero
+00:00 +10: test\wave2_business_setup_test.dart: ExactDecimal — FR-208 / FR-210 / NFR-206 compares only values with the same scale
+00:00 +11: test\wave2_business_setup_test.dart: BusinessSetupValidator — AC-202 through AC-209 accepts an exact dated cross-currency exchange rate
+00:00 +12: test\wave2_business_setup_test.dart: BusinessSetupValidator — AC-202 through AC-209 rejects same-currency and non-positive exchange rates
+00:00 +13: test\wave2_business_setup_test.dart: BusinessSetupValidator — AC-202 through AC-209 enforces tax percentage and validity bounds
+00:00 +14: test\wave2_business_setup_test.dart: BusinessSetupValidator — AC-202 through AC-209 rejects a self-parent account and reversed approval range
+00:00 +15: test\wave2_business_setup_test.dart: BusinessSetupValidator — AC-202 through AC-209 requires scoped product and document-sequence fields
+00:00 +16: test\wave2_business_setup_test.dart: BusinessSetupValidator — AC-202 through AC-209 accepts only canonical workflow states and transition pairs
+00:00 +17: test\wave2_business_setup_test.dart: Setup contracts — FR-201 / FR-240 / NFR-202 resource metadata carries public API and permission contracts
+00:00 +18: test\wave2_business_setup_test.dart: Setup contracts — FR-201 / FR-240 / NFR-202 list queries enforce a bounded cursor page
+00:00 +19: test\wave2_business_setup_test.dart: Setup contracts — FR-201 / FR-240 / NFR-202 records preserve exact decimal strings and optimistic versions
+00:00 +20: test\wave2_business_setup_test.dart: Attachment policy — AC-210 / NFR-209 allows only private Wave 2 document formats under 25 MiB
+00:00 +21: test\wave2_business_setup_test.dart: Attachment policy — AC-210 / NFR-209 rejects traversal, executable MIME, and oversized files
+00:00 +22: test\wave2_domain_invariants_test.dart: ExactDecimal invariants — NFR-206 / AC-203 constructs zero and scaled values with stable predicates
+00:00 +23: test\wave2_domain_invariants_test.dart: ExactDecimal invariants — NFR-206 / AC-203 rejects malformed values and unsupported scales
+00:00 +24: test\wave2_domain_invariants_test.dart: ExactDecimal invariants — NFR-206 / AC-203 supports exact arithmetic, ordering, and scale enforcement
+00:00 +25: test\wave2_domain_invariants_test.dart: ExactDecimal invariants — NFR-206 / AC-203 rescales in both directions with half-away-from-zero rounding
+00:00 +26: test\wave2_domain_invariants_test.dart: ExactDecimal invariants — NFR-206 / AC-203 supports zero-scale formatting, value equality, and hashes
+00:00 +27: test\wave2_domain_invariants_test.dart: TabularDocument invariants — AC-212 / AC-213 maps short rows, ignores surplus cells, and reports dimensions
+00:00 +28: test\wave2_domain_invariants_test.dart: TabularDocument invariants — AC-212 / AC-213 creates a deeply immutable copy
+00:00 +29: test\wave2_domain_invariants_test.dart: TabularDocument invariants — AC-212 / AC-213 compares headers and every row by value
+00:00 +30: test\wave2_domain_invariants_test.dart: Setup import preview — FR-232 / AC-212 reports normalized spreadsheet row and field errors before apply
+00:00 +31: test\wave2_domain_invariants_test.dart: Setup import preview — FR-232 / AC-212 allows a non-empty valid import preview
+00:00 +32: test\wave2_domain_invariants_test.dart: Business setup metadata — FR-201 / NFR-202 defines complete unique API and authorization metadata
+00:00 +33: test\wave2_domain_invariants_test.dart: Business setup validation coverage — AC-202 through AC-209 accepts a valid payload for every setup resource
+00:00 +34: test\wave2_domain_invariants_test.dart: Business setup validation coverage — AC-202 through AC-209 reports required fields across the configurable resources
+00:00 +35: test\wave2_domain_invariants_test.dart: Business setup validation coverage — AC-202 through AC-209 rejects malformed scalar values and unsupported statuses
+00:00 +36: test\wave2_domain_invariants_test.dart: Business setup validation coverage — AC-202 through AC-209 rejects invalid dates and malformed workflow structures
+00:00 +37: test\wave2_domain_invariants_test.dart: Business setup validation coverage — AC-202 through AC-209 aligns desktop scalar choices and report bounds with Postgres
+00:00 +38: test\wave2_domain_invariants_test.dart: Business setup validation coverage — AC-202 through AC-209 validates revisions, account currencies, and approval currency
+00:00 +39: test\wave3_crm_domain_test.dart: Wave 3 CRM read contracts — FR-313..FR-318 / NFR-302 parses an opportunity without crossing binary floating point
+00:00 +40: test\wave3_crm_domain_test.dart: Wave 3 CRM read contracts — FR-313..FR-318 / NFR-302 parses an opportunity without crossing binary floating point
+00:00 +41: test\wave3_crm_domain_test.dart: Wave 3 CRM read contracts — FR-313..FR-318 / NFR-302 parses an opportunity without crossing binary floating point
+00:00 +42: test\wave3_crm_domain_test.dart: Wave 3 CRM read contracts — FR-313..FR-318 / NFR-302 parses an opportunity without crossing binary floating point
+00:00 +43: test\wave3_crm_domain_test.dart: Wave 3 CRM read contracts — FR-313..FR-318 / NFR-302 parses a lead with intentionally absent probability and weighting
+00:00 +44: test\wave3_crm_domain_test.dart: Wave 3 CRM read contracts — FR-313..FR-318 / NFR-302 rejects malformed numeric and entry-type boundaries
+00:00 +45: test\wave3_crm_domain_test.dart: Wave 3 CRM read contracts — FR-313..FR-318 / NFR-302 keeps pipeline totals separated by currency and explicit as-of date
+00:00 +46: test\wave3_crm_domain_test.dart: Wave 3 CRM read contracts — FR-313..FR-318 / NFR-302 normalizes and bounds stable pipeline queries
+00:00 +47: test\wave3_crm_domain_test.dart: Wave 3 CRM mutation inputs — AC-302 / AC-322 lead draft validates required fields and emits exact values
+00:00 +48: test\wave3_crm_domain_test.dart: Wave 3 CRM mutation inputs — AC-302 / AC-322 opportunity draft enforces probability and won/lost reasons
+00:00 +49: test\wave3_crm_domain_test.dart: Wave 3 CRM mutation inputs — AC-302 / AC-322 completed activity requires coherent time and outcome
+00:00 +50: test\wave3_crm_domain_test.dart: Wave 3 CRM mutation inputs — AC-302 / AC-322 conversion input preserves selected links and exact probability
+00:00 +51: test\wave3_lead_to_cash_domain_test.dart: Wave 3 quotation pricing — AC-303 / NFR-302 calculates exclusive and inclusive tax without binary floating point
+00:00 +52: test\wave3_lead_to_cash_domain_test.dart: Wave 3 quotation pricing — AC-303 / NFR-302 allocates an amount header discount exactly and preserves base rate
+00:00 +53: test\wave3_lead_to_cash_domain_test.dart: Wave 3 quotation pricing — AC-303 / NFR-302 keeps every rounded proportional discount allocation non-negative
+00:00 +54: test\wave3_lead_to_cash_domain_test.dart: Wave 3 quotation pricing — AC-303 / NFR-302 rejects incoherent units, discounts, currencies, and rates
+00:00 +55: test\wave3_lead_to_cash_domain_test.dart: Wave 3 quotation contracts — FR-319..FR-321 draft emits only decimal strings and version-aware revision intent
+00:00 +56: test\wave3_quotation_workspace_test.dart: AC-303 draft codec preserves exact inputs and stable line identities
+00:00 +57: test\wave3_quotation_workspace_test.dart: AC-303 draft codec preserves exact inputs and stable line identities
+00:00 +58: test\wave3_quotation_workspace_test.dart: AC-303 draft codec preserves exact inputs and stable line identities
+00:00 +59: test\wave3_quotation_workspace_test.dart: AC-303 draft codec preserves exact inputs and stable line identities
+00:00 +60: test\wave3_quotation_workspace_test.dart: AC-303 draft codec preserves exact inputs and stable line identities
+00:00 +61: test\wave3_quotation_workspace_test.dart: AC-303 draft codec preserves exact inputs and stable line identities
+00:00 +62: test\wave3_quotation_workspace_test.dart: AC-303 draft codec rejects numeric JSON and excess precision
+00:00 +63: test\wave3_quotation_workspace_test.dart: AC-303 server snapshots reconstruct discounts without double application
+00:00 +64: test\wave3_quotation_workspace_test.dart: AC-303 quotation paging is bounded and rejects malformed cursors
+00:00 +65: test\wave3_quotation_workspace_test.dart: AC-303 recall is explicit and requires a reason
+00:00 +66: test\wave3_quotation_workspace_test.dart: AC-303 malformed revision flags cannot silently change command intent
+00:00 +67: test\wave3_quotation_workspace_test.dart: AC-303 malformed tax flags cannot silently change tax treatment
+00:00 +68: All tests passed!

@@ -1,6 +1,10 @@
 /// Stable, framework-free contracts shared by Jentra clients and adapters.
 library;
 
+export 'src/sales_order_workspace.dart';
+
+export 'src/quotation_references.dart';
+
 export 'src/commands.dart';
 export 'src/attachment_policy.dart';
 export 'src/business_setup.dart';

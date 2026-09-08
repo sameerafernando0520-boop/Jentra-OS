@@ -8,6 +8,9 @@ import 'app_providers.dart';
 import 'features/auth/login_screen.dart';
 import 'features/catalogue/component_catalogue_screen.dart';
 import 'features/crm/crm_screen.dart';
+import 'features/receivables/receivables_screen.dart';
+import 'features/sales/quotation_screen.dart';
+import 'features/sales/sales_order_screen.dart';
 import 'features/dashboard/dashboard_screen.dart';
 import 'features/setup/business_setup_screen.dart';
 import 'features/tenant/accept_invitation_screen.dart';
@@ -55,12 +58,23 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const BusinessSetupScreen(),
           ),
           GoRoute(path: '/crm', builder: (context, state) => const CrmScreen()),
-          for (final module in const [
-            (
-              'sales',
-              'Sales',
-              'Quotes, orders, deliveries, invoices and returns.',
+          GoRoute(
+            path: '/receivables',
+            builder: (context, state) => const ReceivablesScreen(),
+          ),
+          GoRoute(
+            path: '/sales',
+            builder: (context, state) => const QuotationScreen(),
+          ),
+          GoRoute(
+            path: '/sales/orders',
+            builder: (context, state) => SalesOrderScreen(
+              orderId: state.uri.queryParameters['order'],
+              quotationId: state.uri.queryParameters['quotation'],
+              sourceQuotationId: state.uri.queryParameters['source'],
             ),
+          ),
+          for (final module in const [
             (
               'procurement',
               'Procurement',

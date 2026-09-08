@@ -49,6 +49,11 @@ const jentraDestinations = <JentraDestination>[
     icon: Icons.shopping_bag_outlined,
   ),
   JentraDestination(
+    label: 'Fulfillment & receivables',
+    path: '/receivables',
+    icon: Icons.payments_outlined,
+  ),
+  JentraDestination(
     label: 'Inventory',
     path: '/inventory',
     icon: Icons.inventory_2_outlined,
@@ -107,7 +112,33 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
     pendingSection = item.section ?? pendingSection;
     final permitted =
         (item.path != '/setup' || canOpenSetup) &&
-        (item.path != '/crm' || canOpenCrm);
+        (item.path != '/crm' || canOpenCrm) &&
+        (item.path != '/receivables' ||
+            (capabilities != null &&
+                const {
+                  'sales.deliveries.view',
+                  'sales.deliveries.manage',
+                  'sales.deliveries.post',
+                  'sales.invoices.view',
+                  'sales.invoices.manage',
+                  'sales.invoices.post',
+                  'finance.receipts.view',
+                  'finance.receipts.manage',
+                  'finance.receipts.post',
+                  'sales.returns.view',
+                  'sales.returns.manage',
+                  'sales.returns.post',
+                  'finance.receivables.view',
+                  'workflow.approvals.decide',
+                }.any(capabilities.contains))) &&
+        (item.path != '/sales' ||
+            (capabilities != null &&
+                const {
+                  'sales.quotations.view',
+                  'sales.quotations.manage',
+                  'sales.orders.view',
+                  'sales.orders.manage',
+                }.any(capabilities.contains)));
     if (!permitted) continue;
     visible.add(
       JentraDestination(

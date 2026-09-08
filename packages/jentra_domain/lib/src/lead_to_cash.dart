@@ -1019,6 +1019,12 @@ final class SalesOrderDraft {
       ...quotation.validate().issues,
       if (warehouseId.trim().isEmpty)
         const ValidationIssue(field: 'warehouse_id', message: 'Required.'),
+      for (var i = 0; i < lines.length; i++)
+        if (lines[i].productId?.trim().isEmpty ?? true)
+          ValidationIssue(
+            field: 'lines[$i].product_id',
+            message: 'A governed product is required.',
+          ),
     ]);
   }
 
@@ -1196,7 +1202,8 @@ final class SalesOrderLine {
   ExactDecimal get remainingToReserve => ExactDecimal.fromScaledValue(
     baseOrderedQuantity.scaledValue -
         cancelledQuantity.scaledValue -
-        allocatedQuantity.scaledValue,
+        allocatedQuantity.scaledValue -
+        deliveredQuantity.scaledValue,
     scale: 6,
   );
 

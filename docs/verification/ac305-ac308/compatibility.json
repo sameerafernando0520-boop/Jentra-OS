@@ -1,0 +1,357 @@
+{
+  "schema_before": "{\n  \"tables\": {\n    \"api.units\": {\n      \"columns\": {\n        \"id\": {\n          \"type\": \"uuid\",\n          \"default\": null,\n          \"nullable\": true\n        },\n        \"code\": {\n          \"type\": \"text\",\n          \"default\": null,\n          \"nullable\": true\n        },\n        \"name\": {\n          \"type\": \"text\",\n          \"default\": null,\n          \"nullable\": true\n        },\n        \"status\": {\n          \"type\": \"text\",\n          \"default\": null,\n          \"nullable\": true\n        },\n        \"s...",
+  "schema_after": "{\n  \"tables\": {\n    \"api.lots\": {\n      \"columns\": {\n        \"id\": {\n          \"type\": \"uuid\",\n          \"default\": null,\n          \"nullable\": true\n        },\n        \"detail\": {\n          \"type\": \"jsonb\",\n          \"default\": null,\n          \"nullable\": true\n        },\n        \"branch_id\": {\n          \"type\": \"text\",\n          \"default\": null,\n          \"nullable\": true\n        },\n        \"tenant_id\": {\n          \"type\": \"uuid\",\n          \"default\": null,\n          \"nullable\": true\n        },\n...",
+  "analysis_date": "2026-09-07T17:46:27.425213",
+  "overall_compatibility": "fully_compatible",
+  "breaking_changes_count": 0,
+  "potentially_breaking_count": 0,
+  "non_breaking_changes_count": 0,
+  "additive_changes_count": 0,
+  "issues": [],
+  "migration_scripts": [
+    {
+      "script_type": "sql",
+      "description": "Create new table api.lots",
+      "script_content": "CREATE TABLE api.lots (\n  id uuid,\n  detail jsonb,\n  branch_id text,\n  tenant_id uuid,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.lots;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.lots';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.serials",
+      "script_content": "CREATE TABLE api.serials (\n  id uuid,\n  detail jsonb,\n  branch_id uuid,\n  tenant_id uuid,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.serials;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.serials';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.deliveries",
+      "script_content": "CREATE TABLE api.deliveries (\n  id uuid,\n  detail jsonb,\n  status text,\n  version bigint,\n  branch_id uuid,\n  tenant_id uuid,\n  base_total text,\n  customer_id uuid,\n  grand_total text,\n  currency_code text,\n  document_date date,\n  document_type text,\n  document_number text,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.deliveries;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.deliveries';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.open_items",
+      "script_content": "CREATE TABLE api.open_items (\n  id uuid,\n  detail jsonb,\n  branch_id uuid,\n  tenant_id uuid,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.open_items;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.open_items';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.lots",
+      "script_content": "CREATE TABLE inventory.lots (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  code text NOT NULL,\n  status text NOT NULL DEFAULT 'saleable'::text,\n  version bigint NOT NULL DEFAULT 1,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  product_id uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  expiry_date date,\n  legal_entity_id uuid NOT NULL,\n  manufacture_date date\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.lots;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.lots';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.lot_balances",
+      "script_content": "CREATE TABLE api.lot_balances (\n  id uuid,\n  detail jsonb,\n  branch_id uuid,\n  tenant_id uuid,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.lot_balances;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.lot_balances';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table sales.deliveries",
+      "script_content": "CREATE TABLE sales.deliveries (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  notes text,\n  terms text,\n  reason text,\n  status text NOT NULL DEFAULT 'draft'::text,\n  version bigint NOT NULL DEFAULT 1,\n  due_date date NOT NULL,\n  subtotal numeric(20,6) NOT NULL DEFAULT 0,\n  branch_id uuid NOT NULL,\n  posted_at timestamp with time zone,\n  posted_by uuid,\n  rate_date date NOT NULL,\n  tax_total numeric(20,6) NOT NULL DEFAULT 0,\n  tenant_id uuid NOT NULL,\n  base_total numeric(20,6) NOT NULL DEFAULT 0,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  request_id uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  customer_id uuid NOT NULL,\n  grand_total numeric(20,6) NOT NULL DEFAULT 0,\n  submitted_by uuid,\n  warehouse_id uuid,\n  currency_code text NOT NULL,\n  document_date date NOT NULL,\n  document_type text NOT NULL DEFAULT 'delivery'::text,\n  exchange_rate numeric(20,10) NOT NULL,\n  correlation_id uuid NOT NULL,\n  discount_total numeric(20,6) NOT NULL DEFAULT 0,\n  rounding_scale smallint NOT NULL,\n  sales_order_id uuid,\n  source_context jsonb NOT NULL DEFAULT '{}'::jsonb,\n  document_number text,\n  legal_entity_id uuid NOT NULL,\n  tender_metadata jsonb NOT NULL DEFAULT '{}'::jsonb,\n  client_timestamp timestamp with time zone NOT NULL,\n  exchange_rate_id uuid,\n  workflow_snapshot jsonb,\n  base_currency_code text NOT NULL,\n  external_reference text,\n  cash_bank_account_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS sales.deliveries;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'sales.deliveries';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.journal_lines",
+      "script_content": "CREATE TABLE api.journal_lines (\n  id uuid,\n  detail jsonb,\n  branch_id uuid,\n  tenant_id uuid,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.journal_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.journal_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.sales_returns",
+      "script_content": "CREATE TABLE api.sales_returns (\n  id uuid,\n  detail jsonb,\n  status text,\n  version bigint,\n  branch_id uuid,\n  tenant_id uuid,\n  base_total text,\n  customer_id uuid,\n  grand_total text,\n  currency_code text,\n  document_date date,\n  document_type text,\n  document_number text,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.sales_returns;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.sales_returns';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.serials",
+      "script_content": "CREATE TABLE inventory.serials (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  code text NOT NULL,\n  lot_id uuid,\n  status text NOT NULL DEFAULT 'available'::text,\n  version bigint NOT NULL DEFAULT 1,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  product_id uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  warehouse_id uuid NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  last_delivery_line_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.serials;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.serials';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.delivery_lines",
+      "script_content": "CREATE TABLE api.delivery_lines (\n  id uuid,\n  detail jsonb,\n  branch_id uuid,\n  tenant_id uuid,\n  product_id uuid,\n  document_id uuid,\n  line_number integer,\n  legal_entity_id uuid,\n  delivery_line_id uuid,\n  sales_order_line_id uuid,\n  sales_invoice_line_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.delivery_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.delivery_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.sales_invoices",
+      "script_content": "CREATE TABLE api.sales_invoices (\n  id uuid,\n  detail jsonb,\n  status text,\n  version bigint,\n  branch_id uuid,\n  tenant_id uuid,\n  base_total text,\n  customer_id uuid,\n  grand_total text,\n  currency_code text,\n  document_date date,\n  document_type text,\n  document_number text,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.sales_invoices;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.sales_invoices';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.open_items",
+      "script_content": "CREATE TABLE finance.open_items (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  kind text NOT NULL DEFAULT 'AR'::text,\n  due_date date NOT NULL,\n  party_id uuid NOT NULL,\n  branch_id uuid NOT NULL,\n  source_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  request_id uuid NOT NULL,\n  source_type text NOT NULL,\n  posting_date date NOT NULL,\n  currency_code text NOT NULL,\n  exchange_rate numeric(20,10) NOT NULL,\n  correlation_id uuid NOT NULL,\n  document_number text NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  original_amount numeric(20,6) NOT NULL,\n  journal_entry_id uuid NOT NULL,\n  base_currency_code text NOT NULL,\n  original_base_amount numeric(20,6) NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.open_items;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.open_items';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.journal_entries",
+      "script_content": "CREATE TABLE api.journal_entries (\n  id uuid,\n  detail jsonb,\n  branch_id uuid,\n  tenant_id uuid,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.journal_entries;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.journal_entries';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.stock_movements",
+      "script_content": "CREATE TABLE api.stock_movements (\n  id uuid,\n  detail jsonb,\n  branch_id uuid,\n  tenant_id uuid,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.stock_movements;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.stock_movements';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table sales.sales_returns",
+      "script_content": "CREATE TABLE sales.sales_returns (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  notes text,\n  terms text,\n  reason text,\n  status text NOT NULL DEFAULT 'draft'::text,\n  version bigint NOT NULL DEFAULT 1,\n  due_date date NOT NULL,\n  subtotal numeric(20,6) NOT NULL DEFAULT 0,\n  branch_id uuid NOT NULL,\n  posted_at timestamp with time zone,\n  posted_by uuid,\n  rate_date date NOT NULL,\n  tax_total numeric(20,6) NOT NULL DEFAULT 0,\n  tenant_id uuid NOT NULL,\n  base_total numeric(20,6) NOT NULL DEFAULT 0,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  request_id uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  customer_id uuid NOT NULL,\n  grand_total numeric(20,6) NOT NULL DEFAULT 0,\n  submitted_by uuid,\n  warehouse_id uuid,\n  currency_code text NOT NULL,\n  document_date date NOT NULL,\n  document_type text NOT NULL DEFAULT 'sales_return'::text,\n  exchange_rate numeric(20,10) NOT NULL,\n  correlation_id uuid NOT NULL,\n  discount_total numeric(20,6) NOT NULL DEFAULT 0,\n  rounding_scale smallint NOT NULL,\n  sales_order_id uuid,\n  source_context jsonb NOT NULL DEFAULT '{}'::jsonb,\n  document_number text,\n  legal_entity_id uuid NOT NULL,\n  tender_metadata jsonb NOT NULL DEFAULT '{}'::jsonb,\n  client_timestamp timestamp with time zone NOT NULL,\n  exchange_rate_id uuid,\n  workflow_snapshot jsonb,\n  base_currency_code text NOT NULL,\n  external_reference text,\n  cash_bank_account_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS sales.sales_returns;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'sales.sales_returns';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.posting_mappings",
+      "script_content": "CREATE TABLE api.posting_mappings (\n  id uuid,\n  detail jsonb,\n  branch_id text,\n  tenant_id uuid,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.posting_mappings;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.posting_mappings';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.stock_valuations",
+      "script_content": "CREATE TABLE api.stock_valuations (\n  id uuid,\n  detail jsonb,\n  branch_id uuid,\n  tenant_id uuid,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.stock_valuations;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.stock_valuations';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table sales.delivery_lines",
+      "script_content": "CREATE TABLE sales.delivery_lines (\n  id uuid NOT NULL,\n  unit_id uuid,\n  quantity numeric(20,6) NOT NULL,\n  snapshot jsonb NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  line_total numeric(20,6) NOT NULL DEFAULT 0,\n  product_id uuid,\n  tax_amount numeric(20,6) NOT NULL DEFAULT 0,\n  description text NOT NULL,\n  document_id uuid NOT NULL,\n  line_number integer NOT NULL,\n  base_quantity numeric(20,6) NOT NULL,\n  taxable_amount numeric(20,6) NOT NULL DEFAULT 0,\n  legal_entity_id uuid NOT NULL,\n  delivery_line_id uuid,\n  sales_order_line_id uuid,\n  sales_invoice_line_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS sales.delivery_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'sales.delivery_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table sales.sales_invoices",
+      "script_content": "CREATE TABLE sales.sales_invoices (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  notes text,\n  terms text,\n  reason text,\n  status text NOT NULL DEFAULT 'draft'::text,\n  version bigint NOT NULL DEFAULT 1,\n  due_date date NOT NULL,\n  subtotal numeric(20,6) NOT NULL DEFAULT 0,\n  branch_id uuid NOT NULL,\n  posted_at timestamp with time zone,\n  posted_by uuid,\n  rate_date date NOT NULL,\n  tax_total numeric(20,6) NOT NULL DEFAULT 0,\n  tenant_id uuid NOT NULL,\n  base_total numeric(20,6) NOT NULL DEFAULT 0,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  request_id uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  customer_id uuid NOT NULL,\n  grand_total numeric(20,6) NOT NULL DEFAULT 0,\n  submitted_by uuid,\n  warehouse_id uuid,\n  currency_code text NOT NULL,\n  document_date date NOT NULL,\n  document_type text NOT NULL DEFAULT 'sales_invoice'::text,\n  exchange_rate numeric(20,10) NOT NULL,\n  correlation_id uuid NOT NULL,\n  discount_total numeric(20,6) NOT NULL DEFAULT 0,\n  rounding_scale smallint NOT NULL,\n  sales_order_id uuid,\n  source_context jsonb NOT NULL DEFAULT '{}'::jsonb,\n  document_number text,\n  legal_entity_id uuid NOT NULL,\n  tender_metadata jsonb NOT NULL DEFAULT '{}'::jsonb,\n  client_timestamp timestamp with time zone NOT NULL,\n  exchange_rate_id uuid,\n  workflow_snapshot jsonb,\n  base_currency_code text NOT NULL,\n  external_reference text,\n  cash_bank_account_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS sales.sales_invoices;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'sales.sales_invoices';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.customer_receipts",
+      "script_content": "CREATE TABLE api.customer_receipts (\n  id uuid,\n  detail jsonb,\n  status text,\n  version bigint,\n  branch_id uuid,\n  tenant_id uuid,\n  base_total text,\n  customer_id uuid,\n  grand_total text,\n  currency_code text,\n  document_date date,\n  document_type text,\n  document_number text,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.customer_receipts;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.customer_receipts';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.journal_lines",
+      "script_content": "CREATE TABLE finance.journal_lines (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  party_id uuid,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  account_id uuid NOT NULL,\n  base_debit numeric(20,6) NOT NULL DEFAULT 0,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  base_credit numeric(20,6) NOT NULL DEFAULT 0,\n  line_number integer NOT NULL,\n  posting_date date NOT NULL,\n  currency_code text NOT NULL,\n  source_line_id uuid,\n  legal_entity_id uuid NOT NULL,\n  journal_entry_id uuid NOT NULL,\n  transaction_debit numeric(20,6) NOT NULL DEFAULT 0,\n  transaction_credit numeric(20,6) NOT NULL DEFAULT 0\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.journal_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.journal_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.cash_bank_accounts",
+      "script_content": "CREATE TABLE api.cash_bank_accounts (\n  id uuid,\n  detail jsonb,\n  branch_id uuid,\n  tenant_id uuid,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.cash_bank_accounts;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.cash_bank_accounts';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.sales_return_lines",
+      "script_content": "CREATE TABLE api.sales_return_lines (\n  id uuid,\n  detail jsonb,\n  branch_id uuid,\n  tenant_id uuid,\n  product_id uuid,\n  document_id uuid,\n  line_number integer,\n  legal_entity_id uuid,\n  delivery_line_id uuid,\n  sales_order_line_id uuid,\n  sales_invoice_line_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.sales_return_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.sales_return_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.lot_balances",
+      "script_content": "CREATE TABLE inventory.lot_balances (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  lot_id uuid NOT NULL,\n  version bigint NOT NULL DEFAULT 1,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  product_id uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  warehouse_id uuid NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  on_hand_quantity numeric(20,6) NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.lot_balances;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.lot_balances';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.receivable_balances",
+      "script_content": "CREATE TABLE api.receivable_balances (\n  id uuid,\n  detail jsonb,\n  due_date date,\n  party_id uuid,\n  branch_id uuid,\n  source_id uuid,\n  tenant_id uuid,\n  source_type text,\n  posting_date date,\n  currency_code text,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.receivable_balances;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.receivable_balances';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.sales_invoice_lines",
+      "script_content": "CREATE TABLE api.sales_invoice_lines (\n  id uuid,\n  detail jsonb,\n  branch_id uuid,\n  tenant_id uuid,\n  product_id uuid,\n  document_id uuid,\n  line_number integer,\n  legal_entity_id uuid,\n  delivery_line_id uuid,\n  sales_order_line_id uuid,\n  sales_invoice_line_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.sales_invoice_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.sales_invoice_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.journal_entries",
+      "script_content": "CREATE TABLE finance.journal_entries (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  status text NOT NULL DEFAULT 'draft'::text,\n  branch_id uuid NOT NULL,\n  source_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  request_id uuid NOT NULL,\n  source_type text NOT NULL,\n  posting_date date NOT NULL,\n  rule_version integer NOT NULL DEFAULT 1,\n  currency_code text NOT NULL,\n  exchange_rate numeric(20,10) NOT NULL,\n  correlation_id uuid NOT NULL,\n  document_number text NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  fiscal_period_id uuid NOT NULL,\n  base_currency_code text NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.journal_entries;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.journal_entries';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table sales.customer_receipts",
+      "script_content": "CREATE TABLE sales.customer_receipts (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  notes text,\n  terms text,\n  reason text,\n  status text NOT NULL DEFAULT 'draft'::text,\n  version bigint NOT NULL DEFAULT 1,\n  due_date date NOT NULL,\n  subtotal numeric(20,6) NOT NULL DEFAULT 0,\n  branch_id uuid NOT NULL,\n  posted_at timestamp with time zone,\n  posted_by uuid,\n  rate_date date NOT NULL,\n  tax_total numeric(20,6) NOT NULL DEFAULT 0,\n  tenant_id uuid NOT NULL,\n  base_total numeric(20,6) NOT NULL DEFAULT 0,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  request_id uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  customer_id uuid NOT NULL,\n  grand_total numeric(20,6) NOT NULL DEFAULT 0,\n  submitted_by uuid,\n  warehouse_id uuid,\n  currency_code text NOT NULL,\n  document_date date NOT NULL,\n  document_type text NOT NULL DEFAULT 'customer_receipt'::text,\n  exchange_rate numeric(20,10) NOT NULL,\n  correlation_id uuid NOT NULL,\n  discount_total numeric(20,6) NOT NULL DEFAULT 0,\n  rounding_scale smallint NOT NULL,\n  sales_order_id uuid,\n  source_context jsonb NOT NULL DEFAULT '{}'::jsonb,\n  document_number text,\n  legal_entity_id uuid NOT NULL,\n  tender_metadata jsonb NOT NULL DEFAULT '{}'::jsonb,\n  client_timestamp timestamp with time zone NOT NULL,\n  exchange_rate_id uuid,\n  workflow_snapshot jsonb,\n  base_currency_code text NOT NULL,\n  external_reference text,\n  cash_bank_account_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS sales.customer_receipts;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'sales.customer_receipts';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.stock_movement_lines",
+      "script_content": "CREATE TABLE api.stock_movement_lines (\n  id uuid,\n  detail jsonb,\n  branch_id uuid,\n  tenant_id uuid,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.stock_movement_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.stock_movement_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.posting_mappings",
+      "script_content": "CREATE TABLE finance.posting_mappings (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  status text NOT NULL DEFAULT 'active'::text,\n  purpose text NOT NULL,\n  version bigint NOT NULL DEFAULT 1,\n  tenant_id uuid NOT NULL,\n  account_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.posting_mappings;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.posting_mappings';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table sales.sales_return_lines",
+      "script_content": "CREATE TABLE sales.sales_return_lines (\n  id uuid NOT NULL,\n  unit_id uuid,\n  quantity numeric(20,6) NOT NULL,\n  snapshot jsonb NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  line_total numeric(20,6) NOT NULL DEFAULT 0,\n  product_id uuid,\n  tax_amount numeric(20,6) NOT NULL DEFAULT 0,\n  description text NOT NULL,\n  document_id uuid NOT NULL,\n  line_number integer NOT NULL,\n  base_quantity numeric(20,6) NOT NULL,\n  taxable_amount numeric(20,6) NOT NULL DEFAULT 0,\n  legal_entity_id uuid NOT NULL,\n  delivery_line_id uuid,\n  sales_order_line_id uuid,\n  sales_invoice_line_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS sales.sales_return_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'sales.sales_return_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.open_item_allocations",
+      "script_content": "CREATE TABLE api.open_item_allocations (\n  id uuid,\n  detail jsonb,\n  branch_id uuid,\n  tenant_id uuid,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.open_item_allocations;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.open_item_allocations';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.stock_movements",
+      "script_content": "CREATE TABLE inventory.stock_movements (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  branch_id uuid NOT NULL,\n  source_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  request_id uuid NOT NULL,\n  source_type text NOT NULL,\n  posting_date date NOT NULL,\n  warehouse_id uuid NOT NULL,\n  movement_kind text NOT NULL,\n  correlation_id uuid NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.stock_movements;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.stock_movements';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table sales.sales_invoice_lines",
+      "script_content": "CREATE TABLE sales.sales_invoice_lines (\n  id uuid NOT NULL,\n  unit_id uuid,\n  quantity numeric(20,6) NOT NULL,\n  snapshot jsonb NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  line_total numeric(20,6) NOT NULL DEFAULT 0,\n  product_id uuid,\n  tax_amount numeric(20,6) NOT NULL DEFAULT 0,\n  description text NOT NULL,\n  document_id uuid NOT NULL,\n  line_number integer NOT NULL,\n  base_quantity numeric(20,6) NOT NULL,\n  taxable_amount numeric(20,6) NOT NULL DEFAULT 0,\n  legal_entity_id uuid NOT NULL,\n  delivery_line_id uuid,\n  sales_order_line_id uuid,\n  sales_invoice_line_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS sales.sales_invoice_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'sales.sales_invoice_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table api.customer_receipt_lines",
+      "script_content": "CREATE TABLE api.customer_receipt_lines (\n  id uuid,\n  detail jsonb,\n  branch_id uuid,\n  tenant_id uuid,\n  product_id uuid,\n  document_id uuid,\n  line_number integer,\n  legal_entity_id uuid,\n  delivery_line_id uuid,\n  sales_order_line_id uuid,\n  sales_invoice_line_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.customer_receipt_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.customer_receipt_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.cash_bank_accounts",
+      "script_content": "CREATE TABLE finance.cash_bank_accounts (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  code text NOT NULL,\n  name text NOT NULL,\n  status text NOT NULL DEFAULT 'active'::text,\n  version bigint NOT NULL DEFAULT 1,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  account_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  account_kind text NOT NULL,\n  currency_code text NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  reconciliation_rules jsonb NOT NULL DEFAULT '{}'::jsonb\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.cash_bank_accounts;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.cash_bank_accounts';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.stock_valuations",
+      "script_content": "CREATE TABLE inventory.stock_valuations (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  version bigint NOT NULL DEFAULT 1,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  carrying_value numeric(20,6) NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  stock_balance_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.stock_valuations;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.stock_valuations';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table sales.customer_receipt_lines",
+      "script_content": "CREATE TABLE sales.customer_receipt_lines (\n  id uuid NOT NULL,\n  unit_id uuid,\n  quantity numeric(20,6) NOT NULL,\n  snapshot jsonb NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  line_total numeric(20,6) NOT NULL DEFAULT 0,\n  product_id uuid,\n  tax_amount numeric(20,6) NOT NULL DEFAULT 0,\n  description text NOT NULL,\n  document_id uuid NOT NULL,\n  line_number integer NOT NULL,\n  base_quantity numeric(20,6) NOT NULL,\n  taxable_amount numeric(20,6) NOT NULL DEFAULT 0,\n  legal_entity_id uuid NOT NULL,\n  delivery_line_id uuid,\n  sales_order_line_id uuid,\n  sales_invoice_line_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS sales.customer_receipt_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'sales.customer_receipt_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.open_item_allocations",
+      "script_content": "CREATE TABLE finance.open_item_allocations (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  reason text,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  write_off numeric(20,6) NOT NULL DEFAULT 0,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  request_id uuid NOT NULL,\n  posting_date date NOT NULL,\n  source_amount numeric(20,6) NOT NULL,\n  correlation_id uuid NOT NULL,\n  conversion_rate numeric(20,10) NOT NULL DEFAULT 1,\n  discount_amount numeric(20,6) NOT NULL DEFAULT 0,\n  legal_entity_id uuid NOT NULL,\n  exchange_rate_id uuid,\n  journal_entry_id uuid,\n  source_base_amount numeric(20,6) NOT NULL,\n  target_base_amount numeric(20,6) NOT NULL,\n  transaction_amount numeric(20,6) NOT NULL,\n  exchange_difference numeric(20,6) NOT NULL DEFAULT 0,\n  source_open_item_id uuid NOT NULL,\n  target_open_item_id uuid NOT NULL,\n  adjustment_base_amount numeric(20,6) NOT NULL DEFAULT 0\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.open_item_allocations;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.open_item_allocations';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.stock_movement_lines",
+      "script_content": "CREATE TABLE inventory.stock_movement_lines (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  lot_id uuid,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  base_value numeric(20,6) NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  product_id uuid NOT NULL,\n  serial_ids uuid[] NOT NULL DEFAULT '{}'::uuid[],\n  posting_date date NOT NULL,\n  warehouse_id uuid NOT NULL,\n  base_quantity numeric(20,6) NOT NULL,\n  source_line_id uuid NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  stock_movement_id uuid NOT NULL,\n  original_movement_line_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.stock_movement_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.stock_movement_lines';"
+    }
+  ],
+  "risk_assessment": {
+    "overall_risk": "low",
+    "deployment_risk": "safe_independent_deployment",
+    "rollback_complexity": "low",
+    "testing_requirements": [
+      "integration_testing",
+      "regression_testing",
+      "data_migration_testing"
+    ]
+  },
+  "recommendations": [
+    "Test all migration scripts in staging environment",
+    "Implement migration progress monitoring",
+    "Create detailed communication plan for stakeholders",
+    "Implement feature flags for gradual rollout"
+  ]
+}
