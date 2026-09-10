@@ -17,6 +17,7 @@ Future<ReceivablesController> pump(
   Size size = const Size(1440, 1000),
   bool edit = false,
   bool offline = false,
+  ReceivableKind kind = ReceivableKind.invoice,
   Set<String>? caps,
 }) async {
   await tester.binding.setSurfaceSize(size);
@@ -30,18 +31,21 @@ Future<ReceivablesController> pump(
     c = ReceivablesController(
       scope: f.scope,
       capabilities: caps ?? f.permissions,
-      repository: f.FakeReceivables(),
+      repository: f.FakeReceivables()
+        ..doc = ReceivableDocument(f.snapshot(kind: kind)),
       drafts: ReceivableDraftStore(
         EncryptedDraftRepository(db, DraftCipher(keyStore: f.MemoryKeys())),
         newId: () => '00000000-0000-4000-8000-000000000099',
       ),
       online: !offline,
     );
-    await c.open(ReceivableDocument(f.snapshot()));
+    await c.open(ReceivableDocument(f.snapshot(kind: kind)));
     if (edit) await c.edit();
   });
   addTearDown(db.close);
-  addTearDown(c.dispose);
+  addTearDown(() {
+    if (c.active) c.dispose();
+  });
   await tester.pumpWidget(
     RepaintBoundary(
       key: const Key('receivables-golden'),
@@ -133,6 +137,55 @@ void main() {
     await expectLater(
       find.byKey(const Key('receivables-golden')),
       matchesGoldenFile('goldens/receivables_recovery_1440_light.png'),
+    );
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('saved draft dialog hides records when scope is invalidated', (
+    tester,
+  ) async {
+    final c = await pump(tester, edit: true);
+    await tester.runAsync(c.closeEditor);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Recover local work'));
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Saved drafts & interrupted commands'), findsOneWidget);
+    expect(find.text('00000000-0000-4000-8000-000000000001'), findsOneWidget);
+    c.dispose();
+    await tester.pumpAndSettle();
+    expect(find.text('Business scope changed'), findsOneWidget);
+    expect(find.text('00000000-0000-4000-8000-000000000001'), findsNothing);
+    await tester.tap(find.text('Close'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('receipt editor offers governed tender and bank fields', (
+    tester,
+  ) async {
+    await pump(tester, edit: true, kind: ReceivableKind.receipt);
+    expect(find.text('Choose cash / bank account'), findsOneWidget);
+    expect(find.text('Receipt amount'), findsOneWidget);
+    expect(find.text('Tender method'), findsOneWidget);
+    expect(find.text('Direct service line'), findsNothing);
+    await expectLater(
+      find.byKey(const Key('receivables-golden')),
+      matchesGoldenFile('goldens/receivables_receipt_1440_light.png'),
+    );
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('return editor requires original source and disposition', (
+    tester,
+  ) async {
+    await pump(tester, edit: true, kind: ReceivableKind.credit);
+    expect(find.text('From invoice'), findsOneWidget);
+    expect(find.text('Return / credit reason'), findsOneWidget);
+    expect(find.text('Disposition'), findsOneWidget);
+    expect(find.text('Direct service line'), findsNothing);
+    await expectLater(
+      find.byKey(const Key('receivables-golden')),
+      matchesGoldenFile('goldens/receivables_credit_1440_light.png'),
     );
     expect(tester.takeException(), isNull);
   });

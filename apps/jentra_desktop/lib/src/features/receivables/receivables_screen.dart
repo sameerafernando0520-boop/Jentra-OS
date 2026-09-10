@@ -7,6 +7,7 @@ import 'receivables_controller.dart';
 import 'receivable_editor.dart';
 import 'receivable_statement.dart';
 import 'receivable_setup.dart';
+import 'receivable_picker.dart';
 
 class ReceivablesScreen extends ConsumerWidget {
   const ReceivablesScreen({super.key});
@@ -63,8 +64,9 @@ class _WorkspaceState extends State<ReceivablesWorkspace> {
   ReceivablesController get c => widget.controller;
   Future<void> reasonedAction(String action) async {
     final text = TextEditingController();
-    final reason = await showDialog<String>(
+    final reason = await showScopedReceivableDialog<String>(
       context: context,
+      controller: c,
       builder: (context) => AlertDialog(
         title: Text(
           '${action[0].toUpperCase()}${action.substring(1)} document',
@@ -102,8 +104,9 @@ class _WorkspaceState extends State<ReceivablesWorkspace> {
       slots.addAll(page.items);
       cursor = page.nextCursor ?? '';
       if (!mounted) return;
-      final selected = await showDialog<String>(
+      final selected = await showScopedReceivableDialog<String>(
         context: context,
+        controller: c,
         builder: (context) => StatefulBuilder(
           builder: (context, setDialog) => AlertDialog(
             title: const Text('Saved drafts & interrupted commands'),
@@ -161,8 +164,9 @@ class _WorkspaceState extends State<ReceivablesWorkspace> {
   }
 
   Future<void> discard() async {
-    final yes = await showDialog<bool>(
+    final yes = await showScopedReceivableDialog<bool>(
       context: context,
+      controller: c,
       builder: (context) => AlertDialog(
         title: const Text('Discard local changes?'),
         content: const Text(

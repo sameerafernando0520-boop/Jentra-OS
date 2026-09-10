@@ -3,6 +3,16 @@ create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
 select no_plan();
 
+select is((select count(*) from pg_policies where schemaname='finance' and tablename='cash_bank_accounts'
+ and cmd='SELECT' and roles=array['authenticated']::name[]),1::bigint,'cash/bank reads use one equivalent permissive policy');
+select is((select count(*) from pg_constraint c join pg_class t on t.oid=c.conrelid
+ join pg_namespace n on n.oid=t.relnamespace where c.contype='f' and n.nspname in ('sales','finance','inventory')
+ and t.relname in ('posting_mappings','cash_bank_accounts','deliveries','delivery_lines','sales_invoices','sales_invoice_lines',
+ 'customer_receipts','customer_receipt_lines','sales_returns','sales_return_lines','journal_entries','journal_lines',
+ 'open_items','open_item_allocations','lots','serials','lot_balances','stock_valuations','stock_movements','stock_movement_lines')
+ and not exists(select 1 from pg_index i where i.indrelid=c.conrelid and i.indisvalid and i.indisready and i.indpred is null
+ and (i.indkey::smallint[])[0:cardinality(c.conkey)-1] @> c.conkey)),0::bigint,'all new foreign keys have a leading-column index');
+
 select has_function('api','post_delivery',
   array['uuid','uuid','uuid','uuid','uuid','timestamp with time zone','jsonb','bigint'],
   'AC-305 delivery posts through a named scoped command');
@@ -250,6 +260,9 @@ select is((select status from inventory.serials where id=pg_temp.fid('serial.1')
 select is((select on_hand_quantity from inventory.lot_balances where lot_id=pg_temp.fid('batch')),1::numeric,'lot residual exact');
 select is((select base_quantity from inventory.stock_reservations where sales_order_line_id=pg_temp.fid('tracked.lot') and status='active'),1::numeric,'tracked reservation residual exact');
 
+select throws_ok($$select pg_temp.call('upsert_receivables_setup',jsonb_build_object('id',pg_temp.fid('missing.resource.bank'),
+ 'code','INVALID-CASH','name','Missing resource','account_kind','cash','account_id',pg_temp.fid('cash'),'currency_code','LKR'))$$,
+ '22023','SETUP_PAYLOAD_INVALID','setup rejects a missing resource type before creating a bank account');
 select lives_ok($$select pg_temp.call('upsert_receivables_setup',jsonb_build_object('resource','cash_bank_account','id',pg_temp.fid('new.bank'),
  'code','NEW-CASH','name','New cash drawer','account_kind','cash','account_id',pg_temp.fid('cash'),'currency_code','LKR'))$$,'cash/bank prerequisites have a governed setup command');
 select throws_ok($$select pg_temp.call('upsert_receivables_setup',jsonb_build_object('resource','posting_mapping','purpose','receivable_control',

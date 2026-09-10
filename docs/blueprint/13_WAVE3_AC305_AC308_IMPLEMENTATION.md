@@ -1,10 +1,12 @@
 # AC-305–AC-308 delivery and receivables implementation
 
-Status: implementation in progress, authorized 2026-09-07 under the approved Wave 3 specification.
+Status: implemented and deployed to synthetic development, verified 2026-09-10.
+Authenticated native acceptance and production release are not claimed. See
+[the verification and remaining-work handoff](15_WAVE3_AC305_AC308_VERIFICATION.md).
 
 Scope: FR-326–FR-334 plus the shared posting, exact-value, authorization, and
-recovery requirements needed by these four acceptance criteria. AC-304 is being
-implemented concurrently by the user.
+recovery requirements needed by these four acceptance criteria. AC-304 was
+implemented concurrently by the user; its files and applied migration are preserved.
 
 ## Integration boundary
 
@@ -44,6 +46,38 @@ implemented concurrently by the user.
 
 ## Development migration rollback runbook
 
+Deployment plan (2026-09-10): consolidate the seven un-applied AC-305–AC-308
+candidates into one atomic expansion migration. No SQL from the applied AC-304
+migration is edited. The credit-exposure integration preserves its API signatures
+and fails closed if the expected live function definitions have changed.
+
+1. Preflight: confirm development project health and migration ledger; compare
+   live schema with the complete rollback-tested candidate; require the
+   compatibility checker to exit zero. Failure means no application.
+2. Atomic application: apply the entire expansion with the migration service.
+   A SQL error must roll back the transaction. If the transport outcome is unclear,
+   inspect the ledger and object definitions before retrying; do not blindly replay.
+3. Verification: rerun strict SQL suites against the applied objects in rollback
+   transactions, inspect RLS/security advisors, reconcile source with the ledger,
+   and confirm synthetic fixtures did not persist. On failure, keep new posting
+   workflows out of use and prepare a tested additive correction.
+4. Client handoff: use the tested desktop build for synthetic review only. If
+   runtime verification fails, return to the prior client release while retaining
+   the compatible database expansion and all posted data. Native authenticated
+   walkthrough and user acceptance remain separate gates.
+
+The compatibility tool's generated SQL and DROP suggestions are analysis
+artifacts, not approved executable migration or rollback scripts.
+
+Advisor follow-up phase: apply a second atomic, additive migration after the
+85-assertion candidate passes in rollback. It adds leading-reference FK indexes
+only on the twenty new relations and combines the two cash/bank SELECT predicates
+with exactly the same OR semantics. The column/API schema is unchanged. Existing
+tenant-leading indexes remain intact. If the transaction fails, it rolls back;
+after success, retain the indexes and use an additive correction if required.
+Do not rewrite the first applied migration or drop indexes based solely on the
+empty development database's unused-index counters.
+
 Before application: candidate DDL and all synthetic fixtures run inside one
 rollback transaction. Any assertion failure aborts the candidate. Verify that no
 candidate objects, fixture rows, or ledger entries persist afterward.
@@ -53,5 +87,6 @@ fails, stop using the affected new posting commands and prepare an additive
 correction. Do not drop financial records or restore a permissive implementation.
 The existing AC-304 command surface remains available throughout the expansion.
 
-Development application and complete acceptance are recorded only after evidence
-exists. This document is not a completion or deployment claim.
+Development application is recorded in the verification handoff with live ledger
+versions and source fingerprints. User acceptance and production release remain
+separate gates; neither is inferred from continuation messages.
