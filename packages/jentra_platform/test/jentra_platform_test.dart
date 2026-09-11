@@ -8,12 +8,16 @@ import 'package:jentra_platform/jentra_platform.dart';
 
 final class _MemoryKeyStore implements SecretKeyStore {
   final values = <String, String>{};
+  bool failWrites = false;
 
   @override
   Future<String?> read(String key) async => values[key];
 
   @override
-  Future<void> write(String key, String value) async => values[key] = value;
+  Future<void> write(String key, String value) async {
+    if (failWrites) throw StateError('Simulated credential write failure');
+    values[key] = value;
+  }
 }
 
 void main() {
@@ -52,6 +56,34 @@ void main() {
       throwsA(isA<SecretBoxAuthenticationError>()),
     );
   });
+
+  test('simultaneous first saves use one durable encryption key', () async {
+    final keys = _MemoryKeyStore();
+    final cipher = DraftCipher(keyStore: keys);
+    final encrypted = await Future.wait([
+      for (var i = 0; i < 8; i++) cipher.encrypt('offline draft $i'),
+    ]);
+    final restarted = DraftCipher(keyStore: keys);
+    expect(await Future.wait(encrypted.map(restarted.decrypt)), [
+      for (var i = 0; i < 8; i++) 'offline draft $i',
+    ]);
+  });
+
+  test(
+    'credential failure is retryable without retaining an unsaved key',
+    () async {
+      final keys = _MemoryKeyStore()..failWrites = true;
+      final cipher = DraftCipher(keyStore: keys);
+      await expectLater(cipher.encrypt('not saved'), throwsStateError);
+      expect(keys.values, isEmpty);
+      keys.failWrites = false;
+      final encrypted = await cipher.encrypt('saved after retry');
+      expect(
+        await DraftCipher(keyStore: keys).decrypt(encrypted),
+        'saved after retry',
+      );
+    },
+  );
 
   test(
     'partial encrypted drafts survive restart and retain conflict versions — AC-217',

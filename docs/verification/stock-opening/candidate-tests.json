@@ -1,0 +1,245 @@
+[
+  {
+    "message": "ok 1 - governed stock opening documents exist"
+  },
+  {
+    "message": "ok 2 - opening draft command exists"
+  },
+  {
+    "message": "ok 3 - opening workflow command exists"
+  },
+  {
+    "message": "ok 4 - opening posting command exists"
+  },
+  {
+    "message": "ok 5 - sub-cent value rejected"
+  },
+  {
+    "message": "ok 6 - quantity respects unit precision"
+  },
+  {
+    "message": "ok 7 - service cannot enter stock"
+  },
+  {
+    "message": "ok 8 - lot requires code"
+  },
+  {
+    "message": "ok 9 - expired lot rejected"
+  },
+  {
+    "message": "ok 10 - duplicate serials rejected"
+  },
+  {
+    "message": "ok 11 - serial count must match"
+  },
+  {
+    "message": "ok 12 - duplicate line ids rejected"
+  },
+  {
+    "message": "ok 13 - offset must be equity"
+  },
+  {
+    "message": "ok 14 - foreign warehouse rejected"
+  },
+  {
+    "message": "ok 15 - save replay returns original receipt"
+  },
+  {
+    "message": "ok 16 - quantities remain decimal strings"
+  },
+  {
+    "message": "ok 17 - exact computed total"
+  },
+  {
+    "message": "ok 18 - stale save rejected"
+  },
+  {
+    "message": "ok 19 - draft cannot post"
+  },
+  {
+    "message": "ok 20 - foreign document cannot be overwritten"
+  },
+  {
+    "message": "ok 21 - foreign tenant remains unchanged"
+  },
+  {
+    "message": "ok 22 - missing approval step fails closed"
+  },
+  {
+    "message": "ok 23 - configuration cannot bypass approval"
+  },
+  {
+    "message": "ok 24 - opening submits"
+  },
+  {
+    "message": "ok 25 - opening waits for approver"
+  },
+  {
+    "message": "ok 26 - creator or submitter cannot approve"
+  },
+  {
+    "message": "ok 27 - unconfigured role cannot approve"
+  },
+  {
+    "message": "ok 28 - approval requires MFA"
+  },
+  {
+    "message": "ok 29 - rejection requires note"
+  },
+  {
+    "message": "ok 30 - independent approver approves"
+  },
+  {
+    "message": "ok 31 - closed period blocks posting"
+  },
+  {
+    "message": "ok 32 - changed mapping needs renewed approval"
+  },
+  {
+    "message": "ok 33 - late journal failure rolls back"
+  },
+  {
+    "message": "ok 34 - late failure leaves no movement"
+  },
+  {
+    "message": "ok 35 - late failure leaves no balance"
+  },
+  {
+    "message": "ok 36 - late failure leaves no receipt"
+  },
+  {
+    "message": "ok 37 - approved opening posts"
+  },
+  {
+    "message": "ok 38 - exact base quantity"
+  },
+  {
+    "message": "ok 39 - exact carrying value"
+  },
+  {
+    "message": "ok 40 - journal balances exactly"
+  },
+  {
+    "message": "ok 41 - inventory debit matches valuation"
+  },
+  {
+    "message": "ok 42 - equity offsets inventory"
+  },
+  {
+    "message": "ok 43 - lost response retry replays posting"
+  },
+  {
+    "message": "ok 44 - only one journal after retry"
+  },
+  {
+    "message": "ok 45 - posted document cannot change"
+  },
+  {
+    "message": "ok 46 - posted document cannot be deleted"
+  },
+  {
+    "message": "ok 47 - second opening rejected"
+  },
+  {
+    "message": "ok 48 - multiple lots and serials post atomically"
+  },
+  {
+    "message": "ok 49 - lot balances match quantity"
+  },
+  {
+    "message": "ok 50 - lot lines aggregate to product balance"
+  },
+  {
+    "message": "ok 51 - serial identities available"
+  },
+  {
+    "message": "ok 52 - movement retains serial identities"
+  },
+  {
+    "message": "ok 53 - latest editor cannot approve"
+  },
+  {
+    "message": "ok 54 - recall requires reason"
+  },
+  {
+    "message": "ok 55 - pending opening can be cancelled"
+  },
+  {
+    "message": "ok 56 - nonzero legacy quantity prevents opening"
+  },
+  {
+    "message": "ok 57 - nonzero legacy valuation prevents opening"
+  },
+  {
+    "message": "ok 58 - empty historical projection can receive first opening"
+  },
+  {
+    "message": "ok 59 - reused key cannot change request"
+  },
+  {
+    "message": "ok 60 - JSON numeric quantity is rejected"
+  },
+  {
+    "message": "ok 61 - posting emits one audit event"
+  },
+  {
+    "message": "ok 62 - posting emits one process event"
+  },
+  {
+    "message": "ok 63 - posting emits one outbox event"
+  },
+  {
+    "message": "ok 64 - independent decision is retained"
+  },
+  {
+    "message": "ok 65 - first step does not prematurely approve"
+  },
+  {
+    "message": "ok 66 - incomplete approval blocks posting"
+  },
+  {
+    "message": "ok 67 - second scoped approver completes approval"
+  },
+  {
+    "message": "ok 68 - fully approved multistep opening posts"
+  },
+  {
+    "message": "ok 69 - both decision steps retained"
+  },
+  {
+    "message": "ok 70 - every opening journal balances"
+  },
+  {
+    "message": "ok 71 - all carrying values reconcile to inventory control"
+  },
+  {
+    "message": "ok 72 - authenticated role can save submit and approve through named commands"
+  },
+  {
+    "message": "ok 73 - authenticated role posts approved opening through named command"
+  },
+  {
+    "message": "ok 74 - authorized caller reads opening"
+  },
+  {
+    "message": "ok 75 - missing cost permission hides values"
+  },
+  {
+    "message": "ok 76 - cost permission required to save"
+  },
+  {
+    "message": "ok 77 - private helper cannot bypass RLS"
+  },
+  {
+    "message": "ok 78 - direct writes revoked"
+  },
+  {
+    "message": "ok 79 - anonymous posting revoked"
+  },
+  {
+    "message": "ok 80 - outsider cannot read openings"
+  },
+  {
+    "message": "1..80"
+  }
+]

@@ -484,6 +484,14 @@ class _ReceivableEditorState extends State<ReceivableEditor> {
             icon: const Icon(Icons.cloud_upload_outlined),
             label: const Text('Save & calculate'),
           ),
+          if (c.localSaveFailed)
+            OutlinedButton.icon(
+              onPressed: c.canEdit && !c.saving
+                  ? () => c.saveLocal(form)
+                  : null,
+              icon: const Icon(Icons.save_outlined),
+              label: const Text('Retry local save'),
+            ),
           OutlinedButton(
             onPressed: !c.busy && !c.pending ? c.closeEditor : null,
             child: const Text('Close · keep local draft'),

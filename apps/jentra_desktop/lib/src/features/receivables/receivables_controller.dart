@@ -167,17 +167,35 @@ final class ReceivablesController extends ChangeNotifier {
       'currency_code': 'LKR',
       'lines': <Object?>[],
     };
-    await drafts.save(scope, slot!, form!, null);
-    local = await drafts.load(scope, slot!);
+    await _persistForm(slot!, form!, null);
     epoch++;
   });
   Future<void> edit() => _run(() async {
     if (!canManage || document?.editable != true || local != null) return;
     form = document!.toDraft();
-    await drafts.save(scope, slot!, form!, document!.version);
-    local = await drafts.load(scope, slot!);
+    await _persistForm(slot!, form!, document!.version);
     epoch++;
   });
+  Future<void> _persistForm(
+    String savedSlot,
+    Map<String, Object?> snapshot,
+    int? version,
+  ) async {
+    try {
+      await drafts.save(scope, savedSlot, snapshot, version);
+      final saved = await drafts.load(scope, savedSlot);
+      localSaveFailed = false;
+      if (!_disposed) local = saved;
+    } catch (_) {
+      localSaveFailed = true;
+      throw const ReceivableFailure(
+        'LOCAL_STORAGE_FULL',
+        'Local storage could not save these edits. Keep this editor open and retry saving.',
+        definite: true,
+      );
+    }
+  }
+
   // Serialize field snapshots through the draft store; the UI awaits this before
   // changing records or sending a command, so no unpersisted edit is abandoned.
   Future<void> saveLocal(Map<String, Object?> value) async {
@@ -188,12 +206,9 @@ final class ReceivablesController extends ChangeNotifier {
     form = snapshot;
     saving = true;
     error = null;
-    final job = _saveTail.then((_) async {
-      await drafts.save(scope, savedSlot, snapshot, version);
-      final saved = await drafts.load(scope, savedSlot);
-      localSaveFailed = false;
-      if (!_disposed) local = saved;
-    });
+    final job = _saveTail.then(
+      (_) => _persistForm(savedSlot, snapshot, version),
+    );
     _saveTail = job.catchError((Object e) {
       localSaveFailed = true;
       error = 'Local save failed: $e';
@@ -222,6 +237,7 @@ final class ReceivablesController extends ChangeNotifier {
   Future<void> discardAndReload() => _run(() async {
     if (slot == null || pending) return;
     await drafts.discard(scope, slot!);
+    localSaveFailed = false;
     local = null;
     form = null;
     if (document != null && online) {
@@ -243,6 +259,7 @@ final class ReceivablesController extends ChangeNotifier {
     }
     kind = selected;
     slot = recoverySlot;
+    localSaveFailed = false;
     local = recovered;
     form =
         recoverySlot.contains(':allocation-') ||
@@ -352,7 +369,11 @@ final class ReceivablesController extends ChangeNotifier {
     Map<String, Object?> payload,
     int? version,
   ) async {
-    if (local == null &&
+    if (form != null) {
+      // A failed autosave can leave an older encrypted form on disk. Persist
+      // the current fields before preparing a retry envelope or dispatching.
+      await _persistForm(slot!, form!, version);
+    } else if (local == null &&
         document != null &&
         rpc != 'allocate_customer_receipt' &&
         rpc != 'upsert_receivables_setup') {

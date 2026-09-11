@@ -3,12 +3,15 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jentra_domain/jentra_receivables.dart';
 
 import 'app_providers.dart';
 import 'features/auth/login_screen.dart';
 import 'features/catalogue/component_catalogue_screen.dart';
 import 'features/crm/crm_screen.dart';
 import 'features/receivables/receivables_screen.dart';
+import 'features/stock_opening/stock_opening_screen.dart';
+import 'features/stock_opening/stock_opening_controller.dart';
 import 'features/sales/quotation_screen.dart';
 import 'features/sales/sales_order_screen.dart';
 import 'features/dashboard/dashboard_screen.dart';
@@ -55,12 +58,21 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/setup',
-            builder: (context, state) => const BusinessSetupScreen(),
+            builder: (context, state) => BusinessSetupScreen(
+              key: ValueKey(state.uri.queryParameters['resource']),
+              initialResource: BusinessSetupResource.values
+                  .where((r) => r.name == state.uri.queryParameters['resource'])
+                  .firstOrNull,
+            ),
           ),
           GoRoute(path: '/crm', builder: (context, state) => const CrmScreen()),
           GoRoute(
             path: '/receivables',
-            builder: (context, state) => const ReceivablesScreen(),
+            builder: (context, state) => ReceivablesScreen(
+              initialKind: ReceivableKind.values
+                  .where((k) => k.wire == state.uri.queryParameters['kind'])
+                  .firstOrNull,
+            ),
           ),
           GoRoute(
             path: '/sales',
@@ -74,16 +86,18 @@ final routerProvider = Provider<GoRouter>((ref) {
               sourceQuotationId: state.uri.queryParameters['source'],
             ),
           ),
+          GoRoute(
+            path: '/inventory',
+            builder: (context, state) => const StockOpeningScreen(),
+            onExit: (context, state) async =>
+                await ref.read(stockOpeningControllerProvider)?.canLeave() ??
+                true,
+          ),
           for (final module in const [
             (
               'procurement',
               'Procurement',
               'Requisitions, approvals, RFQs and purchasing.',
-            ),
-            (
-              'inventory',
-              'Inventory',
-              'Stock, warehouses, transfers and valuation.',
             ),
             (
               'finance',

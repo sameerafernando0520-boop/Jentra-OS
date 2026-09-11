@@ -1,0 +1,40 @@
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/auth_capabilities_test.dart
+00:00 +0: MFA completion reloads capabilities without changing actor or scope
+00:00 +0 -1: MFA completion reloads capabilities without changing actor or scope [E]
+  Expected: Set:['core.setup.manage', 'inventory.cost.view', 'inventory.adjustments.post']
+    Actual: Set:[]
+     Which: does not contain 'core.setup.manage'
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\auth_capabilities_test.dart 93:5               main.<fn>
+  
+00:00 +0 -1: same-actor token refresh removes permissions revoked on the server
+00:00 +0 -2: same-actor token refresh removes permissions revoked on the server [E]
+  Expected: empty
+    Actual: Set:['core.setup.manage']
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\auth_capabilities_test.dart 104:5              main.<fn>
+  
+00:00 +0 -2: switching accounts reloads tenant membership instead of reusing the first owner
+00:00 +0 -3: switching accounts reloads tenant membership instead of reusing the first owner [E]
+  Expected: 'tenant-approver'
+    Actual: 'tenant-owner'
+     Which: is different.
+            Expected: tenant-approver
+              Actual: tenant-owner
+                             ^
+             Differ at offset 7
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\auth_capabilities_test.dart 113:5              main.<fn>
+  
+00:00 +0 -3: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/auth_capabilities_test.dart: MFA completion reloads capabilities without changing actor or scope
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/auth_capabilities_test.dart: same-actor token refresh removes permissions revoked on the server
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/auth_capabilities_test.dart: switching accounts reloads tenant membership instead of reusing the first owner

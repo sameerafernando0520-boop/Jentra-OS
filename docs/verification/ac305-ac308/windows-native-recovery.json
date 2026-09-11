@@ -1,0 +1,68 @@
+{
+  "checkedAtUtc": "2026-09-10T19:35:22.2021274Z",
+  "sourceHead": "f3944014eeabf57862aedf1cabf4f78168cd9c86",
+  "runId": "7d124cab-909f-4443-8aac-19d7a83c0ab0",
+  "configuration": "Windows release; native secure storage and disk SQLite; synthetic gateway",
+  "passed": true,
+  "status": "passed",
+  "phaseResults": [
+    {
+      "phase": "seed",
+      "passed": true,
+      "pid": 8668,
+      "checkedAtUtc": "2026-09-10T19:34:34.237676Z",
+      "nativeKeyWrites": 1,
+      "databaseClosed": false,
+      "backend": "file-backed simulated response loss; no network",
+      "authenticatedWorkflowVerified": false
+    },
+    {
+      "phase": "interrupt",
+      "passed": true,
+      "pid": 11636,
+      "checkedAtUtc": "2026-09-10T19:34:34.841186Z",
+      "nativeKeyWrites": 0,
+      "databaseClosed": false,
+      "backend": "file-backed simulated response loss; no network",
+      "authenticatedWorkflowVerified": false
+    },
+    {
+      "phase": "retry",
+      "passed": true,
+      "pid": 10428,
+      "checkedAtUtc": "2026-09-10T19:34:35.405916Z",
+      "nativeKeyWrites": 0,
+      "databaseClosed": true,
+      "backend": "file-backed simulated response loss; no network",
+      "authenticatedWorkflowVerified": false
+    },
+    {
+      "phase": "verify",
+      "passed": true,
+      "pid": 21804,
+      "checkedAtUtc": "2026-09-10T19:34:35.724924Z",
+      "nativeKeyWrites": 0,
+      "databaseClosed": true,
+      "backend": "file-backed simulated response loss; no network",
+      "authenticatedWorkflowVerified": false
+    },
+    {
+      "phase": "cleanup",
+      "passed": true,
+      "pid": 23856,
+      "checkedAtUtc": "2026-09-10T19:34:36.188684Z",
+      "nativeKeyWrites": 0,
+      "databaseClosed": true,
+      "backend": "file-backed simulated response loss; no network",
+      "authenticatedWorkflowVerified": false
+    }
+  ],
+  "forcedTerminationWithDatabaseOpen": [
+    "seed",
+    "interrupt"
+  ],
+  "ordinaryReleaseBuildRestored": true,
+  "authenticatedWorkflowVerified": false,
+  "crossProcessSimultaneousFirstLaunchVerified": false,
+  "phasesDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_desktop\\build\\native-recovery-7d124cab-909f-4443-8aac-19d7a83c0ab0"
+}

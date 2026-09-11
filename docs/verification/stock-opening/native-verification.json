@@ -1,0 +1,106 @@
+{
+  "verifiedAtUtc": "2026-09-11T00:32:15.384539+00:00",
+  "localDate": "2026-09-11",
+  "scope": "Native stock-opening workspace; synthetic development only",
+  "status": "Implemented and locally verified; authenticated acceptance pending",
+  "tests": {
+    "newPassing": 38,
+    "uniquePassingAcrossSuitesAndAffectedReruns": 313,
+    "packages": {
+      "domain": 81,
+      "platform": 81,
+      "designSystem": 10,
+      "desktop": 141
+    },
+    "newTests": {
+      "domain": 3,
+      "platform": 15,
+      "controller": 11,
+      "workspace": 9
+    },
+    "initialDesktop": {
+      "passed": 126,
+      "failedOldSidebarGoldens": 14,
+      "log": "native-desktop-tests.log"
+    },
+    "reviewedSidebarRerun": {
+      "passed": 32,
+      "log": "native-sidebar-tests.log",
+      "goldensUpdatedDuringRerun": false
+    },
+    "recoveryRegression": {
+      "redLog": "native-register-recovery-red.log",
+      "finalControllerAndWorkspacePassed": 20,
+      "finalLog": "native-opening-final-tests.log"
+    },
+    "countMethod": "126 initial desktop passes plus 14 corrected sidebar cases plus one new recovery regression = 141 unique desktop tests. Package and affected-file reruns are not double-counted."
+  },
+  "analysis": {
+    "result": "No issues found",
+    "log": "native-analyzer.log"
+  },
+  "format": {
+    "filesChecked": 18,
+    "changed": 0,
+    "log": "native-format.log"
+  },
+  "visuals": {
+    "newGoldensReviewed": 6,
+    "updatedSidebarGoldens": 14,
+    "sidebarDifferenceEvidence": "native-sidebar-differences.json",
+    "provenance": "Fresh synthetic Flutter widget-test renders; not authenticated screenshots"
+  },
+  "windows": {
+    "buildPassed": true,
+    "buildSeconds": 88.4,
+    "buildLog": "native-windows-build.log",
+    "smoke": {
+      "checkedAtUtc": "2026-09-10T20:53:14.2237949Z",
+      "configuration": "Ordinary Windows release; unconfigured backend",
+      "target": "lib/main.dart",
+      "observedSeconds": 10,
+      "responding": true,
+      "processOwnedWindowCount": 3,
+      "pid": 17220,
+      "executable": "C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\jentra_desktop.exe",
+      "executableSha256": "bbfd496c81e21fea2c5992fb72d1c1f08b8194ecb0d80550b2fba5a05dc1228c",
+      "authenticatedWorkflowVerified": false,
+      "openingProcessKillRecoveryVerified": false,
+      "stoppedByProbe": true
+    }
+  },
+  "database": {
+    "projectId": "xpdoufauvrbdmxgngetv",
+    "readOnlyRefresh": {
+      "migration_count": 32,
+      "latest_migration": "20260910201410",
+      "users": 0,
+      "tenants": 0,
+      "opening_rpc_definitions": {
+        "post_stock_opening": "01c4b792e340576343f38b53bfa88c11",
+        "upsert_stock_opening": "c666adededec63c1d748d195b792342a",
+        "transition_stock_opening": "9511bf6f8d13f6c1ab3cfc4e67dfa4d6"
+      }
+    },
+    "openingDefinitionsMatchPriorInstalledEvidence": true,
+    "immutableMigrationSha256": "063f8a8b91c502730ed51e52f014faf080fbe8b497c611e55e0f8054de44a3d0",
+    "priorDatabaseAssertions": 549,
+    "sqlSuitesRerunForNativeSlice": false,
+    "databaseMutationsForNativeSlice": false
+  },
+  "remaining": [
+    "User-managed synthetic owner and independent approver accounts",
+    "MFA and governed business masters",
+    "Development-configured Windows rebuild and authenticated opening workflow",
+    "Authenticated stock and journal reconciliation and continued sales-to-receivables acceptance",
+    "Native opening-specific process-kill recovery walkthrough",
+    "User signoff"
+  ],
+  "git": {
+    "staged": false,
+    "committed": false,
+    "pushed": false,
+    "concurrentSourcePreserved": true
+  },
+  "productionChanged": false
+}

@@ -1,0 +1,85 @@
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/auth_capabilities_test.dart
+00:00 +0: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/auth_capabilities_test.dart: MFA completion reloads capabilities without changing actor or scope
+00:00 +1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/auth_capabilities_test.dart: same-actor token refresh removes permissions revoked on the server
+00:00 +2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/auth_capabilities_test.dart: switching accounts reloads tenant membership instead of reusing the first owner
+00:06 +3: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/quick_create_test.dart: (setUpAll)
+00:06 +3: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/quick_create_test.dart: customer quick create opens the party workspace and its create control
+00:09 +4: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/quick_create_test.dart: quotation quick create leaves the menu and opens sales
+00:09 +5: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/receivables_workspace_test.dart: invoice shortcut selects invoices from a delivery register
+00:10 +6: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/receivables_workspace_test.dart: invoice shortcut selects invoices from a delivery register
+00:10 +7: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/receivables_workspace_test.dart: invoice shortcut selects invoices from a delivery register
+00:12 +7: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/quick_create_test.dart: an open create menu drops actions when access changes
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: no matching candidates
+  Actual: _AncestorWidgetFinder:<Found 1 widget with type "ListTile" that are ancestors of widget
+with text "Customer": [
+            ListTile(onTap: Closure: () => void, dependencies: [Directionality,
+InheritedCupertinoTheme, _InheritedTheme, _LocalizationsScope-[GlobalKey#fa769]]),
+          ]>
+   Which: means one was found but none were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/quick_create_test.dart:155:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/quick_create_test.dart line 155
+The test description was:
+  an open create menu drops actions when access changes
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:12 +7 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/receivables_workspace_test.dart: invoice shortcut selects invoices from a delivery register
+00:12 +7 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/quick_create_test.dart: an open create menu drops actions when access changes [E]
+  Test failed. See exception logs above.
+  The test description was: an open create menu drops actions when access changes
+  
+00:12 +7 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/receivables_workspace_test.dart: invoice shortcut selects invoices from a delivery register
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown running a test:
+pumpAndSettle timed out
+
+When the exception was thrown, this was the stack:
+#0      WidgetTester.pumpAndSettle.<anonymous closure> (package:flutter_test/src/widget_tester.dart:717:11)
+<asynchronous suspension>
+#1      TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:130:27)
+<asynchronous suspension>
+#2      pump (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/receivables_workspace_test.dart:69:3)
+<asynchronous suspension>
+#3      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/receivables_workspace_test.dart:77:15)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  invoice shortcut selects invoices from a delivery register
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:14 +7 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/receivables_workspace_test.dart: invoice shortcut selects invoices from a delivery register [E]
+  Test failed. See exception logs above.
+  The test description was: invoice shortcut selects invoices from a delivery register
+  
+00:14 +7 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/receivables_workspace_test.dart: invoice shortcut preserves a delivery draft already being edited
+00:15 +8 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/receivables_workspace_test.dart: invoice source detail renders exact totals and guarded actions
+00:15 +9 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/receivables_workspace_test.dart: invoice editor dark theme
+00:15 +10 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/receivables_workspace_test.dart: narrow editor at 200 percent text remains scrollable
+00:15 +11 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/receivables_workspace_test.dart: offline and view-only users cannot dispatch mutations
+00:15 +12 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/receivables_workspace_test.dart: storage failure keeps the offline editor and offers retry
+00:16 +13 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/receivables_workspace_test.dart: uncertain result displays saved-command retry
+00:16 +14 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/receivables_workspace_test.dart: saved draft dialog hides records when scope is invalidated
+00:17 +15 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/receivables_workspace_test.dart: receipt editor offers governed tender and bank fields
+00:17 +16 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/receivables_workspace_test.dart: return editor requires original source and disposition
+00:17 +17 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/receivables_workspace_test.dart: (tearDownAll)
+00:17 +17 -2: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/quick_create_test.dart: an open create menu drops actions when access changes
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/receivables_workspace_test.dart: invoice shortcut selects invoices from a delivery register

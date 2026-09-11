@@ -1,0 +1,45 @@
+{
+  "schema_before": "{\n  \"tables\": {\n    \"api.lots\": {\n      \"columns\": {\n        \"id\": {\n          \"type\": \"uuid\",\n          \"default\": null,\n          \"nullable\": true\n        },\n        \"detail\": {\n          \"type\": \"jsonb\",\n          \"default\": null,\n          \"nullable\": true\n        },\n        \"branch_id\": {\n          \"type\": \"text\",\n          \"default\": null,\n          \"nullable\": true\n        },\n        \"tenant_id\": {\n          \"type\": \"uuid\",\n          \"default\": null,\n          \"nullable\": true\n        },\n...",
+  "schema_after": "{\n  \"tables\": {\n    \"api.lots\": {\n      \"columns\": {\n        \"id\": {\n          \"type\": \"uuid\",\n          \"default\": null,\n          \"nullable\": true\n        },\n        \"detail\": {\n          \"type\": \"jsonb\",\n          \"default\": null,\n          \"nullable\": true\n        },\n        \"branch_id\": {\n          \"type\": \"text\",\n          \"default\": null,\n          \"nullable\": true\n        },\n        \"tenant_id\": {\n          \"type\": \"uuid\",\n          \"default\": null,\n          \"nullable\": true\n        },\n...",
+  "analysis_date": "2026-09-11T01:39:46.914677",
+  "overall_compatibility": "fully_compatible",
+  "breaking_changes_count": 0,
+  "potentially_breaking_count": 0,
+  "non_breaking_changes_count": 0,
+  "additive_changes_count": 0,
+  "issues": [],
+  "migration_scripts": [
+    {
+      "script_type": "sql",
+      "description": "Create new table api.stock_openings",
+      "script_content": "CREATE TABLE api.stock_openings (\n  id uuid,\n  detail jsonb,\n  status text,\n  version bigint,\n  branch_id uuid,\n  tenant_id uuid,\n  warehouse_id uuid,\n  document_date date,\n  document_number text,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS api.stock_openings;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'api.stock_openings';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.stock_openings",
+      "script_content": "CREATE TABLE inventory.stock_openings (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  lines jsonb NOT NULL,\n  reason text NOT NULL,\n  status text NOT NULL DEFAULT 'draft'::text,\n  version bigint NOT NULL DEFAULT 1,\n  branch_id uuid NOT NULL,\n  posted_at timestamp with time zone,\n  posted_by uuid,\n  tenant_id uuid NOT NULL,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  request_id uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  grand_total numeric NOT NULL,\n  prepared_by uuid NOT NULL,\n  submitted_by uuid,\n  warehouse_id uuid NOT NULL,\n  currency_code text NOT NULL,\n  document_date date NOT NULL,\n  document_type text NOT NULL DEFAULT 'stock_opening'::text,\n  correlation_id uuid NOT NULL,\n  document_number text,\n  legal_entity_id uuid NOT NULL,\n  client_timestamp timestamp with time zone NOT NULL,\n  journal_entry_id uuid,\n  offset_account_id uuid NOT NULL,\n  stock_movement_id uuid,\n  workflow_snapshot jsonb\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.stock_openings;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.stock_openings';"
+    }
+  ],
+  "risk_assessment": {
+    "overall_risk": "low",
+    "deployment_risk": "safe_independent_deployment",
+    "rollback_complexity": "low",
+    "testing_requirements": [
+      "integration_testing",
+      "regression_testing",
+      "data_migration_testing"
+    ]
+  },
+  "recommendations": [
+    "Test all migration scripts in staging environment",
+    "Implement migration progress monitoring",
+    "Create detailed communication plan for stakeholders",
+    "Implement feature flags for gradual rollout"
+  ]
+}

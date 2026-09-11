@@ -29,8 +29,25 @@ final class DraftCipher {
   static const _credentialName = 'jentra.local-draft-key.v1';
   final SecretKeyStore keyStore;
   final AesGcm _algorithm = AesGcm.with256bits();
+  Future<SecretKey>? _keyFuture;
+  SecretKey? _resolvedKey;
 
   Future<SecretKey> _key() async {
+    // The shared cipher serves both draft and reference-cache writes. Resolve
+    // the key once so simultaneous first writes cannot overwrite each other's
+    // freshly generated key and leave earlier ciphertext unreadable at restart.
+    final resolved = _resolvedKey;
+    if (resolved != null) return resolved;
+    final pending = _keyFuture ??= _loadKey();
+    try {
+      return _resolvedKey = await pending;
+    } catch (_) {
+      if (identical(_keyFuture, pending)) _keyFuture = null;
+      rethrow;
+    }
+  }
+
+  Future<SecretKey> _loadKey() async {
     final saved = await keyStore.read(_credentialName);
     if (saved != null) return SecretKey(base64Decode(saved));
     final generated = SecretKeyData.random(length: 32).bytes;

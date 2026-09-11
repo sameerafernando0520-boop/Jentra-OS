@@ -8,6 +8,7 @@ import 'package:jentra_platform/jentra_platform.dart';
 import '../app_providers.dart';
 import '../features/auth/mfa_required_screen.dart';
 import 'navigation.dart';
+import 'quick_create_dialog.dart';
 
 class JentraShell extends ConsumerWidget {
   const JentraShell({required this.child, super.key});
@@ -23,7 +24,7 @@ class JentraShell extends ConsumerWidget {
     final mfaRequired =
         gateway != null &&
         (tenants?.isNotEmpty ?? false) &&
-        gateway.currentAssurance() != MfaAssurance.aal2;
+        ref.watch(sessionAssuranceProvider) != MfaAssurance.aal2;
     return LayoutBuilder(
       builder: (context, constraints) {
         final enlargedText = MediaQuery.textScalerOf(context).scale(1) > 1.4;
@@ -554,42 +555,7 @@ class _CommandBar extends ConsumerWidget {
   void _showQuickCreate(BuildContext context) {
     showDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Quick create'),
-        content: const SizedBox(
-          width: 420,
-          child: Wrap(
-            spacing: JentraSpacing.x3,
-            runSpacing: JentraSpacing.x3,
-            children: [
-              _QuickAction(icon: Icons.person_add_alt, label: 'Customer'),
-              _QuickAction(
-                icon: Icons.description_outlined,
-                label: 'Quotation',
-              ),
-              _QuickAction(
-                icon: Icons.receipt_long_outlined,
-                label: 'Invoice draft',
-              ),
-              _QuickAction(
-                icon: Icons.shopping_cart_outlined,
-                label: 'Purchase request',
-              ),
-              _QuickAction(icon: Icons.task_alt_outlined, label: 'Task'),
-              _QuickAction(
-                icon: Icons.support_agent_outlined,
-                label: 'Service ticket',
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
+      builder: (_) => const QuickCreateDialog(),
     );
   }
 }
@@ -608,31 +574,6 @@ class _KeyHint extends StatelessWidget {
       borderRadius: BorderRadius.circular(4),
     ),
     child: Text(label, style: const TextStyle(fontSize: 10)),
-  );
-}
-
-class _QuickAction extends StatelessWidget {
-  const _QuickAction({required this.icon, required this.label});
-
-  final IconData icon;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-    width: 126,
-    child: OutlinedButton(
-      onPressed: () {},
-      style: OutlinedButton.styleFrom(
-        padding: const EdgeInsets.all(JentraSpacing.x4),
-      ),
-      child: Column(
-        children: [
-          Icon(icon),
-          const SizedBox(height: JentraSpacing.x2),
-          Text(label, textAlign: TextAlign.center),
-        ],
-      ),
-    ),
   );
 }
 

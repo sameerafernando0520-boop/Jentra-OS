@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_platform/jentra_platform.dart';
 import 'package:jentra_platform/jentra_receivables_platform.dart';
 
+import 'package:jentra_platform/jentra_stock_opening_platform.dart';
+import 'src/features/stock_opening/stock_opening_controller.dart';
 import 'src/app.dart';
 import 'src/app_providers.dart';
 import 'src/features/receivables/receivables_controller.dart';
@@ -31,6 +33,9 @@ Future<void> main() async {
         quotationWorkspaceRepositoryProvider.overrideWithValue(quotations),
         salesOrderRepositoryProvider.overrideWithValue(quotations),
         quotationReferenceRepositoryProvider.overrideWithValue(quotations),
+        stockOpeningRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabaseStockOpeningGateway(client),
+        ),
         receivablesRepositoryProvider.overrideWithValue(
           client == null ? null : SupabaseReceivablesGateway(client),
         ),

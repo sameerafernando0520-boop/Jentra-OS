@@ -1,0 +1,272 @@
+{
+  "project_id": "xpdoufauvrbdmxgngetv",
+  "environment": "synthetic development only",
+  "verified_at_utc": "2026-09-10T20:16:01Z",
+  "local_date": "2026-09-11",
+  "migration": {
+    "version": "20260910201410",
+    "name": "governed_stock_openings",
+    "sql_md5": "c4136d9f2817a9dbedc660c432254feb"
+  },
+  "source_file": "supabase/migrations/20260910201410_governed_stock_openings.sql",
+  "source_sha256": "063f8a8b91c502730ed51e52f014faf080fbe8b497c611e55e0f8054de44a3d0",
+  "source_matches_ledger_ignoring_terminal_newline": true,
+  "submitted_sql_matches_ledger_exactly": true,
+  "installed_definitions_match_rollback_candidate": true,
+  "unchanged_existing_dependencies": [
+    {
+      "name": "finance.flow_post_journal",
+      "arguments": "p_doc jsonb, p_lines jsonb, p_source_type text, p_source_id uuid, p_request uuid, p_command uuid",
+      "definition_md5": "bebe95827a7e5ac3f2192d0f7acd38b4"
+    },
+    {
+      "name": "finance.wave3_lock_open_period",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_posting_date date",
+      "definition_md5": "a316c04eef62ba1a43d49ea4d5261ca2"
+    },
+    {
+      "name": "sales.flow_transition",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "definition_md5": "d748b4d6c89a7bdeceb4abd6b42e7d5b"
+    },
+    {
+      "name": "sales.wave3_decimal_string",
+      "arguments": "p_value jsonb, p_field text, p_scale integer, p_required boolean, p_min numeric, p_max numeric",
+      "definition_md5": "914ffb57358036a7c36bd9f5add31f63"
+    },
+    {
+      "name": "sales.wave3_reserve_document_number",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_document_type text, p_document_date date, p_actor uuid",
+      "definition_md5": "6aa64729b9b09ce89699bd7ec218c2d0"
+    }
+  ],
+  "installed_new_definitions": [
+    {
+      "name": "api.post_stock_opening",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "definition_md5": "01c4b792e340576343f38b53bfa88c11"
+    },
+    {
+      "name": "api.transition_stock_opening",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "definition_md5": "9511bf6f8d13f6c1ab3cfc4e67dfa4d6"
+    },
+    {
+      "name": "api.upsert_stock_opening",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "definition_md5": "c666adededec63c1d748d195b792342a"
+    },
+    {
+      "name": "inventory.opening_document",
+      "arguments": "p_kind text, p_tenant uuid, p_id uuid, p_lock boolean",
+      "definition_md5": "1ee13ecaee7842e753ccbe2133c9e359"
+    },
+    {
+      "name": "inventory.opening_normalize",
+      "arguments": "p_tenant uuid, p_entity uuid, p_branch uuid, p_payload jsonb",
+      "definition_md5": "ed5f7833990edc3f5bef48d7a1685fbc"
+    },
+    {
+      "name": "inventory.opening_revalidate",
+      "arguments": "p_kind text, p_doc jsonb",
+      "definition_md5": "dd691764ed9c526a04485b0cf128820b"
+    }
+  ],
+  "compatibility": {
+    "checker_exit_code": 0,
+    "overall_compatibility": "fully_compatible",
+    "breaking_changes": 0,
+    "potentially_breaking_changes": 0
+  },
+  "tests": {
+    "candidate_opening": 80,
+    "installed_opening": 80,
+    "existing_regression": [
+      {
+        "suite": "greenfield_foundation",
+        "passed": 30
+      },
+      {
+        "suite": "wave2_shared_foundation",
+        "passed": 99
+      },
+      {
+        "suite": "wave3_operational_foundation",
+        "passed": 50
+      },
+      {
+        "suite": "wave3_crm_pipeline",
+        "passed": 88
+      },
+      {
+        "suite": "wave3_lead_to_cash_foundation",
+        "passed": 46
+      },
+      {
+        "suite": "wave3_quotation_workspace",
+        "passed": 43
+      },
+      {
+        "suite": "wave3_order_workspace",
+        "passed": 28
+      },
+      {
+        "suite": "wave3_delivery_receivables",
+        "passed": 85
+      }
+    ],
+    "installed_total": 549,
+    "rollback": true,
+    "constraints_checked_immediate": true,
+    "sql_role_authentication": "Synthetic claims with SET LOCAL ROLE authenticated; no real Auth session or MFA ceremony"
+  },
+  "advisors": {
+    "security": {
+      "lints": []
+    },
+    "performance": [
+      {
+        "name": "unused_index",
+        "level": "INFO",
+        "count": 350,
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index",
+        "opening_findings": [
+          {
+            "detail": "Index \\`stock_openings_scope_idx\\` on table \\`inventory.stock_openings\\` has not been used",
+            "metadata": {
+              "name": "stock_openings",
+              "type": "table",
+              "schema": "inventory"
+            },
+            "observed_at": "2026-09-10T20:16:01.751Z"
+          },
+          {
+            "detail": "Index \\`stock_openings_created_by_fkey_idx\\` on table \\`inventory.stock_openings\\` has not been used",
+            "metadata": {
+              "name": "stock_openings",
+              "type": "table",
+              "schema": "inventory"
+            },
+            "observed_at": "2026-09-10T20:16:01.751Z"
+          },
+          {
+            "detail": "Index \\`stock_openings_currency_code_fkey_idx\\` on table \\`inventory.stock_openings\\` has not been used",
+            "metadata": {
+              "name": "stock_openings",
+              "type": "table",
+              "schema": "inventory"
+            },
+            "observed_at": "2026-09-10T20:16:01.751Z"
+          },
+          {
+            "detail": "Index \\`stock_openings_posted_by_fkey_idx\\` on table \\`inventory.stock_openings\\` has not been used",
+            "metadata": {
+              "name": "stock_openings",
+              "type": "table",
+              "schema": "inventory"
+            },
+            "observed_at": "2026-09-10T20:16:01.751Z"
+          },
+          {
+            "detail": "Index \\`stock_openings_prepared_by_fkey_idx\\` on table \\`inventory.stock_openings\\` has not been used",
+            "metadata": {
+              "name": "stock_openings",
+              "type": "table",
+              "schema": "inventory"
+            },
+            "observed_at": "2026-09-10T20:16:01.751Z"
+          },
+          {
+            "detail": "Index \\`stock_openings_submitted_by_fkey_idx\\` on table \\`inventory.stock_openings\\` has not been used",
+            "metadata": {
+              "name": "stock_openings",
+              "type": "table",
+              "schema": "inventory"
+            },
+            "observed_at": "2026-09-10T20:16:01.751Z"
+          },
+          {
+            "detail": "Index \\`stock_openings_tenant_id_branch_id_fkey_idx\\` on table \\`inventory.stock_openings\\` has not been used",
+            "metadata": {
+              "name": "stock_openings",
+              "type": "table",
+              "schema": "inventory"
+            },
+            "observed_at": "2026-09-10T20:16:01.751Z"
+          },
+          {
+            "detail": "Index \\`stock_openings_tenant_id_fkey_idx\\` on table \\`inventory.stock_openings\\` has not been used",
+            "metadata": {
+              "name": "stock_openings",
+              "type": "table",
+              "schema": "inventory"
+            },
+            "observed_at": "2026-09-10T20:16:01.751Z"
+          },
+          {
+            "detail": "Index \\`stock_openings_tenant_id_journal_entry_id_fkey_idx\\` on table \\`inventory.stock_openings\\` has not been used",
+            "metadata": {
+              "name": "stock_openings",
+              "type": "table",
+              "schema": "inventory"
+            },
+            "observed_at": "2026-09-10T20:16:01.751Z"
+          },
+          {
+            "detail": "Index \\`stock_openings_tenant_id_legal_entity_id_fkey_idx\\` on table \\`inventory.stock_openings\\` has not been used",
+            "metadata": {
+              "name": "stock_openings",
+              "type": "table",
+              "schema": "inventory"
+            },
+            "observed_at": "2026-09-10T20:16:01.751Z"
+          },
+          {
+            "detail": "Index \\`stock_openings_tenant_id_legal_entity_id_offset_account_id_fkey\\` on table \\`inventory.stock_openings\\` has not been used",
+            "metadata": {
+              "name": "stock_openings",
+              "type": "table",
+              "schema": "inventory"
+            },
+            "observed_at": "2026-09-10T20:16:01.751Z"
+          },
+          {
+            "detail": "Index \\`stock_openings_tenant_id_stock_movement_id_fkey_idx\\` on table \\`inventory.stock_openings\\` has not been used",
+            "metadata": {
+              "name": "stock_openings",
+              "type": "table",
+              "schema": "inventory"
+            },
+            "observed_at": "2026-09-10T20:16:01.751Z"
+          },
+          {
+            "detail": "Index \\`stock_openings_updated_by_fkey_idx\\` on table \\`inventory.stock_openings\\` has not been used",
+            "metadata": {
+              "name": "stock_openings",
+              "type": "table",
+              "schema": "inventory"
+            },
+            "observed_at": "2026-09-10T20:16:01.751Z"
+          }
+        ]
+      }
+    ]
+  },
+  "final_counts": {
+    "users": 0,
+    "verified_mfa_factors": 0,
+    "tenants": 0,
+    "openings": 0,
+    "movements": 0,
+    "journals": 0,
+    "migrations": 32,
+    "latest": "20260910201410"
+  },
+  "remaining": [
+    "Native stock-opening editor/register and Dart command integration",
+    "User-managed synthetic owner and independent approver accounts with MFA",
+    "Governed business setup through the authenticated client",
+    "Signed-in Windows end-to-end walkthrough and user acceptance"
+  ],
+  "git": "Existing dirty work preserved; no stage, commit or push"
+}

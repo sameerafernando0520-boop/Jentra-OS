@@ -10,7 +10,8 @@ import 'receivable_setup.dart';
 import 'receivable_picker.dart';
 
 class ReceivablesScreen extends ConsumerWidget {
-  const ReceivablesScreen({super.key});
+  const ReceivablesScreen({this.initialKind, super.key});
+  final ReceivableKind? initialKind;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final caps = ref.watch(businessCapabilitiesProvider),
@@ -46,22 +47,52 @@ class ReceivablesScreen extends ConsumerWidget {
       );
     }
     return ReceivablesWorkspace(
-      key: ValueKey(controller),
+      key: ValueKey((controller, initialKind)),
       controller: controller,
+      initialKind: initialKind,
     );
   }
 }
 
 class ReceivablesWorkspace extends StatefulWidget {
-  const ReceivablesWorkspace({super.key, required this.controller});
+  const ReceivablesWorkspace({
+    super.key,
+    required this.controller,
+    this.initialKind,
+  });
   final ReceivablesController controller;
+  final ReceivableKind? initialKind;
   @override
   State<ReceivablesWorkspace> createState() => _WorkspaceState();
 }
 
 class _WorkspaceState extends State<ReceivablesWorkspace> {
+  bool _initialKindApplied = false;
   bool reporting = false;
   ReceivablesController get c => widget.controller;
+  @override
+  void initState() {
+    super.initState();
+    c.addListener(_applyInitialKind);
+    _applyInitialKind();
+  }
+
+  void _applyInitialKind() {
+    if (_initialKindApplied || c.busy) return;
+    _initialKindApplied = true;
+    final kind = widget.initialKind;
+    if (kind == null || kind == c.kind) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && c.active) c.selectKind(kind);
+    });
+  }
+
+  @override
+  void dispose() {
+    if (c.active) c.removeListener(_applyInitialKind);
+    super.dispose();
+  }
+
   Future<void> reasonedAction(String action) async {
     final text = TextEditingController();
     final reason = await showScopedReceivableDialog<String>(

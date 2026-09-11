@@ -52,6 +52,27 @@ final authenticatedActorProvider = StreamProvider<String?>((ref) async* {
   }
 });
 
+// MFA and token refresh can change authority without changing the actor ID.
+// Keep a non-sensitive revision so capability reads react to every auth event.
+final authSessionRevisionProvider = StreamProvider<int>((ref) async* {
+  final gateway = ref.watch(foundationGatewayProvider);
+  var revision = 0;
+  yield revision;
+  if (gateway == null) return;
+  await for (final _ in gateway.authChanges) {
+    yield ++revision;
+  }
+});
+
+final sessionAssuranceProvider = Provider<MfaAssurance>((ref) {
+  final revision = ref.watch(authSessionRevisionProvider);
+  if (revision.isLoading || revision.hasError) {
+    return MfaAssurance.unauthenticated;
+  }
+  return ref.watch(foundationGatewayProvider)?.currentAssurance() ??
+      MfaAssurance.unauthenticated;
+});
+
 final localDatabaseProvider = Provider<JentraLocalDatabase>((ref) {
   final database = JentraLocalDatabase.open();
   ref.onDispose(() => unawaited(database.close()));
@@ -185,7 +206,8 @@ final class TenantListController extends AsyncNotifier<List<TenantSummary>> {
         ),
       ];
     }
-    if (gateway.currentUser == null) return const [];
+    final actorId = await ref.watch(authenticatedActorProvider.future);
+    if (actorId == null) return const [];
     return gateway.listMyTenants();
   }
 
@@ -385,7 +407,10 @@ final businessCapabilitiesProvider = FutureProvider<Set<String>>((ref) async {
   final context = ref.watch(activeTenantContextProvider);
   if (context == null) return const {};
   final gateway = ref.watch(foundationGatewayProvider);
-  if (gateway != null) return gateway.getCapabilities(context.tenantId);
+  if (gateway != null) {
+    await ref.watch(authSessionRevisionProvider.future);
+    return gateway.getCapabilities(context.tenantId);
+  }
   return {
     // Preview navigation only; the quotation controller still requires a backend.
     'sales.quotations.view',

@@ -1,0 +1,74 @@
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/stock_opening_controller_test.dart
+00:00 +0: register reopen keeps interrupted and rejected posting snapshots read-only
+00:00 +0 -1: register reopen keeps interrupted and rejected posting snapshots read-only [E]
+  Expected: null
+    Actual: {
+              'id': '00000000-0000-4000-8000-000000000001',
+              'document_type': 'stock_opening',
+              'tenant_id': 'tenant',
+              'legal_entity_id': 'entity',
+              'branch_id': 'branch',
+              'warehouse_id': 'warehouse',
+              'offset_account_id': 'equity',
+              'document_number': 'OPEN-00001',
+              'document_date': '2026-09-11',
+              'currency_code': 'LKR',
+              'grand_total': '248500.000000',
+              'reason': 'Verified physical count at the Colombo warehouse.',
+              'status': 'approved',
+              'version': 3,
+              'created_by': 'preparer',
+              'prepared_by': 'preparer',
+              'submitted_by': 'preparer',
+              'stock_movement_id': null,
+              'journal_entry_id': null,
+              'workflow_snapshot': {
+                'lifecycle': {
+                  'transitions': [
+                    ['draft', 'submitted'],
+                    ['submitted', 'approved'],
+                    ['submitted', 'rejected'],
+                    ['draft', 'cancelled'],
+                    ['submitted', 'cancelled']
+                  ],
+                  'posting_transitions': [['submitted', 'draft'], ['approved', 'draft'], ['rejected', 'draft']]
+                }
+              },
+              'lines': [
+                {
+                  'line_id': 'line1',
+                  'product_id': 'product',
+                  'product_name': 'Office paper · A4 80 gsm',
+                  'sku': 'PAP-A4-80',
+                  'tracking_mode': 'none',
+                  'base_unit_id': 'unit',
+                  '_unit_label': 'Ream (rm)',
+                  'base_quantity': '250',
+                  'base_value': '187500',
+                  'serial_codes': []
+                },
+                {
+                  'line_id': 'line2',
+                  'product_id': 'toner',
+                  'product_name': 'Black toner cartridge',
+                  'sku': 'TON-BLK-410',
+                  'tracking_mode': 'lot',
+                  'base_unit_id': 'unit',
+                  '_unit_label': 'Each (ea)',
+                  'base_quantity': '10',
+                  'base_value': '61000',
+                  'lot_code': 'LOT-2026-09',
+                  'expiry_date': '2028-09-01',
+                  'serial_codes': []
+                }
+              ]
+            }
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\stock_opening_controller_test.dart 78:7        main.<fn>
+  
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/stock_opening_controller_test.dart: register reopen keeps interrupted and rejected posting snapshots read-only

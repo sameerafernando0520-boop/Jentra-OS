@@ -12,12 +12,38 @@ import 'package:jentra_platform/jentra_platform.dart';
 import '../../app_providers.dart';
 import 'business_setup_controller.dart';
 
-class BusinessSetupScreen extends ConsumerWidget {
-  const BusinessSetupScreen({super.key});
+class BusinessSetupScreen extends ConsumerStatefulWidget {
+  const BusinessSetupScreen({this.initialResource, super.key});
+  final BusinessSetupResource? initialResource;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<BusinessSetupScreen> createState() =>
+      _BusinessSetupScreenState();
+}
+
+class _BusinessSetupScreenState extends ConsumerState<BusinessSetupScreen> {
+  bool _initialResourceApplied = false;
+
+  @override
+  Widget build(BuildContext context) {
     final setup = ref.watch(businessSetupControllerProvider);
+    if (!_initialResourceApplied && !setup.isLoading && setup.hasValue) {
+      _initialResourceApplied = true;
+      final resource = widget.initialResource;
+      if (resource != null &&
+          resource != setup.value!.resource &&
+          setup.value!.capabilities.contains(resource.viewPermission)) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            unawaited(
+              ref
+                  .read(businessSetupControllerProvider.notifier)
+                  .selectResource(resource),
+            );
+          }
+        });
+      }
+    }
     return setup.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (error, _) => Center(
@@ -1470,6 +1496,8 @@ class _SetupRecordDialogState extends ConsumerState<SetupRecordDialog> {
             ? 'draft'
             : 'active');
     final values = <String, Object?>{
+      if (widget.resource == BusinessSetupResource.warehouses)
+        'branch_id': ref.read(businessScopeProvider).value?.branchId,
       ...?widget.existing?.toJson(),
       ...?widget.existing?.fields,
     };
@@ -1663,6 +1691,37 @@ class _SetupRecordDialogState extends ConsumerState<SetupRecordDialog> {
 
   Widget _buildField(_SetupField field) {
     final controller = _controllers[field.name]!;
+    if (widget.resource == BusinessSetupResource.warehouses &&
+        field.name == 'branch_id') {
+      final scope = ref.watch(businessScopeProvider).value;
+      final branches = scope?.branches ?? const <BranchSummary>[];
+      final selected = branches.any((b) => b.id == controller.text)
+          ? controller.text
+          : null;
+      return DropdownButtonFormField<String>(
+        key: field.key,
+        initialValue: selected,
+        isExpanded: true,
+        decoration: InputDecoration(
+          labelText: 'Branch',
+          errorText: _errors[field.name],
+        ),
+        items: [
+          for (final branch in branches)
+            DropdownMenuItem(
+              value: branch.id,
+              child: Text('${branch.code} · ${branch.name}'),
+            ),
+        ],
+        onChanged: widget.existing != null
+            ? null
+            : (value) => setState(() {
+                controller.text = value ?? '';
+                _dirty = true;
+                _errors.remove(field.name);
+              }),
+      );
+    }
     if (field.options case final options?) {
       final current = options.contains(controller.text)
           ? controller.text
@@ -2256,6 +2315,7 @@ extension on BusinessSetupResource {
     BusinessSetupResource.contacts => Icons.contact_page_outlined,
     BusinessSetupResource.units => Icons.straighten_outlined,
     BusinessSetupResource.products => Icons.inventory_2_outlined,
+    BusinessSetupResource.warehouses => Icons.warehouse_outlined,
     BusinessSetupResource.documentSequences => Icons.numbers_outlined,
     BusinessSetupResource.workflowDefinitions => Icons.account_tree,
     BusinessSetupResource.approvalMatrixSteps => Icons.approval_outlined,
@@ -2267,6 +2327,8 @@ extension on BusinessSetupResource {
   };
 
   String get description => switch (this) {
+    BusinessSetupResource.warehouses =>
+      'Scoped stock locations for the selected business and branch.',
     BusinessSetupResource.currencies =>
       'ISO reference currencies and precision.',
     BusinessSetupResource.exchangeRates =>
@@ -2342,6 +2404,11 @@ extension on BusinessSetupResource {
   };
 
   List<_SetupField> get fields => switch (this) {
+    BusinessSetupResource.warehouses => const [
+      _SetupField('code', 'Warehouse code', autofocus: true),
+      _SetupField('name', 'Warehouse name'),
+      _SetupField('branch_id', 'Branch', wide: true),
+    ],
     BusinessSetupResource.exchangeRates => const [
       _SetupField('source_currency_code', 'Source currency', autofocus: true),
       _SetupField('target_currency_code', 'Target currency'),

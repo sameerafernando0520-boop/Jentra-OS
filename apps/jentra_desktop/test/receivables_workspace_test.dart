@@ -17,7 +17,9 @@ Future<ReceivablesController> pump(
   Size size = const Size(1440, 1000),
   bool edit = false,
   bool offline = false,
+  bool failInitialPersistence = false,
   ReceivableKind kind = ReceivableKind.invoice,
+  ReceivableKind? initialKind,
   Set<String>? caps,
 }) async {
   await tester.binding.setSurfaceSize(size);
@@ -40,6 +42,12 @@ Future<ReceivablesController> pump(
       online: !offline,
     );
     await c.open(ReceivableDocument(f.snapshot(kind: kind)));
+    if (failInitialPersistence) {
+      await db.customStatement('''
+        CREATE TEMP TRIGGER fail_draft_write BEFORE INSERT ON encrypted_drafts
+        BEGIN SELECT RAISE(FAIL, 'simulated disk write failure'); END
+      ''');
+    }
     if (edit) await c.edit();
   });
   addTearDown(db.close);
@@ -52,15 +60,49 @@ Future<ReceivablesController> pump(
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: dark ? JentraTheme.dark() : JentraTheme.light(),
-        home: Scaffold(body: ReceivablesWorkspace(controller: c)),
+        home: Scaffold(
+          body: ReceivablesWorkspace(controller: c, initialKind: initialKind),
+        ),
       ),
     ),
   );
+  for (var i = 0; i < 10 && c.busy; i++) {
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 10)),
+    );
+    await tester.pump();
+  }
   await tester.pumpAndSettle();
   return c;
 }
 
 void main() {
+  testWidgets('invoice shortcut selects invoices from a delivery register', (
+    tester,
+  ) async {
+    final c = await pump(
+      tester,
+      kind: ReceivableKind.delivery,
+      initialKind: ReceivableKind.invoice,
+    );
+    expect(c.kind, ReceivableKind.invoice);
+    expect(c.form, isNull);
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets(
+    'invoice shortcut preserves a delivery draft already being edited',
+    (tester) async {
+      final c = await pump(
+        tester,
+        kind: ReceivableKind.delivery,
+        initialKind: ReceivableKind.invoice,
+        edit: true,
+      );
+      expect(c.kind, ReceivableKind.delivery);
+      expect(c.form, isNotNull);
+      expect(tester.takeException(), isNull);
+    },
+  );
   setUpAll(() async {
     const base = 'packages/jentra_design_system/assets/fonts/';
     await (FontLoader(JentraTypography.sansFamily)
@@ -121,6 +163,43 @@ void main() {
     expect(find.text('Submit'), findsNothing);
     expect(find.text('Edit draft'), findsNothing);
     expect(find.textContaining('Offline'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('storage failure keeps the offline editor and offers retry', (
+    tester,
+  ) async {
+    final c = await pump(
+      tester,
+      edit: true,
+      offline: true,
+      failInitialPersistence: true,
+    );
+    expect(find.textContaining('LOCAL_STORAGE_FULL'), findsOneWidget);
+    await tester.drag(
+      find.byType(SingleChildScrollView).first,
+      const Offset(0, -1800),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Retry local save'), findsOneWidget);
+    await tester.tap(find.text('Close · keep local draft'));
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
+    await tester.pumpAndSettle();
+    expect(c.form, isNotNull);
+    expect(c.localSaveFailed, true);
+    await tester.runAsync(() async {
+      await tester.tap(find.text('Retry local save'));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    });
+    await tester.pumpAndSettle();
+    expect(c.localSaveFailed, true);
+    expect(find.textContaining('LOCAL_STORAGE_FULL'), findsOneWidget);
+    expect((c.repository as f.FakeReceivables).commands, isEmpty);
+    await expectLater(
+      find.byKey(const Key('receivables-golden')),
+      matchesGoldenFile('goldens/receivables_storage_failure_1440_light.png'),
+    );
     expect(tester.takeException(), isNull);
   });
   testWidgets('uncertain result displays saved-command retry', (tester) async {

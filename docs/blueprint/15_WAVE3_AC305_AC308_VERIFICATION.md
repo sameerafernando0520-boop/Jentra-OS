@@ -122,10 +122,12 @@ Machine-readable checks and the repeatable startup script are in
    customers/products and opening stock/valuation through approved setup paths.
    Walk order → partial delivery → invoice → receipt/allocation → return/credit →
    dated statement and inspect stock, journals, audit and residuals together.
-2. **Real restart recovery.** Verify actual Windows Credential Manager key retention,
-   application/process restart, offline edits, dropped post responses and identical
-   saved-command retry. Current storage tests use an in-memory key store and a fresh
-   repository instance; they do not prove native cross-process key persistence.
+2. **Real restart recovery: local native evidence added 2026-09-11.** The
+   [native recovery follow-up](16_WAVE3_NATIVE_RECOVERY_VERIFICATION.md) verifies
+   the actual Windows secure-storage adapter and disk SQLite across forced
+   process stops, offline edits, simulated dropped responses and byte-identical
+   retries. Authenticated transport loss, simultaneous first launches, OS restart
+   and broader storage/navigation failure cases remain explicitly open there.
 3. **Concurrent/load and failure testing.** Exercise two actual database sessions
    racing deliveries/allocations, lock waits/deadlocks, large statements, workload
    latency and disk-write failure/navigation behavior. Transactional rejection and

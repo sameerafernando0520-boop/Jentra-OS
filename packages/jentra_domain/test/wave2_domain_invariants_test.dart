@@ -551,6 +551,12 @@ void main() {
 
 Map<String, Object?> _validPayload(BusinessSetupResource resource) =>
     switch (resource) {
+      BusinessSetupResource.warehouses => const {
+        'code': 'ACPT-WH',
+        'name': 'Acceptance warehouse',
+        'branch_id': '579aab50-3856-4ace-a214-0d73a224a6ba',
+        'status': 'active',
+      },
       BusinessSetupResource.currencies => const {},
       BusinessSetupResource.exchangeRates => const {
         'source_currency_code': 'USD',

@@ -1,0 +1,57 @@
+[
+  {
+    "name": "api.post_stock_opening",
+    "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+    "definition_md5": "01c4b792e340576343f38b53bfa88c11"
+  },
+  {
+    "name": "api.transition_stock_opening",
+    "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+    "definition_md5": "9511bf6f8d13f6c1ab3cfc4e67dfa4d6"
+  },
+  {
+    "name": "api.upsert_stock_opening",
+    "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+    "definition_md5": "c666adededec63c1d748d195b792342a"
+  },
+  {
+    "name": "finance.flow_post_journal",
+    "arguments": "p_doc jsonb, p_lines jsonb, p_source_type text, p_source_id uuid, p_request uuid, p_command uuid",
+    "definition_md5": "bebe95827a7e5ac3f2192d0f7acd38b4"
+  },
+  {
+    "name": "finance.wave3_lock_open_period",
+    "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_posting_date date",
+    "definition_md5": "a316c04eef62ba1a43d49ea4d5261ca2"
+  },
+  {
+    "name": "inventory.opening_document",
+    "arguments": "p_kind text, p_tenant uuid, p_id uuid, p_lock boolean",
+    "definition_md5": "1ee13ecaee7842e753ccbe2133c9e359"
+  },
+  {
+    "name": "inventory.opening_normalize",
+    "arguments": "p_tenant uuid, p_entity uuid, p_branch uuid, p_payload jsonb",
+    "definition_md5": "ed5f7833990edc3f5bef48d7a1685fbc"
+  },
+  {
+    "name": "inventory.opening_revalidate",
+    "arguments": "p_kind text, p_doc jsonb",
+    "definition_md5": "dd691764ed9c526a04485b0cf128820b"
+  },
+  {
+    "name": "sales.flow_transition",
+    "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+    "definition_md5": "d748b4d6c89a7bdeceb4abd6b42e7d5b"
+  },
+  {
+    "name": "sales.wave3_decimal_string",
+    "arguments": "p_value jsonb, p_field text, p_scale integer, p_required boolean, p_min numeric, p_max numeric",
+    "definition_md5": "914ffb57358036a7c36bd9f5add31f63"
+  },
+  {
+    "name": "sales.wave3_reserve_document_number",
+    "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_document_type text, p_document_date date, p_actor uuid",
+    "definition_md5": "6aa64729b9b09ce89699bd7ec218c2d0"
+  }
+]

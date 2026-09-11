@@ -22,6 +22,7 @@ enum BusinessSetupResource {
   contacts,
   units,
   products,
+  warehouses,
   documentSequences,
   workflowDefinitions,
   approvalMatrixSteps,
@@ -43,6 +44,7 @@ extension BusinessSetupResourceContract on BusinessSetupResource {
     BusinessSetupResource.contacts => 'contacts',
     BusinessSetupResource.units => 'units',
     BusinessSetupResource.products => 'products',
+    BusinessSetupResource.warehouses => 'warehouses',
     BusinessSetupResource.documentSequences => 'document_sequences',
     BusinessSetupResource.workflowDefinitions => 'workflow_definitions',
     BusinessSetupResource.approvalMatrixSteps => 'approval_matrix_steps',
@@ -66,6 +68,7 @@ extension BusinessSetupResourceContract on BusinessSetupResource {
     BusinessSetupResource.contacts => 'upsert_contact',
     BusinessSetupResource.units => 'upsert_unit',
     BusinessSetupResource.products => 'upsert_product',
+    BusinessSetupResource.warehouses => 'upsert_warehouse',
     BusinessSetupResource.documentSequences => 'upsert_document_sequence',
     BusinessSetupResource.workflowDefinitions => 'upsert_workflow_definition',
     BusinessSetupResource.approvalMatrixSteps => 'upsert_approval_matrix_step',
@@ -82,7 +85,8 @@ extension BusinessSetupResourceContract on BusinessSetupResource {
     BusinessSetupResource.parties ||
     BusinessSetupResource.contacts => BusinessSetupCategory.parties,
     BusinessSetupResource.units ||
-    BusinessSetupResource.products => BusinessSetupCategory.catalogue,
+    BusinessSetupResource.products ||
+    BusinessSetupResource.warehouses => BusinessSetupCategory.catalogue,
     BusinessSetupResource.documentSequences ||
     BusinessSetupResource.workflowDefinitions ||
     BusinessSetupResource.approvalMatrixSteps =>
@@ -104,6 +108,7 @@ extension BusinessSetupResourceContract on BusinessSetupResource {
     BusinessSetupResource.contacts => 'Contacts',
     BusinessSetupResource.units => 'Units of measure',
     BusinessSetupResource.products => 'Products',
+    BusinessSetupResource.warehouses => 'Warehouses',
     BusinessSetupResource.documentSequences => 'Document numbering',
     BusinessSetupResource.workflowDefinitions => 'Workflows',
     BusinessSetupResource.approvalMatrixSteps => 'Approval matrices',
@@ -124,6 +129,7 @@ extension BusinessSetupResourceContract on BusinessSetupResource {
     BusinessSetupResource.contacts => 'contact',
     BusinessSetupResource.units => 'unit',
     BusinessSetupResource.products => 'product',
+    BusinessSetupResource.warehouses => 'warehouse',
     BusinessSetupResource.documentSequences => 'document sequence',
     BusinessSetupResource.workflowDefinitions => 'workflow',
     BusinessSetupResource.approvalMatrixSteps => 'approval step',
@@ -135,7 +141,8 @@ extension BusinessSetupResourceContract on BusinessSetupResource {
   };
 
   String get viewPermission => switch (this) {
-    BusinessSetupResource.currencies => 'core.setup.view',
+    BusinessSetupResource.currencies ||
+    BusinessSetupResource.warehouses => 'core.setup.view',
     BusinessSetupResource.exchangeRates ||
     BusinessSetupResource.taxDefinitions ||
     BusinessSetupResource.accounts ||
@@ -155,7 +162,8 @@ extension BusinessSetupResourceContract on BusinessSetupResource {
   };
 
   String get managePermission => switch (this) {
-    BusinessSetupResource.currencies => 'core.setup.manage',
+    BusinessSetupResource.currencies ||
+    BusinessSetupResource.warehouses => 'core.setup.manage',
     BusinessSetupResource.exchangeRates ||
     BusinessSetupResource.taxDefinitions ||
     BusinessSetupResource.accounts ||
@@ -187,7 +195,8 @@ extension BusinessSetupResourceContract on BusinessSetupResource {
     BusinessSetupResource.taxDefinitions ||
     BusinessSetupResource.accounts ||
     BusinessSetupResource.fiscalPeriods ||
-    BusinessSetupResource.products => true,
+    BusinessSetupResource.products ||
+    BusinessSetupResource.warehouses => true,
     _ => false,
   };
 }
@@ -500,6 +509,28 @@ final class BusinessSetupValidator {
             const ValidationIssue(
               field: 'precision',
               message: 'Precision must be from 0 to 6.',
+            ),
+          );
+        }
+      case BusinessSetupResource.warehouses:
+        codeAndName();
+        required('branch_id');
+        if (!RegExp(
+          r'^[A-Z0-9][A-Z0-9_-]{1,19}$',
+        ).hasMatch(fields['code']?.toString().trim().toUpperCase() ?? '')) {
+          issues.add(
+            const ValidationIssue(
+              field: 'code',
+              message: 'Use 2–20 letters, numbers, hyphens or underscores.',
+            ),
+          );
+        }
+        final warehouseName = fields['name']?.toString().trim() ?? '';
+        if (warehouseName.length < 2 || warehouseName.length > 160) {
+          issues.add(
+            const ValidationIssue(
+              field: 'name',
+              message: 'Use 2–160 characters.',
             ),
           );
         }

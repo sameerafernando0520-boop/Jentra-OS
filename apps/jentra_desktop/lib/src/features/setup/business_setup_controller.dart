@@ -996,6 +996,11 @@ final class BusinessSetupController extends AsyncNotifier<BusinessSetupState> {
     );
 
     return switch (resource) {
+      BusinessSetupResource.warehouses => [
+        record('warehouse-1', 'HQ-WH', 'Head office warehouse', {
+          'branch_id': context.branchId,
+        }),
+      ],
       BusinessSetupResource.currencies => [
         record('LKR', 'LKR', 'Sri Lankan Rupee', const {'minor_units': 2}),
         record('USD', 'USD', 'US Dollar', const {'minor_units': 2}),

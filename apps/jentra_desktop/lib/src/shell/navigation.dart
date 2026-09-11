@@ -1,5 +1,5 @@
+import 'package:jentra_domain/jentra_stock_opening.dart';
 import 'package:flutter/material.dart';
-import 'package:jentra_domain/jentra_domain.dart';
 
 final class JentraDestination {
   const JentraDestination({
@@ -112,6 +112,8 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
     pendingSection = item.section ?? pendingSection;
     final permitted =
         (item.path != '/setup' || canOpenSetup) &&
+        (item.path != '/inventory' ||
+            (capabilities != null && canReadStockOpenings(capabilities))) &&
         (item.path != '/crm' || canOpenCrm) &&
         (item.path != '/receivables' ||
             (capabilities != null &&

@@ -1,5 +1,21 @@
 # Signed-in Windows acceptance preflight
 
+**Current handoff:** see [stock-opening acceptance start](../stock-opening/acceptance-start.md).
+The development-connected release has been rebuilt and opened; two synthetic
+accounts now exist and the user has created the workspace and completed MFA.
+Governed business setup and independent approver membership are the current
+prerequisites. The snapshots below describe earlier artifacts.
+
+**Historical snapshot.** The later native-recovery verification restored an
+ordinary release build. The 2026-09-11 stock-opening prerequisite is now applied
+as migration `20260910201410` (32 ledger entries), with 549 database assertions
+passing and zero persistent users or tenants. See the current
+[stock-opening contract](../../blueprint/17_WAVE3_STOCK_OPENING_CONTRACT.md) and
+[native verification](../../blueprint/18_WAVE3_STOCK_OPENING_NATIVE_VERIFICATION.md).
+The native opening editor is now implemented. Rebuild with the development
+configuration before the signed-in walkthrough; two synthetic accounts, MFA,
+governed business masters and authenticated acceptance are still pending.
+
 Date: 2026-09-10. Status: prepared; waiting for the first synthetic test account
 and manual authentication. This is not completed end-to-end acceptance.
 
@@ -20,9 +36,9 @@ and manual authentication. This is not completed end-to-end acceptance.
   MFA notice and synthetic-development label. No credentials were entered and no
   authentication action was automated.
 
-The current release output is now the configured development build. Earlier
+At the time of this preflight, the release output was the configured development build. Earlier
 unconfigured startup results remain historical evidence for their dated builds;
-they do not describe the current artifact's backend configuration.
+they do not establish the current artifact's backend configuration.
 
 ## Manual handoff
 

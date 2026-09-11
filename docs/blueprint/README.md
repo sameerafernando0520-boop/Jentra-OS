@@ -20,6 +20,10 @@ documents.
 7. [06_WAVE2_SHARED_FOUNDATION_SPEC.md](06_WAVE2_SHARED_FOUNDATION_SPEC.md) — approved Wave 2 requirements, contracts, acceptance criteria, edge cases, and traceability.
 8. [07_WAVE2_VERIFICATION.md](07_WAVE2_VERIFICATION.md) — stage-by-stage Wave 2 test, database, performance, Windows, visual, and residual-gate evidence.
 9. [08_WAVE3_INTEGRATED_COMMERCE_FINANCE_SPEC.md](08_WAVE3_INTEGRATED_COMMERCE_FINANCE_SPEC.md) — approved Wave 3 requirements, operational and ledger contracts, acceptance criteria, edge cases, and traceability.
+10. [17_WAVE3_STOCK_OPENING_CONTRACT.md](17_WAVE3_STOCK_OPENING_CONTRACT.md) — governed opening-stock commands, applied development evidence, and native integration contract.
+11. [18_WAVE3_STOCK_OPENING_NATIVE_VERIFICATION.md](18_WAVE3_STOCK_OPENING_NATIVE_VERIFICATION.md) — native opening register/editor, approval and posting recovery, visual and Windows verification, and remaining authenticated acceptance.
+12. [Controls after MFA](../verification/stock-opening/auth-controls-verification.md) — permission refresh, implemented Quick create navigation, regression tests and native runtime verification.
+13. [19_WAREHOUSE_SETUP_CONTRACT.md](19_WAREHOUSE_SETUP_CONTRACT.md) — governed warehouse creation and editing for the stock-opening prerequisites.
 
 ## Change control
 

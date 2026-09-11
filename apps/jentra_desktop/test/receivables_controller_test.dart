@@ -238,6 +238,65 @@ void main() {
     await c.recover(slot);
     expect(c.form!['notes'], 'edit 4');
   });
+  test('failed first disk save keeps the editor open until saved', () async {
+    await db.customStatement('''
+      CREATE TEMP TRIGGER fail_draft_write BEFORE INSERT ON encrypted_drafts
+      BEGIN SELECT RAISE(FAIL, 'simulated disk write failure'); END
+    ''');
+    await c.create();
+    final slot = c.slot;
+    final form = c.form;
+    expect(c.localSaveFailed, true);
+    await c.closeEditor();
+    expect(c.form, form);
+    expect(c.slot, slot);
+    expect(c.error, contains('LOCAL_SAVE_FAILED'));
+    await db.customStatement('DROP TRIGGER fail_draft_write');
+    await c.saveLocal({...c.form!, 'notes': 'retained after disk recovery'});
+    expect(c.localSaveFailed, false);
+    await c.closeEditor();
+    await c.recover(slot!);
+    expect(c.form!['notes'], 'retained after disk recovery');
+  });
+  test(
+    'failed existing draft save cannot close or dispatch a command',
+    () async {
+      await c.open(repo.doc);
+      await db.customStatement('''
+      CREATE TEMP TRIGGER fail_draft_write BEFORE INSERT ON encrypted_drafts
+      BEGIN SELECT RAISE(FAIL, 'simulated disk write failure'); END
+    ''');
+      await c.edit();
+      expect(c.localSaveFailed, true);
+      await c.saveServer();
+      expect(repo.commands, isEmpty);
+      await c.closeEditor();
+      expect(c.form, isNotNull);
+      expect(c.error, contains('LOCAL_SAVE_FAILED'));
+    },
+  );
+  test(
+    'dispatch recovery retains the latest form after an autosave failure',
+    () async {
+      await c.open(repo.doc);
+      await c.edit();
+      await db.customStatement('''
+      CREATE TEMP TRIGGER fail_draft_write BEFORE INSERT ON encrypted_drafts
+      BEGIN SELECT RAISE(FAIL, 'simulated disk write failure'); END
+    ''');
+      await c.saveLocal({...c.form!, 'notes': 'latest unsaved fields'});
+      expect(c.localSaveFailed, true);
+      await db.customStatement('DROP TRIGGER fail_draft_write');
+      repo.failure = TimeoutException('response lost');
+      await c.saveServer();
+      expect(repo.commands, hasLength(1));
+      expect(c.pending, true);
+      final recovered = (await drafts.load(scope, c.slot!))!;
+      expect(recovered.form['notes'], 'latest unsaved fields');
+      expect(recovered.envelope.payload['notes'], 'latest unsaved fields');
+      expect(c.localSaveFailed, false);
+    },
+  );
   test(
     'definite posting rejection does not strand hidden pending command',
     () async {

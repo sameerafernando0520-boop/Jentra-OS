@@ -1,0 +1,23 @@
+00:00 +0: loading test/warehouse_setup_test.dart
+00:00 +0: warehouse setup is scoped and uses its governed command
+00:00 +0 -1: warehouse setup is scoped and uses its governed command [E]
+  Expected: not null
+    Actual: <null>
+  
+  package:matcher                     expect
+  test\warehouse_setup_test.dart 7:5  main.<fn>
+  
+00:00 +0 -1: warehouse validation requires branch and valid code and name
+00:00 +0 -2: warehouse validation requires branch and valid code and name [E]
+  Bad state: No element
+  dart:collection                       ListBase.firstWhere
+  test\warehouse_setup_test.dart 14:52  main.<fn>
+  
+00:00 +0 -2: Some tests failed.
+
+Failing tests:
+  test/warehouse_setup_test.dart: warehouse setup is scoped and uses its governed command
+  test/warehouse_setup_test.dart: warehouse validation requires branch and valid code and name
+
+Consider enabling the flag chain-stack-traces to receive more detailed exceptions.
+For example, 'dart test --chain-stack-traces'.
