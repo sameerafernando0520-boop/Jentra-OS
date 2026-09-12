@@ -6,6 +6,7 @@ import 'package:jentra_design_system/jentra_design_system.dart';
 
 import '../../app_providers.dart';
 import '../tenant/tenant_onboarding_screen.dart';
+import '../tenant/stock_opening_access.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -30,16 +31,28 @@ class DashboardScreen extends ConsumerWidget {
         ),
       );
     }
-    if (tenants.value?.isEmpty ?? true) return const TenantOnboardingScreen();
+    if (tenants.value?.isEmpty ?? true) {
+      return const SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(24),
+              child: StockOpeningInvitationInbox(),
+            ),
+            TenantOnboardingScreen(),
+          ],
+        ),
+      );
+    }
     return const _DashboardContent();
   }
 }
 
-class _DashboardContent extends StatelessWidget {
+class _DashboardContent extends ConsumerWidget {
   const _DashboardContent();
 
   @override
-  Widget build(BuildContext context) => SingleChildScrollView(
+  Widget build(BuildContext context, WidgetRef ref) => SingleChildScrollView(
     padding: EdgeInsets.all(
       MediaQuery.sizeOf(context).width < 700
           ? JentraSpacing.x4
@@ -48,6 +61,9 @@ class _DashboardContent extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        StockOpeningInvitationInbox(
+          key: ValueKey(ref.watch(authenticatedActorProvider).value),
+        ),
         const _DashboardHeader(),
         const SizedBox(height: JentraSpacing.x6),
         const _KpiGrid(),

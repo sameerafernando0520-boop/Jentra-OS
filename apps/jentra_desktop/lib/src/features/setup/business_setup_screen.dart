@@ -11,6 +11,7 @@ import 'package:jentra_platform/jentra_platform.dart';
 
 import '../../app_providers.dart';
 import 'business_setup_controller.dart';
+import '../tenant/stock_opening_access.dart';
 
 class BusinessSetupScreen extends ConsumerStatefulWidget {
   const BusinessSetupScreen({this.initialResource, super.key});
@@ -176,6 +177,7 @@ class _PageHeader extends ConsumerWidget {
           ],
         ),
       ),
+      const StockOpeningInviteButton(),
       IconButton(
         tooltip: 'Refresh setup data',
         onPressed: state.loading

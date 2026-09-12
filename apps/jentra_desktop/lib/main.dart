@@ -27,6 +27,9 @@ Future<void> main() async {
       overrides: [
         runtimeConfigProvider.overrideWithValue(config),
         foundationGatewayProvider.overrideWithValue(foundationGateway),
+        stockOpeningAccessGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseStockOpeningAccessGateway(client),
+        ),
         businessSetupGatewayProvider.overrideWithValue(businessSetupGateway),
         crmRepositoryProvider.overrideWithValue(crmRepository),
         leadToCashRepositoryProvider.overrideWithValue(quotations),

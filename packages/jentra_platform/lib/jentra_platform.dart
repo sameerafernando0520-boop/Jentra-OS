@@ -8,6 +8,7 @@ export 'src/quotation_draft_store.dart';
 export 'src/reference_cache_repository.dart';
 export 'src/runtime_config.dart';
 export 'src/setup_file_service.dart';
+export 'src/stock_opening_access_gateway.dart';
 export 'src/supabase_business_setup_gateway.dart';
 export 'src/supabase_crm_gateway.dart';
 export 'src/supabase_foundation_gateway.dart';

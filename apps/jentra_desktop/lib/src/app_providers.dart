@@ -15,6 +15,18 @@ final foundationGatewayProvider = Provider<SupabaseFoundationGateway?>(
   (ref) => null,
 );
 
+final stockOpeningAccessGatewayProvider = Provider<StockOpeningAccessGateway?>(
+  (ref) => null,
+);
+
+final stockOpeningInvitationsProvider =
+    FutureProvider.autoDispose<List<Map<String, Object?>>>((ref) async {
+      final actor = await ref.watch(authenticatedActorProvider.future);
+      if (actor == null) return const [];
+      return await ref.watch(stockOpeningAccessGatewayProvider)?.pending() ??
+          const [];
+    });
+
 final businessSetupGatewayProvider = Provider<SupabaseBusinessSetupGateway?>(
   (ref) => null,
 );

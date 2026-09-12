@@ -3,6 +3,94 @@
 Date: 2026-09-11. Development project: `xpdoufauvrbdmxgngetv`.
 This document is a prepared walkthrough, not a record of posted transactions.
 
+## Latest continuation checkpoint
+
+Handoff refresh at 2026-09-12 12:37 UTC: clean health, main `e307d15` with
+all continuation work still uncommitted, 34 migrations/latest `20260911130900`.
+Persistent counts: warehouse 1, unit 1, accounts 2, period 1, products 2,
+stock_opening sequence 1 (next 1). Journal sequence, workflows, approval steps,
+invitations and stock openings remain zero. `test@lh.com` has zero memberships.
+The last observed native screen was a blank New document sequence form for the
+journal. Reobserve on resume. Full continuation instructions are in
+[next-session-prompt.md](next-session-prompt.md).
+
+Stock-opening sequence saved by the user and verified in native list/database:
+UUID `1cdca8f2-d57c-4133-b7e3-54ca38f71756`, document type `stock_opening`,
+prefix `ACPT-OPEN-`, blank suffix, padding 5, next value 1, never reset, active.
+The journal sequence is still absent. Opened a fresh New document sequence
+form for `journal` / `ACPT-JRN-`; the same default numeric/reset/status values apply.
+
+Sequence continuation: database still has zero document sequences. Navigated
+native Governance / Document numbering and opened New document sequence.
+Defaults observed: padding 5, next number 1, Never, Active, blank suffix.
+Typing `stock_opening` through the helper left the focused field blank. No save
+was attempted; manual document type and prefix entry is needed in this form.
+
+Warehouse saved by the user and verified in the native list and database:
+`ACPT-WH` / `Acceptance warehouse`, active, correct JAT/HQ scope, UUID
+`ae045bc4-3851-4861-9eaf-fb6a8cf6ba75`. Read-only sequence refresh returned no
+rows. Next: stock_opening and journal sequences, then workflow/matrix and
+independent approver access. Native navigation attempts repeatedly reported
+user input; no sequence mutation was attempted.
+
+Native unit and product imports are complete: the agent selected the CSVs,
+reviewed the full accessible preview fields, clicked Apply import and verified
+the saved UI lists and database records. EA is Each / ea / quantity / precision
+0, UUID `991c28ad-80b9-4201-8e60-952eac63e912`. ACPT-PAPER is stocked/untracked,
+UUID `10436803-0bd6-4498-8653-14c327551b9d`; ACPT-TONER is stocked/lot,
+UUID `432539d4-0375-4e1b-8a1b-e7fc7c9405e2`. Both reference the saved EA and
+1300 account UUIDs. All are active. The file-picker modal screenshot coordinates
+worked once the prepared folder was open; ordinary text entry still did not.
+The New warehouse form is open at HQ/Active; an attempted ACPT-WH text input
+left its code blank. No warehouse save was attempted. Remaining setup:
+warehouse, sequences, workflow/matrix and independent approver access.
+
+The fiscal period has also been saved through native setup. UI and read-only
+database inspection agree: `Acceptance September 2026`, JAT, 2026-09-01 through
+2026-09-30, open and active, UUID `fd5ffd17-7ad1-4a7c-9c47-0d2094f05b3d`.
+The user completed the import while the agent was observing; the agent did not
+observe the preview/apply clicks. Next prerequisite is the EA unit.
+
+September 12 account import follow-up: the user completed CSV import. Native
+Chart of accounts shows exactly two active records. Read-only database inspection
+confirms the expected JAT entity, LKR currency and posting flags: 1300 Acceptance
+inventory is asset/debit, UUID `2c3f29b0-575b-492b-99d6-e4214cbc6019`; 3100
+Acceptance opening equity is equity/credit, UUID
+`bfa59c6f-2937-4829-95d9-4b199d22d3ce`. The agent observed the saved result,
+not the user's preview/apply clicks. Next: native fiscal-period CSV import, then
+EA unit. Product references must use these saved IDs and the eventual unit ID.
+
+September 12 local refresh (2026-09-11 19:10:36 UTC): development remains
+ACTIVE_HEALTHY with 34 migrations, latest `20260911130900`. Warehouses, units,
+accounts, products, periods, sequences, workflows, approval steps, invitations
+and openings are still zero. Relaunched the existing build and observed the
+restored owner session and JAT/HQ scope. Reopened the account import picker;
+the helper's Alt+N input did not change focus to File name. Manual file selection
+is still needed. No setup mutation was submitted. Use the actual local opening
+date when creating the draft; September 2026 still covers September 12.
+
+2026-09-11, after 13:11 UTC: the checkout was refreshed as clean `main` at
+`e307d15`, ahead of the original handoff. The missing governed stock-opening
+approver invitation and in-app recipient acceptance flow is now implemented.
+Development migration `20260911130900` is applied (34 migrations total).
+See [approver setup verification](approver-setup-verification.md) for the 40
+rollback database assertions, 159 desktop tests, three API tests, compatibility,
+analyzer, rendered form and development Windows build evidence.
+
+The updated release built in 58.1 seconds and reopened with the owner's session
+restored. Native observation confirms Jentra Acceptance Lab / JAT / Head Office
+and the new invitation action. Session restoration does **not** establish
+stock-opening draft/retry recovery. Windows helper text entry and accessibility
+input still fail; even the native import file picker cannot be filled reliably.
+The account import picker is open pending manual selection of
+`prepared-imports/accounts.csv`, after which the agent can inspect/apply the
+governed preview. No import was applied by this checkpoint.
+
+All prepared business prerequisites and `test@lh.com` membership remain absent.
+The approver role is created only when the authenticated invitation command is
+used; the migration did not seed it. Accounts, unit and fiscal-period CSVs are
+prepared; product UUID references still depend on actual saved records.
+
 ## Observed progress
 
 The development-connected Windows build passed in 258.2 seconds. Generated build
