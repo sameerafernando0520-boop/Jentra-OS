@@ -9,6 +9,18 @@ import 'app_providers.dart';
 import 'features/auth/login_screen.dart';
 import 'features/catalogue/component_catalogue_screen.dart';
 import 'features/crm/crm_screen.dart';
+import 'features/procurement/procurement_screen.dart';
+import 'features/procurement/procurement_controller.dart';
+import 'features/procurement/sourcing_controller.dart';
+import 'features/procurement/sourcing_screen.dart';
+import 'features/procurement/purchase_order_screen.dart';
+import 'features/procurement/purchase_order_controller.dart';
+import 'features/procurement/product_unit_controller.dart';
+import 'features/procurement/product_unit_screen.dart';
+import 'features/procurement/goods_receipt_controller.dart';
+import 'features/procurement/goods_receipt_screen.dart';
+import 'features/procurement/supplier_bill_controller.dart';
+import 'features/procurement/supplier_bill_screen.dart';
 import 'features/receivables/receivables_screen.dart';
 import 'features/stock_opening/stock_opening_screen.dart';
 import 'features/stock_opening/stock_opening_controller.dart';
@@ -93,12 +105,48 @@ final routerProvider = Provider<GoRouter>((ref) {
                 await ref.read(stockOpeningControllerProvider)?.canLeave() ??
                 true,
           ),
+          GoRoute(
+            path: '/procurement',
+            builder: (context, state) => const ProcurementScreen(),
+            onExit: (context, state) async =>
+                await ref.read(procurementControllerProvider)?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/procurement/sourcing',
+            builder: (context, state) => const SourcingScreen(),
+            onExit: (context, state) async =>
+                await ref.read(sourcingControllerProvider)?.canLeave() ?? true,
+          ),
+          GoRoute(
+            path: '/procurement/orders',
+            builder: (context, state) => const PurchaseOrderScreen(),
+            onExit: (context, state) async =>
+                await ref.read(purchaseOrderControllerProvider)?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/procurement/units',
+            builder: (context, state) => const ProductUnitScreen(),
+            onExit: (context, state) async =>
+                await ref.read(productUnitControllerProvider)?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/procurement/receipts',
+            builder: (context, state) => const GoodsReceiptScreen(),
+            onExit: (context, state) async =>
+                await ref.read(goodsReceiptControllerProvider)?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/procurement/bills',
+            builder: (context, state) => const SupplierBillScreen(),
+            onExit: (context, state) async =>
+                await ref.read(supplierBillControllerProvider)?.canLeave() ??
+                true,
+          ),
           for (final module in const [
-            (
-              'procurement',
-              'Procurement',
-              'Requisitions, approvals, RFQs and purchasing.',
-            ),
             (
               'finance',
               'Finance',

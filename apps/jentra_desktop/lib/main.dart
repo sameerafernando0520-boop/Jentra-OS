@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_platform/jentra_platform.dart';
 import 'package:jentra_platform/jentra_receivables_platform.dart';
+import 'package:jentra_platform/jentra_procurement_platform.dart';
+import 'src/features/procurement/procurement_controller.dart';
 
 import 'package:jentra_platform/jentra_stock_opening_platform.dart';
 import 'src/features/stock_opening/stock_opening_controller.dart';
@@ -41,6 +43,9 @@ Future<void> main() async {
         ),
         receivablesRepositoryProvider.overrideWithValue(
           client == null ? null : SupabaseReceivablesGateway(client),
+        ),
+        procurementGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseProcurementGateway(client),
         ),
       ],
       child: const JentraApp(),

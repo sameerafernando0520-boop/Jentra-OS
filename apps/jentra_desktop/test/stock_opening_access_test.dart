@@ -13,6 +13,7 @@ class _Access implements StockOpeningAccessGateway {
   final invites = <Map<String, String>>[];
   final accepts = <String>[];
   bool fail = false;
+  StockOpeningAccessFailure? rejection;
   Completer<void>? hold;
   @override
   Future<List<Map<String, Object?>>> pending() async => [
@@ -39,6 +40,7 @@ class _Access implements StockOpeningAccessGateway {
       'key': idempotencyKey,
     });
     await hold?.future;
+    if (rejection != null) throw rejection!;
     if (fail) throw StateError('timeout');
     return {
       'request_id': 'receipt',
@@ -174,6 +176,26 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+  testWidgets('server rejection is visible and retry keeps its identity', (
+    tester,
+  ) async {
+    final access = _Access()
+      ..rejection = const StockOpeningAccessFailure(
+        'Complete MFA for your owner session, then retry this request.',
+      );
+    await _pump(tester, access);
+    await tester.tap(find.byTooltip('Invite stock opening approver'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField), 'test@lh.com');
+    await tester.tap(find.text('Create invitation'));
+    await tester.pumpAndSettle();
+    expect(find.text(access.rejection!.message), findsOneWidget);
+    access.rejection = null;
+    await tester.tap(find.text('Retry invitation'));
+    await tester.pumpAndSettle();
+    expect(access.invites[0], access.invites[1]);
+    expect(find.text('role-uuid'), findsOneWidget);
+  });
   testWidgets('missing role-management authority hides invitation action', (
     tester,
   ) async {

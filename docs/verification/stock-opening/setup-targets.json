@@ -1,7 +1,7 @@
 {
   "environment": "development",
   "project_id": "xpdoufauvrbdmxgngetv",
-  "status": "prerequisites_created_pending_sequences_and_approval",
+  "status": "prerequisites_created_pending_approval_setup",
   "saved_warehouse_id": "ae045bc4-3851-4861-9eaf-fb6a8cf6ba75",
   "saved_stock_opening_sequence_id": "1cdca8f2-d57c-4133-b7e3-54ca38f71756",
   "saved_product_ids": {
@@ -15,13 +15,13 @@
     "3100": "bfa59c6f-2937-4829-95d9-4b199d22d3ce"
   },
   "latest_checkpoint": {
-    "observed_utc": "2026-09-12T12:37:24Z",
+    "observed_utc": "2026-09-12T12:53:04.8143766Z",
     "migration_count": 34,
     "latest_migration": "20260911130900",
-    "native_session": "September 12 local refresh: existing development build relaunched; owner session restored; JAT/HQ setup observed.",
-    "persistent_setup": "Warehouse ACPT-WH, both posting accounts, open September fiscal period, EA unit, both products and stock_opening sequence are saved and verified. Journal sequence, workflow, matrix and approver invitation remain absent; zero stock openings.",
-    "next_action": "Stock-opening sequence verified. Create journal / ACPT-JRN- through governed setup, padding 5, next 1, never reset, active, blank suffix.",
-    "automation_blocker": "Windows helper cannot populate text fields or resolve cached accessibility input elements."
+    "native_session": "Existing development build launched; owner session restored; Jentra Acceptance Lab / JAT / Head Office observed. New journal sequence form open.",
+    "persistent_setup": "All warehouse/unit/account/period/product prerequisites and both document sequences are verified. Journal a908a53c-8b7f-421b-a02f-1922e8d9f9ce is active, ACPT-JRN-, blank suffix, padding 5, next 1, never reset, JAT/HQ. Approval setup and stock-opening acceptance remain pending.",
+    "next_action": "Invite test@lh.com as scoped stock-opening approver through native governed setup; user handles authentication and MFA.",
+    "automation_blocker": "Fresh confirmed-focus sky.type_text attempt left Document type blank. Manual journal and ACPT-JRN- entry and Save to server requested; no save attempted by agent."
   },
   "scope": {
     "tenant_id": "a1d9ee78-de36-4408-9948-0f6ab7749b95",
@@ -29,23 +29,95 @@
     "legal_entity_id": "79f8f792-7b4d-44c2-9f2a-7dc4f8729edc",
     "branch_id": "579aab50-3856-4ace-a214-0d73a224a6ba"
   },
-  "independent_approver": {"email": "test@lh.com", "membership": "missing"},
-  "warehouse": {"code": "ACPT-WH", "name": "Acceptance warehouse", "status": "active"},
-  "unit": {"code": "EA", "name": "Each", "symbol": "ea", "category": "quantity", "precision": 0, "status": "active"},
+  "independent_approver": {
+    "email": "test@lh.com",
+    "membership": "missing"
+  },
+  "warehouse": {
+    "code": "ACPT-WH",
+    "name": "Acceptance warehouse",
+    "status": "active"
+  },
+  "unit": {
+    "code": "EA",
+    "name": "Each",
+    "symbol": "ea",
+    "category": "quantity",
+    "precision": 0,
+    "status": "active"
+  },
   "accounts": [
-    {"code": "1300", "name": "Acceptance inventory", "account_type": "asset", "normal_balance": "debit", "currency_code": "LKR", "is_posting": true, "status": "active"},
-    {"code": "3100", "name": "Acceptance opening equity", "account_type": "equity", "normal_balance": "credit", "currency_code": "LKR", "is_posting": true, "status": "active"}
+    {
+      "code": "1300",
+      "name": "Acceptance inventory",
+      "account_type": "asset",
+      "normal_balance": "debit",
+      "currency_code": "LKR",
+      "is_posting": true,
+      "status": "active"
+    },
+    {
+      "code": "3100",
+      "name": "Acceptance opening equity",
+      "account_type": "equity",
+      "normal_balance": "credit",
+      "currency_code": "LKR",
+      "is_posting": true,
+      "status": "active"
+    }
   ],
-  "fiscal_period": {"name": "Acceptance September 2026", "start_date": "2026-09-01", "end_date": "2026-09-30", "state": "open", "status": "active"},
+  "fiscal_period": {
+    "name": "Acceptance September 2026",
+    "start_date": "2026-09-01",
+    "end_date": "2026-09-30",
+    "state": "open",
+    "status": "active"
+  },
   "sequences": [
-    {"document_type": "stock_opening", "prefix": "ACPT-OPEN-", "padding": 5, "reset_policy": "never", "next_value": 1, "status": "active"},
-    {"document_type": "journal", "prefix": "ACPT-JRN-", "padding": 5, "reset_policy": "never", "next_value": 1, "status": "active"}
+    {
+      "document_type": "stock_opening",
+      "prefix": "ACPT-OPEN-",
+      "padding": 5,
+      "reset_policy": "never",
+      "next_value": 1,
+      "status": "active"
+    },
+    {
+      "document_type": "journal",
+      "prefix": "ACPT-JRN-",
+      "padding": 5,
+      "reset_policy": "never",
+      "next_value": 1,
+      "status": "active"
+    }
   ],
   "products": [
-    {"sku": "ACPT-PAPER", "name": "Acceptance office paper", "kind": "stocked", "tracking_mode": "none", "status": "active"},
-    {"sku": "ACPT-TONER", "name": "Acceptance toner", "kind": "stocked", "tracking_mode": "lot", "status": "active"}
+    {
+      "sku": "ACPT-PAPER",
+      "name": "Acceptance office paper",
+      "kind": "stocked",
+      "tracking_mode": "none",
+      "status": "active"
+    },
+    {
+      "sku": "ACPT-TONER",
+      "name": "Acceptance toner",
+      "kind": "stocked",
+      "tracking_mode": "lot",
+      "status": "active"
+    }
   ],
   "reference_resolution": "After saving EA and account 1300, use their server IDs as both products' base_unit_id and inventory_account_id. Never substitute codes for UUID references.",
   "approval_requirements": "Create an active stock_opening workflow with canonical lifecycle and requires_approval=true. Bind a scoped approval matrix to an appropriate independent role, then arrange test@lh.com membership and user-managed MFA before submit/approve/post.",
-  "expected_opening": {"paper_quantity": "250", "paper_value": "187500.00", "toner_quantity": "10", "toner_value": "61000.00", "toner_lot": "ACPT-LOT-001", "toner_expiry": "2028-09-01", "total": "248500.00", "currency": "LKR"}
+  "expected_opening": {
+    "paper_quantity": "250",
+    "paper_value": "187500.00",
+    "toner_quantity": "10",
+    "toner_value": "61000.00",
+    "toner_lot": "ACPT-LOT-001",
+    "toner_expiry": "2028-09-01",
+    "total": "248500.00",
+    "currency": "LKR"
+  },
+  "saved_journal_sequence_id": "a908a53c-8b7f-421b-a02f-1922e8d9f9ce"
 }

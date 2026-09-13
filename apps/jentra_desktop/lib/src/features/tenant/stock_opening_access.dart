@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
+import 'package:jentra_platform/jentra_platform.dart';
 import 'package:uuid/uuid.dart';
 import '../../app_providers.dart';
 
@@ -80,6 +81,10 @@ class _InviteState extends ConsumerState<StockOpeningInviteDialog> {
           );
       if (mounted && ref.read(authenticatedActorProvider).value == _actor) {
         setState(() => _result = result);
+      }
+    } on StockOpeningAccessFailure catch (error) {
+      if (mounted && ref.read(authenticatedActorProvider).value == _actor) {
+        setState(() => _error = error.message);
       }
     } on Object {
       if (mounted) {
@@ -217,6 +222,10 @@ class _InboxState extends ConsumerState<StockOpeningInvitationInbox> {
         ref.invalidate(tenantListProvider);
         ref.invalidate(businessScopeProvider);
         ref.invalidate(businessCapabilitiesProvider);
+      }
+    } on StockOpeningAccessFailure catch (error) {
+      if (mounted && actor == ref.read(authenticatedActorProvider).value) {
+        setState(() => _error = error.message);
       }
     } on Object {
       if (mounted && actor == ref.read(authenticatedActorProvider).value) {

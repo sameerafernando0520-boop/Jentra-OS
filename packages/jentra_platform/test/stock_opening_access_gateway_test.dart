@@ -10,8 +10,10 @@ void main() {
   late SupabaseStockOpeningAccessGateway gateway;
   final requests = <http.Request>[];
   Object response = [];
+  var statusCode = 200;
   setUp(() {
     requests.clear();
+    statusCode = 200;
     client = SupabaseClient(
       'https://example.test',
       'test',
@@ -19,7 +21,7 @@ void main() {
         requests.add(r);
         return http.Response(
           jsonEncode(response),
-          200,
+          statusCode,
           request: r,
           headers: {'content-type': 'application/json'},
         );
@@ -28,6 +30,33 @@ void main() {
     gateway = SupabaseStockOpeningAccessGateway(client);
   });
   tearDown(() => client.dispose());
+  test(
+    'MFA rejection gives actionable feedback without leaking details',
+    () async {
+      statusCode = 403;
+      response = {
+        'code': '42501',
+        'message': 'Multi-factor authentication required.',
+        'details': 'private server detail',
+      };
+      await expectLater(
+        gateway.invite(
+          tenantId: 'tenant',
+          legalEntityId: 'entity',
+          branchId: 'branch',
+          email: 'test@lh.com',
+          idempotencyKey: 'key',
+        ),
+        throwsA(
+          isA<StockOpeningAccessFailure>().having(
+            (e) => e.message,
+            'message',
+            'Complete MFA for your owner session, then retry this request.',
+          ),
+        ),
+      );
+    },
+  );
   test('invitation command carries exact scope and retry identity', () async {
     response = {
       'request_id': 'receipt',

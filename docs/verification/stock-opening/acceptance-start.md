@@ -5,6 +5,34 @@ This document is a prepared walkthrough, not a record of posted transactions.
 
 ## Latest continuation checkpoint
 
+Journal sequence follow-up: the user saved the journal sequence. Fresh native
+list and database reads confirm `a908a53c-8b7f-421b-a02f-1922e8d9f9ce`, `journal`,
+`ACPT-JRN-`, blank suffix, padding 5, next 1, never reset, active, JAT/HQ.
+The agent observed the saved result, not the user's save click. Both numbering
+prerequisites are complete. Next is the scoped independent approver invitation.
+
+Continuation refresh, 2026-09-12 12:44–12:48 UTC: clean `main` at
+`0ac613b1563f8edfeb8e5f75061f7ab79867af36`; the previous continuation changes
+are now committed by prior work. No Git mutation was performed this session.
+Development remains ACTIVE_HEALTHY, 34 migrations/latest `20260911130900`.
+All saved prerequisite UUIDs and values in setup-targets.json were reverified.
+Journal sequence, workflows, approval steps, invitations and stock openings
+remain absent; the independent approver still has zero memberships.
+
+The existing development executable was launched and the owner session restored.
+Observed Jentra Acceptance Lab / JAT / Head Office and the saved opening sequence.
+Opened New document sequence; confirmed document-type focus, then attempted
+`journal` using supported `sky.type_text`. The field remained visibly blank.
+No save was submitted. The form remains open for manual Document type `journal`
+and Prefix `ACPT-JRN-`; defaults are blank suffix, padding 5, next 1, Never, Active.
+The user was asked to enter those values and Save to server. Requery before any
+creation attempt; do not reset existing numbering.
+
+See [continuation refresh](continuation-refresh-20260912.md) for migration/build
+identity and setup-contract review. No source or database correction was required
+by the observations so far. Transaction acceptance, recovery, contention,
+reconciliation and owner signoff remain pending.
+
 Handoff refresh at 2026-09-12 12:37 UTC: clean health, main `e307d15` with
 all continuation work still uncommitted, 34 migrations/latest `20260911130900`.
 Persistent counts: warehouse 1, unit 1, accounts 2, period 1, products 2,

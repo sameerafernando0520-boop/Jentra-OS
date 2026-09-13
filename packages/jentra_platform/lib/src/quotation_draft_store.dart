@@ -55,12 +55,26 @@ final class QuotationRecoveryEntry {
 /// Raw editor fields may be incomplete; only prepare receives validated command
 /// input. No automatic network sync or conflict merge is performed here.
 final class QuotationDraftStore {
-  QuotationDraftStore(this._repository) : _orders = false;
-  QuotationDraftStore.orders(this._repository) : _orders = true;
+  QuotationDraftStore(this._repository) : _orders = false, _procurement = false;
+  QuotationDraftStore.orders(this._repository)
+    : _orders = true,
+      _procurement = false;
+  QuotationDraftStore.procurement(this._repository)
+    : _orders = false,
+      _procurement = true;
   final EncryptedDraftRepository _repository;
   final bool _orders;
-  String get _prefix => _orders ? 'order:' : 'quotation:';
-  String get _entityType => _orders ? 'sales.order' : 'sales.quotation';
+  final bool _procurement;
+  String get _prefix => _procurement
+      ? 'procurement:'
+      : _orders
+      ? 'order:'
+      : 'quotation:';
+  String get _entityType => _procurement
+      ? 'procurement.requisition'
+      : _orders
+      ? 'sales.order'
+      : 'sales.quotation';
   static const _uuid = Uuid();
   // Serialize store instances sharing a database too. This guards double-clicks
   // and overlapping editor instances in one application process.
