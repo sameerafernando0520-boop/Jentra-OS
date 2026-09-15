@@ -87,6 +87,47 @@ void main() {
       ],
     },
   );
+  test(
+    'purchase return command uses governed envelope and exact quantities',
+    () async {
+      response = {
+        'command_id': 'command',
+        'request_id': 'request',
+        'entity': {'id': 'document', 'status': 'posted'},
+      };
+      final c = command();
+      await gateway.postReturn(c);
+      expect(requests.single.url.path, endsWith('/rpc/post_purchase_return'));
+      final body = jsonDecode(requests.single.body) as Map;
+      expect(body['p_payload'], c.payload);
+      expect(body['p_idempotency_key'], c.idempotencyKey);
+      expect(body['p_command_id'], c.commandId);
+    },
+  );
+  test('return source reads preserve scope kind and keyset filters', () async {
+    response = {'items': []};
+    await gateway.returnSources(
+      scope,
+      'receipt',
+      after: 'cursor',
+      search: 'Supplier 100%',
+    );
+    var body = jsonDecode(requests.last.body) as Map;
+    expect(body, {
+      'p_tenant_id': 'tenant',
+      'p_legal_entity_id': 'entity',
+      'p_branch_id': 'branch',
+      'p_kind': 'receipt',
+      'p_after': 'cursor',
+      'p_search': 'Supplier 100%',
+    });
+    response = {'lines': []};
+    await gateway.returnSource(scope, 'bill', 'source');
+    body = jsonDecode(requests.last.body) as Map;
+    expect(body['p_source_id'], 'source');
+    expect(body['p_kind'], 'bill');
+    expect(body['p_branch_id'], 'branch');
+  });
   test('bounded order list includes tenant entity branch and keyset', () async {
     response = List.generate(
       51,
@@ -152,6 +193,107 @@ void main() {
     );
   });
   test(
+    'allocation correction commands preserve envelope and reject unknown operation',
+    () async {
+      response = {
+        'command_id': 'command',
+        'request_id': 'request',
+        'entity': {'id': 'document'},
+      };
+      await gateway.correctAllocation('allocate', command());
+      await gateway.correctAllocation('reverse', command());
+      expect(requests.map((r) => r.url.path.split('/').last), [
+        'allocate_supplier_credit',
+        'reverse_supplier_allocation',
+      ]);
+      expect(
+        (jsonDecode(requests.first.body) as Map)['p_payload'],
+        command().payload,
+      );
+      expect(
+        () => gateway.correctAllocation('delete', command()),
+        throwsA(isA<DomainError>()),
+      );
+      expect(requests.length, 2);
+    },
+  );
+  test('allocation reads bind source, date, currency pair and scope', () async {
+    response = {'items': []};
+    await gateway.itemDetail(scope, 'item', after: 'after');
+    expect((jsonDecode(requests.last.body) as Map)['p_item_id'], 'item');
+    await gateway.allocationTargets(scope, 'credit', after: 'cursor');
+    expect((jsonDecode(requests.last.body) as Map)['p_source_id'], 'credit');
+    await gateway.allocationRates(scope, {
+      '_currency': 'USD',
+      '_target_currency': 'LKR',
+      'posting_date': '2026-09-14',
+    });
+    final body = jsonDecode(requests.last.body) as Map;
+    expect(body['p_source_currency'], 'USD');
+    expect(body['p_target_currency'], 'LKR');
+    expect(body['p_date'], '2026-09-14');
+    expect(body['p_branch_id'], 'branch');
+  });
+  test(
+    'supplier settlement RPCs preserve command scope and exact payload',
+    () async {
+      response = {
+        'command_id': 'command',
+        'request_id': 'request',
+        'entity': {'id': 'document'},
+      };
+      await gateway.saveProposal(command());
+      await gateway.transitionProposal(command());
+      await gateway.postPayment(command());
+      expect(requests.map((r) => r.url.path.split('/').last), [
+        'upsert_payment_proposal',
+        'transition_payment_proposal',
+        'post_supplier_payment',
+      ]);
+      for (final request in requests) {
+        final body = jsonDecode(request.body) as Map;
+        expect(body['p_payload'], command().payload);
+        expect(body['p_expected_entity_version'], 4);
+        expect(body['p_branch_id'], 'branch');
+      }
+    },
+  );
+  test(
+    'payable selection and dated statements carry bounded scoped filters',
+    () async {
+      response = {'items': []};
+      await gateway.payableItems(scope, {
+        'id': 'proposal',
+        'supplier_id': 'supplier',
+        'cash_bank_account_id': 'bank',
+        'document_date': '2026-09-15',
+      }, after: 'cursor');
+      var body = jsonDecode(requests.last.body) as Map;
+      expect(body['p_proposal_id'], 'proposal');
+      expect(body['p_cash_bank_account_id'], 'bank');
+      expect(body['p_after'], 'cursor');
+      expect(body['p_branch_id'], 'branch');
+      response = {'open_amount': '90071992547409.91', 'rows': []};
+      final report = await gateway.statement(
+        scope,
+        supplierId: 'supplier',
+        currency: 'LKR',
+        asOf: '2026-09-15',
+        buckets: [15, 30, 60],
+      );
+      expect(report['open_amount'], '90071992547409.91');
+      body = jsonDecode(requests.last.body) as Map;
+      expect(body['p_buckets'], [15, 30, 60]);
+      expect(body['p_as_of'], '2026-09-15');
+      expect(body['p_supplier_id'], 'supplier');
+      await expectLater(
+        gateway.payableItems(scope.copyWith(actorId: 'other'), {}),
+        throwsA(isA<DomainError>()),
+      );
+      expect(requests.length, 2);
+    },
+  );
+  test(
     'supplier bill lifecycle and control commands remain distinct RPCs',
     () async {
       response = {
@@ -175,7 +317,7 @@ void main() {
         expect((jsonDecode(r.body) as Map)['p_payload'], command().payload);
       }
       await expectLater(
-      () => gateway.billAction('delete', command()),
+        () => gateway.billAction('delete', command()),
         throwsA(isA<DomainError>()),
       );
       expect(requests.length, 5);

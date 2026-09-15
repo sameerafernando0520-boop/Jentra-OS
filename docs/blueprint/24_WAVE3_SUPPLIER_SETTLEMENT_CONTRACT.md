@@ -16,7 +16,11 @@ must be active, scoped and use the payment currency. A stored payment FX rate de
 cash base value. AP clearing uses original carrying amounts; realized differences post to
 governed exchange gain/loss mappings, never float arithmetic.
 
-`api.upsert_payment_proposal` persists the governed proposal. `api.post_supplier_payment`
+`api.upsert_payment_proposal` persists the governed proposal.
+`api.transition_payment_proposal` submits, independently approves/rejects, recalls or
+cancels it using the configured lifecycle. Recall from approval must be explicitly
+allowed by that frozen lifecycle and invalidates approval before any edit.
+`api.post_supplier_payment`
 records the approved proposal and supplied payment reference
 without contacting a bank. It atomically creates the AP/cash journal, a negative AP open
 item, allocations against the approved bills, command receipt, audit and outbox. The
@@ -27,6 +31,20 @@ eligible bills with exact residual limits, party/entity/branch checks and govern
 when currencies differ. Allocation reversals retain the original links and restore dated
 residuals; they never delete posted history. Supplier statements and configurable AP aging
 use posting dates and allocation dates, with credits visible separately and source links.
+
+Allocation correction extension (2026-09-15): `api.allocate_supplier_credit` requires
+`finance.payments.allocate`; `api.reverse_supplier_allocation` requires
+`finance.payments.reverse`. Neither capability is automatically assigned to a role.
+Both commands use the authenticated envelope, exact immutable request hash, reason,
+open fiscal period and sorted source/target locks. A reversal appends a unique linked
+record and an opposite FX journal when needed. Dated residuals ignore the reversed
+allocation only from the reversal posting date onward. Reversal is rejected while an
+active proposal claims either item or when it would precede a later allocation event.
+After reversal, new allocations distribute the remaining carrying value proportionally,
+with the final allocation consuming its exact residual cents. This extension is AP-only;
+the existing AR behavior is preserved by the kind/scope checks and residual regression.
+The shared residual-helper replacement remains a candidate requiring compatibility
+review before installation alongside the acceptance session.
 
 Purchase returns and debit notes must reference received/billed quantities and preserve
 the original receipt, invoice and valuation history. These follow recorded payments in

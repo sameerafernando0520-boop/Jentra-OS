@@ -13,6 +13,8 @@ $migrationNames = @(
   '20260913006000_procurement_goods_receipts.sql'
   '20260913007000_procurement_supplier_bills.sql'
   '20260914001000_procurement_supplier_settlement.sql'
+  '20260915001000_payable_allocation_corrections.sql'
+  '20260915002000_procurement_purchase_returns.sql'
 )
 $migrationBodies = foreach ($migrationName in $migrationNames) {
   Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot "../migrations/$migrationName")
@@ -27,6 +29,7 @@ $extraTests = [string]::Join("`n", @(
   (Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot 'wave3_goods_receipts_test.sql'))
   (Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot 'wave3_supplier_bills_test.sql'))
   (Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot 'wave3_supplier_settlement_test.sql'))
+  (Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot 'wave3_purchase_returns_test.sql'))
 ))
 $marker = "select pg_temp.actor('outsider');"
 $insertOffset = $fixture.IndexOf($marker)

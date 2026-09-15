@@ -21,6 +21,10 @@ import 'features/procurement/goods_receipt_controller.dart';
 import 'features/procurement/goods_receipt_screen.dart';
 import 'features/procurement/supplier_bill_controller.dart';
 import 'features/procurement/supplier_bill_screen.dart';
+import 'features/procurement/supplier_payment_controller.dart';
+import 'features/procurement/supplier_payment_screen.dart';
+import 'features/procurement/purchase_return_controller.dart';
+import 'features/procurement/purchase_return_screen.dart';
 import 'features/receivables/receivables_screen.dart';
 import 'features/stock_opening/stock_opening_screen.dart';
 import 'features/stock_opening/stock_opening_controller.dart';
@@ -144,6 +148,20 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const SupplierBillScreen(),
             onExit: (context, state) async =>
                 await ref.read(supplierBillControllerProvider)?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/procurement/payments',
+            builder: (context, state) => const SupplierPaymentScreen(),
+            onExit: (context, state) async =>
+                await ref.read(supplierPaymentControllerProvider)?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/procurement/returns',
+            builder: (context, state) => const PurchaseReturnScreen(),
+            onExit: (context, state) async =>
+                await ref.read(purchaseReturnControllerProvider)?.canLeave() ??
                 true,
           ),
           for (final module in const [

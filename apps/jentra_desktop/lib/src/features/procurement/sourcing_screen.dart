@@ -255,7 +255,12 @@ class _RfqDetail extends StatelessWidget {
   }
 }
 
-Future<String?> sourcingReason(BuildContext context, String title) async {
+Future<String?> sourcingReason(
+  BuildContext context,
+  String title, {
+  String label = 'Reason',
+  int maxLength = 1000,
+}) async {
   final input = TextEditingController();
   final result = await showDialog<String>(
     context: context,
@@ -264,9 +269,9 @@ Future<String?> sourcingReason(BuildContext context, String title) async {
       content: TextField(
         controller: input,
         autofocus: true,
-        maxLength: 1000,
+        maxLength: maxLength,
         maxLines: 3,
-        decoration: const InputDecoration(labelText: 'Reason'),
+        decoration: InputDecoration(labelText: label),
       ),
       actions: [
         TextButton(

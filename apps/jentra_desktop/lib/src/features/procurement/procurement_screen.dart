@@ -26,52 +26,50 @@ class ProcurementScreen extends ConsumerWidget {
       return const Center(child: Text('Choose a legal entity and branch.'));
     }
     if (!(caps.value?.contains('procurement.requisitions.manage') ?? false)) {
-      if ([
-        'procurement.bills.view',
-        'procurement.bills.manage',
-        'procurement.bills.post',
-      ].any((p) => caps.value?.contains(p) ?? false)) {
-        return Center(
-          child: FilledButton(
-            onPressed: () => context.go('/procurement/bills'),
-            child: const Text('Open supplier bills'),
+      final destinations = <(String, String)>[
+        if (caps.value?.contains('procurement.returns.post') ?? false)
+          ('returns', 'Purchase returns'),
+        if ([
+          'finance.payments.manage',
+          'finance.payments.post',
+          'finance.payments.allocate',
+          'finance.payments.reverse',
+        ].any((p) => caps.value?.contains(p) ?? false))
+          ('payments', 'Supplier payments'),
+        if ([
+          'procurement.bills.view',
+          'procurement.bills.manage',
+          'procurement.bills.post',
+        ].any((p) => caps.value?.contains(p) ?? false))
+          ('bills', 'Supplier bills'),
+        if (caps.value?.contains('procurement.receipts.post') ?? false)
+          ('receipts', 'Goods receipts'),
+        if (caps.value?.contains('procurement.orders.manage') ?? false)
+          ('orders', 'Purchase orders'),
+        if (caps.value?.contains('procurement.rfq.manage') ?? false)
+          ('sourcing', 'Supplier sourcing'),
+        if (caps.value?.contains('inventory.catalog.manage') ?? false)
+          ('units', 'Product units'),
+      ];
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            children: [
+              if (destinations.isEmpty)
+                const Text(
+                  'Your role has no procurement workspace permission.',
+                ),
+              for (final destination in destinations)
+                FilledButton(
+                  onPressed: () => context.go('/procurement/${destination.$1}'),
+                  child: Text(destination.$2),
+                ),
+            ],
           ),
-        );
-      }
-      if (caps.value?.contains('procurement.receipts.post') ?? false) {
-        return Center(
-          child: FilledButton(
-            onPressed: () => context.go('/procurement/receipts'),
-            child: const Text('Open goods receipts'),
-          ),
-        );
-      }
-      if (caps.value?.contains('procurement.orders.manage') ?? false) {
-        return Center(
-          child: FilledButton(
-            onPressed: () => context.go('/procurement/orders'),
-            child: const Text('Open purchase orders'),
-          ),
-        );
-      }
-      if (caps.value?.contains('procurement.rfq.manage') ?? false) {
-        return Center(
-          child: FilledButton(
-            onPressed: () => context.go('/procurement/sourcing'),
-            child: const Text('Open supplier sourcing'),
-          ),
-        );
-      }
-      if (caps.value?.contains('inventory.catalog.manage') ?? false) {
-        return Center(
-          child: FilledButton(
-            onPressed: () => context.go('/procurement/units'),
-            child: const Text('Open product units'),
-          ),
-        );
-      }
-      return const Center(
-        child: Text('Your role cannot manage purchase requisitions.'),
+        ),
       );
     }
     final controller = ref.watch(procurementControllerProvider);
@@ -87,6 +85,13 @@ class ProcurementScreen extends ConsumerWidget {
       canOrder: caps.value?.contains('procurement.orders.manage') ?? false,
       canManageUnits: caps.value?.contains('inventory.catalog.manage') ?? false,
       canReceive: caps.value?.contains('procurement.receipts.post') ?? false,
+      canReturn: caps.value?.contains('procurement.returns.post') ?? false,
+      canPay: [
+        'finance.payments.manage',
+        'finance.payments.post',
+        'finance.payments.allocate',
+        'finance.payments.reverse',
+      ].any((p) => caps.value?.contains(p) ?? false),
       canBill: [
         'procurement.bills.view',
         'procurement.bills.manage',
@@ -105,6 +110,8 @@ class ProcurementWorkspace extends StatelessWidget {
     this.canManageUnits = false,
     this.canReceive = false,
     this.canBill = false,
+    this.canPay = false,
+    this.canReturn = false,
   });
   final ProcurementController controller;
   final bool canSource;
@@ -112,6 +119,8 @@ class ProcurementWorkspace extends StatelessWidget {
   final bool canManageUnits;
   final bool canReceive;
   final bool canBill;
+  final bool canPay;
+  final bool canReturn;
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: controller,
@@ -188,6 +197,20 @@ class ProcurementWorkspace extends StatelessWidget {
                           ? null
                           : () => context.go('/procurement/bills'),
                       child: const Text('Supplier bills'),
+                    ),
+                  if (canPay)
+                    TextButton(
+                      onPressed: c.busy
+                          ? null
+                          : () => context.go('/procurement/payments'),
+                      child: const Text('Supplier payments'),
+                    ),
+                  if (canReturn)
+                    TextButton(
+                      onPressed: c.busy
+                          ? null
+                          : () => context.go('/procurement/returns'),
+                      child: const Text('Purchase returns'),
                     ),
                   if (canManageUnits)
                     TextButton(

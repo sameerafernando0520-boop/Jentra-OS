@@ -86,6 +86,78 @@ abstract interface class SupplierBillGateway {
   );
 }
 
+abstract interface class SupplierPaymentGateway {
+  Future<Map<String, Object?>> allocationRates(
+    TenantContext scope,
+    Map<String, Object?> filter, {
+    String? after,
+  });
+  Future<Map<String, Object?>> itemDetail(
+    TenantContext scope,
+    String itemId, {
+    String? after,
+  });
+  Future<Map<String, Object?>> allocationTargets(
+    TenantContext scope,
+    String sourceId, {
+    String? after,
+  });
+  Future<Map<String, Object?>> correctAllocation(
+    String action,
+    CommandEnvelope<Map<String, Object?>> command,
+  );
+  Future<Map<String, Object?>> statement(
+    TenantContext scope, {
+    required String supplierId,
+    required String currency,
+    required String asOf,
+    required List<int> buckets,
+  });
+  Future<Map<String, Object?>> payableItems(
+    TenantContext scope,
+    Map<String, Object?> filter, {
+    String? after,
+  });
+  Future<CursorPage<Map<String, Object?>>> proposals(
+    TenantContext scope, {
+    String? after,
+  });
+  Future<CursorPage<Map<String, Object?>>> payments(
+    TenantContext scope, {
+    String? after,
+  });
+  Future<Map<String, Object?>> saveProposal(
+    CommandEnvelope<Map<String, Object?>> command,
+  );
+  Future<Map<String, Object?>> transitionProposal(
+    CommandEnvelope<Map<String, Object?>> command,
+  );
+  Future<Map<String, Object?>> postPayment(
+    CommandEnvelope<Map<String, Object?>> command,
+  );
+}
+
+abstract interface class PurchaseReturnGateway {
+  Future<CursorPage<Map<String, Object?>>> returns(
+    TenantContext scope, {
+    String? after,
+  });
+  Future<Map<String, Object?>> returnSources(
+    TenantContext scope,
+    String kind, {
+    String? after,
+    String search = '',
+  });
+  Future<Map<String, Object?>> returnSource(
+    TenantContext scope,
+    String kind,
+    String sourceId,
+  );
+  Future<Map<String, Object?>> postReturn(
+    CommandEnvelope<Map<String, Object?>> command,
+  );
+}
+
 final class SupabaseProcurementGateway
     implements
         ProcurementGateway,
@@ -93,9 +165,220 @@ final class SupabaseProcurementGateway
         ProductUnitGateway,
         GoodsReceiptGateway,
         ReceiptAllowanceGateway,
-        SupplierBillGateway {
+        SupplierBillGateway,
+        SupplierPaymentGateway,
+        PurchaseReturnGateway {
   SupabaseProcurementGateway(this.client);
   final SupabaseClient client;
+  @override
+  Future<CursorPage<Map<String, Object?>>> returns(
+    TenantContext scope, {
+    String? after,
+  }) => _page(scope, 'purchase_returns', after: after);
+  @override
+  Future<Map<String, Object?>> postReturn(
+    CommandEnvelope<Map<String, Object?>> command,
+  ) => _command('post_purchase_return', command);
+  @override
+  Future<Map<String, Object?>> returnSources(
+    TenantContext scope,
+    String kind, {
+    String? after,
+    String search = '',
+  }) async {
+    _scope(scope);
+    final result = await client
+        .schema('api')
+        .rpc(
+          'purchase_return_sources',
+          params: {
+            'p_tenant_id': scope.tenantId,
+            'p_legal_entity_id': scope.legalEntityId,
+            'p_branch_id': scope.branchId,
+            'p_kind': kind,
+            'p_after': after,
+            'p_search': search,
+          },
+        );
+    return (result as Map).cast<String, Object?>();
+  }
+
+  @override
+  Future<Map<String, Object?>> returnSource(
+    TenantContext scope,
+    String kind,
+    String sourceId,
+  ) async {
+    _scope(scope);
+    final result = await client
+        .schema('api')
+        .rpc(
+          'purchase_return_source',
+          params: {
+            'p_tenant_id': scope.tenantId,
+            'p_legal_entity_id': scope.legalEntityId,
+            'p_branch_id': scope.branchId,
+            'p_kind': kind,
+            'p_source_id': sourceId,
+          },
+        );
+    return (result as Map).cast<String, Object?>();
+  }
+
+  @override
+  Future<Map<String, Object?>> allocationRates(
+    TenantContext scope,
+    Map<String, Object?> filter, {
+    String? after,
+  }) async {
+    _scope(scope);
+    final result = await client
+        .schema('api')
+        .rpc(
+          'payable_allocation_rates',
+          params: {
+            'p_tenant_id': scope.tenantId,
+            'p_legal_entity_id': scope.legalEntityId,
+            'p_branch_id': scope.branchId,
+            'p_source_currency': filter['_currency'],
+            'p_target_currency': filter['_target_currency'],
+            'p_date': filter['posting_date'],
+            'p_after': after,
+          },
+        );
+    return (result as Map).cast<String, Object?>();
+  }
+
+  @override
+  Future<Map<String, Object?>> itemDetail(
+    TenantContext scope,
+    String itemId, {
+    String? after,
+  }) async {
+    _scope(scope);
+    final result = await client
+        .schema('api')
+        .rpc(
+          'payable_item_detail',
+          params: {
+            'p_tenant_id': scope.tenantId,
+            'p_legal_entity_id': scope.legalEntityId,
+            'p_branch_id': scope.branchId,
+            'p_item_id': itemId,
+            'p_after': after,
+          },
+        );
+    return (result as Map).cast<String, Object?>();
+  }
+
+  @override
+  Future<Map<String, Object?>> allocationTargets(
+    TenantContext scope,
+    String sourceId, {
+    String? after,
+  }) async {
+    _scope(scope);
+    final result = await client
+        .schema('api')
+        .rpc(
+          'payable_allocation_targets',
+          params: {
+            'p_tenant_id': scope.tenantId,
+            'p_legal_entity_id': scope.legalEntityId,
+            'p_branch_id': scope.branchId,
+            'p_source_id': sourceId,
+            'p_after': after,
+          },
+        );
+    return (result as Map).cast<String, Object?>();
+  }
+
+  @override
+  Future<Map<String, Object?>> correctAllocation(
+    String action,
+    CommandEnvelope<Map<String, Object?>> command,
+  ) => _command(switch (action) {
+    'allocate' => 'allocate_supplier_credit',
+    'reverse' => 'reverse_supplier_allocation',
+    _ => throw const DomainError(
+      code: 'VALIDATION_ERROR',
+      message: 'Unknown allocation correction.',
+    ),
+  }, command);
+  @override
+  Future<Map<String, Object?>> statement(
+    TenantContext scope, {
+    required String supplierId,
+    required String currency,
+    required String asOf,
+    required List<int> buckets,
+  }) async {
+    _scope(scope);
+    final result = await client
+        .schema('api')
+        .rpc(
+          'supplier_statement',
+          params: {
+            'p_tenant_id': scope.tenantId,
+            'p_legal_entity_id': scope.legalEntityId,
+            'p_branch_id': scope.branchId,
+            'p_supplier_id': supplierId,
+            'p_currency_code': currency,
+            'p_as_of': asOf,
+            'p_buckets': buckets,
+          },
+        );
+    return (result as Map).cast<String, Object?>();
+  }
+
+  @override
+  Future<Map<String, Object?>> payableItems(
+    TenantContext scope,
+    Map<String, Object?> filter, {
+    String? after,
+  }) async {
+    _scope(scope);
+    final result = await client
+        .schema('api')
+        .rpc(
+          'supplier_payment_reference_options',
+          params: {
+            'p_tenant_id': scope.tenantId,
+            'p_legal_entity_id': scope.legalEntityId,
+            'p_branch_id': scope.branchId,
+            'p_resource': 'payment_items',
+            'p_after': after,
+            'p_supplier_id': filter['supplier_id'],
+            'p_cash_bank_account_id': filter['cash_bank_account_id'],
+            'p_date': filter['document_date'],
+            'p_proposal_id': filter['id'],
+          },
+        );
+    return (result as Map).cast<String, Object?>();
+  }
+
+  @override
+  Future<CursorPage<Map<String, Object?>>> proposals(
+    TenantContext scope, {
+    String? after,
+  }) => _page(scope, 'payment_proposals', after: after);
+  @override
+  Future<CursorPage<Map<String, Object?>>> payments(
+    TenantContext scope, {
+    String? after,
+  }) => _page(scope, 'supplier_payments', after: after);
+  @override
+  Future<Map<String, Object?>> saveProposal(
+    CommandEnvelope<Map<String, Object?>> command,
+  ) => _command('upsert_payment_proposal', command);
+  @override
+  Future<Map<String, Object?>> transitionProposal(
+    CommandEnvelope<Map<String, Object?>> command,
+  ) => _command('transition_payment_proposal', command);
+  @override
+  Future<Map<String, Object?>> postPayment(
+    CommandEnvelope<Map<String, Object?>> command,
+  ) => _command('post_supplier_payment', command);
   @override
   Future<CursorPage<Map<String, Object?>>> bills(
     TenantContext scope, {
@@ -226,7 +509,9 @@ final class SupabaseProcurementGateway
     final result = await client
         .schema('api')
         .rpc(
-          resource.startsWith('bill_')
+          resource.startsWith('payment_')
+              ? 'supplier_payment_reference_options'
+              : resource.startsWith('bill_')
               ? 'supplier_bill_reference_options'
               : resource.startsWith('receipt_')
               ? 'goods_receipt_reference_options'

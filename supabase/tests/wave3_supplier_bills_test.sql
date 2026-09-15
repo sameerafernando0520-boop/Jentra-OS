@@ -41,7 +41,7 @@ set constraints all deferred;
 insert into finance.tax_definitions(id,tenant_id,legal_entity_id,code,name,rate,kind,inclusive,valid_from,created_by,updated_by)
 values(pg_temp.fid('input-tax'),pg_temp.fid('tenant'),pg_temp.fid('entity'),'INPUT18','Synthetic input tax',18,'input',false,'2026-01-01',pg_temp.fid('creator'),pg_temp.fid('creator'));
 create function pg_temp.direct_bill(p_name text default 'direct-bill') returns jsonb language sql as $$select jsonb_build_object(
- 'id',pg_temp.fid(p_name),'supplier_id',pg_temp.fid('supplier_b'),'supplier_reference','DIRECT-'||p_name,'document_date','2026-09-14','due_date','2026-09-30',
+ 'id',pg_temp.fid(p_name),'supplier_id',pg_temp.fid('supplier_b'),'supplier_reference','DIRECT-'||p_name,'document_date','2026-09-13','due_date','2026-09-14',
  'currency_code','LKR','exchange_rate_id',null,'lines',jsonb_build_array(jsonb_build_object('line_id',pg_temp.fid(p_name||'.line'),
  'description','Professional services','quantity','2','unit_price','125.123456','discount_percent','0','tax_definition_id',pg_temp.fid('input-tax'),'expense_account_id',pg_temp.fid('expense-account'))))$$;
 select pg_temp.call('upsert_supplier_bill',pg_temp.direct_bill());

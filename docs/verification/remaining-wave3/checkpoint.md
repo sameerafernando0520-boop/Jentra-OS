@@ -89,4 +89,104 @@ items, applicable regression/security/performance/build checks, and final solo r
 - Final blueprint comparison found EC-320 drift handling was too permissive in the
   receipt candidate. A new guard retains the PO ratio while rejecting a changed active
   master; the new regression requires a governed restoration before receipt. Earlier
-  97-check evidence did not cover this corrected rule. Fresh verification is pending.
+  97-check evidence did not cover this corrected rule. It passed in the subsequent
+  133-check suite and the 170-check suite recorded below.
+
+## Supplier settlement continuation — 2026-09-15
+
+- Checkout refresh found clean `main` at `b0aa757`; this session did not commit or
+  stage anything. Dev project remains ACTIVE_HEALTHY with 34 applied migrations.
+  Common scope/replay/finish-command/lifecycle helper fingerprints are unchanged.
+- Ten candidate migrations remain unapplied. The settlement candidate now includes
+  proposal submission, frozen amount/currency workflow, role/MFA and independent
+  approval, recall/rejection/cancellation claim release, and atomic recorded payments.
+  No bank transfer is executed. Payments retain immutable references and allocations.
+- All 170 combined rollback assertions pass. New checks cover due-date eligibility,
+  decimal-string validation, exclusive claims, blocked self-approval, MFA, partial
+  payment residuals, replay, failed-numbering atomic rollback, immutable payment history,
+  claim reacquisition after recall, AP privacy and authenticated direct-write denial.
+  Dated statements exclude later payments/allocations and place a thirteen-day overdue
+  item in a configured 8–14-day bucket. Sequential claim tests are not contention proof.
+- All 43 procurement controller/widget/golden checks and 27 gateway/encrypted-storage
+  regressions pass. The payment subset has nine checks, including controller restart
+  with the identical sealed recording command/reference, branch isolation, exact
+  amounts beyond binary integer precision and success with failed register refresh.
+  The first storage invocation named two nonexistent files; corrected paths were rerun
+  successfully. This was a command selection error, not a product failure.
+- Payment editor light/dark 1024×1100 renders at 200% were visually inspected; all
+  fields and actions fit and remain reachable. This is widget rendering evidence,
+  not authenticated native acceptance or Credential Manager restart proof.
+- Review tightened bank locking and frozen FX-rate comparison. Procurement entry
+  navigation now lists every workspace the user may access. The payment reference
+  prompt has its own field label and 140-character limit.
+- Independent allocation commands/reversal, purchase returns/debit notes, complete
+  FX/concurrency/performance checks, updated isolated build, installation and the
+  later inventory/finance/cross-cutting requirements remain open. Final Wave 3 review
+  and product/owner acceptance have not been completed.
+
+## Allocation corrections and isolated build — 2026-09-15
+
+- Eleven unapplied candidates pass 194 combined rollback assertions. Independent AP
+  allocation and linked reasoned reversal preserve dated balances and immutable history.
+  Source residual carrying values are allocated proportionally, including final cents.
+  A 200.00 FX loss reverses exactly; a later cross-currency allocation posts a 5.00
+  difference. Future posting and active proposal claims block conflicting corrections.
+- All 85 existing delivery/receivables assertions pass with the candidate residual
+  helper. This is compatibility regression evidence, not concurrent-session evidence.
+- 29 platform/storage checks and 15 payment controller/recovery/golden checks pass.
+  Both allocation operations retain the original sealed RPC envelope after uncertain
+  sends and controller restart. Statement and allocation renders at 1024x1300 and
+  200% text were inspected; review fixed restored report filters and allocation title.
+- An isolated Windows release build at `build/w3` passed in 184.1 seconds with payment
+  allocation source included. The earlier longer isolation path failed MSB3501 in
+  generated secure-storage plugin build state; the shorter independent path builds.
+  No executable was launched, auth store copied, or acceptance executable replaced.
+- Shared `finance.flow_residual` now excludes linked AP allocation reversals only as
+  of their posting date. Persistent application still requires acceptance-overlap
+  coordination and a fresh ledger/compatibility check. Purchase returns and subsequent
+  Wave 3 requirements remain unfinished; no native acceptance or final signoff claimed.
+
+## Purchase return/debit continuation — 2026-09-15
+
+- Added contract 25 and unapplied candidate `20260915002000_procurement_purchase_returns`.
+  One scoped receipt or bill supplies each return; source quantities and history stay
+  immutable. Unbilled returns reverse GRNI; billed returns reverse frozen net/tax and
+  create a negative AP item for the existing allocation workspace. Stock issues use
+  pre-issue moving-average cost, original lot/serial identity and matched frozen units.
+- All 240 combined procurement rollback assertions pass with twelve candidates.
+  Coverage includes partial/final cent rounding, exact base units, over-return and
+  duplicate serial denial, expired-lot supplier disposition, reservation protection,
+  immutable history, MFA/scope denial, source-picker eligibility and later bill matching.
+  A failure after stock and journal construction leaves stock, carrying value and
+  journal count unchanged. These are sequential assertions, not real contention proof.
+- Native `/procurement/returns` includes bill/receipt source selection, remaining
+  quantities, lot/serial choice, reason/reference, exact advisory amount preview,
+  encrypted local drafts, identical uncertain retries and posted source evidence.
+  The full selected procurement UI/recovery suite passes 56 checks. Seven return
+  checks include scope isolation, restart retry and offline navigation persistence.
+  Light/dark 1024x1300 renders at 200% were reviewed; preview is LKR 16.67 for the
+  synthetic 0.15-carton return. Widget proof does not establish native acceptance.
+- Twelve domain checks pass, including 200 partial returns of a value above binary
+  integer precision and preservation of separate net/tax half-cent rounding. Thirty-one
+  gateway and encrypted-storage regressions pass. Initial gateway test setup errors
+  (helper declaration order, incomplete mocked command receipt and two misnamed test
+  paths) were corrected before this passing run.
+- Solo slice review fixed the prelock query alias, active conversion/base-currency
+  guards, amount preview and button wording. A redundant moving-average cost field
+  was removed from return responses; cost stays behind `inventory.cost.view` in the
+  movement ledger. Two explicit assertions verify this boundary.
+- One expanded database run suffered a connector transport failure. A subsequent
+  read confirmed the unchanged 34-migration ledger; the full rollback suite then passed.
+  The initial isolated return Windows build passed in 68 seconds. No native app was
+  launched or authentication state copied. Latest preview build/analyzer follow below.
+- Real multi-session contention, full source drill-through, scale/performance,
+  Credential Manager restart, candidate installation and authenticated acceptance
+  remain unverified. Inventory transfers/counts/adjustments, remaining finance and
+  cross-cutting requirements are still pending; this is not final Wave 3 completion.
+
+Final slice checks: all 85 delivery/receivables assertions also pass with all twelve
+candidates. The isolated exact-preview Windows build passed in 46.6 seconds. Source
+and focused test analysis reports no issues after resolving three brace-style findings.
+Both final amount-preview renders were inspected at 200% text scale. Source
+diff checks are clean; `main` remains at `b0aa757` and no acceptance-owned paths were
+changed. No staging, commit, migration application, production or auth action occurred.

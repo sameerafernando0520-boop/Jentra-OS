@@ -5,6 +5,12 @@ This document is a prepared walkthrough, not a record of posted transactions.
 
 ## Latest continuation checkpoint
 
+16 September review: live connectivity restored; 120 rollback-only database
+assertions and 46 focused application tests passed. Still zero invitations,
+stock-opening workflows, openings and journals; both sequences remain next 1.
+No persistent acceptance action occurred. See [fresh review](review-20260916.md).
+The actual client invitation failure remains unresolved pending its exact response.
+
 Journal sequence follow-up: the user saved the journal sequence. Fresh native
 list and database reads confirm `a908a53c-8b7f-421b-a02f-1922e8d9f9ce`, `journal`,
 `ACPT-JRN-`, blank suffix, padding 5, next 1, never reset, active, JAT/HQ.
