@@ -1,5 +1,306 @@
 # Remaining Wave 3 verification checkpoint
 
+## Manual-journal continuation — 2026-09-22
+
+- Refreshed `main` at `0b2261f`. Development project ACTIVE_HEALTHY, **34 applied
+  migrations through `20260911130900`**; relevant live posting/rate/period/replay
+  definitions checked. Security still reports leaked-password protection disabled
+  ([remediation](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection));
+  performance reports 294 unused-index notices. Settings and acceptance state unchanged.
+- Contract 32 and CLI-created `20260921041348_manual_journals.sql` add exact manual
+  drafts, dimensions and existing-file references, configured independent approval/MFA,
+  separate posting, actual ledger source lines and independently approved linked
+  reversals. Existing `finance.flow_post_journal` remains the posting engine. AR/AP
+  controls require source commands. Revalidation rejects changed approved FX/files;
+  period, account and exact-balance checks precede atomic posting/audit/outbox.
+- Native `/finance/journals`: `apps/jentra_desktop/lib/src/features/manual_journal/`.
+  Gateway: `packages/jentra_platform/lib/src/supabase_manual_journal_gateway.dart`,
+  export `jentra_finance_platform.dart`. Main/router/navigation wired with finance-view
+  access. Named account/rate/file choices, lifecycle actions, posting confirmation,
+  source refresh and original/reversal navigation are implemented. Encrypted
+  `manual-journal-editor` preserves sealed retries and confirmed-post restart state.
+- **Nineteen candidate migrations remain UNAPPLIED**. Builder:
+  `supabase/tests/build_journal_candidate.ps1`. Fresh rollback results: **348** combined
+  procurement/valuation/journal, **105** inventory and **126** reservation/delivery/AR
+  assertions pass. `manual-journal-*-20260922.json` records execution evidence. All
+  synthetic fixtures, workflow/period/file mutations and DDL rolled back.
+- Client checks: **87** combined inventory/journal UI/recovery/golden and **77** gateway/
+  shared-store checks passed. The final confirmed-post correction then passed all
+  **13** journal UI tests (one additional recovery case). Journal gateway subset: **10**.
+  Focused app/platform analyzers clean. Final light/dark 200% text renders visually
+  inspected; posting dialog reached and cancelled at 1024×720 with no command sent.
+- Final current-source Windows release build in isolated `build/w3` passed in
+  **85.6 seconds**. Updated journal source hashes and shared main/router copies match
+  the workspace. Only Dart library sources were copied; no environment files,
+  authentication stores or local databases were copied and no executable was launched.
+- Final catalog confirms 34 installed migrations, no manual/valuation candidate tables
+  and none of their three checked command functions. Protected stock-opening source
+  and verification paths have no diff; `git diff --check` passes. No Git writes,
+  production actions, migration installation or executable launch. Solo findings and
+  corrections: `manual-journal-review-20260922.md`.
+- Remaining development: broader inventory disposition/landed/expiry integration,
+  automatic-source drill-through and AR/AP control reconciliation, bank reconciliation,
+  FX revaluation/period governance, financial reports/budgets and cross-cutting work.
+  Real contention, p95/load, Credential Manager/native acceptance, installation
+  coordination and owner signoff remain open. **Wave 3 is not complete.**
+
+## Dated inventory valuation continuation — 2026-09-21
+
+- Contract 31 and CLI-created `20260920202547_inventory_valuation_reports.sql` add
+  governed immutable saved reports. Movement, transit and selected-control GL evidence
+  share one database snapshot. Later backdated postings cannot change a saved report.
+  Quantity, pooled average, carrying value, lot allocation and source differences use
+  exact database decimals; native validation uses decimal strings and BigInt.
+- Native `/inventory/valuation`: `apps/jentra_desktop/lib/src/features/inventory_valuation/`;
+  gateway: `packages/jentra_platform/lib/src/supabase_inventory_valuation_gateway.dart`.
+  Named control-account selection, cutoff, saved report register, six paged evidence
+  sections and filtered movement/journal source details are wired through main,
+  router and navigation. Encrypted `inventory-valuation-report` recovery retains
+  identical uncertain commands; scope rejection clears visible cost evidence.
+- Fresh rollback evidence: **318** procurement/provenance/landed/valuation, **105**
+  inventory and **126** reservation/delivery/AR assertions pass with all **eighteen
+  UNAPPLIED candidates**. `supabase/tests/build_valuation_candidate.ps1` composes them.
+  Artifacts: `valuation-procurement-20260921.json`, `valuation-inventory-20260921.json`,
+  `valuation-ar-20260921.json`. No candidate or fixture changes persisted.
+- Fresh client checks: **75** combined inventory UI/recovery/golden and **63** gateway/
+  shared-store checks pass. New valuation subsets: 11 UI and 9 gateway checks.
+  Light/dark 200% text renders visually inspected; source navigation is reachable at
+  1024×720. Isolated current-source Windows release build passed in **127.9 seconds**.
+  No executable launched; no env, authentication store or local database copied.
+- Final catalog check: 34 applied migrations, latest `20260911130900`; valuation table
+  absent. Fresh health/advisor findings remain those recorded below. Solo review and
+  corrected findings: `valuation-review-20260921.md`.
+- Remaining: broader landed bases/transit value adjustments, disposition and automatic
+  reservation expiry/retirement integration; finance and cross-cutting work in the
+  requirement matrix. Large reports above explicit bounds fail without truncation.
+  Actual contention, p95/load, Credential Manager/native acceptance, installation
+  coordination and owner signoff remain open. Wave 3 is not complete.
+
+## Landed-value continuation — 2026-09-21
+
+- Refreshed `main` at `0b2261f`; development project ACTIVE_HEALTHY, 34 applied
+  migrations through `20260911130900`. Fresh function definitions and advisors checked.
+  Existing leaked-password protection warning remains
+  ([remediation](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection));
+  performance advisor reports 294 unused-index notices. No settings changed.
+- Contract 30 and CLI-created `20260919185538_inventory_landed_value.sql` implement
+  single-receipt exact freight reclassification: server preview, remaining/consumed
+  split, cumulative warehouse rounding, value-only movements, balanced existing-engine
+  journals, immutable evidence and linked reasoned reversal. Scope is enforced in
+  every affected branch. Transit, supplier-return/count effects, missing provenance
+  or valuation and unsafe later reversals fail explicitly. **Seventeen candidates
+  remain UNAPPLIED**; `supabase/tests/build_landed_candidate.ps1` composes their tests.
+- Native `/inventory/landed-value`: `apps/jentra_desktop/lib/src/features/landed_value/`;
+  gateway: `packages/jentra_platform/lib/src/supabase_landed_value_gateway.dart`.
+  Named receipt/account selection, exact preview, posting confirmation, immutable
+  register review, reversal and encrypted `landed-value-editor` recovery are wired
+  into main/router/navigation. Uncertain retries retain the identical command;
+  conflicts require a new preview; explicit scope rejection hides loaded cost data.
+- Fresh database evidence: **294** procurement/provenance/landed, **105** inventory,
+  **126** reservation/delivery/AR assertions pass with all seventeen candidates.
+  Artifacts: `landed-value-procurement-20260921.json`, `landed-value-inventory-20260921.json`,
+  `landed-value-ar-20260921.json`. All fixture changes and DDL rolled back.
+- Fresh client checks: **64** combined inventory UI/recovery/golden and **54** gateway/
+  encrypted-store checks pass. New landed subsets: 11 UI and 13 gateway checks.
+  Focused analyzer clean. Light/dark 200% text widget renders visually inspected;
+  minimum desktop posting reachable. Final current-source Windows release build in
+  isolated `build/w3`: **49.7 seconds**. No executable launched or auth/local DB copied.
+- Solo findings and corrections: `landed-value-review-20260921.md`. Final catalog
+  verifies 34 applied migrations and no landed candidate table/command. Protected
+  stock-opening source/docs have no diff. No staging, commit, push or installation.
+- Remaining: broader landed allocation bases, value in transit, corrections after
+  later consumption, full dated stock valuation/GL reconciliation and disposition,
+  then the finance and cross-cutting requirements in the status matrix. Real contention,
+  load/p95, Credential Manager/native acceptance and owner signoff remain unverified.
+  This completes a bounded development vertical, not all FR-359 or Wave 3 acceptance.
+
+## Receipt provenance continuation — 2026-09-20
+
+- Refreshed `main` at `0b2261f`; project ACTIVE_HEALTHY, 34 applied migrations through
+  `20260911130900`. Security advisor still reports leaked-password protection disabled
+  ([remediation](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection));
+  final performance advisor refresh reports 294 unused-index notices. No settings changed.
+- Contract 29 and CLI-created candidate `20260919181407_inventory_receipt_provenance.sql`
+  add immutable quantity attribution, a private position projection and scoped bounded
+  trace RPCs. Receipt cohorts follow issues, original returns and transfers through
+  transit/completion/reversal. Missing-serial recount restoration retains the same
+  identity. Older stock stays explicitly unknown; no current balance is assigned to
+  an unproven historical receipt. Existing moving-average valuation/journals remain
+  authoritative. Sixteen candidates remain **UNAPPLIED**.
+- Native `/inventory/receipt-trace` is implemented in `features/receipt_trace/` and
+  `packages/jentra_platform/lib/src/supabase_receipt_trace_gateway.dart`; corresponding
+  app/platform tests and two 200% goldens are present. It has current holdings,
+  transit/net-issued quantities, original lot/serial evidence, independent register
+  and history paging, explicit unknown coverage and scope-revocation clearing.
+- Fresh checks: **265** combined procurement/provenance, **105** inventory and **126**
+  reservation/delivery/AR rollback assertions pass with all sixteen candidates.
+  Evidence: `receipt-provenance-procurement-20260920.json`,
+  `receipt-provenance-inventory-20260920.json`, `receipt-provenance-ar-20260920.json`.
+  New fixture writes and its temporary legacy-history trigger disable are rollback-only.
+- **53** combined inventory UI/recovery/golden and **41** gateway/shared-store checks
+  pass. Focused analyzer clean. Light/dark 200% text renders inspected; minimum desktop
+  paging reachable. Current Dart source built in isolated `build/w3` as Windows release
+  in **83.9 seconds**. No executable launched, acceptance build replaced or auth copied.
+- Solo review and corrections: `receipt-provenance-review-20260920.md`. Final live
+  catalog still has 34 migrations and no provenance candidate table/RPC. Protected
+  stock-opening source/docs have no diff. No staging, commit, push or installation.
+- Next: contract and end-to-end landed-value posting through `finance.flow_post_journal`,
+  exact remaining/consumed allocation and reasoned correction. Transit requires a
+  governed extension to frozen transfer value before adjustment. Supplier returns and
+  count shortages must not be classified blindly as consumed-stock expense. Full dated
+  valuation/GL reconciliation, finance, cross-cutting requirements and final AC-326
+  review remain open. This is candidate development evidence, not Wave 3 completion
+  or native acceptance. Actual contention/load and bounded-limit stress checks remain.
+
+## Reservation continuation — 2026-09-19
+
+- Refreshed `main` at `0b2261f`; development project ACTIVE_HEALTHY, 34 applied
+  migrations through `20260911130900`. Advisors retain the leaked-password
+  protection warning ([remediation](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection))
+  and 295 unused-index notices. No database settings changed.
+- Contract 28 and candidate `20260918001000_inventory_reservation_release.sql`
+  add scoped manual/expired/retired reservation release with expected versions,
+  exact replay, stock/order allocation updates and atomic audit/receipt/outbox.
+  An append-only trigger records reservation changes, including partial delivery,
+  and marks the start of historical coverage. On-hand, valuation and journals stay
+  unchanged. Fifteen candidates remain unapplied.
+- Source: `apps/jentra_desktop/lib/src/features/reservations/`,
+  `packages/jentra_platform/lib/src/supabase_reservation_gateway.dart`,
+  `/inventory/reservations` and its permission-aware main/router/navigation wiring.
+  The native queue has named references, bounded queue/history pages, a reasoned
+  confirmation and an encrypted, scope-isolated sealed retry after uncertainty.
+- Dated reservation reporting now uses recorded versions and an explicit UTC
+  cutoff, pins the cutoff across pages and rejects pre-coverage/future requests.
+  Later release does not rewrite a past held quantity; expiry alone does not hide
+  allocation before the governed release. Names are labelled as current references.
+- Fresh verification: 126 reservation/delivery/AR rollback assertions; 105 inventory
+  rollback assertions including the 500/501 identity boundary; 240 procurement
+  regressions with all fifteen candidates. Evidence files: `reservation-candidate-20260919.json`,
+  `reservation-report-candidate-20260919.json`, `inventory-count-limit-20260919.json`,
+  `inventory-candidate-20260919.json`, `inventory-procurement-20260919.json`.
+- Final tests: 43 combined transfer/count/reservation UI/recovery/golden checks,
+  33 gateway/shared-store checks and seven exact domain checks pass.
+  Focused analyzer is clean. Light/dark reservation and corrected count renders
+  reviewed at 200% text scale; minimum 1024×720 action reachability passes.
+  Refreshed Dart source in `build/w3` compiled as Windows release in 48.7 seconds
+  after the dated report and review fixes (earlier release-only build: 92.9 seconds).
+  A formatter-only gateway difference was reviewed and synchronized after that build.
+  No executable launched, acceptance runtime replaced or authentication automated.
+- Final catalog check still shows 34 applied migrations, latest `20260911130900`;
+  transfer, count and reservation-history candidate tables are absent after rollback.
+- Solo review: `reservation-review-20260919.md`. Fixed incomplete-success receipts
+  dropping uncertainty, confirmation banners carrying into another selection and
+  count-field spacing at 200% text scale. Full AC-326 review remains open.
+- The previous test escalation failed because automatic approval review hit a usage
+  limit; the resumed Sep 19 test requests were approved and ran successfully.
+- Automatic expiry/retirement processing, complete dated balances and valuation/GL
+  reconciliation, landed-value posting, remaining finance, cross-cutting tests and
+  final AC-326 review remain open. These results are candidate development evidence,
+  not installed functionality, native authenticated acceptance or owner signoff.
+
+## Tracked-count continuation — 2026-09-18
+
+- Contract 27 and the still-unapplied `20260916002000_inventory_stock_counts.sql`
+  now support frozen lot quantities and serial presence, exact identity totals,
+  immutable identity sets, serial version checks, count-missing disposition and
+  independently approved restoration. Quarantine is preserved on restoration.
+  Offsetting lot changes retain their absolute approval basis and movement trace.
+- Registers now return 50 summaries and retrieve scoped detail separately through
+  `api.stock_count_detail`; document identity count is bounded to 500 (aligned with NFR-311). Larger
+  products fail explicitly, never truncate. Unknown identities require governed
+  receipt/master creation. This is a bounded implementation, not unlimited counting.
+- New domain helper/test: `packages/jentra_domain/lib/src/stock_count_quantity.dart`
+  and `test/stock_count_quantity_test.dart`. Native identity editors and sanitized
+  sealed retry extend `features/stock_count/`; gateway adds scoped detail retrieval.
+- 102 combined inventory assertions pass, plus 240 procurement and 85 receivables
+  regressions with the updated candidates. 16 count UI/recovery/golden checks,
+  22 inventory gateway/storage checks and 6 inventory domain checks pass.
+  Focused count analyzer is clean. Isolated Windows release build passed in 92.2
+  seconds without launch. Updated light/dark 200% renders were reviewed; the later
+  corrected-fixture renders still need a final visual check. No production data changed.
+- Evidence: `tracked-count-candidate-20260918.json`,
+  `tracked-count-procurement-20260918.json`, `tracked-count-ar-20260918.json`.
+  Initial tracked tests failed against the old untracked-only implementation. Test
+  expectations were subsequently corrected for stock already moved by transfer
+  fixtures; later full runs contain no failed assertions.
+- The engineering database-designer schema parser was attempted; its parser reported
+  no tables for this schema-qualified migration. No validation claim is based on that
+  parser. Actual PostgreSQL rollback execution and constraints are the evidence.
+- Still fourteen unapplied candidates. No installation, protected acceptance changes,
+  auth automation or application launch. Landed-value adjustments, full dated
+  balances/reservations/valuation reconciliation, remaining finance, cross-cutting
+  coverage and full AC-326 review remain open.
+
+## Current continuation — 2026-09-17
+
+- Fresh refresh: `main` at `0b2261f`; development project ACTIVE_HEALTHY;
+  34 applied migrations through `20260911130900`. Security/performance advisors
+  still report leaked-password protection disabled and 296 unused-index notices.
+  No database settings, persistent fixtures or migrations changed.
+- Contracts 26–27 and candidates `20260916001000_inventory_transfers.sql` and
+  `20260916002000_inventory_stock_counts.sql` implement transfers/in-transit and
+  the initial untracked-product count/approved-adjustment vertical. There are
+  fourteen unapplied candidates including the twelve procurement candidates.
+- Counts capture a locked cutoff quantity/version, preserve that baseline, apply
+  exact variance to current stock, require configured independent MFA approval,
+  revalidate valuation and reservations, and post through the existing journal
+  engine. A new linked count corrects posted history. Tracked counts fail closed.
+- Principal new source: `apps/jentra_desktop/lib/src/features/stock_count/`,
+  `packages/jentra_platform/lib/src/supabase_stock_count_gateway.dart`, contract 27,
+  the count candidate and `supabase/tests/wave3_stock_counts_test.sql`. Shared
+  main/router/navigation changes only wire the new permission-aware workspaces.
+- Fresh database checks: 81 combined inventory rollback assertions pass; 240
+  procurement and 85 delivery/receivables assertions pass with both inventory
+  candidates plus all twelve procurement candidates. The added tests cover
+  positive, negative and zero variance, linked corrections, frozen baselines,
+  intervening stock movement, valuation drift, reservations and atomic failure.
+- Final client results: 21 inventory UI/recovery/golden checks, 21 gateway/shared
+  encrypted-storage checks and 3 exact domain checks pass. Both count renders and
+  both transfer renders were reviewed at 200% text scale, with controls checked at
+  1024×720. Focused desktop/platform analyzer is clean after the last controller lint
+  correction. Isolated Windows release build passed in 145.9 seconds; the subsequent
+  brace-only lint correction is behavior-preserving. No executable was launched.
+- Solo review record: `inventory-review-20260917.md`; fresh rollback evidence:
+  `inventory-candidate-20260917.json`, `inventory-procurement-regression-20260917.json`
+  and `inventory-ar-regression-20260917.json`. No remaining defect was reproduced in
+  these reviewed verticals; this does not close final full-scope AC-326 review.
+- Review correction: removed the count-reason dialog's unmanaged text controller.
+  The fixture's early immediate-constraint checkpoint was reset to deferred before
+  testing a later journal; this was a test harness correction, not a ledger change.
+- Next required development: identity-level tracked counts, landed-value adjustments,
+  full dated stock/reservation/valuation reports and GL reconciliation, then remaining
+  finance and cross-cutting scope in the development prompt. Real contention,
+  performance, native acceptance, installation coordination and owner signoff remain
+  open. No protected acceptance files, app executable or authentication were touched.
+
+## Previous continuation — 2026-09-16
+
+- Fresh development project health: ACTIVE_HEALTHY; 34 migrations through
+  `20260911130900`. Security advisor retains the leaked-password-protection warning;
+  performance advisor reports 296 unused-index notices. No settings changed.
+- Checkout started at `b0aa757`; HEAD advanced concurrently to `0b2261f`. This
+  session did not stage, commit, switch, reset or otherwise write Git state.
+- Contract 26 and unapplied `20260916001000_inventory_transfers.sql` add exact
+  dispatch/immediate/receive/reverse, both-branch authorization, frozen carrying
+  value, immutable events, in-transit serial state and dated protected holdings.
+- Transfer rollback suite: 47 assertions pass. Existing procurement suite: 240
+  assertions pass with the initial transfer candidate alongside all twelve earlier
+  candidates. No migration installation or persistent fixture write occurred.
+- Three exact domain tests, nine initial transfer UI/recovery/golden checks and
+  fourteen initial gateway/encrypted-store checks pass. Light/dark 1024x1300 renders
+  were inspected at 200% text scale. The initial isolated Windows release build at
+  `build/w3` passed in 107.3 seconds. No executable was launched.
+- Review fixes so far: include process transition status; compare immutable negative
+  movement totals rather than timestamps for consumption; exclude the current reversal
+  when processing multiple lines of one product; retain each operation's reference;
+  remove internal consumption snapshots from ordinary read/event projections.
+- Holdings UI/gateway additions are newer than the initial client/build checks and
+  still require final verification. Broader tracking/unit/failure tests, genuine
+  contention, full inventory reports and final Wave 3 review remain open. Counts and
+  approved quantity adjustments are the next implementation slice after transfers.
+- Acceptance-owned files/data, current app and authentication were preserved.
+  Installation coordination, native acceptance and owner signoff remain outstanding.
+
 2026-09-13. Work in progress; no feature or acceptance completion claim.
 
 - Development project `xpdoufauvrbdmxgngetv` ACTIVE_HEALTHY; 34 applied migrations

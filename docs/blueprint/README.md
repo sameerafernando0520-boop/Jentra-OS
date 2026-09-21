@@ -25,6 +25,14 @@ documents.
 12. [Controls after MFA](../verification/stock-opening/auth-controls-verification.md) — permission refresh, implemented Quick create navigation, regression tests and native runtime verification.
 13. [19_WAREHOUSE_SETUP_CONTRACT.md](19_WAREHOUSE_SETUP_CONTRACT.md) — governed warehouse creation and editing for the stock-opening prerequisites.
 
+14. [26_WAVE3_INVENTORY_TRANSFER_CONTRACT.md](26_WAVE3_INVENTORY_TRANSFER_CONTRACT.md) — candidate warehouse transfer, in-transit, reversal and dated-holdings contract.
+15. [27_WAVE3_STOCK_COUNT_CONTRACT.md](27_WAVE3_STOCK_COUNT_CONTRACT.md) — cutoff counts, independent approval and atomic quantity/valuation adjustments.
+16. [28_WAVE3_RESERVATION_RELEASE_CONTRACT.md](28_WAVE3_RESERVATION_RELEASE_CONTRACT.md) — governed allocation release, immutable reservation history and encrypted retry.
+17. [29_WAVE3_RECEIPT_PROVENANCE_CONTRACT.md](29_WAVE3_RECEIPT_PROVENANCE_CONTRACT.md) — exact receipt quantity attribution, transfer/return trace and historical coverage boundaries.
+18. [30_WAVE3_LANDED_VALUE_CONTRACT.md](30_WAVE3_LANDED_VALUE_CONTRACT.md) — exact receipt-based freight allocation, value-only posting and linked reversal.
+19. [31_WAVE3_INVENTORY_VALUATION_REPORT_CONTRACT.md](31_WAVE3_INVENTORY_VALUATION_REPORT_CONTRACT.md) — immutable dated stock, lot and transit valuation with selected-control GL reconciliation and source evidence.
+20. [32_WAVE3_MANUAL_JOURNAL_CONTRACT.md](32_WAVE3_MANUAL_JOURNAL_CONTRACT.md) — exact manual journal drafts, configured independent approval, posting, source evidence and linked reversals.
+
 ## Change control
 
 - Approved requirements use `FR-*`, `NFR-*`, `AC-*`, and `EC-*` identifiers.

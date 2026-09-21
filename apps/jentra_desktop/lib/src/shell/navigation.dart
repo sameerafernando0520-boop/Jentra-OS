@@ -59,6 +59,36 @@ const jentraDestinations = <JentraDestination>[
     icon: Icons.inventory_2_outlined,
   ),
   JentraDestination(
+    label: 'Warehouse transfers',
+    path: '/inventory/transfers',
+    icon: Icons.swap_horiz_outlined,
+  ),
+  JentraDestination(
+    label: 'Stock counts',
+    path: '/inventory/counts',
+    icon: Icons.fact_check_outlined,
+  ),
+  JentraDestination(
+    label: 'Stock reservations',
+    path: '/inventory/reservations',
+    icon: Icons.bookmark_border,
+  ),
+  JentraDestination(
+    label: 'Receipt quantity trace',
+    path: '/inventory/receipt-trace',
+    icon: Icons.account_tree_outlined,
+  ),
+  JentraDestination(
+    label: 'Landed value',
+    path: '/inventory/landed-value',
+    icon: Icons.price_change_outlined,
+  ),
+  JentraDestination(
+    label: 'Inventory valuation',
+    path: '/inventory/valuation',
+    icon: Icons.fact_check_outlined,
+  ),
+  JentraDestination(
     label: 'Finance',
     path: '/finance',
     icon: Icons.account_balance_outlined,
@@ -68,6 +98,11 @@ const jentraDestinations = <JentraDestination>[
     label: 'People',
     path: '/people',
     icon: Icons.groups_outlined,
+  ),
+  JentraDestination(
+    label: 'Manual journals',
+    path: '/finance/journals',
+    icon: Icons.menu_book_outlined,
   ),
   JentraDestination(
     label: 'Projects',
@@ -112,6 +147,33 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
     pendingSection = item.section ?? pendingSection;
     final permitted =
         (item.path != '/setup' || canOpenSetup) &&
+        (item.path != '/finance/journals' ||
+            (capabilities?.contains('finance.view') ?? false)) &&
+        (item.path != '/inventory/valuation' ||
+            const [
+              'inventory.stock.view',
+              'inventory.cost.view',
+              'finance.view',
+            ].every((p) => capabilities?.contains(p) ?? false)) &&
+        (!{
+              '/inventory/receipt-trace',
+              '/inventory/landed-value',
+            }.contains(item.path) ||
+            (capabilities != null &&
+                capabilities.contains('inventory.valuation.post') &&
+                capabilities.contains('inventory.cost.view'))) &&
+        (item.path != '/inventory/reservations' ||
+            (capabilities?.contains('inventory.reservations.manage') ??
+                false)) &&
+        (item.path != '/inventory/counts' ||
+            (capabilities != null &&
+                capabilities.contains('inventory.cost.view') &&
+                const {
+                  'inventory.adjustments.post',
+                  'workflow.approvals.decide',
+                }.any(capabilities.contains))) &&
+        (item.path != '/inventory/transfers' ||
+            (capabilities?.contains('inventory.transfers.post') ?? false)) &&
         (item.path != '/inventory' ||
             (capabilities != null && canReadStockOpenings(capabilities))) &&
         (item.path != '/crm' || canOpenCrm) &&

@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:jentra_domain/jentra_receivables.dart';
 
 import 'app_providers.dart';
+import 'features/manual_journal/manual_journal_controller.dart';
+import 'features/manual_journal/manual_journal_screen.dart';
 import 'features/auth/login_screen.dart';
 import 'features/catalogue/component_catalogue_screen.dart';
 import 'features/crm/crm_screen.dart';
@@ -25,6 +27,17 @@ import 'features/procurement/supplier_payment_controller.dart';
 import 'features/procurement/supplier_payment_screen.dart';
 import 'features/procurement/purchase_return_controller.dart';
 import 'features/procurement/purchase_return_screen.dart';
+import 'features/inventory_transfer/inventory_transfer_controller.dart';
+import 'features/inventory_transfer/inventory_transfer_screen.dart';
+import 'features/stock_count/stock_count_controller.dart';
+import 'features/stock_count/stock_count_screen.dart';
+import 'features/reservations/reservation_controller.dart';
+import 'features/reservations/reservation_screen.dart';
+import 'features/receipt_trace/receipt_trace_screen.dart';
+import 'features/landed_value/landed_value_screen.dart';
+import 'features/landed_value/landed_value_controller.dart';
+import 'features/inventory_valuation/inventory_valuation_controller.dart';
+import 'features/inventory_valuation/inventory_valuation_screen.dart';
 import 'features/receivables/receivables_screen.dart';
 import 'features/stock_opening/stock_opening_screen.dart';
 import 'features/stock_opening/stock_opening_controller.dart';
@@ -107,6 +120,56 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const StockOpeningScreen(),
             onExit: (context, state) async =>
                 await ref.read(stockOpeningControllerProvider)?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/inventory/transfers',
+            builder: (context, state) => const InventoryTransferScreen(),
+            onExit: (context, state) async =>
+                await ref
+                    .read(inventoryTransferControllerProvider)
+                    ?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/inventory/counts',
+            builder: (context, state) => const StockCountScreen(),
+            onExit: (context, state) async =>
+                await ref.read(stockCountControllerProvider)?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/inventory/reservations',
+            builder: (context, state) => const ReservationScreen(),
+            onExit: (context, state) async =>
+                await ref.read(reservationControllerProvider)?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/inventory/receipt-trace',
+            builder: (context, state) => const ReceiptTraceScreen(),
+          ),
+          GoRoute(
+            path: '/inventory/valuation',
+            builder: (context, state) => const InventoryValuationScreen(),
+            onExit: (context, state) async =>
+                await ref
+                    .read(inventoryValuationControllerProvider)
+                    ?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/finance/journals',
+            builder: (context, state) => const ManualJournalScreen(),
+            onExit: (context, state) async =>
+                await ref.read(manualJournalControllerProvider)?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/inventory/landed-value',
+            builder: (context, state) => const LandedValueScreen(),
+            onExit: (context, state) async =>
+                await ref.read(landedValueControllerProvider)?.canLeave() ??
                 true,
           ),
           GoRoute(
