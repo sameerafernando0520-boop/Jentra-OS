@@ -1,7 +1,7 @@
 # Remaining Wave 3 development status
 
-Refreshed 2026-09-22 against `main`, initially `b0aa757`; a concurrent session
-advanced HEAD to `0b2261f` during transfer development. This session made no Git writes.
+Refreshed 2026-09-24 against `main` at `aa5514b`. AC-317 work remains uncommitted;
+this session made no Git writes. Earlier transfer/journal checkpoints are historical.
 Development ledger: 34 migrations through `20260911130900_stock_opening_approver_setup`.
 No migration applied by this session. Existing acceptance changes preserved.
 
@@ -21,7 +21,7 @@ No migration applied by this session. Existing acceptance changes preserved.
 | FR-354–355 / AC-314 | Partial | Contracts 26 and 29; original lot/serial transfers and receipt quantity trace across issues/returns/transit with a native bounded viewer in `features/receipt_trace/` | Full disposition, historical coverage, installation and concurrent tracking checks remain |
 | FR-356–361 / AC-315 | Partial | Contracts 26–31; transfers, tracked counts, reservation release/dated allocations, receipt provenance, single-receipt landed-value posting/reversal and immutable dated inventory/lot/transit valuation with selected-control GL source reconciliation. Fresh 105 inventory, 318 procurement/valuation and 126 reservation/delivery/AR rollback assertions; 75 UI/recovery and 63 gateway/store checks pass. Seven prior exact domain checks remain recorded evidence | Broader landed allocation bases, transit value treatment, correction after later consumption, automatic expiry/retirement and disposition integration remain. Counts cap identities at 500; oversized partitioning, native acceptance, contention and installation are open |
 | FR-362–366 / AC-316 | Partial | Contract 32; `20260921041348_manual_journals.sql`, native `features/manual_journal/`, `supabase_manual_journal_gateway.dart`; exact FX, configured independent approval/MFA, separate posting, source evidence and linked reversals. Fresh 348 combined procurement/valuation/journal, 105 inventory and 126 AR/reservation rollback assertions pass with nineteen candidates. 13 journal UI/recovery and 10 gateway checks pass | Broader automatic-source drill-through, attachments upload integration, control mapping contention, installation and native acceptance remain |
-| FR-367–369 / AC-317 | Partial | AR/AP open items, cash/bank setup, supplier allocation and linked reasoned AP allocation reversal with realized FX correction; contracts 24–25 | Dated AR/AP control reconciliation, remaining AR allocation corrections and broader source navigation |
+| FR-367–369 / AC-317 | Candidate implemented and tested; acceptance open | Contract 33; additive `20260922001000_ar_ap_control_reconciliation.sql`; branch-scoped immutable AR/AP control snapshots, per-account/command differences, AR allocation reversal including FX/write-off/discount, restored-cent and cross-control settlement corrections; `/finance/controls`, encrypted recovery. Fresh 365 procurement/finance, 158 AR/reservation and 105 inventory rollback assertions; 63 desktop, 77 gateway/storage and 5 exact-domain checks pass. Isolated Windows build passed without launch | Twenty candidates remain UNAPPLIED. Supported-source attribution review, retired mapping coverage, entity consolidation/export, real contention/load, installation and native/owner acceptance remain |
 | FR-370–371 / AC-318 | Missing | No bank import/matching workspace | Bounded statement imports, matching and reasoned reversal |
 | FR-372–374 / AC-319 | Partial | exact FX values and open-period lock helper | FX revaluation, period governance and contention verification |
 | FR-375–382 / AC-320 | Missing | Finance route placeholder | Financial statements, tax summaries, approved budgets and exact variance |

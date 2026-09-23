@@ -8,6 +8,8 @@ import 'package:jentra_domain/jentra_receivables.dart';
 import 'app_providers.dart';
 import 'features/manual_journal/manual_journal_controller.dart';
 import 'features/manual_journal/manual_journal_screen.dart';
+import 'features/control_reconciliation/control_reconciliation_controller.dart';
+import 'features/control_reconciliation/control_reconciliation_screen.dart';
 import 'features/auth/login_screen.dart';
 import 'features/catalogue/component_catalogue_screen.dart';
 import 'features/crm/crm_screen.dart';
@@ -163,6 +165,15 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const ManualJournalScreen(),
             onExit: (context, state) async =>
                 await ref.read(manualJournalControllerProvider)?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/finance/controls',
+            builder: (context, state) => const ControlReconciliationScreen(),
+            onExit: (context, state) async =>
+                await ref
+                    .read(controlReconciliationControllerProvider)
+                    ?.canLeave() ??
                 true,
           ),
           GoRoute(

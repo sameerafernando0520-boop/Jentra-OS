@@ -12,6 +12,7 @@ import 'src/features/landed_value/landed_value_controller.dart';
 import 'src/features/inventory_valuation/inventory_valuation_controller.dart';
 import 'package:jentra_platform/jentra_finance_platform.dart';
 import 'src/features/manual_journal/manual_journal_controller.dart';
+import 'src/features/control_reconciliation/control_reconciliation_controller.dart';
 
 import 'package:jentra_platform/jentra_stock_opening_platform.dart';
 import 'src/features/stock_opening/stock_opening_controller.dart';
@@ -75,6 +76,9 @@ Future<void> main() async {
         ),
         manualJournalGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseManualJournalGateway(client),
+        ),
+        controlReconciliationGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseControlReconciliationGateway(client),
         ),
       ],
       child: const JentraApp(),

@@ -1,5 +1,54 @@
 # Remaining Wave 3 verification checkpoint
 
+## AR/AP control reconciliation — 2026-09-24
+
+- Refreshed `main` at `aa5514b`, preserving the existing AC-317 draft after interruption.
+  Development project remains ACTIVE_HEALTHY with **34 installed migrations through
+  `20260911130900`**. Before/after shared allocation, residual, posting and period
+  function fingerprints agree. Final catalog has no control report table or AR
+  reversal command installed. No staging, commit, push, migration application,
+  production action or real authentication activity occurred.
+- Contract 33 and `20260922001000_ar_ap_control_reconciliation.sql` add branch-scoped
+  immutable AR/AP snapshots, original-journal account attribution, account/command
+  differences and paged item/allocation/subledger/journal evidence. AR reversal
+  negates original FX/write-off/discount journals, restores exact residuals and
+  refreshes credit exposure. AR/AP allocations preserve original control accounts
+  after remapping; AR remaining-value allocation handles restored cent distributions.
+- **Twenty candidates remain UNAPPLIED**. `build_control_candidate.ps1` composes the
+  rollback transaction. Fresh results: **365** procurement/finance, **158**
+  AR/reservation (`finish(true)` fails on assertions) and **105** inventory checks;
+  **628 total**. Evidence: `control-procurement-20260924.json`,
+  `control-ar-20260924.json`, `control-inventory-20260924.json`. All fixtures and DDL
+  rolled back. The report constructor uses a single stable database snapshot.
+- Desktop `/finance/controls` is wired through main, router and permission-aware
+  navigation. It offers dated AR/AP generation, saved report/source browsing and
+  confirmed AR/AP reversal. Existing allocation workspaces handle reallocation.
+  Isolated encrypted report/correction slots preserve identical uncertain commands,
+  protect scope, hide restored evidence until access refresh and retain confirmed
+  state after a failed optional read. No new financial arithmetic engine was added.
+- Fresh **63 desktop/recovery/golden**, **77 gateway/shared-storage** and **5 exact
+  domain** checks pass. AC-317 subsets: 14 desktop and 8 gateway checks. Logs:
+  `control-client-tests-20260924.log`, `control-platform-tests-20260924.log` and
+  `control-domain-tests-20260924.log`. App and platform focused analyzers are clean.
+  Final app analyzer log is `control-desktop-analyzer-20260924.log`.
+- Light/dark 1024-pixel widget renders at 200% text were inspected. A 1024×720 test
+  reaches and cancels reversal confirmation without sending a command. These are
+  widget checks, not signed-in native evidence. The current-source isolated Windows
+  release build at `build/w3` passed in **74.4 seconds**; six source hashes covering
+  feature/gateway/main/router/navigation match the workspace. No executable launched,
+  no environment/authentication store copied, no acceptance executable replaced.
+- Final protected stock-opening source/access-gateway/verification paths have no diff;
+  `git diff --check` passes. Security retains the existing leaked-password warning
+  ([remediation](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection));
+  performance has 292 unused-index notices. No settings changed. Catalog/advisor
+  evidence is in `control-catalog-20260924.json` and `control-advisors-20260924.json`.
+- Review: `control-reconciliation-review-20260924.md`. Native authentication and real
+  Credential Manager restart, contention/load, installation coordination and owner
+  signoff remain open. Report consolidation/exports and retired mappings with no
+  open-item source are extensions. Bank reconciliation, FX/period governance,
+  financial reports/budgets and remaining cross-cutting work remain in Wave 3.
+
+
 ## Manual-journal continuation — 2026-09-22
 
 - Refreshed `main` at `0b2261f`. Development project ACTIVE_HEALTHY, **34 applied

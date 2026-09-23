@@ -105,6 +105,11 @@ const jentraDestinations = <JentraDestination>[
     icon: Icons.menu_book_outlined,
   ),
   JentraDestination(
+    label: 'AR / AP controls',
+    path: '/finance/controls',
+    icon: Icons.account_balance_outlined,
+  ),
+  JentraDestination(
     label: 'Projects',
     path: '/projects',
     icon: Icons.view_timeline_outlined,
@@ -149,6 +154,11 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
         (item.path != '/setup' || canOpenSetup) &&
         (item.path != '/finance/journals' ||
             (capabilities?.contains('finance.view') ?? false)) &&
+        (item.path != '/finance/controls' ||
+            const [
+              'finance.view',
+              'finance.controls.reconcile',
+            ].every((p) => capabilities?.contains(p) ?? false)) &&
         (item.path != '/inventory/valuation' ||
             const [
               'inventory.stock.view',
