@@ -125,6 +125,16 @@ const jentraDestinations = <JentraDestination>[
     icon: Icons.table_chart_outlined,
   ),
   JentraDestination(
+    label: 'Cash-flow mappings',
+    path: '/finance/cash-flow-mappings',
+    icon: Icons.alt_route_outlined,
+  ),
+  JentraDestination(
+    label: 'Budgets & variance',
+    path: '/finance/budgets',
+    icon: Icons.stacked_bar_chart_outlined,
+  ),
+  JentraDestination(
     label: 'Projects',
     path: '/projects',
     icon: Icons.view_timeline_outlined,
@@ -175,6 +185,13 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
             (capabilities?.contains('finance.view') ?? false)) &&
         (item.path != '/finance/statements' ||
             (capabilities?.contains('finance.view') ?? false)) &&
+        (item.path != '/finance/budgets' ||
+            (capabilities?.contains('finance.view') ?? false)) &&
+        (item.path != '/finance/cash-flow-mappings' ||
+            const {
+              'finance.view',
+              'finance.cash_flow.configure',
+            }.every((p) => capabilities?.contains(p) ?? false)) &&
         (item.path != '/people' ||
             const [
               'people.view',

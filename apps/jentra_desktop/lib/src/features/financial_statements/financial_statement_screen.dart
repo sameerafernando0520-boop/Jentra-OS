@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../app_providers.dart';
 import 'financial_statement_controller.dart';
@@ -27,13 +28,20 @@ class FinancialStatementScreen extends ConsumerWidget {
         : FinancialStatementWorkspace(
             key: ValueKey(controller),
             controller: controller,
+            canConfigureCashFlow:
+                access.value?.contains('finance.cash_flow.configure') ?? false,
           );
   }
 }
 
 class FinancialStatementWorkspace extends StatelessWidget {
-  const FinancialStatementWorkspace({super.key, required this.controller});
+  const FinancialStatementWorkspace({
+    super.key,
+    required this.controller,
+    this.canConfigureCashFlow = false,
+  });
   final FinancialStatementController controller;
+  final bool canConfigureCashFlow;
 
   static const labels = {
     'trial_balance': 'Trial balance',
@@ -116,6 +124,14 @@ class FinancialStatementWorkspace extends StatelessWidget {
             const Text(
               'Saved statements freeze posted journal lines and account balances at generation.',
             ),
+            if (canConfigureCashFlow)
+              TextButton.icon(
+                onPressed: c.pending
+                    ? null
+                    : () => context.go('/finance/cash-flow-mappings'),
+                icon: const Icon(Icons.alt_route_outlined),
+                label: const Text('Configure cash-flow mappings'),
+              ),
             if (c.error != null) ...[
               const SizedBox(height: 12),
               Text(
@@ -314,9 +330,16 @@ class FinancialStatementWorkspace extends StatelessWidget {
                   Text(
                     '${cashFlow['unmapped_count']} unmapped accounts · ${cashFlow['no_mapped_cash'] == true ? 'no mapped cash account · ' : ''}difference ${cashFlow['difference']}',
                   ),
+                if (comparative != null && comparative['status'] == 'blocked')
+                  Text(
+                    'Comparison blocked: ${comparative['unmapped_count']} unmapped accounts · difference ${comparative['difference']}',
+                  ),
                 if (cashFlow != null)
-                  for (final row in (cashFlow['unmapped_accounts'] as List? ?? []))
-                    Text('${(row as Map)['code']} · ${row['name']} · ${row['unclassified_movement']}'),
+                  for (final row
+                      in (cashFlow['unmapped_accounts'] as List? ?? []))
+                    Text(
+                      '${(row as Map)['code']} · ${row['name']} · ${row['unclassified_movement']}',
+                    ),
               ],
               const SizedBox(height: 12),
               Wrap(
@@ -344,8 +367,14 @@ class FinancialStatementWorkspace extends StatelessWidget {
                   ],
                   'cash_flow' => [
                     metric('Period profit', cashFlow?['period_profit']),
-                    metric('Noncash adjustments', cashFlow?['noncash_adjustments']),
-                    metric('Working capital', cashFlow?['working_capital_change']),
+                    metric(
+                      'Noncash adjustments',
+                      cashFlow?['noncash_adjustments'],
+                    ),
+                    metric(
+                      'Working capital',
+                      cashFlow?['working_capital_change'],
+                    ),
                     metric('Operating cash', cashFlow?['operating_cash']),
                     metric('Investing cash', cashFlow?['investing_cash']),
                     metric('Financing cash', cashFlow?['financing_cash']),
@@ -354,7 +383,10 @@ class FinancialStatementWorkspace extends StatelessWidget {
                     metric('Closing cash', cashFlow?['closing_cash']),
                     metric('Difference', cashFlow?['difference']),
                     if (comparative != null)
-                      metric('Comparison net cash', comparative['net_cash_change']),
+                      metric(
+                        'Comparison net cash',
+                        comparative['net_cash_change'],
+                      ),
                   ],
                   _ => [
                     metric('Period debit', summary['period_debit']),

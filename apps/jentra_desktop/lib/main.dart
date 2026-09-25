@@ -16,6 +16,8 @@ import 'src/features/control_reconciliation/control_reconciliation_controller.da
 import 'src/features/bank_reconciliation/bank_reconciliation_controller.dart';
 import 'src/features/period_fx/period_fx_controller.dart';
 import 'src/features/financial_statements/financial_statement_controller.dart';
+import 'src/features/financial_statements/cash_flow_mapping_controller.dart';
+import 'src/features/budgets/budget_controller.dart';
 import 'package:jentra_platform/jentra_people_platform.dart';
 import 'src/features/people/employee_controller.dart';
 
@@ -93,6 +95,12 @@ Future<void> main() async {
         ),
         financialStatementGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseFinancialStatementGateway(client),
+        ),
+        cashFlowMappingGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseCashFlowMappingGateway(client),
+        ),
+        budgetGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseBudgetGateway(client),
         ),
         employeeRepositoryProvider.overrideWithValue(
           client == null ? null : SupabaseEmployeeGateway(client),

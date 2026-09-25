@@ -1,8 +1,10 @@
 [CmdletBinding()]
-param()
+param([switch]$Installed)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
-$migration = Get-Content -LiteralPath (Join-Path $root 'migrations/20260925001000_wave4_employee_foundation.sql') -Raw
+$migration = if ($Installed) { '' } else {
+  Get-Content -LiteralPath (Join-Path $root 'migrations/20260925181927_wave4_employee_foundation.sql') -Raw
+}
 $tests = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_employee_test.sql') -Raw
 $tests = [regex]::Replace($tests, '(?m)^select (is|ok|throws_ok)\(', 'insert into employee_assertions select $1(')
 $diagnostic = @'

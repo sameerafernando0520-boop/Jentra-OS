@@ -1,7 +1,7 @@
 # W4-01 — Employee directory and employment foundation
 
 **Date:** 2026-09-24  
-**Status:** Approved for synthetic development on 2026-09-24; development candidate rollback verified on 2026-09-25; migration unapplied  
+**Status:** Approved for synthetic development on 2026-09-24; candidate rollback verified and installed in development as ledger version `20260925181927` on 2026-09-25; native acceptance open
 **Parent:** [Wave 4 specification](40_WAVE4_WORKFORCE_AND_DELIVERY_SPEC.md)  
 **Coverage:** FR-401–408, FR-439–440; foundation portions of AC-401–403 and AC-419
 
@@ -186,6 +186,7 @@ discard uncertainty. Revocation locks drafts and discards old-context responses.
   Windows build, separately evidenced authenticated native walkthrough.
 
 Before database work, refresh development health, ledger, helper definitions and
-advisors. Candidate verification is isolated/rollback-only; coordinate installation.
-No persistent privileged employee fixtures, production change or acceptance-owned
-stock-opening changes are authorized by this contract.
+advisors. Candidate and installed-schema verification use rollback-only fixtures;
+the development installation is recorded separately. No persistent privileged
+employee fixtures, production change or acceptance-owned stock-opening changes
+are authorized by this contract.

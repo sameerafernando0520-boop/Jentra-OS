@@ -1,9 +1,13 @@
 # W4-01 employee contention protocol
 
-**Status:** Prepared, not executed. The employee migration is unapplied.
-**Target:** A disposable development database with the W4-01 candidate installed,
-`module.people` enabled only for its synthetic tenant, and two independent
-authenticated PostgreSQL or API connections. Do not use real employee data.
+**Status:** Prepared, not executed. The employee migration is installed in
+development as `20260925181927`; `w4_employee_synthetic` has People enabled but
+no tenant is subscribed. The three original plans remain disabled.
+**Target:** A coordinated synthetic tenant on a dedicated test plan, or a
+disposable development branch, with `module.people` enabled only on that test
+plan and two independent authenticated PostgreSQL or API connections. A plan
+entitlement affects every subscriber to that plan; do not enable a shared plan
+just for this test. Do not use real employee data.
 
 ## Establish genuinely overlapping sessions
 
@@ -40,9 +44,10 @@ The lack of this later provider does not count as a passed race.
 
 ## Installation and acceptance boundary
 
-The candidate's 49 pgTAP assertions run inside one rollback transaction. They
-validate logic but do not establish this protocol's two-session result. No People
-plan has been enabled and no migration has been installed. Once the candidate is
-coordinated into a disposable development database, run the races above, review
-the ledger/advisors, then perform the user-managed authenticated Windows/MFA
-walkthrough before owner signoff.
+The candidate's 49 pgTAP assertions passed before installation and the same 49
+passed against the installed schema, each inside a separate rollback transaction.
+They validate logic but do not establish this protocol's two-session result.
+No tenant has People access yet. Once the dedicated synthetic tenant is
+subscribed to the test plan and independent sessions are available, run the races
+above, then perform the
+user-managed authenticated Windows/MFA walkthrough before owner signoff.

@@ -1,6 +1,6 @@
 # Wave 4 kickoff and delivery status
 
-Date: 2026-09-25. User instruction: **start wave 4**, then **continue**.
+Updated: 2026-09-26. User instruction: **start wave 4**, then **continue**.
 
 ## Current checkpoint
 
@@ -9,17 +9,22 @@ Wave 4 specification and the first employee development slice are prepared:
 - [Wave 4 specification](../blueprint/40_WAVE4_WORKFORCE_AND_DELIVERY_SPEC.md)
 - [W4-01 employee contract](../blueprint/41_WAVE4_EMPLOYEE_FOUNDATION_CONTRACT.md)
 - [W4-01 development installation review](../verification/wave4/employee-install-review-20260925.md)
+- [W4-01 native acceptance checklist](../verification/wave4/employee-native-acceptance-20260926.md)
 
 The owner instructed continuation on 2026-09-24 after the concrete contract review
 request; the contracts are approved for synthetic development. W4-01 has a
-source-complete development candidate with rollback database evidence. Its migration
-is not installed; authenticated native acceptance remains separate.
+source-complete development slice. The owner authorized development installation
+on 2026-09-25. Its migration is installed and the installed-schema test passed;
+authenticated native acceptance remains separate.
 
-Fresh development refresh: project `xpdoufauvrbdmxgngetv` is ACTIVE_HEALTHY; 34
-migrations through `20260911130900_stock_opening_approver_setup`; no workforce tables.
-Shared permission/command helper definitions were read. Advisors report the existing
-leaked-password-protection warning and unused-index informational notices. No auth
-configuration was changed.
+Fresh development refresh: project `xpdoufauvrbdmxgngetv` is ACTIVE_HEALTHY;
+35 migrations through `20260925181927_wave4_employee_foundation`. The four People
+tables and five scoped API functions exist. All three original plans have
+`module.people` disabled. A separate `w4_employee_synthetic` test plan now has
+People enabled and zero subscribers. Shared permission/command helper definitions were read.
+Advisors report the pre-existing leaked-password-protection warning, four
+intentional no-policy People base tables, ten unindexed People foreign keys and
+unused-index informational notices. No auth configuration was changed.
 
 ## Fresh source audit
 
@@ -58,7 +63,7 @@ retained in document metadata.
 
 | Slice | Status | Dependency / next action |
 |---|---|---|
-| W4-01 employees and employment | Entitlement-gated development candidate; migration unapplied | Plan enablement decision, coordinated installation, two-session contention, authenticated native walkthrough and owner acceptance |
+| W4-01 employees and employment | Entitlement-gated development installation; installed-schema assertions pass | Signed-in synthetic tenant bootstrap, test-plan subscription, two-session contention, authenticated native walkthrough and owner acceptance |
 | W4-02 private HR, organization/calendars | Specified; not implemented | W4-01; privacy/retention and self-service contracts |
 | W4-03 attendance/leave | Specified; not implemented | Effective calendars, overlap and leave-ledger contracts |
 | W4-04 synthetic payroll | Specified; not implemented | Approved inputs, exact rule contract and verified finance/settlement adapters |
@@ -71,20 +76,23 @@ retained in document metadata.
 
 ### W4-01 implementation and verification
 
-- Candidate `20260925001000_wave4_employee_foundation.sql` defines scoped employee
+- Installed migration `20260925181927_wave4_employee_foundation.sql` defines scoped employee
   identity, half-open spells/assignments, immutable redacted events, four read RPCs
   and one idempotent command RPC. A transfer appears in both authorized branch
   histories without exposing the destination in the source projection. The register
-  defaults its date using the legal entity time zone. The candidate remains unapplied.
+  defaults its date using the legal entity time zone. The installed SQL has the
+  same SHA-256 as the reviewed rollback candidate.
 - `build_employee_candidate.ps1` ran the candidate and 49 pgTAP assertions against
   development project `xpdoufauvrbdmxgngetv` inside a transaction ending in
   `ROLLBACK`. The assertions cover scoped reads, permission/MFA denial, future
   assignment/correction/end/rehire, command replay, destination permission loss,
   default-disabled People entitlements, expired/suspended subscriptions, entitlement
-  revocation before replay, private-field rejection and immutable history. They do not constitute two real
-  concurrent sessions or persistent installation evidence. A post-test read still
-  showed 34 installed migrations through `20260911130900`; the employee table and
-  command RPC were absent.
+  revocation before replay, private-field rejection and immutable history. The
+  original rollback test preceded installation. After installation, the same
+  49 assertions passed against the installed schema inside a fresh rollback
+  transaction. A post-test read showed zero persistent People employees, spells,
+  assignments or events, 35 migrations and no enabled People plans. These
+  single-session tests do not prove concurrent behavior.
 - Domain validation, the Supabase gateway, encrypted SQLite draft/retry recovery,
   People navigation, register, scoped history and employee editor are implemented.
   Focused tests passed: 4 domain, 1 encrypted restart, and 9 desktop/controller/UI.
@@ -104,8 +112,12 @@ retained in document metadata.
 - The candidate seeds `module.people` disabled on current plans and checks its
   subscription state on every scoped read, command and replay. The desktop reports
   plan denial, removes loaded employee data and preserves an uncertain encrypted
-  request for retry after restoration. An owner must choose which plans to enable;
-  no plan enablement or migration installation was performed.
+  request for retry after restoration. The migration was installed in development
+  with all three original plans disabled. On 2026-09-26 the owner selected a
+  separate synthetic W4 tenant and plan; the `w4_employee_synthetic` plan was
+  provisioned after a rollback preflight, with People enabled and zero
+  subscribers. The owner must create its tenant through the signed-in setup
+  flow before its subscription can be attached to this plan.
 - A read-only dual-query probe reached distinct PostgreSQL backends, but its query
   intervals did not overlap. The available Supabase connector did not prove true
   employee contention. The exact post-install scenarios and pass criteria are in
@@ -113,8 +125,9 @@ retained in document metadata.
   A downstream-consumption/correction race remains a later integrated gate:
   no governed downstream consumer exists yet, and historical correction remains
   disabled until that race passes.
-- Authenticated live RPC/UI behavior has not been evidenced because the candidate
-  is not installed. Two-session contention and owner acceptance remain open.
+- The installed API is security-definer, contains the entitlement check, and gives
+  `authenticated` no base-table SELECT. Authenticated native RPC/UI behavior has
+  not been evidenced. Two-session contention and owner acceptance remain open.
 
 Work solo. Preserve concurrent source and applied migrations. Do not stage, commit,
 push, reset, clean or stash. Keep production and real employee/payroll data outside

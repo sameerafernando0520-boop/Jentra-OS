@@ -72,6 +72,7 @@ final class FinancialStatementFake implements FinancialStatementGateway {
     'branch_id': 'branch',
     'base_currency_code': 'LKR',
     'generated_at': '2026-09-25T00:00:00Z',
+    'status': payload['kind'] == 'cash_flow' ? 'blocked' : 'generated',
     'account_count': 2,
     'journal_count': 2,
     'period_debit': '10.000000',
@@ -79,6 +80,30 @@ final class FinancialStatementFake implements FinancialStatementGateway {
     'closing_debit': '10.000000',
     'closing_credit': '10.000000',
     'difference': '0.000000',
+    if (payload['kind'] == 'cash_flow')
+      'cash_flow': {
+        'period_profit': '30.000000',
+        'noncash_adjustments': '0.000000',
+        'working_capital_change': '-5.000000',
+        'operating_cash': '25.000000',
+        'investing_cash': '0.000000',
+        'financing_cash': '0.000000',
+        'net_cash_change': '25.000000',
+        'opening_cash': '100.000000',
+        'closing_cash': '125.000000',
+        'cash_delta': '25.000000',
+        'difference': '0.000000',
+        'unmapped_count': 1,
+        'no_mapped_cash': false,
+        'unmapped_accounts': [
+          {
+            'id': 'receivable',
+            'code': '1200',
+            'name': 'Receivable',
+            'unclassified_movement': '-5.000000',
+          },
+        ],
+      },
   };
 
   @override
@@ -114,6 +139,8 @@ final class FinancialStatementFake implements FinancialStatementGateway {
             'code': '1000',
             'name': 'Cash',
             'account_type': 'asset',
+            if (commands.last.payload['kind'] == 'cash_flow')
+              'cash_flow_category': 'cash',
             'closing_balance': '10.000000',
             'amount': '10.000000',
           }
@@ -262,6 +289,29 @@ void main() {
     );
   });
 
+  testWidgets('blocked indirect cash flow names unmapped account', (
+    tester,
+  ) async {
+    await controller.initialize();
+    controller.field('kind', 'cash_flow');
+    await controller.generate();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: FinancialStatementWorkspace(controller: controller),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('Blocked: classify moving accounts'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('1200 · Receivable'), findsOneWidget);
+    expect(find.text('Net cash change'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('desktop statement workspace is usable at 200% text', (
     tester,
   ) async {
@@ -314,5 +364,39 @@ void main() {
         ),
       );
     });
+  }
+
+  for (final dark in [false, true]) {
+    testWidgets(
+      '${dark ? 'dark' : 'light'} blocked cash-flow report at 200% text',
+      (tester) async {
+        await controller.initialize();
+        controller.field('kind', 'cash_flow');
+        await controller.generate();
+        tester.view.physicalSize = const Size(1280, 900);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: dark ? JentraTheme.dark() : JentraTheme.light(),
+            home: MediaQuery(
+              data: const MediaQueryData(textScaler: TextScaler.linear(2)),
+              child: Scaffold(
+                body: FinancialStatementWorkspace(controller: controller),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        await expectLater(
+          find.byType(FinancialStatementWorkspace),
+          matchesGoldenFile(
+            'goldens/cash_flow_report_${dark ? 'dark' : 'light'}_200.png',
+          ),
+        );
+      },
+    );
   }
 }

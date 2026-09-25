@@ -16,6 +16,10 @@ import 'features/period_fx/period_fx_controller.dart';
 import 'features/period_fx/period_fx_screen.dart';
 import 'features/financial_statements/financial_statement_controller.dart';
 import 'features/financial_statements/financial_statement_screen.dart';
+import 'features/financial_statements/cash_flow_mapping_controller.dart';
+import 'features/financial_statements/cash_flow_mapping_screen.dart';
+import 'features/budgets/budget_controller.dart';
+import 'features/budgets/budget_screen.dart';
 import 'features/people/employee_controller.dart';
 import 'features/people/employee_screen.dart';
 import 'features/auth/login_screen.dart';
@@ -207,6 +211,19 @@ final routerProvider = Provider<GoRouter>((ref) {
                     .read(financialStatementControllerProvider)
                     ?.canLeave() ??
                 true,
+          ),
+          GoRoute(
+            path: '/finance/cash-flow-mappings',
+            builder: (context, state) => const CashFlowMappingScreen(),
+            onExit: (context, state) async =>
+                await ref.read(cashFlowMappingControllerProvider)?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/finance/budgets',
+            builder: (context, state) => const BudgetScreen(),
+            onExit: (context, state) async =>
+                await ref.read(budgetControllerProvider)?.canLeave() ?? true,
           ),
           GoRoute(
             path: '/inventory/landed-value',

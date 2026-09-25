@@ -44,7 +44,10 @@ declare rows jsonb;cursor uuid;begin
   raise exception using errcode='22023',message='CASH_FLOW_DATE_INVALID';end if;
  select coalesce(jsonb_agg(to_jsonb(q) order by id),'[]') into rows from (
   select a.id,a.id account_id,a.code,a.name,a.account_type,a.status,
-   m.id mapping_id,m.category,m.effective_date,m.version
+   m.id mapping_id,m.category,m.effective_date,
+   coalesce((select max(h.version) from finance.cash_flow_mapping_events h
+    where h.tenant_id=p_tenant_id and h.legal_entity_id=p_legal_entity_id
+     and h.account_id=a.id),0) version
   from finance.accounts a left join lateral (
    select id,category,effective_date,version from finance.cash_flow_mapping_events
    where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id
@@ -115,17 +118,21 @@ end$$;
 create function finance.cash_flow_totals(t uuid,e uuid,d date,account_rows jsonb)
 returns jsonb language plpgsql stable security definer set search_path='' as $$
 declare x jsonb;rows jsonb:='[]';unmapped jsonb:='[]';cat text;kind text;
+ mapping_id uuid;mapping_date date;mapping_version bigint;
  movement numeric;amount numeric;opening_cash numeric:=0;closing_cash numeric:=0;
  profit numeric:=0;adjustments numeric:=0;working numeric:=0;
  investing numeric:=0;financing numeric:=0;cash_delta numeric:=0;cash_count integer:=0;
  missing_count integer:=0;net numeric;difference numeric;summary jsonb;begin
  for x in select value from jsonb_array_elements(account_rows) loop
   kind:=x->>'account_type';
+  mapping_id:=null;mapping_date:=null;mapping_version:=null;
   movement:=(x->>'period_debit')::numeric-(x->>'period_credit')::numeric;
   if kind in('revenue','expense') then
    cat:='profit';amount:=-movement;profit:=profit+amount;
   else
-   select m.category into cat from finance.cash_flow_mapping_events m
+   select m.category,m.id,m.effective_date,m.version
+    into cat,mapping_id,mapping_date,mapping_version
+    from finance.cash_flow_mapping_events m
     where m.tenant_id=t and m.legal_entity_id=e and m.account_id=(x->>'account_id')::uuid
      and m.effective_date<=d order by m.effective_date desc,m.version desc limit 1;
    if cat='cash' then
@@ -151,7 +158,9 @@ declare x jsonb;rows jsonb:='[]';unmapped jsonb:='[]';cat text;kind text;
    end if;
   end if;
   rows:=rows||jsonb_build_array(x||jsonb_build_object(
-   'cash_flow_category',coalesce(cat,'unmapped'),'amount',amount::text));
+   'cash_flow_category',coalesce(cat,'unmapped'),'amount',amount::text,
+   'cash_flow_mapping_id',mapping_id,'cash_flow_mapping_effective_date',mapping_date,
+   'cash_flow_mapping_version',mapping_version));
  end loop;
  net:=profit+adjustments+working+investing+financing;
  difference:=net-cash_delta;
@@ -191,7 +200,10 @@ declare data jsonb;prior jsonb;current_totals jsonb;prior_totals jsonb;
   end if;
   accounts:=accounts||jsonb_build_array(x||jsonb_build_object(
    'comparative_amount',comp_row->>'amount',
-   'comparative_category',comp_row->>'cash_flow_category'));
+   'comparative_category',comp_row->>'cash_flow_category',
+   'comparative_mapping_id',comp_row->>'cash_flow_mapping_id',
+   'comparative_mapping_effective_date',comp_row->>'cash_flow_mapping_effective_date',
+   'comparative_mapping_version',comp_row->'cash_flow_mapping_version'));
   comp_row:=null;
  end loop;
  summary:=summary||jsonb_build_object('kind','cash_flow',
@@ -235,8 +247,48 @@ declare id uuid:=(p_payload->>'id')::uuid;h text;r jsonb;data jsonb;summary json
   '[]',req,req);
 end$$;
 
+-- Keep the existing period checks intact and add the live cash-flow bridge to
+-- hard-close evidence. A period without any posted movement has no bridge to
+-- classify; an active period with movement cannot close on unmapped cash.
+alter function finance.period_close_exceptions(uuid,uuid,finance.fiscal_periods)
+ rename to period_close_exceptions_before_cash_flow;
+create function finance.period_close_exceptions(t uuid,e uuid,p finance.fiscal_periods)
+returns jsonb language plpgsql security definer set search_path='' as $$
+declare issues jsonb;statement jsonb;bridge jsonb;branch_id uuid;begin
+ issues:=finance.period_close_exceptions_before_cash_flow(t,e,p);
+ if exists(select 1 from finance.journal_lines l
+  join finance.journal_entries j on j.tenant_id=l.tenant_id and j.id=l.journal_entry_id
+  where l.tenant_id=t and l.legal_entity_id=e and l.posting_date between p.start_date and p.end_date
+   and j.status='posted') then
+  begin
+   select b.id into branch_id from core.branches b where b.tenant_id=t
+    and b.legal_entity_id=e and b.status='active' order by b.id limit 1;
+   if branch_id is null then
+    issues:=issues||jsonb_build_array(jsonb_build_object('code','CASH_FLOW_CHECK_FAILED',
+     'reason','NO_ACTIVE_BRANCH'));
+   else
+    statement:=finance.build_cash_flow_statement(t,e,branch_id,
+     jsonb_build_object('id',gen_random_uuid(),'kind','cash_flow','period_id',p.id,
+      'as_of',p.end_date));
+    bridge:=statement#>'{summary,cash_flow}';
+    if bridge->>'status'='blocked' then
+     issues:=issues||jsonb_build_array(jsonb_build_object('code','CASH_FLOW_UNMAPPED',
+      'unmapped_count',bridge->>'unmapped_count','unmapped_accounts',bridge->'unmapped_accounts',
+      'no_mapped_cash',bridge->'no_mapped_cash','difference',bridge->>'difference'));
+    end if;
+   end if;
+  exception when others then
+   issues:=issues||jsonb_build_array(jsonb_build_object('code','CASH_FLOW_CHECK_FAILED',
+    'sqlstate',sqlstate));
+  end;
+ end if;
+ return issues;
+end$$;
+
 revoke all on function finance.cash_flow_totals(uuid,uuid,date,jsonb),
  finance.build_cash_flow_statement(uuid,uuid,uuid,jsonb),
+ finance.period_close_exceptions_before_cash_flow(uuid,uuid,finance.fiscal_periods),
+ finance.period_close_exceptions(uuid,uuid,finance.fiscal_periods),
  api.cash_flow_mapping_options(uuid,uuid,uuid,date,uuid),
  api.configure_cash_flow_mapping(uuid,uuid,uuid,uuid,uuid,timestamptz,jsonb,bigint)
  from public,anon,authenticated;

@@ -17,6 +17,13 @@ insert into procurement_test_results select is((select response#>>'{entity,statu
  where name='cashflow.blocked'),'blocked','cash flow without mappings freezes a blocking report');
 insert into procurement_test_results select is((select response#>>'{entity,cash_flow,unmapped_count}' from procurement_responses
  where name='cashflow.blocked'),'1','cash flow reports missing mapped cash');
+create function pg_temp.cashflow_close_issues() returns jsonb language sql as $$
+select finance.period_close_exceptions(pg_temp.fid('tenant'),pg_temp.fid('report.entity'),p)
+from finance.fiscal_periods p where p.id=pg_temp.fid('report.august')$$;
+insert into procurement_test_results select is((select exists(select 1 from
+ jsonb_array_elements(pg_temp.cashflow_close_issues()) x
+ where x->>'code'='CASH_FLOW_UNMAPPED')),true,
+ 'hard-close evidence blocks posted period without cash classifications');
 create function pg_temp.map_cashflow(n text,account_name text,category text,expected_version bigint default 0)
 returns jsonb language sql as $$
 select api.configure_cash_flow_mapping(pg_temp.fid('tenant'),pg_temp.fid('report.entity'),
@@ -36,6 +43,10 @@ insert into procurement_responses values('cashflow.map.equity',
 insert into procurement_responses values('cashflow.ready',pg_temp.cashflow_call('cashflow.ready'));
 insert into procurement_test_results select is((select response#>>'{entity,status}' from procurement_responses
  where name='cashflow.ready'),'generated','fully mapped cash flow is generated');
+insert into procurement_test_results select is((select exists(select 1 from
+ jsonb_array_elements(pg_temp.cashflow_close_issues()) x
+ where x->>'code'='CASH_FLOW_UNMAPPED')),false,
+ 'complete mapping clears cash-flow close warning');
 insert into procurement_test_results select is((select response#>>'{entity,cash_flow,period_profit}' from procurement_responses
  where name='cashflow.ready'),'31.000000','cash flow starts from August posted profit');
 insert into procurement_test_results select is((select response#>>'{entity,cash_flow,net_cash_change}' from procurement_responses
@@ -46,6 +57,11 @@ insert into procurement_test_results select is((select response#>>'{entity,cash_
  where name='cashflow.ready'),'151.000000','closing cash reconciles mapped bank GL');
 insert into procurement_test_results select is((select response#>>'{entity,cash_flow,difference}' from procurement_responses
  where name='cashflow.ready'),'0.000000','cash-flow bridge reconciles exactly');
+insert into procurement_test_results select is((api.financial_statement_page(
+ pg_temp.fid('tenant'),pg_temp.fid('report.entity'),pg_temp.fid('report.branch'),
+ pg_temp.fid('cashflow.ready'),'accounts',0,pg_temp.fid('report.cash'))#>>
+ '{items,0,cash_flow_mapping_id}'),pg_temp.fid('cashflow.map.cash')::text,
+ 'frozen cash account drill names the mapping decision');
 insert into procurement_test_results select is((select response#>>'{entity,comparative,financing_cash}' from procurement_responses
  where name='cashflow.ready'),'100.000000','comparative period financing is frozen');
 insert into procurement_test_results select is((select response#>>'{entity,comparative,net_cash_change}' from procurement_responses
@@ -76,6 +92,10 @@ insert into procurement_test_results select is((select response#>>'{entity,cash_
  where name='cashflow.unmapped'),'1','unmapped account is counted');
 insert into procurement_test_results select is((select response#>>'{entity,cash_flow,unmapped_accounts,0,code}' from procurement_responses
  where name='cashflow.unmapped'),'RPT-REC','unmapped account is named for close review');
+insert into procurement_test_results select is((select exists(select 1 from
+ jsonb_array_elements(pg_temp.cashflow_close_issues()) x
+ where x->>'code'='CASH_FLOW_UNMAPPED' and x->>'unmapped_count'='1')),true,
+ 'new unclassified working capital blocks hard-close evidence');
 insert into procurement_responses values('cashflow.map.receivable',
  pg_temp.map_cashflow('cashflow.map.receivable','receivable','working_capital'));
 insert into procurement_responses values('cashflow.working',pg_temp.cashflow_call('cashflow.working'));
@@ -85,8 +105,49 @@ insert into procurement_test_results select is((select response#>>'{entity,cash_
  where name='cashflow.working'),'31.000000','cash flow bridges higher profit through working capital');
 insert into procurement_test_results select is((select response#>>'{entity,status}' from procurement_responses
  where name='cashflow.working'),'generated','new mapping clears the cash-flow blocker');
+insert into procurement_test_results select is((select exists(select 1 from
+ jsonb_array_elements(pg_temp.cashflow_close_issues()) x
+ where x->>'code'='CASH_FLOW_UNMAPPED')),false,
+ 'dated working capital mapping clears hard-close warning');
 insert into procurement_test_results select is((select summary->>'status' from finance.financial_reports
  where id=pg_temp.fid('cashflow.unmapped')),'blocked','later mapping never rewrites blocked history');
+insert into finance.accounts(id,tenant_id,legal_entity_id,code,name,account_type,normal_balance,
+ created_by,updated_by)
+values(pg_temp.fid('report.july_asset'),pg_temp.fid('tenant'),pg_temp.fid('report.entity'),
+ 'RPT-JULY','July-only asset','asset','debit',pg_temp.fid('creator'),pg_temp.fid('creator'));
+select pg_temp.report_post('report.july.asset','2026-07-20','july_asset','cash',3);
+select api.configure_cash_flow_mapping(pg_temp.fid('tenant'),pg_temp.fid('report.entity'),
+ pg_temp.fid('report.branch'),pg_temp.fid('cashflow.july.mapping.command'),
+ pg_temp.fid('cashflow.july.mapping.key'),'2026-09-25T00:00:00Z',
+ jsonb_build_object('id',pg_temp.fid('cashflow.july.mapping'),
+ 'account_id',pg_temp.fid('report.july_asset'),'category','working_capital',
+ 'effective_date','2026-08-01','reason','Effective after prior comparative period'),0);
+insert into procurement_responses values('cashflow.prior.blocked',
+ pg_temp.cashflow_call('cashflow.prior.blocked'));
+insert into procurement_test_results select is((select response#>>'{entity,cash_flow,status}'
+ from procurement_responses where name='cashflow.prior.blocked'),'generated',
+ 'current period bridge remains reconciled with current dated mapping');
+insert into procurement_test_results select is((select response#>>'{entity,comparative,status}'
+ from procurement_responses where name='cashflow.prior.blocked'),'blocked',
+ 'earlier comparative uses earlier unmapped classification');
+insert into procurement_test_results select is((select response#>>'{entity,status}'
+ from procurement_responses where name='cashflow.prior.blocked'),'blocked',
+ 'blocked comparative blocks the saved statement');
+select api.configure_cash_flow_mapping(pg_temp.fid('tenant'),pg_temp.fid('report.entity'),
+ pg_temp.fid('report.branch'),pg_temp.fid('cashflow.future.command'),pg_temp.fid('cashflow.future.key'),
+ '2026-09-25T00:00:00Z',jsonb_build_object('id',pg_temp.fid('cashflow.future'),
+ 'account_id',pg_temp.fid('report.cash'),'category','investing',
+ 'effective_date','2026-12-01','reason','Approved future reclassification'),1);
+insert into procurement_test_results select is((select x->>'category' from jsonb_array_elements(
+ api.cash_flow_mapping_options(pg_temp.fid('tenant'),pg_temp.fid('report.entity'),
+ pg_temp.fid('report.branch'),'2026-08-31',null)->'items')x
+ where x->>'account_id'=pg_temp.fid('report.cash')::text),'cash',
+ 'future decision does not rewrite historical classification');
+insert into procurement_test_results select is((select x->>'version' from jsonb_array_elements(
+ api.cash_flow_mapping_options(pg_temp.fid('tenant'),pg_temp.fid('report.entity'),
+ pg_temp.fid('report.branch'),'2026-08-31',null)->'items')x
+ where x->>'account_id'=pg_temp.fid('report.cash')::text),'2',
+ 'mapping picker returns latest version for safe future edits');
 select pg_temp.actor('outsider');
 insert into procurement_test_results select throws_ok($$select api.cash_flow_mapping_options(
  pg_temp.fid('tenant'),pg_temp.fid('report.entity'),pg_temp.fid('report.branch'),'2026-08-31',null)$$,

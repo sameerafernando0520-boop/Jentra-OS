@@ -101,13 +101,13 @@ final class SupabaseFinancialStatementGateway
     } else if (value['kind'] == 'cash_flow') {
       final current = value['cash_flow'];
       final comparison = value['comparative'];
-      if (current is! Map ||
-          (comparison != null && comparison is! Map)) {
+      if (current is! Map || (comparison != null && comparison is! Map)) {
         throw const FormatException('Missing indirect cash-flow bridge.');
       }
       _cashFlow(current);
       if (comparison is Map) _cashFlow(comparison);
-      final blocked = current['status'] == 'blocked' ||
+      final blocked =
+          current['status'] == 'blocked' ||
           (comparison is Map && comparison['status'] == 'blocked');
       if ((blocked ? 'blocked' : 'generated') != value['status']) {
         throw const FormatException('Cash-flow blocker state mismatch.');
@@ -153,12 +153,14 @@ final class SupabaseFinancialStatementGateway
         operating + investing + financing != net ||
         closing - opening != cashDelta ||
         net - cashDelta != difference ||
-        (value['no_mapped_cash'] == ((value['mapped_cash_count'] as int) > 0)) ||
+        (value['no_mapped_cash'] ==
+            ((value['mapped_cash_count'] as int) > 0)) ||
         (value['unmapped_count'] as int) <
             (value['unmapped_accounts'] as List).length) {
       throw const FormatException('Indirect cash flow does not reconcile.');
     }
-    final blocked = (value['unmapped_count'] as int) > 0 ||
+    final blocked =
+        (value['unmapped_count'] as int) > 0 ||
         value['no_mapped_cash'] == true ||
         difference != ExactDecimal.zero(scale: 6);
     if ((blocked ? 'blocked' : 'generated') != value['status']) {
@@ -277,7 +279,8 @@ final class SupabaseFinancialStatementGateway
       if (item['comparative_amount'] != null) {
         _exact(item['comparative_amount']);
       }
-      if (section == 'accounts' && summary['kind'] == 'cash_flow' &&
+      if (section == 'accounts' &&
+          summary['kind'] == 'cash_flow' &&
           !const [
             'cash',
             'profit',
@@ -288,6 +291,21 @@ final class SupabaseFinancialStatementGateway
             'unmapped',
           ].contains(item['cash_flow_category'])) {
         throw const FormatException('Invalid cash-flow classification.');
+      }
+      if (section == 'accounts' && summary['kind'] == 'cash_flow') {
+        final category = item['cash_flow_category'];
+        if (category == 'profit' || category == 'unmapped') {
+          if (item['cash_flow_mapping_id'] != null ||
+              item['cash_flow_mapping_effective_date'] != null ||
+              item['cash_flow_mapping_version'] != null) {
+            throw const FormatException('Cash-flow mapping lineage mismatch.');
+          }
+        } else if (item['cash_flow_mapping_id'] is! String ||
+            item['cash_flow_mapping_effective_date'] is! String ||
+            item['cash_flow_mapping_version'] is! int ||
+            (item['cash_flow_mapping_version'] as int) < 1) {
+          throw const FormatException('Missing frozen cash-flow mapping.');
+        }
       }
     }
     return result;
@@ -351,9 +369,13 @@ final class SupabaseCashFlowMappingGateway implements CashFlowMappingGateway {
       if (row['account_id'] != row['id'] ||
           row['code'] is! String ||
           row['name'] is! String ||
-          !const ['asset', 'liability', 'equity'].contains(
-            row['account_type'],
-          ) ||
+          row['version'] is! int ||
+          (row['version'] as int) < 0 ||
+          !const [
+            'asset',
+            'liability',
+            'equity',
+          ].contains(row['account_type']) ||
           (row['category'] != null &&
               !const [
                 'cash',
@@ -364,7 +386,6 @@ final class SupabaseCashFlowMappingGateway implements CashFlowMappingGateway {
               ].contains(row['category'])) ||
           (row['category'] != null &&
               (row['mapping_id'] is! String ||
-                  row['version'] is! int ||
                   row['effective_date'] is! String))) {
         throw const FormatException('Invalid cash-flow account mapping.');
       }

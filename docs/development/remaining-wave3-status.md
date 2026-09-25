@@ -1,11 +1,14 @@
 # Remaining Wave 3 development status
 
-Refreshed 2026-09-25 against `main` at `d99fe10`. AC-317 was committed at
+Refreshed 2026-09-25 against `main` at `307c006`. AC-317 was committed at
 `4e0a244`; AC-318 and the first AC-319 candidate were committed at `d99fe10`.
-Further AC-319 corrections remain dirty. Concurrent Wave 4 work is separate.
+The first AC-320 statement slice and concurrent Wave 4 work were committed at
+`307c006` while the cash-flow follow-up was in progress. The cash-flow and
+budget follow-ups remain dirty and unstaged. Concurrent Wave 4 work is separate.
 Earlier transfer/journal checkpoints are historical.
-Development ledger: 34 migrations through `20260911130900_stock_opening_approver_setup`.
-No migration applied by this session. Existing acceptance changes preserved.
+Development ledger at the 2026-09-26 refresh: 35 installed migrations through
+`20260925181927_wave4_employee_foundation` (concurrent Wave 4 work). No Wave 3
+candidate migration applied by this budget session. Existing acceptance changes preserved.
 
 | Requirement / AC | Status | Concrete implementation / evidence | Dependency and next action |
 |---|---|---|---|
@@ -26,7 +29,7 @@ No migration applied by this session. Existing acceptance changes preserved.
 | FR-367–369 / AC-317 | Candidate implemented and tested; acceptance open | Contract 33; additive `20260922001000_ar_ap_control_reconciliation.sql`; branch-scoped immutable AR/AP control snapshots, per-account/command differences, AR allocation reversal including FX/write-off/discount, restored-cent and cross-control settlement corrections; `/finance/controls`, encrypted recovery. Fresh 365 procurement/finance, 158 AR/reservation and 105 inventory rollback assertions; 63 desktop, 77 gateway/storage and 5 exact-domain checks pass. Isolated Windows build passed without launch | Twenty candidates remain UNAPPLIED. Supported-source attribution review, retired mapping coverage, entity consolidation/export, real contention/load, installation and native/owner acceptance remain |
 | FR-370–371 / AC-318 | Candidate implemented and tested; acceptance open | Contract 34; additive `20260923225202_bank_reconciliation.sql`; `/finance/bank` exact CSV/XLSX import, scoped 50-row pages, one-to-one/one-to-many/many-to-one matching, governed tolerance/adjustment, immutable linked reversal and encrypted recovery. Fresh 405 procurement/finance, 105 inventory and 158 AR rollback assertions; 29 platform/codec and 11 desktop tests; analyzers and light/dark 200% visual review pass. See `docs/verification/remaining-wave3/bank-review-20260925.md` | Candidate source committed at `d99fe10`, migration UNAPPLIED. Real multi-session contention, installed behavior, Credential Manager restart, native walkthrough and owner acceptance remain |
 | FR-372–374 / AC-319 | Candidate implementation; acceptance open | Contract 35; additive `20260924185321_wave3_period_governance.sql`; period events/reopen requests, independent recent-MFA approval, genuine hard close and immutable blocked exceptions, exact frozen FX valuation with linked reversals and control-difference overlay; `/finance/periods`, scoped RPC gateway and encrypted recovery. Latest strict rollback procurement/finance 445, inventory 105 and AR 158 assertions pass; 22 adjacent gateway and 33 adjacent desktop tests pass, including 8 period/FX tests and light/dark 200% goldens; both analyzers pass. See `docs/verification/remaining-wave3/period-fx-review-20260925.md` | Initial candidate source committed at `d99fe10`; follow-up corrections dirty; migration UNAPPLIED. Real multi-session contention/load, Credential Manager restart, installed/native walkthrough and owner signoff remain |
-| FR-375–382 / AC-320 | Partial candidate; acceptance open | Contract 36; additive `20260925002000_wave3_financial_statements.sql`; posted-journal trial balance, P&L and balance sheet with comparative periods, frozen account/source-line pages, exact equations and `/finance/statements` encrypted recovery. Fresh strict rollback suites: 467 procurement/finance, 105 inventory, 158 AR assertions; adjacent 27 gateway and 42 desktop tests, including light/dark 200% reviewed goldens. See `docs/verification/remaining-wave3/financial-statements-review-20260925.md` | Candidate migration UNAPPLIED. Cash flow, broader control/operational reports, tax, budgets, variance, dimensions, load/contention and native/owner acceptance remain |
+| FR-375–382 / AC-320 | Partial candidate; acceptance open | Contracts 36–37; additive `20260925002000_wave3_financial_statements.sql`, `20260925003000_wave3_cash_flow.sql` and `20260925004000_wave3_budgets.sql`; posted-journal TB/P&L/balance sheet, indirect cash flow and immutable mapping, independent versioned exact budgets and posted-actual variance with frozen drill. `/finance/statements`, `/finance/cash-flow-mappings` and `/finance/budgets` use encrypted recovery. Latest strict rollback: 533 procurement/finance, 105 inventory and 158 AR assertions. Adjacent 35 gateway and 64 desktop tests, clean analyzers and light/dark 200% previews are in `docs/verification/remaining-wave3/budget-review-20260926.md`. | Wave 3 candidate migrations UNAPPLIED. Tax, full control/operational report consolidation, governed cost-centre/project dimensions, load/contention and native/owner acceptance remain. |
 | FR-383–395 / AC-321–324 | Partial | existing shared design, encrypted drafts, reference pickers, reports | Integrate new modules; test scope revocation, retry, accessibility and bounded export |
 | NFR-307–320 / AC-325 | Partial | historical per-slice logs | New real concurrency, performance and rendered UI evidence required |
 | AC-326 | Missing | No complete remaining-Wave-3 verification | Final solo review, fix findings, full applicable development checks |
@@ -46,7 +49,7 @@ release builds passed for allocations (184.1 seconds), initial returns (68 secon
 and the exact return preview (46.6 seconds). No executable was launched.
 
 Remaining: broader AC-312 verification and source navigation; oversized count partitioning,
-broader landed adjustments, disposition, large report extensions, remaining AC-320 finance/budget reporting,
+broader landed adjustments, disposition, large report extensions, remaining AC-320 tax and control reporting,
 AC-321–326 cross-cutting checks, installation coordination and final complete Wave 3 solo review.
 
 ## Inventory continuation — 2026-09-17

@@ -68,13 +68,22 @@ final class CashFlowMappingController extends ChangeNotifier {
   final TenantContext scope;
   final CashFlowMappingGateway gateway;
   final QuotationDraftStore drafts;
-  bool online, busy = false, verified = false, denied = false, _disposed = false;
+  bool online,
+      busy = false,
+      verified = false,
+      denied = false,
+      _disposed = false;
   String? error, message, cursor;
   List<Map<String, Object?>> accounts = [];
   Map<String, Object?> form = {};
   QuotationLocalDraft? local;
 
   String get today => DateTime.now().toUtc().toIso8601String().substring(0, 10);
+  String get latestEffectiveDate => DateTime.now()
+      .toUtc()
+      .add(const Duration(days: 365))
+      .toIso8601String()
+      .substring(0, 10);
   bool get pending => local?.pending != null;
   bool get locked => busy || pending || denied || !verified;
   Map<String, Object?>? get selectedAccount {
@@ -156,7 +165,11 @@ final class CashFlowMappingController extends ChangeNotifier {
 
   Future<void> _load({bool more = false}) async {
     if (!online) return;
-    final result = await gateway.options(scope, today, after: more ? cursor : null);
+    final result = await gateway.options(
+      scope,
+      today,
+      after: more ? cursor : null,
+    );
     if (_disposed) return;
     accounts = [
       if (more) ...accounts,
@@ -188,7 +201,8 @@ final class CashFlowMappingController extends ChangeNotifier {
   });
 
   void field(String key, String? value) {
-    if (locked || !const {'category', 'effective_date', 'reason'}.contains(key)) {
+    if (locked ||
+        !const {'category', 'effective_date', 'reason'}.contains(key)) {
       return;
     }
     form = {...form, key: value?.trim()};
@@ -228,14 +242,18 @@ final class CashFlowMappingController extends ChangeNotifier {
       throw const FormatException('Choose a cash-flow category.');
     }
     if (category == 'cash' && account['account_type'] != 'asset') {
-      throw const FormatException('Cash classification requires an asset account.');
+      throw const FormatException(
+        'Cash classification requires an asset account.',
+      );
     }
     if (date is! String ||
         !RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(date) ||
         DateTime.tryParse(date)?.toIso8601String().substring(0, 10) != date ||
         date.compareTo('2000-01-01') < 0 ||
-        date.compareTo(today) > 0) {
-      throw const FormatException('Choose a valid effective date up to today.');
+        date.compareTo(latestEffectiveDate) > 0) {
+      throw const FormatException(
+        'Choose a valid effective date within one year.',
+      );
     }
     if (reason is! String || reason.trim().length < 3 || reason.length > 1000) {
       throw const FormatException('Provide a reason of 3 to 1000 characters.');
@@ -278,14 +296,17 @@ final class CashFlowMappingController extends ChangeNotifier {
     }
     if (_disposed) return;
     local = null;
-    message = 'Dated classification recorded. Generate a new cash-flow statement.';
+    message =
+        'Dated classification recorded. Generate a new cash-flow statement.';
     form = _newForm();
     await persist();
     try {
       await _load();
     } catch (failure) {
       _handle(failure);
-      if (!denied) error = 'Classification confirmed. Refresh account evidence.';
+      if (!denied) {
+        error = 'Classification confirmed. Refresh account evidence.';
+      }
     }
   });
 

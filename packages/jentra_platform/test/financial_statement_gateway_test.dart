@@ -104,6 +104,25 @@ void main() {
     'liabilities': kind == 'balance_sheet' ? '0.000000' : null,
     'equity': kind == 'balance_sheet' ? '100.000000' : null,
     'current_earnings': kind == 'balance_sheet' ? '50.000000' : null,
+    if (kind == 'cash_flow')
+      'cash_flow': {
+        'period_profit': '30.000000',
+        'noncash_adjustments': '5.000000',
+        'working_capital_change': '-10.000000',
+        'operating_cash': '25.000000',
+        'investing_cash': '-15.000000',
+        'financing_cash': '20.000000',
+        'net_cash_change': '30.000000',
+        'opening_cash': '100.000000',
+        'closing_cash': '130.000000',
+        'cash_delta': '30.000000',
+        'difference': '0.000000',
+        'mapped_cash_count': 1,
+        'unmapped_count': 0,
+        'unmapped_accounts': [],
+        'no_mapped_cash': false,
+        'status': 'generated',
+      },
   };
 
   test('period options use authenticated entity, branch and cursor', () async {
@@ -260,6 +279,172 @@ void main() {
     (response as Map)['entity'] = summary('trial_balance');
     await expectLater(
       gateway.generate(command),
+      throwsA(
+        isA<DomainError>().having((e) => e.code, 'code', 'UNCERTAIN_RESULT'),
+      ),
+    );
+  });
+
+  test('cash-flow read rejects arithmetic drift and hidden blockers', () async {
+    response = {
+      'tenant_id': 'tenant',
+      'legal_entity_id': 'entity',
+      'branch_id': 'branch',
+      'items': [summary('cash_flow')],
+      'next_cursor': null,
+    };
+    expect((await gateway.reports(scope))['items'], hasLength(1));
+    final report = summary('cash_flow');
+    (response as Map)['items'] = [
+      {
+        ...report,
+        'cash_flow': {
+          ...(report['cash_flow'] as Map),
+          'closing_cash': '129.999999',
+        },
+      },
+    ];
+    await expectLater(gateway.reports(scope), throwsFormatException);
+    (response as Map)['items'] = [
+      {
+        ...report,
+        'cash_flow': {
+          ...(report['cash_flow'] as Map),
+          'unmapped_count': 1,
+          'unmapped_accounts': [
+            {
+              'id': 'missing',
+              'code': '1200',
+              'name': 'Receivable',
+              'unclassified_movement': '10.000000',
+            },
+          ],
+          'status': 'blocked',
+        },
+      },
+    ];
+    await expectLater(gateway.reports(scope), throwsFormatException);
+    (response as Map)['items'] = [
+      {
+        ...((response as Map)['items'] as List).single as Map,
+        'status': 'blocked',
+      },
+    ];
+    expect((await gateway.reports(scope))['items'], hasLength(1));
+  });
+
+  test('cash-flow drill requires frozen mapping decision lineage', () async {
+    final row = {
+      'id': 'account',
+      'account_id': 'account',
+      'code': '1000',
+      'name': 'Cash',
+      'account_type': 'asset',
+      'opening_balance': '100.000000',
+      'period_debit': '50.000000',
+      'period_credit': '20.000000',
+      'closing_balance': '130.000000',
+      'amount': '30.000000',
+      'comparative_amount': null,
+      'cash_flow_category': 'cash',
+      'cash_flow_mapping_id': 'mapping',
+      'cash_flow_mapping_effective_date': '2026-07-01',
+      'cash_flow_mapping_version': 1,
+    };
+    response = {
+      'summary': summary('cash_flow'),
+      'section': 'accounts',
+      'account_id': null,
+      'items': [row],
+      'next_offset': null,
+    };
+    expect(
+      (await gateway.page(scope, 'report', 'accounts'))['items'],
+      hasLength(1),
+    );
+    (response as Map)['items'] = [
+      {...row, 'cash_flow_mapping_id': null},
+    ];
+    await expectLater(
+      gateway.page(scope, 'report', 'accounts'),
+      throwsFormatException,
+    );
+  });
+
+  test('cash-flow mappings enforce scope and verify sealed receipt', () async {
+    final mappings = SupabaseCashFlowMappingGateway(client);
+    response = {
+      'tenant_id': 'tenant',
+      'legal_entity_id': 'entity',
+      'branch_id': 'branch',
+      'as_of': '2026-09-25',
+      'items': [
+        {
+          'id': 'account',
+          'account_id': 'account',
+          'code': '1000',
+          'name': 'Cash',
+          'account_type': 'asset',
+          'status': 'active',
+          'mapping_id': null,
+          'category': null,
+          'version': 0,
+          'effective_date': null,
+        },
+      ],
+      'next_cursor': null,
+    };
+    expect(
+      (await mappings.options(scope, '2026-09-25'))['items'],
+      hasLength(1),
+    );
+    expect(
+      requests.single.url.path,
+      endsWith('/rpc/cash_flow_mapping_options'),
+    );
+    expect(jsonDecode(requests.single.body)['p_branch_id'], 'branch');
+    (response as Map)['legal_entity_id'] = 'foreign';
+    await expectLater(
+      mappings.options(scope, '2026-09-25'),
+      throwsFormatException,
+    );
+    requests.clear();
+    final command = CommandEnvelope<Map<String, Object?>>(
+      commandId: 'command',
+      idempotencyKey: 'key',
+      context: scope,
+      payload: {
+        'id': 'mapping',
+        'account_id': 'account',
+        'category': 'cash',
+        'effective_date': '2026-09-25',
+        'reason': 'Opening classification',
+      },
+      expectedEntityVersion: 0,
+    );
+    response = {
+      'command_id': 'command',
+      'request_id': 'request',
+      'entity': {
+        ...command.payload,
+        'tenant_id': 'tenant',
+        'legal_entity_id': 'entity',
+        'branch_id': 'branch',
+        'status': 'configured',
+        'version': 1,
+      },
+    };
+    expect((await mappings.configure(command))['version'], 1);
+    expect(
+      requests.single.url.path,
+      endsWith('/rpc/configure_cash_flow_mapping'),
+    );
+    (response as Map)['entity'] = {
+      ...(response as Map)['entity'] as Map,
+      'version': 2,
+    };
+    await expectLater(
+      mappings.configure(command),
       throwsA(
         isA<DomainError>().having((e) => e.code, 'code', 'UNCERTAIN_RESULT'),
       ),
