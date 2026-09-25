@@ -1,6 +1,6 @@
 # Jentra OS Blueprint Dossier
 
-**Status:** Approved through Wave 2 implementation; Wave 3 specification approved and foundation implementation in progress
+**Status:** Approved through Wave 2 implementation; Wave 3 implementation and acceptance in progress; Wave 4 approved for synthetic development
 **Approved:** 2026-09-01
 **Product:** Jentra OS — Windows-first business operating system for Sri Lankan SMEs
 
@@ -32,6 +32,11 @@ documents.
 18. [30_WAVE3_LANDED_VALUE_CONTRACT.md](30_WAVE3_LANDED_VALUE_CONTRACT.md) — exact receipt-based freight allocation, value-only posting and linked reversal.
 19. [31_WAVE3_INVENTORY_VALUATION_REPORT_CONTRACT.md](31_WAVE3_INVENTORY_VALUATION_REPORT_CONTRACT.md) — immutable dated stock, lot and transit valuation with selected-control GL reconciliation and source evidence.
 20. [32_WAVE3_MANUAL_JOURNAL_CONTRACT.md](32_WAVE3_MANUAL_JOURNAL_CONTRACT.md) — exact manual journal drafts, configured independent approval, posting, source evidence and linked reversals.
+
+21. [40_WAVE4_WORKFORCE_AND_DELIVERY_SPEC.md](40_WAVE4_WORKFORCE_AND_DELIVERY_SPEC.md) — proposed Wave 4 scope, requirements, acceptance criteria, dependencies and delivery sequence.
+22. [41_WAVE4_EMPLOYEE_FOUNDATION_CONTRACT.md](41_WAVE4_EMPLOYEE_FOUNDATION_CONTRACT.md) — proposed first vertical: employee directory, dated employment, scoped commands, native UI and recovery.
+
+Current [Wave 4 delivery status](../development/wave4-status.md) distinguishes specification work from implementation and acceptance.
 
 ## Change control
 

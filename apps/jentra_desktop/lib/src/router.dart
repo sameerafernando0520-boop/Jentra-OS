@@ -10,6 +10,12 @@ import 'features/manual_journal/manual_journal_controller.dart';
 import 'features/manual_journal/manual_journal_screen.dart';
 import 'features/control_reconciliation/control_reconciliation_controller.dart';
 import 'features/control_reconciliation/control_reconciliation_screen.dart';
+import 'features/bank_reconciliation/bank_reconciliation_controller.dart';
+import 'features/bank_reconciliation/bank_reconciliation_screen.dart';
+import 'features/period_fx/period_fx_controller.dart';
+import 'features/period_fx/period_fx_screen.dart';
+import 'features/people/employee_controller.dart';
+import 'features/people/employee_screen.dart';
 import 'features/auth/login_screen.dart';
 import 'features/catalogue/component_catalogue_screen.dart';
 import 'features/crm/crm_screen.dart';
@@ -177,6 +183,21 @@ final routerProvider = Provider<GoRouter>((ref) {
                 true,
           ),
           GoRoute(
+            path: '/finance/bank',
+            builder: (context, state) => const BankReconciliationScreen(),
+            onExit: (context, state) async =>
+                await ref
+                    .read(bankReconciliationControllerProvider)
+                    ?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/finance/periods',
+            builder: (context, state) => const PeriodFxScreen(),
+            onExit: (context, state) async =>
+                await ref.read(periodFxControllerProvider)?.canLeave() ?? true,
+          ),
+          GoRoute(
             path: '/inventory/landed-value',
             builder: (context, state) => const LandedValueScreen(),
             onExit: (context, state) async =>
@@ -238,13 +259,24 @@ final routerProvider = Provider<GoRouter>((ref) {
                 await ref.read(purchaseReturnControllerProvider)?.canLeave() ??
                 true,
           ),
+          GoRoute(
+            path: '/people',
+            builder: (context, state) => const EmployeeScreen(),
+            onExit: (context, state) async =>
+                await ref.read(employeeControllerProvider)?.canLeave() ?? true,
+          ),
+          GoRoute(
+            path: '/people/employees',
+            builder: (context, state) => const EmployeeScreen(),
+            onExit: (context, state) async =>
+                await ref.read(employeeControllerProvider)?.canLeave() ?? true,
+          ),
           for (final module in const [
             (
               'finance',
               'Finance',
               'Ledger, AR/AP, cash, tax and financial reporting.',
             ),
-            ('people', 'People', 'Employees, attendance, leave and payroll.'),
             (
               'projects',
               'Projects',

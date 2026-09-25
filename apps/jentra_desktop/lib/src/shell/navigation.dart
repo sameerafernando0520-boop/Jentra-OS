@@ -110,6 +110,16 @@ const jentraDestinations = <JentraDestination>[
     icon: Icons.account_balance_outlined,
   ),
   JentraDestination(
+    label: 'Bank reconciliation',
+    path: '/finance/bank',
+    icon: Icons.account_balance_wallet_outlined,
+  ),
+  JentraDestination(
+    label: 'Period & FX close',
+    path: '/finance/periods',
+    icon: Icons.event_repeat_outlined,
+  ),
+  JentraDestination(
     label: 'Projects',
     path: '/projects',
     icon: Icons.view_timeline_outlined,
@@ -154,6 +164,15 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
         (item.path != '/setup' || canOpenSetup) &&
         (item.path != '/finance/journals' ||
             (capabilities?.contains('finance.view') ?? false)) &&
+        (item.path != '/finance/bank' ||
+            (capabilities?.contains('finance.view') ?? false)) &&
+        (item.path != '/finance/periods' ||
+            (capabilities?.contains('finance.view') ?? false)) &&
+        (item.path != '/people' ||
+            const [
+              'people.view',
+              'people.employees.view',
+            ].every((p) => capabilities?.contains(p) ?? false)) &&
         (item.path != '/finance/controls' ||
             const [
               'finance.view',

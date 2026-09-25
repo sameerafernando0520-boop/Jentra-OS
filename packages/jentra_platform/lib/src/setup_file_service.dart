@@ -58,6 +58,9 @@ final class SetupFileService {
   Future<SelectedSetupFile?> openImportFile() async {
     final file = await openFile(acceptedTypeGroups: _importTypes);
     if (file == null) return null;
+    if (await file.length() > 5 * 1024 * 1024) {
+      throw const FormatException('Import files must not exceed 5 MiB.');
+    }
     final bytes = await file.readAsBytes();
     final extension = file.name.contains('.')
         ? file.name.split('.').last.toLowerCase()

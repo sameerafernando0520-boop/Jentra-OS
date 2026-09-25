@@ -13,6 +13,10 @@ import 'src/features/inventory_valuation/inventory_valuation_controller.dart';
 import 'package:jentra_platform/jentra_finance_platform.dart';
 import 'src/features/manual_journal/manual_journal_controller.dart';
 import 'src/features/control_reconciliation/control_reconciliation_controller.dart';
+import 'src/features/bank_reconciliation/bank_reconciliation_controller.dart';
+import 'src/features/period_fx/period_fx_controller.dart';
+import 'package:jentra_platform/jentra_people_platform.dart';
+import 'src/features/people/employee_controller.dart';
 
 import 'package:jentra_platform/jentra_stock_opening_platform.dart';
 import 'src/features/stock_opening/stock_opening_controller.dart';
@@ -79,6 +83,15 @@ Future<void> main() async {
         ),
         controlReconciliationGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseControlReconciliationGateway(client),
+        ),
+        bankReconciliationGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseBankReconciliationGateway(client),
+        ),
+        periodFxGatewayProvider.overrideWithValue(
+          client == null ? null : SupabasePeriodFxGateway(client),
+        ),
+        employeeRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabaseEmployeeGateway(client),
         ),
       ],
       child: const JentraApp(),

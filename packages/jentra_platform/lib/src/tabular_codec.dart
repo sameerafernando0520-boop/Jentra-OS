@@ -24,7 +24,9 @@ final class TabularFileException implements Exception {
 /// shared strings, booleans, and raw numeric XML values, while rejecting
 /// formulas, macros, multiple data sheets, unsafe paths, and oversized ZIPs.
 final class SetupTabularCodec {
-  const SetupTabularCodec();
+  const SetupTabularCodec() : rowLimit = maximumRows;
+  const SetupTabularCodec.bankStatement() : rowLimit = 2000;
+  final int rowLimit;
 
   static const int maximumImportBytes = 5 * 1024 * 1024;
   static const int maximumRows = 500;
@@ -289,7 +291,7 @@ final class SetupTabularCodec {
     return rows;
   }
 
-  static TabularDocument _documentFromGrid(List<List<String>> rows) {
+  TabularDocument _documentFromGrid(List<List<String>> rows) {
     if (rows.isEmpty) {
       throw const TabularFileException('EMPTY_FILE', 'The file has no rows.');
     }
@@ -313,10 +315,10 @@ final class SetupTabularCodec {
       );
     }
     final dataRows = rows.skip(1).toList(growable: false);
-    if (dataRows.length > maximumRows) {
-      throw const TabularFileException(
+    if (dataRows.length > rowLimit) {
+      throw TabularFileException(
         'ROW_LIMIT_EXCEEDED',
-        'The import supports at most 500 data rows.',
+        'The import exceeds its configured row limit.',
       );
     }
     for (var index = 0; index < dataRows.length; index += 1) {
@@ -350,7 +352,7 @@ final class SetupTabularCodec {
     }
   }
 
-  static void _validateDocument(TabularDocument document) {
+  void _validateDocument(TabularDocument document) {
     _documentFromGrid([document.headers, ...document.rows]);
   }
 
@@ -384,7 +386,7 @@ final class SetupTabularCodec {
         .toList(growable: false);
   }
 
-  static List<List<String>> _readWorksheetGrid(
+  List<List<String>> _readWorksheetGrid(
     XmlDocument worksheet,
     List<String> sharedStrings,
   ) {
@@ -448,10 +450,10 @@ final class SetupTabularCodec {
       output.add([
         for (var column = 0; column < width; column += 1) values[column] ?? '',
       ]);
-      if (output.length > maximumRows + 1) {
+      if (output.length > rowLimit + 1) {
         throw const TabularFileException(
           'ROW_LIMIT_EXCEEDED',
-          'The import supports at most 500 data rows.',
+          'The import exceeds its configured row limit.',
         );
       }
     }
