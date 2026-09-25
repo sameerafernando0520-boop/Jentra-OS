@@ -206,7 +206,8 @@ declare t uuid:=p_tenant_id;e uuid:=p_legal_entity_id;b uuid:=p_branch_id;
  perform core.wave3_require_scope(t,'finance.fx.post',e,null);
  perform core.wave3_require_scope(t,'finance.view',e,b);
  if act not in('post','reverse') or act is null or v_id is null or d is null
-  or d>(clock_timestamp() at time zone 'UTC')::date or length(reason) not between 3 and 1000 then
+  or p_client_timestamp is null or d>(clock_timestamp() at time zone 'UTC')::date
+  or coalesce(length(reason),0) not between 3 and 1000 then
   raise exception using errcode='22023',message='FX_REVALUATION_INPUT_INVALID';end if;
  h:=core.wave3_request_hash('finance.fx.'||act,p_command_id,t,e,b,p_payload,p_expected_entity_version);
  r:=core.wave3_replay(t,'finance.fx.'||act,p_command_id,p_idempotency_key,h);if r is not null then return r;end if;
@@ -232,8 +233,7 @@ declare t uuid:=p_tenant_id;e uuid:=p_legal_entity_id;b uuid:=p_branch_id;
    and er.target_currency_code=base and er.rate_type='closing' and er.status='active' and er.effective_date<=d;
   if not found then raise exception using errcode='22023',message='FX_CLOSING_RATE_REQUIRED';end if;
   if exists(select 1 from finance.fx_revaluation_runs rr where rr.tenant_id=t and rr.legal_entity_id=e
-   and rr.branch_id=b and rr.currency_code=currency and rr.as_of>d
-   and not exists(select 1 from finance.fx_revaluation_reversals x where x.tenant_id=t and x.run_id=rr.id)) then
+   and rr.branch_id=b and rr.currency_code=currency and rr.as_of>d) then
    raise exception using errcode='22023',message='FX_DATE_BEFORE_ACTIVE_RUN';end if;
   snap:=finance.fx_open_snapshot(t,e,b,currency,d);
   select rr.* into old_run from finance.fx_revaluation_runs rr where rr.tenant_id=t and rr.legal_entity_id=e
@@ -441,7 +441,7 @@ declare t uuid:=p_tenant_id;e uuid:=p_legal_entity_id;b uuid:=p_branch_id;
  h text;r jsonb;result jsonb;issues jsonb:='[]'::jsonb;new_state text;req uuid:=gen_random_uuid();reason text:=btrim(p_payload->>'reason');
 begin
  if act not in('soft_lock','hard_lock','request_reopen','approve_reopen') or act is null
-  or v_id is null or p_client_timestamp is null or length(reason) not between 3 and 1000 then
+  or v_id is null or p_client_timestamp is null or coalesce(length(reason),0) not between 3 and 1000 then
   raise exception using errcode='22023',message='PERIOD_COMMAND_INVALID';end if;
  perform core.wave3_require_scope(t,case when act in('soft_lock','hard_lock') then 'finance.period.close'
   else 'finance.period.reopen' end,e,null);

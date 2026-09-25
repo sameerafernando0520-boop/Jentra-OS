@@ -120,6 +120,11 @@ const jentraDestinations = <JentraDestination>[
     icon: Icons.event_repeat_outlined,
   ),
   JentraDestination(
+    label: 'Financial statements',
+    path: '/finance/statements',
+    icon: Icons.table_chart_outlined,
+  ),
+  JentraDestination(
     label: 'Projects',
     path: '/projects',
     icon: Icons.view_timeline_outlined,
@@ -167,6 +172,8 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
         (item.path != '/finance/bank' ||
             (capabilities?.contains('finance.view') ?? false)) &&
         (item.path != '/finance/periods' ||
+            (capabilities?.contains('finance.view') ?? false)) &&
+        (item.path != '/finance/statements' ||
             (capabilities?.contains('finance.view') ?? false)) &&
         (item.path != '/people' ||
             const [

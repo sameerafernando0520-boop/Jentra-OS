@@ -97,9 +97,20 @@ class _EmployeeWorkspaceState extends State<EmployeeWorkspace> {
     builder: (context, _) {
       final c = widget.controller;
       if (c.accessDenied) {
-        return const Center(
-          child: Text(
-            'Employee access changed. Switch to an authorized branch to continue.',
+        return Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                c.error ??
+                    'Employee access changed. Switch to an authorized branch to continue.',
+              ),
+              if (c.online)
+                TextButton(
+                  onPressed: c.busy ? null : () => c.refresh(),
+                  child: const Text('Retry employee access'),
+                ),
+            ],
           ),
         );
       }

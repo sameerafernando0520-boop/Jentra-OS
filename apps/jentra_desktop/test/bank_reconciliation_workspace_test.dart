@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,8 +22,9 @@ class BankFake implements BankReconciliationGateway {
     String? bankId,
     String? after,
   }) async {
-    if (readFailure != null)
+    if (readFailure != null) {
       throw DomainError(code: readFailure!, message: readFailure!);
+    }
     return {
       'items': [
         if (resource == 'accounts')

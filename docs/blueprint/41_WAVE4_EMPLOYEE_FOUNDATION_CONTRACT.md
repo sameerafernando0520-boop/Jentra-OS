@@ -52,6 +52,14 @@ mechanism. `people.view` alone and employee creation grant none of these rights.
 Mutations require directory read plus the relevant manage permission. Employment
 changes follow the privileged-permission MFA policy.
 
+The candidate seeds `module.people` disabled for every current plan, without
+changing existing plan decisions. Every read, command and replay checks an enabled
+entitlement on the tenant subscription after role/scope checks. `trialing` requires
+an unexpired trial; `active` requires an unexpired paid period when one is set.
+Other subscription states fail closed. The desktop clears loaded employee data on
+entitlement loss, retains sealed uncertain commands encrypted, and offers a fresh
+read after the entitlement is restored. Plan enablement is a separate owner policy.
+
 Requests have explicit non-null tenant/entity/branch. An as-of directory returns
 employees assigned to that branch on the date. An ended-spell filter uses its last
 assignment; future hires use a separate filter. Detail uses the same dated access
@@ -164,8 +172,10 @@ discard uncertainty. Revocation locks drafts and discards old-context responses.
   directory privacy, dual-branch transfer denial, replay after revocation, stale
   version, duplicate codes, date/overlap constraints, corrections, consumed-history
   denial, future conflicts, late-failure rollback and immutable events.
-- Two real sessions: same-code creates, competing timeline changes and downstream
-  consumption against correction. Loser leaves no partial history or overlap.
+- Two real sessions: same-code creates and competing timeline changes. The loser
+  leaves no partial history or overlap. Once a governed downstream consumer is
+  installed, its consumption/correction race is an integrated acceptance gate
+  before historical correction is enabled; W4-01 rejects historical correction.
 - Domain: half-open intervals, leap days, inclusive-end conversion, adjacent rehire,
   dated state, input bounds, exact versions and malformed response rejection.
 - Gateway/recovery: scope/cursor matching, literal search, encrypted restart, retry

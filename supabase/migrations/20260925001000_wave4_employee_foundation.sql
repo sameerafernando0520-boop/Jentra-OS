@@ -8,6 +8,12 @@ insert into core.permissions(code, module, description, privileged) values
 ('people.employees.history.view', 'people', 'Read scoped employment events.', true)
 on conflict (code) do nothing;
 
+-- Publishing this candidate does not enable People for any plan. Product
+-- owners can enable individual plans after the native acceptance gate.
+insert into billing.plan_entitlements(plan_code,entitlement_code,enabled)
+select code,'module.people',false from billing.plans
+on conflict (plan_code,entitlement_code) do nothing;
+
 -- The existing branch key is tenant/id; a scoped composite FK also proves entity.
 alter table core.branches add constraint branches_tenant_entity_id_w4_key
   unique(tenant_id, legal_entity_id, id);
@@ -171,6 +177,17 @@ begin
   end if;
   perform core.wave3_require_scope(p_tenant_id, 'people.view', p_entity_id, p_branch_id);
   perform core.wave3_require_scope(p_tenant_id, p_permission, p_entity_id, p_branch_id);
+  if not exists(
+    select 1 from billing.tenant_subscriptions s
+    join billing.plan_entitlements e on e.plan_code=s.plan_code
+    where s.tenant_id=p_tenant_id
+      and e.entitlement_code='module.people' and e.enabled
+      and ((s.status='trialing' and s.trial_ends_at>now())
+        or (s.status='active' and
+          (s.current_period_ends_at is null or s.current_period_ends_at>now())))
+  ) then
+    raise exception using errcode='42501',message='PEOPLE_ENTITLEMENT_REQUIRED';
+  end if;
 end $$;
 revoke all on function people.require_access(uuid,uuid,uuid,text) from public, anon, authenticated;
 

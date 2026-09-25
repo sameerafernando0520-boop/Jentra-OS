@@ -99,7 +99,12 @@ final class EmployeeController extends ChangeNotifier {
     try {
       await action();
     } catch (cause) {
-      if (cause is DomainError && cause.code == 'PERMISSION_DENIED') {
+      if (cause is DomainError &&
+          {
+            'PERMISSION_DENIED',
+            'FEATURE_NOT_ENTITLED',
+            'AUTHENTICATION_REQUIRED',
+          }.contains(cause.code)) {
         accessDenied = true;
         items = [];
         selected = null;

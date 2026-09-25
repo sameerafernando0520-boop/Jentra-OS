@@ -48,7 +48,12 @@ final class _Employees implements EmployeeRepository {
 
   void _check() {
     if (readFailure != null) {
-      throw DomainError(code: readFailure!, message: readFailure!);
+      throw DomainError(
+        code: readFailure!,
+        message: readFailure == 'FEATURE_NOT_ENTITLED'
+            ? 'People is not enabled on this business plan.'
+            : readFailure!,
+      );
     }
   }
 
@@ -227,6 +232,82 @@ void main() {
     expect(controller.items, isEmpty);
     expect(controller.selected, isNull);
     expect(controller.events, isEmpty);
+  });
+
+  test(
+    'plan revocation clears loaded data and recovery requires a fresh read',
+    () async {
+      repository.employee = repository.record();
+      await controller.initialize();
+      await controller.open('employee');
+      repository.readFailure = 'FEATURE_NOT_ENTITLED';
+      await controller.refresh();
+      expect(controller.accessDenied, isTrue);
+      expect(controller.items, isEmpty);
+      expect(controller.selected, isNull);
+      repository.readFailure = null;
+      await controller.refresh();
+      expect(controller.accessDenied, isFalse);
+      expect(controller.items, hasLength(1));
+    },
+  );
+
+  test('plan loss retains an uncertain command until access returns', () async {
+    await controller.initialize();
+    controller.beginCreate();
+    controller.edit('code', 'EMP-01');
+    controller.edit('display_name', 'Synthetic Employee');
+    controller.edit('job_title', 'Technician');
+    repository.failure = 'UNCERTAIN_RESULT';
+    await controller.submit();
+    final originalId = controller.local!.pending!.envelope.commandId;
+    repository.failure = 'FEATURE_NOT_ENTITLED';
+    await controller.submit();
+    expect(controller.accessDenied, isTrue);
+    expect(controller.local!.pending!.envelope.commandId, originalId);
+    repository.failure = null;
+    await controller.refresh();
+    await controller.submit();
+    expect(controller.local, isNull);
+    expect(repository.commands.last.commandId, originalId);
+  });
+
+  testWidgets('plan denial hides employee data and offers a fresh retry', (
+    tester,
+  ) async {
+    repository.employee = repository.record();
+    await controller.initialize();
+    repository.readFailure = 'FEATURE_NOT_ENTITLED';
+    await controller.refresh();
+    tester.view.physicalSize = const Size(1024, 720);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: JentraTheme.light(),
+        home: MediaQuery(
+          data: const MediaQueryData(textScaler: TextScaler.linear(2)),
+          child: Scaffold(body: EmployeeWorkspace(controller: controller)),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.text('People is not enabled on this business plan.'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Synthetic Employee'), findsNothing);
+    expect(tester.takeException(), isNull);
+    await expectLater(
+      find.byType(EmployeeWorkspace),
+      matchesGoldenFile('goldens/employee_plan_denied_light_200.png'),
+    );
+    repository.readFailure = null;
+    await tester.tap(find.text('Retry employee access'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Synthetic Employee'), findsWidgets);
+    expect(tester.takeException(), isNull);
   });
 
   for (final dark in [false, true]) {

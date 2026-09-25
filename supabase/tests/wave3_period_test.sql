@@ -55,6 +55,13 @@ create function pg_temp.fx_payload(n text,rate text,action text default 'post') 
  select jsonb_build_object('action',action,'id',pg_temp.fid(n),'period_id',pg_temp.period_id(),
  'as_of','2026-09-21','currency_code','USD','exchange_rate_id',pg_temp.fid(rate),
  'reason','Synthetic period-end rate correction')$$;
+insert into procurement_test_results select throws_ok($$select pg_temp.call('post_exchange_revaluation',
+ pg_temp.fx_payload('fx.bad.reason','fx.rate.12')-'reason',0)$$,
+ '22023','FX_REVALUATION_INPUT_INVALID','FX command rejects a missing reason');
+insert into procurement_test_results select throws_ok($$select pg_temp.call('period_governance_command',
+ pg_temp.period_payload('soft_lock','period.bad.reason')-'reason',
+ (select version from finance.fiscal_periods where id=pg_temp.period_id()))$$,
+ '22023','PERIOD_COMMAND_INVALID','period command rejects a missing reason');
 select pg_temp.bank_journal('period.unmatched.source',1);
 insert into procurement_responses values('period.version.before',jsonb_build_object('version',
  (select version from finance.fiscal_periods where id=pg_temp.period_id())));
@@ -113,6 +120,9 @@ insert into procurement_test_results select throws_ok($$select pg_temp.call('pos
  pg_temp.fx_payload('fx.run.13.reverse.2','fx.rate.13','reverse')
  ||jsonb_build_object('run_id',pg_temp.fid('fx.run.13')),1)$$,
  '55000','FX_RUN_NOT_ACTIVE','duplicate FX reversal denied');
+insert into procurement_test_results select throws_ok($$select pg_temp.call('post_exchange_revaluation',
+ pg_temp.fx_payload('fx.backdated','fx.rate.12')||jsonb_build_object('as_of','2026-09-20'),0)$$,
+ '22023','FX_DATE_BEFORE_ACTIVE_RUN','past FX run cannot be inserted after later historical runs');
 insert into procurement_test_results select cmp_ok(jsonb_array_length(api.exchange_revaluation_options(
  pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),'runs')->'items'),'>=',2,
  'scoped FX run register retains both rates');
@@ -168,6 +178,11 @@ insert into procurement_test_results select is((select response#>>'{entity,statu
  'blocked','hard close records unresolved checks instead of locking');
 insert into procurement_test_results select cmp_ok((select jsonb_array_length(exceptions) from finance.period_events
  where id=pg_temp.fid('period.blocked')),'>',0,'blocked close preserves exception evidence');
+insert into procurement_test_results select is((select exists(select 1 from finance.period_events ev
+ cross join lateral jsonb_array_elements(ev.exceptions) issue
+ where ev.id=pg_temp.fid('period.blocked') and issue->>'code'='FX_REVALUATION_REQUIRED'
+ and issue->>'currency_code'='USD')),true,
+ 'hard close requires a current period-end FX run after prior reversal');
 insert into procurement_test_results select is((select state from finance.fiscal_periods where id=pg_temp.period_id()),
  'soft_locked','blocked close leaves state unchanged');
 -- The fixture contains deliberate unreconciled bank evidence. Create a hard state

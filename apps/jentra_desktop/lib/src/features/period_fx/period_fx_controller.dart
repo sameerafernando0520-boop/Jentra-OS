@@ -194,8 +194,9 @@ final class PeriodFxController extends ChangeNotifier {
     if (pending ||
         denied ||
         !verified ||
-        !rows('periods').any((row) => row['id'] == id))
+        !rows('periods').any((row) => row['id'] == id)) {
       return;
+    }
     form = {
       'period_id': id,
       'as_of': rows('periods').firstWhere((row) => row['id'] == id)['end_date'],
@@ -358,8 +359,9 @@ final class PeriodFxController extends ChangeNotifier {
         !verified ||
         denied ||
         pending ||
-        local?.errorCode != 'VERSION_CONFLICT')
+        local?.errorCode != 'VERSION_CONFLICT') {
       return;
+    }
     await _refresh();
     await drafts.save(
       scope,

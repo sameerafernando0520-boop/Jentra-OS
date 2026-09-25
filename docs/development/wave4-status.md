@@ -8,6 +8,7 @@ Wave 4 specification and the first employee development slice are prepared:
 
 - [Wave 4 specification](../blueprint/40_WAVE4_WORKFORCE_AND_DELIVERY_SPEC.md)
 - [W4-01 employee contract](../blueprint/41_WAVE4_EMPLOYEE_FOUNDATION_CONTRACT.md)
+- [W4-01 development installation review](../verification/wave4/employee-install-review-20260925.md)
 
 The owner instructed continuation on 2026-09-24 after the concrete contract review
 request; the contracts are approved for synthetic development. W4-01 has a
@@ -57,7 +58,7 @@ retained in document metadata.
 
 | Slice | Status | Dependency / next action |
 |---|---|---|
-| W4-01 employees and employment | Development candidate; migration unapplied | Coordinate installation; two-session contention, authenticated native walkthrough and owner acceptance |
+| W4-01 employees and employment | Entitlement-gated development candidate; migration unapplied | Plan enablement decision, coordinated installation, two-session contention, authenticated native walkthrough and owner acceptance |
 | W4-02 private HR, organization/calendars | Specified; not implemented | W4-01; privacy/retention and self-service contracts |
 | W4-03 attendance/leave | Specified; not implemented | Effective calendars, overlap and leave-ledger contracts |
 | W4-04 synthetic payroll | Specified; not implemented | Approved inputs, exact rule contract and verified finance/settlement adapters |
@@ -75,29 +76,43 @@ retained in document metadata.
   and one idempotent command RPC. A transfer appears in both authorized branch
   histories without exposing the destination in the source projection. The register
   defaults its date using the legal entity time zone. The candidate remains unapplied.
-- `build_employee_candidate.ps1` ran the candidate and 42 pgTAP assertions against
+- `build_employee_candidate.ps1` ran the candidate and 49 pgTAP assertions against
   development project `xpdoufauvrbdmxgngetv` inside a transaction ending in
   `ROLLBACK`. The assertions cover scoped reads, permission/MFA denial, future
   assignment/correction/end/rehire, command replay, destination permission loss,
-  private-field rejection and immutable history. They do not constitute two real
+  default-disabled People entitlements, expired/suspended subscriptions, entitlement
+  revocation before replay, private-field rejection and immutable history. They do not constitute two real
   concurrent sessions or persistent installation evidence. A post-test read still
   showed 34 installed migrations through `20260911130900`; the employee table and
   command RPC were absent.
 - Domain validation, the Supabase gateway, encrypted SQLite draft/retry recovery,
   People navigation, register, scoped history and employee editor are implemented.
-  Focused tests passed: 4 domain, 1 encrypted restart, and 6 desktop/controller/UI.
+  Focused tests passed: 4 domain, 1 encrypted restart, and 9 desktop/controller/UI.
   The integrated desktop/domain/platform analyzer reported no issues. Light/dark
   register and light editor render previews were observed at 200% text; clipped
-  inputs were corrected before the final preview.
+  inputs were corrected before the final preview. The plan-denial view was also
+  [rendered and inspected](../../apps/jentra_desktop/test/goldens/employee_plan_denied_light_200.png)
+  at 200% text in the light theme; its message/retry control stayed readable and
+  the loaded employee was absent.
 - The Windows release build passed from a short isolated source copy:
   `build/windows/x64/runner/Release/jentra_desktop.exe`. An initial build from a
   longer Temp path failed in native-plugin output at Windows' path limit; the
-  successful short-path build resolved that environmental failure. Both temporary
-  copies were removed. No active checkout binary was launched or overwritten.
-- The existing permission helpers check membership, MFA and tenant/entity/branch
-  scope, but do not enforce a People plan entitlement. Current plans have no People
-  entitlement rows. Plan policy and server/client entitlement wiring must be settled
-  before installation; W4-01 is not a deployable feature gate yet.
+  successful short-path build resolved that environmental failure. The isolated
+  build was repeated after the entitlement-denial client changes on 2026-09-25
+  and returned exit code 0. The isolated copy was removed. No active checkout
+  binary was launched or overwritten.
+- The candidate seeds `module.people` disabled on current plans and checks its
+  subscription state on every scoped read, command and replay. The desktop reports
+  plan denial, removes loaded employee data and preserves an uncertain encrypted
+  request for retry after restoration. An owner must choose which plans to enable;
+  no plan enablement or migration installation was performed.
+- A read-only dual-query probe reached distinct PostgreSQL backends, but its query
+  intervals did not overlap. The available Supabase connector did not prove true
+  employee contention. The exact post-install scenarios and pass criteria are in
+  [the contention protocol](../verification/wave4/employee-contention-20260925.md).
+  A downstream-consumption/correction race remains a later integrated gate:
+  no governed downstream consumer exists yet, and historical correction remains
+  disabled until that race passes.
 - Authenticated live RPC/UI behavior has not been evidenced because the candidate
   is not installed. Two-session contention and owner acceptance remain open.
 

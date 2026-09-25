@@ -278,6 +278,7 @@ class _PeriodFxWorkspaceState extends State<PeriodFxWorkspace> {
               const Text(
                 'The source-currency open item remains unchanged; valuation journals are reversible.',
               ),
+              const SizedBox(height: 20),
               Wrap(
                 spacing: 16,
                 runSpacing: 12,

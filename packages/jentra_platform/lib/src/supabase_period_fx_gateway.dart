@@ -133,8 +133,8 @@ final class SupabasePeriodFxGateway implements PeriodFxGateway {
     if (row['id'] != runId ||
         row['offset'] != offset ||
         row['item_count'] is! int ||
-        row['item_count'] < 0 ||
-        row['item_count'] > 1000 ||
+        (row['item_count'] as int) < 0 ||
+        (row['item_count'] as int) > 1000 ||
         row['snapshot_hash'] is! String ||
         !RegExp(r'^[0-9a-f]{64}$').hasMatch(row['snapshot_hash'] as String) ||
         row['items'] is! List ||

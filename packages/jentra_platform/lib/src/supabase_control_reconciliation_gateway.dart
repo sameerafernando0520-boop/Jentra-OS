@@ -52,7 +52,9 @@ final class SupabaseControlReconciliationGateway
       }
       return r.cast<String, Object?>();
     } on PostgrestException catch (e) {
-      final code = e.code == '42501'
+      final code = e.message == 'RECENT_MFA_REQUIRED'
+          ? 'MFA_REQUIRED'
+          : e.code == '42501'
           ? 'PERMISSION_DENIED'
           : e.code == '40001'
           ? 'VERSION_CONFLICT'
@@ -62,6 +64,8 @@ final class SupabaseControlReconciliationGateway
       throw DomainError(
         code: code,
         message: switch (code) {
+          'MFA_REQUIRED' =>
+            'Complete recent MFA in account security, then retry the saved request.',
           'PERMISSION_DENIED' =>
             'Current finance, reconciliation or reversal access is required.',
           'VERSION_CONFLICT' =>

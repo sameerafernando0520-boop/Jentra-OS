@@ -14,6 +14,8 @@ import 'features/bank_reconciliation/bank_reconciliation_controller.dart';
 import 'features/bank_reconciliation/bank_reconciliation_screen.dart';
 import 'features/period_fx/period_fx_controller.dart';
 import 'features/period_fx/period_fx_screen.dart';
+import 'features/financial_statements/financial_statement_controller.dart';
+import 'features/financial_statements/financial_statement_screen.dart';
 import 'features/people/employee_controller.dart';
 import 'features/people/employee_screen.dart';
 import 'features/auth/login_screen.dart';
@@ -196,6 +198,15 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const PeriodFxScreen(),
             onExit: (context, state) async =>
                 await ref.read(periodFxControllerProvider)?.canLeave() ?? true,
+          ),
+          GoRoute(
+            path: '/finance/statements',
+            builder: (context, state) => const FinancialStatementScreen(),
+            onExit: (context, state) async =>
+                await ref
+                    .read(financialStatementControllerProvider)
+                    ?.canLeave() ??
+                true,
           ),
           GoRoute(
             path: '/inventory/landed-value',

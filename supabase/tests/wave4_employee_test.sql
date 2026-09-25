@@ -38,6 +38,8 @@ values(pg_temp.fid('branch'),pg_temp.fid('tenant'),pg_temp.fid('entity'),
   'Employee Branch','EMPB',pg_temp.fid('creator')),
   (pg_temp.fid('branch2'),pg_temp.fid('tenant'),pg_temp.fid('entity'),
   'Second Branch','EMP2',pg_temp.fid('creator'));
+insert into billing.tenant_subscriptions(tenant_id,plan_code,status,seats,trial_ends_at)
+values(pg_temp.fid('tenant'),'starter','trialing',5,now()+interval '30 days');
 insert into core.memberships(id,tenant_id,user_id,status)
 select pg_temp.fid(x||'.membership'),pg_temp.fid('tenant'),pg_temp.fid(x),
   'active' from unnest(array['creator','reader']) x;
@@ -65,6 +67,16 @@ values(pg_temp.fid('tenant'),pg_temp.fid('reader.membership'),
   pg_temp.fid('creator'));
 
 select pg_temp.actor('creator');
+select is((select count(*) from billing.plan_entitlements
+  where entitlement_code='module.people' and not enabled),
+  (select count(*) from billing.plans),
+  'AC-401 every existing plan starts with People disabled');
+select throws_ok($$select api.people_employee_directory(pg_temp.fid('tenant'),
+  pg_temp.fid('entity'),pg_temp.fid('branch'),'2026-09-25')$$,
+  '42501','PEOPLE_ENTITLEMENT_REQUIRED',
+  'AC-401 plan entitlement is disabled by default');
+update billing.plan_entitlements set enabled=true
+  where plan_code='starter' and entitlement_code='module.people';
 create temporary table employee_response(name text primary key,response jsonb);
 insert into employee_response values('create',pg_temp.call(pg_temp.header(),0,'create'));
 select is((select response#>>'{entity,code}' from employee_response where name='create'),
@@ -78,6 +90,41 @@ select is((select count(*) from people.employment_assignments),1::bigint,
 select is(pg_temp.call(pg_temp.header(),0,'create'),
   (select response from employee_response where name='create'),
   'AC-401 identical replay returns the original receipt');
+update billing.plan_entitlements set enabled=false
+  where plan_code='starter' and entitlement_code='module.people';
+select throws_ok($$select pg_temp.call(pg_temp.header(),0,'create')$$,
+  '42501','PEOPLE_ENTITLEMENT_REQUIRED',
+  'AC-401 confirmed replay is denied after entitlement revocation');
+update billing.plan_entitlements set enabled=true
+  where plan_code='starter' and entitlement_code='module.people';
+update billing.tenant_subscriptions set trial_ends_at=now()-interval '1 day'
+  where tenant_id=pg_temp.fid('tenant');
+select throws_ok($$select api.people_employee_directory(pg_temp.fid('tenant'),
+  pg_temp.fid('entity'),pg_temp.fid('branch'),'2026-09-25')$$,
+  '42501','PEOPLE_ENTITLEMENT_REQUIRED',
+  'AC-401 expired trial cannot read People');
+update billing.tenant_subscriptions set trial_ends_at=now()+interval '30 days',
+  status='suspended' where tenant_id=pg_temp.fid('tenant');
+select throws_ok($$select api.people_employee_directory(pg_temp.fid('tenant'),
+  pg_temp.fid('entity'),pg_temp.fid('branch'),'2026-09-25')$$,
+  '42501','PEOPLE_ENTITLEMENT_REQUIRED',
+  'AC-401 suspended subscription cannot read People');
+update billing.tenant_subscriptions set status='trialing'
+  where tenant_id=pg_temp.fid('tenant');
+update billing.tenant_subscriptions set status='active',
+  current_period_ends_at=now()+interval '30 days'
+  where tenant_id=pg_temp.fid('tenant');
+select is(jsonb_array_length(api.people_employee_directory(pg_temp.fid('tenant'),
+  pg_temp.fid('entity'),pg_temp.fid('branch'),'2026-09-25')->'items'),1,
+  'AC-401 enabled People is available during an active paid period');
+update billing.tenant_subscriptions set current_period_ends_at=now()-interval '1 day'
+  where tenant_id=pg_temp.fid('tenant');
+select throws_ok($$select api.people_employee_directory(pg_temp.fid('tenant'),
+  pg_temp.fid('entity'),pg_temp.fid('branch'),'2026-09-25')$$,
+  '42501','PEOPLE_ENTITLEMENT_REQUIRED',
+  'AC-401 expired paid period cannot read People');
+update billing.tenant_subscriptions set status='trialing',
+  current_period_ends_at=null where tenant_id=pg_temp.fid('tenant');
 select throws_ok($$select pg_temp.call(pg_temp.header('EMP-02'),0,'create')$$,
   '22023','IDEMPOTENCY_MISMATCH','AC-401 changed-body key reuse denied');
 select throws_ok($$select pg_temp.call(pg_temp.header('EMP-01'),0,'duplicate')$$,

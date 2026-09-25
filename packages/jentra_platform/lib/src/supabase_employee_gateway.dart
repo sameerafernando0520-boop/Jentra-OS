@@ -41,6 +41,7 @@ final class SupabaseEmployeeGateway implements EmployeeRepository {
     } on PostgrestException catch (error) {
       final code = switch ((error.code, error.message)) {
         ('PGRST202', _) => 'FEATURE_NOT_INSTALLED',
+        ('42501', 'PEOPLE_ENTITLEMENT_REQUIRED') => 'FEATURE_NOT_ENTITLED',
         ('22023', 'IDEMPOTENCY_MISMATCH') => 'IDEMPOTENCY_MISMATCH',
         ('22023', 'EMPLOYMENT_CORRECTION_REQUIRED') =>
           'EMPLOYMENT_CORRECTION_REQUIRED',
@@ -69,6 +70,8 @@ final class SupabaseEmployeeGateway implements EmployeeRepository {
             'Employee access or MFA verification is required.',
           'FEATURE_NOT_INSTALLED' =>
             'The employee service has not been installed in this environment.',
+          'FEATURE_NOT_ENTITLED' =>
+            'People is not enabled on this business plan.',
           'VERSION_CONFLICT' =>
             'This employee changed. Refresh before editing.',
           'IDEMPOTENCY_MISMATCH' =>
