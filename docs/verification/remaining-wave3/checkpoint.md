@@ -1,5 +1,54 @@
 # Remaining Wave 3 verification checkpoint
 
+## GRNI receipt control continuation — 2026-09-26
+
+Current evidence is in [grni-review-20260926.md](grni-review-20260926.md).
+Contract 39 and the unapplied `20260926007000` candidate add GRNI to the existing
+control report APIs and desktop workspace. Independent immutable source amounts,
+original receipt/bill accounts, dated returns/reversals, every posted control GL
+line and per-source differences are frozen in bounded permission-scoped reports.
+Encrypted acknowledgement is atomic; disconnect, revocation, expired MFA and
+stale responses cannot restore cleared evidence. AR/AP allocation corrections and
+the existing exact-decimal/open-item/journal engines are preserved.
+
+The final compositions pass **671 procurement/finance, 169 receivables and 105
+inventory strict rollback assertions**. **83 platform/storage and 116 desktop
+finance tests** pass; both full analyzers are clean. Six light/dark controls,
+receipt and source-drill previews were reviewed at 200% text. Windows release
+compilation passed in 307.2 seconds in a separate source snapshot without launch.
+Compilation and widget previews do not establish native acceptance.
+
+The restored Supabase connector refreshed development health, ledger, catalog,
+advisors and finance fingerprints. The ledger changed from 35 to **36** through
+the concurrent Wave 4 calendar migration `20260926082441`. This continuation
+applied none. Procurement/control/tax/GRNI candidates are absent outside rollback,
+and all four installed shared finance hashes match the starting values. The
+stock-opening source/verification boundary, authentication configuration, Git
+index and HEAD are preserved. Historical tax reconnection limitations below are
+superseded by this refresh. Wave 3 remains incomplete; consolidation, dimensions,
+exports, broader inventory/cross-module work and separate acceptance gates remain.
+
+## Tax controls, governed tax and recovery — 2026-09-26
+
+Current development evidence is in
+[tax-controls-review-20260926.md](tax-controls-review-20260926.md). The committed
+base tax candidate is preserved; additive hardening, cumulative controls, governed
+input/output/withholding and control-only settlements/adjustments/transfers remain
+UNAPPLIED. Exact original-date/version reversals and frozen source/GL drill reuse
+the existing journal engine. Final strict rollback results are **635 procurement/
+finance, 169 receivables and 105 inventory assertions**. Final local results are
+**79 platform/storage and 104 desktop/recovery/golden tests**, clean analyzers and
+the recorded Windows release compile without launch.
+
+Client review corrected late-response evidence restoration and made encrypted
+report acknowledgement atomic for tax reviews and financial statements. The
+stock-opening acceptance boundary and concurrent Wave 4 work remain untouched.
+The last successful ledger refresh had **35 installed migrations** through the
+Wave 4 employee foundation. The later Supabase connector disappeared and the CLI
+returned Unauthorized; a new ledger/catalog/advisor refresh needs reconnection.
+No installation, real contention/load, native acceptance or owner signoff is
+established by this checkpoint. See the current status matrix for remaining work.
+
 ## AR/AP control reconciliation — 2026-09-24
 
 - Refreshed `main` at `aa5514b`, preserving the existing AC-317 draft after interruption.

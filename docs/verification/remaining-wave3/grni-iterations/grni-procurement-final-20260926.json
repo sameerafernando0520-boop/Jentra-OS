@@ -1,0 +1,12 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"error\":{\"name\":\"HttpException\",\"message\":\"Failed to run sql query: ERROR:  23514: UNBALANCED_JOURNAL\\nCONTEXT:  PL/pgSQL function finance.flow_journal_guard() line 7 at RAISE\\nSQL statement \\\"insert into finance.journal_entries(id,tenant_id,legal_entity_id,branch_id,fiscal_period_id,document_number,\\n posting_date,source_type,source_id,currency_code,base_currency_code,exchange_rate,request_id,command_id,correlation_id,created_by)\\n values(v_id,v_t,v_e,v_b,v_period,sales.wave3_reserve_document_number(v_t,v_e,v_b,'journal_entry',v_date,auth.uid()),\\n v_date,p_source_type,p_source_id,p_doc->>'currency_code',p_doc->>'base_currency_code',(p_doc->>'exchange_rate')::numeric,\\n p_request,p_command,p_request,auth.uid())\\\"\\nPL/pgSQL function finance.flow_post_journal(jsonb,jsonb,text,uuid,uuid,uuid) line 9 at SQL statement\\nSQL statement \\\"SELECT finance.flow_post_journal(jsonb_build_object('tenant_id',pg_temp.fid('tenant'),'legal_entity_id',pg_temp.fid('entity'),'branch_id',pg_temp.fid('branch'),\\n  'document_date','2026-09-24','currency_code','LKR','base_currency_code','LKR','exchange_rate','1'),\\n  jsonb_build_array(finance.flow_jline(pg_temp.fid('grni.new.account'),-1,-1),finance.flow_jline(pg_temp.fid('expense-account'),1,1)),\\n  'manual_journal',pg_temp.fid('grni.page.'||i),gen_random_uuid(),gen_random_uuid())\\\"\\nPL/pgSQL function inline_code_block line 2 at PERFORM\\n\"}}"
+    }
+  ],
+  "structuredContent": {
+    "error_code": "INVALID_ARGUMENT"
+  },
+  "isError": true
+}

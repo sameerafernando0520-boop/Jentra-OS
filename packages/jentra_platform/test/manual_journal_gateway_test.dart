@@ -263,4 +263,258 @@ void main() {
     );
     expect(requests, isEmpty);
   });
+
+  Map<String, Object?> taxDocument({
+    String amount = '25',
+    String basis = '100',
+  }) {
+    final d = {
+      ...document(),
+      'document_date': '2026-09-20',
+      'grand_total': amount,
+      'base_total': amount,
+    };
+    d['lines'] = <Object?>[
+      {
+        'line_id': 'line1',
+        'account_id': 'a',
+        'debit': amount,
+        'credit': '0',
+        'amount': amount,
+        'base_amount': amount,
+      },
+      {
+        'line_id': 'line2',
+        'account_id': 'b',
+        'debit': '0',
+        'credit': amount,
+        'amount': '-$amount',
+        'base_amount': '-$amount',
+        'tax_definition_id': 'withholding',
+        'tax_definition_version': 3,
+        'tax_code': 'WHT25',
+        'tax_kind': 'withholding',
+        'tax_rate': '25.000000',
+        'tax_inclusive': false,
+        'tax_basis_date': '2026-09-20',
+        'tax_rounding_scale': 2,
+        'tax_direction': -1,
+        'taxable_amount': basis,
+        'expected_tax_base': amount,
+      },
+    ];
+    return d;
+  }
+
+  test(
+    'governed tax confirmation checks basis above binary precision exactly',
+    () async {
+      response = taxDocument(
+        amount: '2251799813.69',
+        basis: '9007199254.740993',
+      );
+      final d = await gateway.detail(scope, 'journal');
+      expect((d['lines'] as List)[1]['taxable_amount'], '9007199254.740993');
+    },
+  );
+
+  test(
+    'tax basis, direction, date and expected base drift are rejected',
+    () async {
+      for (final change in [
+        {'taxable_amount': '99'},
+        {'tax_rate': 25},
+        {'tax_direction': 1},
+        {'tax_basis_date': '2026-09-21'},
+        {'expected_tax_base': '25.000001'},
+        {'tax_definition_version': 0},
+      ]) {
+        final d = taxDocument(), lines = d['lines'] as List;
+        lines[1] = {...lines[1] as Map, ...change};
+        response = d;
+        await expectLater(
+          gateway.detail(scope, 'journal'),
+          throwsFormatException,
+        );
+      }
+    },
+  );
+
+  test(
+    'balanced save cannot change or add a requested tax declaration',
+    () async {
+      final d = taxDocument();
+      final base = command();
+      final c = CommandEnvelope<Map<String, Object?>>(
+        commandId: base.commandId,
+        idempotencyKey: base.idempotencyKey,
+        clientTimestamp: base.clientTimestamp,
+        context: scope,
+        expectedEntityVersion: 0,
+        payload: {
+          'id': 'journal',
+          'document_date': '2026-09-20',
+          'lines': [
+            (d['lines'] as List)[0],
+            {
+              ...(d['lines'] as List)[1] as Map,
+              'tax_definition_id': 'different',
+            },
+          ],
+        },
+      );
+      response = {...receipt(), 'entity': d};
+      await expectLater(
+        gateway.execute('save', c),
+        throwsA(
+          isA<DomainError>().having((e) => e.code, 'code', 'UNCERTAIN_RESULT'),
+        ),
+      );
+    },
+  );
+
+  test(
+    'tax choices validate effective date, scope and exact configured rate',
+    () async {
+      final choices = {
+        'tenant_id': 'tenant',
+        'legal_entity_id': 'entity',
+        'branch_id': 'branch',
+        'document_date': '2026-09-20',
+        'rounding_scale': 2,
+        'items': [
+          {
+            'id': 'tax',
+            'code': 'WHT',
+            'name': 'Withholding',
+            'kind': 'withholding',
+            'rate': '25.000000',
+            'inclusive': false,
+            'version': 3,
+            'valid_from': '2026-01-01',
+            'valid_to': '2026-09-20',
+          },
+        ],
+      };
+      response = choices;
+      await gateway.options(
+        scope,
+        'taxes',
+        documentDate: '2026-09-20',
+        search: 'WHT',
+      );
+      expect(requests.last.url.path, endsWith('manual_journal_tax_options'));
+      expect(
+        (jsonDecode(requests.last.body) as Map)['p_document_date'],
+        '2026-09-20',
+      );
+      for (final change in [
+        {'branch_id': 'other'},
+        {'document_date': '2026-09-21'},
+      ]) {
+        response = {...choices, ...change};
+        await expectLater(
+          gateway.options(scope, 'taxes', documentDate: '2026-09-20'),
+          throwsFormatException,
+        );
+      }
+      response = {
+        ...choices,
+        'items': [
+          {...(choices['items'] as List)[0] as Map, 'rate': 25},
+        ],
+      };
+      await expectLater(
+        gateway.options(scope, 'taxes', documentDate: '2026-09-20'),
+        throwsFormatException,
+      );
+    },
+  );
+
+  Map<String, Object?> movementDocument() {
+    final d = taxDocument();
+    final lines = (d['lines'] as List)
+        .map((row) => Map<String, Object?>.from(row as Map))
+        .toList();
+    lines[1] = {
+      for (final entry in lines[1].entries)
+        if (!entry.key.startsWith('tax_') &&
+            entry.key != 'taxable_amount' &&
+            entry.key != 'expected_tax_base')
+          entry.key: entry.value,
+      'is_tax_control': true,
+      'tax_control_movement': 'adjustment',
+      'tax_account_type': 'liability',
+      'tax_direction': -1,
+      'expected_tax_base': '25',
+    };
+    d['lines'] = <Object?>[...lines];
+    return d;
+  }
+
+  test(
+    'control-only movement validates source sides without reclassifying tax',
+    () async {
+      response = movementDocument();
+      final d = await gateway.detail(scope, 'journal');
+      expect((d['lines'] as List)[1]['tax_control_movement'], 'adjustment');
+      for (final change in [
+        {'tax_definition_id': 'tax'},
+        {'tax_direction': 1},
+        {'expected_tax_base': '24.999999'},
+        {'tax_control_movement': 'other'},
+      ]) {
+        final broken = movementDocument();
+        final rows = broken['lines'] as List;
+        rows[1] = {...rows[1] as Map, ...change};
+        response = broken;
+        await expectLater(
+          gateway.detail(scope, 'journal'),
+          throwsFormatException,
+        );
+      }
+    },
+  );
+
+  test(
+    'control choices require a scoped proven asset or liability account',
+    () async {
+      final choices = {
+        'tenant_id': 'tenant',
+        'legal_entity_id': 'entity',
+        'branch_id': 'branch',
+        'items': [
+          {
+            'id': 'control',
+            'code': 'WHT',
+            'name': 'Withholding',
+            'account_type': 'liability',
+            'is_tax_control': true,
+          },
+        ],
+      };
+      response = choices;
+      await gateway.options(scope, 'tax_controls');
+      expect(requests.last.url.path, endsWith('manual_journal_tax_controls'));
+      expect(
+        (jsonDecode(requests.last.body) as Map).containsKey('p_resource'),
+        false,
+      );
+      response = {...choices, 'branch_id': 'other'};
+      await expectLater(
+        gateway.options(scope, 'tax_controls'),
+        throwsFormatException,
+      );
+      response = {
+        ...choices,
+        'items': [
+          {...(choices['items'] as List)[0] as Map, 'is_tax_control': false},
+        ],
+      };
+      await expectLater(
+        gateway.options(scope, 'tax_controls'),
+        throwsFormatException,
+      );
+    },
+  );
 }

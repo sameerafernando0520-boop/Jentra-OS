@@ -82,6 +82,10 @@ use the existing encrypted, actor/entity/branch scoped draft store. An
 uncertain outcome can retry only the same sealed envelope. Offline mode hides
 server evidence until a fresh authenticated read, and permission revocation
 clears visible report data. The client does not change authentication.
+Reads begun before a disconnect cannot repopulate cleared evidence after
+reconnection. Confirmed report identity replaces its sealed request in one
+encrypted write and survives route disposal before acknowledgement. A failed
+local write retains the original request for identical retry.
 The separate `/finance/cash-flow-mappings` workspace requires both
 `finance.view` and `finance.cash_flow.configure`, supports encrypted draft and
 identical-envelope retry, and hides account evidence offline or after access
@@ -90,9 +94,9 @@ account-to-journal evidence.
 
 ## Boundary for the remaining AC-320 work
 
-This slice does not implement tax returns/summaries,
-budget setup and approved versions, budget-to-actual variance, or every
-FR-375/377 control and operational report. The journal schema does not yet
+Tax reviews and budgets are additive follow-up candidates described in contracts
+38 and 37. This statement slice does not implement every FR-375/377 control and
+operational report. The journal schema does not yet
 carry budget cost-centre/project dimensions. These require additive, separately
 verified contracts. Development rollback and widget results are evidence of a
 candidate only; installation, real multi-session contention, Credential

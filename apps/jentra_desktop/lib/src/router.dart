@@ -18,10 +18,14 @@ import 'features/financial_statements/financial_statement_controller.dart';
 import 'features/financial_statements/financial_statement_screen.dart';
 import 'features/financial_statements/cash_flow_mapping_controller.dart';
 import 'features/financial_statements/cash_flow_mapping_screen.dart';
+import 'features/financial_statements/tax_summary_controller.dart';
+import 'features/financial_statements/tax_summary_screen.dart';
 import 'features/budgets/budget_controller.dart';
 import 'features/budgets/budget_screen.dart';
 import 'features/people/employee_controller.dart';
 import 'features/people/employee_screen.dart';
+import 'features/people/calendar_controller.dart';
+import 'features/people/calendar_screen.dart';
 import 'features/auth/login_screen.dart';
 import 'features/catalogue/component_catalogue_screen.dart';
 import 'features/crm/crm_screen.dart';
@@ -213,6 +217,13 @@ final routerProvider = Provider<GoRouter>((ref) {
                 true,
           ),
           GoRoute(
+            path: '/finance/tax',
+            builder: (context, state) => const TaxSummaryScreen(),
+            onExit: (context, state) async =>
+                await ref.read(taxSummaryControllerProvider)?.canLeave() ??
+                true,
+          ),
+          GoRoute(
             path: '/finance/cash-flow-mappings',
             builder: (context, state) => const CashFlowMappingScreen(),
             onExit: (context, state) async =>
@@ -298,6 +309,12 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const EmployeeScreen(),
             onExit: (context, state) async =>
                 await ref.read(employeeControllerProvider)?.canLeave() ?? true,
+          ),
+          GoRoute(
+            path: '/people/calendars',
+            builder: (context, state) => const CalendarScreen(),
+            onExit: (context, state) async =>
+                await ref.read(calendarControllerProvider)?.canLeave() ?? true,
           ),
           for (final module in const [
             (

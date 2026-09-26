@@ -57,3 +57,18 @@ identical uncertain retries, block edits while pending and hide data after expli
 permission rejection. Registers/options page 50 rows; detail is capped at 200 lines
 and 20 attachments. Installation, native acceptance, real contention/load and owner
 signoff remain separate gates.
+
+## Additive governed tax declarations and control movements
+
+Contract [38](38_WAVE3_TAX_SUMMARY_CONTRACT.md) extends these immutable journal
+rules through unapplied additive tax candidates. A line may supply an effective
+`tax_definition_id` and exact `taxable_amount` for input/output/withholding tax,
+or a `tax_control_movement` of `settlement`, `adjustment` or `transfer` on a proven
+tax-control account. The two declarations are mutually exclusive. The server
+freezes definition/version/date/direction/base evidence, revalidates approval
+after material definition changes and uses original metadata for linked reversal.
+Control-only movements affect reconciliation without changing period tax accruals.
+Date-scoped tax and proven-control pickers require existing finance/journal scope.
+The encrypted journal slot retains the full sealed declaration during uncertain
+retry. No new payable/payment engine, external payment or authentication rule is
+introduced. See contract 38 for bounds, APIs and the candidate/acceptance boundary.

@@ -68,9 +68,9 @@ values(pg_temp.fid('tenant'),pg_temp.fid('reader.membership'),
 
 select pg_temp.actor('creator');
 select is((select count(*) from billing.plan_entitlements
-  where entitlement_code='module.people' and not enabled),
-  (select count(*) from billing.plans),
-  'AC-401 every existing plan starts with People disabled');
+  where entitlement_code='module.people' and not enabled
+    and plan_code in ('starter','growth','scale')),
+  3::bigint,'AC-401 original commercial plans keep People disabled');
 select throws_ok($$select api.people_employee_directory(pg_temp.fid('tenant'),
   pg_temp.fid('entity'),pg_temp.fid('branch'),'2026-09-25')$$,
   '42501','PEOPLE_ENTITLEMENT_REQUIRED',

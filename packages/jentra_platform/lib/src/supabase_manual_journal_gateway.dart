@@ -7,6 +7,7 @@ abstract interface class ManualJournalGateway {
     String resource, {
     String? after,
     String search = '',
+    String? documentDate,
   });
   Future<Map<String, Object?>> detail(TenantContext scope, String id);
   Future<Map<String, Object?>> execute(
@@ -122,6 +123,62 @@ final class SupabaseManualJournalGateway implements ManualJournalGateway {
           decimal(raw['amount'], signed: true) != a - b) {
         throw const FormatException('Journal line sides do not match.');
       }
+      if (raw['tax_control_movement'] != null) {
+        if (!const [
+              'settlement',
+              'adjustment',
+              'transfer',
+            ].contains(raw['tax_control_movement']) ||
+            raw['tax_definition_id'] != null ||
+            raw['taxable_amount'] != null ||
+            raw['is_tax_control'] != true ||
+            !const ['asset', 'liability'].contains(raw['tax_account_type']) ||
+            raw['tax_direction'] != (a - b).sign ||
+            decimal(raw['expected_tax_base']) != v.abs()) {
+          throw const FormatException('Invalid governed tax-control movement.');
+        }
+      } else if (raw['tax_definition_id'] != null) {
+        final scale = raw['tax_rounding_scale'];
+        final direction = raw['tax_direction'];
+        final rate = decimal(raw['tax_rate']);
+        final basis = decimal(raw['taxable_amount']);
+        if (raw['tax_definition_id'] is! String ||
+            raw['tax_definition_version'] is! int ||
+            raw['tax_definition_version'] < 1 ||
+            raw['tax_code'] is! String ||
+            !const [
+              'input',
+              'output',
+              'withholding',
+            ].contains(raw['tax_kind']) ||
+            raw['tax_inclusive'] is! bool ||
+            raw['tax_basis_date'] is! String ||
+            scale is! int ||
+            scale < 0 ||
+            scale > 6 ||
+            !const [1, -1].contains(direction) ||
+            direction != (a - b).sign ||
+            rate <= BigInt.zero ||
+            rate > BigInt.from(100000000) ||
+            basis <= BigInt.zero ||
+            decimal(raw['expected_tax_base']) != v.abs()) {
+          throw const FormatException(
+            'Invalid immutable journal tax declaration.',
+          );
+        }
+        final divisor = BigInt.from(10).pow(14 - scale);
+        final expected = (basis * rate + divisor ~/ BigInt.two) ~/ divisor;
+        if (expected * BigInt.from(10).pow(6 - scale) != (a - b).abs() ||
+            (d['reversal_of_id'] == null &&
+                (raw['tax_basis_date'] != d['document_date'] ||
+                    direction != (raw['tax_kind'] == 'input' ? 1 : -1)))) {
+          throw const FormatException(
+            'Journal tax basis does not match the posted amount.',
+          );
+        }
+      } else if (raw['taxable_amount'] != null) {
+        throw const FormatException('Missing journal tax definition.');
+      }
       deb += a;
       cred += b;
       base += v;
@@ -142,12 +199,27 @@ final class SupabaseManualJournalGateway implements ManualJournalGateway {
     String resource, {
     String? after,
     String search = '',
+    String? documentDate,
   }) async {
-    final r = await call('manual_journal_options', scope, {
-      'p_resource': resource,
-      'p_after': after,
-      'p_search': search,
-    });
+    if (resource == 'taxes' && documentDate == null) {
+      throw const FormatException('Select a journal posting date first.');
+    }
+    final r = await call(
+      switch (resource) {
+        'taxes' => 'manual_journal_tax_options',
+        'tax_controls' => 'manual_journal_tax_controls',
+        _ => 'manual_journal_options',
+      },
+      scope,
+      {
+        if (resource == 'taxes')
+          'p_document_date': documentDate
+        else if (resource != 'tax_controls')
+          'p_resource': resource,
+        'p_after': after,
+        'p_search': search,
+      },
+    );
     if (r['items'] is! List ||
         (r['items'] as List).length > 50 ||
         (r['next_cursor'] != null && r['next_cursor'] is! String)) {
@@ -156,6 +228,62 @@ final class SupabaseManualJournalGateway implements ManualJournalGateway {
     if (resource == 'reports') {
       for (final raw in r['items'] as List) {
         decimal((raw as Map)['grand_total']);
+      }
+    } else if (resource == 'tax_controls') {
+      if (r['tenant_id'] != scope.tenantId ||
+          r['legal_entity_id'] != scope.legalEntityId ||
+          r['branch_id'] != scope.branchId) {
+        throw const FormatException(
+          'Tax-control choices have a different scope.',
+        );
+      }
+      final ids = <String>{};
+      for (final row in r['items'] as List) {
+        if (row is! Map ||
+            row['id'] is! String ||
+            !ids.add(row['id']) ||
+            row['code'] is! String ||
+            row['name'] is! String ||
+            row['is_tax_control'] != true ||
+            !const ['asset', 'liability'].contains(row['account_type'])) {
+          throw const FormatException('Invalid proven tax-control account.');
+        }
+      }
+    } else if (resource == 'taxes') {
+      final scale = r['rounding_scale'];
+      if (r['tenant_id'] != scope.tenantId ||
+          r['legal_entity_id'] != scope.legalEntityId ||
+          r['branch_id'] != scope.branchId ||
+          r['document_date'] != documentDate ||
+          scale is! int ||
+          scale < 0 ||
+          scale > 6) {
+        throw const FormatException(
+          'Tax definition choices have a different scope or date.',
+        );
+      }
+      final ids = <String>{};
+      for (final row in r['items'] as List) {
+        if (row is! Map ||
+            row['id'] is! String ||
+            !ids.add(row['id']) ||
+            row['code'] is! String ||
+            row['name'] is! String ||
+            !const ['input', 'output', 'withholding'].contains(row['kind']) ||
+            row['version'] is! int ||
+            row['version'] < 1 ||
+            row['inclusive'] is! bool ||
+            row['valid_from'] is! String ||
+            row['valid_from'].compareTo(documentDate) > 0 ||
+            row['valid_to'] != null &&
+                (row['valid_to'] is! String ||
+                    row['valid_to'].compareTo(documentDate) < 0) ||
+            decimal(row['rate']) <= BigInt.zero ||
+            decimal(row['rate']) > BigInt.from(100000000)) {
+          throw const FormatException(
+            'Invalid effective journal tax definition.',
+          );
+        }
       }
     }
     return r;
@@ -245,6 +373,15 @@ final class SupabaseManualJournalGateway implements ManualJournalGateway {
                 a['account_id'] != e['account_id'] ||
                 decimal(a['debit']) != decimal(e['debit']) ||
                 decimal(a['credit']) != decimal(e['credit'])) {
+              throw const FormatException();
+            }
+            if (a['tax_definition_id'] != e['tax_definition_id'] ||
+                e['tax_definition_id'] != null &&
+                    decimal(a['taxable_amount']) !=
+                        decimal(e['taxable_amount'])) {
+              throw const FormatException();
+            }
+            if (a['tax_control_movement'] != e['tax_control_movement']) {
               throw const FormatException();
             }
           }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,12 +17,20 @@ final class FinancialStatementFake implements FinancialStatementGateway {
   String? failure, readFailure;
   final commands = <CommandEnvelope<Map<String, Object?>>>[];
   final readSections = <String>[];
+  Completer<void>? periodPause, pagePause, generationPause;
+  final periodEntered = Completer<void>();
+  final pageEntered = Completer<void>();
+  final generationEntered = Completer<void>();
 
   @override
   Future<Map<String, Object?>> periods(
     TenantContext scope, {
     String? after,
   }) async {
+    if (periodPause != null) {
+      if (!periodEntered.isCompleted) periodEntered.complete();
+      await periodPause!.future;
+    }
     if (readFailure != null) {
       throw DomainError(code: readFailure!, message: readFailure!);
     }
@@ -111,6 +121,10 @@ final class FinancialStatementFake implements FinancialStatementGateway {
     CommandEnvelope<Map<String, Object?>> command,
   ) async {
     commands.add(command);
+    if (generationPause != null) {
+      if (!generationEntered.isCompleted) generationEntered.complete();
+      await generationPause!.future;
+    }
     if (failure != null) throw DomainError(code: failure!, message: failure!);
     return summary(command.payload);
   }
@@ -123,6 +137,10 @@ final class FinancialStatementFake implements FinancialStatementGateway {
     int offset = 0,
     String? accountId,
   }) async {
+    if (pagePause != null) {
+      if (!pageEntered.isCompleted) pageEntered.complete();
+      await pagePause!.future;
+    }
     if (readFailure != null) {
       throw DomainError(code: readFailure!, message: readFailure!);
     }
@@ -234,6 +252,62 @@ void main() {
     expect(controller.error, contains('within the selected period'));
     expect(gateway.commands, isEmpty);
   });
+
+  test(
+    'late statement initialization cannot verify restored connectivity',
+    () async {
+      gateway.periodPause = Completer<void>();
+      final reading = controller.initialize();
+      await gateway.periodEntered.future;
+      controller.setOnline(false);
+      controller.setOnline(true);
+      gateway.periodPause!.complete();
+      await reading;
+      expect(controller.verified, false);
+      expect(controller.periods, isEmpty);
+      expect(controller.reports, isEmpty);
+      gateway.periodPause = null;
+      await controller.initialize();
+      expect(controller.verified, true);
+    },
+  );
+
+  test('late statement page cannot restore cleared journal evidence', () async {
+    await controller.initialize();
+    await controller.generate();
+    gateway.pagePause = Completer<void>();
+    final reading = controller.refresh();
+    await gateway.pageEntered.future;
+    controller.setOnline(false);
+    controller.setOnline(true);
+    gateway.pagePause!.complete();
+    await reading;
+    expect(controller.verified, false);
+    expect(controller.summary, isEmpty);
+    expect(controller.rows, isEmpty);
+  });
+
+  test(
+    'statement confirmation survives disposal before local acknowledgement',
+    () async {
+      await controller.initialize();
+      gateway.generationPause = Completer<void>();
+      final posting = controller.generate();
+      await gateway.generationEntered.future;
+      controller.dispose();
+      controller = make();
+      gateway.generationPause!.complete();
+      await posting;
+      await controller.initialize();
+      expect(controller.form['status'], 'generated');
+      expect(
+        controller.selectedReportId,
+        gateway.commands.single.payload['id'],
+      );
+      expect(controller.pending, false);
+      expect(gateway.commands, hasLength(1));
+    },
+  );
 
   test('offline recovery hides saved evidence until verification', () async {
     await controller.initialize();

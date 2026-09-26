@@ -250,6 +250,7 @@ final class ManualJournalController extends ChangeNotifier {
         'account_id': account['id'],
         'account_code': account['code'],
         'account_name': account['name'],
+        if (account['is_tax_control'] == true) 'is_tax_control': true,
         'debit': '0',
         'credit': '0',
         'description': '',
@@ -263,6 +264,54 @@ final class ManualJournalController extends ChangeNotifier {
     if (!editable || form?['reversal_of_id'] != null) return;
     final rows = [...form!['lines'] as List];
     rows[i] = {...rows[i] as Map, key: value};
+    update('lines', rows);
+  }
+
+  void taxDefinition(int i, Map<String, Object?>? definition) {
+    if (!editable || form?['reversal_of_id'] != null) return;
+    final rows = [...form!['lines'] as List];
+    final row = (rows[i] as Map).cast<String, Object?>();
+    rows[i] = {
+      for (final entry in row.entries)
+        if (!entry.key.startsWith('tax_') &&
+            entry.key != 'taxable_amount' &&
+            entry.key != 'expected_tax_base')
+          entry.key: entry.value,
+      if (definition != null) ...{
+        'tax_definition_id': definition['id'],
+        'tax_definition_version': definition['version'],
+        'tax_code': definition['code'],
+        'tax_kind': definition['kind'],
+        'tax_rate': definition['rate'],
+        'tax_inclusive': definition['inclusive'],
+        'tax_rounding_scale': definition['rounding_scale'],
+        'taxable_amount': row['taxable_amount'] ?? '',
+      },
+    };
+    update('lines', rows);
+  }
+
+  void taxControlMovement(int i, String? movement) {
+    if (!editable || form?['reversal_of_id'] != null) return;
+    final rows = [...form!['lines'] as List];
+    final row = (rows[i] as Map).cast<String, Object?>();
+    if (row['is_tax_control'] != true ||
+        movement != null &&
+            !const [
+              'settlement',
+              'adjustment',
+              'transfer',
+            ].contains(movement)) {
+      return;
+    }
+    rows[i] = {
+      for (final entry in row.entries)
+        if (!entry.key.startsWith('tax_') &&
+            entry.key != 'taxable_amount' &&
+            entry.key != 'expected_tax_base')
+          entry.key: entry.value,
+      'tax_control_movement': ?movement,
+    };
     update('lines', rows);
   }
 
@@ -308,12 +357,23 @@ final class ManualJournalController extends ChangeNotifier {
     String search = '',
   }) async {
     try {
-      return await gateway.options(
+      final result = await gateway.options(
         scope,
         resource,
         after: after,
         search: search,
+        documentDate: resource == 'taxes'
+            ? (form?['document_date'] as String?)
+            : null,
       );
+      if (resource != 'taxes') return result;
+      return {
+        ...result,
+        'items': [
+          for (final row in result['items'] as List)
+            {...row as Map, 'rounding_scale': result['rounding_scale']},
+        ],
+      };
     } on DomainError catch (e) {
       if (e.code == 'PERMISSION_DENIED') {
         accessDenied = true;
@@ -360,6 +420,43 @@ final class ManualJournalController extends ChangeNotifier {
               throw const FormatException(
                 'Enter either a positive debit or credit per line.',
               );
+            }
+            if (l['tax_control_movement'] != null &&
+                (l['is_tax_control'] != true ||
+                    l['tax_definition_id'] != null ||
+                    !const [
+                      'settlement',
+                      'adjustment',
+                      'transfer',
+                    ].contains(l['tax_control_movement']))) {
+              throw const FormatException(
+                'Choose a governed movement on a proven tax-control account.',
+              );
+            }
+            if (l['tax_definition_id'] != null) {
+              final basis = SupabaseManualJournalGateway.decimal(
+                l['taxable_amount'],
+              );
+              final rate = SupabaseManualJournalGateway.decimal(l['tax_rate']);
+              final scale = l['tax_rounding_scale'];
+              if (scale is! int ||
+                  scale < 0 ||
+                  scale > 6 ||
+                  basis <= BigInt.zero ||
+                  rate <= BigInt.zero ||
+                  rate > BigInt.from(100000000)) {
+                throw const FormatException(
+                  'Select an effective tax definition and enter its taxable basis.',
+                );
+              }
+              final divisor = BigInt.from(10).pow(14 - scale);
+              final tax = (basis * rate + divisor ~/ BigInt.two) ~/ divisor;
+              if (tax * BigInt.from(10).pow(6 - scale) != (a - b).abs() ||
+                  (a - b).sign != (l['tax_kind'] == 'input' ? 1 : -1)) {
+                throw const FormatException(
+                  'Tax amount and debit or credit must match the selected treatment and exact taxable basis.',
+                );
+              }
             }
             deb += a;
             cred += b;

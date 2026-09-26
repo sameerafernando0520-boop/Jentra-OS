@@ -345,6 +345,29 @@ final class QuotationDraftStore {
   });
 
   /// Call only after a confirmed success for this exact pending command.
+  /// Replace the sealed request and confirmed form in one encrypted write.
+  /// A failed write retains the original request for an identical retry.
+  Future<void> confirm(
+    TenantContext context,
+    String slot,
+    String commandId, {
+    required Map<String, Object?> form,
+    int? expectedVersion,
+  }) => _locked(_key(context, slot), () async {
+    final old = await load(context, slot);
+    if (old?.pending?.envelope.commandId != commandId) throw _pendingError;
+    await _write(
+      context,
+      slot,
+      QuotationLocalDraft(
+        form: form,
+        expectedVersion: expectedVersion,
+        localVersion: old!.localVersion + 1,
+      ),
+    );
+  });
+
+  /// Call only after a confirmed success for this exact pending command.
   Future<void> complete(TenantContext context, String slot, String commandId) =>
       _locked(_key(context, slot), () async {
         final old = await load(context, slot);

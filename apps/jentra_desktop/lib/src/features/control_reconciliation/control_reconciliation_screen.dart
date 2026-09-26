@@ -61,6 +61,7 @@ class ControlReconciliationWorkspace extends StatelessWidget {
     listenable: controller,
     builder: (context, _) {
       final c = controller, s = c.summary;
+      final grni = (s['kind'] ?? c.form['kind']) == 'GRNI';
       Widget action(
         String title,
         VoidCallback callback, {
@@ -77,6 +78,7 @@ class ControlReconciliationWorkspace extends StatelessWidget {
               const Text(
                 'Access changed. Reconciliation data has been cleared.',
               ),
+              if (c.error != null) Text(c.error!),
               action('Recheck access', c.initialize),
             ],
           ),
@@ -86,18 +88,24 @@ class ControlReconciliationWorkspace extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         children: [
           Text(
-            'AR / AP control reconciliation',
+            grni
+                ? 'GRNI control reconciliation'
+                : 'AR / AP control reconciliation',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Compare this branch’s posted open items with their original control accounts. Saved reports preserve the selected posting cutoff and every source difference.',
+          Text(
+            grni
+                ? 'Compare goods received but not invoiced with their original accrual accounts. Saved reports retain dated receipts, matched bills, unbilled returns and reversals.'
+                : 'Compare this branch’s posted open items with their original control accounts. Saved reports preserve the selected posting cutoff and every source difference.',
           ),
           if (c.busy) const LinearProgressIndicator(),
           if (!c.online)
             const Text(
               'Offline — inputs and sealed requests are retained. Reconnect and refresh access to read evidence or post corrections.',
             ),
+          if (c.online && !c.verified)
+            const Text('Refresh access to read evidence or generate a report.'),
           if (c.error != null)
             Semantics(
               liveRegion: true,
@@ -197,11 +205,13 @@ class ControlReconciliationWorkspace extends StatelessWidget {
               spacing: 12,
               runSpacing: 8,
               children: [
-                for (final kind in const ['AR', 'AP'])
+                for (final kind in const ['AR', 'AP', 'GRNI'])
                   ChoiceChip(
-                    label: Text(
-                      kind == 'AR' ? 'Receivables (AR)' : 'Payables (AP)',
-                    ),
+                    label: Text(switch (kind) {
+                      'AR' => 'Receivables (AR)',
+                      'AP' => 'Payables (AP)',
+                      _ => 'Received, not invoiced (GRNI)',
+                    }),
                     selected: c.form['kind'] == kind,
                     onSelected: c.locked ? null : (_) => c.field('kind', kind),
                   ),
@@ -222,7 +232,10 @@ class ControlReconciliationWorkspace extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: FilledButton(
                 onPressed:
-                    c.busy || !c.online || c.correctionLocal?.pending != null
+                    c.busy ||
+                        !c.online ||
+                        !c.verified ||
+                        c.correctionLocal?.pending != null
                     ? null
                     : c.generate,
                 child: Text(
@@ -252,7 +265,7 @@ class ControlReconciliationWorkspace extends StatelessWidget {
                       '${s['currency_code']} · ${s['kind'] == 'AR' ? 'Debit' : 'Credit'} balances are positive',
                     ),
                     Text(
-                      'Open items ${s['subledger_value']} · General ledger ${s['gl_value']}',
+                      '${grni ? 'Unbilled accrual' : 'Open items'} ${s['subledger_value']} · General ledger ${s['gl_value']}',
                     ),
                     Text(
                       'Difference ${s['difference']} · ${s['difference_count']} source differences',
@@ -274,10 +287,10 @@ class ControlReconciliationWorkspace extends StatelessWidget {
               spacing: 8,
               runSpacing: 8,
               children: [
-                for (final pair in const {
+                for (final pair in {
                   'accounts': 'Controls',
-                  'items': 'Open items',
-                  'allocations': 'Allocations',
+                  'items': grni ? 'Receipts' : 'Open items',
+                  if (!grni) 'allocations': 'Allocations',
                   'entries': 'Subledger sources',
                   'journals': 'Journal lines',
                   'differences': 'Differences',
@@ -306,11 +319,13 @@ class ControlReconciliationWorkspace extends StatelessWidget {
                         Text(
                           c.section == 'accounts'
                               ? '${r['code']} · ${r['name']}'
+                              : grni
+                              ? '${r['source_type']} · ${r['source_id']}'
                               : 'Command ${r['command_id']}',
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         Text(
-                          'Open items ${r['subledger_value']} · GL ${r['gl_value']} · Difference ${r['difference']}',
+                          '${grni ? 'Expected accrual' : 'Open items'} ${r['subledger_value']} · GL ${r['gl_value']} · Difference ${r['difference']}',
                         ),
                         action(
                           'View account sources',
@@ -322,13 +337,15 @@ class ControlReconciliationWorkspace extends StatelessWidget {
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         Text(
-                          '${r['currency_code']} · Original ${r['original_amount']} · Settled ${r['settled_amount']} · Open ${r['open_amount']}',
+                          '${r['currency_code']} · Original ${r['original_amount']} · ${grni ? 'Matched / returned / reversed' : 'Settled'} ${r['settled_amount']} · Open ${r['open_amount']}',
                         ),
                         Text(
                           'Base original ${r['original_base_amount']} · Base open ${r['open_base_amount']}',
                         ),
                         Text(
-                          'Posted ${r['posting_date']} · Due ${r['due_date']}',
+                          grni
+                              ? 'Received ${r['posting_date']}'
+                              : 'Posted ${r['posting_date']} · Due ${r['due_date']}',
                         ),
                         SelectableText(
                           '${r['source_type']} · ${r['source_id']}\nJournal ${r['journal_entry_id']}',
@@ -365,6 +382,10 @@ class ControlReconciliationWorkspace extends StatelessWidget {
                         SelectableText(
                           '${r['source_type']} · ${r['source_id']}\nCommand ${r['command_id']}',
                         ),
+                        if (grni && c.section == 'entries')
+                          SelectableText(
+                            'Receipt ${r['receipt_id']}\nJournal ${r['journal_entry_id']}',
+                          ),
                         if (c.section == 'journals')
                           SelectableText(
                             'Journal ${r['journal_id']} · Account ${r['account_code']}\nLine ${r['source_line_id'] ?? r['id']}',

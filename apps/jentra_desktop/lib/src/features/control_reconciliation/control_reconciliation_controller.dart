@@ -59,6 +59,10 @@ final class ControlReconciliationController extends ChangeNotifier {
   static const slot = 'control-reconciliation-report',
       correctionSlot = 'control-allocation-correction';
   bool online, busy = false, accessDenied = false, _disposed = false;
+  bool verified = false;
+  int _evidenceEpoch = 0;
+  bool _acceptEvidence(int epoch) =>
+      !_disposed && online && epoch == _evidenceEpoch;
   String? error, message, cursor, reportCursor, accountId;
   String section = 'accounts';
   Map<String, Object?> form = {}, summary = {}, correction = {};
@@ -67,10 +71,16 @@ final class ControlReconciliationController extends ChangeNotifier {
   bool get pending =>
       local?.pending != null || correctionLocal?.pending != null;
   bool get locked =>
-      busy || accessDenied || pending || form['status'] == 'generated';
-  bool canReverse(String kind) => capabilities.contains(
-    kind == 'AR' ? 'finance.receipts.reverse' : 'finance.payments.reverse',
-  );
+      busy ||
+      accessDenied ||
+      !verified ||
+      pending ||
+      form['status'] == 'generated';
+  bool canReverse(String kind) =>
+      ['AR', 'AP'].contains(kind) &&
+      capabilities.contains(
+        kind == 'AR' ? 'finance.receipts.reverse' : 'finance.payments.reverse',
+      );
   String get today => DateTime.now().toUtc().toIso8601String().substring(0, 10);
   void emit() {
     if (!_disposed) notifyListeners();
@@ -78,24 +88,42 @@ final class ControlReconciliationController extends ChangeNotifier {
 
   @override
   void dispose() {
+    _evidenceEpoch++;
     _disposed = true;
     super.dispose();
   }
 
   void setOnline(bool value) {
     online = value;
+    if (!online) {
+      _evidenceEpoch++;
+      verified = false;
+      clearEvidence();
+    }
     emit();
   }
 
+  void clearEvidence() {
+    summary = {};
+    rows = [];
+    reports = [];
+    correction = {};
+    cursor = null;
+    reportCursor = null;
+    accountId = null;
+  }
+
   void deny(Object e) {
-    if (e is DomainError && e.code == 'PERMISSION_DENIED') {
+    if (e is DomainError &&
+        [
+          'PERMISSION_DENIED',
+          'MFA_REQUIRED',
+          'AUTHENTICATION_REQUIRED',
+        ].contains(e.code)) {
+      _evidenceEpoch++;
       accessDenied = true;
-      summary = {};
-      rows = [];
-      reports = [];
-      correction = {};
-      cursor = null;
-      accountId = null;
+      verified = false;
+      clearEvidence();
     }
   }
 
@@ -125,6 +153,7 @@ final class ControlReconciliationController extends ChangeNotifier {
   }
 
   Future<void> initialize() => run(() async {
+    final epoch = _evidenceEpoch;
     // An access refresh must not replace unsaved inputs in an existing editor.
     if (form.isNotEmpty && !accessDenied && !pending) {
       await persist();
@@ -144,6 +173,8 @@ final class ControlReconciliationController extends ChangeNotifier {
     // Report evidence and source descriptions are only displayed after a fresh permission check.
     if (online) {
       await loadReports();
+      if (!_acceptEvidence(epoch)) return;
+      verified = true;
       accessDenied = false;
       correction = correctionLocal?.form ?? {};
       if (form['status'] == 'generated' && form['report_id'] is String) {
@@ -179,8 +210,9 @@ final class ControlReconciliationController extends ChangeNotifier {
 
   Future<void> loadReports({bool more = false}) async {
     if (!online) return;
+    final epoch = _evidenceEpoch;
     final r = await gateway.reports(scope, after: more ? reportCursor : null);
-    if (_disposed) return;
+    if (!_acceptEvidence(epoch)) return;
     reports = [
       if (more) ...reports,
       for (final x in r['items'] as List) (x as Map).cast<String, Object?>(),
@@ -208,11 +240,13 @@ final class ControlReconciliationController extends ChangeNotifier {
   });
   Future<void> generate() => run(() async {
     if (!online ||
+        !verified ||
         accessDenied ||
         correctionLocal?.pending != null ||
         form['status'] == 'generated') {
       return;
     }
+    final epoch = _evidenceEpoch;
     var command = local?.pending;
     if (command == null) {
       final date = form['as_of'];
@@ -231,10 +265,23 @@ final class ControlReconciliationController extends ChangeNotifier {
       );
       local = await drafts.load(scope, slot);
     }
+    if (!_acceptEvidence(epoch) || !verified || accessDenied) return;
     Map<String, Object?> result;
+    late Map<String, Object?> confirmedForm;
     try {
       result = await gateway.generate(command.envelope);
-      await drafts.complete(scope, slot, command.envelope.commandId);
+      confirmedForm = {
+        ...command.envelope.payload,
+        'status': 'generated',
+        'report_id': result['id'],
+      };
+      await drafts.confirm(
+        scope,
+        slot,
+        command.envelope.commandId,
+        form: confirmedForm,
+        expectedVersion: 0,
+      );
     } on DomainError catch (e) {
       await drafts.recordFailure(
         scope,
@@ -246,16 +293,18 @@ final class ControlReconciliationController extends ChangeNotifier {
       rethrow;
     }
     if (_disposed) return;
-    form = {...form, 'status': 'generated', 'report_id': result['id']};
+    local = await drafts.load(scope, slot);
+    if (_disposed) return;
+    form = confirmedForm;
+    if (!_acceptEvidence(epoch)) return;
     summary = result;
-    local = null;
     message =
         'Report saved. Its cutoff evidence will not change with later postings.';
     try {
-      await persist();
       section = 'accounts';
       accountId = null;
       await readReport(result['id'] as String);
+      if (!_acceptEvidence(epoch)) return;
       await loadReports();
     } catch (e) {
       deny(e);
@@ -264,7 +313,7 @@ final class ControlReconciliationController extends ChangeNotifier {
     }
   });
   Future<void> open(Map<String, Object?> r) => run(() async {
-    if (!online || pending || accessDenied) return;
+    if (!online || !verified || pending || accessDenied) return;
     section = 'accounts';
     accountId = null;
     rows = [];
@@ -272,7 +321,8 @@ final class ControlReconciliationController extends ChangeNotifier {
     await readReport(r['id'] as String);
   });
   Future<void> readReport(String id, {bool more = false}) async {
-    if (!online) return;
+    if (!online || !verified) return;
+    final epoch = _evidenceEpoch;
     final r = await gateway.page(
       scope,
       id,
@@ -280,7 +330,7 @@ final class ControlReconciliationController extends ChangeNotifier {
       after: more ? cursor : null,
       accountId: accountId,
     );
-    if (_disposed) return;
+    if (!_acceptEvidence(epoch)) return;
     summary = (r['summary'] as Map).cast<String, Object?>();
     rows = [
       if (more) ...rows,
@@ -296,6 +346,7 @@ final class ControlReconciliationController extends ChangeNotifier {
   });
   Future<void> selectSection(String value) => run(() async {
     if (!online || summary.isEmpty) return;
+    if (summary['kind'] == 'GRNI' && value == 'allocations') return;
     section = value;
     rows = [];
     cursor = null;
@@ -344,12 +395,14 @@ final class ControlReconciliationController extends ChangeNotifier {
   });
   Future<void> reverse() => run(() async {
     if (!online ||
+        !verified ||
         accessDenied ||
         local?.pending != null ||
         correction.isEmpty ||
         !canReverse(correction['kind'] as String)) {
       return;
     }
+    final epoch = _evidenceEpoch;
     var command = correctionLocal?.pending;
     if (command == null) {
       final reason = (correction['reason'] as String? ?? '').trim(),
@@ -377,6 +430,7 @@ final class ControlReconciliationController extends ChangeNotifier {
       );
       correctionLocal = await drafts.load(scope, correctionSlot);
     }
+    if (!_acceptEvidence(epoch) || !verified || accessDenied) return;
     try {
       await gateway.reverse(correction['kind'] as String, command.envelope);
       await drafts.complete(scope, correctionSlot, command.envelope.commandId);

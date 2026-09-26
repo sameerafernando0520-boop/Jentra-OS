@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,6 +43,11 @@ const allocation = {
 };
 
 class Gateway implements ControlReconciliationGateway {
+  String kind = 'AR';
+  Completer<void>? generationPause, pagePause, reportsPause;
+  final generationEntered = Completer<void>(),
+      pageEntered = Completer<void>(),
+      reportsEntered = Completer<void>();
   String? failure, readFailure;
   bool failAfterGenerate = false;
   final commands = <CommandEnvelope<Map<String, Object?>>>[],
@@ -60,6 +66,8 @@ class Gateway implements ControlReconciliationGateway {
     String? after,
   }) async {
     check();
+    if (!reportsEntered.isCompleted) reportsEntered.complete();
+    await reportsPause?.future;
     return {'items': <Object?>[]};
   }
 
@@ -68,9 +76,11 @@ class Gateway implements ControlReconciliationGateway {
     CommandEnvelope<Map<String, Object?>> c,
   ) async {
     commands.add(c);
+    if (!generationEntered.isCompleted) generationEntered.complete();
+    await generationPause?.future;
     if (failure != null) throw DomainError(code: failure!, message: failure!);
     if (failAfterGenerate) readFailure = 'READ_FAILED';
-    return report(c.payload['id'] as String);
+    return {...report(c.payload['id'] as String), 'kind': c.payload['kind']};
   }
 
   @override
@@ -93,6 +103,8 @@ class Gateway implements ControlReconciliationGateway {
     String? accountId,
   }) async {
     check();
+    if (!pageEntered.isCompleted) pageEntered.complete();
+    await pagePause?.future;
     reads.add({
       'id': id,
       'section': section,
@@ -100,7 +112,7 @@ class Gateway implements ControlReconciliationGateway {
       'account': accountId,
     });
     return {
-      'summary': report(id),
+      'summary': {...report(id), 'kind': kind},
       'section': section,
       'evidence_key': accountId,
       'next_cursor': after == null ? '50' : null,
@@ -109,13 +121,43 @@ class Gateway implements ControlReconciliationGateway {
           {
             'id': 'control',
             'evidence_key': 'control',
-            'code': '1100',
-            'name': 'Receivables control',
+            'code': kind == 'GRNI' ? '2300' : '1100',
+            'name': kind == 'GRNI'
+                ? 'Goods received, not invoiced'
+                : 'Receivables control',
             'subledger_value': '9007199254.740993',
             'gl_value': '9007199254.740990',
             'difference': '0.000003',
           },
         if (section == 'allocations') allocation,
+        if (kind == 'GRNI' && section == 'items')
+          {
+            'id': 'receipt-42',
+            'document_number': 'GR-2026-0042',
+            'party_name': 'Western Supplies',
+            'currency_code': 'USD',
+            'original_amount': '0.330000',
+            'settled_amount': '0.330000',
+            'open_amount': '0.000000',
+            'original_base_amount': '1.100000',
+            'open_base_amount': '0.000000',
+            'posting_date': '2026-09-22',
+            'source_type': 'goods_receipt',
+            'source_id': 'receipt-42',
+            'journal_entry_id': 'receipt-journal-42',
+          },
+        if (kind == 'GRNI' && section == 'entries')
+          {
+            'id': 'supplier_bill:bill-line-42',
+            'source_type': 'supplier_bill',
+            'source_id': 'bill-42',
+            'posting_date': '2026-09-24',
+            'value': '-0.730000',
+            'transaction_value': '-0.220000',
+            'receipt_id': 'receipt-42',
+            'journal_entry_id': 'bill-journal-42',
+            'command_id': 'bill-command-42',
+          },
       ],
     };
   }
@@ -203,6 +245,178 @@ void main() {
     expect(gateway.commands.single.payload['as_of'], '2026-09-21');
     expect(gateway.commands.single.expectedEntityVersion, 0);
     expect(c.summary['difference'], '0.000003');
+  });
+  test(
+    'GRNI generation keeps exact totals and has no allocation reversal',
+    () async {
+      await ready();
+      c.field('kind', 'GRNI');
+      gateway.kind = 'GRNI';
+      await c.generate();
+      expect(c.summary['kind'], 'GRNI');
+      expect(gateway.commands.single.payload['kind'], 'GRNI');
+      expect(c.canReverse('GRNI'), false);
+      await c.selectSection('allocations');
+      expect(c.section, 'accounts');
+      await c.chooseAllocation(allocation);
+      expect(c.correction, isEmpty);
+      await c.sources('control');
+      expect(gateway.reads.last['account'], 'control');
+    },
+  );
+  test(
+    'GRNI uncertain request survives restart with identical cutoff and kind',
+    () async {
+      await ready();
+      c.field('kind', 'GRNI');
+      gateway.kind = 'GRNI';
+      gateway.failure = 'UNCERTAIN_RESULT';
+      await c.generate();
+      final sealed = jsonEncode(gateway.commands.single.toJson((x) => x));
+      c.dispose();
+      c = make();
+      await c.initialize();
+      c.field('kind', 'AR');
+      c.field('as_of', '2026-09-20');
+      gateway.failure = null;
+      await c.generate();
+      expect(jsonEncode(gateway.commands.last.toJson((x) => x)), sealed);
+    },
+  );
+  test(
+    'late GRNI page cannot restore evidence after disconnect and reconnect',
+    () async {
+      await ready();
+      c.field('kind', 'GRNI');
+      gateway.kind = 'GRNI';
+      await c.generate();
+      gateway.pagePause = Completer<void>();
+      final reading = c.selectSection('entries');
+      await Future<void>.delayed(Duration.zero);
+      c.setOnline(false);
+      c.setOnline(true);
+      gateway.pagePause!.complete();
+      await reading;
+      expect(c.verified, false);
+      expect(c.rows, isEmpty);
+      expect(c.summary, isEmpty);
+      expect(c.reports, isEmpty);
+      await c.generate();
+      expect(gateway.commands, hasLength(1));
+      gateway.pagePause = null;
+      await c.initialize();
+      expect(c.verified, true);
+    },
+  );
+  test('late access refresh cannot reverify an earlier online epoch', () async {
+    gateway.reportsPause = Completer<void>();
+    final reading = c.initialize();
+    await gateway.reportsEntered.future;
+    c.setOnline(false);
+    c.setOnline(true);
+    gateway.reportsPause!.complete();
+    await reading;
+    expect(c.verified, false);
+    expect(c.summary, isEmpty);
+  });
+  test(
+    'expired MFA clears GRNI evidence until a fresh scoped read succeeds',
+    () async {
+      await ready();
+      c.field('kind', 'GRNI');
+      gateway.kind = 'GRNI';
+      await c.generate();
+      gateway.readFailure = 'MFA_REQUIRED';
+      await c.refreshPage();
+      expect(c.accessDenied, true);
+      expect(c.verified, false);
+      expect(c.rows, isEmpty);
+      expect(c.summary, isEmpty);
+      expect(
+        (await drafts.load(
+          scope,
+          ControlReconciliationController.slot,
+        ))!.form['status'],
+        'generated',
+      );
+      gateway.readFailure = null;
+      await c.initialize();
+      expect(c.verified, true);
+      expect(c.summary['kind'], 'GRNI');
+    },
+  );
+  test(
+    'confirmation while disconnected persists encrypted GRNI identity',
+    () async {
+      await ready();
+      c.field('kind', 'GRNI');
+      gateway.kind = 'GRNI';
+      gateway.generationPause = Completer<void>();
+      final posting = c.generate();
+      await gateway.generationEntered.future;
+      c.setOnline(false);
+      gateway.generationPause!.complete();
+      await posting;
+      final stored = (await drafts.load(
+        scope,
+        ControlReconciliationController.slot,
+      ))!;
+      expect(stored.pending, isNull);
+      expect(stored.form['kind'], 'GRNI');
+      expect(stored.form['status'], 'generated');
+      expect(c.summary, isEmpty);
+      expect(c.rows, isEmpty);
+      expect(c.verified, false);
+      c.setOnline(true);
+      await c.initialize();
+      expect(c.summary['id'], stored.form['report_id']);
+      expect(gateway.commands, hasLength(1));
+    },
+  );
+  test(
+    'confirmation after route disposal retains GRNI identity for reopen',
+    () async {
+      await ready();
+      c.field('kind', 'GRNI');
+      gateway.kind = 'GRNI';
+      gateway.generationPause = Completer<void>();
+      final posting = c.generate();
+      await gateway.generationEntered.future;
+      c.dispose();
+      c = make();
+      gateway.generationPause!.complete();
+      await posting;
+      await c.initialize();
+      expect(c.form['status'], 'generated');
+      expect(c.summary['kind'], 'GRNI');
+      expect(gateway.commands, hasLength(1));
+    },
+  );
+  test('failed encrypted confirmation keeps the exact GRNI retry', () async {
+    await ready();
+    c.field('kind', 'GRNI');
+    gateway.kind = 'GRNI';
+    gateway.generationPause = Completer<void>();
+    final posting = c.generate();
+    await gateway.generationEntered.future;
+    await db.customStatement(
+      "create trigger fail_grni_confirmation before update on encrypted_drafts begin select raise(abort, 'CONFIRMATION_WRITE_FAILURE'); end;",
+    );
+    gateway.generationPause!.complete();
+    await posting;
+    final sealed = jsonEncode(gateway.commands.single.toJson((x) => x));
+    expect(
+      (await drafts.load(scope, ControlReconciliationController.slot))!.pending,
+      isNotNull,
+    );
+    expect(c.summary, isEmpty);
+    await db.customStatement('drop trigger fail_grni_confirmation');
+    c.dispose();
+    c = make();
+    await c.initialize();
+    await c.generate();
+    expect(jsonEncode(gateway.commands.last.toJson((x) => x)), sealed);
+    expect(c.form['status'], 'generated');
   });
   test('uncertain report retry survives restart byte-identically', () async {
     await ready();
@@ -372,6 +586,51 @@ void main() {
   }
 
   for (final dark in [false, true]) {
+    testWidgets(
+      'GRNI receipts and sources ${dark ? 'dark' : 'light'} 200 percent',
+      (tester) async {
+        await ready();
+        c.field('kind', 'GRNI');
+        gateway.kind = 'GRNI';
+        await c.generate();
+        await c.selectSection('items');
+        await render(tester, dark: dark);
+        expect(tester.takeException(), isNull);
+        expect(find.textContaining('Western Supplies'), findsOneWidget);
+        await expectLater(
+          find.byType(Scaffold),
+          matchesGoldenFile(
+            'goldens/grni_receipts_${dark ? 'dark' : 'light'}_200.png',
+          ),
+        );
+        await c.sources('control');
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.textContaining('Receipt receipt-42'), findsOneWidget);
+        await expectLater(
+          find.byType(Scaffold),
+          matchesGoldenFile(
+            'goldens/grni_sources_${dark ? 'dark' : 'light'}_200.png',
+          ),
+        );
+      },
+    );
+    testWidgets('GRNI ${dark ? 'dark' : 'light'} 200 percent', (tester) async {
+      await ready();
+      c.field('kind', 'GRNI');
+      gateway.kind = 'GRNI';
+      await c.generate();
+      await render(tester, dark: dark);
+      expect(tester.takeException(), isNull);
+      expect(find.text('Receipts'), findsOneWidget);
+      expect(find.text('Allocations'), findsNothing);
+      await expectLater(
+        find.byType(Scaffold),
+        matchesGoldenFile(
+          'goldens/grni_control_${dark ? 'dark' : 'light'}_200.png',
+        ),
+      );
+    });
     testWidgets('controls ${dark ? 'dark' : 'light'} 200 percent', (
       tester,
     ) async {

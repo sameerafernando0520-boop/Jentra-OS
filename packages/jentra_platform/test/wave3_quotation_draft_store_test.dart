@@ -94,6 +94,28 @@ void main() {
           expectedVersion: 7,
         );
         expect(replay.toJson(), original.toJson());
+        final confirmed = {...form, 'report_id': 'confirmed-report'};
+        await store.confirm(
+          scope,
+          'new',
+          original.envelope.commandId,
+          form: confirmed,
+          expectedVersion: 8,
+        );
+        await disk.close();
+        diskOpen = false;
+        final confirmedBytes = latin1.decode(await file.readAsBytes());
+        expect(confirmedBytes, isNot(contains('confirmed-report')));
+        expect(confirmedBytes, isNot(contains(form['unit_price'])));
+        disk = JentraLocalDatabase(NativeDatabase(file));
+        diskOpen = true;
+        store = QuotationDraftStore(
+          EncryptedDraftRepository(disk, DraftCipher(keyStore: keys)),
+        );
+        final restored = (await store.load(scope, 'new'))!;
+        expect(restored.form, confirmed);
+        expect(restored.pending, isNull);
+        expect(restored.expectedVersion, 8);
       } finally {
         if (diskOpen) await disk.close();
         if (await file.exists()) await file.delete();
@@ -118,6 +140,86 @@ void main() {
       expect(page.items.map((entry) => entry.slot), ['quotation:one']);
       expect(page.items.single.draft.expectedVersion, 7);
       expect(page.items.single.draft.form['notes'], 'own draft');
+    },
+  );
+
+  test('confirmation rejects a different command and business scope', () async {
+    final store = QuotationDraftStore(encrypted);
+    const form = {'amount': '90071992547409.123456'};
+    await store.save(scope, 'report', form, expectedVersion: 0);
+    final pending = await store.prepare(
+      scope,
+      'report',
+      verb: 'accept',
+      payload: form,
+      expectedVersion: 0,
+    );
+    for (final (context, commandId) in [
+      (scope, 'unrelated'),
+      (scope.copyWith(branchId: 'other'), pending.envelope.commandId),
+    ]) {
+      await expectLater(
+        store.confirm(
+          context,
+          'report',
+          commandId,
+          form: {'status': 'generated'},
+        ),
+        throwsA(isA<DomainError>()),
+      );
+    }
+    final preserved = (await store.load(scope, 'report'))!;
+    expect(preserved.form, form);
+    expect(preserved.pending!.toJson(), pending.toJson());
+  });
+
+  test(
+    'failed confirmation write preserves the original sealed retry',
+    () async {
+      final store = QuotationDraftStore(encrypted);
+      const form = {'amount': '90071992547409.123456'};
+      await store.save(scope, 'report', form, expectedVersion: 0);
+      final original = await store.prepare(
+        scope,
+        'report',
+        verb: 'accept',
+        payload: form,
+        expectedVersion: 0,
+      );
+      await database.customStatement('''
+      create trigger fail_confirmation before update on encrypted_drafts
+      begin select raise(abort, 'TEST_CONFIRMATION_WRITE_FAILURE'); end;
+    ''');
+      await expectLater(
+        store.confirm(
+          scope,
+          'report',
+          original.envelope.commandId,
+          form: {...form, 'report_id': 'confirmed-report'},
+          expectedVersion: 0,
+        ),
+        throwsA(anything),
+      );
+      final retained = (await store.load(scope, 'report'))!;
+      expect(retained.form, form);
+      expect(retained.pending!.toJson(), original.toJson());
+      await database.customStatement('drop trigger fail_confirmation');
+      final retry = await QuotationDraftStore(encrypted).prepare(
+        scope,
+        'report',
+        verb: 'accept',
+        payload: form,
+        expectedVersion: 0,
+      );
+      expect(retry.toJson(), original.toJson());
+      await store.confirm(
+        scope,
+        'report',
+        retry.envelope.commandId,
+        form: {...form, 'report_id': 'confirmed-report'},
+        expectedVersion: 0,
+      );
+      expect((await store.load(scope, 'report'))!.pending, isNull);
     },
   );
 

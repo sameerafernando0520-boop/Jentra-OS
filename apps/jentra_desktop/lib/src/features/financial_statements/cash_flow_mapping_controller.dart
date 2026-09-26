@@ -54,7 +54,8 @@ final class CashFlowMappingController extends ChangeNotifier {
     required this.gateway,
     required this.drafts,
     required this.online,
-  });
+    DateTime Function()? clock,
+  }) : _clock = clock ?? DateTime.now;
 
   static const slot = 'cash-flow-mapping-editor';
   static const categories = {
@@ -68,6 +69,7 @@ final class CashFlowMappingController extends ChangeNotifier {
   final TenantContext scope;
   final CashFlowMappingGateway gateway;
   final QuotationDraftStore drafts;
+  final DateTime Function() _clock;
   bool online,
       busy = false,
       verified = false,
@@ -78,8 +80,8 @@ final class CashFlowMappingController extends ChangeNotifier {
   Map<String, Object?> form = {};
   QuotationLocalDraft? local;
 
-  String get today => DateTime.now().toUtc().toIso8601String().substring(0, 10);
-  String get latestEffectiveDate => DateTime.now()
+  String get today => _clock().toUtc().toIso8601String().substring(0, 10);
+  String get latestEffectiveDate => _clock()
       .toUtc()
       .add(const Duration(days: 365))
       .toIso8601String()

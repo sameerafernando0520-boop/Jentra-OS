@@ -80,6 +80,7 @@ void main() {
         gateway: gateway,
         drafts: drafts,
         online: online,
+        clock: () => DateTime.utc(2026, 9, 25),
       );
   setUp(() {
     database = JentraLocalDatabase(NativeDatabase.memory());

@@ -6,7 +6,8 @@
 **Scope:** Synthetic development, Windows first  
 **Related:** [Roadmap](05_TEST_AND_DELIVERY.md), [architecture](01_ARCHITECTURE.md),
 [security](03_DATA_SECURITY.md), [design system](04_DESIGN_SYSTEM.md),
-[employee foundation](41_WAVE4_EMPLOYEE_FOUNDATION_CONTRACT.md).
+[employee foundation](41_WAVE4_EMPLOYEE_FOUNDATION_CONTRACT.md),
+[private HR and organization/calendar contract](42_WAVE4_PRIVATE_HR_ORGANIZATION_CALENDAR_CONTRACT.md).
 
 ## Outcome and scope
 

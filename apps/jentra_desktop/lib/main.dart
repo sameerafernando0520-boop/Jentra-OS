@@ -17,9 +17,11 @@ import 'src/features/bank_reconciliation/bank_reconciliation_controller.dart';
 import 'src/features/period_fx/period_fx_controller.dart';
 import 'src/features/financial_statements/financial_statement_controller.dart';
 import 'src/features/financial_statements/cash_flow_mapping_controller.dart';
+import 'src/features/financial_statements/tax_summary_controller.dart';
 import 'src/features/budgets/budget_controller.dart';
 import 'package:jentra_platform/jentra_people_platform.dart';
 import 'src/features/people/employee_controller.dart';
+import 'src/features/people/calendar_controller.dart';
 
 import 'package:jentra_platform/jentra_stock_opening_platform.dart';
 import 'src/features/stock_opening/stock_opening_controller.dart';
@@ -96,6 +98,9 @@ Future<void> main() async {
         financialStatementGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseFinancialStatementGateway(client),
         ),
+        taxSummaryGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseTaxSummaryGateway(client),
+        ),
         cashFlowMappingGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseCashFlowMappingGateway(client),
         ),
@@ -104,6 +109,9 @@ Future<void> main() async {
         ),
         employeeRepositoryProvider.overrideWithValue(
           client == null ? null : SupabaseEmployeeGateway(client),
+        ),
+        calendarRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabaseCalendarGateway(client),
         ),
       ],
       child: const JentraApp(),

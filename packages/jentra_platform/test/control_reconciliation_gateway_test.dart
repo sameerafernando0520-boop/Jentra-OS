@@ -110,21 +110,23 @@ void main() {
       },
     ],
   };
-  CommandEnvelope<Map<String, Object?>> command({bool reverse = false}) =>
-      CommandEnvelope(
-        commandId: 'command',
-        idempotencyKey: 'key',
-        context: scope,
-        clientTimestamp: DateTime.utc(2026, 9, 21),
-        expectedEntityVersion: reverse ? null : 0,
-        payload: reverse
-            ? {
-                'allocation_id': 'allocation',
-                'posting_date': '2026-09-21',
-                'reason': 'Correct the target invoice',
-              }
-            : {'id': 'report', 'kind': 'AR', 'as_of': '2026-09-20'},
-      );
+  CommandEnvelope<Map<String, Object?>> command({
+    bool reverse = false,
+    String kind = 'AR',
+  }) => CommandEnvelope(
+    commandId: 'command',
+    idempotencyKey: 'key',
+    context: scope,
+    clientTimestamp: DateTime.utc(2026, 9, 21),
+    expectedEntityVersion: reverse ? null : 0,
+    payload: reverse
+        ? {
+            'allocation_id': 'allocation',
+            'posting_date': '2026-09-21',
+            'reason': 'Correct the target invoice',
+          }
+        : {'id': 'report', 'kind': kind, 'as_of': '2026-09-20'},
+  );
   Object confirmation(Map<String, Object?> entity) => {
     'command_id': 'command',
     'request_id': 'request',
@@ -132,6 +134,107 @@ void main() {
   };
   final uncertain = throwsA(
     isA<DomainError>().having((e) => e.code, 'code', 'UNCERTAIN_RESULT'),
+  );
+  test(
+    'GRNI shares scoped exact command transport and rejects allocation reversal',
+    () async {
+      response = confirmation({...summary(), 'kind': 'GRNI'});
+      expect(
+        (await gateway.generate(command(kind: 'GRNI')))['difference'],
+        '0.000003',
+      );
+      expect(jsonDecode(requests.single.body)['p_payload']['kind'], 'GRNI');
+      requests.clear();
+      expect(
+        () => gateway.reverse('GRNI', command(reverse: true)),
+        throwsFormatException,
+      );
+      expect(requests, isEmpty);
+    },
+  );
+  test(
+    'GRNI evidence requires exact independent source and account attribution',
+    () async {
+      final source = {
+        'id': 'line',
+        'evidence_key': 'account',
+        'source_type': 'supplier_bill',
+        'source_id': 'bill',
+        'receipt_id': 'receipt',
+        'value': '-0.000003',
+        'transaction_value': '-0.000001',
+      };
+      Map<String, Object?> page(Map<String, Object?> row) => {
+        'summary': {...summary(), 'kind': 'GRNI'},
+        'section': 'entries',
+        'evidence_key': 'account',
+        'items': [row],
+        'next_cursor': null,
+      };
+      response = page(source);
+      expect(
+        ((await gateway.page(
+                  scope,
+                  'report',
+                  'entries',
+                  accountId: 'account',
+                ))['items']
+                as List)
+            .single['value'],
+        '-0.000003',
+      );
+      for (final change in [
+        {'receipt_id': null},
+        {'source_id': null},
+        {'evidence_key': 'other'},
+        {'transaction_value': 0.000001},
+      ]) {
+        response = page({...source, ...change});
+        await expectLater(
+          gateway.page(scope, 'report', 'entries', accountId: 'account'),
+          throwsFormatException,
+        );
+      }
+    },
+  );
+  test('GRNI pages reject incorrect continuation and allocations', () async {
+    response = {
+      'summary': {...summary(), 'kind': 'GRNI'},
+      'section': 'differences',
+      'evidence_key': null,
+      'items': [],
+      'next_cursor': '75',
+    };
+    await expectLater(
+      gateway.page(scope, 'report', 'differences'),
+      throwsFormatException,
+    );
+    response = {
+      'summary': {...summary(), 'kind': 'GRNI'},
+      'section': 'allocations',
+      'evidence_key': null,
+      'items': [
+        {'id': 'allocation'},
+      ],
+      'next_cursor': null,
+    };
+    await expectLater(
+      gateway.page(scope, 'report', 'allocations'),
+      throwsFormatException,
+    );
+  });
+  test(
+    'GRNI read preserves the existing recent-MFA error classification',
+    () async {
+      status = 403;
+      response = {'code': '42501', 'message': 'RECENT_MFA_REQUIRED'};
+      await expectLater(
+        gateway.reports(scope),
+        throwsA(
+          isA<DomainError>().having((e) => e.code, 'code', 'MFA_REQUIRED'),
+        ),
+      );
+    },
   );
   test(
     'exact values beyond binary precision and canonical branch scope survive',

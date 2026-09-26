@@ -2,6 +2,9 @@
 
 **Status:** Pending. The dedicated `w4_employee_synthetic` plan has no
 subscriber yet. No authenticated Windows/MFA walkthrough has been recorded.
+The owner reported workspace creation, but a fresh development-database read on
+2026-09-26 still found no tenant with slug `w4-employee-synthetic`; the app
+result/target must be reconciled before a subscription is changed.
 Use only synthetic employee data. Sign-in and MFA stay with the owner; do not
 share credentials or codes with the test operator.
 

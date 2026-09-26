@@ -65,6 +65,10 @@ final class FinancialStatementController extends ChangeNotifier {
   Map<String, Object?> form = {}, summary = {};
   List<Map<String, Object?>> periods = [], reports = [], rows = [];
   QuotationLocalDraft? local;
+  int _evidenceEpoch = 0;
+
+  bool _acceptEvidence(int epoch) =>
+      !_disposed && online && epoch == _evidenceEpoch;
 
   bool get pending => local?.pending != null;
   bool get locked => busy || denied || pending || form['status'] == 'generated';
@@ -83,6 +87,7 @@ final class FinancialStatementController extends ChangeNotifier {
 
   @override
   void dispose() {
+    _evidenceEpoch++;
     _disposed = true;
     super.dispose();
   }
@@ -100,6 +105,7 @@ final class FinancialStatementController extends ChangeNotifier {
   void setOnline(bool value) {
     online = value;
     if (!online) {
+      _evidenceEpoch++;
       verified = false;
       _clearEvidence();
     }
@@ -108,6 +114,7 @@ final class FinancialStatementController extends ChangeNotifier {
 
   void _handle(Object failure) {
     if (failure is DomainError && failure.code == 'PERMISSION_DENIED') {
+      _evidenceEpoch++;
       denied = true;
       verified = false;
       form = {};
@@ -136,13 +143,15 @@ final class FinancialStatementController extends ChangeNotifier {
   }
 
   Future<void> initialize() => _run(() async {
+    final epoch = _evidenceEpoch;
     if (form.isNotEmpty && verified && !denied && !pending) await persist();
     local = await drafts.load(scope, slot);
-    if (!online) return;
+    if (!_acceptEvidence(epoch)) return;
     _clearEvidence();
     await _loadPeriods();
+    if (!_acceptEvidence(epoch)) return;
     await _loadReports();
-    if (_disposed) return;
+    if (!_acceptEvidence(epoch)) return;
     form = local?.form ?? _newForm();
     verified = true;
     denied = false;
@@ -162,11 +171,12 @@ final class FinancialStatementController extends ChangeNotifier {
 
   Future<void> _loadPeriods({bool more = false}) async {
     if (!online) return;
+    final epoch = _evidenceEpoch;
     final result = await gateway.periods(
       scope,
       after: more ? periodCursor : null,
     );
-    if (_disposed) return;
+    if (!_acceptEvidence(epoch)) return;
     periods = [
       if (more) ...periods,
       for (final value in result['items'] as List)
@@ -177,11 +187,12 @@ final class FinancialStatementController extends ChangeNotifier {
 
   Future<void> _loadReports({bool more = false}) async {
     if (!online) return;
+    final epoch = _evidenceEpoch;
     final result = await gateway.reports(
       scope,
       after: more ? reportCursor : null,
     );
-    if (_disposed) return;
+    if (!_acceptEvidence(epoch)) return;
     reports = [
       if (more) ...reports,
       for (final value in result['items'] as List)
@@ -194,8 +205,11 @@ final class FinancialStatementController extends ChangeNotifier {
   Future<void> moreReports() => _run(() => _loadReports(more: true));
   Future<void> refresh() => _run(() async {
     if (!online || !verified || denied) return;
+    final epoch = _evidenceEpoch;
     await _loadPeriods();
+    if (!_acceptEvidence(epoch)) return;
     await _loadReports();
+    if (!_acceptEvidence(epoch)) return;
     if (selectedReportId != null) await _loadPage(selectedReportId!);
   });
 
@@ -275,6 +289,7 @@ final class FinancialStatementController extends ChangeNotifier {
 
   Future<void> generate() => _run(() async {
     if (!online || !verified || denied || form['status'] == 'generated') return;
+    final epoch = _evidenceEpoch;
     var command = local?.pending;
     if (command == null) {
       _validate();
@@ -294,10 +309,23 @@ final class FinancialStatementController extends ChangeNotifier {
       );
       local = await drafts.load(scope, slot);
     }
+    if (!_acceptEvidence(epoch) || !verified || denied) return;
     Map<String, Object?> result;
+    late Map<String, Object?> confirmedForm;
     try {
       result = await gateway.generate(command.envelope);
-      await drafts.complete(scope, slot, command.envelope.commandId);
+      confirmedForm = {
+        ...command.envelope.payload,
+        'status': 'generated',
+        'report_id': result['id'],
+      };
+      await drafts.confirm(
+        scope,
+        slot,
+        command.envelope.commandId,
+        form: confirmedForm,
+        expectedVersion: 0,
+      );
     } on DomainError catch (failure) {
       await drafts.recordFailure(
         scope,
@@ -309,13 +337,15 @@ final class FinancialStatementController extends ChangeNotifier {
       rethrow;
     }
     if (_disposed) return;
-    local = null;
-    form = {...form, 'status': 'generated', 'report_id': result['id']};
+    local = await drafts.load(scope, slot);
+    if (_disposed) return;
+    form = confirmedForm;
+    if (!_acceptEvidence(epoch)) return;
     summary = result;
     message = 'Report saved with frozen posted-journal evidence.';
     try {
-      await persist();
       await _loadPage(result['id'] as String);
+      if (!_acceptEvidence(epoch)) return;
       await _loadReports();
     } catch (failure) {
       _handle(failure);
@@ -327,6 +357,7 @@ final class FinancialStatementController extends ChangeNotifier {
 
   Future<void> _loadPage(String id, {bool more = false}) async {
     if (!online) return;
+    final epoch = _evidenceEpoch;
     final result = await gateway.page(
       scope,
       id,
@@ -334,7 +365,7 @@ final class FinancialStatementController extends ChangeNotifier {
       offset: more ? nextOffset ?? 0 : 0,
       accountId: accountId,
     );
-    if (_disposed) return;
+    if (!_acceptEvidence(epoch)) return;
     summary = (result['summary'] as Map).cast<String, Object?>();
     rows = [
       if (more) ...rows,

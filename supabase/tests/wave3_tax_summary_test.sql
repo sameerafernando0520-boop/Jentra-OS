@@ -89,6 +89,40 @@ insert into procurement_test_results select is((select value->>'tax_kind'
  pg_temp.fid('branch'),pg_temp.fid('tax.prospective'),0,
  pg_temp.fid('tax.zero.bill.line'))->'items') value),'zero',
  'zero-rated treatment is explicit in line drill');
+
+-- Inject a posted source without its journal to prove the report does not
+-- understate the unverified base merely because the journal FX row is absent.
+insert into procurement.supplier_bills
+select (jsonb_populate_record(null::procurement.supplier_bills,to_jsonb(b)||
+ jsonb_build_object('id',pg_temp.fid('tax.missing.bill'),
+  'supplier_reference','Synthetic missing-journal tax bill',
+  'document_number',null,'journal_entry_id',null,'open_item_id',null,
+  'status','draft'))).*
+from procurement.supplier_bills b where id=pg_temp.fid('tax.future.bill');
+insert into procurement.supplier_bill_lines
+select (jsonb_populate_record(null::procurement.supplier_bill_lines,to_jsonb(l)||
+ jsonb_build_object('id',pg_temp.fid('tax.missing.bill.line'),
+  'bill_id',pg_temp.fid('tax.missing.bill')))).*
+from procurement.supplier_bill_lines l where id=pg_temp.fid('tax.future.bill.line');
+update procurement.supplier_bills set status='posted'
+where id=pg_temp.fid('tax.missing.bill');
+insert into procurement_responses values('tax.missing.journal',pg_temp.tax_call('tax.missing.journal',
+ jsonb_build_object('id',pg_temp.fid('tax.missing.journal'),
+  'period_id',pg_temp.fid('period'),'as_of','2026-09-25')));
+insert into procurement_test_results select is((select value->>'review_code'
+ from jsonb_array_elements(api.tax_summary_page(pg_temp.fid('tenant'),pg_temp.fid('entity'),
+ pg_temp.fid('branch'),pg_temp.fid('tax.missing.journal'),0,
+ pg_temp.fid('tax.missing.bill.line'))->'items') value),
+ 'POSTED_JOURNAL_MISSING','posted tax source without a journal is blocked');
+insert into procurement_test_results select is((select value->>'expected_tax_base'
+ from jsonb_array_elements(api.tax_summary_page(pg_temp.fid('tenant'),pg_temp.fid('entity'),
+ pg_temp.fid('branch'),pg_temp.fid('tax.missing.journal'),0,
+ pg_temp.fid('tax.missing.bill.line'))->'items') value),
+ '45.050000','missing journal keeps source exchange rate for unverified base');
+insert into procurement_test_results select ok((select
+ (response#>>'{entity,unverified_tax_base}')::numeric>=90.1
+ from procurement_responses where name='tax.missing.journal'),
+ 'missing journal tax is counted in unverified rather than certified base');
 update finance.tax_definitions set rate=19 where id=pg_temp.fid('input-tax');
 insert into procurement_test_results select is((select count(*) from finance.tax_definition_versions
  where definition_id=pg_temp.fid('input-tax')),2::bigint,

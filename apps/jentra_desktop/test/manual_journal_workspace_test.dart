@@ -75,6 +75,7 @@ class JournalGateway implements ManualJournalGateway {
     String resource, {
     String? after,
     String search = '',
+    String? documentDate,
   }) async {
     if (readFailure != null) {
       throw DomainError(code: readFailure!, message: 'Read failed');
@@ -187,6 +188,79 @@ void main() {
     expect(gateway.commands, isEmpty);
     expect(c.error, contains('balance'));
   });
+  const withholding = {
+    'id': 'tax',
+    'code': 'WHT25',
+    'name': 'Configured withholding',
+    'kind': 'withholding',
+    'rate': '25.000000',
+    'version': 3,
+    'inclusive': false,
+    'rounding_scale': 2,
+  };
+  Future<void> readyTax() async {
+    await ready();
+    c.line(0, 'debit', '25');
+    c.line(1, 'credit', '25');
+    c.taxDefinition(1, withholding);
+    c.line(1, 'taxable_amount', '100');
+    c.form = {
+      ...c.form!,
+      'grand_total': '25',
+      'base_total': '25',
+      'lines': <Object?>[
+        {
+          ...(c.form!['lines'] as List)[0] as Map,
+          'amount': '25',
+          'base_amount': '25',
+        },
+        {
+          ...(c.form!['lines'] as List)[1] as Map,
+          'amount': '-25',
+          'base_amount': '-25',
+          'tax_basis_date': '2026-09-20',
+          'tax_direction': -1,
+          'expected_tax_base': '25',
+        },
+      ],
+    };
+  }
+
+  test('tax amount mismatch stops a balanced journal before sending', () async {
+    await readyTax();
+    c.line(1, 'taxable_amount', '99');
+    await c.act('save');
+    expect(gateway.commands, isEmpty);
+    expect(c.error, contains('taxable basis'));
+    c.taxDefinition(1, null);
+    expect(
+      (c.form!['lines'] as List)[1].containsKey('tax_definition_id'),
+      false,
+    );
+    expect((c.form!['lines'] as List)[1].containsKey('taxable_amount'), false);
+  });
+
+  test(
+    'uncertain withholding save seals its definition and basis across recovery',
+    () async {
+      await readyTax();
+      gateway.failure = 'UNCERTAIN_RESULT';
+      await c.act('save');
+      final sealed = jsonEncode(gateway.commands.single.toJson((x) => x));
+      final line = (gateway.commands.single.payload['lines'] as List)[1] as Map;
+      expect(line['tax_definition_id'], 'tax');
+      expect(line['taxable_amount'], '100');
+      c.dispose();
+      c = make();
+      await c.initialize();
+      c.taxDefinition(1, null);
+      c.line(1, 'taxable_amount', '999');
+      expect((c.form!['lines'] as List)[1]['taxable_amount'], '100');
+      gateway.failure = null;
+      await c.act('retry');
+      expect(jsonEncode(gateway.commands.last.toJson((x) => x)), sealed);
+    },
+  );
   test('uncertain save survives restart and seals identical retry', () async {
     await ready();
     gateway.failure = 'UNCERTAIN_RESULT';
@@ -211,6 +285,43 @@ void main() {
     expect(gateway.commands, hasLength(1));
     expect(c.error, contains('Save journal'));
   });
+  Future<void> readyMovement() async {
+    await ready();
+    c.form = {
+      ...c.form!,
+      'lines': <Object?>[
+        (c.form!['lines'] as List)[0],
+        {...(c.form!['lines'] as List)[1] as Map, 'is_tax_control': true},
+      ],
+    };
+    c.taxControlMovement(1, 'settlement');
+  }
+
+  test(
+    'tax-control movement and account remain sealed across recovery',
+    () async {
+      await readyMovement();
+      gateway.failure = 'UNCERTAIN_RESULT';
+      await c.act('save');
+      final sealed = jsonEncode(gateway.commands.single.toJson((x) => x));
+      expect(
+        (gateway.commands.single.payload['lines']
+            as List)[1]['tax_control_movement'],
+        'settlement',
+      );
+      c.dispose();
+      c = make();
+      await c.initialize();
+      c.taxControlMovement(1, 'adjustment');
+      expect(
+        (c.form!['lines'] as List)[1]['tax_control_movement'],
+        'settlement',
+      );
+      gateway.failure = null;
+      await c.act('retry');
+      expect(jsonEncode(gateway.commands.last.toJson((x) => x)), sealed);
+    },
+  );
   test('reversal is a new draft with original link', () async {
     await c.initialize();
     c.form = journal(status: 'posted', version: 4);
@@ -306,6 +417,38 @@ void main() {
     },
   );
   for (final dark in [false, true]) {
+    testWidgets('control settlement ${dark ? 'dark' : 'light'} 200 percent', (
+      tester,
+    ) async {
+      await readyMovement();
+      c.form = {...c.form!, 'status': 'approved', 'version': 3};
+      await render(tester, dark: dark, height: 1400);
+      await tester.ensureVisible(find.textContaining('Tax-control settlement'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      await expectLater(
+        find.byType(Scaffold),
+        matchesGoldenFile(
+          'goldens/journal_control_${dark ? 'dark' : 'light'}_200.png',
+        ),
+      );
+    });
+    testWidgets('declared withholding ${dark ? 'dark' : 'light'} 200 percent', (
+      tester,
+    ) async {
+      await readyTax();
+      c.form = {...c.form!, 'status': 'approved', 'version': 3};
+      await render(tester, dark: dark, height: 1400);
+      await tester.ensureVisible(find.textContaining('Taxable basis 100'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      await expectLater(
+        find.byType(Scaffold),
+        matchesGoldenFile(
+          'goldens/journal_tax_${dark ? 'dark' : 'light'}_200.png',
+        ),
+      );
+    });
     testWidgets('manual journal ${dark ? 'dark' : 'light'} 200 percent', (
       tester,
     ) async {
@@ -339,6 +482,28 @@ void main() {
       await tester.tap(find.text('Back'));
       await tester.pumpAndSettle();
       expect(gateway.commands, isEmpty);
+    },
+  );
+  testWidgets(
+    'tax-control movement selection is reachable at desktop 200 percent',
+    (tester) async {
+      await readyMovement();
+      await render(tester, height: 720);
+      final movement = find.byType(DropdownButtonFormField<String>);
+      expect(movement, findsOneWidget);
+      await tester.ensureVisible(movement);
+      await tester.pumpAndSettle();
+      expect(find.text('Recorded settlement'), findsOneWidget);
+      await tester.tap(movement);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Reviewed adjustment').last);
+      await tester.pumpAndSettle();
+      expect(
+        (c.form!['lines'] as List)[1]['tax_control_movement'],
+        'adjustment',
+      );
+      expect(gateway.commands, isEmpty);
+      expect(tester.takeException(), isNull);
     },
   );
 }

@@ -35,8 +35,22 @@ documents.
 
 21. [40_WAVE4_WORKFORCE_AND_DELIVERY_SPEC.md](40_WAVE4_WORKFORCE_AND_DELIVERY_SPEC.md) — proposed Wave 4 scope, requirements, acceptance criteria, dependencies and delivery sequence.
 22. [41_WAVE4_EMPLOYEE_FOUNDATION_CONTRACT.md](41_WAVE4_EMPLOYEE_FOUNDATION_CONTRACT.md) — proposed first vertical: employee directory, dated employment, scoped commands, native UI and recovery.
+23. [42_WAVE4_PRIVATE_HR_ORGANIZATION_CALENDAR_CONTRACT.md](42_WAVE4_PRIVATE_HR_ORGANIZATION_CALENDAR_CONTRACT.md) — W4-02 private HR, organization, calendars, reviews and account-link security contract.
 
 Current [Wave 4 delivery status](../development/wave4-status.md) distinguishes specification work from implementation and acceptance.
+
+Additional Wave 3 finance candidate contracts:
+
+- [33_WAVE3_AR_AP_CONTROL_RECONCILIATION_CONTRACT.md](33_WAVE3_AR_AP_CONTROL_RECONCILIATION_CONTRACT.md) — scoped immutable AR/AP controls and governed allocation corrections.
+- [34_WAVE3_BANK_RECONCILIATION_CONTRACT.md](34_WAVE3_BANK_RECONCILIATION_CONTRACT.md) — exact imports, governed matching, adjustments and reversals.
+- [35_WAVE3_PERIOD_FX_GOVERNANCE_CONTRACT.md](35_WAVE3_PERIOD_FX_GOVERNANCE_CONTRACT.md) — period close/reopen decisions and frozen FX valuation.
+- [36_WAVE3_FINANCIAL_STATEMENTS_CONTRACT.md](36_WAVE3_FINANCIAL_STATEMENTS_CONTRACT.md) — posted statements, indirect cash flow, source drill and encrypted recovery.
+- [37_WAVE3_BUDGET_VARIANCE_CONTRACT.md](37_WAVE3_BUDGET_VARIANCE_CONTRACT.md) — approved exact budget versions and immutable actual variance.
+- [38_WAVE3_TAX_SUMMARY_CONTRACT.md](38_WAVE3_TAX_SUMMARY_CONTRACT.md) — posted tax review, complete control reconciliation, governed tax declarations and control movements.
+- [39_WAVE3_GRNI_CONTROL_RECONCILIATION_CONTRACT.md](39_WAVE3_GRNI_CONTROL_RECONCILIATION_CONTRACT.md) — original-account receipt accrual, dated bill/return/reversal evidence and immutable GRNI source-to-GL differences.
+
+The [remaining Wave 3 status](../development/remaining-wave3-status.md) separates
+candidate development/test evidence from installed and native acceptance.
 
 ## Change control
 

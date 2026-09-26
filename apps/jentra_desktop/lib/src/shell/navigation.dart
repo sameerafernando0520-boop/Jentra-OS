@@ -100,12 +100,17 @@ const jentraDestinations = <JentraDestination>[
     icon: Icons.groups_outlined,
   ),
   JentraDestination(
+    label: 'Work calendars',
+    path: '/people/calendars',
+    icon: Icons.calendar_month_outlined,
+  ),
+  JentraDestination(
     label: 'Manual journals',
     path: '/finance/journals',
     icon: Icons.menu_book_outlined,
   ),
   JentraDestination(
-    label: 'AR / AP controls',
+    label: 'Finance controls',
     path: '/finance/controls',
     icon: Icons.account_balance_outlined,
   ),
@@ -123,6 +128,11 @@ const jentraDestinations = <JentraDestination>[
     label: 'Financial statements',
     path: '/finance/statements',
     icon: Icons.table_chart_outlined,
+  ),
+  JentraDestination(
+    label: 'Tax review',
+    path: '/finance/tax',
+    icon: Icons.receipt_long_outlined,
   ),
   JentraDestination(
     label: 'Cash-flow mappings',
@@ -185,6 +195,8 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
             (capabilities?.contains('finance.view') ?? false)) &&
         (item.path != '/finance/statements' ||
             (capabilities?.contains('finance.view') ?? false)) &&
+        (item.path != '/finance/tax' ||
+            (capabilities?.contains('finance.view') ?? false)) &&
         (item.path != '/finance/budgets' ||
             (capabilities?.contains('finance.view') ?? false)) &&
         (item.path != '/finance/cash-flow-mappings' ||
@@ -197,6 +209,9 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
               'people.view',
               'people.employees.view',
             ].every((p) => capabilities?.contains(p) ?? false)) &&
+        (item.path != '/people/calendars' ||
+            const ['people.view', 'people.calendars.view']
+                .every((p) => capabilities?.contains(p) ?? false)) &&
         (item.path != '/finance/controls' ||
             const [
               'finance.view',

@@ -224,6 +224,16 @@ class ManualJournalWorkspace extends StatelessWidget {
                     child: const Text('Add account line'),
                   ),
                 ),
+              if (c.editable && f['reversal_of_id'] == null)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton(
+                    onPressed: !c.online
+                        ? null
+                        : () => pick(context, 'tax_controls', c.addAccount),
+                    child: const Text('Add tax-control line'),
+                  ),
+                ),
               for (var i = 0; i < (f['lines'] as List).length; i++)
                 _LineEditor(controller: c, index: i),
               if (f['grand_total'] != null)
@@ -469,6 +479,97 @@ class _LineEditor extends StatelessWidget {
               SelectableText(
                 'Debit ${l['debit']} · credit ${l['credit']} · base ${l['base_amount'] ?? 'Calculated when saved'}\n${l['description'] ?? ''} · ${l['cost_center'] ?? ''} · ${l['project'] ?? ''}',
               ),
+            if (l['tax_definition_id'] != null) ...[
+              const SizedBox(height: 12),
+              SelectableText(
+                '${l['tax_code']} · ${l['tax_kind']} · ${l['tax_rate']}% · definition version ${l['tax_definition_version']}\nTaxable basis ${l['taxable_amount']} ${c.form!['currency_code']} · tax date ${l['tax_basis_date'] ?? c.form!['document_date']}',
+              ),
+              if (c.editable && c.form!['reversal_of_id'] == null)
+                SizedBox(
+                  width: 350,
+                  child: TextFormField(
+                    key: ValueKey(
+                      '${l['line_id']}-${l['tax_definition_id']}-taxable',
+                    ),
+                    initialValue: l['taxable_amount']?.toString() ?? '',
+                    decoration: const InputDecoration(
+                      labelText: 'Taxable basis · excludes tax',
+                    ),
+                    onChanged: (value) =>
+                        c.line(index, 'taxable_amount', value),
+                  ),
+                ),
+            ],
+            if (l['tax_control_movement'] != null && !c.editable)
+              SelectableText(
+                'Tax-control ${l['tax_control_movement']} · excluded from period tax-accrual totals',
+              ),
+            if (c.editable &&
+                c.form!['reversal_of_id'] == null &&
+                l['is_tax_control'] == true)
+              SizedBox(
+                width: 440,
+                child: DropdownButtonFormField<String>(
+                  key: ValueKey(
+                    '${l['line_id']}-${l['tax_control_movement']}-movement',
+                  ),
+                  initialValue: l['tax_control_movement'] as String?,
+                  isExpanded: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Tax-control movement',
+                  ),
+                  items: const [
+                    DropdownMenuItem<String>(
+                      value: null,
+                      child: Text('No control movement'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'settlement',
+                      child: Text('Recorded settlement'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'adjustment',
+                      child: Text('Reviewed adjustment'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'transfer',
+                      child: Text('Control transfer'),
+                    ),
+                  ],
+                  onChanged: (value) => c.taxControlMovement(index, value),
+                ),
+              ),
+            if (c.editable && c.form!['reversal_of_id'] == null) ...[
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 12,
+                runSpacing: 8,
+                children: [
+                  TextButton(
+                    onPressed: !c.online
+                        ? null
+                        : () => ManualJournalWorkspace(controller: c).pick(
+                            context,
+                            'taxes',
+                            (definition) => c.taxDefinition(index, definition),
+                          ),
+                    child: Text(
+                      l['tax_definition_id'] == null
+                          ? 'Declare tax treatment'
+                          : 'Change tax treatment',
+                    ),
+                  ),
+                  if (l['tax_definition_id'] != null)
+                    TextButton(
+                      onPressed: () => c.taxDefinition(index, null),
+                      child: const Text('Remove tax declaration'),
+                    ),
+                ],
+              ),
+              const Text(
+                'A tax declaration uses the configured rate and taxable basis. It follows journal approval and posting; statutory review remains required.',
+              ),
+            ],
           ],
         ),
       ),
@@ -529,7 +630,11 @@ class _JournalPickerState extends State<_JournalPicker> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: Text('Choose ${widget.resource}'),
+    title: Text(switch (widget.resource) {
+      'tax_controls' => 'Choose a tax-control account',
+      'taxes' => 'Choose tax treatment',
+      _ => 'Choose ${widget.resource}',
+    }),
     content: SizedBox(
       width: 600,
       height: 430,
@@ -555,6 +660,8 @@ class _JournalPickerState extends State<_JournalPicker> {
                     title: Text(
                       widget.resource == 'rates'
                           ? '${r['source_currency_code']} → ${r['target_currency_code']} · ${r['rate']} · ${r['effective_date']}'
+                          : widget.resource == 'taxes'
+                          ? '${r['code']} · ${r['name']} · ${r['kind']} · ${r['rate']}%'
                           : r['file_name']?.toString() ??
                                 '${r['code']} · ${r['name']}',
                     ),

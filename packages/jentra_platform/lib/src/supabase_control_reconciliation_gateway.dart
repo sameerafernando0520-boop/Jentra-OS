@@ -71,7 +71,10 @@ final class SupabaseControlReconciliationGateway
           'VERSION_CONFLICT' =>
             'The requested version changed. Refresh the source.',
           'VALIDATION_ERROR' =>
-            e.message == 'OPEN_ITEM_CONTROL_BASIS_REQUIRED'
+            [
+                  'OPEN_ITEM_CONTROL_BASIS_REQUIRED',
+                  'GRNI_CONTROL_BASIS_REQUIRED',
+                ].contains(e.message)
                 ? 'A source journal has no unique control account. Review its posting evidence.'
                 : e.message == 'ALLOCATION_ALREADY_REVERSED'
                 ? 'This allocation is already reversed. Generate a fresh report.'
@@ -104,7 +107,7 @@ final class SupabaseControlReconciliationGateway
     if (r['tenant_id'] != scope.tenantId ||
         r['legal_entity_id'] != scope.legalEntityId ||
         r['branch_id'] != scope.branchId ||
-        !['AR', 'AP'].contains(r['kind']) ||
+        !['AR', 'AP', 'GRNI'].contains(r['kind']) ||
         r['status'] != 'generated' ||
         r['version'] != 1) {
       throw const FormatException('Report scope or state does not match.');
@@ -284,7 +287,47 @@ final class SupabaseControlReconciliationGateway
       throw const FormatException('Evidence identity mismatch.');
     }
     summary(r['summary'] as Map, scope);
+    final grni = (r['summary'] as Map)['kind'] == 'GRNI';
+    final accounts = ((r['summary'] as Map)['accounts'] as List)
+        .map((a) => (a as Map)['id'])
+        .toSet();
+    if (r['next_cursor'] != null && r['next_cursor'] != '${cursor + 50}') {
+      throw const FormatException(
+        'Evidence cursor does not advance by one page.',
+      );
+    }
+    if (grni && section == 'allocations' && (r['items'] as List).isNotEmpty) {
+      throw const FormatException(
+        'GRNI cannot contain allocation corrections.',
+      );
+    }
     for (final x in r['items'] as List) {
+      if (grni) {
+        final zeroLegacyReceipt =
+            section == 'items' &&
+            x['evidence_key'] == null &&
+            decimal(x['original_base_amount']).isZero &&
+            decimal(x['original_amount']).isZero;
+        if ((!zeroLegacyReceipt && !accounts.contains(x['evidence_key'])) ||
+            (accountId != null && x['evidence_key'] != accountId)) {
+          throw const FormatException(
+            'GRNI source account does not match its report.',
+          );
+        }
+        if (['items', 'entries', 'differences'].contains(section)) {
+          for (final key in ['source_type', 'source_id']) {
+            if (x[key] is! String) {
+              throw const FormatException('GRNI source identity is missing.');
+            }
+          }
+        }
+        if (section == 'entries') {
+          if (x['receipt_id'] is! String) {
+            throw const FormatException('GRNI receipt attribution is missing.');
+          }
+          decimal(x['transaction_value']);
+        }
+      }
       if (section == 'accounts' || section == 'differences') {
         totals(x as Map);
       } else if (section == 'items') {

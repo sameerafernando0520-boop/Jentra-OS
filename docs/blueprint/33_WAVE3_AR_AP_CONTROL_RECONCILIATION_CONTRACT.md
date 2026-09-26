@@ -5,6 +5,11 @@ Development contract, 2026-09-24. Candidate
 the existing nineteen Wave 3 candidates, including allocation reversals. No
 authentication, stock-opening setup, production data or acceptance runtime changes.
 
+The additive [GRNI extension](39_WAVE3_GRNI_CONTROL_RECONCILIATION_CONTRACT.md)
+adds `kind: GRNI` to the same report APIs and encrypted workspace. AR/AP allocation
+commands remain unchanged. Its candidate is unapplied and requires coordinated
+client/schema installation.
+
 ## Public commands and reads
 
 All calls require the authenticated actor and explicit tenant, legal entity and
