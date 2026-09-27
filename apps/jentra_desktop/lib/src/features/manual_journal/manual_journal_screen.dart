@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jentra_platform/jentra_finance_platform.dart';
 import '../../app_providers.dart';
 import 'manual_journal_controller.dart';
+import '../financial_dimensions/financial_dimension_controller.dart';
+import '../financial_dimensions/financial_dimension_screen.dart';
 
 class ManualJournalScreen extends ConsumerWidget {
   const ManualJournalScreen({super.key});
@@ -24,13 +27,22 @@ class ManualJournalScreen extends ConsumerWidget {
               'Choose an entity and branch with finance-view permission.',
             ),
           )
-        : ManualJournalWorkspace(key: ValueKey(c), controller: c);
+        : ManualJournalWorkspace(
+            key: ValueKey(c),
+            controller: c,
+            financialDimensions: ref.watch(financialDimensionGatewayProvider),
+          );
   }
 }
 
 class ManualJournalWorkspace extends StatelessWidget {
-  const ManualJournalWorkspace({required this.controller, super.key});
+  const ManualJournalWorkspace({
+    required this.controller,
+    super.key,
+    this.financialDimensions,
+  });
   final ManualJournalController controller;
+  final FinancialDimensionGateway? financialDimensions;
   Future<void> pick(
     BuildContext context,
     String resource,
@@ -235,7 +247,11 @@ class ManualJournalWorkspace extends StatelessWidget {
                   ),
                 ),
               for (var i = 0; i < (f['lines'] as List).length; i++)
-                _LineEditor(controller: c, index: i),
+                _LineEditor(
+                  controller: c,
+                  index: i,
+                  financialDimensions: financialDimensions,
+                ),
               if (f['grand_total'] != null)
                 SelectableText(
                   'Saved balanced total ${f['grand_total']} ${f['currency_code']} · base ${f['base_total']} ${f['base_currency_code']}',
@@ -425,8 +441,13 @@ class ManualJournalWorkspace extends StatelessWidget {
 }
 
 class _LineEditor extends StatelessWidget {
-  const _LineEditor({required this.controller, required this.index});
+  const _LineEditor({
+    required this.controller,
+    required this.index,
+    this.financialDimensions,
+  });
   final ManualJournalController controller;
+  final FinancialDimensionGateway? financialDimensions;
   final int index;
   @override
   Widget build(BuildContext context) {
@@ -450,8 +471,10 @@ class _LineEditor extends StatelessWidget {
                     'debit',
                     'credit',
                     'description',
-                    'cost_center',
-                    'project',
+                    if (financialDimensions == null) ...[
+                      'cost_center',
+                      'project',
+                    ],
                   ])
                     SizedBox(
                       width: 250,
@@ -473,11 +496,28 @@ class _LineEditor extends StatelessWidget {
                     onPressed: () => c.removeLine(index),
                     child: const Text('Remove line'),
                   ),
+                  if (financialDimensions != null)
+                    for (final kind in ['cost_centre', 'project'])
+                      FinancialDimensionButton(
+                        scope: c.scope,
+                        gateway: financialDimensions!,
+                        kind: kind,
+                        label: kind == 'cost_centre'
+                            ? 'Choose cost centre'
+                            : 'Choose project tag',
+                        enabled: c.online && !c.locked,
+                        onSelected: (row) =>
+                            c.financialDimension(index, kind, row),
+                      ),
                 ],
               )
             else
               SelectableText(
                 'Debit ${l['debit']} · credit ${l['credit']} · base ${l['base_amount'] ?? 'Calculated when saved'}\n${l['description'] ?? ''} · ${l['cost_center'] ?? ''} · ${l['project'] ?? ''}',
+              ),
+            if (financialDimensions != null)
+              Text(
+                'Cost centre: ${l['cost_center'] ?? 'Unassigned'} · Project: ${l['project'] ?? 'Unassigned'}',
               ),
             if (l['tax_definition_id'] != null) ...[
               const SizedBox(height: 12),

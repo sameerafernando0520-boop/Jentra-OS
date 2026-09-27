@@ -35,6 +35,10 @@ final class EncryptedDraftRepository {
   final JentraLocalDatabase _database;
   final DraftCipher _cipher;
 
+  /// Atomically seal/clear private body and its minimal receipt metadata.
+  Future<T> transaction<T>(Future<T> Function() work) =>
+      _database.transaction(work);
+
   Future<void> save({
     required String id,
     required String tenantId,

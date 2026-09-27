@@ -107,6 +107,12 @@ sealed recovery remains encrypted. Permission controls are revalidated on the se
 
 ## Verification boundary
 
+Contract [48](48_WAVE3_POSTED_JOURNAL_EVIDENCE_CONTRACT.md) adds contextual posted-
+journal links to this workspace. The destination rechecks current finance access
+in the actual journal branch and cost access for stock-linked commands. It reads
+immutable ledger evidence without changing the saved report or allocation command.
+Full source-document/attachment navigation remains separate.
+
 See `docs/verification/remaining-wave3/control-reconciliation-review-20260924.md`.
 Synthetic rollback assertions, client tests and rendered widget evidence establish
 candidate development behavior only. Installation, authenticated native use, actual

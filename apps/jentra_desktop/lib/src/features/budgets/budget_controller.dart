@@ -352,14 +352,18 @@ final class BudgetController extends ChangeNotifier {
     _emit();
   }
 
-  void addLine(String accountId) {
+  void addLine(String accountId, {bool allowDuplicate = false}) {
     if (locked ||
         !canManage ||
         !const {'local', 'draft', 'revision'}.contains(form['status'])) {
       return;
     }
     final lines = [...form['lines'] as List];
-    if (lines.any((x) => (x as Map)['account_id'] == accountId)) return;
+    if (lines.length >= 500 ||
+        !allowDuplicate &&
+            lines.any((x) => (x as Map)['account_id'] == accountId)) {
+      return;
+    }
     lines.add({
       'id': const Uuid().v4(),
       'account_id': accountId,
@@ -367,6 +371,56 @@ final class BudgetController extends ChangeNotifier {
       'cost_centre_id': null,
       'project_id': null,
     });
+    form = {...form, 'lines': lines};
+    _emit();
+  }
+
+  void financialDimension(
+    int index,
+    String kind,
+    Map<String, Object?>? choice,
+  ) {
+    if (locked ||
+        !online ||
+        _disposed ||
+        !canManage ||
+        !{'local', 'draft', 'revision'}.contains(form['status']) ||
+        !{'cost_centre', 'project'}.contains(kind)) {
+      return;
+    }
+    if (choice != null &&
+        (choice['status'] != 'active' ||
+            choice['kind'] != kind ||
+            choice['tenant_id'] != scope.tenantId ||
+            choice['legal_entity_id'] != scope.legalEntityId ||
+            choice['dimension_branch_id'] != null &&
+                choice['dimension_branch_id'] != form['branch_id'])) {
+      return;
+    }
+    final lines = [...form['lines'] as List];
+    if (index < 0 || index >= lines.length) return;
+    final row = (lines[index] as Map).cast<String, Object?>();
+    final basis = {...(row['dimension_snapshot'] as Map? ?? {})}..remove(kind);
+    if (choice != null) {
+      basis[kind] = {
+        for (final k in [
+          'id',
+          'tenant_id',
+          'legal_entity_id',
+          'kind',
+          'version',
+          'code',
+          'name',
+        ])
+          k: choice[k],
+        'branch_id': choice['dimension_branch_id'],
+      };
+    }
+    lines[index] = {
+      ...row,
+      '${kind}_id': choice?['id'],
+      'dimension_snapshot': basis.isEmpty ? null : basis,
+    };
     form = {...form, 'lines': lines};
     _emit();
   }
@@ -419,18 +473,33 @@ final class BudgetController extends ChangeNotifier {
         throw const FormatException('Add 1 to 500 budget accounts.');
       }
       final ids = <String>{};
+      final prior = <Map>[];
       for (final raw in lines) {
         final line = raw as Map;
         final value = line['amount'];
         if (line['account_id'] is! String ||
-            !ids.add(line['account_id'] as String) ||
+            !ids.add(line['id'] as String) ||
             value is! String ||
             !RegExp(r'^\d+(\.\d{1,6})?$').hasMatch(value) ||
             ExactDecimal.parse(value, scale: 6).isNegative) {
           throw const FormatException(
-            'Use a unique account and exact nonnegative amount.',
+            'Use valid lines and exact nonnegative amounts.',
           );
         }
+        for (final earlier in prior) {
+          if (earlier['account_id'] == line['account_id'] &&
+              ['cost_centre_id', 'project_id'].every(
+                (k) =>
+                    earlier[k] == null ||
+                    line[k] == null ||
+                    earlier[k] == line[k],
+              )) {
+            throw const FormatException(
+              'Budget dimension combinations must not overlap.',
+            );
+          }
+        }
+        prior.add(line);
       }
     }
     if (action == 'create') {

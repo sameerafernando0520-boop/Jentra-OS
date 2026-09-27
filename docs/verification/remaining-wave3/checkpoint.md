@@ -1,5 +1,82 @@
 # Remaining Wave 3 verification checkpoint
 
+## Posted journal evidence — 2026-09-28
+
+[journal-review-20260928.md](journal-review-20260928.md) records contract 48 and
+the additive permission-scoped posted ledger reader. Control/close/statement
+evidence links bind their originating context; every page rechecks actual branch
+and command-linked stock cost access. Exact FX, whole balance and frozen dimensions
+are preserved; stale/offline/denied reads clear evidence.
+
+All 36 ordered Wave 3 candidates precede synthetic fixtures. **801 finance,
+105 inventory and 169 receivables strict rollback assertions pass (1,075 total)**,
+with JIT enabled. **135 platform/storage and 181 desktop tests pass (316 total)**;
+full desktop/platform and changed-path analyzers are clean. Four full-scaffold light/dark
+1024×720 renders at 200% were inspected. Isolated Windows compilation passed in
+309.8 seconds, with 28 relevant source hashes matching. The earlier SDK approval
+review usage-limit failure cleared; analyzer reruns executed and passed.
+
+At 19:29:55 UTC Sep 27 the development ledger remains 36 through concurrent Wave 4
+calendar versions; this journal API and prior dimension/read-plan candidates are
+absent. All four finance fingerprints match. Index and stock-opening acceptance
+diffs are empty. Candidates remain UNAPPLIED; full Wave 3, installed/native,
+real contention/load and owner acceptance remain open.
+
+## JIT-enabled control read plan — 2026-09-27
+
+[control-read-review-20260927.md](control-read-review-20260927.md) records the
+additive contract 47 follow-up. All 35 candidates precede the synthetic fixtures.
+**775 procurement/finance, 105 inventory and 169 receivables assertions** pass
+with strict rollback and JIT enabled (1,049 total). The earlier oversized-basis
+timeout is resolved in this candidate fixture. Three recorded warm synthetic
+account-basis reads take 17.724, 15.116 and 14.988 ms. This is not load/p95 proof.
+The client contract is unchanged; the 123/169 client tests and isolated Windows
+build below remain applicable. At 19:23 UTC the ledger is still 36, the index and
+dimension schema remain unapplied, and all shared finance fingerprints match.
+
+## Governed dimensions and final-stack regression — 2026-09-27
+
+Current evidence is in [dimensions-review-20260927.md](dimensions-review-20260927.md).
+Contract 46 and additive candidate `20260926010000` add scoped cost-centre/project
+masters, frozen exact posting attribution, retirement-safe reversals and disjoint
+dimensional budgets. Named pickers and encrypted confirmation/recovery are tested.
+
+All 34 candidates precede the synthetic fixtures in the final-stack builder.
+**772 procurement/finance, 105 inventory and 169 receivables assertions** pass
+with strict rollback (1,046 total). **123 platform and 169 desktop tests** pass;
+changed Wave 3 paths have clean scoped analyzers. Six new 200% renders were
+inspected. Isolated Windows compilation passed in **112.7 seconds**, without
+launch; all 25 relevant source hashes match the compiled copy.
+
+At 19:10 UTC the development ledger remains **36** through the concurrent Wave 4
+calendar migration. Candidate tables/API/columns remain absent outside rollback
+and all four shared finance fingerprints match. Default-runtime query-plan/load
+proof, remaining development and installed/native/owner acceptance stay open.
+The prior checkpoint below remains historical evidence.
+
+## Consolidated close review and governed exports — 2026-09-26
+
+Current evidence is in [close-export-review-20260926.md](close-export-review-20260926.md).
+Contracts 43–44 and additive candidates `20260926008000` / `20260926009000`
+add all-branch inventory/GRNI/AR/AP/bank close evidence, live hard-close checks
+and complete filtered CSV/XLSX exports for six saved-report types. Exact frozen
+source attribution, current scope/MFA checks, atomic encrypted acknowledgement
+and byte-identical delivery recovery are tested.
+
+Final compositions pass **735 procurement/finance, 105 inventory and 169
+receivables strict rollback assertions** (1,009 total). **109 platform/storage
+and 148 desktop checks** pass; both full analyzers are clean. Six light/dark
+200% renders were visually inspected. Isolated compilation is recorded separately
+in the review; no native application was launched. The longer-path MSBuild failure
+is diagnostic history.
+
+At 17:36 UTC the development ledger remains **36** through the concurrent Wave 4
+calendar migration. The new close/export candidates are absent outside rollback;
+four shared finance hashes are unchanged. The index, authentication and stock-opening
+acceptance boundary are preserved. Dimensions, remaining operational reports,
+broader landed/count/disposition and cross-module work remain development gaps.
+Installation, native acceptance and owner signoff remain separate gates.
+
 ## GRNI receipt control continuation — 2026-09-26
 
 Current evidence is in [grni-review-20260926.md](grni-review-20260926.md).

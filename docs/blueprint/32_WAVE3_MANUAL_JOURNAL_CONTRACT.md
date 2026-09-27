@@ -11,8 +11,13 @@ history. It contains a description, reason, posting date, currency/rate context,
 2–200 exact lines, dimensions, attachment references, approval snapshot and the
 resulting journal ID. Lines have stable IDs, active posting-account references,
 description, optional cost-center/project labels and one positive debit or credit.
-Labels are descriptive dimensions, not new master-data entities. Scope is inherited
-from the document; clients cannot inject tenant/entity/branch dimensions.
+Historical labels remain descriptive. Additive contract
+[46](46_WAVE3_GOVERNED_FINANCIAL_DIMENSIONS_CONTRACT.md) supplies optional governed
+cost-centre/project identities and frozen versions through named scoped pickers.
+Scope is inherited from the document; clients cannot inject tenant/entity/branch
+dimensions. The existing posting engine remains unchanged; a private trigger
+derives nullable ledger identities from the approved manual source. Reversals
+retain the original basis after master retirement.
 
 Save, submit, recall, cancel, approve/reject and post are authenticated versioned
 commands. Save recomputes every total and conversion. Submission requires a configured

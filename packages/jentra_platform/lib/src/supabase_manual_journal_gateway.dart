@@ -1,5 +1,6 @@
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'supabase_financial_dimension_gateway.dart';
 
 abstract interface class ManualJournalGateway {
   Future<Map<String, Object?>> options(
@@ -114,6 +115,7 @@ final class SupabaseManualJournalGateway implements ManualJournalGateway {
           raw['account_id'] is! String) {
         throw const FormatException('Journal source lines are invalid.');
       }
+      FinancialDimensionEvidence.validate(raw, scope);
       final a = decimal(raw['debit']),
           b = decimal(raw['credit']),
           v = decimal(raw['base_amount'], signed: true);
@@ -309,6 +311,17 @@ final class SupabaseManualJournalGateway implements ManualJournalGateway {
           throw const FormatException('Invalid posted source identity.');
         }
         debit += decimal(raw['base_debit']);
+        final source = (r['lines'] as List).cast<Map>().firstWhere(
+          (x) => x['line_id'] == raw['source_line_id'],
+        );
+        if (raw['cost_centre_id'] != source['cost_centre_id'] ||
+            raw['project_id'] != source['project_id'] ||
+            !FinancialDimensionEvidence.same(
+              raw['dimension_snapshot'],
+              source['dimension_snapshot'],
+            )) {
+          throw const FormatException('Posted dimension source mismatch.');
+        }
         credit += decimal(raw['base_credit']);
         decimal(raw['transaction_debit']);
         decimal(raw['transaction_credit']);
@@ -369,6 +382,11 @@ final class SupabaseManualJournalGateway implements ManualJournalGateway {
           if (actual.length != expected.length) throw const FormatException();
           for (var i = 0; i < expected.length; i++) {
             final a = actual[i] as Map, e = expected[i] as Map;
+            FinancialDimensionEvidence.validate(a, command.context);
+            if (a['cost_centre_id'] != e['cost_centre_id'] ||
+                a['project_id'] != e['project_id']) {
+              throw const FormatException('Journal dimension changed.');
+            }
             if (a['line_id'] != e['line_id'] ||
                 a['account_id'] != e['account_id'] ||
                 decimal(a['debit']) != decimal(e['debit']) ||

@@ -10,6 +10,13 @@ import 'features/manual_journal/manual_journal_controller.dart';
 import 'features/manual_journal/manual_journal_screen.dart';
 import 'features/control_reconciliation/control_reconciliation_controller.dart';
 import 'features/control_reconciliation/control_reconciliation_screen.dart';
+import 'features/close_review/close_review_controller.dart';
+import 'features/close_review/close_review_screen.dart';
+import 'features/journal_evidence/posted_journal_screen.dart';
+import 'features/financial_dimensions/financial_dimension_controller.dart';
+import 'features/financial_dimensions/financial_dimension_screen.dart';
+import 'features/report_export/report_export_controller.dart';
+import 'features/report_export/report_export_screen.dart';
 import 'features/bank_reconciliation/bank_reconciliation_controller.dart';
 import 'features/bank_reconciliation/bank_reconciliation_screen.dart';
 import 'features/period_fx/period_fx_controller.dart';
@@ -26,6 +33,10 @@ import 'features/people/employee_controller.dart';
 import 'features/people/employee_screen.dart';
 import 'features/people/calendar_controller.dart';
 import 'features/people/calendar_screen.dart';
+import 'features/people/organization_controller.dart';
+import 'features/people/organization_screen.dart';
+import 'features/people/private_hr_controller.dart';
+import 'features/people/private_hr_screen.dart';
 import 'features/auth/login_screen.dart';
 import 'features/catalogue/component_catalogue_screen.dart';
 import 'features/crm/crm_screen.dart';
@@ -102,6 +113,17 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/dashboard',
             builder: (context, state) => const DashboardScreen(),
+          ),
+          GoRoute(
+            path: '/finance/journal-evidence',
+            builder: (context, state) => PostedJournalScreen(
+              target: (
+                tenantId: state.uri.queryParameters['tenant'] ?? '',
+                entityId: state.uri.queryParameters['entity'] ?? '',
+                branchId: state.uri.queryParameters['branch'] ?? '',
+                journalId: state.uri.queryParameters['journal'] ?? '',
+              ),
+            ),
           ),
           GoRoute(
             path: '/setup',
@@ -190,6 +212,46 @@ final routerProvider = Provider<GoRouter>((ref) {
                 await ref
                     .read(controlReconciliationControllerProvider)
                     ?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/finance/close-review',
+            builder: (context, state) => const CloseReviewScreen(),
+            onExit: (context, state) async =>
+                await ref.read(closeReviewControllerProvider)?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/finance/dimensions',
+            builder: (context, state) => const FinancialDimensionScreen(),
+            onExit: (context, state) async =>
+                await ref
+                    .read(financialDimensionControllerProvider)
+                    ?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/finance/report-export',
+            builder: (context, state) => ReportExportScreen(
+              initial: {
+                'source_type': state.uri.queryParameters['source'],
+                'source_id': state.uri.queryParameters['id'],
+                'section': state.uri.queryParameters['section'],
+                'filters': {
+                  for (final key in [
+                    'account_id',
+                    'evidence_key',
+                    'source_line_id',
+                    'budget_line_id',
+                    'component_key',
+                  ])
+                    if (state.uri.queryParameters[key] != null)
+                      key: state.uri.queryParameters[key],
+                },
+              },
+            ),
+            onExit: (context, state) async =>
+                await ref.read(reportExportControllerProvider)?.canLeave() ??
                 true,
           ),
           GoRoute(
@@ -315,6 +377,18 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const CalendarScreen(),
             onExit: (context, state) async =>
                 await ref.read(calendarControllerProvider)?.canLeave() ?? true,
+          ),
+          GoRoute(
+            path: '/people/organization',
+            builder: (context, state) => const OrganizationScreen(),
+            onExit: (context, state) async =>
+                await ref.read(organizationControllerProvider)?.canLeave() ?? true,
+          ),
+          GoRoute(
+            path: '/people/private',
+            builder: (context, state) => const PrivateHrScreen(),
+            onExit: (context, state) async =>
+                await ref.read(privateHrControllerProvider)?.canLeave() ?? true,
           ),
           for (final module in const [
             (

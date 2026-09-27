@@ -49,6 +49,12 @@ Additional Wave 3 finance candidate contracts:
 - [38_WAVE3_TAX_SUMMARY_CONTRACT.md](38_WAVE3_TAX_SUMMARY_CONTRACT.md) — posted tax review, complete control reconciliation, governed tax declarations and control movements.
 - [39_WAVE3_GRNI_CONTROL_RECONCILIATION_CONTRACT.md](39_WAVE3_GRNI_CONTROL_RECONCILIATION_CONTRACT.md) — original-account receipt accrual, dated bill/return/reversal evidence and immutable GRNI source-to-GL differences.
 
+- [43_WAVE3_CLOSE_CONTROL_REVIEW_CONTRACT.md](43_WAVE3_CLOSE_CONTROL_REVIEW_CONTRACT.md) — entity-wide frozen inventory, AR/AP, GRNI and bank evidence with live close integration.
+- [44_WAVE3_GOVERNED_REPORT_EXPORT_CONTRACT.md](44_WAVE3_GOVERNED_REPORT_EXPORT_CONTRACT.md) — scoped complete frozen CSV/XLSX evidence, attributable export jobs and encrypted local-delivery recovery.
+- [46_WAVE3_GOVERNED_FINANCIAL_DIMENSIONS_CONTRACT.md](46_WAVE3_GOVERNED_FINANCIAL_DIMENSIONS_CONTRACT.md) — governed cost-centre/project masters, immutable posting attribution and disjoint dimensional budgets.
+- [47_WAVE3_CONTROL_READ_PLAN_CONTRACT.md](47_WAVE3_CONTROL_READ_PLAN_CONTRACT.md) — scoped deduplicated stock-command account basis and JIT-enabled rollback read-plan evidence.
+- [48_WAVE3_POSTED_JOURNAL_EVIDENCE_CONTRACT.md](48_WAVE3_POSTED_JOURNAL_EVIDENCE_CONTRACT.md) — exact scoped posted-journal drill-through, bounded pages and contextual desktop links.
+
 The [remaining Wave 3 status](../development/remaining-wave3-status.md) separates
 candidate development/test evidence from installed and native acceptance.
 

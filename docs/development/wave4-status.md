@@ -1,8 +1,37 @@
 # Wave 4 kickoff and delivery status
 
-Updated: 2026-09-26. User instruction: **start wave 4**, then **continue**.
+Updated: 2026-09-27. User instruction: complete all remaining approved synthetic
+Wave 4 development, work solo and continue independent work across pending gates.
 
 ## Current checkpoint
+
+Continuation is active. Employee and calendar baseline installations are preserved.
+The new organization/instant-resolution candidates are **unapplied**:
+`20260926160000_wave4_calendar_resolution.sql` (25 rollback assertions) and
+`20260926161000_wave4_organization.sql` (53 rollback assertions). Organization
+includes dated department/manager cycles, employee/calendar coverage, consumed
+input guards, explicit future ending/withdrawal and immutable attributable history.
+The native `/people/organization` workspace, typed gateway and actor/scope/aggregate
+encrypted recovery exist. Its focused checks passed 7 domain, 14 platform and
+15 desktop tests. Five calendar instant-preview desktop tests passed; the new
+UTC resolver has six domain checks and three gateway checks. Rendered review is
+being finalized and an isolated Windows build is next; neither candidate has an
+installation approval or authenticated acceptance result yet.
+
+The employee/calendar installed regressions passed 49/65 assertions with the
+organization candidate present before the final withdrawal extension; final
+regression confirmation is required for the installation review. The development
+refresh still shows ACTIVE_HEALTHY, PostgreSQL 17.6.1.166, 36 migrations through
+`20260926082441`, no organization/resolver installation, zero employee/calendar
+fixtures and no `w4-employee-synthetic` tenant. The earlier bootstrap reconciliation
+question remains pending; no acceptance-lab subscription or owner identity changed.
+
+Next: finalize this candidate review/build while implementing W4-02B private HR,
+then attendance/leave, payroll, projects, service, assets and integrated verification.
+The full [gap matrix](wave4-gap-matrix.md) remains open. Concurrent Wave 3 contracts
+43/44/46 and their candidates/source/evidence remain owned by the other task.
+
+## Installed baseline and earlier checkpoints
 
 Wave 4 specification and the first employee development slice are prepared:
 

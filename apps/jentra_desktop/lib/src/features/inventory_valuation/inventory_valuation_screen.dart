@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app_providers.dart';
 import 'inventory_valuation_controller.dart';
+import '../report_export/report_export_screen.dart';
 
 class InventoryValuationScreen extends ConsumerWidget {
   const InventoryValuationScreen({super.key});
@@ -22,13 +23,23 @@ class InventoryValuationScreen extends ConsumerWidget {
         ? const Center(
             child: Text('Choose a scope with stock, cost and finance access.'),
           )
-        : InventoryValuationWorkspace(key: ValueKey(c), controller: c);
+        : InventoryValuationWorkspace(
+            key: ValueKey(c),
+            controller: c,
+            allowExport:
+                caps.value?.contains('finance.reports.export') ?? false,
+          );
   }
 }
 
 class InventoryValuationWorkspace extends StatelessWidget {
-  const InventoryValuationWorkspace({required this.controller, super.key});
+  const InventoryValuationWorkspace({
+    required this.controller,
+    super.key,
+    this.allowExport = false,
+  });
   final InventoryValuationController controller;
+  final bool allowExport;
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: controller,
@@ -144,6 +155,14 @@ class InventoryValuationWorkspace extends StatelessWidget {
             ),
           ],
           if (s.isNotEmpty) ...[
+            if (allowExport)
+              ReportExportLink(
+                sourceType: 'inventory',
+                sourceId: s['id'] as String,
+                section: c.section,
+                filters: {'evidence_key': c.evidenceKey},
+                enabled: c.online && !c.busy,
+              ),
             const SizedBox(height: 20),
             Card(
               child: Padding(

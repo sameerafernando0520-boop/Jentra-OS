@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../app_providers.dart';
 import 'financial_statement_controller.dart';
+import '../report_export/report_export_screen.dart';
+import '../journal_evidence/posted_journal_screen.dart';
 
 class FinancialStatementScreen extends ConsumerWidget {
   const FinancialStatementScreen({super.key});
@@ -28,6 +30,9 @@ class FinancialStatementScreen extends ConsumerWidget {
         : FinancialStatementWorkspace(
             key: ValueKey(controller),
             controller: controller,
+            allowJournal: access.value?.contains('finance.view') ?? false,
+            allowExport:
+                access.value?.contains('finance.reports.export') ?? false,
             canConfigureCashFlow:
                 access.value?.contains('finance.cash_flow.configure') ?? false,
           );
@@ -39,9 +44,13 @@ class FinancialStatementWorkspace extends StatelessWidget {
     super.key,
     required this.controller,
     this.canConfigureCashFlow = false,
+    this.allowExport = false,
+    this.allowJournal = false,
   });
   final FinancialStatementController controller;
   final bool canConfigureCashFlow;
+  final bool allowExport;
+  final bool allowJournal;
 
   static const labels = {
     'trial_balance': 'Trial balance',
@@ -304,6 +313,14 @@ class FinancialStatementWorkspace extends StatelessWidget {
                 child: const Text('More reports'),
               ),
             if (summary.isNotEmpty) ...[
+              if (allowExport)
+                ReportExportLink(
+                  sourceType: 'statement',
+                  sourceId: summary['id'] as String,
+                  section: c.section,
+                  filters: {'account_id': c.accountId},
+                  enabled: c.online && c.verified && !c.busy,
+                ),
               const Divider(height: 40),
               Text(
                 '${labels[summary['kind']] ?? summary['kind']} · ${summary['as_of']}',
@@ -438,11 +455,28 @@ class FinancialStatementWorkspace extends StatelessWidget {
                   ),
                   trailing: c.section == 'accounts'
                       ? const Icon(Icons.account_tree_outlined)
+                      : allowJournal && row['journal_entry_id'] is String
+                      ? const Tooltip(
+                          message: 'Open posted journal',
+                          child: Icon(Icons.receipt_long_outlined),
+                        )
                       : null,
+                  // Keep the frozen report page; the destination rechecks live access.
                   onTap: c.section == 'accounts' && !c.busy
                       ? () => c.chooseSection(
                           'journals',
                           account: row['account_id'] as String,
+                        )
+                      : allowJournal &&
+                            c.online &&
+                            c.verified &&
+                            !c.busy &&
+                            row['journal_entry_id'] is String
+                      ? () => context.push(
+                          postedJournalLocation(
+                            c.scope,
+                            row['journal_entry_id'] as String,
+                          ),
                         )
                       : null,
                 ),

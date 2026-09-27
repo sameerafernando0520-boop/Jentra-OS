@@ -1,0 +1,41 @@
+Waiting for another flutter command to release the startup lock...
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/financial_dimension_workspace_test.dart
+test/financial_dimension_workspace_test.dart:62:10: Error: Method not found: 'destinationsFor'.
+  expect(destinationsFor(capabilities:{'finance.view'}).any((x)=>x.path=='/finance/dimensions'),false);
+         ^^^^^^^^^^^^^^^
+test/financial_dimension_workspace_test.dart:63:10: Error: Method not found: 'destinationsFor'.
+  expect(destinationsFor(capabilities:{'finance.view','finance.dimensions.manage'}).any((x)=>x.path=='/finance/dimensions'),true);
+         ^^^^^^^^^^^^^^^
+test/financial_dimension_workspace_test.dart:153:58: Error: The argument type 'ThemeData Function({JentraDensity density})' can't be assigned to the parameter type 'ThemeData?'.
+ - 'ThemeData' is from 'package:flutter/src/material/theme_data.dart' ('/C:/src/flutter/packages/flutter/lib/src/material/theme_data.dart').
+ - 'JentraDensity' is from 'package:jentra_design_system/src/tokens.dart' ('../../packages/jentra_design_system/lib/src/tokens.dart').
+   await tester.pumpWidget(MaterialApp(theme:JentraTheme.light,darkTheme:JentraTheme.dark,
+                                                         ^
+test/financial_dimension_workspace_test.dart:153:86: Error: The argument type 'ThemeData Function({JentraDensity density})' can't be assigned to the parameter type 'ThemeData?'.
+ - 'ThemeData' is from 'package:flutter/src/material/theme_data.dart' ('/C:/src/flutter/packages/flutter/lib/src/material/theme_data.dart').
+ - 'JentraDensity' is from 'package:jentra_design_system/src/tokens.dart' ('../../packages/jentra_design_system/lib/src/tokens.dart').
+   await tester.pumpWidget(MaterialApp(theme:JentraTheme.light,darkTheme:JentraTheme.dark,
+                                                                                     ^
+00:00 +0 -1: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/financial_dimension_workspace_test.dart [E]
+  Failed to load "C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/financial_dimension_workspace_test.dart":
+  Compilation failed for testPath=C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/financial_dimension_workspace_test.dart: test/financial_dimension_workspace_test.dart:62:10: Error: Method not found: 'destinationsFor'.
+    expect(destinationsFor(capabilities:{'finance.view'}).any((x)=>x.path=='/finance/dimensions'),false);
+           ^^^^^^^^^^^^^^^
+  test/financial_dimension_workspace_test.dart:63:10: Error: Method not found: 'destinationsFor'.
+    expect(destinationsFor(capabilities:{'finance.view','finance.dimensions.manage'}).any((x)=>x.path=='/finance/dimensions'),true);
+           ^^^^^^^^^^^^^^^
+  test/financial_dimension_workspace_test.dart:153:58: Error: The argument type 'ThemeData Function({JentraDensity density})' can't be assigned to the parameter type 'ThemeData?'.
+   - 'ThemeData' is from 'package:flutter/src/material/theme_data.dart' ('/C:/src/flutter/packages/flutter/lib/src/material/theme_data.dart').
+   - 'JentraDensity' is from 'package:jentra_design_system/src/tokens.dart' ('../../packages/jentra_design_system/lib/src/tokens.dart').
+     await tester.pumpWidget(MaterialApp(theme:JentraTheme.light,darkTheme:JentraTheme.dark,
+                                                           ^
+  test/financial_dimension_workspace_test.dart:153:86: Error: The argument type 'ThemeData Function({JentraDensity density})' can't be assigned to the parameter type 'ThemeData?'.
+   - 'ThemeData' is from 'package:flutter/src/material/theme_data.dart' ('/C:/src/flutter/packages/flutter/lib/src/material/theme_data.dart').
+   - 'JentraDensity' is from 'package:jentra_design_system/src/tokens.dart' ('../../packages/jentra_design_system/lib/src/tokens.dart').
+     await tester.pumpWidget(MaterialApp(theme:JentraTheme.light,darkTheme:JentraTheme.dark,
+                                                                                       ^
+  .
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/financial_dimension_workspace_test.dart: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/financial_dimension_workspace_test.dart

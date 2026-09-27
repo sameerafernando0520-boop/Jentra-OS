@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jentra_platform/jentra_finance_platform.dart';
 
 import '../../app_providers.dart';
 import 'budget_controller.dart';
+import '../report_export/report_export_screen.dart';
+import '../financial_dimensions/financial_dimension_controller.dart';
+import '../financial_dimensions/financial_dimension_screen.dart';
 
 class BudgetScreen extends ConsumerWidget {
   const BudgetScreen({super.key});
@@ -24,13 +28,26 @@ class BudgetScreen extends ConsumerWidget {
     final controller = ref.watch(budgetControllerProvider);
     return controller == null
         ? const Center(child: Text('Choose a branch with finance access.'))
-        : BudgetWorkspace(key: ValueKey(controller), controller: controller);
+        : BudgetWorkspace(
+            key: ValueKey(controller),
+            controller: controller,
+            financialDimensions: ref.watch(financialDimensionGatewayProvider),
+            allowExport:
+                access.value?.contains('finance.reports.export') ?? false,
+          );
   }
 }
 
 class BudgetWorkspace extends StatelessWidget {
-  const BudgetWorkspace({super.key, required this.controller});
+  const BudgetWorkspace({
+    super.key,
+    required this.controller,
+    this.allowExport = false,
+    this.financialDimensions,
+  });
   final BudgetController controller;
+  final bool allowExport;
+  final FinancialDimensionGateway? financialDimensions;
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
@@ -102,8 +119,10 @@ class BudgetWorkspace extends StatelessWidget {
               'Approve a version before comparing it with posted journals. Each variance report keeps its original figures and source lines.',
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Budgets use account, entity, branch, period and currency. Cost centre and project budgets become available when those governed dimensions are configured.',
+            Text(
+              financialDimensions == null
+                  ? 'Budgets use account, entity, branch, period and currency. Cost centre and project budgets become available when those governed dimensions are configured.'
+                  : 'Choose governed cost centres and project tags for disjoint account plans. An unassigned dimension includes every value; overlapping plans are rejected.',
             ),
             if (c.error != null) ...[
               const SizedBox(height: 12),
@@ -301,6 +320,26 @@ class BudgetWorkspace extends StatelessWidget {
                           onPressed: editable ? () => c.removeLine(i) : null,
                           icon: const Icon(Icons.remove_circle_outline),
                         ),
+                        for (final kind in ['cost_centre', 'project']) ...[
+                          if ((line['dimension_snapshot'] as Map?)?[kind] !=
+                              null)
+                            Text(
+                              '${((line['dimension_snapshot'] as Map)[kind] as Map)['code']} · ${((line['dimension_snapshot'] as Map)[kind] as Map)['name']}',
+                            ),
+                          if (editable && financialDimensions != null)
+                            FinancialDimensionButton(
+                              scope: c.scope,
+                              gateway: financialDimensions!,
+                              kind: kind,
+                              entityOnly: c.form['branch_id'] == null,
+                              label: kind == 'cost_centre'
+                                  ? 'Choose cost centre'
+                                  : 'Choose project tag',
+                              enabled: c.online && !c.locked,
+                              onSelected: (row) =>
+                                  c.financialDimension(i, kind, row),
+                            ),
+                        ],
                       ],
                     ),
                   );
@@ -327,11 +366,16 @@ class BudgetWorkspace extends StatelessWidget {
                     ActionChip(
                       label: Text('${account['code']} · ${account['name']}'),
                       onPressed:
-                          lines.any(
-                            (x) => (x as Map)['account_id'] == account['id'],
-                          )
+                          financialDimensions == null &&
+                              lines.any(
+                                (x) =>
+                                    (x as Map)['account_id'] == account['id'],
+                              )
                           ? null
-                          : () => c.addLine(account['id'] as String),
+                          : () => c.addLine(
+                              account['id'] as String,
+                              allowDuplicate: financialDimensions != null,
+                            ),
                     ),
                   if (c.accountCursor != null)
                     TextButton(
@@ -510,6 +554,14 @@ class BudgetWorkspace extends StatelessWidget {
                 child: const Text('More reports'),
               ),
             if (c.summary.isNotEmpty) ...[
+              if (allowExport)
+                ReportExportLink(
+                  sourceType: 'budget',
+                  sourceId: c.summary['id'] as String,
+                  section: c.section,
+                  filters: {'budget_line_id': c.budgetLineId},
+                  enabled: c.online && c.verified && !c.busy,
+                ),
               const SizedBox(height: 24),
               Text(
                 'Frozen variance at ${c.summary['as_of']}',
@@ -526,8 +578,12 @@ class BudgetWorkspace extends StatelessWidget {
                   metric('Budget', c.summary['budget_total']),
                   metric('Actual', c.summary['actual_total']),
                   metric('Variance', c.summary['variance_total']),
-                  metric('Variance %', c.summary['variance_percent'] == null
-                      ? null : '${c.summary['variance_percent']}%'),
+                  metric(
+                    'Variance %',
+                    c.summary['variance_percent'] == null
+                        ? null
+                        : '${c.summary['variance_percent']}%',
+                  ),
                 ],
               ),
               const SizedBox(height: 12),

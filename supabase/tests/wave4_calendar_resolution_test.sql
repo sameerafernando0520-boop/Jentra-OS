@@ -1,0 +1,108 @@
+create extension if not exists pgtap with schema extensions;
+set local search_path=extensions,public,pg_catalog;
+set local timezone='UTC';
+select no_plan();
+select is(people.resolve_local_instant('Asia/Colombo','2026-09-26 09:00'),
+  '2026-09-26 03:30Z'::timestamptz,'AC-405 normal local boundary resolves exactly');
+select is(jsonb_array_length(people.local_instant_candidates('America/New_York','2026-03-08 02:30')),
+  0,'AC-405 DST gap has no instant');
+select throws_ok($$select people.resolve_local_instant('America/New_York','2026-03-08 02:30')$$,
+  '22023','CALENDAR_LOCAL_TIME_NONEXISTENT','AC-405 gap cannot normalize');
+select is(jsonb_array_length(people.local_instant_candidates('America/New_York','2026-11-01 01:30')),
+  2,'AC-405 DST fold returns both choices');
+select throws_ok($$select people.resolve_local_instant('America/New_York','2026-11-01 01:30')$$,
+  '22023','CALENDAR_OFFSET_SELECTION_REQUIRED','AC-405 fold needs explicit offset');
+select is(people.resolve_local_instant('America/New_York','2026-11-01 01:30',-14400),
+  '2026-11-01 05:30Z'::timestamptz,'AC-405 first fold alternative');
+select is(people.resolve_local_instant('America/New_York','2026-11-01 01:30',-18000),
+  '2026-11-01 06:30Z'::timestamptz,'AC-405 second fold alternative');
+select throws_ok($$select people.resolve_local_instant('America/New_York','2026-11-01 01:30',0)$$,
+  '22023','CALENDAR_OFFSET_INVALID','AC-405 unrelated offset is rejected');
+select is(jsonb_array_length(people.local_instant_candidates('Australia/Lord_Howe','2026-04-05 01:45')),
+  2,'AC-405 half-hour fold returns both choices');
+select is(jsonb_array_length(people.local_instant_candidates('Australia/Lord_Howe','2026-10-04 02:15')),
+  0,'AC-405 half-hour gap rejected');
+select is(jsonb_array_length(people.local_instant_candidates('Pacific/Apia','2011-12-30 12:00')),
+  0,'AC-405 skipped civil day rejected');
+select is(people.resolve_local_instant('Asia/Colombo','1900-01-01 06:30'),
+  '1900-01-01 01:10:28Z'::timestamptz,'AC-405 historical second offset retained');
+select is(extract(epoch from people.resolve_local_instant('America/New_York','2026-03-08 04:00')-
+  people.resolve_local_instant('America/New_York','2026-03-07 22:00'))::integer,18000,
+  'AC-405 overnight spring duration is five exact hours');
+select is(extract(epoch from people.resolve_local_instant('America/New_York','2026-11-01 04:00')-
+  people.resolve_local_instant('America/New_York','2026-10-31 22:00'))::integer,25200,
+  'AC-405 overnight autumn duration is seven exact hours');
+select throws_ok($$select people.local_instant_candidates('Unknown/Zone','2026-09-26 09:00')$$,
+  '22023','CALENDAR_LOCAL_BOUNDARY_INVALID','AC-405 unknown zone is rejected');
+select ok(not has_function_privilege('authenticated',
+  'people.resolve_local_instant(text,timestamp,integer)','EXECUTE'),
+  'AC-401 internal resolver cannot bypass scoped calendar API');
+select ok(not has_function_privilege('anon',
+  'api.people_calendar_local_candidates(uuid,uuid,uuid,uuid,date,integer)','EXECUTE'),
+  'AC-401 anonymous resolution forbidden');
+select ok(has_function_privilege('authenticated',
+  'api.people_calendar_local_candidates(uuid,uuid,uuid,uuid,date,integer)','EXECUTE'),
+  'AC-401 signed-in resolution uses scoped API');
+-- Use a distinct rollback-only tenant and actor. No persistent owner/account is fabricated.
+create function pg_temp.rid(p text) returns uuid language sql immutable as
+  $$select md5('wave4-resolution-20260926:'||p)::uuid$$;
+insert into auth.users(id,instance_id,aud,role,email,encrypted_password,created_at,updated_at)
+values(pg_temp.rid('actor'),'00000000-0000-0000-0000-000000000000',
+  'authenticated','authenticated','resolution@jentra.test','',now(),now());
+insert into core.tenants(id,name,slug,created_by) values
+  (pg_temp.rid('tenant'),'Resolution Rollback','w4-resolution-rollback',pg_temp.rid('actor'));
+insert into core.legal_entities(id,tenant_id,name,code,timezone,created_by) values
+  (pg_temp.rid('entity'),pg_temp.rid('tenant'),'Resolution Entity','RES','Asia/Colombo',pg_temp.rid('actor'));
+insert into core.branches(id,tenant_id,legal_entity_id,name,code,created_by) values
+  (pg_temp.rid('branch'),pg_temp.rid('tenant'),pg_temp.rid('entity'),'HQ','HQ',pg_temp.rid('actor'));
+insert into core.memberships(id,tenant_id,user_id,status) values
+  (pg_temp.rid('membership'),pg_temp.rid('tenant'),pg_temp.rid('actor'),'active');
+insert into core.roles(id,tenant_id,code,name) values
+  (pg_temp.rid('role'),pg_temp.rid('tenant'),'resolver','Resolver');
+insert into core.role_permissions(tenant_id,role_id,permission_code)
+select pg_temp.rid('tenant'),pg_temp.rid('role'),p
+from unnest(array['people.view','people.calendars.view']) p;
+insert into core.role_assignments(tenant_id,membership_id,role_id,legal_entity_id,branch_id,created_by)
+values(pg_temp.rid('tenant'),pg_temp.rid('membership'),pg_temp.rid('role'),
+  pg_temp.rid('entity'),pg_temp.rid('branch'),pg_temp.rid('actor'));
+insert into billing.plans(code,name) values('w4_resolution_rollback','Resolution rollback');
+insert into billing.plan_entitlements(plan_code,entitlement_code,enabled)
+values('w4_resolution_rollback','module.people',true);
+insert into billing.tenant_subscriptions(tenant_id,plan_code,status,seats,trial_ends_at)
+values(pg_temp.rid('tenant'),'w4_resolution_rollback','trialing',1,now()+interval '1 day');
+insert into people.work_calendars(id,tenant_id,legal_entity_id,code,name,created_by,updated_by)
+values(pg_temp.rid('calendar'),pg_temp.rid('tenant'),pg_temp.rid('entity'),'RES','Resolution',
+  pg_temp.rid('actor'),pg_temp.rid('actor'));
+insert into people.work_calendar_versions(id,tenant_id,legal_entity_id,calendar_id,
+  start_date,end_date_exclusive,timezone,weekly_intervals,date_overrides,published_by)
+values(pg_temp.rid('version'),pg_temp.rid('tenant'),pg_temp.rid('entity'),pg_temp.rid('calendar'),
+  '2026-01-01','2027-01-01','America/New_York','[]','[]',pg_temp.rid('actor'));
+select set_config('request.jwt.claims',jsonb_build_object('sub',pg_temp.rid('actor'),
+  'role','authenticated','aal','aal1')::text,true);
+select set_config('request.jwt.claim.sub',pg_temp.rid('actor')::text,true);
+set local role authenticated;
+select is((api.people_calendar_local_candidates(pg_temp.rid('tenant'),pg_temp.rid('entity'),
+  pg_temp.rid('branch'),pg_temp.rid('version'),'2026-11-01',90)#>>'{resolution,timezone}'),
+  'America/New_York','AC-405 resolver freezes the referenced calendar timezone');
+select is(jsonb_array_length(api.people_calendar_local_candidates(pg_temp.rid('tenant'),pg_temp.rid('entity'),
+  pg_temp.rid('branch'),pg_temp.rid('version'),'2026-11-01',90)#>'{resolution,candidates}'),
+  2,'AC-405 scoped API retains fold choices');
+select throws_ok($$select api.people_calendar_local_candidates(pg_temp.rid('tenant'),pg_temp.rid('entity'),
+  pg_temp.rid('branch'),pg_temp.rid('version'),'2027-01-01',90)$$,
+  '22023','CALENDAR_LOCAL_BOUNDARY_INVALID','AC-405 exclusive coverage end rejected');
+select throws_ok($$select api.people_calendar_local_candidates(pg_temp.rid('tenant'),pg_temp.rid('entity'),
+  pg_temp.rid('branch'),pg_temp.rid('version'),'2026-11-01',1440)$$,
+  '22023','CALENDAR_LOCAL_BOUNDARY_INVALID','AC-405 minute bound checked');
+select throws_ok($$select api.people_calendar_local_candidates(pg_temp.rid('tenant'),pg_temp.rid('entity'),
+  pg_temp.rid('branch'),pg_temp.rid('foreign-version'),'2026-11-01',90)$$,
+  'P0002','CALENDAR_NOT_FOUND','AC-401 unknown version has uniform not-found');
+select throws_ok($$select api.people_calendar_local_candidates(pg_temp.rid('other-tenant'),pg_temp.rid('entity'),
+  pg_temp.rid('branch'),pg_temp.rid('version'),'2026-11-01',90)$$,
+  '42501',null,'AC-401 cross-tenant resolution denied');
+reset role;
+update billing.plan_entitlements set enabled=false where plan_code='w4_resolution_rollback';
+set local role authenticated;
+select throws_ok($$select api.people_calendar_local_candidates(pg_temp.rid('tenant'),pg_temp.rid('entity'),
+  pg_temp.rid('branch'),pg_temp.rid('version'),'2026-11-01',90)$$,
+  '42501','PEOPLE_ENTITLEMENT_REQUIRED','AC-401 revoked entitlement blocks resolution');
+reset role;

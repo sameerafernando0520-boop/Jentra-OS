@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:jentra_domain/jentra_domain.dart';
+import 'package:jentra_domain/jentra_people.dart';
 import 'package:jentra_platform/jentra_people_platform.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -397,6 +398,106 @@ void main() {
       }
     },
   );
+  test(
+    'AC-405 local resolver binds version zone boundary and exact UTC',
+    () async {
+      final version = CalendarVersionDetail.fromJson(
+        detail()['calendar_version'] as Map<String, Object?>,
+      );
+      response = {
+        'tenant_id': _tenant,
+        'legal_entity_id': _entity,
+        'branch_id': _branch,
+        'resolution': {
+          'calendar_version_id': _version,
+          'date': '2026-09-26',
+          'minute': 540,
+          'timezone': 'Asia/Colombo',
+          'local_datetime': '2026-09-26T09:00:00',
+          'algorithm': 'pg-iana-roundtrip-v1',
+          'candidates': [
+            {'utc': '2026-09-26T03:30:00Z', 'offset_seconds': 19800},
+          ],
+        },
+      };
+      final result = await gateway.localCandidates(
+        _scope,
+        version,
+        CivilDate.parse('2026-09-26'),
+        540,
+      );
+      expect(result.choose().utc, DateTime.utc(2026, 9, 26, 3, 30));
+      final sent = jsonDecode(requests.single.body) as Map;
+      expect(sent['p_version_id'], _version);
+      expect(sent['p_branch_id'], _branch);
+      expect(sent['p_minute'], 540);
+      expect(
+        requests.single.url.path,
+        endsWith('/rpc/people_calendar_local_candidates'),
+      );
+    },
+  );
+  test(
+    'AC-401 resolution response cannot substitute scope or calendar zone',
+    () async {
+      final version = CalendarVersionDetail.fromJson(
+        detail()['calendar_version'] as Map<String, Object?>,
+      );
+      final row = {
+        'calendar_version_id': _version,
+        'date': '2026-09-26',
+        'minute': 540,
+        'timezone': 'Asia/Colombo',
+        'local_datetime': '2026-09-26T09:00:00',
+        'algorithm': 'pg-iana-roundtrip-v1',
+        'candidates': [
+          {'utc': '2026-09-26T03:30:00Z', 'offset_seconds': 19800},
+        ],
+      };
+      for (final replacement in [
+        {'tenant_id': _actor},
+        {'branch_id': _actor},
+        {
+          'resolution': {...row, 'timezone': 'Asia/Kolkata'},
+        },
+        {
+          'resolution': {...row, 'calendar_version_id': _calendar},
+        },
+      ]) {
+        response = {
+          'tenant_id': _tenant,
+          'legal_entity_id': _entity,
+          'branch_id': _branch,
+          'resolution': row,
+          ...replacement,
+        };
+        await expectLater(
+          gateway.localCandidates(
+            _scope,
+            version,
+            CivilDate.parse('2026-09-26'),
+            540,
+          ),
+          throwsFormatException,
+        );
+      }
+    },
+  );
+  test('AC-405 out-of-coverage resolution is rejected before RPC', () async {
+    final version = CalendarVersionDetail.fromJson(
+      detail()['calendar_version'] as Map<String, Object?>,
+    );
+    await expectLater(
+      gateway.localCandidates(
+        _scope,
+        version,
+        CivilDate.parse('2027-01-01'),
+        540,
+      ),
+      throwsFormatException,
+    );
+    expect(requests, isEmpty);
+  });
   test('actor substitution is rejected before a calendar request', () async {
     await expectLater(
       gateway.directory(

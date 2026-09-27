@@ -5,6 +5,7 @@ import 'package:jentra_domain/jentra_people.dart';
 
 import '../../app_providers.dart';
 import 'calendar_controller.dart';
+import 'calendar_resolution_dialog.dart';
 
 class CalendarScreen extends ConsumerWidget {
   const CalendarScreen({super.key});
@@ -397,6 +398,35 @@ class _CalendarWorkspaceState extends State<CalendarWorkspace> {
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               Text('Local times · ${version.summary.coverage.timezone}'),
+              if (c.repository case final CalendarInstantResolver resolver)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: _button(
+                    'Resolve local time',
+                    c.busy || !c.online
+                        ? null
+                        : () => showDialog<void>(
+                            context: context,
+                            builder: (_) => Consumer(
+                              builder: (context, ref, _) {
+                                final current = ref.watch(
+                                  calendarControllerProvider,
+                                );
+                                return CalendarResolutionDialog(
+                                  resolver: resolver,
+                                  scope: c.scope,
+                                  version: version,
+                                  isCurrent: () =>
+                                      identical(current, c) &&
+                                      !c.accessDenied &&
+                                      c.detail?.summary.coverage.id ==
+                                          version.summary.coverage.id,
+                                );
+                              },
+                            ),
+                          ),
+                  ),
+                ),
               if (c.asOfDate.isNotEmpty &&
                   !version.summary.coverage.contains(
                     CivilDate.parse(c.asOfDate),

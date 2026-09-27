@@ -63,11 +63,11 @@ insert into procurement_test_results select is((select (value->>'open_base_amoun
 select finance.flow_post_journal(jsonb_build_object('tenant_id',pg_temp.fid('tenant'),'legal_entity_id',pg_temp.fid('entity'),'branch_id',pg_temp.fid('branch'),
  'document_date','2026-09-24','currency_code','LKR','base_currency_code','LKR','exchange_rate','1'),
  jsonb_build_array(finance.flow_jline(pg_temp.fid('grni.new.account'),-1,-1),finance.flow_jline(pg_temp.fid('expense-account'),1,1)),
- 'manual_journal',pg_temp.fid('grni.extra.1'),gen_random_uuid(),gen_random_uuid());
+ 'grni_control_fixture',pg_temp.fid('grni.extra.1'),gen_random_uuid(),gen_random_uuid());
 select finance.flow_post_journal(jsonb_build_object('tenant_id',pg_temp.fid('tenant'),'legal_entity_id',pg_temp.fid('entity'),'branch_id',pg_temp.fid('branch'),
  'document_date','2026-09-24','currency_code','LKR','base_currency_code','LKR','exchange_rate','1'),
  jsonb_build_array(finance.flow_jline(pg_temp.fid('grni.new.account'),1,1),finance.flow_jline(pg_temp.fid('expense-account'),-1,-1)),
- 'manual_journal',pg_temp.fid('grni.extra.2'),gen_random_uuid(),gen_random_uuid());
+ 'grni_control_fixture',pg_temp.fid('grni.extra.2'),gen_random_uuid(),gen_random_uuid());
 insert into procurement_responses values('grni.offset',pg_temp.call('generate_control_reconciliation_report',pg_temp.control_payload('grni.offset','GRNI','2026-09-24'),0));
 insert into procurement_test_results select is((select (response#>>'{entity,difference}')::numeric from procurement_responses where name='grni.offset'),0::numeric,'offsetting journals can have a zero aggregate difference');
 insert into procurement_test_results select is((select (response#>>'{entity,difference_count}')::integer from procurement_responses where name='grni.offset'),2,'offsetting unrelated journal sources remain two explicit differences');
@@ -111,7 +111,7 @@ do $$begin for i in 1..51 loop
  perform finance.flow_post_journal(jsonb_build_object('tenant_id',pg_temp.fid('tenant'),'legal_entity_id',pg_temp.fid('entity'),'branch_id',pg_temp.fid('branch'),
   'document_date','2026-09-24','currency_code','LKR','base_currency_code','LKR','exchange_rate','1'),
   jsonb_build_array(finance.flow_jline(pg_temp.fid('grni.new.account'),-1,-1),finance.flow_jline(pg_temp.fid('expense-account'),1,1)),
-  'manual_journal',pg_temp.fid('grni.page.'||i),gen_random_uuid(),gen_random_uuid());
+  'grni_control_fixture',pg_temp.fid('grni.page.'||i),gen_random_uuid(),gen_random_uuid());
 end loop;end $$;
 select pg_temp.call('generate_control_reconciliation_report',pg_temp.control_payload('grni.paged','GRNI','2026-09-24'),0);
 insert into procurement_test_results select is(jsonb_array_length(pg_temp.control_page('grni.paged','differences',pg_temp.fid('grni.new.account')::text)->'items'),50,'GRNI evidence returns at most fifty source differences');

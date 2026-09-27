@@ -313,4 +313,98 @@ void main() {
       ),
     );
   });
+
+  Map<String, Object?> basis(String id, {String? branch}) => {
+    'id': id,
+    'kind': 'cost_centre',
+    'version': 1,
+    'code': 'CC-1',
+    'name': 'Distribution',
+    'tenant_id': scope.tenantId,
+    'legal_entity_id': scope.legalEntityId,
+    'branch_id': branch,
+  };
+  Map<String, Object?> dimensionalLine(String id, String cost) => {
+    ...line(),
+    'id': id,
+    'cost_centre_id': cost,
+    'dimension_snapshot': {'cost_centre': basis(cost)},
+  };
+  test(
+    'governed budget permits repeated account only for disjoint identities',
+    () async {
+      final rows = [
+        dimensionalLine('line', 'cost-a'),
+        dimensionalLine('line-b', 'cost-b'),
+      ];
+      response = {
+        'tenant_id': scope.tenantId,
+        'legal_entity_id': scope.legalEntityId,
+        'branch_id': scope.branchId,
+        'items': [
+          {...budget(), 'lines': rows},
+        ],
+        'next_cursor': null,
+      };
+      expect(((await gateway.budgets(scope))['items'] as List).length, 1);
+      rows[1] = {
+        ...rows[1],
+        'cost_centre_id': null,
+        'dimension_snapshot': null,
+      };
+      await expectLater(gateway.budgets(scope), throwsFormatException);
+    },
+  );
+  test('budget receipt cannot replace a selected governed identity', () async {
+    final rows = [dimensionalLine('line', 'cost-a')];
+    final c = CommandEnvelope<Map<String, Object?>>(
+      context: scope,
+      commandId: 'command',
+      idempotencyKey: 'key',
+      expectedEntityVersion: 0,
+      payload: {'id': 'budget', 'action': 'create', 'lines': rows},
+    );
+    final confirmed = {
+      ...budget(),
+      'tenant_id': scope.tenantId,
+      'legal_entity_id': scope.legalEntityId,
+      'branch_id': scope.branchId,
+      'status': 'draft',
+      'version': 1,
+      'line_count': 1,
+      'lines': rows,
+    };
+    response = {
+      'command_id': 'command',
+      'request_id': 'request',
+      'entity': confirmed,
+    };
+    await gateway.command(c);
+    confirmed['lines'] = [dimensionalLine('line', 'different')];
+    await expectLater(
+      gateway.command(c),
+      throwsA(
+        isA<DomainError>().having((e) => e.code, 'code', 'UNCERTAIN_RESULT'),
+      ),
+    );
+  });
+  test(
+    'entity variance retains branch-specific actual attribution without claiming a branch plan',
+    () async {
+      final r = page('journals');
+      r['summary'] = {...summary(), 'budget_branch_id': null};
+      r['items'] = [
+        {
+          ...((r['items'] as List).first as Map),
+          'branch_id': 'other-entity-branch',
+          'cost_centre_id': 'other-centre',
+          'dimension_snapshot': {
+            'cost_centre': basis('other-centre', branch: 'other-entity-branch'),
+          },
+        },
+      ];
+      response = r;
+      await gateway.page(scope, 'report', 'journals', budgetLineId: 'line');
+    },
+  );
 }

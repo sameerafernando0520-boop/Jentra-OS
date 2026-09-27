@@ -105,6 +105,16 @@ const jentraDestinations = <JentraDestination>[
     icon: Icons.calendar_month_outlined,
   ),
   JentraDestination(
+    label: 'Organization',
+    path: '/people/organization',
+    icon: Icons.account_tree_outlined,
+  ),
+  JentraDestination(
+    label: 'Private HR & account',
+    path: '/people/private',
+    icon: Icons.privacy_tip_outlined,
+  ),
+  JentraDestination(
     label: 'Manual journals',
     path: '/finance/journals',
     icon: Icons.menu_book_outlined,
@@ -113,6 +123,16 @@ const jentraDestinations = <JentraDestination>[
     label: 'Finance controls',
     path: '/finance/controls',
     icon: Icons.account_balance_outlined,
+  ),
+  JentraDestination(
+    label: 'Control and close review',
+    icon: Icons.fact_check_outlined,
+    path: '/finance/close-review',
+  ),
+  JentraDestination(
+    label: 'Financial dimensions',
+    icon: Icons.category_outlined,
+    path: '/finance/dimensions',
   ),
   JentraDestination(
     label: 'Bank reconciliation',
@@ -210,12 +230,31 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
               'people.employees.view',
             ].every((p) => capabilities?.contains(p) ?? false)) &&
         (item.path != '/people/calendars' ||
-            const ['people.view', 'people.calendars.view']
+            const [
+              'people.view',
+              'people.calendars.view',
+            ].every((p) => capabilities?.contains(p) ?? false)) &&
+        (item.path != '/people/organization' ||
+            const ['people.view', 'people.organization.view']
                 .every((p) => capabilities?.contains(p) ?? false)) &&
+        (item.path != '/people/private' ||
+            (capabilities?.contains('people.view') ?? false)) &&
         (item.path != '/finance/controls' ||
             const [
               'finance.view',
               'finance.controls.reconcile',
+            ].every((p) => capabilities?.contains(p) ?? false)) &&
+        (item.path != '/finance/close-review' ||
+            const [
+              'finance.view',
+              'finance.controls.reconcile',
+              'inventory.stock.view',
+              'inventory.cost.view',
+            ].every((p) => capabilities?.contains(p) ?? false)) &&
+        (item.path != '/finance/dimensions' ||
+            const [
+              'finance.view',
+              'finance.dimensions.manage',
             ].every((p) => capabilities?.contains(p) ?? false)) &&
         (item.path != '/inventory/valuation' ||
             const [

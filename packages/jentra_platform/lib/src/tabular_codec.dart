@@ -26,6 +26,7 @@ final class TabularFileException implements Exception {
 final class SetupTabularCodec {
   const SetupTabularCodec() : rowLimit = maximumRows;
   const SetupTabularCodec.bankStatement() : rowLimit = 2000;
+  const SetupTabularCodec.reportExport() : rowLimit = 10001;
   final int rowLimit;
 
   static const int maximumImportBytes = 5 * 1024 * 1024;

@@ -96,8 +96,10 @@ account-to-journal evidence.
 
 Tax reviews and budgets are additive follow-up candidates described in contracts
 38 and 37. This statement slice does not implement every FR-375/377 control and
-operational report. The journal schema does not yet
-carry budget cost-centre/project dimensions. These require additive, separately
-verified contracts. Development rollback and widget results are evidence of a
+operational report. Contract 46 now adds nullable governed cost-centre/project
+identities to the candidate journal schema; legacy lines remain unassigned.
+Contract 48 adds exact permission-scoped posted-journal drill-through from statement
+rows without replacing their frozen report evidence. These remain additive,
+unapplied candidates. Development rollback and widget results are evidence of a
 candidate only; installation, real multi-session contention, Credential
 Manager restart, native walkthrough and owner signoff remain separate.

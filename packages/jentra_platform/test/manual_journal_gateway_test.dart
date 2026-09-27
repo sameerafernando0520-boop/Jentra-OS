@@ -517,4 +517,58 @@ void main() {
       );
     },
   );
+
+  test(
+    'governed journal receipt cannot swap a requested identity or cross entity basis',
+    () async {
+      final d = document();
+      final l = Map<String, Object?>.from((d['lines'] as List).first as Map);
+      d['lines'] = <Object?>[l, ...(d['lines'] as List).skip(1)];
+      final basis = {
+        'id': 'cost',
+        'kind': 'cost_centre',
+        'version': 1,
+        'code': 'CC-1',
+        'name': 'Distribution',
+        'tenant_id': scope.tenantId,
+        'legal_entity_id': scope.legalEntityId,
+        'branch_id': null,
+      };
+      l['cost_centre_id'] = 'cost';
+      l['dimension_snapshot'] = {'cost_centre': basis};
+      final c = CommandEnvelope<Map<String, Object?>>(
+        context: scope,
+        commandId: 'command',
+        idempotencyKey: 'key',
+        expectedEntityVersion: 0,
+        payload: {'id': 'journal', 'lines': jsonDecode(jsonEncode(d['lines']))},
+      );
+      response = {
+        'command_id': 'command',
+        'request_id': 'request',
+        'entity': d,
+      };
+      await gateway.execute('save', c);
+      l['cost_centre_id'] = 'different';
+      l['dimension_snapshot'] = {
+        'cost_centre': {...basis, 'id': 'different'},
+      };
+      await expectLater(
+        gateway.execute('save', c),
+        throwsA(
+          isA<DomainError>().having((e) => e.code, 'code', 'UNCERTAIN_RESULT'),
+        ),
+      );
+      l['cost_centre_id'] = 'cost';
+      l['dimension_snapshot'] = {
+        'cost_centre': {...basis, 'legal_entity_id': 'other'},
+      };
+      await expectLater(
+        gateway.execute('save', c),
+        throwsA(
+          isA<DomainError>().having((e) => e.code, 'code', 'UNCERTAIN_RESULT'),
+        ),
+      );
+    },
+  );
 }

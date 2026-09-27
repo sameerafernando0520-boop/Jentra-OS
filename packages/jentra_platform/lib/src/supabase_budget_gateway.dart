@@ -2,6 +2,7 @@ import 'package:jentra_domain/jentra_domain.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'supabase_control_reconciliation_gateway.dart';
+import 'supabase_financial_dimension_gateway.dart';
 
 abstract interface class BudgetGateway {
   Future<Map<String, Object?>> accounts(
@@ -42,22 +43,30 @@ final class SupabaseBudgetGateway implements BudgetGateway {
 
   ExactDecimal _exact(Object? value) => transport.decimal(value);
 
-  void _lines(List lines) {
+  void _lines(List lines, TenantContext? scope, {bool entityOnly = false}) {
     if (lines.isEmpty || lines.length > 500) {
       throw const FormatException('Invalid budget lines.');
     }
     final ids = <String>{};
-    final accounts = <String>{};
+    final prior = <Map>[];
     for (final raw in lines) {
       if (raw is! Map ||
           raw['id'] is! String ||
           raw['account_id'] is! String ||
-          !ids.add(raw['id'] as String) ||
-          !accounts.add(raw['account_id'] as String) ||
-          raw['cost_centre_id'] != null ||
-          raw['project_id'] != null) {
+          !ids.add(raw['id'] as String)) {
         throw const FormatException('Invalid budget account or dimension.');
       }
+      FinancialDimensionEvidence.validate(raw, scope, entityOnly: entityOnly);
+      for (final earlier in prior) {
+        if (earlier['account_id'] == raw['account_id'] &&
+            ['cost_centre_id', 'project_id'].every(
+              (k) =>
+                  earlier[k] == null || raw[k] == null || earlier[k] == raw[k],
+            )) {
+          throw const FormatException('Budget dimensions overlap.');
+        }
+      }
+      prior.add(raw);
       final amount = _exact(raw['amount']);
       if (amount.isNegative) {
         throw const FormatException('Budget amount must be nonnegative.');
@@ -88,7 +97,11 @@ final class SupabaseBudgetGateway implements BudgetGateway {
         value['lines'] is! List) {
       throw const FormatException('Invalid budget version.');
     }
-    _lines(value['lines'] as List);
+    _lines(
+      value['lines'] as List,
+      scope,
+      entityOnly: value['budget_branch_id'] == null,
+    );
     if (receipt && value['line_count'] != (value['lines'] as List).length) {
       throw const FormatException('Budget line count mismatch.');
     }
@@ -193,7 +206,7 @@ final class SupabaseBudgetGateway implements BudgetGateway {
     _scope(result, scope);
     transport.rows(result);
     for (final raw in result['items'] as List) {
-      _budget(raw as Map);
+      _budget(raw as Map, scope: scope);
       if (raw['budget_branch_id'] != null &&
           raw['budget_branch_id'] != scope.branchId) {
         throw const FormatException('Budget branch mismatch.');
@@ -254,6 +267,13 @@ final class SupabaseBudgetGateway implements BudgetGateway {
     });
     for (final raw in result['items'] as List) {
       final row = raw as Map;
+      FinancialDimensionEvidence.validate(
+        row,
+        section == 'journals'
+            ? scope.copyWith(branchId: row['branch_id'] as String? ?? scope.branchId)
+            : scope,
+        entityOnly: section == 'lines' && rawSummary['budget_branch_id'] == null,
+      );
       if (section == 'lines') {
         if (row['account_id'] is! String ||
             row['code'] is! String ||
@@ -326,6 +346,8 @@ final class SupabaseBudgetGateway implements BudgetGateway {
         final actual = confirmed[i] as Map;
         if (wanted['id'] != actual['id'] ||
             wanted['account_id'] != actual['account_id'] ||
+            wanted['cost_centre_id'] != actual['cost_centre_id'] ||
+            wanted['project_id'] != actual['project_id'] ||
             _exact(wanted['amount']) != _exact(actual['amount'])) {
           throw const FormatException('Budget amount receipt mismatch.');
         }

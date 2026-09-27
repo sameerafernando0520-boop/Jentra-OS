@@ -267,6 +267,57 @@ final class ManualJournalController extends ChangeNotifier {
     update('lines', rows);
   }
 
+  void financialDimension(
+    int index,
+    String kind,
+    Map<String, Object?>? choice,
+  ) {
+    if (!editable ||
+        !online ||
+        _disposed ||
+        form?['reversal_of_id'] != null ||
+        !{'cost_centre', 'project'}.contains(kind)) {
+      return;
+    }
+    if (choice != null &&
+        (choice['status'] != 'active' ||
+            choice['kind'] != kind ||
+            choice['tenant_id'] != scope.tenantId ||
+            choice['legal_entity_id'] != scope.legalEntityId ||
+            choice['dimension_branch_id'] != null &&
+                choice['dimension_branch_id'] != scope.branchId)) {
+      return;
+    }
+    final rows = [...form!['lines'] as List];
+    if (index < 0 || index >= rows.length) return;
+    final row = (rows[index] as Map).cast<String, Object?>();
+    final basis = {...(row['dimension_snapshot'] as Map? ?? {})}..remove(kind);
+    if (choice != null) {
+      basis[kind] = {
+        for (final k in [
+          'id',
+          'tenant_id',
+          'legal_entity_id',
+          'kind',
+          'version',
+          'code',
+          'name',
+        ])
+          k: choice[k],
+        'branch_id': choice['dimension_branch_id'],
+      };
+    }
+    rows[index] = {
+      ...row,
+      '${kind}_id': choice?['id'],
+      'dimension_snapshot': basis.isEmpty ? null : basis,
+      kind == 'cost_centre' ? 'cost_center' : 'project': choice == null
+          ? ''
+          : "${choice['code']} · ${choice['name']}",
+    };
+    update('lines', rows);
+  }
+
   void taxDefinition(int i, Map<String, Object?>? definition) {
     if (!editable || form?['reversal_of_id'] != null) return;
     final rows = [...form!['lines'] as List];

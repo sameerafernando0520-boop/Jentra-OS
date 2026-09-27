@@ -1,21 +1,33 @@
 # Remaining Wave 3 development status
 
-Refreshed 2026-09-26 against `main` at `6595d14`. AC-317 was committed at
-`4e0a244`; AC-318 and the first AC-319 candidate at `d99fe10`; the first
-AC-320 statement slice at `307c006`. The cash-flow, budget and concurrent Wave 4
-source updates were committed at `6595d14`. The tax-control/governed-tax follow-ups
-and report-recovery corrections are dirty and unstaged, together with the GRNI
-extension. Concurrent Wave 4 work is separate. The latest scoped results are 671
-procurement/finance, 169 receivables and 105 inventory strict rollback assertions;
-83 platform/storage and 116 desktop tests pass with clean full analyzers. See
-`docs/verification/remaining-wave3/grni-review-20260926.md` for this continuation.
-Earlier transfer/journal checkpoints are historical.
-Supabase reconnection and the required development refresh are complete. The ledger
-started at 35 installed migrations; the final 09:10 UTC refresh reports 36 through
-`20260926082441_wave4_calendar_versions`, a concurrent Wave 4 change. No migration
-was applied by this Wave 3 continuation. GRNI/procurement/control/tax candidates
-remain absent outside rollback, and all four shared finance fingerprints match.
-Acceptance-owned work and authentication configuration are preserved.
+Refreshed 2026-09-28 against `main` at
+`b51eec0dce3a73236f3460325394a4dc19e7a2ce`. Earlier Wave 3 source is preserved.
+Consolidated close review, governed exports, dimensions, read-plan improvements and
+posted-journal drill-through are dirty and unstaged, alongside separate concurrent
+Wave 4 work. The index is empty. The complete 36-candidate stack passes 801
+procurement/finance, 169 receivables and 105 inventory strict rollback assertions
+with JIT enabled (1,075 total). Affected suites pass 135 platform/storage and 181
+desktop tests (316 total); full desktop/platform and changed-path analyzers pass. Four new
+200% journal renders were inspected. Isolated Windows compilation passed in 309.8
+seconds; all 28 relevant source hashes match the compiled copy. See
+`docs/verification/remaining-wave3/journal-review-20260928.md`. Earlier reviews
+remain dated historical evidence. The earlier SDK approval-review usage-limit
+failure cleared, and previously blocked full analyzer reruns passed.
+
+At 19:29:55 UTC on Sep 27, development Supabase is healthy with 36 installed
+migrations through concurrent Wave 4 `20260926082441_wave4_calendar_versions`.
+No migration was installed by this continuation. The journal reader, dimension
+tables and read-plan index remain absent outside rollback. All four installed
+shared finance fingerprints match the starting refresh. Stock-opening acceptance,
+authentication, production and concurrent Wave 4 source are preserved.
+
+The historical contract 47 read-plan follow-up passes 775 procurement/finance,
+169 receivables and 105 inventory assertions (1,049 total) with JIT enabled and
+resolves the earlier oversized close-basis timeout in the synthetic fixture.
+Three account-basis EXPLAIN reads take 17.724, 15.116 and 14.988 ms. The 19:23 UTC
+refresh still reports 36 installed migrations and unchanged finance fingerprints.
+See `docs/verification/remaining-wave3/control-read-review-20260927.md`;
+real contention/load/p95 remains open.
 
 | Requirement / AC | Status | Concrete implementation / evidence | Dependency and next action |
 |---|---|---|---|
@@ -32,14 +44,14 @@ Acceptance-owned work and authentication configuration are preserved.
 | Stock-opening native acceptance | Acceptance-owned | `features/stock_opening`, access gateway, `docs/verification/stock-opening` | Do not alter ACPT records, sequences, authentication or running executable |
 | FR-354–355 / AC-314 | Partial | Contracts 26 and 29; original lot/serial transfers and receipt quantity trace across issues/returns/transit with a native bounded viewer in `features/receipt_trace/` | Full disposition, historical coverage, installation and concurrent tracking checks remain |
 | FR-356–361 / AC-315 | Partial | Contracts 26–31; transfers, tracked counts, reservation release/dated allocations, receipt provenance, single-receipt landed-value posting/reversal and immutable dated inventory/lot/transit valuation with selected-control GL source reconciliation. Fresh 105 inventory, 318 procurement/valuation and 126 reservation/delivery/AR rollback assertions; 75 UI/recovery and 63 gateway/store checks pass. Seven prior exact domain checks remain recorded evidence | Broader landed allocation bases, transit value treatment, correction after later consumption, automatic expiry/retirement and disposition integration remain. Counts cap identities at 500; oversized partitioning, native acceptance, contention and installation are open |
-| FR-362–366 / AC-316 | Partial | Contract 32; `20260921041348_manual_journals.sql`, native `features/manual_journal/`, `supabase_manual_journal_gateway.dart`; exact FX, configured independent approval/MFA, separate posting, source evidence and linked reversals. Fresh 348 combined procurement/valuation/journal, 105 inventory and 126 AR/reservation rollback assertions pass with nineteen candidates. 13 journal UI/recovery and 10 gateway checks pass | Broader automatic-source drill-through, attachments upload integration, control mapping contention, installation and native acceptance remain |
-| FR-367–369 / AC-317 | AR/AP and GRNI candidates implemented and tested; acceptance open | Contracts 33 and 39; original AR/AP controls/corrections plus additive `20260926007000_wave3_grni_control_reconciliation.sql`. GRNI freezes original receipt accounts, compares dated independent bill/return/reversal amounts against all original/current/historical control GL, retains net-zero source differences, bounds evidence and reuses `/finance/controls`. Confirmation is atomic and evidence clears across disconnect, permission/MFA changes and stale reads. Current combined evidence: 671 procurement/finance, 169 receivables and 105 inventory strict rollback assertions; 83 platform/storage and 116 desktop checks; clean analyzers. See the GRNI review. | All Wave 3 candidates remain UNAPPLIED. Broader supported-source attribution/retired AR/AP mappings, consolidated close/report integration, entity consolidation/export, real contention/load, installation and native/owner acceptance remain |
+| FR-362–366 / AC-316 | Partial | Contract 32; `20260921041348_manual_journals.sql`, native `features/manual_journal/`, `supabase_manual_journal_gateway.dart`; exact FX, configured independent approval/MFA, separate posting, source evidence and linked reversals. Fresh 348 combined procurement/valuation/journal, 105 inventory and 126 AR/reservation rollback assertions pass with nineteen candidates. 13 journal UI/recovery and 10 gateway checks pass | Broader source-document drill-through, attachments upload integration, control mapping contention, installation and native acceptance remain |
+| FR-367–369 / AC-317 | AR/AP, GRNI and consolidated review candidates implemented/tested; acceptance open | Contracts 33, 39, 43 and 47–48 preserve original/historical control accounts, immutable allocation corrections, exact dated source differences and all-branch close review. Live hard close rechecks inventory/GRNI/cash; source/command/journal attribution and governed saved-report exports are present. Encrypted acknowledgement and scope/MFA/epoch clearing remain tested in the 1,075-assertion JIT-enabled stack and 316 affected client tests. | Candidates UNAPPLIED. Broader source-document navigation/retired AR/AP mapping coverage, scale/load/contention, installation and native/owner acceptance remain |
 | FR-370–371 / AC-318 | Candidate implemented and tested; acceptance open | Contract 34; additive `20260923225202_bank_reconciliation.sql`; `/finance/bank` exact CSV/XLSX import, scoped 50-row pages, one-to-one/one-to-many/many-to-one matching, governed tolerance/adjustment, immutable linked reversal and encrypted recovery. Fresh 405 procurement/finance, 105 inventory and 158 AR rollback assertions; 29 platform/codec and 11 desktop tests; analyzers and light/dark 200% visual review pass. See `docs/verification/remaining-wave3/bank-review-20260925.md` | Candidate source committed at `d99fe10`, migration UNAPPLIED. Real multi-session contention, installed behavior, Credential Manager restart, native walkthrough and owner acceptance remain |
 | FR-372–374 / AC-319 | Candidate implementation; acceptance open | Contract 35; additive `20260924185321_wave3_period_governance.sql`; period events/reopen requests, independent recent-MFA approval, genuine hard close and immutable blocked exceptions, exact frozen FX valuation with linked reversals and control-difference overlay; `/finance/periods`, scoped RPC gateway and encrypted recovery. Latest strict rollback procurement/finance 445, inventory 105 and AR 158 assertions pass; 22 adjacent gateway and 33 adjacent desktop tests pass, including 8 period/FX tests and light/dark 200% goldens; both analyzers pass. See `docs/verification/remaining-wave3/period-fx-review-20260925.md` | Initial candidate source committed at `d99fe10`; follow-up corrections dirty; migration UNAPPLIED. Real multi-session contention/load, Credential Manager restart, installed/native walkthrough and owner signoff remain |
-| FR-375–382 / AC-320 | Partial candidate; acceptance open | Contracts 36–39; statement/cash-flow/budget, five ordered tax candidates and the GRNI extension. Posted TB/P&L/balance sheet/cash flow, approved budgets/frozen variance, versioned posted-tax review, complete cumulative tax controls, original-date/version returns and governed journal tax/control movements remain preserved. GRNI adds independent exact receipt/match/return/reversal reconciliation. `/finance/tax`, `/finance/journals` and `/finance/controls` retain frozen scoped evidence and encrypted recovery. Current combined verification: 671 procurement/finance, 105 inventory and 169 receivables assertions; 83 platform/storage and 116 desktop checks; clean full analyzers. Tax-only historical build evidence remains in its Sep 26 review; current GRNI compilation is recorded separately. | Candidates UNAPPLIED. Consolidated inventory/GRNI/cash and operational reports with close integration, governed cost-centre/project dimensions, attributable bounded exports, supplier withholding allocation/statutory rules, load/contention and native/owner acceptance remain. |
+| FR-375–382 / AC-320 | Finance candidates implemented/tested; broader report acceptance open | Contracts 36–39, 43–44 and 46–48 cover posted statements/cash flow, frozen tax/control evidence, all-branch close review, six saved-report CSV/XLSX sources, governed cost-centre/project masters, retirement-safe journal reversals and disjoint dimension budgets/actuals. Current proof is 1,075 JIT-enabled strict rollback assertions, 135 platform and 181 desktop tests, clean analyzers, inspected 200% renders, synthetic query-plan timings and isolated Windows compilation. | Candidates UNAPPLIED. Remaining operational/current-list and party/bank report exports, supplier withholding allocation/statutory rules, broader scale/load/contention and native/owner acceptance remain. |
 | FR-383–395 / AC-321–324 | Partial | existing shared design, encrypted drafts, reference pickers, reports | Integrate new modules; test scope revocation, retry, accessibility and bounded export |
 | NFR-307–320 / AC-325 | Partial | historical per-slice logs | New real concurrency, performance and rendered UI evidence required |
-| AC-326 | Partial development verification; full release gate open | Current GRNI/tax/journal/report review preserves exact source control, original account/FX/rounding and encrypted confirmation/access boundaries. 945 rollback database assertions and 199 local platform/desktop checks pass. Current development advisors and unchanged finance fingerprints are recorded. | Full remaining-source coverage, advisor review, real contention/load and all separate installed/native/owner checks remain |
+| AC-326 | Partial development verification; full release gate open | Final-stack review preserves exact source control, original account/FX/rounding, dimensional identities and encrypted confirmation/access. 1,075 rollback assertions and 316 affected client tests pass, with isolated Windows compilation, JIT-enabled read-plan evidence and current development advisor/finance fingerprints recorded. | Full remaining-source coverage, broader scale evidence, real contention/load and all separate installed/native/owner checks remain |
 | Native walkthrough / owner signoff | External gate | Separate acceptance session | Never substitute automated tests for native acceptance |
 | Waves 4–6 | External gate | Roadmap in blueprint 05 | Separate detailed specification and approval; outside this implementation |
 
@@ -47,7 +59,7 @@ Historical test records are not fresh execution in this session. An API catalog 
 corroborated by source searches; foundation permissions do not establish feature completion.
 The current advisor refresh retains the leaked-password warning and reports seven
 RLS-enabled private Wave 4 tables without policies. Performance reports ten
-unindexed foreign keys and 297 unused indexes. These are recorded review items,
+unindexed foreign keys and 295 unused indexes. These are recorded review items,
 not fixes or acceptance claims; authentication and concurrent Wave 4 work are untouched.
 Persistent business writes remain authenticated application commands only.
 
@@ -62,16 +74,17 @@ Remaining: broader AC-312 verification and source navigation; oversized count pa
 broader landed adjustments, disposition, large report extensions, remaining AC-320 control and operational reporting,
 AC-321–326 cross-cutting checks, installation coordination and final complete Wave 3 solo review.
 
-## Next development sequence after the GRNI continuation
+## Next development sequence after the journal evidence continuation
 
-1. Completed in this continuation: development ledger/catalog/advisor and shared
-   finance refresh; original-account GRNI receipt/bill/return/reversal reconciliation,
-   frozen scoped drill, bounded failure and encrypted recovery. Preserve these
-   unapplied candidates and acceptance-owned work.
-2. Consolidate inventory, GRNI and cash controls/operational reports, including
-   close-review integration, entity-wide reporting and supported-source attribution.
-3. Complete supported posting/budget dimensions and attributable CSV/XLSX report
-   exports with exact strings, scope/cutoff/filter metadata and bounded failure.
+1. Completed candidates: original-account GRNI reconciliation, consolidated
+   inventory/GRNI/cash close integration, supported-source attribution, six saved-
+   report exports, governed journal/budget dimensions and exact posted-journal
+   drill-through from controls/close/statements. Preserve their encrypted
+   recovery, strict rollback evidence and acceptance-owned work.
+2. The default-JIT close-basis diagnostic is resolved by the additive read-plan
+   candidate. Finish broader default-runtime scale and real concurrent evidence.
+3. Complete remaining operational/current-list and party/bank report exports,
+   broader source-document navigation and capability-aware dashboard/deep links.
 4. Finish the wider landed-value allocation/correction, oversized count, disposition,
    attachment/source navigation, dashboard/deep-link and cross-module recovery work.
 5. Run remaining meaningful security, rollback, query-plan/scale and real concurrent

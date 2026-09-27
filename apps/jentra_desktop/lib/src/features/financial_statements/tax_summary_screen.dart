@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app_providers.dart';
 import 'tax_summary_controller.dart';
+import '../report_export/report_export_screen.dart';
 
 class TaxSummaryScreen extends ConsumerWidget {
   const TaxSummaryScreen({super.key});
@@ -27,13 +28,20 @@ class TaxSummaryScreen extends ConsumerWidget {
         : TaxSummaryWorkspace(
             key: ValueKey(controller),
             controller: controller,
+            allowExport:
+                access.value?.contains('finance.reports.export') ?? false,
           );
   }
 }
 
 class TaxSummaryWorkspace extends StatelessWidget {
-  const TaxSummaryWorkspace({super.key, required this.controller});
+  const TaxSummaryWorkspace({
+    super.key,
+    required this.controller,
+    this.allowExport = false,
+  });
   final TaxSummaryController controller;
+  final bool allowExport;
   static const sourceLabels = {
     'sales_invoice': 'Sales invoice',
     'sales_return': 'Sales return',
@@ -242,6 +250,26 @@ class TaxSummaryWorkspace extends StatelessWidget {
                 child: const Text('More reviews'),
               ),
             if (s.isNotEmpty) ...[
+              if (allowExport)
+                ReportExportLink(
+                  sourceType: 'tax',
+                  sourceId: s['id'] as String,
+                  section: 'lines',
+                  label: 'Export tax lines',
+                  enabled: c.online && c.verified && !c.busy,
+                ),
+              if (allowExport && s['version'] == 2)
+                ReportExportLink(
+                  sourceType: 'tax',
+                  sourceId: s['id'] as String,
+                  section: c.controlSection,
+                  label: 'Export tax controls',
+                  filters: {
+                    'account_id': c.controlAccountId,
+                    'evidence_key': c.controlEvidenceKey,
+                  },
+                  enabled: c.online && c.verified && !c.busy,
+                ),
               const Divider(height: 40),
               Text(
                 'Saved tax review · ${s['as_of']}',

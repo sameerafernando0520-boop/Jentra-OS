@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app_providers.dart';
 import 'control_reconciliation_controller.dart';
+import '../report_export/report_export_screen.dart';
+import '../journal_evidence/posted_journal_screen.dart';
 
 class ControlReconciliationScreen extends ConsumerWidget {
   const ControlReconciliationScreen({super.key});
@@ -24,13 +26,26 @@ class ControlReconciliationScreen extends ConsumerWidget {
               'Choose a branch with finance and control reconciliation access.',
             ),
           )
-        : ControlReconciliationWorkspace(key: ValueKey(c), controller: c);
+        : ControlReconciliationWorkspace(
+            key: ValueKey(c),
+            controller: c,
+            allowJournal: caps.value?.contains('finance.view') ?? false,
+            allowExport:
+                caps.value?.contains('finance.reports.export') ?? false,
+          );
   }
 }
 
 class ControlReconciliationWorkspace extends StatelessWidget {
-  const ControlReconciliationWorkspace({super.key, required this.controller});
+  const ControlReconciliationWorkspace({
+    super.key,
+    required this.controller,
+    this.allowExport = false,
+    this.allowJournal = false,
+  });
   final ControlReconciliationController controller;
+  final bool allowExport;
+  final bool allowJournal;
   Future<void> confirm(BuildContext context) async {
     final approved = await showDialog<bool>(
       context: context,
@@ -247,6 +262,14 @@ class ControlReconciliationWorkspace extends StatelessWidget {
             ),
           ],
           if (s.isNotEmpty) ...[
+            if (allowExport)
+              ReportExportLink(
+                sourceType: 'control',
+                sourceId: s['id'] as String,
+                section: c.section,
+                filters: {'evidence_key': c.accountId},
+                enabled: c.online && c.verified && !c.busy,
+              ),
             const SizedBox(height: 20),
             Card(
               child: Padding(
@@ -391,6 +414,15 @@ class ControlReconciliationWorkspace extends StatelessWidget {
                             'Journal ${r['journal_id']} · Account ${r['account_code']}\nLine ${r['source_line_id'] ?? r['id']}',
                           ),
                       ],
+                      if (allowJournal &&
+                          (r['journal_id'] ?? r['journal_entry_id']) is String)
+                        PostedJournalLink(
+                          scope: c.scope,
+                          journalId:
+                              (r['journal_id'] ?? r['journal_entry_id'])
+                                  as String,
+                          enabled: c.online && !c.busy && c.verified,
+                        ),
                     ],
                   ),
                 ),

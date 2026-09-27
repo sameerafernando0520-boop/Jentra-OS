@@ -13,6 +13,10 @@ import 'src/features/inventory_valuation/inventory_valuation_controller.dart';
 import 'package:jentra_platform/jentra_finance_platform.dart';
 import 'src/features/manual_journal/manual_journal_controller.dart';
 import 'src/features/control_reconciliation/control_reconciliation_controller.dart';
+import 'src/features/close_review/close_review_controller.dart';
+import 'src/features/journal_evidence/posted_journal_controller.dart';
+import 'src/features/financial_dimensions/financial_dimension_controller.dart';
+import 'src/features/report_export/report_export_controller.dart';
 import 'src/features/bank_reconciliation/bank_reconciliation_controller.dart';
 import 'src/features/period_fx/period_fx_controller.dart';
 import 'src/features/financial_statements/financial_statement_controller.dart';
@@ -22,6 +26,8 @@ import 'src/features/budgets/budget_controller.dart';
 import 'package:jentra_platform/jentra_people_platform.dart';
 import 'src/features/people/employee_controller.dart';
 import 'src/features/people/calendar_controller.dart';
+import 'src/features/people/organization_controller.dart';
+import 'src/features/people/private_hr_controller.dart';
 
 import 'package:jentra_platform/jentra_stock_opening_platform.dart';
 import 'src/features/stock_opening/stock_opening_controller.dart';
@@ -89,6 +95,18 @@ Future<void> main() async {
         controlReconciliationGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseControlReconciliationGateway(client),
         ),
+        closeReviewGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseCloseReviewGateway(client),
+        ),
+        reportExportGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseReportExportGateway(client),
+        ),
+        financialDimensionGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseFinancialDimensionGateway(client),
+        ),
+        postedJournalGatewayProvider.overrideWithValue(
+          client == null ? null : SupabasePostedJournalGateway(client),
+        ),
         bankReconciliationGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseBankReconciliationGateway(client),
         ),
@@ -112,6 +130,12 @@ Future<void> main() async {
         ),
         calendarRepositoryProvider.overrideWithValue(
           client == null ? null : SupabaseCalendarGateway(client),
+        ),
+        organizationRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabaseOrganizationGateway(client),
+        ),
+        privateHrRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabasePrivateHrGateway(client),
         ),
       ],
       child: const JentraApp(),

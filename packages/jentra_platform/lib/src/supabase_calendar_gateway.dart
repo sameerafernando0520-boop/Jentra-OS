@@ -2,9 +2,52 @@ import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_domain/jentra_people.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-final class SupabaseCalendarGateway implements WorkCalendarRepository {
+final class SupabaseCalendarGateway
+    implements WorkCalendarRepository, CalendarInstantResolver {
   SupabaseCalendarGateway(this.client);
   final SupabaseClient client;
+
+  @override
+  Future<CalendarLocalResolution> localCandidates(
+    TenantContext scope,
+    CalendarVersionDetail version,
+    CivilDate date,
+    int minute,
+  ) async {
+    if (version.tenantId != scope.tenantId ||
+        version.legalEntityId != scope.legalEntityId ||
+        !version.summary.coverage.contains(date) ||
+        minute < 0 ||
+        minute > 1439) {
+      throw const FormatException(
+        'Select a local boundary within this published version.',
+      );
+    }
+    final response = await _call('people_calendar_local_candidates', scope, {
+      'p_version_id': version.summary.coverage.id,
+      'p_date': date.value,
+      'p_minute': minute,
+    });
+    calendarFields(response, {
+      'tenant_id',
+      'legal_entity_id',
+      'branch_id',
+      'resolution',
+    });
+    _scope(response, scope);
+    final result = CalendarLocalResolution.fromJson(
+      _map(response['resolution']),
+    );
+    if (result.versionId != version.summary.coverage.id ||
+        result.date.value != date.value ||
+        result.minute != minute ||
+        result.timezone != version.summary.coverage.timezone) {
+      throw const FormatException(
+        'Calendar resolution changed its version, zone or boundary.',
+      );
+    }
+    return result;
+  }
 
   void _require(TenantContext scope) {
     if (!scope.hasOperationalScope ||
