@@ -142,4 +142,159 @@ void main() {
       ),
     );
   });
+
+  // Read authentication preserves typed scope denials; command precedence is unchanged.
+  test(
+    'read entrypoint 1 redacts typed access and expired-token errors',
+    () async {
+      for (final rejection in [
+        ('P0001', 'PERMISSION_DENIED', 'PERMISSION_DENIED'),
+        ('42501', 'PRIVATE database table', 'PERMISSION_DENIED'),
+        ('P0001', 'ACCESS_DENIED', 'ACCESS_DENIED'),
+        ('P0001', 'MFA_REQUIRED', 'MFA_REQUIRED'),
+        ('P0001', 'AUTHENTICATION_REQUIRED', 'AUTHENTICATION_REQUIRED'),
+        (
+          'PGRST301',
+          'PRIVATE signature diagnostics',
+          'AUTHENTICATION_REQUIRED',
+        ),
+        ('PGRST302', 'PRIVATE role diagnostics', 'AUTHENTICATION_REQUIRED'),
+        ('PGRST303', 'PRIVATE claims diagnostics', 'AUTHENTICATION_REQUIRED'),
+      ]) {
+        status = rejection.$1.startsWith('PGRST') ? 401 : 403;
+        response = {
+          'code': rejection.$1,
+          'message': rejection.$2,
+          'details': 'PRIVATE SQL and host',
+          'hint': 'PRIVATE internal remediation',
+        };
+        await expectLater(
+          gateway.page(scope),
+          throwsA(
+            isA<DomainError>()
+                .having((e) => e.code, 'typed rejection', rejection.$3)
+                .having(
+                  (e) => e.message,
+                  'public message',
+                  isNot(contains('PRIVATE')),
+                ),
+          ),
+        );
+        final body = jsonDecode(requests.last.body) as Map;
+        expect(body['p_tenant_id'], 'tenant');
+        expect(body['p_legal_entity_id'], 'entity');
+        expect(body['p_branch_id'], 'branch');
+      }
+    },
+  );
+  test(
+    'read entrypoint 2 redacts typed access and expired-token errors',
+    () async {
+      for (final rejection in [
+        ('P0001', 'PERMISSION_DENIED', 'PERMISSION_DENIED'),
+        ('42501', 'PRIVATE database table', 'PERMISSION_DENIED'),
+        ('P0001', 'ACCESS_DENIED', 'ACCESS_DENIED'),
+        ('P0001', 'MFA_REQUIRED', 'MFA_REQUIRED'),
+        ('P0001', 'AUTHENTICATION_REQUIRED', 'AUTHENTICATION_REQUIRED'),
+        (
+          'PGRST301',
+          'PRIVATE signature diagnostics',
+          'AUTHENTICATION_REQUIRED',
+        ),
+        ('PGRST302', 'PRIVATE role diagnostics', 'AUTHENTICATION_REQUIRED'),
+        ('PGRST303', 'PRIVATE claims diagnostics', 'AUTHENTICATION_REQUIRED'),
+      ]) {
+        status = rejection.$1.startsWith('PGRST') ? 401 : 403;
+        response = {
+          'code': rejection.$1,
+          'message': rejection.$2,
+          'details': 'PRIVATE SQL and host',
+          'hint': 'PRIVATE internal remediation',
+        };
+        await expectLater(
+          gateway.options(scope, 'warehouses'),
+          throwsA(
+            isA<DomainError>()
+                .having((e) => e.code, 'typed rejection', rejection.$3)
+                .having(
+                  (e) => e.message,
+                  'public message',
+                  isNot(contains('PRIVATE')),
+                ),
+          ),
+        );
+        final body = jsonDecode(requests.last.body) as Map;
+        expect(body['p_tenant_id'], 'tenant');
+        expect(body['p_legal_entity_id'], 'entity');
+        expect(body['p_branch_id'], 'branch');
+      }
+    },
+  );
+  test(
+    'read entrypoint 3 redacts typed access and expired-token errors',
+    () async {
+      for (final rejection in [
+        ('P0001', 'PERMISSION_DENIED', 'PERMISSION_DENIED'),
+        ('42501', 'PRIVATE database table', 'PERMISSION_DENIED'),
+        ('P0001', 'ACCESS_DENIED', 'ACCESS_DENIED'),
+        ('P0001', 'MFA_REQUIRED', 'MFA_REQUIRED'),
+        ('P0001', 'AUTHENTICATION_REQUIRED', 'AUTHENTICATION_REQUIRED'),
+        (
+          'PGRST301',
+          'PRIVATE signature diagnostics',
+          'AUTHENTICATION_REQUIRED',
+        ),
+        ('PGRST302', 'PRIVATE role diagnostics', 'AUTHENTICATION_REQUIRED'),
+        ('PGRST303', 'PRIVATE claims diagnostics', 'AUTHENTICATION_REQUIRED'),
+      ]) {
+        status = rejection.$1.startsWith('PGRST') ? 401 : 403;
+        response = {
+          'code': rejection.$1,
+          'message': rejection.$2,
+          'details': 'PRIVATE SQL and host',
+          'hint': 'PRIVATE internal remediation',
+        };
+        await expectLater(
+          gateway.detail(scope, 'document'),
+          throwsA(
+            isA<DomainError>()
+                .having((e) => e.code, 'typed rejection', rejection.$3)
+                .having(
+                  (e) => e.message,
+                  'public message',
+                  isNot(contains('PRIVATE')),
+                ),
+          ),
+        );
+        final body = jsonDecode(requests.last.body) as Map;
+        expect(body['p_tenant_id'], 'tenant');
+        expect(body['p_legal_entity_id'], 'entity');
+        expect(body['p_branch_id'], 'branch');
+      }
+    },
+  );
+  test(
+    'command error classification retains its existing SQLSTATE precedence',
+    () async {
+      for (final rejection in [
+        ('P0001', 'MFA_REQUIRED', 'VALIDATION_ERROR'),
+        ('42501', 'MFA_REQUIRED', 'PERMISSION_DENIED'),
+        ('40001', 'MFA_REQUIRED', 'VERSION_CONFLICT'),
+        ('PGRST301', 'AUTHENTICATION_REQUIRED', 'UNCERTAIN_RESULT'),
+      ]) {
+        status = 400;
+        response = {'code': rejection.$1, 'message': rejection.$2};
+        await expectLater(
+          gateway.execute('post', command()),
+          throwsA(
+            isA<DomainError>().having(
+              (e) => e.code,
+              'command precedence',
+              rejection.$3,
+            ),
+          ),
+        );
+      }
+    },
+  );
 }

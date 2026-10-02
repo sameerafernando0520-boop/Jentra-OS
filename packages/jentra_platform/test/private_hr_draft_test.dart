@@ -37,6 +37,65 @@ Map<String, Object?> profile() => {
 };
 void main() {
   test(
+    'recovery index uses only metadata and excludes other actors and capabilities',
+    () async {
+      final db = JentraLocalDatabase(NativeDatabase.memory()), keys = _Keys();
+      var now = DateTime.utc(2026, 9, 28);
+      final store = PrivateHrDraftStore(
+        EncryptedDraftRepository(db, DraftCipher(keyStore: keys)),
+        (s, e, c) async {},
+        clock: () => now,
+      );
+      try {
+        final request = await store.prepare(
+          w4Scope,
+          w4Id,
+          w4Id,
+          'profile_save',
+          profile(),
+          0,
+        );
+        final before = keys.reads;
+        keys.forbid = true;
+        final items = await store.recovery(w4Scope, {
+          'people.hr.private.manage',
+        });
+        expect(items.single.aggregateId, w4Id);
+        expect(items.single.expiresAt, isNotNull);
+        expect(keys.reads, before);
+        expect(await store.recovery(w4Scope, {'people.self.view'}), isEmpty);
+        final other = TenantContext(
+          tenantId: w4Scope.tenantId,
+          legalEntityId: w4Scope.legalEntityId,
+          branchId: w4Scope.branchId,
+          actorId: w4Id,
+        );
+        expect(
+          await store.recovery(other, {'people.hr.private.manage'}),
+          isEmpty,
+        );
+        now = now.add(const Duration(hours: 24));
+        final expired = await store.recovery(w4Scope, {
+          'people.hr.private.manage',
+        });
+        expect(expired.single.expiresAt, isNull);
+        expect(keys.reads, before);
+        keys.forbid = false;
+        expect(
+          (await store.expiredReceipt(
+            w4Scope,
+            w4Id,
+            w4Id,
+            'profile_save',
+          ))!['command_id'],
+          request.envelope.commandId,
+        );
+      } finally {
+        await db.close();
+      }
+    },
+  );
+  test(
     'encrypted private request and minimal receipt survive a SQLite restart exactly',
     () async {
       final scratch = await Directory.systemTemp.createTemp(

@@ -1,0 +1,118 @@
+create extension if not exists pgtap with schema extensions;
+set local search_path=extensions,public,pg_catalog;
+select no_plan();
+insert into billing.plan_entitlements(plan_code,entitlement_code,enabled) values('w4_integrated_rollback','module.service',true);
+insert into core.role_permissions(tenant_id,role_id,permission_code)
+select pg_temp.wid('tenant'),pg_temp.wid(x||'.role'),p.code from unnest(array['creator','reviewer','branch-manager']) x cross join core.permissions p where p.module='service';
+insert into core.role_permissions(tenant_id,role_id,permission_code) values(pg_temp.wid('tenant'),pg_temp.wid('reader.role'),'service.view');
+insert into crm.parties(id,tenant_id,code,legal_name,display_name,kind,status,created_by,updated_by)
+values(pg_temp.wid('customer'),pg_temp.wid('tenant'),'W4SERVICE','Synthetic Service Customer','Synthetic Customer','customer','active',pg_temp.wid('creator'),pg_temp.wid('creator'));
+insert into people.departments(id,tenant_id,legal_entity_id,code) values(pg_temp.wid('department'),pg_temp.wid('tenant'),pg_temp.wid('entity'),'W4OPS');
+insert into people.department_revisions(id,tenant_id,legal_entity_id,department_id,name,start_date,end_date_exclusive,reason,recorded_by)
+values(pg_temp.wid('department-r1'),pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('department'),'Synthetic Operations',pg_temp.wdate()-10,pg_temp.wdate()+400,'Synthetic service fixture',pg_temp.wid('creator'));
+insert into people.organization_assignments(id,tenant_id,legal_entity_id,branch_id,employee_id,spell_id,department_id,calendar_version_id,role_title,start_date,end_date_exclusive,reason,recorded_by)
+select pg_temp.wid('org-service'),pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('employee'),s.id,pg_temp.wid('department'),pg_temp.wid('calendar-version'),'Synthetic engineer',pg_temp.wdate()-10,pg_temp.wdate()+400,'Synthetic service fixture',pg_temp.wid('creator')
+from people.employment_spells s where s.employee_id=pg_temp.wid('employee');
+create function pg_temp.sutc(hour integer) returns text language sql as $$select to_char(pg_temp.wdate()::timestamp+hour*interval '1 hour'-interval '5 hours 30 minutes','YYYY-MM-DD"T"HH24:MI:SS"Z"')$$;
+create function pg_temp.sc(action text,id text,data jsonb default '{}',version bigint default 0,k text default null) returns jsonb language sql as $$
+ select api.service_command(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid(coalesce(k,id||'.'||action)),pg_temp.wid(coalesce(k,id||'.'||action)),now(),
+ jsonb_build_object('action',action,'id',pg_temp.wid(id),'reason','Synthetic service evidence')||data,version) $$;
+create function pg_temp.spolicy(seconds bigint default 3600) returns jsonb language sql as $$select jsonb_build_object('name','Synthetic SLA','calendar_version_id',pg_temp.wid('calendar-version'),
+ 'start_date',pg_temp.wdate()-1,'end_date_exclusive',pg_temp.wdate()+29,'response_seconds',seconds,'resolution_seconds',10800,'independent_closure',true,'offsets','[]'::jsonb)$$;
+create function pg_temp.sticket(code text default 'W4-SERVICE') returns jsonb language sql as $$select jsonb_build_object('code',code,'name','Synthetic fault','classification','repair',
+ 'customer_id',pg_temp.wid('customer'),'contact_id',null,'equipment_id',pg_temp.wid('equipment'),'coverage_id',null,'policy_id',pg_temp.wid('policy'),'priority','normal','owner_id',null,'observed_utc',pg_temp.sutc(9))$$;
+create temporary table service_responses(name text primary key,body jsonb);
+create temporary table service_samples(name text primary key,body jsonb);
+grant select,insert on service_responses,service_samples to authenticated;
+select ok((select bool_and(relrowsecurity and relforcerowsecurity) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='service' and c.relkind='r'),'AC-401 all service tables force RLS');
+select ok(not has_table_privilege('authenticated','service.labor','SELECT'),'AC-401 labor API only');
+select ok(not has_function_privilege('authenticated','service.consume_billing_source(uuid,uuid,uuid,uuid,bigint,text,uuid)','EXECUTE'),'AC-411 consumption owner only');
+select ok(not has_function_privilege('anon','api.service_command(uuid,uuid,uuid,uuid,uuid,timestamptz,jsonb,bigint)','EXECUTE'),'AC-401 anonymous writes denied');
+select is(service.round_ratio(5000,1,2)::numeric(20,6)::text,'0.000000','AC-414 half-even exact tie');
+select is(service.round_ratio(15000,1,2)::numeric(20,6)::text,'0.020000','AC-414 half-even odd tie');
+select pg_temp.wactor('creator');set local role authenticated;
+insert into service_responses values('equipment',pg_temp.sc('equipment','equipment',jsonb_build_object('code','EQ-W4','name','Synthetic Pump','identity','W4-PUMP-0001','kind','customer','customer_id',pg_temp.wid('customer'),'provider_id',null)));
+select is((select body->'entity'->>'version' from service_responses where name='equipment'),'1','AC-415 equipment created');
+select is(pg_temp.sc('equipment','equipment',jsonb_build_object('code','EQ-W4','name','Synthetic Pump','identity','W4-PUMP-0001','kind','customer','customer_id',pg_temp.wid('customer'),'provider_id',null)),(select body from service_responses where name='equipment'),'EC-402 exact replay');
+select throws_ok($$select pg_temp.sc('equipment','equipment',jsonb_build_object('code','CHANGED','name','Synthetic Pump','identity','W4-PUMP-0001','kind','customer','customer_id',pg_temp.wid('customer'),'provider_id',null))$$,'22023','IDEMPOTENCY_MISMATCH','EC-402 changed-body replay rejected');
+insert into service_responses values('policy',pg_temp.sc('policy','policy',pg_temp.spolicy()));
+insert into service_responses values('policy2',pg_temp.sc('policy','policy2',pg_temp.spolicy(1800)));
+insert into service_responses values('coverage',pg_temp.sc('coverage','coverage',jsonb_build_object('equipment_id',pg_temp.wid('equipment'),'kind','warranty','name','Synthetic warranty','start_date',pg_temp.wdate()-1,'end_date_exclusive',pg_temp.wdate()+30,'evidence_reference','W4-WARRANTY-001')));
+insert into service_responses values('ticket',pg_temp.sc('ticket','ticket',pg_temp.sticket()));
+insert into service_samples values('ticket-initial',api.service_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),'ticket',pg_temp.wid('ticket')));
+select ok((select (body->'record'->>'response_due')::timestamptz from service_samples where name='ticket-initial')=pg_temp.sutc(10)::timestamptz,'AC-413 calendar due instant exact');
+insert into service_responses values('pause',pg_temp.sc('pause','ticket',jsonb_build_object('observed_utc',pg_temp.sutc(10)),1));
+insert into service_responses values('resume',pg_temp.sc('resume','ticket',jsonb_build_object('observed_utc',pg_temp.sutc(11)),2));
+insert into service_responses values('reprioritize',pg_temp.sc('reprioritize','ticket',jsonb_build_object('observed_utc',pg_temp.sutc(12),'policy_id',pg_temp.wid('policy2'),'priority','urgent'),3));
+insert into service_samples values('ticket-reprioritized',api.service_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),'ticket',pg_temp.wid('ticket')));
+select is((select body->'record'->>'version' from service_samples where name='ticket-reprioritized'),'4','AC-413 pause resume repriority keep versions');
+select is((select body->'record'->>'consumed_seconds' from service_samples where name='ticket-reprioritized'),'7200','AC-413 paused hour not consumed');
+select is((select body->'record'->>'response_breached' from service_samples where name='ticket-reprioritized'),'true','AC-413 earlier breach retained');
+select throws_ok($$select pg_temp.sc('evaluate','ticket',jsonb_build_object('observed_utc',pg_temp.sutc(12)),1)$$,'40001','SERVICE_VERSION_CONFLICT','EC-415 stale SLA rejected');
+insert into service_responses values('order',pg_temp.sc('order','order',jsonb_build_object('ticket_id',pg_temp.wid('ticket'))));
+insert into service_responses values('dispatch',pg_temp.sc('dispatch','order',jsonb_build_object('employee_id',pg_temp.wid('employee'),'calendar_version_id',pg_temp.wid('calendar-version'),'start_utc',pg_temp.sutc(12),'end_utc',pg_temp.sutc(14),'booking_id',pg_temp.wid('booking')),1));
+insert into service_responses values('accept',pg_temp.sc('accept','order',jsonb_build_object('observed_utc',pg_temp.sutc(12)),2));
+insert into service_responses values('start',pg_temp.sc('start','order',jsonb_build_object('observed_utc',pg_temp.sutc(12)),3));
+insert into service_responses values('labor',pg_temp.sc('labor','labor',jsonb_build_object('order_id',pg_temp.wid('order'),'employee_id',pg_temp.wid('employee'),'calendar_version_id',pg_temp.wid('calendar-version'),
+ 'start_utc',pg_temp.sutc(12),'end_utc',pg_temp.sutc(13),'breaks','[]'::jsonb,'claim_id',null,'hourly_cost','123.455000','currency_code','LKR','precision',2,'billing_kind','billable','hourly_billing','250.005000','billing_reference','Synthetic contract rate')));
+select throws_ok($$select pg_temp.sc('approve_labor','labor','{}',1)$$,'55000','SERVICE_INDEPENDENT_APPROVAL_REQUIRED','AC-414 preparer cannot approve labor');
+select pg_temp.wactor('reviewer');
+insert into service_responses values('approved',pg_temp.sc('approve_labor','labor','{}',1));
+insert into service_samples values('labor-approved',api.service_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),'labor',pg_temp.wid('labor')));
+select is((select body->'record'->>'amount' from service_samples where name='labor-approved'),'123.460000','AC-414 exact labor cost');
+select pg_temp.wactor('creator');
+insert into service_responses values('complete',pg_temp.sc('complete','order',jsonb_build_object('observed_utc',pg_temp.sutc(14),'resolution','Synthetic repair complete','customer_confirmed',false,'exception_reason','Synthetic customer unavailable'),4));
+insert into service_samples values('order-completed',api.service_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),'order',pg_temp.wid('order')));
+select throws_ok($$select pg_temp.sc('close','order','{}',5)$$,'55000','SERVICE_INDEPENDENT_CLOSURE_REQUIRED','AC-414 independent closure and unbilled sources required');
+select throws_ok($$select pg_temp.sc('parts_issue','order','{}',5)$$,'55000','SERVICE_PARTS_PROVIDER_UNAVAILABLE','EC-416 no fabricated service parts');
+insert into service_responses values('plan',pg_temp.sc('plan','plan',jsonb_build_object('equipment_id',pg_temp.wid('equipment'),'policy_id',pg_temp.wid('policy'),'name','Synthetic meter maintenance','basis','meter','interval_units',100,'next_date',null,'next_meter',100)));
+insert into service_responses values('reading0',pg_temp.sc('reading','reading0',jsonb_build_object('equipment_id',pg_temp.wid('equipment'),'kind','initial','raw_value',90,'rollover_max',null,'observed_utc',pg_temp.sutc(9))));
+select throws_ok($$select pg_temp.sc('reading','bad-reading',jsonb_build_object('equipment_id',pg_temp.wid('equipment'),'kind','reading','raw_value',80,'rollover_max',null,'observed_utc',pg_temp.sutc(10)))$$,'22023','SERVICE_METER_DECREASE','AC-415 decreases require reset');
+insert into service_responses values('reading1',pg_temp.sc('reading','reading1',jsonb_build_object('equipment_id',pg_temp.wid('equipment'),'kind','rollover','raw_value',9,'rollover_max',99,'observed_utc',pg_temp.sutc(10))));
+insert into service_responses values('reading2',pg_temp.sc('reading','reading2',jsonb_build_object('equipment_id',pg_temp.wid('equipment'),'kind','reset','raw_value',0,'rollover_max',null,'observed_utc',pg_temp.sutc(11))));
+insert into service_samples values('reading-reset',api.service_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),'reading',pg_temp.wid('reading2')));
+select is((select body->'record'->>'logical_value' from service_samples where name='reading-reset'),'109','AC-415 rollover reset conserve logical units');
+insert into service_responses values('generate',pg_temp.sc('generate','plan',jsonb_build_object('ticket_id',pg_temp.wid('pm-ticket'),'order_id',pg_temp.wid('pm-order'),'occurrence_id',pg_temp.wid('pm-occurrence'),'observed_utc',pg_temp.sutc(12)),1));
+select is(pg_temp.sc('generate','plan',jsonb_build_object('ticket_id',pg_temp.wid('pm-ticket'),'order_id',pg_temp.wid('pm-order'),'occurrence_id',pg_temp.wid('pm-occurrence'),'observed_utc',pg_temp.sutc(12)),1),(select body from service_responses where name='generate'),'EC-413 generation retry original identity');
+select throws_ok($$select pg_temp.sc('generate','plan',jsonb_build_object('ticket_id',pg_temp.wid('pm-ticket2'),'order_id',pg_temp.wid('pm-order2'),'occurrence_id',pg_temp.wid('pm-occurrence2'),'observed_utc',pg_temp.sutc(12)),1,'duplicate-generate')$$,'40001','SERVICE_VERSION_CONFLICT','EC-413 stale generation cannot duplicate occurrence');
+insert into service_samples values('occurrence',api.service_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),'occurrence',pg_temp.wid('pm-occurrence')));
+select pg_temp.wactor('reader');
+insert into service_samples values('labor-redacted',api.service_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),'labor',pg_temp.wid('labor')));
+select ok(not((select body->'record' from service_samples where name='labor-redacted')?'amount'),'AC-404 internal service cost separately protected');
+select ok(not exists(select 1 from jsonb_array_elements((select body->'events' from service_samples where name='labor-redacted')) x where x->'facts'?'amount'),'AC-404 history does not leak cost');
+select throws_ok($$select pg_temp.sc('evaluate','ticket',jsonb_build_object('observed_utc',pg_temp.sutc(12)),4)$$,'42501','Permission denied or multi-factor authentication required.','AC-401 directory role cannot mutate service');
+select pg_temp.wactor('outsider');
+select throws_ok($$select api.service_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),'ticket',pg_temp.wid('ticket'))$$,'42501','Permission denied or multi-factor authentication required.','AC-401 outsider denied');
+reset role;select pg_temp.wactor('reviewer');
+select is(service.payroll_source(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('employee'),(select claim_id from service.labor where id=pg_temp.wid('labor')))->>'paid_seconds','3600','AC-411 one direct payroll claim');
+select is(service.billing_source(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('labor'))->>'source_version','2','AC-412 immutable approved billing source');
+select ok(not exists(select 1 from core.outbox_events where command_id in(select command_id from core.command_receipts where command_name like 'service.%') and payload::text like '%hourly_cost%'),'AC-404 generic outbox excludes internal cost');
+select is(service.billing_source(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('labor'))->>'amount','250.000000','AC-412 billing price independent of internal cost');
+select is(service.payroll_impact(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('employee'),
+ (select claim_id from service.labor where id=pg_temp.wid('labor')),pg_temp.wid('source-revision'),'{}','read')->>'paid_seconds','3600','AC-411 correction read retains original service seconds');
+select is(service.payroll_impact(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('employee'),
+ (select claim_id from service.labor where id=pg_temp.wid('labor')),pg_temp.wid('source-revision'),jsonb_build_object('expected_source_version',2,'mode','geometry',
+ 'start_local',pg_temp.wdate()::text||'T12:00:00','end_local',pg_temp.wdate()::text||'T12:30:00','start_offset_seconds',19800,'end_offset_seconds',19800,'breaks','[]'::jsonb),'validate')->>'paid_seconds','1800','AC-411 revised service seconds exact');
+select is(service.payroll_impact(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('employee'),
+ (select claim_id from service.labor where id=pg_temp.wid('labor')),pg_temp.wid('source-revision'),jsonb_build_object('expected_source_version',2,'mode','geometry',
+ 'start_local',pg_temp.wdate()::text||'T12:00:00','end_local',pg_temp.wdate()::text||'T12:30:00','start_offset_seconds',19800,'end_offset_seconds',19800,'breaks','[]'::jsonb),'validate')->'after'->>'amount','61.730000','AC-411 frozen service cost revised exactly');
+select is((select version from service.labor where id=pg_temp.wid('labor')),2::bigint,'AC-411 validation does not mutate source');
+select ok(not has_function_privilege('authenticated','service.payroll_impact(uuid,uuid,uuid,uuid,uuid,uuid,jsonb,text)','EXECUTE'),'AC-401 correction hook owner only');
+select ok(not has_function_privilege('authenticated','service.payroll_allocation_impact(uuid,uuid,uuid,uuid,uuid,uuid,jsonb,text)','EXECUTE'),'AC-401 allocation hook owner only');
+select is((select count(*) from service.events where aggregate_id=pg_temp.wid('ticket') and action in('accept','complete')),2::bigint,'AC-413 indirect ticket clocks retain history');
+select is((select count(*) from service.events where aggregate_id=pg_temp.wid('pm-order')),1::bigint,'AC-415 generated work order has provenance');
+create function pg_temp.service_fail_outbox() returns trigger language plpgsql as $$begin raise exception 'SERVICE_TEST_OUTBOX_FAILURE';end $$;
+create trigger service_test_outbox_failure before insert on core.outbox_events for each row execute function pg_temp.service_fail_outbox();
+select pg_temp.wactor('creator');set local role authenticated;
+select throws_ok($$select pg_temp.sc('ticket','atomic-ticket',pg_temp.sticket('ATOMIC-SERVICE'))$$,'P0001','SERVICE_TEST_OUTBOX_FAILURE','EC-415 late outbox failure rolls back service');
+reset role;
+drop trigger service_test_outbox_failure on core.outbox_events;
+select ok(not exists(select 1 from service.tickets where id=pg_temp.wid('atomic-ticket')) and not exists(select 1 from service.events where aggregate_id=pg_temp.wid('atomic-ticket'))
+ and not exists(select 1 from core.command_receipts where command_id=pg_temp.wid('atomic-ticket.ticket')),'EC-415 no partial ticket event or receipt');
+select pg_temp.wactor('creator','aal1');set local role authenticated;
+select throws_ok($$select pg_temp.sc('ticket','mfa-ticket',pg_temp.sticket('MFA-SERVICE'))$$,'42501','Permission denied or multi-factor authentication required.','AC-401 privileged service requires MFA');
+reset role;select pg_temp.wactor('reviewer');
+delete from core.role_permissions where role_id=pg_temp.wid('creator.role') and permission_code='service.configure';
+select pg_temp.wactor('creator');set local role authenticated;
+select throws_ok($$select api.service_own_receipt(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('equipment.equipment'),'equipment')$$,'42501','Permission denied or multi-factor authentication required.','EC-402 revocation before receipt lookup');
+reset role;

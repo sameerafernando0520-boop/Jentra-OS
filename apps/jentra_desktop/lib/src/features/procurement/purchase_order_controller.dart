@@ -1,10 +1,13 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_procurement.dart';
 import 'package:jentra_platform/jentra_procurement_platform.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../app_providers.dart';
+import '../operations/operational_read_access.dart';
 import 'procurement_controller.dart';
 
 final purchaseOrderControllerProvider =
@@ -41,7 +44,8 @@ final purchaseOrderControllerProvider =
       return c;
     });
 
-final class PurchaseOrderController extends ChangeNotifier {
+final class PurchaseOrderController extends ChangeNotifier
+    implements OperationalReadAccess {
   PurchaseOrderController({
     required this.scope,
     required this.gateway,
@@ -56,7 +60,46 @@ final class PurchaseOrderController extends ChangeNotifier {
   final QuotationDraftStore drafts;
   final bool canApprove;
   static const slot = 'purchase-order-editor';
-  bool online, busy = false, _disposed = false;
+  bool online, busy = false, _disposed = false, accessDenied = false;
+  int _epoch = 0, _operationEpoch = 0;
+  @override
+  int get readAccessEpoch => _epoch;
+  @override
+  bool currentRead(int epoch) =>
+      !_disposed && online && !accessDenied && epoch == _epoch;
+  @override
+  void denyReadAccess() {
+    if (_disposed) return;
+    accessDenied = true;
+    _epoch++;
+    clearServer();
+    emit();
+  }
+
+  bool get currentServer => !_disposed && online && _operationEpoch == _epoch;
+  void confirmedReadFailure(Object failure, int epoch, String fallback) {
+    if (_disposed || epoch != _epoch) return;
+    if (failure is DomainError &&
+        const {
+          'PERMISSION_DENIED',
+          'ACCESS_DENIED',
+          'MFA_REQUIRED',
+          'AUTHENTICATION_REQUIRED',
+        }.contains(failure.code)) {
+      accessDenied = true;
+      _epoch++;
+      clearServer();
+      error = failure.message;
+      return;
+    }
+    error = fallback;
+  }
+
+  void clearServer() {
+    page = CursorPage(items: [], limit: 50);
+    selected = null;
+  }
+
   String? error, message;
   Map<String, Object?>? form, selected;
   QuotationLocalDraft? local;
@@ -64,6 +107,7 @@ final class PurchaseOrderController extends ChangeNotifier {
   CursorPage<Map<String, Object?>> page = CursorPage(items: [], limit: 50);
   bool get locked =>
       _disposed ||
+      accessDenied ||
       busy ||
       local?.pending != null ||
       local?.errorCode == 'VERSION_CONFLICT';
@@ -83,11 +127,18 @@ final class PurchaseOrderController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _epoch++;
+    clearServer();
+    notifyListeners();
     super.dispose();
   }
 
   void setOnline(bool v) {
-    online = v;
+    if (online != v) {
+      online = v;
+      _epoch++;
+      clearServer();
+    }
     emit();
   }
 
@@ -96,11 +147,26 @@ final class PurchaseOrderController extends ChangeNotifier {
       return;
     }
     busy = true;
+    _operationEpoch = _epoch;
     error = null;
     emit();
     try {
       await work();
     } catch (e) {
+      if (_disposed || _operationEpoch != _epoch) return;
+      if (!_disposed &&
+          _operationEpoch == _epoch &&
+          e is DomainError &&
+          const {
+            'PERMISSION_DENIED',
+            'ACCESS_DENIED',
+            'MFA_REQUIRED',
+            'AUTHENTICATION_REQUIRED',
+          }.contains(e.code)) {
+        accessDenied = true;
+        _epoch++;
+        clearServer();
+      }
       error = e is DomainError
           ? e.message
           : e is FormatException
@@ -120,7 +186,11 @@ final class PurchaseOrderController extends ChangeNotifier {
     form = local?.form;
     version = local?.expectedVersion;
     if (online) {
-      page = await gateway.orders(scope);
+      final result = await gateway.orders(scope);
+      if (currentServer) {
+        page = result;
+        accessDenied = false;
+      }
     }
   });
   Future<void> refresh({bool more = false}) => run(() async {
@@ -131,9 +201,10 @@ final class PurchaseOrderController extends ChangeNotifier {
       scope,
       after: more ? page.nextCursor : null,
     );
-    if (_disposed) {
+    if (!currentServer) {
       return;
     }
+    accessDenied = false;
     page = CursorPage(
       items: [if (more) ...page.items, ...result.items],
       limit: 50,
@@ -236,7 +307,7 @@ final class PurchaseOrderController extends ChangeNotifier {
       return;
     }
     final result = await references.references(scope, 'units');
-    if (_disposed || form == null) {
+    if (!currentServer || accessDenied || form == null) {
       return;
     }
     form = {
@@ -305,22 +376,19 @@ final class PurchaseOrderController extends ChangeNotifier {
     };
     // The draft store's established verbs distinguish commands from editable saves.
     final verb = action == 'revise' ? 'recall' : action;
-    await drafts.save(
-      scope,
-      slot,
-      selected!,
-      expectedVersion: selected!['version'] as int,
-    );
+    final original = Map<String, Object?>.from(selected!);
+    final expectedVersion = original['version'] as int;
+    await drafts.save(scope, slot, original, expectedVersion: expectedVersion);
     final pending = await drafts.prepare(
       scope,
       slot,
       verb: verb,
       payload: payload,
-      expectedVersion: selected!['version'] as int,
+      expectedVersion: expectedVersion,
     );
     local = await drafts.load(scope, slot);
-    form = selected;
-    version = selected!['version'] as int;
+    form = original;
+    version = expectedVersion;
     await send(pending);
   });
   Future<void> saveServer() => run(() async {
@@ -396,7 +464,7 @@ final class PurchaseOrderController extends ChangeNotifier {
     await send(pending);
   });
   Future<void> send(QuotationPendingCommand pending) async {
-    if (_disposed || !online) {
+    if (!currentServer || accessDenied) {
       return;
     }
     late final Map<String, Object?> result;
@@ -423,20 +491,27 @@ final class PurchaseOrderController extends ChangeNotifier {
       }
       rethrow;
     }
-    if (_disposed) {
-      return;
-    }
+    if (_disposed) return;
     form = null;
     local = null;
     version = null;
+    if (!currentServer) {
+      message = 'Action confirmed. Refresh after reconnecting.';
+      return;
+    }
     selected = result;
     message =
         'Purchase order ${result['status']} · revision ${result['revision']}';
+    final refreshEpoch = _epoch;
     try {
-      page = await gateway.orders(scope);
-    } catch (_) {
-      error =
-          'Saved successfully. The register could not refresh; use Refresh to reload it.';
+      final refreshed = await gateway.orders(scope);
+      if (currentServer) page = refreshed;
+    } catch (failure) {
+      confirmedReadFailure(
+        failure,
+        refreshEpoch,
+        'Saved successfully. The register could not refresh; use Refresh to reload it.',
+      );
     }
   }
 }

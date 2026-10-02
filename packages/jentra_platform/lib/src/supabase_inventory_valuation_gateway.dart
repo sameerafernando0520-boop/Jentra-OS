@@ -1,5 +1,6 @@
 import 'package:jentra_domain/jentra_inventory.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'finance_report_read_access.dart';
 
 abstract interface class InventoryValuationGateway {
   Future<Map<String, Object?>> options(
@@ -56,6 +57,8 @@ final class SupabaseInventoryValuationGateway
       }
       return r.cast<String, Object?>();
     } on PostgrestException catch (e) {
+      final denial = financeReportReadDenial(name, e);
+      if (denial != null) throw denial;
       final code = e.code == '42501'
           ? 'PERMISSION_DENIED'
           : e.code == '40001'

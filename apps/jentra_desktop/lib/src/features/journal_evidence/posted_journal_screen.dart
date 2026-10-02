@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jentra_domain/jentra_domain.dart';
+
 import '../../app_providers.dart';
 import 'posted_journal_controller.dart';
+import '../operations/operational_link.dart';
+
+import '../operations/operational_controller.dart';
 
 String postedJournalLocation(TenantContext scope, String journalId) => Uri(
   path: '/finance/journal-evidence',
@@ -57,13 +61,22 @@ class PostedJournalScreen extends ConsumerWidget {
               'This journal destination is unavailable. Select a permitted finance scope.',
             ),
           )
-        : PostedJournalWorkspace(key: ValueKey(c), controller: c);
+        : PostedJournalWorkspace(
+            key: ValueKey(c),
+            controller: c,
+            sourceCapabilities: caps.value ?? {},
+          );
   }
 }
 
 class PostedJournalWorkspace extends StatelessWidget {
-  const PostedJournalWorkspace({super.key, required this.controller});
+  const PostedJournalWorkspace({
+    super.key,
+    required this.controller,
+    this.sourceCapabilities = const {},
+  });
   final PostedJournalController controller;
+  final Set<String> sourceCapabilities;
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: controller,
@@ -131,6 +144,17 @@ class PostedJournalWorkspace extends StatelessWidget {
             ])
               SelectableText('${_label(k)}: ${j[k]}'),
             const SizedBox(height: 12),
+            if (j['source_type'] is String &&
+                canReadOperational(
+                  j['source_type'] as String,
+                  sourceCapabilities,
+                ) &&
+                j['source_id'] is String)
+              OperationalLink(
+                scope: c.scope,
+                kind: j['source_type'] as String,
+                id: j['source_id'] as String,
+              ),
             const Text(
               'Account and branch labels are from the current catalogue. Amounts and dimension snapshots are immutable posted evidence.',
             ),

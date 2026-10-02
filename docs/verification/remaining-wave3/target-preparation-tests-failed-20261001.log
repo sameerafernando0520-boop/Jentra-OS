@@ -1,0 +1,57 @@
+✔ Exact micro units and values beyond JavaScript safe integer range remain strings (8.4174ms)
+✔ Bounded deterministic receipt IDs, original exact quantities and purchase-order versions (30.9569ms)
+✔ Development/production and wrong target URLs are rejected offline (0.9733ms)
+✔ Invalid dates, stale versions, duplicate order lanes and capacity overflow reject (3.2835ms)
+✔ Source fingerprints include all 45 candidate bodies and reject drift (1571.9659ms)
+✔ Foundation generation checks actual candidate columns and always finishes rollback (352.4447ms)
+✔ Default target foundation recipe plans the exact per-cohort dimensions, without filling installed counts (265.7535ms)
+✔ Fixture preflight verifies real approved sources, exact value/capacity, membership, period and guards (2.3292ms)
+✔ Persistent execution rejects silence, absent approval, wrong host and expired sessions (1092.6034ms)
+✔ Eleven source query plans are scoped and bounded; bank private basis is labelled separately (2.5081ms)
+✔ Plan walker flags high-volume parallel/ordinary sequential scans without changing planner settings (4.2333ms)
+✔ All nine postflight classes include relational uniqueness, balances, source links and immutable originals (6.5553ms)
+✖ Postflight refuses arbitrary relation SQL, inexact quantities and malformed source IDs (4.5908ms)
+✔ Preparation requires the five actual ordinary reports and two distinct race actors (1.5657ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 13
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3383.2013
+
+✖ failing tests:
+
+test at tools\wave3\target-verification-preparation.test.mjs:22:29
+✖ Postflight refuses arbitrary relation SQL, inexact quantities and malformed source IDs (4.5908ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /immutable relation/. Input:
+  
+  'Error: Every original allocation item and reversed receipt needs its pre-race immutable-row hash'
+  
+      at file:///C:/Users/sheha/Desktop/Jentra%20OS/tools/wave3/target-verification-preparation.test.mjs:141:10
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/tools/wave3/target-verification-preparation.test.mjs:22:48)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Error: Every original allocation item and reversed receipt needs its pre-race immutable-row hash
+        at racePostflightSql (file:///C:/Users/sheha/Desktop/Jentra%20OS/tools/wave3/prepare-target-race-invariants.mjs:35:13)
+        at file:///C:/Users/sheha/Desktop/Jentra%20OS/tools/wave3/target-verification-preparation.test.mjs:141:23
+        at getActual (node:assert:611:5)
+        at strict.throws (node:assert:759:24)
+        at file:///C:/Users/sheha/Desktop/Jentra%20OS/tools/wave3/target-verification-preparation.test.mjs:141:10
+        at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/tools/wave3/target-verification-preparation.test.mjs:22:48)
+        at Test.runInAsyncScope (node:async_hooks:214:14)
+        at Test.run (node:internal/test_runner/test:1106:25)
+        at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+        at Test.postRun (node:internal/test_runner/test:1235:19),
+    expected: /immutable relation/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+{"offline_preparation_checks":13,"executed_database_or_http_calls":0,"boundary":"Fictitious tiny recipes and guard/structural tests only; no target authentication, fixture installation, p95 or lock-concurrency evidence."}

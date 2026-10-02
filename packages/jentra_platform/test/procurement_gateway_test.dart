@@ -17,10 +17,12 @@ void main() {
   late SupabaseProcurementGateway gateway;
   final requests = <http.Request>[];
   Object? response;
+  Object? transportFailure;
   var status = 200;
   setUp(() async {
     requests.clear();
     response = [];
+    transportFailure = null;
     status = 200;
     client = SupabaseClient(
       'https://example.test',
@@ -59,6 +61,7 @@ void main() {
           );
         }
         requests.add(r);
+        if (transportFailure != null) throw transportFailure!;
         return http.Response(
           jsonEncode(response),
           status,
@@ -85,6 +88,143 @@ void main() {
       'lines': [
         {'quantity': '99999999999999.999999', 'unit_price': '0.000001'},
       ],
+    },
+  );
+  final reads = <String, Future<Object?> Function()>{
+    'requisitions': () => gateway.page(scope),
+    'sourcing': () => gateway.rfqs(scope),
+    'orders': () => gateway.orders(scope),
+    'receipts': () => gateway.receipts(scope),
+    'bills': () => gateway.bills(scope),
+    'proposals': () => gateway.proposals(scope),
+    'payments': () => gateway.payments(scope),
+    'returns': () => gateway.returns(scope),
+    'references': () => gateway.references(scope, 'bill_suppliers'),
+    'units': () => gateway.units(scope),
+    'return sources': () => gateway.returnSources(scope, 'bill'),
+    'return source': () => gateway.returnSource(scope, 'bill', 'source'),
+    'allocation rates': () => gateway.allocationRates(scope, {}),
+    'item detail': () => gateway.itemDetail(scope, 'item'),
+    'allocation targets': () => gateway.allocationTargets(scope, 'item'),
+    'payable items': () => gateway.payableItems(scope, {}),
+    'statement': () => gateway.statement(
+      scope,
+      supplierId: 'supplier',
+      currency: 'USD',
+      asOf: '2026-09-30',
+      buckets: [15, 30, 60],
+    ),
+  };
+  for (final read in reads.entries) {
+    test('${read.key} permission denial remains typed and private', () async {
+      status = 403;
+      response = {
+        'code': '42501',
+        'message': 'SECRET relation and supplier identity',
+        'details': 'SECRET scope',
+        'hint': null,
+      };
+      await expectLater(
+        read.value(),
+        throwsA(
+          isA<DomainError>()
+              .having((e) => e.code, 'code', 'PERMISSION_DENIED')
+              .having(
+                (e) => e.message,
+                'public message',
+                isNot(contains('SECRET')),
+              ),
+        ),
+      );
+    });
+  }
+  test('MFA and authentication errors retain current read states', () async {
+    for (final code in [
+      'MFA_REQUIRED',
+      'ACCESS_DENIED',
+      'AUTHENTICATION_REQUIRED',
+    ]) {
+      status = 403;
+      response = {
+        'code': 'P0001',
+        'message': code,
+        'details': 'SECRET claims',
+        'hint': null,
+      };
+      await expectLater(
+        gateway.references(scope, 'bill_suppliers'),
+        throwsA(
+          isA<DomainError>()
+              .having((e) => e.code, 'code', code)
+              .having(
+                (e) => e.message,
+                'public message',
+                isNot(contains('SECRET')),
+              ),
+        ),
+      );
+    }
+    status = 401;
+    response = {
+      'code': 'PGRST303',
+      'message': 'SECRET JWT validation',
+      'details': null,
+      'hint': null,
+    };
+    await expectLater(
+      gateway.references(scope, 'units'),
+      throwsA(
+        isA<DomainError>().having(
+          (e) => e.code,
+          'code',
+          'AUTHENTICATION_REQUIRED',
+        ),
+      ),
+    );
+  });
+  test(
+    'malformed and uncertain procurement reads use fixed safe errors',
+    () async {
+      response = [];
+      await expectLater(
+        gateway.references(scope, 'bill_suppliers'),
+        throwsA(
+          isA<DomainError>().having((e) => e.code, 'code', 'READ_INVALID'),
+        ),
+      );
+      transportFailure = StateError('SECRET private socket');
+      await expectLater(
+        gateway.references(scope, 'bill_suppliers'),
+        throwsA(
+          isA<DomainError>()
+              .having((e) => e.code, 'code', 'READ_UNAVAILABLE')
+              .having(
+                (e) => e.message,
+                'public message',
+                isNot(contains('SECRET')),
+              ),
+        ),
+      );
+      transportFailure = null;
+      status = 400;
+      response = {
+        'code': 'XX000',
+        'message': 'SECRET database error',
+        'details': null,
+        'hint': null,
+      };
+      await expectLater(
+        gateway.references(scope, 'bill_suppliers'),
+        throwsA(
+          isA<DomainError>()
+              .having((e) => e.code, 'code', 'READ_REJECTED')
+              .having(
+                (e) => e.message,
+                'public message',
+                isNot(contains('SECRET')),
+              ),
+        ),
+      );
     },
   );
   test(

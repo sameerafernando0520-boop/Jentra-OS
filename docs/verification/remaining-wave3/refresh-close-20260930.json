@@ -1,0 +1,441 @@
+{
+  "api": [
+    {
+      "return": "jsonb",
+      "signature": "api.accept_invitation(text)",
+      "source_md5": "affe15933b1af94697ae4d8c6c92efa5"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.accept_stock_opening_invitation(uuid,uuid)",
+      "source_md5": "c7fc450c6835fa15d1fbaa79933ff4a2"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.allocate_customer_receipt(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "c8117503c63f0197c0e398305ee860ab"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.bootstrap_tenant(text,text,text,text,text,text,text,text,uuid)",
+      "source_md5": "3070e464e6bd32566813473e864d9004"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.complete_attachment(uuid,uuid,text,bigint,uuid)",
+      "source_md5": "a008049739c8f950d7ed142524b4e385"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.convert_lead(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "2e2661a7cdb9b1128fbf80c32c677961"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.convert_quotation_to_order(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "6ee7ed2bce9d8822def3acefd0c2dab4"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.create_export_job(uuid,text,text,jsonb,jsonb,integer,text,bigint,uuid)",
+      "source_md5": "d989c3adc23bed7052c6b756b2b8a7e6"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.create_invitation(uuid,text,uuid,uuid,uuid,integer)",
+      "source_md5": "bfa23bee5111952190c23b4e4759dee5"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.customer_statement(uuid,uuid,uuid,uuid,text,date,integer[])",
+      "source_md5": "9ba7dadb5aa428ed49535eca6a5fcc9d"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.decide_operational_approval(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "32f883d110f9d700f1fa0dc4cc99c7a2"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.get_crm_pipeline_summary(uuid,uuid,uuid,date)",
+      "source_md5": "34d463c2515ce8825e497e229a1f7c16"
+    },
+    {
+      "return": "TABLE(permission_code text)",
+      "signature": "api.get_my_capabilities(uuid)",
+      "source_md5": "9bab5f828522fe1270c257791749005f"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.get_sales_order_credit_preview(uuid,uuid,uuid,uuid)",
+      "source_md5": "b7dc76769be8637cbc7c531f915c65f0"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.import_setup_records(uuid,uuid,text,text,text,bigint,jsonb,uuid)",
+      "source_md5": "5e057bca42213113185a0f07415c77be"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.invite_stock_opening_approver(uuid,uuid,uuid,text,uuid)",
+      "source_md5": "70ce07485ee9fce723000375b4092721"
+    },
+    {
+      "return": "TABLE(id uuid, tenant_name text, legal_entity_name text, branch_name text, expires_at timestamp with time zone)",
+      "signature": "api.list_my_stock_opening_invitations()",
+      "source_md5": "7bfbb1103e90f52de695f025941cf555"
+    },
+    {
+      "return": "TABLE(tenant_id uuid, tenant_name text, tenant_slug text, tenant_status text, timezone text, default_currency_code text, membership_status text, joined_at timestamp with time zone)",
+      "signature": "api.list_my_tenants()",
+      "source_md5": "b8925c1780602effdeffced49788b17c"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.mark_notification_read(uuid,uuid,bigint,uuid)",
+      "source_md5": "4af09c71fea297adb94f72fda3f666c1"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_calendar_command(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "93bedbbd726f12ac76b249f4e1dab1ef"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_calendar_detail(uuid,uuid,uuid,uuid,uuid)",
+      "source_md5": "9d85f88a1039040bb8f43a068fa921c4"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_calendar_directory(uuid,uuid,uuid,date,text,uuid)",
+      "source_md5": "43b1c1e88b8ea085e1da02117c0f83e9"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_calendar_history(uuid,uuid,uuid,uuid,uuid)",
+      "source_md5": "09242c790decb808526b3d7d18153f5e"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_calendar_versions(uuid,uuid,uuid,uuid,uuid)",
+      "source_md5": "c8a825ae933417094c496fad2275a8d0"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_employee_branches(uuid,uuid,uuid,text)",
+      "source_md5": "bf39fac632803ce9274639c5cd40be0f"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_employee_command(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "bf49d148124cfaefd84bdcc3dde0c0a9"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_employee_detail(uuid,uuid,uuid,uuid,date,text)",
+      "source_md5": "111413c5f876b6ed948ff6c4a437a538"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_employee_directory(uuid,uuid,uuid,date,text,text,uuid)",
+      "source_md5": "379836c7edefb14a4394b533bb339bbe"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_employee_history(uuid,uuid,uuid,uuid,uuid)",
+      "source_md5": "e66e63cc8c9d001ec726641a3e4cdda9"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_access(uuid,uuid,uuid,uuid,text)",
+      "source_md5": "00bfef34a457afc22e0fe0d4d38c276a"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_command(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "02e2c3faf3757705b68f055621d12e46"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_document_ticket(uuid,uuid,uuid,uuid,uuid,text)",
+      "source_md5": "6432fa182efa93736e3c87bd26069b16"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_documents(uuid,uuid,uuid,uuid,uuid)",
+      "source_md5": "e5ee93a79ccb9bada05eb267b10e4b5c"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_erasure_status(uuid,uuid,uuid,uuid,uuid)",
+      "source_md5": "61adecd002eaa68bd34f855ea922c5ac"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_export_content(uuid,uuid,uuid,uuid)",
+      "source_md5": "0b663166d131a3081103fae885dac25d"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_link_inbox(uuid,uuid,uuid,uuid)",
+      "source_md5": "d9c47282dc707dd746be37af67e92f01"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_links(uuid,uuid,uuid,uuid,uuid)",
+      "source_md5": "b1204755a31e59d697b952bc47ed2133"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_memberships(uuid,uuid,uuid,uuid)",
+      "source_md5": "3a83640eb412aac80664df03a04ab280"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_own_receipt(uuid,uuid,uuid,uuid)",
+      "source_md5": "ca583629fcda0e9cd392858f4be15c7f"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_policy(uuid,uuid,uuid)",
+      "source_md5": "ba48ace4fbd09706764905772632dbbd"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_profile(uuid,uuid,uuid,uuid,uuid)",
+      "source_md5": "726745c88be98b65ef61b5afd0ecba14"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_review_history(uuid,uuid,uuid,uuid,uuid,uuid)",
+      "source_md5": "3af7a9309b07abbb88a893a6a04b2be4"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_reviews(uuid,uuid,uuid,uuid,uuid)",
+      "source_md5": "4ed65fd85a4365d1d2cfd0962deb3533"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_self(uuid,uuid,uuid)",
+      "source_md5": "4c2b54290898520540a7c61bf9551cfa"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_service_document(uuid,uuid)",
+      "source_md5": "b58e3e04a1b1a6c98a8e7722ed4eb941"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_service_verify_upload(uuid,uuid,text,integer)",
+      "source_md5": "6d4dad4e8d67e8442f2e7245cd0bfa71"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_subjects(uuid,uuid,uuid,text,text,uuid)",
+      "source_md5": "5c244dbdc406720e23c0ef94ad47c37f"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_worker_claim(integer)",
+      "source_md5": "17bde809953453747ed6e0a30f5ad239"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_worker_complete(uuid,uuid)",
+      "source_md5": "cbad5dde0fcdc39f3dc9b6f8c7ccd340"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.people_hr_worker_register(text,text)",
+      "source_md5": "30a2775f964ad4ffc8549d1f8ada08a3"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.post_customer_receipt(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "cfea8df957cebb79a27fdca9cf183d01"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.post_delivery(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "da6234d6ed86a00093007f6a0f7c5fdb"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.post_sales_invoice(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "a624856e7a7ae5fe9a44ef30c33be311"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.post_sales_return(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "43ea1b1f09ecc29a07599d4a65a77c45"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.post_stock_opening(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "01c4b792e340576343f38b53bfa88c11"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.record_crm_activity(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "01c58b2f520803e82d9062817d29ce3a"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.register_attachment(uuid,jsonb,uuid)",
+      "source_md5": "ad596cdfc66e74eaadf76eebd1aab5dd"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.reserve_document_number(uuid,uuid,date,uuid)",
+      "source_md5": "60d291aa125ce6f64e03fd14341cc863"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.reserve_sales_order_stock(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "afa86633ab50cad741e74eb658119283"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.transition_operational_document(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "3bd7bdf704c332442e6de0eb21ba0eab"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.transition_stock_opening(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "9511bf6f8d13f6c1ab3cfc4e67dfa4d6"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.update_sales_order_fulfillment(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "8f82ee3b35ec61d830c1160f4f6b2251"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_account(uuid,uuid,jsonb,bigint,uuid)",
+      "source_md5": "4a41222d19ff5f69ea382f16cb39f714"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_approval_matrix_step(uuid,jsonb,bigint,uuid)",
+      "source_md5": "4a64d9f6ab425b8bb720e02d3e81bb7c"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_contact(uuid,jsonb,bigint,uuid)",
+      "source_md5": "55a1bd26e10b56254563baae32fdc779"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_customer_receipt(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "2ea8db45b711dbd018bdaf6e3ff76ea8"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_delivery(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "2fdf5f035c3d75e049b19d2edf93ccfc"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_document_sequence(uuid,jsonb,bigint,uuid)",
+      "source_md5": "30c445ff1159029a854f590ff687f39f"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_exchange_rate(uuid,uuid,jsonb,bigint,uuid)",
+      "source_md5": "22f339a48e5126523c7869d8f964ed25"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_fiscal_period(uuid,uuid,jsonb,bigint,uuid)",
+      "source_md5": "f24bbaca5ecd18143c140494310a8a8c"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_lead(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "e850799b1217af2eca9a5ba8e4b38bf2"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_opportunity(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "342eed60e0242c1eafc5c5aebcac108e"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_party(uuid,jsonb,bigint,uuid)",
+      "source_md5": "3db8ed3707ccafb0e3eed611d4d6a8ba"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_product(uuid,uuid,jsonb,bigint,uuid)",
+      "source_md5": "e2f59adf8ed7c0d2a79187761776ada0"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_receivables_setup(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "ff34b968c281edbbefc84516a26903f5"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_report_definition(uuid,jsonb,bigint,uuid)",
+      "source_md5": "520a2986d6a6c5c458363342d55becf5"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_sales_invoice(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "c870b662e243c713a470820d35584f46"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_sales_order(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "cec066c7ec4127c1840c5e3e63efe236"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_sales_quotation(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "348e90fa1e24df2480eef05c1f898059"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_sales_return(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "7481b959bb3e448900a854bfd6f1404f"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_stock_opening(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint)",
+      "source_md5": "c666adededec63c1d748d195b792342a"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_tax_definition(uuid,uuid,jsonb,bigint,uuid)",
+      "source_md5": "c30c552cf9842fee251b575d4cdc5ee5"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_unit(uuid,jsonb,bigint,uuid)",
+      "source_md5": "9bf1005623f139c6c70238610cfd788f"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_warehouse(uuid,uuid,jsonb,bigint,uuid)",
+      "source_md5": "c705b442484895a37a45d9164e266d00"
+    },
+    {
+      "return": "jsonb",
+      "signature": "api.upsert_workflow_definition(uuid,uuid,jsonb,bigint,uuid)",
+      "source_md5": "a17eb8e99da3020a4888d0b13f25346b"
+    }
+  ],
+  "helpers": {
+    "finance.flow_residual(uuid,uuid,date)": "c0933ed943663701bbc7e01a1c21831f",
+    "finance.wave3_lock_open_period(uuid,uuid,date)": "a316c04eef62ba1a43d49ea4d5261ca2",
+    "finance.flow_post_journal(jsonb,jsonb,text,uuid,uuid,uuid)": "bebe95827a7e5ac3f2192d0f7acd38b4",
+    "finance.flow_allocate(uuid,uuid,uuid,uuid,uuid,jsonb,date,uuid,uuid)": "e6e9f68ec7d8aca03be157816fe8eef6"
+  },
+  "captured_at": "2026-09-30T09:26:52.888778+00:00",
+  "migration_count": 37,
+  "latest_migration": {
+    "name": "wave4_private_hr",
+    "version": "20260929224939"
+  }
+}

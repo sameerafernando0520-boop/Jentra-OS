@@ -1,10 +1,13 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_procurement.dart';
 import 'package:jentra_platform/jentra_procurement_platform.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../app_providers.dart';
+import '../operations/operational_read_access.dart';
 import 'procurement_controller.dart';
 
 final productUnitControllerProvider =
@@ -40,7 +43,8 @@ final productUnitControllerProvider =
       return c;
     });
 
-final class ProductUnitController extends ChangeNotifier {
+final class ProductUnitController extends ChangeNotifier
+    implements OperationalReadAccess {
   ProductUnitController({
     required this.scope,
     required this.gateway,
@@ -53,7 +57,45 @@ final class ProductUnitController extends ChangeNotifier {
   final ProcurementGateway references;
   final QuotationDraftStore drafts;
   static const slot = 'product-unit-editor';
-  bool online, busy = false, _disposed = false;
+  bool online, busy = false, _disposed = false, accessDenied = false;
+  int _epoch = 0, _operationEpoch = 0;
+  @override
+  int get readAccessEpoch => _epoch;
+  @override
+  bool currentRead(int epoch) =>
+      !_disposed && online && !accessDenied && epoch == _epoch;
+  @override
+  void denyReadAccess() {
+    if (_disposed) return;
+    accessDenied = true;
+    _epoch++;
+    clearServer();
+    emit();
+  }
+
+  bool get currentServer => !_disposed && online && _operationEpoch == _epoch;
+  void confirmedReadFailure(Object failure, int epoch, String fallback) {
+    if (_disposed || epoch != _epoch) return;
+    if (failure is DomainError &&
+        const {
+          'PERMISSION_DENIED',
+          'ACCESS_DENIED',
+          'MFA_REQUIRED',
+          'AUTHENTICATION_REQUIRED',
+        }.contains(failure.code)) {
+      accessDenied = true;
+      _epoch++;
+      clearServer();
+      error = failure.message;
+      return;
+    }
+    error = fallback;
+  }
+
+  void clearServer() {
+    page = CursorPage(items: [], limit: 50);
+  }
+
   String? error, message;
   Map<String, Object?>? form;
   int? version;
@@ -61,6 +103,7 @@ final class ProductUnitController extends ChangeNotifier {
   CursorPage<Map<String, Object?>> page = CursorPage(items: [], limit: 50);
   bool get locked =>
       _disposed ||
+      accessDenied ||
       busy ||
       local?.pending != null ||
       local?.errorCode == 'VERSION_CONFLICT';
@@ -73,11 +116,18 @@ final class ProductUnitController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _epoch++;
+    clearServer();
+    notifyListeners();
     super.dispose();
   }
 
   void setOnline(bool value) {
-    online = value;
+    if (online != value) {
+      online = value;
+      _epoch++;
+      clearServer();
+    }
     emit();
   }
 
@@ -86,11 +136,26 @@ final class ProductUnitController extends ChangeNotifier {
       return;
     }
     busy = true;
+    _operationEpoch = _epoch;
     error = null;
     emit();
     try {
       await work();
     } catch (e) {
+      if (_disposed || _operationEpoch != _epoch) return;
+      if (!_disposed &&
+          _operationEpoch == _epoch &&
+          e is DomainError &&
+          const {
+            'PERMISSION_DENIED',
+            'ACCESS_DENIED',
+            'MFA_REQUIRED',
+            'AUTHENTICATION_REQUIRED',
+          }.contains(e.code)) {
+        accessDenied = true;
+        _epoch++;
+        clearServer();
+      }
       error = e is DomainError
           ? e.message
           : e is FormatException
@@ -119,9 +184,10 @@ final class ProductUnitController extends ChangeNotifier {
       'unit_conversions',
       after: more ? page.nextCursor : null,
     );
-    if (_disposed) {
+    if (!currentServer) {
       return;
     }
+    accessDenied = false;
     page = CursorPage(
       items: [
         if (more) ...page.items,
@@ -233,7 +299,7 @@ final class ProductUnitController extends ChangeNotifier {
       );
       local = await drafts.load(scope, slot);
     }
-    if (_disposed || !online) {
+    if (!currentServer || accessDenied) {
       return;
     }
     late final Map<String, Object?> result;
@@ -257,10 +323,16 @@ final class ProductUnitController extends ChangeNotifier {
     local = null;
     version = null;
     message = 'Product unit saved · version ${result['version']}';
+    if (!currentServer) return;
+    final refreshEpoch = _epoch;
     try {
       await loadPage();
-    } catch (_) {
-      error = 'Saved successfully. Refresh the register to reload it.';
+    } catch (failure) {
+      confirmedReadFailure(
+        failure,
+        refreshEpoch,
+        'Saved successfully. Refresh the register to reload it.',
+      );
     }
   });
 }

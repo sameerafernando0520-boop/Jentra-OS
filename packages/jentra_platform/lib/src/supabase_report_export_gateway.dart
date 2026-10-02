@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'finance_report_read_access.dart';
 import 'report_export_file.dart';
 
 abstract interface class ReportExportGateway {
@@ -44,6 +45,8 @@ final class SupabaseReportExportGateway implements ReportExportGateway {
       }
       return r.cast<String, Object?>();
     } on PostgrestException catch (e) {
+      final denial = financeReportReadDenial(rpc, e);
+      if (denial != null) throw denial;
       final code = e.message == 'RECENT_MFA_REQUIRED'
           ? 'MFA_REQUIRED'
           : e.code == '42501'

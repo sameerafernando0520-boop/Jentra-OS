@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +15,11 @@ import 'support/procurement_fakes.dart' show Keys;
 
 final class BudgetFake implements BudgetGateway {
   String? failure, readFailure;
+  Completer<void>? accountPause, pagePause, generationPause, commandPause;
+  final accountEntered = Completer<void>(),
+      pageEntered = Completer<void>(),
+      generationEntered = Completer<void>(),
+      commandEntered = Completer<void>();
   final commands = <CommandEnvelope<Map<String, Object?>>>[];
   final generations = <CommandEnvelope<Map<String, Object?>>>[];
   final sections = <String>[];
@@ -31,6 +38,10 @@ final class BudgetFake implements BudgetGateway {
     String? after,
     String search = '',
   }) async {
+    if (accountPause != null) {
+      if (!accountEntered.isCompleted) accountEntered.complete();
+      await accountPause!.future;
+    }
     checkRead();
     return {
       'items': [
@@ -88,6 +99,10 @@ final class BudgetFake implements BudgetGateway {
     CommandEnvelope<Map<String, Object?>> command,
   ) async {
     commands.add(command);
+    if (commandPause != null) {
+      if (!commandEntered.isCompleted) commandEntered.complete();
+      await commandPause!.future;
+    }
     if (failure != null) throw DomainError(code: failure!, message: failure!);
     final payload = command.payload;
     final action = payload['action'];
@@ -150,6 +165,10 @@ final class BudgetFake implements BudgetGateway {
     CommandEnvelope<Map<String, Object?>> command,
   ) async {
     generations.add(command);
+    if (generationPause != null) {
+      if (!generationEntered.isCompleted) generationEntered.complete();
+      await generationPause!.future;
+    }
     if (failure != null) throw DomainError(code: failure!, message: failure!);
     final result = summary(command.payload);
     savedReports.add(result);
@@ -164,6 +183,10 @@ final class BudgetFake implements BudgetGateway {
     int offset = 0,
     String? budgetLineId,
   }) async {
+    if (pagePause != null) {
+      if (!pageEntered.isCompleted) pageEntered.complete();
+      await pagePause!.future;
+    }
     checkRead();
     sections.add(section);
     return {
@@ -411,15 +434,13 @@ void main() {
 
   test('navigation requires finance read', () {
     expect(
-      visibleJentraDestinations(
-        {},
-      ).any((item) => item.path == '/finance/budgets'),
+      visibleJentraDestinations({})
+          .any((item) => item.path == '/finance/budgets'),
       false,
     );
     expect(
-      visibleJentraDestinations({
-        'finance.view',
-      }).any((item) => item.path == '/finance/budgets'),
+      visibleJentraDestinations({'finance.view'})
+          .any((item) => item.path == '/finance/budgets'),
       true,
     );
   });

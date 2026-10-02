@@ -58,6 +58,18 @@ reversal. Local forms and sealed requests reuse the encrypted scoped draft store
 Offline mutation is disabled; restored source evidence is hidden until fresh access
 verification. A confirmed command is cleared before any optional refresh.
 
+Disconnect, scope/controller disposal and definite permission, MFA or authentication
+denial invalidate the current bank read epoch, hide the workspace and clear loaded
+bank source pages. Late reads from an obsolete epoch cannot restore evidence or
+revoke newly verified access. Reconnect requires fresh account verification before
+restoring encrypted input forms. Input edits and sealed original requests remain
+recoverable; cached source pages are never encrypted as draft inputs. A confirmed
+command completes its original encrypted request before any optional read, even
+when confirmation arrives after disconnect. Such a reply cannot restore the bank
+workspace. Known read denials retain typed public codes; malformed and unavailable
+reads use fixed public errors rather than raw database or transport messages. The
+existing command error precedence remains unchanged.
+
 ## Verification boundary
 
 Rollback tests cover imports, exact balance, malformed/duplicate input, permission,

@@ -571,6 +571,29 @@ final class QuotationDraft {
         ),
       );
     }
+    if (headerDiscountAmount != null &&
+        (headerDiscountAmount!.currencyCode != currencyCode ||
+            headerDiscountAmount!.minorUnits.isNegative)) {
+      issues.add(
+        const ValidationIssue(
+          field: 'header_discount_amount',
+          message: 'Header discount must be non-negative document currency.',
+        ),
+      );
+    }
+    final headerPercent = headerDiscountPercent;
+    if (headerPercent != null &&
+        (headerPercent.scale != 6 ||
+            headerPercent.isNegative ||
+            headerPercent.scaledValue > BigInt.from(100000000))) {
+      issues.add(
+        const ValidationIssue(
+          field: 'header_discount_percent',
+          message:
+              'Header discount percentage must be between zero and one hundred.',
+        ),
+      );
+    }
     if (createRevision && (revisionReason?.trim().isEmpty ?? true)) {
       issues.add(
         const ValidationIssue(

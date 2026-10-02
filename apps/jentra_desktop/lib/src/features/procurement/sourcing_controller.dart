@@ -1,10 +1,13 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_procurement.dart';
 import 'package:jentra_platform/jentra_procurement_platform.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../app_providers.dart';
+import '../operations/operational_read_access.dart';
 import 'procurement_controller.dart';
 
 final sourcingControllerProvider = Provider.autoDispose<SourcingController?>((
@@ -39,7 +42,8 @@ final sourcingControllerProvider = Provider.autoDispose<SourcingController?>((
   return controller;
 });
 
-final class SourcingController extends ChangeNotifier {
+final class SourcingController extends ChangeNotifier
+    implements OperationalReadAccess {
   SourcingController({
     required this.scope,
     required this.gateway,
@@ -50,7 +54,47 @@ final class SourcingController extends ChangeNotifier {
   final ProcurementGateway gateway;
   final QuotationDraftStore drafts;
   static const slot = 'rfq-editor';
-  bool online, busy = false, _disposed = false;
+  bool online, busy = false, _disposed = false, accessDenied = false;
+  int _epoch = 0, _operationEpoch = 0;
+  @override
+  int get readAccessEpoch => _epoch;
+  @override
+  bool currentRead(int epoch) =>
+      !_disposed && online && !accessDenied && epoch == _epoch;
+  @override
+  void denyReadAccess() {
+    if (_disposed) return;
+    accessDenied = true;
+    _epoch++;
+    clearServer();
+    emit();
+  }
+
+  bool get currentServer => !_disposed && online && _operationEpoch == _epoch;
+  void confirmedReadFailure(Object failure, int epoch, String fallback) {
+    if (_disposed || epoch != _epoch) return;
+    if (failure is DomainError &&
+        const {
+          'PERMISSION_DENIED',
+          'ACCESS_DENIED',
+          'MFA_REQUIRED',
+          'AUTHENTICATION_REQUIRED',
+        }.contains(failure.code)) {
+      accessDenied = true;
+      _epoch++;
+      clearServer();
+      error = failure.message;
+      return;
+    }
+    error = fallback;
+  }
+
+  void clearServer() {
+    page = CursorPage(items: [], limit: 50);
+    selected = null;
+    baseCurrency = null;
+  }
+
   String? error, message, baseCurrency;
   Map<String, Object?>? form, selected;
   int? version;
@@ -58,6 +102,7 @@ final class SourcingController extends ChangeNotifier {
   CursorPage<Map<String, Object?>> page = CursorPage(items: [], limit: 50);
   bool get locked =>
       _disposed ||
+      accessDenied ||
       busy ||
       local?.pending != null ||
       local?.errorCode == 'VERSION_CONFLICT';
@@ -66,24 +111,46 @@ final class SourcingController extends ChangeNotifier {
   }
 
   void setOnline(bool v) {
-    online = v;
+    if (online != v) {
+      online = v;
+      _epoch++;
+      clearServer();
+    }
     emit();
   }
 
   @override
   void dispose() {
     _disposed = true;
+    _epoch++;
+    clearServer();
+    notifyListeners();
     super.dispose();
   }
 
   Future<void> run(Future<void> Function() work) async {
     if (busy || _disposed) return;
     busy = true;
+    _operationEpoch = _epoch;
     error = null;
     emit();
     try {
       await work();
     } catch (e) {
+      if (_disposed || _operationEpoch != _epoch) return;
+      if (!_disposed &&
+          _operationEpoch == _epoch &&
+          e is DomainError &&
+          const {
+            'PERMISSION_DENIED',
+            'ACCESS_DENIED',
+            'MFA_REQUIRED',
+            'AUTHENTICATION_REQUIRED',
+          }.contains(e.code)) {
+        accessDenied = true;
+        _epoch++;
+        clearServer();
+      }
       error = e is DomainError
           ? e.message
           : e is FormatException
@@ -102,9 +169,14 @@ final class SourcingController extends ChangeNotifier {
     version = local?.expectedVersion;
     if (online) {
       final refs = await gateway.references(scope, 'suppliers');
+      if (!currentServer) return;
       if (_disposed) return;
       baseCurrency = refs['base_currency'] as String;
-      page = await gateway.rfqs(scope);
+      final result = await gateway.rfqs(scope);
+      if (currentServer) {
+        page = result;
+        accessDenied = false;
+      }
     }
   });
   Future<void> refresh({bool more = false}) => run(() async {
@@ -113,7 +185,8 @@ final class SourcingController extends ChangeNotifier {
       scope,
       after: more ? page.nextCursor : null,
     );
-    if (_disposed) return;
+    if (!currentServer) return;
+    accessDenied = false;
     page = CursorPage(
       items: [if (more) ...page.items, ...result.items],
       limit: 50,
@@ -286,7 +359,7 @@ final class SourcingController extends ChangeNotifier {
       );
       local = await drafts.load(scope, slot);
     }
-    if (_disposed || !online) return;
+    if (!currentServer || accessDenied) return;
     late final Map<String, Object?> result;
     try {
       result = await gateway.source(pending.envelope);
@@ -305,13 +378,22 @@ final class SourcingController extends ChangeNotifier {
     form = null;
     local = null;
     version = null;
+    if (!currentServer) {
+      message = 'Action confirmed. Refresh after reconnecting.';
+      return;
+    }
     selected = result;
     message = 'Sourcing record saved · ${result['status']}';
+    final refreshEpoch = _epoch;
     try {
-      page = await gateway.rfqs(scope);
-    } catch (_) {
-      error =
-          'Saved successfully. The register could not refresh; use Refresh to reload it.';
+      final refreshed = await gateway.rfqs(scope);
+      if (currentServer) page = refreshed;
+    } catch (failure) {
+      confirmedReadFailure(
+        failure,
+        refreshEpoch,
+        'Saved successfully. The register could not refresh; use Refresh to reload it.',
+      );
     }
   }
 }

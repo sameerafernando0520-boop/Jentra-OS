@@ -1,10 +1,13 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_finance_platform.dart';
+
 import '../../app_providers.dart';
+import '../shared/report_wait.dart';
 
 final closeReviewGatewayProvider = Provider<CloseReviewGateway?>((ref) => null);
 final closeReviewControllerProvider =
@@ -64,6 +67,14 @@ final class CloseReviewController extends ChangeNotifier {
       accessDenied = false,
       _disposed = false;
   int _epoch = 0;
+  final reportWait = ReportWaitState();
+  void cancelReportWait() {
+    if (!reportWait.cancel()) return;
+    _epoch++;
+    clear();
+    emit();
+  }
+
   Map<String, Object?> form = {}, summary = {};
   List<Map<String, Object?>> reports = [], periods = [], rows = [];
   String section = 'controls';
@@ -110,6 +121,7 @@ final class CloseReviewController extends ChangeNotifier {
     if (e is DomainError &&
         [
           'PERMISSION_DENIED',
+          'ACCESS_DENIED',
           'MFA_REQUIRED',
           'AUTHENTICATION_REQUIRED',
         ].contains(e.code)) {
@@ -122,12 +134,14 @@ final class CloseReviewController extends ChangeNotifier {
 
   Future<void> run(Future<void> Function() work) async {
     if (busy || _disposed) return;
+    final accessEpoch = _epoch;
     busy = true;
     error = null;
     emit();
     try {
       await work();
     } catch (e) {
+      if (_disposed || !online || accessEpoch != _epoch) return;
       deny(e);
       error = e is DomainError
           ? e.message
@@ -135,6 +149,7 @@ final class CloseReviewController extends ChangeNotifier {
           ? e.message
           : 'Unable to complete this action. Saved requests are retained.';
     } finally {
+      reportWait.finish();
       busy = false;
       emit();
     }
@@ -184,7 +199,7 @@ final class CloseReviewController extends ChangeNotifier {
     if (!accessDenied && !pending) await persist();
   });
   Future<bool> canLeave() async {
-    if (busy) return false;
+    if (busy) return reportWait.active && reportWait.cancelled;
     if (accessDenied || pending) return true;
     await save();
     return error == null;
@@ -228,6 +243,8 @@ final class CloseReviewController extends ChangeNotifier {
     if (!online || !verified || accessDenied || form['status'] == 'confirmed') {
       return;
     }
+    reportWait.begin();
+    emit();
     final epoch = _epoch;
     var request = local?.pending;
     if (request == null) {
@@ -260,6 +277,9 @@ final class CloseReviewController extends ChangeNotifier {
     Map<String, Object?> result;
     late Map<String, Object?> confirmed;
     try {
+      reportWait.generating();
+      emit();
+      if (reportWait.cancelled || !current(epoch)) return;
       result = await gateway.generate(request.envelope);
       confirmed = {
         ...request.envelope.payload,
@@ -294,8 +314,7 @@ final class CloseReviewController extends ChangeNotifier {
     componentKey = null;
     cursor = null;
     rows = [];
-    message =
-        'Review confirmed. Its evidence is frozen; hard close will recheck current ledgers.';
+    message = 'Review confirmed. Its evidence is frozen; hard close will recheck current ledgers.';
     try {
       await read(result['id'] as String);
     } catch (e) {
@@ -305,7 +324,12 @@ final class CloseReviewController extends ChangeNotifier {
   });
   Future<void> read(String id, {bool more = false}) async {
     if (!online || !verified || accessDenied) return;
+    if (reportWait.active && reportWait.cancelled) return;
     final epoch = _epoch;
+    if (!reportWait.active) reportWait.begin();
+    reportWait.reading();
+    emit();
+    if (reportWait.cancelled || !current(epoch)) return;
     final r = await gateway.page(
       scope,
       id,

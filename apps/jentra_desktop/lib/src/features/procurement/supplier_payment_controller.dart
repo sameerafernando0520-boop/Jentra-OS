@@ -1,10 +1,13 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_procurement.dart';
 import 'package:jentra_platform/jentra_procurement_platform.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../app_providers.dart';
+import '../operations/operational_read_access.dart';
 import 'procurement_controller.dart';
 
 final supplierPaymentControllerProvider =
@@ -50,7 +53,8 @@ final supplierPaymentControllerProvider =
       return c;
     });
 
-final class SupplierPaymentController extends ChangeNotifier {
+final class SupplierPaymentController extends ChangeNotifier
+    implements OperationalReadAccess {
   SupplierPaymentController({
     required this.scope,
     required this.gateway,
@@ -83,7 +87,7 @@ final class SupplierPaymentController extends ChangeNotifier {
       form!,
       after: more ? rateCursor : null,
     );
-    if (_disposed) return;
+    if (!currentServer) return;
     allocationRates = [
       if (more) ...allocationRates,
       for (final raw in result['items'] as List)
@@ -98,7 +102,7 @@ final class SupplierPaymentController extends ChangeNotifier {
       id,
       after: more ? (itemDetail?['next_cursor'] as String?) : null,
     );
-    if (_disposed) return;
+    if (!currentServer) return;
     itemDetail = {
       ...detail,
       'allocations': [
@@ -140,7 +144,7 @@ final class SupplierPaymentController extends ChangeNotifier {
       form!['source_open_item_id'] as String,
       after: more ? targetCursor : null,
     );
-    if (_disposed) return;
+    if (!currentServer) return;
     allocationTargets = [
       if (more) ...allocationTargets,
       for (final row in result['items'] as List)
@@ -220,7 +224,58 @@ final class SupplierPaymentController extends ChangeNotifier {
   }
 
   static const slot = 'supplier-payment-editor';
-  bool online, busy = false, _disposed = false, showingPayments = false;
+  bool online,
+      busy = false,
+      _disposed = false,
+      showingPayments = false,
+      accessDenied = false;
+  int _epoch = 0, _operationEpoch = 0;
+  @override
+  int get readAccessEpoch => _epoch;
+  @override
+  bool currentRead(int epoch) =>
+      !_disposed && online && !accessDenied && epoch == _epoch;
+  @override
+  void denyReadAccess() {
+    if (_disposed) return;
+    accessDenied = true;
+    _epoch++;
+    clearServer();
+    emit();
+  }
+
+  bool get currentServer => !_disposed && online && _operationEpoch == _epoch;
+  void confirmedReadFailure(Object failure, int epoch, String fallback) {
+    if (_disposed || epoch != _epoch) return;
+    if (failure is DomainError &&
+        const {
+          'PERMISSION_DENIED',
+          'ACCESS_DENIED',
+          'MFA_REQUIRED',
+          'AUTHENTICATION_REQUIRED',
+        }.contains(failure.code)) {
+      accessDenied = true;
+      _epoch++;
+      clearServer();
+      error = failure.message;
+      return;
+    }
+    error = fallback;
+  }
+
+  void clearServer() {
+    page = CursorPage(items: [], limit: 50);
+    selected = null;
+    eligible = [];
+    itemDetail = null;
+    statementReport = null;
+    allocationTargets = [];
+    allocationRates = [];
+    targetCursor = null;
+    rateCursor = null;
+    itemCursor = null;
+  }
+
   String? error, message, itemCursor;
   Map<String, Object?>? form, selected;
   Map<String, Object?>? statementReport;
@@ -236,17 +291,15 @@ final class SupplierPaymentController extends ChangeNotifier {
         form != null) {
       return;
     }
-    statementReport = await gateway.statement(
+    final report = await gateway.statement(
       scope,
       supplierId: supplierId,
       currency: currency,
       asOf: asOf,
       buckets: buckets,
     );
-    statementReport = {
-      ...statementReport!,
-      'supplier_name': supplierName ?? supplierId,
-    };
+    if (!currentServer) return;
+    statementReport = {...report, 'supplier_name': supplierName ?? supplierId};
   });
   QuotationLocalDraft? local;
   int? version;
@@ -254,6 +307,7 @@ final class SupplierPaymentController extends ChangeNotifier {
   CursorPage<Map<String, Object?>> page = CursorPage(items: [], limit: 50);
   bool get locked =>
       _disposed ||
+      accessDenied ||
       busy ||
       local?.pending != null ||
       local?.errorCode == 'VERSION_CONFLICT';
@@ -285,11 +339,18 @@ final class SupplierPaymentController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _epoch++;
+    clearServer();
+    notifyListeners();
     super.dispose();
   }
 
   void setOnline(bool value) {
-    online = value;
+    if (online != value) {
+      online = value;
+      _epoch++;
+      clearServer();
+    }
     emit();
   }
 
@@ -297,10 +358,25 @@ final class SupplierPaymentController extends ChangeNotifier {
     if (busy || _disposed) return;
     busy = true;
     error = null;
+    _operationEpoch = _epoch;
     emit();
     try {
       await action();
     } catch (e) {
+      if (_disposed || _operationEpoch != _epoch) return;
+      if (!_disposed &&
+          _operationEpoch == _epoch &&
+          e is DomainError &&
+          const {
+            'PERMISSION_DENIED',
+            'ACCESS_DENIED',
+            'MFA_REQUIRED',
+            'AUTHENTICATION_REQUIRED',
+          }.contains(e.code)) {
+        accessDenied = true;
+        _epoch++;
+        clearServer();
+      }
       error = e is DomainError
           ? e.message
           : e is FormatException
@@ -321,7 +397,13 @@ final class SupplierPaymentController extends ChangeNotifier {
     if (_disposed) return;
     form = local?.form;
     version = local?.expectedVersion;
-    if (online) page = await fetch();
+    if (online) {
+      final result = await fetch();
+      if (currentServer) {
+        page = result;
+        accessDenied = false;
+      }
+    }
   });
   Future<void> refresh({bool more = false, bool? payments}) => run(() async {
     if (!online || form != null) return;
@@ -330,12 +412,13 @@ final class SupplierPaymentController extends ChangeNotifier {
       selected = null;
     }
     final result = await fetch(after: more ? page.nextCursor : null);
-    if (_disposed) return;
+    if (!currentServer) return;
     page = CursorPage(
       items: [if (more) ...page.items, ...result.items],
       limit: 50,
       nextCursor: result.nextCursor,
     );
+    accessDenied = false;
   });
   void select(Map<String, Object?> row) {
     if (!locked && form == null) {
@@ -432,7 +515,7 @@ final class SupplierPaymentController extends ChangeNotifier {
       form!,
       after: more ? itemCursor : null,
     );
-    if (_disposed) return;
+    if (!currentServer) return;
     eligible = [
       if (more) ...eligible,
       for (final raw in result['items'] as List)
@@ -604,10 +687,11 @@ final class SupplierPaymentController extends ChangeNotifier {
           throw const FormatException('Unknown payment action.');
         }
         form = {...selected!, '_mode': 'action'};
+        final documentId = selected!['id'];
         version = selected!['version'] as int;
         await drafts.save(scope, slot, form!, expectedVersion: version);
         final payload = <String, Object?>{
-          'document_id': selected!['id'],
+          'document_id': documentId,
           if (action == 'post')
             'reference': reference!.trim()
           else if (action == 'approve' || action == 'reject')
@@ -627,7 +711,7 @@ final class SupplierPaymentController extends ChangeNotifier {
         await send(pending);
       });
   Future<void> send(QuotationPendingCommand pending) async {
-    if (_disposed || !online) return;
+    if (!currentServer || accessDenied) return;
     late Map<String, Object?> result;
     try {
       result = switch (pending.verb) {
@@ -662,6 +746,8 @@ final class SupplierPaymentController extends ChangeNotifier {
     local = null;
     version = null;
     eligible = [];
+    message = 'Supplier payment action confirmed.';
+    if (!currentServer) return;
     selected = result;
     if (pending.verb == 'expire') {
       selected = null;
@@ -674,11 +760,16 @@ final class SupplierPaymentController extends ChangeNotifier {
         : pending.verb == 'accept'
         ? 'Supplier payment recorded. Awaiting bank reconciliation.'
         : 'Payment proposal ${result['status']}.';
+    final refreshEpoch = _epoch;
     try {
-      page = await fetch();
-    } catch (_) {
-      error =
-          'Saved successfully. Refresh the register when the connection returns.';
+      final refreshed = await fetch();
+      if (currentServer) page = refreshed;
+    } catch (failure) {
+      confirmedReadFailure(
+        failure,
+        refreshEpoch,
+        'Saved successfully. Refresh the register when the connection returns.',
+      );
     }
   }
 }

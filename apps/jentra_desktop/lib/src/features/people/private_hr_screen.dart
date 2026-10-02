@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_people.dart';
 import 'package:pdfrx/pdfrx.dart';
+
 import '../../app_providers.dart';
 import 'private_hr_controller.dart';
 import 'organization_screen.dart' show organizationPicker, OrganizationChoice;
@@ -13,6 +15,7 @@ String hrViewLabel(PrivateHrView view) => switch (view) {
   PrivateHrView.documents => 'Private documents',
   PrivateHrView.reviews => 'Performance reviews',
   PrivateHrView.links => 'Account links',
+  PrivateHrView.erasure => 'Private erasure',
   PrivateHrView.retention => 'Retention & holds',
   PrivateHrView.myAccount => 'My account & reviews',
 };
@@ -366,7 +369,7 @@ class _PrivateHrWorkspaceState extends State<PrivateHrWorkspace> {
                       controller: search,
                       maxLength: 160,
                       decoration: const InputDecoration(
-                        labelText: 'Name or employee code',
+                        labelText: 'Name or code',
                       ),
                       onSubmitted: (text) => c.filter(text),
                     ),
@@ -570,6 +573,22 @@ class _PrivateHrWorkspaceState extends State<PrivateHrWorkspace> {
               alignment: Alignment.centerLeft,
               child: _button('More records', c.moreRows),
             ),
+          if (c.view == PrivateHrView.erasure && c.subject != null)
+            _card('Erasure status', [
+              if (c.rows.isEmpty)
+                const Text('No erasure is requested for this employee.'),
+              for (final row in c.rows) ...[
+                Text('Status: ${row.text('status')!}'),
+                Text('Requested: ${row.text('requested_at')!}'),
+                if (row.text('completed_at') != null)
+                  Text(
+                    'Completed by retention worker: ${row.text('completed_at')!}',
+                  ),
+              ],
+              const Text(
+                'A request and completed storage/redaction cleanup are separate results.',
+              ),
+            ]),
           if (c.view == PrivateHrView.retention)
             _card('Synthetic retention policy', [
               const Text(
@@ -587,13 +606,10 @@ class _PrivateHrWorkspaceState extends State<PrivateHrWorkspace> {
               if (c.policyState?.policy != null) ...[
                 Text(c.policyState!.policy!.text('purpose')!),
                 Text(
-                  'Retention worker: ${c.policyState!.workerReady
-                          ? 'verified within 26 hours'
-                          : 'not ready; private content writes are blocked'}',
+                  'Retention worker: ${c.policyState!.workerReady ? 'verified within 26 hours' : 'not ready; private content writes are blocked'}',
                 ),
                 Text(
-                  'Cycle closed: ${c.policyState!.policy!.text('closed_at') ??
-                          'Not closed'}',
+                  'Cycle closed: ${c.policyState!.policy!.text('closed_at') ?? 'Not closed'}',
                 ),
                 if (c.policyState!.policy!.text('hold_reason') != null) ...[
                   Text('Hold: ${c.policyState!.policy!.text('hold_reason')!}'),
@@ -651,7 +667,7 @@ class _PrivateHrWorkspaceState extends State<PrivateHrWorkspace> {
                     ],
                   ),
                 ),
-              if (c.cursor != null)
+              if (c.inboxCursor != null)
                 Align(
                   alignment: Alignment.centerLeft,
                   child: _button('More proposals', c.moreInbox),
@@ -675,6 +691,11 @@ class _PrivateHrWorkspaceState extends State<PrivateHrWorkspace> {
                   const Text('No shared reviews are available.'),
               ]),
               for (final row in c.rows) _review(row, own: true),
+              if (c.cursor != null)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: _button('More shared reviews', c.moreRows),
+                ),
             ],
           ],
           if (c.previewBytes != null && c.previewDocument != null)
@@ -936,9 +957,7 @@ class _PrivateHrEditorState extends State<PrivateHrEditor> {
                       : (value) => c.edit('classification', value),
                 ),
                 const SizedBox(height: 12),
-                Text(
-                  '${c.form!['mime']} · ${c.form!['byte_size']} bytes',
-                ),
+                Text('${c.form!['mime']} · ${c.form!['byte_size']} bytes'),
                 const Text(
                   'Reservation does not confirm a document. Upload the exact file and complete its verification next.',
                 ),
@@ -982,15 +1001,13 @@ class _PrivateHrEditorState extends State<PrivateHrEditor> {
                 ),
                 if (c.comparedContacts?.profile?.body != null)
                   Text(
-                    const JsonEncoder.withIndent(
-                      '  ',
-                    ).convert(c.comparedContacts!.profile!.body),
+                    const JsonEncoder.withIndent('  ')
+                        .convert(c.comparedContacts!.profile!.body),
                   ),
                 if (c.comparedReview != null)
                   Text(
-                    const JsonEncoder.withIndent(
-                      '  ',
-                    ).convert(c.comparedReview!.body),
+                    const JsonEncoder.withIndent('  ')
+                        .convert(c.comparedReview!.body),
                   ),
               ],
               const SizedBox(height: 16),

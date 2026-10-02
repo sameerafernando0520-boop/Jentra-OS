@@ -1,0 +1,855 @@
+{
+  "apis": [
+    {
+      "name": "upsert_sales_quotation",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "transition_stock_opening",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "reserve_sales_order_stock",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "upsert_sales_order",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "upsert_workflow_definition",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid"
+    },
+    {
+      "name": "upsert_approval_matrix_step",
+      "signature": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid"
+    },
+    {
+      "name": "decide_operational_approval",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "upsert_sales_invoice",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "upsert_sales_return",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "post_sales_invoice",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "post_sales_return",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "transition_operational_document",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "get_sales_order_credit_preview",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_sales_order_id uuid"
+    },
+    {
+      "name": "update_sales_order_fulfillment",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    }
+  ],
+  "latest": "20260929224939",
+  "tables": [
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "tenant_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "legal_entity_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "branch_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "document_type",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "document_number",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "customer_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "date",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "document_date",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "date",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "due_date",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "currency_code",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "base_currency_code",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "exchange_rate_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "numeric",
+      "scale": 10,
+      "table": "sales_invoices",
+      "column": "exchange_rate",
+      "schema": "sales",
+      "precision": 20
+    },
+    {
+      "type": "date",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "rate_date",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "smallint",
+      "scale": 0,
+      "table": "sales_invoices",
+      "column": "rounding_scale",
+      "schema": "sales",
+      "precision": 16
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "sales_order_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "warehouse_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "cash_bank_account_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "external_reference",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "terms",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "notes",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "reason",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "jsonb",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "tender_metadata",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "numeric",
+      "scale": 6,
+      "table": "sales_invoices",
+      "column": "subtotal",
+      "schema": "sales",
+      "precision": 20
+    },
+    {
+      "type": "numeric",
+      "scale": 6,
+      "table": "sales_invoices",
+      "column": "discount_total",
+      "schema": "sales",
+      "precision": 20
+    },
+    {
+      "type": "numeric",
+      "scale": 6,
+      "table": "sales_invoices",
+      "column": "tax_total",
+      "schema": "sales",
+      "precision": 20
+    },
+    {
+      "type": "numeric",
+      "scale": 6,
+      "table": "sales_invoices",
+      "column": "grand_total",
+      "schema": "sales",
+      "precision": 20
+    },
+    {
+      "type": "numeric",
+      "scale": 6,
+      "table": "sales_invoices",
+      "column": "base_total",
+      "schema": "sales",
+      "precision": 20
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "status",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "bigint",
+      "scale": 0,
+      "table": "sales_invoices",
+      "column": "version",
+      "schema": "sales",
+      "precision": 64
+    },
+    {
+      "type": "jsonb",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "workflow_snapshot",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "submitted_by",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "posted_by",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "timestamp with time zone",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "posted_at",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "request_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "command_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "correlation_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "jsonb",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "source_context",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "timestamp with time zone",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "client_timestamp",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "created_by",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "updated_by",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "timestamp with time zone",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "created_at",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "timestamp with time zone",
+      "scale": null,
+      "table": "sales_invoices",
+      "column": "updated_at",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoice_lines",
+      "column": "id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoice_lines",
+      "column": "tenant_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoice_lines",
+      "column": "legal_entity_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoice_lines",
+      "column": "branch_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoice_lines",
+      "column": "document_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "integer",
+      "scale": 0,
+      "table": "sales_invoice_lines",
+      "column": "line_number",
+      "schema": "sales",
+      "precision": 32
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoice_lines",
+      "column": "product_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "sales_invoice_lines",
+      "column": "description",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "numeric",
+      "scale": 6,
+      "table": "sales_invoice_lines",
+      "column": "quantity",
+      "schema": "sales",
+      "precision": 20
+    },
+    {
+      "type": "numeric",
+      "scale": 6,
+      "table": "sales_invoice_lines",
+      "column": "base_quantity",
+      "schema": "sales",
+      "precision": 20
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoice_lines",
+      "column": "unit_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoice_lines",
+      "column": "sales_order_line_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoice_lines",
+      "column": "delivery_line_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoice_lines",
+      "column": "sales_invoice_line_id",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "numeric",
+      "scale": 6,
+      "table": "sales_invoice_lines",
+      "column": "taxable_amount",
+      "schema": "sales",
+      "precision": 20
+    },
+    {
+      "type": "numeric",
+      "scale": 6,
+      "table": "sales_invoice_lines",
+      "column": "tax_amount",
+      "schema": "sales",
+      "precision": 20
+    },
+    {
+      "type": "numeric",
+      "scale": 6,
+      "table": "sales_invoice_lines",
+      "column": "line_total",
+      "schema": "sales",
+      "precision": 20
+    },
+    {
+      "type": "jsonb",
+      "scale": null,
+      "table": "sales_invoice_lines",
+      "column": "snapshot",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "sales_invoice_lines",
+      "column": "created_by",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "timestamp with time zone",
+      "scale": null,
+      "table": "sales_invoice_lines",
+      "column": "created_at",
+      "schema": "sales",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "exchange_rates",
+      "column": "id",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "exchange_rates",
+      "column": "tenant_id",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "exchange_rates",
+      "column": "legal_entity_id",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "exchange_rates",
+      "column": "source_currency_code",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "exchange_rates",
+      "column": "target_currency_code",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "numeric",
+      "scale": 10,
+      "table": "exchange_rates",
+      "column": "rate",
+      "schema": "finance",
+      "precision": 20
+    },
+    {
+      "type": "date",
+      "scale": null,
+      "table": "exchange_rates",
+      "column": "effective_date",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "exchange_rates",
+      "column": "rate_type",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "exchange_rates",
+      "column": "source",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "exchange_rates",
+      "column": "status",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "bigint",
+      "scale": 0,
+      "table": "exchange_rates",
+      "column": "version",
+      "schema": "finance",
+      "precision": 64
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "exchange_rates",
+      "column": "created_by",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "exchange_rates",
+      "column": "updated_by",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "timestamp with time zone",
+      "scale": null,
+      "table": "exchange_rates",
+      "column": "created_at",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "timestamp with time zone",
+      "scale": null,
+      "table": "exchange_rates",
+      "column": "updated_at",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "tax_definitions",
+      "column": "id",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "tax_definitions",
+      "column": "tenant_id",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "tax_definitions",
+      "column": "legal_entity_id",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "tax_definitions",
+      "column": "code",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "tax_definitions",
+      "column": "name",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "numeric",
+      "scale": 6,
+      "table": "tax_definitions",
+      "column": "rate",
+      "schema": "finance",
+      "precision": 12
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "tax_definitions",
+      "column": "kind",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "boolean",
+      "scale": null,
+      "table": "tax_definitions",
+      "column": "inclusive",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "boolean",
+      "scale": null,
+      "table": "tax_definitions",
+      "column": "recoverable",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "date",
+      "scale": null,
+      "table": "tax_definitions",
+      "column": "valid_from",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "date",
+      "scale": null,
+      "table": "tax_definitions",
+      "column": "valid_to",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "tax_definitions",
+      "column": "status",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "bigint",
+      "scale": 0,
+      "table": "tax_definitions",
+      "column": "version",
+      "schema": "finance",
+      "precision": 64
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "tax_definitions",
+      "column": "created_by",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "tax_definitions",
+      "column": "updated_by",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "timestamp with time zone",
+      "scale": null,
+      "table": "tax_definitions",
+      "column": "created_at",
+      "schema": "finance",
+      "precision": null
+    },
+    {
+      "type": "timestamp with time zone",
+      "scale": null,
+      "table": "tax_definitions",
+      "column": "updated_at",
+      "schema": "finance",
+      "precision": null
+    }
+  ],
+  "captured_at": "2026-10-01T07:51:37.689303+00:00",
+  "definitions": [
+    {
+      "name": "flow_post",
+      "source": "CREATE OR REPLACE FUNCTION sales.flow_post(p_kind text, p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare v_id uuid:=coalesce((p_payload->>'document_id')::uuid,(p_payload->>'id')::uuid);v_command text:='sales.'||p_kind||'.post';\n v_hash text;v_replay jsonb;v_doc jsonb;v_before jsonb;v_request uuid:=gen_random_uuid();v_stock jsonb;\n v_jlines jsonb:='[]';v_journal uuid;v_stock_journal uuid;v_open uuid;v_line jsonb;v_product inventory.products%rowtype;\n v_amount numeric;v_base numeric;v_net numeric;v_tax numeric;v_net_base numeric;v_tax_base numeric;v_diff numeric;\n v_control uuid;v_bank finance.cash_bank_accounts%rowtype;v_sign integer:=case when p_kind='sales_invoice' then 1 else -1 end;\n v_stock_doc jsonb;v_allocation jsonb;v_outputs jsonb;v_scale integer;v_revenue uuid;v_tax_account uuid;\nbegin\n perform core.wave3_require_scope(p_tenant_id,sales.flow_permission(p_kind,'post'),p_legal_entity_id,p_branch_id);\n if p_branch_id is null or p_client_timestamp is null or v_id is null then raise exception using errcode='22023',message='DOCUMENT_PAYLOAD_INVALID';end if;\n v_hash:=core.wave3_request_hash(v_command,p_command_id,p_tenant_id,p_legal_entity_id,p_branch_id,p_payload,p_expected_entity_version);\n v_replay:=core.wave3_replay(p_tenant_id,v_command,p_command_id,p_idempotency_key,v_hash);if v_replay is not null then return v_replay;end if;\n v_doc:=sales.flow_document(p_kind,p_tenant_id,v_id,true);v_before:=v_doc;\n if v_doc is null or (v_doc->>'legal_entity_id')::uuid<>p_legal_entity_id or (v_doc->>'branch_id')::uuid<>p_branch_id then\n raise exception using errcode='P0002',message='DOCUMENT_NOT_FOUND';end if;\n perform core.wave3_assert_expected_version((v_doc->>'version')::bigint,p_expected_entity_version,v_doc);\n if v_doc->>'status' not in ('submitted','approved') or v_doc->'workflow_snapshot' is null\n or (v_doc#>'{workflow_snapshot,lifecycle,requires_approval}' is distinct from 'false'::jsonb and v_doc->>'status'<>'approved') then\n raise exception using errcode='55000',message='DOCUMENT_NOT_APPROVED';end if;\n perform sales.flow_assert_transition(v_doc#>'{workflow_snapshot,lifecycle}',v_doc->>'status','posted');\n if v_doc#>'{workflow_snapshot,lifecycle,separate_poster}'='true'::jsonb and (v_doc->>'submitted_by')::uuid=auth.uid() then\n raise exception using errcode='42501',message='SEGREGATION_OF_DUTIES_VIOLATION';end if;\n perform sales.flow_lock_sources(p_kind,v_doc);\n perform finance.wave3_lock_open_period(p_tenant_id,p_legal_entity_id,(v_doc->>'document_date')::date);\n if (v_doc->>'document_date')::date>(clock_timestamp() at time zone 'UTC')::date then raise exception using errcode='22023',message='FUTURE_POSTING_DATE';end if;\n perform sales.flow_revalidate(p_kind,v_doc);\n v_scale:=(v_doc->>'rounding_scale')::integer;v_amount:=(v_doc->>'grand_total')::numeric;v_base:=(v_doc->>'base_total')::numeric;\n if p_kind in ('delivery','sales_return') then\n v_stock:=sales.flow_post_stock(p_kind,v_doc,v_request,p_command_id);\n v_stock_doc:=v_doc||jsonb_build_object('currency_code',v_doc->>'base_currency_code','exchange_rate','1');\n v_stock_journal:=finance.flow_post_journal(v_stock_doc,v_stock->'journal_lines',p_kind||'.stock',v_id,v_request,p_command_id);\n end if;\n if p_kind='customer_receipt' then\n select * into v_bank from finance.cash_bank_accounts where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and branch_id=p_branch_id\n and id=(v_doc->>'cash_bank_account_id')::uuid and status='active' and currency_code=v_doc->>'currency_code';\n if not found then raise exception using errcode='55000',message='CASH_BANK_ACCOUNT_INVALID';end if;\n perform finance.flow_account(p_tenant_id,p_legal_entity_id,v_bank.account_id,'asset',v_doc->>'currency_code');\n v_control:=finance.flow_mapping(p_tenant_id,p_legal_entity_id,'receivable_control',v_doc->>'currency_code');\n v_jlines:=jsonb_build_array(finance.flow_jline(v_bank.account_id,v_amount,v_base),finance.flow_jline(v_control,-v_amount,-v_base));\n elsif p_kind in ('sales_invoice','sales_return') and v_amount>0 then\n v_control:=finance.flow_mapping(p_tenant_id,p_legal_entity_id,'receivable_control',v_doc->>'currency_code');\n v_jlines:=jsonb_build_array(finance.flow_jline(v_control,v_sign*v_amount,v_sign*v_base));\n for v_line in select value from jsonb_array_elements(v_doc->'lines') loop\n v_net:=(v_line->>'taxable_amount')::numeric;v_tax:=(v_line->>'tax_amount')::numeric;\n v_net_base:=round(v_net*(v_doc->>'exchange_rate')::numeric,v_scale);v_tax_base:=round(v_tax*(v_doc->>'exchange_rate')::numeric,v_scale);\n select * into v_product from inventory.products where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and id=(v_line->>'product_id')::uuid;\n v_revenue:=v_product.revenue_account_id;\n if p_kind='sales_return' then\n select l.account_id into v_revenue from finance.journal_lines l join finance.journal_entries j on j.id=l.journal_entry_id\n join finance.accounts a on a.id=l.account_id where l.tenant_id=p_tenant_id and j.source_type='sales_invoice'\n and l.source_line_id=(v_line->>'sales_invoice_line_id')::uuid and a.account_type='revenue';\n select l.account_id into v_tax_account from finance.journal_lines l join finance.journal_entries j on j.id=l.journal_entry_id\n join finance.accounts a on a.id=l.account_id where l.tenant_id=p_tenant_id and j.source_type='sales_invoice'\n and l.source_line_id=(v_line->>'sales_invoice_line_id')::uuid and a.account_type='liability';\n elsif v_tax>0 then v_tax_account:=finance.flow_mapping(p_tenant_id,p_legal_entity_id,'output_tax',v_doc->>'currency_code');end if;\n if v_net>0 then v_jlines:=v_jlines||jsonb_build_array(finance.flow_jline(finance.flow_account(p_tenant_id,p_legal_entity_id,\n v_revenue,'revenue',v_doc->>'currency_code'),-v_sign*v_net,-v_sign*v_net_base,(v_line->>'id')::uuid));end if;\n if v_tax>0 then v_jlines:=v_jlines||jsonb_build_array(finance.flow_jline(finance.flow_account(p_tenant_id,p_legal_entity_id,\n v_tax_account,'liability',v_doc->>'currency_code'),-v_sign*v_tax,-v_sign*v_tax_base,(v_line->>'id')::uuid));end if;\n end loop;\n select sum((x->>'base_amount')::numeric) into v_diff from jsonb_array_elements(v_jlines) x;\n if v_diff<>0 then v_jlines:=v_jlines||jsonb_build_array(finance.flow_jline(finance.flow_mapping(p_tenant_id,p_legal_entity_id,'rounding',v_doc->>'currency_code'),0,-v_diff));end if;\n end if;\n -- Zero-value invoices still consume their source quantities.\n if p_kind='sales_invoice' then\n for v_line in select value from jsonb_array_elements(v_doc->'lines') where value->>'sales_order_line_id' is not null loop\n update sales.sales_order_lines set invoiced_quantity=invoiced_quantity+(v_line->>'base_quantity')::numeric,updated_by=auth.uid()\n where tenant_id=p_tenant_id and id=(v_line->>'sales_order_line_id')::uuid;\n update sales.sales_orders set updated_by=auth.uid() where tenant_id=p_tenant_id and id=(select sales_order_id from sales.sales_order_lines where id=(v_line->>'sales_order_line_id')::uuid);\n end loop;end if;\n if jsonb_array_length(v_jlines)>0 then\n v_journal:=finance.flow_post_journal(v_doc,v_jlines,p_kind,v_id,v_request,p_command_id);\n v_open:=gen_random_uuid();insert into finance.open_items(id,tenant_id,legal_entity_id,branch_id,party_id,source_type,source_id,\n document_number,currency_code,base_currency_code,exchange_rate,original_amount,original_base_amount,posting_date,due_date,\n journal_entry_id,request_id,command_id,correlation_id,created_by)\n values(v_open,p_tenant_id,p_legal_entity_id,p_branch_id,(v_doc->>'customer_id')::uuid,p_kind,v_id,v_doc->>'document_number',\n v_doc->>'currency_code',v_doc->>'base_currency_code',(v_doc->>'exchange_rate')::numeric,v_sign*v_amount,v_sign*v_base,\n (v_doc->>'document_date')::date,(v_doc->>'due_date')::date,v_journal,v_request,p_command_id,v_request,auth.uid());\n end if;\n execute format('update sales.%I set status=''posted'',posted_by=$1,posted_at=clock_timestamp(),updated_by=$1,request_id=$2,command_id=$3,correlation_id=$2,client_timestamp=$4 where tenant_id=$5 and id=$6',sales.flow_table(p_kind))\n using auth.uid(),v_request,p_command_id,p_client_timestamp,p_tenant_id,v_id;\n if v_open is not null then perform finance.flow_refresh_credit(v_doc);end if;\n v_outputs:=jsonb_build_object('stock_movement_ids',case when v_stock->>'movement_id' is null then '[]'::jsonb else jsonb_build_array(v_stock->>'movement_id') end,\n 'journal_entry_ids',to_jsonb(array_remove(array[v_stock_journal,v_journal],null)),\n 'open_item_ids',to_jsonb(array_remove(array[v_open],null)),'allocation_ids','[]'::jsonb,'reconciliation_status','unreconciled');\n return core.wave3_finish_command(p_tenant_id,v_command,p_command_id,p_kind,v_id,p_idempotency_key,v_hash,v_before,\n sales.flow_document(p_kind,p_tenant_id,v_id)||v_outputs,p_legal_entity_id,p_branch_id,coalesce(p_payload->'source_context','{}'),\n jsonb_build_object('from_status',v_before->>'status','to_status','posted'),\n jsonb_build_array(jsonb_build_object('topic',v_command,'payload',v_outputs)),'[]',v_request,v_request);\nend $function$\n"
+    },
+    {
+      "name": "flow_transition",
+      "source": "CREATE OR REPLACE FUNCTION sales.flow_transition(p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare v_kind text:=p_payload->>'document_type';v_id uuid:=(p_payload->>'document_id')::uuid;\n v_action text:=p_payload->>'action';v_decision text:=p_payload->>'decision';v_command text;\n v_doc jsonb;v_before jsonb;v_hash text;v_replay jsonb;v_to text;v_snapshot jsonb;\n v_workflow workflow.workflow_definitions%rowtype;v_request uuid:=gen_random_uuid();v_first integer;\n v_ar workflow.approval_requests%rowtype;v_step jsonb;v_number text;\nbegin\n v_command:='sales.'||v_kind||case when v_decision is null then '.transition' else '.decide' end;\n perform core.wave3_require_scope(p_tenant_id,case when v_decision is null then sales.flow_permission(v_kind,'manage') else 'workflow.approvals.decide' end,p_legal_entity_id,p_branch_id);\n if sales.flow_table(v_kind) is null or p_branch_id is null or p_client_timestamp is null then raise exception using errcode='22023',message='DOCUMENT_PAYLOAD_INVALID';end if;\n v_hash:=core.wave3_request_hash(v_command,p_command_id,p_tenant_id,p_legal_entity_id,p_branch_id,p_payload,p_expected_entity_version);\n v_replay:=core.wave3_replay(p_tenant_id,v_command,p_command_id,p_idempotency_key,v_hash);if v_replay is not null then return v_replay;end if;\n v_doc:=sales.flow_document(v_kind,p_tenant_id,v_id,true);v_before:=v_doc;\n if v_doc is null or (v_doc->>'legal_entity_id')::uuid<>p_legal_entity_id or (v_doc->>'branch_id')::uuid<>p_branch_id then\n raise exception using errcode='P0002',message='DOCUMENT_NOT_FOUND';end if;\n perform core.wave3_assert_expected_version((v_doc->>'version')::bigint,p_expected_entity_version,v_doc);\n if v_doc->>'status'='posted' then raise exception using errcode='55000',message='POSTED_DOCUMENT_IMMUTABLE';end if;\n v_snapshot:=v_doc->'workflow_snapshot';v_number:=v_doc->>'document_number';\n if v_decision is not null then\n if v_decision not in ('approved','rejected') or v_doc->>'status'<>'pending_approval' then raise exception using errcode='55000',message='APPROVAL_NOT_PENDING';end if;\n select * into v_ar from workflow.approval_requests where tenant_id=p_tenant_id and document_type=v_kind and document_id=v_id and status='submitted' for update;\n if not found then raise exception using errcode='55000',message='APPROVAL_REQUEST_NOT_FOUND';end if;\n if v_ar.submitted_by=auth.uid() then raise exception using errcode='42501',message='SEGREGATION_OF_DUTIES_VIOLATION';end if;\n select x into v_step from jsonb_array_elements(v_snapshot->'steps') x where (x->>'step_order')::integer=v_ar.current_step;\n if v_step is null or not exists(select 1 from core.memberships m join core.role_assignments ra on ra.tenant_id=m.tenant_id and ra.membership_id=m.id\n join core.roles r on r.id=ra.role_id and r.tenant_id=m.tenant_id\n where m.tenant_id=p_tenant_id and m.user_id=auth.uid() and m.status='active' and ra.role_id=(v_step->>'role_id')::uuid\n and (ra.legal_entity_id is null or ra.legal_entity_id=p_legal_entity_id) and (ra.branch_id is null or ra.branch_id=p_branch_id)\n and (not r.requires_mfa or auth.jwt()->>'aal'='aal2')) then raise exception using errcode='42501',message='APPROVAL_ROLE_REQUIRED';end if;\n if v_decision='rejected' and nullif(trim(p_payload->>'note'),'') is null then raise exception using errcode='22023',message='REASON_REQUIRED';end if;\n perform sales.flow_assert_transition(v_snapshot->'lifecycle','submitted',v_decision);\n insert into workflow.approval_decisions(tenant_id,approval_request_id,workflow_definition_id,workflow_revision,\n approval_matrix_step_id,step_order,actor_id,decision,note,amount,currency_code,request_id,command_id,correlation_id)\n values(p_tenant_id,v_ar.id,v_ar.workflow_definition_id,v_ar.workflow_revision,(v_step->>'id')::uuid,v_ar.current_step,\n auth.uid(),v_decision,p_payload->>'note',v_ar.amount,v_ar.currency_code,v_request,p_command_id,v_request);\n if v_decision='approved' then select min((x->>'step_order')::integer) into v_first from jsonb_array_elements(v_snapshot->'steps') x\n where (x->>'step_order')::integer>v_ar.current_step;end if;\n v_to:=case when v_decision='rejected' then 'rejected' when v_first is null then 'approved' else 'pending_approval' end;\n if v_first is null then update workflow.approval_requests set status=v_to,decision_by=auth.uid(),decision_note=p_payload->>'note',decided_at=clock_timestamp() where id=v_ar.id;\n else update workflow.approval_requests set current_step=v_first where id=v_ar.id;end if;\n elsif v_action='submit' then\n if v_doc->>'status'<>'draft' then raise exception using errcode='55000',message='DOCUMENT_NOT_EDITABLE';end if;\n perform sales.flow_revalidate(v_kind,v_doc);\n select * into v_workflow from workflow.workflow_definitions where tenant_id=p_tenant_id and document_type=v_kind and status='active'\n and (legal_entity_id is null or legal_entity_id=p_legal_entity_id) order by (legal_entity_id is not null) desc limit 1;\n if not found then raise exception using errcode='55000',message='WORKFLOW_CONFIGURATION_ERROR';end if;\n select jsonb_build_object('definition_id',v_workflow.id,'revision',v_workflow.revision,'lifecycle',v_workflow.lifecycle,\n 'steps',coalesce(jsonb_agg(sales.flow_exact_json(to_jsonb(s)) order by s.step_order),'[]'::jsonb)) into v_snapshot\n from workflow.approval_matrix_steps s where s.tenant_id=p_tenant_id and s.workflow_definition_id=v_workflow.id and s.status='active'\n and (s.currency_code is null or s.currency_code=v_doc->>'currency_code')\n and (s.minimum_amount is null or (v_doc->>'grand_total')::numeric>=s.minimum_amount)\n and (s.maximum_amount is null or (v_doc->>'grand_total')::numeric<=s.maximum_amount);\n if v_workflow.lifecycle->'requires_approval' is distinct from 'false'::jsonb then\n select min((x->>'step_order')::integer) into v_first from jsonb_array_elements(v_snapshot->'steps') x;\n if v_first is null then raise exception using errcode='55000',message='WORKFLOW_CONFIGURATION_ERROR';end if;end if;\n v_to:=case when v_first is null then 'submitted' else 'pending_approval' end;\n perform sales.flow_assert_transition(v_workflow.lifecycle,'draft','submitted');\n v_number:=coalesce(v_number,sales.wave3_reserve_document_number(p_tenant_id,p_legal_entity_id,p_branch_id,v_kind,(v_doc->>'document_date')::date,auth.uid()));\n if v_first is not null then insert into workflow.approval_requests(tenant_id,legal_entity_id,branch_id,document_type,document_id,status,\n submitted_by,workflow_definition_id,workflow_revision,current_step,amount,currency_code,command_id,request_id,correlation_id)\n values(p_tenant_id,p_legal_entity_id,p_branch_id,v_kind,v_id,'submitted',auth.uid(),v_workflow.id,v_workflow.revision,v_first,\n (v_doc->>'grand_total')::numeric,v_doc->>'currency_code',p_command_id,v_request,v_request);end if;\n elsif v_action in ('recall','cancel') then\n if nullif(trim(p_payload->>'reason'),'') is null then raise exception using errcode='22023',message='REASON_REQUIRED';end if;\n if v_snapshot is null and v_doc->>'status'='draft' then\n select jsonb_build_object('lifecycle',lifecycle) into v_snapshot from workflow.workflow_definitions\n where tenant_id=p_tenant_id and document_type=v_kind and status='active'\n and (legal_entity_id is null or legal_entity_id=p_legal_entity_id) order by (legal_entity_id is not null) desc limit 1;\n end if;\n v_to:=case when v_action='recall' then 'draft' else 'cancelled' end;\n perform sales.flow_assert_transition(v_snapshot->'lifecycle',v_doc->>'status',v_to);\n update workflow.approval_requests set status='cancelled',decision_by=auth.uid(),decision_note=p_payload->>'reason',decided_at=clock_timestamp()\n where tenant_id=p_tenant_id and document_type=v_kind and document_id=v_id and status='submitted';\n if v_action='recall' then v_snapshot:=null;end if;\n else raise exception using errcode='22023',message='DOCUMENT_ACTION_INVALID';end if;\n execute format('update sales.%I set status=$1,workflow_snapshot=$2,document_number=$3,submitted_by=case when $4=''submit'' then $5 else submitted_by end,updated_by=$5,request_id=$6,command_id=$7,correlation_id=$6,client_timestamp=$8 where tenant_id=$9 and id=$10',sales.flow_table(v_kind))\n using v_to,v_snapshot,v_number,v_action,auth.uid(),v_request,p_command_id,p_client_timestamp,p_tenant_id,v_id;\n return core.wave3_finish_command(p_tenant_id,v_command,p_command_id,v_kind,v_id,p_idempotency_key,v_hash,v_before,\n sales.flow_document(v_kind,p_tenant_id,v_id),p_legal_entity_id,p_branch_id,coalesce(p_payload->'source_context','{}'),\n jsonb_build_object('from_status',v_doc->>'status','to_status',v_to,'reason',coalesce(p_payload->>'reason',p_payload->>'note')),\n jsonb_build_array(jsonb_build_object('topic',v_command,'payload',jsonb_build_object('status',v_to))),'[]',v_request,v_request);\nend $function$\n"
+    },
+    {
+      "name": "flow_upsert",
+      "source": "CREATE OR REPLACE FUNCTION sales.flow_upsert(p_kind text, p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare v_table text:=sales.flow_table(p_kind);v_id uuid:=coalesce((p_payload->>'id')::uuid,gen_random_uuid());\n v_command text:='sales.'||p_kind||'.upsert';v_hash text;v_replay jsonb;v_before jsonb;v_doc jsonb;v_price jsonb;\n v_rate jsonb;v_scale integer;v_line jsonb;v_request uuid:=gen_random_uuid();v_cols text;v_values text;\n v_allowed text[]:=array['id','customer_id','document_date','due_date','currency_code','sales_order_id','warehouse_id',\n 'cash_bank_account_id','external_reference','terms','notes','reason','tender_metadata','source_context'];\nbegin\n perform core.wave3_require_scope(p_tenant_id,sales.flow_permission(p_kind,'manage'),p_legal_entity_id,p_branch_id);\n if v_table is null or p_branch_id is null or p_client_timestamp is null or jsonb_typeof(p_payload) is distinct from 'object'\n or p_legal_entity_id is null then raise exception using errcode='22023',message='DOCUMENT_PAYLOAD_INVALID';end if;\n v_hash:=core.wave3_request_hash(v_command,p_command_id,p_tenant_id,p_legal_entity_id,p_branch_id,p_payload,p_expected_entity_version);\n v_replay:=core.wave3_replay(p_tenant_id,v_command,p_command_id,p_idempotency_key,v_hash);if v_replay is not null then return v_replay;end if;\n v_before:=sales.flow_document(p_kind,p_tenant_id,v_id,true);\n if v_before is not null then\n if (v_before->>'legal_entity_id')::uuid<>p_legal_entity_id or (v_before->>'branch_id')::uuid<>p_branch_id then\n raise exception using errcode='42501',message='DOCUMENT_SCOPE_INVALID';end if;\n perform core.wave3_assert_expected_version((v_before->>'version')::bigint,p_expected_entity_version,v_before);\n if v_before->>'status'<>'draft' then raise exception using errcode='55000',message='DOCUMENT_NOT_EDITABLE';end if;\n elsif p_expected_entity_version is not null then raise exception using errcode='40001',message='VERSION_CONFLICT';end if;\n if not exists(select 1 from crm.parties where tenant_id=p_tenant_id and id=(p_payload->>'customer_id')::uuid\n and status='active' and kind in ('customer','both')) then raise exception using errcode='22023',message='CUSTOMER_INACTIVE';end if;\n select rounding_scale into v_scale from core.legal_entities where tenant_id=p_tenant_id and id=p_legal_entity_id;\n v_rate:=finance.flow_rate(p_tenant_id,p_legal_entity_id,p_payload->>'currency_code',(p_payload->>'document_date')::date,(p_payload->>'exchange_rate_id')::uuid);\n select coalesce(jsonb_object_agg(key,value),'{}') into v_doc from jsonb_each(p_payload) where key=any(v_allowed);\n v_doc:=v_doc||v_rate||jsonb_build_object('id',v_id,'tenant_id',p_tenant_id,'legal_entity_id',p_legal_entity_id,\n 'branch_id',p_branch_id,'document_type',p_kind,'status','draft','rounding_scale',v_scale,\n 'due_date',coalesce(p_payload->>'due_date',p_payload->>'document_date'),'request_id',v_request,'command_id',p_command_id,\n 'correlation_id',v_request,'client_timestamp',p_client_timestamp,'created_by',coalesce(v_before->>'created_by',auth.uid()::text),\n 'updated_by',auth.uid(),'version',coalesce((v_before->>'version')::bigint,1),\n 'created_at',coalesce(v_before->>'created_at',clock_timestamp()::text),'updated_at',clock_timestamp(),\n 'source_context',coalesce(p_payload->'source_context','{}'::jsonb),'tender_metadata',coalesce(p_payload->'tender_metadata','{}'::jsonb),\n 'document_number',v_before->>'document_number');\n if p_kind='delivery' and (v_doc->>'sales_order_id' is null or v_doc->>'warehouse_id' is null) then\n raise exception using errcode='22023',message='DELIVERY_SOURCE_REQUIRED';end if;\n if p_kind='customer_receipt' and not exists(select 1 from finance.cash_bank_accounts a where a.tenant_id=p_tenant_id\n and a.legal_entity_id=p_legal_entity_id and a.branch_id=p_branch_id and a.id=(v_doc->>'cash_bank_account_id')::uuid\n and a.status='active' and a.currency_code=v_doc->>'currency_code') then raise exception using errcode='22023',message='CASH_BANK_ACCOUNT_INVALID';end if;\n v_price:=sales.flow_price(p_kind,v_doc||jsonb_build_object('amount',p_payload->'amount'),p_payload->'lines');\n v_doc:=v_doc||(v_price-'lines');\n -- Explicitly populated record includes only whitelisted and server-owned fields.\n select string_agg(quote_ident(a.attname),',' order by a.attnum),string_agg('x.'||quote_ident(a.attname),',' order by a.attnum)\n into v_cols,v_values from pg_attribute a where a.attrelid=format('sales.%I',v_table)::regclass and a.attnum>0 and not a.attisdropped;\n if v_before is null then execute format('insert into sales.%I(%s) select %s from jsonb_populate_record(null::sales.%I,$1) x',v_table,v_cols,v_values,v_table) using v_doc;\n else\n execute format('update sales.%I d set (%s)=(select %s from jsonb_populate_record(null::sales.%I,$1) x) where d.tenant_id=$2 and d.id=$3',v_table,v_cols,v_values,v_table)\n using v_doc,p_tenant_id,v_id;\n execute format('delete from sales.%I where tenant_id=$1 and document_id=$2',sales.flow_lines_table(p_kind)) using p_tenant_id,v_id;\n end if;\n for v_line in select value from jsonb_array_elements(v_price->'lines') loop\n execute format('insert into sales.%I(id,tenant_id,legal_entity_id,branch_id,document_id,line_number,product_id,description,quantity,base_quantity,unit_id,sales_order_line_id,delivery_line_id,sales_invoice_line_id,taxable_amount,tax_amount,line_total,snapshot,created_by) values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)',sales.flow_lines_table(p_kind))\n using (v_line->>'line_id')::uuid,p_tenant_id,p_legal_entity_id,p_branch_id,v_id,(v_line->>'line_number')::integer,\n (v_line->>'product_id')::uuid,v_line->>'description',(v_line->>'quantity')::numeric,(v_line->>'base_quantity')::numeric,\n (v_line->>'unit_id')::uuid,(v_line->>'sales_order_line_id')::uuid,(v_line->>'delivery_line_id')::uuid,\n (v_line->>'sales_invoice_line_id')::uuid,(v_line->>'taxable_amount')::numeric,(v_line->>'tax_amount')::numeric,\n (v_line->>'line_total')::numeric,v_line,auth.uid();end loop;\n v_doc:=sales.flow_document(p_kind,p_tenant_id,v_id);\n return core.wave3_finish_command(p_tenant_id,v_command,p_command_id,p_kind,v_id,p_idempotency_key,v_hash,v_before,v_doc,\n p_legal_entity_id,p_branch_id,coalesce(p_payload->'source_context','{}'),null,\n jsonb_build_array(jsonb_build_object('topic',v_command,'payload',jsonb_build_object('status','draft'))),'[]',v_request,v_request);\nend $function$\n"
+    },
+    {
+      "name": "wave3_price_lines",
+      "source": "CREATE OR REPLACE FUNCTION sales.wave3_price_lines(p_tenant_id uuid, p_legal_entity_id uuid, p_document_date date, p_currency_code text, p_lines jsonb, p_header_discount_amount jsonb DEFAULT NULL::jsonb, p_header_discount_percent jsonb DEFAULT NULL::jsonb)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare\n  v_rounding_scale integer;\n  v_line jsonb;\n  v_ordinal integer;\n  v_count integer;\n  v_product inventory.products%rowtype;\n  v_tax finance.tax_definitions%rowtype;\n  v_quantity numeric(20, 6);\n  v_base_quantity numeric(20, 6);\n  v_numerator bigint;\n  v_denominator bigint;\n  v_unit_price numeric(20, 6);\n  v_gross numeric(20, 6);\n  v_line_discount numeric(20, 6);\n  v_discount_percent numeric(12, 6);\n  v_basis numeric(20, 6);\n  v_basis_total numeric(20, 6) := 0;\n  v_cumulative_basis numeric(20, 6) := 0;\n  v_subtotal numeric(20, 6) := 0;\n  v_line_discount_total numeric(20, 6) := 0;\n  v_header_amount numeric(20, 6);\n  v_header_percent numeric(12, 6);\n  v_header_total numeric(20, 6) := 0;\n  v_header_allocation numeric(20, 6);\n  v_allocated numeric(20, 6) := 0;\n  v_discounted_basis numeric(20, 6);\n  v_tax_amount numeric(20, 6);\n  v_net_amount numeric(20, 6);\n  v_line_total numeric(20, 6);\n  v_tax_total numeric(20, 6) := 0;\n  v_grand_total numeric(20, 6) := 0;\n  v_prepared jsonb := '[]'::jsonb;\n  v_priced jsonb := '[]'::jsonb;\nbegin\n  if p_document_date is null then\n    raise exception using errcode = '22023', message = 'Document date is required.';\n  end if;\n  if p_currency_code !~ '^[A-Z]{3}$' then\n    raise exception using errcode = '22023', message = 'Currency code is invalid.';\n  end if;\n  if jsonb_typeof(p_lines) <> 'array'\n     or jsonb_array_length(p_lines) not between 1 and 500 then\n    raise exception using errcode = '22023', message = 'One to five hundred lines are required.';\n  end if;\n  select le.rounding_scale into v_rounding_scale\n  from core.legal_entities as le\n  where le.tenant_id = p_tenant_id and le.id = p_legal_entity_id\n    and le.status = 'active';\n  if not found then\n    raise exception using errcode = '42501', message = 'LEGAL_ENTITY_SCOPE_INVALID';\n  end if;\n\n  for v_line, v_ordinal in\n    select value, ordinality::integer\n    from jsonb_array_elements(p_lines) with ordinality\n  loop\n    if jsonb_typeof(v_line) <> 'object' then\n      raise exception using errcode = '22023', message = 'Each commercial line must be an object.';\n    end if;\n    if length(trim(coalesce(v_line->>'description', ''))) not between 1 and 1000 then\n      raise exception using errcode = '22023', message = 'Line description is required.';\n    end if;\n    if nullif(v_line->>'product_id', '') is null then\n      raise exception using errcode = '22023', message = 'Product is required.';\n    end if;\n    select p.* into v_product\n    from inventory.products as p\n    where p.tenant_id = p_tenant_id\n      and p.legal_entity_id = p_legal_entity_id\n      and p.id = (v_line->>'product_id')::uuid\n      and p.status = 'active' and p.can_sell;\n    if not found then\n      raise exception using errcode = '22023', message = 'Product is outside scope or cannot be sold.';\n    end if;\n    if not exists (\n      select 1 from inventory.units as u\n      where u.tenant_id = p_tenant_id and u.id = (v_line->>'unit_id')::uuid\n        and u.status = 'active'\n    ) then\n      raise exception using errcode = '22023', message = 'Unit is outside scope or inactive.';\n    end if;\n\n    v_quantity := sales.wave3_decimal_string(\n      v_line->'quantity', 'Quantity', 6, true, 0, null\n    )::numeric(20, 6);\n    v_base_quantity := sales.wave3_decimal_string(\n      v_line->'base_quantity', 'Base quantity', 6, true, 0, null\n    )::numeric(20, 6);\n    if v_quantity <= 0 or v_base_quantity <= 0 then\n      raise exception using errcode = '22023', message = 'Quantities must be positive.';\n    end if;\n    v_numerator := sales.wave3_positive_bigint(\n      v_line->'conversion_numerator', 'Conversion numerator'\n    );\n    v_denominator := sales.wave3_positive_bigint(\n      v_line->'conversion_denominator', 'Conversion denominator'\n    );\n    if v_base_quantity * v_denominator <> v_quantity * v_numerator then\n      raise exception using errcode = '22023', message = 'Base quantity does not match unit conversion.';\n    end if;\n    v_unit_price := sales.wave3_decimal_string(\n      v_line->'unit_price', 'Unit price', 6, true, 0, null\n    )::numeric(20, 6);\n    v_gross := round(v_quantity * v_unit_price, v_rounding_scale)::numeric(20, 6);\n\n    if v_line ? 'discount_amount' and v_line ? 'discount_percent' then\n      raise exception using errcode = '22023', message = 'Choose one line discount type.';\n    end if;\n    v_discount_percent := null;\n    if v_line ? 'discount_amount' then\n      v_line_discount := round(sales.wave3_decimal_string(\n        v_line->'discount_amount', 'Line discount amount', 6, true, 0, null\n      ), v_rounding_scale)::numeric(20, 6);\n    elsif v_line ? 'discount_percent' then\n      v_discount_percent := sales.wave3_decimal_string(\n        v_line->'discount_percent', 'Line discount percent', 6, true, 0, 100\n      )::numeric(12, 6);\n      v_line_discount := round(\n        v_gross * v_discount_percent / 100, v_rounding_scale\n      )::numeric(20, 6);\n    else\n      v_line_discount := 0;\n    end if;\n    if v_line_discount > v_gross then\n      raise exception using errcode = '22023', message = 'Line discount exceeds gross amount.';\n    end if;\n    v_basis := v_gross - v_line_discount;\n\n    v_tax := null;\n    if nullif(v_line->>'tax_definition_id', '') is not null then\n      select td.* into v_tax\n      from finance.tax_definitions as td\n      where td.tenant_id = p_tenant_id\n        and td.legal_entity_id = p_legal_entity_id\n        and td.id = (v_line->>'tax_definition_id')::uuid\n        and td.status = 'active'\n        and td.kind in ('output', 'zero', 'exempt')\n        and p_document_date >= td.valid_from\n        and (td.valid_to is null or p_document_date <= td.valid_to);\n      if not found then\n        raise exception using errcode = '22023', message = 'Tax definition is outside scope or date.';\n      end if;\n    end if;\n\n    v_prepared := v_prepared || jsonb_build_array(jsonb_build_object(\n      'line_id', nullif(v_line->>'line_id', ''),\n      'product_id', v_product.id,\n      'description', trim(v_line->>'description'),\n      'unit_id', (v_line->>'unit_id')::uuid,\n      'quantity', v_quantity::text,\n      'base_quantity', v_base_quantity::text,\n      'conversion_numerator', v_numerator::text,\n      'conversion_denominator', v_denominator::text,\n      'unit_price', v_unit_price::text,\n      'gross_amount', v_gross::text,\n      'line_discount_amount', v_line_discount::text,\n      'discount_percent', case when v_discount_percent is null then null else v_discount_percent::text end,\n      '_basis', v_basis,\n      'tax_definition_id', v_tax.id,\n      'tax_code', v_tax.code,\n      'tax_name', v_tax.name,\n      'tax_kind', v_tax.kind,\n      'tax_rate', coalesce(v_tax.rate, 0)::numeric(12, 6)::text,\n      'tax_inclusive', coalesce(v_tax.inclusive, false),\n      'tax_definition_version', v_tax.version\n    ));\n    v_subtotal := v_subtotal + v_gross;\n    v_line_discount_total := v_line_discount_total + v_line_discount;\n    v_basis_total := v_basis_total + v_basis;\n  end loop;\n\n  if p_header_discount_amount is not null\n     and p_header_discount_amount <> 'null'::jsonb\n     and p_header_discount_percent is not null\n     and p_header_discount_percent <> 'null'::jsonb then\n    raise exception using errcode = '22023', message = 'Choose one header discount type.';\n  end if;\n  v_header_amount := sales.wave3_decimal_string(\n    p_header_discount_amount, 'Header discount amount', 6, false, 0, null\n  )::numeric(20, 6);\n  v_header_percent := sales.wave3_decimal_string(\n    p_header_discount_percent, 'Header discount percent', 6, false, 0, 100\n  )::numeric(12, 6);\n  if v_header_amount is not null then\n    v_header_total := round(v_header_amount, v_rounding_scale)::numeric(20, 6);\n  elsif v_header_percent is not null then\n    v_header_total := round(\n      v_basis_total * v_header_percent / 100, v_rounding_scale\n    )::numeric(20, 6);\n  end if;\n  if v_header_total > v_basis_total then\n    raise exception using errcode = '22023', message = 'Header discount exceeds line basis.';\n  end if;\n\n  v_count := jsonb_array_length(v_prepared);\n  for v_line, v_ordinal in\n    select value, ordinality::integer\n    from jsonb_array_elements(v_prepared) with ordinality\n  loop\n    v_basis := (v_line->>'_basis')::numeric(20, 6);\n    v_cumulative_basis := v_cumulative_basis + v_basis;\n    v_header_allocation := case\n      when v_header_total = 0 then 0\n      when v_ordinal = v_count then v_header_total - v_allocated\n      else round(\n        v_header_total * v_cumulative_basis / nullif(v_basis_total, 0),\n        v_rounding_scale\n      ) - v_allocated\n    end::numeric(20, 6);\n    v_allocated := v_allocated + v_header_allocation;\n    v_discounted_basis := v_basis - v_header_allocation;\n    if (v_line->>'tax_inclusive')::boolean then\n      v_tax_amount := round(\n        v_discounted_basis * (v_line->>'tax_rate')::numeric\n          / (100 + (v_line->>'tax_rate')::numeric),\n        v_rounding_scale\n      )::numeric(20, 6);\n      v_net_amount := v_discounted_basis - v_tax_amount;\n      v_line_total := v_discounted_basis;\n    else\n      v_tax_amount := round(\n        v_discounted_basis * (v_line->>'tax_rate')::numeric / 100,\n        v_rounding_scale\n      )::numeric(20, 6);\n      v_net_amount := v_discounted_basis;\n      v_line_total := v_discounted_basis + v_tax_amount;\n    end if;\n    v_tax_total := v_tax_total + v_tax_amount;\n    v_grand_total := v_grand_total + v_line_total;\n    v_priced := v_priced || jsonb_build_array(\n      (v_line - '_basis') || jsonb_build_object(\n        'header_discount_amount', v_header_allocation::text,\n        'taxable_amount', v_net_amount::text,\n        'net_amount', v_net_amount::text,\n        'tax_amount', v_tax_amount::text,\n        'line_total', v_line_total::text\n      )\n    );\n  end loop;\n\n  return jsonb_build_object(\n    'lines', v_priced,\n    'subtotal', v_subtotal::text,\n    'line_discount_total', v_line_discount_total::text,\n    'header_discount_total', v_header_total::text,\n    'discount_total', (v_line_discount_total + v_header_total)::numeric(20, 6)::text,\n    'tax_total', v_tax_total::text,\n    'grand_total', v_grand_total::text\n  );\nend;\n$function$\n"
+    }
+  ],
+  "permissions": [
+    {
+      "code": "projects.view",
+      "module": "projects",
+      "privileged": false
+    },
+    {
+      "code": "service.view",
+      "module": "service",
+      "privileged": false
+    }
+  ],
+  "ledger_count": 37
+}

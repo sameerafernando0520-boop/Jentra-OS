@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:jentra_domain/jentra_domain.dart' show DomainError;
+
+import '../operations/access_changed.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../app_providers.dart';
+import '../operations/operational_read_access.dart';
 import 'inventory_transfer_controller.dart';
 
 class InventoryTransferScreen extends ConsumerWidget {
@@ -38,16 +44,18 @@ class InventoryTransferWorkspace extends StatelessWidget {
     bool source = false,
   }) async {
     final c = controller;
-    final result = await showDialog<Map<String, Object?>>(
-      context: context,
-      builder: (_) => _ReferencePicker(
+    final access = controller.readAccessEpoch;
+    final result = await showOperationalReadDialog<Map<String, Object?>>(
+      context,
+      controller,
+      (_) => _ReferencePicker(
         controller: c,
         resource: resource,
         product: product,
         source: source,
       ),
     );
-    if (result != null && !c.locked) selected(result);
+    if (result != null && !c.locked && c.currentRead(access)) selected(result);
   }
 
   @override
@@ -55,6 +63,12 @@ class InventoryTransferWorkspace extends StatelessWidget {
     listenable: controller,
     builder: (context, _) {
       final c = controller, f = c.form;
+      if (c.accessDenied) {
+        return OperationalAccessChanged(
+          retry: c.initialize,
+          enabled: c.online && !c.busy,
+        );
+      }
       final dispatch =
           f != null && ['dispatch', 'immediate'].contains(f['operation']);
       Widget field(String key, String label, {int? max}) => Padding(
@@ -483,14 +497,16 @@ class _ReferencePickerState extends State<_ReferencePicker> {
   String? cursor, error;
   String search = '';
   bool busy = false;
+  late int accessEpoch;
   @override
   void initState() {
     super.initState();
+    accessEpoch = widget.controller.readAccessEpoch;
     load();
   }
 
   Future<void> load({bool more = false}) async {
-    if (busy) return;
+    if (busy || !widget.controller.currentRead(accessEpoch)) return;
     setState(() {
       busy = true;
       error = null;
@@ -505,7 +521,7 @@ class _ReferencePickerState extends State<_ReferencePicker> {
         after: more ? cursor : null,
         search: search,
       );
-      if (!mounted) return;
+      if (!mounted || !widget.controller.currentRead(accessEpoch)) return;
       setState(() {
         rows = [
           if (more) ...rows,
@@ -514,8 +530,18 @@ class _ReferencePickerState extends State<_ReferencePicker> {
         ];
         cursor = r['next_cursor'] as String?;
       });
-    } catch (_) {
-      if (mounted) {
+    } catch (failure) {
+      if (mounted && widget.controller.currentRead(accessEpoch)) {
+        if (failure is DomainError &&
+            const {
+              'PERMISSION_DENIED',
+              'ACCESS_DENIED',
+              'MFA_REQUIRED',
+              'AUTHENTICATION_REQUIRED',
+            }.contains(failure.code)) {
+          widget.controller.denyReadAccess();
+          return;
+        }
         setState(() => error = 'Unable to load choices. Retry when connected.');
       }
     } finally {
@@ -550,7 +576,13 @@ class _ReferencePickerState extends State<_ReferencePicker> {
                       subtitle: Text(
                         '${row['available_quantity'] ?? row['on_hand_quantity'] ?? row['code'] ?? ''}',
                       ),
-                      onTap: () => Navigator.pop(context, row),
+                      onTap: busy
+                          ? null
+                          : () {
+                              if (widget.controller.currentRead(accessEpoch)) {
+                                Navigator.pop(context, row);
+                              }
+                            },
                     ),
                 if (rows.isEmpty && !busy) const Text('No eligible choices.'),
               ],

@@ -1,9 +1,13 @@
+import '../operations/access_changed.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../app_providers.dart';
 import 'purchase_order_controller.dart';
 import 'procurement_picker.dart';
+import 'conflict_comparison.dart';
 import 'sourcing_screen.dart' show sourcingReason;
 
 class PurchaseOrderScreen extends ConsumerWidget {
@@ -40,6 +44,12 @@ class PurchaseOrderWorkspace extends StatelessWidget {
     listenable: controller,
     builder: (context, _) {
       final c = controller;
+      if (c.accessDenied) {
+        return OperationalAccessChanged(
+          retry: c.initialize,
+          enabled: c.online && !c.busy,
+        );
+      }
       return SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -78,6 +88,7 @@ class PurchaseOrderWorkspace extends StatelessWidget {
                               c.references,
                               c.scope,
                               'selected_rfqs',
+                              access: c,
                             );
                             if (source != null) {
                               await c.create(
@@ -98,6 +109,7 @@ class PurchaseOrderWorkspace extends StatelessWidget {
                               c.references,
                               c.scope,
                               'requisitions',
+                              access: c,
                             );
                             if (source != null) {
                               await c.createFromRequisition(
@@ -292,7 +304,13 @@ class _OrderEditor extends StatelessWidget {
       onChanged: (v) => c.update(key, v),
     );
     Future<Map<String, Object?>?> pick(String resource) =>
-        pickSourcingReference(context, c.references, c.scope, resource);
+        pickSourcingReference(
+          context,
+          c.references,
+          c.scope,
+          resource,
+          access: c,
+        );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -480,8 +498,22 @@ class _OrderEditor extends StatelessWidget {
             'A saved command needs confirmation. Retry preserves its original IDs and exact inputs.',
           ),
         if (c.local?.errorCode == 'VERSION_CONFLICT')
-          const Text(
-            'This order changed. Compare the current revision before discarding this local edit and refreshing.',
+          OutlinedButton(
+            onPressed: c.busy || !c.online
+                ? null
+                : () => reviewAndReloadProcurementConflict(
+                    context,
+                    access: c,
+                    gateway: c.references,
+                    scope: c.scope,
+                    kind: 'purchase_order',
+                    local: f,
+                    discard: c.discard,
+                    hasForm: () => c.form != null,
+                    select: c.select,
+                    edit: c.edit,
+                  ),
+            child: const Text('Compare current revision'),
           ),
         Wrap(
           spacing: 12,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_domain/jentra_receivables.dart';
+
 import '../../app_providers.dart';
 import 'receivables_controller.dart';
 import 'receivable_editor.dart';
@@ -50,6 +51,7 @@ class ReceivablesScreen extends ConsumerWidget {
       key: ValueKey((controller, initialKind)),
       controller: controller,
       initialKind: initialKind,
+      showOperationalReports: true,
     );
   }
 }
@@ -59,9 +61,11 @@ class ReceivablesWorkspace extends StatefulWidget {
     super.key,
     required this.controller,
     this.initialKind,
+    this.showOperationalReports = false,
   });
   final ReceivablesController controller;
   final ReceivableKind? initialKind;
+  final bool showOperationalReports;
   @override
   State<ReceivablesWorkspace> createState() => _WorkspaceState();
 }
@@ -187,9 +191,8 @@ class _WorkspaceState extends State<ReceivablesWorkspace> {
       if (selected != null) await c.recover(selected);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(e.toString())));
       }
     }
   }
@@ -339,7 +342,12 @@ class _WorkspaceState extends State<ReceivablesWorkspace> {
               ),
             ),
           if (reporting)
-            JentraPanel(child: ReceivableStatement(controller: c))
+            JentraPanel(
+              child: ReceivableStatement(
+                controller: c,
+                showOperationalReports: widget.showOperationalReports,
+              ),
+            )
           else ...[
             const SizedBox(height: 12),
             if (c.form != null)

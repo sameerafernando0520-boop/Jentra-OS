@@ -1,0 +1,114 @@
+{
+  "schema": "agent-harness/plan.v1",
+  "goal": "Complete and review all remaining approved synthetic Wave 4 developments in Jentra OS; preserve concurrent source and acceptance data; no unapproved installation, no Git commits or branch changes; never close missing acceptance evidence.",
+  "domain": "engineering",
+  "tasks": [
+    {
+      "id": "T1",
+      "skill": "agent-harness",
+      "skill_path": "C:/Users/sheha/.codex/plugins/cache/claude-code-skills/agent-harness/1.0.0/skills/agent-harness",
+      "objective": "Verify exact source-bound project domain/gateway/native implementation and recovery",
+      "verification": [
+        {
+          "cmd": "\"C:/Users/sheha/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe\" scripts/wave4/run_verification.py --task projects --verify-report",
+          "expect_exit": 0,
+          "kind": "machine-evidence"
+        }
+      ],
+      "done_when": "All six real SDK checks pass against unchanged source and logs",
+      "max_attempts": 3,
+      "status": "pending"
+    },
+    {
+      "id": "T2",
+      "skill": "agent-harness",
+      "skill_path": "C:/Users/sheha/.codex/plugins/cache/claude-code-skills/agent-harness/1.0.0/skills/agent-harness",
+      "objective": "Complete finance development, actual provider SQL, domain/gateway/native recovery and independent review",
+      "verification": [
+        {
+          "cmd": "MANUAL: Complete finance development, actual provider SQL, domain/gateway/native recovery and independent review; retain concrete machine and attributable acceptance evidence before verification.",
+          "expect_exit": 0,
+          "kind": "manual-evidence"
+        }
+      ],
+      "done_when": "Required implementation and verification evidence is complete; no inferred or waived acceptance.",
+      "max_attempts": 3,
+      "status": "pending"
+    },
+    {
+      "id": "T3",
+      "skill": "agent-harness",
+      "skill_path": "C:/Users/sheha/.codex/plugins/cache/claude-code-skills/agent-harness/1.0.0/skills/agent-harness",
+      "objective": "Complete service development, real source conservation, SLA/maintenance, native recovery and independent review",
+      "verification": [
+        {
+          "cmd": "MANUAL: Complete service development, real source conservation, SLA/maintenance, native recovery and independent review; retain concrete machine and attributable acceptance evidence before verification.",
+          "expect_exit": 0,
+          "kind": "manual-evidence"
+        }
+      ],
+      "done_when": "Required implementation and verification evidence is complete; no inferred or waived acceptance.",
+      "max_attempts": 3,
+      "status": "pending"
+    },
+    {
+      "id": "T4",
+      "skill": "agent-harness",
+      "skill_path": "C:/Users/sheha/.codex/plugins/cache/claude-code-skills/agent-harness/1.0.0/skills/agent-harness",
+      "objective": "Complete linked-source payroll corrections, finance conservation, native recovery and independent review",
+      "verification": [
+        {
+          "cmd": "MANUAL: Complete linked-source payroll corrections, finance conservation, native recovery and independent review; retain concrete machine and attributable acceptance evidence before verification.",
+          "expect_exit": 0,
+          "kind": "manual-evidence"
+        }
+      ],
+      "done_when": "Required implementation and verification evidence is complete; no inferred or waived acceptance.",
+      "max_attempts": 3,
+      "status": "pending"
+    },
+    {
+      "id": "T5",
+      "skill": "agent-harness",
+      "skill_path": "C:/Users/sheha/.codex/plugins/cache/claude-code-skills/agent-harness/1.0.0/skills/agent-harness",
+      "objective": "Complete integrated security/rollback/native regressions, rendered review and isolated Windows build",
+      "verification": [
+        {
+          "cmd": "MANUAL: Complete integrated security/rollback/native regressions, rendered review and isolated Windows build; retain concrete machine and attributable acceptance evidence before verification.",
+          "expect_exit": 0,
+          "kind": "manual-evidence"
+        }
+      ],
+      "done_when": "Required implementation and verification evidence is complete; no inferred or waived acceptance.",
+      "max_attempts": 3,
+      "status": "pending"
+    },
+    {
+      "id": "T6",
+      "skill": "agent-harness",
+      "skill_path": "C:/Users/sheha/.codex/plugins/cache/claude-code-skills/agent-harness/1.0.0/skills/agent-harness",
+      "objective": "Complete installation, authenticated native/MFA, real contention/load, Credential Manager restart and owner acceptance",
+      "verification": [
+        {
+          "cmd": "MANUAL: Complete installation, authenticated native/MFA, real contention/load, Credential Manager restart and owner acceptance; retain concrete machine and attributable acceptance evidence before verification.",
+          "expect_exit": 0,
+          "kind": "manual-evidence"
+        }
+      ],
+      "done_when": "Required implementation and verification evidence is complete; no inferred or waived acceptance.",
+      "max_attempts": 3,
+      "status": "pending"
+    }
+  ],
+  "loop": {
+    "order": "sequential",
+    "max_loop_iterations": 20,
+    "escalate_on": [
+      "attempts_exhausted",
+      "no_verification_available"
+    ]
+  },
+  "close": {
+    "requires": "all tasks verified or explicitly waived by the human"
+  }
+}

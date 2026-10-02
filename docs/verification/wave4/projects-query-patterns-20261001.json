@@ -1,0 +1,328 @@
+{
+  "queries": [
+    {
+      "id": "register_scoped_page",
+      "type": "SELECT",
+      "table": "register",
+      "description": "Actual 50-row API page filtered by active scope and parent, ordered by immutable UUID.",
+      "where_conditions": [
+        {
+          "column": "tenant_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "legal_entity_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "branch_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "id",
+          "operator": ">",
+          "selectivity": 0.5
+        }
+      ],
+      "join_conditions": [],
+      "order_by": [
+        {
+          "column": "id",
+          "direction": "ASC"
+        }
+      ],
+      "group_by": [],
+      "frequency": 100,
+      "avg_execution_time_ms": 0
+    },
+    {
+      "id": "plans_scoped_page",
+      "type": "SELECT",
+      "table": "plans",
+      "description": "Actual 50-row API page filtered by active scope and parent, ordered by immutable UUID.",
+      "where_conditions": [
+        {
+          "column": "tenant_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "legal_entity_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "project_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "id",
+          "operator": ">",
+          "selectivity": 0.5
+        }
+      ],
+      "join_conditions": [],
+      "order_by": [
+        {
+          "column": "id",
+          "direction": "ASC"
+        }
+      ],
+      "group_by": [],
+      "frequency": 100,
+      "avg_execution_time_ms": 0
+    },
+    {
+      "id": "tasks_scoped_page",
+      "type": "SELECT",
+      "table": "tasks",
+      "description": "Actual 50-row API page filtered by active scope and parent, ordered by immutable UUID.",
+      "where_conditions": [
+        {
+          "column": "tenant_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "legal_entity_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "project_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "plan_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "id",
+          "operator": ">",
+          "selectivity": 0.5
+        }
+      ],
+      "join_conditions": [],
+      "order_by": [
+        {
+          "column": "id",
+          "direction": "ASC"
+        }
+      ],
+      "group_by": [],
+      "frequency": 100,
+      "avg_execution_time_ms": 0
+    },
+    {
+      "id": "resource_slots_scoped_page",
+      "type": "SELECT",
+      "table": "resource_slots",
+      "description": "Actual 50-row API page filtered by active scope and parent, ordered by immutable UUID.",
+      "where_conditions": [
+        {
+          "column": "tenant_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "legal_entity_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "project_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "plan_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "id",
+          "operator": ">",
+          "selectivity": 0.5
+        }
+      ],
+      "join_conditions": [],
+      "order_by": [
+        {
+          "column": "id",
+          "direction": "ASC"
+        }
+      ],
+      "group_by": [],
+      "frequency": 100,
+      "avg_execution_time_ms": 0
+    },
+    {
+      "id": "time_entries_scoped_page",
+      "type": "SELECT",
+      "table": "time_entries",
+      "description": "Actual 50-row API page filtered by active scope and parent, ordered by immutable UUID.",
+      "where_conditions": [
+        {
+          "column": "tenant_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "legal_entity_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "branch_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "project_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "id",
+          "operator": ">",
+          "selectivity": 0.5
+        }
+      ],
+      "join_conditions": [],
+      "order_by": [
+        {
+          "column": "id",
+          "direction": "ASC"
+        }
+      ],
+      "group_by": [],
+      "frequency": 100,
+      "avg_execution_time_ms": 0
+    },
+    {
+      "id": "time_events_scoped_page",
+      "type": "SELECT",
+      "table": "time_events",
+      "description": "Actual 50-row API page filtered by active scope and parent, ordered by immutable UUID.",
+      "where_conditions": [
+        {
+          "column": "tenant_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "legal_entity_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "project_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "entry_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "id",
+          "operator": ">",
+          "selectivity": 0.5
+        }
+      ],
+      "join_conditions": [],
+      "order_by": [
+        {
+          "column": "id",
+          "direction": "ASC"
+        }
+      ],
+      "group_by": [],
+      "frequency": 100,
+      "avg_execution_time_ms": 0
+    },
+    {
+      "id": "time_costs_scoped_page",
+      "type": "SELECT",
+      "table": "time_costs",
+      "description": "Actual 50-row API page filtered by active scope and parent, ordered by immutable UUID.",
+      "where_conditions": [
+        {
+          "column": "tenant_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "legal_entity_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "project_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "revision_id",
+          "operator": ">",
+          "selectivity": 0.5
+        }
+      ],
+      "join_conditions": [],
+      "order_by": [
+        {
+          "column": "revision_id",
+          "direction": "ASC"
+        }
+      ],
+      "group_by": [],
+      "frequency": 100,
+      "avg_execution_time_ms": 0
+    },
+    {
+      "id": "billable_units_scoped_page",
+      "type": "SELECT",
+      "table": "billable_units",
+      "description": "Actual 50-row API page filtered by active scope and parent, ordered by immutable UUID.",
+      "where_conditions": [
+        {
+          "column": "tenant_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "legal_entity_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "project_id",
+          "operator": "=",
+          "selectivity": 0.9
+        },
+        {
+          "column": "id",
+          "operator": ">",
+          "selectivity": 0.5
+        }
+      ],
+      "join_conditions": [],
+      "order_by": [
+        {
+          "column": "id",
+          "direction": "ASC"
+        }
+      ],
+      "group_by": [],
+      "frequency": 100,
+      "avg_execution_time_ms": 0
+    }
+  ]
+}

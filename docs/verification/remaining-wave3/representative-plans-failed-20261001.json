@@ -1,0 +1,24 @@
+{
+  "started_at": "2026-10-01T06:45:51.934Z",
+  "finished_at": "2026-10-01T06:46:27.624Z",
+  "project_id": "xpdoufauvrbdmxgngetv",
+  "query_sha256": "54b931689ec9d9b7f204d7303d7f08dd9c953f4948c782620898eebf5d72c79a",
+  "synthetic": true,
+  "installed": false,
+  "passed": false,
+  "strict_finish_not_reached": true,
+  "error": "42501 permission denied for table bank_statement_lines",
+  "interpretation": "Private bank basis is intentionally not exposed to authenticated SELECT. Preserve existing grants and capture its basis under the privileged fixture role, separately labelled; authenticated API acceptance remains open.",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"name\":\"HttpException\",\"message\":\"Failed to run sql query: ERROR:  42501: permission denied for table bank_statement_lines\\nHINT:  Grant the required privileges to the current role with: GRANT SELECT ON finance.bank_statement_lines TO authenticated;\\nCONTEXT:  PL/pgSQL function pg_temp_6.record_representative_read_plan(text,text) line 2 at FOR over EXECUTE statement\\n\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error_code": "INVALID_ARGUMENT"
+    },
+    "isError": true
+  }
+}

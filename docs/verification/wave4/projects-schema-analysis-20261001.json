@@ -1,0 +1,765 @@
+{
+  "schema_overview": {
+    "total_tables": 16,
+    "total_columns": 177,
+    "tables_with_primary_keys": 16,
+    "total_foreign_keys": 96,
+    "total_indexes": 0
+  },
+  "normalization_analysis": {
+    "total_issues": 8,
+    "by_severity": {
+      "high": 0,
+      "medium": 6,
+      "low": 1,
+      "warning": 1
+    },
+    "issues": [
+      {
+        "table": "tasks",
+        "issue_type": "2NF_VIOLATION",
+        "severity": "MEDIUM",
+        "description": "Column 'tenant_id' may have partial dependency on 'id'",
+        "suggestion": "Consider moving 'tenant_id' to a separate table related to 'id'",
+        "columns_affected": [
+          "tenant_id",
+          "id"
+        ]
+      },
+      {
+        "table": "tasks",
+        "issue_type": "2NF_VIOLATION",
+        "severity": "MEDIUM",
+        "description": "Column 'project_id' may have partial dependency on 'id'",
+        "suggestion": "Consider moving 'project_id' to a separate table related to 'id'",
+        "columns_affected": [
+          "project_id",
+          "id"
+        ]
+      },
+      {
+        "table": "tasks",
+        "issue_type": "2NF_VIOLATION",
+        "severity": "MEDIUM",
+        "description": "Column 'legal_entity_id' may have partial dependency on 'id'",
+        "suggestion": "Consider moving 'legal_entity_id' to a separate table related to 'id'",
+        "columns_affected": [
+          "legal_entity_id",
+          "id"
+        ]
+      },
+      {
+        "table": "tasks",
+        "issue_type": "2NF_VIOLATION",
+        "severity": "MEDIUM",
+        "description": "Column 'planned_seconds' may have partial dependency on 'plan_id'",
+        "suggestion": "Consider moving 'planned_seconds' to a separate table related to 'plan_id'",
+        "columns_affected": [
+          "planned_seconds",
+          "plan_id"
+        ]
+      },
+      {
+        "table": "dependencies",
+        "issue_type": "BCNF_WARNING",
+        "severity": "LOW",
+        "description": "Table has composite primary key with 3 columns",
+        "suggestion": "Review functional dependencies to ensure BCNF compliance",
+        "columns_affected": [
+          "plan_id",
+          "task_id",
+          "prerequisite_id"
+        ]
+      },
+      {
+        "table": "task_progress",
+        "issue_type": "3NF_VIOLATION",
+        "severity": "MEDIUM",
+        "description": "Columns ['project_id', 'project_version'] may have transitive dependency through 'project_id'",
+        "suggestion": "Consider creating separate 'project' table with these columns",
+        "columns_affected": [
+          "project_id",
+          "project_version",
+          "project_id"
+        ]
+      },
+      {
+        "table": "billable_units",
+        "issue_type": "3NF_VIOLATION",
+        "severity": "MEDIUM",
+        "description": "Columns ['source_id', 'source_kind', 'source_digest', 'source_version'] may have transitive dependency through 'source_id'",
+        "suggestion": "Consider creating separate 'source' table with these columns",
+        "columns_affected": [
+          "source_id",
+          "source_kind",
+          "source_digest",
+          "source_version",
+          "source_id"
+        ]
+      },
+      {
+        "table": "time_revisions",
+        "issue_type": "1NF_VIOLATION",
+        "severity": "WARNING",
+        "description": "Column 'breaks' uses JSON type which may contain non-atomic values",
+        "suggestion": "Consider normalizing JSON arrays into separate tables",
+        "columns_affected": [
+          "breaks"
+        ]
+      }
+    ]
+  },
+  "data_type_analysis": {
+    "total_issues": 11,
+    "issues": [
+      {
+        "table": "plans",
+        "column": "version",
+        "current_type": "BIGINT",
+        "issue": "Potentially oversized integer type",
+        "suggested_type": "INTEGER",
+        "rationale": "INTEGER is sufficient for most ID and count fields unless very large values are expected"
+      },
+      {
+        "table": "tasks",
+        "column": "planned_seconds",
+        "current_type": "BIGINT",
+        "issue": "Potentially oversized integer type",
+        "suggested_type": "INTEGER",
+        "rationale": "INTEGER is sufficient for most ID and count fields unless very large values are expected"
+      },
+      {
+        "table": "register",
+        "column": "version",
+        "current_type": "BIGINT",
+        "issue": "Potentially oversized integer type",
+        "suggested_type": "INTEGER",
+        "rationale": "INTEGER is sufficient for most ID and count fields unless very large values are expected"
+      },
+      {
+        "table": "time_events",
+        "column": "version",
+        "current_type": "BIGINT",
+        "issue": "Potentially oversized integer type",
+        "suggested_type": "INTEGER",
+        "rationale": "INTEGER is sufficient for most ID and count fields unless very large values are expected"
+      },
+      {
+        "table": "time_entries",
+        "column": "version",
+        "current_type": "BIGINT",
+        "issue": "Potentially oversized integer type",
+        "suggested_type": "INTEGER",
+        "rationale": "INTEGER is sufficient for most ID and count fields unless very large values are expected"
+      },
+      {
+        "table": "task_progress",
+        "column": "project_version",
+        "current_type": "BIGINT",
+        "issue": "Potentially oversized integer type",
+        "suggested_type": "INTEGER",
+        "rationale": "INTEGER is sufficient for most ID and count fields unless very large values are expected"
+      },
+      {
+        "table": "billable_units",
+        "column": "source_version",
+        "current_type": "BIGINT",
+        "issue": "Potentially oversized integer type",
+        "suggested_type": "INTEGER",
+        "rationale": "INTEGER is sufficient for most ID and count fields unless very large values are expected"
+      },
+      {
+        "table": "billable_units",
+        "column": "payable_seconds",
+        "current_type": "BIGINT",
+        "issue": "Potentially oversized integer type",
+        "suggested_type": "INTEGER",
+        "rationale": "INTEGER is sufficient for most ID and count fields unless very large values are expected"
+      },
+      {
+        "table": "resource_slots",
+        "column": "planned_seconds",
+        "current_type": "BIGINT",
+        "issue": "Potentially oversized integer type",
+        "suggested_type": "INTEGER",
+        "rationale": "INTEGER is sufficient for most ID and count fields unless very large values are expected"
+      },
+      {
+        "table": "time_revisions",
+        "column": "version",
+        "current_type": "BIGINT",
+        "issue": "Potentially oversized integer type",
+        "suggested_type": "INTEGER",
+        "rationale": "INTEGER is sufficient for most ID and count fields unless very large values are expected"
+      },
+      {
+        "table": "time_revisions",
+        "column": "payable_seconds",
+        "current_type": "BIGINT",
+        "issue": "Potentially oversized integer type",
+        "suggested_type": "INTEGER",
+        "rationale": "INTEGER is sufficient for most ID and count fields unless very large values are expected"
+      }
+    ]
+  },
+  "constraint_analysis": {
+    "total_issues": 1,
+    "by_severity": {
+      "high": 0,
+      "medium": 1,
+      "low": 0
+    },
+    "issues": [
+      {
+        "table": "register",
+        "issue_type": "MISSING_UNIQUE",
+        "severity": "MEDIUM",
+        "description": "Column 'code' should likely have UNIQUE constraint",
+        "suggestion": "Add UNIQUE constraint to 'code'",
+        "columns_affected": [
+          "code"
+        ]
+      }
+    ]
+  },
+  "naming_analysis": {
+    "total_issues": 1,
+    "issues": [
+      {
+        "table": "register",
+        "column": null,
+        "issue": "Table name should be plural",
+        "current_name": "register",
+        "suggested_name": "registers"
+      }
+    ]
+  },
+  "missing_indexes": [
+    {
+      "table": "plans",
+      "column": "tenant_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_plans_tenant_id ON plans (tenant_id);"
+    },
+    {
+      "table": "plans",
+      "column": "project_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_plans_project_id ON plans (project_id);"
+    },
+    {
+      "table": "plans",
+      "column": "prepared_by",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_plans_prepared_by ON plans (prepared_by);"
+    },
+    {
+      "table": "plans",
+      "column": "legal_entity_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_plans_legal_entity_id ON plans (legal_entity_id);"
+    },
+    {
+      "table": "tasks",
+      "column": "tenant_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_tasks_tenant_id ON tasks (tenant_id);"
+    },
+    {
+      "table": "tasks",
+      "column": "project_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_tasks_project_id ON tasks (project_id);"
+    },
+    {
+      "table": "tasks",
+      "column": "legal_entity_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_tasks_legal_entity_id ON tasks (legal_entity_id);"
+    },
+    {
+      "table": "register",
+      "column": "branch_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_register_branch_id ON register (branch_id);"
+    },
+    {
+      "table": "register",
+      "column": "tenant_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_register_tenant_id ON register (tenant_id);"
+    },
+    {
+      "table": "register",
+      "column": "created_by",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_register_created_by ON register (created_by);"
+    },
+    {
+      "table": "register",
+      "column": "manager_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_register_manager_id ON register (manager_id);"
+    },
+    {
+      "table": "register",
+      "column": "customer_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_register_customer_id ON register (customer_id);"
+    },
+    {
+      "table": "register",
+      "column": "currency_code",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_register_currency_code ON register (currency_code);"
+    },
+    {
+      "table": "register",
+      "column": "current_plan_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_register_current_plan_id ON register (current_plan_id);"
+    },
+    {
+      "table": "register",
+      "column": "legal_entity_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_register_legal_entity_id ON register (legal_entity_id);"
+    },
+    {
+      "table": "cost_basis",
+      "column": "tenant_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_cost_basis_tenant_id ON cost_basis (tenant_id);"
+    },
+    {
+      "table": "cost_basis",
+      "column": "project_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_cost_basis_project_id ON cost_basis (project_id);"
+    },
+    {
+      "table": "cost_basis",
+      "column": "legal_entity_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_cost_basis_legal_entity_id ON cost_basis (legal_entity_id);"
+    },
+    {
+      "table": "time_costs",
+      "column": "entry_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_costs_entry_id ON time_costs (entry_id);"
+    },
+    {
+      "table": "time_costs",
+      "column": "tenant_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_costs_tenant_id ON time_costs (tenant_id);"
+    },
+    {
+      "table": "time_costs",
+      "column": "project_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_costs_project_id ON time_costs (project_id);"
+    },
+    {
+      "table": "time_costs",
+      "column": "legal_entity_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_costs_legal_entity_id ON time_costs (legal_entity_id);"
+    },
+    {
+      "table": "time_events",
+      "column": "actor_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_events_actor_id ON time_events (actor_id);"
+    },
+    {
+      "table": "time_events",
+      "column": "entry_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_events_entry_id ON time_events (entry_id);"
+    },
+    {
+      "table": "time_events",
+      "column": "tenant_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_events_tenant_id ON time_events (tenant_id);"
+    },
+    {
+      "table": "time_events",
+      "column": "project_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_events_project_id ON time_events (project_id);"
+    },
+    {
+      "table": "time_events",
+      "column": "revision_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_events_revision_id ON time_events (revision_id);"
+    },
+    {
+      "table": "time_events",
+      "column": "legal_entity_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_events_legal_entity_id ON time_events (legal_entity_id);"
+    },
+    {
+      "table": "dependencies",
+      "column": "tenant_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_dependencies_tenant_id ON dependencies (tenant_id);"
+    },
+    {
+      "table": "dependencies",
+      "column": "project_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_dependencies_project_id ON dependencies (project_id);"
+    },
+    {
+      "table": "dependencies",
+      "column": "legal_entity_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_dependencies_legal_entity_id ON dependencies (legal_entity_id);"
+    },
+    {
+      "table": "time_entries",
+      "column": "branch_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_entries_branch_id ON time_entries (branch_id);"
+    },
+    {
+      "table": "time_entries",
+      "column": "tenant_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_entries_tenant_id ON time_entries (tenant_id);"
+    },
+    {
+      "table": "time_entries",
+      "column": "created_by",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_entries_created_by ON time_entries (created_by);"
+    },
+    {
+      "table": "time_entries",
+      "column": "project_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_entries_project_id ON time_entries (project_id);"
+    },
+    {
+      "table": "time_entries",
+      "column": "employee_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_entries_employee_id ON time_entries (employee_id);"
+    },
+    {
+      "table": "time_entries",
+      "column": "submitted_by",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_entries_submitted_by ON time_entries (submitted_by);"
+    },
+    {
+      "table": "time_entries",
+      "column": "legal_entity_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_entries_legal_entity_id ON time_entries (legal_entity_id);"
+    },
+    {
+      "table": "time_entries",
+      "column": "current_revision_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_entries_current_revision_id ON time_entries (current_revision_id);"
+    },
+    {
+      "table": "task_progress",
+      "column": "plan_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_task_progress_plan_id ON task_progress (plan_id);"
+    },
+    {
+      "table": "task_progress",
+      "column": "task_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_task_progress_task_id ON task_progress (task_id);"
+    },
+    {
+      "table": "task_progress",
+      "column": "tenant_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_task_progress_tenant_id ON task_progress (tenant_id);"
+    },
+    {
+      "table": "task_progress",
+      "column": "project_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_task_progress_project_id ON task_progress (project_id);"
+    },
+    {
+      "table": "task_progress",
+      "column": "recorded_by",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_task_progress_recorded_by ON task_progress (recorded_by);"
+    },
+    {
+      "table": "task_progress",
+      "column": "legal_entity_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_task_progress_legal_entity_id ON task_progress (legal_entity_id);"
+    },
+    {
+      "table": "billable_units",
+      "column": "branch_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_billable_units_branch_id ON billable_units (branch_id);"
+    },
+    {
+      "table": "billable_units",
+      "column": "tenant_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_billable_units_tenant_id ON billable_units (tenant_id);"
+    },
+    {
+      "table": "billable_units",
+      "column": "project_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_billable_units_project_id ON billable_units (project_id);"
+    },
+    {
+      "table": "billable_units",
+      "column": "legal_entity_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_billable_units_legal_entity_id ON billable_units (legal_entity_id);"
+    },
+    {
+      "table": "plan_decisions",
+      "column": "plan_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_plan_decisions_plan_id ON plan_decisions (plan_id);"
+    },
+    {
+      "table": "plan_decisions",
+      "column": "tenant_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_plan_decisions_tenant_id ON plan_decisions (tenant_id);"
+    },
+    {
+      "table": "plan_decisions",
+      "column": "decided_by",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_plan_decisions_decided_by ON plan_decisions (decided_by);"
+    },
+    {
+      "table": "plan_decisions",
+      "column": "project_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_plan_decisions_project_id ON plan_decisions (project_id);"
+    },
+    {
+      "table": "plan_decisions",
+      "column": "legal_entity_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_plan_decisions_legal_entity_id ON plan_decisions (legal_entity_id);"
+    },
+    {
+      "table": "resource_costs",
+      "column": "plan_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_resource_costs_plan_id ON resource_costs (plan_id);"
+    },
+    {
+      "table": "resource_costs",
+      "column": "tenant_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_resource_costs_tenant_id ON resource_costs (tenant_id);"
+    },
+    {
+      "table": "resource_costs",
+      "column": "project_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_resource_costs_project_id ON resource_costs (project_id);"
+    },
+    {
+      "table": "resource_costs",
+      "column": "legal_entity_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_resource_costs_legal_entity_id ON resource_costs (legal_entity_id);"
+    },
+    {
+      "table": "resource_slots",
+      "column": "plan_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_resource_slots_plan_id ON resource_slots (plan_id);"
+    },
+    {
+      "table": "resource_slots",
+      "column": "task_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_resource_slots_task_id ON resource_slots (task_id);"
+    },
+    {
+      "table": "resource_slots",
+      "column": "tenant_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_resource_slots_tenant_id ON resource_slots (tenant_id);"
+    },
+    {
+      "table": "resource_slots",
+      "column": "project_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_resource_slots_project_id ON resource_slots (project_id);"
+    },
+    {
+      "table": "resource_slots",
+      "column": "employee_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_resource_slots_employee_id ON resource_slots (employee_id);"
+    },
+    {
+      "table": "resource_slots",
+      "column": "legal_entity_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_resource_slots_legal_entity_id ON resource_slots (legal_entity_id);"
+    },
+    {
+      "table": "resource_slots",
+      "column": "calendar_version_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_resource_slots_calendar_version_id ON resource_slots (calendar_version_id);"
+    },
+    {
+      "table": "time_revisions",
+      "column": "plan_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_revisions_plan_id ON time_revisions (plan_id);"
+    },
+    {
+      "table": "time_revisions",
+      "column": "task_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_revisions_task_id ON time_revisions (task_id);"
+    },
+    {
+      "table": "time_revisions",
+      "column": "entry_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_revisions_entry_id ON time_revisions (entry_id);"
+    },
+    {
+      "table": "time_revisions",
+      "column": "tenant_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_revisions_tenant_id ON time_revisions (tenant_id);"
+    },
+    {
+      "table": "time_revisions",
+      "column": "project_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_revisions_project_id ON time_revisions (project_id);"
+    },
+    {
+      "table": "time_revisions",
+      "column": "recorded_by",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_revisions_recorded_by ON time_revisions (recorded_by);"
+    },
+    {
+      "table": "time_revisions",
+      "column": "supersedes_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_revisions_supersedes_id ON time_revisions (supersedes_id);"
+    },
+    {
+      "table": "time_revisions",
+      "column": "legal_entity_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_revisions_legal_entity_id ON time_revisions (legal_entity_id);"
+    },
+    {
+      "table": "time_revisions",
+      "column": "resource_slot_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_revisions_resource_slot_id ON time_revisions (resource_slot_id);"
+    },
+    {
+      "table": "time_revisions",
+      "column": "attendance_claim_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_revisions_attendance_claim_id ON time_revisions (attendance_claim_id);"
+    },
+    {
+      "table": "unit_decisions",
+      "column": "unit_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_unit_decisions_unit_id ON unit_decisions (unit_id);"
+    },
+    {
+      "table": "unit_decisions",
+      "column": "actor_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_unit_decisions_actor_id ON unit_decisions (actor_id);"
+    },
+    {
+      "table": "unit_decisions",
+      "column": "tenant_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_unit_decisions_tenant_id ON unit_decisions (tenant_id);"
+    },
+    {
+      "table": "unit_decisions",
+      "column": "project_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_unit_decisions_project_id ON unit_decisions (project_id);"
+    },
+    {
+      "table": "unit_decisions",
+      "column": "legal_entity_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_unit_decisions_legal_entity_id ON unit_decisions (legal_entity_id);"
+    },
+    {
+      "table": "time_allocations",
+      "column": "claim_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_allocations_claim_id ON time_allocations (claim_id);"
+    },
+    {
+      "table": "time_allocations",
+      "column": "entry_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_allocations_entry_id ON time_allocations (entry_id);"
+    },
+    {
+      "table": "time_allocations",
+      "column": "tenant_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_allocations_tenant_id ON time_allocations (tenant_id);"
+    },
+    {
+      "table": "time_allocations",
+      "column": "project_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_allocations_project_id ON time_allocations (project_id);"
+    },
+    {
+      "table": "time_allocations",
+      "column": "revision_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_allocations_revision_id ON time_allocations (revision_id);"
+    },
+    {
+      "table": "time_allocations",
+      "column": "allocation_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_allocations_allocation_id ON time_allocations (allocation_id);"
+    },
+    {
+      "table": "time_allocations",
+      "column": "legal_entity_id",
+      "type": "foreign_key",
+      "suggestion": "CREATE INDEX idx_time_allocations_legal_entity_id ON time_allocations (legal_entity_id);"
+    }
+  ],
+  "recommendations": [
+    "Review 8 normalization issues for schema optimization"
+  ],
+  "mermaid_erd": "erDiagram\n    PLANS {\n        UUID id \"PK NOT NULL\"\n        TEXT terms \"NOT NULL\"\n        TEXT reason \"NOT NULL\"\n        TEXT status \"NOT NULL\"\n        BIGINT version \"NOT NULL\"\n        UUID tenant_id \"FK NOT NULL\"\n        UUID project_id \"FK NOT NULL\"\n        TIMESTAMP WITH TIME ZONE prepared_at \"NOT NULL\"\n        UUID prepared_by \"FK NOT NULL\"\n        TEXT basis_digest \"NOT NULL\"\n        UUID legal_entity_id \"FK NOT NULL\"\n    }\n    TASKS {\n        UUID id \"PK NOT NULL\"\n        TEXT name \"NOT NULL\"\n        UUID plan_id \"PK FK NOT NULL\"\n        UUID tenant_id \"FK NOT NULL\"\n        UUID project_id \"FK NOT NULL\"\n        DATE start_date \"NOT NULL\"\n        UUID legal_entity_id \"FK NOT NULL\"\n        BIGINT planned_seconds \"NOT NULL\"\n        DATE end_date_exclusive \"NOT NULL\"\n    }\n    REGISTER {\n        UUID id \"PK FK NOT NULL\"\n        TEXT code \"NOT NULL\"\n        TEXT name \"NOT NULL\"\n        TEXT status \"NOT NULL\"\n        BIGINT version \"NOT NULL\"\n        UUID branch_id \"FK NOT NULL\"\n        INTEGER precision \"NOT NULL\"\n        UUID tenant_id \"FK NOT NULL\"\n        TIMESTAMP WITH TIME ZONE created_at \"NOT NULL\"\n        UUID created_by \"FK NOT NULL\"\n        UUID manager_id \"FK NOT NULL\"\n        DATE start_date \"NOT NULL\"\n        UUID customer_id \"FK\"\n        TEXT currency_code \"FK NOT NULL\"\n        UUID current_plan_id \"FK\"\n        UUID legal_entity_id \"FK NOT NULL\"\n        DATE end_date_exclusive \"NOT NULL\"\n    }\n    COST_BASIS {\n        NUMERIC(20,6) budget \"NOT NULL\"\n        UUID plan_id \"PK FK NOT NULL\"\n        UUID tenant_id \"FK NOT NULL\"\n        UUID project_id \"FK NOT NULL\"\n        UUID legal_entity_id \"FK NOT NULL\"\n    }\n    TIME_COSTS {\n        NUMERIC(20,6) amount \"NOT NULL\"\n        UUID entry_id \"FK NOT NULL\"\n        UUID tenant_id \"FK NOT NULL\"\n        UUID project_id \"FK NOT NULL\"\n        NUMERIC(20,6) hourly_rate \"NOT NULL\"\n        UUID revision_id \"PK FK NOT NULL\"\n        UUID legal_entity_id \"FK NOT NULL\"\n    }\n    TIME_EVENTS {\n        UUID id \"PK NOT NULL\"\n        TEXT action \"NOT NULL\"\n        TEXT reason \"NOT NULL\"\n        BIGINT version \"NOT NULL\"\n        UUID actor_id \"FK NOT NULL\"\n        UUID entry_id \"FK NOT NULL\"\n        UUID tenant_id \"FK NOT NULL\"\n        UUID command_id \"NOT NULL\"\n        UUID project_id \"FK NOT NULL\"\n        TIMESTAMP WITH TIME ZONE recorded_at \"NOT NULL\"\n        UUID revision_id \"FK NOT NULL\"\n        UUID legal_entity_id \"FK NOT NULL\"\n    }\n    DEPENDENCIES {\n        UUID plan_id \"PK FK NOT NULL\"\n        UUID task_id \"PK FK NOT NULL\"\n        UUID tenant_id \"FK NOT NULL\"\n        UUID project_id \"FK NOT NULL\"\n        UUID legal_entity_id \"FK NOT NULL\"\n        UUID prerequisite_id \"PK FK NOT NULL\"\n    }\n    TIME_ENTRIES {\n        UUID id \"PK FK NOT NULL\"\n        TEXT status \"NOT NULL\"\n        BIGINT version \"NOT NULL\"\n        UUID branch_id \"FK NOT NULL\"\n        UUID tenant_id \"FK NOT NULL\"\n        TIMESTAMP WITH TIME ZONE created_at \"NOT NULL\"\n        UUID created_by \"FK NOT NULL\"\n        UUID project_id \"FK NOT NULL\"\n        UUID employee_id \"FK NOT NULL\"\n        UUID submitted_by \"FK\"\n        UUID legal_entity_id \"FK NOT NULL\"\n        UUID current_revision_id \"FK NOT NULL\"\n    }\n    TASK_PROGRESS {\n        UUID id \"PK NOT NULL\"\n        TEXT reason \"NOT NULL\"\n        UUID plan_id \"FK NOT NULL\"\n        UUID task_id \"FK NOT NULL\"\n        INTEGER progress \"NOT NULL\"\n        UUID tenant_id \"FK NOT NULL\"\n        UUID project_id \"FK NOT NULL\"\n        TIMESTAMP WITH TIME ZONE recorded_at \"NOT NULL\"\n        UUID recorded_by \"FK NOT NULL\"\n        UUID legal_entity_id \"FK NOT NULL\"\n        BIGINT project_version \"NOT NULL\"\n    }\n    BILLABLE_UNITS {\n        UUID id \"PK NOT NULL\"\n        NUMERIC(20,6) amount \"NOT NULL\"\n        TEXT status \"NOT NULL\"\n        UUID branch_id \"FK NOT NULL\"\n        UUID source_id \"NOT NULL\"\n        UUID tenant_id \"FK NOT NULL\"\n        UUID project_id \"FK NOT NULL\"\n        TEXT source_kind \"NOT NULL\"\n        TEXT source_digest \"NOT NULL\"\n        BIGINT source_version \"NOT NULL\"\n        UUID legal_entity_id \"FK NOT NULL\"\n        BIGINT payable_seconds\n    }\n    PLAN_DECISIONS {\n        UUID id \"PK NOT NULL\"\n        TEXT digest \"NOT NULL\"\n        TEXT reason \"NOT NULL\"\n        UUID plan_id \"FK NOT NULL\"\n        TEXT decision \"NOT NULL\"\n        UUID tenant_id \"FK NOT NULL\"\n        TIMESTAMP WITH TIME ZONE decided_at \"NOT NULL\"\n        UUID decided_by \"FK NOT NULL\"\n        UUID project_id \"FK NOT NULL\"\n        UUID legal_entity_id \"FK NOT NULL\"\n    }\n    RESOURCE_COSTS {\n        UUID plan_id \"FK NOT NULL\"\n        UUID tenant_id \"FK NOT NULL\"\n        UUID project_id \"FK NOT NULL\"\n        NUMERIC(20,6) hourly_rate \"NOT NULL\"\n        UUID legal_entity_id \"FK NOT NULL\"\n        UUID resource_slot_id \"PK FK NOT NULL\"\n    }\n    RESOURCE_SLOTS {\n        UUID id \"PK NOT NULL\"\n        BOOLEAN active \"NOT NULL\"\n        TIMESTAMP WITH TIME ZONE end_utc \"NOT NULL\"\n        UUID plan_id \"FK NOT NULL\"\n        UUID task_id \"FK NOT NULL\"\n        NUMERIC(20,6) bill_rate \"NOT NULL\"\n        TIMESTAMP WITHOUT TIME ZONE end_local \"NOT NULL\"\n        TIMESTAMP WITH TIME ZONE start_utc \"NOT NULL\"\n        UUID tenant_id \"FK NOT NULL\"\n        UUID project_id \"FK NOT NULL\"\n        UUID employee_id \"FK NOT NULL\"\n        TIMESTAMP WITHOUT TIME ZONE start_local \"NOT NULL\"\n        UUID legal_entity_id \"FK NOT NULL\"\n        BIGINT planned_seconds \"NOT NULL\"\n        INTEGER end_offset_seconds \"NOT NULL\"\n        UUID calendar_version_id \"FK NOT NULL\"\n        INTEGER start_offset_seconds \"NOT NULL\"\n    }\n    TIME_REVISIONS {\n        UUID id \"PK NOT NULL\"\n        JSONB breaks \"NOT NULL\"\n        TEXT digest \"NOT NULL\"\n        TEXT reason \"NOT NULL\"\n        TIMESTAMP WITH TIME ZONE end_utc \"NOT NULL\"\n        UUID plan_id \"FK NOT NULL\"\n        UUID task_id \"FK NOT NULL\"\n        BIGINT version \"NOT NULL\"\n        UUID entry_id \"FK NOT NULL\"\n        TIMESTAMP WITHOUT TIME ZONE end_local \"NOT NULL\"\n        TIMESTAMP WITH TIME ZONE start_utc \"NOT NULL\"\n        UUID tenant_id \"FK NOT NULL\"\n        UUID project_id \"FK NOT NULL\"\n        NUMERIC(20,6) bill_amount \"NOT NULL\"\n        TIMESTAMP WITH TIME ZONE recorded_at \"NOT NULL\"\n        UUID recorded_by \"FK NOT NULL\"\n        TIMESTAMP WITHOUT TIME ZONE start_local \"NOT NULL\"\n        UUID supersedes_id \"FK\"\n        UUID legal_entity_id \"FK NOT NULL\"\n        BIGINT payable_seconds \"NOT NULL\"\n        UUID resource_slot_id \"FK NOT NULL\"\n        INTEGER end_offset_seconds \"NOT NULL\"\n        UUID attendance_claim_id \"FK\"\n        INTEGER start_offset_seconds \"NOT NULL\"\n    }\n    UNIT_DECISIONS {\n        UUID id \"PK NOT NULL\"\n        TEXT reason \"NOT NULL\"\n        UUID unit_id \"FK NOT NULL\"\n        UUID actor_id \"FK NOT NULL\"\n        TEXT decision \"NOT NULL\"\n        UUID tenant_id \"FK NOT NULL\"\n        UUID project_id \"FK NOT NULL\"\n        TIMESTAMP WITH TIME ZONE recorded_at \"NOT NULL\"\n        UUID legal_entity_id \"FK NOT NULL\"\n    }\n    TIME_ALLOCATIONS {\n        UUID id \"PK NOT NULL\"\n        UUID claim_id \"FK NOT NULL\"\n        UUID entry_id \"FK NOT NULL\"\n        UUID tenant_id \"FK NOT NULL\"\n        UUID project_id \"FK NOT NULL\"\n        UUID revision_id \"FK NOT NULL\"\n        BOOLEAN direct_claim \"NOT NULL\"\n        UUID allocation_id \"FK NOT NULL\"\n        UUID legal_entity_id \"FK NOT NULL\"\n    }\n    BILLABLE_UNITS ||--o{ UNIT_DECISIONS : has\n    PLANS ||--o{ COST_BASIS : has\n    PLANS ||--o{ PLAN_DECISIONS : has\n    PLANS ||--o{ REGISTER : has\n    PLANS ||--o{ TASKS : has\n    REGISTER ||--o{ BILLABLE_UNITS : has\n    REGISTER ||--o{ PLANS : has\n    REGISTER ||--o{ TIME_ENTRIES : has\n    RESOURCE_SLOTS ||--o{ RESOURCE_COSTS : has\n    RESOURCE_SLOTS ||--o{ TIME_REVISIONS : has\n    TASKS ||--o{ DEPENDENCIES : has\n    TASKS ||--o{ RESOURCE_SLOTS : has\n    TASKS ||--o{ TASK_PROGRESS : has\n    TASKS ||--o{ TIME_REVISIONS : has\n    TIME_ENTRIES ||--o{ TIME_REVISIONS : has\n    TIME_REVISIONS ||--o{ TIME_ALLOCATIONS : has\n    TIME_REVISIONS ||--o{ TIME_COSTS : has\n    TIME_REVISIONS ||--o{ TIME_ENTRIES : has\n    TIME_REVISIONS ||--o{ TIME_EVENTS : has\n    TIME_REVISIONS ||--o{ TIME_REVISIONS : has"
+}

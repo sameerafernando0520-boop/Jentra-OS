@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../app_providers.dart';
 import 'financial_statement_controller.dart';
+import '../shared/report_wait.dart';
 import '../report_export/report_export_screen.dart';
 import '../journal_evidence/posted_journal_screen.dart';
 
@@ -70,8 +71,7 @@ class FinancialStatementWorkspace extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                c.error ??
-                    'Connect to verify finance access and restore the encrypted report request.',
+                c.error ?? 'Connect to verify finance access and restore the encrypted report request.',
               ),
               if (c.busy) const CircularProgressIndicator(),
               TextButton(
@@ -82,9 +82,9 @@ class FinancialStatementWorkspace extends StatelessWidget {
           ),
         );
       }
-      final textScale = MediaQuery.textScalerOf(
-        context,
-      ).scale(1).clamp(1.0, 1.7);
+      final textScale = MediaQuery.textScalerOf(context)
+          .scale(1)
+          .clamp(1.0, 1.7);
       final width = 270.0 * textScale;
       final selectedPeriod = c.selectedPeriod;
       final comparisons = c.periods
@@ -152,7 +152,13 @@ class FinancialStatementWorkspace extends StatelessWidget {
               const SizedBox(height: 12),
               Text(c.message!),
             ],
-            if (c.busy) const LinearProgressIndicator(),
+            if (c.reportWait.active)
+              ReportWaitIndicator(
+                state: c.reportWait,
+                onCancel: c.cancelReportWait,
+              )
+            else if (c.busy)
+              const LinearProgressIndicator(),
             const SizedBox(height: 24),
             Text(
               'Generate a report',

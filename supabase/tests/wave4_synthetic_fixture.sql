@@ -60,4 +60,7 @@ insert into people.work_calendar_versions(id,tenant_id,legal_entity_id,calendar_
   timezone,weekly_intervals,date_overrides,published_by)
 values(pg_temp.wid('calendar-version'),pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('calendar'),
   pg_temp.wdate()-10,pg_temp.wdate()+400,'Asia/Colombo',
-  '[{"day_of_week":1,"start_minute":540,"end_minute":1020,"end_day_offset":0}]','[]',pg_temp.wid('creator'));
+  jsonb_build_array(jsonb_build_object(
+    'day_of_week',extract(isodow from pg_temp.wdate())::integer,
+    'start_minute',540,'end_minute',1020,'end_day_offset',0)),
+  '[]',pg_temp.wid('creator'));

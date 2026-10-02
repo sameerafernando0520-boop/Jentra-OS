@@ -1,0 +1,2492 @@
+{
+  "generated_on": "2026-09-29",
+  "spec": "docs/blueprint/08_WAVE3_INTEGRATED_COMMERCE_FINANCE_SPEC.md",
+  "spec_sha256": "a5b6b788a21f51d1267f9148c1196d06e3dd37cc8fddff2b0a9e55c097e92454",
+  "boundary": "Evidence references prove only their specific candidate checks. A candidate-present row is not a native or owner acceptance claim.",
+  "counts": {
+    "FR": 95,
+    "AC": 26,
+    "EC": 40,
+    "NFR": 20
+  },
+  "requirements": [
+    {
+      "id": "FR-301",
+      "approved_behavior": "Every Wave 3 tenant record MUST carry tenant identity, UUID identity, UTC timestamps,   attributable actor fields, status, and optimistic version where it is mutable.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-302",
+      "approved_behavior": "Client reads MUST use tenant-filtered `security_invoker` API views and client mutations   MUST use named, authenticated, idempotent `api` RPCs; direct private-table mutation MUST remain   unavailable to desktop roles.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-303",
+      "approved_behavior": "Draft document headers and lines MUST be mutable only in editable lifecycle states,   compare expected versions on save, and return a structured conflict containing the current   server version when stale.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-304",
+      "approved_behavior": "A document MUST reserve its permanent number from the matching Wave 2 sequence when it   first leaves Draft; retries MUST return the same number and a reserved number MUST never be   reassigned to another document.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-305",
+      "approved_behavior": "Submission and approval MUST consume the active Wave 2 workflow and approval-matrix   version selected for the document scope and amount, record each decision, and enforce   segregation of duties.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-306",
+      "approved_behavior": "Posting MUST require an online authenticated command, an open fiscal period, active and   correctly scoped master references, complete accounting mappings, and an approved state where   the active workflow requires approval.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-307",
+      "approved_behavior": "Posted documents and ledger movements MUST NOT be edited or deleted; a correction MUST   create an attributable, reasoned document linked to the original and reverse or adjust the   original effects exactly once.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-308",
+      "approved_behavior": "The server MUST recalculate quantities, prices, discounts, taxes, subtotals, totals,   allocations, and base-currency amounts from canonical line inputs using exact decimals and the   legal entity rounding policy; client totals are advisory only.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-309",
+      "approved_behavior": "A foreign-currency document MUST persist currency, exchange-rate identifier or approved   manual rate, rate date, direct rate, transaction amounts, and base amounts without later rate   changes altering posted history.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-310",
+      "approved_behavior": "Posting MUST validate product, tax, inventory, revenue, expense, COGS, receivable,   payable, cash/bank, rounding, and exchange-difference mappings required by that document before   any side effect is committed.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-311",
+      "approved_behavior": "Every successful mutation MUST atomically create or reuse one command receipt, append   attributable audit context, emit process telemetry for lifecycle changes, and enqueue required   outbox events with the same correlation identifier.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-312",
+      "approved_behavior": "Wave 3 aggregates MUST reuse Wave 2 private attachments and user notifications with   aggregate allowlisting and permission checks; an attachment or notification MUST NOT authorize   access to its underlying aggregate.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Configured file/notification fan-out needs item-by-item source and security review.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-313",
+      "approved_behavior": "A permitted user MUST create and revise tenant-scoped leads with code, person or   organization name, optional party/contact, source, owner, stage, expected value/currency,   expected close date, loss reason, status, and version.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_crm_pipeline_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-314",
+      "approved_behavior": "A permitted user MUST record timestamped CRM activities for a lead, opportunity, party,   or contact with activity type, subject, owner, due/completed time, outcome, and notes.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_crm_pipeline_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-315",
+      "approved_behavior": "Lead stage changes MUST follow the active scoped workflow, record entered/completed   times and reason, and require qualification data before a lead becomes qualified.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_crm_pipeline_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-316",
+      "approved_behavior": "A permitted user MUST create and revise opportunities with customer or prospect,   owner, stage, probability from 0 to 100, exact expected value, currency, expected close date,   next action, products of interest, and won/lost reason.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_crm_pipeline_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-317",
+      "approved_behavior": "Lead conversion MUST be idempotent and MUST create or link one party/contact and one   opportunity without duplicating an existing party selected by the user.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_crm_pipeline_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-318",
+      "approved_behavior": "Pipeline reads MUST expose stage totals, weighted value, aging, conversion, win/loss,   activity recency, and forecast buckets using persisted exact values and explicit as-of dates.",
+      "implementation": "partial",
+      "missing_implementation": "Pipeline metrics are not integrated into the capability-aware command centre.",
+      "evidence": [
+        "supabase/tests/wave3_crm_pipeline_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-319",
+      "approved_behavior": "A permitted user MUST create and revise quotations with customer, contact, entity,   branch, currency/rate, validity, payment and delivery terms, salesperson, header discounts,   notes, and versioned product/service lines.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_quotation_workspace_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-320",
+      "approved_behavior": "Quotation lines MUST preserve quantity, unit, conversion, unit price, line discount,   tax definition, inclusive/exclusive behavior, exact calculated totals, and revision history;   expired quotations MUST NOT be accepted without a new revision.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_quotation_workspace_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-321",
+      "approved_behavior": "Quotation submission, approval, rejection, recall, acceptance, expiry, and cancellation   MUST follow the configured workflow and preserve all decisions and customer-facing revisions.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_quotation_workspace_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-322",
+      "approved_behavior": "An accepted quotation MUST convert idempotently into one sales order with traceable   source lines; repeated conversion MUST return the existing order.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_order_workspace_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-323",
+      "approved_behavior": "A permitted user MUST create and revise sales orders with promised dates, ship-to data,   fulfillment warehouse, exact commercial terms, and ordered/cancelled/allocated/delivered/   invoiced quantities per source line.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_order_workspace_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-324",
+      "approved_behavior": "Sales-order confirmation MUST evaluate the customer's active status, due and overdue   exposure, credit limit, order exposure, and privileged override reason before commitment.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_order_workspace_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-325",
+      "approved_behavior": "A permitted online command MUST reserve available stock for eligible order lines,   release or reduce reservations on cancellation and fulfillment, and never make the reservation   itself an accounting or stock movement.",
+      "implementation": "partial",
+      "missing_implementation": "Reservation expiry and retirement need complete lifecycle integration beyond the bounded maintenance command.",
+      "evidence": [
+        "supabase/tests/wave3_order_workspace_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-326",
+      "approved_behavior": "Posting a delivery MUST validate fulfilled quantities and tracking data, consume the   related reservation, create immutable inventory issues, update order fulfillment, and create   balanced inventory/COGS journals in one transaction.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_delivery_receivables_test.sql",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-327",
+      "approved_behavior": "Partial deliveries and invoices MUST be supported without exceeding the remaining   approved order quantity unless a separately permitted and audited tolerance override applies.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_delivery_receivables_test.sql",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-328",
+      "approved_behavior": "A permitted user MUST draft, submit, approve where configured, and post sales invoices   from delivered/order lines or, for service and non-stocked products, as authorized direct   invoices, with customer, due date, currency, tax, discounts, terms, and source traceability.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_delivery_receivables_test.sql",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-329",
+      "approved_behavior": "Sales-invoice posting MUST atomically create the immutable invoice, customer receivable   open item, tax/revenue journal effects, due balance, audit, receipt, telemetry, and outbox event.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_delivery_receivables_test.sql",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-330",
+      "approved_behavior": "A permitted user MUST record customer receipts against a configured cash or bank   account with receipt date, currency/rate, external reference, tender metadata, and unapplied   amount.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_delivery_receivables_test.sql",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-331",
+      "approved_behavior": "Customer-receipt posting MUST create balanced cash/bank and receivable-control journal   effects and MUST NOT mark funds bank-reconciled before an explicit reconciliation.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_delivery_receivables_test.sql",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-332",
+      "approved_behavior": "Receipt allocation MUST support one-to-many and many-to-one invoice allocation,   preserve exact residuals, prevent over-allocation, and create explicit discount, write-off, or   realized exchange-difference lines only with the required permission and reason.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_delivery_receivables_test.sql",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-333",
+      "approved_behavior": "Sales returns and credit notes MUST reference eligible delivered or invoiced quantities,   prevent excess return/credit, restore saleable stock at the required cost where applicable,   reverse revenue/tax/COGS/AR effects, and retain the original document unchanged.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_delivery_receivables_test.sql",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-334",
+      "approved_behavior": "Customer statements and aged receivables MUST reconcile to AR open items as of a chosen   date, expose current and configurable overdue buckets, and support drill-through to source,   allocation, credit, and receipt records.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_delivery_receivables_test.sql",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json"
+      ],
+      "missing_verification": "Full source/allocation/credit drill-through and native dated-report proof are missing.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-335",
+      "approved_behavior": "A permitted user MUST create and revise purchase requisitions with requester, entity,   branch, need-by date, cost centre/project where available, justification, and exact product or   free-text lines.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_procurement_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-336",
+      "approved_behavior": "Requisition submission and decision MUST use the active workflow and approval matrix;   the requester MUST NOT approve their own requisition when segregation of duties is enabled.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_procurement_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-337",
+      "approved_behavior": "A permitted user MUST issue an RFQ from approved requisition lines, record invited   suppliers and comparable supplier quotations, and retain the selection rationale.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_procurement_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-338",
+      "approved_behavior": "A permitted user MUST create and revise purchase orders with supplier, currency/rate,   terms, receiving warehouse, promised dates, tax, ordered/cancelled/received/billed quantities,   and source requisition or RFQ links.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_procurement_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-339",
+      "approved_behavior": "A material change to an approved purchase order MUST create a new revision and repeat   approval when configured thresholds, supplier, currency, quantity, price, tax, or total change.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_procurement_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-340",
+      "approved_behavior": "Posting a goods receipt MUST validate purchase-order eligibility, received quantities,   warehouse, units, lots/serials, and acceptance/rejection quantities, then create immutable stock   receipts and accrued-receipt journal effects atomically.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_goods_receipts_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-341",
+      "approved_behavior": "Partial receipts, approved over-receipt tolerances, rejected quantities, and receipt   reversals MUST update remaining quantities without rewriting the purchase order or prior receipt.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_goods_receipts_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-342",
+      "approved_behavior": "A permitted user MUST draft and post supplier bills against purchase orders and goods   receipts or as authorized direct bills, with invoice reference uniqueness per supplier, due   date, tax, currency/rate, and exact line totals.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_supplier_bills_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-343",
+      "approved_behavior": "Three-way matching MUST compare purchase-order, accepted receipt, and supplier-bill   quantities, unit prices, discounts, taxes, and totals and MUST identify each exception.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_supplier_bills_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-344",
+      "approved_behavior": "Match exceptions beyond configured exact quantity or amount tolerances MUST block posting   until a permitted approval records the exception, reason, and accountable actor.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_supplier_bills_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-345",
+      "approved_behavior": "Supplier-bill posting MUST atomically create the payable open item and balanced expense/   inventory/accrual, input-tax, and AP-control journal effects without duplicating receipt value.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_supplier_bills_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-346",
+      "approved_behavior": "A permitted user MUST create payment proposals from due supplier open items, select   invoices and credits, and submit the proposal through configured payment approval without   executing an external bank payment.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_supplier_settlement_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-347",
+      "approved_behavior": "Posting a supplier payment MUST record the approved payment, allocate exact amounts,   create balanced AP and cash/bank journal effects, and leave bank reconciliation pending.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_supplier_settlement_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-348",
+      "approved_behavior": "Purchase returns and supplier debit notes MUST reference eligible receipts or bills,   prevent excess quantities/amounts, issue stock where applicable, reverse tax/accrual/AP effects,   and preserve the source documents.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_supplier_settlement_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-349",
+      "approved_behavior": "Supplier statements and aged payables MUST reconcile to AP open items as of a chosen   date, expose configurable aging buckets, and drill through to bills, credits, allocations, and   payments.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_supplier_settlement_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Full bill/credit/allocation/payment drill-through and native dated-report proof are missing.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-350",
+      "approved_behavior": "Transaction quantities MUST use exact base-unit values; non-base transaction units MUST   use an active product-specific rational conversion whose numerator and denominator are persisted   on the document line.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-351",
+      "approved_behavior": "Every receipt, issue, transfer, return, or adjustment MUST create immutable stock   movement headers and lines with source type/id/line, warehouse, product, base quantity, value,   actor, posting time, and correlation identifier.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-352",
+      "approved_behavior": "On-hand, reserved, and available balances MUST be derived from posted movements and   active reservations and MUST be reproducible for a requested as-of time.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-353",
+      "approved_behavior": "A posting that would make on-hand or available quantity negative MUST be rejected unless   the legal entity has an active negative-stock policy and the actor has the override capability;   every override MUST be separately audited.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-354",
+      "approved_behavior": "Lot-tracked products MUST require tenant/product-scoped lot identity and applicable   manufacture/expiry metadata on movement; expired lots MUST be blocked from saleable issue unless   a separately permitted disposition command is used.",
+      "implementation": "partial",
+      "missing_implementation": "Permitted expired-lot disposition command is absent.",
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-355",
+      "approved_behavior": "Serial-tracked products MUST record one unique serial per base unit, prevent a serial   from being available in two places, and preserve the complete receipt, transfer, delivery,   return, and disposition history.",
+      "implementation": "partial",
+      "missing_implementation": "Disposal and full serial disposition history are not implemented.",
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-356",
+      "approved_behavior": "Moving weighted-average cost MUST update atomically for positive receipts and value   adjustments, price issues at the pre-issue carrying cost, preserve exact intermediate precision,   and post rounding differences to the configured account.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-357",
+      "approved_behavior": "A warehouse transfer MUST post one atomic source issue and destination receipt at the   same carrying value, retain in-transit state when locations differ operationally, and complete or   reverse without creating or losing aggregate value.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-358",
+      "approved_behavior": "A permitted user MUST create stock counts and adjustments; variances MUST require a   reason and configured approval and MUST post quantity, value, and inventory variance journals   together.",
+      "implementation": "partial",
+      "missing_implementation": "Counts over 500 tracked identities are rejected; partitioned count documents are absent.",
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-359",
+      "approved_behavior": "A permitted value-adjustment command MUST allocate freight or other landed value to   eligible received stock using an explicit exact basis and post the amount to remaining inventory   and consumed-stock variance without changing historical quantities.",
+      "implementation": "partial",
+      "missing_implementation": "Multi-receipt explicit allocation, held/transit split and later-consumption correction are absent.",
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-360",
+      "approved_behavior": "Inventory valuation and inventory-to-GL reconciliation MUST reproduce quantity, moving   average, and carrying value by entity, warehouse, product, lot where applicable, and as-of time,   with every difference linked to its movement or journal source.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Broader lot/transit value history and target-scale reconciliation remain unproven.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-361",
+      "approved_behavior": "Reservations MUST be uniquely linked to demand lines, bounded by remaining demand, and   released on expiry, cancellation, delivery, reversal, product retirement, or explicit permitted   release without altering posted stock.",
+      "implementation": "partial",
+      "missing_implementation": "Expiry/retirement maintenance is candidate-tested; all event-triggered releases are not verified.",
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-362",
+      "approved_behavior": "Every journal entry MUST carry tenant, legal entity, fiscal period, posting date,   currency context, source type/id, immutable sequence number, description, status, reversal link,   and two or more journal lines.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_manual_journal_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-363",
+      "approved_behavior": "Journal lines MUST reference active posting accounts and carry exact transaction and   base debit/credit amounts; a posted entry MUST balance base debits and credits exactly and MUST   never contain a line with both debit and credit.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_manual_journal_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-364",
+      "approved_behavior": "Delivery, invoice, receipt, goods receipt, bill, payment, return, credit/debit note, stock   adjustment, landed-value adjustment, bank adjustment, and exchange revaluation commands MUST   use versioned server-owned posting rules and produce deterministic balanced entries.",
+      "implementation": "partial",
+      "missing_implementation": "The approved disposition posting source remains absent.",
+      "evidence": [
+        "supabase/tests/wave3_manual_journal_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-365",
+      "approved_behavior": "A permitted user MUST draft and submit manual journals with lines, dimensions,   attachments, and reason; posting MUST require configured approval, segregation of duties, an   open period, and exact balance.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_manual_journal_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-366",
+      "approved_behavior": "Journal entries MUST retain source-document and source-line drill-through; direct client   creation of posted journal lines or mutation of any posted journal MUST be denied.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_manual_journal_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-367",
+      "approved_behavior": "AR and AP open items MUST be created only by posting or reversal, track original, open,   due, allocated, written-off, and base amounts, and reconcile exactly to their control accounts.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_control_procurement_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-368",
+      "approved_behavior": "Reversing an allocation MUST require permission and reason, reopen affected items by the   exact amount, create any required exchange reversal, and retain both allocation records.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_control_procurement_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-369",
+      "approved_behavior": "A permitted finance administrator MUST configure operational cash and bank accounts that   reference one legal entity, currency, posting GL account, optional branch, reconciliation rules,   and active status.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_control_procurement_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-370",
+      "approved_behavior": "A permitted user MUST import at most 2,000 bank-statement rows from bounded CSV/XLSX,   preview normalized dates/references/exact amounts, reject duplicate statement identities, and   apply the valid statement atomically without posting accounting entries.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_bank_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-371",
+      "approved_behavior": "Bank reconciliation MUST support one-to-one, one-to-many, and many-to-one matches between   statement lines and posted cash/bank transactions, exact tolerance rules, permitted adjustments,   lock concurrent matches, and preserve a reversible audit trail.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_bank_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-372",
+      "approved_behavior": "Settlement and period-end foreign-currency processing MUST calculate realized and   unrealized exchange differences from persisted rates, create deterministic journals, and reverse   prior unrealized entries when required without changing source amounts.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_period_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-373",
+      "approved_behavior": "Soft-locked periods MUST reject ordinary posting but allow explicitly permitted close   adjustments; hard-locked periods MUST reject all Wave 3 posting, allocation, reconciliation   adjustment, and reversal commands.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_period_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-374",
+      "approved_behavior": "Closing a fiscal period MUST verify required subledger and bank reconciliations and record   exceptions; reopening a hard-locked period MUST require `finance.period.reopen`, recent MFA,   reason, approval, audit, and a new version without deleting the prior close event.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_period_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-375",
+      "approved_behavior": "AR-control, AP-control, inventory-control, tax, cash/bank, and goods-received-not-invoiced   reconciliations MUST compare subledger totals with the GL as of a period and drill through every   difference.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_financial_statements_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-376",
+      "approved_behavior": "Trial balance, profit and loss, balance sheet, and indirect cash-flow statements MUST be   generated from posted journals for a legal entity, explicit period/as-of date, and base currency,   with comparative periods and account drill-through.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_financial_statements_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-377",
+      "approved_behavior": "Aged receivables, aged payables, customer statements, supplier statements, tax summaries,   inventory valuation, and bank reconciliation reports MUST use posted as-of truth and reconcile   to their governing subledger or ledger totals.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_financial_statements_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-378",
+      "approved_behavior": "The indirect cash-flow statement MUST start from posted profit, classify non-cash   adjustments and working-capital changes, present investing and financing cash movements through   configured account mappings, reconcile closing cash to mapped cash/bank GL balances, and expose   unmapped items as blocking close warnings.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_financial_statements_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-379",
+      "approved_behavior": "A permitted user MUST create versioned annual or period budgets by legal entity, account,   branch, cost centre, project where available, and currency with exact amounts and workflow state.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_financial_statements_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-380",
+      "approved_behavior": "Budget-versus-actual reporting MUST compare the selected approved budget version with   posted actuals by period and dimension and expose exact amount and percentage variances.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_financial_statements_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-381",
+      "approved_behavior": "Tax summaries MUST derive from posted tax lines and effective-dated Wave 2 definitions,   distinguish input/output/withholding/zero/exempt treatment, and display an explicit   non-certified/statutory-review-required notice.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_financial_statements_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-382",
+      "approved_behavior": "Every financial and operational report MUST expose its tenant/entity scope, as-of or   period basis, base/transaction currency meaning, generation time, filters, and drill-through   lineage; mutable current-state data MUST NOT be substituted for requested as-of truth.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_financial_statements_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Metadata and lineage have not been audited item by item for every report.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-383",
+      "approved_behavior": "The desktop shell MUST expose capability-gated CRM, Sales, Purchasing, Inventory, and   Finance workspaces through routes, primary navigation, and command-palette destinations.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "build/remaining-wave3/desktop-full-20260929.log",
+        "packages/jentra_platform/test/operational_gateway_test.dart",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Every workspace and command-palette destination has not been audited for scoped routing.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-384",
+      "approved_behavior": "Each workspace MUST provide accessible loading, error, empty, and populated states plus   a dense list/detail/timeline layout that keeps source, lifecycle, approval, posting, allocation,   attachment, and audit context visible.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "build/remaining-wave3/desktop-full-20260929.log",
+        "packages/jentra_platform/test/operational_gateway_test.dart",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Timeline, approval and audit context is not verified on every detail screen.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-385",
+      "approved_behavior": "Wave 3 forms MUST provide field and cross-line validation, keyboard traversal, visible   focus, exact decimal/date entry, server-recalculated previews, unsaved-change confirmation, and   a clear distinction between Save Draft, Submit, Approve, Post, Reverse, and Cancel.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "build/remaining-wave3/desktop-full-20260929.log",
+        "packages/jentra_platform/test/operational_gateway_test.dart",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Keyboard traversal, unsaved changes and preview behavior are not verified on every form.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-386",
+      "approved_behavior": "Offline users MAY read encrypted cached references and edit encrypted drafts, but every   authoritative lifecycle, reservation, allocation, posting, reconciliation, close, reopen,   reversal, and import command MUST be disabled until live confirmation.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "build/remaining-wave3/desktop-full-20260929.log",
+        "packages/jentra_platform/test/operational_gateway_test.dart",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Focused client checks exist; full desktop suite and native acceptance are not clean.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-387",
+      "approved_behavior": "A server version conflict MUST preserve the encrypted local draft, display current and   local material fields, and require explicit reload, copy, or merge; no automatic last-write-wins   behavior is permitted.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "build/remaining-wave3/desktop-full-20260929.log",
+        "packages/jentra_platform/test/operational_gateway_test.dart",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Focused client checks exist; full desktop suite and native acceptance are not clean.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-388",
+      "approved_behavior": "Routes, fields, prices/costs, margins, actions, approval controls, posting controls, and   report/export controls MUST respect server-resolved capability and scope; the database remains   authoritative and segregation-of-duty failures MUST be explained without leaking hidden data.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "build/remaining-wave3/desktop-full-20260929.log",
+        "packages/jentra_platform/test/operational_gateway_test.dart",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Focused client checks exist; full desktop suite and native acceptance are not clean.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-389",
+      "approved_behavior": "Operational lists MUST provide literal search, status and date filters, stable sorting,   bounded cursor pagination, saved view state, and refresh without using Realtime as transaction   truth.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "build/remaining-wave3/desktop-full-20260929.log",
+        "packages/jentra_platform/test/operational_gateway_test.dart",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Focused client checks exist; full desktop suite and native acceptance are not clean.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-390",
+      "approved_behavior": "Role-appropriate dashboards MUST surface actionable pipeline, quotation, order,   fulfillment, procurement, stock, AR/AP aging, cash, bank reconciliation, close, budget, and   exception states using explicit timestamps and scopes.",
+      "implementation": "partial",
+      "missing_implementation": "Dashboard has current document queues; aging, cash, close, budget and exception states are absent.",
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "build/remaining-wave3/desktop-full-20260929.log",
+        "packages/jentra_platform/test/operational_gateway_test.dart",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-391",
+      "approved_behavior": "Users MUST attach and retrieve permitted Wave 2 files from Wave 3 detail screens without   public URLs, and posted-document attachments MUST remain append-only unless a privileged audited   rejection marks a file unavailable.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "build/remaining-wave3/desktop-full-20260929.log",
+        "packages/jentra_platform/test/operational_gateway_test.dart",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Focused client checks exist; full desktop suite and native acceptance are not clean.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-392",
+      "approved_behavior": "Submission, decision, posting, exception, due, allocation, reconciliation, close, and   reversal events MUST create in-app notification records for configured recipients without making   external delivery a posting dependency.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "build/remaining-wave3/desktop-full-20260929.log",
+        "packages/jentra_platform/test/operational_gateway_test.dart",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Configured recipient notification records are not verified across every listed lifecycle event.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-393",
+      "approved_behavior": "Deep links and command-palette actions MUST restore tenant/entity context and open the   permitted aggregate or a non-disclosing not-found/forbidden state.",
+      "implementation": "partial",
+      "missing_implementation": "Broader contextual links and command-palette deep-link restoration remain incomplete.",
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "build/remaining-wave3/desktop-full-20260929.log",
+        "packages/jentra_platform/test/operational_gateway_test.dart",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-394",
+      "approved_behavior": "A permitted user MUST export the currently filtered bounded view or generated report to   UTF-8 CSV/XLSX with stable columns, exact decimal strings, scope/as-of metadata, and an   attributable Wave 2 export job.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "build/remaining-wave3/desktop-full-20260929.log",
+        "packages/jentra_platform/test/operational_gateway_test.dart",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Focused client checks exist; full desktop suite and native acceptance are not clean.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "FR-395",
+      "approved_behavior": "Retryable network, validation, permission, conflict, closed-period, insufficient-stock,   match, and posting failures MUST have distinct actionable states; a failed command MUST not leave   a success indicator or partial local/server effect.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "build/remaining-wave3/desktop-full-20260929.log",
+        "packages/jentra_platform/test/operational_gateway_test.dart",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Cross-module failure-state and encrypted recovery audit is incomplete.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-301",
+      "approved_behavior": "Each posting, reversal, allocation, and reconciliation command MUST be one database   transaction covering domain state, stock, subledger, journal, audit, receipt, telemetry, and   outbox effects; injected failure at any step MUST roll back all effects.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-302",
+      "approved_behavior": "Money, quantity, rates, discounts, tax, costs, and percentages MUST use PostgreSQL   `numeric` and decimal-string/`BigInt`-backed Dart values; binary floating point MUST NOT cross a   public contract.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-303",
+      "approved_behavior": "Every tenant-bearing Wave 3 table MUST enable and force RLS, and database tests MUST   prove tenant, legal-entity, branch, warehouse, ownership, and capability boundaries for reads and   commands.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-304",
+      "approved_behavior": "Every privileged function MUST use an empty search path, fully qualified objects,   explicit authentication/capability/scope checks, and no execution grant to `PUBLIC` or `anon`.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-305",
+      "approved_behavior": "Approval, price override, cost visibility, stock override, posting, payment, bank   adjustment, period close/reopen, and reversal MUST support distinct capabilities; configured   high-risk actions MUST require recent MFA and segregation-of-duty checks.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-306",
+      "approved_behavior": "One hundred percent of successful Wave 3 mutations MUST be attributable by tenant,   actor, request, command, aggregate, source, before/after context, correlation ID, and UTC time;   audit and posted ledger history MUST be append-only.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-307",
+      "approved_behavior": "Ordinary indexed list/detail reads MUST meet p95 under 500 ms at target scale, excluding   generated reports, file transfer, and external providers.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Target-scale indexed read p95 was not measured.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-308",
+      "approved_behavior": "Draft/save/transition commands MUST meet p95 under 1.5 seconds and single-document   posting commands p95 under 3 seconds at target scale, excluding user approval wait and external   delivery.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Target-scale command and posting p95 was not measured.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-309",
+      "approved_behavior": "Verification data MUST exercise at least 500 tenants, 10 legal entities per tenant,   25 warehouses per entity, 100,000 products per large tenant, 10 million stock movements, and 20   million journal lines without cross-tenant scans.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "The specified 500-tenant, 10-entity, 25-warehouse, 100k-product, 10m-movement and 20m-journal fixture was not run.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-310",
+      "approved_behavior": "Tenant-leading indexes MUST cover foreign keys, lifecycle queues, source links, cursor   lists, open-item aging, stock as-of, bank matching, and journal/report filters; representative   plans MUST avoid unbounded sequential scans on high-volume tables.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Representative target-scale query plans are missing; three synthetic control reads are only diagnostics.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-311",
+      "approved_behavior": "Interactive list limits MUST be 1–200, detail child pages 1–500, bank imports at most   2,000 rows and 10 MiB, and synchronous report results at most 10,000 rows; larger work MUST be a   separately specified background job.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-312",
+      "approved_behavior": "Concurrent number reservation, order allocation, stock issue, receipt, matching,   allocation, posting, close, and reversal MUST use deterministic lock ordering or equivalent   constraints and return a stable retryable conflict instead of overselling or double posting.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Independent authenticated concurrent sessions were not exercised.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-313",
+      "approved_behavior": "Local drafts and cached sensitive payloads MUST remain inside the Wave 1 AES-256-GCM and   Windows Credential Manager boundary and MUST exclude posted ledger truth, full bank statements,   and unmasked cost data not permitted to the current user.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-314",
+      "approved_behavior": "Wave 3 desktop flows MUST meet WCAG 2.2 AA, full keyboard operation, visible focus,   semantic status/error text, screen-reader labels, reduced motion, and 200% text scaling.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Full keyboard, screen-reader and reduced-motion review is missing.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-315",
+      "approved_behavior": "Wave 3 screens MUST render without overflow at 1024×720, 1440×900, 1920×1080, and 4K in   light/dark and compact/comfortable modes; tables MUST retain reachable horizontal scrolling and   frozen identity columns where necessary.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Current operational detail has all four sizes at 200%; all Wave 3 screens and mode combinations are not verified.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-316",
+      "approved_behavior": "Logs and telemetry MUST carry correlation and scoped identifiers while excluding   secrets, bank credentials, raw attachment contents, and unnecessary PII; posting latency,   conflicts, stock denials, reconciliation gaps, close blockers, and dead-letter depth MUST be   observable.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Observability coverage for every listed signal is not audited.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-317",
+      "approved_behavior": "Pure domain, calculation, allocation, matching, lifecycle, valuation, and posting-rule   code MUST maintain at least 90% branch coverage; changed overall code MUST preserve the project   80% target and critical invariants MUST have property tests.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Branch coverage targets and critical property-test coverage are not measured across the whole change.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-318",
+      "approved_behavior": "Database tests MUST prove RLS/grants, exact calculations, idempotency, optimistic   conflicts, atomic rollback, concurrency, stock/serial uniqueness, weighted-average valuation,   balanced journals, subledger reconciliation, closed-period rejection, reversal, and audit   immutability.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Full security, rollback and genuine concurrency matrix is incomplete.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-319",
+      "approved_behavior": "The Windows release build MUST complete and cold-launch without an immediate crash;   critical lead-to-cash, procure-to-pay, inventory, reconciliation, and close paths MUST receive   rendered visual and keyboard QA in addition to automated tests.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Authorized cold-launch and native visual/keyboard acceptance are outside this prompt.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "NFR-320",
+      "approved_behavior": "Trial balance, aged balances, inventory valuation, and subledger reconciliation MUST   meet p95 under 2 seconds for one ordinary entity/period at target scale; bounded complex reports   MAY take up to 10 seconds and MUST expose progress and cancellation.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Target-scale report p95 and progress/cancellation behavior are not verified.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-301",
+      "approved_behavior": "Scoped and atomic operational commands (FR-301–FR-312, NFR-301–NFR-306) **Covers:** FR-301, FR-302, FR-303, FR-304, FR-305, FR-306, FR-307, FR-308, FR-309, FR-310, FR-311, FR-312.  Given two tenants, scoped users, active Wave 2 setup, and an injectable posting failure When users read, save, submit, replay, post, and attempt cross-tenant or direct-table actions Then only permitted scoped records are visible and only named RPCs mutate business data And a replay returns the original result without duplicate effects And an injected failure leaves no document, stock, journal, audit, receipt, telemetry, or outbox partial effect.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Notification and cross-module command security coverage is incomplete.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-302",
+      "approved_behavior": "CRM pipeline and lead conversion (FR-313–FR-318) **Covers:** FR-313, FR-314, FR-315, FR-316, FR-317, FR-318.  Given a new prospect lead with activities and an active qualification workflow When a permitted user qualifies and converts the lead twice Then one linked party/contact and one opportunity exist with complete stage telemetry And the second conversion returns the same aggregates And pipeline totals preserve exact expected and probability-weighted values for the selected as-of date.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_crm_pipeline_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-303",
+      "approved_behavior": "Versioned quotation (FR-319–FR-321, NFR-302) **Covers:** FR-319, FR-320, FR-321.  Given an active customer, products, taxes, prices, currency rate, and approval workflow When a user drafts, revises, submits, and accepts a quotation Then the server-calculated exact inclusive/exclusive taxes and totals match the rounding policy And each customer-facing revision and approval decision remains readable And an expired unrevised quotation cannot be accepted.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_quotation_workspace_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-304",
+      "approved_behavior": "Quote-to-order and credit control (FR-322–FR-325) **Covers:** FR-322, FR-323, FR-324, FR-325.  Given an accepted quotation and customer exposure near the credit limit When conversion is replayed and the order is confirmed and reserved Then exactly one traced sales order exists And confirmation is blocked or records a permitted override according to exposure And stock reservations are bounded by available stock and remaining demand without creating a journal or stock movement.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_order_workspace_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-305",
+      "approved_behavior": "Delivery and partial fulfillment (FR-326–FR-327) **Covers:** FR-326, FR-327.  Given an approved order with reserved stocked, lot-tracked, and service lines When a permitted user posts a partial delivery Then eligible stock is issued at carrying cost, reservations and remaining quantities update, and inventory/COGS journals balance in the same transaction And an excess or invalid-lot delivery is rejected without partial effects.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_delivery_receivables_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-306",
+      "approved_behavior": "Sales invoice posting (FR-328–FR-329) **Covers:** FR-328, FR-329.  Given delivered lines and an open fiscal period When a permitted user posts the sales invoice and replays the command Then one immutable invoice, one AR open item, one balanced revenue/tax journal, one audit event, and one command receipt result exist And the customer balance equals the invoice residual exactly.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_delivery_receivables_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-307",
+      "approved_behavior": "Customer receipt and allocations (FR-330–FR-332) **Covers:** FR-330, FR-331, FR-332.  Given two open invoices in a foreign currency and one customer receipt When the receipt is posted and allocated one-to-many Then cash/bank and AR journal effects balance, invoice residuals are exact, and the receipt remains unreconciled with its unapplied amount visible And over-allocation or an unauthorized write-off is rejected.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_delivery_receivables_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-308",
+      "approved_behavior": "Sales return, credit, and customer aging (FR-333–FR-334) **Covers:** FR-333, FR-334.  Given a delivered and invoiced sale included in a prior aging report When an eligible partial return and credit note are posted Then stock and financial effects reverse only the eligible amount with links to the source And a new as-of aging report reconciles to AR while the earlier as-of report remains unchanged.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_delivery_receivables_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-309",
+      "approved_behavior": "Requisition, RFQ, and purchase order (FR-335–FR-339) **Covers:** FR-335, FR-336, FR-337, FR-338, FR-339.  Given an approved requisition and supplier responses When a user selects a supplier, creates a purchase order, and materially changes its price Then source links and selection rationale remain visible And the changed revision returns to approval according to the configured threshold And the requester cannot self-approve when segregation of duties applies.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_procurement_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-310",
+      "approved_behavior": "Goods receipt (FR-340–FR-341) **Covers:** FR-340, FR-341.  Given an approved purchase order with tracked stock When a user posts accepted, rejected, and partial receipt quantities Then only accepted quantities enter stock with required lot/serial identity and accrued-receipt journals And excess or duplicate receipt posting is rejected or requires the configured audited tolerance.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_goods_receipts_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-311",
+      "approved_behavior": "Supplier bill and three-way match (FR-342–FR-345) **Covers:** FR-342, FR-343, FR-344, FR-345.  Given purchase-order, goods-receipt, and supplier-bill values inside and outside tolerance When the bills are matched and posted Then the within-tolerance bill creates one AP item and balanced accounting without duplicating receipt value And the outside-tolerance bill is blocked until a permitted exception decision is recorded.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_supplier_bills_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-312",
+      "approved_behavior": "Supplier payment, return, and aging (FR-346–FR-349) **Covers:** FR-346, FR-347, FR-348, FR-349.  Given approved payable items, a payment proposal, and an eligible received item When payment and a partial purchase return/debit note are posted Then AP, cash/bank, tax, accrual, and stock effects remain exact and source-linked And supplier aging reconciles to AP with the payment still pending bank reconciliation.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_supplier_settlement_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-313",
+      "approved_behavior": "Exact units and stock balances (FR-350–FR-353, NFR-302, NFR-312) **Covers:** FR-350, FR-351, FR-352, FR-353.  Given a product with a rational transaction-unit conversion and two concurrent issue commands When both commands compete for the final available quantity Then base quantity conversion is exact and at most one issue succeeds when negative stock is off And on-hand, reserved, and available balances reproduce from posted movements and reservations.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-314",
+      "approved_behavior": "Lot and serial traceability (FR-354–FR-355) **Covers:** FR-354, FR-355.  Given lot-tracked and serial-tracked products across two warehouses When they are received, transferred, delivered, returned, and dispositioned Then every unit has one unbroken tenant/product/location history And duplicate serial availability, missing tracking data, and expired saleable issues are rejected.",
+      "implementation": "partial",
+      "missing_implementation": "Disposition path is missing.",
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-315",
+      "approved_behavior": "Weighted average, transfers, counts, and valuation (FR-356–FR-361) **Covers:** FR-356, FR-357, FR-358, FR-359, FR-360, FR-361.  Given receipts at different costs, an issue, transfer, count variance, landed-value adjustment, and active demand reservations When all permitted commands post Then moving average and carrying value follow the specified order with exact rounding And transfers conserve aggregate value, adjustments balance to the GL, and as-of valuation reconciles to movement history without altering quantities for a value-only adjustment.",
+      "implementation": "partial",
+      "missing_implementation": "Landed allocation/correction, oversized count partitioning and lifecycle coverage are incomplete.",
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-316",
+      "approved_behavior": "Balanced and immutable journals (FR-362–FR-366) **Covers:** FR-362, FR-363, FR-364, FR-365, FR-366.  Given mapped source documents and a submitted manual journal When automatic and manual postings run Then every entry has at least two valid posting-account lines and exact equal base debits/credits And source drill-through is complete And direct, unbalanced, self-approved, duplicate, closed-period, and posted-line mutations are rejected.",
+      "implementation": "partial",
+      "missing_implementation": "Disposition journal source is absent.",
+      "evidence": [
+        "supabase/tests/wave3_manual_journal_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-317",
+      "approved_behavior": "Open items and operational accounts (FR-367–FR-369) **Covers:** FR-367, FR-368, FR-369.  Given posted AR/AP items, allocations, and configured cash/bank accounts When an authorized allocation is reversed Then the exact residuals and any exchange effect reopen through linked immutable records And AR/AP control accounts still reconcile And cross-entity or inactive operational account mappings are rejected.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_control_procurement_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-318",
+      "approved_behavior": "Bank import and reconciliation (FR-370–FR-371, NFR-311–NFR-312) **Covers:** FR-370, FR-371.  Given a bounded statement file and posted bank transactions When a user previews, imports, and reconciles one-to-many while another user attempts the same match Then one statement is stored without accounting effects and one match wins under lock And duplicates, malformed exact amounts, out-of-tolerance matches, and unauthorized adjustments are rejected without partial reconciliation.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_bank_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-319",
+      "approved_behavior": "Foreign currency and period control (FR-372–FR-374) **Covers:** FR-372, FR-373, FR-374.  Given foreign open items and an open period moving through soft and hard lock When settlement, revaluation, close, ordinary posting, and an approved MFA-backed reopen are attempted Then realized/unrealized entries are deterministic and reversible And lock rules reject prohibited commands And reopen preserves the prior close event, reason, approval, actor, and version.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_period_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-320",
+      "approved_behavior": "Reconciliation, statements, budgets, and lineage (FR-375–FR-382, NFR-320) **Covers:** FR-375, FR-376, FR-377, FR-378, FR-379, FR-380, FR-381, FR-382.  Given posted subledgers, mapped cash flows, tax lines, an approved budget, and comparative periods When reconciliation and financial/operational reports run Then trial balance, statements, aging, inventory, tax, bank, budget variance, and control-account totals agree exactly for their declared scope and as-of basis And every total drills to immutable source lines within the performance bounds And unmapped cash-flow items and the tax-review notice are visible.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_financial_statements_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Report lineage and bank/party native review are incomplete.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-321",
+      "approved_behavior": "Desktop workspaces and forms (FR-383–FR-385, NFR-314–NFR-315) **Covers:** FR-383, FR-384, FR-385.  Given each Wave 3 workspace is loading, failed, empty, or populated When it renders at every target viewport, theme, density, keyboard path, and 200% text scale Then the correct semantic state appears without unreachable controls or data loss And users can distinguish every draft, lifecycle, approval, posting, and corrective action.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "build/remaining-wave3/desktop-full-20260929.log",
+        "packages/jentra_platform/test/operational_gateway_test.dart",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Complete workspace/form keyboard and visual audit is open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-322",
+      "approved_behavior": "Offline, conflict, and capability safety (FR-386–FR-388, NFR-313) **Covers:** FR-386, FR-387, FR-388.  Given offline, stale-version, view-only, cost-hidden, approver, and poster user states When users edit drafts and invoke commands directly or through the UI Then encrypted drafts survive restart and conflict resolution is explicit And no authoritative command runs offline And UI visibility and database authorization enforce scope, cost, action, MFA, and segregation rules.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "build/remaining-wave3/desktop-full-20260929.log",
+        "packages/jentra_platform/test/operational_gateway_test.dart",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Cross-module encrypted recovery and access audit is open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-323",
+      "approved_behavior": "Lists, dashboards, exports, and recovery (FR-389–FR-390, FR-394–FR-395) **Covers:** FR-389, FR-390, FR-394, FR-395.  Given representative operational volume, filters, retryable failures, and exact financial values When users search, page, refresh, view dashboards, export, and retry Then ordering and cursors remain stable, timestamps/scopes are explicit, and exports preserve exact strings and selected as-of metadata And failed attempts show no success state or partial server effect.",
+      "implementation": "partial",
+      "missing_implementation": "Role dashboard breadth is incomplete.",
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "build/remaining-wave3/desktop-full-20260929.log",
+        "packages/jentra_platform/test/operational_gateway_test.dart",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-324",
+      "approved_behavior": "Files, notifications, and deep links (FR-391–FR-393) **Covers:** FR-391, FR-392, FR-393.  Given permitted and forbidden users, posted documents, event recipients, and aggregate deep links When files are added/read, events occur, and links open under different tenant contexts Then private file rules and append-only posted context hold, configured notifications are created, and links restore permitted context or return a non-disclosing denied/not-found state.",
+      "implementation": "partial",
+      "missing_implementation": "Notification breadth and deep-link restoration remain incomplete.",
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "build/remaining-wave3/desktop-full-20260929.log",
+        "packages/jentra_platform/test/operational_gateway_test.dart",
+        "apps/jentra_desktop/test/operational_detail_visual_test.dart"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-325",
+      "approved_behavior": "Scale, security, and observability (NFR-307–NFR-312, NFR-316) Given representative target-scale data and concurrent critical commands When read, save, post, report, allocation, stock, and reconciliation benchmarks and plans run Then documented p95 and bounded-work targets are met without cross-tenant or unbounded high-volume scans And contention returns stable conflicts without duplicate effects And diagnostics contain correlation data but no prohibited secrets or raw sensitive content.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Target-scale, real contention and observability verification are missing.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "AC-326",
+      "approved_behavior": "Complete Wave 3 release gate (FR-301–FR-395, NFR-301–NFR-320) Given the complete Wave 3 implementation and an isolated database environment When format, analysis, coverage, unit, property, widget, golden, platform, pgTAP, concurrency, end-to-end, advisor, Windows release build, cold-launch, keyboard, and rendered visual checks run Then all executable checks pass with no unresolved security findings And performance evidence meets the documented targets And backend contract, migration-ledger, runtime, and residual external gaps are recorded without deploying to staging or production.",
+      "implementation": "partial",
+      "missing_implementation": "Approved implementation and full release gate remain open.",
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-301",
+      "approved_behavior": "Reused idempotency key with a different command or payload -> return   `IDEMPOTENCY_MISMATCH`; create no new effect.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-302",
+      "approved_behavior": "Expected document version is stale -> return `VERSION_CONFLICT` with current material   fields; preserve the local draft.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-303",
+      "approved_behavior": "Connectivity drops after request send -> a retry returns the original committed result or   a safe retryable error, never a duplicate post.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-304",
+      "approved_behavior": "A sequence, workflow, approval matrix, tax, exchange rate, account, product, party,   warehouse, or period changes after draft creation -> submission/posting revalidates and returns a   field/source-specific error.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-305",
+      "approved_behavior": "Workflow has no matching amount step or has ambiguous active versions -> block submission   with `WORKFLOW_CONFIGURATION_ERROR`.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-306",
+      "approved_behavior": "Submitter, approver, poster, payment releaser, or period reopener violates configured   segregation -> return `SEGREGATION_OF_DUTIES_VIOLATION`.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-307",
+      "approved_behavior": "Server totals differ from client preview after rate/tax/rounding revalidation -> return   recalculated values and require explicit confirmation before posting.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-308",
+      "approved_behavior": "Manual exchange rate is non-positive, wrong-direction, too imprecise, or actor lacks   permission -> reject without changing the draft's prior approved rate.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-309",
+      "approved_behavior": "Quote expires during acceptance or conversion -> lock/recheck prevents conversion and   requires a new revision.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_quotation_workspace_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-310",
+      "approved_behavior": "Credit exposure changes concurrently with order confirmation -> locked recalculation   applies the latest posted/open exposure before approval or rejection.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_order_workspace_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-311",
+      "approved_behavior": "Two orders reserve the last stock concurrently -> at most one reservation succeeds;   neither available balance nor demand may become negative.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_order_workspace_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-312",
+      "approved_behavior": "Delivery references inactive warehouse, insufficient reservation, missing lot/serial,   expired lot, or excess quantity -> reject the entire delivery.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_delivery_receivables_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-313",
+      "approved_behavior": "Direct invoice contains a stocked product that has not been delivered -> reject; direct   invoices in this wave are limited to eligible service and non-stocked products.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_delivery_receivables_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-314",
+      "approved_behavior": "Receipt or payment currency differs from allocated open item -> require a persisted rate   and explicit exchange-difference treatment.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_delivery_receivables_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-315",
+      "approved_behavior": "Allocation amount exceeds either item residual or is applied to another party/entity ->   reject without changing any allocation.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_delivery_receivables_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-316",
+      "approved_behavior": "Return or credit/debit note exceeds original eligible quantity/value or is repeated ->   return `SOURCE_QUANTITY_EXCEEDED` or the original idempotent result.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_delivery_receivables_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-317",
+      "approved_behavior": "Supplier invoice reference duplicates an active/posted bill for that supplier/entity ->   reject unless it is an explicitly linked correction.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_supplier_bills_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-318",
+      "approved_behavior": "Three-way match has missing receipt, price variance, quantity variance, tax mismatch, or   currency mismatch -> record bounded exceptions and block outside-tolerance posting.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_supplier_bills_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-319",
+      "approved_behavior": "Payment proposal contains already settled, soft-locked, foreign-entity, or concurrently   selected items -> remove/reject invalid lines and require a new approval version.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_supplier_settlement_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-320",
+      "approved_behavior": "Product-unit conversion is zero, negative, cyclic, inactive, or changes after document   approval -> reject or require a new document revision.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-321",
+      "approved_behavior": "Stock receipt quantity is positive but value is negative, or issue quantity is negative   under an issue type -> reject sign-inconsistent movement.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-322",
+      "approved_behavior": "Moving-average denominator would become zero -> preserve zero quantity and zero carrying   value, posting any approved residual rounding/variance explicitly.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-323",
+      "approved_behavior": "Negative stock override produces a later receipt -> value the interim issue and subsequent   correction according to the versioned negative-stock policy and expose the variance.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-324",
+      "approved_behavior": "Serial is duplicated, already issued, in transit, disposed, or belongs to another product   or tenant -> reject the entire movement without revealing foreign serial details.",
+      "implementation": "partial",
+      "missing_implementation": "Disposition-side serial uniqueness/reuse path is absent.",
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-325",
+      "approved_behavior": "Transfer source posts but destination step fails -> roll back both sides; an in-transit   transfer exists only when the explicit atomic dispatch command succeeds.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-326",
+      "approved_behavior": "Count occurs while later movements exist -> require a count cutoff/as-of time and apply   variance against that snapshot under lock.",
+      "implementation": "partial",
+      "missing_implementation": "Count cutoff is tested, but oversized partition path is absent.",
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-327",
+      "approved_behavior": "Landed-value allocation basis sums to zero or references consumed/foreign receipt lines ->   reject with line-specific errors.",
+      "implementation": "partial",
+      "missing_implementation": "Multi-line allocation basis and line-specific failure cases remain absent.",
+      "evidence": [
+        "supabase/tests/wave3_stock_counts_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Candidate-level tests cover adjacent behavior; the named implementation gap has no end-to-end proof.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-328",
+      "approved_behavior": "Journal has one line, both debit and credit on a line, no account, non-posting/inactive   account, unequal base totals, or unapproved rounding difference -> reject atomically.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_manual_journal_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-329",
+      "approved_behavior": "Source posting mapping resolves to a foreign entity, inactive account, or account with the   wrong control purpose -> return `ACCOUNT_MAPPING_INVALID`.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-330",
+      "approved_behavior": "A hard lock races with posting -> deterministic locks allow either the posting before   close or close before rejection, never a post inside a closed snapshot.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_period_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-331",
+      "approved_behavior": "Reversal is attempted twice or after an incompatible later correction -> return the first   reversal or `REVERSAL_NOT_ALLOWED` without a second effect.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_operational_foundation_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-332",
+      "approved_behavior": "Bank file is malformed, formula-bearing, encrypted, macro-enabled, duplicate, over 2,000   rows/10 MiB, or contains ambiguous locale dates/amounts -> reject preview/apply safely.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_bank_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-333",
+      "approved_behavior": "Bank statement contains duplicate external identities or identical repeated lines ->   require an explicit duplicate-resolution decision before apply.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_bank_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-334",
+      "approved_behavior": "Two users match the same statement or ledger line -> one match succeeds and the other   receives `MATCH_CONFLICT` with refreshed candidates.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_bank_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Genuine independent-session match race is not verified.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-335",
+      "approved_behavior": "Reconciliation tolerance would create an adjustment without permission/mapping -> keep   unmatched and require a permitted adjustment command.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_bank_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-336",
+      "approved_behavior": "Period close has unreconciled controls, unmapped cash flows, draft postings, or unposted   approved documents -> report blockers and do not hard lock.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_period_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-337",
+      "approved_behavior": "Reopen lacks recent MFA, approval, reason, or capability -> deny without changing period   state or prior close evidence.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_period_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Synthetic strict-rollback regression passed; installed, target-scale and native proof remain open.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-338",
+      "approved_behavior": "As-of report is requested before entity inception, after an unsupported future date, or   across entities/currencies without consolidation -> reject or return an explicit empty scoped   result, never silently combine books.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_financial_statements_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "All report kinds and unsupported cutoff boundaries are not audited.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-339",
+      "approved_behavior": "Report exceeds synchronous bounds -> return `LIMIT_EXCEEDED` with narrowed-filter guidance;   do not silently truncate financial totals.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "All synchronous report bounds and cancellation paths are not audited.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    },
+    {
+      "id": "EC-340",
+      "approved_behavior": "Local encrypted storage is unavailable or full -> retain in-memory draft edits, block   offline persistence, and show `LOCAL_STORAGE_FULL` without attempting an authoritative command.",
+      "implementation": "candidate_present",
+      "missing_implementation": null,
+      "evidence": [
+        "supabase/tests/wave3_report_exports_test.sql",
+        "docs/verification/remaining-wave3/final-procurement-20260929.json",
+        "docs/verification/remaining-wave3/inventory-receivables-20260929.json",
+        "docs/verification/remaining-wave3/inventory-suite-20260929.json"
+      ],
+      "missing_verification": "Full encrypted-store exhaustion/restart behavior is not verified.",
+      "external_acceptance": "Uninstalled development candidates; authenticated native acceptance and owner signoff pending."
+    }
+  ]
+}

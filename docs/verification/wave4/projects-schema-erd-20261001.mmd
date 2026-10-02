@@ -1,0 +1,230 @@
+erDiagram
+    PLANS {
+        UUID id "PK NOT NULL"
+        TEXT terms "NOT NULL"
+        TEXT reason "NOT NULL"
+        TEXT status "NOT NULL"
+        BIGINT version "NOT NULL"
+        UUID tenant_id "FK NOT NULL"
+        UUID project_id "FK NOT NULL"
+        TIMESTAMP WITH TIME ZONE prepared_at "NOT NULL"
+        UUID prepared_by "FK NOT NULL"
+        TEXT basis_digest "NOT NULL"
+        UUID legal_entity_id "FK NOT NULL"
+    }
+    TASKS {
+        UUID id "PK NOT NULL"
+        TEXT name "NOT NULL"
+        UUID plan_id "PK FK NOT NULL"
+        UUID tenant_id "FK NOT NULL"
+        UUID project_id "FK NOT NULL"
+        DATE start_date "NOT NULL"
+        UUID legal_entity_id "FK NOT NULL"
+        BIGINT planned_seconds "NOT NULL"
+        DATE end_date_exclusive "NOT NULL"
+    }
+    REGISTER {
+        UUID id "PK FK NOT NULL"
+        TEXT code "NOT NULL"
+        TEXT name "NOT NULL"
+        TEXT status "NOT NULL"
+        BIGINT version "NOT NULL"
+        UUID branch_id "FK NOT NULL"
+        INTEGER precision "NOT NULL"
+        UUID tenant_id "FK NOT NULL"
+        TIMESTAMP WITH TIME ZONE created_at "NOT NULL"
+        UUID created_by "FK NOT NULL"
+        UUID manager_id "FK NOT NULL"
+        DATE start_date "NOT NULL"
+        UUID customer_id "FK"
+        TEXT currency_code "FK NOT NULL"
+        UUID current_plan_id "FK"
+        UUID legal_entity_id "FK NOT NULL"
+        DATE end_date_exclusive "NOT NULL"
+    }
+    COST_BASIS {
+        NUMERIC(20,6) budget "NOT NULL"
+        UUID plan_id "PK FK NOT NULL"
+        UUID tenant_id "FK NOT NULL"
+        UUID project_id "FK NOT NULL"
+        UUID legal_entity_id "FK NOT NULL"
+    }
+    TIME_COSTS {
+        NUMERIC(20,6) amount "NOT NULL"
+        UUID entry_id "FK NOT NULL"
+        UUID tenant_id "FK NOT NULL"
+        UUID project_id "FK NOT NULL"
+        NUMERIC(20,6) hourly_rate "NOT NULL"
+        UUID revision_id "PK FK NOT NULL"
+        UUID legal_entity_id "FK NOT NULL"
+    }
+    TIME_EVENTS {
+        UUID id "PK NOT NULL"
+        TEXT action "NOT NULL"
+        TEXT reason "NOT NULL"
+        BIGINT version "NOT NULL"
+        UUID actor_id "FK NOT NULL"
+        UUID entry_id "FK NOT NULL"
+        UUID tenant_id "FK NOT NULL"
+        UUID command_id "NOT NULL"
+        UUID project_id "FK NOT NULL"
+        TIMESTAMP WITH TIME ZONE recorded_at "NOT NULL"
+        UUID revision_id "FK NOT NULL"
+        UUID legal_entity_id "FK NOT NULL"
+    }
+    DEPENDENCIES {
+        UUID plan_id "PK FK NOT NULL"
+        UUID task_id "PK FK NOT NULL"
+        UUID tenant_id "FK NOT NULL"
+        UUID project_id "FK NOT NULL"
+        UUID legal_entity_id "FK NOT NULL"
+        UUID prerequisite_id "PK FK NOT NULL"
+    }
+    TIME_ENTRIES {
+        UUID id "PK FK NOT NULL"
+        TEXT status "NOT NULL"
+        BIGINT version "NOT NULL"
+        UUID branch_id "FK NOT NULL"
+        UUID tenant_id "FK NOT NULL"
+        TIMESTAMP WITH TIME ZONE created_at "NOT NULL"
+        UUID created_by "FK NOT NULL"
+        UUID project_id "FK NOT NULL"
+        UUID employee_id "FK NOT NULL"
+        UUID submitted_by "FK"
+        UUID legal_entity_id "FK NOT NULL"
+        UUID current_revision_id "FK NOT NULL"
+    }
+    TASK_PROGRESS {
+        UUID id "PK NOT NULL"
+        TEXT reason "NOT NULL"
+        UUID plan_id "FK NOT NULL"
+        UUID task_id "FK NOT NULL"
+        INTEGER progress "NOT NULL"
+        UUID tenant_id "FK NOT NULL"
+        UUID project_id "FK NOT NULL"
+        TIMESTAMP WITH TIME ZONE recorded_at "NOT NULL"
+        UUID recorded_by "FK NOT NULL"
+        UUID legal_entity_id "FK NOT NULL"
+        BIGINT project_version "NOT NULL"
+    }
+    BILLABLE_UNITS {
+        UUID id "PK NOT NULL"
+        NUMERIC(20,6) amount "NOT NULL"
+        TEXT status "NOT NULL"
+        UUID branch_id "FK NOT NULL"
+        UUID source_id "NOT NULL"
+        UUID tenant_id "FK NOT NULL"
+        UUID project_id "FK NOT NULL"
+        TEXT source_kind "NOT NULL"
+        TEXT source_digest "NOT NULL"
+        BIGINT source_version "NOT NULL"
+        UUID legal_entity_id "FK NOT NULL"
+        BIGINT payable_seconds
+    }
+    PLAN_DECISIONS {
+        UUID id "PK NOT NULL"
+        TEXT digest "NOT NULL"
+        TEXT reason "NOT NULL"
+        UUID plan_id "FK NOT NULL"
+        TEXT decision "NOT NULL"
+        UUID tenant_id "FK NOT NULL"
+        TIMESTAMP WITH TIME ZONE decided_at "NOT NULL"
+        UUID decided_by "FK NOT NULL"
+        UUID project_id "FK NOT NULL"
+        UUID legal_entity_id "FK NOT NULL"
+    }
+    RESOURCE_COSTS {
+        UUID plan_id "FK NOT NULL"
+        UUID tenant_id "FK NOT NULL"
+        UUID project_id "FK NOT NULL"
+        NUMERIC(20,6) hourly_rate "NOT NULL"
+        UUID legal_entity_id "FK NOT NULL"
+        UUID resource_slot_id "PK FK NOT NULL"
+    }
+    RESOURCE_SLOTS {
+        UUID id "PK NOT NULL"
+        BOOLEAN active "NOT NULL"
+        TIMESTAMP WITH TIME ZONE end_utc "NOT NULL"
+        UUID plan_id "FK NOT NULL"
+        UUID task_id "FK NOT NULL"
+        NUMERIC(20,6) bill_rate "NOT NULL"
+        TIMESTAMP WITHOUT TIME ZONE end_local "NOT NULL"
+        TIMESTAMP WITH TIME ZONE start_utc "NOT NULL"
+        UUID tenant_id "FK NOT NULL"
+        UUID project_id "FK NOT NULL"
+        UUID employee_id "FK NOT NULL"
+        TIMESTAMP WITHOUT TIME ZONE start_local "NOT NULL"
+        UUID legal_entity_id "FK NOT NULL"
+        BIGINT planned_seconds "NOT NULL"
+        INTEGER end_offset_seconds "NOT NULL"
+        UUID calendar_version_id "FK NOT NULL"
+        INTEGER start_offset_seconds "NOT NULL"
+    }
+    TIME_REVISIONS {
+        UUID id "PK NOT NULL"
+        JSONB breaks "NOT NULL"
+        TEXT digest "NOT NULL"
+        TEXT reason "NOT NULL"
+        TIMESTAMP WITH TIME ZONE end_utc "NOT NULL"
+        UUID plan_id "FK NOT NULL"
+        UUID task_id "FK NOT NULL"
+        BIGINT version "NOT NULL"
+        UUID entry_id "FK NOT NULL"
+        TIMESTAMP WITHOUT TIME ZONE end_local "NOT NULL"
+        TIMESTAMP WITH TIME ZONE start_utc "NOT NULL"
+        UUID tenant_id "FK NOT NULL"
+        UUID project_id "FK NOT NULL"
+        NUMERIC(20,6) bill_amount "NOT NULL"
+        TIMESTAMP WITH TIME ZONE recorded_at "NOT NULL"
+        UUID recorded_by "FK NOT NULL"
+        TIMESTAMP WITHOUT TIME ZONE start_local "NOT NULL"
+        UUID supersedes_id "FK"
+        UUID legal_entity_id "FK NOT NULL"
+        BIGINT payable_seconds "NOT NULL"
+        UUID resource_slot_id "FK NOT NULL"
+        INTEGER end_offset_seconds "NOT NULL"
+        UUID attendance_claim_id "FK"
+        INTEGER start_offset_seconds "NOT NULL"
+    }
+    UNIT_DECISIONS {
+        UUID id "PK NOT NULL"
+        TEXT reason "NOT NULL"
+        UUID unit_id "FK NOT NULL"
+        UUID actor_id "FK NOT NULL"
+        TEXT decision "NOT NULL"
+        UUID tenant_id "FK NOT NULL"
+        UUID project_id "FK NOT NULL"
+        TIMESTAMP WITH TIME ZONE recorded_at "NOT NULL"
+        UUID legal_entity_id "FK NOT NULL"
+    }
+    TIME_ALLOCATIONS {
+        UUID id "PK NOT NULL"
+        UUID claim_id "FK NOT NULL"
+        UUID entry_id "FK NOT NULL"
+        UUID tenant_id "FK NOT NULL"
+        UUID project_id "FK NOT NULL"
+        UUID revision_id "FK NOT NULL"
+        BOOLEAN direct_claim "NOT NULL"
+        UUID allocation_id "FK NOT NULL"
+        UUID legal_entity_id "FK NOT NULL"
+    }
+    BILLABLE_UNITS ||--o{ UNIT_DECISIONS : has
+    PLANS ||--o{ COST_BASIS : has
+    PLANS ||--o{ PLAN_DECISIONS : has
+    PLANS ||--o{ REGISTER : has
+    PLANS ||--o{ TASKS : has
+    REGISTER ||--o{ BILLABLE_UNITS : has
+    REGISTER ||--o{ PLANS : has
+    REGISTER ||--o{ TIME_ENTRIES : has
+    RESOURCE_SLOTS ||--o{ RESOURCE_COSTS : has
+    RESOURCE_SLOTS ||--o{ TIME_REVISIONS : has
+    TASKS ||--o{ DEPENDENCIES : has
+    TASKS ||--o{ RESOURCE_SLOTS : has
+    TASKS ||--o{ TASK_PROGRESS : has
+    TASKS ||--o{ TIME_REVISIONS : has
+    TIME_ENTRIES ||--o{ TIME_REVISIONS : has
+    TIME_REVISIONS ||--o{ TIME_ALLOCATIONS : has
+    TIME_REVISIONS ||--o{ TIME_COSTS : has
+    TIME_REVISIONS ||--o{ TIME_ENTRIES : has
+    TIME_REVISIONS ||--o{ TIME_EVENTS : has
+    TIME_REVISIONS ||--o{ TIME_REVISIONS : has

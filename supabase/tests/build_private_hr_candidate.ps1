@@ -3,7 +3,7 @@ param([switch]$Installed)
 $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path $PSScriptRoot -Parent
 $taskMigration = if ($Installed) { '' } else {
-  Get-Content -LiteralPath (Join-Path $taskRoot 'migrations/20260926185432_wave4_private_hr.sql') -Raw
+  Get-Content -LiteralPath (Join-Path $taskRoot 'migrations/20260929224939_wave4_private_hr.sql') -Raw
 }
 $taskFixture = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_synthetic_fixture.sql') -Raw
 $taskTests = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_private_hr_test.sql') -Raw

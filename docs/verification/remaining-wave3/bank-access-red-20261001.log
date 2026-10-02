@@ -1,0 +1,244 @@
+Resolving dependencies in `C:\Users\sheha\Desktop\Jentra OS`...
+Downloading packages...
+  _fe_analyzer_shared 99.0.0 (108.0.0 available)
+  analyzer 12.1.0 (14.4.0 available)
+  archive 4.2.0 (4.3.0 available)
+  build 4.0.7 (4.0.11 available)
+  build_config 1.3.2 (1.3.3 available)
+  build_daemon 4.1.5 (4.1.6 available)
+  build_runner 2.15.1 (2.16.1 available)
+  built_collection 5.1.1 (5.1.2 available)
+  built_value 8.12.7 (8.13.0 available)
+  cli_util 0.4.2 (0.6.0 available)
+  clock 1.1.2 (1.1.3 available)
+  code_assets 1.2.1 (2.1.0 available)
+  cross_file 0.3.5+5 (0.4.0 available)
+  dart_style 3.1.8 (3.1.13 available)
+  dbus 0.7.15 (0.8.0 available)
+  drift 2.34.3 (2.35.1 available)
+  drift_dev 2.34.0 (2.35.1 available)
+  file_selector_android 0.5.2+10 (0.5.2+11 available)
+  flutter_riverpod 3.4.2 (3.4.3 available)
+  flutter_secure_storage 11.0.0 (11.2.0 available)
+  flutter_secure_storage_darwin 0.4.0 (0.4.3 available)
+  flutter_secure_storage_linux 3.0.2 (3.0.3 available)
+  flutter_secure_storage_platform_interface 2.0.3 (2.1.1 available)
+  go_router 17.5.0 (18.0.2 available)
+  hooks 2.0.2 (2.2.0 available)
+  jni 1.0.3 (1.1.0 available)
+  jni_flutter 1.0.2 (1.0.4 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  material_ui 1.4.0 (1.5.0 available)
+  native_toolchain_c 0.19.2 (0.19.5 available)
+  nm 0.5.0 (0.6.0 available)
+  objective_c 9.5.0 (9.6.2 available)
+  package_config 2.2.0 (3.0.0 available)
+  passkeys_platform_interface 2.9.0 (2.10.0 available)
+  petitparser 7.0.2 (7.1.0 available)
+  platform 3.1.6 (3.2.0 available)
+  record_use 0.6.0 (1.1.1 available)
+  riverpod 3.4.2 (3.4.3 available)
+  source_gen 4.2.4 (4.3.0 available)
+  sqlite3 3.5.2 (3.7.0 available)
+  sqlparser 0.44.5 (0.45.0 available)
+  stack_trace 1.12.1 (1.12.2 available)
+  storage_client 2.8.0 (2.8.1 available)
+  supabase 2.16.1 (2.16.2 available)
+  supabase_flutter 2.17.2 (2.18.0 available)
+  test 1.31.1 (1.32.0 available)
+  test_api 0.7.12 (0.7.14 available)
+  test_core 0.6.18 (0.6.20 available)
+  xml 7.0.1 (7.1.0 available)
+Got dependencies in `C:\Users\sheha\Desktop\Jentra OS`!
+49 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart
+00:00 +0: disconnect hides verified bank evidence and reconnect requires fresh verification
+00:00 +0 -1: disconnect hides verified bank evidence and reconnect requires fresh verification [E]
+  Expected: <false>
+    Actual: <true>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\bank_access_interaction_test.dart 143:5        main.<fn>
+  
+00:00 +0 -1: obsolete bank source reply after disconnect is discarded
+00:00 +0 -2: obsolete bank source reply after disconnect is discarded [E]
+  Expected: empty
+    Actual: {
+              'accounts': [
+                {
+                  'id': 'bank',
+                  'code': 'MAIN',
+                  'name': 'Operating bank',
+                  'currency_code': 'LKR',
+                  'version': 7,
+                  'reconciliation_rules': {'tolerance': '0.000001'}
+                }
+              ],
+              'statements': [
+                {
+                  'id': 'statement',
+                  'identity': 'STMT-1',
+                  'row_count': 1,
+                  'start_date': '2026-09-21',
+                  'end_date': '2026-09-21',
+                  'opening': '0',
+                  'total': '-0.000001',
+                  'closing': '-0.000001'
+                }
+              ],
+              'statement_lines': [{'id': 'private-late', 'amount': '9007199254.740993'}],
+              'journal_lines': [
+                {
+                  'id': 'j1',
+                  'document_number': 'REC-001',
+                  'posting_date': '2026-09-21',
+                  'source_type': 'customer_receipt',
+                  'amount': '9007199254.740993'
+                }
+              ],
+              'matches': [
+                {
+                  'id': 'match',
+                  'posting_date': '2026-09-21',
+                  'statement_total': '100.000000',
+                  'difference': '0.000000',
+                  'currency_code': 'LKR',
+                  'reason': 'Customer deposit',
+                  'statement_line_ids': ['s1'],
+                  'journal_line_ids': ['j1']
+                }
+              ],
+              'offset_accounts': [{'id': 'offset', 'code': '6200', 'name': 'Bank fee expense'}],
+              'rates': [
+                {
+                  'id': 'rate',
+                  'source_currency_code': 'USD',
+                  'target_currency_code': 'LKR',
+                  'rate': '301.000001',
+                  'effective_date': '2026-09-21'
+                }
+              ]
+            }
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\bank_access_interaction_test.dart 168:5        main.<fn>
+  
+00:00 +0 -2: PERMISSION_DENIED clears bank evidence and fresh verification restores input draft
+00:00 +1 -2: ACCESS_DENIED clears bank evidence and fresh verification restores input draft
+00:00 +1 -3: ACCESS_DENIED clears bank evidence and fresh verification restores input draft [E]
+  Expected: <true>
+    Actual: <false>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\bank_access_interaction_test.dart 183:9        main.<fn>
+  
+00:00 +1 -3: MFA_REQUIRED clears bank evidence and fresh verification restores input draft
+00:00 +1 -4: MFA_REQUIRED clears bank evidence and fresh verification restores input draft [E]
+  Expected: <true>
+    Actual: <false>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\bank_access_interaction_test.dart 183:9        main.<fn>
+  
+00:00 +1 -4: AUTHENTICATION_REQUIRED clears bank evidence and fresh verification restores input draft
+00:00 +1 -5: AUTHENTICATION_REQUIRED clears bank evidence and fresh verification restores input draft [E]
+  Expected: <true>
+    Actual: <false>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\bank_access_interaction_test.dart 183:9        main.<fn>
+  
+00:00 +1 -5: obsolete denial cannot erase recovery inputs after connectivity change
+00:00 +1 -6: obsolete denial cannot erase recovery inputs after connectivity change [E]
+  Expected: <false>
+    Actual: <true>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\bank_access_interaction_test.dart 219:7        main.<fn>
+  
+00:00 +1 -6: confirmed original match after disconnect clears sealed request without rehydrating sources
+00:01 +1 -7: confirmed original match after disconnect clears sealed request without rehydrating sources [E]
+  Expected: <false>
+    Actual: <true>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\bank_access_interaction_test.dart 237:5        main.<fn>
+  
+00:01 +1 -7: exact rules use current bank optimistic version and omit selected source evidence
+00:01 +2 -7: statement input is balanced with exact micro-unit and preserves sealed import identity
+00:01 +3 -7: invalid-date rejects before sealing or executing
+00:01 +4 -7: future rejects before sealing or executing
+00:01 +5 -7: range rejects before sealing or executing
+00:01 +6 -7: identity rejects before sealing or executing
+00:01 +7 -7: balance-format rejects before sealing or executing
+00:01 +8 -7: out-of-range rejects before sealing or executing
+00:01 +9 -7: many-to-many rejects before sealing or executing
+00:01 +10 -7: missing-reason rejects before sealing or executing
+00:01 +11 -7: missing-match rejects before sealing or executing
+00:01 +12 -7: invalid-tolerance rejects before sealing or executing
+00:01 +13 -7: bank rules and matching confirmation cancel and exact scoped confirm
+
+Warning: A call to tap() with finder "Found 1 widget with text "Reverse match": [
+  Text("Reverse match", dependencies: [DefaultSelectionStyle, DefaultTextStyle, MediaQuery, _ScrollableScope]),
+]" derived an Offset (Offset(143.7, 1136.0)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+Indeed, Offset(143.7, 1136.0) is outside the bounds of the root of the render tree, Size(1600.0, 1100.0).
+The finder corresponds to this RenderBox: RenderParagraph#ed5f8 relayoutBoundary=up25
+The hit test result at that offset is: HitTestResult(HitTestEntry<HitTestTarget>#9b685(_ReusableRenderView#1bfbc), HitTestEntry<HitTestTarget>#d2bd5(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2165:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.<anonymous closure>.tap (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/bank_access_interaction_test.dart:376:22)
+<asynchronous suspension>
+#4      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/bank_access_interaction_test.dart:403:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+#7      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Reverse this match?": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/bank_access_interaction_test.dart:404:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/bank_access_interaction_test.dart line 404
+The test description was:
+  bank rules and matching confirmation cancel and exact scoped confirm
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:17 +13 -8: bank rules and matching confirmation cancel and exact scoped confirm [E]
+  Test failed. See exception logs above.
+  The test description was: bank rules and matching confirmation cancel and exact scoped confirm
+  
+00:18 +13 -8: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: ACCESS_DENIED clears bank evidence and fresh verification restores input draft
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: AUTHENTICATION_REQUIRED clears bank evidence and fresh verification restores input draft
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: MFA_REQUIRED clears bank evidence and fresh verification restores input draft
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: bank rules and matching confirmation cancel and exact scoped confirm
+  ... and 4 more

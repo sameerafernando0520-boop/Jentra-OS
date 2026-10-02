@@ -1,0 +1,30 @@
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/report_stale_denial_test.dart
+test/report_stale_denial_test.dart:93:81: Error: No named parameter with the name 'capabilities'.
+      final c=BudgetController(scope:scope,gateway:g,drafts:drafts,online:true, capabilities: const {'finance.view','finance.budgets.manage','finance.budgets.view'});
+                                                                                ^^^^^^^^^^^^
+lib/src/features/budgets/budget_controller.dart:44:3: Context: Found this candidate, but the arguments don't match.
+  BudgetController({
+  ^^^^^^^^^^^^^^^^
+test/report_stale_denial_test.dart:111:50: Error: The getter 'verified' isn't defined for the type 'InventoryValuationController'.
+ - 'InventoryValuationController' is from 'package:jentra_desktop/src/features/inventory_valuation/inventory_valuation_controller.dart' ('lib/src/features/inventory_valuation/inventory_valuation_controller.dart').
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'verified'.
+        expect(c.accessDenied,isFalse); expect(c.verified,isFalse); expect(c.error,isNull);
+                                                 ^^^^^^^^
+00:00 +0 -1: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/report_stale_denial_test.dart [E]
+  Failed to load "C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/report_stale_denial_test.dart":
+  Compilation failed for testPath=C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/report_stale_denial_test.dart: test/report_stale_denial_test.dart:93:81: Error: No named parameter with the name 'capabilities'.
+        final c=BudgetController(scope:scope,gateway:g,drafts:drafts,online:true, capabilities: const {'finance.view','finance.budgets.manage','finance.budgets.view'});
+                                                                                  ^^^^^^^^^^^^
+  lib/src/features/budgets/budget_controller.dart:44:3: Context: Found this candidate, but the arguments don't match.
+    BudgetController({
+    ^^^^^^^^^^^^^^^^
+  test/report_stale_denial_test.dart:111:50: Error: The getter 'verified' isn't defined for the type 'InventoryValuationController'.
+   - 'InventoryValuationController' is from 'package:jentra_desktop/src/features/inventory_valuation/inventory_valuation_controller.dart' ('lib/src/features/inventory_valuation/inventory_valuation_controller.dart').
+  Try correcting the name to the name of an existing getter, or defining a getter or field named 'verified'.
+          expect(c.accessDenied,isFalse); expect(c.verified,isFalse); expect(c.error,isNull);
+                                                   ^^^^^^^^
+  .
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/report_stale_denial_test.dart: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/report_stale_denial_test.dart

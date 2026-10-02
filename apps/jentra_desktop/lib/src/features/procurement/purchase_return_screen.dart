@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+
+import '../operations/access_changed.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../app_providers.dart';
 import 'purchase_return_controller.dart';
 
@@ -36,6 +40,12 @@ class PurchaseReturnWorkspace extends StatelessWidget {
     listenable: controller,
     builder: (context, _) {
       final c = controller, f = controller.form;
+      if (c.accessDenied) {
+        return OperationalAccessChanged(
+          retry: c.initialize,
+          enabled: c.online && !c.busy,
+        );
+      }
       return SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(

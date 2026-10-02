@@ -1,0 +1,71 @@
+{
+  "schema": "agent-harness/plan.v1",
+  "goal": "Finish approved Jentra OS Wave 3 development and reviews, then obtain and execute only specifically approved installation and native acceptance gates. Completion requires current requirement evidence and owner signoff; preparation or candidate rollback alone cannot close this goal.",
+  "domain": "engineering",
+  "goal_complete": false,
+  "owner": "Jentra OS human owner",
+  "loop": {"max_loop_iterations": 12},
+  "authorization": {
+    "source_development_and_offline_verification": true,
+    "candidate_strict_rollback_verification": true,
+    "persistent_installation": false,
+    "production": false,
+    "authentication_changes": false,
+    "acceptance_executable": false,
+    "acceptance_records_sequences_credentials": false
+  },
+  "no_touch": [
+    "Git index, commits and remotes: no stage, commit, push, reset, clean or stash",
+    "Concurrent Wave 4 and Wave 5 files owned by other work",
+    "Stock-opening acceptance executable, records, sequences and Credential Manager stores",
+    "Installed migration bodies, production and authentication"
+  ],
+  "tasks": [
+    {
+      "id": "T1",
+      "skill": "agent-harness:agent-harness",
+      "objective": "Verify the offline isolated-target preparation guards and record a source-bound independent review, including any remaining defects without claiming installation or acceptance.",
+      "max_attempts": 3,
+      "verification": [
+        {"cmd": "\"C:\\Program Files\\nodejs\\node.exe\" --test --test-isolation=none tools/wave3/target-verification-preparation.test.mjs tools/wave3/target_review_guards.test.mjs tools/wave3/target_review_aging.test.mjs", "expect_exit": 0, "kind": "offline-test"},
+        {"cmd": "\"C:\\Program Files\\nodejs\\node.exe\" tools/wave3/run-independent-sessions.mjs --self-test", "expect_exit": 0, "kind": "offline-session-guards"},
+        {"cmd": "\"C:\\Program Files\\nodejs\\node.exe\" tools/wave3/run-target-load.mjs --self-test", "expect_exit": 0, "kind": "offline-load-guards"},
+        {"cmd": "\"C:\\Program Files\\nodejs\\node.exe\" tools/wave3/target_review_verify.mjs", "expect_exit": 0, "kind": "source-integrity"}
+      ]
+    },
+    {
+      "id": "T2",
+      "skill": "engineering-suite-build:code-review",
+      "objective": "Complete current approved development and reviews across all 181 Wave 3 FR/AC/EC/NFR IDs; resolve execution-tool findings, approved negative-stock policy development, coverage, analyzers and approved-golden differences. Produce current source-matched Windows compile and accurate unresolved external gates.",
+      "max_attempts": 3,
+      "verification": [
+        {"kind": "manual-evidence", "required": "Current 181-ID requirement matrix, confirmed development gaps resolved, exact owner-provided negative-stock policy decision and its implementation evidence; no invented policy or owner waiver."},
+        {"kind": "manual-evidence", "required": "Current source-bound tests/analyzers, pure-domain branch coverage >=90%, changed overall code coverage preserving the project 80% target, approved-golden differences investigated and resolved without rebaseline, rendered required-size/200% desktop evidence and isolated release compilation."},
+        {"kind": "manual-evidence", "required": "Target tool execution guards reviewed and defects resolved; additive migration dependency order, compatibility warnings, rollback and concrete acceptance procedure are reviewable."}
+      ]
+    },
+    {
+      "id": "T3",
+      "skill": "engineering-advanced-skills:migration-architect",
+      "objective": "After specific owner approval, install only the reviewed dependency-ordered candidates into an exact approved isolated development target; verify installed security/rollback, two independent signed sessions, population-bound query plans and measured p95 workloads.",
+      "max_attempts": 3,
+      "verification": [
+        {"kind": "manual-evidence", "required": "Explicit human approval identifies isolated project/resources, 45 reviewed candidate hashes in ordinal order, eight compatibility warning acceptances, restore point/window, actors/scopes/fixture budget and allowed sequences; no approval inferred from silence."},
+        {"kind": "manual-evidence", "required": "Fresh actual installed ledger, API/grant/RLS/shared-helper fingerprints and strict finish(true)/final-rollback installed synthetic checks, separately labelled from candidate-only evidence."},
+        {"kind": "manual-evidence", "required": "Two existing authenticated actors and distinct session IDs; concrete race RPC/payload classes, retained command and response hashes, actual concurrent-session outcomes and relational/immutable invariants. Client overlap alone is not database-lock-overlap proof."},
+        {"kind": "manual-evidence", "required": "Measured NFR-309 counts/distribution/resources, representative populated EXPLAIN plans, raw samples and all NFR-307/308/320 p95 classes with stated sample count/warmup; synthetic timings remain separate."}
+      ]
+    },
+    {
+      "id": "T4",
+      "skill": "engineering-suite-build:code-review",
+      "objective": "After separate specific native approval, verify an isolated Windows copy with a fresh approved test profile and actor; obtain owner signoff only when all required implementation, installation and acceptance evidence is complete.",
+      "max_attempts": 3,
+      "verification": [
+        {"kind": "manual-evidence", "required": "Native approval identifies copy/source/bundle hashes, test profile, existing actor/capabilities, permitted new credential entries, tenant/entity/branch, synthetic record/sequence and Storage prefix boundaries. Never launch acceptance-owned executable."},
+        {"kind": "manual-evidence", "required": "Real cold-launch, authenticated command/file/export flows, offline/revocation/process-restart exact recovery, keyboard/focus/screen reader/reduced motion, required sizes/themes/densities and 200% text screenshots; widget previews are not native acceptance."},
+        {"kind": "manual-evidence", "required": "Owner signoff and current completion matrix: every required development, installed verification and native gate complete. No waivers or fully-complete claim without direct human authority."}
+      ]
+    }
+  ]
+}

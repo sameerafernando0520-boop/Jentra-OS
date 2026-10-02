@@ -33,6 +33,27 @@ final class SupabasePeriodFxGateway implements PeriodFxGateway {
     : transport = SupabaseControlReconciliationGateway(client);
   final SupabaseControlReconciliationGateway transport;
 
+  Future<Map<String, Object?>> _read(
+    String rpc,
+    TenantContext scope,
+    Map<String, Object?> params,
+  ) async {
+    void requireActor() {
+      if (transport.client.auth.currentUser?.id != scope.actorId) {
+        throw const DomainError(
+          code: 'AUTHENTICATION_REQUIRED',
+          message:
+              'Restore your authenticated session, then verify period and FX access.',
+        );
+      }
+    }
+
+    requireActor();
+    final result = await transport.call(rpc, scope, params);
+    requireActor();
+    return result;
+  }
+
   void _scope(Map row, TenantContext scope) {
     if (row['tenant_id'] != scope.tenantId ||
         row['legal_entity_id'] != scope.legalEntityId ||
@@ -76,7 +97,7 @@ final class SupabasePeriodFxGateway implements PeriodFxGateway {
     if (!const ['periods', 'events', 'reopen_requests'].contains(resource)) {
       throw const FormatException('Unknown period resource.');
     }
-    final row = await transport.call('period_governance_options', scope, {
+    final row = await _read('period_governance_options', scope, {
       'p_resource': resource,
       'p_period_id': periodId,
       'p_after': after,
@@ -97,7 +118,7 @@ final class SupabasePeriodFxGateway implements PeriodFxGateway {
     if (!const ['rates', 'runs'].contains(resource)) {
       throw const FormatException('Unknown FX resource.');
     }
-    final row = await transport.call('exchange_revaluation_options', scope, {
+    final row = await _read('exchange_revaluation_options', scope, {
       'p_resource': resource,
       'p_after': after,
     });
@@ -125,7 +146,7 @@ final class SupabasePeriodFxGateway implements PeriodFxGateway {
     if (offset < 0 || offset > 1000) {
       throw const FormatException('Invalid FX detail offset.');
     }
-    final row = await transport.call('exchange_revaluation_detail', scope, {
+    final row = await _read('exchange_revaluation_detail', scope, {
       'p_run_id': runId,
       'p_offset': offset,
     });

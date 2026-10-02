@@ -1,10 +1,14 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_inventory.dart';
 import 'package:jentra_platform/jentra_inventory_platform.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../app_providers.dart';
+import '../operations/operational_read_access.dart';
+import '../operations/inventory_recovery_inputs.dart';
 
 final inventoryTransferGatewayProvider = Provider<InventoryTransferGateway?>(
   (ref) => null,
@@ -41,7 +45,8 @@ final inventoryTransferControllerProvider =
       return c;
     });
 
-final class InventoryTransferController extends ChangeNotifier {
+final class InventoryTransferController extends ChangeNotifier
+    implements OperationalReadAccess {
   InventoryTransferController({
     required this.scope,
     required this.gateway,
@@ -53,7 +58,32 @@ final class InventoryTransferController extends ChangeNotifier {
   // Reuses the existing encrypted envelope store in a unique slot. No shared store change.
   final QuotationDraftStore drafts;
   static const slot = 'inventory-transfer-editor';
-  bool online, busy = false, _disposed = false;
+  bool online, busy = false, _disposed = false, accessDenied = false;
+  int _epoch = 0, _operationEpoch = 0;
+  @override
+  int get readAccessEpoch => _epoch;
+  @override
+  bool currentRead(int value) =>
+      !_disposed && online && !accessDenied && value == _epoch;
+  @override
+  void denyReadAccess() {
+    if (_disposed) return;
+    accessDenied = true;
+    _epoch++;
+    clearServer();
+    emit();
+  }
+
+  bool get currentServer => !_disposed && online && _operationEpoch == _epoch;
+  void clearServer() {
+    items = [];
+    holdings = [];
+    cursor = null;
+    holdingsCursor = null;
+    loadedHoldingsDate = null;
+    if (form != null) form = inventoryRecoveryInputs(form!);
+  }
+
   String? error, message, cursor;
   Map<String, Object?>? form;
   QuotationLocalDraft? local;
@@ -76,7 +106,7 @@ final class InventoryTransferController extends ChangeNotifier {
       date,
       after: more ? holdingsCursor : null,
     );
-    if (_disposed) return;
+    if (!currentServer) return;
     holdings = [
       if (more) ...holdings,
       for (final raw in result['items'] as List)
@@ -85,7 +115,8 @@ final class InventoryTransferController extends ChangeNotifier {
     holdingsCursor = result['next_cursor'] as String?;
     loadedHoldingsDate = date;
   });
-  bool get locked => busy || _disposed || local?.pending != null;
+  bool get locked =>
+      busy || _disposed || accessDenied || local?.pending != null;
   void emit() {
     if (!_disposed) notifyListeners();
   }
@@ -93,11 +124,19 @@ final class InventoryTransferController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _epoch++;
+    clearServer();
+    form = null;
+    notifyListeners();
     super.dispose();
   }
 
   void setOnline(bool value) {
-    online = value;
+    if (online != value) {
+      online = value;
+      _epoch++;
+      clearServer();
+    }
     emit();
   }
 
@@ -105,10 +144,24 @@ final class InventoryTransferController extends ChangeNotifier {
     if (busy || _disposed) return;
     busy = true;
     error = null;
+    _operationEpoch = _epoch;
     emit();
     try {
       await action();
     } catch (e) {
+      if (!_disposed &&
+          _operationEpoch == _epoch &&
+          e is DomainError &&
+          const {
+            'PERMISSION_DENIED',
+            'ACCESS_DENIED',
+            'MFA_REQUIRED',
+            'AUTHENTICATION_REQUIRED',
+          }.contains(e.code)) {
+        accessDenied = true;
+        _epoch++;
+        clearServer();
+      }
       error = e is DomainError
           ? e.message
           : e is FormatException
@@ -123,18 +176,19 @@ final class InventoryTransferController extends ChangeNotifier {
   Future<void> initialize() => run(() async {
     local = await drafts.load(scope, slot);
     if (_disposed) return;
-    form = local?.form;
+    form = local == null ? null : inventoryRecoveryInputs(local!.form);
     if (online) await _refresh();
   });
   Future<void> _refresh({bool more = false}) async {
     final result = await gateway.page(scope, after: more ? cursor : null);
-    if (_disposed) return;
+    if (!currentServer) return;
     items = [
       if (more) ...items,
       for (final x in result['items'] as List)
         (x as Map).cast<String, Object?>(),
     ];
     cursor = result['next_cursor'] as String?;
+    accessDenied = false;
   }
 
   Future<void> refresh({bool more = false}) => run(() async {
@@ -159,7 +213,7 @@ final class InventoryTransferController extends ChangeNotifier {
       run(() async {
         if (form != null || !['receive', 'reverse'].contains(operation)) return;
         form = {
-          ...transfer,
+          ...inventoryRecoveryInputs(transfer),
           'operation': operation,
           'document_date': DateTime.now().toUtc().toIso8601String().substring(
             0,
@@ -174,7 +228,7 @@ final class InventoryTransferController extends ChangeNotifier {
     await drafts.save(
       scope,
       slot,
-      form!,
+      inventoryRecoveryInputs(form!),
       expectedVersion: form!['version'] as int?,
     );
     local = await drafts.load(scope, slot);
@@ -235,7 +289,7 @@ final class InventoryTransferController extends ChangeNotifier {
     local = null;
   });
   Future<void> submit() => run(() async {
-    if (!online || form == null) return;
+    if (!currentServer || accessDenied || form == null) return;
     var pending = local?.pending;
     if (pending == null) {
       final f = form!;
@@ -320,6 +374,7 @@ final class InventoryTransferController extends ChangeNotifier {
       );
       local = await drafts.load(scope, slot);
     }
+    if (!currentServer || accessDenied) return;
     try {
       await gateway.execute(pending.envelope);
       await drafts.complete(scope, slot, pending.envelope.commandId);
@@ -337,11 +392,11 @@ final class InventoryTransferController extends ChangeNotifier {
     form = null;
     local = null;
     message = 'Transfer action posted. Movement history is retained.';
+    if (!currentServer) return;
     try {
       await _refresh();
     } catch (_) {
-      error =
-          'Posted successfully. Refresh the register when the connection returns.';
+      error = 'Posted successfully. Refresh the register when the connection returns.';
     }
   });
 }

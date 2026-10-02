@@ -1,10 +1,13 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_procurement.dart';
 import 'package:jentra_platform/jentra_procurement_platform.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../app_providers.dart';
+import '../operations/operational_read_access.dart';
 import 'procurement_controller.dart';
 
 final goodsReceiptControllerProvider =
@@ -44,7 +47,8 @@ final goodsReceiptControllerProvider =
       return c;
     });
 
-final class GoodsReceiptController extends ChangeNotifier {
+final class GoodsReceiptController extends ChangeNotifier
+    implements OperationalReadAccess {
   GoodsReceiptController({
     required this.scope,
     required this.gateway,
@@ -63,7 +67,46 @@ final class GoodsReceiptController extends ChangeNotifier {
   bool get canAllow =>
       canPost && canApprove && gateway is ReceiptAllowanceGateway;
   static const slot = 'goods-receipt-editor';
-  bool online, busy = false, _disposed = false;
+  bool online, busy = false, _disposed = false, accessDenied = false;
+  int _epoch = 0, _operationEpoch = 0;
+  @override
+  int get readAccessEpoch => _epoch;
+  @override
+  bool currentRead(int epoch) =>
+      !_disposed && online && !accessDenied && epoch == _epoch;
+  @override
+  void denyReadAccess() {
+    if (_disposed) return;
+    accessDenied = true;
+    _epoch++;
+    clearServer();
+    emit();
+  }
+
+  bool get currentServer => !_disposed && online && _operationEpoch == _epoch;
+  void confirmedReadFailure(Object failure, int epoch, String fallback) {
+    if (_disposed || epoch != _epoch) return;
+    if (failure is DomainError &&
+        const {
+          'PERMISSION_DENIED',
+          'ACCESS_DENIED',
+          'MFA_REQUIRED',
+          'AUTHENTICATION_REQUIRED',
+        }.contains(failure.code)) {
+      accessDenied = true;
+      _epoch++;
+      clearServer();
+      error = failure.message;
+      return;
+    }
+    error = fallback;
+  }
+
+  void clearServer() {
+    page = CursorPage(items: [], limit: 50);
+    selected = null;
+  }
+
   String? error, message;
   Map<String, Object?>? form, selected;
   QuotationLocalDraft? local;
@@ -71,6 +114,7 @@ final class GoodsReceiptController extends ChangeNotifier {
   CursorPage<Map<String, Object?>> page = CursorPage(items: [], limit: 50);
   bool get locked =>
       _disposed ||
+      accessDenied ||
       busy ||
       local?.pending != null ||
       local?.errorCode == 'VERSION_CONFLICT';
@@ -81,11 +125,18 @@ final class GoodsReceiptController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _epoch++;
+    clearServer();
+    notifyListeners();
     super.dispose();
   }
 
   void setOnline(bool value) {
-    online = value;
+    if (online != value) {
+      online = value;
+      _epoch++;
+      clearServer();
+    }
     emit();
   }
 
@@ -93,10 +144,25 @@ final class GoodsReceiptController extends ChangeNotifier {
     if (_disposed || busy) return;
     busy = true;
     error = null;
+    _operationEpoch = _epoch;
     emit();
     try {
       await action();
     } catch (e) {
+      if (_disposed || _operationEpoch != _epoch) return;
+      if (!_disposed &&
+          _operationEpoch == _epoch &&
+          e is DomainError &&
+          const {
+            'PERMISSION_DENIED',
+            'ACCESS_DENIED',
+            'MFA_REQUIRED',
+            'AUTHENTICATION_REQUIRED',
+          }.contains(e.code)) {
+        accessDenied = true;
+        _epoch++;
+        clearServer();
+      }
       error = e is DomainError
           ? e.message
           : e is FormatException
@@ -113,7 +179,13 @@ final class GoodsReceiptController extends ChangeNotifier {
     if (_disposed) return;
     form = local?.form;
     version = local?.expectedVersion;
-    if (online && canPost) page = await gateway.receipts(scope);
+    if (online && canPost) {
+      final result = await gateway.receipts(scope);
+      if (currentServer) {
+        page = result;
+        accessDenied = false;
+      }
+    }
   });
   Future<void> refresh({bool more = false}) => run(() async {
     if (!online || !canPost) return;
@@ -121,12 +193,13 @@ final class GoodsReceiptController extends ChangeNotifier {
       scope,
       after: more ? page.nextCursor : null,
     );
-    if (_disposed) return;
+    if (!currentServer) return;
     page = CursorPage(
       items: [if (more) ...page.items, ...result.items],
       limit: 50,
       nextCursor: result.nextCursor,
     );
+    accessDenied = false;
   });
   void select(Map<String, Object?> row) {
     if (!locked && form == null) {
@@ -172,7 +245,7 @@ final class GoodsReceiptController extends ChangeNotifier {
   Future<void> configure() => run(() async {
     if (!canSetup || !online || form != null || local != null) return;
     final result = await references.references(scope, 'receipt_controls');
-    if (_disposed) return;
+    if (!currentServer || accessDenied) return;
     final rows = result['items'] as List;
     final current = rows.isEmpty
         ? <String, Object?>{}
@@ -283,6 +356,7 @@ final class GoodsReceiptController extends ChangeNotifier {
       'document_date': postingDate,
       'reason': reason,
     };
+    final documentId = selected!['id'];
     version = selected!['version'] as int;
     await drafts.save(scope, slot, form!, expectedVersion: version);
     final pending = await drafts.prepare(
@@ -291,7 +365,7 @@ final class GoodsReceiptController extends ChangeNotifier {
       verb: 'cancel',
       expectedVersion: version,
       payload: {
-        'document_id': selected!['id'],
+        'document_id': documentId,
         'document_date': postingDate,
         'reason': reason,
       },
@@ -317,9 +391,8 @@ final class GoodsReceiptController extends ChangeNotifier {
           payload[key] = form![key];
         }
         final percent = form!['maximum_over_receipt_percent'] ?? '0';
-        if (GoodsReceiptQuantity.decimal(
-              percent,
-            ).compareTo(GoodsReceiptQuantity.decimal('100')) >
+        if (GoodsReceiptQuantity.decimal(percent)
+                .compareTo(GoodsReceiptQuantity.decimal('100')) >
             0) {
           throw const FormatException(
             'Enter a maximum percentage from 0 to 100.',
@@ -429,7 +502,7 @@ final class GoodsReceiptController extends ChangeNotifier {
     await send(pending);
   });
   Future<void> send(QuotationPendingCommand pending) async {
-    if (_disposed || !online) return;
+    if (!currentServer || accessDenied) return;
     late Map<String, Object?> result;
     try {
       result = switch (pending.verb) {
@@ -457,6 +530,8 @@ final class GoodsReceiptController extends ChangeNotifier {
     form = null;
     local = null;
     version = null;
+    message = 'Goods receipt action confirmed.';
+    if (!currentServer) return;
     if (pending.verb != 'save' && pending.verb != 'approve') selected = result;
     message = pending.verb == 'save'
         ? 'Receipt posting accounts saved.'
@@ -464,11 +539,16 @@ final class GoodsReceiptController extends ChangeNotifier {
         ? 'Receipt allowance approved. A different poster can reload this order and receive within the allowance.'
         : 'Goods receipt ${result['status']}.';
     if (canPost) {
+      final refreshEpoch = _epoch;
       try {
-        page = await gateway.receipts(scope);
-      } catch (_) {
-        error =
-            'Saved successfully. Refresh the register when the connection returns.';
+        final refreshed = await gateway.receipts(scope);
+        if (currentServer) page = refreshed;
+      } catch (failure) {
+        confirmedReadFailure(
+          failure,
+          refreshEpoch,
+          'Saved successfully. Refresh the register when the connection returns.',
+        );
       }
     }
   }

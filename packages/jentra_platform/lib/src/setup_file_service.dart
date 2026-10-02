@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
+import 'package:jentra_domain/jentra_domain.dart' show AttachmentFilePolicy;
 
 final class SelectedSetupFile {
   const SelectedSetupFile({
@@ -75,6 +76,9 @@ final class SetupFileService {
   Future<SelectedAttachmentFile?> openAttachmentFile() async {
     final file = await openFile(acceptedTypeGroups: _attachmentTypes);
     if (file == null) return null;
+    if (await file.length() > AttachmentFilePolicy.maximumBytes) {
+      throw const FormatException('Attachments must not exceed 25 MiB.');
+    }
     final extension = file.name.contains('.')
         ? file.name.split('.').last.toLowerCase()
         : '';

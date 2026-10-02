@@ -4,6 +4,30 @@ Development candidate only. This contract does not install the migration or gran
 native, production, load, or owner acceptance. Existing sign-in and MFA remain
 user-managed.
 
+Options, run detail and command presentation bind the originating access epoch.
+Disconnect, disposal and definite permission/MFA/authentication denial clear live
+evidence and reject obsolete replies and failures. Command dispatch rechecks that
+epoch after asynchronous encrypted save/sealing, retaining the original request
+for a fresh permitted retry. An already dispatched confirmation is acknowledged
+durably before any optional refresh, even if its original workspace lost access.
+
+Each chained read, encrypted draft publication and explicit conflict resolution
+rechecks its entry epoch. A stale refresh cannot release a stored conflict or
+replace its version. Refresh after reconnect or read denial performs a fresh
+scoped authorization check, then restores encrypted inputs and the identical
+pending envelope only while that operation remains current. Optional local save
+failure after a durable confirmation retains fixed `LOCAL_STORAGE_FULL` guidance
+alongside the confirmation and never recreates the confirmed pending envelope.
+The sealed payload action also determines the command gateway during retry;
+later caller input cannot reroute an existing period command into the FX engine.
+
+Period options, closing-rate/run options and frozen FX detail normalize the
+allowlisted permission, access, MFA/recent-MFA and authentication denials,
+including expired/absent/invalid JWT transport codes, to fixed typed guidance.
+No server message, hint or row detail becomes public error text. Reads recheck
+their authenticated actor after the response. Existing governance and revaluation
+command classification and precedence remain unchanged.
+
 ## Accounting boundary
 
 The existing exact journal, immutable open-item, realized-settlement FX, posting

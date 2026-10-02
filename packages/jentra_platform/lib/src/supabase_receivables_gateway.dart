@@ -14,13 +14,56 @@ final class SupabaseReceivablesGateway implements ReceivablesRepository {
     }
   }
 
+  Future<T> _read<T>(Future<T> Function() action) async {
+    try {
+      return await action();
+    } on ReceivableFailure {
+      rethrow;
+    } on PostgrestException catch (error) {
+      final known = const {
+        'PERMISSION_DENIED',
+        'ACCESS_DENIED',
+        'MFA_REQUIRED',
+        'AUTHENTICATION_REQUIRED',
+      };
+      final code = known.contains(error.message)
+          ? error.message
+          : error.code == '42501'
+          ? 'PERMISSION_DENIED'
+          : const {'PGRST301', 'PGRST302', 'PGRST303'}.contains(error.code)
+          ? 'AUTHENTICATION_REQUIRED'
+          : 'READ_REJECTED';
+      throw ReceivableFailure(
+        code,
+        code == 'MFA_REQUIRED'
+            ? 'Verify your identity before reading this evidence.'
+            : code == 'AUTHENTICATION_REQUIRED'
+            ? 'Sign in again before reading this evidence.'
+            : known.contains(code)
+            ? 'Evidence is unavailable with your current access. Recheck your role and scope.'
+            : 'The evidence read was rejected. Check the selected scope and filters.',
+        definite: true,
+      );
+    } on FormatException {
+      throw const ReceivableFailure(
+        'READ_INVALID',
+        'The response could not be verified. Refresh its evidence.',
+      );
+    } catch (_) {
+      throw const ReceivableFailure(
+        'READ_UNAVAILABLE',
+        'Evidence could not be verified. Retry when connected.',
+      );
+    }
+  }
+
   @override
   Future<CursorPage<ReceivableDocument>> page(
     TenantContext scope,
     ReceivableKind kind, {
     String? cursor,
     String? status,
-  }) async {
+  }) => _read(() async {
     _scope(scope);
     var query = client
         .schema('api')
@@ -41,16 +84,16 @@ final class SupabaseReceivablesGateway implements ReceivablesRepository {
       limit: 50,
       nextCursor: rows.length > 50 ? docs.last.id : null,
     );
-  }
+  });
 
   @override
   Future<ReceivableDocument> find(
     TenantContext scope,
     ReceivableKind kind,
     String id,
-  ) async {
+  ) => _read(() async {
     _scope(scope);
-    final row = await client
+    final rows = await client
         .schema('api')
         .from(kind.view)
         .select('detail')
@@ -58,16 +101,19 @@ final class SupabaseReceivablesGateway implements ReceivablesRepository {
         .eq('legal_entity_id', scope.legalEntityId!)
         .eq('branch_id', scope.branchId!)
         .eq('id', id)
-        .maybeSingle();
-    if (row == null) {
+        .limit(2);
+    if (rows.isEmpty) {
       throw const ReceivableFailure(
         'NOT_FOUND',
         'Document is unavailable in this scope.',
         definite: true,
       );
     }
-    return ReceivableDocument(receivableMap(row['detail']));
-  }
+    if (rows.length != 1) {
+      throw const FormatException('Document identity is not unique.');
+    }
+    return ReceivableDocument(receivableMap(rows.single['detail']));
+  });
 
   @override
   Future<Map<String, Object?>> command(
@@ -149,7 +195,7 @@ final class SupabaseReceivablesGateway implements ReceivablesRepository {
     String? cursor,
     String? customerId,
     String? sourceId,
-  }) async {
+  }) => _read(() async {
     _scope(scope);
     if (!{
       'parties',
@@ -249,7 +295,7 @@ final class SupabaseReceivablesGateway implements ReceivablesRepository {
       limit: 50,
       nextCursor: rows.length > 50 ? items.last['id'] as String : null,
     );
-  }
+  });
 
   @override
   Future<Map<String, Object?>> statement(
@@ -258,7 +304,7 @@ final class SupabaseReceivablesGateway implements ReceivablesRepository {
     String currency,
     String asOf,
     List<int> buckets,
-  ) async {
+  ) => _read(() async {
     _scope(scope);
     return receivableMap(
       await client
@@ -276,5 +322,5 @@ final class SupabaseReceivablesGateway implements ReceivablesRepository {
             },
           ),
     );
-  }
+  });
 }

@@ -1,5 +1,6 @@
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'finance_report_read_access.dart';
 import 'supabase_financial_dimension_gateway.dart';
 
 abstract interface class ManualJournalGateway {
@@ -25,6 +26,19 @@ final class SupabaseManualJournalGateway implements ManualJournalGateway {
     TenantContext scope,
     Map<String, Object?> params,
   ) async {
+    final read = const {
+      'manual_journal_options',
+      'manual_journal_detail',
+      'manual_journal_tax_options',
+      'manual_journal_tax_controls',
+    }.contains(rpc);
+    if (read && client.auth.currentUser?.id != scope.actorId) {
+      throw const DomainError(
+        code: 'AUTHENTICATION_REQUIRED',
+        message:
+            'Restore your authenticated session, then verify journal access.',
+      );
+    }
     if (!scope.hasOperationalScope ||
         client.auth.currentUser?.id != scope.actorId) {
       throw const DomainError(
@@ -44,9 +58,18 @@ final class SupabaseManualJournalGateway implements ManualJournalGateway {
               ...params,
             },
           );
+      if (read && client.auth.currentUser?.id != scope.actorId) {
+        throw const DomainError(
+          code: 'AUTHENTICATION_REQUIRED',
+          message:
+              'Restore your authenticated session, then verify journal access.',
+        );
+      }
       if (r is! Map) throw const FormatException('Invalid journal response.');
       return r.cast<String, Object?>();
     } on PostgrestException catch (e) {
+      final denial = financeReportReadDenial(rpc, e);
+      if (denial != null) throw denial;
       final code = e.code == '42501'
           ? 'PERMISSION_DENIED'
           : e.code == '40001'

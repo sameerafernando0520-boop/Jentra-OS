@@ -1,0 +1,349 @@
+{
+  "clientDate": "2026-09-30",
+  "clientTimeZone": "Asia/Colombo",
+  "environment": "synthetic development",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "sourcePreflight": {
+    "branch": "main",
+    "head": "f9cc342815e2446fb3f26204d5e65e03c1b2a140",
+    "dirty": true,
+    "concurrentChats": [
+      "Start Wave",
+      "Complete Wave 3 verification"
+    ],
+    "ownershipRefreshRequiredBeforeIntegration": true
+  },
+  "methods": [
+    "read-only Supabase list_migrations",
+    "read-only metadata/capability SELECT queries",
+    "local source/blueprint inspection",
+    "Codex list_threads and Wave 4 read_thread"
+  ],
+  "migrations": [
+    {
+      "version": "20260831193714",
+      "name": "create_greenfield_foundation"
+    },
+    {
+      "version": "20260831193857",
+      "name": "harden_foundation_rls_and_indexes"
+    },
+    {
+      "version": "20260831194005",
+      "name": "simplify_invitation_read_policy"
+    },
+    {
+      "version": "20260901005825",
+      "name": "optimize_invitation_auth_initplan"
+    },
+    {
+      "version": "20260901090317",
+      "name": "create_wave2_shared_foundation_schema"
+    },
+    {
+      "version": "20260901090331",
+      "name": "create_wave2_command_helpers"
+    },
+    {
+      "version": "20260901090354",
+      "name": "create_wave2_setup_upsert_command"
+    },
+    {
+      "version": "20260901090406",
+      "name": "create_wave2_special_commands"
+    },
+    {
+      "version": "20260901090420",
+      "name": "expose_wave2_versioned_api"
+    },
+    {
+      "version": "20260901090642",
+      "name": "cover_wave2_foreign_keys"
+    },
+    {
+      "version": "20260901091132",
+      "name": "validate_wave2_attachment_aggregates"
+    },
+    {
+      "version": "20260903045702",
+      "name": "enforce_wave2_fiscal_period_lifecycle"
+    },
+    {
+      "version": "20260903051423",
+      "name": "enforce_wave2_workflow_lifecycle"
+    },
+    {
+      "version": "20260903110103",
+      "name": "align_wave2_setup_contracts"
+    },
+    {
+      "version": "20260903110716",
+      "name": "bound_wave2_report_rows"
+    },
+    {
+      "version": "20260904121647",
+      "name": "wave3_operational_foundation"
+    },
+    {
+      "version": "20260904122313",
+      "name": "cover_wave3_foreign_keys"
+    },
+    {
+      "version": "20260904125910",
+      "name": "create_wave3_crm_pipeline_schema"
+    },
+    {
+      "version": "20260904130000",
+      "name": "create_wave3_crm_pipeline_commands"
+    },
+    {
+      "version": "20260904135959",
+      "name": "add_crm_pipeline_aging_summary"
+    },
+    {
+      "version": "20260905050419",
+      "name": "create_wave3_quotation_schema"
+    },
+    {
+      "version": "20260905050428",
+      "name": "create_wave3_quotation_commands"
+    },
+    {
+      "version": "20260905050436",
+      "name": "create_wave3_order_credit_reservation_schema"
+    },
+    {
+      "version": "20260905050444",
+      "name": "create_wave3_order_credit_reservation_commands"
+    },
+    {
+      "version": "20260905050839",
+      "name": "cover_wave3_lead_to_cash_foreign_keys"
+    },
+    {
+      "version": "20260905054457",
+      "name": "stabilize_wave3_discount_allocation"
+    },
+    {
+      "version": "20260905123934",
+      "name": "harden_crm_pipeline_ac302"
+    },
+    {
+      "version": "20260906153036",
+      "name": "complete_quotation_workspace_contracts"
+    },
+    {
+      "version": "20260907044241",
+      "name": "complete_sales_order_workspace"
+    },
+    {
+      "version": "20260910135010",
+      "name": "complete_delivery_receivables"
+    },
+    {
+      "version": "20260910135507",
+      "name": "harden_receivables_reference_indexes"
+    },
+    {
+      "version": "20260910201410",
+      "name": "governed_stock_openings"
+    },
+    {
+      "version": "20260911065744",
+      "name": "governed_warehouse_setup"
+    },
+    {
+      "version": "20260911130900",
+      "name": "stock_opening_approver_setup"
+    },
+    {
+      "version": "20260925181927",
+      "name": "wave4_employee_foundation"
+    },
+    {
+      "version": "20260926082441",
+      "name": "wave4_calendar_versions"
+    },
+    {
+      "version": "20260929224939",
+      "name": "wave4_private_hr"
+    }
+  ],
+  "installedMigrationCount": 37,
+  "lastInstalledMigration": {
+    "version": "20260929224939",
+    "name": "wave4_private_hr"
+  },
+  "processProvider": {
+    "relations": {
+      "ai_schema": "ai",
+      "payroll_runs": null,
+      "process_events": "workflow.process_events",
+      "analytics_schema": null,
+      "process_events_api": "api.process_events",
+      "attendance_intervals": null,
+      "supplier_bill_controls": null
+    },
+    "tableSecurity": {
+      "rls": true,
+      "forced_rls": true
+    },
+    "viewOptions": [
+      "security_invoker=true"
+    ],
+    "columns": [
+      {
+        "column": "id",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "column": "tenant_id",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "column": "legal_entity_id",
+        "type": "uuid",
+        "nullable": "YES"
+      },
+      {
+        "column": "branch_id",
+        "type": "uuid",
+        "nullable": "YES"
+      },
+      {
+        "column": "workflow_instance_id",
+        "type": "uuid",
+        "nullable": "YES"
+      },
+      {
+        "column": "workflow_definition_id",
+        "type": "uuid",
+        "nullable": "YES"
+      },
+      {
+        "column": "workflow_revision",
+        "type": "integer",
+        "nullable": "YES"
+      },
+      {
+        "column": "document_type",
+        "type": "text",
+        "nullable": "NO"
+      },
+      {
+        "column": "document_id",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "column": "from_status",
+        "type": "text",
+        "nullable": "YES"
+      },
+      {
+        "column": "to_status",
+        "type": "text",
+        "nullable": "NO"
+      },
+      {
+        "column": "actor_id",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "column": "owner_id",
+        "type": "uuid",
+        "nullable": "YES"
+      },
+      {
+        "column": "entered_at",
+        "type": "timestamp with time zone",
+        "nullable": "NO"
+      },
+      {
+        "column": "completed_at",
+        "type": "timestamp with time zone",
+        "nullable": "YES"
+      },
+      {
+        "column": "active_minutes",
+        "type": "numeric",
+        "nullable": "NO"
+      },
+      {
+        "column": "wait_minutes",
+        "type": "numeric",
+        "nullable": "NO"
+      },
+      {
+        "column": "reason",
+        "type": "text",
+        "nullable": "YES"
+      },
+      {
+        "column": "request_id",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "column": "command_id",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "column": "correlation_id",
+        "type": "uuid",
+        "nullable": "NO"
+      },
+      {
+        "column": "created_at",
+        "type": "timestamp with time zone",
+        "nullable": "NO"
+      }
+    ]
+  },
+  "capabilities": {
+    "permissions": [
+      {
+        "code": "analytics.view",
+        "module": "analytics",
+        "privileged": false,
+        "description": "Open analytics workspaces."
+      },
+      {
+        "code": "crm.leads.view",
+        "module": "crm",
+        "privileged": false,
+        "description": "View leads and their pipeline state."
+      },
+      {
+        "code": "crm.opportunities.view",
+        "module": "crm",
+        "privileged": false,
+        "description": "View opportunities and forecasts."
+      },
+      {
+        "code": "workflow.process.view",
+        "module": "workflow",
+        "privileged": false,
+        "description": "View scoped process telemetry."
+      }
+    ],
+    "crm_function": "34d463c2515ce8825e497e229a1f7c16",
+    "entitlements": null
+  },
+  "initialSessionOwnedPaths": [
+    "docs/blueprint/wave5/",
+    "docs/development/wave5-status.md",
+    "docs/verification/wave5/"
+  ],
+  "limitations": [
+    "Metadata presence is not authenticated runtime acceptance",
+    "Specific absent relation probes are not an exhaustive module inventory",
+    "Process events do not certify stage dwell, productive work or rework",
+    "No Wave 5 code, candidate execution, install, deployment, or external delivery occurred",
+    "Concurrent sessions can change HEAD, source and installed state after this preflight"
+  ]
+}

@@ -1,0 +1,892 @@
+{
+  "schema_before": "{\n  \"views\": {\n    \"api.lots\": {\n      \"options\": [\n        \"security_invoker=true\"\n      ],\n      \"source_md5\": \"887ba46230b8360a9b483650e2cdc7e5\"\n    },\n    \"api.units\": {\n      \"options\": [\n        \"security_invoker=true\"\n      ],\n      \"source_md5\": \"490479ab12f396a149a578abbcbcc46f\"\n    },\n    \"api.parties\": {\n      \"options\": [\n        \"security_invoker=true\"\n      ],\n      \"source_md5\": \"6d72a99ed748a4aa8160b4ec6704e1b3\"\n    },\n    \"api.serials\": {\n      \"options\": [\n        \"security_inv...",
+  "schema_after": "{\n  \"views\": {\n    \"api.lots\": {\n      \"options\": [\n        \"security_invoker=true\"\n      ],\n      \"source_md5\": \"887ba46230b8360a9b483650e2cdc7e5\"\n    },\n    \"api.units\": {\n      \"options\": [\n        \"security_invoker=true\"\n      ],\n      \"source_md5\": \"490479ab12f396a149a578abbcbcc46f\"\n    },\n    \"api.parties\": {\n      \"options\": [\n        \"security_invoker=true\"\n      ],\n      \"source_md5\": \"6d72a99ed748a4aa8160b4ec6704e1b3\"\n    },\n    \"api.serials\": {\n      \"options\": [\n        \"security_inv...",
+  "analysis_date": "2026-09-30T15:01:02.782677",
+  "overall_compatibility": "potentially_incompatible",
+  "breaking_changes_count": 0,
+  "potentially_breaking_count": 8,
+  "non_breaking_changes_count": 4,
+  "additive_changes_count": 0,
+  "issues": [
+    {
+      "type": "foreign_key_added",
+      "severity": "potentially_breaking",
+      "description": "New foreign key constraint 'FOREIGN KEY (tenant_id, legal_entity_id, project_id) REFERENCES finance.dimensions(tenant_id, legal_entity_id, id)' added to table 'finance.journal_lines'",
+      "field_path": "tables.finance.journal_lines.constraints.foreign_key",
+      "old_value": null,
+      "new_value": "FOREIGN KEY (tenant_id, legal_entity_id, project_id) REFERENCES finance.dimensions(tenant_id, legal_entity_id, id)",
+      "impact": "New foreign_key constraint may reject existing data",
+      "suggested_migration": "Validate existing data complies with new constraint",
+      "affected_operations": [
+        "INSERT",
+        "UPDATE"
+      ]
+    },
+    {
+      "type": "foreign_key_added",
+      "severity": "potentially_breaking",
+      "description": "New foreign key constraint 'FOREIGN KEY (tenant_id, legal_entity_id, cost_centre_id) REFERENCES finance.dimensions(tenant_id, legal_entity_id, id)' added to table 'finance.journal_lines'",
+      "field_path": "tables.finance.journal_lines.constraints.foreign_key",
+      "old_value": null,
+      "new_value": "FOREIGN KEY (tenant_id, legal_entity_id, cost_centre_id) REFERENCES finance.dimensions(tenant_id, legal_entity_id, id)",
+      "impact": "New foreign_key constraint may reject existing data",
+      "suggested_migration": "Validate existing data complies with new constraint",
+      "affected_operations": [
+        "INSERT",
+        "UPDATE"
+      ]
+    },
+    {
+      "type": "check_removed",
+      "severity": "non_breaking",
+      "description": "Check constraint 'CHECK ((movement_kind = ANY (ARRAY['opening'::text, 'delivery'::text, 'sales_return'::text])))' removed from table 'inventory.stock_movements'",
+      "field_path": "tables.inventory.stock_movements.constraints.check",
+      "old_value": "CHECK ((movement_kind = ANY (ARRAY['opening'::text, 'delivery'::text, 'sales_return'::text])))",
+      "new_value": null,
+      "impact": "No longer enforcing check constraint",
+      "suggested_migration": "Consider application-level validation for removed constraint",
+      "affected_operations": [
+        "INSERT",
+        "UPDATE",
+        "DELETE"
+      ]
+    },
+    {
+      "type": "check_added",
+      "severity": "potentially_breaking",
+      "description": "New check constraint 'CHECK (((movement_kind = ANY (ARRAY['opening'::text, 'delivery'::text, 'sales_return'::text, 'goods_receipt'::text, 'goods_receipt_reversal'::text, 'purchase_return'::text])) OR (movement_kind = ANY (ARRAY['transfer_issue'::text, 'transfer_receipt'::text, 'stock_adjustment'::text])) OR (movement_kind = 'value_adjustment'::text) OR (movement_kind = ANY (ARRAY['disposition'::text, 'disposition_reversal'::text]))))' added to table 'inventory.stock_movements'",
+      "field_path": "tables.inventory.stock_movements.constraints.check",
+      "old_value": null,
+      "new_value": "CHECK (((movement_kind = ANY (ARRAY['opening'::text, 'delivery'::text, 'sales_return'::text, 'goods_receipt'::text, 'goods_receipt_reversal'::text, 'purchase_return'::text])) OR (movement_kind = ANY (ARRAY['transfer_issue'::text, 'transfer_receipt'::text, 'stock_adjustment'::text])) OR (movement_kind = 'value_adjustment'::text) OR (movement_kind = ANY (ARRAY['disposition'::text, 'disposition_reversal'::text]))))",
+      "impact": "New check constraint may reject existing data",
+      "suggested_migration": "Validate existing data complies with new constraint",
+      "affected_operations": [
+        "INSERT",
+        "UPDATE"
+      ]
+    },
+    {
+      "type": "check_removed",
+      "severity": "non_breaking",
+      "description": "Check constraint 'CHECK ((status = ANY (ARRAY['available'::text, 'issued'::text, 'quarantine'::text, 'disposed'::text])))' removed from table 'inventory.serials'",
+      "field_path": "tables.inventory.serials.constraints.check",
+      "old_value": "CHECK ((status = ANY (ARRAY['available'::text, 'issued'::text, 'quarantine'::text, 'disposed'::text])))",
+      "new_value": null,
+      "impact": "No longer enforcing check constraint",
+      "suggested_migration": "Consider application-level validation for removed constraint",
+      "affected_operations": [
+        "INSERT",
+        "UPDATE",
+        "DELETE"
+      ]
+    },
+    {
+      "type": "check_added",
+      "severity": "potentially_breaking",
+      "description": "New check constraint 'CHECK ((count_previous_status = ANY (ARRAY['available'::text, 'quarantine'::text])))' added to table 'inventory.serials'",
+      "field_path": "tables.inventory.serials.constraints.check",
+      "old_value": null,
+      "new_value": "CHECK ((count_previous_status = ANY (ARRAY['available'::text, 'quarantine'::text])))",
+      "impact": "New check constraint may reject existing data",
+      "suggested_migration": "Validate existing data complies with new constraint",
+      "affected_operations": [
+        "INSERT",
+        "UPDATE"
+      ]
+    },
+    {
+      "type": "check_added",
+      "severity": "potentially_breaking",
+      "description": "New check constraint 'CHECK (((status = 'count_missing'::text) = (count_previous_status IS NOT NULL)))' added to table 'inventory.serials'",
+      "field_path": "tables.inventory.serials.constraints.check",
+      "old_value": null,
+      "new_value": "CHECK (((status = 'count_missing'::text) = (count_previous_status IS NOT NULL)))",
+      "impact": "New check constraint may reject existing data",
+      "suggested_migration": "Validate existing data complies with new constraint",
+      "affected_operations": [
+        "INSERT",
+        "UPDATE"
+      ]
+    },
+    {
+      "type": "check_added",
+      "severity": "potentially_breaking",
+      "description": "New check constraint 'CHECK ((status = ANY (ARRAY['available'::text, 'issued'::text, 'quarantine'::text, 'disposed'::text, 'in_transit'::text, 'count_missing'::text])))' added to table 'inventory.serials'",
+      "field_path": "tables.inventory.serials.constraints.check",
+      "old_value": null,
+      "new_value": "CHECK ((status = ANY (ARRAY['available'::text, 'issued'::text, 'quarantine'::text, 'disposed'::text, 'in_transit'::text, 'count_missing'::text])))",
+      "impact": "New check constraint may reject existing data",
+      "suggested_migration": "Validate existing data complies with new constraint",
+      "affected_operations": [
+        "INSERT",
+        "UPDATE"
+      ]
+    },
+    {
+      "type": "check_removed",
+      "severity": "non_breaking",
+      "description": "Check constraint 'CHECK ((base_quantity <> (0)::numeric))' removed from table 'inventory.stock_movement_lines'",
+      "field_path": "tables.inventory.stock_movement_lines.constraints.check",
+      "old_value": "CHECK ((base_quantity <> (0)::numeric))",
+      "new_value": null,
+      "impact": "No longer enforcing check constraint",
+      "suggested_migration": "Consider application-level validation for removed constraint",
+      "affected_operations": [
+        "INSERT",
+        "UPDATE",
+        "DELETE"
+      ]
+    },
+    {
+      "type": "check_removed",
+      "severity": "non_breaking",
+      "description": "Check constraint 'CHECK (((base_value = (0)::numeric) OR (sign(base_quantity) = sign(base_value))))' removed from table 'inventory.stock_movement_lines'",
+      "field_path": "tables.inventory.stock_movement_lines.constraints.check",
+      "old_value": "CHECK (((base_value = (0)::numeric) OR (sign(base_quantity) = sign(base_value))))",
+      "new_value": null,
+      "impact": "No longer enforcing check constraint",
+      "suggested_migration": "Consider application-level validation for removed constraint",
+      "affected_operations": [
+        "INSERT",
+        "UPDATE",
+        "DELETE"
+      ]
+    },
+    {
+      "type": "check_added",
+      "severity": "potentially_breaking",
+      "description": "New check constraint 'CHECK (((base_quantity = (0)::numeric) OR (base_value = (0)::numeric) OR (sign(base_quantity) = sign(base_value))))' added to table 'inventory.stock_movement_lines'",
+      "field_path": "tables.inventory.stock_movement_lines.constraints.check",
+      "old_value": null,
+      "new_value": "CHECK (((base_quantity = (0)::numeric) OR (base_value = (0)::numeric) OR (sign(base_quantity) = sign(base_value))))",
+      "impact": "New check constraint may reject existing data",
+      "suggested_migration": "Validate existing data complies with new constraint",
+      "affected_operations": [
+        "INSERT",
+        "UPDATE"
+      ]
+    },
+    {
+      "type": "check_added",
+      "severity": "potentially_breaking",
+      "description": "New check constraint 'CHECK (((base_quantity <> (0)::numeric) OR (base_value <> (0)::numeric)))' added to table 'inventory.stock_movement_lines'",
+      "field_path": "tables.inventory.stock_movement_lines.constraints.check",
+      "old_value": null,
+      "new_value": "CHECK (((base_quantity <> (0)::numeric) OR (base_value <> (0)::numeric)))",
+      "impact": "New check constraint may reject existing data",
+      "suggested_migration": "Validate existing data complies with new constraint",
+      "affected_operations": [
+        "INSERT",
+        "UPDATE"
+      ]
+    }
+  ],
+  "migration_scripts": [
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.rfqs",
+      "script_content": "CREATE TABLE procurement.rfqs (\n  id uuid NOT NULL,\n  title text NOT NULL,\n  status text NOT NULL DEFAULT 'issued'::text,\n  version bigint NOT NULL DEFAULT 1,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  close_date date NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  document_date date NOT NULL,\n  requisition_id uuid NOT NULL,\n  document_number text NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  selection_reason text,\n  invited_suppliers jsonb NOT NULL,\n  selected_quote_id uuid,\n  requisition_version bigint NOT NULL,\n  invited_supplier_ids uuid[] NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.rfqs;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.rfqs';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.dimensions",
+      "script_content": "CREATE TABLE finance.dimensions (\n  id uuid NOT NULL,\n  code text NOT NULL,\n  kind text NOT NULL,\n  name text NOT NULL,\n  reason text NOT NULL,\n  status text NOT NULL,\n  version bigint NOT NULL,\n  branch_id uuid,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.dimensions;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.dimensions';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.tax_reports",
+      "script_content": "CREATE TABLE finance.tax_reports (\n  id uuid NOT NULL,\n  as_of date NOT NULL,\n  summary jsonb NOT NULL,\n  evidence jsonb NOT NULL,\n  period_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_by uuid NOT NULL,\n  generated_at timestamp with time zone NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  branch_filter_id uuid,\n  requested_branch_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.tax_reports;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.tax_reports';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.transfers",
+      "script_content": "CREATE TABLE inventory.transfers (\n  id uuid NOT NULL,\n  reason text NOT NULL,\n  status text NOT NULL,\n  version bigint NOT NULL DEFAULT 1,\n  branch_id uuid NOT NULL,\n  reference text NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  document_date date NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  last_posting_date date NOT NULL,\n  source_warehouse_id uuid NOT NULL,\n  destination_branch_id uuid NOT NULL,\n  destination_warehouse_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.transfers;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.transfers';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.bank_matches",
+      "script_content": "CREATE TABLE finance.bank_matches (\n  id uuid NOT NULL,\n  reason text NOT NULL,\n  bank_id uuid NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  difference numeric(20,6) NOT NULL,\n  posting_date date NOT NULL,\n  currency_code text NOT NULL,\n  journal_total numeric(20,6) NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  statement_total numeric(20,6) NOT NULL,\n  journal_line_ids uuid[] NOT NULL,\n  statement_line_ids uuid[] NOT NULL,\n  adjustment_journal_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.bank_matches;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.bank_matches';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.budget_events",
+      "script_content": "CREATE TABLE finance.budget_events (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  action text NOT NULL,\n  reason text NOT NULL,\n  version bigint NOT NULL,\n  actor_id uuid NOT NULL,\n  snapshot jsonb NOT NULL,\n  budget_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.budget_events;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.budget_events';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.period_events",
+      "script_content": "CREATE TABLE finance.period_events (\n  id uuid NOT NULL,\n  action text NOT NULL,\n  reason text NOT NULL,\n  actor_id uuid NOT NULL,\n  to_state text NOT NULL,\n  period_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  exceptions jsonb NOT NULL DEFAULT '[]'::jsonb,\n  from_state text NOT NULL,\n  period_version bigint NOT NULL,\n  transaction_id bigint NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  reopen_request_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.period_events;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.period_events';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.rfq_lines",
+      "script_content": "CREATE TABLE procurement.rfq_lines (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  rfq_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  source_line_id uuid NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  source_snapshot jsonb NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.rfq_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.rfq_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.stock_counts",
+      "script_content": "CREATE TABLE inventory.stock_counts (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  lines jsonb NOT NULL,\n  reason text NOT NULL,\n  status text NOT NULL DEFAULT 'draft'::text,\n  version bigint NOT NULL DEFAULT 1,\n  branch_id uuid NOT NULL,\n  cutoff_at timestamp with time zone NOT NULL,\n  posted_at timestamp with time zone,\n  posted_by uuid,\n  tenant_id uuid NOT NULL,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  request_id uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  grand_total numeric(20,6) NOT NULL,\n  prepared_by uuid NOT NULL,\n  submitted_by uuid,\n  warehouse_id uuid NOT NULL,\n  currency_code text NOT NULL,\n  document_date date NOT NULL,\n  document_type text NOT NULL DEFAULT 'stock_count'::text,\n  correlation_id uuid NOT NULL,\n  document_number text,\n  legal_entity_id uuid NOT NULL,\n  client_timestamp timestamp with time zone NOT NULL,\n  journal_entry_id uuid,\n  corrects_count_id uuid,\n  offset_account_id uuid NOT NULL,\n  stock_movement_id uuid,\n  workflow_snapshot jsonb\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.stock_counts;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.stock_counts';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.bank_statements",
+      "script_content": "CREATE TABLE finance.bank_statements (\n  id uuid NOT NULL,\n  total numeric(20,6) NOT NULL,\n  bank_id uuid NOT NULL,\n  closing numeric(20,6) NOT NULL,\n  opening numeric(20,6) NOT NULL,\n  end_date date NOT NULL,\n  identity text NOT NULL,\n  branch_id uuid NOT NULL,\n  row_count integer NOT NULL,\n  tenant_id uuid NOT NULL,\n  account_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  start_date date NOT NULL,\n  currency_code text NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.bank_statements;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.bank_statements';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.budget_versions",
+      "script_content": "CREATE TABLE finance.budget_versions (\n  id uuid NOT NULL,\n  lines jsonb NOT NULL,\n  reason text NOT NULL,\n  status text NOT NULL,\n  root_id uuid NOT NULL,\n  version bigint NOT NULL,\n  revision integer NOT NULL,\n  branch_id uuid,\n  period_id uuid,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  decided_at timestamp with time zone,\n  decided_by uuid,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  budget_year integer NOT NULL,\n  submitted_by uuid,\n  currency_code text NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.budget_versions;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.budget_versions';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.control_reports",
+      "script_content": "CREATE TABLE finance.control_reports (\n  id uuid NOT NULL,\n  as_of date NOT NULL,\n  summary jsonb NOT NULL,\n  evidence jsonb NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_by uuid NOT NULL,\n  generated_at timestamp with time zone NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.control_reports;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.control_reports';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.manual_journals",
+      "script_content": "CREATE TABLE finance.manual_journals (\n  id uuid NOT NULL,\n  reason text NOT NULL,\n  status text NOT NULL DEFAULT 'draft'::text,\n  version bigint NOT NULL DEFAULT 1,\n  snapshot jsonb NOT NULL,\n  branch_id uuid NOT NULL,\n  posted_at timestamp with time zone,\n  posted_by uuid,\n  tenant_id uuid NOT NULL,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  request_id uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  description text NOT NULL,\n  grand_total numeric(20,6) NOT NULL,\n  prepared_by uuid NOT NULL,\n  submitted_by uuid,\n  currency_code text NOT NULL,\n  document_date date NOT NULL,\n  document_type text NOT NULL DEFAULT 'manual_journal'::text,\n  correlation_id uuid NOT NULL,\n  reversal_of_id uuid,\n  document_number text,\n  legal_entity_id uuid NOT NULL,\n  client_timestamp timestamp with time zone NOT NULL,\n  journal_entry_id uuid,\n  workflow_snapshot jsonb\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.manual_journals;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.manual_journals';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.rfq_history",
+      "script_content": "CREATE TABLE procurement.rfq_history (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  rfq_id uuid NOT NULL,\n  version bigint NOT NULL,\n  actor_id uuid NOT NULL,\n  snapshot jsonb NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.rfq_history;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.rfq_history';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table core.operational_reports",
+      "script_content": "CREATE TABLE core.operational_reports (\n  id uuid NOT NULL,\n  kind text NOT NULL,\n  evidence jsonb NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS core.operational_reports;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'core.operational_reports';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.dimension_events",
+      "script_content": "CREATE TABLE finance.dimension_events (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  version bigint NOT NULL,\n  actor_id uuid NOT NULL,\n  snapshot jsonb NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  dimension_id uuid NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.dimension_events;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.dimension_events';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.transfer_lines",
+      "script_content": "CREATE TABLE inventory.transfer_lines (\n  id uuid NOT NULL,\n  detail jsonb NOT NULL,\n  lot_id uuid,\n  tenant_id uuid NOT NULL,\n  product_id uuid NOT NULL,\n  serial_ids uuid[] NOT NULL,\n  transfer_id uuid NOT NULL,\n  base_quantity numeric(20,6) NOT NULL,\n  carrying_value numeric(20,6) NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.transfer_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.transfer_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.requisitions",
+      "script_content": "CREATE TABLE procurement.requisitions (\n  id uuid NOT NULL,\n  status text NOT NULL DEFAULT 'draft'::text,\n  need_by date NOT NULL,\n  version bigint NOT NULL DEFAULT 1,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  requester_id uuid NOT NULL,\n  submitted_at timestamp with time zone,\n  submitted_by uuid,\n  currency_code text NOT NULL,\n  justification text NOT NULL,\n  document_number text,\n  estimated_total numeric(20,6) NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  workflow_snapshot jsonb\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.requisitions;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.requisitions';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.bank_match_claims",
+      "script_content": "CREATE TABLE finance.bank_match_claims (\n  kind text NOT NULL,\n  match_id uuid NOT NULL,\n  source_id uuid NOT NULL,\n  tenant_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.bank_match_claims;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.bank_match_claims';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.financial_reports",
+      "script_content": "CREATE TABLE finance.financial_reports (\n  id uuid NOT NULL,\n  kind text NOT NULL,\n  as_of date NOT NULL,\n  summary jsonb NOT NULL,\n  evidence jsonb NOT NULL,\n  period_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_by uuid NOT NULL,\n  generated_at timestamp with time zone NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  requested_branch_id uuid NOT NULL,\n  comparative_period_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.financial_reports;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.financial_reports';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.transfer_events",
+      "script_content": "CREATE TABLE inventory.transfer_events (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  reason text NOT NULL,\n  version bigint NOT NULL,\n  operation text NOT NULL,\n  reference text NOT NULL,\n  tenant_id uuid NOT NULL,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  request_id uuid NOT NULL,\n  transfer_id uuid NOT NULL,\n  posting_date date NOT NULL,\n  destination_issue_snapshot jsonb NOT NULL DEFAULT '{}'::jsonb\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.transfer_events;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.transfer_events';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.goods_receipts",
+      "script_content": "CREATE TABLE procurement.goods_receipts (\n  id uuid NOT NULL,\n  order_id uuid NOT NULL,\n  branch_id uuid NOT NULL,\n  reference text NOT NULL,\n  tenant_id uuid NOT NULL,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  net_amount numeric(20,6) NOT NULL,\n  request_id uuid NOT NULL,\n  base_amount numeric(20,6) NOT NULL,\n  warehouse_id uuid NOT NULL,\n  currency_code text NOT NULL,\n  document_date date NOT NULL,\n  exchange_rate numeric(20,10) NOT NULL,\n  order_revision integer NOT NULL,\n  document_number text NOT NULL,\n  grni_account_id uuid,\n  legal_entity_id uuid NOT NULL,\n  source_snapshot jsonb NOT NULL,\n  journal_entry_id uuid,\n  stock_movement_id uuid,\n  base_currency_code text NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.goods_receipts;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.goods_receipts';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.payment_claims",
+      "script_content": "CREATE TABLE procurement.payment_claims (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  active boolean NOT NULL DEFAULT true,\n  amount numeric(20,6) NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  proposal_id uuid NOT NULL,\n  released_at timestamp with time zone,\n  open_item_id uuid NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.payment_claims;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.payment_claims';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.supplier_bills",
+      "script_content": "CREATE TABLE procurement.supplier_bills (\n  id uuid NOT NULL,\n  total numeric(20,6) NOT NULL,\n  status text NOT NULL DEFAULT 'draft'::text,\n  version bigint NOT NULL DEFAULT 1,\n  due_date date NOT NULL,\n  subtotal numeric(20,6) NOT NULL,\n  branch_id uuid NOT NULL,\n  tax_total numeric(20,6) NOT NULL,\n  tenant_id uuid NOT NULL,\n  base_total numeric(20,6) NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  supplier_id uuid NOT NULL,\n  match_result jsonb NOT NULL,\n  open_item_id uuid,\n  currency_code text NOT NULL,\n  document_date date NOT NULL,\n  exchange_rate numeric(20,10) NOT NULL,\n  document_number text,\n  legal_entity_id uuid NOT NULL,\n  exchange_rate_id uuid,\n  journal_entry_id uuid,\n  base_currency_code text NOT NULL,\n  supplier_reference text NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.supplier_bills;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.supplier_bills';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.fx_revaluation_runs",
+      "script_content": "CREATE TABLE finance.fx_revaluation_runs (\n  id uuid NOT NULL,\n  as_of date NOT NULL,\n  reason text NOT NULL,\n  snapshot jsonb NOT NULL,\n  branch_id uuid NOT NULL,\n  period_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  item_count integer NOT NULL,\n  currency_code text NOT NULL,\n  exchange_rate numeric(20,10) NOT NULL,\n  snapshot_hash text NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  exchange_rate_id uuid NOT NULL,\n  journal_entry_id uuid,\n  base_currency_code text NOT NULL,\n  control_delta_base numeric(20,6) NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.fx_revaluation_runs;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.fx_revaluation_runs';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.landed_extensions",
+      "script_content": "CREATE TABLE inventory.landed_extensions (\n  id uuid NOT NULL,\n  amount numeric(20,6) NOT NULL,\n  detail jsonb NOT NULL,\n  reason text NOT NULL,\n  root_id uuid NOT NULL,\n  branch_id uuid NOT NULL,\n  reference text NOT NULL,\n  tenant_id uuid NOT NULL,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT clock_timestamp(),\n  created_by uuid NOT NULL,\n  request_id uuid NOT NULL,\n  total_amount numeric(20,6) NOT NULL,\n  correction_of uuid,\n  document_date date NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.landed_extensions;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.landed_extensions';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.valuation_reports",
+      "script_content": "CREATE TABLE inventory.valuation_reports (\n  id uuid NOT NULL,\n  as_of date NOT NULL,\n  summary jsonb NOT NULL,\n  evidence jsonb NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_by uuid NOT NULL,\n  generated_at timestamp with time zone NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.valuation_reports;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.valuation_reports';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.value_adjustments",
+      "script_content": "CREATE TABLE inventory.value_adjustments (\n  id uuid NOT NULL,\n  amount numeric(20,6) NOT NULL,\n  detail jsonb NOT NULL,\n  reason text NOT NULL,\n  branch_id uuid NOT NULL,\n  reference text NOT NULL,\n  tenant_id uuid NOT NULL,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT clock_timestamp(),\n  created_by uuid NOT NULL,\n  request_id uuid NOT NULL,\n  reverse_of uuid,\n  currency_code text NOT NULL,\n  document_date date NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  receipt_line_id uuid NOT NULL,\n  offset_account_id uuid NOT NULL,\n  variance_account_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.value_adjustments;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.value_adjustments';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.purchase_orders",
+      "script_content": "CREATE TABLE procurement.purchase_orders (\n  id uuid NOT NULL,\n  total numeric(20,6) NOT NULL,\n  status text NOT NULL DEFAULT 'draft'::text,\n  version bigint NOT NULL DEFAULT 1,\n  revision integer NOT NULL DEFAULT 1,\n  subtotal numeric(20,6) NOT NULL,\n  branch_id uuid NOT NULL,\n  rate_date date NOT NULL,\n  tax_total numeric(20,6) NOT NULL,\n  tenant_id uuid NOT NULL,\n  base_total numeric(20,6) NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  supplier_id uuid NOT NULL,\n  submitted_at timestamp with time zone,\n  submitted_by uuid,\n  warehouse_id uuid NOT NULL,\n  currency_code text NOT NULL,\n  document_date date NOT NULL,\n  exchange_rate numeric(20,10) NOT NULL,\n  payment_terms text NOT NULL,\n  promised_date date NOT NULL,\n  source_rfq_id uuid,\n  delivery_terms text NOT NULL,\n  document_number text,\n  legal_entity_id uuid NOT NULL,\n  revision_reason text,\n  source_quote_id uuid,\n  source_snapshot jsonb NOT NULL,\n  exchange_rate_id uuid,\n  workflow_snapshot jsonb,\n  commercial_editor_id uuid NOT NULL,\n  source_requisition_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.purchase_orders;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.purchase_orders';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.supplier_quotes",
+      "script_content": "CREATE TABLE procurement.supplier_quotes (\n  id uuid NOT NULL,\n  total numeric(20,6) NOT NULL,\n  rfq_id uuid NOT NULL,\n  version bigint NOT NULL DEFAULT 1,\n  complete boolean NOT NULL,\n  subtotal numeric(20,6) NOT NULL,\n  rate_date date NOT NULL,\n  tax_total numeric(20,6) NOT NULL,\n  tenant_id uuid NOT NULL,\n  base_total numeric(20,6) NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  quote_date date NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  supplier_id uuid NOT NULL,\n  valid_until date NOT NULL,\n  currency_code text NOT NULL,\n  exchange_rate numeric(20,10) NOT NULL,\n  payment_terms text NOT NULL,\n  delivery_terms text NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  exchange_rate_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.supplier_quotes;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.supplier_quotes';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.allocation_reversals",
+      "script_content": "CREATE TABLE finance.allocation_reversals (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  reason text NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  request_id uuid NOT NULL,\n  posting_date date NOT NULL,\n  allocation_id uuid NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  source_snapshot jsonb NOT NULL,\n  journal_entry_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.allocation_reversals;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.allocation_reversals';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.bank_match_reversals",
+      "script_content": "CREATE TABLE finance.bank_match_reversals (\n  id uuid NOT NULL,\n  reason text NOT NULL,\n  match_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  posting_date date NOT NULL,\n  journal_entry_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.bank_match_reversals;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.bank_match_reversals';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.bank_statement_lines",
+      "script_content": "CREATE TABLE finance.bank_statement_lines (\n  id uuid NOT NULL,\n  amount numeric(20,6) NOT NULL,\n  bank_id uuid NOT NULL,\n  reference text NOT NULL,\n  tenant_id uuid NOT NULL,\n  description text NOT NULL,\n  line_number integer NOT NULL,\n  posting_date date NOT NULL,\n  statement_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.bank_statement_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.bank_statement_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.stock_dispositions",
+      "script_content": "CREATE TABLE inventory.stock_dispositions (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  lines jsonb NOT NULL,\n  reason text NOT NULL,\n  status text NOT NULL DEFAULT 'draft'::text,\n  version bigint NOT NULL DEFAULT 1,\n  branch_id uuid NOT NULL,\n  cutoff_at timestamp with time zone NOT NULL,\n  posted_at timestamp with time zone,\n  posted_by uuid,\n  tenant_id uuid NOT NULL,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  post_state jsonb,\n  request_id uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  grand_total numeric(20,6) NOT NULL,\n  prepared_by uuid NOT NULL,\n  submitted_by uuid,\n  warehouse_id uuid NOT NULL,\n  currency_code text NOT NULL,\n  document_date date NOT NULL,\n  document_type text NOT NULL DEFAULT 'inventory_disposition'::text,\n  correlation_id uuid NOT NULL,\n  document_number text,\n  legal_entity_id uuid NOT NULL,\n  client_timestamp timestamp with time zone NOT NULL,\n  journal_entry_id uuid,\n  offset_account_id uuid NOT NULL,\n  stock_movement_id uuid,\n  workflow_snapshot jsonb,\n  corrects_disposition_id uuid,\n  reverses_disposition_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.stock_dispositions;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.stock_dispositions';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.purchase_returns",
+      "script_content": "CREATE TABLE procurement.purchase_returns (\n  id uuid NOT NULL,\n  total numeric(20,6) NOT NULL,\n  reason text NOT NULL,\n  branch_id uuid NOT NULL,\n  reference text NOT NULL,\n  source_id uuid NOT NULL,\n  tax_total numeric(20,6) NOT NULL,\n  tenant_id uuid NOT NULL,\n  base_total numeric(20,6) NOT NULL,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  request_id uuid NOT NULL,\n  source_kind text NOT NULL,\n  supplier_id uuid NOT NULL,\n  open_item_id uuid,\n  currency_code text NOT NULL,\n  document_date date NOT NULL,\n  exchange_rate numeric(20,10) NOT NULL,\n  document_number text NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  source_snapshot jsonb NOT NULL,\n  journal_entry_id uuid,\n  stock_movement_id uuid,\n  base_currency_code text NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.purchase_returns;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.purchase_returns';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.receipt_controls",
+      "script_content": "CREATE TABLE procurement.receipt_controls (\n  version bigint NOT NULL DEFAULT 1,\n  tenant_id uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  grni_account_id uuid NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  expense_account_id uuid NOT NULL,\n  maximum_over_receipt_percent numeric(9,6) NOT NULL DEFAULT 0\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.receipt_controls;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.receipt_controls';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.close_control_reviews",
+      "script_content": "CREATE TABLE finance.close_control_reviews (\n  id uuid NOT NULL,\n  as_of date NOT NULL,\n  summary jsonb NOT NULL,\n  evidence jsonb NOT NULL,\n  branch_id uuid NOT NULL,\n  period_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_by uuid NOT NULL,\n  generated_at timestamp with time zone NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.close_control_reviews;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.close_control_reviews';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.control_account_basis",
+      "script_content": "CREATE TABLE finance.control_account_basis (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  kind text NOT NULL,\n  actor_id uuid,\n  source_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  account_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  observed_at timestamp with time zone NOT NULL,\n  source_type text NOT NULL,\n  source_version bigint NOT NULL DEFAULT 0,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.control_account_basis;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.control_account_basis';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.reservation_history",
+      "script_content": "CREATE TABLE inventory.reservation_history (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  version bigint NOT NULL,\n  actor_id uuid,\n  baseline boolean NOT NULL DEFAULT false,\n  snapshot jsonb NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  recorded_at timestamp with time zone NOT NULL,\n  reservation_id uuid NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.reservation_history;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.reservation_history';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.payment_proposals",
+      "script_content": "CREATE TABLE procurement.payment_proposals (\n  id uuid NOT NULL,\n  lines jsonb NOT NULL,\n  total numeric(20,6) NOT NULL,\n  status text NOT NULL DEFAULT 'draft'::text,\n  version bigint NOT NULL DEFAULT 1,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  base_total numeric(20,6) NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  prepared_by uuid NOT NULL,\n  supplier_id uuid NOT NULL,\n  submitted_at timestamp with time zone,\n  submitted_by uuid,\n  currency_code text NOT NULL,\n  document_date date NOT NULL,\n  exchange_rate numeric(20,10) NOT NULL,\n  document_number text,\n  legal_entity_id uuid NOT NULL,\n  exchange_rate_id uuid,\n  workflow_snapshot jsonb,\n  base_currency_code text NOT NULL,\n  cash_bank_account_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.payment_proposals;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.payment_proposals';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.requisition_lines",
+      "script_content": "CREATE TABLE procurement.requisition_lines (\n  id uuid NOT NULL,\n  ordinal integer NOT NULL,\n  unit_id uuid NOT NULL,\n  quantity numeric(20,6) NOT NULL,\n  tenant_id uuid NOT NULL,\n  product_id uuid,\n  description text NOT NULL,\n  base_quantity numeric(20,6) NOT NULL,\n  conversion_id uuid,\n  requisition_id uuid NOT NULL,\n  estimated_total numeric(20,6) NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  conversion_version bigint,\n  conversion_numerator bigint NOT NULL,\n  estimated_unit_price numeric(20,6) NOT NULL,\n  conversion_denominator bigint NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.requisition_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.requisition_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.supplier_payments",
+      "script_content": "CREATE TABLE procurement.supplier_payments (\n  id uuid NOT NULL,\n  amount numeric(20,6) NOT NULL,\n  branch_id uuid NOT NULL,\n  reference text NOT NULL,\n  tenant_id uuid NOT NULL,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  request_id uuid NOT NULL,\n  allocations jsonb NOT NULL,\n  base_amount numeric(20,6) NOT NULL,\n  proposal_id uuid NOT NULL,\n  supplier_id uuid NOT NULL,\n  open_item_id uuid NOT NULL,\n  currency_code text NOT NULL,\n  document_date date NOT NULL,\n  exchange_rate numeric(20,10) NOT NULL,\n  document_number text NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  source_snapshot jsonb NOT NULL,\n  journal_entry_id uuid NOT NULL,\n  base_currency_code text NOT NULL,\n  cash_bank_account_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.supplier_payments;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.supplier_payments';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.period_reopen_requests",
+      "script_content": "CREATE TABLE finance.period_reopen_requests (\n  id uuid NOT NULL,\n  reason text NOT NULL,\n  period_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  requested_at timestamp with time zone NOT NULL DEFAULT now(),\n  requested_by uuid NOT NULL,\n  period_version bigint NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.period_reopen_requests;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.period_reopen_requests';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.product_unit_history",
+      "script_content": "CREATE TABLE inventory.product_unit_history (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  version bigint NOT NULL,\n  actor_id uuid NOT NULL,\n  snapshot jsonb NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  conversion_id uuid NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.product_unit_history;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.product_unit_history';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.receipt_allowances",
+      "script_content": "CREATE TABLE procurement.receipt_allowances (\n  id uuid NOT NULL,\n  reason text NOT NULL,\n  order_id uuid NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  approved_by uuid NOT NULL,\n  order_line_id uuid NOT NULL,\n  order_version bigint NOT NULL,\n  control_version bigint NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  maximum_received_quantity numeric(20,6) NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.receipt_allowances;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.receipt_allowances';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.budget_variance_reports",
+      "script_content": "CREATE TABLE finance.budget_variance_reports (\n  id uuid NOT NULL,\n  as_of date NOT NULL,\n  summary jsonb NOT NULL,\n  evidence jsonb NOT NULL,\n  budget_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_by uuid NOT NULL,\n  generated_at timestamp with time zone NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  requested_branch_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.budget_variance_reports;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.budget_variance_reports';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.tax_definition_versions",
+      "script_content": "CREATE TABLE finance.tax_definition_versions (\n  code text NOT NULL,\n  kind text NOT NULL,\n  name text NOT NULL,\n  rate numeric(12,6) NOT NULL,\n  status text NOT NULL,\n  version bigint NOT NULL,\n  valid_to date,\n  inclusive boolean NOT NULL,\n  tenant_id uuid NOT NULL,\n  valid_from date NOT NULL,\n  captured_at timestamp with time zone NOT NULL DEFAULT clock_timestamp(),\n  recoverable boolean NOT NULL,\n  definition_id uuid NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.tax_definition_versions;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.tax_definition_versions';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.goods_receipt_lines",
+      "script_content": "CREATE TABLE procurement.goods_receipt_lines (\n  id uuid NOT NULL,\n  detail jsonb NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  net_amount numeric(20,6) NOT NULL,\n  receipt_id uuid NOT NULL,\n  base_amount numeric(20,6) NOT NULL,\n  base_quantity numeric(20,6) NOT NULL,\n  order_line_id uuid NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  accepted_quantity numeric(20,6) NOT NULL,\n  rejected_quantity numeric(20,6) NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.goods_receipt_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.goods_receipt_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.requisition_history",
+      "script_content": "CREATE TABLE procurement.requisition_history (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  version bigint NOT NULL,\n  actor_id uuid NOT NULL,\n  snapshot jsonb NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  requisition_id uuid NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.requisition_history;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.requisition_history';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.supplier_bill_lines",
+      "script_content": "CREATE TABLE procurement.supplier_bill_lines (\n  id uuid NOT NULL,\n  detail jsonb NOT NULL,\n  bill_id uuid NOT NULL,\n  quantity numeric(20,6) NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  receipt_line_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.supplier_bill_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.supplier_bill_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.cash_flow_mapping_events",
+      "script_content": "CREATE TABLE finance.cash_flow_mapping_events (\n  id uuid NOT NULL,\n  reason text NOT NULL,\n  version bigint NOT NULL,\n  category text NOT NULL,\n  tenant_id uuid NOT NULL,\n  account_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  effective_date date NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.cash_flow_mapping_events;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.cash_flow_mapping_events';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table finance.fx_revaluation_reversals",
+      "script_content": "CREATE TABLE finance.fx_revaluation_reversals (\n  id uuid NOT NULL,\n  reason text NOT NULL,\n  run_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  posting_date date NOT NULL,\n  journal_entry_id uuid,\n  replacement_run_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS finance.fx_revaluation_reversals;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'finance.fx_revaluation_reversals';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.stock_count_partitions",
+      "script_content": "CREATE TABLE inventory.stock_count_partitions (\n  ordinal integer NOT NULL,\n  count_id uuid NOT NULL,\n  group_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  identity_count integer NOT NULL,\n  baseline_quantity numeric(20,6) NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.stock_count_partitions;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.stock_count_partitions';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.purchase_order_lines",
+      "script_content": "CREATE TABLE procurement.purchase_order_lines (\n  id uuid NOT NULL,\n  detail jsonb NOT NULL,\n  unit_id uuid NOT NULL,\n  order_id uuid NOT NULL,\n  quantity numeric(20,6) NOT NULL,\n  tenant_id uuid NOT NULL,\n  product_id uuid,\n  unit_price numeric(20,6) NOT NULL,\n  description text NOT NULL,\n  source_line_id uuid NOT NULL,\n  billed_quantity numeric(20,6) NOT NULL DEFAULT 0,\n  legal_entity_id uuid NOT NULL,\n  discount_percent numeric(9,6) NOT NULL,\n  received_quantity numeric(20,6) NOT NULL DEFAULT 0,\n  cancelled_quantity numeric(20,6) NOT NULL DEFAULT 0,\n  approved_extra_quantity numeric(20,6) NOT NULL DEFAULT 0\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.purchase_order_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.purchase_order_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.supplier_quote_lines",
+      "script_content": "CREATE TABLE procurement.supplier_quote_lines (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  detail jsonb NOT NULL,\n  quote_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  source_line_id uuid NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.supplier_quote_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.supplier_quote_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.purchase_return_lines",
+      "script_content": "CREATE TABLE procurement.purchase_return_lines (\n  id uuid NOT NULL,\n  detail jsonb NOT NULL,\n  quantity numeric(20,6) NOT NULL,\n  branch_id uuid NOT NULL,\n  return_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  bill_line_id uuid,\n  legal_entity_id uuid NOT NULL,\n  receipt_line_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.purchase_return_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.purchase_return_lines';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.supplier_bill_history",
+      "script_content": "CREATE TABLE procurement.supplier_bill_history (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  bill_id uuid NOT NULL,\n  version bigint NOT NULL,\n  actor_id uuid NOT NULL,\n  snapshot jsonb NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.supplier_bill_history;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.supplier_bill_history';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.landed_extension_transit",
+      "script_content": "CREATE TABLE inventory.landed_extension_transit (\n  id uuid NOT NULL,\n  amount numeric(20,6) NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  transfer_id uuid NOT NULL,\n  extension_id uuid NOT NULL,\n  posting_date date NOT NULL,\n  origin_line_id uuid NOT NULL,\n  transfer_line_id uuid NOT NULL,\n  dispatch_entry_id bigint NOT NULL,\n  inventory_account_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.landed_extension_transit;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.landed_extension_transit';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.product_unit_conversions",
+      "script_content": "CREATE TABLE inventory.product_unit_conversions (\n  id uuid NOT NULL,\n  status text NOT NULL,\n  unit_id uuid NOT NULL,\n  version bigint NOT NULL DEFAULT 1,\n  numerator bigint NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  product_id uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  denominator bigint NOT NULL,\n  base_unit_id uuid NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.product_unit_conversions;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.product_unit_conversions';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.receipt_provenance_pools",
+      "script_content": "CREATE TABLE inventory.receipt_provenance_pools (\n  lot_id uuid,\n  serial_id uuid,\n  tenant_id uuid NOT NULL,\n  product_id uuid NOT NULL,\n  captured_at timestamp with time zone NOT NULL DEFAULT clock_timestamp(),\n  warehouse_id uuid NOT NULL,\n  baseline_quantity numeric(20,6) NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.receipt_provenance_pools;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.receipt_provenance_pools';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.supplier_bill_controls",
+      "script_content": "CREATE TABLE procurement.supplier_bill_controls (\n  version bigint NOT NULL DEFAULT 1,\n  tenant_id uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT now(),\n  updated_by uuid NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  amount_tolerance numeric(20,6) NOT NULL DEFAULT 0,\n  payable_account_id uuid NOT NULL,\n  variance_account_id uuid NOT NULL,\n  input_tax_account_id uuid NOT NULL,\n  price_percent_tolerance numeric(9,6) NOT NULL DEFAULT 0\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.supplier_bill_controls;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.supplier_bill_controls';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.goods_receipt_reversals",
+      "script_content": "CREATE TABLE procurement.goods_receipt_reversals (\n  id uuid NOT NULL,\n  reason text NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  command_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  receipt_id uuid NOT NULL,\n  request_id uuid NOT NULL,\n  document_date date NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  journal_entry_id uuid,\n  stock_movement_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.goods_receipt_reversals;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.goods_receipt_reversals';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.receipt_control_history",
+      "script_content": "CREATE TABLE procurement.receipt_control_history (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  version bigint NOT NULL,\n  actor_id uuid NOT NULL,\n  snapshot jsonb NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.receipt_control_history;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.receipt_control_history';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.receipt_provenance_entries",
+      "script_content": "CREATE TABLE inventory.receipt_provenance_entries (\n  id bigint NOT NULL,\n  lot_id uuid,\n  quantity numeric(20,6) NOT NULL,\n  branch_id uuid NOT NULL,\n  serial_id uuid,\n  tenant_id uuid NOT NULL,\n  product_id uuid NOT NULL,\n  recorded_at timestamp with time zone NOT NULL DEFAULT clock_timestamp(),\n  warehouse_id uuid NOT NULL,\n  origin_line_id uuid,\n  legal_entity_id uuid NOT NULL,\n  movement_line_id uuid NOT NULL,\n  restores_entry_id bigint\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.receipt_provenance_entries;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.receipt_provenance_entries';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.payment_proposal_history",
+      "script_content": "CREATE TABLE procurement.payment_proposal_history (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  version bigint NOT NULL,\n  actor_id uuid NOT NULL,\n  snapshot jsonb NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  proposal_id uuid NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.payment_proposal_history;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.payment_proposal_history';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.purchase_order_revisions",
+      "script_content": "CREATE TABLE procurement.purchase_order_revisions (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  version bigint NOT NULL,\n  actor_id uuid NOT NULL,\n  order_id uuid NOT NULL,\n  revision integer NOT NULL,\n  snapshot jsonb NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.purchase_order_revisions;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.purchase_order_revisions';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table core.wave3_notification_subscriptions",
+      "script_content": "CREATE TABLE core.wave3_notification_subscriptions (\n  id uuid NOT NULL,\n  enabled boolean NOT NULL,\n  version bigint NOT NULL,\n  branch_id uuid,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT clock_timestamp(),\n  created_by uuid NOT NULL,\n  updated_at timestamp with time zone NOT NULL DEFAULT clock_timestamp(),\n  updated_by uuid NOT NULL,\n  event_class text NOT NULL,\n  recipient_id uuid NOT NULL,\n  legal_entity_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS core.wave3_notification_subscriptions;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'core.wave3_notification_subscriptions';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.landed_extension_settlements",
+      "script_content": "CREATE TABLE inventory.landed_extension_settlements (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  amount numeric(20,6) NOT NULL,\n  operation text NOT NULL,\n  tenant_id uuid NOT NULL,\n  transit_id uuid NOT NULL,\n  posting_date date NOT NULL,\n  movement_line_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.landed_extension_settlements;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.landed_extension_settlements';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.receipt_provenance_positions",
+      "script_content": "CREATE TABLE inventory.receipt_provenance_positions (\n  id bigint NOT NULL,\n  lot_id uuid,\n  entry_id bigint,\n  quantity numeric(20,6) NOT NULL,\n  serial_id uuid,\n  tenant_id uuid NOT NULL,\n  product_id uuid NOT NULL,\n  warehouse_id uuid NOT NULL,\n  origin_line_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.receipt_provenance_positions;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.receipt_provenance_positions';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.reservation_history_coverage",
+      "script_content": "CREATE TABLE inventory.reservation_history_coverage (\n  singleton boolean NOT NULL DEFAULT true,\n  starts_at timestamp with time zone NOT NULL DEFAULT clock_timestamp()\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.reservation_history_coverage;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.reservation_history_coverage';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.stock_count_partition_groups",
+      "script_content": "CREATE TABLE inventory.stock_count_partition_groups (\n  id uuid NOT NULL,\n  branch_id uuid NOT NULL,\n  cutoff_at timestamp with time zone NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  created_by uuid NOT NULL,\n  product_id uuid NOT NULL,\n  warehouse_id uuid NOT NULL,\n  identity_count integer NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  partition_count integer NOT NULL,\n  baseline_quantity numeric(20,6) NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.stock_count_partition_groups;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.stock_count_partition_groups';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.supplier_bill_control_history",
+      "script_content": "CREATE TABLE procurement.supplier_bill_control_history (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  version bigint NOT NULL,\n  actor_id uuid NOT NULL,\n  snapshot jsonb NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.supplier_bill_control_history;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.supplier_bill_control_history';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table procurement.supplier_bill_match_approvals",
+      "script_content": "CREATE TABLE procurement.supplier_bill_match_approvals (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  reason text NOT NULL,\n  bill_id uuid NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamp with time zone NOT NULL DEFAULT now(),\n  match_hash text NOT NULL,\n  approved_by uuid NOT NULL,\n  bill_version bigint NOT NULL,\n  control_version bigint NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS procurement.supplier_bill_match_approvals;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'procurement.supplier_bill_match_approvals';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table inventory.stock_count_partition_identities",
+      "script_content": "CREATE TABLE inventory.stock_count_partition_identities (\n  baseline jsonb NOT NULL,\n  count_id uuid NOT NULL,\n  group_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  identity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS inventory.stock_count_partition_identities;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'inventory.stock_count_partition_identities';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Add column project_id to table finance.journal_lines",
+      "script_content": "ALTER TABLE finance.journal_lines ADD COLUMN project_id uuid;",
+      "rollback_script": "ALTER TABLE finance.journal_lines DROP COLUMN project_id;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.columns WHERE table_name = 'finance.journal_lines' AND column_name = 'project_id';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Add column cost_centre_id to table finance.journal_lines",
+      "script_content": "ALTER TABLE finance.journal_lines ADD COLUMN cost_centre_id uuid;",
+      "rollback_script": "ALTER TABLE finance.journal_lines DROP COLUMN cost_centre_id;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.columns WHERE table_name = 'finance.journal_lines' AND column_name = 'cost_centre_id';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Add column dimension_snapshot to table finance.journal_lines",
+      "script_content": "ALTER TABLE finance.journal_lines ADD COLUMN dimension_snapshot jsonb;",
+      "rollback_script": "ALTER TABLE finance.journal_lines DROP COLUMN dimension_snapshot;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.columns WHERE table_name = 'finance.journal_lines' AND column_name = 'dimension_snapshot';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Add foreign_key constraint to finance.journal_lines",
+      "script_content": "ALTER TABLE finance.journal_lines ADD CONSTRAINT foreign_key_finance.journal_lines FOREIGN_KEY (FOREIGN KEY (tenant_id, legal_entity_id, project_id) REFERENCES finance.dimensions(tenant_id, legal_entity_id, id));",
+      "rollback_script": "ALTER TABLE finance.journal_lines DROP CONSTRAINT foreign_key_finance.journal_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.table_constraints WHERE table_name = 'finance.journal_lines' AND constraint_type = 'FOREIGN_KEY';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Add foreign_key constraint to finance.journal_lines",
+      "script_content": "ALTER TABLE finance.journal_lines ADD CONSTRAINT foreign_key_finance.journal_lines FOREIGN_KEY (FOREIGN KEY (tenant_id, legal_entity_id, cost_centre_id) REFERENCES finance.dimensions(tenant_id, legal_entity_id, id));",
+      "rollback_script": "ALTER TABLE finance.journal_lines DROP CONSTRAINT foreign_key_finance.journal_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.table_constraints WHERE table_name = 'finance.journal_lines' AND constraint_type = 'FOREIGN_KEY';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Add check constraint to inventory.stock_movements",
+      "script_content": "ALTER TABLE inventory.stock_movements ADD CONSTRAINT check_inventory.stock_movements CHECK (CHECK (((movement_kind = ANY (ARRAY['opening'::text, 'delivery'::text, 'sales_return'::text, 'goods_receipt'::text, 'goods_receipt_reversal'::text, 'purchase_return'::text])) OR (movement_kind = ANY (ARRAY['transfer_issue'::text, 'transfer_receipt'::text, 'stock_adjustment'::text])) OR (movement_kind = 'value_adjustment'::text) OR (movement_kind = ANY (ARRAY['disposition'::text, 'disposition_reversal'::text])))));",
+      "rollback_script": "ALTER TABLE inventory.stock_movements DROP CONSTRAINT check_inventory.stock_movements;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.table_constraints WHERE table_name = 'inventory.stock_movements' AND constraint_type = 'CHECK';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Add column count_previous_status to table inventory.serials",
+      "script_content": "ALTER TABLE inventory.serials ADD COLUMN count_previous_status text;",
+      "rollback_script": "ALTER TABLE inventory.serials DROP COLUMN count_previous_status;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.columns WHERE table_name = 'inventory.serials' AND column_name = 'count_previous_status';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Add check constraint to inventory.serials",
+      "script_content": "ALTER TABLE inventory.serials ADD CONSTRAINT check_inventory.serials CHECK (CHECK ((count_previous_status = ANY (ARRAY['available'::text, 'quarantine'::text]))));",
+      "rollback_script": "ALTER TABLE inventory.serials DROP CONSTRAINT check_inventory.serials;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.table_constraints WHERE table_name = 'inventory.serials' AND constraint_type = 'CHECK';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Add check constraint to inventory.serials",
+      "script_content": "ALTER TABLE inventory.serials ADD CONSTRAINT check_inventory.serials CHECK (CHECK (((status = 'count_missing'::text) = (count_previous_status IS NOT NULL))));",
+      "rollback_script": "ALTER TABLE inventory.serials DROP CONSTRAINT check_inventory.serials;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.table_constraints WHERE table_name = 'inventory.serials' AND constraint_type = 'CHECK';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Add check constraint to inventory.serials",
+      "script_content": "ALTER TABLE inventory.serials ADD CONSTRAINT check_inventory.serials CHECK (CHECK ((status = ANY (ARRAY['available'::text, 'issued'::text, 'quarantine'::text, 'disposed'::text, 'in_transit'::text, 'count_missing'::text]))));",
+      "rollback_script": "ALTER TABLE inventory.serials DROP CONSTRAINT check_inventory.serials;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.table_constraints WHERE table_name = 'inventory.serials' AND constraint_type = 'CHECK';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Add check constraint to inventory.stock_movement_lines",
+      "script_content": "ALTER TABLE inventory.stock_movement_lines ADD CONSTRAINT check_inventory.stock_movement_lines CHECK (CHECK (((base_quantity = (0)::numeric) OR (base_value = (0)::numeric) OR (sign(base_quantity) = sign(base_value)))));",
+      "rollback_script": "ALTER TABLE inventory.stock_movement_lines DROP CONSTRAINT check_inventory.stock_movement_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.table_constraints WHERE table_name = 'inventory.stock_movement_lines' AND constraint_type = 'CHECK';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Add check constraint to inventory.stock_movement_lines",
+      "script_content": "ALTER TABLE inventory.stock_movement_lines ADD CONSTRAINT check_inventory.stock_movement_lines CHECK (CHECK (((base_quantity <> (0)::numeric) OR (base_value <> (0)::numeric))));",
+      "rollback_script": "ALTER TABLE inventory.stock_movement_lines DROP CONSTRAINT check_inventory.stock_movement_lines;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.table_constraints WHERE table_name = 'inventory.stock_movement_lines' AND constraint_type = 'CHECK';"
+    }
+  ],
+  "risk_assessment": {
+    "overall_risk": "medium",
+    "deployment_risk": "safe_independent_deployment",
+    "rollback_complexity": "low",
+    "testing_requirements": [
+      "integration_testing",
+      "regression_testing",
+      "data_migration_testing"
+    ]
+  },
+  "recommendations": [
+    "Conduct thorough testing with realistic data volumes",
+    "Implement monitoring for migration success metrics",
+    "Test all migration scripts in staging environment",
+    "Implement migration progress monitoring",
+    "Create detailed communication plan for stakeholders",
+    "Implement feature flags for gradual rollout"
+  ]
+}

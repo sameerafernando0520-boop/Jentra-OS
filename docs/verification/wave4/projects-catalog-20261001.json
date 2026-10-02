@@ -1,0 +1,1769 @@
+{
+  "tables": {
+    "plans": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false
+        },
+        "terms": {
+          "type": "text",
+          "nullable": false
+        },
+        "reason": {
+          "type": "text",
+          "nullable": false
+        },
+        "status": {
+          "type": "text",
+          "default": "'pending'::text",
+          "nullable": false
+        },
+        "version": {
+          "type": "bigint",
+          "nullable": false
+        },
+        "tenant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "register.tenant_id"
+        },
+        "project_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "register.id"
+        },
+        "prepared_at": {
+          "type": "timestamp with time zone",
+          "default": "clock_timestamp()",
+          "nullable": false
+        },
+        "prepared_by": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "users.id"
+        },
+        "basis_digest": {
+          "type": "text",
+          "nullable": false
+        },
+        "legal_entity_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "register.legal_entity_id"
+        }
+      },
+      "indexes": [
+        {
+          "name": "plans_pkey",
+          "unique": true,
+          "columns": [
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX plans_pkey ON projects.plans USING btree (id)"
+        },
+        {
+          "name": "plans_tenant_id_legal_entity_id_project_id_id_key",
+          "unique": true,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX plans_tenant_id_legal_entity_id_project_id_id_key ON projects.plans USING btree (tenant_id, legal_entity_id, project_id, id)"
+        },
+        {
+          "name": "plans_project_id_version_key",
+          "unique": true,
+          "columns": [
+            "project_id",
+            "version"
+          ],
+          "definition": "CREATE UNIQUE INDEX plans_project_id_version_key ON projects.plans USING btree (project_id, version)"
+        },
+        {
+          "name": "plan_scope_idx",
+          "unique": false,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "id"
+          ],
+          "definition": "CREATE INDEX plan_scope_idx ON projects.plans USING btree (tenant_id, legal_entity_id, project_id, id)"
+        },
+        {
+          "name": "plan_actor_idx",
+          "unique": false,
+          "columns": [
+            "prepared_by"
+          ],
+          "definition": "CREATE INDEX plan_actor_idx ON projects.plans USING btree (prepared_by)"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "check_constraints": {
+        "plans_status_check": "CHECK ((status = ANY (ARRAY['pending'::text, 'approved'::text, 'rejected'::text, 'superseded'::text])))",
+        "plans_version_check": "CHECK (((version >= 1) AND (version <= '9007199254740990'::bigint)))",
+        "plans_basis_digest_check": "CHECK ((basis_digest ~ '^[a-f0-9]{64}$'::text))"
+      },
+      "unique_constraints": [
+        [
+          "project_id",
+          "version"
+        ],
+        [
+          "tenant_id",
+          "legal_entity_id",
+          "project_id",
+          "id"
+        ]
+      ]
+    },
+    "tasks": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false
+        },
+        "name": {
+          "type": "text",
+          "nullable": false
+        },
+        "plan_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "plans.id"
+        },
+        "tenant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "plans.tenant_id"
+        },
+        "project_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "plans.project_id"
+        },
+        "start_date": {
+          "type": "date",
+          "nullable": false
+        },
+        "legal_entity_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "plans.legal_entity_id"
+        },
+        "planned_seconds": {
+          "type": "bigint",
+          "nullable": false
+        },
+        "end_date_exclusive": {
+          "type": "date",
+          "nullable": false
+        }
+      },
+      "indexes": [
+        {
+          "name": "tasks_pkey",
+          "unique": true,
+          "columns": [
+            "plan_id",
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX tasks_pkey ON projects.tasks USING btree (plan_id, id)"
+        },
+        {
+          "name": "tasks_tenant_id_legal_entity_id_project_id_plan_id_id_key",
+          "unique": true,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "plan_id",
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX tasks_tenant_id_legal_entity_id_project_id_plan_id_id_key ON projects.tasks USING btree (tenant_id, legal_entity_id, project_id, plan_id, id)"
+        },
+        {
+          "name": "task_scope_idx",
+          "unique": false,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "plan_id",
+            "id"
+          ],
+          "definition": "CREATE INDEX task_scope_idx ON projects.tasks USING btree (tenant_id, legal_entity_id, project_id, plan_id, id)"
+        }
+      ],
+      "primary_key": [
+        "plan_id",
+        "id"
+      ],
+      "check_constraints": {
+        "tasks_check": "CHECK ((end_date_exclusive > start_date))",
+        "tasks_name_check": "CHECK ((((length(name) >= 1) AND (length(name) <= 160)) AND (name = btrim(name)) AND (name !~ '[[:cntrl:]]'::text)))",
+        "tasks_planned_seconds_check": "CHECK (((planned_seconds >= 0) AND (planned_seconds <= 31622400)))"
+      },
+      "unique_constraints": [
+        [
+          "tenant_id",
+          "legal_entity_id",
+          "project_id",
+          "plan_id",
+          "id"
+        ]
+      ]
+    },
+    "register": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "plans.project_id"
+        },
+        "code": {
+          "type": "text",
+          "nullable": false
+        },
+        "name": {
+          "type": "text",
+          "nullable": false
+        },
+        "status": {
+          "type": "text",
+          "default": "'open'::text",
+          "nullable": false
+        },
+        "version": {
+          "type": "bigint",
+          "default": "1",
+          "nullable": false
+        },
+        "branch_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "branches.id"
+        },
+        "precision": {
+          "type": "integer",
+          "nullable": false
+        },
+        "tenant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "branches.tenant_id"
+        },
+        "created_at": {
+          "type": "timestamp with time zone",
+          "default": "clock_timestamp()",
+          "nullable": false
+        },
+        "created_by": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "users.id"
+        },
+        "manager_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "employees.id"
+        },
+        "start_date": {
+          "type": "date",
+          "nullable": false
+        },
+        "customer_id": {
+          "type": "uuid",
+          "nullable": true,
+          "foreign_key": "parties.id"
+        },
+        "currency_code": {
+          "type": "text",
+          "nullable": false,
+          "foreign_key": "currencies.code"
+        },
+        "current_plan_id": {
+          "type": "uuid",
+          "nullable": true,
+          "foreign_key": "plans.id"
+        },
+        "legal_entity_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "branches.legal_entity_id"
+        },
+        "end_date_exclusive": {
+          "type": "date",
+          "nullable": false
+        }
+      },
+      "indexes": [
+        {
+          "name": "register_pkey",
+          "unique": true,
+          "columns": [
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX register_pkey ON projects.register USING btree (id)"
+        },
+        {
+          "name": "register_tenant_id_legal_entity_id_id_key",
+          "unique": true,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX register_tenant_id_legal_entity_id_id_key ON projects.register USING btree (tenant_id, legal_entity_id, id)"
+        },
+        {
+          "name": "register_tenant_id_legal_entity_id_code_key",
+          "unique": true,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "code"
+          ],
+          "definition": "CREATE UNIQUE INDEX register_tenant_id_legal_entity_id_code_key ON projects.register USING btree (tenant_id, legal_entity_id, code)"
+        },
+        {
+          "name": "project_scope_idx",
+          "unique": false,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "branch_id",
+            "id"
+          ],
+          "definition": "CREATE INDEX project_scope_idx ON projects.register USING btree (tenant_id, legal_entity_id, branch_id, id)"
+        },
+        {
+          "name": "project_customer_idx",
+          "unique": false,
+          "columns": [
+            "tenant_id",
+            "customer_id"
+          ],
+          "definition": "CREATE INDEX project_customer_idx ON projects.register USING btree (tenant_id, customer_id)"
+        },
+        {
+          "name": "project_manager_idx",
+          "unique": false,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "manager_id"
+          ],
+          "definition": "CREATE INDEX project_manager_idx ON projects.register USING btree (tenant_id, legal_entity_id, manager_id)"
+        },
+        {
+          "name": "project_creator_idx",
+          "unique": false,
+          "columns": [
+            "created_by"
+          ],
+          "definition": "CREATE INDEX project_creator_idx ON projects.register USING btree (created_by)"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "check_constraints": {
+        "register_check": "CHECK (((start_date >= '0001-01-01'::date) AND (end_date_exclusive <= '9999-12-31'::date) AND (((end_date_exclusive - start_date) >= 1) AND ((end_date_exclusive - start_date) <= 366))))",
+        "register_code_check": "CHECK ((code ~ '^[A-Z0-9][A-Z0-9_-]{0,31}$'::text))",
+        "register_name_check": "CHECK ((((length(name) >= 1) AND (length(name) <= 160)) AND (name = btrim(name)) AND (name !~ '[[:cntrl:]]'::text)))",
+        "register_status_check": "CHECK ((status = ANY (ARRAY['open'::text, 'closed'::text])))",
+        "register_version_check": "CHECK (((version >= 1) AND (version <= '9007199254740990'::bigint)))",
+        "register_precision_check": "CHECK (((\"precision\" >= 0) AND (\"precision\" <= 6)))"
+      },
+      "unique_constraints": [
+        [
+          "tenant_id",
+          "legal_entity_id",
+          "code"
+        ],
+        [
+          "tenant_id",
+          "legal_entity_id",
+          "id"
+        ]
+      ]
+    },
+    "cost_basis": {
+      "columns": {
+        "budget": {
+          "type": "numeric(20,6)",
+          "nullable": false
+        },
+        "plan_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "plans.id"
+        },
+        "tenant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "plans.tenant_id"
+        },
+        "project_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "plans.project_id"
+        },
+        "legal_entity_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "plans.legal_entity_id"
+        }
+      },
+      "indexes": [
+        {
+          "name": "cost_basis_pkey",
+          "unique": true,
+          "columns": [
+            "plan_id"
+          ],
+          "definition": "CREATE UNIQUE INDEX cost_basis_pkey ON projects.cost_basis USING btree (plan_id)"
+        }
+      ],
+      "primary_key": [
+        "plan_id"
+      ],
+      "check_constraints": {
+        "cost_basis_budget_check": "CHECK ((budget >= (0)::numeric))"
+      },
+      "unique_constraints": []
+    },
+    "time_costs": {
+      "columns": {
+        "amount": {
+          "type": "numeric(20,6)",
+          "nullable": false
+        },
+        "entry_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_revisions.entry_id"
+        },
+        "tenant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_revisions.tenant_id"
+        },
+        "project_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_revisions.project_id"
+        },
+        "hourly_rate": {
+          "type": "numeric(20,6)",
+          "nullable": false
+        },
+        "revision_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_revisions.id"
+        },
+        "legal_entity_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_revisions.legal_entity_id"
+        }
+      },
+      "indexes": [
+        {
+          "name": "time_costs_pkey",
+          "unique": true,
+          "columns": [
+            "revision_id"
+          ],
+          "definition": "CREATE UNIQUE INDEX time_costs_pkey ON projects.time_costs USING btree (revision_id)"
+        },
+        {
+          "name": "time_cost_scope_idx",
+          "unique": false,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "revision_id"
+          ],
+          "definition": "CREATE INDEX time_cost_scope_idx ON projects.time_costs USING btree (tenant_id, legal_entity_id, project_id, revision_id)"
+        }
+      ],
+      "primary_key": [
+        "revision_id"
+      ],
+      "check_constraints": {
+        "time_costs_amount_check": "CHECK ((amount >= (0)::numeric))",
+        "time_costs_hourly_rate_check": "CHECK ((hourly_rate >= (0)::numeric))"
+      },
+      "unique_constraints": []
+    },
+    "time_events": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "default": "pg_catalog.gen_random_uuid()",
+          "nullable": false
+        },
+        "action": {
+          "type": "text",
+          "nullable": false
+        },
+        "reason": {
+          "type": "text",
+          "nullable": false
+        },
+        "version": {
+          "type": "bigint",
+          "nullable": false
+        },
+        "actor_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "users.id"
+        },
+        "entry_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_revisions.entry_id"
+        },
+        "tenant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_revisions.tenant_id"
+        },
+        "command_id": {
+          "type": "uuid",
+          "nullable": false
+        },
+        "project_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_revisions.project_id"
+        },
+        "recorded_at": {
+          "type": "timestamp with time zone",
+          "default": "clock_timestamp()",
+          "nullable": false
+        },
+        "revision_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_revisions.id"
+        },
+        "legal_entity_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_revisions.legal_entity_id"
+        }
+      },
+      "indexes": [
+        {
+          "name": "time_events_pkey",
+          "unique": true,
+          "columns": [
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX time_events_pkey ON projects.time_events USING btree (id)"
+        },
+        {
+          "name": "time_events_tenant_id_legal_entity_id_command_id_key",
+          "unique": true,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "command_id"
+          ],
+          "definition": "CREATE UNIQUE INDEX time_events_tenant_id_legal_entity_id_command_id_key ON projects.time_events USING btree (tenant_id, legal_entity_id, command_id)"
+        },
+        {
+          "name": "time_event_scope_idx",
+          "unique": false,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "entry_id",
+            "id"
+          ],
+          "definition": "CREATE INDEX time_event_scope_idx ON projects.time_events USING btree (tenant_id, legal_entity_id, project_id, entry_id, id)"
+        },
+        {
+          "name": "time_event_actor_idx",
+          "unique": false,
+          "columns": [
+            "actor_id"
+          ],
+          "definition": "CREATE INDEX time_event_actor_idx ON projects.time_events USING btree (actor_id)"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "check_constraints": {},
+      "unique_constraints": [
+        [
+          "tenant_id",
+          "legal_entity_id",
+          "command_id"
+        ]
+      ]
+    },
+    "dependencies": {
+      "columns": {
+        "plan_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "tasks.plan_id"
+        },
+        "task_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "tasks.id"
+        },
+        "tenant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "tasks.tenant_id"
+        },
+        "project_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "tasks.project_id"
+        },
+        "legal_entity_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "tasks.legal_entity_id"
+        },
+        "prerequisite_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "tasks.id"
+        }
+      },
+      "indexes": [
+        {
+          "name": "dependencies_pkey",
+          "unique": true,
+          "columns": [
+            "plan_id",
+            "task_id",
+            "prerequisite_id"
+          ],
+          "definition": "CREATE UNIQUE INDEX dependencies_pkey ON projects.dependencies USING btree (plan_id, task_id, prerequisite_id)"
+        },
+        {
+          "name": "dependency_prerequisite_idx",
+          "unique": false,
+          "columns": [
+            "plan_id",
+            "prerequisite_id"
+          ],
+          "definition": "CREATE INDEX dependency_prerequisite_idx ON projects.dependencies USING btree (plan_id, prerequisite_id)"
+        }
+      ],
+      "primary_key": [
+        "plan_id",
+        "task_id",
+        "prerequisite_id"
+      ],
+      "check_constraints": {
+        "dependencies_check": "CHECK ((task_id <> prerequisite_id))"
+      },
+      "unique_constraints": []
+    },
+    "time_entries": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_revisions.entry_id"
+        },
+        "status": {
+          "type": "text",
+          "default": "'draft'::text",
+          "nullable": false
+        },
+        "version": {
+          "type": "bigint",
+          "default": "1",
+          "nullable": false
+        },
+        "branch_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "branches.id"
+        },
+        "tenant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "register.tenant_id"
+        },
+        "created_at": {
+          "type": "timestamp with time zone",
+          "default": "clock_timestamp()",
+          "nullable": false
+        },
+        "created_by": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "users.id"
+        },
+        "project_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "register.id"
+        },
+        "employee_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "employees.id"
+        },
+        "submitted_by": {
+          "type": "uuid",
+          "nullable": true,
+          "foreign_key": "users.id"
+        },
+        "legal_entity_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "register.legal_entity_id"
+        },
+        "current_revision_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_revisions.id"
+        }
+      },
+      "indexes": [
+        {
+          "name": "time_entries_pkey",
+          "unique": true,
+          "columns": [
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX time_entries_pkey ON projects.time_entries USING btree (id)"
+        },
+        {
+          "name": "time_entries_tenant_id_legal_entity_id_project_id_id_key",
+          "unique": true,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX time_entries_tenant_id_legal_entity_id_project_id_id_key ON projects.time_entries USING btree (tenant_id, legal_entity_id, project_id, id)"
+        },
+        {
+          "name": "project_time_scope_idx",
+          "unique": false,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "branch_id",
+            "project_id",
+            "id"
+          ],
+          "definition": "CREATE INDEX project_time_scope_idx ON projects.time_entries USING btree (tenant_id, legal_entity_id, branch_id, project_id, id)"
+        },
+        {
+          "name": "project_time_employee_idx",
+          "unique": false,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "employee_id"
+          ],
+          "definition": "CREATE INDEX project_time_employee_idx ON projects.time_entries USING btree (tenant_id, legal_entity_id, employee_id)"
+        },
+        {
+          "name": "project_time_creator_idx",
+          "unique": false,
+          "columns": [
+            "created_by"
+          ],
+          "definition": "CREATE INDEX project_time_creator_idx ON projects.time_entries USING btree (created_by)"
+        },
+        {
+          "name": "project_time_submitter_idx",
+          "unique": false,
+          "columns": [
+            "submitted_by"
+          ],
+          "definition": "CREATE INDEX project_time_submitter_idx ON projects.time_entries USING btree (submitted_by)"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "check_constraints": {
+        "time_entries_status_check": "CHECK ((status = ANY (ARRAY['draft'::text, 'submitted'::text, 'approved'::text, 'rejected'::text, 'cancelled'::text])))",
+        "time_entries_version_check": "CHECK (((version >= 1) AND (version <= '9007199254740990'::bigint)))"
+      },
+      "unique_constraints": [
+        [
+          "tenant_id",
+          "legal_entity_id",
+          "project_id",
+          "id"
+        ]
+      ]
+    },
+    "task_progress": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "default": "pg_catalog.gen_random_uuid()",
+          "nullable": false
+        },
+        "reason": {
+          "type": "text",
+          "nullable": false
+        },
+        "plan_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "tasks.plan_id"
+        },
+        "task_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "tasks.id"
+        },
+        "progress": {
+          "type": "integer",
+          "nullable": false
+        },
+        "tenant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "tasks.tenant_id"
+        },
+        "project_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "tasks.project_id"
+        },
+        "recorded_at": {
+          "type": "timestamp with time zone",
+          "default": "clock_timestamp()",
+          "nullable": false
+        },
+        "recorded_by": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "users.id"
+        },
+        "legal_entity_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "tasks.legal_entity_id"
+        },
+        "project_version": {
+          "type": "bigint",
+          "nullable": false
+        }
+      },
+      "indexes": [
+        {
+          "name": "task_progress_pkey",
+          "unique": true,
+          "columns": [
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX task_progress_pkey ON projects.task_progress USING btree (id)"
+        },
+        {
+          "name": "task_progress_project_id_project_version_key",
+          "unique": true,
+          "columns": [
+            "project_id",
+            "project_version"
+          ],
+          "definition": "CREATE UNIQUE INDEX task_progress_project_id_project_version_key ON projects.task_progress USING btree (project_id, project_version)"
+        },
+        {
+          "name": "progress_scope_idx",
+          "unique": false,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "plan_id",
+            "task_id",
+            "project_version"
+          ],
+          "definition": "CREATE INDEX progress_scope_idx ON projects.task_progress USING btree (tenant_id, legal_entity_id, project_id, plan_id, task_id, project_version DESC)"
+        },
+        {
+          "name": "progress_actor_idx",
+          "unique": false,
+          "columns": [
+            "recorded_by"
+          ],
+          "definition": "CREATE INDEX progress_actor_idx ON projects.task_progress USING btree (recorded_by)"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "check_constraints": {
+        "task_progress_progress_check": "CHECK (((progress >= 0) AND (progress <= 10000)))"
+      },
+      "unique_constraints": [
+        [
+          "project_id",
+          "project_version"
+        ]
+      ]
+    },
+    "billable_units": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false
+        },
+        "amount": {
+          "type": "numeric(20,6)",
+          "nullable": false
+        },
+        "status": {
+          "type": "text",
+          "default": "'available'::text",
+          "nullable": false
+        },
+        "branch_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "branches.id"
+        },
+        "source_id": {
+          "type": "uuid",
+          "nullable": false
+        },
+        "tenant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "register.tenant_id"
+        },
+        "project_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "register.id"
+        },
+        "source_kind": {
+          "type": "text",
+          "nullable": false
+        },
+        "source_digest": {
+          "type": "text",
+          "nullable": false
+        },
+        "source_version": {
+          "type": "bigint",
+          "nullable": false
+        },
+        "legal_entity_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "register.legal_entity_id"
+        },
+        "payable_seconds": {
+          "type": "bigint",
+          "nullable": true
+        }
+      },
+      "indexes": [
+        {
+          "name": "billable_units_pkey",
+          "unique": true,
+          "columns": [
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX billable_units_pkey ON projects.billable_units USING btree (id)"
+        },
+        {
+          "name": "billable_units_tenant_id_legal_entity_id_source_kind_source_key",
+          "unique": true,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "source_kind",
+            "source_id"
+          ],
+          "definition": "CREATE UNIQUE INDEX billable_units_tenant_id_legal_entity_id_source_kind_source_key ON projects.billable_units USING btree (tenant_id, legal_entity_id, source_kind, source_id)"
+        },
+        {
+          "name": "billable_units_tenant_id_legal_entity_id_project_id_id_key",
+          "unique": true,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX billable_units_tenant_id_legal_entity_id_project_id_id_key ON projects.billable_units USING btree (tenant_id, legal_entity_id, project_id, id)"
+        },
+        {
+          "name": "billable_scope_idx",
+          "unique": false,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "status",
+            "id"
+          ],
+          "definition": "CREATE INDEX billable_scope_idx ON projects.billable_units USING btree (tenant_id, legal_entity_id, project_id, status, id)"
+        },
+        {
+          "name": "billable_branch_idx",
+          "unique": false,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "branch_id",
+            "id"
+          ],
+          "definition": "CREATE INDEX billable_branch_idx ON projects.billable_units USING btree (tenant_id, legal_entity_id, branch_id, id)"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "check_constraints": {
+        "billable_units_check": "CHECK (((source_kind = 'time'::text) = (payable_seconds IS NOT NULL)))",
+        "billable_units_amount_check": "CHECK ((amount >= (0)::numeric))",
+        "billable_units_status_check": "CHECK ((status = ANY (ARRAY['available'::text, 'reserved'::text, 'billed'::text, 'waived'::text, 'cancelled'::text])))",
+        "billable_units_source_kind_check": "CHECK ((source_kind = ANY (ARRAY['time'::text, 'expense'::text, 'milestone'::text])))",
+        "billable_units_source_digest_check": "CHECK ((source_digest ~ '^[a-f0-9]{64}$'::text))",
+        "billable_units_payable_seconds_check": "CHECK (((payable_seconds >= 1) AND (payable_seconds <= 129600)))"
+      },
+      "unique_constraints": [
+        [
+          "tenant_id",
+          "legal_entity_id",
+          "project_id",
+          "id"
+        ],
+        [
+          "tenant_id",
+          "legal_entity_id",
+          "source_kind",
+          "source_id"
+        ]
+      ]
+    },
+    "plan_decisions": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "default": "pg_catalog.gen_random_uuid()",
+          "nullable": false
+        },
+        "digest": {
+          "type": "text",
+          "nullable": false
+        },
+        "reason": {
+          "type": "text",
+          "nullable": false
+        },
+        "plan_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "plans.id"
+        },
+        "decision": {
+          "type": "text",
+          "nullable": false
+        },
+        "tenant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "plans.tenant_id"
+        },
+        "decided_at": {
+          "type": "timestamp with time zone",
+          "default": "clock_timestamp()",
+          "nullable": false
+        },
+        "decided_by": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "users.id"
+        },
+        "project_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "plans.project_id"
+        },
+        "legal_entity_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "plans.legal_entity_id"
+        }
+      },
+      "indexes": [
+        {
+          "name": "plan_decisions_pkey",
+          "unique": true,
+          "columns": [
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX plan_decisions_pkey ON projects.plan_decisions USING btree (id)"
+        },
+        {
+          "name": "plan_decisions_plan_id_key",
+          "unique": true,
+          "columns": [
+            "plan_id"
+          ],
+          "definition": "CREATE UNIQUE INDEX plan_decisions_plan_id_key ON projects.plan_decisions USING btree (plan_id)"
+        },
+        {
+          "name": "decision_actor_idx",
+          "unique": false,
+          "columns": [
+            "decided_by"
+          ],
+          "definition": "CREATE INDEX decision_actor_idx ON projects.plan_decisions USING btree (decided_by)"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "check_constraints": {
+        "plan_decisions_decision_check": "CHECK ((decision = ANY (ARRAY['approved'::text, 'rejected'::text])))"
+      },
+      "unique_constraints": [
+        [
+          "plan_id"
+        ]
+      ]
+    },
+    "resource_costs": {
+      "columns": {
+        "plan_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "resource_slots.plan_id"
+        },
+        "tenant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "resource_slots.tenant_id"
+        },
+        "project_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "resource_slots.project_id"
+        },
+        "hourly_rate": {
+          "type": "numeric(20,6)",
+          "nullable": false
+        },
+        "legal_entity_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "resource_slots.legal_entity_id"
+        },
+        "resource_slot_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "resource_slots.id"
+        }
+      },
+      "indexes": [
+        {
+          "name": "resource_costs_pkey",
+          "unique": true,
+          "columns": [
+            "resource_slot_id"
+          ],
+          "definition": "CREATE UNIQUE INDEX resource_costs_pkey ON projects.resource_costs USING btree (resource_slot_id)"
+        },
+        {
+          "name": "resource_cost_plan_idx",
+          "unique": false,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "plan_id",
+            "resource_slot_id"
+          ],
+          "definition": "CREATE INDEX resource_cost_plan_idx ON projects.resource_costs USING btree (tenant_id, legal_entity_id, project_id, plan_id, resource_slot_id)"
+        }
+      ],
+      "primary_key": [
+        "resource_slot_id"
+      ],
+      "check_constraints": {
+        "resource_costs_hourly_rate_check": "CHECK ((hourly_rate >= (0)::numeric))"
+      },
+      "unique_constraints": []
+    },
+    "resource_slots": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false
+        },
+        "active": {
+          "type": "boolean",
+          "default": "false",
+          "nullable": false
+        },
+        "end_utc": {
+          "type": "timestamp with time zone",
+          "nullable": false
+        },
+        "plan_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "tasks.plan_id"
+        },
+        "task_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "tasks.id"
+        },
+        "bill_rate": {
+          "type": "numeric(20,6)",
+          "nullable": false
+        },
+        "end_local": {
+          "type": "timestamp without time zone",
+          "nullable": false
+        },
+        "start_utc": {
+          "type": "timestamp with time zone",
+          "nullable": false
+        },
+        "tenant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "tasks.tenant_id"
+        },
+        "project_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "tasks.project_id"
+        },
+        "employee_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "employees.id"
+        },
+        "start_local": {
+          "type": "timestamp without time zone",
+          "nullable": false
+        },
+        "legal_entity_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "tasks.legal_entity_id"
+        },
+        "planned_seconds": {
+          "type": "bigint",
+          "nullable": false
+        },
+        "end_offset_seconds": {
+          "type": "integer",
+          "nullable": false
+        },
+        "calendar_version_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "work_calendar_versions.id"
+        },
+        "start_offset_seconds": {
+          "type": "integer",
+          "nullable": false
+        }
+      },
+      "indexes": [
+        {
+          "name": "resource_slots_pkey",
+          "unique": true,
+          "columns": [
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX resource_slots_pkey ON projects.resource_slots USING btree (id)"
+        },
+        {
+          "name": "resource_slots_tenant_id_legal_entity_id_project_id_plan_id_key",
+          "unique": true,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "plan_id",
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX resource_slots_tenant_id_legal_entity_id_project_id_plan_id_key ON projects.resource_slots USING btree (tenant_id, legal_entity_id, project_id, plan_id, id)"
+        },
+        {
+          "name": "resource_slots_employee_id_tstzrange_excl",
+          "unique": false,
+          "columns": [
+            "employee_id"
+          ],
+          "definition": "CREATE INDEX resource_slots_employee_id_tstzrange_excl ON projects.resource_slots USING gist (employee_id, tstzrange(start_utc, end_utc, '[)'::text)) WHERE active"
+        },
+        {
+          "name": "slot_scope_idx",
+          "unique": false,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "plan_id",
+            "id"
+          ],
+          "definition": "CREATE INDEX slot_scope_idx ON projects.resource_slots USING btree (tenant_id, legal_entity_id, project_id, plan_id, id)"
+        },
+        {
+          "name": "slot_employee_idx",
+          "unique": false,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "employee_id"
+          ],
+          "definition": "CREATE INDEX slot_employee_idx ON projects.resource_slots USING btree (tenant_id, legal_entity_id, employee_id)"
+        },
+        {
+          "name": "slot_calendar_idx",
+          "unique": false,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "calendar_version_id"
+          ],
+          "definition": "CREATE INDEX slot_calendar_idx ON projects.resource_slots USING btree (tenant_id, legal_entity_id, calendar_version_id)"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "check_constraints": {
+        "resource_slots_check": "CHECK (((end_utc > start_utc) AND (planned_seconds = (EXTRACT(epoch FROM (end_utc - start_utc)))::bigint) AND ((planned_seconds >= 1) AND (planned_seconds <= 86400))))",
+        "resource_slots_bill_rate_check": "CHECK ((bill_rate >= (0)::numeric))"
+      },
+      "unique_constraints": [
+        [
+          "tenant_id",
+          "legal_entity_id",
+          "project_id",
+          "plan_id",
+          "id"
+        ]
+      ]
+    },
+    "time_revisions": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false
+        },
+        "breaks": {
+          "type": "jsonb",
+          "nullable": false
+        },
+        "digest": {
+          "type": "text",
+          "nullable": false
+        },
+        "reason": {
+          "type": "text",
+          "nullable": false
+        },
+        "end_utc": {
+          "type": "timestamp with time zone",
+          "nullable": false
+        },
+        "plan_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "tasks.plan_id"
+        },
+        "task_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "tasks.id"
+        },
+        "version": {
+          "type": "bigint",
+          "nullable": false
+        },
+        "entry_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_entries.id"
+        },
+        "end_local": {
+          "type": "timestamp without time zone",
+          "nullable": false
+        },
+        "start_utc": {
+          "type": "timestamp with time zone",
+          "nullable": false
+        },
+        "tenant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_entries.tenant_id"
+        },
+        "project_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_entries.project_id"
+        },
+        "bill_amount": {
+          "type": "numeric(20,6)",
+          "nullable": false
+        },
+        "recorded_at": {
+          "type": "timestamp with time zone",
+          "default": "clock_timestamp()",
+          "nullable": false
+        },
+        "recorded_by": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "users.id"
+        },
+        "start_local": {
+          "type": "timestamp without time zone",
+          "nullable": false
+        },
+        "supersedes_id": {
+          "type": "uuid",
+          "nullable": true,
+          "foreign_key": "time_revisions.id"
+        },
+        "legal_entity_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_entries.legal_entity_id"
+        },
+        "payable_seconds": {
+          "type": "bigint",
+          "nullable": false
+        },
+        "resource_slot_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "resource_slots.id"
+        },
+        "end_offset_seconds": {
+          "type": "integer",
+          "nullable": false
+        },
+        "attendance_claim_id": {
+          "type": "uuid",
+          "nullable": true,
+          "foreign_key": "work_claims.id"
+        },
+        "start_offset_seconds": {
+          "type": "integer",
+          "nullable": false
+        }
+      },
+      "indexes": [
+        {
+          "name": "time_revisions_pkey",
+          "unique": true,
+          "columns": [
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX time_revisions_pkey ON projects.time_revisions USING btree (id)"
+        },
+        {
+          "name": "time_revisions_tenant_id_legal_entity_id_project_id_entry_i_key",
+          "unique": true,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "entry_id",
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX time_revisions_tenant_id_legal_entity_id_project_id_entry_i_key ON projects.time_revisions USING btree (tenant_id, legal_entity_id, project_id, entry_id, id)"
+        },
+        {
+          "name": "time_revisions_entry_id_version_key",
+          "unique": true,
+          "columns": [
+            "entry_id",
+            "version"
+          ],
+          "definition": "CREATE UNIQUE INDEX time_revisions_entry_id_version_key ON projects.time_revisions USING btree (entry_id, version)"
+        },
+        {
+          "name": "time_revision_slot_idx",
+          "unique": false,
+          "columns": [
+            "resource_slot_id"
+          ],
+          "definition": "CREATE INDEX time_revision_slot_idx ON projects.time_revisions USING btree (resource_slot_id)"
+        },
+        {
+          "name": "time_revision_plan_idx",
+          "unique": false,
+          "columns": [
+            "plan_id",
+            "task_id"
+          ],
+          "definition": "CREATE INDEX time_revision_plan_idx ON projects.time_revisions USING btree (plan_id, task_id)"
+        },
+        {
+          "name": "time_revision_attendance_idx",
+          "unique": false,
+          "columns": [
+            "attendance_claim_id"
+          ],
+          "definition": "CREATE INDEX time_revision_attendance_idx ON projects.time_revisions USING btree (attendance_claim_id)"
+        },
+        {
+          "name": "time_revision_supersedes_idx",
+          "unique": false,
+          "columns": [
+            "supersedes_id"
+          ],
+          "definition": "CREATE INDEX time_revision_supersedes_idx ON projects.time_revisions USING btree (supersedes_id)"
+        },
+        {
+          "name": "time_revision_actor_idx",
+          "unique": false,
+          "columns": [
+            "recorded_by"
+          ],
+          "definition": "CREATE INDEX time_revision_actor_idx ON projects.time_revisions USING btree (recorded_by)"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "check_constraints": {
+        "time_revisions_digest_check": "CHECK ((digest ~ '^[a-f0-9]{64}$'::text))",
+        "time_revisions_bill_amount_check": "CHECK ((bill_amount >= (0)::numeric))",
+        "time_revisions_payable_seconds_check": "CHECK (((payable_seconds >= 1) AND (payable_seconds <= 129600)))"
+      },
+      "unique_constraints": [
+        [
+          "entry_id",
+          "version"
+        ],
+        [
+          "tenant_id",
+          "legal_entity_id",
+          "project_id",
+          "entry_id",
+          "id"
+        ]
+      ]
+    },
+    "unit_decisions": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "default": "pg_catalog.gen_random_uuid()",
+          "nullable": false
+        },
+        "reason": {
+          "type": "text",
+          "nullable": false
+        },
+        "unit_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "billable_units.id"
+        },
+        "actor_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "users.id"
+        },
+        "decision": {
+          "type": "text",
+          "nullable": false
+        },
+        "tenant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "billable_units.tenant_id"
+        },
+        "project_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "billable_units.project_id"
+        },
+        "recorded_at": {
+          "type": "timestamp with time zone",
+          "default": "clock_timestamp()",
+          "nullable": false
+        },
+        "legal_entity_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "billable_units.legal_entity_id"
+        }
+      },
+      "indexes": [
+        {
+          "name": "unit_decisions_pkey",
+          "unique": true,
+          "columns": [
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX unit_decisions_pkey ON projects.unit_decisions USING btree (id)"
+        },
+        {
+          "name": "unit_decisions_unit_id_key",
+          "unique": true,
+          "columns": [
+            "unit_id"
+          ],
+          "definition": "CREATE UNIQUE INDEX unit_decisions_unit_id_key ON projects.unit_decisions USING btree (unit_id)"
+        },
+        {
+          "name": "unit_decision_actor_idx",
+          "unique": false,
+          "columns": [
+            "actor_id"
+          ],
+          "definition": "CREATE INDEX unit_decision_actor_idx ON projects.unit_decisions USING btree (actor_id)"
+        },
+        {
+          "name": "unit_decision_scope_idx",
+          "unique": false,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "unit_id"
+          ],
+          "definition": "CREATE INDEX unit_decision_scope_idx ON projects.unit_decisions USING btree (tenant_id, legal_entity_id, project_id, unit_id)"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "check_constraints": {
+        "unit_decisions_decision_check": "CHECK ((decision = ANY (ARRAY['waived'::text, 'cancelled'::text])))"
+      },
+      "unique_constraints": [
+        [
+          "unit_id"
+        ]
+      ]
+    },
+    "time_allocations": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false
+        },
+        "claim_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "work_claims.id"
+        },
+        "entry_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_revisions.entry_id"
+        },
+        "tenant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_revisions.tenant_id"
+        },
+        "project_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_revisions.project_id"
+        },
+        "revision_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_revisions.id"
+        },
+        "direct_claim": {
+          "type": "boolean",
+          "nullable": false
+        },
+        "allocation_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "work_allocations.id"
+        },
+        "legal_entity_id": {
+          "type": "uuid",
+          "nullable": false,
+          "foreign_key": "time_revisions.legal_entity_id"
+        }
+      },
+      "indexes": [
+        {
+          "name": "time_allocations_pkey",
+          "unique": true,
+          "columns": [
+            "id"
+          ],
+          "definition": "CREATE UNIQUE INDEX time_allocations_pkey ON projects.time_allocations USING btree (id)"
+        },
+        {
+          "name": "time_allocations_allocation_id_key",
+          "unique": true,
+          "columns": [
+            "allocation_id"
+          ],
+          "definition": "CREATE UNIQUE INDEX time_allocations_allocation_id_key ON projects.time_allocations USING btree (allocation_id)"
+        },
+        {
+          "name": "time_allocation_revision_idx",
+          "unique": false,
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "entry_id",
+            "revision_id"
+          ],
+          "definition": "CREATE INDEX time_allocation_revision_idx ON projects.time_allocations USING btree (tenant_id, legal_entity_id, project_id, entry_id, revision_id)"
+        },
+        {
+          "name": "time_allocation_claim_idx",
+          "unique": false,
+          "columns": [
+            "claim_id"
+          ],
+          "definition": "CREATE INDEX time_allocation_claim_idx ON projects.time_allocations USING btree (claim_id)"
+        }
+      ],
+      "primary_key": [
+        "id"
+      ],
+      "check_constraints": {},
+      "unique_constraints": [
+        [
+          "allocation_id"
+        ]
+      ]
+    }
+  }
+}

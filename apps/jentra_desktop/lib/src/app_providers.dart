@@ -343,6 +343,61 @@ final class BusinessScopeController extends AsyncNotifier<BusinessScopeState> {
     );
   }
 
+  Future<bool> selectPermittedContext({
+    required String tenantId,
+    required String legalEntityId,
+    required String branchId,
+    bool Function()? isCurrent,
+  }) async {
+    final current = state.value;
+    if (isCurrent?.call() == false ||
+        current == null ||
+        !current.tenants.any((item) => item.id == tenantId)) {
+      return false;
+    }
+    if (current.tenantId == tenantId &&
+        current.legalEntityId == legalEntityId &&
+        current.branchId == branchId) {
+      return true;
+    }
+    final gateway = ref.read(foundationGatewayProvider);
+    final entities = current.tenantId == tenantId
+        ? current.legalEntities
+        : gateway == null
+        ? _previewEntities(tenantId)
+        : await gateway.listLegalEntities(tenantId);
+    if (!entities.any((item) => item.id == legalEntityId) ||
+        isCurrent?.call() == false ||
+        !identical(state.value, current)) {
+      return false;
+    }
+    final branches =
+        current.tenantId == tenantId && current.legalEntityId == legalEntityId
+        ? current.branches
+        : gateway == null
+        ? _previewBranches(tenantId, legalEntityId)
+        : await gateway.listBranches(
+            tenantId: tenantId,
+            legalEntityId: legalEntityId,
+          );
+    if (!branches.any((item) => item.id == branchId) ||
+        isCurrent?.call() == false ||
+        !identical(state.value, current)) {
+      return false;
+    }
+    state = AsyncData(
+      BusinessScopeState(
+        tenants: current.tenants,
+        legalEntities: entities,
+        branches: branches,
+        tenantId: tenantId,
+        legalEntityId: legalEntityId,
+        branchId: branchId,
+      ),
+    );
+    return true;
+  }
+
   Future<BusinessScopeState> _load(
     List<TenantSummary> tenants,
     String tenantId,

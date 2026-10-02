@@ -1,5 +1,8 @@
+import '../shared/report_wait.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../app_providers.dart';
 import 'control_reconciliation_controller.dart';
 import '../report_export/report_export_screen.dart';
@@ -114,7 +117,13 @@ class ControlReconciliationWorkspace extends StatelessWidget {
                 ? 'Compare goods received but not invoiced with their original accrual accounts. Saved reports retain dated receipts, matched bills, unbilled returns and reversals.'
                 : 'Compare this branch’s posted open items with their original control accounts. Saved reports preserve the selected posting cutoff and every source difference.',
           ),
-          if (c.busy) const LinearProgressIndicator(),
+          if (c.reportWait.active)
+            ReportWaitIndicator(
+              state: c.reportWait,
+              onCancel: c.cancelReportWait,
+            )
+          else if (c.busy)
+            const LinearProgressIndicator(),
           if (!c.online)
             const Text(
               'Offline — inputs and sealed requests are retained. Reconnect and refresh access to read evidence or post corrections.',

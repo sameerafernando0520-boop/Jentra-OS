@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:jentra_domain/jentra_receivables.dart';
+
 import 'receivables_controller.dart';
 import 'receivable_picker.dart';
+import '../operations/operational_report_export.dart';
 
 class ReceivableStatement extends StatefulWidget {
-  const ReceivableStatement({super.key, required this.controller});
+  const ReceivableStatement({
+    super.key,
+    required this.controller,
+    this.showOperationalReports = false,
+  });
   final ReceivablesController controller;
+  final bool showOperationalReports;
   @override
   State<ReceivableStatement> createState() => _StatementState();
 }
@@ -17,8 +24,53 @@ class _StatementState extends State<ReceivableStatement> {
       buckets = '30,60,90';
   String? error;
   bool loading = false;
+  int readEpoch = 0;
   ReceivablesController get c => widget.controller;
+  @override
+  void initState() {
+    super.initState();
+    readEpoch = c.readAccessEpoch;
+    c.addListener(accessChanged);
+  }
+
+  void accessChanged() {
+    if (!mounted) return;
+    if (!c.active || !c.online || readEpoch != c.readAccessEpoch) {
+      setState(() {
+        report = null;
+        customer = null;
+        loading = false;
+        error = null;
+      });
+    }
+    readEpoch = c.readAccessEpoch;
+  }
+
+  @override
+  void didUpdateWidget(covariant ReceivableStatement oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != c) {
+      if (oldWidget.controller.active) {
+        oldWidget.controller.removeListener(accessChanged);
+      }
+      c.addListener(accessChanged);
+      report = null;
+      customer = null;
+      loading = false;
+      error = null;
+      readEpoch = c.readAccessEpoch;
+    }
+  }
+
+  @override
+  void dispose() {
+    if (c.active) c.removeListener(accessChanged);
+    super.dispose();
+  }
+
   Future<void> load() async {
+    final access = c.readAccessEpoch;
+    if (!c.currentRead(access)) return;
     if (customer == null || !receivableDate(asOf)) {
       setState(() => error = 'Choose a customer and valid as-of date.');
       return;
@@ -44,15 +96,21 @@ class _StatementState extends State<ReceivableStatement> {
         asOf,
         days,
       );
-      if (mounted) setState(() => report = result);
+      if (mounted && c.currentRead(access)) setState(() => report = result);
     } catch (e) {
-      if (mounted) setState(() => error = e.toString());
+      if (!mounted || !c.currentRead(access)) return;
+      final message = receivableReadError(c, e);
+      if (mounted) {
+        setState(() => error = message);
+      }
     } finally {
       if (mounted) setState(() => loading = false);
     }
   }
 
   Future<void> source(Map<String, Object?> row) async {
+    final access = c.readAccessEpoch;
+    if (!c.currentRead(access)) return;
     try {
       final kind = ReceivableKind.values.firstWhere(
         (k) => k.wire == row['source_type'],
@@ -68,7 +126,7 @@ class _StatementState extends State<ReceivableStatement> {
         kind,
         row['source_id']! as String,
       );
-      if (!mounted) return;
+      if (!mounted || !c.currentRead(access)) return;
       await showScopedReceivableDialog<void>(
         context: context,
         controller: c,
@@ -107,11 +165,15 @@ class _StatementState extends State<ReceivableStatement> {
         ),
       );
     } catch (e) {
-      if (mounted) setState(() => error = e.toString());
+      if (!mounted || !c.currentRead(access)) return;
+      final message = receivableReadError(c, e);
+      if (mounted) setState(() => error = message);
     }
   }
 
   Future<void> allocations(Map<String, Object?> row) async {
+    final access = c.readAccessEpoch;
+    if (!c.currentRead(access)) return;
     var cursor = '';
     final rows = <Map<String, Object?>>[];
     try {
@@ -122,7 +184,7 @@ class _StatementState extends State<ReceivableStatement> {
       );
       rows.addAll(page.items);
       cursor = page.nextCursor ?? '';
-      if (!mounted) return;
+      if (!mounted || !c.currentRead(access)) return;
       await showScopedReceivableDialog<void>(
         context: context,
         controller: c,
@@ -155,17 +217,20 @@ class _StatementState extends State<ReceivableStatement> {
                             sourceId: row['id']! as String,
                             cursor: cursor,
                           );
-                          if (context.mounted) {
+                          if (context.mounted && c.currentRead(access)) {
                             setDialog(() {
                               rows.addAll(page.items);
                               cursor = page.nextCursor ?? '';
                             });
                           }
                         } catch (e) {
+                          if (!context.mounted || !c.currentRead(access)) {
+                            return;
+                          }
+                          final message = receivableReadError(c, e);
                           if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(e.toString())),
-                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(SnackBar(content: Text(message)));
                           }
                         }
                       },
@@ -184,7 +249,9 @@ class _StatementState extends State<ReceivableStatement> {
         ),
       );
     } catch (e) {
-      if (mounted) setState(() => error = e.toString());
+      if (!mounted || !c.currentRead(access)) return;
+      final message = receivableReadError(c, e);
+      if (mounted) setState(() => error = message);
     }
   }
 
@@ -209,13 +276,14 @@ class _StatementState extends State<ReceivableStatement> {
             onPressed: loading || !c.online
                 ? null
                 : () async {
+                    final access = c.readAccessEpoch;
                     final row = await pickReceivableReference(
                       context,
                       c,
                       'parties',
                       'Choose customer',
                     );
-                    if (row != null && mounted) {
+                    if (row != null && mounted && c.currentRead(access)) {
                       setState(() {
                         customer = row;
                         report = null;
@@ -277,6 +345,20 @@ class _StatementState extends State<ReceivableStatement> {
         ),
       if (report != null) ...[
         const SizedBox(height: 20),
+        if (widget.showOperationalReports)
+          OperationalReportExport(
+            kind: 'customer_statement',
+            label: 'Save dated customer statement for export',
+            inputs: {
+              'party_id': customer!['id'],
+              'currency_code': currency,
+              'as_of': asOf,
+              'bucket_days': buckets
+                  .split(',')
+                  .map((v) => int.parse(v.trim()))
+                  .toList(),
+            },
+          ),
         Text(
           '$currency ${report!['open_amount']} open · base ${report!['open_base_amount']}',
           style: Theme.of(context).textTheme.headlineSmall,

@@ -71,7 +71,10 @@ final class QuotationWorkspaceState {
   QuotationPendingCommand? get pending => localDraft?.pending;
   bool get conflict => localDraft?.errorCode == 'VERSION_CONFLICT';
   bool get dirty =>
-      localDraft != null || savingLocal || error?.code == 'DRAFT_SAVE_FAILED';
+      localDraft != null ||
+      savingLocal ||
+      error?.code == 'DRAFT_SAVE_FAILED' ||
+      (error != null && isLocalDraftStorageFailure(error!));
   bool get canEditForm =>
       canManage &&
       !busy &&
@@ -241,8 +244,7 @@ final class QuotationWorkspaceController
 
   static const _draftSaveError = DomainError(
     code: 'DRAFT_SAVE_FAILED',
-    message:
-        'This device could not save the encrypted draft. Keep this editor open and retry saving, or explicitly discard your edits.',
+    message: 'This device could not save the encrypted draft. Keep this editor open and retry saving, or explicitly discard your edits.',
   );
   QuotationWorkspaceRepository get _reader =>
       ref.read(quotationWorkspaceRepositoryProvider) ??
@@ -566,8 +568,7 @@ final class QuotationWorkspaceController
           loading: false,
           error: null,
           editorEpoch: state.requireValue.editorEpoch + 1,
-          statusMessage:
-              'Recovered local fields. Server totals will be available after the quotation is refreshed.',
+          statusMessage: 'Recovered local fields. Server totals will be available after the quotation is refreshed.',
         ),
       );
       if (current.isOnline && local.form['id'] is String) {
@@ -615,14 +616,16 @@ final class QuotationWorkspaceController
             state.requireValue.copyWith(localDraft: local, savingLocal: false),
           );
         }
-      } on Object {
+      } on Object catch (failure) {
         _failedEdits.add(_editKey(current.context, slot));
         if (_valid(generation, current.context) &&
             selection == _selection &&
             edit == _edit) {
           state = AsyncData(
             state.requireValue.copyWith(
-              error: _draftSaveError,
+              error: isLocalDraftStorageFailure(failure)
+                  ? failure as DomainError
+                  : _draftSaveError,
               savingLocal: false,
             ),
           );
@@ -669,8 +672,7 @@ final class QuotationWorkspaceController
       _fail(
         const DomainError(
           code: 'OFFLINE_COMMAND_BLOCKED',
-          message:
-              'Reconnect before sending. Your draft is retained on this device.',
+          message: 'Reconnect before sending. Your draft is retained on this device.',
         ),
       );
       return;
@@ -692,8 +694,7 @@ final class QuotationWorkspaceController
       _fail(
         const DomainError(
           code: 'VERSION_CONFLICT',
-          message:
-              'Compare the current server version and explicitly resolve your draft.',
+          message: 'Compare the current server version and explicitly resolve your draft.',
         ),
       );
       return;
@@ -714,8 +715,7 @@ final class QuotationWorkspaceController
       _fail(
         const DomainError(
           code: 'INVALID_DOCUMENT_STATE',
-          message:
-              'Save your edits or review the current workflow before this action.',
+          message: 'Save your edits or review the current workflow before this action.',
         ),
       );
       return;
@@ -826,8 +826,7 @@ final class QuotationWorkspaceController
           ConnectivityState.online) {
         throw const DomainError(
           code: 'NETWORK_ERROR',
-          message:
-              'Connection changed before sending. Retry the saved request when online.',
+          message: 'Connection changed before sending. Retry the saved request when online.',
           retryable: true,
         );
       }
@@ -1009,8 +1008,7 @@ final class QuotationWorkspaceController
       _fail(
         const DomainError(
           code: 'INVALID_DOCUMENT_STATE',
-          message:
-              'The server quotation is no longer a draft. Use its version, then recall or create a revision.',
+          message: 'The server quotation is no longer a draft. Use its version, then recall or create a revision.',
         ),
       );
       return;
@@ -1146,8 +1144,7 @@ final class QuotationWorkspaceController
       ? DomainError(code: 'VALIDATION_ERROR', message: error.message)
       : const DomainError(
           code: 'NETWORK_ERROR',
-          message:
-              'The request could not be confirmed. Your local fields and any pending request are retained.',
+          message: 'The request could not be confirmed. Your local fields and any pending request are retained.',
           retryable: true,
         );
 }

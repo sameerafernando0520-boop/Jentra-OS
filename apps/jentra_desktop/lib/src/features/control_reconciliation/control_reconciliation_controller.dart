@@ -1,10 +1,13 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_finance_platform.dart';
+
 import '../../app_providers.dart';
+import '../shared/report_wait.dart';
 
 final controlReconciliationGatewayProvider =
     Provider<ControlReconciliationGateway?>((ref) => null);
@@ -61,6 +64,14 @@ final class ControlReconciliationController extends ChangeNotifier {
   bool online, busy = false, accessDenied = false, _disposed = false;
   bool verified = false;
   int _evidenceEpoch = 0;
+  final reportWait = ReportWaitState();
+  void cancelReportWait() {
+    if (!reportWait.cancel()) return;
+    _evidenceEpoch++;
+    clearEvidence();
+    emit();
+  }
+
   bool _acceptEvidence(int epoch) =>
       !_disposed && online && epoch == _evidenceEpoch;
   String? error, message, cursor, reportCursor, accountId;
@@ -117,6 +128,7 @@ final class ControlReconciliationController extends ChangeNotifier {
     if (e is DomainError &&
         [
           'PERMISSION_DENIED',
+          'ACCESS_DENIED',
           'MFA_REQUIRED',
           'AUTHENTICATION_REQUIRED',
         ].contains(e.code)) {
@@ -129,12 +141,14 @@ final class ControlReconciliationController extends ChangeNotifier {
 
   Future<void> run(Future<void> Function() work) async {
     if (busy || _disposed) return;
+    final accessEpoch = _evidenceEpoch;
     busy = true;
     error = null;
     emit();
     try {
       await work();
     } catch (e) {
+      if (_disposed || !online || accessEpoch != _evidenceEpoch) return;
       deny(e);
       error = e is DomainError
           ? e.message
@@ -142,6 +156,7 @@ final class ControlReconciliationController extends ChangeNotifier {
           ? e.message
           : 'Unable to complete this action. Saved requests are retained.';
     } finally {
+      reportWait.finish();
       busy = false;
       emit();
     }
@@ -202,7 +217,7 @@ final class ControlReconciliationController extends ChangeNotifier {
     }
   });
   Future<bool> canLeave() async {
-    if (busy) return false;
+    if (busy) return reportWait.active && reportWait.cancelled;
     if (accessDenied || pending) return true;
     await save();
     return error == null;
@@ -246,6 +261,8 @@ final class ControlReconciliationController extends ChangeNotifier {
         form['status'] == 'generated') {
       return;
     }
+    reportWait.begin();
+    emit();
     final epoch = _evidenceEpoch;
     var command = local?.pending;
     if (command == null) {
@@ -269,6 +286,9 @@ final class ControlReconciliationController extends ChangeNotifier {
     Map<String, Object?> result;
     late Map<String, Object?> confirmedForm;
     try {
+      reportWait.generating();
+      emit();
+      if (reportWait.cancelled || !_acceptEvidence(epoch)) return;
       result = await gateway.generate(command.envelope);
       confirmedForm = {
         ...command.envelope.payload,
@@ -298,8 +318,7 @@ final class ControlReconciliationController extends ChangeNotifier {
     form = confirmedForm;
     if (!_acceptEvidence(epoch)) return;
     summary = result;
-    message =
-        'Report saved. Its cutoff evidence will not change with later postings.';
+    message = 'Report saved. Its cutoff evidence will not change with later postings.';
     try {
       section = 'accounts';
       accountId = null;
@@ -322,7 +341,12 @@ final class ControlReconciliationController extends ChangeNotifier {
   });
   Future<void> readReport(String id, {bool more = false}) async {
     if (!online || !verified) return;
+    if (reportWait.active && reportWait.cancelled) return;
     final epoch = _evidenceEpoch;
+    if (!reportWait.active) reportWait.begin();
+    reportWait.reading();
+    emit();
+    if (reportWait.cancelled || !_acceptEvidence(epoch)) return;
     final r = await gateway.page(
       scope,
       id,
@@ -447,7 +471,6 @@ final class ControlReconciliationController extends ChangeNotifier {
     if (_disposed) return;
     correction = {};
     correctionLocal = null;
-    message =
-        'Allocation reversal confirmed. Generate a new report to see reopened items; this saved report remains unchanged.';
+    message = 'Allocation reversal confirmed. Generate a new report to see reopened items; this saved report remains unchanged.';
   });
 }

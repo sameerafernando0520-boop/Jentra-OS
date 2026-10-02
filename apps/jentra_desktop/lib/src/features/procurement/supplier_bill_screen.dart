@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+
+import '../operations/access_changed.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../app_providers.dart';
 import 'supplier_bill_controller.dart';
+import 'conflict_comparison.dart';
 import 'procurement_picker.dart';
 import 'sourcing_screen.dart';
 
@@ -38,6 +43,12 @@ class SupplierBillWorkspace extends StatelessWidget {
     listenable: controller,
     builder: (context, _) {
       final c = controller, f = controller.form;
+      if (c.accessDenied) {
+        return OperationalAccessChanged(
+          retry: c.initialize,
+          enabled: c.online && !c.busy,
+        );
+      }
       return SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -83,6 +94,7 @@ class SupplierBillWorkspace extends StatelessWidget {
                                 c.references,
                                 c.scope,
                                 'bill_receipts',
+                                access: c,
                               );
                               if (row != null) {
                                 await c.create(
@@ -210,8 +222,22 @@ class SupplierBillWorkspace extends StatelessWidget {
                   'Confirmation pending. Retry the saved command before editing.',
                 ),
               if (c.local?.errorCode == 'VERSION_CONFLICT')
-                const Text(
-                  'The bill or source changed. Keep this draft for reference or discard it and reload the current record.',
+                OutlinedButton(
+                  onPressed: c.busy || !c.online
+                      ? null
+                      : () => reviewAndReloadProcurementConflict(
+                          context,
+                          access: c,
+                          gateway: c.references,
+                          scope: c.scope,
+                          kind: 'supplier_bill',
+                          local: f,
+                          discard: c.discard,
+                          hasForm: () => c.form != null,
+                          select: c.select,
+                          edit: c.edit,
+                        ),
+                  child: const Text('Compare current revision'),
                 ),
               const SizedBox(height: 16),
               if (f['_mode'] == 'controls')
@@ -347,6 +373,7 @@ class _BillEditor extends StatelessWidget {
                     c.references,
                     c.scope,
                     'bill_suppliers',
+                    access: c,
                   );
                   if (row != null && c.form?['id'] == f['id']) {
                     c.update('supplier_id', row['id']);
@@ -378,6 +405,7 @@ class _BillEditor extends StatelessWidget {
                         c.references,
                         c.scope,
                         'bill_rates',
+                        access: c,
                       );
                       if (row != null && c.form?['id'] == f['id']) {
                         c.update('currency_code', row['currency_code']);
@@ -449,6 +477,7 @@ class _BillEditor extends StatelessWidget {
                                     c.references,
                                     c.scope,
                                     'bill_expenses',
+                                    access: c,
                                   );
                                   if (row != null) {
                                     c.updateLine(
@@ -483,6 +512,7 @@ class _BillEditor extends StatelessWidget {
                                       c.references,
                                       c.scope,
                                       'bill_taxes',
+                                      access: c,
                                     );
                                     if (row != null) {
                                       c.updateLine(
@@ -539,6 +569,7 @@ class _BillEditor extends StatelessWidget {
                         c.references,
                         c.scope,
                         'bill_receipts',
+                        access: c,
                       );
                       if (row != null && c.form?['id'] == f['id']) {
                         c.addReceipt(
@@ -595,6 +626,7 @@ class _BillControls extends StatelessWidget {
                         c.references,
                         c.scope,
                         'bill_accounts',
+                        access: c,
                       );
                       if (row != null && c.form?['_mode'] == 'controls') {
                         c.update(entry.key, row['id']);

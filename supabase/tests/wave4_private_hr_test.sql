@@ -239,6 +239,13 @@ select api.people_hr_worker_complete((select (response#>>'{items,0,job_id}')::uu
 select is(api.people_hr_worker_complete((select (response#>>'{items,0,job_id}')::uuid from hr_response where name='claim'),
  (select (response#>>'{items,0,lease_id}')::uuid from hr_response where name='claim'))->>'complete','true','AC-402 purge completion replay');
 reset role;
+select pg_temp.wactor('creator');
+set local role authenticated;
+select is(api.people_hr_erasure_status(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('employee'))
+ #>>'{items,0,status}','complete','AC-402 authorized native erasure status reports actual completion');
+select is(api.people_hr_erasure_status(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('employee'))
+ #>>'{items,0,completion_actor_kind}','system','AC-402 native completion preserves truthful system actor');
+reset role;
 select ok((select bool_and(body is null and reason is null and redacted_at is not null) from people_private.profile_revisions
  where employee_id=pg_temp.wid('employee')),'AC-402 contact content erased');
 select ok((select bool_and(body is null and reason is null and redacted_at is not null) from people_private.review_revisions

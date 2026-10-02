@@ -1,0 +1,1375 @@
+{
+  "analysis_summary": {
+    "tables_analyzed": 16,
+    "query_patterns_analyzed": 8,
+    "existing_indexes": 66,
+    "total_recommendations": 34,
+    "high_priority_recommendations": 34,
+    "redundancy_issues_found": 11
+  },
+  "index_recommendations": {
+    "high_priority": [
+      {
+        "recommendation_id": "e5fcd52a",
+        "table": "register",
+        "recommended_index": {
+          "name": "idx_register_legal_entity_id",
+          "table": "register",
+          "columns": [
+            "legal_entity_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE legal_entity_id = queries (used 100 times)",
+        "query_patterns_helped": [
+          "register_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_register_legal_entity_id ON register (legal_entity_id);",
+        "selectivity_analysis": {
+          "column_selectivity": 0.9,
+          "estimated_reduction": "90%"
+        }
+      },
+      {
+        "recommendation_id": "831f64ff",
+        "table": "register",
+        "recommended_index": {
+          "name": "idx_register_branch_id",
+          "table": "register",
+          "columns": [
+            "branch_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE branch_id = queries (used 100 times)",
+        "query_patterns_helped": [
+          "register_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_register_branch_id ON register (branch_id);",
+        "selectivity_analysis": {
+          "column_selectivity": 0.9,
+          "estimated_reduction": "90%"
+        }
+      },
+      {
+        "recommendation_id": "a9e412b8",
+        "table": "plans",
+        "recommended_index": {
+          "name": "idx_plans_legal_entity_id",
+          "table": "plans",
+          "columns": [
+            "legal_entity_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE legal_entity_id = queries (used 100 times)",
+        "query_patterns_helped": [
+          "plans_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_plans_legal_entity_id ON plans (legal_entity_id);",
+        "selectivity_analysis": {
+          "column_selectivity": 0.9,
+          "estimated_reduction": "90%"
+        }
+      },
+      {
+        "recommendation_id": "15af7005",
+        "table": "tasks",
+        "recommended_index": {
+          "name": "idx_tasks_legal_entity_id",
+          "table": "tasks",
+          "columns": [
+            "legal_entity_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE legal_entity_id = queries (used 100 times)",
+        "query_patterns_helped": [
+          "tasks_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_tasks_legal_entity_id ON tasks (legal_entity_id);",
+        "selectivity_analysis": {
+          "column_selectivity": 0.9,
+          "estimated_reduction": "90%"
+        }
+      },
+      {
+        "recommendation_id": "d5b8cb78",
+        "table": "tasks",
+        "recommended_index": {
+          "name": "idx_tasks_project_id",
+          "table": "tasks",
+          "columns": [
+            "project_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE project_id = queries (used 100 times)",
+        "query_patterns_helped": [
+          "tasks_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_tasks_project_id ON tasks (project_id);",
+        "selectivity_analysis": {
+          "column_selectivity": 0.9,
+          "estimated_reduction": "90%"
+        }
+      },
+      {
+        "recommendation_id": "e2129785",
+        "table": "tasks",
+        "recommended_index": {
+          "name": "idx_tasks_id",
+          "table": "tasks",
+          "columns": [
+            "id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE id > queries (used 100 times)",
+        "query_patterns_helped": [
+          "tasks_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_tasks_id ON tasks (id);",
+        "selectivity_analysis": {
+          "column_selectivity": 1.0,
+          "estimated_reduction": "100%"
+        }
+      },
+      {
+        "recommendation_id": "a499787c",
+        "table": "resource_slots",
+        "recommended_index": {
+          "name": "idx_resource_slots_legal_entity_id",
+          "table": "resource_slots",
+          "columns": [
+            "legal_entity_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE legal_entity_id = queries (used 100 times)",
+        "query_patterns_helped": [
+          "resource_slots_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_resource_slots_legal_entity_id ON resource_slots (legal_entity_id);",
+        "selectivity_analysis": {
+          "column_selectivity": 0.9,
+          "estimated_reduction": "90%"
+        }
+      },
+      {
+        "recommendation_id": "13b39a54",
+        "table": "resource_slots",
+        "recommended_index": {
+          "name": "idx_resource_slots_project_id",
+          "table": "resource_slots",
+          "columns": [
+            "project_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE project_id = queries (used 100 times)",
+        "query_patterns_helped": [
+          "resource_slots_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_resource_slots_project_id ON resource_slots (project_id);",
+        "selectivity_analysis": {
+          "column_selectivity": 0.9,
+          "estimated_reduction": "90%"
+        }
+      },
+      {
+        "recommendation_id": "6573b838",
+        "table": "resource_slots",
+        "recommended_index": {
+          "name": "idx_resource_slots_plan_id",
+          "table": "resource_slots",
+          "columns": [
+            "plan_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE plan_id = queries (used 100 times)",
+        "query_patterns_helped": [
+          "resource_slots_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_resource_slots_plan_id ON resource_slots (plan_id);",
+        "selectivity_analysis": {
+          "column_selectivity": 0.9,
+          "estimated_reduction": "90%"
+        }
+      },
+      {
+        "recommendation_id": "9ecc345a",
+        "table": "time_entries",
+        "recommended_index": {
+          "name": "idx_time_entries_legal_entity_id",
+          "table": "time_entries",
+          "columns": [
+            "legal_entity_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE legal_entity_id = queries (used 100 times)",
+        "query_patterns_helped": [
+          "time_entries_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_time_entries_legal_entity_id ON time_entries (legal_entity_id);",
+        "selectivity_analysis": {
+          "column_selectivity": 0.9,
+          "estimated_reduction": "90%"
+        }
+      },
+      {
+        "recommendation_id": "268379fb",
+        "table": "time_entries",
+        "recommended_index": {
+          "name": "idx_time_entries_branch_id",
+          "table": "time_entries",
+          "columns": [
+            "branch_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE branch_id = queries (used 100 times)",
+        "query_patterns_helped": [
+          "time_entries_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_time_entries_branch_id ON time_entries (branch_id);",
+        "selectivity_analysis": {
+          "column_selectivity": 0.9,
+          "estimated_reduction": "90%"
+        }
+      },
+      {
+        "recommendation_id": "51746cd2",
+        "table": "time_entries",
+        "recommended_index": {
+          "name": "idx_time_entries_project_id",
+          "table": "time_entries",
+          "columns": [
+            "project_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE project_id = queries (used 100 times)",
+        "query_patterns_helped": [
+          "time_entries_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_time_entries_project_id ON time_entries (project_id);",
+        "selectivity_analysis": {
+          "column_selectivity": 0.9,
+          "estimated_reduction": "90%"
+        }
+      },
+      {
+        "recommendation_id": "51165f46",
+        "table": "time_events",
+        "recommended_index": {
+          "name": "idx_time_events_legal_entity_id",
+          "table": "time_events",
+          "columns": [
+            "legal_entity_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE legal_entity_id = queries (used 100 times)",
+        "query_patterns_helped": [
+          "time_events_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_time_events_legal_entity_id ON time_events (legal_entity_id);",
+        "selectivity_analysis": {
+          "column_selectivity": 0.9,
+          "estimated_reduction": "90%"
+        }
+      },
+      {
+        "recommendation_id": "4ba06c71",
+        "table": "time_events",
+        "recommended_index": {
+          "name": "idx_time_events_project_id",
+          "table": "time_events",
+          "columns": [
+            "project_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE project_id = queries (used 100 times)",
+        "query_patterns_helped": [
+          "time_events_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_time_events_project_id ON time_events (project_id);",
+        "selectivity_analysis": {
+          "column_selectivity": 0.9,
+          "estimated_reduction": "90%"
+        }
+      },
+      {
+        "recommendation_id": "665c4c61",
+        "table": "time_events",
+        "recommended_index": {
+          "name": "idx_time_events_entry_id",
+          "table": "time_events",
+          "columns": [
+            "entry_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE entry_id = queries (used 100 times)",
+        "query_patterns_helped": [
+          "time_events_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_time_events_entry_id ON time_events (entry_id);",
+        "selectivity_analysis": {
+          "column_selectivity": 0.9,
+          "estimated_reduction": "90%"
+        }
+      },
+      {
+        "recommendation_id": "366d786b",
+        "table": "time_costs",
+        "recommended_index": {
+          "name": "idx_time_costs_legal_entity_id",
+          "table": "time_costs",
+          "columns": [
+            "legal_entity_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE legal_entity_id = queries (used 100 times)",
+        "query_patterns_helped": [
+          "time_costs_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_time_costs_legal_entity_id ON time_costs (legal_entity_id);",
+        "selectivity_analysis": {
+          "column_selectivity": 0.9,
+          "estimated_reduction": "90%"
+        }
+      },
+      {
+        "recommendation_id": "d78f7bb0",
+        "table": "time_costs",
+        "recommended_index": {
+          "name": "idx_time_costs_project_id",
+          "table": "time_costs",
+          "columns": [
+            "project_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE project_id = queries (used 100 times)",
+        "query_patterns_helped": [
+          "time_costs_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_time_costs_project_id ON time_costs (project_id);",
+        "selectivity_analysis": {
+          "column_selectivity": 0.9,
+          "estimated_reduction": "90%"
+        }
+      },
+      {
+        "recommendation_id": "6aad54a9",
+        "table": "billable_units",
+        "recommended_index": {
+          "name": "idx_billable_units_legal_entity_id",
+          "table": "billable_units",
+          "columns": [
+            "legal_entity_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE legal_entity_id = queries (used 100 times)",
+        "query_patterns_helped": [
+          "billable_units_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_billable_units_legal_entity_id ON billable_units (legal_entity_id);",
+        "selectivity_analysis": {
+          "column_selectivity": 0.9,
+          "estimated_reduction": "90%"
+        }
+      },
+      {
+        "recommendation_id": "62192095",
+        "table": "billable_units",
+        "recommended_index": {
+          "name": "idx_billable_units_project_id",
+          "table": "billable_units",
+          "columns": [
+            "project_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize WHERE project_id = queries (used 100 times)",
+        "query_patterns_helped": [
+          "billable_units_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Low (single column)",
+        "priority": 1,
+        "sql_statement": "CREATE INDEX idx_billable_units_project_id ON billable_units (project_id);",
+        "selectivity_analysis": {
+          "column_selectivity": 0.9,
+          "estimated_reduction": "90%"
+        }
+      },
+      {
+        "recommendation_id": "0119f181",
+        "table": "time_costs",
+        "recommended_index": {
+          "name": "idx_time_costs_tenant_id_legal_entity_id_project_id_revision_id",
+          "table": "time_costs",
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "revision_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize multi-column WHERE conditions: tenant_id, legal_entity_id, project_id, revision_id",
+        "query_patterns_helped": [
+          "time_costs_scoped_page",
+          "time_costs_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Medium (composite index with 4 columns)",
+        "priority": 2,
+        "sql_statement": "CREATE INDEX idx_time_costs_tenant_id_legal_entity_id_project_id_revision_id ON time_costs (tenant_id, legal_entity_id, project_id, revision_id);",
+        "selectivity_analysis": {
+          "column_selectivities": {
+            "tenant_id": 0.9,
+            "legal_entity_id": 0.9,
+            "project_id": 0.9,
+            "revision_id": 0.9
+          },
+          "combined_selectivity": 0.9,
+          "column_order_rationale": "Ordered by selectivity (most selective first)"
+        }
+      },
+      {
+        "recommendation_id": "1d84ca97",
+        "table": "register",
+        "recommended_index": {
+          "name": "idx_register_id_tenant_id_legal_entity_id_branch_id",
+          "table": "register",
+          "columns": [
+            "id",
+            "tenant_id",
+            "legal_entity_id",
+            "branch_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize multi-column WHERE conditions: id, tenant_id, legal_entity_id, branch_id",
+        "query_patterns_helped": [
+          "register_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Medium (composite index with 4 columns)",
+        "priority": 2,
+        "sql_statement": "CREATE INDEX idx_register_id_tenant_id_legal_entity_id_branch_id ON register (id, tenant_id, legal_entity_id, branch_id);",
+        "selectivity_analysis": {
+          "column_selectivities": {
+            "id": 1.0,
+            "tenant_id": 0.9,
+            "legal_entity_id": 0.9,
+            "branch_id": 0.9
+          },
+          "combined_selectivity": 0.925,
+          "column_order_rationale": "Ordered by selectivity (most selective first)"
+        }
+      },
+      {
+        "recommendation_id": "6e8f99bd",
+        "table": "register",
+        "recommended_index": {
+          "name": "idx_register_covering_tenant_id_legal_entity_id_branch_id",
+          "table": "register",
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "branch_id",
+            "id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": [],
+          "size_estimate": null
+        },
+        "reason": "Covering index for WHERE + ORDER BY optimization",
+        "query_patterns_helped": [
+          "register_scoped_page"
+        ],
+        "estimated_benefit": "High (eliminates table lookups for SELECT)",
+        "estimated_overhead": "High (covering index with 4 columns)",
+        "priority": 2,
+        "sql_statement": "CREATE INDEX idx_register_covering_tenant_id_legal_entity_id_branch_id ON register (tenant_id, legal_entity_id, branch_id, id);",
+        "selectivity_analysis": {
+          "main_columns_selectivity": 0.9,
+          "covering_benefit": "Eliminates table lookup for SELECT queries"
+        }
+      },
+      {
+        "recommendation_id": "4d86f3ce",
+        "table": "plans",
+        "recommended_index": {
+          "name": "idx_plans_id_tenant_id_legal_entity_id_project_id",
+          "table": "plans",
+          "columns": [
+            "id",
+            "tenant_id",
+            "legal_entity_id",
+            "project_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize multi-column WHERE conditions: id, tenant_id, legal_entity_id, project_id",
+        "query_patterns_helped": [
+          "plans_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Medium (composite index with 4 columns)",
+        "priority": 2,
+        "sql_statement": "CREATE INDEX idx_plans_id_tenant_id_legal_entity_id_project_id ON plans (id, tenant_id, legal_entity_id, project_id);",
+        "selectivity_analysis": {
+          "column_selectivities": {
+            "id": 1.0,
+            "tenant_id": 0.9,
+            "legal_entity_id": 0.9,
+            "project_id": 0.9
+          },
+          "combined_selectivity": 0.925,
+          "column_order_rationale": "Ordered by selectivity (most selective first)"
+        }
+      },
+      {
+        "recommendation_id": "a5869364",
+        "table": "plans",
+        "recommended_index": {
+          "name": "idx_plans_covering_tenant_id_legal_entity_id_project_id",
+          "table": "plans",
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": [],
+          "size_estimate": null
+        },
+        "reason": "Covering index for WHERE + ORDER BY optimization",
+        "query_patterns_helped": [
+          "plans_scoped_page"
+        ],
+        "estimated_benefit": "High (eliminates table lookups for SELECT)",
+        "estimated_overhead": "High (covering index with 4 columns)",
+        "priority": 2,
+        "sql_statement": "CREATE INDEX idx_plans_covering_tenant_id_legal_entity_id_project_id ON plans (tenant_id, legal_entity_id, project_id, id);",
+        "selectivity_analysis": {
+          "main_columns_selectivity": 0.9,
+          "covering_benefit": "Eliminates table lookup for SELECT queries"
+        }
+      },
+      {
+        "recommendation_id": "22007a15",
+        "table": "tasks",
+        "recommended_index": {
+          "name": "idx_tasks_id_tenant_id_legal_entity_id_project_id_plan_id",
+          "table": "tasks",
+          "columns": [
+            "id",
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "plan_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize multi-column WHERE conditions: id, tenant_id, legal_entity_id, project_id, plan_id",
+        "query_patterns_helped": [
+          "tasks_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Medium (composite index with 5 columns)",
+        "priority": 2,
+        "sql_statement": "CREATE INDEX idx_tasks_id_tenant_id_legal_entity_id_project_id_plan_id ON tasks (id, tenant_id, legal_entity_id, project_id, plan_id);",
+        "selectivity_analysis": {
+          "column_selectivities": {
+            "id": 1.0,
+            "tenant_id": 0.9,
+            "legal_entity_id": 0.9,
+            "project_id": 0.9,
+            "plan_id": 0.9
+          },
+          "combined_selectivity": 0.9199999999999999,
+          "column_order_rationale": "Ordered by selectivity (most selective first)"
+        }
+      },
+      {
+        "recommendation_id": "2c6ccc23",
+        "table": "tasks",
+        "recommended_index": {
+          "name": "idx_tasks_covering_tenant_id_legal_entity_id_project_id",
+          "table": "tasks",
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "plan_id",
+            "id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": [],
+          "size_estimate": null
+        },
+        "reason": "Covering index for WHERE + ORDER BY optimization",
+        "query_patterns_helped": [
+          "tasks_scoped_page"
+        ],
+        "estimated_benefit": "High (eliminates table lookups for SELECT)",
+        "estimated_overhead": "High (covering index with 5 columns)",
+        "priority": 2,
+        "sql_statement": "CREATE INDEX idx_tasks_covering_tenant_id_legal_entity_id_project_id ON tasks (tenant_id, legal_entity_id, project_id, plan_id, id);",
+        "selectivity_analysis": {
+          "main_columns_selectivity": 0.9,
+          "covering_benefit": "Eliminates table lookup for SELECT queries"
+        }
+      },
+      {
+        "recommendation_id": "2580c69d",
+        "table": "resource_slots",
+        "recommended_index": {
+          "name": "idx_resource_slots_composite_4577",
+          "table": "resource_slots",
+          "columns": [
+            "id",
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "plan_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize multi-column WHERE conditions: id, tenant_id, legal_entity_id, project_id, plan_id",
+        "query_patterns_helped": [
+          "resource_slots_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Medium (composite index with 5 columns)",
+        "priority": 2,
+        "sql_statement": "CREATE INDEX idx_resource_slots_composite_4577 ON resource_slots (id, tenant_id, legal_entity_id, project_id, plan_id);",
+        "selectivity_analysis": {
+          "column_selectivities": {
+            "id": 1.0,
+            "tenant_id": 0.9,
+            "legal_entity_id": 0.9,
+            "project_id": 0.9,
+            "plan_id": 0.9
+          },
+          "combined_selectivity": 0.9199999999999999,
+          "column_order_rationale": "Ordered by selectivity (most selective first)"
+        }
+      },
+      {
+        "recommendation_id": "376ca6ea",
+        "table": "resource_slots",
+        "recommended_index": {
+          "name": "idx_resource_slots_covering_2094",
+          "table": "resource_slots",
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "plan_id",
+            "id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": [],
+          "size_estimate": null
+        },
+        "reason": "Covering index for WHERE + ORDER BY optimization",
+        "query_patterns_helped": [
+          "resource_slots_scoped_page"
+        ],
+        "estimated_benefit": "High (eliminates table lookups for SELECT)",
+        "estimated_overhead": "High (covering index with 5 columns)",
+        "priority": 2,
+        "sql_statement": "CREATE INDEX idx_resource_slots_covering_2094 ON resource_slots (tenant_id, legal_entity_id, project_id, plan_id, id);",
+        "selectivity_analysis": {
+          "main_columns_selectivity": 0.9,
+          "covering_benefit": "Eliminates table lookup for SELECT queries"
+        }
+      },
+      {
+        "recommendation_id": "3b211bdd",
+        "table": "time_entries",
+        "recommended_index": {
+          "name": "idx_time_entries_composite_3866",
+          "table": "time_entries",
+          "columns": [
+            "id",
+            "tenant_id",
+            "legal_entity_id",
+            "branch_id",
+            "project_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize multi-column WHERE conditions: id, tenant_id, legal_entity_id, branch_id, project_id",
+        "query_patterns_helped": [
+          "time_entries_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Medium (composite index with 5 columns)",
+        "priority": 2,
+        "sql_statement": "CREATE INDEX idx_time_entries_composite_3866 ON time_entries (id, tenant_id, legal_entity_id, branch_id, project_id);",
+        "selectivity_analysis": {
+          "column_selectivities": {
+            "id": 1.0,
+            "tenant_id": 0.9,
+            "legal_entity_id": 0.9,
+            "branch_id": 0.9,
+            "project_id": 0.9
+          },
+          "combined_selectivity": 0.9199999999999999,
+          "column_order_rationale": "Ordered by selectivity (most selective first)"
+        }
+      },
+      {
+        "recommendation_id": "ec62742b",
+        "table": "time_entries",
+        "recommended_index": {
+          "name": "idx_time_entries_covering_tenant_id_legal_entity_id_branch_id",
+          "table": "time_entries",
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "branch_id",
+            "project_id",
+            "id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": [],
+          "size_estimate": null
+        },
+        "reason": "Covering index for WHERE + ORDER BY optimization",
+        "query_patterns_helped": [
+          "time_entries_scoped_page"
+        ],
+        "estimated_benefit": "High (eliminates table lookups for SELECT)",
+        "estimated_overhead": "High (covering index with 5 columns)",
+        "priority": 2,
+        "sql_statement": "CREATE INDEX idx_time_entries_covering_tenant_id_legal_entity_id_branch_id ON time_entries (tenant_id, legal_entity_id, branch_id, project_id, id);",
+        "selectivity_analysis": {
+          "main_columns_selectivity": 0.9,
+          "covering_benefit": "Eliminates table lookup for SELECT queries"
+        }
+      },
+      {
+        "recommendation_id": "1cd29f77",
+        "table": "time_events",
+        "recommended_index": {
+          "name": "idx_time_events_composite_7695",
+          "table": "time_events",
+          "columns": [
+            "id",
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "entry_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize multi-column WHERE conditions: id, tenant_id, legal_entity_id, project_id, entry_id",
+        "query_patterns_helped": [
+          "time_events_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Medium (composite index with 5 columns)",
+        "priority": 2,
+        "sql_statement": "CREATE INDEX idx_time_events_composite_7695 ON time_events (id, tenant_id, legal_entity_id, project_id, entry_id);",
+        "selectivity_analysis": {
+          "column_selectivities": {
+            "id": 1.0,
+            "tenant_id": 0.9,
+            "legal_entity_id": 0.9,
+            "project_id": 0.9,
+            "entry_id": 0.9
+          },
+          "combined_selectivity": 0.9199999999999999,
+          "column_order_rationale": "Ordered by selectivity (most selective first)"
+        }
+      },
+      {
+        "recommendation_id": "34d5a943",
+        "table": "time_events",
+        "recommended_index": {
+          "name": "idx_time_events_covering_tenant_id_legal_entity_id_project_id",
+          "table": "time_events",
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "entry_id",
+            "id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": [],
+          "size_estimate": null
+        },
+        "reason": "Covering index for WHERE + ORDER BY optimization",
+        "query_patterns_helped": [
+          "time_events_scoped_page"
+        ],
+        "estimated_benefit": "High (eliminates table lookups for SELECT)",
+        "estimated_overhead": "High (covering index with 5 columns)",
+        "priority": 2,
+        "sql_statement": "CREATE INDEX idx_time_events_covering_tenant_id_legal_entity_id_project_id ON time_events (tenant_id, legal_entity_id, project_id, entry_id, id);",
+        "selectivity_analysis": {
+          "main_columns_selectivity": 0.9,
+          "covering_benefit": "Eliminates table lookup for SELECT queries"
+        }
+      },
+      {
+        "recommendation_id": "97074081",
+        "table": "billable_units",
+        "recommended_index": {
+          "name": "idx_billable_units_id_tenant_id_legal_entity_id_project_id",
+          "table": "billable_units",
+          "columns": [
+            "id",
+            "tenant_id",
+            "legal_entity_id",
+            "project_id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": null,
+          "size_estimate": null
+        },
+        "reason": "Optimize multi-column WHERE conditions: id, tenant_id, legal_entity_id, project_id",
+        "query_patterns_helped": [
+          "billable_units_scoped_page"
+        ],
+        "estimated_benefit": "Very High",
+        "estimated_overhead": "Medium (composite index with 4 columns)",
+        "priority": 2,
+        "sql_statement": "CREATE INDEX idx_billable_units_id_tenant_id_legal_entity_id_project_id ON billable_units (id, tenant_id, legal_entity_id, project_id);",
+        "selectivity_analysis": {
+          "column_selectivities": {
+            "id": 1.0,
+            "tenant_id": 0.9,
+            "legal_entity_id": 0.9,
+            "project_id": 0.9
+          },
+          "combined_selectivity": 0.925,
+          "column_order_rationale": "Ordered by selectivity (most selective first)"
+        }
+      },
+      {
+        "recommendation_id": "91b574df",
+        "table": "billable_units",
+        "recommended_index": {
+          "name": "idx_billable_units_covering_835",
+          "table": "billable_units",
+          "columns": [
+            "tenant_id",
+            "legal_entity_id",
+            "project_id",
+            "id"
+          ],
+          "unique": false,
+          "index_type": "btree",
+          "partial_condition": null,
+          "include_columns": [],
+          "size_estimate": null
+        },
+        "reason": "Covering index for WHERE + ORDER BY optimization",
+        "query_patterns_helped": [
+          "billable_units_scoped_page"
+        ],
+        "estimated_benefit": "High (eliminates table lookups for SELECT)",
+        "estimated_overhead": "High (covering index with 4 columns)",
+        "priority": 2,
+        "sql_statement": "CREATE INDEX idx_billable_units_covering_835 ON billable_units (tenant_id, legal_entity_id, project_id, id);",
+        "selectivity_analysis": {
+          "main_columns_selectivity": 0.9,
+          "covering_benefit": "Eliminates table lookup for SELECT queries"
+        }
+      }
+    ],
+    "medium_priority": [],
+    "low_priority": []
+  },
+  "redundancy_analysis": [
+    {
+      "issue_type": "OVERLAPPING",
+      "affected_indexes": [
+        "plans_tenant_id_legal_entity_id_project_id_id_key",
+        "plan_scope_idx"
+      ],
+      "table": "plans",
+      "description": "Index 'plans_tenant_id_legal_entity_id_project_id_id_key' overlaps 100% with 'plan_scope_idx'",
+      "recommendation": "Consider dropping 'plans_tenant_id_legal_entity_id_project_id_id_key' as it's largely covered by 'plan_scope_idx'",
+      "sql_statements": [
+        "DROP INDEX plans_tenant_id_legal_entity_id_project_id_id_key;"
+      ]
+    },
+    {
+      "issue_type": "UNUSED",
+      "affected_indexes": [
+        "plan_actor_idx"
+      ],
+      "table": "plans",
+      "description": "Index 'plan_actor_idx' columns ['prepared_by'] are not used in any query patterns",
+      "recommendation": "Consider dropping this index if it's truly unused (verify with query logs)",
+      "sql_statements": [
+        "-- Review usage before dropping\n-- DROP INDEX plan_actor_idx;"
+      ]
+    },
+    {
+      "issue_type": "OVERLAPPING",
+      "affected_indexes": [
+        "tasks_tenant_id_legal_entity_id_project_id_plan_id_id_key",
+        "task_scope_idx"
+      ],
+      "table": "tasks",
+      "description": "Index 'tasks_tenant_id_legal_entity_id_project_id_plan_id_id_key' overlaps 100% with 'task_scope_idx'",
+      "recommendation": "Consider dropping 'tasks_tenant_id_legal_entity_id_project_id_plan_id_id_key' as it's largely covered by 'task_scope_idx'",
+      "sql_statements": [
+        "DROP INDEX tasks_tenant_id_legal_entity_id_project_id_plan_id_id_key;"
+      ]
+    },
+    {
+      "issue_type": "UNUSED",
+      "affected_indexes": [
+        "project_creator_idx"
+      ],
+      "table": "register",
+      "description": "Index 'project_creator_idx' columns ['created_by'] are not used in any query patterns",
+      "recommendation": "Consider dropping this index if it's truly unused (verify with query logs)",
+      "sql_statements": [
+        "-- Review usage before dropping\n-- DROP INDEX project_creator_idx;"
+      ]
+    },
+    {
+      "issue_type": "UNUSED",
+      "affected_indexes": [
+        "time_event_actor_idx"
+      ],
+      "table": "time_events",
+      "description": "Index 'time_event_actor_idx' columns ['actor_id'] are not used in any query patterns",
+      "recommendation": "Consider dropping this index if it's truly unused (verify with query logs)",
+      "sql_statements": [
+        "-- Review usage before dropping\n-- DROP INDEX time_event_actor_idx;"
+      ]
+    },
+    {
+      "issue_type": "OVERLAPPING",
+      "affected_indexes": [
+        "time_entries_tenant_id_legal_entity_id_project_id_id_key",
+        "project_time_scope_idx"
+      ],
+      "table": "time_entries",
+      "description": "Index 'time_entries_tenant_id_legal_entity_id_project_id_id_key' overlaps 80% with 'project_time_scope_idx'",
+      "recommendation": "Consider dropping 'time_entries_tenant_id_legal_entity_id_project_id_id_key' as it's largely covered by 'project_time_scope_idx'",
+      "sql_statements": [
+        "DROP INDEX time_entries_tenant_id_legal_entity_id_project_id_id_key;"
+      ]
+    },
+    {
+      "issue_type": "UNUSED",
+      "affected_indexes": [
+        "project_time_creator_idx"
+      ],
+      "table": "time_entries",
+      "description": "Index 'project_time_creator_idx' columns ['created_by'] are not used in any query patterns",
+      "recommendation": "Consider dropping this index if it's truly unused (verify with query logs)",
+      "sql_statements": [
+        "-- Review usage before dropping\n-- DROP INDEX project_time_creator_idx;"
+      ]
+    },
+    {
+      "issue_type": "UNUSED",
+      "affected_indexes": [
+        "project_time_submitter_idx"
+      ],
+      "table": "time_entries",
+      "description": "Index 'project_time_submitter_idx' columns ['submitted_by'] are not used in any query patterns",
+      "recommendation": "Consider dropping this index if it's truly unused (verify with query logs)",
+      "sql_statements": [
+        "-- Review usage before dropping\n-- DROP INDEX project_time_submitter_idx;"
+      ]
+    },
+    {
+      "issue_type": "OVERLAPPING",
+      "affected_indexes": [
+        "billable_units_tenant_id_legal_entity_id_project_id_id_key",
+        "billable_scope_idx"
+      ],
+      "table": "billable_units",
+      "description": "Index 'billable_units_tenant_id_legal_entity_id_project_id_id_key' overlaps 80% with 'billable_scope_idx'",
+      "recommendation": "Consider dropping 'billable_units_tenant_id_legal_entity_id_project_id_id_key' as it's largely covered by 'billable_scope_idx'",
+      "sql_statements": [
+        "DROP INDEX billable_units_tenant_id_legal_entity_id_project_id_id_key;"
+      ]
+    },
+    {
+      "issue_type": "OVERLAPPING",
+      "affected_indexes": [
+        "resource_slots_tenant_id_legal_entity_id_project_id_plan_id_key",
+        "slot_scope_idx"
+      ],
+      "table": "resource_slots",
+      "description": "Index 'resource_slots_tenant_id_legal_entity_id_project_id_plan_id_key' overlaps 100% with 'slot_scope_idx'",
+      "recommendation": "Consider dropping 'resource_slots_tenant_id_legal_entity_id_project_id_plan_id_key' as it's largely covered by 'slot_scope_idx'",
+      "sql_statements": [
+        "DROP INDEX resource_slots_tenant_id_legal_entity_id_project_id_plan_id_key;"
+      ]
+    },
+    {
+      "issue_type": "UNUSED",
+      "affected_indexes": [
+        "resource_slots_employee_id_tstzrange_excl"
+      ],
+      "table": "resource_slots",
+      "description": "Index 'resource_slots_employee_id_tstzrange_excl' columns ['employee_id'] are not used in any query patterns",
+      "recommendation": "Consider dropping this index if it's truly unused (verify with query logs)",
+      "sql_statements": [
+        "-- Review usage before dropping\n-- DROP INDEX resource_slots_employee_id_tstzrange_excl;"
+      ]
+    }
+  ],
+  "size_estimates": {
+    "plans": {
+      "estimated_table_rows": 10000,
+      "existing_indexes_size_mb": 25,
+      "index_overhead_per_column_mb": 2
+    },
+    "tasks": {
+      "estimated_table_rows": 10000,
+      "existing_indexes_size_mb": 15,
+      "index_overhead_per_column_mb": 2
+    },
+    "register": {
+      "estimated_table_rows": 10000,
+      "existing_indexes_size_mb": 35,
+      "index_overhead_per_column_mb": 2
+    },
+    "cost_basis": {
+      "estimated_table_rows": 10000,
+      "existing_indexes_size_mb": 5,
+      "index_overhead_per_column_mb": 2
+    },
+    "time_costs": {
+      "estimated_table_rows": 10000,
+      "existing_indexes_size_mb": 10,
+      "index_overhead_per_column_mb": 2
+    },
+    "time_events": {
+      "estimated_table_rows": 10000,
+      "existing_indexes_size_mb": 20,
+      "index_overhead_per_column_mb": 2
+    },
+    "dependencies": {
+      "estimated_table_rows": 10000,
+      "existing_indexes_size_mb": 10,
+      "index_overhead_per_column_mb": 2
+    },
+    "time_entries": {
+      "estimated_table_rows": 10000,
+      "existing_indexes_size_mb": 30,
+      "index_overhead_per_column_mb": 2
+    },
+    "task_progress": {
+      "estimated_table_rows": 10000,
+      "existing_indexes_size_mb": 20,
+      "index_overhead_per_column_mb": 2
+    },
+    "billable_units": {
+      "estimated_table_rows": 10000,
+      "existing_indexes_size_mb": 25,
+      "index_overhead_per_column_mb": 2
+    },
+    "plan_decisions": {
+      "estimated_table_rows": 10000,
+      "existing_indexes_size_mb": 15,
+      "index_overhead_per_column_mb": 2
+    },
+    "resource_costs": {
+      "estimated_table_rows": 10000,
+      "existing_indexes_size_mb": 10,
+      "index_overhead_per_column_mb": 2
+    },
+    "resource_slots": {
+      "estimated_table_rows": 10000,
+      "existing_indexes_size_mb": 30,
+      "index_overhead_per_column_mb": 2
+    },
+    "time_revisions": {
+      "estimated_table_rows": 10000,
+      "existing_indexes_size_mb": 40,
+      "index_overhead_per_column_mb": 2
+    },
+    "unit_decisions": {
+      "estimated_table_rows": 10000,
+      "existing_indexes_size_mb": 20,
+      "index_overhead_per_column_mb": 2
+    },
+    "time_allocations": {
+      "estimated_table_rows": 10000,
+      "existing_indexes_size_mb": 20,
+      "index_overhead_per_column_mb": 2
+    }
+  },
+  "sql_statements": {
+    "create_indexes": [
+      "CREATE INDEX idx_register_legal_entity_id ON register (legal_entity_id);",
+      "CREATE INDEX idx_register_branch_id ON register (branch_id);",
+      "CREATE INDEX idx_plans_legal_entity_id ON plans (legal_entity_id);",
+      "CREATE INDEX idx_tasks_legal_entity_id ON tasks (legal_entity_id);",
+      "CREATE INDEX idx_tasks_project_id ON tasks (project_id);",
+      "CREATE INDEX idx_tasks_id ON tasks (id);",
+      "CREATE INDEX idx_resource_slots_legal_entity_id ON resource_slots (legal_entity_id);",
+      "CREATE INDEX idx_resource_slots_project_id ON resource_slots (project_id);",
+      "CREATE INDEX idx_resource_slots_plan_id ON resource_slots (plan_id);",
+      "CREATE INDEX idx_time_entries_legal_entity_id ON time_entries (legal_entity_id);",
+      "CREATE INDEX idx_time_entries_branch_id ON time_entries (branch_id);",
+      "CREATE INDEX idx_time_entries_project_id ON time_entries (project_id);",
+      "CREATE INDEX idx_time_events_legal_entity_id ON time_events (legal_entity_id);",
+      "CREATE INDEX idx_time_events_project_id ON time_events (project_id);",
+      "CREATE INDEX idx_time_events_entry_id ON time_events (entry_id);",
+      "CREATE INDEX idx_time_costs_legal_entity_id ON time_costs (legal_entity_id);",
+      "CREATE INDEX idx_time_costs_project_id ON time_costs (project_id);",
+      "CREATE INDEX idx_billable_units_legal_entity_id ON billable_units (legal_entity_id);",
+      "CREATE INDEX idx_billable_units_project_id ON billable_units (project_id);",
+      "CREATE INDEX idx_time_costs_tenant_id_legal_entity_id_project_id_revision_id ON time_costs (tenant_id, legal_entity_id, project_id, revision_id);",
+      "CREATE INDEX idx_register_id_tenant_id_legal_entity_id_branch_id ON register (id, tenant_id, legal_entity_id, branch_id);",
+      "CREATE INDEX idx_register_covering_tenant_id_legal_entity_id_branch_id ON register (tenant_id, legal_entity_id, branch_id, id);",
+      "CREATE INDEX idx_plans_id_tenant_id_legal_entity_id_project_id ON plans (id, tenant_id, legal_entity_id, project_id);",
+      "CREATE INDEX idx_plans_covering_tenant_id_legal_entity_id_project_id ON plans (tenant_id, legal_entity_id, project_id, id);",
+      "CREATE INDEX idx_tasks_id_tenant_id_legal_entity_id_project_id_plan_id ON tasks (id, tenant_id, legal_entity_id, project_id, plan_id);",
+      "CREATE INDEX idx_tasks_covering_tenant_id_legal_entity_id_project_id ON tasks (tenant_id, legal_entity_id, project_id, plan_id, id);",
+      "CREATE INDEX idx_resource_slots_composite_4577 ON resource_slots (id, tenant_id, legal_entity_id, project_id, plan_id);",
+      "CREATE INDEX idx_resource_slots_covering_2094 ON resource_slots (tenant_id, legal_entity_id, project_id, plan_id, id);",
+      "CREATE INDEX idx_time_entries_composite_3866 ON time_entries (id, tenant_id, legal_entity_id, branch_id, project_id);",
+      "CREATE INDEX idx_time_entries_covering_tenant_id_legal_entity_id_branch_id ON time_entries (tenant_id, legal_entity_id, branch_id, project_id, id);",
+      "CREATE INDEX idx_time_events_composite_7695 ON time_events (id, tenant_id, legal_entity_id, project_id, entry_id);",
+      "CREATE INDEX idx_time_events_covering_tenant_id_legal_entity_id_project_id ON time_events (tenant_id, legal_entity_id, project_id, entry_id, id);",
+      "CREATE INDEX idx_billable_units_id_tenant_id_legal_entity_id_project_id ON billable_units (id, tenant_id, legal_entity_id, project_id);",
+      "CREATE INDEX idx_billable_units_covering_835 ON billable_units (tenant_id, legal_entity_id, project_id, id);"
+    ],
+    "drop_redundant": [
+      "DROP INDEX plans_tenant_id_legal_entity_id_project_id_id_key;",
+      "-- Review usage before dropping\n-- DROP INDEX plan_actor_idx;",
+      "DROP INDEX tasks_tenant_id_legal_entity_id_project_id_plan_id_id_key;",
+      "-- Review usage before dropping\n-- DROP INDEX project_creator_idx;",
+      "-- Review usage before dropping\n-- DROP INDEX time_event_actor_idx;",
+      "DROP INDEX time_entries_tenant_id_legal_entity_id_project_id_id_key;",
+      "-- Review usage before dropping\n-- DROP INDEX project_time_creator_idx;",
+      "-- Review usage before dropping\n-- DROP INDEX project_time_submitter_idx;",
+      "DROP INDEX billable_units_tenant_id_legal_entity_id_project_id_id_key;",
+      "DROP INDEX resource_slots_tenant_id_legal_entity_id_project_id_plan_id_key;",
+      "-- Review usage before dropping\n-- DROP INDEX resource_slots_employee_id_tstzrange_excl;"
+    ]
+  },
+  "performance_impact": {
+    "query_optimization": {
+      "queries_improved": 8,
+      "high_impact_queries": 8,
+      "benefit_distribution": {
+        "Very High": 27,
+        "High (eliminates table lookups for SELECT)": 7
+      }
+    },
+    "write_overhead": {
+      "total_new_indexes": 34,
+      "estimated_insert_overhead": "170%",
+      "tables_most_affected": [
+        [
+          "tasks",
+          5
+        ],
+        [
+          "resource_slots",
+          5
+        ],
+        [
+          "time_entries",
+          5
+        ]
+      ]
+    },
+    "storage_impact": {}
+  }
+}

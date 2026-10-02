@@ -1,10 +1,14 @@
+import '../operations/access_changed.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import 'package:jentra_domain/jentra_procurement.dart';
+
 import '../../app_providers.dart';
 import 'procurement_controller.dart';
+import 'conflict_comparison.dart';
 import 'procurement_picker.dart';
 
 class ProcurementScreen extends ConsumerWidget {
@@ -126,6 +130,12 @@ class ProcurementWorkspace extends StatelessWidget {
     listenable: controller,
     builder: (context, _) {
       final c = controller;
+      if (c.accessDenied) {
+        return OperationalAccessChanged(
+          retry: c.initialize,
+          enabled: c.online && !c.busy,
+        );
+      }
       return SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -576,8 +586,22 @@ class _RequisitionEditor extends StatelessWidget {
         Text('Estimated total · ${estimate()}'),
         const SizedBox(height: 16),
         if (c.recovery?.errorCode == 'VERSION_CONFLICT')
-          const Text(
-            'Server revision changed. Discard this local edit, refresh the register and reopen the current revision.',
+          OutlinedButton(
+            onPressed: c.busy || !c.online
+                ? null
+                : () => reviewAndReloadProcurementConflict(
+                    context,
+                    access: c,
+                    gateway: c.gateway,
+                    scope: c.scope,
+                    kind: 'purchase_requisition',
+                    local: form,
+                    discard: c.discard,
+                    hasForm: () => c.form != null,
+                    select: c.select,
+                    edit: c.edit,
+                  ),
+            child: const Text('Compare current revision'),
           ),
         if (c.recovery?.pending != null)
           const Text(

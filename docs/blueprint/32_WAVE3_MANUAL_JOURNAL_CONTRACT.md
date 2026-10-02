@@ -4,6 +4,31 @@ Candidate development contract, 2026-09-21. Manual journals reuse
 `finance.flow_post_journal`, open-period locking, document sequences, workflow
 approval snapshots, command receipts, audit and outbox. No alternate ledger engine.
 
+Journal reads and command presentation bind the originating scope/access epoch.
+Disconnect, disposal, permission, MFA or authentication denial clear live register,
+picker and posted evidence; obsolete successes and failures cannot restore or
+relabel it. Encrypted recovery retains user inputs and original linked identities,
+not posted amounts or cached attachment metadata. Command dispatch rechecks the
+originating epoch after asynchronous encrypted save/sealing. A command already
+dispatched still atomically confirms its input-only recovery form before optional
+reads, including after access loss; a fresh permitted read restores posted evidence.
+
+Encrypted initialization and linked reversal preparation also retain their entry
+epoch across local reads/deletes. Obsolete completion cannot restore a form or
+start additional reads. Post-confirmation local storage failure keeps fixed
+`LOCAL_STORAGE_FULL` guidance alongside the known confirmation; a later read
+denial keeps typed access guidance and hides live evidence without reviving the
+confirmed command. Optional failures never turn a durably acknowledged command
+back into a pending retry.
+
+Journal register, detail, ordinary picker, effective tax and tax-control reads
+normalize the allowlisted permission, access, MFA/recent-MFA and authentication
+denials (including expired/absent/invalid JWT transport codes) into fixed typed
+errors without server messages, hints or row details. A read checks the same
+authenticated actor before issuance and after its response. This read-only
+normalization does not alter save, transition or posting error precedence or
+sealed command behavior.
+
 ## Document and commands
 
 `finance.manual_journals` is a scoped draft/approval aggregate with immutable posted

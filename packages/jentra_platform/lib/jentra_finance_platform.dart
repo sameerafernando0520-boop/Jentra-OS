@@ -15,3 +15,5 @@ export 'src/supabase_report_export_gateway.dart';
 export 'src/report_export_file.dart';
 export 'src/supabase_financial_dimension_gateway.dart';
 export 'src/supabase_posted_journal_gateway.dart';
+export 'src/supabase_operational_gateway.dart';
+export 'src/wave3_notification_gateway.dart';

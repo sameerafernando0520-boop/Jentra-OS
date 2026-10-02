@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_finance_platform.dart';
+
 import '../../app_providers.dart';
 
 final bankReconciliationGatewayProvider = Provider<BankReconciliationGateway?>(
@@ -63,12 +65,15 @@ final class BankReconciliationController extends ChangeNotifier {
       _disposed = false;
   String? error, message;
   int formEpoch = 0;
+  int _readEpoch = 0, _operationEpoch = 0;
+  bool get currentServer =>
+      !_disposed && online && _operationEpoch == _readEpoch;
   Map<String, Object?> form = {};
   QuotationLocalDraft? local;
   final pages = <String, List<Map<String, Object?>>>{};
   final cursors = <String, String?>{};
   bool get pending => local?.pending != null;
-  bool get locked => busy || pending || denied;
+  bool get locked => _disposed || busy || pending || denied || !verified;
   String? get bankId => form['bank_id'] as String?;
   List<Map<String, Object?>> rows(String resource) => pages[resource] ?? [];
   bool can(String action) => capabilities.contains(switch (action) {
@@ -84,20 +89,38 @@ final class BankReconciliationController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _readEpoch++;
+    clearReadEvidence();
+    form = {};
     super.dispose();
   }
 
+  void clearReadEvidence() {
+    verified = false;
+    pages.clear();
+    cursors.clear();
+  }
+
   void setOnline(bool value) {
-    online = value;
+    if (online != value) {
+      online = value;
+      _readEpoch++;
+      clearReadEvidence();
+    }
     emit();
   }
 
   void handle(Object e) {
-    if (e is DomainError && e.code == 'PERMISSION_DENIED') {
+    if (e is DomainError &&
+        const {
+          'PERMISSION_DENIED',
+          'ACCESS_DENIED',
+          'MFA_REQUIRED',
+          'AUTHENTICATION_REQUIRED',
+        }.contains(e.code)) {
       denied = true;
-      verified = false;
-      pages.clear();
-      cursors.clear();
+      _readEpoch++;
+      clearReadEvidence();
       form = {};
     }
     error = e is DomainError
@@ -110,12 +133,13 @@ final class BankReconciliationController extends ChangeNotifier {
   Future<void> run(Future<void> Function() work) async {
     if (busy || _disposed) return;
     busy = true;
+    _operationEpoch = _readEpoch;
     error = null;
     emit();
     try {
       await work();
     } catch (e) {
-      handle(e);
+      if (!_disposed && _operationEpoch == _readEpoch) handle(e);
     } finally {
       busy = false;
       emit();
@@ -125,12 +149,14 @@ final class BankReconciliationController extends ChangeNotifier {
   Future<void> initialize() => run(() async {
     if (form.isNotEmpty && !pending && !denied) await persist();
     local = await drafts.load(scope, slot);
+    if (_disposed) return;
     // Financial source descriptions remain hidden until current server access succeeds.
     if (!online) {
       verified = false;
       return;
     }
     await load('accounts');
+    if (!currentServer) return;
     verified = true;
     denied = false;
     form =
@@ -140,6 +166,7 @@ final class BankReconciliationController extends ChangeNotifier {
   });
   Future<void> load(String resource, {bool more = false}) async {
     if (!online) return;
+    final epoch = _readEpoch;
     final r = await gateway.options(
       scope,
       resource,
@@ -151,7 +178,7 @@ final class BankReconciliationController extends ChangeNotifier {
           : bankId,
       after: more ? cursors[resource] : null,
     );
-    if (_disposed) return;
+    if (_disposed || !online || epoch != _readEpoch) return;
     pages[resource] = [
       if (more) ...rows(resource),
       for (final x in r['items'] as List) (x as Map).cast<String, Object?>(),
@@ -169,6 +196,7 @@ final class BankReconciliationController extends ChangeNotifier {
       'offset_accounts',
       'rates',
     ]) {
+      if (!currentServer) return;
       await load(resource);
     }
   }
@@ -177,7 +205,7 @@ final class BankReconciliationController extends ChangeNotifier {
     if (online && !denied && bankId != null) await reloadBank();
   });
   Future<void> selectBank(String id) => run(() async {
-    if (pending || !verified || denied) return;
+    if (pending || !verified || denied || !online) return;
     form = {
       'bank_id': id,
       'posting_date': today,
@@ -197,7 +225,7 @@ final class BankReconciliationController extends ChangeNotifier {
   }
 
   void toggle(String resource, String id, bool value) {
-    if (locked || !verified || !can('match')) return;
+    if (locked || !online || !verified || !can('match')) return;
     final key = resource == 'statement_lines'
         ? 'statement_line_ids'
         : 'journal_line_ids';
@@ -320,9 +348,8 @@ final class BankReconciliationController extends ChangeNotifier {
           );
         }
         for (final k in ['opening', 'closing']) {
-          if (!RegExp(
-            r'^-?\d{1,14}(\.\d{1,6})?$',
-          ).hasMatch(form[k] as String? ?? '')) {
+          if (!RegExp(r'^-?\d{1,14}(\.\d{1,6})?$')
+              .hasMatch(form[k] as String? ?? '')) {
             throw const FormatException(
               'Enter exact opening and closing balances.',
             );
@@ -396,6 +423,7 @@ final class BankReconciliationController extends ChangeNotifier {
       );
       local = await drafts.load(scope, slot);
     }
+    if (!currentServer || denied || !verified) return;
     try {
       await gateway.execute(command.envelope);
       await drafts.complete(scope, slot, command.envelope.commandId);
@@ -410,6 +438,12 @@ final class BankReconciliationController extends ChangeNotifier {
       rethrow;
     }
     local = null;
+    message = 'Bank command confirmed. Original evidence remains in history.';
+    if (!currentServer || denied) {
+      form = {};
+      clearReadEvidence();
+      return;
+    }
     form = {
       'bank_id': bankId,
       'posting_date': today,
@@ -417,12 +451,12 @@ final class BankReconciliationController extends ChangeNotifier {
       'closing': '0',
     };
     formEpoch++;
-    message = 'Bank command confirmed. Original evidence remains in history.';
     try {
       await persist();
       await load('accounts');
       await reloadBank();
     } catch (e) {
+      if (!currentServer) return;
       handle(e);
       if (!denied) {
         error = 'Command confirmed. Refresh to load its recorded evidence.';

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../app_providers.dart';
+import '../operations/operational_read_access.dart';
 import 'landed_value_controller.dart';
 
 class LandedValueScreen extends ConsumerWidget {
@@ -37,15 +39,16 @@ class LandedValueWorkspace extends StatelessWidget {
       return;
     }
     final reverse = controller.form?['reverse_of'] != null;
-    final accepted = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
+    final accepted = await showOperationalReadDialog<bool>(
+      context,
+      controller,
+      (context) => AlertDialog(
         title: Text(
           reverse ? 'Reverse this landed value?' : 'Post this landed value?',
         ),
         content: SingleChildScrollView(
           child: Text(
-            '${controller.preview?['currency_code']} ${controller.preview?['amount']}\n${controller.form?['reference']}\n${controller.form?['reason']}\n\n${reverse ? 'This creates a linked correction.' : 'This reclassifies recorded freight expense and changes inventory carrying value.'}',
+            '${reverse ? 'Original allocation: ${controller.form?['reverse_of']}' : '${controller.preview?['currency_code']} ${controller.preview?['amount']}'}\n${controller.form?['reference']}\n${controller.form?['reason']}\n\n${reverse ? 'This creates a linked correction.' : 'This reclassifies recorded freight expense and changes inventory carrying value.'}',
           ),
         ),
         actions: [

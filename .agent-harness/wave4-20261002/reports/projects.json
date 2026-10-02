@@ -1,0 +1,131 @@
+{
+  "task": "projects",
+  "at": "2026-10-02T06:35:45.838340+00:00",
+  "manifest_hash": "97979ba9871ed575590705f05b14e47b335d25486629c1cbd0542355b83d14af",
+  "runner_hash": "bca8555da7bd32d8b290eabc2478299f4e5a88df09fd5472f0ceb699dd726cd8",
+  "sources_before": {
+    "packages/jentra_domain/lib/src/project_values.dart": "e9965b57f3d323c506ea58ac697351749e518fe7f553f6d7cbf904652e17eb11",
+    "packages/jentra_domain/lib/src/projects_repository.dart": "37b1625f87b76abe71b74fd5d31dbe9ce256bd24f1d0e8ccdffb75545bdfc6bc",
+    "packages/jentra_domain/test/project_values_test.dart": "8abf9302127540bd3c0a7d443c754b194bf711c99a3bc1ff892fdcea6a0d8b4a",
+    "packages/jentra_platform/lib/src/supabase_projects_gateway.dart": "c21f7f4c3a298ca95c55007afdde858d295fe19cddcfb63861b636d245ed7141",
+    "packages/jentra_platform/test/projects_gateway_test.dart": "6c6d7125e5a9b1a18f1500d3dbed65f93cf9056dee86748b07f4a4aa426ddbb2",
+    "packages/jentra_platform/test/fixtures/projects_rollback_projections.json": "75ea0fcc2e2ef29f25ad8c3579533078b87f607e4bc05b089185acf996e28a1f",
+    "apps/jentra_desktop/lib/src/features/projects/projects_controller.dart": "c35ef772d564cb36e08b7723b2ba5f0092667ee906af9806773200d3049dd25b",
+    "apps/jentra_desktop/lib/src/features/projects/projects_screen.dart": "8cfa2c6c41c25a77a76a3a12da7c9ce5f38e193190632d8ad21e10291a434015",
+    "apps/jentra_desktop/test/projects_workspace_test.dart": "6f1e9d13519b3116de3a4609bfb45462bca4f330aee384c060ebf337339da2a2"
+  },
+  "sources_after": {
+    "packages/jentra_domain/lib/src/project_values.dart": "e9965b57f3d323c506ea58ac697351749e518fe7f553f6d7cbf904652e17eb11",
+    "packages/jentra_domain/lib/src/projects_repository.dart": "37b1625f87b76abe71b74fd5d31dbe9ce256bd24f1d0e8ccdffb75545bdfc6bc",
+    "packages/jentra_domain/test/project_values_test.dart": "8abf9302127540bd3c0a7d443c754b194bf711c99a3bc1ff892fdcea6a0d8b4a",
+    "packages/jentra_platform/lib/src/supabase_projects_gateway.dart": "c21f7f4c3a298ca95c55007afdde858d295fe19cddcfb63861b636d245ed7141",
+    "packages/jentra_platform/test/projects_gateway_test.dart": "6c6d7125e5a9b1a18f1500d3dbed65f93cf9056dee86748b07f4a4aa426ddbb2",
+    "packages/jentra_platform/test/fixtures/projects_rollback_projections.json": "75ea0fcc2e2ef29f25ad8c3579533078b87f607e4bc05b089185acf996e28a1f",
+    "apps/jentra_desktop/lib/src/features/projects/projects_controller.dart": "c35ef772d564cb36e08b7723b2ba5f0092667ee906af9806773200d3049dd25b",
+    "apps/jentra_desktop/lib/src/features/projects/projects_screen.dart": "8cfa2c6c41c25a77a76a3a12da7c9ce5f38e193190632d8ad21e10291a434015",
+    "apps/jentra_desktop/test/projects_workspace_test.dart": "6f1e9d13519b3116de3a4609bfb45462bca4f330aee384c060ebf337339da2a2"
+  },
+  "checks": [
+    {
+      "command": {
+        "cwd": "packages/jentra_domain",
+        "argv": [
+          "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+          "analyze",
+          "lib/src/project_values.dart",
+          "lib/src/projects_repository.dart",
+          "test/project_values_test.dart"
+        ],
+        "timeout_seconds": 900
+      },
+      "exit_code": 0,
+      "log": ".agent-harness/wave4-20261002/reports/projects-1.log",
+      "log_hash": "d7a3e7ca7a154ebbca73397e2fe7c1e1b6d64707b90031ee598374daa80c8912"
+    },
+    {
+      "command": {
+        "cwd": "packages/jentra_domain",
+        "argv": [
+          "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+          "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+          "test",
+          "--no-pub",
+          "test/project_values_test.dart",
+          "--reporter",
+          "expanded"
+        ],
+        "timeout_seconds": 900
+      },
+      "exit_code": 0,
+      "log": ".agent-harness/wave4-20261002/reports/projects-2.log",
+      "log_hash": "c27e709edce8240ffd4962eb9597e74acb6213c6ccc4bf59b6e5fade3477d2d4"
+    },
+    {
+      "command": {
+        "cwd": "packages/jentra_platform",
+        "argv": [
+          "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+          "analyze",
+          "lib/src/supabase_projects_gateway.dart",
+          "test/projects_gateway_test.dart"
+        ],
+        "timeout_seconds": 900
+      },
+      "exit_code": 0,
+      "log": ".agent-harness/wave4-20261002/reports/projects-3.log",
+      "log_hash": "5ad67816bd83d331ba528b071db97631ab3790284f5a44eaac455285e5d8c035"
+    },
+    {
+      "command": {
+        "cwd": "packages/jentra_platform",
+        "argv": [
+          "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+          "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+          "test",
+          "--no-pub",
+          "test/projects_gateway_test.dart",
+          "--reporter",
+          "expanded"
+        ],
+        "timeout_seconds": 900
+      },
+      "exit_code": 0,
+      "log": ".agent-harness/wave4-20261002/reports/projects-4.log",
+      "log_hash": "0feaea58cabb3249dd8b3fe724262ccd90d34fe47e2567399b491e73a31396c4"
+    },
+    {
+      "command": {
+        "cwd": "apps/jentra_desktop",
+        "argv": [
+          "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+          "analyze",
+          "lib/src/features/projects/projects_controller.dart",
+          "lib/src/features/projects/projects_screen.dart",
+          "test/projects_workspace_test.dart"
+        ],
+        "timeout_seconds": 900
+      },
+      "exit_code": 0,
+      "log": ".agent-harness/wave4-20261002/reports/projects-5.log",
+      "log_hash": "4ca4221a86885cff2e2bff2b30307f8438af928b87c55a94f72ba764a436a324"
+    },
+    {
+      "command": {
+        "cwd": "apps/jentra_desktop",
+        "argv": [
+          "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+          "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+          "test",
+          "--no-pub",
+          "test/projects_workspace_test.dart",
+          "--reporter",
+          "expanded"
+        ],
+        "timeout_seconds": 900
+      },
+      "exit_code": 0,
+      "log": ".agent-harness/wave4-20261002/reports/projects-6.log",
+      "log_hash": "a1ea97adddf16d840e04363efbd5932d47a3419b028f624f3ea8a2f138cdf378"
+    }
+  ]
+}

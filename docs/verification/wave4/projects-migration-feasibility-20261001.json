@@ -1,0 +1,146 @@
+[
+  {
+    "check_id": "validate_step_001",
+    "check_type": "TABLE_EXISTS",
+    "table": "plan_decisions",
+    "description": "Verify table plan_decisions exists",
+    "sql_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'plan_decisions';",
+    "expected_result": 1,
+    "critical": true
+  },
+  {
+    "check_id": "validate_step_002",
+    "check_type": "TABLE_EXISTS",
+    "table": "time_revisions",
+    "description": "Verify table time_revisions exists",
+    "sql_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'time_revisions';",
+    "expected_result": 1,
+    "critical": true
+  },
+  {
+    "check_id": "validate_step_003",
+    "check_type": "TABLE_EXISTS",
+    "table": "resource_costs",
+    "description": "Verify table resource_costs exists",
+    "sql_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'resource_costs';",
+    "expected_result": 1,
+    "critical": true
+  },
+  {
+    "check_id": "validate_step_004",
+    "check_type": "TABLE_EXISTS",
+    "table": "cost_basis",
+    "description": "Verify table cost_basis exists",
+    "sql_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'cost_basis';",
+    "expected_result": 1,
+    "critical": true
+  },
+  {
+    "check_id": "validate_step_005",
+    "check_type": "TABLE_EXISTS",
+    "table": "task_progress",
+    "description": "Verify table task_progress exists",
+    "sql_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'task_progress';",
+    "expected_result": 1,
+    "critical": true
+  },
+  {
+    "check_id": "validate_step_006",
+    "check_type": "TABLE_EXISTS",
+    "table": "time_entries",
+    "description": "Verify table time_entries exists",
+    "sql_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'time_entries';",
+    "expected_result": 1,
+    "critical": true
+  },
+  {
+    "check_id": "validate_step_007",
+    "check_type": "TABLE_EXISTS",
+    "table": "time_events",
+    "description": "Verify table time_events exists",
+    "sql_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'time_events';",
+    "expected_result": 1,
+    "critical": true
+  },
+  {
+    "check_id": "validate_step_008",
+    "check_type": "TABLE_EXISTS",
+    "table": "resource_slots",
+    "description": "Verify table resource_slots exists",
+    "sql_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'resource_slots';",
+    "expected_result": 1,
+    "critical": true
+  },
+  {
+    "check_id": "validate_step_009",
+    "check_type": "TABLE_EXISTS",
+    "table": "plans",
+    "description": "Verify table plans exists",
+    "sql_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'plans';",
+    "expected_result": 1,
+    "critical": true
+  },
+  {
+    "check_id": "validate_step_010",
+    "check_type": "TABLE_EXISTS",
+    "table": "time_allocations",
+    "description": "Verify table time_allocations exists",
+    "sql_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'time_allocations';",
+    "expected_result": 1,
+    "critical": true
+  },
+  {
+    "check_id": "validate_step_011",
+    "check_type": "TABLE_EXISTS",
+    "table": "register",
+    "description": "Verify table register exists",
+    "sql_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'register';",
+    "expected_result": 1,
+    "critical": true
+  },
+  {
+    "check_id": "validate_step_012",
+    "check_type": "TABLE_EXISTS",
+    "table": "tasks",
+    "description": "Verify table tasks exists",
+    "sql_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'tasks';",
+    "expected_result": 1,
+    "critical": true
+  },
+  {
+    "check_id": "validate_step_013",
+    "check_type": "TABLE_EXISTS",
+    "table": "unit_decisions",
+    "description": "Verify table unit_decisions exists",
+    "sql_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'unit_decisions';",
+    "expected_result": 1,
+    "critical": true
+  },
+  {
+    "check_id": "validate_step_014",
+    "check_type": "TABLE_EXISTS",
+    "table": "billable_units",
+    "description": "Verify table billable_units exists",
+    "sql_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'billable_units';",
+    "expected_result": 1,
+    "critical": true
+  },
+  {
+    "check_id": "validate_step_015",
+    "check_type": "TABLE_EXISTS",
+    "table": "time_costs",
+    "description": "Verify table time_costs exists",
+    "sql_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'time_costs';",
+    "expected_result": 1,
+    "critical": true
+  },
+  {
+    "check_id": "validate_step_016",
+    "check_type": "TABLE_EXISTS",
+    "table": "dependencies",
+    "description": "Verify table dependencies exists",
+    "sql_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'dependencies';",
+    "expected_result": 1,
+    "critical": true
+  }
+]

@@ -1,6 +1,9 @@
+import '../operations/access_changed.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../app_providers.dart';
 import 'sourcing_controller.dart';
 import 'procurement_picker.dart';
@@ -48,6 +51,12 @@ class SourcingWorkspace extends StatelessWidget {
     listenable: controller,
     builder: (context, _) {
       final c = controller;
+      if (c.accessDenied) {
+        return OperationalAccessChanged(
+          retry: c.initialize,
+          enabled: c.online && !c.busy,
+        );
+      }
       return SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -88,6 +97,7 @@ class SourcingWorkspace extends StatelessWidget {
                               c.gateway,
                               c.scope,
                               'requisitions',
+                              access: c,
                             );
                             if (source != null && !c.locked) {
                               await c.issue(
@@ -387,6 +397,7 @@ class _SourcingEditor extends StatelessWidget {
                           c.gateway,
                           c.scope,
                           'suppliers',
+                          access: c,
                         );
                         if (supplier == null || c.locked) return;
                         final ids = List<Object?>.from(
@@ -441,6 +452,7 @@ class _SourcingEditor extends StatelessWidget {
                           c.gateway,
                           c.scope,
                           'rates',
+                          access: c,
                         );
                         if (rate == null || c.locked) return;
                         for (final key in [
@@ -520,6 +532,7 @@ class _SourcingEditor extends StatelessWidget {
                                         c.gateway,
                                         c.scope,
                                         'taxes',
+                                        access: c,
                                       );
                                       if (tax == null || c.locked) return;
                                       change('tax_definition_id', tax['id']);

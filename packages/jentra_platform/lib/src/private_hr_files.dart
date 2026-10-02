@@ -28,8 +28,9 @@ final class NativeHrFiles implements HrFiles {
     );
     if (file == null) return null;
     final length = await file.length();
-    if (length < 1 || length > 10485760)
+    if (length < 1 || length > 10485760) {
       throw const FormatException('Choose a supported document up to 10 MiB.');
+    }
     final mime = switch (file.name.split('.').last.toLowerCase()) {
       'txt' => 'text/plain',
       'png' => 'image/png',
@@ -38,10 +39,11 @@ final class NativeHrFiles implements HrFiles {
       _ => throw const FormatException('Choose text, PNG, JPEG or PDF.'),
     };
     final bytes = await file.readAsBytes();
-    if (bytes.length != length)
+    if (bytes.length != length) {
       throw const FormatException(
         'The selected file changed. Choose it again.',
       );
+    }
     final checksum = (await Sha256().hash(
       bytes,
     )).bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();

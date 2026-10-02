@@ -49,8 +49,7 @@ class CashFlowMappingWorkspace extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                c.error ??
-                    'Connect to verify access and restore the encrypted classification draft.',
+                c.error ?? 'Connect to verify access and restore the encrypted classification draft.',
               ),
               if (c.busy) const CircularProgressIndicator(),
               TextButton(

@@ -4,6 +4,7 @@ import 'package:jentra_domain/jentra_domain.dart';
 
 import 'draft_cipher.dart';
 import 'local_database.dart';
+import 'local_draft_storage_failure.dart';
 
 final class LocalDraft {
   const LocalDraft({
@@ -36,8 +37,24 @@ final class EncryptedDraftRepository {
   final DraftCipher _cipher;
 
   /// Atomically seal/clear private body and its minimal receipt metadata.
-  Future<T> transaction<T>(Future<T> Function() work) =>
-      _database.transaction(work);
+  Future<T> transaction<T>(Future<T> Function() work) async {
+    Object? workFailure;
+    try {
+      return await _database.transaction(() async {
+        try {
+          return await work();
+        } catch (error) {
+          workFailure = error;
+          rethrow;
+        }
+      });
+    } catch (error) {
+      // Work may reject a version, scope, pending command or caller value. Its
+      // domain/serialization error is distinct from a failed local commit.
+      if (identical(error, workFailure)) rethrow;
+      throw localDraftStorageFailure(error);
+    }
+  }
 
   Future<void> save({
     required String id,
@@ -48,21 +65,26 @@ final class EncryptedDraftRepository {
     int? serverVersion,
     DraftSyncState syncState = DraftSyncState.localOnly,
   }) async {
-    final encrypted = await _cipher.encrypt(jsonEncode(payload));
-    await _database
-        .into(_database.encryptedDrafts)
-        .insertOnConflictUpdate(
-          EncryptedDraftsCompanion.insert(
-            id: id,
-            tenantId: tenantId,
-            entityType: entityType,
-            encryptedPayload: Uint8List.fromList(encrypted),
-            localVersion: Value(localVersion),
-            serverVersion: Value(serverVersion),
-            syncState: syncState.name,
-            updatedAt: DateTime.now().toUtc(),
-          ),
-        );
+    final encoded = jsonEncode(payload);
+    try {
+      final encrypted = await _cipher.encrypt(encoded);
+      await _database
+          .into(_database.encryptedDrafts)
+          .insertOnConflictUpdate(
+            EncryptedDraftsCompanion.insert(
+              id: id,
+              tenantId: tenantId,
+              entityType: entityType,
+              encryptedPayload: Uint8List.fromList(encrypted),
+              localVersion: Value(localVersion),
+              serverVersion: Value(serverVersion),
+              syncState: syncState.name,
+              updatedAt: DateTime.now().toUtc(),
+            ),
+          );
+    } catch (error) {
+      throw localDraftStorageFailure(error);
+    }
   }
 
   Stream<List<LocalDraft>> watchTenant(String tenantId) =>
@@ -106,8 +128,12 @@ final class EncryptedDraftRepository {
         .toList();
   }
 
-  Future<void> markConflict({required String id, required int serverVersion}) =>
-      (_database.update(
+  Future<void> markConflict({
+    required String id,
+    required int serverVersion,
+  }) async {
+    try {
+      await (_database.update(
         _database.encryptedDrafts,
       )..where((item) => item.id.equals(id))).write(
         EncryptedDraftsCompanion(
@@ -116,10 +142,20 @@ final class EncryptedDraftRepository {
           updatedAt: Value(DateTime.now().toUtc()),
         ),
       );
+    } catch (error) {
+      throw localDraftStorageFailure(error);
+    }
+  }
 
-  Future<void> delete(String id) => (_database.delete(
-    _database.encryptedDrafts,
-  )..where((item) => item.id.equals(id))).go();
+  Future<void> delete(String id) async {
+    try {
+      await (_database.delete(
+        _database.encryptedDrafts,
+      )..where((item) => item.id.equals(id))).go();
+    } catch (error) {
+      throw localDraftStorageFailure(error);
+    }
+  }
 
   Future<LocalDraft> _decode(EncryptedDraft row) async {
     final cleartext = await _cipher.decrypt(row.encryptedPayload);

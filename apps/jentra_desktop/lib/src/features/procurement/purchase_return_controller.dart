@@ -1,9 +1,11 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_procurement.dart';
 import 'package:jentra_platform/jentra_procurement_platform.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../app_providers.dart';
 import 'procurement_controller.dart';
 
@@ -50,14 +52,43 @@ final class PurchaseReturnController extends ChangeNotifier {
   final PurchaseReturnGateway gateway;
   final QuotationDraftStore drafts;
   static const slot = 'purchase-return-editor';
-  bool online, busy = false, _disposed = false;
+  bool online, busy = false, _disposed = false, accessDenied = false;
+  int _epoch = 0, _operationEpoch = 0;
+  bool get currentServer => !_disposed && online && _operationEpoch == _epoch;
+  void confirmedReadFailure(Object failure, int epoch, String fallback) {
+    if (_disposed || epoch != _epoch) return;
+    if (failure is DomainError &&
+        const {
+          'PERMISSION_DENIED',
+          'ACCESS_DENIED',
+          'MFA_REQUIRED',
+          'AUTHENTICATION_REQUIRED',
+        }.contains(failure.code)) {
+      accessDenied = true;
+      _epoch++;
+      clearServer();
+      error = failure.message;
+      return;
+    }
+    error = fallback;
+  }
+
+  void clearServer() {
+    page = CursorPage(items: [], limit: 50);
+    selected = null;
+    sources = [];
+    sourceCursor = null;
+    sourceKind = null;
+  }
+
   String? error, message, sourceKind, sourceCursor;
   String sourceSearch = '';
   Map<String, Object?>? form, selected;
   QuotationLocalDraft? local;
   List<Map<String, Object?>> sources = [];
   CursorPage<Map<String, Object?>> page = CursorPage(items: [], limit: 50);
-  bool get locked => _disposed || busy || local?.pending != null;
+  bool get locked =>
+      _disposed || accessDenied || busy || local?.pending != null;
   void emit() {
     if (!_disposed) notifyListeners();
   }
@@ -69,7 +100,11 @@ final class PurchaseReturnController extends ChangeNotifier {
   }
 
   void setOnline(bool value) {
-    online = value;
+    if (online != value) {
+      online = value;
+      _epoch++;
+      clearServer();
+    }
     emit();
   }
 
@@ -77,10 +112,25 @@ final class PurchaseReturnController extends ChangeNotifier {
     if (_disposed || busy) return;
     busy = true;
     error = null;
+    _operationEpoch = _epoch;
     emit();
     try {
       await action();
     } catch (e) {
+      if (_disposed || _operationEpoch != _epoch) return;
+      if (!_disposed &&
+          _operationEpoch == _epoch &&
+          e is DomainError &&
+          const {
+            'PERMISSION_DENIED',
+            'ACCESS_DENIED',
+            'MFA_REQUIRED',
+            'AUTHENTICATION_REQUIRED',
+          }.contains(e.code)) {
+        accessDenied = true;
+        _epoch++;
+        clearServer();
+      }
       error = e is DomainError
           ? e.message
           : e is FormatException
@@ -96,7 +146,13 @@ final class PurchaseReturnController extends ChangeNotifier {
     local = await drafts.load(scope, slot);
     if (_disposed) return;
     form = local?.form;
-    if (online) page = await gateway.returns(scope);
+    if (online) {
+      final result = await gateway.returns(scope);
+      if (currentServer) {
+        page = result;
+        accessDenied = false;
+      }
+    }
   });
   Future<void> refresh({bool more = false}) => run(() async {
     if (!online) return;
@@ -104,12 +160,13 @@ final class PurchaseReturnController extends ChangeNotifier {
       scope,
       after: more ? page.nextCursor : null,
     );
-    if (!_disposed) {
+    if (currentServer) {
       page = CursorPage(
         items: [if (more) ...page.items, ...result.items],
         limit: 50,
         nextCursor: result.nextCursor,
       );
+      accessDenied = false;
     }
   });
   Future<void> findSources(
@@ -124,7 +181,7 @@ final class PurchaseReturnController extends ChangeNotifier {
       after: more ? sourceCursor : null,
       search: more ? sourceSearch : search,
     );
-    if (_disposed) return;
+    if (!currentServer) return;
     sourceKind = kind;
     if (!more) sourceSearch = search;
     sources = [
@@ -137,7 +194,7 @@ final class PurchaseReturnController extends ChangeNotifier {
   Future<void> create(String kind, String sourceId) => run(() async {
     if (!online || form != null || local != null) return;
     final source = await gateway.returnSource(scope, kind, sourceId);
-    if (_disposed) return;
+    if (!currentServer || accessDenied) return;
     form = {
       'id': const Uuid().v4(),
       'source_kind': kind,
@@ -322,6 +379,7 @@ final class PurchaseReturnController extends ChangeNotifier {
     if (pending.verb != 'submit') {
       throw const FormatException('Unknown saved return command.');
     }
+    if (!currentServer || accessDenied) return;
     Map<String, Object?> result;
     try {
       result = await gateway.postReturn(pending.envelope);
@@ -337,16 +395,21 @@ final class PurchaseReturnController extends ChangeNotifier {
       rethrow;
     }
     if (_disposed) return;
-    selected = result;
     form = null;
     local = null;
-    message =
-        'Purchase return posted. Source documents and posting evidence are retained.';
+    message = 'Purchase return posted. Source documents and posting evidence are retained.';
+    if (!currentServer) return;
+    selected = result;
+    final refreshEpoch = _epoch;
     try {
-      page = await gateway.returns(scope);
-    } catch (_) {
-      error =
-          'Posted successfully. Refresh the register when the connection returns.';
+      final refreshed = await gateway.returns(scope);
+      if (currentServer) page = refreshed;
+    } catch (failure) {
+      confirmedReadFailure(
+        failure,
+        refreshEpoch,
+        'Posted successfully. Refresh the register when the connection returns.',
+      );
     }
   });
 }

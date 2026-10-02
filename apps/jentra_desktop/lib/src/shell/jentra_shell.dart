@@ -7,6 +7,7 @@ import 'package:jentra_platform/jentra_platform.dart';
 
 import '../app_providers.dart';
 import '../features/auth/mfa_required_screen.dart';
+import '../features/operations/operational_link.dart';
 import 'navigation.dart';
 import 'quick_create_dialog.dart';
 
@@ -589,6 +590,7 @@ class _CommandPaletteState extends ConsumerState<_CommandPalette> {
 
   @override
   Widget build(BuildContext context) {
+    final documentLocation = parseOperationalDocumentLocation(query);
     final destinations = [
       ...visibleJentraDestinations(
         ref.watch(businessCapabilitiesProvider).value,
@@ -628,6 +630,19 @@ class _CommandPaletteState extends ConsumerState<_CommandPalette> {
                 shrinkWrap: true,
                 padding: const EdgeInsets.all(JentraSpacing.x2),
                 children: [
+                  if (documentLocation != null)
+                    ListTile(
+                      dense: true,
+                      leading: const Icon(Icons.description_outlined, size: 19),
+                      title: const Text('Open permitted document'),
+                      subtitle: const Text('Access is checked after opening'),
+                      trailing: const Icon(Icons.keyboard_return, size: 16),
+                      onTap: () {
+                        final router = GoRouter.of(context);
+                        Navigator.pop(context);
+                        router.go(documentLocation);
+                      },
+                    ),
                   for (final item in matches)
                     ListTile(
                       dense: true,
@@ -640,7 +655,7 @@ class _CommandPaletteState extends ConsumerState<_CommandPalette> {
                         context.go(item.path);
                       },
                     ),
-                  if (matches.isEmpty)
+                  if (matches.isEmpty && documentLocation == null)
                     const Padding(
                       padding: EdgeInsets.all(JentraSpacing.x8),
                       child: Center(

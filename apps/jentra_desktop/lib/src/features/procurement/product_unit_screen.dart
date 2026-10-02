@@ -1,6 +1,9 @@
+import '../operations/access_changed.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../app_providers.dart';
 import 'product_unit_controller.dart';
 import 'procurement_picker.dart';
@@ -41,6 +44,12 @@ class ProductUnitWorkspace extends StatelessWidget {
     listenable: controller,
     builder: (context, _) {
       final c = controller;
+      if (c.accessDenied) {
+        return OperationalAccessChanged(
+          retry: c.initialize,
+          enabled: c.online && !c.busy,
+        );
+      }
       final f = c.form;
       return SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -130,6 +139,7 @@ class ProductUnitWorkspace extends StatelessWidget {
                                   c.references,
                                   c.scope,
                                   'catalogue_products',
+                                  access: c,
                                 );
                                 if (p != null) {
                                   c.update('product_id', p['id']);
@@ -149,6 +159,7 @@ class ProductUnitWorkspace extends StatelessWidget {
                                   c.references,
                                   c.scope,
                                   'units',
+                                  access: c,
                                 );
                                 if (u != null) {
                                   c.update('unit_id', u['id']);

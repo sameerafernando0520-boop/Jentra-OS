@@ -1,10 +1,13 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:jentra_domain/jentra_inventory.dart';
 import 'package:jentra_platform/jentra_inventory_platform.dart';
+
 import '../../app_providers.dart';
+import '../shared/report_wait.dart';
 
 final inventoryValuationGatewayProvider = Provider<InventoryValuationGateway?>(
   (ref) => null,
@@ -57,6 +60,16 @@ final class InventoryValuationController extends ChangeNotifier {
   final QuotationDraftStore drafts;
   static const slot = 'inventory-valuation-report';
   bool online, busy = false, _disposed = false, accessDenied = false;
+  int _evidenceEpoch = 0;
+  final reportWait = ReportWaitState();
+  void cancelReportWait() {
+    if (!reportWait.cancel()) return;
+    _evidenceEpoch++;
+    clearEvidence();
+    emit();
+  }
+
+  bool current(int epoch) => !_disposed && online && epoch == _evidenceEpoch;
   String? error, message, cursor, evidenceKey;
   String section = 'stock';
   Map<String, Object?> form = {}, summary = {};
@@ -76,35 +89,55 @@ final class InventoryValuationController extends ChangeNotifier {
 
   @override
   void dispose() {
+    _evidenceEpoch++;
     _disposed = true;
     super.dispose();
   }
 
   void setOnline(bool v) {
     online = v;
+    if (!online) {
+      _evidenceEpoch++;
+      clearEvidence();
+    }
     emit();
   }
 
   void deny(Object e) {
-    if (e is DomainError && e.code == 'PERMISSION_DENIED') {
+    if (e is DomainError &&
+        const {
+          'PERMISSION_DENIED',
+          'ACCESS_DENIED',
+          'AUTHENTICATION_REQUIRED',
+          'MFA_REQUIRED',
+        }.contains(e.code)) {
+      _evidenceEpoch++;
       accessDenied = true;
-      summary = {};
-      rows = [];
-      accounts = [];
-      reports = [];
-      cursor = null;
-      evidenceKey = null;
+      clearEvidence();
     }
+  }
+
+  void clearEvidence() {
+    summary = {};
+    rows = [];
+    accounts = [];
+    reports = [];
+    cursor = null;
+    evidenceKey = null;
+    accountCursor = null;
+    reportCursor = null;
   }
 
   Future<void> run(Future<void> Function() work) async {
     if (busy || _disposed) return;
+    final accessEpoch = _evidenceEpoch;
     busy = true;
     error = null;
     emit();
     try {
       await work();
     } catch (e) {
+      if (_disposed || !online || accessEpoch != _evidenceEpoch) return;
       deny(e);
       error = e is DomainError
           ? e.message
@@ -112,17 +145,20 @@ final class InventoryValuationController extends ChangeNotifier {
           ? e.message
           : 'Unable to load the report. Saved work is retained.';
     } finally {
+      reportWait.finish();
       busy = false;
       emit();
     }
   }
 
   Future<void> persist() async {
+    form = {...form}..remove('summary');
     await drafts.save(scope, slot, form, expectedVersion: 0);
     local = await drafts.load(scope, slot);
   }
 
   Future<void> initialize() => run(() async {
+    final epoch = _evidenceEpoch;
     local = await drafts.load(scope, slot);
     if (_disposed) return;
     form =
@@ -133,18 +169,27 @@ final class InventoryValuationController extends ChangeNotifier {
           'account_ids': <String>[],
           'status': 'local',
         };
+    // Migrate legacy encrypted recovery to identifiers, never cached report truth.
+    if (form['summary'] case final Map old) {
+      form = {...form, if (old['id'] is String) 'report_id': old['id']}
+        ..remove('summary');
+      if (local?.pending == null) await persist();
+    }
     if (online) {
+      clearEvidence();
       await loadOptions('accounts');
+      if (!current(epoch)) return;
       await loadOptions('reports');
+      if (!current(epoch)) return;
       accessDenied = false;
-      if (form['status'] == 'generated') {
-        summary = Map<String, Object?>.from(form['summary'] as Map);
-        await readPage();
+      if (form['status'] == 'generated' && form['report_id'] is String) {
+        await readPage(reportId: form['report_id'] as String);
       }
     }
   });
   Future<void> loadOptions(String resource, {bool more = false}) async {
     if (!online) return;
+    final epoch = _evidenceEpoch;
     final r = await gateway.options(
       scope,
       resource,
@@ -152,7 +197,7 @@ final class InventoryValuationController extends ChangeNotifier {
           ? (resource == 'accounts' ? accountCursor : reportCursor)
           : null,
     );
-    if (_disposed) return;
+    if (!current(epoch)) return;
     final items = [
       for (final x in r['items'] as List) (x as Map).cast<String, Object?>(),
     ];
@@ -183,7 +228,7 @@ final class InventoryValuationController extends ChangeNotifier {
 
   Future<void> save() => run(persist);
   Future<bool> canLeave() async {
-    if (busy) return false;
+    if (busy) return reportWait.active && reportWait.cancelled;
     if (accessDenied || local?.pending != null) return true;
     await save();
     return error == null;
@@ -213,6 +258,9 @@ final class InventoryValuationController extends ChangeNotifier {
   });
   Future<void> generate() => run(() async {
     if (!online || accessDenied || form['status'] == 'generated') return;
+    reportWait.begin();
+    emit();
+    final epoch = _evidenceEpoch;
     var pending = local?.pending;
     if (pending == null) {
       if (selectedAccounts.isEmpty || selectedAccounts.length > 50) {
@@ -232,10 +280,26 @@ final class InventoryValuationController extends ChangeNotifier {
       );
       local = await drafts.load(scope, slot);
     }
+    if (!current(epoch) || accessDenied) return;
     Map<String, Object?> result;
+    late Map<String, Object?> confirmedForm;
     try {
+      reportWait.generating();
+      emit();
+      if (reportWait.cancelled || !current(epoch)) return;
       result = await gateway.generate(pending.envelope);
-      await drafts.complete(scope, slot, pending.envelope.commandId);
+      confirmedForm = {
+        ...pending.envelope.payload,
+        'status': 'generated',
+        'report_id': result['id'],
+      };
+      await drafts.confirm(
+        scope,
+        slot,
+        pending.envelope.commandId,
+        form: confirmedForm,
+        expectedVersion: 0,
+      );
     } on DomainError catch (e) {
       await drafts.recordFailure(
         scope,
@@ -247,17 +311,22 @@ final class InventoryValuationController extends ChangeNotifier {
       rethrow;
     }
     if (_disposed) return;
+    local = await drafts.load(scope, slot);
+    if (_disposed) return;
+    if (accessDenied) return;
+    form = confirmedForm;
+    if (!current(epoch)) return;
     summary = result;
-    form = {...form, 'status': 'generated', 'summary': result};
-    local = null;
     message = 'Report saved. Later postings will not change this snapshot.';
     try {
-      await persist();
+      reportWait.reading();
+      emit();
       section = 'stock';
       evidenceKey = null;
       rows = [];
       cursor = null;
       await readPage();
+      if (!current(epoch)) return;
       await loadOptions('reports');
     } catch (e) {
       deny(e);
@@ -266,14 +335,14 @@ final class InventoryValuationController extends ChangeNotifier {
     }
   });
   Future<void> open(Map<String, Object?> report) => run(() async {
-    if (!online || local?.pending != null) return;
-    summary = report;
+    if (!online || accessDenied || local?.pending != null) return;
+    summary = {};
     section = 'stock';
     evidenceKey = null;
     rows = [];
     cursor = null;
     emit();
-    await readPage();
+    await readPage(reportId: report['id'] as String);
     // Reviewing a saved report does not replace the user's unsubmitted inputs.
     await persist();
   });
@@ -299,16 +368,22 @@ final class InventoryValuationController extends ChangeNotifier {
   });
   Future<void> refreshPage({bool more = false}) =>
       run(() => readPage(more: more));
-  Future<void> readPage({bool more = false}) async {
-    if (!online || summary.isEmpty) return;
+  Future<void> readPage({bool more = false, String? reportId}) async {
+    if (!online || (reportId == null && summary.isEmpty)) return;
+    if (reportWait.active && reportWait.cancelled) return;
+    final epoch = _evidenceEpoch;
+    if (!reportWait.active) reportWait.begin();
+    reportWait.reading();
+    emit();
+    if (reportWait.cancelled || !current(epoch)) return;
     final r = await gateway.page(
       scope,
-      summary['id'] as String,
+      reportId ?? summary['id'] as String,
       section,
       after: more ? cursor : null,
       evidenceKey: evidenceKey,
     );
-    if (_disposed) return;
+    if (!current(epoch)) return;
     summary = (r['summary'] as Map).cast<String, Object?>();
     rows = [
       if (more) ...rows,

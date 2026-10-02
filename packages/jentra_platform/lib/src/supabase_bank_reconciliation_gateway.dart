@@ -72,24 +72,79 @@ final class SupabaseBankReconciliationGateway
     String? bankId,
     String? after,
   }) async {
-    final r = await transport.call('bank_reconciliation_options', scope, {
-      'p_resource': resource,
-      'p_bank_id': bankId,
-      'p_after': after,
-    });
-    scopeCheck(r, scope);
-    if (r['resource'] != resource || r['bank_id'] != bankId) {
-      throw const FormatException('Bank page context mismatch.');
+    if (!scope.hasOperationalScope ||
+        transport.client.auth.currentUser?.id != scope.actorId) {
+      throw const DomainError(
+        code: 'PERMISSION_DENIED',
+        message: 'Select your current authenticated finance scope.',
+      );
     }
-    transport.rows(r);
-    final ids = <String>{};
-    for (final row in r['items'] as List) {
-      if (!ids.add(row['id'] as String)) {
-        throw const FormatException('Duplicate bank page row.');
+    try {
+      final raw = await transport.client
+          .schema('api')
+          .rpc(
+            'bank_reconciliation_options',
+            params: {
+              'p_tenant_id': scope.tenantId,
+              'p_legal_entity_id': scope.legalEntityId,
+              'p_branch_id': scope.branchId,
+              'p_resource': resource,
+              'p_bank_id': bankId,
+              'p_after': after,
+            },
+          );
+      if (raw is! Map) throw const FormatException('Invalid bank evidence.');
+      final r = raw.cast<String, Object?>();
+      scopeCheck(r, scope);
+      if (r['resource'] != resource || r['bank_id'] != bankId) {
+        throw const FormatException('Bank page context mismatch.');
       }
-      amounts(row as Map);
+      transport.rows(r);
+      final ids = <String>{};
+      for (final row in r['items'] as List) {
+        if (!ids.add(row['id'] as String)) {
+          throw const FormatException('Duplicate bank page row.');
+        }
+        amounts(row as Map);
+      }
+      return r;
+    } on PostgrestException catch (e) {
+      const denied = {
+        'PERMISSION_DENIED',
+        'ACCESS_DENIED',
+        'MFA_REQUIRED',
+        'AUTHENTICATION_REQUIRED',
+      };
+      final code = denied.contains(e.message)
+          ? e.message
+          : e.message == 'RECENT_MFA_REQUIRED'
+          ? 'MFA_REQUIRED'
+          : e.code == '42501'
+          ? 'PERMISSION_DENIED'
+          : const {'PGRST301', 'PGRST302', 'PGRST303'}.contains(e.code)
+          ? 'AUTHENTICATION_REQUIRED'
+          : RegExp(r'^(22|23|54|55|P0)').hasMatch(e.code ?? '')
+          ? 'READ_REJECTED'
+          : 'READ_UNAVAILABLE';
+      throw DomainError(
+        code: code,
+        message: denied.contains(code)
+            ? 'Bank evidence is unavailable with your current access. Recheck your role and scope.'
+            : 'Bank evidence could not be loaded. Retry after checking the connection and scope.',
+      );
+    } on FormatException {
+      throw const DomainError(
+        code: 'READ_INVALID',
+        message:
+            'Bank evidence could not be verified. Reload the current scope.',
+      );
+    } catch (_) {
+      throw const DomainError(
+        code: 'READ_UNAVAILABLE',
+        message:
+            'Bank evidence could not be loaded. Retry after checking the connection and scope.',
+      );
     }
-    return r;
   }
 
   @override

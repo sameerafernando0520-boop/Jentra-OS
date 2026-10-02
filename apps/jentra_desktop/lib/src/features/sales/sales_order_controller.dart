@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_platform.dart';
+
 import '../../app_providers.dart';
 
 final salesOrderProvider =
@@ -70,7 +72,10 @@ final class SalesOrderState {
   QuotationPendingCommand? get pending => localDraft?.pending;
   bool get conflict => localDraft?.errorCode == 'VERSION_CONFLICT';
   bool get dirty =>
-      localDraft != null || savingLocal || error?.code == 'DRAFT_SAVE_FAILED';
+      localDraft != null ||
+      savingLocal ||
+      error?.code == 'DRAFT_SAVE_FAILED' ||
+      (error != null && isLocalDraftStorageFailure(error!));
   bool get conversion => form?['_conversion'] == true;
   bool get converted =>
       detail?.converted == true || form?['_source_quotation_id'] != null;
@@ -187,8 +192,7 @@ final class SalesOrderController extends AsyncNotifier<SalesOrderState> {
 
   static const _draftSaveError = DomainError(
     code: 'DRAFT_SAVE_FAILED',
-    message:
-        'This device could not save the encrypted draft. Keep this editor open and retry saving, or explicitly discard your edits.',
+    message: 'This device could not save the encrypted draft. Keep this editor open and retry saving, or explicitly discard your edits.',
   );
   SalesOrderWorkspaceRepository get _reader =>
       ref.read(salesOrderRepositoryProvider) ??
@@ -400,14 +404,16 @@ final class SalesOrderController extends AsyncNotifier<SalesOrderState> {
             state.requireValue.copyWith(localDraft: local, savingLocal: false),
           );
         }
-      } on Object {
+      } on Object catch (failure) {
         _failedEdits.add(_editKey(current.context, slot));
         if (_valid(generation, current.context) &&
             selection == _selection &&
             edit == _edit) {
           state = AsyncData(
             state.requireValue.copyWith(
-              error: _draftSaveError,
+              error: isLocalDraftStorageFailure(failure)
+                  ? failure as DomainError
+                  : _draftSaveError,
               savingLocal: false,
             ),
           );
@@ -787,8 +793,7 @@ final class SalesOrderController extends AsyncNotifier<SalesOrderState> {
       _fail(
         const DomainError(
           code: 'OFFLINE_COMMAND_BLOCKED',
-          message:
-              'Reconnect to send this command. Your encrypted draft is retained.',
+          message: 'Reconnect to send this command. Your encrypted draft is retained.',
         ),
       );
       return;
@@ -1110,8 +1115,7 @@ final class SalesOrderController extends AsyncNotifier<SalesOrderState> {
         _fail(
           const DomainError(
             code: 'INVALID_DOCUMENT_STATE',
-            message:
-                'This quotation is no longer accepted. Discard this draft and inspect the quotation.',
+            message: 'This quotation is no longer accepted. Discard this draft and inspect the quotation.',
           ),
         );
         return;
@@ -1120,8 +1124,7 @@ final class SalesOrderController extends AsyncNotifier<SalesOrderState> {
       _fail(
         const DomainError(
           code: 'INVALID_DOCUMENT_STATE',
-          message:
-              'Inspect the latest version. Local edits can only be retained for an editable order.',
+          message: 'Inspect the latest version. Local edits can only be retained for an editable order.',
         ),
       );
       return;
@@ -1237,8 +1240,7 @@ final class SalesOrderController extends AsyncNotifier<SalesOrderState> {
       ? DomainError(code: 'VALIDATION_ERROR', message: error.message)
       : const DomainError(
           code: 'NETWORK_ERROR',
-          message:
-              'The request could not be confirmed. Local fields and any pending request are retained.',
+          message: 'The request could not be confirmed. Local fields and any pending request are retained.',
           retryable: true,
         );
 }

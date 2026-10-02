@@ -1,10 +1,13 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_finance_platform.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../app_providers.dart';
+import '../operations/operational_read_access.dart';
 
 final manualJournalGatewayProvider = Provider<ManualJournalGateway?>(
   (ref) => null,
@@ -42,7 +45,8 @@ final manualJournalControllerProvider =
       return c;
     });
 
-final class ManualJournalController extends ChangeNotifier {
+final class ManualJournalController extends ChangeNotifier
+    implements OperationalReadAccess {
   ManualJournalController({
     required this.scope,
     required this.gateway,
@@ -56,13 +60,87 @@ final class ManualJournalController extends ChangeNotifier {
   final Set<String> permissions;
   static const slot = 'manual-journal-editor';
   bool online, busy = false, accessDenied = false, _disposed = false;
+  int _epoch = 0;
+  @override
+  int get readAccessEpoch => _epoch;
+  @override
+  bool currentRead(int epoch) =>
+      !_disposed && online && !accessDenied && epoch == _epoch;
+  @override
+  void denyReadAccess() {
+    if (_disposed) return;
+    accessDenied = true;
+    _epoch++;
+    clearReadEvidence();
+    emit();
+  }
+
+  void clearReadEvidence() {
+    items = [];
+    cursor = null;
+    baseCurrency = '';
+    if (form != null) {
+      form = form!['status'] == 'posted' ? null : recoveryForm(form!);
+    }
+  }
+
+  static Map<String, Object?> recoveryForm(Map<String, Object?> source) => {
+    for (final key in [
+      'id',
+      'status',
+      'version',
+      'document_date',
+      'description',
+      'reason',
+      'currency_code',
+      'exchange_rate_id',
+      'reversal_of_id',
+      'attachment_ids',
+      '_dirty',
+    ])
+      if (source.containsKey(key)) key: source[key],
+    'attachment_ids': source['attachment_ids'] ?? <String>[],
+    'attachments': <Object?>[],
+    'lines': [
+      if (source['status'] != 'posted' && source['reversal_of_id'] == null)
+        for (final raw in source['lines'] as List? ?? [])
+          {
+            for (final key in [
+              'line_id',
+              'account_id',
+              'account_code',
+              'account_name',
+              'debit',
+              'credit',
+              'description',
+              'cost_center',
+              'project',
+              'cost_centre_id',
+              'project_id',
+              'dimension_snapshot',
+              'is_tax_control',
+              'tax_control_movement',
+              'tax_definition_id',
+              'tax_definition_version',
+              'tax_code',
+              'tax_kind',
+              'tax_rate',
+              'tax_inclusive',
+              'tax_rounding_scale',
+              'taxable_amount',
+            ])
+              if ((raw as Map).containsKey(key)) key: raw[key],
+          },
+    ],
+  };
   String? error, message, cursor;
   String baseCurrency = '';
   Map<String, Object?>? form;
   QuotationLocalDraft? local;
   List<Map<String, Object?>> items = [];
   bool get canManage => permissions.contains('finance.journals.post');
-  bool get locked => busy || accessDenied || local?.pending != null;
+  bool get locked =>
+      _disposed || busy || accessDenied || local?.pending != null;
   bool get editable => !locked && canManage && form?['status'] == 'draft';
   void emit() {
     if (!_disposed) notifyListeners();
@@ -71,25 +149,39 @@ final class ManualJournalController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _epoch++;
+    clearReadEvidence();
+    notifyListeners();
     super.dispose();
   }
 
   void setOnline(bool v) {
-    online = v;
+    if (online != v) {
+      online = v;
+      _epoch++;
+      clearReadEvidence();
+    }
     emit();
   }
 
   Future<void> run(Future<void> Function() work) async {
     if (busy || _disposed) return;
+    final epoch = _epoch;
     busy = true;
     error = null;
     emit();
     try {
       await work();
     } catch (e) {
-      if (e is DomainError && e.code == 'PERMISSION_DENIED') {
-        accessDenied = true;
-        items = [];
+      if (_disposed || epoch != _epoch) return;
+      if (e is DomainError &&
+          const {
+            'PERMISSION_DENIED',
+            'ACCESS_DENIED',
+            'MFA_REQUIRED',
+            'AUTHENTICATION_REQUIRED',
+          }.contains(e.code)) {
+        denyReadAccess();
       }
       error = e is DomainError
           ? e.message
@@ -103,24 +195,38 @@ final class ManualJournalController extends ChangeNotifier {
   }
 
   Future<void> initialize() => run(() async {
-    local = await drafts.load(scope, slot);
-    form = local?.form;
+    final epoch = _epoch;
+    final recovered = await drafts.load(scope, slot);
+    if (_disposed || epoch != _epoch) return;
+    local = recovered;
+    form = local == null ? null : recoveryForm(local!.form);
     if ((form?['attachment_ids'] as List? ?? []).isNotEmpty &&
         !permissions.contains('core.files.view')) {
       accessDenied = true;
     }
-    if (online) await _refresh();
+    if (online) {
+      await _refresh();
+      if (currentRead(epoch) && form?['status'] == 'posted') {
+        final detail = await gateway.detail(scope, form!['id'] as String);
+        if (currentRead(epoch)) form = detail;
+      }
+    } else if (form?['status'] == 'posted') {
+      form = null;
+    }
   });
   Future<void> _refresh({bool more = false}) async {
+    if (!online || _disposed) return;
+    final epoch = _epoch;
     final r = await gateway.options(
       scope,
       'reports',
       after: more ? cursor : null,
     );
+    if (_disposed || !online || epoch != _epoch) return;
     if (accessDenied && (form?['attachment_ids'] as List? ?? []).isNotEmpty) {
       await gateway.options(scope, 'attachments');
     }
-    if (_disposed) return;
+    if (_disposed || !online || epoch != _epoch) return;
     items = [
       if (more) ...items,
       for (final x in r['items'] as List) (x as Map).cast<String, Object?>(),
@@ -136,13 +242,12 @@ final class ManualJournalController extends ChangeNotifier {
   Future<void> _save() async {
     if (form != null) {
       if (local?.pending != null) return;
-      await drafts.save(
-        scope,
-        slot,
-        form!,
-        expectedVersion: form!['version'] as int? ?? 0,
-      );
-      local = await drafts.load(scope, slot);
+      final epoch = _epoch;
+      final input = recoveryForm(form!);
+      final version = form!['version'] as int? ?? 0;
+      await drafts.save(scope, slot, input, expectedVersion: version);
+      final saved = await drafts.load(scope, slot);
+      if (!_disposed && epoch == _epoch) local = saved;
     }
   }
 
@@ -177,7 +282,10 @@ final class ManualJournalController extends ChangeNotifier {
   });
   Future<void> open(String id) => run(() async {
     if (form != null || !online || accessDenied) return;
-    form = await gateway.detail(scope, id);
+    final epoch = _epoch;
+    final detail = await gateway.detail(scope, id);
+    if (!currentRead(epoch)) return;
+    form = detail;
     await _save();
   });
   Future<void> close() => run(() async {
@@ -195,7 +303,9 @@ final class ManualJournalController extends ChangeNotifier {
         !online) {
       return;
     }
+    final epoch = _epoch;
     final detail = await gateway.detail(scope, id);
+    if (!currentRead(epoch)) return;
     form = detail;
     await _save();
   });
@@ -204,11 +314,14 @@ final class ManualJournalController extends ChangeNotifier {
         form?['reversal_of_id'] != null ||
         !permissions.contains('finance.reversals.post') ||
         local?.pending != null ||
-        accessDenied) {
+        accessDenied ||
+        !online) {
       return;
     }
+    final epoch = _epoch;
     final original = form!;
     await drafts.discard(scope, slot);
+    if (!currentRead(epoch)) return;
     local = null;
     form = {
       ...original,
@@ -407,6 +520,13 @@ final class ManualJournalController extends ChangeNotifier {
     String? after,
     String search = '',
   }) async {
+    final epoch = _epoch;
+    if (!currentRead(epoch)) {
+      throw const DomainError(
+        code: 'ACCESS_DENIED',
+        message: 'Recheck current journal access.',
+      );
+    }
     try {
       final result = await gateway.options(
         scope,
@@ -417,6 +537,12 @@ final class ManualJournalController extends ChangeNotifier {
             ? (form?['document_date'] as String?)
             : null,
       );
+      if (!currentRead(epoch)) {
+        throw const DomainError(
+          code: 'ACCESS_DENIED',
+          message: 'Journal access changed. Reopen the selector.',
+        );
+      }
       if (resource != 'taxes') return result;
       return {
         ...result,
@@ -426,10 +552,14 @@ final class ManualJournalController extends ChangeNotifier {
         ],
       };
     } on DomainError catch (e) {
-      if (e.code == 'PERMISSION_DENIED') {
-        accessDenied = true;
-        items = [];
-        emit();
+      if (currentRead(epoch) &&
+          const {
+            'PERMISSION_DENIED',
+            'ACCESS_DENIED',
+            'MFA_REQUIRED',
+            'AUTHENTICATION_REQUIRED',
+          }.contains(e.code)) {
+        denyReadAccess();
       }
       rethrow;
     }
@@ -437,6 +567,7 @@ final class ManualJournalController extends ChangeNotifier {
 
   Future<void> act(String verb, {String note = ''}) => run(() async {
     if (!online || form == null || accessDenied) return;
+    final epoch = _epoch;
     var pending = local?.pending;
     if (pending == null) {
       final f = form!;
@@ -559,15 +690,23 @@ final class ManualJournalController extends ChangeNotifier {
         payload: payload,
         expectedVersion: f['version'] as int? ?? 0,
       );
-      local = await drafts.load(scope, slot);
+      final sealed = await drafts.load(scope, slot);
+      if (currentRead(epoch)) local = sealed;
     }
+    if (!currentRead(epoch)) return;
     Map<String, Object?> result;
     try {
       result = await gateway.execute(
         pending.verb == 'accept' ? 'post' : pending.verb,
         pending.envelope,
       );
-      await drafts.complete(scope, slot, pending.envelope.commandId);
+      await drafts.confirm(
+        scope,
+        slot,
+        pending.envelope.commandId,
+        form: recoveryForm(result),
+        expectedVersion: result['version'] as int?,
+      );
     } on DomainError catch (e) {
       await drafts.recordFailure(
         scope,
@@ -575,27 +714,47 @@ final class ManualJournalController extends ChangeNotifier {
         e,
         commandId: pending.envelope.commandId,
       );
-      local = await drafts.load(scope, slot);
+      final retained = await drafts.load(scope, slot);
+      if (currentRead(epoch)) local = retained;
       rethrow;
     }
     if (_disposed) return;
+    final confirmed = await drafts.load(scope, slot);
+    // This exact command is durably acknowledged. Keep stale presentation from
+    // restoring private input/result evidence while clearing its obsolete retry.
+    if (local?.pending?.envelope.commandId == pending.envelope.commandId) {
+      local = null;
+    }
+    if (!currentRead(epoch)) {
+      return;
+    }
+    local = confirmed;
     form = result;
-    local = null;
     message = 'Journal action confirmed.';
     try {
       await _save();
       if (result['status'] == 'posted') {
-        form = await gateway.detail(scope, result['id'] as String);
+        final detail = await gateway.detail(scope, result['id'] as String);
+        if (!currentRead(epoch)) return;
+        form = detail;
         await _save();
       }
-      await _refresh();
+      if (currentRead(epoch)) await _refresh();
     } catch (e) {
-      if (e is DomainError && e.code == 'PERMISSION_DENIED') {
-        accessDenied = true;
-        items = [];
+      if (!currentRead(epoch)) return;
+      if (e is DomainError &&
+          const {
+            'PERMISSION_DENIED',
+            'ACCESS_DENIED',
+            'MFA_REQUIRED',
+            'AUTHENTICATION_REQUIRED',
+          }.contains(e.code)) {
+        denyReadAccess();
       }
       error =
-          'Action confirmed. Retry saving locally or refreshing before leaving.';
+          e is DomainError && (isLocalDraftStorageFailure(e) || accessDenied)
+          ? e.message
+          : 'Action confirmed. Retry saving locally or refreshing before leaving.';
     }
   });
 }

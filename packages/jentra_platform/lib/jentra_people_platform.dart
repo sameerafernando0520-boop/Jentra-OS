@@ -9,3 +9,6 @@ export 'src/scoped_command_draft_store.dart';
 export 'src/supabase_private_hr_gateway.dart';
 export 'src/private_hr_draft_store.dart';
 export 'src/private_hr_files.dart';
+export 'src/supabase_workforce_gateway.dart';
+export 'src/sensitive_leave_draft_store.dart';
+export 'src/clock_import_files.dart';

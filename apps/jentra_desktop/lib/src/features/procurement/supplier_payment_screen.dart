@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+
+import '../operations/access_changed.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../app_providers.dart';
 import 'supplier_payment_controller.dart';
+import '../operations/operational_report_export.dart';
 import 'procurement_picker.dart';
 import 'sourcing_screen.dart';
+
 import 'package:jentra_domain/jentra_procurement.dart';
 
 class SupplierPaymentScreen extends ConsumerWidget {
@@ -29,18 +35,33 @@ class SupplierPaymentScreen extends ConsumerWidget {
         ),
       );
     }
-    return SupplierPaymentWorkspace(key: ValueKey(c), controller: c);
+    return SupplierPaymentWorkspace(
+      key: ValueKey(c),
+      controller: c,
+      showOperationalReports: true,
+    );
   }
 }
 
 class SupplierPaymentWorkspace extends StatelessWidget {
-  const SupplierPaymentWorkspace({super.key, required this.controller});
+  const SupplierPaymentWorkspace({
+    super.key,
+    required this.controller,
+    this.showOperationalReports = false,
+  });
   final SupplierPaymentController controller;
+  final bool showOperationalReports;
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: controller,
     builder: (context, _) {
       final c = controller, f = controller.form;
+      if (c.accessDenied) {
+        return OperationalAccessChanged(
+          retry: c.initialize,
+          enabled: c.online && !c.busy,
+        );
+      }
       return SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -110,7 +131,10 @@ class SupplierPaymentWorkspace extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               if (c.canManage || c.canPost || c.canAllocate || c.canReverse)
-                _StatementPanel(controller: c),
+                _StatementPanel(
+                  controller: c,
+                  showOperationalReports: showOperationalReports,
+                ),
               if (c.page.items.isEmpty && !c.busy)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 16),
@@ -295,6 +319,7 @@ class SupplierPaymentWorkspace extends StatelessWidget {
                                 c.references,
                                 c.scope,
                                 'payment_suppliers',
+                                access: c,
                               );
                               if (row != null && c.form?['id'] == id) {
                                 c.chooseSupplier(row);
@@ -314,6 +339,7 @@ class SupplierPaymentWorkspace extends StatelessWidget {
                                 c.references,
                                 c.scope,
                                 'payment_banks',
+                                access: c,
                               );
                               if (row != null && c.form?['id'] == id) {
                                 c.chooseBank(row);
@@ -333,6 +359,7 @@ class SupplierPaymentWorkspace extends StatelessWidget {
                                 c.references,
                                 c.scope,
                                 'payment_rates',
+                                access: c,
                               );
                               if (row != null && c.form?['id'] == id) {
                                 c.update('exchange_rate_id', row['id']);
@@ -506,8 +533,12 @@ class _SelectedItem extends StatelessWidget {
 }
 
 class _StatementPanel extends StatefulWidget {
-  const _StatementPanel({required this.controller});
+  const _StatementPanel({
+    required this.controller,
+    required this.showOperationalReports,
+  });
   final SupplierPaymentController controller;
+  final bool showOperationalReports;
   @override
   State<_StatementPanel> createState() => _StatementPanelState();
 }
@@ -558,8 +589,7 @@ class _StatementPanelState extends State<_StatementPanel> {
           (i) => i,
         ).skip(1).any((i) => days[i]! <= days[i - 1]!)) {
       setState(
-        () => validation =
-            'Choose a supplier, date, currency and increasing positive bucket days.',
+        () => validation = 'Choose a supplier, date, currency and increasing positive bucket days.',
       );
       return;
     }
@@ -591,6 +621,7 @@ class _StatementPanelState extends State<_StatementPanel> {
                       c.references,
                       c.scope,
                       'payment_suppliers',
+                      access: c,
                     );
                     if (mounted && row != null) {
                       setState(() {
@@ -636,6 +667,17 @@ class _StatementPanelState extends State<_StatementPanel> {
           child: const Text('Load dated statement'),
         ),
         if (r != null) ...[
+          if (widget.showOperationalReports)
+            OperationalReportExport(
+              kind: 'supplier_statement',
+              label: 'Save dated supplier statement for export',
+              inputs: {
+                'party_id': r['supplier_id'],
+                'currency_code': r['currency_code'],
+                'as_of': r['as_of'],
+                'bucket_days': r['bucket_days'],
+              },
+            ),
           const Divider(),
           Text(
             '${r['supplier_name']} · ${r['currency_code']} · As of ${r['as_of']}',

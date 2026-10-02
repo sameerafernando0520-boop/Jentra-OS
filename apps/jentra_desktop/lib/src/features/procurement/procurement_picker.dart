@@ -1,41 +1,74 @@
 import 'package:flutter/material.dart';
+
 import 'procurement_controller.dart';
+
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_procurement_platform.dart';
+
+import '../operations/operational_read_access.dart';
 
 Future<Map<String, Object?>?> pickProcurementReference(
   BuildContext context,
   ProcurementController controller,
   String resource,
-) => showDialog<Map<String, Object?>>(
-  context: context,
-  builder: (context) => _ReferenceDialog(
-    gateway: controller.gateway,
-    scope: controller.scope,
-    resource: resource,
-  ),
+) => pickSourcingReference(
+  context,
+  controller.gateway,
+  controller.scope,
+  resource,
+  access: controller,
 );
 
 Future<Map<String, Object?>?> pickSourcingReference(
   BuildContext context,
   ProcurementGateway gateway,
   TenantContext scope,
-  String resource,
-) => showDialog<Map<String, Object?>>(
-  context: context,
-  builder: (context) =>
-      _ReferenceDialog(gateway: gateway, scope: scope, resource: resource),
-);
+  String resource, {
+  required OperationalReadAccess access,
+}) {
+  final epoch = access.readAccessEpoch;
+  if (!access.currentRead(epoch)) return Future.value(null);
+  return showDialog<Map<String, Object?>>(
+    context: context,
+    builder: (context) => ListenableBuilder(
+      listenable: access,
+      builder: (context, _) => access.currentRead(epoch)
+          ? _ReferenceDialog(
+              gateway: gateway,
+              scope: scope,
+              resource: resource,
+              access: access,
+              accessEpoch: epoch,
+            )
+          : AlertDialog(
+              title: const Text('Reference access changed'),
+              content: const Text(
+                'Close this selector and recheck your business scope and connection.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Close'),
+                ),
+              ],
+            ),
+    ),
+  );
+}
 
 class _ReferenceDialog extends StatefulWidget {
   const _ReferenceDialog({
     required this.gateway,
     required this.scope,
     required this.resource,
+    required this.access,
+    required this.accessEpoch,
   });
   final ProcurementGateway gateway;
   final TenantContext scope;
   final String resource;
+  final OperationalReadAccess access;
+  final int accessEpoch;
   @override
   State<_ReferenceDialog> createState() => _ReferenceDialogState();
 }
@@ -72,7 +105,11 @@ class _ReferenceDialogState extends State<_ReferenceDialog> {
         after: more ? cursor : null,
         search: search.text.trim(),
       );
-      if (!mounted || epoch != request) return;
+      if (!mounted ||
+          epoch != request ||
+          !widget.access.currentRead(widget.accessEpoch)) {
+        return;
+      }
       final next = (result['items'] as List).map(
         (r) => (r as Map).cast<String, Object?>(),
       );
@@ -80,8 +117,20 @@ class _ReferenceDialogState extends State<_ReferenceDialog> {
         rows = [if (more) ...rows, ...next];
         cursor = result['next_cursor'] as String?;
       });
-    } catch (_) {
-      if (mounted && request == epoch) {
+    } catch (failure) {
+      if (mounted &&
+          request == epoch &&
+          widget.access.currentRead(widget.accessEpoch)) {
+        if (failure is DomainError &&
+            const {
+              'PERMISSION_DENIED',
+              'MFA_REQUIRED',
+              'AUTHENTICATION_REQUIRED',
+              'ACCESS_DENIED',
+            }.contains(failure.code)) {
+          widget.access.denyReadAccess();
+          return;
+        }
         setState(() => error = 'References could not be loaded. Try again.');
       }
     } finally {
@@ -126,7 +175,13 @@ class _ReferenceDialogState extends State<_ReferenceDialog> {
                 for (final row in rows)
                   ListTile(
                     title: Text('${row['code']} · ${row['name']}'),
-                    onTap: busy ? null : () => Navigator.pop(context, row),
+                    onTap: busy
+                        ? null
+                        : () {
+                            if (widget.access.currentRead(widget.accessEpoch)) {
+                              Navigator.pop(context, row);
+                            }
+                          },
                   ),
                 if (cursor != null)
                   TextButton(

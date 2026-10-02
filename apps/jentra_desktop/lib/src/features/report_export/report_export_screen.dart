@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../app_providers.dart';
 import 'report_export_controller.dart';
 
@@ -63,7 +64,9 @@ class _ReportExportScreenState extends ConsumerState<ReportExportScreen> {
     final c = ref.watch(reportExportControllerProvider);
     if (c == null) {
       return const Center(
-        child: Text('Current finance and report export access is required.'),
+        child: Text(
+          'Current source-document and report export access is required.',
+        ),
       );
     }
     if (c != initialized) {

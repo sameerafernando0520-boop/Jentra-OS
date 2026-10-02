@@ -1,0 +1,90 @@
+{
+  "tasks": {
+    "projects": {
+      "sources": [
+        "packages/jentra_domain/lib/src/project_values.dart",
+        "packages/jentra_domain/lib/src/projects_repository.dart",
+        "packages/jentra_domain/test/project_values_test.dart",
+        "packages/jentra_platform/lib/src/supabase_projects_gateway.dart",
+        "packages/jentra_platform/test/projects_gateway_test.dart",
+        "packages/jentra_platform/test/fixtures/projects_rollback_projections.json",
+        "apps/jentra_desktop/lib/src/features/projects/projects_controller.dart",
+        "apps/jentra_desktop/lib/src/features/projects/projects_screen.dart",
+        "apps/jentra_desktop/test/projects_workspace_test.dart"
+      ],
+      "commands": [
+        {
+          "cwd": "packages/jentra_domain",
+          "argv": [
+            "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+            "analyze",
+            "lib/src/project_values.dart",
+            "lib/src/projects_repository.dart",
+            "test/project_values_test.dart"
+          ],
+          "timeout_seconds": 900
+        },
+        {
+          "cwd": "packages/jentra_domain",
+          "argv": [
+            "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+            "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+            "test",
+            "--no-pub",
+            "test/project_values_test.dart",
+            "--reporter",
+            "expanded"
+          ],
+          "timeout_seconds": 900
+        },
+        {
+          "cwd": "packages/jentra_platform",
+          "argv": [
+            "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+            "analyze",
+            "lib/src/supabase_projects_gateway.dart",
+            "test/projects_gateway_test.dart"
+          ],
+          "timeout_seconds": 900
+        },
+        {
+          "cwd": "packages/jentra_platform",
+          "argv": [
+            "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+            "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+            "test",
+            "--no-pub",
+            "test/projects_gateway_test.dart",
+            "--reporter",
+            "expanded"
+          ],
+          "timeout_seconds": 900
+        },
+        {
+          "cwd": "apps/jentra_desktop",
+          "argv": [
+            "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+            "analyze",
+            "lib/src/features/projects/projects_controller.dart",
+            "lib/src/features/projects/projects_screen.dart",
+            "test/projects_workspace_test.dart"
+          ],
+          "timeout_seconds": 900
+        },
+        {
+          "cwd": "apps/jentra_desktop",
+          "argv": [
+            "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+            "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+            "test",
+            "--no-pub",
+            "test/projects_workspace_test.dart",
+            "--reporter",
+            "expanded"
+          ],
+          "timeout_seconds": 900
+        }
+      ]
+    }
+  }
+}

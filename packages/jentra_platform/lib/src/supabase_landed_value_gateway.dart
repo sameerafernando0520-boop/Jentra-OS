@@ -48,6 +48,31 @@ final class SupabaseLandedValueGateway implements LandedValueGateway {
       }
       return r.cast<String, Object?>();
     } on PostgrestException catch (e) {
+      if (const {
+        'inventory_value_options',
+        'preview_inventory_value_adjustment',
+        'landed_extension_documents',
+        'preview_landed_extension',
+      }.contains(name)) {
+        const denied = {
+          'PERMISSION_DENIED',
+          'ACCESS_DENIED',
+          'MFA_REQUIRED',
+          'AUTHENTICATION_REQUIRED',
+        };
+        final denial = denied.contains(e.message)
+            ? e.message
+            : const {'PGRST301', 'PGRST302', 'PGRST303'}.contains(e.code)
+            ? 'AUTHENTICATION_REQUIRED'
+            : null;
+        if (denial != null) {
+          throw DomainError(
+            code: denial,
+            message:
+                'Evidence is unavailable with your current access. Recheck your role and scope.',
+          );
+        }
+      }
       final code = e.code == '40001'
           ? 'VERSION_CONFLICT'
           : e.code == '42501'

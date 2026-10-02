@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../app_providers.dart';
 import 'inventory_valuation_controller.dart';
+import '../shared/report_wait.dart';
 import '../report_export/report_export_screen.dart';
 
 class InventoryValuationScreen extends ConsumerWidget {
@@ -74,7 +76,13 @@ class InventoryValuationWorkspace extends StatelessWidget {
           const Text(
             'Saved reports cover the whole legal entity, including stock in transit. Select the inventory control accounts to reconcile.',
           ),
-          if (c.busy) const LinearProgressIndicator(),
+          if (c.reportWait.active)
+            ReportWaitIndicator(
+              state: c.reportWait,
+              onCancel: c.cancelReportWait,
+            )
+          else if (c.busy)
+            const LinearProgressIndicator(),
           if (!c.online)
             const Text(
               'Offline — saved inputs remain available. Connect to generate or read report evidence.',

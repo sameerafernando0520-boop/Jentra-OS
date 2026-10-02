@@ -1,9 +1,112 @@
 # Wave 4 kickoff and delivery status
 
-Updated: 2026-09-27. User instruction: complete all remaining approved synthetic
-Wave 4 development, work solo and continue independent work across pending gates.
+Updated: 2026-10-02. User instruction: complete all remaining approved synthetic
+Wave 4 development and continue independent work across pending gates. On October
+1 the user explicitly authorized additional agents for development and reviews,
+superseding the earlier solo-work preference.
 
 ## Current checkpoint
+
+October 2: core project planning/time checks now pass 49 rollback assertions,
+10 domain, 18 gateway and 26 native tests with clean focused analyzers. The trusted
+harness verified their exact source/log hashes. Eight updated 200 percent previews
+were inspected. Finance and service are connected to the native providers/router;
+their final integrated checks and independent reviews remain open. The first linked
+project payroll fixture passed the failure diagnostic for 138 assertion calls,
+including actual geometry posting/reversal and removed-allocation restoration.
+Later direct-source, leave/service and lock-order refinements need final reruns.
+Three resumed agents continue finance/service/payroll corrections after recorded
+usage-limit interruptions. Live development remains at 37 migrations. See the
+[October 2 project checkpoint](../verification/wave4/projects-checkpoint-20261002.md).
+Wave 4 is **not complete**; development, provider, installation and required
+authenticated/native/contention/load/restart/signoff evidence remain open. The
+dated checkpoints below retain prior evidence and are not current completion claims.
+
+Fresh September 30 verification: the combined People suites pass 45 domain,
+64 platform/recovery and 82 native tests. Employee/calendar installed checks
+pass 49/65 rollback assertions; organization/private-HR candidates pass 53/82.
+The new attendance/leave candidates pass 36/59. `/people/workforce` now provides
+typed scoped attendance/leave/policy/raw-source/work-ownership views, native
+correction/approval/carry workflows, published-zone choices, grant/history pages
+and encrypted recovery with private 24-hour expiry. Payroll seal consumption,
+linked post-consumption corrections and a batch/file clock adapter remain open.
+See the [current workforce checkpoint](../verification/wave4/workforce-checkpoint-20260930.md)
+for source hashes and evidence limits.
+
+Private HR's final source/goldens regressions and isolated Windows build now pass.
+An isolated refreshed People client release build passed in 161.6 seconds after
+the first 312.5-second build. The prior auto-review account-limit rejection is
+resolved for these current builds. No application was installed or launched.
+Following the owner's specific approval, private HR is installed in development
+as `20260929224939_wave4_private_hr`; the ledger now has 37 migrations. Both
+reviewed Edge functions are ACTIVE at version 1, installed private checks pass
+82 assertions, and unauthenticated requests return 401. Worker readiness has zero
+rows and the synthetic tenant is still absent. See the
+[installed private HR evidence](../verification/wave4/private-hr-installed-20260930.md).
+Organization/resolution and attendance/leave remain unapplied.
+The [payroll contract](../blueprint/53_WAVE4_SYNTHETIC_PAYROLL_CONTRACT.md) and
+verified installed journal/period adapter inspection start W4-04 development.
+Final focused domain, gateway and integrated native analyzers report no issues.
+Payroll now has an unapplied 15-table private candidate with exact calculation,
+immutable preparation, independent approval, atomic journal/obligation/payslip
+posting, original reversal and partial settlement/export APIs. Its rollback suite
+passes 72 assertions; exact domain, platform/recovery and native checks pass
+13/19/20. Encrypted 24-hour recovery, native configuration/run/approval/payslip/
+export/settlement workflows and immutable breakdown/history are implemented.
+Light/dark workspace and editor previews were inspected at 200% text; both
+densities and wide layouts passed. The isolated Windows release build passed in
+451.8 seconds without installing or launching the app. A subsequent comparison
+response/paging fix passed its two focused regressions and is included in the
+current isolated rebuild with the clock adapter.
+Linked off-cycle
+differences and project/service input adapters remain open. See the
+[payroll checkpoint](../verification/wave4/payroll-checkpoint-20260930.md).
+
+The bounded clock CSV vertical now has an unapplied two-table/three-API candidate,
+strict native preview, server-verifiable source/manifest checksums, atomic exact
+duplicate reuse and immutable paged lineage. Its combined attendance suite passes
+65 rollback assertions. The three CSV domain and six adapter/gateway tests pass;
+the current isolated native run passes 20 payroll and 24 workforce tests, including
+clock encrypted retries and keyboard/rendered checks. All four light/dark and
+density previews at 200% were inspected. The refreshed isolated Windows build is
+passed in 91.3 seconds; see the [clock checkpoint](../verification/wave4/clock-batch-checkpoint-20260930.md).
+
+Original-basis chained payroll difference arithmetic now passes five focused tests
+and analysis; the full payroll domain run passes 18. It recomputes complete pay
+using the original rules, then subtracts prior rounded amounts, preserving cap and
+signed-difference evidence and rejecting stale/duplicate seals. Its authoritative
+source correction, off-cycle approval/posting/settlement/recovery/native adapters
+remain development work; this domain engine alone does not close W4-04.
+
+Fixed assets now has its delivery contract, 13 passing exact domain tests and
+an unapplied eight-table candidate against the installed journal/period engine.
+The refreshed suite passes 88 rollback assertions, and the typed gateway passes
+20 checks including twelve actual API projection regressions. Governed openings, immutable books,
+depreciation, prospective revisions, separate impairment reserves, revaluation,
+disposal, transfers and original-effect reversal are implemented in the candidate.
+Native forms/register/history/schedules and encrypted recovery now exist at
+`/assets`; all 20 native checks pass, including keyboard Enter submission and
+approval review. Eight readable previews were inspected at 200% text in both
+themes/densities. The isolated Windows release build passed in 147.6 seconds.
+The [asset installation review](../verification/wave4/assets-install-review-20261001.md)
+is ready for its specific development approval.
+Procurement/stock/equipment adapters and authenticated acceptance remain open.
+See the [asset checkpoint](../verification/wave4/assets-checkpoint-20261001.md).
+
+Project planning and common time now have an unapplied 16-table/eight-API
+candidate and native `/projects` integration. The latest candidate run passed 45
+rollback assertions, including frozen plan review, task cycles/capacity, revised
+dependency graphs, attendance allocation versus direct payable claims, exact
+whole billing units, payroll source ownership/seals and late-outbox atomicity.
+Eight exact domain foundation tests passed earlier. Typed gateway and native
+recovery/screen tests are written, but their current analyzer/test commands were
+not executed because automatic approval review reached an account usage limit.
+Project expenses/billing, service/maintenance and payroll correction verticals
+are actively being developed by separate agents. None is installed or accepted.
+See the [project checkpoint](../verification/wave4/projects-checkpoint-20261001.md).
+
+The paragraphs below retain earlier dated checkpoints; current results above
+supersede their pending client/build and private HR installation wording.
 
 Continuation is active. Employee and calendar baseline installations are preserved.
 The new organization/instant-resolution candidates are **unapplied**:
@@ -14,20 +117,38 @@ input guards, explicit future ending/withdrawal and immutable attributable histo
 The native `/people/organization` workspace, typed gateway and actor/scope/aggregate
 encrypted recovery exist. Its focused checks passed 7 domain, 14 platform and
 15 desktop tests. Five calendar instant-preview desktop tests passed; the new
-UTC resolver has six domain checks and three gateway checks. Rendered review is
-being finalized and an isolated Windows build is next; neither candidate has an
-installation approval or authenticated acceptance result yet.
+UTC resolver has six domain checks and three gateway checks. The complete focused
+People desktop run passed 46 tests, rendered light/dark and 200% layouts were
+inspected, and an isolated Windows release build passed. The concrete
+[installation review](../verification/wave4/organization-resolution-review-20260927.md)
+is pending its specific owner approval; neither candidate has been installed or
+authenticated in the native app.
 
-The employee/calendar installed regressions passed 49/65 assertions with the
-organization candidate present before the final withdrawal extension; final
-regression confirmation is required for the installation review. The development
+The employee/calendar installed regressions passed 49/65 assertions with both
+organization and resolution candidates present after the final withdrawal extension.
+The development
 refresh still shows ACTIVE_HEALTHY, PostgreSQL 17.6.1.166, 36 migrations through
 `20260926082441`, no organization/resolver installation, zero employee/calendar
 fixtures and no `w4-employee-synthetic` tenant. The earlier bootstrap reconciliation
 question remains pending; no acceptance-lab subscription or owner identity changed.
 
-Next: finalize this candidate review/build while implementing W4-02B private HR,
-then attendance/leave, payroll, projects, service, assets and integrated verification.
+W4-02B private HR has an unapplied candidate with 15 forced-RLS private tables,
+separate private Storage, protected contact/review/link APIs, bounded erasure worker,
+frozen metadata-only export preparation and scoped erasure status. The latest
+rollback run passed 82 assertions without installing data. Eleven injected Edge
+handler tests, six domain tests, 17 platform tests and 19 native tests passed in
+their respective earlier focused runs; both Edge entries passed pinned Deno 2.9.6
+type checking. Six light/dark and 200% native screenshots were generated and four
+were inspected; a subsequent search-label fix still needs refreshed goldens. The
+[private HR checkpoint](../verification/wave4/private-hr-checkpoint-20260928.md)
+records the boundaries. An attempted isolated Windows build was rejected before
+execution by automatic approval review because of an account usage limit. Private
+HR is not installed or deployed, and its combined final client checks and native
+authenticated acceptance remain open.
+
+Next: finish W4-03/04 linked post-seal corrections, then complete
+projects, service, assets and integrated verification while installation and
+authenticated acceptance gates remain pending.
 The full [gap matrix](wave4-gap-matrix.md) remains open. Concurrent Wave 3 contracts
 43/44/46 and their candidates/source/evidence remain owned by the other task.
 
@@ -102,12 +223,12 @@ retained in document metadata.
 | Slice | Status | Dependency / next action |
 |---|---|---|
 | W4-01 employees and employment | Entitlement-gated development installation; installed-schema assertions pass | Signed-in synthetic tenant bootstrap, test-plan subscription, two-session contention, authenticated native walkthrough and owner acceptance |
-| W4-02 private HR, organization/calendars | [Calendar source verified and installed in development](../verification/wave4/calendar-client-20260926.md): typed gateway, native workspace and encrypted recovery; 65 installed-schema checks passed | Calendar authenticated acceptance/contention; W4-01; dated organization assignments, then private HR/reviews/link with separate document authorization and retention |
-| W4-03 attendance/leave | Specified; not implemented | Effective calendars, overlap and leave-ledger contracts |
-| W4-04 synthetic payroll | Specified; not implemented | Approved inputs, exact rule contract and verified finance/settlement adapters |
-| W4-05 projects/time/expenses | Specified; not implemented | W4-01–02, common work-time ownership and billing/AP integration |
-| W4-06 service/equipment/maintenance | Specified; not implemented | Employee eligibility, common time, SLA and stock/billing providers |
-| W4-07 fixed assets | Specified; not implemented | Capitalization/schedule contracts and verified finance providers |
+| W4-02 private HR, organization/calendars | Calendar and approved private HR installed; both private Edge functions ACTIVE v1; organization/resolution approval pending | [Installed private HR evidence](../verification/wave4/private-hr-installed-20260930.md); Auth/worker/contention/owner evidence remain |
+| W4-03 attendance/leave | Tested candidate/domain/gateway/native/recovery vertical; 36/59 SQL, 13 domain/16 platform/17 native checks | Payroll seal/difference integration and provider batch import; installed/Auth/contention/load evidence |
+| W4-04 synthetic payroll | Unapplied private candidate passes 63 SQL assertions; exact calculation/domain 13 and named gateway 8 checks; encrypted recovery and native workspace in progress | Linked off-cycle differences, project/service adapters, full client/build and installed/Auth/contention/load evidence |
+| W4-05 projects/time/expenses | Planning/time candidate and native source implemented; 45 rollback assertions; current client verification pending; expenses/billing agent active | Common work-time candidates, installation, billing/AP provider contracts and acceptance |
+| W4-06 service/equipment/maintenance | Service agent implementing and reviewing full candidate/client vertical; not integrated or installed | Employee eligibility, common time, SLA and stock/billing providers |
+| W4-07 fixed assets | Governed opening/book candidate and native vertical; 88 SQL, 13 domain, 20 gateway, 20 native; inspected previews and Windows build pass | Specific installation approval, source adapters and acceptance |
 | W4-08 integrated verification | Not started | All slices; security, contention/load, visual, restart and owner evidence |
 
 ## Preservation and evidence

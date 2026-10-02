@@ -2,19 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_platform/jentra_receivables_platform.dart';
 import 'package:jentra_platform/jentra_procurement_platform.dart';
+
 import 'src/features/procurement/procurement_controller.dart';
-import 'package:jentra_platform/jentra_inventory_platform.dart';
+
+import 'package:jentra_platform/landed_extension_platform.dart';
+import 'package:jentra_platform/disposition.dart';
+import 'package:jentra_platform/count_partitions.dart';
+
+import 'src/features/landed_extension/landed_extension_controller.dart';
+import 'src/features/disposition/disposition_controller.dart';
 import 'src/features/inventory_transfer/inventory_transfer_controller.dart';
 import 'src/features/stock_count/stock_count_controller.dart';
 import 'src/features/reservations/reservation_controller.dart';
 import 'src/features/receipt_trace/receipt_trace_controller.dart';
 import 'src/features/landed_value/landed_value_controller.dart';
 import 'src/features/inventory_valuation/inventory_valuation_controller.dart';
+
 import 'package:jentra_platform/jentra_finance_platform.dart';
+
 import 'src/features/manual_journal/manual_journal_controller.dart';
 import 'src/features/control_reconciliation/control_reconciliation_controller.dart';
 import 'src/features/close_review/close_review_controller.dart';
 import 'src/features/journal_evidence/posted_journal_controller.dart';
+import 'src/features/operations/operational_controller.dart';
+import 'src/features/operations/notification_admin_controller.dart';
 import 'src/features/financial_dimensions/financial_dimension_controller.dart';
 import 'src/features/report_export/report_export_controller.dart';
 import 'src/features/bank_reconciliation/bank_reconciliation_controller.dart';
@@ -23,13 +34,28 @@ import 'src/features/financial_statements/financial_statement_controller.dart';
 import 'src/features/financial_statements/cash_flow_mapping_controller.dart';
 import 'src/features/financial_statements/tax_summary_controller.dart';
 import 'src/features/budgets/budget_controller.dart';
+
 import 'package:jentra_platform/jentra_people_platform.dart';
+import 'package:jentra_platform/jentra_payroll_platform.dart';
+import 'package:jentra_platform/jentra_assets_platform.dart';
+import 'package:jentra_platform/jentra_projects_platform.dart';
+import 'package:jentra_platform/jentra_project_finance_platform.dart';
+import 'package:jentra_platform/jentra_service_platform.dart';
+
+import 'src/features/assets/assets_controller.dart';
+import 'src/features/projects/projects_controller.dart';
+import 'src/features/projects/project_finance_controller.dart';
+import 'src/features/service/service_controller.dart';
+
 import 'src/features/people/employee_controller.dart';
 import 'src/features/people/calendar_controller.dart';
 import 'src/features/people/organization_controller.dart';
 import 'src/features/people/private_hr_controller.dart';
+import 'src/features/people/workforce_controller.dart';
+import 'src/features/people/payroll_controller.dart';
 
 import 'package:jentra_platform/jentra_stock_opening_platform.dart';
+
 import 'src/features/stock_opening/stock_opening_controller.dart';
 import 'src/app.dart';
 import 'src/app_providers.dart';
@@ -77,6 +103,15 @@ Future<void> main() async {
         stockCountGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseStockCountGateway(client),
         ),
+        countPartitionGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseCountPartitionGateway(client),
+        ),
+        landedExtensionGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseLandedExtensionGateway(client),
+        ),
+        dispositionGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseDispositionGateway(client),
+        ),
         reservationGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseReservationGateway(client),
         ),
@@ -107,6 +142,12 @@ Future<void> main() async {
         postedJournalGatewayProvider.overrideWithValue(
           client == null ? null : SupabasePostedJournalGateway(client),
         ),
+        operationalGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseOperationalGateway(client),
+        ),
+        wave3NotificationGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseWave3NotificationGateway(client),
+        ),
         bankReconciliationGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseBankReconciliationGateway(client),
         ),
@@ -136,6 +177,24 @@ Future<void> main() async {
         ),
         privateHrRepositoryProvider.overrideWithValue(
           client == null ? null : SupabasePrivateHrGateway(client),
+        ),
+        workforceRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabaseWorkforceGateway(client),
+        ),
+        payrollRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabasePayrollGateway(client),
+        ),
+        assetsRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabaseAssetGateway(client),
+        ),
+        projectsRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabaseProjectGateway(client),
+        ),
+        projectFinanceRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabaseProjectFinanceGateway(client),
+        ),
+        serviceRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabaseServiceGateway(client),
         ),
       ],
       child: const JentraApp(),

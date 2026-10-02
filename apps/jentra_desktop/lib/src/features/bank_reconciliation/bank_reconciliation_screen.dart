@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_platform/jentra_platform.dart';
+
 import '../../app_providers.dart';
 import 'bank_reconciliation_controller.dart';
+import '../operations/operational_report_export.dart';
 
 class BankReconciliationScreen extends ConsumerWidget {
   const BankReconciliationScreen({super.key});
@@ -21,13 +23,22 @@ class BankReconciliationScreen extends ConsumerWidget {
     final c = ref.watch(bankReconciliationControllerProvider);
     return c == null
         ? const Center(child: Text('Choose a branch with finance access.'))
-        : BankReconciliationWorkspace(key: ValueKey(c), controller: c);
+        : BankReconciliationWorkspace(
+            key: ValueKey(c),
+            controller: c,
+            showOperationalReports: true,
+          );
   }
 }
 
 class BankReconciliationWorkspace extends StatefulWidget {
-  const BankReconciliationWorkspace({super.key, required this.controller});
+  const BankReconciliationWorkspace({
+    super.key,
+    required this.controller,
+    this.showOperationalReports = false,
+  });
   final BankReconciliationController controller;
+  final bool showOperationalReports;
   @override
   State<BankReconciliationWorkspace> createState() => _BankWorkspaceState();
 }
@@ -35,6 +46,15 @@ class BankReconciliationWorkspace extends StatefulWidget {
 class _BankWorkspaceState extends State<BankReconciliationWorkspace> {
   BankReconciliationController get c => widget.controller;
   int previewOffset = 0;
+  final reportAsOf = TextEditingController(
+    text: DateTime.now().toUtc().toIso8601String().substring(0, 10),
+  );
+  @override
+  void dispose() {
+    reportAsOf.dispose();
+    super.dispose();
+  }
+
   Future<void> pickFile() async {
     try {
       final file = await const SetupFileService().openImportFile();
@@ -62,14 +82,10 @@ class _BankWorkspaceState extends State<BankReconciliationWorkspace> {
         }),
         content: SingleChildScrollView(
           child: Text(switch (action) {
-            'import' =>
-              'The complete validated statement is stored without accounting entries.',
-            'reverse' =>
-              'The original match remains in history. Its lines become available again and any original adjustment is reversed in the selected open period.',
-            'rules' =>
-              'The new exact tolerance applies to later matches. Existing matching evidence does not change.',
-            _ =>
-              'Selected statement and posted transaction lines will be claimed together. Any permitted difference posts an exact balanced adjustment.',
+            'import' => 'The complete validated statement is stored without accounting entries.',
+            'reverse' => 'The original match remains in history. Its lines become available again and any original adjustment is reversed in the selected open period.',
+            'rules' => 'The new exact tolerance applies to later matches. Existing matching evidence does not change.',
+            _ => 'Selected statement and posted transaction lines will be claimed together. Any permitted difference posts an exact balanced adjustment.',
           }),
         ),
         actions: [
@@ -98,8 +114,7 @@ class _BankWorkspaceState extends State<BankReconciliationWorkspace> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  c.error ??
-                      'Connect to verify current bank access and restore your encrypted draft.',
+                  c.error ?? 'Connect to verify current bank access and restore your encrypted draft.',
                 ),
                 if (c.busy) const CircularProgressIndicator(),
                 TextButton(
@@ -119,9 +134,9 @@ class _BankWorkspaceState extends State<BankReconciliationWorkspace> {
         onPressed: !c.locked && c.online && enabled ? callback : null,
         child: Text(title),
       );
-      final fieldScale = MediaQuery.textScalerOf(
-        context,
-      ).scale(1).clamp(1.0, 1.7);
+      final fieldScale = MediaQuery.textScalerOf(context)
+          .scale(1)
+          .clamp(1.0, 1.7);
       Widget field(String key, String label, {double width = 260}) => SizedBox(
         width: width * fieldScale,
         child: TextFormField(
@@ -209,7 +224,32 @@ class _BankWorkspaceState extends State<BankReconciliationWorkspace> {
           Text(
             'Statement imports, posted transactions and reversible matching',
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: widget.showOperationalReports ? 12 : 20),
+          if (widget.showOperationalReports)
+            Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                SizedBox(
+                  width: 210,
+                  child: TextField(
+                    controller: reportAsOf,
+                    enabled: c.online && !c.busy,
+                    decoration: const InputDecoration(
+                      labelText: 'Report as of · YYYY-MM-DD',
+                    ),
+                    onChanged: (_) => setState(() {}),
+                  ),
+                ),
+                OperationalReportExport(
+                  kind: 'bank_reconciliation',
+                  label: 'Save branch bank report for export',
+                  inputs: {'as_of': reportAsOf.text.trim()},
+                ),
+              ],
+            ),
+          if (widget.showOperationalReports) const SizedBox(height: 20),
           if (!c.online)
             const Text(
               'Offline — commands are disabled. Save draft is available.',

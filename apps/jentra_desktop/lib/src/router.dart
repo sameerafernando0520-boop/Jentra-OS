@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jentra_domain/jentra_receivables.dart';
+import 'package:jentra_domain/jentra_projects.dart';
 
 import 'app_providers.dart';
 import 'features/manual_journal/manual_journal_controller.dart';
@@ -13,6 +15,8 @@ import 'features/control_reconciliation/control_reconciliation_screen.dart';
 import 'features/close_review/close_review_controller.dart';
 import 'features/close_review/close_review_screen.dart';
 import 'features/journal_evidence/posted_journal_screen.dart';
+import 'features/operations/operational_screen.dart';
+import 'features/operations/notification_admin_screen.dart';
 import 'features/financial_dimensions/financial_dimension_controller.dart';
 import 'features/financial_dimensions/financial_dimension_screen.dart';
 import 'features/report_export/report_export_controller.dart';
@@ -37,6 +41,18 @@ import 'features/people/organization_controller.dart';
 import 'features/people/organization_screen.dart';
 import 'features/people/private_hr_controller.dart';
 import 'features/people/private_hr_screen.dart';
+import 'features/people/workforce_controller.dart';
+import 'features/people/workforce_screen.dart';
+import 'features/people/payroll_controller.dart';
+import 'features/people/payroll_screen.dart';
+import 'features/assets/assets_controller.dart';
+import 'features/assets/assets_screen.dart';
+import 'features/projects/projects_controller.dart';
+import 'features/projects/projects_screen.dart';
+import 'features/projects/project_finance_controller.dart';
+import 'features/projects/project_finance_screen.dart';
+import 'features/service/service_controller.dart';
+import 'features/service/service_screen.dart';
 import 'features/auth/login_screen.dart';
 import 'features/catalogue/component_catalogue_screen.dart';
 import 'features/crm/crm_screen.dart';
@@ -60,6 +76,10 @@ import 'features/inventory_transfer/inventory_transfer_controller.dart';
 import 'features/inventory_transfer/inventory_transfer_screen.dart';
 import 'features/stock_count/stock_count_controller.dart';
 import 'features/stock_count/stock_count_screen.dart';
+import 'features/landed_extension/landed_extension_controller.dart';
+import 'features/landed_extension/landed_extension_screen.dart';
+import 'features/disposition/disposition_controller.dart';
+import 'features/disposition/disposition_screen.dart';
 import 'features/reservations/reservation_controller.dart';
 import 'features/reservations/reservation_screen.dart';
 import 'features/receipt_trace/receipt_trace_screen.dart';
@@ -113,6 +133,22 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/dashboard',
             builder: (context, state) => const DashboardScreen(),
+          ),
+          GoRoute(
+            path: '/operations/documents',
+            builder: (context, state) => OperationalScreen(
+              target: (
+                tenantId: state.uri.queryParameters['tenant'] ?? '',
+                entityId: state.uri.queryParameters['entity'] ?? '',
+                branchId: state.uri.queryParameters['branch'] ?? '',
+                kind: state.uri.queryParameters['kind'] ?? '',
+                id: state.uri.queryParameters['id'],
+              ),
+            ),
+          ),
+          GoRoute(
+            path: '/operations/notifications',
+            builder: (context, state) => const NotificationAdminScreen(),
           ),
           GoRoute(
             path: '/finance/journal-evidence',
@@ -183,6 +219,20 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const ReservationScreen(),
             onExit: (context, state) async =>
                 await ref.read(reservationControllerProvider)?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/inventory/landed-extensions',
+            builder: (context, state) => const LandedExtensionScreen(),
+            onExit: (context, state) async =>
+                await ref.read(landedExtensionControllerProvider)?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/inventory/dispositions',
+            builder: (context, state) => const DispositionScreen(),
+            onExit: (context, state) async =>
+                await ref.read(dispositionControllerProvider)?.canLeave() ??
                 true,
           ),
           GoRoute(
@@ -367,6 +417,12 @@ final routerProvider = Provider<GoRouter>((ref) {
                 await ref.read(employeeControllerProvider)?.canLeave() ?? true,
           ),
           GoRoute(
+            path: '/assets',
+            builder: (context, state) => const AssetsScreen(),
+            onExit: (context, state) async =>
+                await ref.read(assetsControllerProvider)?.canLeave() ?? true,
+          ),
+          GoRoute(
             path: '/people/employees',
             builder: (context, state) => const EmployeeScreen(),
             onExit: (context, state) async =>
@@ -382,7 +438,8 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/people/organization',
             builder: (context, state) => const OrganizationScreen(),
             onExit: (context, state) async =>
-                await ref.read(organizationControllerProvider)?.canLeave() ?? true,
+                await ref.read(organizationControllerProvider)?.canLeave() ??
+                true,
           ),
           GoRoute(
             path: '/people/private',
@@ -390,21 +447,69 @@ final routerProvider = Provider<GoRouter>((ref) {
             onExit: (context, state) async =>
                 await ref.read(privateHrControllerProvider)?.canLeave() ?? true,
           ),
+          GoRoute(
+            path: '/people/workforce',
+            builder: (context, state) => const WorkforceScreen(),
+            onExit: (context, state) async =>
+                await ref.read(workforceControllerProvider)?.canLeave() ?? true,
+          ),
+          GoRoute(
+            path: '/people/payroll',
+            builder: (context, state) => const PayrollScreen(),
+            onExit: (context, state) async =>
+                await ref.read(payrollControllerProvider)?.canLeave() ?? true,
+          ),
+          GoRoute(
+            path: '/projects',
+            builder: (context, state) => const ProjectsScreen(),
+            onExit: (context, state) async =>
+                await ref.read(projectsControllerProvider)?.canLeave() ?? true,
+          ),
+          GoRoute(
+            path: '/projects/:projectId/finance',
+            builder: (context, state) {
+              final project = state.extra;
+              if (project is! ProjectRecord ||
+                  project.id != state.pathParameters['projectId']) {
+                return const Center(
+                  child: Text(
+                    'Open a project from the register to view its finances.',
+                  ),
+                );
+              }
+              return ProjectFinanceScreen(
+                projectId: project.id,
+                projectName: project.name,
+                currency: project.currency,
+                precision: project.precision,
+              );
+            },
+            onExit: (context, state) async {
+              final project = state.extra;
+              if (project is! ProjectRecord) return true;
+              return await ref
+                      .read(
+                        projectFinanceControllerProvider((
+                          project.id,
+                          project.currency,
+                          project.precision,
+                        )),
+                      )
+                      ?.canLeave() ??
+                  true;
+            },
+          ),
+          GoRoute(
+            path: '/service',
+            builder: (context, state) => const ServiceScreen(),
+            onExit: (context, state) async =>
+                await ref.read(serviceControllerProvider)?.canLeave() ?? true,
+          ),
           for (final module in const [
             (
               'finance',
               'Finance',
               'Ledger, AR/AP, cash, tax and financial reporting.',
-            ),
-            (
-              'projects',
-              'Projects',
-              'Plan delivery, capture time and protect margin.',
-            ),
-            (
-              'service',
-              'Service',
-              'Tickets, SLAs, work orders and maintenance.',
             ),
             (
               'analytics',

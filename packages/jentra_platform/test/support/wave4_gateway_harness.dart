@@ -21,6 +21,7 @@ final class Wave4GatewayHarness {
   Object response = {};
   int status = 200;
   Completer<void>? gate;
+  Future<http.Response?> Function(http.Request)? onRequest;
   final requests = <http.Request>[];
   Future<void> initialize() async {
     client = SupabaseClient(
@@ -60,6 +61,8 @@ final class Wave4GatewayHarness {
           );
         }
         requests.add(request);
+        final special = await onRequest?.call(request);
+        if (special != null) return special;
         if (request.url.path.contains('/rpc/')) {
           await gate?.future;
         }

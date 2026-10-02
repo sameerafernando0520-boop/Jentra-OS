@@ -17,3 +17,10 @@ ANALYZE evidence records the helper's plan and repeated execution timings on the
 synthetic dataset. This establishes candidate read-plan behavior, not production
 p95, installed behavior, multi-session load or native acceptance. Installation
 requires the same coordinated compatibility review as contracts 43 and 46.
+
+Representative candidate plan verification must project the actual dated/current
+residual evidence from receivable/payable balance views. An identity-only
+projection may let PostgreSQL omit the residual helper and cannot establish its
+plan behavior. Empty lifecycle fixtures are explicitly reported as unpopulated
+components rather than representative load evidence. Query and provider source
+hashes, authenticated SQL-role claims, fixture counts and raw plans remain linked.

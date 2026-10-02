@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+
+import '../operations/access_changed.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../app_providers.dart';
 import 'goods_receipt_controller.dart';
 import 'procurement_picker.dart';
@@ -37,6 +41,12 @@ class GoodsReceiptWorkspace extends StatelessWidget {
     listenable: controller,
     builder: (context, _) {
       final c = controller, f = controller.form;
+      if (c.accessDenied) {
+        return OperationalAccessChanged(
+          retry: c.initialize,
+          enabled: c.online && !c.busy,
+        );
+      }
       return SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -82,6 +92,7 @@ class GoodsReceiptWorkspace extends StatelessWidget {
                                 c.references,
                                 c.scope,
                                 'receipt_orders',
+                                access: c,
                               );
                               if (row != null) {
                                 await c.create(
@@ -108,6 +119,7 @@ class GoodsReceiptWorkspace extends StatelessWidget {
                                 c.references,
                                 c.scope,
                                 'receipt_orders',
+                                access: c,
                               );
                               if (row != null) {
                                 await c.createAllowance(
@@ -226,6 +238,7 @@ class GoodsReceiptWorkspace extends StatelessWidget {
                                 c.references,
                                 c.scope,
                                 'receipt_accounts',
+                                access: c,
                               );
                               if (row == null ||
                                   c.form?['id'] != f['id'] ||

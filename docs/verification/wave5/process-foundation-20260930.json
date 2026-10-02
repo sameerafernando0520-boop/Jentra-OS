@@ -1,0 +1,88 @@
+{
+  "clientDate": "2026-09-30",
+  "clientTimeZone": "Asia/Colombo",
+  "approval": "Product owner continue on 2026-09-30",
+  "scope": "First W5-01 domain calculation and SHA-256 adapter; full slice still incomplete",
+  "runtime": "Dart 3.13.4, available local Flutter, cached dependency configuration",
+  "focusedDomainTests": 25,
+  "focusedPlatformTests": 8,
+  "analysis": {
+    "newFiles": 6,
+    "findings": 0
+  },
+  "coverage": {
+    "file": "process-domain-coverage-20260930.lcov",
+    "lineHit": 242,
+    "lineFound": 246,
+    "linePercent": 98.37,
+    "branchHit": 77,
+    "branchFound": 81,
+    "branchPercent": 95.06
+  },
+  "sources": [
+    {
+      "path": "packages/jentra_domain/lib/analytics.dart",
+      "sha256": "0b8ba3de276ea6c7960f5419fef1f65b0b9076b0708312a97ad00d2695e43edb"
+    },
+    {
+      "path": "packages/jentra_domain/lib/src/analytics/process_metrics.dart",
+      "sha256": "31d1b3bdbb230d7239f304130652db9562f282b25497ab2b55a5baa732201f50"
+    },
+    {
+      "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+      "sha256": "23fbe9474429deec1088c27ec5b2431879b3d49760230fdb73aa2f522ecdb0f5"
+    },
+    {
+      "path": "packages/jentra_platform/lib/analytics_platform.dart",
+      "sha256": "543ff11da7462eb3c6b24e8c324779ecd5a6a8803dc658eb47150c89e28a04db"
+    },
+    {
+      "path": "packages/jentra_platform/lib/src/analytics/process_metric_hasher.dart",
+      "sha256": "65e132f435a1bee8584b365f5b63d59cfdfaf9e57b034840bd068fc39285dde1"
+    },
+    {
+      "path": "packages/jentra_platform/test/analytics/process_metric_hasher_test.dart",
+      "sha256": "2aaef7f39cc16329768bb1040a4b61003a7b54cb5d6df22f30cd2db64d8b3cb6"
+    }
+  ],
+  "specValidation": [
+    {
+      "path": "docs/blueprint/wave5/WAVE5_INTELLIGENCE_AND_CONTROL_SPEC.md",
+      "score": 100,
+      "findings": [],
+      "sha256": "f9df22284963bdd63b2d6cf52cf6b19e355453f48284e113615731c15aa19378"
+    },
+    {
+      "path": "docs/blueprint/wave5/W5_01_PROCESS_METRICS_CONTRACT.md",
+      "score": 100,
+      "findings": [],
+      "sha256": "899623ba7df7e3c83a4dd836b9c052dd314ea82461051e63b255d5b7f297f0b0"
+    }
+  ],
+  "errors": [],
+  "openGates": [
+    "server provider/candidate SQL",
+    "source permission and entitlement checks",
+    "native workspace and encrypted filters",
+    "rendered/native restart evidence",
+    "Windows package build",
+    "installation and authenticated runtime",
+    "actual contention/target-scale load",
+    "owner acceptance"
+  ],
+  "domainRegression": {
+    "success": true,
+    "passed": 194,
+    "total": 194,
+    "skipped": 0
+  },
+  "installedLedger": {
+    "beforeCount": 37,
+    "afterCount": 37,
+    "lastVersion": "20260929224939",
+    "lastName": "wave4_private_hr",
+    "wave5DatabaseMutation": false
+  },
+  "localLinksChecked": 16,
+  "passed": true
+}

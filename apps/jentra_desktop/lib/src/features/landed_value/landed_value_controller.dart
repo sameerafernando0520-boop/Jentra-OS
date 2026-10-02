@@ -1,10 +1,13 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:jentra_domain/jentra_inventory.dart';
 import 'package:jentra_platform/jentra_inventory_platform.dart';
+
 import '../../app_providers.dart';
+import '../operations/operational_read_access.dart';
 
 final landedValueGatewayProvider = Provider<LandedValueGateway?>((ref) => null);
 final landedValueControllerProvider =
@@ -40,7 +43,8 @@ final landedValueControllerProvider =
       return c;
     });
 
-final class LandedValueController extends ChangeNotifier {
+final class LandedValueController extends ChangeNotifier
+    implements OperationalReadAccess {
   LandedValueController({
     required this.scope,
     required this.gateway,
@@ -52,6 +56,43 @@ final class LandedValueController extends ChangeNotifier {
   final QuotationDraftStore drafts;
   static const slot = 'landed-value-editor';
   bool online, busy = false, _disposed = false;
+  int _epoch = 0;
+  @override
+  int get readAccessEpoch => _epoch;
+  @override
+  bool currentRead(int epoch) =>
+      !_disposed && online && !accessDenied && epoch == _epoch;
+  @override
+  void denyReadAccess() {
+    if (_disposed) return;
+    accessDenied = true;
+    _epoch++;
+    clearServer();
+    emit();
+  }
+
+  void clearServer() {
+    options.clear();
+    cursors.clear();
+    preview = null;
+    if (form?['status'] == 'posted') form = null;
+  }
+
+  Map<String, Object?> recoveryInputs(Map<String, Object?> source) => {
+    for (final key in [
+      'id',
+      'status',
+      'reverse_of',
+      'receipt_line_id',
+      'offset_account_id',
+      'variance_account_id',
+      'amount',
+      'document_date',
+      'reference',
+      'reason',
+    ])
+      if (source.containsKey(key)) key: source[key],
+  };
   bool accessDenied = false;
   String? error, message;
   Map<String, Object?>? form, preview;
@@ -60,15 +101,19 @@ final class LandedValueController extends ChangeNotifier {
   final cursors = <String, String?>{};
   bool get locked =>
       busy ||
+      _disposed ||
       accessDenied ||
       local?.pending != null ||
       form?['status'] == 'posted';
   void clearDeniedAccess(Object e) {
-    if (e is DomainError && e.code == 'PERMISSION_DENIED') {
-      accessDenied = true;
-      options.clear();
-      cursors.clear();
-      preview = null;
+    if (e is DomainError &&
+        const {
+          'PERMISSION_DENIED',
+          'ACCESS_DENIED',
+          'MFA_REQUIRED',
+          'AUTHENTICATION_REQUIRED',
+        }.contains(e.code)) {
+      denyReadAccess();
     }
   }
 
@@ -79,22 +124,32 @@ final class LandedValueController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _epoch++;
+    clearServer();
+    form = null;
+    notifyListeners();
     super.dispose();
   }
 
   void setOnline(bool value) {
-    online = value;
+    if (online != value) {
+      online = value;
+      _epoch++;
+      clearServer();
+    }
     emit();
   }
 
   Future<void> run(Future<void> Function() work) async {
     if (busy || _disposed) return;
     busy = true;
+    final epoch = _epoch;
     error = null;
     emit();
     try {
       await work();
     } catch (e) {
+      if (_disposed || epoch != _epoch) return;
       clearDeniedAccess(e);
       error = e is DomainError
           ? e.message
@@ -109,12 +164,13 @@ final class LandedValueController extends ChangeNotifier {
 
   Future<void> load(String resource, {bool more = false}) async {
     if (!online) return;
+    final epoch = _epoch;
     final r = await gateway.options(
       scope,
       resource,
       after: more ? cursors[resource] : null,
     );
-    if (_disposed) return;
+    if (_disposed || !online || epoch != _epoch) return;
     options[resource] = [
       if (more) ...?options[resource],
       for (final x in r['items'] as List) (x as Map).cast<String, Object?>(),
@@ -131,14 +187,17 @@ final class LandedValueController extends ChangeNotifier {
   Future<void> initialize() => run(() async {
     local = await drafts.load(scope, slot);
     if (_disposed) return;
-    form = local?.form;
-    preview = (form?['preview'] as Map?)?.cast<String, Object?>();
-    if (local?.errorCode == 'VERSION_CONFLICT') preview = null;
+    form = local == null || local!.form['status'] == 'posted'
+        ? null
+        : recoveryInputs(local!.form);
+    preview = null;
+    if (form == null && local?.pending == null) local = null;
     if (online) {
+      final epoch = _epoch;
       for (final r in ['receipts', 'accounts', 'posted']) {
         await load(r);
       }
-      accessDenied = false;
+      if (!_disposed && online && epoch == _epoch) accessDenied = false;
     }
   });
   Future<void> create() => run(() async {
@@ -159,11 +218,15 @@ final class LandedValueController extends ChangeNotifier {
     await persist();
   });
   Future<void> openPosted(Map<String, Object?> row) => run(() async {
-    if (form != null) return;
+    if (form != null ||
+        !online ||
+        accessDenied ||
+        !(options['posted'] ?? []).contains(row)) {
+      return;
+    }
     message = null;
     form = {...row, 'status': 'posted'};
     preview = row;
-    await persist();
   });
   void update(String key, String value) {
     if (locked || form == null) return;
@@ -188,8 +251,8 @@ final class LandedValueController extends ChangeNotifier {
 
   Future<void> persist({bool resolveConflict = false}) async {
     if (form == null) return;
-    final saved = {...form!}..remove('preview');
-    if (preview != null) saved['preview'] = preview;
+    if (_disposed || form!['status'] == 'posted') return;
+    final saved = recoveryInputs(form!);
     await drafts.save(
       scope,
       slot,
@@ -221,16 +284,23 @@ final class LandedValueController extends ChangeNotifier {
   });
   Future<void> calculate() => run(() async {
     if (!online ||
+        accessDenied ||
         form == null ||
         local?.pending != null ||
         form!['status'] == 'posted') {
       return;
     }
-    preview = await gateway.preview(scope, form!);
+    final epoch = _epoch;
+    final original = form!;
+    final result = await gateway.preview(scope, original);
+    if (!currentRead(epoch) || !identical(form, original)) return;
+    preview = result;
     await persist(resolveConflict: true);
   });
   Future<void> reverse() => run(() async {
-    if (form?['status'] != 'posted' ||
+    if (!online ||
+        accessDenied ||
+        form?['status'] != 'posted' ||
         form?['reverse_of'] != null ||
         form?['reversed'] == true) {
       return;
@@ -246,15 +316,18 @@ final class LandedValueController extends ChangeNotifier {
         0,
         10,
       ),
-      'preview': preview,
     };
     message = null;
     await persist();
   });
   Future<void> post() => run(() async {
-    if (!online || accessDenied || form == null || form!['status'] == 'posted') {
+    if (!online ||
+        accessDenied ||
+        form == null ||
+        form!['status'] == 'posted') {
       return;
     }
+    final epoch = _epoch;
     var pending = local?.pending;
     if (pending == null) {
       final reason = (form!['reason'] as String? ?? '').trim(),
@@ -272,7 +345,6 @@ final class LandedValueController extends ChangeNotifier {
           'Refresh the exact allocation preview first.',
         );
       }
-      await persist();
       final payload = {
         for (final k in [
           'id',
@@ -288,16 +360,19 @@ final class LandedValueController extends ChangeNotifier {
         'reference': reference,
         if (form!['reverse_of'] == null) 'basis_hash': preview!['basis_hash'],
       };
+      final expectedVersion = form!['reverse_of'] == null ? 0 : 1;
+      await persist();
       pending = await drafts.prepare(
         scope,
         slot,
         verb: 'accept',
         payload: payload,
-        expectedVersion: form!['reverse_of'] == null ? 0 : 1,
+        expectedVersion: expectedVersion,
       );
       local = await drafts.load(scope, slot);
     }
     Map<String, Object?> result;
+    if (!currentRead(epoch)) return;
     try {
       result = await gateway.post(pending.envelope);
       await drafts.complete(scope, slot, pending.envelope.commandId);
@@ -309,23 +384,28 @@ final class LandedValueController extends ChangeNotifier {
         commandId: pending.envelope.commandId,
       );
       local = await drafts.load(scope, slot);
-      if (e.code == 'VERSION_CONFLICT') {
+      if (currentRead(epoch) && e.code == 'VERSION_CONFLICT') {
         preview = null;
       }
       rethrow;
     }
     if (_disposed) return;
-    form = result;
-    preview = result;
     local = null;
     message = 'Landed-value posting confirmed.';
+    if (!currentRead(epoch)) {
+      form = null;
+      preview = null;
+      return;
+    }
+    form = result;
+    preview = result;
     try {
-      await persist();
       await load('posted');
     } catch (e) {
+      if (!currentRead(epoch)) return;
       clearDeniedAccess(e);
       error =
-          'Posting confirmed. Retry save or register refresh before leaving.';
+          'Posting confirmed. Retry the register refresh to view its evidence.';
     }
   });
 }

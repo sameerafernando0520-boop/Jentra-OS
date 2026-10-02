@@ -1,0 +1,87 @@
+import 'dart:async';
+import 'package:drift/native.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:jentra_domain/jentra_domain.dart';
+import 'package:jentra_domain/jentra_payroll.dart';
+import 'package:jentra_platform/jentra_payroll_platform.dart';
+import 'package:jentra_platform/jentra_platform.dart';
+import 'package:jentra_desktop/src/features/people/payroll_correction_controller.dart';
+
+const scope = TenantContext(tenantId: '11111111-1111-4111-8111-111111111111', actorId: '22222222-2222-4222-8222-222222222222',
+  legalEntityId: '33333333-3333-4333-8333-333333333333', branchId: '44444444-4444-4444-8444-444444444444');
+const id = '55555555-5555-4555-8555-555555555555';
+class _Keys implements SecretKeyStore {
+  final values = <String, String>{};
+  @override Future<String?> read(String key) async => values[key];
+  @override Future<void> write(String key, String value) async { values[key] = value; }
+}
+class _Base implements PayrollRepository {
+  @override dynamic noSuchMethod(Invocation invocation) => throw StateError('Unexpected base read');
+}
+class _Repository implements PayrollCorrectionRepository {
+  Completer<void>? readGate, commandGate;
+  DomainError? readFailure;
+  final commands = <CommandEnvelope<Map<String, Object?>>>[];
+  @override Future<void> authorize(TenantContext s, String capability) async {}
+  @override Future<CursorPage<Map<String, Object?>>> corrections(TenantContext s, {String? after}) async {
+    final failure = readFailure;
+    await readGate?.future;
+    if (failure != null) throw failure;
+    return CursorPage(items: [{'id': id, 'status': 'prepared', 'private_total': '123.450000'}], limit: 50);
+  }
+  @override Future<Map<String, Object?>> executeCorrection(PayrollCorrectionCommandKind kind, CommandEnvelope<Map<String, Object?>> envelope) async {
+    commands.add(envelope); await commandGate?.future;
+    return {'command_id': envelope.commandId, 'request_id': '66666666-6666-4666-8666-666666666666',
+      'entity': {'id': id, 'tenant_id': scope.tenantId, 'legal_entity_id': scope.legalEntityId,
+        'branch_id': scope.branchId, 'version': envelope.expectedEntityVersion! + 1, 'status': 'approved'}};
+  }
+  @override dynamic noSuchMethod(Invocation invocation) => throw StateError('Unexpected correction call: ${invocation.memberName}');
+}
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  late JentraLocalDatabase db;
+  late _Repository repository;
+  late SensitivePayrollCorrectionDraftStore drafts;
+  PayrollCorrectionController make() => PayrollCorrectionController(scope: scope, repository: repository,
+    base: _Base(), drafts: drafts, permissions: {'people.payroll.view', 'people.payroll.approve'}, online: true, monitor: false);
+  setUp(() {
+    db = JentraLocalDatabase(NativeDatabase.memory()); repository = _Repository();
+    drafts = SensitivePayrollCorrectionDraftStore(EncryptedDraftRepository(db, DraftCipher(keyStore: _Keys())), repository.authorize);
+  });
+  tearDown(() => db.close());
+  test('disconnect clears current private evidence and ignores obsolete success after reconnect', () async {
+    final c = make(); addTearDown(c.dispose);
+    await c.initialize(); expect(c.rows, isNotEmpty);
+    repository.readGate = Completer(); final read = c.refresh();
+    c.setOnline(false); expect(c.rows, isEmpty);
+    c.setOnline(true); repository.readGate!.complete(); await read;
+    expect(c.rows, isEmpty); expect(c.denied, false);
+    repository.readGate = null; await c.refresh(); expect(c.rows, isNotEmpty);
+  });
+  for (final code in ['PERMISSION_DENIED', 'MFA_REQUIRED', 'AUTHENTICATION_REQUIRED', 'FEATURE_NOT_ENTITLED']) {
+    test('obsolete $code does not deny the replacement connection', () async {
+      final c = make(); addTearDown(c.dispose);
+      repository.readGate = Completer(); repository.readFailure = DomainError(code: code, message: 'Old private source');
+      final read = c.refresh(); c.setOnline(false); c.setOnline(true);
+      repository.readGate!.complete(); await read;
+      expect(c.denied, false); expect(c.error, isNull); expect(c.rows, isEmpty);
+    });
+  }
+  for (final change in ['disconnect', 'reconnect', 'dispose']) {
+    test('confirmed correction across $change clears original durable receipt before presentation', () async {
+      final c = make(); var disposed = false;
+      try {
+        c.form = {'action': 'approve', 'id': id, 'digest': 'a' * 64, 'reason': 'Independent synthetic approval'};
+        c.expectedVersion = 1; repository.commandGate = Completer();
+        final send = c.submit();
+        for (var i = 0; i < 1000 && repository.commands.isEmpty; i++) { await Future<void>.delayed(const Duration(milliseconds: 1)); }
+        expect(repository.commands, hasLength(1));
+        if (change == 'dispose') { c.dispose(); disposed = true; }
+        else { c.setOnline(false); if (change == 'reconnect') c.setOnline(true); }
+        repository.commandGate!.complete(); await send;
+        expect(await drafts.receipt(scope, PayrollCorrectionCommandKind.correction, id), isNull);
+        expect(c.confirmed, isNull); expect(c.form, isNull);
+      } finally { if (!disposed) c.dispose(); }
+    });
+  }
+}

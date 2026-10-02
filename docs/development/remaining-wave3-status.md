@@ -1,5 +1,91 @@
 # Remaining Wave 3 development status
 
+## Current continuation — 2026-10-01
+
+HEAD remains `f9cc342815e2446fb3f26204d5e65e03c1b2a140`, with concurrent dirty
+Wave 4/5 work. The latest [read-only refresh](../verification/remaining-wave3/refresh-value-recovery-20261001.json)
+records 37 installed migrations, 85 API functions and unchanged shared finance
+helpers. All 45 Wave 3 candidates remain unapplied. No staging, commit, push,
+installation, authentication change, acceptance launch or Credential Manager
+operation was performed.
+
+The [current 181-ID matrix](../verification/remaining-wave3/requirement-matrix-20261001.md)
+preserves all approved wording and distinguishes source evidence, missing
+verification and external gates. Earlier dated sections below remain historical.
+They do not create unapproved scheduler, withholding or valuation requirements.
+
+| Area | Fresh evidence / correction | Remaining gate |
+|---|---|---|
+| Operational, party/bank reports and governed exports | Exact bounded frozen reports/exports and metadata remain implemented; report cancellation/confirmation checks are recorded | Target-scale plans/p95 and installed file delivery |
+| Navigation, dashboards, attachments | Allowlisted contextual links, capability-bound metrics and private attachment integration remain in candidate source | Installed Storage/native dialogs, full accessibility and owner review |
+| Inventory | Multi-receipt landed corrections, later consumption, count partitions, disposition and reservation maintenance remain implemented. Contract 51 now binds root selectors to access epochs and stores input-only count/disposition recovery | Installed/native valuation and original-command recovery, real contention and populated target-scale plans |
+| AR/AP and cross-module recovery | Exact retired/original mapping and immutable allocation correction candidates remain. Inventory adapters pass 35 checks; inventory root selectors pass 51 cases. Four new AP interactions cover exact proposal, dated statement, allocation correction and reversal | Full native access/restart and independent allocation contention |
+| Inventory recovery correction | Five failing regressions confirmed retained offline cost previews. Sanitized recovery preserves exact inputs, versions and sealed retry identity. Final 55 checks include 32 required-size/theme/density 200% renders and keyboard reload | Complete native process/store failure and owner visual acceptance |
+| Candidate database | 1,328 strict synthetic assertions remain: 991 finance/procurement, 155 inventory, 182 AR; all final rollback. Separate representative-plan stack passes 1,005 overlapping assertions and records eleven small-fixture plans | Genuine independent authenticated sessions; large-fixture plans/load/p95. Reservation plan has zero fixture rows; bank bases are separately labelled privileged |
+| Whole clients / coverage | Platform run passes 466. Current desktop passes 852 with 81 approved-golden failures. Domain remains 221 passes. Reviewed pure-domain branches are 642/677 (94.83%); changed Dart whole-file lines are 13,227/18,268 (72.41%), with no source mismatch or unmeasured file | Required 80% changed-overall gate remains open; further meaningful interaction coverage is underway |
+| Analyzers / goldens | Final whole desktop analyzer is clean; whole platform analyzer is clean. All 81 failures reproduce on preserved HEAD; 83/83 resulting images match byte/pixel exactly. No approved golden was overwritten | Rendering cause, approved visual regression and full native accessibility remain open |
+| Isolated Windows | New value-recovery copy compiled in 825.5 seconds; 308 source hashes matched current checkout at completion. Executable never launched | Installed native cold launch, authenticated critical paths and owner signoff |
+| Installation package | Tested 45-candidate dependency order, eight-phase rollback/native runbook and zero-breaking/eight-potential compatibility review remain prepared | Written owner acceptance of all eight warnings, concrete isolated target/restore point/resource budget, installation and native authorization |
+
+See the [inventory recovery review](../verification/remaining-wave3/inventory-recovery-review-20261001.md),
+[current coverage](../verification/remaining-wave3/coverage-value-final-reviewed-20261001.json),
+[golden comparison](../verification/remaining-wave3/golden-control-value-20261001.json)
+and [compiled copy](../verification/remaining-wave3/windows-build-20261001-value-recovery.json).
+These are candidate/test-engine/compilation evidence, not installed or
+authenticated native acceptance. Wave 3 is **not fully complete**. Independent
+authorized development verification continues before installation approval is
+requested for a concrete, reviewable package.
+
+## Historical continuation — 2026-09-30
+
+HEAD is `f9cc342815e2446fb3f26204d5e65e03c1b2a140`; the shared checkout remains
+dirty and unstaged with concurrent Wave 4 changes. The refreshed development
+ledger has 37 installed migrations through `20260929224939_wave4_private_hr`.
+The four installed finance-helper fingerprints remain unchanged. The **45
+ordered remaining Wave 3 candidates are unapplied**. No installation, production
+write, authentication change, acceptance executable launch or Credential Manager
+change has been performed.
+
+The [181-ID matrix](../verification/remaining-wave3/requirement-matrix-20260930.md)
+preserves every approved FR, AC, EC and NFR. Evidence presence does not establish
+complete verification or acceptance. The historical September 28 tables below
+are superseded for current development scope, and remain historical evidence.
+
+| Area | Current development evidence | Open work / acceptance |
+|---|---|---|
+| Operational/party/bank reports and governed exports | Frozen exact reports, complete bounded CSV/XLSX, scoped source metadata and no silent partial results are implemented in contracts 49 and 44 | Target-scale plans/p95 and installed file delivery |
+| Contextual navigation, dashboards and private attachments | Allowlisted source links, capability-bound metrics, stage/ready/reject attachment integration and current-scope checks | Installed Storage/file dialogs, native keyboard/accessibility and owner review |
+| Inventory extensions | Multi-receipt landed allocation/correction, held/transit/later consumption, 10,000-identity partitioning, disposition and governed reservation maintenance are implemented | Independent session races, target-scale plans, installed/native review |
+| AR/AP history and recovery | Retired/original mappings and immutable allocation corrections are implemented. Contracts 55–56 add typed/redacted reads and root-dialog access epochs; 60 adapter and 42 desktop access/recovery checks pass | Authenticated native recovery and genuine allocation contention |
+| Exact client validation | Contract 52 fixes negative/over-100 quotation header discounts and preserves mutually exclusive draft inputs; immutable snapshot reconstruction remains distinct | Native form walkthrough |
+| Observability and report waits | Contract 53 provides redacted diagnostics and bounded outbox depth. Contract 54 fixes valuation/budget confirmation and access epochs, and exposes progress/cancellation across frozen reports; focused checks and 16 report render cases pass | Installed diagnostics, genuine report p95 and native cancellation/recovery |
+| Candidate database | Latest 45-candidate stack passes 991 procurement/finance, 155 inventory and 182 AR assertions (1,328), strict finish and final rollback; 209 foundation/CRM/quotation/order assertions passed with the preceding 44-candidate stack | Independent-session/load execution and target-scale plans remain open; current dependency and compatibility review is recorded |
+| Client verification | 221 full domain tests pass. Reviewed 25-file pure-domain scope measures 642/677 branches (94.83%). Whole platform before contracts 55–56 passed 407; whole desktop before them passed 658 with 81 approved-golden failures | Changed-overall gate remains below 80% (64.89% before read-access additions); current full suites/coverage are running. Four exact procurement interaction checks pass |
+| Golden investigation | Unchanged HEAD reproduces all 81 failing cases; 83 resulting images match the current pre-read-access run byte-for-byte and pixel-for-pixel | Latest receivable fixture differences still need comparison; cause and visual acceptance remain open; approved goldens preserved |
+| Windows compile | Report-recovery copy compiled in 157.4 seconds, executable never launched; source drift is recorded because read-access changes followed the copy | Fresh read-access isolated compilation is running; compilation does not prove installed/native acceptance |
+| Release gates | Compatibility/rollback/native procedure is prepared; eight potential schema compatibility items require owner review | Installation, genuine sessions/load/p95, cold launch, native acceptance and owner signoff remain separate approvals |
+
+Stale entries below do not create extra requirements: FR-325 does not require an
+autonomous reservation expiry/retirement scheduler; FR-355 requires immutable
+serial-linked movement history; FR-381 requires tax treatment classification
+and statutory-review notice rather than an invented supplier withholding engine.
+The CI pin was corrected to Flutter 3.47.5 because committed desktop constraints
+already require Dart 3.13/Flutter 3.47. The isolated 3.44.7 diagnostic attempt failed
+dependency resolution; it provides no golden or native acceptance proof.
+
+Wave 3 is **not fully complete**. Development verification remains open as listed
+above. Installation/native approval will be requested only after a concrete,
+reviewable implementation and final dependency/compatibility/rollback package.
+
+Current ledger/API/helper refresh is [refresh-read-access-20260930.json](../verification/remaining-wave3/refresh-read-access-20260930.json).
+The 45-candidate manifests and eight-phase installation/rollback review are linked
+from the [runbook](../verification/remaining-wave3/migration-review-and-runbook-20260930.md).
+All eight potential compatibility changes require written owner review before an
+approved isolated installation. Independent-session and target-load harnesses have
+only passed offline self-tests; they have not connected or measured real p95.
+
+## Historical September 28 status
+
 Refreshed 2026-09-28 against `main` at
 `b51eec0dce3a73236f3460325394a4dc19e7a2ce`. Earlier Wave 3 source is preserved.
 Consolidated close review, governed exports, dimensions, read-plan improvements and

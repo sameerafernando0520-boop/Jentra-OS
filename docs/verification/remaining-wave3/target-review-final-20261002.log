@@ -1,0 +1,67 @@
+✖ tools\wave3\target-verification-preparation.test.mjs (113.8588ms)
+✖ tools\wave3\target_review_aging.test.mjs (35.9377ms)
+✖ tools\wave3\target_review_guards.test.mjs (30.3315ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 0
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 393.9263
+
+✖ failing tests:
+
+test at tools\wave3\target-verification-preparation.test.mjs:1:1
+✖ tools\wave3\target-verification-preparation.test.mjs (113.8588ms)
+  Error: spawn EPERM
+      at ChildProcess.spawn (node:internal/child_process:421:11)
+      at spawn (node:child_process:796:9)
+      at TestContext.<anonymous> (node:internal/test_runner/runner:398:19)
+      at FileTest.runInAsyncScope (node:async_hooks:214:14)
+      at FileTest.run (node:internal/test_runner/test:1106:25)
+      at FileTest.start (node:internal/test_runner/test:1003:17)
+      at runTestFile (node:internal/test_runner/runner:477:32)
+      at node:internal/test_runner/runner:769:25
+      at node:internal/per_context/primordials:559:37
+      at new Promise (<anonymous>) {
+    errno: -4048,
+    code: 'EPERM',
+    syscall: 'spawn'
+  }
+
+test at tools\wave3\target_review_aging.test.mjs:1:1
+✖ tools\wave3\target_review_aging.test.mjs (35.9377ms)
+  Error: spawn EPERM
+      at ChildProcess.spawn (node:internal/child_process:421:11)
+      at spawn (node:child_process:796:9)
+      at TestContext.<anonymous> (node:internal/test_runner/runner:398:19)
+      at FileTest.runInAsyncScope (node:async_hooks:214:14)
+      at FileTest.run (node:internal/test_runner/test:1106:25)
+      at FileTest.start (node:internal/test_runner/test:1003:17)
+      at runTestFile (node:internal/test_runner/runner:477:32)
+      at node:internal/test_runner/runner:769:25
+      at node:internal/per_context/primordials:559:37
+      at new Promise (<anonymous>) {
+    errno: -4048,
+    code: 'EPERM',
+    syscall: 'spawn'
+  }
+
+test at tools\wave3\target_review_guards.test.mjs:1:1
+✖ tools\wave3\target_review_guards.test.mjs (30.3315ms)
+  Error: spawn EPERM
+      at ChildProcess.spawn (node:internal/child_process:421:11)
+      at spawn (node:child_process:796:9)
+      at TestContext.<anonymous> (node:internal/test_runner/runner:398:19)
+      at FileTest.runInAsyncScope (node:async_hooks:214:14)
+      at FileTest.run (node:internal/test_runner/test:1106:25)
+      at FileTest.start (node:internal/test_runner/test:1003:17)
+      at runTestFile (node:internal/test_runner/runner:477:32)
+      at node:internal/test_runner/runner:769:25
+      at node:internal/per_context/primordials:559:37
+      at new Promise (<anonymous>) {
+    errno: -4048,
+    code: 'EPERM',
+    syscall: 'spawn'
+  }

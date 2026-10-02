@@ -1,0 +1,138 @@
+{
+  "schema": "agent-harness/state.v1",
+  "goal": "Complete and review all remaining approved synthetic Wave 4 developments in Jentra OS; preserve concurrent source and acceptance data; no unapproved installation, no Git commits or branch changes; never close missing acceptance evidence.",
+  "domain": "engineering",
+  "plan_file": ".agent-harness/wave4-20261002/plan.json",
+  "created_at": "2026-10-01T20:13:24Z",
+  "iteration": 3,
+  "max_loop_iterations": 20,
+  "status": "open",
+  "tasks": [
+    {
+      "id": "T1",
+      "skill": "agent-harness",
+      "objective": "Verify exact source-bound project domain/gateway/native implementation and recovery",
+      "verification": [
+        {
+          "cmd": "\"C:/Users/sheha/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe\" scripts/wave4/run_verification.py --task projects --verify-report",
+          "expect_exit": 0,
+          "kind": "machine-evidence"
+        }
+      ],
+      "max_attempts": 3,
+      "attempts": 1,
+      "status": "verified",
+      "evidence": [
+        {
+          "at": "2026-10-02T06:32:22Z",
+          "phase": "execute",
+          "exit_code": 1,
+          "attempt": 1,
+          "evidence": "Trusted project runner failed two actual calendar gateway projection tests: CivilDate compared by object identity. Domain checks pass10; platform analysis passes. Fix value comparison before retry."
+        },
+        {
+          "at": "2026-10-02T08:54:54Z",
+          "phase": "execute",
+          "exit_code": 0,
+          "attempt": 2,
+          "evidence": "Trusted project runner completed all six source-bound checks with exit 0: domain 10, gateway 18, native 26 and corresponding analyzers. Report logs and hashes are persisted."
+        },
+        {
+          "at": "2026-10-02T08:54:56Z",
+          "phase": "verify-run",
+          "checks": [
+            {
+              "cmd": "\"C:/Users/sheha/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe\" scripts/wave4/run_verification.py --task projects --verify-report",
+              "exit": 0,
+              "passed": true,
+              "tail": [
+                "{\"task\": \"projects\", \"verified\": true, \"report\": \"C:\\\\Users\\\\sheha\\\\Desktop\\\\Jentra OS\\\\.agent-harness\\\\wave4-20261002\\\\reports\\\\projects.json\"}"
+              ]
+            }
+          ],
+          "attempt": 2
+        }
+      ]
+    },
+    {
+      "id": "T2",
+      "skill": "agent-harness",
+      "objective": "Complete finance development, actual provider SQL, domain/gateway/native recovery and independent review",
+      "verification": [
+        {
+          "cmd": "MANUAL: Complete finance development, actual provider SQL, domain/gateway/native recovery and independent review; retain concrete machine and attributable acceptance evidence before verification.",
+          "expect_exit": 0,
+          "kind": "manual-evidence"
+        }
+      ],
+      "max_attempts": 3,
+      "attempts": 0,
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "T3",
+      "skill": "agent-harness",
+      "objective": "Complete service development, real source conservation, SLA/maintenance, native recovery and independent review",
+      "verification": [
+        {
+          "cmd": "MANUAL: Complete service development, real source conservation, SLA/maintenance, native recovery and independent review; retain concrete machine and attributable acceptance evidence before verification.",
+          "expect_exit": 0,
+          "kind": "manual-evidence"
+        }
+      ],
+      "max_attempts": 3,
+      "attempts": 0,
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "T4",
+      "skill": "agent-harness",
+      "objective": "Complete linked-source payroll corrections, finance conservation, native recovery and independent review",
+      "verification": [
+        {
+          "cmd": "MANUAL: Complete linked-source payroll corrections, finance conservation, native recovery and independent review; retain concrete machine and attributable acceptance evidence before verification.",
+          "expect_exit": 0,
+          "kind": "manual-evidence"
+        }
+      ],
+      "max_attempts": 3,
+      "attempts": 0,
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "T5",
+      "skill": "agent-harness",
+      "objective": "Complete integrated security/rollback/native regressions, rendered review and isolated Windows build",
+      "verification": [
+        {
+          "cmd": "MANUAL: Complete integrated security/rollback/native regressions, rendered review and isolated Windows build; retain concrete machine and attributable acceptance evidence before verification.",
+          "expect_exit": 0,
+          "kind": "manual-evidence"
+        }
+      ],
+      "max_attempts": 3,
+      "attempts": 0,
+      "status": "pending",
+      "evidence": []
+    },
+    {
+      "id": "T6",
+      "skill": "agent-harness",
+      "objective": "Complete installation, authenticated native/MFA, real contention/load, Credential Manager restart and owner acceptance",
+      "verification": [
+        {
+          "cmd": "MANUAL: Complete installation, authenticated native/MFA, real contention/load, Credential Manager restart and owner acceptance; retain concrete machine and attributable acceptance evidence before verification.",
+          "expect_exit": 0,
+          "kind": "manual-evidence"
+        }
+      ],
+      "max_attempts": 3,
+      "attempts": 0,
+      "status": "pending",
+      "evidence": []
+    }
+  ]
+}

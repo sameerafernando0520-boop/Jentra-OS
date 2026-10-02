@@ -1,6 +1,15 @@
 import 'package:jentra_domain/jentra_procurement.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+/// Bounded current material fields for an explicit local conflict comparison.
+abstract interface class ProcurementConflictGateway {
+  Future<Map<String, Object?>> conflictDocument(
+    TenantContext scope,
+    String kind,
+    String id,
+  );
+}
+
 abstract interface class ProcurementGateway {
   Future<CursorPage<Map<String, Object?>>> page(
     TenantContext scope, {
@@ -160,6 +169,7 @@ abstract interface class PurchaseReturnGateway {
 
 final class SupabaseProcurementGateway
     implements
+        ProcurementConflictGateway,
         ProcurementGateway,
         PurchaseOrderGateway,
         ProductUnitGateway,
@@ -170,6 +180,125 @@ final class SupabaseProcurementGateway
         PurchaseReturnGateway {
   SupabaseProcurementGateway(this.client);
   final SupabaseClient client;
+
+  @override
+  Future<Map<String, Object?>> conflictDocument(
+    TenantContext scope,
+    String kind,
+    String id,
+  ) => _read(() async {
+    _scope(scope);
+    final view = switch (kind) {
+      'purchase_requisition' => 'purchase_requisitions',
+      'purchase_order' => 'purchase_orders',
+      'supplier_bill' => 'supplier_bills',
+      _ => throw const FormatException('Unsupported conflict document.'),
+    };
+    if (!RegExp(
+      r'^[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$',
+    ).hasMatch(id)) {
+      throw const FormatException('Invalid conflict document identity.');
+    }
+    final rows = await client
+        .schema('api')
+        .from(view)
+        .select('tenant_id,legal_entity_id,branch_id,id,detail')
+        .eq('tenant_id', scope.tenantId)
+        .eq('legal_entity_id', scope.legalEntityId!)
+        .eq('branch_id', scope.branchId!)
+        .eq('id', id)
+        .limit(1);
+    if (rows.isEmpty) {
+      throw const DomainError(
+        code: 'READ_REJECTED',
+        message:
+            'The current document is unavailable. Recheck its scope and access.',
+      );
+    }
+    final row = rows.single;
+    if (row['tenant_id'] != scope.tenantId ||
+        row['legal_entity_id'] != scope.legalEntityId ||
+        row['branch_id'] != scope.branchId ||
+        row['id'] != id ||
+        row['detail'] is! Map) {
+      throw const FormatException('Conflict document scope mismatch.');
+    }
+    final detail = (row['detail'] as Map).cast<String, Object?>();
+    if (detail['id'] != id ||
+        detail['version'] is! int ||
+        (detail['lines'] != null &&
+            (detail['lines'] is! List ||
+                (detail['lines'] as List).length > 500))) {
+      throw const FormatException('Invalid current document.');
+    }
+    void exact(Object? value, [String? key]) {
+      if (value is Map) {
+        for (final entry in value.entries) {
+          exact(entry.value, entry.key.toString());
+        }
+      } else if (value is List) {
+        for (final item in value) {
+          exact(item);
+        }
+      } else if (value != null &&
+          key != null &&
+          RegExp(
+            r'(?:^|_)(?:amount|total|price|rate|quantity)$',
+          ).hasMatch(key) &&
+          (value is! String || !RegExp(r'^-?\d+(?:\.\d+)?$').hasMatch(value))) {
+        throw const FormatException(
+          'Current financial fields require exact strings.',
+        );
+      }
+    }
+
+    exact(detail);
+    return detail;
+  });
+  Future<T> _read<T>(Future<T> Function() action) async {
+    try {
+      return await action();
+    } on DomainError {
+      rethrow;
+    } on PostgrestException catch (error) {
+      const denied = {
+        'PERMISSION_DENIED',
+        'ACCESS_DENIED',
+        'MFA_REQUIRED',
+        'AUTHENTICATION_REQUIRED',
+      };
+      final code = denied.contains(error.message)
+          ? error.message
+          : error.code == '42501'
+          ? 'PERMISSION_DENIED'
+          : const {'PGRST301', 'PGRST302', 'PGRST303'}.contains(error.code)
+          ? 'AUTHENTICATION_REQUIRED'
+          : 'READ_REJECTED';
+      throw DomainError(
+        code: code,
+        message: denied.contains(code)
+            ? 'Evidence is unavailable with your current access. Recheck your role and scope.'
+            : 'The evidence read was rejected. Check the selected scope and filters.',
+      );
+    } on FormatException {
+      throw const DomainError(
+        code: 'READ_INVALID',
+        message: 'The response could not be verified. Refresh its evidence.',
+      );
+    } on TypeError {
+      throw const DomainError(
+        code: 'READ_INVALID',
+        message: 'The response could not be verified. Refresh its evidence.',
+      );
+    } catch (_) {
+      throw const DomainError(
+        code: 'READ_UNAVAILABLE',
+        message: 'Evidence could not be verified. Retry when connected.',
+        retryable: true,
+      );
+    }
+  }
+
   @override
   Future<CursorPage<Map<String, Object?>>> returns(
     TenantContext scope, {
@@ -185,7 +314,7 @@ final class SupabaseProcurementGateway
     String kind, {
     String? after,
     String search = '',
-  }) async {
+  }) => _read(() async {
     _scope(scope);
     final result = await client
         .schema('api')
@@ -201,14 +330,14 @@ final class SupabaseProcurementGateway
           },
         );
     return (result as Map).cast<String, Object?>();
-  }
+  });
 
   @override
   Future<Map<String, Object?>> returnSource(
     TenantContext scope,
     String kind,
     String sourceId,
-  ) async {
+  ) => _read(() async {
     _scope(scope);
     final result = await client
         .schema('api')
@@ -223,14 +352,14 @@ final class SupabaseProcurementGateway
           },
         );
     return (result as Map).cast<String, Object?>();
-  }
+  });
 
   @override
   Future<Map<String, Object?>> allocationRates(
     TenantContext scope,
     Map<String, Object?> filter, {
     String? after,
-  }) async {
+  }) => _read(() async {
     _scope(scope);
     final result = await client
         .schema('api')
@@ -247,14 +376,14 @@ final class SupabaseProcurementGateway
           },
         );
     return (result as Map).cast<String, Object?>();
-  }
+  });
 
   @override
   Future<Map<String, Object?>> itemDetail(
     TenantContext scope,
     String itemId, {
     String? after,
-  }) async {
+  }) => _read(() async {
     _scope(scope);
     final result = await client
         .schema('api')
@@ -269,14 +398,14 @@ final class SupabaseProcurementGateway
           },
         );
     return (result as Map).cast<String, Object?>();
-  }
+  });
 
   @override
   Future<Map<String, Object?>> allocationTargets(
     TenantContext scope,
     String sourceId, {
     String? after,
-  }) async {
+  }) => _read(() async {
     _scope(scope);
     final result = await client
         .schema('api')
@@ -291,7 +420,7 @@ final class SupabaseProcurementGateway
           },
         );
     return (result as Map).cast<String, Object?>();
-  }
+  });
 
   @override
   Future<Map<String, Object?>> correctAllocation(
@@ -312,7 +441,7 @@ final class SupabaseProcurementGateway
     required String currency,
     required String asOf,
     required List<int> buckets,
-  }) async {
+  }) => _read(() async {
     _scope(scope);
     final result = await client
         .schema('api')
@@ -329,14 +458,14 @@ final class SupabaseProcurementGateway
           },
         );
     return (result as Map).cast<String, Object?>();
-  }
+  });
 
   @override
   Future<Map<String, Object?>> payableItems(
     TenantContext scope,
     Map<String, Object?> filter, {
     String? after,
-  }) async {
+  }) => _read(() async {
     _scope(scope);
     final result = await client
         .schema('api')
@@ -355,7 +484,7 @@ final class SupabaseProcurementGateway
           },
         );
     return (result as Map).cast<String, Object?>();
-  }
+  });
 
   @override
   Future<CursorPage<Map<String, Object?>>> proposals(
@@ -468,7 +597,7 @@ final class SupabaseProcurementGateway
     TenantContext scope,
     String view, {
     String? after,
-  }) async {
+  }) => _read(() async {
     _scope(scope);
     var query = client
         .schema('api')
@@ -488,15 +617,16 @@ final class SupabaseProcurementGateway
       limit: 50,
       nextCursor: rows.length > 50 ? items.last['id'] as String : null,
     );
-  }
+  });
 
   @override
-  Future<List<Map<String, Object?>>> units(TenantContext scope) async {
-    final result = await references(scope, 'units');
-    return (result['items'] as List)
-        .map((r) => (r as Map).cast<String, Object?>())
-        .toList();
-  }
+  Future<List<Map<String, Object?>>> units(TenantContext scope) =>
+      _read(() async {
+        final result = await references(scope, 'units');
+        return (result['items'] as List)
+            .map((r) => (r as Map).cast<String, Object?>())
+            .toList();
+      });
 
   @override
   Future<Map<String, Object?>> references(
@@ -504,7 +634,7 @@ final class SupabaseProcurementGateway
     String resource, {
     String? after,
     String search = '',
-  }) async {
+  }) => _read(() async {
     _scope(scope);
     final result = await client
         .schema('api')
@@ -526,7 +656,7 @@ final class SupabaseProcurementGateway
           },
         );
     return (result as Map).cast<String, Object?>();
-  }
+  });
 
   @override
   Future<Map<String, Object?>> save(

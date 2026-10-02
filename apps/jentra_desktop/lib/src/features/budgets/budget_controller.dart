@@ -7,6 +7,7 @@ import 'package:jentra_platform/jentra_finance_platform.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../app_providers.dart';
+import '../shared/report_wait.dart';
 
 final budgetGatewayProvider = Provider<BudgetGateway?>((ref) => null);
 
@@ -59,6 +60,16 @@ final class BudgetController extends ChangeNotifier {
       verified = false,
       denied = false,
       _disposed = false;
+  int _evidenceEpoch = 0;
+  final reportWait = ReportWaitState();
+  bool current(int epoch) => !_disposed && online && epoch == _evidenceEpoch;
+  void cancelReportWait() {
+    if (!reportWait.cancel()) return;
+    _evidenceEpoch++;
+    _clearEvidence();
+    _emit();
+  }
+
   String? error,
       message,
       budgetCursor,
@@ -96,6 +107,7 @@ final class BudgetController extends ChangeNotifier {
 
   @override
   void dispose() {
+    _evidenceEpoch++;
     _disposed = true;
     super.dispose();
   }
@@ -119,6 +131,7 @@ final class BudgetController extends ChangeNotifier {
   void setOnline(bool value) {
     online = value;
     if (!online) {
+      _evidenceEpoch++;
       verified = false;
       _clearEvidence();
     }
@@ -126,7 +139,14 @@ final class BudgetController extends ChangeNotifier {
   }
 
   void _handle(Object failure) {
-    if (failure is DomainError && failure.code == 'PERMISSION_DENIED') {
+    if (failure is DomainError &&
+        const {
+          'PERMISSION_DENIED',
+          'ACCESS_DENIED',
+          'AUTHENTICATION_REQUIRED',
+          'MFA_REQUIRED',
+        }.contains(failure.code)) {
+      _evidenceEpoch++;
       denied = true;
       verified = false;
       _clearEvidence();
@@ -142,28 +162,36 @@ final class BudgetController extends ChangeNotifier {
 
   Future<void> _run(Future<void> Function() work) async {
     if (busy || _disposed) return;
+    final accessEpoch = _evidenceEpoch;
     busy = true;
     error = null;
     _emit();
     try {
       await work();
     } catch (failure) {
+      if (_disposed || !online || accessEpoch != _evidenceEpoch) return;
       _handle(failure);
     } finally {
+      reportWait.finish();
       busy = false;
       _emit();
     }
   }
 
   Future<void> initialize() => _run(() async {
+    final epoch = _evidenceEpoch;
     local = await drafts.load(scope, editorSlot);
     varianceLocal = await drafts.load(scope, varianceSlot);
-    if (!online) return;
+    if (!current(epoch)) return;
     _clearEvidence();
     await _loadAccounts();
+    if (!current(epoch)) return;
     await _loadPeriods();
+    if (!current(epoch)) return;
     await _loadBudgets();
+    if (!current(epoch)) return;
     await _loadReports();
+    if (!current(epoch)) return;
     if (_disposed) return;
     form = local?.form ?? _newBudget();
     varianceForm = varianceLocal?.form ?? _newVariance();
@@ -194,13 +222,14 @@ final class BudgetController extends ChangeNotifier {
 
   Future<void> _loadAccounts({bool more = false, String search = ''}) async {
     if (!online) return;
+    final epoch = _evidenceEpoch;
     final requestedSearch = more ? accountSearch : search.trim();
     final result = await gateway.accounts(
       scope,
       after: more ? accountCursor : null,
       search: requestedSearch,
     );
-    if (_disposed) return;
+    if (!current(epoch)) return;
     accounts = [
       if (more) ...accounts,
       for (final raw in result['items'] as List)
@@ -213,11 +242,12 @@ final class BudgetController extends ChangeNotifier {
 
   Future<void> _loadPeriods({bool more = false}) async {
     if (!online) return;
+    final epoch = _evidenceEpoch;
     final result = await gateway.periods(
       scope,
       after: more ? periodCursor : null,
     );
-    if (_disposed) return;
+    if (!current(epoch)) return;
     periods = [
       if (more) ...periods,
       for (final raw in result['items'] as List)
@@ -228,11 +258,12 @@ final class BudgetController extends ChangeNotifier {
 
   Future<void> _loadBudgets({bool more = false}) async {
     if (!online) return;
+    final epoch = _evidenceEpoch;
     final result = await gateway.budgets(
       scope,
       after: more ? budgetCursor : null,
     );
-    if (_disposed) return;
+    if (!current(epoch)) return;
     budgets = [
       if (more) ...budgets,
       for (final raw in result['items'] as List)
@@ -243,11 +274,12 @@ final class BudgetController extends ChangeNotifier {
 
   Future<void> _loadReports({bool more = false}) async {
     if (!online) return;
+    final epoch = _evidenceEpoch;
     final result = await gateway.reports(
       scope,
       after: more ? reportCursor : null,
     );
-    if (_disposed) return;
+    if (!current(epoch)) return;
     reports = [
       if (more) ...reports,
       for (final raw in result['items'] as List)
@@ -264,8 +296,11 @@ final class BudgetController extends ChangeNotifier {
   Future<void> moreReports() => _run(() => _loadReports(more: true));
   Future<void> refresh() => _run(() async {
     if (!online || denied || !verified) return;
+    final epoch = _evidenceEpoch;
     await _loadBudgets();
+    if (!current(epoch)) return;
     await _loadReports();
+    if (!current(epoch)) return;
     if (selectedReportId != null) await _loadPage(selectedReportId!);
   });
 
@@ -292,7 +327,7 @@ final class BudgetController extends ChangeNotifier {
     message = 'Encrypted budget and variance drafts saved.';
   });
   Future<bool> canLeave() async {
-    if (busy) return false;
+    if (busy) return reportWait.active && reportWait.cancelled;
     if (pending || variancePending || denied || !verified) return true;
     await saveEncrypted();
     return error == null;
@@ -548,6 +583,7 @@ final class BudgetController extends ChangeNotifier {
             : canManage)) {
       return;
     }
+    final epoch = _evidenceEpoch;
     var command = local?.pending;
     if (command == null) {
       _validateBudget(action);
@@ -565,10 +601,19 @@ final class BudgetController extends ChangeNotifier {
     } else if (command.envelope.payload['action'] != action) {
       return;
     }
+    if (!current(epoch) || !verified || denied) return;
     Map<String, Object?> result;
+    late Map<String, Object?> confirmed;
     try {
       result = await gateway.command(command.envelope);
-      await drafts.complete(scope, editorSlot, command.envelope.commandId);
+      confirmed = {...result, 'branch_id': result['budget_branch_id']};
+      await drafts.confirm(
+        scope,
+        editorSlot,
+        command.envelope.commandId,
+        form: confirmed,
+        expectedVersion: result['version'] as int,
+      );
     } on DomainError catch (failure) {
       await drafts.recordFailure(
         scope,
@@ -580,11 +625,12 @@ final class BudgetController extends ChangeNotifier {
       rethrow;
     }
     if (_disposed) return;
-    local = null;
-    form = {...result, 'branch_id': result['budget_branch_id']};
+    local = await drafts.load(scope, editorSlot);
+    if (_disposed) return;
+    if (!current(epoch) || denied) return;
+    form = confirmed;
     message = 'Budget ${result['status']} at revision ${result['revision']}.';
     try {
-      await _persistBudget();
       await _loadBudgets();
     } catch (failure) {
       _handle(failure);
@@ -650,6 +696,9 @@ final class BudgetController extends ChangeNotifier {
         varianceForm['status'] == 'generated') {
       return;
     }
+    reportWait.begin();
+    _emit();
+    final epoch = _evidenceEpoch;
     var command = varianceLocal?.pending;
     if (command == null) {
       _validateVariance();
@@ -667,10 +716,26 @@ final class BudgetController extends ChangeNotifier {
       );
       varianceLocal = await drafts.load(scope, varianceSlot);
     }
+    if (!current(epoch) || !verified || denied) return;
     Map<String, Object?> result;
+    late Map<String, Object?> confirmed;
     try {
+      reportWait.generating();
+      _emit();
+      if (reportWait.cancelled || !current(epoch)) return;
       result = await gateway.generate(command.envelope);
-      await drafts.complete(scope, varianceSlot, command.envelope.commandId);
+      confirmed = {
+        ...command.envelope.payload,
+        'report_id': result['id'],
+        'status': 'generated',
+      };
+      await drafts.confirm(
+        scope,
+        varianceSlot,
+        command.envelope.commandId,
+        form: confirmed,
+        expectedVersion: 0,
+      );
     } on DomainError catch (failure) {
       await drafts.recordFailure(
         scope,
@@ -682,17 +747,16 @@ final class BudgetController extends ChangeNotifier {
       rethrow;
     }
     if (_disposed) return;
-    varianceLocal = null;
-    varianceForm = {
-      ...varianceForm,
-      'report_id': result['id'],
-      'status': 'generated',
-    };
+    varianceLocal = await drafts.load(scope, varianceSlot);
+    if (_disposed) return;
+    if (denied) return;
+    varianceForm = confirmed;
+    if (!current(epoch)) return;
     summary = result;
     message = 'Variance saved with frozen posted-journal evidence.';
     try {
-      await _persistVariance();
       await _loadPage(result['id'] as String);
+      if (!current(epoch)) return;
       await _loadReports();
     } catch (failure) {
       _handle(failure);
@@ -702,7 +766,13 @@ final class BudgetController extends ChangeNotifier {
   Future<void> retryVariance() => generate();
 
   Future<void> _loadPage(String id, {bool more = false}) async {
-    if (!online) return;
+    if (!online || denied) return;
+    if (reportWait.active && reportWait.cancelled) return;
+    final epoch = _evidenceEpoch;
+    if (!reportWait.active) reportWait.begin();
+    reportWait.reading();
+    _emit();
+    if (reportWait.cancelled || !current(epoch)) return;
     final result = await gateway.page(
       scope,
       id,
@@ -710,7 +780,7 @@ final class BudgetController extends ChangeNotifier {
       offset: more ? nextOffset ?? 0 : 0,
       budgetLineId: budgetLineId,
     );
-    if (_disposed) return;
+    if (!current(epoch)) return;
     summary = (result['summary'] as Map).cast<String, Object?>();
     rows = [
       if (more) ...rows,

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_platform.dart';
@@ -12,6 +13,7 @@ import 'package:jentra_platform/jentra_platform.dart';
 import '../../app_providers.dart';
 import 'business_setup_controller.dart';
 import '../tenant/stock_opening_access.dart';
+import '../operations/operational_link.dart';
 
 class BusinessSetupScreen extends ConsumerStatefulWidget {
   const BusinessSetupScreen({this.initialResource, super.key});
@@ -170,9 +172,8 @@ class _PageHeader extends ConsumerWidget {
             const SizedBox(height: JentraSpacing.x1),
             Text(
               'Govern the records every Jentra workflow depends on.',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: context.jentraColors.textSecondary,
-              ),
+              style: Theme.of(context).textTheme.bodyLarge
+                  ?.copyWith(color: context.jentraColors.textSecondary),
             ),
           ],
         ),
@@ -258,9 +259,8 @@ class _ScopeStrip extends ConsumerWidget {
         const SizedBox(width: JentraSpacing.x3),
         Text(
           scope.legalEntity?.currencyCode ?? '—',
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            fontFamily: JentraTypography.monoFamily,
-          ),
+          style: Theme.of(context).textTheme.labelLarge
+              ?.copyWith(fontFamily: JentraTypography.monoFamily),
         ),
       ],
     ),
@@ -376,9 +376,8 @@ class _ResourceRail extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
             child: Text(
               state.category.description,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: context.jentraColors.textSecondary,
-              ),
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(color: context.jentraColors.textSecondary),
             ),
           ),
           for (final resource in resources)
@@ -621,9 +620,8 @@ class _ResourceToolbar extends ConsumerWidget {
                       state.resource.description,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: context.jentraColors.textSecondary,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall
+                          ?.copyWith(color: context.jentraColors.textSecondary),
                     ),
                   ],
                 ),
@@ -720,9 +718,8 @@ class _ResourceToolbar extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     'Offline mode: cached references and encrypted drafts remain available. Imports and server commands are paused.',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: JentraColors.warning,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall
+                        ?.copyWith(color: JentraColors.warning),
                   ),
                 ),
               ],
@@ -836,9 +833,8 @@ class _ResourceToolbar extends ConsumerWidget {
             document: document,
           );
       if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(outcome.message)));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(outcome.message)));
       }
     } on TabularFileException catch (error) {
       if (context.mounted) {
@@ -879,9 +875,7 @@ class _ResourceToolbar extends ConsumerWidget {
           .saveExport(
             suggestedName: fileName,
             bytes: bytes,
-            mimeType: format == 'csv'
-                ? 'text/csv'
-                : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            mimeType: format == 'csv' ? 'text/csv' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
           );
       if (location == null || !context.mounted) return;
       final outcome = await ref
@@ -1084,6 +1078,16 @@ class _ResourceGrid extends ConsumerWidget {
                               .markNotificationRead(state.items[index]),
                         )
                       : null,
+                  onOpenSource:
+                      state.resource == BusinessSetupResource.notifications &&
+                          state.canView &&
+                          state.isOnline &&
+                          operationalNotificationLocation(state.items[index]) !=
+                              null
+                      ? () => context.push(
+                          operationalNotificationLocation(state.items[index])!,
+                        )
+                      : null,
                 ),
               ),
               if (state.loading)
@@ -1114,9 +1118,8 @@ class _ResourceGrid extends ConsumerWidget {
       ),
     );
     if (outcome != null && context.mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(outcome.message)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(outcome.message)));
     }
   }
 
@@ -1243,6 +1246,7 @@ class _SetupRow extends StatelessWidget {
     this.onReserve,
     this.onMarkRead,
     this.onOpenAttachment,
+    this.onOpenSource,
   });
 
   final SetupRecord record;
@@ -1251,6 +1255,7 @@ class _SetupRow extends StatelessWidget {
   final VoidCallback? onReserve;
   final VoidCallback? onMarkRead;
   final VoidCallback? onOpenAttachment;
+  final VoidCallback? onOpenSource;
 
   @override
   Widget build(BuildContext context) => Semantics(
@@ -1290,9 +1295,8 @@ class _SetupRow extends StatelessWidget {
                   record.detail,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: context.jentraColors.textSecondary,
-                  ),
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: context.jentraColors.textSecondary),
                 ),
               ),
               SizedBox(
@@ -1331,6 +1335,8 @@ class _SetupRow extends StatelessWidget {
                         onMarkRead?.call();
                       case 'open_attachment':
                         onOpenAttachment?.call();
+                      case 'open_source':
+                        onOpenSource?.call();
                     }
                   },
                   itemBuilder: (context) => [
@@ -1384,6 +1390,16 @@ class _SetupRow extends StatelessWidget {
                           contentPadding: EdgeInsets.zero,
                           leading: Icon(Icons.lock_open_outlined, size: 18),
                           title: Text('Open signed link'),
+                        ),
+                      ),
+                    if (onOpenSource != null)
+                      const PopupMenuItem(
+                        value: 'open_source',
+                        child: ListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.zero,
+                          leading: Icon(Icons.description_outlined, size: 18),
+                          title: Text('Open source document'),
                         ),
                       ),
                   ],
@@ -1968,9 +1984,8 @@ class _ConflictNotice extends StatelessWidget {
         const SizedBox(height: JentraSpacing.x2),
         Text(
           'Draft version ${localVersion ?? 'unknown'} · Server version ${serverVersion ?? 'unavailable'}',
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            fontFamily: JentraTypography.monoFamily,
-          ),
+          style: Theme.of(context).textTheme.labelMedium
+              ?.copyWith(fontFamily: JentraTypography.monoFamily),
         ),
         const SizedBox(height: JentraSpacing.x3),
         Wrap(
@@ -2132,9 +2147,8 @@ class _ImportPreviewDialog extends StatelessWidget {
           const SizedBox(height: JentraSpacing.x3),
           Text(
             'Local field checks run before apply. The server then validates permissions and references and applies the file atomically; any rejected row rolls back the full import.',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: context.jentraColors.textSecondary,
-            ),
+            style: Theme.of(context).textTheme.bodySmall
+                ?.copyWith(color: context.jentraColors.textSecondary),
           ),
         ],
       ),
@@ -2203,9 +2217,8 @@ class _AttachmentTargetDialogState extends State<_AttachmentTargetDialog> {
           const SizedBox(height: JentraSpacing.x4),
           Text(
             'PDF, PNG, JPEG, CSV, or XLSX · maximum 25 MiB. The file stays private and is confirmed only after upload succeeds.',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: context.jentraColors.textSecondary,
-            ),
+            style: Theme.of(context).textTheme.bodySmall
+                ?.copyWith(color: context.jentraColors.textSecondary),
           ),
         ],
       ),
@@ -2660,8 +2673,7 @@ extension on BusinessSetupResource {
         wide: true,
         multiline: true,
         json: true,
-        defaultValue:
-            '{"states":["draft","submitted","approved","rejected","posted","settled","fulfilled","closed","cancelled","reversed"],"transitions":[["draft","submitted"],["draft","cancelled"],["submitted","approved"],["submitted","rejected"],["submitted","cancelled"],["rejected","draft"],["rejected","cancelled"],["approved","posted"],["approved","cancelled"],["posted","settled"],["posted","fulfilled"],["posted","closed"],["posted","reversed"],["settled","closed"],["fulfilled","closed"]]}',
+        defaultValue: '{"states":["draft","submitted","approved","rejected","posted","settled","fulfilled","closed","cancelled","reversed"],"transitions":[["draft","submitted"],["draft","cancelled"],["submitted","approved"],["submitted","rejected"],["submitted","cancelled"],["rejected","draft"],["rejected","cancelled"],["approved","posted"],["approved","cancelled"],["posted","settled"],["posted","fulfilled"],["posted","closed"],["posted","reversed"],["settled","closed"],["fulfilled","closed"]]}',
       ),
     ],
     BusinessSetupResource.approvalMatrixSteps => const [

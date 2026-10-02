@@ -1,0 +1,24 @@
+{
+  "type": "database",
+  "pattern": "schema_change",
+  "source": "Jentra development xpdoufauvrbdmxgngetv installed ledger through 20260926082441",
+  "target": "Same development baseline plus approved Wave 3 candidates; installation prohibited pending specific approval",
+  "description": "Add exact scoped commerce, inventory and finance APIs, history and reports while preserving concurrent Wave 4 and stock-opening acceptance.",
+  "constraints": {
+    "max_downtime_minutes": 0,
+    "dependencies": [
+      "stock-opening acceptance boundary",
+      "concurrent Wave 4 APIs",
+      "existing exact finance posting and encrypted recovery"
+    ],
+    "special_requirements": [
+      "zero_data_loss",
+      "immutable_posted_history",
+      "rollback_before_persistent_install",
+      "native_acceptance_separate"
+    ]
+  },
+  "schema_changes": [],
+  "tables_to_migrate": [],
+  "rollback_strategy": "Abort the candidate transaction before installation; after an approved installation, restore an isolated pre-install development snapshot or roll forward under a separately approved recovery plan. Do not drop live ledger history."
+}

@@ -19,7 +19,10 @@ permissions. Mutations require MFA. Current membership, People entitlement,
 tenant/entity/branch and employee ancestry are checked before every read, command,
 replay and trusted document request. HR subjects expose only IDs/code/display name
 under one of these dedicated capabilities, without depending on directory grants.
-Private history pages have a hard bound of 50.
+Private history pages have a hard bound of 50. Erasure status is a separate,
+minimal MFA-protected projection of the actual pending/leased/complete job;
+completion identifies a system actor rather than implying that an HR user performed
+physical deletion.
 
 ## Retention, storage and trusted worker
 
@@ -51,13 +54,20 @@ IDs/checksum/size/MIME permit safe retries after uncertainty; no claim of a sing
 cross-service transaction. Document bytes, paths and access URLs never enter drafts.
 At most 50 documents per employee keep erasure bounded.
 
-Worker jobs lease at most 50 employees, expire access before deleting content,
+Worker jobs lease at most 50 employees, exclude held entities before the lease
+limit, expire access before deleting content,
 delete through the Storage API, then redact SQL payloads/paths. Failed leases retry
 with the same job/path identities. Holds and jobs serialize with employee and
 entity locks. System erasure has truthful `actor_kind=system` evidence; it does not
 fabricate an Auth user to satisfy generic audit's non-null actor constraint.
 Requested erasure records its real initiating actor. Minimal keyed digests and
 attributable metadata survive; contact/review text and document objects do not.
+
+An export preparation is a separate MFA-protected command. It freezes only a
+source kind, source version, immutable revision ID and digest in the private export
+table; no private body enters its generic receipt. Actual content retrieval checks
+the current actor, export and underlying view capabilities, MFA and expiry again,
+then reads that frozen revision. Export and erasure are independent authorities.
 
 ## Reviews and exact account links
 
@@ -86,10 +96,12 @@ own-command receipt query may resolve uncertainty. Documents keep metadata only.
 Visible text/bytes clear on access/context loss and stale async responses are
 discarded. No private values are interpolated into logs, errors or generic search.
 
-Native workspaces expose independent contact/document/review/link/retention panes,
+Native workspaces expose independent contact/document/review/link/retention/erasure panes,
 scoped named pickers, loading/empty/denied/unavailable states, revision comparison,
 explicit sealed retry and explicit export. Tests cover security/PII redaction,
 retention readiness/holds/erasure, link identity/expiry/revocation, independent
-review decisions, exact recovery and late failure atomicity. Node tests exercise
-injected trusted handlers; Deno compilation, deployed worker/storage, authenticated
-native use, real OS-keystore restart and contention are separate evidence.
+review decisions, exact recovery and late failure atomicity. PDF preview uses an
+in-memory byte source and closes it on disposal; the preview has no external URL.
+Node tests exercise injected trusted handlers; Deno compilation, deployed
+worker/storage, authenticated native use, real OS-keystore restart and contention
+are separate evidence.

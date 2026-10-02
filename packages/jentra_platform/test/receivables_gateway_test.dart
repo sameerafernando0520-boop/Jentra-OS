@@ -17,16 +17,19 @@ void main() {
   late SupabaseReceivablesGateway gateway;
   final requests = <http.Request>[];
   Object? response;
+  Object? transportFailure;
   var status = 200;
   setUp(() {
     requests.clear();
     response = [];
+    transportFailure = null;
     status = 200;
     client = SupabaseClient(
       'https://example.test',
       'test',
       httpClient: MockClient((r) async {
         requests.add(r);
+        if (transportFailure != null) throw transportFailure!;
         return http.Response(
           jsonEncode(response),
           status,
@@ -148,4 +151,180 @@ void main() {
     expect(body['p_as_of'], '2026-09-06');
     expect(body['p_buckets'], [15, 30, 60]);
   });
+
+  final reads = <String, Future<Object?> Function()>{
+    'register': () => gateway.page(scope, ReceivableKind.invoice),
+    'document': () => gateway.find(scope, ReceivableKind.invoice, 'invoice'),
+    'references': () => gateway.references(scope, 'parties'),
+    'statement': () =>
+        gateway.statement(scope, 'customer', 'USD', '2026-09-06', [15, 30, 60]),
+  };
+  test(
+    'document lookup is bounded and rejects missing or ambiguous evidence',
+    () async {
+      response = [];
+      await expectLater(
+        gateway.find(scope, ReceivableKind.invoice, 'invoice'),
+        throwsA(
+          isA<ReceivableFailure>().having((e) => e.code, 'code', 'NOT_FOUND'),
+        ),
+      );
+      expect(requests.single.url.queryParameters['limit'], '2');
+      response = [
+        {'detail': {}},
+        {'detail': {}},
+      ];
+      await expectLater(
+        gateway.find(scope, ReceivableKind.invoice, 'invoice'),
+        throwsA(
+          isA<ReceivableFailure>().having(
+            (e) => e.code,
+            'code',
+            'READ_INVALID',
+          ),
+        ),
+      );
+    },
+  );
+  for (final read in reads.entries) {
+    test(
+      '${read.key} normalizes permission denial and hides server details',
+      () async {
+        status = 403;
+        response = {
+          'code': '42501',
+          'message': 'SECRET table and customer identity',
+          'details': 'SECRET scope',
+          'hint': 'SECRET hint',
+        };
+        await expectLater(
+          read.value(),
+          throwsA(
+            isA<ReceivableFailure>()
+                .having((e) => e.code, 'code', 'PERMISSION_DENIED')
+                .having((e) => e.definite, 'definite', true)
+                .having(
+                  (e) => e.toString(),
+                  'public message',
+                  isNot(contains('SECRET')),
+                ),
+          ),
+        );
+      },
+    );
+    test(
+      '${read.key} normalizes transport uncertainty without private exceptions',
+      () async {
+        transportFailure = StateError('SECRET socket and customer identity');
+        await expectLater(
+          read.value(),
+          throwsA(
+            isA<ReceivableFailure>()
+                .having((e) => e.code, 'code', 'READ_UNAVAILABLE')
+                .having(
+                  (e) => e.toString(),
+                  'public message',
+                  isNot(contains('SECRET')),
+                ),
+          ),
+        );
+      },
+    );
+  }
+  for (final code in ['PGRST301', 'PGRST302', 'PGRST303']) {
+    test('$code becomes a fixed authentication read state', () async {
+      status = 401;
+      response = {
+        'code': code,
+        'message': 'SECRET token claims',
+        'details': null,
+        'hint': null,
+      };
+      await expectLater(
+        gateway.page(scope, ReceivableKind.invoice),
+        throwsA(
+          isA<ReceivableFailure>()
+              .having((e) => e.code, 'code', 'AUTHENTICATION_REQUIRED')
+              .having(
+                (e) => e.toString(),
+                'public message',
+                isNot(contains('SECRET')),
+              ),
+        ),
+      );
+    });
+  }
+  test('known MFA denial is preserved without private diagnostics', () async {
+    status = 403;
+    response = {
+      'code': 'P0001',
+      'message': 'MFA_REQUIRED',
+      'details': 'SECRET claims',
+      'hint': null,
+    };
+    await expectLater(
+      gateway.references(scope, 'parties'),
+      throwsA(
+        isA<ReceivableFailure>()
+            .having((e) => e.code, 'code', 'MFA_REQUIRED')
+            .having(
+              (e) => e.toString(),
+              'public message',
+              isNot(contains('SECRET')),
+            ),
+      ),
+    );
+  });
+  test('unknown server rejection has a fixed public read state', () async {
+    status = 500;
+    response = {
+      'code': 'PGRST000',
+      'message': 'SECRET relation error',
+      'details': null,
+      'hint': null,
+    };
+    await expectLater(
+      gateway.statement(scope, 'customer', 'USD', '2026-09-06', [15, 30, 60]),
+      throwsA(
+        isA<ReceivableFailure>()
+            .having((e) => e.code, 'code', 'READ_REJECTED')
+            .having(
+              (e) => e.toString(),
+              'public message',
+              isNot(contains('SECRET')),
+            ),
+      ),
+    );
+  });
+  test(
+    'malformed statement and register evidence cannot be accepted',
+    () async {
+      response = [];
+      await expectLater(
+        gateway.statement(scope, 'customer', 'USD', '2026-09-06', [15, 30, 60]),
+        throwsA(
+          isA<ReceivableFailure>().having(
+            (e) => e.code,
+            'code',
+            'READ_INVALID',
+          ),
+        ),
+      );
+      response = [
+        {'detail': 'SECRET malformed object'},
+      ];
+      await expectLater(
+        gateway.page(scope, ReceivableKind.invoice),
+        throwsA(
+          isA<ReceivableFailure>()
+              .having((e) => e.code, 'code', 'READ_INVALID')
+              .having(
+                (e) => e.toString(),
+                'public message',
+                isNot(contains('SECRET')),
+              ),
+        ),
+      );
+    },
+  );
 }

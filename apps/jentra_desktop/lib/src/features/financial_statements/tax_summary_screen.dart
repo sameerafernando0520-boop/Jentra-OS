@@ -1,3 +1,5 @@
+import '../shared/report_wait.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -61,8 +63,7 @@ class TaxSummaryWorkspace extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                c.error ??
-                    'Connect to verify finance access and restore the encrypted tax request.',
+                c.error ?? 'Connect to verify finance access and restore the encrypted tax request.',
               ),
               if (c.busy) const CircularProgressIndicator(),
               TextButton(
@@ -116,7 +117,13 @@ class TaxSummaryWorkspace extends StatelessWidget {
               const SizedBox(height: 12),
               Text(c.message!),
             ],
-            if (c.busy) const LinearProgressIndicator(),
+            if (c.reportWait.active)
+              ReportWaitIndicator(
+                state: c.reportWait,
+                onCancel: c.cancelReportWait,
+              )
+            else if (c.busy)
+              const LinearProgressIndicator(),
             const SizedBox(height: 24),
             Text(
               'Generate a tax review',

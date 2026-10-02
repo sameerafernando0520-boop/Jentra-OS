@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_receivables.dart';
 import 'package:jentra_platform/jentra_receivables_platform.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../app_providers.dart';
 
 final receivablesRepositoryProvider = Provider<ReceivablesRepository?>(
@@ -69,6 +71,16 @@ final class ReceivablesController extends ChangeNotifier {
   ReceivableLocalDraft? local;
   CursorPage<ReceivableDocument> page = CursorPage(items: [], limit: 50);
   int epoch = 0;
+  int _readAccessEpoch = 0;
+  int get readAccessEpoch => _readAccessEpoch;
+  bool currentRead(int value) => active && online && value == _readAccessEpoch;
+  void invalidateReadEvidence() {
+    _readAccessEpoch++;
+    document = null;
+    page = CursorPage(items: [], limit: 50);
+    _emit();
+  }
+
   Future<void> _saveTail = Future<void>.value();
   bool saving = false;
   bool localSaveFailed = false;
@@ -90,11 +102,13 @@ final class ReceivablesController extends ChangeNotifier {
 
   void setOnline(bool value) {
     online = value;
+    if (!online) invalidateReadEvidence();
     _emit();
   }
 
   @override
   void dispose() {
+    _readAccessEpoch++;
     _disposed = true;
     notifyListeners();
     super.dispose();
@@ -102,6 +116,7 @@ final class ReceivablesController extends ChangeNotifier {
 
   Future<void> _run(Future<void> Function() work) async {
     if (busy || _disposed) return;
+    final access = readAccessEpoch;
     busy = true;
     error = null;
     _emit();
@@ -110,7 +125,19 @@ final class ReceivablesController extends ChangeNotifier {
       if (_disposed) return;
       await work();
     } catch (e) {
-      error = e.toString();
+      if (!active || access != readAccessEpoch) return;
+      if (e is ReceivableFailure &&
+          const {
+            'PERMISSION_DENIED',
+            'MFA_REQUIRED',
+            'AUTHENTICATION_REQUIRED',
+            'ACCESS_DENIED',
+          }.contains(e.code)) {
+        invalidateReadEvidence();
+      }
+      error = e is ReceivableFailure || e is FormatException
+          ? e.toString()
+          : 'Evidence could not be verified. Retry when connected.';
     } finally {
       busy = false;
       _emit();
@@ -119,13 +146,14 @@ final class ReceivablesController extends ChangeNotifier {
 
   Future<void> refresh({bool more = false}) => _run(() async {
     if (!online || !kind.canRead(capabilities)) return;
+    final access = readAccessEpoch;
     final next = await repository.page(
       scope,
       kind,
       cursor: more ? page.nextCursor : null,
       status: statusFilter,
     );
-    if (_disposed) return;
+    if (!currentRead(access)) return;
     page = more
         ? CursorPage(
             items: [...page.items, ...next.items],
@@ -148,10 +176,13 @@ final class ReceivablesController extends ChangeNotifier {
 
   Future<void> open(ReceivableDocument value) => _run(() async {
     if (form != null || pending) return;
+    final access = readAccessEpoch;
     kind = value.kind;
     slot = '${kind.wire}:${value.id}';
-    document = online ? await repository.find(scope, kind, value.id) : value;
+    final next = online ? await repository.find(scope, kind, value.id) : null;
     local = await drafts.load(scope, slot!);
+    if (_disposed) return;
+    document = currentRead(access) ? next : null;
     form = local?.form;
     epoch++;
   });
@@ -369,6 +400,8 @@ final class ReceivablesController extends ChangeNotifier {
     Map<String, Object?> payload,
     int? version,
   ) async {
+    final access = readAccessEpoch;
+    if (!currentRead(access)) return;
     if (form != null) {
       // A failed autosave can leave an older encrypted form on disk. Persist
       // the current fields before preparing a retry envelope or dispatching.
@@ -380,11 +413,15 @@ final class ReceivablesController extends ChangeNotifier {
       await drafts.save(scope, slot!, document!.toDraft(), version);
     }
     local = await drafts.prepare(scope, slot!, rpc, payload, version);
-    await _dispatch(local!);
+    await _dispatch(local!, originatingAccess: access);
   }
 
-  Future<void> _dispatch(ReceivableLocalDraft saved) async {
-    if (_disposed) return;
+  Future<void> _dispatch(
+    ReceivableLocalDraft saved, {
+    int? originatingAccess,
+  }) async {
+    final access = originatingAccess ?? readAccessEpoch;
+    if (!currentRead(access)) return;
     final savedSlot = slot!, envelope = saved.envelope;
     try {
       final result = await repository.command(saved.rpc, envelope);
@@ -398,14 +435,29 @@ final class ReceivablesController extends ChangeNotifier {
           : ReceivableDocument(receivableMap(result['entity']));
       await drafts.complete(scope, savedSlot, envelope.commandId);
       if (_disposed) return;
-      document = next;
+      document = currentRead(access) ? next : null;
       local = null;
       form = null;
       epoch++;
       message = 'Confirmed · request ${result['request_id']}';
+      if (!currentRead(access)) return;
       try {
-        page = await repository.page(scope, kind, status: statusFilter);
-      } catch (_) {
+        final refreshed = await repository.page(
+          scope,
+          kind,
+          status: statusFilter,
+        );
+        if (currentRead(access)) page = refreshed;
+      } catch (e) {
+        if (!currentRead(access)) return;
+        if (e is ReceivableFailure && const {
+          'PERMISSION_DENIED', 'ACCESS_DENIED', 'MFA_REQUIRED',
+          'AUTHENTICATION_REQUIRED',
+        }.contains(e.code)) {
+          invalidateReadEvidence();
+          error = e.toString();
+          return;
+        }
         message = '$message · refresh the register when connected';
       }
     } catch (e) {
@@ -416,7 +468,16 @@ final class ReceivablesController extends ChangeNotifier {
               'Could not verify the result. Retry the saved command.',
             );
       await drafts.failure(scope, savedSlot, envelope.commandId, failure);
-      if (!_disposed) {
+      if (currentRead(access) &&
+          const {
+            'PERMISSION_DENIED',
+            'ACCESS_DENIED',
+            'MFA_REQUIRED',
+            'AUTHENTICATION_REQUIRED',
+          }.contains(failure.code)) {
+        invalidateReadEvidence();
+      }
+      if (currentRead(access)) {
         local = await drafts.load(scope, savedSlot);
         error = failure.toString();
       }

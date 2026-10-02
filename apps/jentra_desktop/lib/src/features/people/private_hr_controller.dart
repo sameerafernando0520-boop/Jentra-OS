@@ -8,7 +8,15 @@ import 'package:jentra_platform/jentra_people_platform.dart';
 import 'package:uuid/uuid.dart';
 import '../../app_providers.dart';
 
-enum PrivateHrView { contacts, documents, reviews, links, retention, myAccount }
+enum PrivateHrView {
+  contacts,
+  documents,
+  reviews,
+  links,
+  erasure,
+  retention,
+  myAccount,
+}
 
 final privateHrRepositoryProvider = Provider<HrRepository?>((ref) => null);
 final privateHrFilesProvider = Provider<HrFiles>(
@@ -82,6 +90,7 @@ final class PrivateHrController extends ChangeNotifier {
   String? error,
       message,
       cursor,
+      inboxCursor,
       historyCursor,
       subjectCursor,
       preparedExportId;
@@ -108,6 +117,7 @@ final class PrivateHrController extends ChangeNotifier {
     if (has('people.reviews.view') || has('people.reviews.manage'))
       PrivateHrView.reviews,
     if (has('people.account_links.manage')) PrivateHrView.links,
+    if (has('people.hr.erase')) PrivateHrView.erasure,
     if (has('people.hr.retention.manage')) PrivateHrView.retention,
     PrivateHrView.myAccount,
   ];
@@ -122,6 +132,7 @@ final class PrivateHrController extends ChangeNotifier {
           ? 'people.reviews.view'
           : 'people.reviews.manage',
     PrivateHrView.links => 'people.account_links.manage',
+    PrivateHrView.erasure => 'people.hr.erase',
     _ => null,
   };
   String? get employeeId =>
@@ -198,12 +209,20 @@ final class PrivateHrController extends ChangeNotifier {
         'AUTHENTICATION_REQUIRED',
       }.contains(e.code);
   Future<void> _run(Future<void> Function() work) async {
+    final expired = _formExpiry != null && !_formExpiry!.isAfter(clock());
+    if (expired) {
+      _clearForm();
+      closePreview();
+      message =
+          'Private draft text expired after 24 hours. Resolve its minimal receipt in recovery.';
+    }
     if (!current || busy) return;
     busy = true;
     error = null;
     _notify();
     try {
       _connected();
+      if (expired) await _recover();
       await work();
     } catch (e) {
       if (_denied(e)) {
@@ -269,12 +288,14 @@ final class PrivateHrController extends ChangeNotifier {
     }
     await repository.authorize(
       scope,
-      form?['employee_id'] as String? ??
-          (previewDocument != null ? subject?.id : null),
+      form?['employee_id'] as String? ?? subject?.id ?? selfIdentity?.id,
       action == null
           ? (previewDocument != null
                 ? 'people.hr.documents.view'
-                : subjectCapability ?? 'people.view')
+                : subjectCapability ??
+                      (selfIdentity != null
+                          ? 'people.self.view'
+                          : 'people.view'))
           : HrCommands.capability(action!),
     );
   });
@@ -328,7 +349,7 @@ final class PrivateHrController extends ChangeNotifier {
       final proposals = await repository.page(scope, HrCollection.inbox);
       if (!current) return;
       inbox = proposals.items;
-      cursor = proposals.nextCursor;
+      inboxCursor = proposals.nextCursor;
       if (has('people.self.view')) {
         try {
           final identity = await repository.self(scope);
@@ -340,7 +361,10 @@ final class PrivateHrController extends ChangeNotifier {
             HrCollection.reviews,
             employee: identity.id,
           );
-          if (current) rows = shared.items;
+          if (current) {
+            rows = shared.items;
+            cursor = shared.nextCursor;
+          }
         } on DomainError catch (e) {
           if (e.code != 'SELF_LINK_REQUIRED') rethrow;
           selfIdentity = null;
@@ -388,6 +412,7 @@ final class PrivateHrController extends ChangeNotifier {
       final collection = switch (view) {
         PrivateHrView.documents => HrCollection.documents,
         PrivateHrView.links => HrCollection.links,
+        PrivateHrView.erasure => HrCollection.erasure,
         _ => HrCollection.reviews,
       };
       if (view == PrivateHrView.reviews && !has('people.reviews.view')) return;
@@ -405,15 +430,15 @@ final class PrivateHrController extends ChangeNotifier {
 
   Future<void> moreRows() => _run(() => _loadSubject(more: true));
   Future<void> moreInbox() => _run(() async {
-    if (view != PrivateHrView.myAccount || cursor == null) return;
+    if (view != PrivateHrView.myAccount || inboxCursor == null) return;
     final page = await repository.page(
       scope,
       HrCollection.inbox,
-      after: cursor,
+      after: inboxCursor,
     );
     if (current) {
       inbox = [...inbox, ...page.items];
-      cursor = page.nextCursor;
+      inboxCursor = page.nextCursor;
     }
   });
   Future<List<HrRecord>> choices(String query, {String? after}) async {

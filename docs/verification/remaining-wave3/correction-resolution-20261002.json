@@ -1,0 +1,41 @@
+{
+  "resolved_findings": {
+    "material_conflict_comparison": {
+      "finding": "Scoped current/local material comparison, fresh capability/epoch and explicit reload confirmation now implemented for requisition/order/bill editors; no automatic merge, immutable pending input.",
+      "source_evidence": [
+        "docs/blueprint/58_WAVE3_CONFLICT_MATERIAL_FIELDS_CONTRACT.md",
+        "packages/jentra_domain/lib/src/procurement.dart",
+        "packages/jentra_platform/lib/src/supabase_procurement_gateway.dart",
+        "apps/jentra_desktop/lib/src/features/procurement/conflict_comparison.dart",
+        "apps/jentra_desktop/lib/src/features/procurement/procurement_controller.dart",
+        "apps/jentra_desktop/lib/src/features/procurement/purchase_order_controller.dart",
+        "apps/jentra_desktop/lib/src/features/procurement/supplier_bill_controller.dart",
+        "apps/jentra_desktop/test/conflict_comparison_interaction_test.dart"
+      ],
+      "verification_evidence": [
+        "build/remaining-wave3/conflict-comparison-second-20261002.log",
+        "build/remaining-wave3/conflict-adapters-final-20261002.log",
+        "build/remaining-wave3/desktop-full-20261002.log"
+      ]
+    },
+    "local_storage": {
+      "finding": "Typed redacted FULL/unavailable secure persistence preserves in-memory fields, failed-edit navigation gate and exact retry. Actual SQLite capacity/commit/key tests plus quotation/order caller tests establish no pre-save authoritative dispatch.",
+      "source_evidence": [
+        "docs/blueprint/57_WAVE3_LOCAL_DRAFT_STORAGE_FAILURE_CONTRACT.md",
+        "packages/jentra_platform/lib/src/local_draft_storage_failure.dart",
+        "packages/jentra_platform/lib/src/draft_repository.dart",
+        "packages/jentra_platform/test/local_draft_storage_failure_test.dart",
+        "apps/jentra_desktop/lib/src/features/sales/quotation_controller.dart",
+        "apps/jentra_desktop/lib/src/features/sales/sales_order_controller.dart",
+        "apps/jentra_desktop/test/sales_local_storage_failure_test.dart"
+      ],
+      "verification_evidence": [
+        "docs/verification/remaining-wave3/local-draft-storage-final-20261002.log",
+        "build/remaining-wave3/conflict-adapters-final-20261002.log",
+        "build/remaining-wave3/sales-storage-final-20261002.log",
+        "build/remaining-wave3/desktop-full-20261002.log"
+      ]
+    }
+  },
+  "boundary": "Only executed synthetic correction checks close development findings. Earlier failures remain preserved; no installed/native/full-security acceptance inferred."
+}

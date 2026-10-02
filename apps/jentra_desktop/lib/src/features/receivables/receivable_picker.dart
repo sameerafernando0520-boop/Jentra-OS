@@ -1,6 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:jentra_domain/jentra_receivables.dart';
+
 import 'receivables_controller.dart';
+
+String receivableReadError(ReceivablesController controller, Object error) {
+  if (error is ReceivableFailure) {
+    if (const {
+      'PERMISSION_DENIED',
+      'ACCESS_DENIED',
+      'MFA_REQUIRED',
+      'AUTHENTICATION_REQUIRED',
+    }.contains(error.code)) {
+      controller.error = 'Evidence is unavailable with your current access. Recheck your role and scope.';
+      controller.invalidateReadEvidence();
+      return controller.error!;
+    }
+    return error.toString();
+  }
+  if (error is FormatException) return error.message;
+  return 'Evidence could not be verified. Retry when connected.';
+}
 
 /// Dialogs live on the root navigator, so explicitly hide cached content when
 /// their actor/business-scope controller is invalidated.
@@ -8,26 +27,33 @@ Future<T?> showScopedReceivableDialog<T>({
   required BuildContext context,
   required ReceivablesController controller,
   required WidgetBuilder builder,
-}) => showDialog<T>(
-  context: context,
-  builder: (dialogContext) => ListenableBuilder(
-    listenable: controller,
-    builder: (context, _) => controller.active
-        ? builder(context)
-        : AlertDialog(
-            title: const Text('Business scope changed'),
-            content: const Text(
-              'Close this dialog and reopen it in the current scope.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(dialogContext),
-                child: const Text('Close'),
+}) {
+  final access = controller.readAccessEpoch;
+  return showDialog<T>(
+    context: context,
+    builder: (dialogContext) => ListenableBuilder(
+      listenable: controller,
+      builder: (context, _) => controller.currentRead(access)
+          ? builder(context)
+          : AlertDialog(
+              title: Text(
+                controller.online
+                    ? 'Business scope changed'
+                    : 'Connect to recheck access',
               ),
-            ],
-          ),
-  ),
-);
+              content: const Text(
+                'Close this dialog and reopen it after verifying the current scope.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: const Text('Close'),
+                ),
+              ],
+            ),
+    ),
+  );
+}
 
 String referenceLabel(Map<String, Object?> row) => [
   row['document_number'] ?? row['code'] ?? row['sku'],
@@ -83,6 +109,8 @@ class _PickerState extends State<_Picker> {
   }
 
   Future<void> load() async {
+    final access = widget.controller.readAccessEpoch;
+    if (!widget.controller.currentRead(access)) return;
     setState(() {
       loading = true;
       error = null;
@@ -95,13 +123,17 @@ class _PickerState extends State<_Picker> {
         customerId: widget.customerId,
         sourceId: widget.sourceId,
       );
-      if (!mounted) return;
+      if (!mounted || !widget.controller.currentRead(access)) return;
       setState(() {
         rows.addAll(page.items);
         cursor = page.nextCursor;
       });
     } catch (e) {
-      if (mounted) setState(() => error = e.toString());
+      if (!mounted || !widget.controller.currentRead(access)) return;
+      final message = receivableReadError(widget.controller, e);
+      if (mounted) {
+        setState(() => error = message);
+      }
     } finally {
       if (mounted) setState(() => loading = false);
     }

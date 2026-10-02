@@ -249,4 +249,50 @@ void main() {
     );
     expect(requests, isEmpty);
   });
+  for (final entry in <String, String>{
+    'PERMISSION_DENIED': 'P0001',
+    'ACCESS_DENIED': 'P0001',
+    'MFA_REQUIRED': 'P0001',
+    'AUTHENTICATION_REQUIRED': 'P0001',
+    'PGRST301': 'PGRST301',
+    'PGRST302': 'PGRST302',
+    'PGRST303': 'PGRST303',
+    '42501': '42501',
+  }.entries) {
+    for (final read in ['options', 'preview']) {
+      test('$read normalizes current read denial ${entry.key}', () async {
+        status = 403;
+        response = {'code': entry.value, 'message': entry.key};
+        final expected = entry.key.startsWith('PGRST')
+            ? 'AUTHENTICATION_REQUIRED'
+            : entry.key == '42501'
+            ? 'PERMISSION_DENIED'
+            : entry.key;
+        await expectLater(
+          read == 'options'
+              ? gateway.options(scope, 'receipts')
+              : gateway.preview(scope, {'receipt_line_id': 'receipt'}),
+          throwsA(isA<DomainError>().having((e) => e.code, 'code', expected)),
+        );
+      });
+    }
+    test('posting keeps existing error precedence for ${entry.key}', () async {
+      status = 403;
+      response = {'code': entry.value, 'message': entry.key};
+      await expectLater(
+        gateway.post(command()),
+        throwsA(
+          isA<DomainError>().having(
+            (e) => e.code,
+            'code',
+            entry.value == '42501'
+                ? 'PERMISSION_DENIED'
+                : entry.value == 'P0001'
+                ? 'VALIDATION_ERROR'
+                : 'UNCERTAIN_RESULT',
+          ),
+        ),
+      );
+    });
+  }
 }

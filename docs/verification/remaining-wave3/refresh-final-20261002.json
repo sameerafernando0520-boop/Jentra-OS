@@ -1,0 +1,602 @@
+{
+  "migrations": [
+    {
+      "name": "create_greenfield_foundation",
+      "version": "20260831193714"
+    },
+    {
+      "name": "harden_foundation_rls_and_indexes",
+      "version": "20260831193857"
+    },
+    {
+      "name": "simplify_invitation_read_policy",
+      "version": "20260831194005"
+    },
+    {
+      "name": "optimize_invitation_auth_initplan",
+      "version": "20260901005825"
+    },
+    {
+      "name": "create_wave2_shared_foundation_schema",
+      "version": "20260901090317"
+    },
+    {
+      "name": "create_wave2_command_helpers",
+      "version": "20260901090331"
+    },
+    {
+      "name": "create_wave2_setup_upsert_command",
+      "version": "20260901090354"
+    },
+    {
+      "name": "create_wave2_special_commands",
+      "version": "20260901090406"
+    },
+    {
+      "name": "expose_wave2_versioned_api",
+      "version": "20260901090420"
+    },
+    {
+      "name": "cover_wave2_foreign_keys",
+      "version": "20260901090642"
+    },
+    {
+      "name": "validate_wave2_attachment_aggregates",
+      "version": "20260901091132"
+    },
+    {
+      "name": "enforce_wave2_fiscal_period_lifecycle",
+      "version": "20260903045702"
+    },
+    {
+      "name": "enforce_wave2_workflow_lifecycle",
+      "version": "20260903051423"
+    },
+    {
+      "name": "align_wave2_setup_contracts",
+      "version": "20260903110103"
+    },
+    {
+      "name": "bound_wave2_report_rows",
+      "version": "20260903110716"
+    },
+    {
+      "name": "wave3_operational_foundation",
+      "version": "20260904121647"
+    },
+    {
+      "name": "cover_wave3_foreign_keys",
+      "version": "20260904122313"
+    },
+    {
+      "name": "create_wave3_crm_pipeline_schema",
+      "version": "20260904125910"
+    },
+    {
+      "name": "create_wave3_crm_pipeline_commands",
+      "version": "20260904130000"
+    },
+    {
+      "name": "add_crm_pipeline_aging_summary",
+      "version": "20260904135959"
+    },
+    {
+      "name": "create_wave3_quotation_schema",
+      "version": "20260905050419"
+    },
+    {
+      "name": "create_wave3_quotation_commands",
+      "version": "20260905050428"
+    },
+    {
+      "name": "create_wave3_order_credit_reservation_schema",
+      "version": "20260905050436"
+    },
+    {
+      "name": "create_wave3_order_credit_reservation_commands",
+      "version": "20260905050444"
+    },
+    {
+      "name": "cover_wave3_lead_to_cash_foreign_keys",
+      "version": "20260905050839"
+    },
+    {
+      "name": "stabilize_wave3_discount_allocation",
+      "version": "20260905054457"
+    },
+    {
+      "name": "harden_crm_pipeline_ac302",
+      "version": "20260905123934"
+    },
+    {
+      "name": "complete_quotation_workspace_contracts",
+      "version": "20260906153036"
+    },
+    {
+      "name": "complete_sales_order_workspace",
+      "version": "20260907044241"
+    },
+    {
+      "name": "complete_delivery_receivables",
+      "version": "20260910135010"
+    },
+    {
+      "name": "harden_receivables_reference_indexes",
+      "version": "20260910135507"
+    },
+    {
+      "name": "governed_stock_openings",
+      "version": "20260910201410"
+    },
+    {
+      "name": "governed_warehouse_setup",
+      "version": "20260911065744"
+    },
+    {
+      "name": "stock_opening_approver_setup",
+      "version": "20260911130900"
+    },
+    {
+      "name": "wave4_employee_foundation",
+      "version": "20260925181927"
+    },
+    {
+      "name": "wave4_calendar_versions",
+      "version": "20260926082441"
+    },
+    {
+      "name": "wave4_private_hr",
+      "version": "20260929224939"
+    }
+  ],
+  "api_catalogue": [
+    {
+      "name": "accept_invitation",
+      "arguments": "p_token text",
+      "source_md5": "affe15933b1af94697ae4d8c6c92efa5"
+    },
+    {
+      "name": "accept_stock_opening_invitation",
+      "arguments": "p_invitation_id uuid, p_idempotency_key uuid",
+      "source_md5": "c7fc450c6835fa15d1fbaa79933ff4a2"
+    },
+    {
+      "name": "allocate_customer_receipt",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "c8117503c63f0197c0e398305ee860ab"
+    },
+    {
+      "name": "bootstrap_tenant",
+      "arguments": "p_name text, p_slug text, p_legal_entity_name text, p_legal_entity_code text, p_branch_name text, p_branch_code text, p_timezone text, p_currency_code text, p_idempotency_key uuid",
+      "source_md5": "3070e464e6bd32566813473e864d9004"
+    },
+    {
+      "name": "complete_attachment",
+      "arguments": "p_tenant_id uuid, p_attachment_id uuid, p_checksum_sha256 text, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "a008049739c8f950d7ed142524b4e385"
+    },
+    {
+      "name": "convert_lead",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "2e2661a7cdb9b1128fbf80c32c677961"
+    },
+    {
+      "name": "convert_quotation_to_order",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "6ee7ed2bce9d8822def3acefd0c2dab4"
+    },
+    {
+      "name": "create_export_job",
+      "arguments": "p_tenant_id uuid, p_resource text, p_file_format text, p_filters jsonb, p_columns jsonb, p_row_count integer, p_file_name text, p_file_size bigint, p_idempotency_key uuid",
+      "source_md5": "d989c3adc23bed7052c6b756b2b8a7e6"
+    },
+    {
+      "name": "create_invitation",
+      "arguments": "p_tenant_id uuid, p_email text, p_role_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_expires_in_hours integer",
+      "source_md5": "bfa23bee5111952190c23b4e4759dee5"
+    },
+    {
+      "name": "customer_statement",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_customer_id uuid, p_currency_code text, p_as_of date, p_buckets integer[]",
+      "source_md5": "9ba7dadb5aa428ed49535eca6a5fcc9d"
+    },
+    {
+      "name": "decide_operational_approval",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "32f883d110f9d700f1fa0dc4cc99c7a2"
+    },
+    {
+      "name": "get_crm_pipeline_summary",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of_date date",
+      "source_md5": "34d463c2515ce8825e497e229a1f7c16"
+    },
+    {
+      "name": "get_my_capabilities",
+      "arguments": "p_tenant_id uuid",
+      "source_md5": "9bab5f828522fe1270c257791749005f"
+    },
+    {
+      "name": "get_sales_order_credit_preview",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_sales_order_id uuid",
+      "source_md5": "b7dc76769be8637cbc7c531f915c65f0"
+    },
+    {
+      "name": "import_setup_records",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_resource text, p_file_format text, p_file_name text, p_file_size bigint, p_rows jsonb, p_idempotency_key uuid",
+      "source_md5": "5e057bca42213113185a0f07415c77be"
+    },
+    {
+      "name": "invite_stock_opening_approver",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_email text, p_idempotency_key uuid",
+      "source_md5": "70ce07485ee9fce723000375b4092721"
+    },
+    {
+      "name": "list_my_stock_opening_invitations",
+      "arguments": "",
+      "source_md5": "7bfbb1103e90f52de695f025941cf555"
+    },
+    {
+      "name": "list_my_tenants",
+      "arguments": "",
+      "source_md5": "b8925c1780602effdeffced49788b17c"
+    },
+    {
+      "name": "mark_notification_read",
+      "arguments": "p_tenant_id uuid, p_notification_id uuid, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "4af09c71fea297adb94f72fda3f666c1"
+    },
+    {
+      "name": "people_calendar_command",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+      "source_md5": "93bedbbd726f12ac76b249f4e1dab1ef"
+    },
+    {
+      "name": "people_calendar_detail",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_calendar_id uuid, p_version_id uuid",
+      "source_md5": "9d85f88a1039040bb8f43a068fa921c4"
+    },
+    {
+      "name": "people_calendar_directory",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of date, p_search text, p_after uuid",
+      "source_md5": "43b1c1e88b8ea085e1da02117c0f83e9"
+    },
+    {
+      "name": "people_calendar_history",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_calendar_id uuid, p_after uuid",
+      "source_md5": "09242c790decb808526b3d7d18153f5e"
+    },
+    {
+      "name": "people_calendar_versions",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_calendar_id uuid, p_after uuid",
+      "source_md5": "c8a825ae933417094c496fad2275a8d0"
+    },
+    {
+      "name": "people_employee_branches",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_search text",
+      "source_md5": "bf39fac632803ce9274639c5cd40be0f"
+    },
+    {
+      "name": "people_employee_command",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+      "source_md5": "bf49d148124cfaefd84bdcc3dde0c0a9"
+    },
+    {
+      "name": "people_employee_detail",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_as_of date, p_status text",
+      "source_md5": "111413c5f876b6ed948ff6c4a437a538"
+    },
+    {
+      "name": "people_employee_directory",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of date, p_status text, p_search text, p_after uuid",
+      "source_md5": "379836c7edefb14a4394b533bb339bbe"
+    },
+    {
+      "name": "people_employee_history",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+      "source_md5": "e66e63cc8c9d001ec726641a3e4cdda9"
+    },
+    {
+      "name": "people_hr_access",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_capability text",
+      "source_md5": "00bfef34a457afc22e0fe0d4d38c276a"
+    },
+    {
+      "name": "people_hr_command",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+      "source_md5": "02e2c3faf3757705b68f055621d12e46"
+    },
+    {
+      "name": "people_hr_document_ticket",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_document_id uuid, p_operation text",
+      "source_md5": "6432fa182efa93736e3c87bd26069b16"
+    },
+    {
+      "name": "people_hr_documents",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+      "source_md5": "e5ee93a79ccb9bada05eb267b10e4b5c"
+    },
+    {
+      "name": "people_hr_erasure_status",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+      "source_md5": "61adecd002eaa68bd34f855ea922c5ac"
+    },
+    {
+      "name": "people_hr_export_content",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_export_id uuid",
+      "source_md5": "0b663166d131a3081103fae885dac25d"
+    },
+    {
+      "name": "people_hr_link_inbox",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+      "source_md5": "d9c47282dc707dd746be37af67e92f01"
+    },
+    {
+      "name": "people_hr_links",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+      "source_md5": "b1204755a31e59d697b952bc47ed2133"
+    },
+    {
+      "name": "people_hr_memberships",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+      "source_md5": "3a83640eb412aac80664df03a04ab280"
+    },
+    {
+      "name": "people_hr_own_receipt",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid",
+      "source_md5": "ca583629fcda0e9cd392858f4be15c7f"
+    },
+    {
+      "name": "people_hr_policy",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+      "source_md5": "ba48ace4fbd09706764905772632dbbd"
+    },
+    {
+      "name": "people_hr_profile",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+      "source_md5": "726745c88be98b65ef61b5afd0ecba14"
+    },
+    {
+      "name": "people_hr_review_history",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_review_id uuid, p_after uuid",
+      "source_md5": "3af7a9309b07abbb88a893a6a04b2be4"
+    },
+    {
+      "name": "people_hr_reviews",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+      "source_md5": "4ed65fd85a4365d1d2cfd0962deb3533"
+    },
+    {
+      "name": "people_hr_self",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+      "source_md5": "4c2b54290898520540a7c61bf9551cfa"
+    },
+    {
+      "name": "people_hr_service_document",
+      "arguments": "p_ticket_id uuid, p_user_id uuid",
+      "source_md5": "b58e3e04a1b1a6c98a8e7722ed4eb941"
+    },
+    {
+      "name": "people_hr_service_verify_upload",
+      "arguments": "p_ticket_id uuid, p_user_id uuid, p_checksum text, p_byte_size integer",
+      "source_md5": "6d4dad4e8d67e8442f2e7245cd0bfa71"
+    },
+    {
+      "name": "people_hr_subjects",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_capability text, p_search text, p_after uuid",
+      "source_md5": "5c244dbdc406720e23c0ef94ad47c37f"
+    },
+    {
+      "name": "people_hr_worker_claim",
+      "arguments": "p_limit integer",
+      "source_md5": "17bde809953453747ed6e0a30f5ad239"
+    },
+    {
+      "name": "people_hr_worker_complete",
+      "arguments": "p_job_id uuid, p_lease_id uuid",
+      "source_md5": "cbad5dde0fcdc39f3dc9b6f8c7ccd340"
+    },
+    {
+      "name": "people_hr_worker_register",
+      "arguments": "p_artifact_digest text, p_storage_probe_digest text",
+      "source_md5": "30a2775f964ad4ffc8549d1f8ada08a3"
+    },
+    {
+      "name": "post_customer_receipt",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "cfea8df957cebb79a27fdca9cf183d01"
+    },
+    {
+      "name": "post_delivery",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "da6234d6ed86a00093007f6a0f7c5fdb"
+    },
+    {
+      "name": "post_sales_invoice",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "a624856e7a7ae5fe9a44ef30c33be311"
+    },
+    {
+      "name": "post_sales_return",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "43ea1b1f09ecc29a07599d4a65a77c45"
+    },
+    {
+      "name": "post_stock_opening",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "01c4b792e340576343f38b53bfa88c11"
+    },
+    {
+      "name": "record_crm_activity",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "01c58b2f520803e82d9062817d29ce3a"
+    },
+    {
+      "name": "register_attachment",
+      "arguments": "p_tenant_id uuid, p_payload jsonb, p_idempotency_key uuid",
+      "source_md5": "ad596cdfc66e74eaadf76eebd1aab5dd"
+    },
+    {
+      "name": "reserve_document_number",
+      "arguments": "p_tenant_id uuid, p_sequence_id uuid, p_document_date date, p_idempotency_key uuid",
+      "source_md5": "60d291aa125ce6f64e03fd14341cc863"
+    },
+    {
+      "name": "reserve_sales_order_stock",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "afa86633ab50cad741e74eb658119283"
+    },
+    {
+      "name": "transition_operational_document",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "3bd7bdf704c332442e6de0eb21ba0eab"
+    },
+    {
+      "name": "transition_stock_opening",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "9511bf6f8d13f6c1ab3cfc4e67dfa4d6"
+    },
+    {
+      "name": "update_sales_order_fulfillment",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "8f82ee3b35ec61d830c1160f4f6b2251"
+    },
+    {
+      "name": "upsert_account",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "4a41222d19ff5f69ea382f16cb39f714"
+    },
+    {
+      "name": "upsert_approval_matrix_step",
+      "arguments": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "4a64d9f6ab425b8bb720e02d3e81bb7c"
+    },
+    {
+      "name": "upsert_contact",
+      "arguments": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "55a1bd26e10b56254563baae32fdc779"
+    },
+    {
+      "name": "upsert_customer_receipt",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "2ea8db45b711dbd018bdaf6e3ff76ea8"
+    },
+    {
+      "name": "upsert_delivery",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "2fdf5f035c3d75e049b19d2edf93ccfc"
+    },
+    {
+      "name": "upsert_document_sequence",
+      "arguments": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "30c445ff1159029a854f590ff687f39f"
+    },
+    {
+      "name": "upsert_exchange_rate",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "22f339a48e5126523c7869d8f964ed25"
+    },
+    {
+      "name": "upsert_fiscal_period",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "f24bbaca5ecd18143c140494310a8a8c"
+    },
+    {
+      "name": "upsert_lead",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "e850799b1217af2eca9a5ba8e4b38bf2"
+    },
+    {
+      "name": "upsert_opportunity",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "342eed60e0242c1eafc5c5aebcac108e"
+    },
+    {
+      "name": "upsert_party",
+      "arguments": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "3db8ed3707ccafb0e3eed611d4d6a8ba"
+    },
+    {
+      "name": "upsert_product",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "e2f59adf8ed7c0d2a79187761776ada0"
+    },
+    {
+      "name": "upsert_receivables_setup",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "ff34b968c281edbbefc84516a26903f5"
+    },
+    {
+      "name": "upsert_report_definition",
+      "arguments": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "520a2986d6a6c5c458363342d55becf5"
+    },
+    {
+      "name": "upsert_sales_invoice",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "c870b662e243c713a470820d35584f46"
+    },
+    {
+      "name": "upsert_sales_order",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "cec066c7ec4127c1840c5e3e63efe236"
+    },
+    {
+      "name": "upsert_sales_quotation",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "348e90fa1e24df2480eef05c1f898059"
+    },
+    {
+      "name": "upsert_sales_return",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "7481b959bb3e448900a854bfd6f1404f"
+    },
+    {
+      "name": "upsert_stock_opening",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "c666adededec63c1d748d195b792342a"
+    },
+    {
+      "name": "upsert_tax_definition",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "c30c552cf9842fee251b575d4cdc5ee5"
+    },
+    {
+      "name": "upsert_unit",
+      "arguments": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "9bf1005623f139c6c70238610cfd788f"
+    },
+    {
+      "name": "upsert_warehouse",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "c705b442484895a37a45d9164e266d00"
+    },
+    {
+      "name": "upsert_workflow_definition",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "a17eb8e99da3020a4888d0b13f25346b"
+    }
+  ],
+  "shared_helpers": [
+    {
+      "name": "flow_allocate",
+      "schema": "finance",
+      "source_md5": "e6e9f68ec7d8aca03be157816fe8eef6"
+    },
+    {
+      "name": "flow_post_journal",
+      "schema": "finance",
+      "source_md5": "bebe95827a7e5ac3f2192d0f7acd38b4"
+    },
+    {
+      "name": "flow_residual",
+      "schema": "finance",
+      "source_md5": "c0933ed943663701bbc7e01a1c21831f"
+    },
+    {
+      "name": "wave3_lock_open_period",
+      "schema": "finance",
+      "source_md5": "a316c04eef62ba1a43d49ea4d5261ca2"
+    }
+  ],
+  "observed_at": "2026-10-02T08:59:44.287Z"
+}

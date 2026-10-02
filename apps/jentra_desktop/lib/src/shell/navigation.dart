@@ -33,6 +33,11 @@ const jentraDestinations = <JentraDestination>[
     shortcut: 'G S',
   ),
   JentraDestination(
+    label: 'Wave 3 notifications',
+    path: '/operations/notifications',
+    icon: Icons.notifications_outlined,
+  ),
+  JentraDestination(
     label: 'CRM & Revenue',
     path: '/crm',
     icon: Icons.handshake_outlined,
@@ -89,6 +94,16 @@ const jentraDestinations = <JentraDestination>[
     icon: Icons.fact_check_outlined,
   ),
   JentraDestination(
+    label: 'Receipt landed allocation',
+    path: '/inventory/landed-extensions',
+    icon: Icons.price_change_outlined,
+  ),
+  JentraDestination(
+    label: 'Stock disposition',
+    path: '/inventory/dispositions',
+    icon: Icons.remove_circle_outline,
+  ),
+  JentraDestination(
     label: 'Finance',
     path: '/finance',
     icon: Icons.account_balance_outlined,
@@ -113,6 +128,21 @@ const jentraDestinations = <JentraDestination>[
     label: 'Private HR & account',
     path: '/people/private',
     icon: Icons.privacy_tip_outlined,
+  ),
+  JentraDestination(
+    label: 'Attendance & leave',
+    path: '/people/workforce',
+    icon: Icons.schedule_outlined,
+  ),
+  JentraDestination(
+    label: 'Payroll',
+    path: '/people/payroll',
+    icon: Icons.payments_outlined,
+  ),
+  JentraDestination(
+    label: 'Fixed assets',
+    path: '/assets',
+    icon: Icons.business_outlined,
   ),
   JentraDestination(
     label: 'Manual journals',
@@ -207,6 +237,8 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
     pendingSection = item.section ?? pendingSection;
     final permitted =
         (item.path != '/setup' || canOpenSetup) &&
+        (item.path != '/operations/notifications' ||
+            (capabilities?.contains('core.roles.manage') ?? false)) &&
         (item.path != '/finance/journals' ||
             (capabilities?.contains('finance.view') ?? false)) &&
         (item.path != '/finance/bank' ||
@@ -235,10 +267,32 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
               'people.calendars.view',
             ].every((p) => capabilities?.contains(p) ?? false)) &&
         (item.path != '/people/organization' ||
-            const ['people.view', 'people.organization.view']
-                .every((p) => capabilities?.contains(p) ?? false)) &&
+            const [
+              'people.view',
+              'people.organization.view',
+            ].every((p) => capabilities?.contains(p) ?? false)) &&
         (item.path != '/people/private' ||
             (capabilities?.contains('people.view') ?? false)) &&
+        (item.path != '/people/workforce' ||
+            ((capabilities?.contains('people.view') ?? false) &&
+                const {
+                  'people.attendance.view',
+                  'people.leave.view',
+                  'people.work_claims.view',
+                }.any((p) => capabilities?.contains(p) ?? false))) &&
+        (item.path != '/assets' ||
+            (capabilities?.contains('assets.view') ?? false)) &&
+        (item.path != '/projects' ||
+            (capabilities?.contains('projects.view') ?? false)) &&
+        (item.path != '/service' ||
+            (capabilities?.contains('service.view') ?? false)) &&
+        (item.path != '/people/payroll' ||
+            ((capabilities?.contains('people.view') ?? false) &&
+                const {
+                  'people.payroll.view',
+                  'people.payroll.payslip.view',
+                  'people.payroll.payslip.self',
+                }.any((p) => capabilities?.contains(p) ?? false))) &&
         (item.path != '/finance/controls' ||
             const [
               'finance.view',
@@ -265,10 +319,18 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
         (!{
               '/inventory/receipt-trace',
               '/inventory/landed-value',
+              '/inventory/landed-extensions',
             }.contains(item.path) ||
             (capabilities != null &&
                 capabilities.contains('inventory.valuation.post') &&
                 capabilities.contains('inventory.cost.view'))) &&
+        (item.path != '/inventory/dispositions' ||
+            (capabilities != null &&
+                capabilities.contains('inventory.cost.view') &&
+                const {
+                  'inventory.dispositions.post',
+                  'workflow.approvals.decide',
+                }.any(capabilities.contains))) &&
         (item.path != '/inventory/reservations' ||
             (capabilities?.contains('inventory.reservations.manage') ??
                 false)) &&

@@ -1,5 +1,8 @@
+import '../shared/report_wait.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../app_providers.dart';
 import 'close_review_controller.dart';
 import '../report_export/report_export_screen.dart';
@@ -81,7 +84,13 @@ class CloseReviewWorkspace extends StatelessWidget {
           const Text(
             'Review every entity branch at one posting cutoff. AR, AP, GRNI, inventory and bank evidence retain their original sources and account basis.',
           ),
-          if (c.busy) const LinearProgressIndicator(),
+          if (c.reportWait.active)
+            ReportWaitIndicator(
+              state: c.reportWait,
+              onCancel: c.cancelReportWait,
+            )
+          else if (c.busy)
+            const LinearProgressIndicator(),
           if (!c.online)
             const Text(
               'Offline — encrypted inputs and sealed requests are retained. Reconnect and refresh access to read evidence.',

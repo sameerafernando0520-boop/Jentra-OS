@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
 
 import '../../app_providers.dart';
+import '../operations/operational_dashboard.dart';
 import '../tenant/tenant_onboarding_screen.dart';
 import '../tenant/stock_opening_access.dart';
 
@@ -44,7 +45,9 @@ class DashboardScreen extends ConsumerWidget {
         ),
       );
     }
-    return const _DashboardContent();
+    return ref.watch(foundationGatewayProvider) == null
+        ? const _DashboardContent()
+        : const OperationalDashboard();
   }
 }
 

@@ -103,6 +103,19 @@ void main() {
 
     expect(find.text('Search modules, records, or commands…'), findsOneWidget);
     expect(find.text('Permission-aware'), findsOneWidget);
+    const documentLink =
+        '/operations/documents?tenant=00000000-0000-4000-8000-000000000001&entity=00000000-0000-4000-8000-000000000002&branch=00000000-0000-4000-8000-000000000003&kind=supplier_bill&id=00000000-0000-4000-8000-000000000004';
+    await tester.enterText(find.byType(TextField).last, documentLink);
+    await tester.pumpAndSettle();
+    expect(find.text('Open permitted document'), findsOneWidget);
+    await tester.tap(find.text('Open permitted document'));
+    await tester.pumpAndSettle();
+    expect(
+      find.text(
+        'This document destination is unavailable in the selected business scope.',
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets(

@@ -75,7 +75,8 @@ abstract final class QuotationDraftCodec {
       deliveryTerms: _optionalText(json, 'delivery_terms'),
       salespersonId: _text(json, 'salesperson_id'),
       headerDiscountAmount:
-          headerPercent != null || json['header_discount_amount'] == null
+          (snapshot && headerPercent != null) ||
+              json['header_discount_amount'] == null
           ? null
           : _money(json, 'header_discount_amount', currency),
       headerDiscountPercent: headerPercent == null
@@ -114,7 +115,8 @@ abstract final class QuotationDraftCodec {
               ),
             ),
             unitPrice: _money(line, 'unit_price', currency),
-            discountAmount: percent != null || line[amountKey] == null
+            discountAmount:
+                (snapshot && percent != null) || line[amountKey] == null
                 ? null
                 : _money(line, amountKey, currency),
             discountPercent: percent == null

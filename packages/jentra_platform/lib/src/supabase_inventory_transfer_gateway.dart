@@ -64,6 +64,30 @@ final class SupabaseInventoryTransferGateway
       }
       return raw.cast<String, Object?>();
     } on PostgrestException catch (e) {
+      if ({
+        'inventory_transfer_options',
+        'inventory_transfers',
+        'inventory_transfer_holdings',
+      }.contains(name)) {
+        const denied = {
+          'PERMISSION_DENIED',
+          'ACCESS_DENIED',
+          'MFA_REQUIRED',
+          'AUTHENTICATION_REQUIRED',
+        };
+        final code = denied.contains(e.message)
+            ? e.message
+            : const {'PGRST301', 'PGRST302', 'PGRST303'}.contains(e.code)
+            ? 'AUTHENTICATION_REQUIRED'
+            : null;
+        if (code != null) {
+          throw DomainError(
+            code: code,
+            message:
+                'Evidence is unavailable with your current access. Recheck your role and scope.',
+          );
+        }
+      }
       final code = e.code == '40001'
           ? 'VERSION_CONFLICT'
           : e.code == '42501'

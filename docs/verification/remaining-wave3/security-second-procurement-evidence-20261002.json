@@ -1,0 +1,96 @@
+{
+  "captured_at": "2026-10-02T09:14:09.3008880Z",
+  "head": "f9cc342815e2446fb3f26204d5e65e03c1b2a140",
+  "boundary": "Synthetic Flutter tests and source review; no installed authentication, native recovery, real race/load or owner signoff",
+  "contract_updated_first": "docs/blueprint/56_WAVE3_PROCUREMENT_REFERENCE_ACCESS_CONTRACT.md",
+  "red": {
+    "log": "build/remaining-wave3/security-second-procurement-red2-20261002.log",
+    "passed": 0,
+    "failed": 56,
+    "command": "C:/src/flutter/bin/flutter.bat test test/security_second_procurement_failure_epoch_test.dart --no-pub --concurrency=1 --reporter expanded",
+    "fixture_correction": "An earlier interrupted diagnostic used the wrong held payment register read. The corrected fake holds payments as well as proposals; this complete RED contains actual behavior failures and no read-inflight harness misses."
+  },
+  "green": {
+    "log": "build/remaining-wave3/security-second-procurement-green-20261002.log",
+    "passed": 88,
+    "failed": 0,
+    "command": "C:/src/flutter/bin/flutter.bat test test/security_second_procurement_failure_epoch_test.dart test/security_review_procurement_sealing_test.dart test/procurement_access_recovery_test.dart --no-pub --concurrency=1 --reporter expanded",
+    "coverage_collected": false,
+    "execution_source_fingerprint": null,
+    "source_hash_boundary": "Hashes captured after a completed formatting-only pass; GREEN preceded that formatting. Root combined functional/retry coverage and current-source fingerprint remains required."
+  },
+  "formatter": {
+    "files_formatted": 9,
+    "exit_code": 1,
+    "limitation": "Formatting completed before Dart failed updating forbidden telemetry metadata under AppData/Roaming/.dart-tool. This is not clean analyzer evidence."
+  },
+  "broader_functional_files": [
+    "test/procurement_workspace_test.dart",
+    "test/sourcing_recovery_test.dart",
+    "test/purchase_order_workspace_test.dart",
+    "test/goods_receipt_workspace_test.dart",
+    "test/supplier_bill_workspace_test.dart",
+    "test/supplier_payment_workspace_test.dart",
+    "test/product_unit_workspace_test.dart",
+    "test/purchase_return_workspace_test.dart"
+  ],
+  "files": [
+    {
+      "file": "docs/blueprint/56_WAVE3_PROCUREMENT_REFERENCE_ACCESS_CONTRACT.md",
+      "sha256": "9b9cd161c92d285d3891bbde7054e2f61498afca43af63750b2909e940442e29"
+    },
+    {
+      "file": "apps/jentra_desktop/lib/src/features/procurement/procurement_controller.dart",
+      "sha256": "044edd7c5257f40db3d9821a3b0263be99700de714692fa03f754fcc7cef124b"
+    },
+    {
+      "file": "apps/jentra_desktop/lib/src/features/procurement/sourcing_controller.dart",
+      "sha256": "c5d65600bb7c29ef978f51a3947eeb65436f5e2a3fdd104ca6d6d3a97753e008"
+    },
+    {
+      "file": "apps/jentra_desktop/lib/src/features/procurement/purchase_order_controller.dart",
+      "sha256": "56c791250274dd570bb1a82b7353c2eb2acf47a611508e62e438ecee572a01c6"
+    },
+    {
+      "file": "apps/jentra_desktop/lib/src/features/procurement/goods_receipt_controller.dart",
+      "sha256": "38cd979153141bde3d55acaeb98f49ef221300145fa9441719dd60f859fec77c"
+    },
+    {
+      "file": "apps/jentra_desktop/lib/src/features/procurement/supplier_bill_controller.dart",
+      "sha256": "85989aa27317df111e1fea3d4c554e36f2c139b5b4d58fbebdeee5ebc08be365"
+    },
+    {
+      "file": "apps/jentra_desktop/lib/src/features/procurement/supplier_payment_controller.dart",
+      "sha256": "626192617e9ce69d55e8acc06b674561efbacc99dcfc05603c9ed7cbd1c9c485"
+    },
+    {
+      "file": "apps/jentra_desktop/lib/src/features/procurement/product_unit_controller.dart",
+      "sha256": "35a509515a30442064db3509eeb13c9b82f3c272f227e5c793202bb4af70c20e"
+    },
+    {
+      "file": "apps/jentra_desktop/lib/src/features/procurement/purchase_return_controller.dart",
+      "sha256": "ce66b8e1213ac933479a6ec7bbbad7bdad92ea9e430602edf94cbf2e66d1b7a3"
+    },
+    {
+      "file": "apps/jentra_desktop/test/security_second_procurement_failure_epoch_test.dart",
+      "sha256": "23e1fb56d5a0759f81d414a24993018cc6c6accfcf8cc1d48d2abdeff9eba4c5"
+    },
+    {
+      "file": "apps/jentra_desktop/test/security_review_procurement_sealing_test.dart",
+      "sha256": "1217939b76d7fc9de47fcbf3c97593400f795cea3e74265e6743eed484a5c383"
+    },
+    {
+      "file": "apps/jentra_desktop/test/procurement_access_recovery_test.dart",
+      "sha256": "80c6878af2daf868b286013a58224881930ba6cabab413be11c5e233cddf3cc4"
+    },
+    {
+      "file": "build/remaining-wave3/security-second-procurement-red2-20261002.log",
+      "sha256": "9deac235f1b0d512fb52c08c231269e5d92a8c8975cac851fd93a7d6f423ebec"
+    },
+    {
+      "file": "build/remaining-wave3/security-second-procurement-green-20261002.log",
+      "sha256": "2c5cb4bbef68905d82e4f82dc8ee400810914a05569c59b85b79424a34978544"
+    }
+  ],
+  "external_acceptance": "Open: installed authenticated/native recovery, real target races/load, source-current final build and owner signoff"
+}

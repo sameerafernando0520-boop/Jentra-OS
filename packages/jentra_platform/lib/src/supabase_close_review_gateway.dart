@@ -1,5 +1,6 @@
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'finance_report_read_access.dart';
 
 abstract interface class CloseReviewGateway {
   Future<Map<String, Object?>> reports(TenantContext scope, {String? after});
@@ -55,6 +56,8 @@ final class SupabaseCloseReviewGateway implements CloseReviewGateway {
       }
       return r.cast<String, Object?>();
     } on PostgrestException catch (e) {
+      final denial = financeReportReadDenial(rpc, e);
+      if (denial != null) throw denial;
       final code = e.message == 'RECENT_MFA_REQUIRED'
           ? 'MFA_REQUIRED'
           : e.code == '42501'

@@ -1,10 +1,13 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_procurement.dart';
 import 'package:jentra_platform/jentra_procurement_platform.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../app_providers.dart';
+import '../operations/operational_read_access.dart';
 import 'procurement_controller.dart';
 
 final supplierBillControllerProvider =
@@ -49,7 +52,8 @@ final supplierBillControllerProvider =
       return c;
     });
 
-final class SupplierBillController extends ChangeNotifier {
+final class SupplierBillController extends ChangeNotifier
+    implements OperationalReadAccess {
   SupplierBillController({
     required this.scope,
     required this.gateway,
@@ -67,7 +71,46 @@ final class SupplierBillController extends ChangeNotifier {
   final QuotationDraftStore drafts;
   final bool canManage, canPost, canApprove, canSetup;
   static const slot = 'supplier-bill-editor';
-  bool online, busy = false, _disposed = false;
+  bool online, busy = false, _disposed = false, accessDenied = false;
+  int _epoch = 0, _operationEpoch = 0;
+  @override
+  int get readAccessEpoch => _epoch;
+  @override
+  bool currentRead(int epoch) =>
+      !_disposed && online && !accessDenied && epoch == _epoch;
+  @override
+  void denyReadAccess() {
+    if (_disposed) return;
+    accessDenied = true;
+    _epoch++;
+    clearServer();
+    emit();
+  }
+
+  bool get currentServer => !_disposed && online && _operationEpoch == _epoch;
+  void confirmedReadFailure(Object failure, int epoch, String fallback) {
+    if (_disposed || epoch != _epoch) return;
+    if (failure is DomainError &&
+        const {
+          'PERMISSION_DENIED',
+          'ACCESS_DENIED',
+          'MFA_REQUIRED',
+          'AUTHENTICATION_REQUIRED',
+        }.contains(failure.code)) {
+      accessDenied = true;
+      _epoch++;
+      clearServer();
+      error = failure.message;
+      return;
+    }
+    error = fallback;
+  }
+
+  void clearServer() {
+    page = CursorPage(items: [], limit: 50);
+    selected = null;
+  }
+
   String? error, message, baseCurrency;
   Map<String, Object?>? form, selected;
   QuotationLocalDraft? local;
@@ -75,6 +118,7 @@ final class SupplierBillController extends ChangeNotifier {
   CursorPage<Map<String, Object?>> page = CursorPage(items: [], limit: 50);
   bool get locked =>
       _disposed ||
+      accessDenied ||
       busy ||
       local?.pending != null ||
       local?.errorCode == 'VERSION_CONFLICT';
@@ -88,11 +132,18 @@ final class SupplierBillController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _epoch++;
+    clearServer();
+    notifyListeners();
     super.dispose();
   }
 
   void setOnline(bool v) {
-    online = v;
+    if (online != v) {
+      online = v;
+      _epoch++;
+      clearServer();
+    }
     emit();
   }
 
@@ -100,10 +151,25 @@ final class SupplierBillController extends ChangeNotifier {
     if (busy || _disposed) return;
     busy = true;
     error = null;
+    _operationEpoch = _epoch;
     emit();
     try {
       await action();
     } catch (e) {
+      if (_disposed || _operationEpoch != _epoch) return;
+      if (!_disposed &&
+          _operationEpoch == _epoch &&
+          e is DomainError &&
+          const {
+            'PERMISSION_DENIED',
+            'ACCESS_DENIED',
+            'MFA_REQUIRED',
+            'AUTHENTICATION_REQUIRED',
+          }.contains(e.code)) {
+        accessDenied = true;
+        _epoch++;
+        clearServer();
+      }
       error = e is DomainError
           ? e.message
           : e is FormatException
@@ -120,7 +186,13 @@ final class SupplierBillController extends ChangeNotifier {
     if (_disposed) return;
     form = local?.form;
     version = local?.expectedVersion;
-    if (online) page = await gateway.bills(scope);
+    if (online) {
+      final result = await gateway.bills(scope);
+      if (currentServer) {
+        page = result;
+        accessDenied = false;
+      }
+    }
   });
   Future<void> refresh({bool more = false}) => run(() async {
     if (!online) return;
@@ -128,12 +200,13 @@ final class SupplierBillController extends ChangeNotifier {
       scope,
       after: more ? page.nextCursor : null,
     );
-    if (_disposed) return;
+    if (!currentServer) return;
     page = CursorPage(
       items: [if (more) ...page.items, ...result.items],
       limit: 50,
       nextCursor: result.nextCursor,
     );
+    accessDenied = false;
   });
   void select(Map<String, Object?> row) {
     if (!locked && form == null) {
@@ -150,7 +223,7 @@ final class SupplierBillController extends ChangeNotifier {
       return;
     }
     final meta = await references.references(scope, 'bill_suppliers');
-    if (_disposed) return;
+    if (!currentServer || accessDenied) return;
     baseCurrency = meta['base_currency'] as String;
     final today = DateTime.now().toIso8601String().substring(0, 10);
     form = {
@@ -227,7 +300,7 @@ final class SupplierBillController extends ChangeNotifier {
   Future<void> configure() => run(() async {
     if (!canSetup || !online || form != null || local != null) return;
     final result = await references.references(scope, 'bill_controls');
-    if (_disposed) return;
+    if (!currentServer || accessDenied) return;
     final items = result['items'] as List;
     final current = items.isEmpty
         ? <String, Object?>{}
@@ -312,13 +385,14 @@ final class SupplierBillController extends ChangeNotifier {
       return;
     }
     form = {...selected!, '_mode': 'action'};
+    final documentId = selected!['id'];
     version = selected!['version'] as int;
     await drafts.save(scope, slot, form!, expectedVersion: version);
     final pending = await drafts.prepare(
       scope,
       slot,
       verb: action == 'post' ? 'submit' : action,
-      payload: {'document_id': selected!['id'], 'reason': ?reason},
+      payload: {'document_id': documentId, 'reason': ?reason},
       expectedVersion: version,
     );
     local = await drafts.load(scope, slot);
@@ -405,9 +479,8 @@ final class SupplierBillController extends ChangeNotifier {
             throw const FormatException('Bill quantities must be positive.');
           }
           GoodsReceiptQuantity.decimal(line['unit_price']);
-          if (GoodsReceiptQuantity.decimal(
-                line['discount_percent'],
-              ).compareTo(GoodsReceiptQuantity.decimal('100')) >
+          if (GoodsReceiptQuantity.decimal(line['discount_percent'])
+                  .compareTo(GoodsReceiptQuantity.decimal('100')) >
               0) {
             throw const FormatException('Discount must be from 0 to 100.');
           }
@@ -426,7 +499,7 @@ final class SupplierBillController extends ChangeNotifier {
     await send(pending);
   });
   Future<void> send(QuotationPendingCommand pending) async {
-    if (_disposed || !online) return;
+    if (!currentServer || accessDenied) return;
     late Map<String, Object?> result;
     try {
       result = switch (pending.verb) {
@@ -452,17 +525,24 @@ final class SupplierBillController extends ChangeNotifier {
     form = null;
     local = null;
     version = null;
+    message = 'Supplier bill action confirmed.';
+    if (!currentServer) return;
     if (pending.verb != 'accept') selected = result;
     message = pending.verb == 'accept'
         ? 'Supplier bill controls saved.'
         : pending.verb == 'approve'
         ? 'Match decision recorded.'
         : 'Supplier bill ${result['status']}.';
+    final refreshEpoch = _epoch;
     try {
-      page = await gateway.bills(scope);
-    } catch (_) {
-      error =
-          'Saved successfully. Refresh the register when the connection returns.';
+      final refreshed = await gateway.bills(scope);
+      if (currentServer) page = refreshed;
+    } catch (failure) {
+      confirmedReadFailure(
+        failure,
+        refreshEpoch,
+        'Saved successfully. Refresh the register when the connection returns.',
+      );
     }
   }
 }

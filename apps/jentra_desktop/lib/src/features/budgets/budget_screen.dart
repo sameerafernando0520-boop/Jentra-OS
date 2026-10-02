@@ -1,3 +1,5 @@
+import '../shared/report_wait.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_platform/jentra_finance_platform.dart';
@@ -60,8 +62,7 @@ class BudgetWorkspace extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                c.error ??
-                    'Connect to verify access and restore encrypted budget requests.',
+                c.error ?? 'Connect to verify access and restore encrypted budget requests.',
               ),
               if (c.busy) const CircularProgressIndicator(),
               TextButton(
@@ -132,7 +133,13 @@ class BudgetWorkspace extends StatelessWidget {
               ),
             ],
             if (c.message != null) Text(c.message!),
-            if (c.busy) const LinearProgressIndicator(),
+            if (c.reportWait.active)
+              ReportWaitIndicator(
+                state: c.reportWait,
+                onCancel: c.cancelReportWait,
+              )
+            else if (c.busy)
+              const LinearProgressIndicator(),
             const SizedBox(height: 24),
             Text(
               'Budget version',

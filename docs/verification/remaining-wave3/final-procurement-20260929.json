@@ -1,0 +1,36 @@
+{
+  "date": "2026-09-29",
+  "project_id": "xpdoufauvrbdmxgngetv",
+  "suite": "procurement",
+  "query_file": "build/remaining-wave3/final-procurement-20260929.sql",
+  "query_sha256": "3A8B5D39C213038215475A2E3E4E1CF38151AA28DB545E12B5DE0B0A71FCD3B4",
+  "assertions": 849,
+  "strict_finish": true,
+  "final_rollback": true,
+  "result_tail": [
+    "ok 845 - file registration replay rechecks underlying source access",
+    "ok 846 - reasoned rejection retries the exact original receipt",
+    "ok 847 - rejected attachment remains audited but its private file is unavailable",
+    "ok 848 - outsider security-invoker read denied",
+    "ok 849 - authenticated direct writes denied",
+    "1..849"
+  ],
+  "read_plans": [
+    {
+      "iteration": 1,
+      "jit": "on",
+      "execution_ms": 17.686
+    },
+    {
+      "iteration": 2,
+      "jit": "on",
+      "execution_ms": 15.367
+    },
+    {
+      "iteration": 3,
+      "jit": "on",
+      "execution_ms": 15.001
+    }
+  ],
+  "note": "Synthetic fixture transaction; no migration installed, no authenticated native or real load/p95 proof."
+}

@@ -60,6 +60,8 @@ final class PeriodFxController extends ChangeNotifier {
       _disposed = false;
   String? error, message;
   int formEpoch = 0;
+  int _epoch = 0, _operationEpoch = 0;
+  bool get currentServer => !_disposed && online && _operationEpoch == _epoch;
   Map<String, Object?> form = {};
   QuotationLocalDraft? local;
   final pages = <String, List<Map<String, Object?>>>{};
@@ -70,7 +72,7 @@ final class PeriodFxController extends ChangeNotifier {
 
   String? get periodId => form['period_id'] as String?;
   bool get pending => local?.pending != null;
-  bool get locked => busy || pending || denied;
+  bool get locked => _disposed || busy || pending || denied || !verified;
   String get today => DateTime.now().toUtc().toIso8601String().substring(0, 10);
   List<Map<String, Object?>> rows(String key) => pages[key] ?? [];
   Map<String, Object?>? get period {
@@ -94,25 +96,40 @@ final class PeriodFxController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _epoch++;
+    clearEvidence();
     super.dispose();
   }
 
   void setOnline(bool value) {
-    online = value;
-    if (!value) {
-      verified = false;
-      pages.clear();
-      detail = [];
+    if (online != value) {
+      online = value;
+      _epoch++;
+      clearEvidence();
     }
     emit();
   }
 
+  void clearEvidence() {
+    verified = false;
+    pages.clear();
+    cursors.clear();
+    detail = [];
+    detailNext = null;
+    detailRunId = null;
+  }
+
   void _handle(Object failure) {
-    if (failure is DomainError && failure.code == 'PERMISSION_DENIED') {
+    if (failure is DomainError &&
+        const {
+          'PERMISSION_DENIED',
+          'ACCESS_DENIED',
+          'MFA_REQUIRED',
+          'AUTHENTICATION_REQUIRED',
+        }.contains(failure.code)) {
       denied = true;
-      verified = false;
-      pages.clear();
-      detail = [];
+      _epoch++;
+      clearEvidence();
       form = {};
     }
     error = failure is DomainError
@@ -125,36 +142,53 @@ final class PeriodFxController extends ChangeNotifier {
   Future<void> _run(Future<void> Function() work) async {
     if (busy || _disposed) return;
     busy = true;
+    _operationEpoch = _epoch;
     error = null;
     emit();
     try {
       await work();
     } catch (failure) {
-      _handle(failure);
+      if (!_disposed && _operationEpoch == _epoch) _handle(failure);
     } finally {
       busy = false;
       emit();
     }
   }
 
-  Future<void> initialize() => _run(() async {
-    local = await drafts.load(scope, slot);
-    if (!online) return;
+  Future<void> initialize() => _run(_restoreAndRefresh);
+
+  Future<void> _restoreAndRefresh() async {
+    final epoch = _epoch;
+    final recovered = await drafts.load(scope, slot);
+    if (_disposed || epoch != _epoch) return;
+    if (!online) {
+      local = recovered;
+      return;
+    }
     await _load('periods');
-    verified = true;
-    denied = false;
-    form = local?.form ?? {'reason': '', 'as_of': today};
-    formEpoch++;
+    if (!currentServer) return;
     await _load('rates');
+    if (!currentServer) return;
     await _load('runs');
+    if (!currentServer) return;
+    if (form.isEmpty) {
+      form = recovered?.form ?? {'reason': '', 'as_of': today};
+      formEpoch++;
+    }
     if (periodId != null) {
       await _load('events');
+      if (!currentServer) return;
       await _load('reopen_requests');
     }
-  });
+    if (!currentServer) return;
+    local = recovered;
+    verified = true;
+    denied = false;
+  }
 
   Future<void> _load(String resource, {bool more = false}) async {
-    if (!online) return;
+    if (!currentServer) return;
+    final epoch = _epoch;
     final after = more ? cursors[resource] : null;
     final response = switch (resource) {
       'periods' || 'events' || 'reopen_requests' => await gateway.periodOptions(
@@ -165,7 +199,7 @@ final class PeriodFxController extends ChangeNotifier {
       ),
       _ => await gateway.fxOptions(scope, resource, after: after),
     };
-    if (_disposed) return;
+    if (!currentServer || epoch != _epoch) return;
     pages[resource] = [
       if (more) ...rows(resource),
       for (final value in response['items'] as List)
@@ -178,8 +212,11 @@ final class PeriodFxController extends ChangeNotifier {
 
   Future<void> _refresh() async {
     await _load('periods');
+    if (!currentServer) return;
     await _load('rates');
+    if (!currentServer) return;
     await _load('runs');
+    if (!currentServer) return;
     if (periodId != null) {
       await _load('events');
       await _load('reopen_requests');
@@ -187,7 +224,7 @@ final class PeriodFxController extends ChangeNotifier {
   }
 
   Future<void> refresh() => _run(() async {
-    if (online && verified && !denied) await _refresh();
+    if (online) await _restoreAndRefresh();
   });
 
   Future<void> selectPeriod(String id) => _run(() async {
@@ -217,13 +254,12 @@ final class PeriodFxController extends ChangeNotifier {
   }
 
   Future<void> persist() async {
-    await drafts.save(
-      scope,
-      slot,
-      form,
-      expectedVersion: expectedVersion(form['action'] as String? ?? 'post'),
-    );
-    local = await drafts.load(scope, slot);
+    final epoch = _epoch;
+    final input = Map<String, Object?>.from(form);
+    final version = expectedVersion(form['action'] as String? ?? 'post');
+    await drafts.save(scope, slot, input, expectedVersion: version);
+    final saved = await drafts.load(scope, slot);
+    if (!_disposed && epoch == _epoch) local = saved;
   }
 
   int expectedVersion(String action) => switch (action) {
@@ -310,23 +346,28 @@ final class PeriodFxController extends ChangeNotifier {
         }
       }
       form = {...form, 'action': action};
+      final version = expectedVersion(action);
       await persist();
       pendingCommand = await drafts.prepare(
         scope,
         slot,
         verb: 'accept',
         payload: payload,
-        expectedVersion: expectedVersion(action),
+        expectedVersion: version,
       );
-      local = await drafts.load(scope, slot);
+      final sealed = await drafts.load(scope, slot);
+      if (currentServer) local = sealed;
     }
+    if (!currentServer || !verified || denied) return;
     final command = pendingCommand;
+    final sealedAction = command.envelope.payload['action'];
     try {
-      final result = action == 'post' || action == 'reverse'
+      final result = sealedAction == 'post' || sealedAction == 'reverse'
           ? await gateway.revalue(command.envelope)
           : await gateway.govern(command.envelope);
       await drafts.complete(scope, slot, command.envelope.commandId);
       local = null;
+      if (!currentServer || denied) return;
       message = result['status'] == 'blocked'
           ? 'Close blocked. Review the recorded exceptions before retrying.'
           : 'Command confirmed. The original evidence remains in history.';
@@ -336,8 +377,11 @@ final class PeriodFxController extends ChangeNotifier {
         await persist();
         await _refresh();
       } catch (failure) {
+        if (!currentServer) return;
         _handle(failure);
-        if (!denied) error = 'Command confirmed. Refresh to load its evidence.';
+        if (!denied && !isLocalDraftStorageFailure(failure)) {
+          error = 'Command confirmed. Refresh to load its evidence.';
+        }
       }
     } on DomainError catch (failure) {
       await drafts.recordFailure(
@@ -346,7 +390,8 @@ final class PeriodFxController extends ChangeNotifier {
         failure,
         commandId: command.envelope.commandId,
       );
-      local = await drafts.load(scope, slot);
+      final retained = await drafts.load(scope, slot);
+      if (currentServer) local = retained;
       rethrow;
     }
   });
@@ -363,6 +408,7 @@ final class PeriodFxController extends ChangeNotifier {
       return;
     }
     await _refresh();
+    if (!currentServer || !verified || denied) return;
     await drafts.save(
       scope,
       slot,
@@ -370,7 +416,9 @@ final class PeriodFxController extends ChangeNotifier {
       expectedVersion: expectedVersion(form['action'] as String? ?? 'post'),
       resolveConflict: true,
     );
-    local = await drafts.load(scope, slot);
+    final resolved = await drafts.load(scope, slot);
+    if (!currentServer || !verified || denied) return;
+    local = resolved;
     message =
         'Current period and rate evidence refreshed. Review before retrying.';
   });
@@ -378,6 +426,7 @@ final class PeriodFxController extends ChangeNotifier {
   Future<void> openDetail(String runId) => _run(() async {
     if (!online || !verified || denied) return;
     final page = await gateway.fxDetail(scope, runId);
+    if (!currentServer) return;
     detailRunId = runId;
     detail = [
       for (final item in page['items'] as List)
@@ -393,6 +442,7 @@ final class PeriodFxController extends ChangeNotifier {
       detailRunId!,
       offset: detailNext!,
     );
+    if (!currentServer) return;
     detail = [
       ...detail,
       for (final item in page['items'] as List)

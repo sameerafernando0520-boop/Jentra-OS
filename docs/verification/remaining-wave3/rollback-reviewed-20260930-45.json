@@ -1,0 +1,158 @@
+{
+  "migration_id": "jentra-wave3-reviewed-45-20260930",
+  "manifest_sha256": "f511ca6f0f99681c4ce87872b94edd7af53173f16ae9bdec843e8c2e52f8f08c",
+  "phases": [
+    {
+      "name": "baseline",
+      "ordinals": null,
+      "triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      }
+    },
+    {
+      "name": "procurement",
+      "ordinals": [
+        1,
+        12
+      ],
+      "triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      }
+    },
+    {
+      "name": "inventory",
+      "ordinals": [
+        13,
+        18
+      ],
+      "triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      }
+    },
+    {
+      "name": "finance",
+      "ordinals": [
+        19,
+        34
+      ],
+      "triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      }
+    },
+    {
+      "name": "integrated_evidence",
+      "ordinals": [
+        35,
+        40
+      ],
+      "triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      }
+    },
+    {
+      "name": "inventory_dashboard_observability",
+      "ordinals": [
+        41,
+        45
+      ],
+      "triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      }
+    },
+    {
+      "name": "installed_synthetic_checks",
+      "ordinals": null,
+      "triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      }
+    },
+    {
+      "name": "native_owner_acceptance",
+      "ordinals": null,
+      "triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      }
+    }
+  ],
+  "boundary": "Reviewed preparation artifact only. No persistent installation, fixture generation, resource allocation, native launch or credential changes authorized or executed."
+}

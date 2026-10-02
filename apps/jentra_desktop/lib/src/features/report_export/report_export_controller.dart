@@ -1,9 +1,11 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_finance_platform.dart';
+
 import '../../app_providers.dart';
 
 final reportExportGatewayProvider = Provider<ReportExportGateway?>(
@@ -22,10 +24,7 @@ final reportExportControllerProvider =
           g == null ||
           caps.isLoading ||
           caps.hasError ||
-          ![
-            'finance.view',
-            'finance.reports.export',
-          ].every((p) => caps.value?.contains(p) ?? false)) {
+          !(caps.value?.contains('finance.reports.export') ?? false)) {
         return null;
       }
       final c = ReportExportController(
@@ -102,6 +101,7 @@ final class ReportExportController extends ChangeNotifier {
     if (e is DomainError &&
         [
           'PERMISSION_DENIED',
+          'ACCESS_DENIED',
           'MFA_REQUIRED',
           'AUTHENTICATION_REQUIRED',
         ].contains(e.code)) {
@@ -114,12 +114,14 @@ final class ReportExportController extends ChangeNotifier {
 
   Future<void> run(Future<void> Function() work) async {
     if (busy || _disposed) return;
+    final accessEpoch = _epoch;
     busy = true;
     error = null;
     emit();
     try {
       await work();
     } catch (e) {
+      if (_disposed || !online || accessEpoch != _epoch) return;
       deny(e);
       error = e is DomainError
           ? e.message

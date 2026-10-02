@@ -1,0 +1,104 @@
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_sealing_access_test.dart
+00:00 +0: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_sealing_access_test.dart: transfer sealing survives disconnect without dispatching an obsolete command
+00:00 +1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_sealing_access_test.dart: transfer sealing survives reconnect without dispatching an obsolete command
+00:00 +2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_sealing_access_test.dart: transfer sealing survives denial without dispatching an obsolete command
+00:00 +3: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_sealing_access_test.dart: transfer sealing survives dispose without dispatching an obsolete command
+00:01 +4: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: disconnect hides verified bank evidence and reconnect requires fresh verification
+00:01 +5: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: obsolete bank source reply after disconnect is discarded
+00:01 +6: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: PERMISSION_DENIED clears bank evidence and fresh verification restores input draft
+00:01 +7: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: ACCESS_DENIED clears bank evidence and fresh verification restores input draft
+00:01 +8: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: MFA_REQUIRED clears bank evidence and fresh verification restores input draft
+00:01 +9: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: AUTHENTICATION_REQUIRED clears bank evidence and fresh verification restores input draft
+00:01 +10: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: obsolete denial cannot erase recovery inputs after connectivity change
+00:01 +11: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: confirmed original match after disconnect clears sealed request without rehydrating sources
+00:01 +12: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: exact rules use current bank optimistic version and omit selected source evidence
+00:01 +13: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: statement input is balanced with exact micro-unit and preserves sealed import identity
+00:01 +14: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: invalid-date rejects before sealing or executing
+00:01 +15: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: future rejects before sealing or executing
+00:01 +16: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: range rejects before sealing or executing
+00:01 +17: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: identity rejects before sealing or executing
+00:01 +18: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: balance-format rejects before sealing or executing
+00:01 +19: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: out-of-range rejects before sealing or executing
+00:01 +20: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: many-to-many rejects before sealing or executing
+00:01 +21: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: missing-reason rejects before sealing or executing
+00:01 +22: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: missing-match rejects before sealing or executing
+00:01 +23: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: invalid-tolerance rejects before sealing or executing
+00:01 +24: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: full statement preview pages retain exact totals and import confirmation stores all rows
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.last (dart:core/iterable.dart:679:7)
+#1      _LastFinderMixin.filter (package:flutter_test/src/finders.dart:1410:28)
+#3      Iterable.single (dart:core/iterable.dart:694:13)
+#4      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#5      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2389:32)
+#6      main.<anonymous closure>.tap (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/bank_access_interaction_test.dart:379:22)
+#7      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/bank_access_interaction_test.dart:398:13)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 2 frames from dart:async-patch and package:stack_trace)
+
+The test description was:
+  full statement preview pages retain exact totals and import confirmation stores all rows
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +24 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/sourcing_interaction_test.dart: issue RFQ selects approved source lines and invited supplier with scoped immutable version
+00:05 +24 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: full statement preview pages retain exact totals and import confirmation stores all rows [E]
+  Test failed. See exception logs above.
+  The test description was: full statement preview pages retain exact totals and import confirmation stores all rows
+  
+00:06 +25 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: immediate lot transfer chooses scoped warehouses and exact rational conversion with no copied money
+00:07 +26 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: bank rules and matching confirmation cancel and exact scoped confirm
+00:07 +27 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/sourcing_interaction_test.dart: supplier response preserves exact fields governed FX and tax choices then sealed server save
+00:08 +28 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_attachment_access_test.dart: private link disappears immediately after disconnect
+00:08 +29 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_attachment_access_test.dart: private link disappears immediately after disconnect
+00:09 +30 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_attachment_access_test.dart: private link disappears immediately after disconnect
+00:09 +31 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/sourcing_interaction_test.dart: discard confirmation retains local notes when cancelled and removes only current scoped draft
+00:09 +32 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: receive uses original transfer version without historical output in recovered form
+00:09 +33 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: receive uses original transfer version without historical output in recovered form
+00:09 +34 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: receive uses original transfer version without historical output in recovered form
+00:09 +35 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: receive uses original transfer version without historical output in recovered form
+00:09 +36 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: receive uses original transfer version without historical output in recovered form
+00:09 +37 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: receive uses original transfer version without historical output in recovered form
+00:09 +38 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: receive uses original transfer version without historical output in recovered form
+00:09 +39 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: receive uses original transfer version without historical output in recovered form
+00:09 +40 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: receive uses original transfer version without historical output in recovered form
+00:09 +41 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: receive uses original transfer version without historical output in recovered form
+00:09 +42 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: receive uses original transfer version without historical output in recovered form
+00:09 +43 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_attachment_access_test.dart: document refresh invalidates an already opened private link
+00:10 +44 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: reverse uses original transfer version without historical output in recovered form
+00:10 +45 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_attachment_access_test.dart: disposed source cannot leave a private link in the root dialog
+00:10 +46 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: dated transit report keeps original cutoff across paging and clears on disconnect
+00:10 +47 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_attachment_access_test.dart: replaced workspace rejects the previous source link reply
+00:10 +48 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: removing transfer line and discarding local form sends no command
+00:10 +49 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: removing transfer line and discarding local form sends no command
+00:10 +50 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: removing transfer line and discarding local form sends no command
+00:10 +51 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: removing transfer line and discarding local form sends no command
+00:10 +52 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/transfer_interaction_test.dart: removing transfer line and discarding local form sends no command
+00:10 +53 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_attachment_access_test.dart: file rejection dialog cannot revive after disconnect
+00:10 +54 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_attachment_access_test.dart: file rejection dialog cannot revive after disconnect
+00:10 +54 -2: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_file_recovery_test.dart [E]
+  Failed to load "C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_file_recovery_test.dart": Does not exist.
+00:10 +55 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_attachment_access_test.dart: file rejection dialog cannot revive after disconnect
+00:11 +56 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_attachment_access_test.dart: file rejection dialog cannot revive after disconnect
+00:11 +57 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_attachment_access_test.dart: file rejection dialog cannot revive after disconnect
+00:11 +58 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_attachment_access_test.dart: file rejection dialog cannot revive after disconnect
+00:11 +59 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_workspace_test.dart: operational list 1024 light 200%
+00:11 +60 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_workspace_test.dart: operational list 1024 light 200%
+00:11 +61 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_workspace_test.dart: operational list 1024 light 200%
+00:11 +62 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_workspace_test.dart: operational list 1024 light 200%
+00:11 +63 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_workspace_test.dart: operational list 1024 light 200%
+00:12 +64 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_workspace_test.dart: operational list 1024 dark 200%
+00:12 +65 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_workspace_test.dart: operational list 1440 light 200%
+00:12 +66 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_workspace_test.dart: operational list 1440 dark 200%
+00:12 +67 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_workspace_test.dart: (tearDownAll)
+00:13 +67 -2: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/bank_access_interaction_test.dart: full statement preview pages retain exact totals and import confirmation stores all rows
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_file_recovery_test.dart: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/operational_file_recovery_test.dart

@@ -1,9 +1,12 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_inventory.dart';
 import 'package:jentra_platform/jentra_inventory_platform.dart';
+
 import '../../app_providers.dart';
+import '../operations/operational_read_access.dart';
 
 final reservationGatewayProvider = Provider<ReservationGateway?>((ref) => null);
 final reservationControllerProvider =
@@ -38,7 +41,7 @@ final reservationControllerProvider =
       return c;
     });
 
-final class ReservationController extends ChangeNotifier {
+final class ReservationController extends ChangeNotifier implements OperationalReadAccess {
   ReservationController({
     required this.scope,
     required this.gateway,
@@ -49,7 +52,20 @@ final class ReservationController extends ChangeNotifier {
   final ReservationGateway gateway;
   final QuotationDraftStore drafts;
   static const slot = 'reservation-release-editor';
-  bool online, busy = false, _disposed = false;
+  bool online, busy = false, _disposed = false, accessDenied = false;
+  int _epoch = 0;
+  @override
+  int get readAccessEpoch => _epoch;
+  @override
+  bool currentRead(int epoch) => !_disposed && online && !accessDenied && epoch == _epoch;
+  @override
+  void denyReadAccess() {
+    if (_disposed) return;
+    accessDenied = true;
+    _epoch++;
+    clearEvidence();
+    emit();
+  }
   String filter = 'active';
   String? cursor, error, message, coverageStart;
   int? historyCursor;
@@ -57,14 +73,14 @@ final class ReservationController extends ChangeNotifier {
   String? reportCursor, loadedReportInstant, reportCoverage;
   List<Map<String, Object?>> reportRows = [];
   Future<void> loadReport({bool more = false}) => run(() async {
-    if (!online) return;
+    if (!online || accessDenied) return;
+    final epoch = _epoch;
     final instant = more ? loadedReportInstant : reportInstant.trim();
     final parsed = instant == null ? null : DateTime.tryParse(instant);
     if (parsed == null ||
         !instant!.endsWith('Z') ||
-        !RegExp(
-          r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?Z$',
-        ).hasMatch(instant) ||
+        !RegExp(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?Z$')
+            .hasMatch(instant) ||
         parsed.toUtc().toIso8601String().substring(0, 19) !=
             instant.substring(0, 19)) {
       throw const FormatException(
@@ -76,7 +92,7 @@ final class ReservationController extends ChangeNotifier {
       instant,
       after: more ? reportCursor : null,
     );
-    if (_disposed) return;
+    if (_disposed || !online || epoch != _epoch) return;
     reportRows = [
       if (more) ...reportRows,
       for (final row in result['items'] as List)
@@ -89,30 +105,82 @@ final class ReservationController extends ChangeNotifier {
   List<Map<String, Object?>> items = [], events = [];
   Map<String, Object?>? form;
   QuotationLocalDraft? local;
-  bool get locked => busy || _disposed || local?.pending != null;
+  bool get locked =>
+      busy || _disposed || accessDenied || local?.pending != null;
   void emit() {
     if (!_disposed) notifyListeners();
   }
 
   @override
   void dispose() {
+    if (_disposed) return;
     _disposed = true;
+    _epoch++;
+    clearEvidence();
+    notifyListeners();
     super.dispose();
   }
 
   void setOnline(bool value) {
-    online = value;
+    if (online != value) {
+      online = value;
+      _epoch++;
+      clearEvidence();
+    }
     emit();
   }
 
+  void clearEvidence() {
+    if (form != null) form = releaseInputs(form!);
+    local = inputDraft(local);
+    items = [];
+    events = [];
+    reportRows = [];
+    cursor = null;
+    historyCursor = null;
+    coverageStart = null;
+    reportCursor = null;
+    loadedReportInstant = null;
+    reportCoverage = null;
+  }
+
+  static Map<String, Object?> releaseInputs(Map<String, Object?> value) => {
+    for (final key in ['id', 'version', 'status', 'reason', 'mode'])
+      if (value.containsKey(key)) key: value[key],
+  };
+
+  static QuotationLocalDraft? inputDraft(QuotationLocalDraft? value) =>
+      value == null
+      ? null
+      : QuotationLocalDraft(
+          form: releaseInputs(value.form),
+          expectedVersion: value.expectedVersion,
+          localVersion: value.localVersion,
+          pending: value.pending,
+          errorCode: value.errorCode,
+        );
+
   Future<void> run(Future<void> Function() work) async {
     if (busy || _disposed) return;
+    final epoch = _epoch;
     busy = true;
     error = null;
     emit();
     try {
       await work();
     } catch (e) {
+      if (_disposed || epoch != _epoch) return;
+      if (e is DomainError &&
+          const {
+            'PERMISSION_DENIED',
+            'ACCESS_DENIED',
+            'MFA_REQUIRED',
+            'AUTHENTICATION_REQUIRED',
+          }.contains(e.code)) {
+        accessDenied = true;
+        _epoch++;
+        clearEvidence();
+      }
       error = e is DomainError
           ? e.message
           : e is FormatException
@@ -125,24 +193,26 @@ final class ReservationController extends ChangeNotifier {
   }
 
   Future<void> initialize() => run(() async {
-    local = await drafts.load(scope, slot);
+    local = inputDraft(await drafts.load(scope, slot));
     if (_disposed) return;
     form = local?.form;
     if (online) await _refresh();
   });
   Future<void> _refresh({bool more = false}) async {
+    final epoch = _epoch;
     final result = await gateway.queue(
       scope,
       filter: filter,
       after: more ? cursor : null,
     );
-    if (_disposed) return;
+    if (_disposed || !online || epoch != _epoch) return;
     items = [
       if (more) ...items,
       for (final row in result['items'] as List)
         (row as Map).cast<String, Object?>(),
     ];
     cursor = result['next_cursor'] as String?;
+    accessDenied = false;
   }
 
   Future<void> refresh({bool more = false, String? selection}) => run(() async {
@@ -155,10 +225,13 @@ final class ReservationController extends ChangeNotifier {
     await _refresh(more: more);
   });
   Future<void> open(Map<String, Object?> row) => run(() async {
-    if (form != null) return;
+    if (!online || form != null || accessDenied) return;
+    final current = items.where((item) => item['id'] == row['id'] &&
+        item['version'] == row['version']).firstOrNull;
+    if (current == null) return;
     message = null;
     form = {
-      ...row,
+      ...current,
       'reason': '',
       'mode': filter == 'expired' || filter == 'retired' ? filter : 'manual',
     };
@@ -180,13 +253,14 @@ final class ReservationController extends ChangeNotifier {
 
   Future<void> _save() async {
     if (form == null) return;
+    final inputs = releaseInputs(form!);
     await drafts.save(
       scope,
       slot,
-      form!,
-      expectedVersion: form!['version'] as int?,
+      inputs,
+      expectedVersion: inputs['version'] as int?,
     );
-    local = await drafts.load(scope, slot);
+    local = inputDraft(await drafts.load(scope, slot));
   }
 
   Future<void> save() => run(_save);
@@ -212,13 +286,14 @@ final class ReservationController extends ChangeNotifier {
     coverageStart = null;
   });
   Future<void> history({bool more = false}) => run(() async {
-    if (!online || form == null) return;
+    if (!online || accessDenied || form == null) return;
+    final epoch = _epoch;
     final result = await gateway.history(
       scope,
       form!['id'] as String,
       beforeVersion: more ? historyCursor : null,
     );
-    if (_disposed) return;
+    if (_disposed || !online || epoch != _epoch) return;
     events = [
       if (more) ...events,
       for (final row in result['items'] as List)
@@ -228,7 +303,12 @@ final class ReservationController extends ChangeNotifier {
     historyCursor = result['next_version'] as int?;
   });
   Future<void> release() => run(() async {
-    if (!online || form == null) return;
+    if (!online || accessDenied || form == null) return;
+    final epoch = _epoch;
+    final inputs = {
+      for (final key in ['id', 'version', 'status', 'reason', 'mode'])
+        key: form![key],
+    };
     var pending = local?.pending;
     if (pending == null) {
       if (form!['status'] != 'active') return;
@@ -245,15 +325,26 @@ final class ReservationController extends ChangeNotifier {
         scope,
         slot,
         verb: 'cancel',
-        payload: {'id': form!['id'], 'mode': form!['mode'], 'reason': reason},
-        expectedVersion: form!['version'] as int?,
+        payload: {'id': inputs['id'], 'mode': inputs['mode'], 'reason': reason},
+        expectedVersion: inputs['version'] as int?,
       );
       local = await drafts.load(scope, slot);
     }
+    if (_disposed || !online || accessDenied || epoch != _epoch) return;
     Map<String, Object?> result;
     try {
       result = await gateway.release(pending.envelope);
-      await drafts.complete(scope, slot, pending.envelope.commandId);
+      await drafts.confirm(
+        scope,
+        slot,
+        pending.envelope.commandId,
+        form: {
+          ...inputs,
+          'status': result['status'],
+          'version': result['version'],
+        },
+        expectedVersion: result['version'] as int?,
+      );
     } on DomainError catch (e) {
       await drafts.recordFailure(
         scope,
@@ -265,14 +356,27 @@ final class ReservationController extends ChangeNotifier {
       rethrow;
     }
     if (_disposed) return;
-    form = {...form!, ...result};
     local = null;
     message = 'Reservation release confirmed.';
+    if (!online || epoch != _epoch) {
+      form = null;
+      return;
+    }
+    form = {...form!, ...result};
     try {
-      await _save();
       await _refresh();
-    } catch (_) {
-      error = 'Release confirmed. Retry local save or refresh before leaving.';
+    } catch (e) {
+      if (_disposed || !online || epoch != _epoch) return;
+      if (e is DomainError &&
+          const {
+            'PERMISSION_DENIED',
+            'ACCESS_DENIED',
+            'MFA_REQUIRED',
+            'AUTHENTICATION_REQUIRED',
+          }.contains(e.code))
+        rethrow;
+      error =
+          'Release confirmed. Retry the queue refresh to view its evidence.';
     }
   });
 }

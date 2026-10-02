@@ -1,0 +1,1635 @@
+{
+  "spec": "docs/blueprint/08_WAVE3_INTEGRATED_COMMERCE_FINANCE_SPEC.md",
+  "spec_sha256": "a5b6b788a21f51d1267f9148c1196d06e3dd37cc8fddff2b0a9e55c097e92454",
+  "requirements": [
+    {
+      "id": "FR-301",
+      "statement": "Every Wave 3 tenant record MUST carry tenant identity, UUID identity, UTC timestamps,   attributable actor fields, status, and optimistic version where it is mutable.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-302",
+      "statement": "Client reads MUST use tenant-filtered `security_invoker` API views and client mutations   MUST use named, authenticated, idempotent `api` RPCs; direct private-table mutation MUST remain   unavailable to desktop roles.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-303",
+      "statement": "Draft document headers and lines MUST be mutable only in editable lifecycle states,   compare expected versions on save, and return a structured conflict containing the current   server version when stale.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-304",
+      "statement": "A document MUST reserve its permanent number from the matching Wave 2 sequence when it   first leaves Draft; retries MUST return the same number and a reserved number MUST never be   reassigned to another document.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-305",
+      "statement": "Submission and approval MUST consume the active Wave 2 workflow and approval-matrix   version selected for the document scope and amount, record each decision, and enforce   segregation of duties.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-306",
+      "statement": "Posting MUST require an online authenticated command, an open fiscal period, active and   correctly scoped master references, complete accounting mappings, and an approved state where   the active workflow requires approval.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-307",
+      "statement": "Posted documents and ledger movements MUST NOT be edited or deleted; a correction MUST   create an attributable, reasoned document linked to the original and reverse or adjust the   original effects exactly once.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-308",
+      "statement": "The server MUST recalculate quantities, prices, discounts, taxes, subtotals, totals,   allocations, and base-currency amounts from canonical line inputs using exact decimals and the   legal entity rounding policy; client totals are advisory only.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-309",
+      "statement": "A foreign-currency document MUST persist currency, exchange-rate identifier or approved   manual rate, rate date, direct rate, transaction amounts, and base amounts without later rate   changes altering posted history.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-310",
+      "statement": "Posting MUST validate product, tax, inventory, revenue, expense, COGS, receivable,   payable, cash/bank, rounding, and exchange-difference mappings required by that document before   any side effect is committed.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-311",
+      "statement": "Every successful mutation MUST atomically create or reuse one command receipt, append   attributable audit context, emit process telemetry for lifecycle changes, and enqueue required   outbox events with the same correlation identifier.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-312",
+      "statement": "Wave 3 aggregates MUST reuse Wave 2 private attachments and user notifications with   aggregate allowlisting and permission checks; an attachment or notification MUST NOT authorize   access to its underlying aggregate.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-313",
+      "statement": "A permitted user MUST create and revise tenant-scoped leads with code, person or   organization name, optional party/contact, source, owner, stage, expected value/currency,   expected close date, loss reason, status, and version.",
+      "source_evidence": "supabase/tests/wave3_crm_pipeline_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "fresh regression and contextual navigation",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-314",
+      "statement": "A permitted user MUST record timestamped CRM activities for a lead, opportunity, party,   or contact with activity type, subject, owner, due/completed time, outcome, and notes.",
+      "source_evidence": "supabase/tests/wave3_crm_pipeline_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "fresh regression and contextual navigation",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-315",
+      "statement": "Lead stage changes MUST follow the active scoped workflow, record entered/completed   times and reason, and require qualification data before a lead becomes qualified.",
+      "source_evidence": "supabase/tests/wave3_crm_pipeline_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "fresh regression and contextual navigation",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-316",
+      "statement": "A permitted user MUST create and revise opportunities with customer or prospect,   owner, stage, probability from 0 to 100, exact expected value, currency, expected close date,   next action, products of interest, and won/lost reason.",
+      "source_evidence": "supabase/tests/wave3_crm_pipeline_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "fresh regression and contextual navigation",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-317",
+      "statement": "Lead conversion MUST be idempotent and MUST create or link one party/contact and one   opportunity without duplicating an existing party selected by the user.",
+      "source_evidence": "supabase/tests/wave3_crm_pipeline_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "fresh regression and contextual navigation",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-318",
+      "statement": "Pipeline reads MUST expose stage totals, weighted value, aging, conversion, win/loss,   activity recency, and forecast buckets using persisted exact values and explicit as-of dates.",
+      "source_evidence": "supabase/tests/wave3_crm_pipeline_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "fresh regression and contextual navigation",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-319",
+      "statement": "A permitted user MUST create and revise quotations with customer, contact, entity,   branch, currency/rate, validity, payment and delivery terms, salesperson, header discounts,   notes, and versioned product/service lines.",
+      "source_evidence": "supabase/tests/wave3_quotation_workspace_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "current-list/report integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-320",
+      "statement": "Quotation lines MUST preserve quantity, unit, conversion, unit price, line discount,   tax definition, inclusive/exclusive behavior, exact calculated totals, and revision history;   expired quotations MUST NOT be accepted without a new revision.",
+      "source_evidence": "supabase/tests/wave3_quotation_workspace_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "current-list/report integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-321",
+      "statement": "Quotation submission, approval, rejection, recall, acceptance, expiry, and cancellation   MUST follow the configured workflow and preserve all decisions and customer-facing revisions.",
+      "source_evidence": "supabase/tests/wave3_quotation_workspace_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "current-list/report integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-322",
+      "statement": "An accepted quotation MUST convert idempotently into one sales order with traceable   source lines; repeated conversion MUST return the existing order.",
+      "source_evidence": "supabase/tests/wave3_order_workspace_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "current-list/report and reservation lifecycle integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-323",
+      "statement": "A permitted user MUST create and revise sales orders with promised dates, ship-to data,   fulfillment warehouse, exact commercial terms, and ordered/cancelled/allocated/delivered/   invoiced quantities per source line.",
+      "source_evidence": "supabase/tests/wave3_order_workspace_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "current-list/report and reservation lifecycle integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-324",
+      "statement": "Sales-order confirmation MUST evaluate the customer's active status, due and overdue   exposure, credit limit, order exposure, and privileged override reason before commitment.",
+      "source_evidence": "supabase/tests/wave3_order_workspace_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "current-list/report and reservation lifecycle integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-325",
+      "statement": "A permitted online command MUST reserve available stock for eligible order lines,   release or reduce reservations on cancellation and fulfillment, and never make the reservation   itself an accounting or stock movement.",
+      "source_evidence": "supabase/tests/wave3_order_workspace_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "current-list/report and reservation lifecycle integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-326",
+      "statement": "Posting a delivery MUST validate fulfilled quantities and tracking data, consume the   related reservation, create immutable inventory issues, update order fulfillment, and create   balanced inventory/COGS journals in one transaction.",
+      "source_evidence": "supabase/tests/wave3_delivery_receivables_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "report navigation, historical mappings, recovery and concurrent commands",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-327",
+      "statement": "Partial deliveries and invoices MUST be supported without exceeding the remaining   approved order quantity unless a separately permitted and audited tolerance override applies.",
+      "source_evidence": "supabase/tests/wave3_delivery_receivables_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "report navigation, historical mappings, recovery and concurrent commands",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-328",
+      "statement": "A permitted user MUST draft, submit, approve where configured, and post sales invoices   from delivered/order lines or, for service and non-stocked products, as authorized direct   invoices, with customer, due date, currency, tax, discounts, terms, and source traceability.",
+      "source_evidence": "supabase/tests/wave3_delivery_receivables_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "report navigation, historical mappings, recovery and concurrent commands",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-329",
+      "statement": "Sales-invoice posting MUST atomically create the immutable invoice, customer receivable   open item, tax/revenue journal effects, due balance, audit, receipt, telemetry, and outbox event.",
+      "source_evidence": "supabase/tests/wave3_delivery_receivables_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "report navigation, historical mappings, recovery and concurrent commands",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-330",
+      "statement": "A permitted user MUST record customer receipts against a configured cash or bank   account with receipt date, currency/rate, external reference, tender metadata, and unapplied   amount.",
+      "source_evidence": "supabase/tests/wave3_delivery_receivables_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "report navigation, historical mappings, recovery and concurrent commands",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-331",
+      "statement": "Customer-receipt posting MUST create balanced cash/bank and receivable-control journal   effects and MUST NOT mark funds bank-reconciled before an explicit reconciliation.",
+      "source_evidence": "supabase/tests/wave3_delivery_receivables_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "report navigation, historical mappings, recovery and concurrent commands",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-332",
+      "statement": "Receipt allocation MUST support one-to-many and many-to-one invoice allocation,   preserve exact residuals, prevent over-allocation, and create explicit discount, write-off, or   realized exchange-difference lines only with the required permission and reason.",
+      "source_evidence": "supabase/tests/wave3_delivery_receivables_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "report navigation, historical mappings, recovery and concurrent commands",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-333",
+      "statement": "Sales returns and credit notes MUST reference eligible delivered or invoiced quantities,   prevent excess return/credit, restore saleable stock at the required cost where applicable,   reverse revenue/tax/COGS/AR effects, and retain the original document unchanged.",
+      "source_evidence": "supabase/tests/wave3_delivery_receivables_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "report navigation, historical mappings, recovery and concurrent commands",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-334",
+      "statement": "Customer statements and aged receivables MUST reconcile to AR open items as of a chosen   date, expose current and configurable overdue buckets, and support drill-through to source,   allocation, credit, and receipt records.",
+      "source_evidence": "supabase/tests/wave3_delivery_receivables_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "report navigation, historical mappings, recovery and concurrent commands",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-335",
+      "statement": "A permitted user MUST create and revise purchase requisitions with requester, entity,   branch, need-by date, cost centre/project where available, justification, and exact product or   free-text lines.",
+      "source_evidence": "supabase/tests/wave3_procurement_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "operational reporting and contextual source integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-336",
+      "statement": "Requisition submission and decision MUST use the active workflow and approval matrix;   the requester MUST NOT approve their own requisition when segregation of duties is enabled.",
+      "source_evidence": "supabase/tests/wave3_procurement_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "operational reporting and contextual source integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-337",
+      "statement": "A permitted user MUST issue an RFQ from approved requisition lines, record invited   suppliers and comparable supplier quotations, and retain the selection rationale.",
+      "source_evidence": "supabase/tests/wave3_procurement_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "operational reporting and contextual source integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-338",
+      "statement": "A permitted user MUST create and revise purchase orders with supplier, currency/rate,   terms, receiving warehouse, promised dates, tax, ordered/cancelled/received/billed quantities,   and source requisition or RFQ links.",
+      "source_evidence": "supabase/tests/wave3_procurement_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "operational reporting and contextual source integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-339",
+      "statement": "A material change to an approved purchase order MUST create a new revision and repeat   approval when configured thresholds, supplier, currency, quantity, price, tax, or total change.",
+      "source_evidence": "supabase/tests/wave3_procurement_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "operational reporting and contextual source integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-340",
+      "statement": "Posting a goods receipt MUST validate purchase-order eligibility, received quantities,   warehouse, units, lots/serials, and acceptance/rejection quantities, then create immutable stock   receipts and accrued-receipt journal effects atomically.",
+      "source_evidence": "supabase/tests/wave3_goods_receipts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "source integration and wider verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-341",
+      "statement": "Partial receipts, approved over-receipt tolerances, rejected quantities, and receipt   reversals MUST update remaining quantities without rewriting the purchase order or prior receipt.",
+      "source_evidence": "supabase/tests/wave3_goods_receipts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "source integration and wider verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-342",
+      "statement": "A permitted user MUST draft and post supplier bills against purchase orders and goods   receipts or as authorized direct bills, with invoice reference uniqueness per supplier, due   date, tax, currency/rate, and exact line totals.",
+      "source_evidence": "supabase/tests/wave3_supplier_bills_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "source integration and wider verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-343",
+      "statement": "Three-way matching MUST compare purchase-order, accepted receipt, and supplier-bill   quantities, unit prices, discounts, taxes, and totals and MUST identify each exception.",
+      "source_evidence": "supabase/tests/wave3_supplier_bills_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "source integration and wider verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-344",
+      "statement": "Match exceptions beyond configured exact quantity or amount tolerances MUST block posting   until a permitted approval records the exception, reason, and accountable actor.",
+      "source_evidence": "supabase/tests/wave3_supplier_bills_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "source integration and wider verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-345",
+      "statement": "Supplier-bill posting MUST atomically create the payable open item and balanced expense/   inventory/accrual, input-tax, and AP-control journal effects without duplicating receipt value.",
+      "source_evidence": "supabase/tests/wave3_supplier_bills_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "source integration and wider verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-346",
+      "statement": "A permitted user MUST create payment proposals from due supplier open items, select   invoices and credits, and submit the proposal through configured payment approval without   executing an external bank payment.",
+      "source_evidence": "supabase/tests/wave3_supplier_settlement_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "party reports, governed corrections and access/recovery verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-347",
+      "statement": "Posting a supplier payment MUST record the approved payment, allocate exact amounts,   create balanced AP and cash/bank journal effects, and leave bank reconciliation pending.",
+      "source_evidence": "supabase/tests/wave3_supplier_settlement_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "party reports, governed corrections and access/recovery verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-348",
+      "statement": "Purchase returns and supplier debit notes MUST reference eligible receipts or bills,   prevent excess quantities/amounts, issue stock where applicable, reverse tax/accrual/AP effects,   and preserve the source documents.",
+      "source_evidence": "supabase/tests/wave3_supplier_settlement_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "party reports, governed corrections and access/recovery verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-349",
+      "statement": "Supplier statements and aged payables MUST reconcile to AP open items as of a chosen   date, expose configurable aging buckets, and drill through to bills, credits, allocations, and   payments.",
+      "source_evidence": "supabase/tests/wave3_supplier_settlement_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "party reports, governed corrections and access/recovery verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-350",
+      "statement": "Transaction quantities MUST use exact base-unit values; non-base transaction units MUST   use an active product-specific rational conversion whose numerator and denominator are persisted   on the document line.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-351",
+      "statement": "Every receipt, issue, transfer, return, or adjustment MUST create immutable stock   movement headers and lines with source type/id/line, warehouse, product, base quantity, value,   actor, posting time, and correlation identifier.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-352",
+      "statement": "On-hand, reserved, and available balances MUST be derived from posted movements and   active reservations and MUST be reproducible for a requested as-of time.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-353",
+      "statement": "A posting that would make on-hand or available quantity negative MUST be rejected unless   the legal entity has an active negative-stock policy and the actor has the override capability;   every override MUST be separately audited.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-354",
+      "statement": "Lot-tracked products MUST require tenant/product-scoped lot identity and applicable   manufacture/expiry metadata on movement; expired lots MUST be blocked from saleable issue unless   a separately permitted disposition command is used.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-355",
+      "statement": "Serial-tracked products MUST record one unique serial per base unit, prevent a serial   from being available in two places, and preserve the complete receipt, transfer, delivery,   return, and disposition history.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-356",
+      "statement": "Moving weighted-average cost MUST update atomically for positive receipts and value   adjustments, price issues at the pre-issue carrying cost, preserve exact intermediate precision,   and post rounding differences to the configured account.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-357",
+      "statement": "A warehouse transfer MUST post one atomic source issue and destination receipt at the   same carrying value, retain in-transit state when locations differ operationally, and complete or   reverse without creating or losing aggregate value.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-358",
+      "statement": "A permitted user MUST create stock counts and adjustments; variances MUST require a   reason and configured approval and MUST post quantity, value, and inventory variance journals   together.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-359",
+      "statement": "A permitted value-adjustment command MUST allocate freight or other landed value to   eligible received stock using an explicit exact basis and post the amount to remaining inventory   and consumed-stock variance without changing historical quantities.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-360",
+      "statement": "Inventory valuation and inventory-to-GL reconciliation MUST reproduce quantity, moving   average, and carrying value by entity, warehouse, product, lot where applicable, and as-of time,   with every difference linked to its movement or journal source.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-361",
+      "statement": "Reservations MUST be uniquely linked to demand lines, bounded by remaining demand, and   released on expiry, cancellation, delivery, reversal, product retirement, or explicit permitted   release without altering posted stock.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-362",
+      "statement": "Every journal entry MUST carry tenant, legal entity, fiscal period, posting date,   currency context, source type/id, immutable sequence number, description, status, reversal link,   and two or more journal lines.",
+      "source_evidence": "supabase/tests/wave3_manual_journal_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "source and attachment integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-363",
+      "statement": "Journal lines MUST reference active posting accounts and carry exact transaction and   base debit/credit amounts; a posted entry MUST balance base debits and credits exactly and MUST   never contain a line with both debit and credit.",
+      "source_evidence": "supabase/tests/wave3_manual_journal_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "source and attachment integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-364",
+      "statement": "Delivery, invoice, receipt, goods receipt, bill, payment, return, credit/debit note, stock   adjustment, landed-value adjustment, bank adjustment, and exchange revaluation commands MUST   use versioned server-owned posting rules and produce deterministic balanced entries.",
+      "source_evidence": "supabase/tests/wave3_manual_journal_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "source and attachment integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-365",
+      "statement": "A permitted user MUST draft and submit manual journals with lines, dimensions,   attachments, and reason; posting MUST require configured approval, segregation of duties, an   open period, and exact balance.",
+      "source_evidence": "supabase/tests/wave3_manual_journal_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "source and attachment integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-366",
+      "statement": "Journal entries MUST retain source-document and source-line drill-through; direct client   creation of posted journal lines or mutation of any posted journal MUST be denied.",
+      "source_evidence": "supabase/tests/wave3_manual_journal_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "source and attachment integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-367",
+      "statement": "AR and AP open items MUST be created only by posting or reversal, track original, open,   due, allocated, written-off, and base amounts, and reconcile exactly to their control accounts.",
+      "source_evidence": "supabase/tests/wave3_control_procurement_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "historical/retired control mapping coverage",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-368",
+      "statement": "Reversing an allocation MUST require permission and reason, reopen affected items by the   exact amount, create any required exchange reversal, and retain both allocation records.",
+      "source_evidence": "supabase/tests/wave3_control_procurement_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "historical/retired control mapping coverage",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-369",
+      "statement": "A permitted finance administrator MUST configure operational cash and bank accounts that   reference one legal entity, currency, posting GL account, optional branch, reconciliation rules,   and active status.",
+      "source_evidence": "supabase/tests/wave3_control_procurement_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "historical/retired control mapping coverage",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-370",
+      "statement": "A permitted user MUST import at most 2,000 bank-statement rows from bounded CSV/XLSX,   preview normalized dates/references/exact amounts, reject duplicate statement identities, and   apply the valid statement atomically without posting accounting entries.",
+      "source_evidence": "supabase/tests/wave3_bank_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "bank reporting and concurrent match proof",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-371",
+      "statement": "Bank reconciliation MUST support one-to-one, one-to-many, and many-to-one matches between   statement lines and posted cash/bank transactions, exact tolerance rules, permitted adjustments,   lock concurrent matches, and preserve a reversible audit trail.",
+      "source_evidence": "supabase/tests/wave3_bank_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "bank reporting and concurrent match proof",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-372",
+      "statement": "Settlement and period-end foreign-currency processing MUST calculate realized and   unrealized exchange differences from persisted rates, create deterministic journals, and reverse   prior unrealized entries when required without changing source amounts.",
+      "source_evidence": "supabase/tests/wave3_period_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "concurrent close/post verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-373",
+      "statement": "Soft-locked periods MUST reject ordinary posting but allow explicitly permitted close   adjustments; hard-locked periods MUST reject all Wave 3 posting, allocation, reconciliation   adjustment, and reversal commands.",
+      "source_evidence": "supabase/tests/wave3_period_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "concurrent close/post verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-374",
+      "statement": "Closing a fiscal period MUST verify required subledger and bank reconciliations and record   exceptions; reopening a hard-locked period MUST require `finance.period.reopen`, recent MFA,   reason, approval, audit, and a new version without deleting the prior close event.",
+      "source_evidence": "supabase/tests/wave3_period_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "concurrent close/post verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-375",
+      "statement": "AR-control, AP-control, inventory-control, tax, cash/bank, and goods-received-not-invoiced   reconciliations MUST compare subledger totals with the GL as of a period and drill through every   difference.",
+      "source_evidence": "supabase/tests/wave3_financial_statements_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "operational, party and bank report extensions",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-376",
+      "statement": "Trial balance, profit and loss, balance sheet, and indirect cash-flow statements MUST be   generated from posted journals for a legal entity, explicit period/as-of date, and base currency,   with comparative periods and account drill-through.",
+      "source_evidence": "supabase/tests/wave3_financial_statements_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "operational, party and bank report extensions",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-377",
+      "statement": "Aged receivables, aged payables, customer statements, supplier statements, tax summaries,   inventory valuation, and bank reconciliation reports MUST use posted as-of truth and reconcile   to their governing subledger or ledger totals.",
+      "source_evidence": "supabase/tests/wave3_financial_statements_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "operational, party and bank report extensions",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-378",
+      "statement": "The indirect cash-flow statement MUST start from posted profit, classify non-cash   adjustments and working-capital changes, present investing and financing cash movements through   configured account mappings, reconcile closing cash to mapped cash/bank GL balances, and expose   unmapped items as blocking close warnings.",
+      "source_evidence": "supabase/tests/wave3_financial_statements_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "operational, party and bank report extensions",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-379",
+      "statement": "A permitted user MUST create versioned annual or period budgets by legal entity, account,   branch, cost centre, project where available, and currency with exact amounts and workflow state.",
+      "source_evidence": "supabase/tests/wave3_financial_statements_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "operational, party and bank report extensions",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-380",
+      "statement": "Budget-versus-actual reporting MUST compare the selected approved budget version with   posted actuals by period and dimension and expose exact amount and percentage variances.",
+      "source_evidence": "supabase/tests/wave3_financial_statements_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "operational, party and bank report extensions",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-381",
+      "statement": "Tax summaries MUST derive from posted tax lines and effective-dated Wave 2 definitions,   distinguish input/output/withholding/zero/exempt treatment, and display an explicit   non-certified/statutory-review-required notice.",
+      "source_evidence": "supabase/tests/wave3_financial_statements_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "operational, party and bank report extensions",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-382",
+      "statement": "Every financial and operational report MUST expose its tenant/entity scope, as-of or   period basis, base/transaction currency meaning, generation time, filters, and drill-through   lineage; mutable current-state data MUST NOT be substituted for requested as-of truth.",
+      "source_evidence": "supabase/tests/wave3_financial_statements_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "operational, party and bank report extensions",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-383",
+      "statement": "The desktop shell MUST expose capability-gated CRM, Sales, Purchasing, Inventory, and   Finance workspaces through routes, primary navigation, and command-palette destinations.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-384",
+      "statement": "Each workspace MUST provide accessible loading, error, empty, and populated states plus   a dense list/detail/timeline layout that keeps source, lifecycle, approval, posting, allocation,   attachment, and audit context visible.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-385",
+      "statement": "Wave 3 forms MUST provide field and cross-line validation, keyboard traversal, visible   focus, exact decimal/date entry, server-recalculated previews, unsaved-change confirmation, and   a clear distinction between Save Draft, Submit, Approve, Post, Reverse, and Cancel.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-386",
+      "statement": "Offline users MAY read encrypted cached references and edit encrypted drafts, but every   authoritative lifecycle, reservation, allocation, posting, reconciliation, close, reopen,   reversal, and import command MUST be disabled until live confirmation.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-387",
+      "statement": "A server version conflict MUST preserve the encrypted local draft, display current and   local material fields, and require explicit reload, copy, or merge; no automatic last-write-wins   behavior is permitted.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-388",
+      "statement": "Routes, fields, prices/costs, margins, actions, approval controls, posting controls, and   report/export controls MUST respect server-resolved capability and scope; the database remains   authoritative and segregation-of-duty failures MUST be explained without leaking hidden data.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-389",
+      "statement": "Operational lists MUST provide literal search, status and date filters, stable sorting,   bounded cursor pagination, saved view state, and refresh without using Realtime as transaction   truth.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-390",
+      "statement": "Role-appropriate dashboards MUST surface actionable pipeline, quotation, order,   fulfillment, procurement, stock, AR/AP aging, cash, bank reconciliation, close, budget, and   exception states using explicit timestamps and scopes.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-391",
+      "statement": "Users MUST attach and retrieve permitted Wave 2 files from Wave 3 detail screens without   public URLs, and posted-document attachments MUST remain append-only unless a privileged audited   rejection marks a file unavailable.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-392",
+      "statement": "Submission, decision, posting, exception, due, allocation, reconciliation, close, and   reversal events MUST create in-app notification records for configured recipients without making   external delivery a posting dependency.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-393",
+      "statement": "Deep links and command-palette actions MUST restore tenant/entity context and open the   permitted aggregate or a non-disclosing not-found/forbidden state.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-394",
+      "statement": "A permitted user MUST export the currently filtered bounded view or generated report to   UTF-8 CSV/XLSX with stable columns, exact decimal strings, scope/as-of metadata, and an   attributable Wave 2 export job.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "FR-395",
+      "statement": "Retryable network, validation, permission, conflict, closed-period, insufficient-stock,   match, and posting failures MUST have distinct actionable states; a failed command MUST not leave   a success indicator or partial local/server effect.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-301",
+      "statement": "Each posting, reversal, allocation, and reconciliation command MUST be one database   transaction covering domain state, stock, subledger, journal, audit, receipt, telemetry, and   outbox effects; injected failure at any step MUST roll back all effects.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "security/exactness/rollback/encrypted recovery fresh checks",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-302",
+      "statement": "Money, quantity, rates, discounts, tax, costs, and percentages MUST use PostgreSQL   `numeric` and decimal-string/`BigInt`-backed Dart values; binary floating point MUST NOT cross a   public contract.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "security/exactness/rollback/encrypted recovery fresh checks",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-303",
+      "statement": "Every tenant-bearing Wave 3 table MUST enable and force RLS, and database tests MUST   prove tenant, legal-entity, branch, warehouse, ownership, and capability boundaries for reads and   commands.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "security/exactness/rollback/encrypted recovery fresh checks",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-304",
+      "statement": "Every privileged function MUST use an empty search path, fully qualified objects,   explicit authentication/capability/scope checks, and no execution grant to `PUBLIC` or `anon`.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "security/exactness/rollback/encrypted recovery fresh checks",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-305",
+      "statement": "Approval, price override, cost visibility, stock override, posting, payment, bank   adjustment, period close/reopen, and reversal MUST support distinct capabilities; configured   high-risk actions MUST require recent MFA and segregation-of-duty checks.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "security/exactness/rollback/encrypted recovery fresh checks",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-306",
+      "statement": "One hundred percent of successful Wave 3 mutations MUST be attributable by tenant,   actor, request, command, aggregate, source, before/after context, correlation ID, and UTC time;   audit and posted ledger history MUST be append-only.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "security/exactness/rollback/encrypted recovery fresh checks",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-307",
+      "statement": "Ordinary indexed list/detail reads MUST meet p95 under 500 ms at target scale, excluding   generated reports, file transfer, and external providers.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "target-scale p95 ordinary reads",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-308",
+      "statement": "Draft/save/transition commands MUST meet p95 under 1.5 seconds and single-document   posting commands p95 under 3 seconds at target scale, excluding user approval wait and external   delivery.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "target-scale command p95",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-309",
+      "statement": "Verification data MUST exercise at least 500 tenants, 10 legal entities per tenant,   25 warehouses per entity, 100,000 products per large tenant, 10 million stock movements, and 20   million journal lines without cross-tenant scans.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "500 tenants / 10 entities / 25 warehouses / 100k products / 10m movements / 20m journal lines",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-310",
+      "statement": "Tenant-leading indexes MUST cover foreign keys, lifecycle queues, source links, cursor   lists, open-item aging, stock as-of, bank matching, and journal/report filters; representative   plans MUST avoid unbounded sequential scans on high-volume tables.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "representative plans at target scale",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-311",
+      "statement": "Interactive list limits MUST be 1–200, detail child pages 1–500, bank imports at most   2,000 rows and 10 MiB, and synchronous report results at most 10,000 rows; larger work MUST be a   separately specified background job.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "security/exactness/rollback/encrypted recovery fresh checks",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-312",
+      "statement": "Concurrent number reservation, order allocation, stock issue, receipt, matching,   allocation, posting, close, and reversal MUST use deterministic lock ordering or equivalent   constraints and return a stable retryable conflict instead of overselling or double posting.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "genuine independent concurrent database sessions",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-313",
+      "statement": "Local drafts and cached sensitive payloads MUST remain inside the Wave 1 AES-256-GCM and   Windows Credential Manager boundary and MUST exclude posted ledger truth, full bank statements,   and unmasked cost data not permitted to the current user.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "security/exactness/rollback/encrypted recovery fresh checks",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-314",
+      "statement": "Wave 3 desktop flows MUST meet WCAG 2.2 AA, full keyboard operation, visible focus,   semantic status/error text, screen-reader labels, reduced motion, and 200% text scaling.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "full keyboard/screen reader/reduced motion acceptance",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-315",
+      "statement": "Wave 3 screens MUST render without overflow at 1024×720, 1440×900, 1920×1080, and 4K in   light/dark and compact/comfortable modes; tables MUST retain reachable horizontal scrolling and   frozen identity columns where necessary.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "all sizes/themes/densities at 200 percent",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-316",
+      "statement": "Logs and telemetry MUST carry correlation and scoped identifiers while excluding   secrets, bank credentials, raw attachment contents, and unnecessary PII; posting latency,   conflicts, stock denials, reconciliation gaps, close blockers, and dead-letter depth MUST be   observable.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "security/exactness/rollback/encrypted recovery fresh checks",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-317",
+      "statement": "Pure domain, calculation, allocation, matching, lifecycle, valuation, and posting-rule   code MUST maintain at least 90% branch coverage; changed overall code MUST preserve the project   80% target and critical invariants MUST have property tests.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "branch coverage and property-test targets",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-318",
+      "statement": "Database tests MUST prove RLS/grants, exact calculations, idempotency, optimistic   conflicts, atomic rollback, concurrency, stock/serial uniqueness, weighted-average valuation,   balanced journals, subledger reconciliation, closed-period rejection, reversal, and audit   immutability.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "wider security, fault injection and concurrency",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-319",
+      "statement": "The Windows release build MUST complete and cold-launch without an immediate crash;   critical lead-to-cash, procure-to-pay, inventory, reconciliation, and close paths MUST receive   rendered visual and keyboard QA in addition to automated tests.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "isolated build; authorized cold-launch/native QA pending",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "NFR-320",
+      "statement": "Trial balance, aged balances, inventory valuation, and subledger reconciliation MUST   meet p95 under 2 seconds for one ordinary entity/period at target scale; bounded complex reports   MAY take up to 10 seconds and MUST expose progress and cancellation.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "target-scale report p95",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-301",
+      "statement": "Scoped and atomic operational commands (FR-301–FR-312, NFR-301–NFR-306) **Covers:** FR-301, FR-302, FR-303, FR-304, FR-305, FR-306, FR-307, FR-308, FR-309, FR-310, FR-311, FR-312.  Given two tenants, scoped users, active Wave 2 setup, and an injectable posting failure When users read, save, submit, replay, post, and attempt cross-tenant or direct-table actions Then only permitted scoped records are visible and only named RPCs mutate business data And a replay returns the original result without duplicate effects And an injected failure leaves no document, stock, journal, audit, receipt, telemetry, or outbox partial effect.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-302",
+      "statement": "CRM pipeline and lead conversion (FR-313–FR-318) **Covers:** FR-313, FR-314, FR-315, FR-316, FR-317, FR-318.  Given a new prospect lead with activities and an active qualification workflow When a permitted user qualifies and converts the lead twice Then one linked party/contact and one opportunity exist with complete stage telemetry And the second conversion returns the same aggregates And pipeline totals preserve exact expected and probability-weighted values for the selected as-of date.",
+      "source_evidence": "supabase/tests/wave3_crm_pipeline_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "fresh regression and contextual navigation",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-303",
+      "statement": "Versioned quotation (FR-319–FR-321, NFR-302) **Covers:** FR-319, FR-320, FR-321.  Given an active customer, products, taxes, prices, currency rate, and approval workflow When a user drafts, revises, submits, and accepts a quotation Then the server-calculated exact inclusive/exclusive taxes and totals match the rounding policy And each customer-facing revision and approval decision remains readable And an expired unrevised quotation cannot be accepted.",
+      "source_evidence": "supabase/tests/wave3_quotation_workspace_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "current-list/report integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-304",
+      "statement": "Quote-to-order and credit control (FR-322–FR-325) **Covers:** FR-322, FR-323, FR-324, FR-325.  Given an accepted quotation and customer exposure near the credit limit When conversion is replayed and the order is confirmed and reserved Then exactly one traced sales order exists And confirmation is blocked or records a permitted override according to exposure And stock reservations are bounded by available stock and remaining demand without creating a journal or stock movement.",
+      "source_evidence": "supabase/tests/wave3_order_workspace_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "current-list/report and reservation lifecycle integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-305",
+      "statement": "Delivery and partial fulfillment (FR-326–FR-327) **Covers:** FR-326, FR-327.  Given an approved order with reserved stocked, lot-tracked, and service lines When a permitted user posts a partial delivery Then eligible stock is issued at carrying cost, reservations and remaining quantities update, and inventory/COGS journals balance in the same transaction And an excess or invalid-lot delivery is rejected without partial effects.",
+      "source_evidence": "supabase/tests/wave3_delivery_receivables_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "report navigation, historical mappings, recovery and concurrent commands",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-306",
+      "statement": "Sales invoice posting (FR-328–FR-329) **Covers:** FR-328, FR-329.  Given delivered lines and an open fiscal period When a permitted user posts the sales invoice and replays the command Then one immutable invoice, one AR open item, one balanced revenue/tax journal, one audit event, and one command receipt result exist And the customer balance equals the invoice residual exactly.",
+      "source_evidence": "supabase/tests/wave3_delivery_receivables_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "report navigation, historical mappings, recovery and concurrent commands",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-307",
+      "statement": "Customer receipt and allocations (FR-330–FR-332) **Covers:** FR-330, FR-331, FR-332.  Given two open invoices in a foreign currency and one customer receipt When the receipt is posted and allocated one-to-many Then cash/bank and AR journal effects balance, invoice residuals are exact, and the receipt remains unreconciled with its unapplied amount visible And over-allocation or an unauthorized write-off is rejected.",
+      "source_evidence": "supabase/tests/wave3_delivery_receivables_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "report navigation, historical mappings, recovery and concurrent commands",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-308",
+      "statement": "Sales return, credit, and customer aging (FR-333–FR-334) **Covers:** FR-333, FR-334.  Given a delivered and invoiced sale included in a prior aging report When an eligible partial return and credit note are posted Then stock and financial effects reverse only the eligible amount with links to the source And a new as-of aging report reconciles to AR while the earlier as-of report remains unchanged.",
+      "source_evidence": "supabase/tests/wave3_delivery_receivables_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "report navigation, historical mappings, recovery and concurrent commands",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-309",
+      "statement": "Requisition, RFQ, and purchase order (FR-335–FR-339) **Covers:** FR-335, FR-336, FR-337, FR-338, FR-339.  Given an approved requisition and supplier responses When a user selects a supplier, creates a purchase order, and materially changes its price Then source links and selection rationale remain visible And the changed revision returns to approval according to the configured threshold And the requester cannot self-approve when segregation of duties applies.",
+      "source_evidence": "supabase/tests/wave3_procurement_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "operational reporting and contextual source integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-310",
+      "statement": "Goods receipt (FR-340–FR-341) **Covers:** FR-340, FR-341.  Given an approved purchase order with tracked stock When a user posts accepted, rejected, and partial receipt quantities Then only accepted quantities enter stock with required lot/serial identity and accrued-receipt journals And excess or duplicate receipt posting is rejected or requires the configured audited tolerance.",
+      "source_evidence": "supabase/tests/wave3_goods_receipts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "source integration and wider verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-311",
+      "statement": "Supplier bill and three-way match (FR-342–FR-345) **Covers:** FR-342, FR-343, FR-344, FR-345.  Given purchase-order, goods-receipt, and supplier-bill values inside and outside tolerance When the bills are matched and posted Then the within-tolerance bill creates one AP item and balanced accounting without duplicating receipt value And the outside-tolerance bill is blocked until a permitted exception decision is recorded.",
+      "source_evidence": "supabase/tests/wave3_supplier_bills_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "source integration and wider verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-312",
+      "statement": "Supplier payment, return, and aging (FR-346–FR-349) **Covers:** FR-346, FR-347, FR-348, FR-349.  Given approved payable items, a payment proposal, and an eligible received item When payment and a partial purchase return/debit note are posted Then AP, cash/bank, tax, accrual, and stock effects remain exact and source-linked And supplier aging reconciles to AP with the payment still pending bank reconciliation.",
+      "source_evidence": "supabase/tests/wave3_supplier_settlement_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "party reports, governed corrections and access/recovery verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-313",
+      "statement": "Exact units and stock balances (FR-350–FR-353, NFR-302, NFR-312) **Covers:** FR-350, FR-351, FR-352, FR-353.  Given a product with a rational transaction-unit conversion and two concurrent issue commands When both commands compete for the final available quantity Then base quantity conversion is exact and at most one issue succeeds when negative stock is off And on-hand, reserved, and available balances reproduce from posted movements and reservations.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-314",
+      "statement": "Lot and serial traceability (FR-354–FR-355) **Covers:** FR-354, FR-355.  Given lot-tracked and serial-tracked products across two warehouses When they are received, transferred, delivered, returned, and dispositioned Then every unit has one unbroken tenant/product/location history And duplicate serial availability, missing tracking data, and expired saleable issues are rejected.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-315",
+      "statement": "Weighted average, transfers, counts, and valuation (FR-356–FR-361) **Covers:** FR-356, FR-357, FR-358, FR-359, FR-360, FR-361.  Given receipts at different costs, an issue, transfer, count variance, landed-value adjustment, and active demand reservations When all permitted commands post Then moving average and carrying value follow the specified order with exact rounding And transfers conserve aggregate value, adjustments balance to the GL, and as-of valuation reconciles to movement history without altering quantities for a value-only adjustment.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-316",
+      "statement": "Balanced and immutable journals (FR-362–FR-366) **Covers:** FR-362, FR-363, FR-364, FR-365, FR-366.  Given mapped source documents and a submitted manual journal When automatic and manual postings run Then every entry has at least two valid posting-account lines and exact equal base debits/credits And source drill-through is complete And direct, unbalanced, self-approved, duplicate, closed-period, and posted-line mutations are rejected.",
+      "source_evidence": "supabase/tests/wave3_manual_journal_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "source and attachment integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-317",
+      "statement": "Open items and operational accounts (FR-367–FR-369) **Covers:** FR-367, FR-368, FR-369.  Given posted AR/AP items, allocations, and configured cash/bank accounts When an authorized allocation is reversed Then the exact residuals and any exchange effect reopen through linked immutable records And AR/AP control accounts still reconcile And cross-entity or inactive operational account mappings are rejected.",
+      "source_evidence": "supabase/tests/wave3_control_procurement_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "historical/retired control mapping coverage",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-318",
+      "statement": "Bank import and reconciliation (FR-370–FR-371, NFR-311–NFR-312) **Covers:** FR-370, FR-371.  Given a bounded statement file and posted bank transactions When a user previews, imports, and reconciles one-to-many while another user attempts the same match Then one statement is stored without accounting effects and one match wins under lock And duplicates, malformed exact amounts, out-of-tolerance matches, and unauthorized adjustments are rejected without partial reconciliation.",
+      "source_evidence": "supabase/tests/wave3_bank_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "bank reporting and concurrent match proof",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-319",
+      "statement": "Foreign currency and period control (FR-372–FR-374) **Covers:** FR-372, FR-373, FR-374.  Given foreign open items and an open period moving through soft and hard lock When settlement, revaluation, close, ordinary posting, and an approved MFA-backed reopen are attempted Then realized/unrealized entries are deterministic and reversible And lock rules reject prohibited commands And reopen preserves the prior close event, reason, approval, actor, and version.",
+      "source_evidence": "supabase/tests/wave3_period_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "concurrent close/post verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-320",
+      "statement": "Reconciliation, statements, budgets, and lineage (FR-375–FR-382, NFR-320) **Covers:** FR-375, FR-376, FR-377, FR-378, FR-379, FR-380, FR-381, FR-382.  Given posted subledgers, mapped cash flows, tax lines, an approved budget, and comparative periods When reconciliation and financial/operational reports run Then trial balance, statements, aging, inventory, tax, bank, budget variance, and control-account totals agree exactly for their declared scope and as-of basis And every total drills to immutable source lines within the performance bounds And unmapped cash-flow items and the tax-review notice are visible.",
+      "source_evidence": "supabase/tests/wave3_financial_statements_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "operational, party and bank report extensions",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-321",
+      "statement": "Desktop workspaces and forms (FR-383–FR-385, NFR-314–NFR-315) **Covers:** FR-383, FR-384, FR-385.  Given each Wave 3 workspace is loading, failed, empty, or populated When it renders at every target viewport, theme, density, keyboard path, and 200% text scale Then the correct semantic state appears without unreachable controls or data loss And users can distinguish every draft, lifecycle, approval, posting, and corrective action.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-322",
+      "statement": "Offline, conflict, and capability safety (FR-386–FR-388, NFR-313) **Covers:** FR-386, FR-387, FR-388.  Given offline, stale-version, view-only, cost-hidden, approver, and poster user states When users edit drafts and invoke commands directly or through the UI Then encrypted drafts survive restart and conflict resolution is explicit And no authoritative command runs offline And UI visibility and database authorization enforce scope, cost, action, MFA, and segregation rules.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-323",
+      "statement": "Lists, dashboards, exports, and recovery (FR-389–FR-390, FR-394–FR-395) **Covers:** FR-389, FR-390, FR-394, FR-395.  Given representative operational volume, filters, retryable failures, and exact financial values When users search, page, refresh, view dashboards, export, and retry Then ordering and cursors remain stable, timestamps/scopes are explicit, and exports preserve exact strings and selected as-of metadata And failed attempts show no success state or partial server effect.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-324",
+      "statement": "Files, notifications, and deep links (FR-391–FR-393) **Covers:** FR-391, FR-392, FR-393.  Given permitted and forbidden users, posted documents, event recipients, and aggregate deep links When files are added/read, events occur, and links open under different tenant contexts Then private file rules and append-only posted context hold, configured notifications are created, and links restore permitted context or return a non-disclosing denied/not-found state.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-325",
+      "statement": "Scale, security, and observability (NFR-307–NFR-312, NFR-316) Given representative target-scale data and concurrent critical commands When read, save, post, report, allocation, stock, and reconciliation benchmarks and plans run Then documented p95 and bounded-work targets are met without cross-tenant or unbounded high-volume scans And contention returns stable conflicts without duplicate effects And diagnostics contain correlation data but no prohibited secrets or raw sensitive content.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "AC-326",
+      "statement": "Complete Wave 3 release gate (FR-301–FR-395, NFR-301–NFR-320) Given the complete Wave 3 implementation and an isolated database environment When format, analysis, coverage, unit, property, widget, golden, platform, pgTAP, concurrency, end-to-end, advisor, Windows release build, cold-launch, keyboard, and rendered visual checks run Then all executable checks pass with no unresolved security findings And performance evidence meets the documented targets And backend contract, migration-ledger, runtime, and residual external gaps are recorded without deploying to staging or production.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-301",
+      "statement": "Reused idempotency key with a different command or payload -> return   `IDEMPOTENCY_MISMATCH`; create no new effect.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-302",
+      "statement": "Expected document version is stale -> return `VERSION_CONFLICT` with current material   fields; preserve the local draft.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-303",
+      "statement": "Connectivity drops after request send -> a retry returns the original committed result or   a safe retryable error, never a duplicate post.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-304",
+      "statement": "A sequence, workflow, approval matrix, tax, exchange rate, account, product, party,   warehouse, or period changes after draft creation -> submission/posting revalidates and returns a   field/source-specific error.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-305",
+      "statement": "Workflow has no matching amount step or has ambiguous active versions -> block submission   with `WORKFLOW_CONFIGURATION_ERROR`.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-306",
+      "statement": "Submitter, approver, poster, payment releaser, or period reopener violates configured   segregation -> return `SEGREGATION_OF_DUTIES_VIOLATION`.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-307",
+      "statement": "Server totals differ from client preview after rate/tax/rounding revalidation -> return   recalculated values and require explicit confirmation before posting.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-308",
+      "statement": "Manual exchange rate is non-positive, wrong-direction, too imprecise, or actor lacks   permission -> reject without changing the draft's prior approved rate.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-309",
+      "statement": "Quote expires during acceptance or conversion -> lock/recheck prevents conversion and   requires a new revision.",
+      "source_evidence": "supabase/tests/wave3_quotation_workspace_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "current-list/report integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-310",
+      "statement": "Credit exposure changes concurrently with order confirmation -> locked recalculation   applies the latest posted/open exposure before approval or rejection.",
+      "source_evidence": "supabase/tests/wave3_order_workspace_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "current-list/report and reservation lifecycle integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-311",
+      "statement": "Two orders reserve the last stock concurrently -> at most one reservation succeeds;   neither available balance nor demand may become negative.",
+      "source_evidence": "supabase/tests/wave3_order_workspace_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "current-list/report and reservation lifecycle integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-312",
+      "statement": "Delivery references inactive warehouse, insufficient reservation, missing lot/serial,   expired lot, or excess quantity -> reject the entire delivery.",
+      "source_evidence": "supabase/tests/wave3_delivery_receivables_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "report navigation, historical mappings, recovery and concurrent commands",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-313",
+      "statement": "Direct invoice contains a stocked product that has not been delivered -> reject; direct   invoices in this wave are limited to eligible service and non-stocked products.",
+      "source_evidence": "supabase/tests/wave3_delivery_receivables_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "report navigation, historical mappings, recovery and concurrent commands",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-314",
+      "statement": "Receipt or payment currency differs from allocated open item -> require a persisted rate   and explicit exchange-difference treatment.",
+      "source_evidence": "supabase/tests/wave3_delivery_receivables_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "report navigation, historical mappings, recovery and concurrent commands",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-315",
+      "statement": "Allocation amount exceeds either item residual or is applied to another party/entity ->   reject without changing any allocation.",
+      "source_evidence": "supabase/tests/wave3_delivery_receivables_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "report navigation, historical mappings, recovery and concurrent commands",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-316",
+      "statement": "Return or credit/debit note exceeds original eligible quantity/value or is repeated ->   return `SOURCE_QUANTITY_EXCEEDED` or the original idempotent result.",
+      "source_evidence": "supabase/tests/wave3_delivery_receivables_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "report navigation, historical mappings, recovery and concurrent commands",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-317",
+      "statement": "Supplier invoice reference duplicates an active/posted bill for that supplier/entity ->   reject unless it is an explicitly linked correction.",
+      "source_evidence": "supabase/tests/wave3_supplier_bills_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "source integration and wider verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-318",
+      "statement": "Three-way match has missing receipt, price variance, quantity variance, tax mismatch, or   currency mismatch -> record bounded exceptions and block outside-tolerance posting.",
+      "source_evidence": "supabase/tests/wave3_supplier_bills_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "source integration and wider verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-319",
+      "statement": "Payment proposal contains already settled, soft-locked, foreign-entity, or concurrently   selected items -> remove/reject invalid lines and require a new approval version.",
+      "source_evidence": "supabase/tests/wave3_supplier_settlement_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "party reports, governed corrections and access/recovery verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-320",
+      "statement": "Product-unit conversion is zero, negative, cyclic, inactive, or changes after document   approval -> reject or require a new document revision.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-321",
+      "statement": "Stock receipt quantity is positive but value is negative, or issue quantity is negative   under an issue type -> reject sign-inconsistent movement.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-322",
+      "statement": "Moving-average denominator would become zero -> preserve zero quantity and zero carrying   value, posting any approved residual rounding/variance explicitly.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-323",
+      "statement": "Negative stock override produces a later receipt -> value the interim issue and subsequent   correction according to the versioned negative-stock policy and expose the variance.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-324",
+      "statement": "Serial is duplicated, already issued, in transit, disposed, or belongs to another product   or tenant -> reject the entire movement without revealing foreign serial details.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-325",
+      "statement": "Transfer source posts but destination step fails -> roll back both sides; an in-transit   transfer exists only when the explicit atomic dispatch command succeeds.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-326",
+      "statement": "Count occurs while later movements exist -> require a count cutoff/as-of time and apply   variance against that snapshot under lock.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-327",
+      "statement": "Landed-value allocation basis sums to zero or references consumed/foreign receipt lines ->   reject with line-specific errors.",
+      "source_evidence": "supabase/tests/wave3_stock_counts_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "landed corrections, count partitioning, disposition and reservation lifecycle",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-328",
+      "statement": "Journal has one line, both debit and credit on a line, no account, non-posting/inactive   account, unequal base totals, or unapproved rounding difference -> reject atomically.",
+      "source_evidence": "supabase/tests/wave3_manual_journal_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "source and attachment integration",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-329",
+      "statement": "Source posting mapping resolves to a foreign entity, inactive account, or account with the   wrong control purpose -> return `ACCOUNT_MAPPING_INVALID`.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-330",
+      "statement": "A hard lock races with posting -> deterministic locks allow either the posting before   close or close before rejection, never a post inside a closed snapshot.",
+      "source_evidence": "supabase/tests/wave3_period_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "concurrent close/post verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-331",
+      "statement": "Reversal is attempted twice or after an incompatible later correction -> return the first   reversal or `REVERSAL_NOT_ALLOWED` without a second effect.",
+      "source_evidence": "supabase/tests/wave3_operational_foundation_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "command security, attachments and cross-module verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-332",
+      "statement": "Bank file is malformed, formula-bearing, encrypted, macro-enabled, duplicate, over 2,000   rows/10 MiB, or contains ambiguous locale dates/amounts -> reject preview/apply safely.",
+      "source_evidence": "supabase/tests/wave3_bank_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "bank reporting and concurrent match proof",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-333",
+      "statement": "Bank statement contains duplicate external identities or identical repeated lines ->   require an explicit duplicate-resolution decision before apply.",
+      "source_evidence": "supabase/tests/wave3_bank_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "bank reporting and concurrent match proof",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-334",
+      "statement": "Two users match the same statement or ledger line -> one match succeeds and the other   receives `MATCH_CONFLICT` with refreshed candidates.",
+      "source_evidence": "supabase/tests/wave3_bank_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "bank reporting and concurrent match proof",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-335",
+      "statement": "Reconciliation tolerance would create an adjustment without permission/mapping -> keep   unmatched and require a permitted adjustment command.",
+      "source_evidence": "supabase/tests/wave3_bank_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "bank reporting and concurrent match proof",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-336",
+      "statement": "Period close has unreconciled controls, unmapped cash flows, draft postings, or unposted   approved documents -> report blockers and do not hard lock.",
+      "source_evidence": "supabase/tests/wave3_period_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "concurrent close/post verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-337",
+      "statement": "Reopen lacks recent MFA, approval, reason, or capability -> deny without changing period   state or prior close evidence.",
+      "source_evidence": "supabase/tests/wave3_period_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "concurrent close/post verification",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-338",
+      "statement": "As-of report is requested before entity inception, after an unsupported future date, or   across entities/currencies without consolidation -> reject or return an explicit empty scoped   result, never silently combine books.",
+      "source_evidence": "supabase/tests/wave3_financial_statements_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "operational, party and bank report extensions",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-339",
+      "statement": "Report exceeds synchronous bounds -> return `LIMIT_EXCEEDED` with narrowed-filter guidance;   do not silently truncate financial totals.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    },
+    {
+      "id": "EC-340",
+      "statement": "Local encrypted storage is unavailable or full -> retain in-memory draft edits, block   offline persistence, and show `LOCAL_STORAGE_FULL` without attempting an authoritative command.",
+      "source_evidence": "supabase/tests/wave3_report_exports_test.sql",
+      "implementation": "present in baseline; requirement-specific gap review pending",
+      "verification": "historical evidence only until fresh execution",
+      "development_gap": "dashboards, list state, contextual links, files and cross-module recovery",
+      "external_gate": "development candidate installation, authenticated native acceptance and owner signoff remain separate"
+    }
+  ]
+}

@@ -1,10 +1,13 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_procurement.dart';
 import 'package:jentra_platform/jentra_procurement_platform.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../app_providers.dart';
+import '../operations/operational_read_access.dart';
 
 final procurementGatewayProvider = Provider<ProcurementGateway?>((ref) => null);
 final procurementControllerProvider =
@@ -41,7 +44,8 @@ final procurementControllerProvider =
       return controller;
     });
 
-final class ProcurementController extends ChangeNotifier {
+final class ProcurementController extends ChangeNotifier
+    implements OperationalReadAccess {
   ProcurementController({
     required this.scope,
     required this.gateway,
@@ -54,7 +58,48 @@ final class ProcurementController extends ChangeNotifier {
   final QuotationDraftStore store;
   final bool canApprove;
   static const slot = 'requisition-editor';
-  bool online, busy = false, _disposed = false;
+  bool online, busy = false, _disposed = false, accessDenied = false;
+  int _epoch = 0, _operationEpoch = 0;
+  @override
+  int get readAccessEpoch => _epoch;
+  @override
+  bool currentRead(int epoch) =>
+      !_disposed && online && !accessDenied && epoch == _epoch;
+  @override
+  void denyReadAccess() {
+    if (_disposed) return;
+    accessDenied = true;
+    _epoch++;
+    clearServer();
+    _emit();
+  }
+
+  bool get currentServer => !_disposed && online && _operationEpoch == _epoch;
+  void confirmedReadFailure(Object failure, int epoch, String fallback) {
+    if (_disposed || epoch != _epoch) return;
+    if (failure is DomainError &&
+        const {
+          'PERMISSION_DENIED',
+          'ACCESS_DENIED',
+          'MFA_REQUIRED',
+          'AUTHENTICATION_REQUIRED',
+        }.contains(failure.code)) {
+      accessDenied = true;
+      _epoch++;
+      clearServer();
+      error = failure.message;
+      return;
+    }
+    error = fallback;
+  }
+
+  void clearServer() {
+    page = CursorPage(items: [], limit: 50);
+    selected = null;
+    units = [];
+    baseCurrency = null;
+  }
+
   String? error, message;
   String? baseCurrency;
   Map<String, Object?>? form;
@@ -65,6 +110,7 @@ final class ProcurementController extends ChangeNotifier {
   CursorPage<Map<String, Object?>> page = CursorPage(items: [], limit: 50);
   bool get locked =>
       _disposed ||
+      accessDenied ||
       busy ||
       recovery?.pending != null ||
       recovery?.errorCode == 'VERSION_CONFLICT' ||
@@ -74,24 +120,46 @@ final class ProcurementController extends ChangeNotifier {
   }
 
   void setOnline(bool value) {
-    online = value;
+    if (online != value) {
+      online = value;
+      _epoch++;
+      clearServer();
+    }
     _emit();
   }
 
   @override
   void dispose() {
     _disposed = true;
+    _epoch++;
+    clearServer();
+    notifyListeners();
     super.dispose();
   }
 
   Future<void> _run(Future<void> Function() work) async {
     if (busy || _disposed) return;
     busy = true;
+    _operationEpoch = _epoch;
     error = null;
     _emit();
     try {
       await work();
     } catch (e) {
+      if (_disposed || _operationEpoch != _epoch) return;
+      if (!_disposed &&
+          _operationEpoch == _epoch &&
+          e is DomainError &&
+          const {
+            'PERMISSION_DENIED',
+            'ACCESS_DENIED',
+            'MFA_REQUIRED',
+            'AUTHENTICATION_REQUIRED',
+          }.contains(e.code)) {
+        accessDenied = true;
+        _epoch++;
+        clearServer();
+      }
       error = e is DomainError
           ? e.message
           : 'Unable to complete this action. Your draft is retained.';
@@ -108,17 +176,23 @@ final class ProcurementController extends ChangeNotifier {
     version = recovery?.expectedVersion;
     if (online) {
       final refs = await gateway.references(scope, 'units');
+      if (!currentServer) return;
       baseCurrency = refs['base_currency'] as String;
       units = (refs['items'] as List)
           .map((r) => (r as Map).cast<String, Object?>())
           .toList();
       if (_disposed) return;
-      page = await gateway.page(scope);
+      final result = await gateway.page(scope);
+      if (currentServer) {
+        page = result;
+        accessDenied = false;
+      }
     }
   });
   Future<void> refresh({bool more = false}) => _run(() async {
     if (!online) return;
     final refs = await gateway.references(scope, 'units');
+    if (!currentServer) return;
     baseCurrency = refs['base_currency'] as String;
     units = (refs['items'] as List)
         .map((r) => (r as Map).cast<String, Object?>())
@@ -128,7 +202,8 @@ final class ProcurementController extends ChangeNotifier {
       scope,
       after: more ? page.nextCursor : null,
     );
-    if (_disposed) return;
+    if (!currentServer) return;
+    accessDenied = false;
     page = CursorPage(
       items: [if (more) ...page.items, ...next.items],
       limit: 50,
@@ -221,22 +296,19 @@ final class ProcurementController extends ChangeNotifier {
         'action': verb,
       'reason': ?reason,
     };
-    await store.save(
-      scope,
-      slot,
-      selected!,
-      expectedVersion: selected!['version'] as int,
-    );
+    final original = Map<String, Object?>.from(selected!);
+    final expectedVersion = original['version'] as int;
+    await store.save(scope, slot, original, expectedVersion: expectedVersion);
     final pending = await store.prepare(
       scope,
       slot,
       verb: verb,
       payload: payload,
-      expectedVersion: selected!['version'] as int,
+      expectedVersion: expectedVersion,
     );
     recovery = await store.load(scope, slot);
-    form = selected;
-    version = selected!['version'] as int;
+    form = original;
+    version = expectedVersion;
     await _send(pending);
   });
   Future<void> saveServer() => _run(() async {
@@ -292,7 +364,7 @@ final class ProcurementController extends ChangeNotifier {
     await _send(pending);
   });
   Future<void> _send(QuotationPendingCommand pending) async {
-    if (_disposed || !online) return;
+    if (!currentServer || accessDenied) return;
     late final Map<String, Object?> result;
     try {
       result = pending.verb == 'save'
@@ -321,13 +393,22 @@ final class ProcurementController extends ChangeNotifier {
     form = null;
     recovery = null;
     version = null;
+    if (!currentServer) {
+      message = 'Action confirmed. Refresh after reconnecting.';
+      return;
+    }
     selected = result;
     message = 'Requisition ${result['status']} · version ${result['version']}';
+    final refreshEpoch = _epoch;
     try {
-      page = await gateway.page(scope);
-    } catch (_) {
-      error =
-          'Saved successfully. The register could not refresh; use Refresh to reload it.';
+      final refreshed = await gateway.page(scope);
+      if (currentServer) page = refreshed;
+    } catch (failure) {
+      confirmedReadFailure(
+        failure,
+        refreshEpoch,
+        'Saved successfully. The register could not refresh; use Refresh to reload it.',
+      );
     }
   }
 }

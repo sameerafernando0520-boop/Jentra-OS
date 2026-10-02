@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../app_providers.dart';
+import '../operations/operational_read_access.dart';
 import 'reservation_controller.dart';
 
 class ReservationScreen extends ConsumerWidget {
@@ -36,13 +38,14 @@ class ReservationWorkspace extends StatelessWidget {
       return;
     }
     final f = controller.form!;
-    final accepted = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
+    final epoch = controller.readAccessEpoch;
+    final accepted = await showOperationalReadDialog<bool>(
+      context, controller,
+      (context) => AlertDialog(
         title: const Text('Release this reservation?'),
         content: SingleChildScrollView(
           child: Text(
-            'Release ${f['base_quantity']} base units of ${f['product_name']} for ${f['document_number']}.\n\nMode: ${f['mode']}\nReason: ${f['reason']}',
+            '${f['base_quantity'] == null ? 'Release reservation ${f['id']} using saved version ${f['version']}.' : 'Release ${f['base_quantity']} base units of ${f['product_name']} for ${f['document_number']}.'}\n\nMode: ${f['mode']}\nReason: ${f['reason']}',
           ),
         ),
         actions: [
@@ -57,7 +60,7 @@ class ReservationWorkspace extends StatelessWidget {
         ],
       ),
     );
-    if (accepted == true && !controller.locked) await controller.release();
+    if (accepted == true && controller.currentRead(epoch) && !controller.locked) await controller.release();
   }
 
   @override
@@ -65,6 +68,20 @@ class ReservationWorkspace extends StatelessWidget {
     listenable: controller,
     builder: (context, _) {
       final c = controller, f = c.form;
+      if (c.accessDenied) {
+        return Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Access changed. Saved work is retained securely.'),
+              TextButton(
+                onPressed: c.busy || !c.online ? null : c.refresh,
+                child: const Text('Recheck access'),
+              ),
+            ],
+          ),
+        );
+      }
       return ListView(
         padding: const EdgeInsets.all(24),
         children: [
@@ -216,14 +233,22 @@ class ReservationWorkspace extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${f['document_number']} · ${f['product_name']}',
+                      f['document_number'] == null
+                          ? 'Reservation ${f['id']}'
+                          : '${f['document_number']} · ${f['product_name']}',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
+                    if (f['warehouse_name'] != null)
+                      Text(
+                        '${f['warehouse_name']} · ${f['base_quantity']} base units',
+                      )
+                    else
+                      const Text(
+                        'Saved release inputs. Reload current reservations to review their evidence.',
+                      ),
                     Text(
-                      '${f['warehouse_name']} · ${f['base_quantity']} base units',
-                    ),
-                    Text(
-                      '${f['status']} · Version ${f['version']} · Expires ${f['expires_at']}',
+                      '${f['status']} · Version ${f['version']}'
+                      '${f['expires_at'] == null ? '' : ' · Expires ${f['expires_at']}'}',
                     ),
                   ],
                 ),
@@ -264,7 +289,9 @@ class ReservationWorkspace extends StatelessWidget {
                 onChanged: (v) => c.update('reason', v),
               ),
             ] else
-              Text('Release reason: ${f['release_reason'] ?? ''}'),
+              Text(
+                'Release reason: ${f['release_reason'] ?? f['reason'] ?? ''}',
+              ),
             if (c.local?.pending != null)
               const Text(
                 'The outcome is uncertain. The saved request is sealed; retry it to confirm the result.',

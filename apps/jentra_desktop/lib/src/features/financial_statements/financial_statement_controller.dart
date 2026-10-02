@@ -7,6 +7,7 @@ import 'package:jentra_platform/jentra_finance_platform.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../app_providers.dart';
+import '../shared/report_wait.dart';
 
 final financialStatementGatewayProvider = Provider<FinancialStatementGateway?>(
   (ref) => null,
@@ -66,6 +67,13 @@ final class FinancialStatementController extends ChangeNotifier {
   List<Map<String, Object?>> periods = [], reports = [], rows = [];
   QuotationLocalDraft? local;
   int _evidenceEpoch = 0;
+  final reportWait = ReportWaitState();
+  void cancelReportWait() {
+    if (!reportWait.cancel()) return;
+    _evidenceEpoch++;
+    _clearEvidence();
+    _emit();
+  }
 
   bool _acceptEvidence(int epoch) =>
       !_disposed && online && epoch == _evidenceEpoch;
@@ -113,7 +121,13 @@ final class FinancialStatementController extends ChangeNotifier {
   }
 
   void _handle(Object failure) {
-    if (failure is DomainError && failure.code == 'PERMISSION_DENIED') {
+    if (failure is DomainError &&
+        const {
+          'PERMISSION_DENIED',
+          'ACCESS_DENIED',
+          'MFA_REQUIRED',
+          'AUTHENTICATION_REQUIRED',
+        }.contains(failure.code)) {
       _evidenceEpoch++;
       denied = true;
       verified = false;
@@ -129,14 +143,17 @@ final class FinancialStatementController extends ChangeNotifier {
 
   Future<void> _run(Future<void> Function() work) async {
     if (busy || _disposed) return;
+    final accessEpoch = _evidenceEpoch;
     busy = true;
     error = null;
     _emit();
     try {
       await work();
     } catch (failure) {
+      if (_disposed || !online || accessEpoch != _evidenceEpoch) return;
       _handle(failure);
     } finally {
+      reportWait.finish();
       busy = false;
       _emit();
     }
@@ -235,7 +252,7 @@ final class FinancialStatementController extends ChangeNotifier {
   });
 
   Future<bool> canLeave() async {
-    if (busy) return false;
+    if (busy) return reportWait.active && reportWait.cancelled;
     if (pending || denied || form.isEmpty) return true;
     await save();
     return error == null;
@@ -289,6 +306,8 @@ final class FinancialStatementController extends ChangeNotifier {
 
   Future<void> generate() => _run(() async {
     if (!online || !verified || denied || form['status'] == 'generated') return;
+    reportWait.begin();
+    _emit();
     final epoch = _evidenceEpoch;
     var command = local?.pending;
     if (command == null) {
@@ -313,6 +332,9 @@ final class FinancialStatementController extends ChangeNotifier {
     Map<String, Object?> result;
     late Map<String, Object?> confirmedForm;
     try {
+      reportWait.generating();
+      _emit();
+      if (reportWait.cancelled || !_acceptEvidence(epoch)) return;
       result = await gateway.generate(command.envelope);
       confirmedForm = {
         ...command.envelope.payload,
@@ -344,6 +366,8 @@ final class FinancialStatementController extends ChangeNotifier {
     summary = result;
     message = 'Report saved with frozen posted-journal evidence.';
     try {
+      reportWait.reading();
+      _emit();
       await _loadPage(result['id'] as String);
       if (!_acceptEvidence(epoch)) return;
       await _loadReports();
@@ -357,7 +381,12 @@ final class FinancialStatementController extends ChangeNotifier {
 
   Future<void> _loadPage(String id, {bool more = false}) async {
     if (!online) return;
+    if (reportWait.active && reportWait.cancelled) return;
     final epoch = _evidenceEpoch;
+    if (!reportWait.active) reportWait.begin();
+    reportWait.reading();
+    _emit();
+    if (reportWait.cancelled || !_acceptEvidence(epoch)) return;
     final result = await gateway.page(
       scope,
       id,

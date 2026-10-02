@@ -103,7 +103,9 @@ void main() {
       response = page({'id': 's1', 'amount': bad});
       await expectLater(
         gateway.options(scope, 'statement_lines', bankId: 'bank'),
-        throwsFormatException,
+        throwsA(
+          isA<DomainError>().having((e) => e.code, 'code', 'READ_INVALID'),
+        ),
       );
     });
   }
@@ -114,7 +116,7 @@ void main() {
     };
     await expectLater(
       gateway.options(scope, 'statement_lines', bankId: 'bank'),
-      throwsFormatException,
+      throwsA(isA<DomainError>().having((e) => e.code, 'code', 'READ_INVALID')),
     );
     response = {
       ...page({'id': 's1', 'amount': '1'}),
@@ -122,7 +124,7 @@ void main() {
     };
     await expectLater(
       gateway.options(scope, 'statement_lines', bankId: 'bank'),
-      throwsFormatException,
+      throwsA(isA<DomainError>().having((e) => e.code, 'code', 'READ_INVALID')),
     );
   });
   test('rejects inconsistent match and statement balances', () async {
@@ -134,7 +136,7 @@ void main() {
     });
     await expectLater(
       gateway.options(scope, 'statement_lines', bankId: 'bank'),
-      throwsFormatException,
+      throwsA(isA<DomainError>().having((e) => e.code, 'code', 'READ_INVALID')),
     );
     response = page({
       'id': 's',
@@ -144,7 +146,7 @@ void main() {
     });
     await expectLater(
       gateway.options(scope, 'statement_lines', bankId: 'bank'),
-      throwsFormatException,
+      throwsA(isA<DomainError>().having((e) => e.code, 'code', 'READ_INVALID')),
     );
   });
   test(

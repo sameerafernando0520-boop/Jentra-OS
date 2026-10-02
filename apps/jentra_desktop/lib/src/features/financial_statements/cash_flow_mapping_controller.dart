@@ -79,6 +79,8 @@ final class CashFlowMappingController extends ChangeNotifier {
   List<Map<String, Object?>> accounts = [];
   Map<String, Object?> form = {};
   QuotationLocalDraft? local;
+  int _epoch = 0;
+  bool _current(int epoch) => !_disposed && online && epoch == _epoch;
 
   String get today => _clock().toUtc().toIso8601String().substring(0, 10);
   String get latestEffectiveDate => _clock()
@@ -87,7 +89,8 @@ final class CashFlowMappingController extends ChangeNotifier {
       .toIso8601String()
       .substring(0, 10);
   bool get pending => local?.pending != null;
-  bool get locked => busy || pending || denied || !verified;
+  bool get locked =>
+      busy || _disposed || !online || pending || denied || !verified;
   Map<String, Object?>? get selectedAccount {
     for (final row in accounts) {
       if (row['id'] == form['account_id']) return row;
@@ -102,10 +105,16 @@ final class CashFlowMappingController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _epoch++;
+    verified = false;
+    accounts = [];
+    cursor = null;
+    form = {};
     super.dispose();
   }
 
   void setOnline(bool value) {
+    if (online != value) _epoch++;
     online = value;
     if (!online) {
       verified = false;
@@ -116,7 +125,14 @@ final class CashFlowMappingController extends ChangeNotifier {
   }
 
   void _handle(Object failure) {
-    if (failure is DomainError && failure.code == 'PERMISSION_DENIED') {
+    if (failure is DomainError &&
+        const {
+          'PERMISSION_DENIED',
+          'ACCESS_DENIED',
+          'MFA_REQUIRED',
+          'AUTHENTICATION_REQUIRED',
+        }.contains(failure.code)) {
+      _epoch++;
       denied = true;
       verified = false;
       accounts = [];
@@ -134,11 +150,12 @@ final class CashFlowMappingController extends ChangeNotifier {
     if (busy || _disposed) return;
     busy = true;
     error = null;
+    final epoch = _epoch;
     _emit();
     try {
       await work();
     } catch (failure) {
-      _handle(failure);
+      if (_current(epoch)) _handle(failure);
     } finally {
       busy = false;
       _emit();
@@ -146,12 +163,13 @@ final class CashFlowMappingController extends ChangeNotifier {
   }
 
   Future<void> initialize() => _run(() async {
+    final epoch = _epoch;
     local = await drafts.load(scope, slot);
-    if (!online) return;
+    if (!_current(epoch)) return;
     accounts = [];
     cursor = null;
     await _load();
-    if (_disposed) return;
+    if (!_current(epoch)) return;
     form = local?.form ?? _newForm();
     verified = true;
     denied = false;
@@ -167,12 +185,13 @@ final class CashFlowMappingController extends ChangeNotifier {
 
   Future<void> _load({bool more = false}) async {
     if (!online) return;
+    final epoch = _epoch;
     final result = await gateway.options(
       scope,
       today,
       after: more ? cursor : null,
     );
-    if (_disposed) return;
+    if (!_current(epoch)) return;
     accounts = [
       if (more) ...accounts,
       for (final value in result['items'] as List)
@@ -212,6 +231,7 @@ final class CashFlowMappingController extends ChangeNotifier {
   }
 
   Future<void> persist() async {
+    if (_disposed) return;
     await drafts.save(
       scope,
       slot,
@@ -264,6 +284,7 @@ final class CashFlowMappingController extends ChangeNotifier {
 
   Future<void> configure() => _run(() async {
     if (!online || !verified || denied) return;
+    final epoch = _epoch;
     var command = local?.pending;
     if (command == null) {
       _validate();
@@ -283,6 +304,7 @@ final class CashFlowMappingController extends ChangeNotifier {
       );
       local = await drafts.load(scope, slot);
     }
+    if (!_current(epoch) || !verified || denied) return;
     try {
       await gateway.configure(command.envelope);
       await drafts.complete(scope, slot, command.envelope.commandId);
@@ -296,15 +318,17 @@ final class CashFlowMappingController extends ChangeNotifier {
       local = await drafts.load(scope, slot);
       rethrow;
     }
-    if (_disposed) return;
+    if (!_current(epoch)) return;
     local = null;
     message =
         'Dated classification recorded. Generate a new cash-flow statement.';
     form = _newForm();
     await persist();
+    if (!_current(epoch)) return;
     try {
       await _load();
     } catch (failure) {
+      if (!_current(epoch)) return;
       _handle(failure);
       if (!denied) {
         error = 'Classification confirmed. Refresh account evidence.';

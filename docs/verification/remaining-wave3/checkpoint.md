@@ -1,5 +1,109 @@
 # Remaining Wave 3 verification checkpoint
 
+## Active continuation — 2026-10-01
+
+The [181-ID matrix](requirement-matrix-20261001.md) is current; September 30 and
+earlier entries below are historical. HEAD remains
+`f9cc342815e2446fb3f26204d5e65e03c1b2a140` with concurrent Wave 4/5 changes.
+[Ledger/API/helper refresh](refresh-value-recovery-20261001.json) at 07:28:58 UTC
+records 37 installed migrations through private HR, 85 API functions and unchanged
+finance helpers. All 45 candidates remain unapplied.
+
+[Inventory review](inventory-recovery-review-20261001.md) records the confirmed
+offline cost-preview defect, five failing regression cases and the corrected
+input-only encrypted recovery boundary under contract 51. Exact local inputs,
+cutoff/version/tracking identities and original sealed requests are preserved.
+The existing atomic acknowledgement stores an input-only form even after
+disconnect/disposal. Explicit permitted reload cannot overwrite dirty inputs or
+pending requests. All 55 recovery checks pass, including 32 renders across four
+required sizes, both themes/densities, 200% text, reduced motion and keyboard Enter.
+Eight fresh renders were inspected; [render hashes](inventory-render-hashes-20261001.json)
+record bytes. Inventory selector/access checks pass 51 cases and read adapters 35.
+
+The [full desktop run](../../../build/remaining-wave3/desktop-value-full-20261001.log)
+has **852 passes and 81 approved-golden failures**, with no additional functional
+failure. The [comparison](golden-control-value-20261001.json) has the same 81 HEAD
+cases and 83/83 byte/pixel-identical images. Approved goldens remain unchanged;
+the cause and visual acceptance remain open. Whole platform passes 466, and domain
+passes 221. Final whole desktop/platform analyzers are clean; failed style,
+concurrent import and test-fixture/harness runs are retained in the review.
+
+[Fresh coverage](coverage-value-final-reviewed-20261001.json) has **642/677 reviewed
+pure-domain branches (94.83%)** and **13,227/18,268 changed Dart whole-file lines
+(72.41%)**, with no source mismatch or unmeasured executable file. The 80% gate
+remains open. Whole changed-file branches are 2,740/5,565 (49.24%), separate from
+the reviewed pure-domain scope. SQL assertion counts are not branch coverage.
+
+[Isolated Windows compilation](windows-build-20261001-value-recovery.json) passes
+in 825.5 seconds. All 308 copied source hashes match the checkout at completion;
+the executable was never launched. The preceding inventory build recorded two
+concurrent Wave 4 source changes and is historical, not final compilation proof.
+
+Strict rollback evidence remains **991 finance/procurement + 155 inventory +
+182 AR = 1,328 assertions**, with `finish(true)` and final rollback. The separate
+[representative-plan stack](representative-plans-final-20261001.json) passes 1,005
+overlapping assertions and eleven small-fixture plans. Nine use authenticated SQL
+role/synthetic claims; two private bank bases are explicitly privileged. The
+reservation fixture is empty. No real p95, target-scale or independent-session
+claim is made. Offline load/session harnesses and the strengthened per-tenant/
+entity fixture-count query remain preparation only.
+
+Authorized development verification continues: meaningful overall coverage,
+golden cause/accessibility review and final source/dependency/protected-boundary
+checks. The [45-candidate installation/rollback/native procedure](migration-review-and-runbook-20260930.md)
+remains prepared. Eight potential compatibility findings require written owner
+acceptance. Installation, isolated resources, genuine sessions/load, native
+authentication/store/cold-launch checks and owner signoff require separate
+specific approval. **Wave 3 is not fully complete.**
+
+## Historical continuation — 2026-09-30
+
+The September 28 and earlier checkpoints below are historical. Current HEAD is
+`f9cc342815e2446fb3f26204d5e65e03c1b2a140`, with concurrent dirty Wave 4 work and
+an empty index. The development ledger remains 37 through private HR; no remaining
+Wave 3 candidate has been installed. The refreshed catalogue/helper evidence is
+in [refresh-read-access-20260930.json](refresh-read-access-20260930.json).
+
+The 45-candidate rollback stack now passes **991 finance/procurement, 155 inventory
+and 182 AR assertions (1,328 total)**. Each run uses synthetic fixtures,
+`finish(true)` and final rollback. See [procurement](observability-final-procurement-20260930.json),
+[inventory](observability-final-inventory-20260930.json) and
+[AR](observability-final-receivables-20260930.json). The earlier complete 44-candidate
+foundation/CRM/quotation/order runs add 50/88/43/28 assertions; they are distinct
+source-stack evidence. Three warm synthetic control reads take 16.995,
+15.226 and 15.017 ms; these are not target-scale load or p95 measurements.
+
+Contract 52 fixes exact client header-discount validation and conflicting draft
+intent without changing server pricing. The full domain suite passes 221 tests;
+the reviewed 25-file Wave 3 pure-domain scope has 94.83% branch coverage. Contract 53
+adds redacted allowlisted request diagnostics and read-only scoped outbox depth.
+Its focused platform tests and desktop evidence-clearing test pass. Contracts
+54–56 correct report confirmation/cancellation and receivable/procurement read
+access. Current focused runs pass 60 adapter and 42 desktop access/recovery checks,
+plus four exact procurement form/comparison checks. Full coverage/suites/build
+are being refreshed. The changed-file line gate was 64.89% before these additions,
+and remains open; pure Dart coverage is not SQL branch or native acceptance proof.
+
+The whole desktop run preceding contracts 55–56 had 658 passes and 81 retained
+approved-golden failures; the corresponding whole platform run passed 407.
+No approved golden was overwritten. CI was pinned below committed desktop SDK
+constraints; its Flutter pin is now corrected to 3.47.5. An isolated 3.44.7 attempt
+failed dependency resolution and did not test any goldens. It does not prove the
+cause of those visual differences. Unchanged HEAD reproduces all 81 failed cases;
+83 resulting images are byte/pixel identical to that current run, recorded in
+[golden-control-comparison-20260930.json](golden-control-comparison-20260930.json).
+That comparison predates the latest receivable read fixture changes. The report
+recovery copy compiled in 157.4 seconds without launch; read-access source changes
+followed the copy, and a fresh isolated build is running.
+
+The [181-ID matrix](requirement-matrix-20260930.md) and
+[migration/native runbook](migration-review-and-runbook-20260930.md) distinguish
+code, missing verification and external gates. Remaining authorized development
+includes overall coverage, golden/accessibility review, final catalogue/order/
+source hashes, concurrency/load harness preparation and final compilation.
+Installation, independent authenticated sessions/load, native acceptance and
+owner signoff remain open. **Wave 3 is not fully complete.**
+
 ## Posted journal evidence — 2026-09-28
 
 [journal-review-20260928.md](journal-review-20260928.md) records contract 48 and

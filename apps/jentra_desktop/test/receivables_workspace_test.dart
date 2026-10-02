@@ -8,6 +8,7 @@ import 'package:jentra_desktop/src/features/receivables/receivables_screen.dart'
 import 'package:jentra_domain/jentra_receivables.dart';
 import 'package:jentra_platform/jentra_platform.dart';
 import 'package:jentra_platform/jentra_receivables_platform.dart';
+
 import 'receivables_controller_test.dart' as f;
 
 Future<ReceivablesController> pump(
@@ -39,7 +40,7 @@ Future<ReceivablesController> pump(
         EncryptedDraftRepository(db, DraftCipher(keyStore: f.MemoryKeys())),
         newId: () => '00000000-0000-4000-8000-000000000099',
       ),
-      online: !offline,
+      online: !offline || edit,
     );
     await c.open(ReceivableDocument(f.snapshot(kind: kind)));
     if (failInitialPersistence) {
@@ -49,6 +50,7 @@ Future<ReceivablesController> pump(
       ''');
     }
     if (edit) await c.edit();
+    if (offline) c.setOnline(false);
   });
   addTearDown(db.close);
   addTearDown(() {
