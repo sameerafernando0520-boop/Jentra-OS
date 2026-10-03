@@ -130,6 +130,7 @@ void main() {
   late FxReads fx;
   late ManualJournalController manual;
   late PeriodFxController period;
+  bool manualDisposed = false, periodDisposed = false;
   ManualJournalController makeJournal(QuotationDraftStore store) =>
       ManualJournalController(
         scope: scope,
@@ -153,7 +154,28 @@ void main() {
     manual = makeJournal(drafts);
   }
 
+  void reopenPeriodCipher() {
+    period.dispose();
+    drafts = QuotationDraftStore(
+      EncryptedDraftRepository(db, DraftCipher(keyStore: keys)),
+    );
+    period = PeriodFxController(
+      scope: scope,
+      gateway: fx,
+      drafts: drafts,
+      online: true,
+      capabilities: {
+        'finance.view',
+        'finance.period.close',
+        'finance.period.reopen',
+        'finance.fx.post',
+      },
+    );
+  }
+
   setUp(() {
+    manualDisposed = false;
+    periodDisposed = false;
     db = JentraLocalDatabase(NativeDatabase.memory());
     keys = PausedKeys();
     drafts = QuotationDraftStore(
@@ -179,8 +201,8 @@ void main() {
     if (!keys.release.isCompleted) keys.release.complete();
     if (!journals.release.isCompleted) journals.release.complete();
     if (!fx.release.isCompleted) fx.release.complete();
-    manual.dispose();
-    period.dispose();
+    if (!manualDisposed) manual.dispose();
+    if (!periodDisposed) period.dispose();
     await db.close();
   });
   Future<void> readyFx() async {
@@ -191,6 +213,12 @@ void main() {
   }
 
   void change(dynamic controller, String kind) {
+    if (kind == 'dispose') {
+      controller.dispose();
+      if (controller is ManualJournalController) manualDisposed = true;
+      if (controller is PeriodFxController) periodDisposed = true;
+      return;
+    }
     controller.setOnline(false);
     if (kind == 'reconnect') controller.setOnline(true);
     if (kind == 'denial' && controller is ManualJournalController) {
@@ -253,7 +281,25 @@ void main() {
     expect(period.pending, false);
   });
 
-  for (final kind in ['disconnect', 'reconnect', 'denial']) {
+  test('period retry checks the capability of the sealed action', () async {
+    await readyFx();
+    fx.source.failure = 'UNCERTAIN_RESULT';
+    await period.execute('soft_lock');
+    final original = fx.source.commands.single.toJson((x) => x);
+    period.capabilities.remove('finance.period.close');
+    fx.source.failure = null;
+    await period.execute('post');
+    expect(fx.source.commands, hasLength(1));
+    expect(period.pending, true);
+    expect(period.local?.pending?.envelope.toJson((x) => x), original);
+    period.capabilities.add('finance.period.close');
+    await period.retry();
+    expect(fx.source.commands, hasLength(2));
+    expect(fx.source.commands.last.toJson((x) => x), original);
+    expect(period.pending, false);
+  });
+
+  for (final kind in ['disconnect', 'reconnect', 'denial', 'dispose']) {
     test(
       'journal obsolete encrypted initialization cannot publish after $kind',
       () async {
@@ -300,7 +346,26 @@ void main() {
     );
   }
 
-  for (final kind in ['disconnect', 'reconnect']) {
+  for (final kind in ['disconnect', 'reconnect', 'dispose']) {
+    test(
+      'period obsolete encrypted initialization cannot publish after $kind',
+      () async {
+        await readyFx();
+        reopenPeriodCipher();
+        fx.resources.clear();
+        keys.armed = true;
+        final work = period.initialize();
+        await keys.entered.future.timeout(const Duration(seconds: 5));
+        change(period, kind);
+        keys.release.complete();
+        await work;
+        expect(period.form, isEmpty);
+        expect(period.local, isNull);
+        expect(period.pages, isEmpty);
+        expect(fx.resources, isEmpty);
+        expect(await drafts.load(scope, PeriodFxController.slot), isNotNull);
+      },
+    );
     test(
       'period obsolete initialize stops chained reads after $kind',
       () async {
@@ -334,6 +399,79 @@ void main() {
         expect(period.message, isNull);
       },
     );
+  }
+
+  for (final code in [
+    'PERMISSION_DENIED',
+    'ACCESS_DENIED',
+    'MFA_REQUIRED',
+    'AUTHENTICATION_REQUIRED',
+  ]) {
+    test('journal optional $code cannot revive acknowledged command', () async {
+      await manual.initialize();
+      manual.form = journal(status: 'approved', version: 3);
+      journals.readFailure = code;
+      await manual.act('post');
+      final stored = await drafts.load(scope, ManualJournalController.slot);
+      expect(stored?.pending, isNull);
+      expect(stored?.form['status'], 'posted');
+      expect(manual.form, isNull);
+      expect(manual.accessDenied, true);
+      expect(manual.message, contains('confirmed'));
+      journals.readFailure = null;
+      await manual.initialize();
+      expect(manual.accessDenied, false);
+      expect(manual.form?['status'], 'posted');
+      expect(journals.commands, hasLength(1));
+    });
+    test('period optional $code cannot revive acknowledged command', () async {
+      await readyFx();
+      fx.source.readFailure = code;
+      await period.execute('soft_lock');
+      final stored = await drafts.load(scope, PeriodFxController.slot);
+      expect(stored?.pending, isNull);
+      expect(period.pending, false);
+      expect(period.denied, true);
+      expect(period.form, isEmpty);
+      expect(period.pages, isEmpty);
+      expect(period.message, contains('confirmed'));
+      fx.source.readFailure = null;
+      await period.refresh();
+      expect(period.denied, false);
+      expect(period.verified, true);
+      expect(period.form['reason'], 'Original governed close');
+      expect(fx.source.commands, hasLength(1));
+    });
+  }
+
+  for (final kind in ['disconnect', 'reconnect', 'dispose']) {
+    test('journal dispatched confirmation stays durable after $kind', () async {
+      await manual.initialize();
+      manual.form = journal(status: 'approved', version: 3);
+      journals.resources.clear();
+      journals.afterCommand = () async => change(manual, kind);
+      await manual.act('post');
+      final stored = await drafts.load(scope, ManualJournalController.slot);
+      expect(stored?.pending, isNull);
+      expect(stored?.form['status'], 'posted');
+      expect(stored?.form['version'], 4);
+      expect(stored?.form['lines'], isEmpty);
+      expect(manual.form, isNull);
+      expect(journals.resources, isEmpty);
+      expect(manual.message, isNull);
+    });
+    test('period dispatched confirmation stays durable after $kind', () async {
+      await readyFx();
+      fx.resources.clear();
+      fx.afterCommand = () async => change(period, kind);
+      await period.execute('soft_lock');
+      expect(await drafts.load(scope, PeriodFxController.slot), isNull);
+      expect(period.pending, false);
+      expect(period.verified, false);
+      expect(period.pages, isEmpty);
+      expect(fx.resources, isEmpty);
+      expect(period.message, isNull);
+    });
   }
 
   test(

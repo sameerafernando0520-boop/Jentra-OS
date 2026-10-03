@@ -10,6 +10,7 @@ import '../../app_providers.dart';
 import 'procurement_controller.dart';
 import 'conflict_comparison.dart';
 import 'procurement_picker.dart';
+import '../operations/operational_read_access.dart';
 
 class ProcurementScreen extends ConsumerWidget {
   const ProcurementScreen({super.key});
@@ -271,12 +272,15 @@ class _RequisitionDetail extends StatelessWidget {
   const _RequisitionDetail({required this.controller});
   final ProcurementController controller;
   Future<void> action(BuildContext context, String verb) async {
+    final epoch = controller.readAccessEpoch;
+    if (!controller.currentRead(epoch)) return;
     String? reason;
     if (['recall', 'cancel', 'reject'].contains(verb)) {
       final input = TextEditingController();
-      reason = await showDialog<String>(
-        context: context,
-        builder: (context) => AlertDialog(
+      reason = await showOperationalReadDialog<String>(
+        context,
+        controller,
+        (context) => AlertDialog(
           title: Text(
             '${verb[0].toUpperCase()}${verb.substring(1)} requisition',
           ),
@@ -302,6 +306,7 @@ class _RequisitionDetail extends StatelessWidget {
       WidgetsBinding.instance.addPostFrameCallback((_) => input.dispose());
       if (reason == null || reason.isEmpty) return;
     }
+    if (!context.mounted || !controller.currentRead(epoch)) return;
     await controller.transition(verb, reason: reason);
   }
 

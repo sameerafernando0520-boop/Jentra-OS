@@ -7,6 +7,7 @@ import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_finance_platform.dart';
 
 import '../../app_providers.dart';
+import '../operations/operational_read_access.dart';
 import '../shared/report_wait.dart';
 
 final controlReconciliationGatewayProvider =
@@ -27,6 +28,7 @@ final controlReconciliationControllerProvider =
           ].every((p) => caps.value?.contains(p) ?? false)) {
         return null;
       }
+      final connection = ref.read(connectivityStateProvider);
       final c = ControlReconciliationController(
         scope: scope,
         gateway: gateway,
@@ -35,19 +37,23 @@ final controlReconciliationControllerProvider =
         ),
         capabilities: caps.value!,
         online:
-            ref.read(connectivityStateProvider).value ==
-            ConnectivityState.online,
+            !connection.isLoading &&
+            !connection.hasError &&
+            connection.value == ConnectivityState.online,
       );
       ref.listen(
         connectivityStateProvider,
-        (_, s) => c.setOnline(s.value == ConnectivityState.online),
+        (_, s) => c.setOnline(
+          !s.isLoading && !s.hasError && s.value == ConnectivityState.online,
+        ),
       );
       ref.onDispose(c.dispose);
       unawaited(c.initialize());
       return c;
     });
 
-final class ControlReconciliationController extends ChangeNotifier {
+final class ControlReconciliationController extends ChangeNotifier
+    implements OperationalReadAccess {
   ControlReconciliationController({
     required this.scope,
     required this.gateway,
@@ -64,6 +70,21 @@ final class ControlReconciliationController extends ChangeNotifier {
   bool online, busy = false, accessDenied = false, _disposed = false;
   bool verified = false;
   int _evidenceEpoch = 0;
+  @override
+  int get readAccessEpoch => _evidenceEpoch;
+  @override
+  bool currentRead(int epoch) =>
+      _acceptEvidence(epoch) && verified && !accessDenied;
+  @override
+  void denyReadAccess() {
+    if (_disposed) return;
+    _evidenceEpoch++;
+    accessDenied = true;
+    verified = false;
+    clearEvidence();
+    emit();
+  }
+
   final reportWait = ReportWaitState();
   void cancelReportWait() {
     if (!reportWait.cancel()) return;
@@ -101,6 +122,9 @@ final class ControlReconciliationController extends ChangeNotifier {
   void dispose() {
     _evidenceEpoch++;
     _disposed = true;
+    verified = false;
+    clearEvidence();
+    notifyListeners();
     super.dispose();
   }
 
@@ -132,10 +156,7 @@ final class ControlReconciliationController extends ChangeNotifier {
           'MFA_REQUIRED',
           'AUTHENTICATION_REQUIRED',
         ].contains(e.code)) {
-      _evidenceEpoch++;
-      accessDenied = true;
-      verified = false;
-      clearEvidence();
+      denyReadAccess();
     }
   }
 

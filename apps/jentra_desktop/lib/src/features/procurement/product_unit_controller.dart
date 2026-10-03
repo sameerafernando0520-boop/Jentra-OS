@@ -30,13 +30,11 @@ final productUnitControllerProvider =
         drafts: QuotationDraftStore.procurement(
           ref.watch(encryptedDraftRepositoryProvider),
         ),
-        online:
-            ref.read(connectivityStateProvider).value ==
-            ConnectivityState.online,
+        online: procurementVerifiedOnline(ref.read(connectivityStateProvider)),
       );
       ref.listen(
         connectivityStateProvider,
-        (_, v) => c.setOnline(v.value == ConnectivityState.online),
+        (_, v) => c.setOnline(procurementVerifiedOnline(v)),
       );
       ref.onDispose(c.dispose);
       unawaited(c.initialize());

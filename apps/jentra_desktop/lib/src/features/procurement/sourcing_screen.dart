@@ -1,4 +1,5 @@
 import '../operations/access_changed.dart';
+import '../operations/operational_read_access.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -240,6 +241,7 @@ class _RfqDetail extends StatelessWidget {
                                       final reason = await sourcingReason(
                                         context,
                                         'Why select ${quote['supplier_name']}?',
+                                        access: c,
                                       );
                                       if (reason != null && reason.isNotEmpty) {
                                         await c.choose(quote, reason);
@@ -268,13 +270,17 @@ class _RfqDetail extends StatelessWidget {
 Future<String?> sourcingReason(
   BuildContext context,
   String title, {
+  required OperationalReadAccess access,
   String label = 'Reason',
   int maxLength = 1000,
 }) async {
+  final epoch = access.readAccessEpoch;
+  if (!access.currentRead(epoch)) return null;
   final input = TextEditingController();
-  final result = await showDialog<String>(
-    context: context,
-    builder: (context) => AlertDialog(
+  final result = await showOperationalReadDialog<String>(
+    context,
+    access,
+    (context) => AlertDialog(
       title: Text(title),
       content: TextField(
         controller: input,
@@ -296,7 +302,7 @@ Future<String?> sourcingReason(
     ),
   );
   WidgetsBinding.instance.addPostFrameCallback((_) => input.dispose());
-  return result;
+  return context.mounted && access.currentRead(epoch) ? result : null;
 }
 
 class _SourcingEditor extends StatelessWidget {

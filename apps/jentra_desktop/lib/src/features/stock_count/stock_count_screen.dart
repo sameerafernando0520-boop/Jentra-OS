@@ -59,9 +59,11 @@ class StockCountWorkspace extends StatelessWidget {
       return;
     }
     var input = '';
-    final reason = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
+    final access = controller.readAccessEpoch;
+    final reason = await showOperationalReadDialog<String>(
+      context,
+      controller,
+      (context) => AlertDialog(
         title: Text('$verb count'),
         content: TextField(
           onChanged: (value) => input = value,
@@ -80,7 +82,9 @@ class StockCountWorkspace extends StatelessWidget {
         ],
       ),
     );
-    if (reason != null) await controller.act(verb, note: reason);
+    if (reason != null && controller.currentRead(access)) {
+      await controller.act(verb, note: reason);
+    }
   }
 
   @override

@@ -24,6 +24,7 @@ final receivablesControllerProvider =
           repository == null) {
         return null;
       }
+      final connection = ref.read(connectivityStateProvider);
       final controller = ReceivablesController(
         scope: scope,
         capabilities: caps.value!,
@@ -32,13 +33,17 @@ final receivablesControllerProvider =
           ref.watch(encryptedDraftRepositoryProvider),
         ),
         online:
-            ref.read(connectivityStateProvider).value ==
-            ConnectivityState.online,
+            !connection.isLoading &&
+            !connection.hasError &&
+            connection.value == ConnectivityState.online,
       );
       ref.listen(
         connectivityStateProvider,
-        (_, next) =>
-            controller.setOnline(next.value == ConnectivityState.online),
+        (_, next) => controller.setOnline(
+          !next.isLoading &&
+              !next.hasError &&
+              next.value == ConnectivityState.online,
+        ),
       );
       ref.onDispose(controller.dispose);
       unawaited(controller.refresh());
@@ -450,10 +455,13 @@ final class ReceivablesController extends ChangeNotifier {
         if (currentRead(access)) page = refreshed;
       } catch (e) {
         if (!currentRead(access)) return;
-        if (e is ReceivableFailure && const {
-          'PERMISSION_DENIED', 'ACCESS_DENIED', 'MFA_REQUIRED',
-          'AUTHENTICATION_REQUIRED',
-        }.contains(e.code)) {
+        if (e is ReceivableFailure &&
+            const {
+              'PERMISSION_DENIED',
+              'ACCESS_DENIED',
+              'MFA_REQUIRED',
+              'AUTHENTICATION_REQUIRED',
+            }.contains(e.code)) {
           invalidateReadEvidence();
           error = e.toString();
           return;

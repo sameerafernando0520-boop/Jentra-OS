@@ -25,6 +25,7 @@ final manualJournalControllerProvider =
           !(caps.value?.contains('finance.view') ?? false)) {
         return null;
       }
+      final connection = ref.read(connectivityStateProvider);
       final c = ManualJournalController(
         scope: scope,
         gateway: gateway,
@@ -33,12 +34,15 @@ final manualJournalControllerProvider =
         ),
         permissions: caps.value!,
         online:
-            ref.read(connectivityStateProvider).value ==
-            ConnectivityState.online,
+            !connection.isLoading &&
+            !connection.hasError &&
+            connection.value == ConnectivityState.online,
       );
       ref.listen(
         connectivityStateProvider,
-        (_, s) => c.setOnline(s.value == ConnectivityState.online),
+        (_, s) => c.setOnline(
+          !s.isLoading && !s.hasError && s.value == ConnectivityState.online,
+        ),
       );
       ref.onDispose(c.dispose);
       unawaited(c.initialize());
@@ -151,6 +155,8 @@ final class ManualJournalController extends ChangeNotifier
     _disposed = true;
     _epoch++;
     clearReadEvidence();
+    form = null;
+    local = null;
     notifyListeners();
     super.dispose();
   }
@@ -726,6 +732,7 @@ final class ManualJournalController extends ChangeNotifier
       local = null;
     }
     if (!currentRead(epoch)) {
+      if (form?['id'] == result['id']) form = null;
       return;
     }
     local = confirmed;

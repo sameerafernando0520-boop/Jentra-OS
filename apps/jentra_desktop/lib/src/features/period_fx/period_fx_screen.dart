@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app_providers.dart';
 import 'period_fx_controller.dart';
+import '../operations/operational_read_access.dart';
 
 class PeriodFxScreen extends ConsumerWidget {
   const PeriodFxScreen({super.key});
@@ -40,9 +41,12 @@ class _PeriodFxWorkspaceState extends State<PeriodFxWorkspace> {
   PeriodFxController get c => widget.controller;
 
   Future<void> confirm(String action, {String? sourceId}) async {
-    final accepted = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
+    final controller = c;
+    final epoch = controller.readAccessEpoch;
+    final accepted = await showOperationalReadDialog<bool>(
+      context,
+      controller,
+      (dialogContext) => AlertDialog(
         title: Text(switch (action) {
           'soft_lock' => 'Soft lock this period?',
           'hard_lock' => 'Check and hard close?',
@@ -53,16 +57,11 @@ class _PeriodFxWorkspaceState extends State<PeriodFxWorkspace> {
         }),
         content: SingleChildScrollView(
           child: Text(switch (action) {
-            'soft_lock' =>
-              'Ordinary posting will stop. Authorized period-end FX adjustments remain available.',
-            'hard_lock' =>
-              'The server checks bank, AR/AP and FX evidence. Failed checks are recorded as close exceptions.',
-            'request_reopen' || 'approve_reopen' =>
-              'A recent second-factor session is required. Complete MFA in your account security flow, then return here. The prior close stays in history.',
-            'post' =>
-              'The selected closing rate values remaining foreign open items. A prior active run is reversed and linked.',
-            _ =>
-              'The original frozen run and journal remain in history. An exact reversal posts in the selected period.',
+            'soft_lock' => 'Ordinary posting will stop. Authorized period-end FX adjustments remain available.',
+            'hard_lock' => 'The server checks bank, AR/AP and FX evidence. Failed checks are recorded as close exceptions.',
+            'request_reopen' || 'approve_reopen' => 'A recent second-factor session is required. Complete MFA in your account security flow, then return here. The prior close stays in history.',
+            'post' => 'The selected closing rate values remaining foreign open items. A prior active run is reversed and linked.',
+            _ => 'The original frozen run and journal remain in history. An exact reversal posts in the selected period.',
           }),
         ),
         actions: [
@@ -77,8 +76,11 @@ class _PeriodFxWorkspaceState extends State<PeriodFxWorkspace> {
         ],
       ),
     );
-    if (accepted == true && mounted) {
-      await c.execute(action, sourceId: sourceId);
+    if (accepted == true &&
+        mounted &&
+        identical(c, controller) &&
+        controller.currentRead(epoch)) {
+      await controller.execute(action, sourceId: sourceId);
     }
   }
 
@@ -92,8 +94,7 @@ class _PeriodFxWorkspaceState extends State<PeriodFxWorkspace> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                c.error ??
-                    'Connect to verify finance access and restore the encrypted period draft.',
+                c.error ?? 'Connect to verify finance access and restore the encrypted period draft.',
               ),
               if (c.busy) const CircularProgressIndicator(),
               TextButton(

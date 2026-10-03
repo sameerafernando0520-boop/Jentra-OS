@@ -2,12 +2,22 @@
 
 Candidate only. No installation or native acceptance is implied.
 
+Connectivity loading or error states fail closed even when a provider retains a
+previous online value. They invalidate current read access while preserving
+encrypted inputs and sealed requests; restored connectivity requires fresh
+server evidence.
+
 ## Scope and exact inputs
 
 One authenticated tenant/entity/branch and one existing operational bank account per
 command. `finance.view` is required for reads; import, match/reverse and adjustment
 add `finance.bank.import`, `finance.bank.reconcile` and `finance.bank.adjust` respectively.
 Existing server MFA/scope policy remains authoritative. No authentication changes.
+Root-level import/match/reversal/rule confirmations retain their originating
+access epoch and hide their content on disconnect, definite read denial or
+disposal. Reconnect and fresh authorization cannot revive an old confirmation
+or dispatch its action in a newer epoch. Confirmed/pending command and exact
+bank accounting protocols remain unchanged.
 
 CSV/XLSX files use the existing bounded tabular codec. Required text columns:
 `date` (ISO YYYY-MM-DD), `reference` (bank line identity), `description`, `amount`

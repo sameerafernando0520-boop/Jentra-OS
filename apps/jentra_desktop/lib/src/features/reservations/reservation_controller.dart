@@ -22,6 +22,7 @@ final reservationControllerProvider =
           !(caps.value?.contains('inventory.reservations.manage') ?? false)) {
         return null;
       }
+      final connection = ref.read(connectivityStateProvider);
       final c = ReservationController(
         scope: scope,
         gateway: gateway,
@@ -29,19 +30,23 @@ final reservationControllerProvider =
           ref.watch(encryptedDraftRepositoryProvider),
         ),
         online:
-            ref.read(connectivityStateProvider).value ==
-            ConnectivityState.online,
+            !connection.isLoading &&
+            !connection.hasError &&
+            connection.value == ConnectivityState.online,
       );
       ref.listen(
         connectivityStateProvider,
-        (_, s) => c.setOnline(s.value == ConnectivityState.online),
+        (_, s) => c.setOnline(
+          !s.isLoading && !s.hasError && s.value == ConnectivityState.online,
+        ),
       );
       ref.onDispose(c.dispose);
       unawaited(c.initialize());
       return c;
     });
 
-final class ReservationController extends ChangeNotifier implements OperationalReadAccess {
+final class ReservationController extends ChangeNotifier
+    implements OperationalReadAccess {
   ReservationController({
     required this.scope,
     required this.gateway,
@@ -57,7 +62,8 @@ final class ReservationController extends ChangeNotifier implements OperationalR
   @override
   int get readAccessEpoch => _epoch;
   @override
-  bool currentRead(int epoch) => !_disposed && online && !accessDenied && epoch == _epoch;
+  bool currentRead(int epoch) =>
+      !_disposed && online && !accessDenied && epoch == _epoch;
   @override
   void denyReadAccess() {
     if (_disposed) return;
@@ -66,6 +72,7 @@ final class ReservationController extends ChangeNotifier implements OperationalR
     clearEvidence();
     emit();
   }
+
   String filter = 'active';
   String? cursor, error, message, coverageStart;
   int? historyCursor;
@@ -226,8 +233,12 @@ final class ReservationController extends ChangeNotifier implements OperationalR
   });
   Future<void> open(Map<String, Object?> row) => run(() async {
     if (!online || form != null || accessDenied) return;
-    final current = items.where((item) => item['id'] == row['id'] &&
-        item['version'] == row['version']).firstOrNull;
+    final current = items
+        .where(
+          (item) =>
+              item['id'] == row['id'] && item['version'] == row['version'],
+        )
+        .firstOrNull;
     if (current == null) return;
     message = null;
     form = {
@@ -373,8 +384,9 @@ final class ReservationController extends ChangeNotifier implements OperationalR
             'ACCESS_DENIED',
             'MFA_REQUIRED',
             'AUTHENTICATION_REQUIRED',
-          }.contains(e.code))
+          }.contains(e.code)) {
         rethrow;
+      }
       error =
           'Release confirmed. Retry the queue refresh to view its evidence.';
     }

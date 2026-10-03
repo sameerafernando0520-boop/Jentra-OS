@@ -191,6 +191,7 @@ class SupplierBillWorkspace extends StatelessWidget {
                                   final reason = await sourcingReason(
                                     context,
                                     'Approve match exceptions',
+                                    access: c,
                                   );
                                   if (reason != null) {
                                     await c.action('approve', reason: reason);
@@ -206,6 +207,7 @@ class SupplierBillWorkspace extends StatelessWidget {
                                   final reason = await sourcingReason(
                                     context,
                                     'Cancel draft bill',
+                                    access: c,
                                   );
                                   if (reason != null) {
                                     await c.action('cancel', reason: reason);

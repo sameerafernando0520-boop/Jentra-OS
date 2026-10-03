@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:jentra_domain/jentra_inventory.dart';
 import 'package:jentra_domain/jentra_receivables.dart';
 import 'package:jentra_platform/jentra_inventory_platform.dart';
 import 'package:jentra_platform/jentra_receivables_platform.dart';
@@ -94,6 +93,38 @@ void main() {
       c.dispose();
       await db.close();
     });
+    for (final code in [
+      'PERMISSION_DENIED',
+      'ACCESS_DENIED',
+      'MFA_REQUIRED',
+      'AUTHENTICATION_REQUIRED',
+    ]) {
+      test(
+        'current $code retains typed guidance after durable posting',
+        () async {
+          final work = c.post();
+          await gateway.entered.future;
+          gateway.reply.completeError(
+            DomainError(
+              code: code,
+              message: 'Current authority required: $code',
+            ),
+          );
+          await work;
+          expect(c.accessDenied, true);
+          expect(c.options, isEmpty);
+          expect(c.preview, isNull);
+          expect(c.form, isNull);
+          expect(c.error, contains(code));
+          expect(c.message, contains('confirmed'));
+          expect(
+            (await drafts.load(scope, LandedValueController.slot))?.pending,
+            isNull,
+          );
+          expect(gateway.commands, hasLength(1));
+        },
+      );
+    }
     test('obsolete denial cannot revoke replacement connection after durable posting', () async {
       final work = c.post();
       await gateway.entered.future;

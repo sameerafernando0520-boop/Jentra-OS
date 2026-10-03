@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_platform.dart';
+
 import '../../app_providers.dart';
 import 'quotation_controller.dart';
 import 'quotation_editor.dart';
@@ -95,10 +97,14 @@ class _OrderWorkspace extends ConsumerStatefulWidget {
 
 class _OrderWorkspaceState extends ConsumerState<_OrderWorkspace> {
   final _search = TextEditingController();
+  final _creditAccess = <_CreditDialogAccess>{};
   int _tab = 0;
   SalesOrderController get controller => ref.read(salesOrderProvider.notifier);
   @override
   void dispose() {
+    for (final access in _creditAccess) {
+      access.invalidate();
+    }
     _search.dispose();
     super.dispose();
   }
@@ -640,26 +646,100 @@ class _OrderWorkspaceState extends ConsumerState<_OrderWorkspace> {
     ),
   );
   Future<void> _credit(SalesOrderState s) async {
-    await controller.reviewCredit();
-    if (!mounted) return;
-    final current = ref.read(salesOrderProvider).value;
-    if (current?.context != s.context || current?.credit == null) return;
-    final response = await showDialog<({bool overrideCredit, String reason})>(
-      context: context,
-      builder: (_) => QuotationScopeGuard(
-        scope: s.context,
-        capabilities: s.capabilities,
-        child: OrderCreditDialog(
-          preview: current!.credit!,
-          canOverride: current.canOverride,
+    final origin = controller;
+    final originAccess = _CreditDialogAccess();
+    _creditAccess.add(originAccess);
+    var invalidated = false;
+    void invalidate() {
+      invalidated = true;
+      originAccess.invalidate();
+    }
+
+    bool capabilitiesMatch(AsyncValue<Set<String>> value) =>
+        !value.isLoading &&
+        !value.hasError &&
+        value.value != null &&
+        value.value!.length == s.capabilities.length &&
+        value.value!.containsAll(s.capabilities);
+    final connection = ref.listenManual(connectivityStateProvider, (_, next) {
+      if (next.isLoading ||
+          next.hasError ||
+          next.value != ConnectivityState.online) {
+        invalidate();
+      }
+    });
+    final scope = ref.listenManual(activeTenantContextProvider, (_, next) {
+      if (next != s.context) invalidate();
+    });
+    final capabilities = ref.listenManual(businessCapabilitiesProvider, (
+      _,
+      next,
+    ) {
+      if (!capabilitiesMatch(next)) invalidate();
+    });
+    bool currentAccess() =>
+        mounted &&
+        !invalidated &&
+        ref.read(activeTenantContextProvider) == s.context &&
+        !ref.read(connectivityStateProvider).isLoading &&
+        !ref.read(connectivityStateProvider).hasError &&
+        ref.read(connectivityStateProvider).value == ConnectivityState.online &&
+        capabilitiesMatch(ref.read(businessCapabilitiesProvider)) &&
+        identical(ref.read(salesOrderProvider.notifier), origin);
+    try {
+      if (!currentAccess()) return;
+      await origin.reviewCredit();
+      if (!currentAccess()) return;
+      final current = ref.read(salesOrderProvider).value;
+      if (current?.context != s.context ||
+          current?.credit == null ||
+          current?.detail?.order.id != s.detail?.order.id ||
+          current?.detail?.order.version != s.detail?.order.version) {
+        return;
+      }
+      final preview = current!.credit!;
+      if (!mounted) return;
+      final response = await showDialog<({bool overrideCredit, String reason})>(
+        context: context,
+        builder: (_) => ListenableBuilder(
+          listenable: originAccess,
+          builder: (dialogContext, _) => originAccess.active
+              ? QuotationScopeGuard(
+                  scope: s.context,
+                  capabilities: s.capabilities,
+                  child: OrderCreditDialog(
+                    preview: preview,
+                    canOverride: current.canOverride,
+                  ),
+                )
+              : AlertDialog(
+                  title: const Text('Business scope or access changed'),
+                  content: const Text(
+                    'Close this dialog and review customer credit again.',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(dialogContext),
+                      child: const Text('Close'),
+                    ),
+                  ],
+                ),
         ),
-      ),
-    );
-    if (mounted && response != null && widget.state.context == s.context) {
-      await controller.confirm(
-        overrideCredit: response.overrideCredit,
-        reason: response.reason,
       );
+      if (response != null &&
+          currentAccess() &&
+          identical(ref.read(salesOrderProvider).value?.credit, preview)) {
+        await origin.confirm(
+          overrideCredit: response.overrideCredit,
+          reason: response.reason,
+        );
+      }
+    } finally {
+      connection.close();
+      scope.close();
+      capabilities.close();
+      _creditAccess.remove(originAccess);
+      originAccess.dispose();
     }
   }
 
@@ -692,6 +772,28 @@ class _OrderWorkspaceState extends ConsumerState<_OrderWorkspace> {
   }
 }
 
+class _CreditDialogAccess extends ChangeNotifier {
+  bool active = true, _disposed = false;
+  void invalidate() {
+    if (!active || _disposed) return;
+    active = false;
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!_disposed) notifyListeners();
+      });
+    } else {
+      notifyListeners();
+    }
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+}
+
 String orderStatus(String value) => value
     .split('_')
     .map(
@@ -716,6 +818,7 @@ class SalesOrderFulfillmentEditor extends StatefulWidget {
 }
 
 class _FulfillmentState extends State<SalesOrderFulfillmentEditor> {
+  final _referenceDialogs = <QuotationDialogAccess>{};
   late final _promised = TextEditingController(
     text: widget.form['promised_date']?.toString(),
   );
@@ -731,6 +834,10 @@ class _FulfillmentState extends State<SalesOrderFulfillmentEditor> {
   });
   @override
   void dispose() {
+    for (final access in _referenceDialogs) {
+      access.denyReadAccess();
+    }
+    _referenceDialogs.clear();
     _promised.dispose();
     super.dispose();
   }
@@ -761,18 +868,26 @@ class _FulfillmentState extends State<SalesOrderFulfillmentEditor> {
           child: TextButton(
             onPressed: widget.enabled && widget.online
                 ? () async {
-                    final item = await showQuotationReferencePicker(
-                      context,
-                      title: 'Warehouse',
-                      kind: QuotationReferenceKind.warehouse,
-                      permission: 'sales.orders.manage',
-                    );
-                    if (!mounted || !widget.enabled || item == null) return;
-                    setState(() {
-                      _warehouse = item.id;
-                      _warehouseLabel = item.label;
-                    });
-                    _save();
+                    final access = QuotationDialogAccess(context);
+                    _referenceDialogs.add(access);
+                    try {
+                      final item = await showQuotationReferencePicker(
+                        context,
+                        originAccess: access,
+                        title: 'Warehouse',
+                        kind: QuotationReferenceKind.warehouse,
+                        permission: 'sales.orders.manage',
+                      );
+                      if (!mounted || !widget.enabled || item == null) return;
+                      setState(() {
+                        _warehouse = item.id;
+                        _warehouseLabel = item.label;
+                      });
+                      _save();
+                    } finally {
+                      _referenceDialogs.remove(access);
+                      access.dispose();
+                    }
                   }
                 : null,
             child: _warehouse.isEmpty

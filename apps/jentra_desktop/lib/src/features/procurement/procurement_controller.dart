@@ -10,6 +10,11 @@ import '../../app_providers.dart';
 import '../operations/operational_read_access.dart';
 
 final procurementGatewayProvider = Provider<ProcurementGateway?>((ref) => null);
+bool procurementVerifiedOnline(AsyncValue<ConnectivityState> state) =>
+    !state.isLoading &&
+    !state.hasError &&
+    state.value == ConnectivityState.online;
+
 final procurementControllerProvider =
     Provider.autoDispose<ProcurementController?>((ref) {
       final scope = ref.watch(activeTenantContextProvider);
@@ -30,14 +35,11 @@ final procurementControllerProvider =
         store: QuotationDraftStore.procurement(
           ref.watch(encryptedDraftRepositoryProvider),
         ),
-        online:
-            ref.read(connectivityStateProvider).value ==
-            ConnectivityState.online,
+        online: procurementVerifiedOnline(ref.read(connectivityStateProvider)),
       );
       ref.listen(
         connectivityStateProvider,
-        (_, next) =>
-            controller.setOnline(next.value == ConnectivityState.online),
+        (_, next) => controller.setOnline(procurementVerifiedOnline(next)),
       );
       ref.onDispose(controller.dispose);
       unawaited(controller.initialize());

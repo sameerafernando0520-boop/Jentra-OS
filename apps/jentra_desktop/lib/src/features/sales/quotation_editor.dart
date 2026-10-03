@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 
 import 'quotation_reference_picker.dart';
 import 'quotation_reference_label.dart';
+import 'quotation_scope_guard.dart';
 
 class QuotationEditor extends StatefulWidget {
   const QuotationEditor({
@@ -31,6 +32,7 @@ class _QuotationEditorState extends State<QuotationEditor> {
   late Map<String, Object?> _form;
   final _controllers = <String, TextEditingController>{};
   final _discountModes = <String, bool>{};
+  final _referenceDialogs = <QuotationDialogAccess>{};
   @override
   void initState() {
     super.initState();
@@ -40,6 +42,10 @@ class _QuotationEditorState extends State<QuotationEditor> {
 
   @override
   void dispose() {
+    for (final access in _referenceDialogs) {
+      access.denyReadAccess();
+    }
+    _referenceDialogs.clear();
     for (final controller in _controllers.values) {
       controller.dispose();
     }
@@ -193,86 +199,95 @@ class _QuotationEditorState extends State<QuotationEditor> {
                           (_form['customer_id'] as String? ?? '').isEmpty)
                   ? null
                   : () async {
-                      final item = await showQuotationReferencePicker(
-                        context,
-                        title: label,
-                        permission: widget.orderMode
-                            ? 'sales.orders.manage'
-                            : 'sales.quotations.manage',
-                        kind: kind,
-                        customerId: _form['customer_id'] as String?,
-                        fromCurrency:
-                            kind == QuotationReferenceKind.exchangeRate
-                            ? _form['currency_code'] as String?
-                            : null,
-                        toCurrency: kind == QuotationReferenceKind.exchangeRate
-                            ? widget.baseCurrency
-                            : null,
-                      );
-                      if (!mounted || !widget.enabled || item == null) return;
-                      setState(() {
-                        if (line == null) {
-                          _form[field] = item.id;
-                          _label(field, item.label);
-                        } else {
-                          _lineSet(line, field, item.id);
-                          _label('$field:${item.id}', item.label);
-                        }
-                        if (kind == QuotationReferenceKind.customer) {
-                          _form.remove('contact_id');
-                          _form.remove('opportunity_id');
-                          _form['_labels'] = {..._labels}
-                            ..remove('contact_id')
-                            ..remove('opportunity_id');
-                          final days = item.values['payment_terms_days'];
-                          if (days is int) {
-                            _form['payment_terms_days'] = days;
-                            _controllers['payment_terms_days']?.text = days
-                                .toString();
+                      final access = QuotationDialogAccess(context);
+                      _referenceDialogs.add(access);
+                      try {
+                        final item = await showQuotationReferencePicker(
+                          context,
+                          originAccess: access,
+                          title: label,
+                          permission: widget.orderMode
+                              ? 'sales.orders.manage'
+                              : 'sales.quotations.manage',
+                          kind: kind,
+                          customerId: _form['customer_id'] as String?,
+                          fromCurrency:
+                              kind == QuotationReferenceKind.exchangeRate
+                              ? _form['currency_code'] as String?
+                              : null,
+                          toCurrency:
+                              kind == QuotationReferenceKind.exchangeRate
+                              ? widget.baseCurrency
+                              : null,
+                        );
+                        if (!mounted || !widget.enabled || item == null) return;
+                        setState(() {
+                          if (line == null) {
+                            _form[field] = item.id;
+                            _label(field, item.label);
+                          } else {
+                            _lineSet(line, field, item.id);
+                            _label('$field:${item.id}', item.label);
                           }
-                        }
-                        if (kind == QuotationReferenceKind.currency) {
-                          _form.remove('exchange_rate_id');
-                          _form['_labels'] = {..._labels}
-                            ..remove('exchange_rate_id');
-                          _form['exchange_rate'] =
-                              item.id == widget.baseCurrency
-                              ? '1.0000000000'
-                              : '';
-                          _controllers['exchange_rate']?.text =
-                              _form['exchange_rate']! as String;
-                        }
-                        if (kind == QuotationReferenceKind.exchangeRate) {
-                          _form['exchange_rate'] = item.values['rate'];
-                          _form['rate_date'] = item.values['effective_date'];
-                          _controllers['exchange_rate']?.text =
-                              item.values['rate']! as String;
-                          _controllers['rate_date']?.text =
-                              item.values['effective_date']! as String;
-                        }
-                        if (kind == QuotationReferenceKind.product &&
-                            line != null) {
-                          _lineSet(
-                            line,
-                            'description',
-                            item.values['description'] ?? item.values['name'],
-                          );
-                          _lineSet(
-                            line,
-                            'unit_id',
-                            item.values['base_unit_id'],
-                          );
-                          _lineSet(
-                            line,
-                            'tax_definition_id',
-                            item.values['tax_definition_id'],
-                          );
-                          _lineSet(line, 'conversion_numerator', '1');
-                          _lineSet(line, 'conversion_denominator', '1');
-                          _quantity(line);
-                        }
-                      });
-                      _changed();
+                          if (kind == QuotationReferenceKind.customer) {
+                            _form.remove('contact_id');
+                            _form.remove('opportunity_id');
+                            _form['_labels'] = {..._labels}
+                              ..remove('contact_id')
+                              ..remove('opportunity_id');
+                            final days = item.values['payment_terms_days'];
+                            if (days is int) {
+                              _form['payment_terms_days'] = days;
+                              _controllers['payment_terms_days']?.text = days
+                                  .toString();
+                            }
+                          }
+                          if (kind == QuotationReferenceKind.currency) {
+                            _form.remove('exchange_rate_id');
+                            _form['_labels'] = {..._labels}
+                              ..remove('exchange_rate_id');
+                            _form['exchange_rate'] =
+                                item.id == widget.baseCurrency
+                                ? '1.0000000000'
+                                : '';
+                            _controllers['exchange_rate']?.text =
+                                _form['exchange_rate']! as String;
+                          }
+                          if (kind == QuotationReferenceKind.exchangeRate) {
+                            _form['exchange_rate'] = item.values['rate'];
+                            _form['rate_date'] = item.values['effective_date'];
+                            _controllers['exchange_rate']?.text =
+                                item.values['rate']! as String;
+                            _controllers['rate_date']?.text =
+                                item.values['effective_date']! as String;
+                          }
+                          if (kind == QuotationReferenceKind.product &&
+                              line != null) {
+                            _lineSet(
+                              line,
+                              'description',
+                              item.values['description'] ?? item.values['name'],
+                            );
+                            _lineSet(
+                              line,
+                              'unit_id',
+                              item.values['base_unit_id'],
+                            );
+                            _lineSet(
+                              line,
+                              'tax_definition_id',
+                              item.values['tax_definition_id'],
+                            );
+                            _lineSet(line, 'conversion_numerator', '1');
+                            _lineSet(line, 'conversion_denominator', '1');
+                            _quantity(line);
+                          }
+                        });
+                        _changed();
+                      } finally {
+                        _referenceDialogs.remove(access);
+                        access.dispose();
+                      }
                     },
               child: display == null || display.isEmpty
                   ? Text('Choose ${label.toLowerCase()}')
@@ -378,8 +393,7 @@ class _QuotationEditorState extends State<QuotationEditor> {
               'salesperson_id',
               'Salesperson',
               readOnly: true,
-              hint:
-                  'Assigned member; new quotations use your signed-in identity.',
+              hint: 'Assigned member; new quotations use your signed-in identity.',
             ),
           _field('delivery_terms', 'Delivery terms'),
         ]),

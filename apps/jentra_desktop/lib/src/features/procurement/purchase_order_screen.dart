@@ -175,6 +175,7 @@ class _OrderDetail extends StatelessWidget {
         reason = await sourcingReason(
           context,
           '${verb[0].toUpperCase()}${verb.substring(1)} purchase order',
+          access: c,
         );
         if (reason == null || reason.isEmpty) {
           return;

@@ -19,8 +19,9 @@ final class _Keys implements SecretKeyStore {
 
   @override
   Future<void> write(String key, String value) async {
-    if (fail == 'write')
+    if (fail == 'write') {
       throw StateError('private credential diagnostic token');
+    }
     values[key] = value;
   }
 }

@@ -5,6 +5,7 @@ import 'package:jentra_platform/jentra_platform.dart';
 import '../../app_providers.dart';
 import 'bank_reconciliation_controller.dart';
 import '../operations/operational_report_export.dart';
+import '../operations/operational_read_access.dart';
 
 class BankReconciliationScreen extends ConsumerWidget {
   const BankReconciliationScreen({super.key});
@@ -71,9 +72,12 @@ class _BankWorkspaceState extends State<BankReconciliationWorkspace> {
   }
 
   Future<void> confirm(String action, {String? matchId}) async {
-    final approved = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
+    final controller = c;
+    final epoch = controller.readAccessEpoch;
+    final approved = await showOperationalReadDialog<bool>(
+      context,
+      controller,
+      (dialogContext) => AlertDialog(
         title: Text(switch (action) {
           'import' => 'Import this statement?',
           'reverse' => 'Reverse this match?',
@@ -100,7 +104,12 @@ class _BankWorkspaceState extends State<BankReconciliationWorkspace> {
         ],
       ),
     );
-    if (approved == true && mounted) await c.execute(action, matchId: matchId);
+    if (approved == true &&
+        mounted &&
+        identical(c, controller) &&
+        controller.currentRead(epoch)) {
+      await controller.execute(action, matchId: matchId);
+    }
   }
 
   @override

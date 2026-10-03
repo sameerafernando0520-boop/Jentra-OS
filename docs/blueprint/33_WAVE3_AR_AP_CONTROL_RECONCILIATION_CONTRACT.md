@@ -10,6 +10,13 @@ adds `kind: GRNI` to the same report APIs and encrypted workspace. AR/AP allocat
 commands remain unchanged. Its candidate is unapplied and requires coordinated
 client/schema installation.
 
+Controller creation and connectivity subscriptions require resolved, error-free
+online connection state. An unknown/loading/failed observation remains
+unavailable even if its `AsyncValue` retains previous online data. It invalidates
+the current server-read epoch, clears private report/correction evidence and
+prevents old confirmations from acquiring authority after reconnect. Original
+encrypted correction inputs and sealed command identities remain recoverable.
+
 ## Public commands and reads
 
 All calls require the authenticated actor and explicit tenant, legal entity and
@@ -96,6 +103,12 @@ reconciled or executes an external payment.
 evidence, exact differences and permission-aware AR/AP reversal preparation.
 Reversals have an explicit confirmation dialog. A saved report remains unchanged
 after a correction; the user generates a new report to see reopened balances.
+The root-navigator reversal confirmation binds its originating controller and
+read-access epoch. Disconnect, denied access or disposal invalidates that dialog
+and its returned result; reconnect and fresh verification cannot revive it.
+Disposal clears live report/correction evidence and notifies surviving dialogs
+before releasing listeners. Original encrypted correction inputs and sealed
+commands remain available to a fresh permitted workspace.
 
 Encrypted, actor/entity/branch-scoped slots `control-reconciliation-report` and
 `control-allocation-correction` use the existing draft repository. Uncertain results

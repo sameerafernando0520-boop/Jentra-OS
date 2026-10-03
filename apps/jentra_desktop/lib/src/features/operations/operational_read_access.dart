@@ -11,10 +11,10 @@ Future<T?> showOperationalReadDialog<T>(
   BuildContext context,
   OperationalReadAccess access,
   WidgetBuilder builder,
-) {
+) async {
   final epoch = access.readAccessEpoch;
-  if (!access.currentRead(epoch)) return Future.value(null);
-  return showDialog<T>(
+  if (!access.currentRead(epoch)) return null;
+  final result = await showDialog<T>(
     context: context,
     builder: (context) => ListenableBuilder(
       listenable: access,
@@ -34,4 +34,5 @@ Future<T?> showOperationalReadDialog<T>(
             ),
     ),
   );
+  return access.currentRead(epoch) ? result : null;
 }

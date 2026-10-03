@@ -4,6 +4,11 @@ Development candidate only. This contract does not install the migration or gran
 native, production, load, or owner acceptance. Existing sign-in and MFA remain
 user-managed.
 
+Connectivity loading or error states fail closed even when a provider retains a
+previous online value. They invalidate current read access while preserving
+encrypted inputs and sealed requests; restored connectivity requires fresh
+server evidence.
+
 Options, run detail and command presentation bind the originating access epoch.
 Disconnect, disposal and definite permission/MFA/authentication denial clear live
 evidence and reject obsolete replies and failures. Command dispatch rechecks that
@@ -20,6 +25,11 @@ failure after a durable confirmation retains fixed `LOCAL_STORAGE_FULL` guidance
 alongside the confirmation and never recreates the confirmed pending envelope.
 The sealed payload action also determines the command gateway during retry;
 later caller input cannot reroute an existing period command into the FX engine.
+A retry rechecks the capability required by its sealed action; a later caller
+action cannot substitute another action capability.
+Root-level action confirmations retain their originating access epoch and hide
+their content on access change or disposal. Reconnect and fresh authorization
+cannot revive an old confirmation or dispatch its action in a newer epoch.
 
 Period options, closing-rate/run options and frozen FX detail normalize the
 allowlisted permission, access, MFA/recent-MFA and authentication denials,

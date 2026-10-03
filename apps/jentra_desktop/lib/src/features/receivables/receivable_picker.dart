@@ -27,9 +27,10 @@ Future<T?> showScopedReceivableDialog<T>({
   required BuildContext context,
   required ReceivablesController controller,
   required WidgetBuilder builder,
-}) {
+}) async {
   final access = controller.readAccessEpoch;
-  return showDialog<T>(
+  if (!controller.currentRead(access)) return null;
+  final result = await showDialog<T>(
     context: context,
     builder: (dialogContext) => ListenableBuilder(
       listenable: controller,
@@ -53,6 +54,7 @@ Future<T?> showScopedReceivableDialog<T>({
             ),
     ),
   );
+  return context.mounted && controller.currentRead(access) ? result : null;
 }
 
 String referenceLabel(Map<String, Object?> row) => [

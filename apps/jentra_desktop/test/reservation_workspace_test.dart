@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ import 'package:jentra_platform/jentra_inventory_platform.dart';
 import 'package:jentra_desktop/src/features/reservations/reservation_controller.dart';
 import 'package:jentra_desktop/src/features/reservations/reservation_screen.dart';
 import 'package:jentra_desktop/src/shell/navigation.dart';
+
 import 'support/procurement_fakes.dart' show Keys;
 
 const reservation = <String, Object?>{
@@ -23,6 +25,7 @@ const reservation = <String, Object?>{
 };
 
 class Reservations implements ReservationGateway {
+  List<Map<String, Object?>> queueItems = [reservation];
   final reportCalls = <Map<String, Object?>>[];
   @override
   Future<Map<String, Object?>> asOf(
@@ -51,9 +54,7 @@ class Reservations implements ReservationGateway {
   }) async {
     filters.add(filter);
     if (refreshFails) throw StateError('offline');
-    return {
-      'items': [reservation],
-    };
+    return {'items': queueItems};
   }
 
   @override
@@ -200,6 +201,9 @@ void main() {
       await c.release();
       expect(gateway.commands.length, 1);
       await c.close();
+      gateway.queueItems = [
+        {...reservation, 'version': 9},
+      ];
       await c.refresh();
       await c.open({...reservation, 'version': 9});
       c.update('reason', 'Reviewed changed reservation');
@@ -223,9 +227,25 @@ void main() {
       await c.release();
       expect(c.message, contains('confirmed'));
       await c.close();
+      gateway.queueItems = [
+        {...reservation, 'id': 'another'},
+      ];
+      await c.refresh();
       await c.open({...reservation, 'id': 'another'});
       expect(c.message, isNull);
       expect(c.form!['status'], 'active');
+    },
+  );
+  test(
+    'a source row outside the current scoped queue cannot open an editor',
+    () async {
+      await c.initialize();
+      await c.open({...reservation, 'version': 9});
+      expect(c.form, isNull);
+      expect(c.local, isNull);
+      await c.open({...reservation, 'id': 'another'});
+      expect(c.form, isNull);
+      expect(gateway.commands, isEmpty);
     },
   );
   test('offline reason persists and does not execute', () async {
@@ -264,15 +284,13 @@ void main() {
   });
   test('navigation requires reservation permission', () {
     expect(
-      visibleJentraDestinations(
-        {},
-      ).any((d) => d.path == '/inventory/reservations'),
+      visibleJentraDestinations({})
+          .any((d) => d.path == '/inventory/reservations'),
       false,
     );
     expect(
-      visibleJentraDestinations({
-        'inventory.reservations.manage',
-      }).any((d) => d.path == '/inventory/reservations'),
+      visibleJentraDestinations({'inventory.reservations.manage'})
+          .any((d) => d.path == '/inventory/reservations'),
       true,
     );
   });

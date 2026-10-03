@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../app_providers.dart';
 import 'goods_receipt_controller.dart';
 import 'procurement_picker.dart';
+import '../operations/operational_read_access.dart';
 
 class GoodsReceiptScreen extends ConsumerWidget {
   const GoodsReceiptScreen({super.key});
@@ -188,12 +189,18 @@ class GoodsReceiptWorkspace extends StatelessWidget {
                     onPressed: c.busy || !c.online
                         ? null
                         : () async {
+                            final epoch = c.readAccessEpoch;
                             final result =
-                                await showDialog<Map<String, String>>(
-                                  context: context,
-                                  builder: (_) => const _ReverseReceiptDialog(),
+                                await showOperationalReadDialog<
+                                  Map<String, String>
+                                >(
+                                  context,
+                                  c,
+                                  (_) => const _ReverseReceiptDialog(),
                                 );
-                            if (result != null) {
+                            if (result != null &&
+                                context.mounted &&
+                                c.currentRead(epoch)) {
                               await c.reverse(
                                 result['date']!,
                                 result['reason']!,

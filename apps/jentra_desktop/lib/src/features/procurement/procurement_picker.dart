@@ -25,10 +25,10 @@ Future<Map<String, Object?>?> pickSourcingReference(
   TenantContext scope,
   String resource, {
   required OperationalReadAccess access,
-}) {
+}) async {
   final epoch = access.readAccessEpoch;
-  if (!access.currentRead(epoch)) return Future.value(null);
-  return showDialog<Map<String, Object?>>(
+  if (!access.currentRead(epoch)) return null;
+  final result = await showDialog<Map<String, Object?>>(
     context: context,
     builder: (context) => ListenableBuilder(
       listenable: access,
@@ -54,6 +54,7 @@ Future<Map<String, Object?>?> pickSourcingReference(
             ),
     ),
   );
+  return context.mounted && access.currentRead(epoch) ? result : null;
 }
 
 class _ReferenceDialog extends StatefulWidget {

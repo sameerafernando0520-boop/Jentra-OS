@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_platform/jentra_finance_platform.dart';
+
 import '../../app_providers.dart';
 import 'manual_journal_controller.dart';
+import '../operations/operational_read_access.dart';
 import '../financial_dimensions/financial_dimension_controller.dart';
 import '../financial_dimensions/financial_dimension_screen.dart';
 
@@ -48,12 +50,18 @@ class ManualJournalWorkspace extends StatelessWidget {
     String resource,
     void Function(Map<String, Object?>) selected,
   ) async {
-    final r = await showDialog<Map<String, Object?>>(
-      context: context,
-      builder: (_) =>
-          _JournalPicker(controller: controller, resource: resource),
+    final epoch = controller.readAccessEpoch;
+    final r = await showOperationalReadDialog<Map<String, Object?>>(
+      context,
+      controller,
+      (_) => _JournalPicker(controller: controller, resource: resource),
     );
-    if (r != null && !controller.locked) selected(r);
+    if (r != null &&
+        context.mounted &&
+        controller.currentRead(epoch) &&
+        !controller.locked) {
+      selected(r);
+    }
   }
 
   Future<void> act(BuildContext context, String verb) async {
@@ -61,10 +69,12 @@ class ManualJournalWorkspace extends StatelessWidget {
       await controller.act(verb);
       return;
     }
+    final epoch = controller.readAccessEpoch;
     var note = '';
-    final result = await showDialog<String>(
-      context: context,
-      builder: (dialog) => AlertDialog(
+    final result = await showOperationalReadDialog<String>(
+      context,
+      controller,
+      (dialog) => AlertDialog(
         title: Text(
           verb == 'post'
               ? 'Post approved journal?'
@@ -91,7 +101,9 @@ class ManualJournalWorkspace extends StatelessWidget {
         ],
       ),
     );
-    if (result != null) await controller.act(verb, note: result);
+    if (result != null && context.mounted && controller.currentRead(epoch)) {
+      await controller.act(verb, note: result);
+    }
   }
 
   @override

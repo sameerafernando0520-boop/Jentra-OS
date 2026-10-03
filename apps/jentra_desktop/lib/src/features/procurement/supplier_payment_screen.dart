@@ -238,6 +238,7 @@ class SupplierPaymentWorkspace extends StatelessWidget {
                                   final reference = await sourcingReason(
                                     context,
                                     'Enter the recorded payment reference',
+                                    access: c,
                                     label: 'Payment reference',
                                     maxLength: 140,
                                   );
@@ -491,7 +492,7 @@ class SupplierPaymentWorkspace extends StatelessWidget {
     String action,
     String title,
   ) async {
-    final reason = await sourcingReason(context, title);
+    final reason = await sourcingReason(context, title, access: c);
     if (reason != null) await c.action(action, reason: reason);
   }
 }
@@ -775,9 +776,11 @@ class _AllocationDetail extends StatelessWidget {
                       onPressed: c.busy || !c.online
                           ? null
                           : () async {
+                              final epoch = c.readAccessEpoch;
                               final reason = await sourcingReason(
                                 context,
                                 'Reverse allocation',
+                                access: c,
                               );
                               if (reason != null) {
                                 await c.reverseAllocation(
@@ -786,6 +789,7 @@ class _AllocationDetail extends StatelessWidget {
                                       .toIso8601String()
                                       .substring(0, 10),
                                   reason: reason,
+                                  readEpoch: epoch,
                                 );
                               }
                             },

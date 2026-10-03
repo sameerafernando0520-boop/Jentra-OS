@@ -7,6 +7,7 @@ import 'package:jentra_platform/jentra_finance_platform.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../app_providers.dart';
+import '../operations/operational_read_access.dart';
 
 final periodFxGatewayProvider = Provider<PeriodFxGateway?>((ref) => null);
 final periodFxControllerProvider = Provider.autoDispose<PeriodFxController?>((
@@ -23,24 +24,32 @@ final periodFxControllerProvider = Provider.autoDispose<PeriodFxController?>((
       !(caps.value?.contains('finance.view') ?? false)) {
     return null;
   }
+  final connection = ref.read(connectivityStateProvider);
   final controller = PeriodFxController(
     scope: scope,
     gateway: gateway,
     drafts: QuotationDraftStore(ref.watch(encryptedDraftRepositoryProvider)),
     capabilities: caps.value!,
     online:
-        ref.read(connectivityStateProvider).value == ConnectivityState.online,
+        !connection.isLoading &&
+        !connection.hasError &&
+        connection.value == ConnectivityState.online,
   );
   ref.listen(
     connectivityStateProvider,
-    (_, state) => controller.setOnline(state.value == ConnectivityState.online),
+    (_, state) => controller.setOnline(
+      !state.isLoading &&
+          !state.hasError &&
+          state.value == ConnectivityState.online,
+    ),
   );
   ref.onDispose(controller.dispose);
   unawaited(controller.initialize());
   return controller;
 });
 
-final class PeriodFxController extends ChangeNotifier {
+final class PeriodFxController extends ChangeNotifier
+    implements OperationalReadAccess {
   PeriodFxController({
     required this.scope,
     required this.gateway,
@@ -61,6 +70,21 @@ final class PeriodFxController extends ChangeNotifier {
   String? error, message;
   int formEpoch = 0;
   int _epoch = 0, _operationEpoch = 0;
+  @override
+  int get readAccessEpoch => _epoch;
+  @override
+  bool currentRead(int epoch) =>
+      !_disposed && online && verified && !denied && epoch == _epoch;
+  @override
+  void denyReadAccess() {
+    if (_disposed) return;
+    denied = true;
+    _epoch++;
+    clearEvidence();
+    form = {};
+    emit();
+  }
+
   bool get currentServer => !_disposed && online && _operationEpoch == _epoch;
   Map<String, Object?> form = {};
   QuotationLocalDraft? local;
@@ -98,6 +122,7 @@ final class PeriodFxController extends ChangeNotifier {
     _disposed = true;
     _epoch++;
     clearEvidence();
+    notifyListeners();
     super.dispose();
   }
 
@@ -127,10 +152,7 @@ final class PeriodFxController extends ChangeNotifier {
           'MFA_REQUIRED',
           'AUTHENTICATION_REQUIRED',
         }.contains(failure.code)) {
-      denied = true;
-      _epoch++;
-      clearEvidence();
-      form = {};
+      denyReadAccess();
     }
     error = failure is DomainError
         ? failure.message
@@ -292,8 +314,10 @@ final class PeriodFxController extends ChangeNotifier {
   }
 
   Future<void> execute(String action, {String? sourceId}) => _run(() async {
-    if (!online || !verified || denied || !can(action)) return;
     var pendingCommand = local?.pending;
+    final requiredAction =
+        pendingCommand?.envelope.payload['action'] as String? ?? action;
+    if (!online || !verified || denied || !can(requiredAction)) return;
     if (pendingCommand == null) {
       if (periodId == null || period == null) {
         throw const FormatException('Choose an active fiscal period.');

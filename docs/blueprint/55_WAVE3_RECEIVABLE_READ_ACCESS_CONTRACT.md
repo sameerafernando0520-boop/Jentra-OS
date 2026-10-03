@@ -9,6 +9,10 @@ clear current server-derived document/register, statement and picker evidence.
 Late responses from a prior read access epoch cannot restore it. A reconnect does
 not automatically revive the cleared evidence: a fresh scoped read must succeed.
 Encrypted canonical draft inputs and sealed retry requests remain recoverable.
+Provider entry and connection notifications require a successful, settled online
+state. Loading or failed states retaining a previous online value invalidate the
+current read epoch and cannot enable server reads or commands. A fresh settled
+online state establishes a new epoch; it does not revive earlier dialog evidence.
 
 Receivable command dispatch binds the originating read-access epoch before any
 encrypted save or sealing and rechecks it immediately before transmission. A
@@ -46,3 +50,13 @@ denials hide the confirmed document and register while retaining the acknowledge
 request and fixed public access guidance. They never create a new pending command.
 Installed/native and real access
 revocation verification remain separate acceptance gates.
+# Root-dialog result continuation — 2026-10-03
+
+An AR root dialog captures its originating controller's read-access epoch before
+opening. It checks that same epoch and the originating context after the dialog
+returns, before returning a reason, selected reference, recovery slot or discard
+confirmation. A pop followed by disconnect/reconnect, access denial or disposal
+cannot authorize a continuation in a replacement epoch. An unchanged permitted
+epoch returns the original choice. Existing encrypted draft and original-command
+recovery rules are unchanged.
+

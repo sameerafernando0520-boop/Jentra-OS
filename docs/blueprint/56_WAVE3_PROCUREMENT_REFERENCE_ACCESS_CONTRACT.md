@@ -1,7 +1,7 @@
 # Procurement reference access during scope changes
 
 This clarifies FR-349, FR-384, FR-395, AC-322 and NFR-313 for existing
-requisition, sourcing, order, receipt, bill, payment and product-unit reference
+requisition, sourcing, order, receipt, bill, payment, purchase-return and product-unit reference
 dialogs. It adds no posting command or historical correction.
 
 Reference dialogs bind their originating controller and read access epoch,
@@ -40,3 +40,25 @@ its fixed typed guidance. It must not be flattened into a generic refresh messag
 The already confirmed command remains durably acknowledged; local canonical input
 and immutable retry identities are unaffected. A non-access refresh failure may
 show fixed confirmed-but-unavailable guidance only in the originating epoch.
+
+Purchase-return disposal advances the access epoch, clears the posted register
+and eligible-source rows, cursors and kind, and notifies an already visible
+workspace before releasing its listeners. Exact local inputs and the original
+sealed request remain encrypted for a fresh permitted controller.
+
+Server-derived reason, supplier-selection and reversal dialogs bind the same
+originating access epoch. They hide private document/supplier evidence and remove
+confirmation actions after disconnect, reconnect, disposal or definite denial.
+An accepted reference or confirmation rechecks that epoch after the root route
+result resolves; a pop-time access change cannot create a draft or authorize a
+replacement action. Existing local-only save/discard and original sealed retry
+inputs remain governed by their established offline recovery contract.
+
+Controller providers treat connectivity as verified online only when its current
+asynchronous value has neither loading nor error state and contains online data.
+A retained prior online value during reload or error cannot authorize server
+reads, choices or commands. Initial construction and subsequent notifications
+use the same rule; unverified connectivity advances the existing access epoch
+and clears server evidence while preserving encrypted local inputs and original
+sealed requests. A later verified online result starts fresh access and cannot
+revive an obsolete dialog or read result.

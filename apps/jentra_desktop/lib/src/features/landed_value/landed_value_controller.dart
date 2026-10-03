@@ -24,6 +24,7 @@ final landedValueControllerProvider =
           !(caps.value?.contains('inventory.cost.view') ?? false)) {
         return null;
       }
+      final connection = ref.read(connectivityStateProvider);
       final c = LandedValueController(
         scope: scope,
         gateway: gateway,
@@ -31,12 +32,15 @@ final landedValueControllerProvider =
           ref.watch(encryptedDraftRepositoryProvider),
         ),
         online:
-            ref.read(connectivityStateProvider).value ==
-            ConnectivityState.online,
+            !connection.isLoading &&
+            !connection.hasError &&
+            connection.value == ConnectivityState.online,
       );
       ref.listen(
         connectivityStateProvider,
-        (_, s) => c.setOnline(s.value == ConnectivityState.online),
+        (_, s) => c.setOnline(
+          !s.isLoading && !s.hasError && s.value == ConnectivityState.online,
+        ),
       );
       ref.onDispose(c.dispose);
       unawaited(c.initialize());
@@ -181,21 +185,26 @@ final class LandedValueController extends ChangeNotifier
   Future<void> refresh(String resource, {bool more = false}) =>
       run(() => load(resource, more: more));
   Future<void> references() => run(() async {
+    final epoch = _epoch;
+    if (!currentRead(epoch)) return;
     await load('receipts');
+    if (!currentRead(epoch)) return;
     await load('accounts');
   });
   Future<void> initialize() => run(() async {
-    local = await drafts.load(scope, slot);
-    if (_disposed) return;
+    final epoch = _epoch;
+    final recovered = await drafts.load(scope, slot);
+    if (_disposed || epoch != _epoch) return;
+    local = recovered;
     form = local == null || local!.form['status'] == 'posted'
         ? null
         : recoveryInputs(local!.form);
     preview = null;
     if (form == null && local?.pending == null) local = null;
     if (online) {
-      final epoch = _epoch;
       for (final r in ['receipts', 'accounts', 'posted']) {
         await load(r);
+        if (_disposed || !online || epoch != _epoch) return;
       }
       if (!_disposed && online && epoch == _epoch) accessDenied = false;
     }
@@ -404,6 +413,10 @@ final class LandedValueController extends ChangeNotifier
     } catch (e) {
       if (!currentRead(epoch)) return;
       clearDeniedAccess(e);
+      if (accessDenied && e is DomainError) {
+        error = e.message;
+        return;
+      }
       error =
           'Posting confirmed. Retry the register refresh to view its evidence.';
     }

@@ -35,9 +35,7 @@ final supplierPaymentControllerProvider =
         drafts: QuotationDraftStore.procurement(
           ref.watch(encryptedDraftRepositoryProvider),
         ),
-        online:
-            ref.read(connectivityStateProvider).value ==
-            ConnectivityState.online,
+        online: procurementVerifiedOnline(ref.read(connectivityStateProvider)),
         canManage: caps.value?.contains('finance.payments.manage') ?? false,
         canPost: caps.value?.contains('finance.payments.post') ?? false,
         canAllocate: caps.value?.contains('finance.payments.allocate') ?? false,
@@ -46,7 +44,7 @@ final supplierPaymentControllerProvider =
       );
       ref.listen(
         connectivityStateProvider,
-        (_, v) => c.setOnline(v.value == ConnectivityState.online),
+        (_, v) => c.setOnline(procurementVerifiedOnline(v)),
       );
       ref.onDispose(c.dispose);
       unawaited(c.initialize());
@@ -156,9 +154,12 @@ final class SupplierPaymentController extends ChangeNotifier
     Map<String, Object?> allocation, {
     required String date,
     required String reason,
+    int? readEpoch,
   }) => run(() async {
     if (!canReverse ||
         !online ||
+        accessDenied ||
+        (readEpoch != null && !currentRead(readEpoch)) ||
         form != null ||
         local != null ||
         allocation['reversal'] != null) {

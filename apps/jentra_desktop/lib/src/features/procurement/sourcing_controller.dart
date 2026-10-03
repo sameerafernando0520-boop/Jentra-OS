@@ -30,12 +30,11 @@ final sourcingControllerProvider = Provider.autoDispose<SourcingController?>((
     drafts: QuotationDraftStore.procurement(
       ref.watch(encryptedDraftRepositoryProvider),
     ),
-    online:
-        ref.read(connectivityStateProvider).value == ConnectivityState.online,
+    online: procurementVerifiedOnline(ref.read(connectivityStateProvider)),
   );
   ref.listen(
     connectivityStateProvider,
-    (_, v) => controller.setOnline(v.value == ConnectivityState.online),
+    (_, v) => controller.setOnline(procurementVerifiedOnline(v)),
   );
   ref.onDispose(controller.dispose);
   unawaited(controller.initialize());

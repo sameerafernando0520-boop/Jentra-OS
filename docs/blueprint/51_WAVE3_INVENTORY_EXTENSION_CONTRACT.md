@@ -4,6 +4,26 @@ Additive candidate development for FR-354–361, EC-324/326–327 and AC-314/315
 Receipt provenance remains quantity attribution, independent of pooled moving
 average. Original movements and journals are immutable.
 
+Inventory controller factories and connection subscriptions treat unknown,
+loading, failed and non-online connection observations as unavailable, including
+`AsyncValue` states retaining a previous online value. This boundary applies to
+single- and multi-receipt landed value, count, disposition and reservation
+read/confirmation paths. A current private read or authoritative action requires
+an explicitly resolved, error-free online observation. An unavailable observation
+advances the existing access epoch and clears live server evidence; the original
+encrypted input and sealed command remain recoverable. Restoring online access
+does not revive an earlier dialog or request epoch.
+
+After a confirmed single-receipt landed-value posting, an optional register read
+retains fixed typed permission, access, MFA or authentication guidance when the
+originating epoch is current. It clears server evidence and does not replace the
+denial with generic refresh guidance or recreate the acknowledged command.
+Single-receipt initialization and chained reference reads retain their entry
+epoch across encrypted recovery and every read; an obsolete operation must not
+start another read in the replacement connection. Shared current-access dialogs
+also reject a returned choice or confirmation if access changes between closing
+the dialog and resuming its caller.
+
 Transfer, stock count and disposition transmission rechecks the originating scope/access epoch after asynchronous
 encrypted save and sealing, immediately before dispatch. Disconnect, access
 denial, reconnect or disposal during sealing leaves the original request locally
@@ -105,6 +125,17 @@ reservations within their posting transaction; the maintenance command handles
 only remaining expired or retired holdings.
 
 All candidates require strict synthetic rollback tests and compatibility review.
+
+Multi-receipt landed-value posting confirmations and count/disposition reasoned
+recall, cancellation and rejection confirmations bind their originating
+controller/read-access epoch, including root-navigator dialogs. Disconnect,
+definite access denial and disposal hide obsolete preview amounts and remove the
+confirmation action. Reconnect or a replacement preview cannot revive the old
+dialog result; a fresh permitted confirmation is required. Existing exact inputs
+and original sealed requests remain encrypted and unchanged.
+Multi-receipt landed-value initialization retains its entry epoch across encrypted
+recovery and every chained receipt/account/posted read. An obsolete completion
+cannot start subsequent reads in a replacement connection or publish its options.
 
 Transfer, count and disposition reference/serial dialogs bind their originating
 controller and read-access epoch, including root-navigator dialogs. Disconnect,

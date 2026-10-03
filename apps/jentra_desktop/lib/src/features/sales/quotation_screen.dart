@@ -35,8 +35,7 @@ class QuotationScreen extends ConsumerWidget {
                 child: JentraEmptyState(
                   icon: Icons.lock_outline,
                   title: 'Access is restricted',
-                  description:
-                      'Your role does not include permission to view quotations.',
+                  description: 'Your role does not include permission to view quotations.',
                 ),
               ),
             );
@@ -60,12 +59,9 @@ class QuotationScreen extends ConsumerWidget {
 
 String _errorMessage(DomainError error) {
   final message = switch (error.code) {
-    'WORKFLOW_CONFIGURATION_ERROR' =>
-      'Quotation approval is not configured for this business scope. Configure its workflow and approval steps in Business setup, then retry.',
-    'WORKFLOW_TRANSITION_INVALID' =>
-      'The configured workflow does not permit this action from the current status.',
-    'QUOTATION_RECALCULATION_REQUIRED' =>
-      'Tax or reference data changed. Save and recalculate this draft before submitting.',
+    'WORKFLOW_CONFIGURATION_ERROR' => 'Quotation approval is not configured for this business scope. Configure its workflow and approval steps in Business setup, then retry.',
+    'WORKFLOW_TRANSITION_INVALID' => 'The configured workflow does not permit this action from the current status.',
+    'QUOTATION_RECALCULATION_REQUIRED' => 'Tax or reference data changed. Save and recalculate this draft before submitting.',
     'SEGREGATION_OF_DUTIES_VIOLATION' =>
       'This decision must be made by another authorized approver.',
     'PERMISSION_DENIED' => 'Your current role does not permit this action.',
@@ -251,9 +247,8 @@ class _WorkspaceState extends ConsumerState<_Workspace> {
               const SizedBox(height: 6),
               Text(
                 'Prepare a clear offer. Keep every revision and decision in view.',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: context.jentraColors.textSecondary,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium
+                    ?.copyWith(color: context.jentraColors.textSecondary),
               ),
               const SizedBox(height: 20),
             ],
@@ -405,9 +400,9 @@ class _WorkspaceState extends ConsumerState<_Workspace> {
                                   Text(
                                     quotation.documentNumber ??
                                         'Draft quotation',
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.titleSmall,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleSmall,
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
@@ -428,9 +423,9 @@ class _WorkspaceState extends ConsumerState<_Workspace> {
                                       Text(quotationStatus(quotation.status)),
                                       Text(
                                         'Revision ${quotation.currentRevision}',
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.bodySmall,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall,
                                       ),
                                     ],
                                   ),
@@ -503,8 +498,7 @@ class _WorkspaceState extends ConsumerState<_Workspace> {
             child: JentraEmptyState(
               icon: Icons.description_outlined,
               title: 'Choose a quotation',
-              description:
-                  'Open an offer to review its exact totals, terms and history, or create a quotation.',
+              description: 'Open an offer to review its exact totals, terms and history, or create a quotation.',
             ),
           )
         else ...[
@@ -807,13 +801,11 @@ class _WorkspaceState extends ConsumerState<_Workspace> {
   );
   Future<void> _action(BuildContext context, String action) async {
     final origin = widget.state;
-    final reason = await showDialog<String>(
-      context: context,
-      builder: (_) => QuotationScopeGuard(
-        scope: origin.context,
-        capabilities: origin.capabilities,
-        child: _ActionDialog(action: action),
-      ),
+    final reason = await showScopedQuotationDialog<String>(
+      context,
+      scope: origin.context,
+      capabilities: origin.capabilities,
+      builder: (_) => _ActionDialog(action: action),
     );
     if (!mounted ||
         reason == null ||
@@ -841,8 +833,11 @@ class _WorkspaceState extends ConsumerState<_Workspace> {
 
   Future<void> _discard(BuildContext context) async {
     final origin = widget.state;
-    final confirmed = await showDialog<bool>(
-      context: context,
+    final confirmed = await showScopedQuotationDialog<bool>(
+      context,
+      scope: origin.context,
+      capabilities: origin.capabilities,
+      requireOnline: false,
       builder: (context) => QuotationScopeGuard(
         scope: origin.context,
         capabilities: origin.capabilities,
@@ -882,8 +877,11 @@ class _WorkspaceState extends ConsumerState<_Workspace> {
     }
     final state = ref.read(quotationWorkspaceProvider).value;
     if (state?.conflictDetail == null) return;
-    final keep = await showDialog<bool>(
-      context: context,
+    final keep = await showScopedQuotationDialog<bool>(
+      context,
+      scope: origin.context,
+      capabilities: origin.capabilities,
+      requireOnline: false,
       builder: (context) => QuotationScopeGuard(
         scope: origin.context,
         capabilities: origin.capabilities,
@@ -962,8 +960,7 @@ class _ActionDialogState extends State<_ActionDialog> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(switch (widget.action) {
-            'submit' =>
-              'Submit this saved version using the configured approval workflow.',
+            'submit' => 'Submit this saved version using the configured approval workflow.',
             'approve' => 'Record your decision for the current approval step.',
             'accept' => 'Record customer acceptance of this saved offer.',
             'revision' =>

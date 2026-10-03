@@ -93,9 +93,11 @@ class DispositionWorkspace extends StatelessWidget {
       return;
     }
     var reason = '';
-    final result = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
+    final access = controller.readAccessEpoch;
+    final result = await showOperationalReadDialog<String>(
+      context,
+      controller,
+      (context) => AlertDialog(
         title: Text('$verb disposition'),
         content: TextField(
           maxLength: 1000,
@@ -114,7 +116,9 @@ class DispositionWorkspace extends StatelessWidget {
         ],
       ),
     );
-    if (result != null) await controller.act(verb, note: result);
+    if (result != null && controller.currentRead(access)) {
+      await controller.act(verb, note: result);
+    }
   }
 
   @override

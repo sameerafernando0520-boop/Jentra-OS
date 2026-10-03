@@ -152,7 +152,7 @@ Future<void> seed(String name, dynamic c) async {
 Future<void> send(String name, dynamic c, {bool retry = false}) async {
   if (retry) {
     if (name == 'sourcing') {
-      await c.send();
+      await c.saveServer();
     } else if (name == 'return') {
       await c.post();
     } else {
@@ -172,7 +172,7 @@ Future<void> send(String name, dynamic c, {bool retry = false}) async {
     case 'unit':
       await c.saveServer();
     case 'sourcing':
-      await c.send();
+      await c.saveServer();
     default:
       await c.post();
   }

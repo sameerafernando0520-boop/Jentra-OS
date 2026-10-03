@@ -31,13 +31,11 @@ final purchaseOrderControllerProvider =
           ref.watch(encryptedDraftRepositoryProvider),
         ),
         canApprove: caps.value?.contains('workflow.approvals.decide') ?? false,
-        online:
-            ref.read(connectivityStateProvider).value ==
-            ConnectivityState.online,
+        online: procurementVerifiedOnline(ref.read(connectivityStateProvider)),
       );
       ref.listen(
         connectivityStateProvider,
-        (_, v) => c.setOnline(v.value == ConnectivityState.online),
+        (_, v) => c.setOnline(procurementVerifiedOnline(v)),
       );
       ref.onDispose(c.dispose);
       unawaited(c.initialize());

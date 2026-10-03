@@ -140,7 +140,7 @@ void main() {
         },
       );
     }
-    for (final code in [...denialCodes, 'obsolete']) {
+    for (final code in [...denialCodes, 'obsolete', 'unavailable']) {
       test(
         '$name confirmed optional $code failure retains acknowledgement and enforces current epoch',
         () async {
@@ -180,8 +180,14 @@ void main() {
             }
             read.reply!.completeError(
               DomainError(
-                code: code == 'obsolete' ? 'PERMISSION_DENIED' : code,
-                message: 'Recheck current access.',
+                code: code == 'obsolete'
+                    ? 'PERMISSION_DENIED'
+                    : code == 'unavailable'
+                    ? 'READ_UNAVAILABLE'
+                    : code,
+                message: code == 'unavailable'
+                    ? 'Private transport diagnostic must not be shown.'
+                    : 'Recheck current access.',
               ),
             );
             await sending;
@@ -194,6 +200,17 @@ void main() {
             if (code == 'obsolete') {
               expect(c.error, isNull);
               expect(c.accessDenied, isFalse);
+            } else if (code == 'unavailable') {
+              expect(c.accessDenied, isFalse);
+              expect(c.error, isNotNull);
+              expect(c.error, isNot(contains('Private transport')));
+              final commandsBeforeRetry = gateway.commands.length;
+              await send(name, c, retry: true);
+              expect(
+                gateway.commands,
+                hasLength(commandsBeforeRetry),
+                reason: 'Confirmed refresh failure cannot recreate a command.',
+              );
             } else {
               expectCleared(c, name);
               expect(c.error, 'Recheck current access.');

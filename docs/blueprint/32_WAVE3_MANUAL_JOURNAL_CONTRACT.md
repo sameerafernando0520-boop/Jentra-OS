@@ -4,6 +4,11 @@ Candidate development contract, 2026-09-21. Manual journals reuse
 `finance.flow_post_journal`, open-period locking, document sequences, workflow
 approval snapshots, command receipts, audit and outbox. No alternate ledger engine.
 
+Connectivity loading or error states fail closed even when a provider retains a
+previous online value. They invalidate current read access while preserving
+encrypted inputs and sealed requests; restored connectivity requires fresh
+server evidence.
+
 Journal reads and command presentation bind the originating scope/access epoch.
 Disconnect, disposal, permission, MFA or authentication denial clear live register,
 picker and posted evidence; obsolete successes and failures cannot restore or
@@ -20,6 +25,13 @@ start additional reads. Post-confirmation local storage failure keeps fixed
 denial keeps typed access guidance and hides live evidence without reviving the
 confirmed command. Optional failures never turn a durably acknowledged command
 back into a pending retry.
+Disposal clears in-memory forms. Durable acknowledgement clears an obsolete
+pre-confirmation form for that document, retaining encrypted recovery until fresh
+authorization restores the confirmed state.
+Root-level selectors and action confirmations retain their originating access
+epoch. They immediately hide loaded choices and confirmation amounts on access
+change or disposal; fresh authorization cannot revive an old dialog or apply its
+returned selection/confirmation to a newer workspace epoch.
 
 Journal register, detail, ordinary picker, effective tax and tax-control reads
 normalize the allowlisted permission, access, MFA/recent-MFA and authentication

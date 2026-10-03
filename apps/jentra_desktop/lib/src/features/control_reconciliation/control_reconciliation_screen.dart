@@ -7,6 +7,7 @@ import '../../app_providers.dart';
 import 'control_reconciliation_controller.dart';
 import '../report_export/report_export_screen.dart';
 import '../journal_evidence/posted_journal_screen.dart';
+import '../operations/operational_read_access.dart';
 
 class ControlReconciliationScreen extends ConsumerWidget {
   const ControlReconciliationScreen({super.key});
@@ -50,9 +51,11 @@ class ControlReconciliationWorkspace extends StatelessWidget {
   final bool allowExport;
   final bool allowJournal;
   Future<void> confirm(BuildContext context) async {
-    final approved = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
+    final access = controller.readAccessEpoch;
+    final approved = await showOperationalReadDialog<bool>(
+      context,
+      controller,
+      (dialogContext) => AlertDialog(
         title: const Text('Reverse this allocation?'),
         content: const SingleChildScrollView(
           child: Text(
@@ -71,7 +74,9 @@ class ControlReconciliationWorkspace extends StatelessWidget {
         ],
       ),
     );
-    if (approved == true) await controller.reverse();
+    if (approved == true && controller.currentRead(access)) {
+      await controller.reverse();
+    }
   }
 
   @override

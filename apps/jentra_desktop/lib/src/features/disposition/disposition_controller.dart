@@ -29,6 +29,7 @@ final dispositionControllerProvider =
           ].any(permissions.contains)) {
         return null;
       }
+      final connection = ref.read(connectivityStateProvider);
       final c = DispositionController(
         scope: scope,
         gateway: gateway,
@@ -36,13 +37,16 @@ final dispositionControllerProvider =
           ref.watch(encryptedDraftRepositoryProvider),
         ),
         online:
-            ref.read(connectivityStateProvider).value ==
-            ConnectivityState.online,
+            !connection.isLoading &&
+            !connection.hasError &&
+            connection.value == ConnectivityState.online,
         permissions: permissions,
       );
       ref.listen(
         connectivityStateProvider,
-        (_, s) => c.setOnline(s.value == ConnectivityState.online),
+        (_, s) => c.setOnline(
+          !s.isLoading && !s.hasError && s.value == ConnectivityState.online,
+        ),
       );
       ref.onDispose(c.dispose);
       unawaited(c.initialize());

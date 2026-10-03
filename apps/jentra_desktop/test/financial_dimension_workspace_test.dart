@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,6 +17,7 @@ import 'package:jentra_desktop/src/features/financial_dimensions/financial_dimen
 import 'package:jentra_desktop/src/features/budgets/budget_controller.dart';
 import 'package:jentra_desktop/src/features/manual_journal/manual_journal_controller.dart';
 import 'package:jentra_desktop/src/shell/navigation.dart';
+
 import 'support/procurement_fakes.dart' show Keys;
 import 'budget_workspace_test.dart' show BudgetFake;
 import 'manual_journal_workspace_test.dart' show JournalGateway, journal;
@@ -137,16 +139,13 @@ void main() {
 
   test('navigation requires both current finance and management access', () {
     expect(
-      visibleJentraDestinations({
-        'finance.view',
-      }).any((x) => x.path == '/finance/dimensions'),
+      visibleJentraDestinations({'finance.view'})
+          .any((x) => x.path == '/finance/dimensions'),
       false,
     );
     expect(
-      visibleJentraDestinations({
-        'finance.view',
-        'finance.dimensions.manage',
-      }).any((x) => x.path == '/finance/dimensions'),
+      visibleJentraDestinations({'finance.view', 'finance.dimensions.manage'})
+          .any((x) => x.path == '/finance/dimensions'),
       true,
     );
   });
@@ -230,28 +229,25 @@ void main() {
       expect(saved.pending, isNull);
     },
   );
-  test(
-    'confirmation during disconnect remains encrypted and requires fresh access',
-    () async {
-      await ready();
-      gateway.pause = Completer<void>();
-      final pending = c.save();
-      await gateway.entered.future;
-      c.setOnline(false);
-      gateway.pause!.complete();
-      await pending;
-      expect(c.verified, false);
-      expect(c.items, isEmpty);
-      expect(
-        (await drafts.load(scope, FinancialDimensionController.slot))!.pending,
-        isNull,
-      );
-      c.setOnline(true);
-      expect(c.verified, false);
-      await c.refresh();
-      expect(c.verified, true);
-    },
-  );
+  test('confirmation during disconnect remains encrypted and requires fresh access', () async {
+    await ready();
+    gateway.pause = Completer<void>();
+    final pending = c.save();
+    await gateway.entered.future;
+    c.setOnline(false);
+    gateway.pause!.complete();
+    await pending;
+    expect(c.verified, false);
+    expect(c.items, isEmpty);
+    expect(
+      (await drafts.load(scope, FinancialDimensionController.slot))!.pending,
+      isNull,
+    );
+    c.setOnline(true);
+    expect(c.verified, false);
+    await c.refresh();
+    expect(c.verified, true);
+  });
   test(
     'failed encrypted confirmation retains the sealed request for exact retry',
     () async {
@@ -325,44 +321,44 @@ void main() {
       j.dispose();
     },
   );
-  test(
-    'budget accepts disjoint account plans and rejects wildcard overlap locally',
-    () async {
-      final b = BudgetController(
-        scope: scope,
-        gateway: BudgetFake(),
-        drafts: drafts,
-        permissions: {'finance.view', 'finance.budgets.manage'},
-        online: true,
-      );
-      await b.initialize();
-      await b.newBudget();
-      b.field('reason', 'Dimension plan');
-      b.addLine('account');
-      b.financialDimension(0, 'cost_centre', dimension(scope, id: 'first'));
-      b.addLine('account', allowDuplicate: true);
-      b.financialDimension(1, 'cost_centre', dimension(scope, id: 'second'));
-      b.amount(0, '9007199254.740993');
-      b.amount(1, '0.000001');
-      await b.act('create');
-      expect((b.gateway as BudgetFake).commands.length, 1);
-      await b.newBudget();
-      b.field('reason', 'Overlapping plan');
-      b.addLine('account');
-      b.financialDimension(0, 'cost_centre', dimension(scope, id: 'first'));
-      b.addLine('account', allowDuplicate: true);
-      await b.act('create');
-      expect((b.gateway as BudgetFake).commands.length, 1);
-      expect(b.error, contains('overlap'));
-      b.dispose();
-    },
-  );
+  test('budget accepts disjoint account plans and rejects wildcard overlap locally', () async {
+    final b = BudgetController(
+      scope: scope,
+      gateway: BudgetFake(),
+      drafts: drafts,
+      permissions: {'finance.view', 'finance.budgets.manage'},
+      online: true,
+    );
+    await b.initialize();
+    await b.newBudget();
+    b.field('reason', 'Dimension plan');
+    b.addLine('account');
+    b.financialDimension(0, 'cost_centre', dimension(scope, id: 'first'));
+    b.addLine('account', allowDuplicate: true);
+    b.financialDimension(1, 'cost_centre', dimension(scope, id: 'second'));
+    b.amount(0, '9007199254.740993');
+    b.amount(1, '0.000001');
+    await b.act('create');
+    expect((b.gateway as BudgetFake).commands.length, 1);
+    await b.newBudget();
+    b.field('reason', 'Overlapping plan');
+    b.addLine('account');
+    b.financialDimension(0, 'cost_centre', dimension(scope, id: 'first'));
+    b.addLine('account', allowDuplicate: true);
+    await b.act('create');
+    expect((b.gateway as BudgetFake).commands.length, 1);
+    expect(b.error, contains('overlap'));
+    b.dispose();
+  });
 
   testWidgets(
-    'named picker rejects late choices after disconnect and rechecks on reconnect',
+    'named picker rejects late choices and requires a fresh selector after reconnect',
     (tester) async {
-      final connection = StreamController<ConnectivityState>();
-      addTearDown(connection.close);
+      final connection = StreamController<ConnectivityState>.broadcast();
+      addTearDown(() async {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await connection.close();
+      });
       Map<String, Object?>? chosen;
       gateway.readPause = Completer<void>();
       await tester.pumpWidget(
@@ -392,6 +388,28 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(FinancialDimensionButton)),
+        listen: false,
+      );
+      final networkSubscription = container
+          .listen<AsyncValue<ConnectivityState>>(
+            connectivityStateProvider,
+            (_, next) {},
+          );
+      final capabilitySubscription = container.listen<AsyncValue<Set<String>>>(
+        businessCapabilitiesProvider,
+        (_, next) {},
+      );
+      addTearDown(() {
+        networkSubscription.close();
+        capabilitySubscription.close();
+      });
+      await tester.runAsync(() async {
+        await container.read(businessCapabilitiesProvider.future);
+        await container.read(connectivityStateProvider.future);
+      });
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Pick centre'));
       for (
         var attempt = 0;
@@ -405,15 +423,23 @@ void main() {
       await tester.pump();
       gateway.readPause!.complete();
       await tester.pumpAndSettle();
-      expect(find.text('Dimension access changed'), findsOneWidget);
+      expect(find.text('Reference access changed'), findsOneWidget);
       expect(find.text('CC-1 · Distribution and logistics'), findsNothing);
       expect(chosen, isNull);
       gateway.readPause = null;
       connection.add(ConnectivityState.online);
       await tester.pumpAndSettle();
+      expect(find.text('CC-1 · Distribution and logistics'), findsNothing);
+      await tester.tap(find.text('Close'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Pick centre'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('CC-1 · Distribution and logistics'));
       await tester.pumpAndSettle();
       expect(chosen!['id'], 'centre');
+      networkSubscription.close();
+      capabilitySubscription.close();
+      await tester.pumpWidget(const SizedBox.shrink());
     },
   );
   testWidgets(
@@ -450,12 +476,37 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(FinancialDimensionButton)),
+        listen: false,
+      );
+      final networkSubscription = container
+          .listen<AsyncValue<ConnectivityState>>(
+            connectivityStateProvider,
+            (_, next) {},
+          );
+      final capabilitySubscription = container.listen<AsyncValue<Set<String>>>(
+        businessCapabilitiesProvider,
+        (_, next) {},
+      );
+      addTearDown(() {
+        networkSubscription.close();
+        capabilitySubscription.close();
+      });
+      await tester.runAsync(() async {
+        await container.read(businessCapabilitiesProvider.future);
+        await container.read(connectivityStateProvider.future);
+      });
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Pick project'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Clear dimension'));
       await tester.pumpAndSettle();
       expect(called, true);
       expect(chosen, isNull);
+      networkSubscription.close();
+      capabilitySubscription.close();
+      await tester.pumpWidget(const SizedBox.shrink());
     },
   );
 
@@ -491,9 +542,8 @@ void main() {
               ? ThemeMode.dark
               : ThemeMode.light,
           builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(textScaler: const TextScaler.linear(2)),
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(2)),
             child: child!,
           ),
           home: Scaffold(
@@ -536,9 +586,8 @@ void main() {
               ? ThemeMode.dark
               : ThemeMode.light,
           builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(textScaler: const TextScaler.linear(2)),
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(2)),
             child: child!,
           ),
           home: Scaffold(
@@ -577,9 +626,8 @@ void main() {
               ? ThemeMode.dark
               : ThemeMode.light,
           builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(textScaler: const TextScaler.linear(2)),
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(2)),
             child: child!,
           ),
           home: Scaffold(body: FinancialDimensionWorkspace(controller: c)),

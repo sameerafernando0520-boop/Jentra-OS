@@ -7,6 +7,7 @@ import 'package:jentra_platform/landed_extension_platform.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../app_providers.dart';
+import '../operations/operational_read_access.dart';
 
 final landedExtensionGatewayProvider = Provider<LandedExtensionGateway?>(
   (ref) => null,
@@ -26,6 +27,7 @@ final landedExtensionControllerProvider =
           !(capabilities.value?.contains('inventory.cost.view') ?? false)) {
         return null;
       }
+      final connection = ref.read(connectivityStateProvider);
       final controller = LandedExtensionController(
         scope: scope,
         gateway: gateway,
@@ -33,20 +35,25 @@ final landedExtensionControllerProvider =
           ref.watch(encryptedDraftRepositoryProvider),
         ),
         online:
-            ref.read(connectivityStateProvider).value ==
-            ConnectivityState.online,
+            !connection.isLoading &&
+            !connection.hasError &&
+            connection.value == ConnectivityState.online,
       );
       ref.listen(
         connectivityStateProvider,
-        (_, next) =>
-            controller.setOnline(next.value == ConnectivityState.online),
+        (_, next) => controller.setOnline(
+          !next.isLoading &&
+              !next.hasError &&
+              next.value == ConnectivityState.online,
+        ),
       );
       ref.onDispose(controller.dispose);
       unawaited(controller.initialize());
       return controller;
     });
 
-final class LandedExtensionController extends ChangeNotifier {
+final class LandedExtensionController extends ChangeNotifier
+    implements OperationalReadAccess {
   LandedExtensionController({
     required this.scope,
     required this.gateway,
@@ -58,6 +65,23 @@ final class LandedExtensionController extends ChangeNotifier {
   final LandedExtensionDraftStore drafts;
   bool online, busy = false, accessDenied = false, _disposed = false;
   int _epoch = 0;
+  @override
+  int get readAccessEpoch => _epoch;
+  @override
+  bool currentRead(int epoch) =>
+      !_disposed && online && !accessDenied && epoch == _epoch;
+  @override
+  void denyReadAccess() {
+    if (_disposed) return;
+    accessDenied = true;
+    _epoch++;
+    preview = null;
+    posted = null;
+    options.clear();
+    cursors.clear();
+    emit();
+  }
+
   String? error, message;
   Map<String, Object?>? form, preview, posted;
   ScopedCommandDraft? local;
@@ -87,6 +111,7 @@ final class LandedExtensionController extends ChangeNotifier {
     cursors.clear();
     posted = null;
     form = null;
+    notifyListeners();
     super.dispose();
   }
 
@@ -119,12 +144,7 @@ final class LandedExtensionController extends ChangeNotifier {
             'MFA_REQUIRED',
             'AUTHENTICATION_REQUIRED',
           }.contains(e.code)) {
-        accessDenied = true;
-        _epoch++;
-        preview = null;
-        posted = null;
-        options.clear();
-        cursors.clear();
+        denyReadAccess();
       }
       error = e is DomainError
           ? e.message
@@ -138,7 +158,7 @@ final class LandedExtensionController extends ChangeNotifier {
   }
 
   Future<void> load(String resource, {bool more = false}) async {
-    if (!online) return;
+    if (_disposed || !online) return;
     final epoch = _epoch;
     try {
       final result = await gateway.options(
@@ -172,9 +192,10 @@ final class LandedExtensionController extends ChangeNotifier {
   Future<void> initialize() => run(() async {
     final epoch = _epoch;
     await recover();
-    if (!online) return;
+    if (_disposed || !online || epoch != _epoch) return;
     for (final resource in ['receipts', 'accounts', 'posted']) {
       await load(resource);
+      if (_disposed || !online || epoch != _epoch) return;
     }
     if (!_disposed && online && epoch == _epoch) accessDenied = false;
   });

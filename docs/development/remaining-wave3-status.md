@@ -1,5 +1,47 @@
 # Remaining Wave 3 development status
 
+## Active continuation — 2026-10-03
+
+Resumed at clean HEAD `7c08ea890746b1914c2f6e825523482a9146114c`.
+The [fresh read-only ledger/API/helper refresh](../verification/remaining-wave3/refresh-resume-20261003.json)
+confirms 37 installed migrations, 85 API functions and unchanged finance helpers.
+All 45 candidate bodies and their dependency order match the reviewed, unapplied
+stack. [Source-matched historical SQL reuse](../verification/remaining-wave3/database-verification-reuse-20261003.json)
+retains the original execution dates and 1,328 strict rollback assertion boundary.
+No persistent migration, production, authentication or acceptance-owned operation
+is authorized or performed by this continuation.
+
+Three agents have disjoint procurement, finance and independent requirements/
+database ownership. Initial recovery corrections pass a fresh combined **221/221**
+client checks, including 114 procurement cases. Expanded RED regressions reproduced
+current denial guidance, sealed-action capability and stale acknowledgement/
+disposal failures before correction. Failed fixture runs remain identified.
+See [procurement review](../verification/remaining-wave3/procurement-independent-recovery-review-20261003.md)
+and [finance review](../verification/remaining-wave3/finance-recovery-completion-review-20261003.md).
+
+The [independent approved-ID refresh](../verification/remaining-wave3/requirements-review-20261003.md)
+preserves all 181 approved requirements and exact wording. The cumulative changed
+Dart scope is 189 files against the approved Wave 3 baseline; the former 119-file
+denominator omitted committed additions. Full source-matched coverage and tests
+are running; no current 80 percent gate is claimed.
+
+Further independent review found unbound root confirmation/picker dialogs in
+manual journal, period/FX, multi-receipt landed value, count, disposition, control
+allocation and procurement. Actual widget regressions are prepared before product
+correction. See [dialog findings](../verification/remaining-wave3/requirements-dialog-findings-20261003.md).
+Rendered reservation recovery passed required sizes, themes/densities and 200
+percent text; this is widget-render evidence, separate from native/owner signoff.
+
+The owner explicitly approved FR-353/EC-323 policy A on 2026-10-03: interim
+issues use the last authoritative positive moving-average cost, unknown cost
+basis blocks posting, and later receipts produce linked variance corrections.
+Additive implementation and enabled-policy verification are now underway; policy
+selection alone does not close the development requirements.
+Installation, eight compatibility decisions, isolated resources/restore point,
+independent signed sessions, target-scale population/plans/p95, native acceptance,
+approved visual regression and owner signoff remain open. **Wave 3 is not fully
+complete.** Earlier sections below are historical.
+
 ## Current continuation — 2026-10-01
 
 HEAD remains `f9cc342815e2446fb3f26204d5e65e03c1b2a140`, with concurrent dirty

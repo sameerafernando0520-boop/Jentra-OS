@@ -28,13 +28,11 @@ final purchaseReturnControllerProvider =
         drafts: QuotationDraftStore.procurement(
           ref.watch(encryptedDraftRepositoryProvider),
         ),
-        online:
-            ref.read(connectivityStateProvider).value ==
-            ConnectivityState.online,
+        online: procurementVerifiedOnline(ref.read(connectivityStateProvider)),
       );
       ref.listen(
         connectivityStateProvider,
-        (_, state) => c.setOnline(state.value == ConnectivityState.online),
+        (_, state) => c.setOnline(procurementVerifiedOnline(state)),
       );
       ref.onDispose(c.dispose);
       unawaited(c.initialize());
@@ -96,6 +94,9 @@ final class PurchaseReturnController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _epoch++;
+    clearServer();
+    notifyListeners();
     super.dispose();
   }
 

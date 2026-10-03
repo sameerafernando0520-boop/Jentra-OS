@@ -40,6 +40,15 @@ Journal and budget editors use named bounded pickers, preserve chosen identities
 and show frozen labels in read-only evidence. Scope/offline/MFA changes clear
 server evidence and reject stale reads. Unknown raw IDs are never accepted as
 picker choices. CSV/XLSX exports reuse the governed saved-report pipeline.
+Each root-level picker retains a display access epoch for its originating
+actor/scope, connectivity and current finance permission. Access changes or
+origin disposal permanently invalidate that open selector; restoring access
+requires closing it and opening a fresh selector. Returned choices are checked
+again after the dialog pops, so a provider change between selection and caller
+continuation cannot attach a choice under a different access epoch. Loading or
+failed permission/connectivity refreshes cannot authorize a new selector from
+a retained previous value. Late reads and denials must match the request ticket
+and its originating display epoch before changing current selector evidence.
 
 Compatibility review and rollback-tested synthetic fixtures precede any future
 coordinated schema/client installation. Stock-opening acceptance and authentication

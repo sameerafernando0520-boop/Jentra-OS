@@ -243,7 +243,7 @@ void main() {
     harness.container.updateOverrides(harness.overrides(actor: 'other'));
     await tester.pumpAndSettle();
     expect(find.text('Private decision'), findsNothing);
-    expect(find.text('Business scope or access changed'), findsOneWidget);
+    expect(find.text('Reference access changed'), findsOneWidget);
     expect(harness.repository.commands, isEmpty);
   });
 

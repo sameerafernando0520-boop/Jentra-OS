@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_domain/jentra_domain.dart';
+
 import '../../app_providers.dart';
 import 'sales_order_screen.dart' show orderStatus;
 
@@ -20,6 +21,26 @@ class OrderCreditDialog extends ConsumerStatefulWidget {
 class _CreditState extends ConsumerState<OrderCreditDialog> {
   final _reason = TextEditingController();
   bool _override = false;
+  bool _seenOnline = false, _invalidated = false;
+  @override
+  void initState() {
+    super.initState();
+    final initial = ref.read(connectivityStateProvider);
+    _seenOnline =
+        !initial.isLoading &&
+        !initial.hasError &&
+        initial.value == ConnectivityState.online;
+    ref.listenManual(connectivityStateProvider, (_, next) {
+      if (!next.isLoading &&
+          !next.hasError &&
+          next.value == ConnectivityState.online) {
+        _seenOnline = true;
+      } else if (_seenOnline && !_invalidated) {
+        setState(() => _invalidated = true);
+      }
+    });
+  }
+
   @override
   void dispose() {
     _reason.dispose();
@@ -33,8 +54,27 @@ class _CreditState extends ConsumerState<OrderCreditDialog> {
       'CUSTOMER_INACTIVE',
       'CREDIT_CURRENCY_MISMATCH',
     }.contains(p.reason);
+    final connection = ref.watch(connectivityStateProvider);
     final online =
-        ref.watch(connectivityStateProvider).value == ConnectivityState.online;
+        !connection.isLoading &&
+        !connection.hasError &&
+        connection.value == ConnectivityState.online;
+    if (online) _seenOnline = true;
+    if (!online && _seenOnline) _invalidated = true;
+    if (!online || _invalidated) {
+      return AlertDialog(
+        title: const Text('Credit access changed'),
+        content: const Text(
+          'Close this dialog and review customer credit again in your current connection.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      );
+    }
     return AlertDialog(
       title: const Text('Review customer credit'),
       content: SizedBox(
@@ -78,10 +118,8 @@ class _CreditState extends ConsumerState<OrderCreditDialog> {
                   child: Text(switch (p.reason) {
                     'CUSTOMER_INACTIVE' =>
                       'The customer is inactive. Confirmation is unavailable.',
-                    'CREDIT_CURRENCY_MISMATCH' =>
-                      'Customer credit currency differs from this order. Correct the governed credit configuration before confirmation.',
-                    _ =>
-                      'The limit would be exceeded. Confirmation records a credit hold unless an authorized override is applied.',
+                    'CREDIT_CURRENCY_MISMATCH' => 'Customer credit currency differs from this order. Correct the governed credit configuration before confirmation.',
+                    _ => 'The limit would be exceeded. Confirmation records a credit hold unless an authorized override is applied.',
                   }),
                 ),
               if (widget.canOverride &&
@@ -313,8 +351,7 @@ class _ReservationState extends ConsumerState<OrderReservationDialog> {
       if (_active && generation == _generation) {
         setState(() {
           _loading = false;
-          _error =
-              'Could not load current availability. Try again before reserving.';
+          _error = 'Could not load current availability. Try again before reserving.';
         });
       }
     }

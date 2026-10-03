@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_finance_platform.dart';
+
 import '../../app_providers.dart';
 import 'financial_dimension_controller.dart';
+import '../operations/operational_read_access.dart';
 
 class FinancialDimensionScreen extends ConsumerWidget {
   const FinancialDimensionScreen({super.key});
@@ -104,11 +107,15 @@ class FinancialDimensionWorkspace extends StatelessWidget {
               children: [
                 for (final k in ['code', 'name', 'reason'])
                   SizedBox(
-                width: k == 'code' ? 320 : 640,
+                    width: k == 'code' ? 320 : 640,
                     child: TextFormField(
                       key: ValueKey('${f['id']}-$k-${c.version}'),
-                  initialValue: f[k] as String? ?? '',
-                  maxLines: k == 'reason' ? 3 : k == 'name' ? 2 : 1,
+                      initialValue: f[k] as String? ?? '',
+                      maxLines: k == 'reason'
+                          ? 3
+                          : k == 'name'
+                          ? 2
+                          : 1,
                       enabled: !c.locked && (k != 'code' || c.version == 0),
                       onChanged: (v) => c.field(k, v),
                       decoration: InputDecoration(
@@ -149,7 +156,7 @@ class FinancialDimensionWorkspace extends StatelessWidget {
                     items: [
                       const DropdownMenuItem(
                         value: '',
-                      child: Text('Entity-wide'),
+                        child: Text('Entity-wide'),
                       ),
                       DropdownMenuItem(
                         value: c.scope.branchId,
@@ -213,7 +220,7 @@ class FinancialDimensionWorkspace extends StatelessWidget {
   );
 }
 
-class FinancialDimensionButton extends StatelessWidget {
+class FinancialDimensionButton extends StatefulWidget {
   const FinancialDimensionButton({
     super.key,
     required this.scope,
@@ -231,24 +238,148 @@ class FinancialDimensionButton extends StatelessWidget {
   final bool entityOnly;
   final ValueChanged<Map<String, Object?>?> onSelected;
   @override
+  State<FinancialDimensionButton> createState() => _DimensionButtonState();
+}
+
+class _DimensionPickerAccess extends ChangeNotifier
+    implements OperationalReadAccess {
+  _DimensionPickerAccess(this.allowed);
+  final bool Function() allowed;
+  int _epoch = 0;
+  bool _disposed = false, _notifierDisposed = false;
+  @override
+  int get readAccessEpoch => _epoch;
+  @override
+  bool currentRead(int epoch) => !_disposed && epoch == _epoch && allowed();
+  void invalidate() {
+    if (_disposed) return;
+    _epoch++;
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!_notifierDisposed) notifyListeners();
+      });
+    } else {
+      notifyListeners();
+    }
+  }
+
+  @override
+  void denyReadAccess() => invalidate();
+  @override
+  void dispose() {
+    _disposed = true;
+    _epoch++;
+    void finish() {
+      notifyListeners();
+      _notifierDisposed = true;
+      super.dispose();
+    }
+
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => finish());
+    } else {
+      finish();
+    }
+  }
+}
+
+class _DimensionButtonState extends State<FinancialDimensionButton> {
+  late final _DimensionPickerAccess access;
+  ProviderContainer? container;
+  final subscriptions = <ProviderSubscription<dynamic>>[];
+  bool allowed() {
+    final current = container;
+    if (!mounted || !widget.enabled || current == null) return false;
+    final network = current.read(connectivityStateProvider);
+    final caps = current.read(businessCapabilitiesProvider);
+    return current.read(activeTenantContextProvider) == widget.scope &&
+        !network.isLoading &&
+        !network.hasError &&
+        network.value == ConnectivityState.online &&
+        !caps.isLoading &&
+        !caps.hasError &&
+        (caps.value?.contains('finance.view') ?? false);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    access = _DimensionPickerAccess(allowed);
+  }
+
+  void closeSubscriptions() {
+    for (final subscription in subscriptions) {
+      subscription.close();
+    }
+    subscriptions.clear();
+  }
+
+  @override
+  void didUpdateWidget(FinancialDimensionButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.scope != widget.scope ||
+        oldWidget.gateway != widget.gateway ||
+        oldWidget.kind != widget.kind ||
+        oldWidget.entityOnly != widget.entityOnly ||
+        oldWidget.enabled && !widget.enabled) {
+      access.invalidate();
+    }
+  }
+
+  @override
+  void dispose() {
+    closeSubscriptions();
+    access.dispose();
+    super.dispose();
+  }
+
+  Future<void> pick() async {
+    if (subscriptions.isNotEmpty) return;
+    final current = ProviderScope.containerOf(context, listen: false);
+    container = current;
+    subscriptions.add(
+      current.listen(activeTenantContextProvider, (previous, next) {
+        if (previous != next) access.invalidate();
+      }),
+    );
+    subscriptions.add(
+      current.listen(connectivityStateProvider, (previous, next) {
+        if (previous != next) access.invalidate();
+      }),
+    );
+    subscriptions.add(
+      current.listen(businessCapabilitiesProvider, (previous, next) {
+        if (previous != next) access.invalidate();
+      }),
+    );
+    final epoch = access.readAccessEpoch;
+    try {
+      final result = await showOperationalReadDialog<Map<String, Object?>>(
+        context,
+        access,
+        (_) => _DimensionPicker(
+          scope: widget.scope,
+          gateway: widget.gateway,
+          kind: widget.kind,
+          entityOnly: widget.entityOnly,
+          access: access,
+        ),
+      );
+      if (result != null && mounted && access.currentRead(epoch)) {
+        widget.onSelected(result.isEmpty ? null : result);
+      }
+    } finally {
+      closeSubscriptions();
+      container = null;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) => OutlinedButton(
-    onPressed: enabled
-        ? () async {
-            final result = await showDialog<Map<String, Object?>>(
-              context: context,
-              builder: (_) => _DimensionPicker(
-                scope: scope,
-                gateway: gateway,
-                kind: kind,
-                entityOnly: entityOnly,
-              ),
-            );
-            if (result != null && context.mounted) {
-              onSelected(result.isEmpty ? null : result);
-            }
-          }
-        : null,
-    child: Text(label),
+    onPressed: widget.enabled ? pick : null,
+    child: Text(widget.label),
   );
 }
 
@@ -258,7 +389,9 @@ class _DimensionPicker extends ConsumerStatefulWidget {
     required this.gateway,
     required this.kind,
     required this.entityOnly,
+    required this.access,
   });
+  final OperationalReadAccess access;
   final bool entityOnly;
   final TenantContext scope;
   final FinancialDimensionGateway gateway;
@@ -279,14 +412,22 @@ class _DimensionPickerState extends ConsumerState<_DimensionPicker> {
     super.initState();
   }
 
-  bool allowed() =>
-      ref.read(activeTenantContextProvider) == widget.scope &&
-      ref.read(connectivityStateProvider).value == ConnectivityState.online &&
-      (ref.read(businessCapabilitiesProvider).value?.contains('finance.view') ??
-          false);
+  bool allowed() {
+    final network = ref.read(connectivityStateProvider);
+    final caps = ref.read(businessCapabilitiesProvider);
+    return ref.read(activeTenantContextProvider) == widget.scope &&
+        !network.isLoading &&
+        !network.hasError &&
+        network.value == ConnectivityState.online &&
+        !caps.isLoading &&
+        !caps.hasError &&
+        (caps.value?.contains('finance.view') ?? false);
+  }
+
   Future<void> load({bool more = false}) async {
     if (!allowed()) return;
     final ticket = ++epoch;
+    final accessEpoch = widget.access.readAccessEpoch;
     setState(() {
       busy = true;
       error = null;
@@ -298,7 +439,12 @@ class _DimensionPickerState extends ConsumerState<_DimensionPicker> {
         after: more ? cursor : null,
         search: search,
       );
-      if (!mounted || ticket != epoch || !allowed()) return;
+      if (!mounted ||
+          ticket != epoch ||
+          !allowed() ||
+          !widget.access.currentRead(accessEpoch)) {
+        return;
+      }
       setState(() {
         rows = [
           if (more) ...rows,
@@ -309,7 +455,18 @@ class _DimensionPickerState extends ConsumerState<_DimensionPicker> {
         cursor = r['next_cursor'] as String?;
       });
     } catch (e) {
-      if (mounted && ticket == epoch) {
+      if (mounted &&
+          ticket == epoch &&
+          widget.access.currentRead(accessEpoch)) {
+        if (e is DomainError &&
+            const {
+              'PERMISSION_DENIED',
+              'ACCESS_DENIED',
+              'MFA_REQUIRED',
+              'AUTHENTICATION_REQUIRED',
+            }.contains(e.code)) {
+          widget.access.denyReadAccess();
+        }
         setState(() {
           rows = [];
           cursor = null;
@@ -319,7 +476,11 @@ class _DimensionPickerState extends ConsumerState<_DimensionPicker> {
         });
       }
     } finally {
-      if (mounted && ticket == epoch) setState(() => busy = false);
+      if (mounted &&
+          ticket == epoch &&
+          widget.access.currentRead(accessEpoch)) {
+        setState(() => busy = false);
+      }
     }
   }
 

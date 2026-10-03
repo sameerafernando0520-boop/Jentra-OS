@@ -35,9 +35,7 @@ final supplierBillControllerProvider =
         drafts: QuotationDraftStore.procurement(
           ref.watch(encryptedDraftRepositoryProvider),
         ),
-        online:
-            ref.read(connectivityStateProvider).value ==
-            ConnectivityState.online,
+        online: procurementVerifiedOnline(ref.read(connectivityStateProvider)),
         canManage: caps.value?.contains('procurement.bills.manage') ?? false,
         canPost: caps.value?.contains('procurement.bills.post') ?? false,
         canApprove: caps.value?.contains('workflow.approvals.decide') ?? false,
@@ -45,7 +43,7 @@ final supplierBillControllerProvider =
       );
       ref.listen(
         connectivityStateProvider,
-        (_, v) => c.setOnline(v.value == ConnectivityState.online),
+        (_, v) => c.setOnline(procurementVerifiedOnline(v)),
       );
       ref.onDispose(c.dispose);
       unawaited(c.initialize());

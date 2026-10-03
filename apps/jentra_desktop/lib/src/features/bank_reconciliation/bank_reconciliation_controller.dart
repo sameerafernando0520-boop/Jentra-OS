@@ -8,6 +8,7 @@ import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_finance_platform.dart';
 
 import '../../app_providers.dart';
+import '../operations/operational_read_access.dart';
 
 final bankReconciliationGatewayProvider = Provider<BankReconciliationGateway?>(
   (ref) => null,
@@ -25,6 +26,7 @@ final bankReconciliationControllerProvider =
           !(caps.value?.contains('finance.view') ?? false)) {
         return null;
       }
+      final connection = ref.read(connectivityStateProvider);
       final c = BankReconciliationController(
         scope: scope,
         gateway: gateway,
@@ -33,19 +35,23 @@ final bankReconciliationControllerProvider =
         ),
         capabilities: caps.value!,
         online:
-            ref.read(connectivityStateProvider).value ==
-            ConnectivityState.online,
+            !connection.isLoading &&
+            !connection.hasError &&
+            connection.value == ConnectivityState.online,
       );
       ref.listen(
         connectivityStateProvider,
-        (_, s) => c.setOnline(s.value == ConnectivityState.online),
+        (_, s) => c.setOnline(
+          !s.isLoading && !s.hasError && s.value == ConnectivityState.online,
+        ),
       );
       ref.onDispose(c.dispose);
       unawaited(c.initialize());
       return c;
     });
 
-final class BankReconciliationController extends ChangeNotifier {
+final class BankReconciliationController extends ChangeNotifier
+    implements OperationalReadAccess {
   BankReconciliationController({
     required this.scope,
     required this.gateway,
@@ -66,6 +72,21 @@ final class BankReconciliationController extends ChangeNotifier {
   String? error, message;
   int formEpoch = 0;
   int _readEpoch = 0, _operationEpoch = 0;
+  @override
+  int get readAccessEpoch => _readEpoch;
+  @override
+  bool currentRead(int epoch) =>
+      !_disposed && online && verified && !denied && epoch == _readEpoch;
+  @override
+  void denyReadAccess() {
+    if (_disposed) return;
+    denied = true;
+    _readEpoch++;
+    clearReadEvidence();
+    form = {};
+    emit();
+  }
+
   bool get currentServer =>
       !_disposed && online && _operationEpoch == _readEpoch;
   Map<String, Object?> form = {};
@@ -92,6 +113,7 @@ final class BankReconciliationController extends ChangeNotifier {
     _readEpoch++;
     clearReadEvidence();
     form = {};
+    notifyListeners();
     super.dispose();
   }
 
@@ -118,10 +140,7 @@ final class BankReconciliationController extends ChangeNotifier {
           'MFA_REQUIRED',
           'AUTHENTICATION_REQUIRED',
         }.contains(e.code)) {
-      denied = true;
-      _readEpoch++;
-      clearReadEvidence();
-      form = {};
+      denyReadAccess();
     }
     error = e is DomainError
         ? e.message

@@ -6,6 +6,7 @@ import 'landed_extension_controller.dart';
 import '../journal_evidence/posted_journal_screen.dart';
 import '../operations/operational_controller.dart';
 import '../operations/operational_link.dart';
+import '../operations/operational_read_access.dart';
 
 class LandedExtensionScreen extends ConsumerWidget {
   const LandedExtensionScreen({super.key});
@@ -51,9 +52,11 @@ class LandedExtensionWorkspace extends StatelessWidget {
     }
     final preview = controller.preview;
     if (preview == null) return;
-    final accepted = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
+    final access = controller.readAccessEpoch;
+    final accepted = await showOperationalReadDialog<bool>(
+      context,
+      controller,
+      (context) => AlertDialog(
         title: Text(
           controller.correcting
               ? 'Post this landed value correction?'
@@ -79,7 +82,9 @@ class LandedExtensionWorkspace extends StatelessWidget {
         ],
       ),
     );
-    if (accepted == true) await controller.post();
+    if (accepted == true && controller.currentRead(access)) {
+      await controller.post();
+    }
   }
 
   @override
