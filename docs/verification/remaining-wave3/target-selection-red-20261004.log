@@ -1,0 +1,85 @@
+✖ Explicit current46 selection cannot silently fall back to the historical45 source list (71.1181ms)
+✖ Current46 fixture plan requires the explicitly selected complete artifacts (18.8138ms)
+✖ Relabelling a valid legacy45 source bundle as current46 is rejected (23.8209ms)
+✖ Current46 live RPC comparison cannot use the historical45 schema by omission (4.2807ms)
+✔ The explicit historical library default retains all45 source hashes (33.5768ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 1
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 269.6655
+
+✖ failing tests:
+
+test at tools\wave3\target_review_selection_20261004.test.mjs:16:1
+✖ Explicit current46 selection cannot silently fall back to the historical45 source list (71.1181ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/tools/wave3/target_review_selection_20261004.test.mjs:17:10)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.start (node:internal/test_runner/test:1003:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /selection|artifact|ENOENT/i,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at tools\wave3\target_review_selection_20261004.test.mjs:19:1
+✖ Current46 fixture plan requires the explicitly selected complete artifacts (18.8138ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/tools/wave3/target_review_selection_20261004.test.mjs:20:10)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /selection|artifact|ENOENT/i,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at tools\wave3\target_review_selection_20261004.test.mjs:22:1
+✖ Relabelling a valid legacy45 source bundle as current46 is rejected (23.8209ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/tools/wave3/target_review_selection_20261004.test.mjs:26:10)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /selection|artifact|bundle|ENOENT/i,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at tools\wave3\target_review_selection_20261004.test.mjs:28:1
+✖ Current46 live RPC comparison cannot use the historical45 schema by omission (4.2807ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/tools/wave3/target_review_selection_20261004.test.mjs:30:10)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /selection|artifact|ENOENT/i,
+    operator: 'throws',
+    diff: 'simple'
+  }

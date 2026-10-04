@@ -317,10 +317,27 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    final customerChoice = find.widgetWithText(
+      OutlinedButton,
+      'Customer: Recorded choice ${id.substring(0, 8)}',
+    );
+    await tester.scrollUntilVisible(
+      customerChoice,
+      350,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(customerChoice);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Synthetic customer'));
+    await tester.pumpAndSettle();
+    expect(c.labels['customer_id'], 'Synthetic customer');
     await tester.scrollUntilVisible(
       find.widgetWithText(TextField, 'Reason'),
-      350,
+      -350,
+      scrollable: find.byType(Scrollable).first,
     );
+    await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(TextField, 'Reason'));
     await tester.testTextInput.receiveAction(TextInputAction.done);
     await tester.pumpAndSettle();
@@ -328,45 +345,107 @@ void main() {
     expect(repo.commands, hasLength(1));
     expect(tester.takeException(), isNull);
   });
+  testWidgets('open service picker clears named choices after reconnect', (
+    tester,
+  ) async {
+    final c = create();
+    addTearDown(c.dispose);
+    await fill(c);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: ServiceWorkspace(controller: c)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final customerChoice = find.widgetWithText(
+      OutlinedButton,
+      'Customer: Recorded choice ${id.substring(0, 8)}',
+    );
+    await tester.scrollUntilVisible(
+      customerChoice,
+      350,
+      scrollable: find.byType(Scrollable).first,
+    );
+      await tester.pumpAndSettle();
+    await tester.tap(customerChoice);
+    await tester.pumpAndSettle();
+    expect(find.text('Synthetic customer'), findsOneWidget);
+    c.setOnline(false);
+    c.setOnline(true);
+    await tester.pumpAndSettle();
+    expect(find.text('Synthetic customer'), findsNothing);
+    expect(
+      find.text(
+        'Service scope or form changed. Reopen the picker after checking current access.',
+      ),
+      findsOneWidget,
+    );
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(c.form, isNull);
+    expect(tester.takeException(), isNull);
+  });
   for (final dark in [false, true]) {
-    testWidgets(
-      '${dark ? 'dark' : 'light'} 200 percent workspace renders at narrow desktop',
-      (tester) async {
-        tester.view.physicalSize = const Size(1024, 720);
-        tester.view.devicePixelRatio = 1;
-        addTearDown(tester.view.resetPhysicalSize);
-        addTearDown(tester.view.resetDevicePixelRatio);
-        final c = create();
-        addTearDown(c.dispose);
-        c.kind = ServiceKind.equipment;
-        await c.initialize();
-        await tester.pumpWidget(
-          MaterialApp(
-            theme: dark ? JentraTheme.dark() : JentraTheme.light(),
-            home: MediaQuery(
-              data: const MediaQueryData(
-                size: Size(1024, 720),
-                textScaler: TextScaler.linear(2),
-              ),
-              child: Scaffold(
-                body: RepaintBoundary(
-                  key: const ValueKey('service_preview'),
-                  child: ServiceWorkspace(controller: c),
+    for (final density in [JentraDensity.comfortable, JentraDensity.compact]) {
+      for (final editor in [false, true]) {
+        testWidgets(
+          'service ${editor ? 'equipment' : 'register'} ${dark ? 'dark' : 'light'} ${density.name} 200 percent preview',
+          (tester) async {
+            tester.view.physicalSize = const Size(1024, 720);
+            tester.view.devicePixelRatio = 1;
+            addTearDown(tester.view.resetPhysicalSize);
+            addTearDown(tester.view.resetDevicePixelRatio);
+            final c = create();
+            addTearDown(c.dispose);
+            c.kind = ServiceKind.equipment;
+            await c.initialize();
+            if (editor) {
+              await fill(c);
+              c.labels['customer_id'] = 'Synthetic customer';
+            }
+            final theme = dark
+                ? JentraTheme.dark(density: density)
+                : JentraTheme.light(density: density);
+            await tester.pumpWidget(
+              MaterialApp(
+                theme: theme,
+                home: MediaQuery(
+                  data: const MediaQueryData(
+                    size: Size(1024, 720),
+                    textScaler: TextScaler.linear(2),
+                  ),
+                  child: Scaffold(
+                    body: RepaintBoundary(
+                      key: const ValueKey('service_preview'),
+                      child: ColoredBox(
+                        color: theme.colorScheme.surface,
+                        child: ServiceWorkspace(controller: c),
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+            await tester.pumpAndSettle();
+            if (editor) {
+              await tester.scrollUntilVisible(
+                find.widgetWithText(TextField, 'Reason'),
+                350,
+                scrollable: find.byType(Scrollable).first,
+              );
+              await tester.pumpAndSettle();
+            }
+            expect(tester.takeException(), isNull);
+            await expectLater(
+              find.byKey(const ValueKey('service_preview')),
+              matchesGoldenFile(
+                'goldens/service-${editor ? 'equipment' : 'register'}-${dark ? 'dark' : 'light'}-${density.name}-200.png',
+              ),
+            );
+          },
         );
-        await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
-        await expectLater(
-          find.byKey(const ValueKey('service_preview')),
-          matchesGoldenFile(
-            'goldens/service_workspace_${dark ? 'dark' : 'light'}_200.png',
-          ),
-        );
-      },
-    );
+      }
+    }
   }
   test(
     'actual SQL labor and occurrence projections are retained immutably',

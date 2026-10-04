@@ -1,5 +1,6 @@
 -- Real installed sales posting and independently posted original credit govern billed service revisions.
 insert into billing.plan_entitlements(plan_code,entitlement_code,enabled) values('w4_integrated_rollback','module.projects',true) on conflict do nothing;
+insert into billing.plan_entitlements(plan_code,entitlement_code,enabled) values('w4_integrated_rollback','module.finance',true) on conflict do nothing;
 insert into core.role_permissions(tenant_id,role_id,permission_code)
 select pg_temp.wid('tenant'),pg_temp.wid(x||'.role'),p.code from unnest(array['creator','reviewer']) x cross join core.permissions p where p.module in('projects','sales','workflow','finance') on conflict do nothing;
 insert into finance.accounts(id,tenant_id,legal_entity_id,code,name,account_type,normal_balance,created_by,updated_by)
@@ -52,10 +53,19 @@ select pg_temp.wactor('creator');set local role authenticated;
 select pg_temp.sbf(pg_temp.sb_action('billing_submit',1),1,'sb.submit');
 reset role;select pg_temp.wactor('reviewer');set local role authenticated;
 select pg_temp.sbf(pg_temp.sb_action('billing_decide',2)||'{"decision":"approved"}',2,'sb.approve');
-reset role;select pg_temp.wactor('creator');set local role authenticated;
+reset role;select pg_temp.wactor('reviewer');set local role authenticated;
 select pg_temp.sbf(pg_temp.sb_action('billing_post',3),3,'sb.post');
 reset role;
 select ok((select billing_consumption_id=pg_temp.wid('sb.batch') from service.labor where id=pg_temp.wid('sd.labor')),'actual invoice posting consumes current service source');
+insert into service_impact_samples values('posted_margin',api.projects_margin(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sb.project'),clock_timestamp(),(now() at time zone 'UTC')::date));
+select is((select body->>'service_cost' from service_impact_samples where name='posted_margin'),'18.000000','project margin includes exact imported service cost');
+select is((select body->>'margin' from service_impact_samples where name='posted_margin'),'36.000000','project margin reconciles service revenue54 less cost18');
+insert into service_impact_samples values('before_service_correction',jsonb_build_object('as_of',clock_timestamp()));
+select ok(not ((select body from service_impact_samples where name='billing_source') ?| array['hourly_cost','cost_amount','internal_cost']), 'public billing source excludes private service cost');
+select pg_temp.wactor('reader');set local role authenticated;
+select throws_ok($q$select api.projects_finance_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sb.project'),'serviceCosts',null,null)$q$,
+ '42501','Permission denied or multi-factor authentication required.','service cost drilldown requires private cost authority');
+reset role;select pg_temp.wactor('reviewer');
 select throws_ok($q$select service.payroll_billing_impact(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sd.labor'),
  (select current_revision_id from service.labor where id=pg_temp.wid('sd.labor')),jsonb_build_object('correction_id',pg_temp.wid('sb.correction')),'validate')$q$,'55000','PROJECT_POSTED_ORIGINAL_CREDIT_REQUIRED','consumed service requires actual original posted credit');
 create function pg_temp.sb_credit() returns jsonb language sql security definer set search_path='' as $$
@@ -70,7 +80,7 @@ select api.transition_operational_document(pg_temp.wid('tenant'),pg_temp.wid('en
 reset role;select pg_temp.wactor('reviewer');set local role authenticated;
 select api.transition_operational_document(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),gen_random_uuid(),gen_random_uuid(),now(),
  jsonb_build_object('document_type','sales_return','document_id',pg_temp.wid('sb.credit'),'action',null,'decision','approved','note','Independent original credit'),2);
-reset role;select pg_temp.wactor('creator');set local role authenticated;
+reset role;select pg_temp.wactor('reviewer');set local role authenticated;
 select api.post_sales_return(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),gen_random_uuid(),gen_random_uuid(),now(),jsonb_build_object('id',pg_temp.wid('sb.credit')),3);
 reset role;
 create function pg_temp.sb_correction() returns jsonb language sql security definer set search_path='' as $$
@@ -88,8 +98,48 @@ select is((select status from projects.billable_units where id=pg_temp.wid('sb.s
 select is(service.snapshot('labor',pg_temp.wid('sd.labor'))->>'seconds','2700','credited consumed service now has truthful linked replacement');
 select ok((select billing_consumption_id is null from service.labor where id=pg_temp.wid('sd.labor')),'replacement service source awaits its own separate invoice');
 select is((select count(*)::integer from sales.sales_returns where id=pg_temp.wid('sb.credit') and status='posted'),1,'original sales credit retained as posted evidence');
+select is(api.projects_margin(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sb.project'),clock_timestamp(),(now() at time zone 'UTC')::date)->>'service_cost',
+ '13.500000','linked correction updates project service cost without new billing import');
+select is(api.projects_margin(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sb.project'),
+ (select (body->>'as_of')::timestamptz from service_impact_samples where name='before_service_correction'),(now() at time zone 'UTC')::date)->>'service_cost',
+ '18.000000','historical as-of retains original service cost');
 select pg_temp.wactor('reviewer');set local role authenticated;
 select pg_temp.cc(pg_temp.correction_action('reverse','sb.correction'),3,'sb.correction.reverse');
 reset role;
 select is(service.snapshot('labor',pg_temp.wid('sd.labor'))->>'seconds','3600','billed source operational reverse restores basis as new revision');
 select is((select status from projects.billable_units where id=pg_temp.wid('sb.source')),'billed','operational reverse cannot revive original consumed unit');
+select is(api.projects_margin(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sb.project'),clock_timestamp(),(now() at time zone 'UTC')::date)->>'service_cost',
+ '18.000000','operational reversal appends restored project service cost');
+select ok(not has_table_privilege('authenticated','projects.service_cost_revisions','SELECT'), 'service cost immutable revisions remain API only');
+-- An unsealed available import cancellation contributes a dated zero cost and
+-- cancels the stale available unit, without deleting its original cost evidence.
+select pg_temp.wactor('creator');set local role authenticated;
+select pg_temp.sic(jsonb_build_object('action','ticket','id',pg_temp.wid('sb.cancel.ticket'),'code','SB-CANCEL','name','Synthetic unsealed service cancellation',
+ 'classification','repair','customer_id',pg_temp.wid('customer'),'contact_id',null,'equipment_id',pg_temp.wid('si.eq'),'coverage_id',null,
+ 'policy_id',pg_temp.wid('sd.policy'),'priority','normal','owner_id',null,'observed_utc',pg_temp.sidu(720),'reason','Synthetic unsealed source'),0,'sb.cancel.ticket');
+select pg_temp.sic(jsonb_build_object('action','order','id',pg_temp.wid('sb.cancel.order'),'ticket_id',pg_temp.wid('sb.cancel.ticket'),'reason','Synthetic cancellation source'),0,'sb.cancel.order');
+select pg_temp.sic(jsonb_build_object('action','dispatch','id',pg_temp.wid('sb.cancel.order'),'employee_id',pg_temp.wid('third'),
+ 'calendar_version_id',pg_temp.wid('calendar-version'),'start_utc',pg_temp.sidu(720),'end_utc',pg_temp.sidu(780),'booking_id',pg_temp.wid('sb.cancel.booking'),'reason','Synthetic independent interval'),1,'sb.cancel.dispatch');
+select pg_temp.sic(jsonb_build_object('action','accept','id',pg_temp.wid('sb.cancel.order'),'observed_utc',pg_temp.sidu(720),'reason','Synthetic acceptance'),2,'sb.cancel.accept');
+select pg_temp.sic(jsonb_build_object('action','labor','id',pg_temp.wid('sb.cancel.labor'),'order_id',pg_temp.wid('sb.cancel.order'),'employee_id',pg_temp.wid('third'),
+ 'calendar_version_id',pg_temp.wid('calendar-version'),'start_utc',pg_temp.sidu(720),'end_utc',pg_temp.sidu(780),'breaks','[]'::jsonb,'claim_id',null,
+ 'hourly_cost','6.00','currency_code','LKR','precision',2,'billing_kind','billable','hourly_billing','3.00','billing_reference','Synthetic separate cost', 'reason','Synthetic unsealed source'),0,'sb.cancel.labor');
+reset role;select pg_temp.wactor('reviewer');set local role authenticated;
+select pg_temp.sic(jsonb_build_object('action','approve_labor','id',pg_temp.wid('sb.cancel.labor'),'reason','Independent unsealed labor approval'),1,'sb.cancel.approve');
+reset role;select pg_temp.wactor('creator');set local role authenticated;
+select pg_temp.sic(jsonb_build_object('action','complete','id',pg_temp.wid('sb.cancel.order'),'observed_utc',pg_temp.sidu(780),'resolution','Synthetic finished work',
+ 'customer_confirmed',true,'reason','Synthetic completion'),3,'sb.cancel.complete');
+reset role;
+insert into service_impact_samples values('cancel_source',service.billing_source(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sb.cancel.labor')));
+set local role authenticated;
+select pg_temp.sbf(jsonb_build_object('action','service_source','id',pg_temp.wid('sb.cancel.unit'),'project_id',pg_temp.wid('sb.project'),
+ 'service_source_id',pg_temp.wid('sb.cancel.labor'),'source_version',2,'source_digest',(select body->>'digest' from service_impact_samples where name='cancel_source'),'reason','Synthetic available import'),0,'sb.cancel.import');
+reset role;
+select is(api.projects_margin(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sb.project'),clock_timestamp(),(now() at time zone 'UTC')::date)->>'service_cost',
+ '24.000000','available imported approved work adds exact cost before cancellation');
+select pg_temp.wactor('reviewer');set local role authenticated;
+select pg_temp.sic(jsonb_build_object('action','cancel_labor','id',pg_temp.wid('sb.cancel.labor'),'reason','Governed unsealed cancellation'),2,'sb.cancel.command');
+reset role;
+select is(api.projects_margin(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sb.project'),clock_timestamp(),(now() at time zone 'UTC')::date)->>'service_cost',
+ '18.000000','cancellation appends zero effective cost');
+select is((select status from projects.billable_units where id=pg_temp.wid('sb.cancel.unit')),'cancelled','unsealed source cancellation resolves stale available import');

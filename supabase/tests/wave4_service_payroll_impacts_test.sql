@@ -5,6 +5,7 @@ insert into billing.plan_entitlements(plan_code,entitlement_code,enabled) values
 insert into core.role_permissions(tenant_id,role_id,permission_code)
 select pg_temp.wid('tenant'),pg_temp.wid(x||'.role'),p.code from unnest(array['creator','reviewer']) x cross join core.permissions p
 where p.module='service' or p.code='people.payroll.post' on conflict do nothing;
+delete from core.role_permissions where role_id=pg_temp.wid('reviewer.role') and permission_code='service.work';
 create temporary table service_impact_samples(name text primary key,body jsonb);
 grant select,insert on service_impact_samples to authenticated;
 create function pg_temp.sic(p jsonb,v bigint,key text) returns jsonb language sql as $$

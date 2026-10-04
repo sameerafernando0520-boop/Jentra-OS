@@ -548,7 +548,11 @@ declare act text:=p_payload->>'action';cap text:=service.capability(act);id uuid
    if exists(select 1 from people.work_input_seals where claim_id=labor.claim_id) then raise exception using errcode='55000',message='PAYROLL_INPUT_SEALED';end if;
    foreach allocation in array labor.allocation_ids loop perform people.revoke_work_allocation(p_tenant_id,p_legal_entity_id,employee,allocation);end loop;
    if labor.owns_claim then perform people.revoke_work_claim(p_tenant_id,p_legal_entity_id,employee,labor.claim_id);end if;
-   update service.labor set status='cancelled',version=service.labor.version+1 where service.labor.id=id;end if;
+   update service.labor set status='cancelled',version=service.labor.version+1 where service.labor.id=id;
+   if to_regprocedure('projects.service_payroll_cost_impact(uuid,uuid,uuid,uuid,uuid)') is not null then
+    execute 'select projects.service_payroll_cost_impact($1,$2,$3,$4,$5)' using p_tenant_id,p_legal_entity_id,p_branch_id,labor.id,coalesce(labor.current_revision_id,labor.id);
+   end if;
+  end if;
  elsif act='plan' then kind:='plan';
   select * into eq from service.equipment where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and branch_id=p_branch_id and equipment.id=(p_payload->>'equipment_id')::uuid and status='active';
   select * into policy from service.sla_policies where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and branch_id=p_branch_id and sla_policies.id=(p_payload->>'policy_id')::uuid;
@@ -659,7 +663,7 @@ begin
  if p_mode not in('read','validate','release','apply','reverse') or revision is null or proposal is null or jsonb_typeof(proposal)<>'object' then
   raise exception using errcode='22023',message='SERVICE_PAYROLL_IMPACT_INVALID';end if;
  actual_mode:=case when p_mode='reverse' or proposal->>'operational_mode'='reverse' then 'reverse' else 'apply' end;
- perform service.require_access(t,e,b,case when p_mode in('release','apply','reverse') then 'service.approve' else 'service.work' end);
+ perform service.require_access(t,e,b,case when p_mode='read' then 'service.view' else 'service.approve' end);
  perform service.require_access(t,e,b,'service.cost.view');
  perform pg_advisory_xact_lock(hashtextextended('people.payroll:'||t||':'||e,0));
  perform pg_advisory_xact_lock(hashtextextended('projects:'||t||':'||e,0));
@@ -815,6 +819,9 @@ begin
  insert into service.labor_revisions(id,tenant_id,legal_entity_id,branch_id,labor_id,employee_id,version,correction_id,supersedes_id,snapshot,recorded_by)
   values(rid,t,e,b,l.id,employee,l.version+1,cid,l.current_revision_id,after_body,auth.uid());
  update service.labor set version=version+1,current_revision_id=rid,claim_id=new_claim,allocation_ids=allocs,billing_consumption_id=null,status=case when remove_source then 'cancelled' else 'approved' end where id=l.id;
+ if to_regprocedure('projects.service_payroll_cost_impact(uuid,uuid,uuid,uuid,uuid)') is not null then
+  execute 'select projects.service_payroll_cost_impact($1,$2,$3,$4,$5)' using t,e,b,l.id,rid;
+ end if;
  perform people.consume_organization(t,e,b,employee,'service_time',rid,sl::date,((el-interval '1 microsecond')::date)+1);
  if w.status='closed' and not remove_source and l.billing_kind='billable' then
   update service.work_orders set status='completed',closed_by=null,closed_at=null,version=version+1 where id=w.id;

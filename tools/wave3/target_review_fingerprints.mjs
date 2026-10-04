@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import {reviewedSources} from './prepare-target-verification.mjs';
 
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const names = [
@@ -23,6 +24,11 @@ const names = [
   'tools/wave3/target_review_guards.test.mjs',
   'tools/wave3/target_review_aging.mjs',
   'tools/wave3/target_review_aging.test.mjs',
+  'tools/wave3/target_review_selection.mjs',
+  'tools/wave3/target_review_selection_20261004.test.mjs',
+  'tools/wave3/strict-candidate-evidence.mjs',
+  'supabase/migrations/20261003090000_wave3_negative_stock_policy.sql',
+  'docs/blueprint/64_WAVE3_NEGATIVE_STOCK_POLICY_CONTRACT.md',
   'tools/wave3/target_review_verify.mjs',
   'tools/wave3/target_review_candidate.mjs',
   'tools/wave3/target_review_fingerprints.mjs',
@@ -40,12 +46,21 @@ const names = [
   'supabase/tests/build_control_candidate.ps1',
   'supabase/tests/build_journal_candidate.ps1',
 ];
-const manifest = JSON.parse(fs.readFileSync(path.join(repo,
-  'docs/verification/remaining-wave3/migration-order-final-20260930-45.json'), 'utf8'));
-names.push(...manifest.candidates.map(candidate => candidate.path));
+const selectionIndex=process.argv.indexOf('--selection');
+let selection;
+if(selectionIndex>=0) {
+  const file=process.argv[selectionIndex+1],resolved=path.resolve(repo,file??'');
+  if(!resolved.startsWith(path.join(repo,'docs/verification/remaining-wave3')+path.sep)||path.extname(resolved)!=='.json')throw Error('Explicit task-owned46 selection JSON required.');
+  selection=JSON.parse(fs.readFileSync(resolved,'utf8').replace(/^\uFEFF/,''));
+  if(selection.candidate_count!==46)throw Error('Current fingerprints require the explicit46 selection.');
+  names.push(file,'docs/blueprint/64_WAVE3_NEGATIVE_STOCK_POLICY_CONTRACT.md');
+}
+const selectedSources=reviewedSources(selection);
+names.push(...Object.keys(selectedSources));
 names.push(...fs.readdirSync(path.join(repo, 'supabase/tests'))
   .filter(name => /^wave3_.*\.sql$/.test(name))
   .map(name => 'supabase/tests/' + name));
 const source_sha256 = Object.fromEntries([...new Set(names)].sort().map(name =>
   [name, crypto.createHash('sha256').update(fs.readFileSync(path.join(repo, name), 'utf8')).digest('hex')]));
-console.log(JSON.stringify({ source_sha256 }));
+console.log(JSON.stringify({ source_sha256,candidate_review:selection??null,candidate_count:selection?46:45,
+  boundary:selection?'Explicit source-matched46 preparation fingerprint only; no installation or native acceptance.':'Historical45 library preparation/source fingerprint only; current46 acceptance selection remains separate.' }));

@@ -36,8 +36,19 @@ const secondChoice = 'ffffffff-ffff-4fff-afff-ffffffffffff';
 
 class Keys implements SecretKeyStore {
   final values = <String, String>{};
+  bool armed = false;
+  final readStarted = Completer<void>();
+  final readGate = Completer<void>();
   @override
-  Future<String?> read(String key) async => values[key];
+  Future<String?> read(String key) async {
+    if (armed) {
+      armed = false;
+      readStarted.complete();
+      await readGate.future;
+    }
+    return values[key];
+  }
+
   @override
   Future<void> write(String key, String value) async {
     values[key] = value;
@@ -52,8 +63,11 @@ class Repository implements ProjectRepository {
       pendingPlan = false,
       changeReview = false;
   DomainError? failure;
+  DomainError? authorityFailure;
   String? deniedCapability;
-  Completer<void>? directoryGate, choiceGate;
+  Completer<void>? directoryGate, choiceGate, commandGate, receiptGate;
+  Completer<void>? commandStarted, receiptStarted;
+  Completer<void>? authorityStarted, authorityGate;
   final commands = <CommandEnvelope<Map<String, Object?>>>[];
   final reads = <(ProjectSection, String?)>[];
   Map<String, Object?>? receipt;
@@ -63,7 +77,12 @@ class Repository implements ProjectRepository {
     TenantContext s,
     String capability,
   ) async {
-    if (deny || capability == deniedCapability) {
+    final denied = deny || capability == deniedCapability;
+    final authorityError = authorityFailure;
+    authorityStarted?.complete();
+    await authorityGate?.future;
+    if (authorityError != null) throw authorityError;
+    if (denied) {
       throw const DomainError(
         code: 'PERMISSION_DENIED',
         message: 'Synthetic access revoked.',
@@ -194,6 +213,8 @@ class Repository implements ProjectRepository {
     int precision,
   ) async {
     commands.add(c);
+    commandStarted?.complete();
+    await commandGate?.future;
     if (failure != null) {
       throw failure!;
     }
@@ -245,7 +266,11 @@ class Repository implements ProjectRepository {
     TenantContext s,
     String key,
     String action,
-  ) async => receipt;
+  ) async {
+    receiptStarted?.complete();
+    await receiptGate?.future;
+    return receipt;
+  }
 }
 
 void main() {
@@ -262,6 +287,7 @@ void main() {
   });
   late JentraLocalDatabase db;
   late EncryptedDraftRepository encrypted;
+  late Keys keys;
   late Repository repository;
   ProjectsController create({Set<String>? permissions}) => ProjectsController(
     scope: scope,
@@ -273,7 +299,8 @@ void main() {
   );
   setUp(() {
     db = JentraLocalDatabase(NativeDatabase.memory());
-    encrypted = EncryptedDraftRepository(db, DraftCipher(keyStore: Keys()));
+    keys = Keys();
+    encrypted = EncryptedDraftRepository(db, DraftCipher(keyStore: keys));
     repository = Repository();
   });
   tearDown(() async {
@@ -480,6 +507,221 @@ void main() {
       final restored = create();
       await restored.initialize();
       expect(restored.recovery.single.draft.form['budget'], '1234.56');
+      restored.dispose();
+    },
+  );
+  test('validated late command confirmation persists after disposal', () async {
+    final c = create();
+    await creation(c);
+    repository.commandStarted = Completer<void>();
+    repository.commandGate = Completer<void>();
+    final work = c.send();
+    await repository.commandStarted!.future;
+    c.dispose();
+    repository.commandGate!.complete();
+    await work;
+    expect(c.confirmed, isNull);
+    final restored = create();
+    await restored.initialize();
+    expect(restored.recovery, isEmpty);
+    expect(repository.commands, hasLength(1));
+    restored.dispose();
+  });
+  test('old authority denial cannot revoke a reconnected epoch', () async {
+    final c = create();
+    await c.initialize();
+    repository.deny = true;
+    repository.authorityStarted = Completer<void>();
+    repository.authorityGate = Completer<void>();
+    final work = c.refresh();
+    await repository.authorityStarted!.future;
+    c.setOnline(false);
+    c.setOnline(true);
+    repository.deny = false;
+    repository.authorityGate!.complete();
+    await work;
+    expect(c.current, isTrue);
+    repository.authorityStarted = null;
+    repository.authorityGate = null;
+    await c.refresh();
+    expect(c.records, isNotEmpty);
+    c.dispose();
+  });
+  test('old directory response cannot populate a reconnected epoch', () async {
+    final c = create();
+    repository.directoryGate = Completer<void>();
+    final work = c.initialize();
+    await Future<void>.delayed(const Duration(milliseconds: 20));
+    c.setOnline(false);
+    c.setOnline(true);
+    repository.directoryGate!.complete();
+    await work;
+    expect(c.records, isEmpty);
+    repository.directoryGate = null;
+    await c.refresh();
+    expect(c.records, isNotEmpty);
+    c.dispose();
+  });
+  test(
+    'task draft retains an explicit named owner through encrypted restart',
+    () async {
+      final c = create();
+      await c.initialize();
+      await c.select(c.records.single.id);
+      await c.begin('plan');
+      final owner = (await c.choices('employees')).rows.first;
+      c.addTask(
+        'Owned synthetic task',
+        c.selected!.start.value,
+        c.selected!.end.value,
+        owner: owner,
+      );
+      expect(
+        projectMap((c.form!['tasks'] as List).single)['owner_id'],
+        owner.id,
+      );
+      expect(c.labels[owner.id], owner.name);
+      await c.save();
+      c.dispose();
+      final restored = create();
+      await restored.initialize();
+      expect(
+        projectMap(
+          (restored.recovery.single.draft.form['tasks'] as List).single,
+        )['owner_id'],
+        owner.id,
+      );
+      restored.dispose();
+    },
+  );
+  test('current MFA denial clears project plaintext and recovery', () async {
+    final c = create();
+    await creation(c);
+    await c.save();
+    repository.authorityFailure = const DomainError(
+      code: 'MFA_REQUIRED',
+      message: 'Synthetic MFA expired',
+    );
+    await c.checkAccess();
+    expect(c.current, isFalse);
+    expect(c.form, isNull);
+    expect(c.records, isEmpty);
+    expect(c.recovery, isEmpty);
+    c.dispose();
+  });
+  test(
+    'validated late own receipt persists after disposal without retry',
+    () async {
+      final c = create();
+      await creation(c);
+      repository.failure = const DomainError(
+        code: 'UNCERTAIN_RESULT',
+        message: 'Synthetic unknown original result',
+        retryable: true,
+      );
+      await c.send();
+      final original = c.pending!.envelope;
+      repository.receipt = {
+        'command_id': original.commandId,
+        'idempotency_key': original.idempotencyKey,
+        'response': {
+          'request_id': original.commandId,
+          'command_id': original.commandId,
+          'correlation_id': original.commandId,
+          'entity': {
+            'id': original.payload['id'],
+            'tenant_id': scope.tenantId,
+            'legal_entity_id': scope.legalEntityId,
+            'branch_id': scope.branchId,
+            'version': original.expectedEntityVersion! + 1,
+            'status': 'open',
+            'current_plan_id': null,
+          },
+          'warnings': <Object?>[],
+        },
+      };
+      repository.receiptStarted = Completer<void>();
+      repository.receiptGate = Completer<void>();
+      final work = c.reconcile();
+      await repository.receiptStarted!.future;
+      c.dispose();
+      repository.receiptGate!.complete();
+      await work;
+      final restored = create();
+      await restored.initialize();
+      expect(restored.recovery, isEmpty);
+      expect(repository.commands, hasLength(1));
+      restored.dispose();
+    },
+  );
+  test(
+    'confirmed cleanup survives restart without dispatching the request again',
+    () async {
+      final c = create();
+      await creation(c);
+      await db.customStatement(
+        "CREATE TEMP TRIGGER project_ack_cleanup_failure BEFORE DELETE ON encrypted_drafts BEGIN SELECT RAISE(ABORT,'Synthetic cleanup failure'); END",
+      );
+      await c.send();
+      expect(c.confirmed, isNotNull);
+      expect(c.pending, isNotNull);
+      c.dispose();
+      await db.customStatement('DROP TRIGGER project_ack_cleanup_failure');
+      final restored = create();
+      await restored.initialize();
+      expect(restored.recovery, isEmpty);
+      expect(repository.commands, hasLength(1));
+      restored.dispose();
+    },
+  );
+  test(
+    'confirmation remains known when encrypted acknowledgement insert fails',
+    () async {
+      final c = create();
+      await creation(c);
+      await db.customStatement(
+        "CREATE TEMP TRIGGER project_ack_insert_failure BEFORE INSERT ON encrypted_drafts WHEN NEW.entity_type='projects.command.acknowledgement' BEGIN SELECT RAISE(ABORT,'Synthetic acknowledgement failure'); END",
+      );
+      await c.send();
+      expect(c.confirmed, isNotNull);
+      expect(c.pending, isNotNull);
+      expect(c.message, contains('Saving the encrypted confirmation failed'));
+      final original = c.pending!.envelope;
+      await c.send();
+      expect(repository.commands, hasLength(1));
+      c.dispose();
+      await db.customStatement('DROP TRIGGER project_ack_insert_failure');
+      final restored = create();
+      await restored.initialize();
+      expect(
+        restored.recovery.single.draft.pending!.envelope.commandId,
+        original.commandId,
+      );
+      restored.dispose();
+    },
+  );
+  test(
+    'connection changes during sealing preserve original without dispatch',
+    () async {
+      final c = create();
+      await creation(c);
+      keys.armed = true;
+      final work = c.send();
+      await keys.readStarted.future;
+      c.setOnline(false);
+      c.setOnline(true);
+      keys.readGate.complete();
+      await work;
+      expect(repository.commands, isEmpty);
+      c.dispose();
+      final restored = create();
+      await restored.initialize();
+      expect(restored.recovery.single.draft.pending, isNotNull);
+      final original = restored.recovery.single.draft.pending!.envelope;
+      await restored.resume(restored.recovery.single);
+      await restored.send();
+      expect(repository.commands.single.commandId, original.commandId);
+      expect(repository.commands.single.payload, original.payload);
       restored.dispose();
     },
   );

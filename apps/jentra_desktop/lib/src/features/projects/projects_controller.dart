@@ -216,6 +216,8 @@ final class ProjectsController extends ChangeNotifier {
     'PERMISSION_DENIED',
     'AUTHENTICATION_REQUIRED',
     'FEATURE_NOT_ENTITLED',
+    'MFA_REQUIRED',
+    'ACCESS_DENIED',
   }.contains(e.code);
   Future<void> _access(String cap) async {
     final epoch = _epoch;
@@ -238,6 +240,12 @@ final class ProjectsController extends ChangeNotifier {
         providers = state;
       }
     } on DomainError catch (e) {
+      if (!current || epoch != _epoch || !online) {
+        throw const DomainError(
+          code: 'ACCESS_RECHECK_REQUIRED',
+          message: 'Connection changed. Refresh current project authority.',
+        );
+      }
       if (_revoked(e) && current) {
         _deny();
       }
@@ -327,9 +335,10 @@ final class ProjectsController extends ChangeNotifier {
     }
   });
   Future<void> _directory({bool more = false}) async {
+    final epoch = _epoch;
     _connected();
     final page = await repository.directory(scope, after: more ? cursor : null);
-    if (current) {
+    if (current && epoch == _epoch && online) {
       records = [if (more) ...records, ...page.rows];
       cursor = page.next;
     }
@@ -353,6 +362,7 @@ final class ProjectsController extends ChangeNotifier {
     String? parent,
     bool more = false,
   }) async {
+    final epoch = _epoch;
     if (kind.privateCost) {
       await _access('projects.cost.view');
     } else {
@@ -368,7 +378,7 @@ final class ProjectsController extends ChangeNotifier {
       parentId: parent,
       after: more ? next : null,
     );
-    if (current) {
+    if (current && epoch == _epoch && online) {
       selected = page.project;
       section = kind;
       parentId = parent;
@@ -756,6 +766,7 @@ final class ProjectsController extends ChangeNotifier {
     String name,
     String start,
     String end, {
+    required ProjectChoice owner,
     Iterable<String> dependencies = const [],
   }) {
     if (locked || action != 'plan') {
@@ -768,15 +779,20 @@ final class ProjectsController extends ChangeNotifier {
     projectText(name, 160);
     CivilDate.parse(start);
     CivilDate.parse(end);
+    if (owner.kind != 'employees') {
+      throw const FormatException('Select a scoped employee as task owner.');
+    }
     tasks.add({
       'id': _uuid.v4(),
       'name': name,
+      'owner_id': owner.id,
       'start_date': start,
       'end_date_exclusive': end,
       'planned_seconds': 0,
       'dependencies': dependencies.toList(),
     });
     form = {...form!, 'tasks': tasks};
+    labels[owner.id] = owner.name;
     _notify();
   }
 
@@ -901,7 +917,19 @@ final class ProjectsController extends ChangeNotifier {
         final sealed = d.pending;
         if (sealed != null &&
             await ProjectCommandAcknowledgements(drafts[a]!).contains(sealed)) {
-          await drafts[a]!.complete(scope, d.aggregateId, sealed.envelope.commandId);
+          try {
+            await drafts[a]!.complete(
+              scope,
+              d.aggregateId,
+              sealed.envelope.commandId,
+            );
+          } catch (_) {
+            items.add(ProjectSavedDraft(a, d));
+            if (current && epoch == _epoch) {
+              message = 'The original request is confirmed. Its encrypted cleanup still needs reconciliation.';
+            }
+            continue;
+          }
           if (!current || epoch != _epoch) return;
           message = 'A confirmed original project request was reconciled without sending it again.';
         } else {
@@ -909,10 +937,7 @@ final class ProjectsController extends ChangeNotifier {
         }
       }
       if (!current || epoch != _epoch) return;
-      recovery = [
-        ...recovery.where((d) => d.action != a || more),
-        ...items,
-      ];
+      recovery = [...recovery.where((d) => d.action != a || more), ...items];
       recoveryCursors[a] = page.nextCursor;
     }
   }
@@ -1108,11 +1133,19 @@ final class ProjectsController extends ChangeNotifier {
     int epoch,
   ) async {
     final e = _verify(result, sealed);
-    await ProjectCommandAcknowledgements(drafts[sealed.action]!).save(sealed, e);
     if (current && epoch == _epoch) {
       confirmed = e;
       message = 'Confirmed. The original project request succeeded.';
       _notify();
+    }
+    try {
+      await ProjectCommandAcknowledgements(drafts[sealed.action]!)
+          .save(sealed, e);
+    } catch (_) {
+      if (current && epoch == _epoch) {
+        message = 'Confirmed. Saving the encrypted confirmation failed. Keep the original request and reconcile its receipt before issuing another request.';
+      }
+      return;
     }
     try {
       await drafts[sealed.action]!.complete(
@@ -1263,11 +1296,10 @@ final class ProjectsController extends ChangeNotifier {
       sealed.envelope.idempotencyKey,
       sealed.action,
     );
-    if (!current) {
-      return;
-    }
     if (receipt == null) {
-      message = 'No matching receipt was found. Retry only the exact encrypted request.';
+      if (current && epoch == _epoch) {
+        message = 'No matching receipt was found. Retry only the exact encrypted request.';
+      }
       return;
     }
     if (receipt['command_id'] != sealed.envelope.commandId ||

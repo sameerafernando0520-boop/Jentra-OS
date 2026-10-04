@@ -423,6 +423,7 @@ final class _ProjectFinanceScreenState
     ProjectFinanceSection.obligations => 'Reimbursements',
     ProjectFinanceSection.billing => 'Invoices',
     ProjectFinanceSection.units => 'Billing sources',
+    ProjectFinanceSection.serviceCosts => 'Service costs',
     _ => s.name[0].toUpperCase() + s.name.substring(1),
   };
   Widget _row(ProjectFinanceController c, ProjectFinanceRow row) {
@@ -479,6 +480,13 @@ final class _ProjectFinanceScreenState
               ),
             if (row.section == ProjectFinanceSection.history)
               Text('${row.values['action']} · ${row.values['recorded_at']}'),
+            if (row.values['payment_due_days'] != null)
+              Text('Payment due ${row.values['payment_due_days']} days after invoice · ${row.values['payment_terms']}'),
+            if (row.section == ProjectFinanceSection.serviceCosts) ...[
+              Text('Original ${row.values['payable_seconds']} seconds · hourly cost ${row.values['hourly_cost']} ${row.values['currency_code']}'),
+              Text('Recorded ${row.values['recorded_at']}'),
+              const Text('Immutable service revision. Later corrections keep this original basis.'),
+            ],
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -772,7 +780,10 @@ final class _ProjectFinanceScreenState
                     ),
                 ],
                 TextButton(
-                  onPressed: c.pending != null || c.conflict
+                  onPressed:
+                      c.busy ||
+                          c.confirmed == null &&
+                              (c.pending != null || c.conflict)
                       ? null
                       : c.closeForm,
                   child: Text(

@@ -38,10 +38,11 @@ create table projects.plans(
 );
 create table projects.tasks(
  tenant_id uuid not null,legal_entity_id uuid not null,project_id uuid not null,plan_id uuid not null,id uuid not null,
- name text not null,start_date date not null,end_date_exclusive date not null,planned_seconds bigint not null check(planned_seconds between 0 and 31622400),
+ name text not null,owner_id uuid not null,owner_name text not null,start_date date not null,end_date_exclusive date not null,planned_seconds bigint not null check(planned_seconds between 0 and 31622400),
  primary key(plan_id,id),unique(tenant_id,legal_entity_id,project_id,plan_id,id),
  check(length(name) between 1 and 160 and name=btrim(name) and name !~ '[[:cntrl:]]'),
- check(end_date_exclusive>start_date),
+ check(end_date_exclusive>start_date),check(length(owner_name) between 1 and 160),
+ foreign key(tenant_id,legal_entity_id,owner_id) references people.employees(tenant_id,legal_entity_id,id),
  foreign key(tenant_id,legal_entity_id,project_id,plan_id) references projects.plans(tenant_id,legal_entity_id,project_id,id)
 );
 create table projects.dependencies(
@@ -246,14 +247,19 @@ declare act text:=p_payload->>'action';cap text;id uuid;project_id uuid;employee
   employee_id:=(p_payload->>'manager_id')::uuid;
   perform id from people.employees where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and employees.id=employee_id for update;
  elsif act='plan' then
+  if jsonb_typeof(p_payload->'tasks') is distinct from 'array' or jsonb_array_length(p_payload->'tasks') not between 1 and 200 then
+   raise exception using errcode='22023',message='PROJECT_TASK_LIMIT';end if;
   if jsonb_typeof(p_payload->'resources') is distinct from 'array' or jsonb_array_length(p_payload->'resources')>366 then
    raise exception using errcode='22023',message='PROJECT_RESOURCE_LIMIT';end if;
   perform e.id from people.employees e where e.tenant_id=p_tenant_id and e.legal_entity_id=p_legal_entity_id and
-   e.id in(select (value->>'employee_id')::uuid from jsonb_array_elements(p_payload->'resources')) order by e.id for update;
+   e.id in(select (value->>'employee_id')::uuid from jsonb_array_elements(p_payload->'resources')
+    union select (value->>'owner_id')::uuid from jsonb_array_elements(p_payload->'tasks')) order by e.id for update;
  elsif act in('approve_plan','reject_plan','close') then
   perform e.id from people.employees e where e.tenant_id=p_tenant_id and e.legal_entity_id=p_legal_entity_id and e.id in(
    select s.employee_id from projects.resource_slots s where s.tenant_id=p_tenant_id and s.legal_entity_id=p_legal_entity_id
-    and s.project_id=project_id and (s.active or s.plan_id=(p_payload->>'plan_id')::uuid)) order by e.id for update;
+    and s.project_id=project_id and (s.active or s.plan_id=(p_payload->>'plan_id')::uuid)
+   union select t.owner_id from projects.tasks t where t.tenant_id=p_tenant_id and t.legal_entity_id=p_legal_entity_id
+    and t.project_id=project_id and t.plan_id=(p_payload->>'plan_id')::uuid) order by e.id for update;
  end if;
  select * into r from projects.register q where q.tenant_id=p_tenant_id and q.legal_entity_id=p_legal_entity_id
   and q.branch_id=p_branch_id and q.id=project_id for update;
@@ -291,13 +297,16 @@ declare act text:=p_payload->>'action';cap text;id uuid;project_id uuid;employee
    insert into projects.plans(id,tenant_id,legal_entity_id,project_id,version,basis_digest,terms,reason,prepared_by)
    values(plan_id,p_tenant_id,p_legal_entity_id,r.id,r.version+1,encode(extensions.digest(p_payload::text,'sha256'),'hex'),projects.text(p_payload->'terms',2000),reason,auth.uid());
    for x in select value from jsonb_array_elements(p_payload->'tasks') loop
-    if jsonb_typeof(x) is distinct from 'object' or exists(select 1 from jsonb_object_keys(x) k where k<>all(array['id','name','start_date','end_date_exclusive','planned_seconds','dependencies']))
+    if jsonb_typeof(x) is distinct from 'object' or exists(select 1 from jsonb_object_keys(x) k where k<>all(array['id','name','owner_id','start_date','end_date_exclusive','planned_seconds','dependencies']))
      or jsonb_typeof(x->'planned_seconds') is distinct from 'number' or coalesce(x->>'planned_seconds','') !~ '^(0|[1-9][0-9]{0,7})$'
      or jsonb_typeof(x->'dependencies') is distinct from 'array' or jsonb_array_length(x->'dependencies')>50
      or (x->>'start_date')::date<r.start_date or (x->>'end_date_exclusive')::date>r.end_date_exclusive
      or (x->>'planned_seconds')::bigint>((x->>'end_date_exclusive')::date-(x->>'start_date')::date)::bigint*86400 then
      raise exception using errcode='22023',message='PROJECT_TASK_INVALID';end if;
+    resolved:=projects.task_owner_validate(p_tenant_id,p_legal_entity_id,p_branch_id,(x->>'owner_id')::uuid,
+     (x->>'start_date')::date,(x->>'end_date_exclusive')::date);
     insert into projects.tasks values(p_tenant_id,p_legal_entity_id,r.id,plan_id,(x->>'id')::uuid,projects.text(x->'name',160),
+     (x->>'owner_id')::uuid,resolved->>'name',
      (x->>'start_date')::date,(x->>'end_date_exclusive')::date,(x->>'planned_seconds')::bigint);
    end loop;
    for x in select value from jsonb_array_elements(p_payload->'tasks') loop
@@ -340,6 +349,10 @@ declare act text:=p_payload->>'action';cap text;id uuid;project_id uuid;employee
     raise exception using errcode='55000',message='PROJECT_PLAN_STALE';end if;
    if p.prepared_by=auth.uid() then raise exception using errcode='42501',message='PROJECT_INDEPENDENT_APPROVAL_REQUIRED';end if;
    if act='approve_plan' then
+    for x in select to_jsonb(q) from projects.tasks q where q.plan_id=p.id order by q.owner_id,q.id loop
+     perform projects.task_owner_validate(p_tenant_id,p_legal_entity_id,p_branch_id,(x->>'owner_id')::uuid,
+      (x->>'start_date')::date,(x->>'end_date_exclusive')::date);
+    end loop;
     for slot in select * from projects.resource_slots q where q.plan_id=p.id order by q.employee_id,q.id loop
      perform projects.slot_validate(p_tenant_id,p_legal_entity_id,p_branch_id,slot.employee_id,slot.calendar_version_id,
       slot.start_local,slot.end_local,slot.start_offset_seconds,slot.end_offset_seconds);
@@ -370,6 +383,9 @@ declare act text:=p_payload->>'action';cap text;id uuid;project_id uuid;employee
    values(p_tenant_id,p_legal_entity_id,r.id,r.current_plan_id,task_id,progress,r.version+1,reason,auth.uid());
    update projects.register set version=version+1 where register.id=r.id;
   elsif act='close' then
+   if to_regprocedure('projects.milestone_closure_guard(uuid,uuid,uuid)') is not null then
+    execute 'select projects.milestone_closure_guard($1,$2,$3)' using p_tenant_id,p_legal_entity_id,r.id;
+   end if;
    perform projects.finance_closure_guard(p_tenant_id,p_legal_entity_id,r.id);
    if r.current_plan_id is null or exists(select 1 from projects.plans where plans.project_id=r.id and status='pending')
     or exists(select 1 from projects.tasks q where q.plan_id=r.current_plan_id and coalesce((select z.progress from projects.task_progress z
@@ -551,6 +567,18 @@ declare q numeric;r numeric;divisor numeric;begin
  if r*2>divisor or(r*2=divisor and mod(q,2)=1) then q:=q+1;end if;
  return sign(n)*q*power(10::numeric,6-p_precision)/1000000;
 end $$;
+create function projects.task_owner_validate(t uuid,e uuid,b uuid,employee uuid,p_start date,p_end date)
+returns jsonb language plpgsql stable set search_path='' as $$declare name text;begin
+ if employee is null or p_start is null or p_end is null or p_end<=p_start then
+  raise exception using errcode='22023',message='PROJECT_TASK_OWNER_REQUIRED';end if;
+ select p.display_name into name from people.employees p where p.tenant_id=t and p.legal_entity_id=e and p.id=employee
+ and exists(select 1 from people.employment_assignments a join people.employment_spells s on s.id=a.spell_id
+  where a.tenant_id=t and a.legal_entity_id=e and a.branch_id=b and a.employee_id=employee
+  and daterange(a.start_date,a.end_date_exclusive,'[)') @> daterange(p_start,p_end,'[)')
+  and daterange(s.start_date,s.end_date_exclusive,'[)') @> daterange(p_start,p_end,'[)'));
+ if name is null then raise exception using errcode='55000',message='PROJECT_TASK_OWNER_COVERAGE_REQUIRED';end if;
+ return jsonb_build_object('id',employee,'name',name);
+end $$;
 create function projects.slot_validate(t uuid,e uuid,b uuid,employee uuid,calendar uuid,start_local timestamp,end_local timestamp,
  start_offset integer,end_offset integer) returns jsonb language plpgsql security definer set search_path='' as $$
 declare c people.work_calendar_versions%rowtype;s timestamptz;z timestamptz;d date;pattern jsonb;x jsonb;start_min integer;end_min integer;matched boolean:=false;begin
@@ -627,7 +655,7 @@ declare r projects.register%rowtype;rows jsonb;plan uuid;begin
    'decision',(select jsonb_build_object('decision',d.decision,'digest',d.digest,'reason',d.reason,'decided_by',d.decided_by,'decided_at',d.decided_at) from projects.plan_decisions d where d.plan_id=q.id)) order by q.id),'[]') into rows
    from(select * from projects.plans where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and project_id=r.id and(p_parent_id is null or id=p_parent_id) and(p_after is null or id>p_after) order by id limit 50) q;
  elsif p_kind='tasks' then
-  select coalesce(jsonb_agg(jsonb_build_object('id',q.id,'project_id',q.project_id,'plan_id',q.plan_id,'name',q.name,'start_date',q.start_date,
+  select coalesce(jsonb_agg(jsonb_build_object('id',q.id,'project_id',q.project_id,'plan_id',q.plan_id,'name',q.name,'owner_id',q.owner_id,'owner_name',q.owner_name,'start_date',q.start_date,
    'end_date_exclusive',q.end_date_exclusive,'planned_seconds',q.planned_seconds,'dependencies',(select coalesce(jsonb_agg(d.prerequisite_id order by d.prerequisite_id),'[]') from projects.dependencies d where d.plan_id=q.plan_id and d.task_id=q.id),
    'progress',coalesce((select z.progress from projects.task_progress z where z.project_id=r.id and z.plan_id=q.plan_id and z.task_id=q.id order by z.project_version desc limit 1),0)) order by q.id),'[]') into rows
    from(select * from projects.tasks where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and project_id=r.id and plan_id=plan and(p_after is null or id>p_after) order by id limit 50) q;

@@ -165,6 +165,7 @@ final class PayrollCorrectionController extends ChangeNotifier {
     if (busy || _disposed || denied) {
       return;
     }
+    final epoch = _epoch;
     if (local != null && !local!.expiresAt.isAfter(drafts.clock())) {
       form = null;
       local = null;
@@ -173,13 +174,18 @@ final class PayrollCorrectionController extends ChangeNotifier {
       original = null;
       sources = [];
       banks = [];
+      creditChoices.clear();
+      creditCursors.clear();
       message = 'Private correction fields expired. Resolve its encrypted minimal receipt.';
       try {
-        recovery = await drafts.recovery(scope);
+        final saved = await drafts.recovery(scope);
+        if (!_current(epoch)) {
+          return;
+        }
+        recovery = saved;
       } catch (_) {}
       _notify();
     }
-    final epoch = _epoch;
     try {
       await repository.authorize(scope, 'people.payroll.view');
     } catch (_) {
@@ -564,6 +570,8 @@ final class PayrollCorrectionController extends ChangeNotifier {
       local = null;
       sources = [];
       banks = [];
+      creditChoices.clear();
+      creditCursors.clear();
       throw const DomainError(
         code: 'PRIVATE_DRAFT_EXPIRED',
         message: 'Private correction fields expired. Resolve the minimal encrypted receipt.',
@@ -672,15 +680,37 @@ final class PayrollCorrectionController extends ChangeNotifier {
             value.form['id'] as String,
             'calculation',
           );
-          if (!_current(e)) return;
+          if (!_current(e)) {
+            return;
+          }
           selected = workforceMap(data['correction']);
           final page = await repository.correctionSources(
             scope,
             selected!['original_calculation_id'] as String,
           );
-          if (!_current(e)) return;
+          if (!_current(e)) {
+            return;
+          }
           sources = page.items;
           sourceCursor = page.nextCursor;
+        } else if (value.kind == PayrollCorrectionCommandKind.settlement) {
+          final data = await repository.correctionDetail(
+            scope,
+            value.form['correction_id'] as String,
+            value.action == 'record' ? 'balances' : 'settlements',
+          );
+          if (!_current(e)) {
+            return;
+          }
+          selected = workforceMap(data['correction']);
+          detail = data;
+          if (value.action == 'record') {
+            final page = await base.accounts(scope, 'bank');
+            if (!_current(e)) {
+              return;
+            }
+            banks = page.items;
+          }
         }
       });
   Future<void> compare() => _run((e) async {
@@ -718,10 +748,67 @@ final class PayrollCorrectionController extends ChangeNotifier {
     final data = await repository.correctionDetail(
       scope,
       (form!['correction_id'] ?? form!['id']) as String,
-      'calculation',
+      kind == PayrollCorrectionCommandKind.settlement
+          ? action == 'record'
+                ? 'balances'
+                : 'settlements'
+          : 'calculation',
     );
-    if (_current(e)) {
+    if (!_current(e)) {
+      return;
+    }
+    if (kind == PayrollCorrectionCommandKind.settlement) {
+      detail = data;
+      if (action == 'record') {
+        final page = await base.accounts(scope, 'bank');
+        if (!_current(e)) {
+          return;
+        }
+        banks = page.items;
+        comparison = data;
+      } else {
+        var all = (data['items'] as List).map(workforceMap).toList();
+        String? after = data['next_cursor'] as String?;
+        while (!all.any((row) => row['id'] == form!['id']) && after != null) {
+          final page = await repository.correctionDetail(
+            scope,
+            form!['correction_id'] as String,
+            'settlements',
+            after: after,
+          );
+          if (!_current(e)) {
+            return;
+          }
+          all = [...all, ...(page['items'] as List).map(workforceMap)];
+          after = page['next_cursor'] as String?;
+          if (all.length > 2000) {
+            throw const DomainError(
+              code: 'PAGE_LIMIT',
+              message: 'Settlement comparison exceeds its bound.',
+            );
+          }
+        }
+        comparison = {
+          ...data,
+          'settlement': all
+              .where((row) => row['id'] == form!['id'])
+              .firstOrNull,
+        };
+      }
+    } else {
       comparison = data;
+      if (action == 'reverse') {
+        final current = workforceMap(data['correction']);
+        final page = await repository.correctionSources(
+          scope,
+          current['original_calculation_id'] as String,
+        );
+        if (!_current(e)) {
+          return;
+        }
+        sources = page.items;
+        sourceCursor = page.nextCursor;
+      }
     }
   });
   Future<void> acceptComparison() => _run((e) async {
@@ -765,14 +852,53 @@ final class PayrollCorrectionController extends ChangeNotifier {
     } else {
       final current = workforceMap(comparison!['correction']);
       selected = current;
-      if (!canAction(action)) {
-        throw const DomainError(
-          code: 'STATE_CONFLICT',
-          message: 'Choose a current action after comparison.',
-        );
+      if (kind == PayrollCorrectionCommandKind.settlement) {
+        if (action == 'record') {
+          if (!canAction('record')) {
+            throw const DomainError(
+              code: 'STATE_CONFLICT',
+              message: 'The current correction cannot accept a settlement.',
+            );
+          }
+          final bank = banks
+              .where((row) => row['id'] == form!['bank_id'])
+              .firstOrNull;
+          if (bank == null) {
+            throw const DomainError(
+              code: 'VERSION_CONFLICT',
+              message: 'Select a current scoped bank account.',
+            );
+          }
+          expectedVersion = 0;
+          form = {...form!, 'bank_version': bank['version']};
+          detail = comparison;
+        } else {
+          final settlement = comparison!['settlement'] == null
+              ? null
+              : workforceMap(comparison!['settlement']);
+          if (!canAction('settlement_reverse', settlement: settlement)) {
+            throw const DomainError(
+              code: 'STATE_CONFLICT',
+              message: 'Choose a current recorded settlement after comparison.',
+            );
+          }
+          expectedVersion = settlement!['version'] as int;
+        }
+      } else {
+        if (!canAction(action)) {
+          throw const DomainError(
+            code: 'STATE_CONFLICT',
+            message: 'Choose a current action after comparison.',
+          );
+        }
+        expectedVersion = current['version'] as int;
+        form = {
+          ...form!,
+          'digest': current['digest'],
+          if (action == 'reverse')
+            'current_billing_impacts': <Map<String, Object?>>[],
+        };
       }
-      expectedVersion = current['version'] as int;
-      form = {...form!, 'digest': current['digest']};
     }
     await drafts.save(
       scope,

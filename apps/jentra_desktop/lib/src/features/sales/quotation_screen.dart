@@ -114,11 +114,16 @@ class _Workspace extends ConsumerStatefulWidget {
 
 class _WorkspaceState extends ConsumerState<_Workspace> {
   final _search = TextEditingController();
+  final _dialogs = <QuotationDialogAccess>{};
   int _tab = 0;
   QuotationWorkspaceController get controller =>
       ref.read(quotationWorkspaceProvider.notifier);
   @override
   void dispose() {
+    for (final access in _dialogs) {
+      access.denyReadAccess();
+    }
+    _dialogs.clear();
     _search.dispose();
     super.dispose();
   }
@@ -799,79 +804,113 @@ class _WorkspaceState extends ConsumerState<_Workspace> {
       ],
     ),
   );
-  Future<void> _action(BuildContext context, String action) async {
-    final origin = widget.state;
-    final reason = await showScopedQuotationDialog<String>(
-      context,
-      scope: origin.context,
-      capabilities: origin.capabilities,
-      builder: (_) => _ActionDialog(action: action),
+  Future<void> _withDialogAccess(
+    BuildContext context,
+    Future<void> Function(QuotationDialogAccess access, int epoch) work, {
+    bool requireOnline = true,
+  }) async {
+    final access = QuotationDialogAccess(context);
+    final epoch = access.readAccessEpoch;
+    access.observeScope(
+      container: ProviderScope.containerOf(context, listen: false),
+      scope: widget.state.context,
+      capabilities: widget.state.capabilities,
+      requireOnline: requireOnline,
     );
-    if (!mounted ||
-        reason == null ||
-        origin.context != widget.state.context ||
-        origin.detail?.quotation.id != widget.state.detail?.quotation.id ||
-        origin.detail?.quotation.version !=
-            widget.state.detail?.quotation.version) {
-      return;
-    }
-    if (action == 'revision') {
-      await controller.startRevision(reason);
-      setState(() => _tab = 0);
-    } else if (action == 'approve' || action == 'reject') {
-      await controller.decide(
-        approve: action == 'approve',
-        reason: reason.isEmpty ? null : reason,
-      );
-    } else {
-      await controller.transition(
-        action,
-        reason: reason.isEmpty ? null : reason,
-      );
+    _dialogs.add(access);
+    try {
+      await work(access, epoch);
+    } finally {
+      _dialogs.remove(access);
+      access.dispose();
     }
   }
 
-  Future<void> _discard(BuildContext context) async {
-    final origin = widget.state;
-    final confirmed = await showScopedQuotationDialog<bool>(
-      context,
-      scope: origin.context,
-      capabilities: origin.capabilities,
-      requireOnline: false,
-      builder: (context) => QuotationScopeGuard(
-        scope: origin.context,
-        capabilities: origin.capabilities,
-        child: AlertDialog(
-          title: const Text('Discard local edits?'),
-          content: const Text(
-            'The saved server quotation will remain available. Local changes in this editor will be removed.',
+  Future<void> _action(BuildContext context, String action) =>
+      _withDialogAccess(context, (access, epoch) async {
+        final origin = widget.state;
+        final reason = await showScopedQuotationDialog<String>(
+          context,
+          scope: origin.context,
+          capabilities: origin.capabilities,
+          originAccess: access,
+          builder: (_) => _ActionDialog(action: action),
+        );
+        if (!mounted ||
+            !access.currentRead(epoch) ||
+            reason == null ||
+            origin.context != widget.state.context ||
+            origin.detail?.quotation.id != widget.state.detail?.quotation.id ||
+            origin.detail?.quotation.version !=
+                widget.state.detail?.quotation.version) {
+          return;
+        }
+        if (action == 'revision') {
+          await controller.startRevision(reason);
+          if (mounted && access.currentRead(epoch)) {
+            setState(() => _tab = 0);
+          }
+        } else if (action == 'approve' || action == 'reject') {
+          await controller.decide(
+            approve: action == 'approve',
+            reason: reason.isEmpty ? null : reason,
+          );
+        } else {
+          await controller.transition(
+            action,
+            reason: reason.isEmpty ? null : reason,
+          );
+        }
+      });
+
+  Future<void> _discard(BuildContext context) =>
+      _withDialogAccess(context, (access, epoch) async {
+        final origin = widget.state;
+        final confirmed = await showScopedQuotationDialog<bool>(
+          context,
+          scope: origin.context,
+          capabilities: origin.capabilities,
+          requireOnline: false,
+          originAccess: access,
+          builder: (context) => QuotationScopeGuard(
+            scope: origin.context,
+            capabilities: origin.capabilities,
+            child: AlertDialog(
+              title: const Text('Discard local edits?'),
+              content: const Text(
+                'The saved server quotation will remain available. Local changes in this editor will be removed.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('Keep editing'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('Discard local edits'),
+                ),
+              ],
+            ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Keep editing'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Discard local edits'),
-            ),
-          ],
-        ),
-      ),
-    );
-    if (mounted &&
-        confirmed == true &&
-        origin.context == widget.state.context &&
-        origin.slot == widget.state.slot) {
-      await controller.discardEdits();
-    }
-  }
+        );
+        if (mounted &&
+            access.currentRead(epoch) &&
+            confirmed == true &&
+            origin.context == widget.state.context &&
+            origin.slot == widget.state.slot) {
+          await controller.discardEdits();
+        }
+      }, requireOnline: false);
 
-  Future<void> _conflict(BuildContext context) async {
+  Future<void> _conflict(BuildContext context) => _withDialogAccess(context, (
+    access,
+    epoch,
+  ) async {
     final origin = widget.state;
     await controller.inspectConflict();
     if (!context.mounted ||
         !mounted ||
+        !access.currentRead(epoch) ||
         origin.context != widget.state.context) {
       return;
     }
@@ -882,6 +921,7 @@ class _WorkspaceState extends ConsumerState<_Workspace> {
       scope: origin.context,
       capabilities: origin.capabilities,
       requireOnline: false,
+      originAccess: access,
       builder: (context) => QuotationScopeGuard(
         scope: origin.context,
         capabilities: origin.capabilities,
@@ -925,12 +965,13 @@ class _WorkspaceState extends ConsumerState<_Workspace> {
       ),
     );
     if (mounted &&
+        access.currentRead(epoch) &&
         keep != null &&
         origin.context == widget.state.context &&
         origin.slot == widget.state.slot) {
       await controller.resolveConflict(keepLocal: keep);
     }
-  }
+  }, requireOnline: false);
 }
 
 class _ActionDialog extends StatefulWidget {

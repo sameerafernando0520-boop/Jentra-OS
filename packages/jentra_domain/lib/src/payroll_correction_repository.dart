@@ -165,6 +165,7 @@ final class PayrollCorrectionCommands {
                   (impact['breaks'] as List).length > 100) {
                 throw const FormatException('Break bound is invalid.');
               }
+              _breaks(impact['breaks']);
             } else if (seconds != 0) {
               throw const FormatException(
                 'Cancelled leave has no payroll eligibility.',
@@ -240,6 +241,7 @@ final class PayrollCorrectionCommands {
                       'Allocated break bound is invalid.',
                     );
                   }
+                  _breaks(change['breaks']);
                 }
                 if (change['billing_credit_line_ids'] != null) {
                   final credits = change['billing_credit_line_ids'] as List;
@@ -350,6 +352,28 @@ final class PayrollCorrectionCommands {
     if (credits.length > 50 ||
         credits.map(calendarUuid).toSet().length != credits.length) {
       throw const FormatException('Current posted credit identity is invalid.');
+    }
+  }
+
+  static void _breaks(Object? value) {
+    for (final item in value as List) {
+      final row = workforceMap(item);
+      calendarFields(row, {'start_utc', 'end_utc'});
+      for (final key in ['start_utc', 'end_utc']) {
+        if (row[key] is! String ||
+            !RegExp(
+              r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})$',
+            ).hasMatch(row[key] as String)) {
+          throw const FormatException(
+            'Select whole-second break instants with explicit UTC offsets.',
+          );
+        }
+      }
+      if (!DateTime.parse(
+        row['end_utc'] as String,
+      ).isAfter(DateTime.parse(row['start_utc'] as String))) {
+        throw const FormatException('Break end must follow its start.');
+      }
     }
   }
 }

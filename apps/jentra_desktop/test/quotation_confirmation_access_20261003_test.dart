@@ -15,109 +15,141 @@ import 'quotation_reference_access_20261003_test.dart' show PopObserver;
 
 void main() {
   setUpAll(_fonts);
-  for (final change in ['connection', 'capabilities', 'current']) {
-    testWidgets('quotation reason root-pop $change keeps original authority', (
-      tester,
-    ) async {
-      await tester.binding.setSurfaceSize(const Size(1440, 1000));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      final db = JentraLocalDatabase(NativeDatabase.memory());
-      final store = QuotationDraftStore(
-        EncryptedDraftRepository(db, DraftCipher(keyStore: q.MemoryKeys())),
-      );
-      final repository = q.FakeQuotations()
-        ..detail = q.detail(status: 'pending_approval');
-      final observer = PopObserver();
-      AsyncValue<ConnectivityState> connection = const AsyncData(
-        ConnectivityState.online,
-      );
-      AsyncValue<Set<String>> capabilities = AsyncData(q.permissions);
-      overrides() => [
-        activeTenantContextProvider.overrideWithValue(q.scope),
-        businessCapabilitiesProvider.overrideWithValue(capabilities),
-        connectivityStateProvider.overrideWithValue(connection),
-        quotationWorkspaceRepositoryProvider.overrideWithValue(repository),
-        leadToCashRepositoryProvider.overrideWithValue(repository),
-        quotationDraftStoreProvider.overrideWithValue(store),
-      ];
-      final container = ProviderContainer(
-        retry: (_, _) => null,
-        overrides: overrides(),
-      );
-      final connectionSubscription = container.listen(
-        connectivityStateProvider,
-        (_, _) {},
-        fireImmediately: true,
-      );
-      final capabilitySubscription = container.listen(
-        businessCapabilitiesProvider,
-        (_, _) {},
-        fireImmediately: true,
-      );
-      void publish() {
-        container.updateOverrides(overrides());
-        container.read(connectivityStateProvider);
-        container.read(businessCapabilitiesProvider);
-      }
-
-      addTearDown(() async {
-        await tester.pumpWidget(const SizedBox.shrink());
-        connectionSubscription.close();
-        capabilitySubscription.close();
-        container.dispose();
-        await db.close();
-      });
-      container.read(connectivityStateProvider);
-      await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: container,
-          child: MaterialApp(
-            theme: JentraTheme.light(),
-            navigatorObservers: [observer],
-            home: const Scaffold(body: QuotationScreen()),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      await tester.runAsync(() async {
-        await container.read(quotationWorkspaceProvider.future);
-        await container
-            .read(quotationWorkspaceProvider.notifier)
-            .selectQuotation(q.quoteId);
-      });
-      await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('Reject'));
-      await tester.tap(find.text('Reject'));
-      await tester.pumpAndSettle();
-      await tester.enterText(
-        find.byKey(const Key('quotation-action-reason')),
-        'Original governed reason',
-      );
-      await tester.pump();
-      observer.change = () {
-        if (change == 'connection') {
-          connection = const AsyncData(ConnectivityState.offline);
-          publish();
-          connection = const AsyncData(ConnectivityState.online);
-          publish();
-        } else if (change == 'capabilities') {
-          // Deliberately reproduce Riverpod's retained-data uncertain state.
-          // ignore: invalid_use_of_internal_member
-          capabilities = const AsyncLoading<Set<String>>().copyWithPrevious(
-            AsyncData(q.permissions),
+  for (final (change, depth) in [
+    ('connection', 0),
+    ('capabilities', 0),
+    ('current', 0),
+    ('connection', 2),
+    ('capabilities', 2),
+    ('current', 2),
+  ]) {
+    testWidgets(
+      'quotation reason root-pop $change microtask depth $depth keeps original authority',
+      (tester) async {
+        await tester.binding.setSurfaceSize(const Size(1440, 1000));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        final db = JentraLocalDatabase(NativeDatabase.memory());
+        final store = QuotationDraftStore(
+          EncryptedDraftRepository(db, DraftCipher(keyStore: q.MemoryKeys())),
+        );
+        final repository = q.FakeQuotations()
+          ..detail = q.detail(status: 'pending_approval');
+        final events = <String>[];
+        repository.onCommand = (_) async {
+          events.add('command transmitted');
+          return CommandResult.success(
+            requestId: 'observed',
+            entity: q.quotation(),
           );
-          publish();
-          capabilities = AsyncData(q.permissions);
-          publish();
+        };
+        final observer = PopObserver();
+        AsyncValue<ConnectivityState> connection = const AsyncData(
+          ConnectivityState.online,
+        );
+        AsyncValue<Set<String>> capabilities = AsyncData(q.permissions);
+        overrides() => [
+          activeTenantContextProvider.overrideWithValue(q.scope),
+          businessCapabilitiesProvider.overrideWithValue(capabilities),
+          connectivityStateProvider.overrideWithValue(connection),
+          quotationWorkspaceRepositoryProvider.overrideWithValue(repository),
+          leadToCashRepositoryProvider.overrideWithValue(repository),
+          quotationDraftStoreProvider.overrideWithValue(store),
+        ];
+        final container = ProviderContainer(
+          retry: (_, _) => null,
+          overrides: overrides(),
+        );
+        final connectionSubscription = container.listen(
+          connectivityStateProvider,
+          (_, _) {},
+          fireImmediately: true,
+        );
+        final capabilitySubscription = container.listen(
+          businessCapabilitiesProvider,
+          (_, _) {},
+          fireImmediately: true,
+        );
+        void publish() {
+          container.updateOverrides(overrides());
+          container.read(connectivityStateProvider);
+          container.read(businessCapabilitiesProvider);
         }
-      };
-      await tester.tap(find.widgetWithText(FilledButton, 'Confirm reject'));
-      await tester.runAsync(
-        () => Future<void>.delayed(const Duration(milliseconds: 100)),
-      );
-      await tester.pumpAndSettle();
-      expect(repository.commands.length, change == 'current' ? 1 : 0);
-    });
+
+        addTearDown(() async {
+          await tester.pumpWidget(const SizedBox.shrink());
+          connectionSubscription.close();
+          capabilitySubscription.close();
+          container.dispose();
+          await db.close();
+        });
+        container.read(connectivityStateProvider);
+        await tester.pumpWidget(
+          UncontrolledProviderScope(
+            container: container,
+            child: MaterialApp(
+              theme: JentraTheme.light(),
+              navigatorObservers: [observer],
+              home: const Scaffold(body: QuotationScreen()),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.runAsync(() async {
+          await container.read(quotationWorkspaceProvider.future);
+          await container
+              .read(quotationWorkspaceProvider.notifier)
+              .selectQuotation(q.quoteId);
+        });
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(find.text('Reject'));
+        await tester.tap(find.text('Reject'));
+        await tester.pumpAndSettle();
+        await tester.enterText(
+          find.byKey(const Key('quotation-action-reason')),
+          'Original governed reason',
+        );
+        await tester.pump();
+        void changeDuringContinuation() {
+          events.add('loss begins');
+          if (change == 'connection') {
+            connection = const AsyncData(ConnectivityState.offline);
+            publish();
+            events.add('loss published');
+            connection = const AsyncData(ConnectivityState.online);
+            publish();
+            events.add('restoration published');
+          } else if (change == 'capabilities') {
+            // Deliberately reproduce Riverpod's retained-data uncertain state.
+            // ignore: invalid_use_of_internal_member
+            capabilities = const AsyncLoading<Set<String>>().copyWithPrevious(
+              AsyncData(q.permissions),
+            );
+            publish();
+            capabilities = AsyncData(q.permissions);
+            publish();
+          }
+        }
+
+        void scheduleChange(int remaining) {
+          if (remaining == 0) {
+            changeDuringContinuation();
+          } else {
+            Future<void>.microtask(() => scheduleChange(remaining - 1));
+          }
+        }
+
+        observer.change = () => scheduleChange(depth);
+        await tester.tap(find.widgetWithText(FilledButton, 'Confirm reject'));
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 100)),
+        );
+        await tester.pumpAndSettle();
+        debugPrint(
+          'Confirmation timeline change=$change depth=$depth: ${events.join(' -> ')}',
+        );
+        expect(repository.commands.length, change == 'current' ? 1 : 0);
+      },
+    );
   }
 }
 

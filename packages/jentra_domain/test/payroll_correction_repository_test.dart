@@ -81,6 +81,36 @@ void main() {
       throwsFormatException,
     );
   });
+  test('geometry breaks preserve exact whole-second ordered UTC evidence', () {
+    final p = form();
+    final impact = ((p['replacements'] as List).single as Map)['impact'] as Map;
+    impact['breaks'] = [
+      {'start_utc': '2026-10-01T04:00:00Z', 'end_utc': '2026-10-01T04:15:00Z'},
+    ];
+    PayrollCorrectionCommands.validate(
+      PayrollCorrectionCommandKind.correction,
+      p,
+      0,
+    );
+    (impact['breaks'] as List).single['start_utc'] = '2026-10-01T04:00:00.5Z';
+    expect(
+      () => PayrollCorrectionCommands.validate(
+        PayrollCorrectionCommandKind.correction,
+        p,
+        0,
+      ),
+      throwsFormatException,
+    );
+    (impact['breaks'] as List).single['start_utc'] = '2026-10-01T04:30:00Z';
+    expect(
+      () => PayrollCorrectionCommands.validate(
+        PayrollCorrectionCommandKind.correction,
+        p,
+        0,
+      ),
+      throwsFormatException,
+    );
+  });
   test(
     'leave cancellation cannot retain pay and allocations retain unique identities',
     () {

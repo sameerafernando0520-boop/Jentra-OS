@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { digest, verifySources } from './prepare-target-verification.mjs';
+import { digest, reviewedSchema, verifySources } from './prepare-target-verification.mjs';
 import { approvedContext, ledgerSql, readDatabase } from './run-target-fixture-generator.mjs';
 import { racePostflightSql } from './prepare-target-race-invariants.mjs';
 import { assertRaceClass, assertRacePostflightBindings } from './target_review_guards.mjs';
@@ -19,7 +19,7 @@ const contained = filename => {
 export function liveRpcSourceSql(config) {
   const calls = config.workloads?.flatMap(w => w.calls) ?? config.races?.flatMap(r => [...r.commands, ...r.invariants]);
   if (!calls?.length) throw Error('Concrete calls required');
-  const schema = JSON.parse(fs.readFileSync(path.join(repo, 'docs/verification/remaining-wave3/schema-after-45-20260930.json'), 'utf8'));
+  const schema = reviewedSchema(config.candidate_review);
   const expected = {};
   for (const name of new Set(calls.flatMap(c => c.aging?[c.rpc,'control_reconciliation_report_page']:[c.rpc]))) {
     if (!/^[a-z][a-z0-9_]*$/.test(name ?? '')) throw Error('Reviewed RPC identifier required');
@@ -56,9 +56,11 @@ if (main) {
   const binding = JSON.parse(fs.readFileSync(contained(filename), 'utf8'));
   if (!['load', 'races'].includes(binding.kind)) throw Error('Choose the reviewed load or independent-race run');
   const fixture = JSON.parse(fs.readFileSync(contained(binding.fixture_plan_path), 'utf8'));
+  if(fixture.candidate_review?.candidate_count!==46)throw Error('Current verification wrapper requires the explicit complete46 fixture selection.');
   verifySources(fixture);
   const config = JSON.parse(fs.readFileSync(contained(binding.prepared_config_path), 'utf8'));
   if (config.project_id !== fixture.project_id || config.url !== fixture.url) throw Error('Fixture and verification target differ');
+  if(digest(config.candidate_review)!==digest(fixture.candidate_review))throw Error('Fixture and verification candidate selections differ.');
   if (binding.kind === 'races') for (const race of config.races ?? []) assertRaceClass(race.kind, race.commands);
   const rpcSources = liveRpcSourceSql(config);
   if (!process.argv.includes('--execute')) {

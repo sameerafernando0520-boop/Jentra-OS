@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 import { assertRaceClass } from './target_review_guards.mjs';
 import { assertOrdinaryReportBinding, ordinaryReportMetrics } from './target_review_aging.mjs';
+import { reviewedCandidateSelection } from './target_review_selection.mjs';
 
 // This compiler performs no network calls. Planned counts are never installed counts.
 export const forbiddenProject = 'xpdoufauvrbdmxgngetv';
@@ -30,6 +31,8 @@ const sourceFiles = [orderPath, schemaPath, fixtureQueryPath,
   'tools/wave3/run-reviewed-target-verification.mjs',
   'tools/wave3/target_review_guards.mjs',
   'tools/wave3/target_review_aging.mjs',
+  'tools/wave3/target_review_selection.mjs',
+  'tools/wave3/strict-candidate-evidence.mjs',
   'docs/blueprint/57_WAVE3_TARGET_VERIFICATION_CONTRACT.md',
   'packages/jentra_platform/lib/src/wave3_observability_allowlist.dart'];
 
@@ -85,9 +88,11 @@ export function assertTarget(config) {
   if (!Number.isSafeInteger(planned) || planned > 10000000) throw Error('Approved fixture budget is at most ten million new receipts');
   return planned;
 }
-export function reviewedSources() {
-  const order = JSON.parse(fs.readFileSync(path.join(repo, orderPath), 'utf8'));
-  const sources = Object.fromEntries([...new Set([...sourceFiles, ...order.candidates.map(c => c.path)])]
+export function reviewedSchema(selection) { return reviewedCandidateSelection(selection).schema; }
+export function reviewedSources(selection) {
+  const selected=reviewedCandidateSelection(selection),order=selected.manifest;
+  const common=sourceFiles.filter(file=>file!==orderPath&&file!==schemaPath);
+  const sources = Object.fromEntries([...new Set([...common, ...selected.artifact_paths, ...order.candidates.map(c => c.path)])]
     .map(filename => [filename, digest(fs.readFileSync(path.join(repo, filename), 'utf8'))]));
   for (const c of order.candidates) if (sources[c.path] !== c.sha256)
     throw Error('Candidate migration differs from the reviewed dependency manifest: ' + c.path);
@@ -116,7 +121,7 @@ export function receiptCall(config, lane, ordinal) {
     { pointer: '/entity/net_amount', equals: amountText(lane.reviewed_value_per_receipt) }] };
 }
 export function fixturePlan(config) {
-  const planned = assertTarget(config), sources = reviewedSources();
+  const planned = assertTarget(config), sources = reviewedSources(config.candidate_review);
   return { ...config, source_hashes: sources, source_bundle_sha256: digest(sources),
     fixture_counts_query_sha256: sources[fixtureQueryPath], planned_receipts: planned,
     planned_minimum_journal_lines: planned * 2, executed: false,
@@ -133,7 +138,7 @@ export function foundationSql(config, dimensions = { tenants: 500, entities: 10,
   for (const n of Object.values(dimensions)) if (!Number.isSafeInteger(n) || n < 1) throw Error('Positive bounded dimensions required');
   if (tenants > 500 || entities > 10 || warehouses > 25 || largeProducts > 100000) throw Error('Foundation dimensions exceed the reviewed target');
   const seed = config.seed.replaceAll("'", "''"), actor = config.actor_id;
-  const schema = JSON.parse(fs.readFileSync(path.join(repo, schemaPath), 'utf8'));
+  const schema = reviewedSchema(config.candidate_review);
   const columns = {
     'core.tenants': ['id', 'name', 'slug', 'created_by'],
     'core.legal_entities': ['id', 'tenant_id', 'name', 'code', 'created_by'],
@@ -231,6 +236,7 @@ export function workloadConfig(input) {
     actor_id: target.actor_id, scope, fixture_counts: input.measured_fixture_counts,
     fixture_counts_query_sha256: digest(fs.readFileSync(path.join(repo, fixtureQueryPath), 'utf8')),
     fixture_source_sha256: digest(fixturePlan(target)), environment: input.environment, workloads,
+    ...(target.candidate_review?{candidate_review:target.candidate_review}:{}),
     evidence_path: input.evidence_path, approval_status: 'not_requested', executed: false };
 }
 export function raceConfig(input) {
@@ -239,7 +245,7 @@ export function raceConfig(input) {
     throw Error('Exact race scope required');
   if (!input.actors?.every(x => uuidPattern.test(x)) || input.actors.length !== 2 || input.actors[0] === input.actors[1]) throw Error('Two distinct existing actors required');
   if (input.races?.length !== 9 || raceKinds.some(k => input.races.filter(r => r.kind === k).length !== 1)) throw Error('Nine concrete race bindings required');
-  const schema = JSON.parse(fs.readFileSync(path.join(repo, schemaPath), 'utf8'));
+  const schema = reviewedSchema(input.fixture.candidate_review);
   const races = input.races.map(r => {
     if (r.commands?.length !== 2 || !r.invariants?.length || !Number.isInteger(r.expected_successes)) throw Error('Two commands and exact invariants required');
     assertRaceClass(r.kind, r.commands);
@@ -251,10 +257,13 @@ export function raceConfig(input) {
   });
   return { synthetic: true, is_production: false, project_id: input.fixture.project_id,
     url: input.fixture.url, actors: input.actors, scope: input.scope, races,
+    ...(input.fixture.candidate_review?{candidate_review:input.fixture.candidate_review}:{}),
     evidence_path: input.evidence_path, approval_status: 'not_requested', executed: false };
 }
 export function verifySources(plan) {
   if (!plan.source_hashes || !hashPattern.test(plan.source_bundle_sha256 ?? '') || digest(plan.source_hashes) !== plan.source_bundle_sha256) throw Error('Reviewed source bundle required');
+  const required=reviewedSources(plan.candidate_review);
+  if(digest(Object.keys(plan.source_hashes).sort())!==digest(Object.keys(required).sort()))throw Error('Complete explicitly selected candidate/artifact source bundle required.');
   for (const [filename, expected] of Object.entries(plan.source_hashes)) {
     const resolved = path.resolve(repo, filename);
     if (!resolved.startsWith(repo + path.sep) || !hashPattern.test(expected) || digest(fs.readFileSync(resolved, 'utf8')) !== expected)
@@ -269,6 +278,7 @@ if (main) {
   if (!inputFile || outputIndex < 0 || !process.argv[outputIndex + 1])
     throw Error('Usage: node tools/wave3/prepare-target-verification.mjs concrete-bindings.json --output task-owned-directory');
   const input = JSON.parse(fs.readFileSync(inputFile, 'utf8'));
+  if(input.fixture?.candidate_review?.candidate_count!==46)throw Error('Current Wave3 target preparation requires an explicit complete46 candidate selection. Historical45 library recipes remain separate.');
   const output = path.resolve(process.argv[outputIndex + 1]);
   const evidenceRoot = path.join(repo, 'docs/verification/remaining-wave3');
   if (!output.startsWith(evidenceRoot + path.sep)) throw Error('Task-owned verification output directory required');

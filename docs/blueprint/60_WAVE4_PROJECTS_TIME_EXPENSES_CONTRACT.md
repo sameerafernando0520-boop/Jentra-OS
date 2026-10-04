@@ -21,6 +21,11 @@ cycles, invalid date windows and dependent completion before prerequisites.
 Retain dated owners, planned seconds, progress and capacity calendar/organization
 basis. Resource approval rechecks employment, branch assignment and current
 published calendar resolution; no estimated capacity is presented as approved.
+Each immutable task has an explicitly selected employee owner and original
+display name. Preparation and independent plan approval validate that owner's
+branch assignment and employment cover the complete task date range. Owner and
+resource employee rows are locked in sorted order before project rows. A resource
+allocation does not infer task ownership; incomplete ownership is rejected.
 
 ## Common interval ownership and time
 
@@ -30,8 +35,11 @@ revisions. Use the W4-03 `people.work_claims`, segments and allocations contract
 Approval either allocates an eligible approved attendance segment or creates a
 direct project/service claim; it never creates a second payable claim over an
 existing attendance claim. Shared allocation exclusion protects the same payable
-segment across projects and service. Employee locks precede project/time locks;
-multi-employee operations sort UUIDs. Approvers must be independent and eligible.
+segment across projects and service. Cross-module commands acquire entity
+advisories in payroll, projects, service order before sorted employee and source
+row locks; ordinary project-only commands acquire their project advisory before
+employee/source rows. Multi-employee operations sort UUIDs. Approvers must be
+independent and eligible.
 Correction/cancellation never rewrites a revision and must reject consumed or
 payroll-sealed sources without a complete linked-impact path.
 

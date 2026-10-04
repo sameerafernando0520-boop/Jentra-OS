@@ -15,6 +15,7 @@ enum ProjectFinanceSection {
   billing,
   units,
   history,
+  serviceCosts,
 }
 
 const projectFinanceActions = {
@@ -521,6 +522,7 @@ final class ProjectFinanceRow {
           'source_version',
           'source_digest',
           if (j.containsKey('source_name')) 'source_name',
+          if (j['source_kind'] == 'milestone') ...{'payment_terms', 'payment_due_days'},
           'amount',
           'payable_seconds',
           'status',
@@ -528,6 +530,13 @@ final class ProjectFinanceRow {
         final source = ProjectBillingSource.values.byName(
           j['source_kind'] as String,
         );
+        if (source == ProjectBillingSource.milestone) {
+          projectText(j['payment_terms'], 500);
+          final days = workforceInteger(j['payment_due_days']);
+          if (days < 0 || days > 365) {
+            throw const FormatException('Milestone payment term changed.');
+          }
+        }
         version = workforceInteger(j['source_version'], positive: true);
         amount = projectAmount(j['amount'] as String, currency);
         ProjectBillableUnit(
@@ -553,6 +562,33 @@ final class ProjectFinanceRow {
         title = j['source_name'] == null
             ? '${source.name} · whole approved source'
             : projectText(j['source_name'], 500);
+        break;
+      case ProjectFinanceSection.serviceCosts:
+        allow = {
+          ...common, 'provider_source_id', 'source_revision_id', 'source_version',
+          'source_digest', 'currency_code', 'precision', 'service_date',
+          'payable_seconds', 'hourly_cost', 'amount', 'status', 'recorded_at',
+        };
+        projectIdentity(j['provider_source_id']);
+        projectIdentity(j['source_revision_id']);
+        projectDigest(j['source_digest']);
+        version = workforceInteger(j['source_version'], positive: true);
+        status = projectState(j['status'], {'approved', 'cancelled'});
+        final precision = projectPrecision(j['precision']);
+        if (j['currency_code'] != currency) {
+          throw const FormatException('Service cost currency changed.');
+        }
+        final seconds = workforceInteger(j['payable_seconds']);
+        if (seconds < 0 || seconds > 2678400 || status == 'cancelled' && seconds != 0) {
+          throw const FormatException('Service cost duration changed.');
+        }
+        final rate = projectAmount(j['hourly_cost'] as String, currency);
+        amount = projectAmount(j['amount'] as String, currency);
+        if (projectRoundRatio(rate.minorUnits * BigInt.from(seconds), BigInt.from(3600), precision) != amount.minorUnits) {
+          throw const FormatException('Service cost evidence changed.');
+        }
+        title = 'Service labor cost · ${CivilDate.parse(j['service_date'] as String).value}';
+        DateTime.parse(j['recorded_at'] as String);
         break;
       case ProjectFinanceSection.history:
         allow = {
@@ -663,6 +699,7 @@ final class ProjectMargin {
     if (values['posted_revenue']! -
             values['posted_credits']! -
             values['time_cost']! -
+            values['service_cost']! -
             values['expense_cost']! !=
         values['margin']) {
       throw const FormatException('Margin projection does not reconcile.');
@@ -672,6 +709,7 @@ final class ProjectMargin {
     'budget',
     'commitments',
     'time_cost',
+    'service_cost',
     'expense_cost',
     'posted_revenue',
     'posted_credits',

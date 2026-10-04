@@ -269,6 +269,7 @@ final class ProjectTaskBasis {
   ProjectTaskBasis({
     required this.id,
     required this.projectId,
+    required this.ownerId,
     required this.start,
     required this.endExclusive,
     required this.plannedSeconds,
@@ -277,6 +278,7 @@ final class ProjectTaskBasis {
   }) : dependencies = List.unmodifiable(dependencies) {
     projectUuid(id);
     projectUuid(projectId);
+    projectUuid(ownerId);
     _integer(plannedSeconds);
     if (start.compareTo(endExclusive) >= 0 ||
         plannedSeconds > endExclusive.utc.difference(start.utc).inSeconds ||
@@ -295,7 +297,7 @@ final class ProjectTaskBasis {
       }
     }
   }
-  final String id, projectId;
+  final String id, projectId, ownerId;
   final CivilDate start, endExclusive;
   final int plannedSeconds, progressBasisPoints;
   final List<String> dependencies;

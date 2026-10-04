@@ -1,0 +1,1499 @@
+{
+  "head": "cbdb9f8166034bbb6e6112d68baf149cd1d7be84",
+  "refresh_path": "docs/verification/remaining-wave3/refresh-policy-final-20261004.json",
+  "refresh_sha256": "c178114fb3b15c5d9670ca4e23a4b90a33c0088c5401d550d7d4fcdc54a06a03",
+  "observed_at": "2026-10-04T01:43:48.978534+00:00",
+  "installed_count": 37,
+  "latest_installed": {
+    "name": "wave4_private_hr",
+    "version": "20260929224939"
+  },
+  "api_functions": 85,
+  "shared_helpers": [
+    {
+      "name": "flow_allocate",
+      "signature": "p_source uuid, p_target uuid, p_tenant uuid, p_entity uuid, p_branch uuid, p_payload jsonb, p_date date, p_request uuid, p_command uuid",
+      "source_md5": "e6e9f68ec7d8aca03be157816fe8eef6",
+      "matches": true
+    },
+    {
+      "name": "flow_post_journal",
+      "signature": "p_doc jsonb, p_lines jsonb, p_source_type text, p_source_id uuid, p_request uuid, p_command uuid",
+      "source_md5": "bebe95827a7e5ac3f2192d0f7acd38b4",
+      "matches": true
+    },
+    {
+      "name": "flow_residual",
+      "signature": "p_tenant uuid, p_id uuid, p_as_of date DEFAULT NULL::date",
+      "source_md5": "c0933ed943663701bbc7e01a1c21831f",
+      "matches": true
+    },
+    {
+      "name": "wave3_lock_open_period",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_posting_date date",
+      "source_md5": "a316c04eef62ba1a43d49ea4d5261ca2",
+      "matches": true
+    }
+  ],
+  "manifest_path": "docs/verification/remaining-wave3/migration-order-negative-stock-policy-scoped-author-reviewed-20261004-46.json",
+  "historical_manifest_sha256": "f511ca6f0f99681c4ce87872b94edd7af53173f16ae9bdec843e8c2e52f8f08c",
+  "candidates": [
+    {
+      "path": "supabase/migrations/20260912152000_product_unit_conversions.sql",
+      "version": "20260912152000",
+      "sha256": "1245dd3f3bfca3c00afa4477da67e6a02655ef9f3e25a1c848e5ca3f769f526c",
+      "installed": false,
+      "ordinal": 1,
+      "requires_previous_candidates": true,
+      "current_sha256": "1245dd3f3bfca3c00afa4477da67e6a02655ef9f3e25a1c848e5ca3f769f526c",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260912153000_procurement_requisition_drafts.sql",
+      "version": "20260912153000",
+      "sha256": "9b751a04245677ca999b6e11a4b7935a2e577d5080961553df3af30161b49a2c",
+      "installed": false,
+      "ordinal": 2,
+      "requires_previous_candidates": true,
+      "current_sha256": "9b751a04245677ca999b6e11a4b7935a2e577d5080961553df3af30161b49a2c",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260913001000_procurement_requisition_workflow.sql",
+      "version": "20260913001000",
+      "sha256": "05533f3c9b038cc1e023c35869a62b987810d776fbba805621678eaa787579d5",
+      "installed": false,
+      "ordinal": 3,
+      "requires_previous_candidates": true,
+      "current_sha256": "05533f3c9b038cc1e023c35869a62b987810d776fbba805621678eaa787579d5",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260913002000_procurement_reference_options.sql",
+      "version": "20260913002000",
+      "sha256": "c56605aa3ab7fafe38dbab4777ca23f731e7a53fd9076ef30a1953fa49adc74c",
+      "installed": false,
+      "ordinal": 4,
+      "requires_previous_candidates": true,
+      "current_sha256": "c56605aa3ab7fafe38dbab4777ca23f731e7a53fd9076ef30a1953fa49adc74c",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260913003000_procurement_sourcing.sql",
+      "version": "20260913003000",
+      "sha256": "d4f92c0fb5c6d24c48d4c21c7184ef042a635abb654c7a53c92129fbc3503d44",
+      "installed": false,
+      "ordinal": 5,
+      "requires_previous_candidates": true,
+      "current_sha256": "d4f92c0fb5c6d24c48d4c21c7184ef042a635abb654c7a53c92129fbc3503d44",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260913004000_procurement_purchase_orders.sql",
+      "version": "20260913004000",
+      "sha256": "8a71252b8bf62a0a8a7325a4683ae770039cecd5c72dc30be131c428636e6795",
+      "installed": false,
+      "ordinal": 6,
+      "requires_previous_candidates": true,
+      "current_sha256": "8a71252b8bf62a0a8a7325a4683ae770039cecd5c72dc30be131c428636e6795",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260913005000_procurement_order_workflow.sql",
+      "version": "20260913005000",
+      "sha256": "dedb4da3b59ca593a349ecaf4c77fc1adf5dd9e3e56d903726291f6e5e98c077",
+      "installed": false,
+      "ordinal": 7,
+      "requires_previous_candidates": true,
+      "current_sha256": "dedb4da3b59ca593a349ecaf4c77fc1adf5dd9e3e56d903726291f6e5e98c077",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260913006000_procurement_goods_receipts.sql",
+      "version": "20260913006000",
+      "sha256": "f38bc858ea03067f56f44208196312842484bd1263b4b9466dc58cb8a7220b76",
+      "installed": false,
+      "ordinal": 8,
+      "requires_previous_candidates": true,
+      "current_sha256": "f38bc858ea03067f56f44208196312842484bd1263b4b9466dc58cb8a7220b76",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260913007000_procurement_supplier_bills.sql",
+      "version": "20260913007000",
+      "sha256": "9212e1dea7c9abcb0e3224ff37bc5a3e1495ea73128bb450f99ef79c4c93c722",
+      "installed": false,
+      "ordinal": 9,
+      "requires_previous_candidates": true,
+      "current_sha256": "9212e1dea7c9abcb0e3224ff37bc5a3e1495ea73128bb450f99ef79c4c93c722",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260914001000_procurement_supplier_settlement.sql",
+      "version": "20260914001000",
+      "sha256": "5b776e2dc0eb53a72fa51375f248ab24848768d3141c757233c7b97a4a654bf1",
+      "installed": false,
+      "ordinal": 10,
+      "requires_previous_candidates": true,
+      "current_sha256": "5b776e2dc0eb53a72fa51375f248ab24848768d3141c757233c7b97a4a654bf1",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260915001000_payable_allocation_corrections.sql",
+      "version": "20260915001000",
+      "sha256": "d175cf49fe16783e2d413d46167e99777904b804873e96dbc185992fc2625666",
+      "installed": false,
+      "ordinal": 11,
+      "requires_previous_candidates": true,
+      "current_sha256": "d175cf49fe16783e2d413d46167e99777904b804873e96dbc185992fc2625666",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260915002000_procurement_purchase_returns.sql",
+      "version": "20260915002000",
+      "sha256": "44292af187109e00c267a9be60b50a2de8243e97e421c0dee2f0bd7220e2acc6",
+      "installed": false,
+      "ordinal": 12,
+      "requires_previous_candidates": true,
+      "current_sha256": "44292af187109e00c267a9be60b50a2de8243e97e421c0dee2f0bd7220e2acc6",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260916001000_inventory_transfers.sql",
+      "version": "20260916001000",
+      "sha256": "de1d6141109130d2c29a8d253966f3d934fa412821baa2ef893ac4691c263dc5",
+      "installed": false,
+      "ordinal": 13,
+      "requires_previous_candidates": true,
+      "current_sha256": "de1d6141109130d2c29a8d253966f3d934fa412821baa2ef893ac4691c263dc5",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260916002000_inventory_stock_counts.sql",
+      "version": "20260916002000",
+      "sha256": "90072604b03523e391fb12bd315032a4a4b968d28789ad0fbbe77a15d204b40b",
+      "installed": false,
+      "ordinal": 14,
+      "requires_previous_candidates": true,
+      "current_sha256": "90072604b03523e391fb12bd315032a4a4b968d28789ad0fbbe77a15d204b40b",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260918001000_inventory_reservation_release.sql",
+      "version": "20260918001000",
+      "sha256": "fb7782b9389615e6a02bcc335d958bba84caa2662c8a85fb295f76120cf9c3e6",
+      "installed": false,
+      "ordinal": 15,
+      "requires_previous_candidates": true,
+      "current_sha256": "fb7782b9389615e6a02bcc335d958bba84caa2662c8a85fb295f76120cf9c3e6",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260919181407_inventory_receipt_provenance.sql",
+      "version": "20260919181407",
+      "sha256": "29becfdc43fef3bbc07a303eb8d79232f6ad3e77cd203d70dd2b82737b7b28e4",
+      "installed": false,
+      "ordinal": 16,
+      "requires_previous_candidates": true,
+      "current_sha256": "29becfdc43fef3bbc07a303eb8d79232f6ad3e77cd203d70dd2b82737b7b28e4",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260919185538_inventory_landed_value.sql",
+      "version": "20260919185538",
+      "sha256": "b13ac607ae1418bd860a5b5012a6adbfcb381217b76f256bd6ca313463eb6d1b",
+      "installed": false,
+      "ordinal": 17,
+      "requires_previous_candidates": true,
+      "current_sha256": "b13ac607ae1418bd860a5b5012a6adbfcb381217b76f256bd6ca313463eb6d1b",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260920202547_inventory_valuation_reports.sql",
+      "version": "20260920202547",
+      "sha256": "8d58f47813dbfac15882bc4c80dd64f650fdeb233f14a61b772468adbbceb0db",
+      "installed": false,
+      "ordinal": 18,
+      "requires_previous_candidates": true,
+      "current_sha256": "8d58f47813dbfac15882bc4c80dd64f650fdeb233f14a61b772468adbbceb0db",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260921041348_manual_journals.sql",
+      "version": "20260921041348",
+      "sha256": "8bea1e05398339b03979bf34569bcb76303c449923b346ece57da3d3d9e79bfd",
+      "installed": false,
+      "ordinal": 19,
+      "requires_previous_candidates": true,
+      "current_sha256": "8bea1e05398339b03979bf34569bcb76303c449923b346ece57da3d3d9e79bfd",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260922001000_ar_ap_control_reconciliation.sql",
+      "version": "20260922001000",
+      "sha256": "9de77b0e06887469a682292311d9cd161d598dcb6f871a34a712dbc38aaa5e26",
+      "installed": false,
+      "ordinal": 20,
+      "requires_previous_candidates": true,
+      "current_sha256": "9de77b0e06887469a682292311d9cd161d598dcb6f871a34a712dbc38aaa5e26",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260923225202_bank_reconciliation.sql",
+      "version": "20260923225202",
+      "sha256": "6d914ceb736d69d2becf7130701509e1f617d8493798b5a8922fd9f268b7f6bd",
+      "installed": false,
+      "ordinal": 21,
+      "requires_previous_candidates": true,
+      "current_sha256": "6d914ceb736d69d2becf7130701509e1f617d8493798b5a8922fd9f268b7f6bd",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260924185321_wave3_period_governance.sql",
+      "version": "20260924185321",
+      "sha256": "c6fae72402c4f47e638d7fd9d74b0f05907937e2ac93568ef3c48edb51e67517",
+      "installed": false,
+      "ordinal": 22,
+      "requires_previous_candidates": true,
+      "current_sha256": "c6fae72402c4f47e638d7fd9d74b0f05907937e2ac93568ef3c48edb51e67517",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260925002000_wave3_financial_statements.sql",
+      "version": "20260925002000",
+      "sha256": "7596ec3e5b1ac2b348e4b23371ff6c54818a5336d276fa3a03f14f1ecd5f17b6",
+      "installed": false,
+      "ordinal": 23,
+      "requires_previous_candidates": true,
+      "current_sha256": "7596ec3e5b1ac2b348e4b23371ff6c54818a5336d276fa3a03f14f1ecd5f17b6",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260925003000_wave3_cash_flow.sql",
+      "version": "20260925003000",
+      "sha256": "5c9a3b6db7e562ef8dfdc3ae590c26215e01e23d4cc838b88edd74a48b6e354e",
+      "installed": false,
+      "ordinal": 24,
+      "requires_previous_candidates": true,
+      "current_sha256": "5c9a3b6db7e562ef8dfdc3ae590c26215e01e23d4cc838b88edd74a48b6e354e",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260925004000_wave3_budgets.sql",
+      "version": "20260925004000",
+      "sha256": "56e5ba5993f32297772a994fcdb39c595ee928de9081e6643a4478c4adf021af",
+      "installed": false,
+      "ordinal": 25,
+      "requires_previous_candidates": true,
+      "current_sha256": "56e5ba5993f32297772a994fcdb39c595ee928de9081e6643a4478c4adf021af",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260926001000_wave3_tax_summary.sql",
+      "version": "20260926001000",
+      "sha256": "dcef36d0dcbf6b5277e6a79f625314d7595434cd88ced42271baa1cfa86b4969",
+      "installed": false,
+      "ordinal": 26,
+      "requires_previous_candidates": true,
+      "current_sha256": "dcef36d0dcbf6b5277e6a79f625314d7595434cd88ced42271baa1cfa86b4969",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260926002000_wave3_tax_summary_hardening.sql",
+      "version": "20260926002000",
+      "sha256": "7976c8c944fd776729e4c67949706c1265bb0b5df04b076e83db301e8164ddee",
+      "installed": false,
+      "ordinal": 27,
+      "requires_previous_candidates": true,
+      "current_sha256": "7976c8c944fd776729e4c67949706c1265bb0b5df04b076e83db301e8164ddee",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260926003000_wave3_tax_control_reconciliation.sql",
+      "version": "20260926003000",
+      "sha256": "51fb81ab482fdd6e2091ed46add2e2efa0c377528950393469ef721f081fe17b",
+      "installed": false,
+      "ordinal": 28,
+      "requires_previous_candidates": true,
+      "current_sha256": "51fb81ab482fdd6e2091ed46add2e2efa0c377528950393469ef721f081fe17b",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260926005000_wave3_governed_journal_tax.sql",
+      "version": "20260926005000",
+      "sha256": "78ae3cf5ee32b220f164431bdc0891dc5f87e04c7eeb079ae5665a9462ee2910",
+      "installed": false,
+      "ordinal": 29,
+      "requires_previous_candidates": true,
+      "current_sha256": "78ae3cf5ee32b220f164431bdc0891dc5f87e04c7eeb079ae5665a9462ee2910",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260926006000_wave3_tax_control_movements.sql",
+      "version": "20260926006000",
+      "sha256": "41c09e5c0f8b6e40c1fca225e4f04196101b1012ebb88ef954234eee4c1e682d",
+      "installed": false,
+      "ordinal": 30,
+      "requires_previous_candidates": true,
+      "current_sha256": "41c09e5c0f8b6e40c1fca225e4f04196101b1012ebb88ef954234eee4c1e682d",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260926007000_wave3_grni_control_reconciliation.sql",
+      "version": "20260926007000",
+      "sha256": "b1864d4ac1612ebfc54439873ef5c8afab790051cf399869f55bc8ba4ff67f02",
+      "installed": false,
+      "ordinal": 31,
+      "requires_previous_candidates": true,
+      "current_sha256": "b1864d4ac1612ebfc54439873ef5c8afab790051cf399869f55bc8ba4ff67f02",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260926008000_wave3_close_control_review.sql",
+      "version": "20260926008000",
+      "sha256": "654fadae87a9b0b027d20aec58ce32ff0fe52a19f024e5182e4b24e5dc2da0ba",
+      "installed": false,
+      "ordinal": 32,
+      "requires_previous_candidates": true,
+      "current_sha256": "654fadae87a9b0b027d20aec58ce32ff0fe52a19f024e5182e4b24e5dc2da0ba",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260926009000_wave3_governed_report_exports.sql",
+      "version": "20260926009000",
+      "sha256": "85238e684c967e8377221e55f911fcb9dfa64e7696110ee28eacffe8b6586386",
+      "installed": false,
+      "ordinal": 33,
+      "requires_previous_candidates": true,
+      "current_sha256": "85238e684c967e8377221e55f911fcb9dfa64e7696110ee28eacffe8b6586386",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260926010000_wave3_financial_dimensions.sql",
+      "version": "20260926010000",
+      "sha256": "34f530f465bc21eff2fd0d137c4fa4b7a8a54d9b82401d91f20110e9f055c900",
+      "installed": false,
+      "ordinal": 34,
+      "requires_previous_candidates": true,
+      "current_sha256": "34f530f465bc21eff2fd0d137c4fa4b7a8a54d9b82401d91f20110e9f055c900",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260927001000_wave3_control_read_plan.sql",
+      "version": "20260927001000",
+      "sha256": "bea514edc6178a914c8c7ed3881c1a007bc01760ad60772a4549cb4c41499e49",
+      "installed": false,
+      "ordinal": 35,
+      "requires_previous_candidates": true,
+      "current_sha256": "bea514edc6178a914c8c7ed3881c1a007bc01760ad60772a4549cb4c41499e49",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260928001000_wave3_posted_journal_evidence.sql",
+      "version": "20260928001000",
+      "sha256": "1c0808dcdb36ebba8d320b1bf344c514e0c1ed7d23cf3e01581364adc219c4f5",
+      "installed": false,
+      "ordinal": 36,
+      "requires_previous_candidates": true,
+      "current_sha256": "1c0808dcdb36ebba8d320b1bf344c514e0c1ed7d23cf3e01581364adc219c4f5",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260927200629_wave3_operational_evidence.sql",
+      "version": "20260927200629",
+      "sha256": "50a0ab28a3573a0bacc0415450e40ddb9deed5fd98196ee49df17e4357dba8f6",
+      "installed": false,
+      "ordinal": 37,
+      "requires_previous_candidates": true,
+      "current_sha256": "50a0ab28a3573a0bacc0415450e40ddb9deed5fd98196ee49df17e4357dba8f6",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260927200703_wave3_historical_controls.sql",
+      "version": "20260927200703",
+      "sha256": "4d135f473782c8f6fa776fe2cb3190efc0bc34bf6e88f629968c3a0b86743990",
+      "installed": false,
+      "ordinal": 38,
+      "requires_previous_candidates": true,
+      "current_sha256": "4d135f473782c8f6fa776fe2cb3190efc0bc34bf6e88f629968c3a0b86743990",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260927200706_wave3_inventory_extensions.sql",
+      "version": "20260927200706",
+      "sha256": "a89834cd135096cf380e5f0446867c5a3b8b6c5c62f63e0f59011943e9e85eea",
+      "installed": false,
+      "ordinal": 39,
+      "requires_previous_candidates": true,
+      "current_sha256": "a89834cd135096cf380e5f0446867c5a3b8b6c5c62f63e0f59011943e9e85eea",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260929001000_wave3_notifications.sql",
+      "version": "20260929001000",
+      "sha256": "ec673056482b7219c4e983bc602bc05cf35ba3f0d6315bead6f5b0f27ea8d2e0",
+      "installed": false,
+      "ordinal": 40,
+      "requires_previous_candidates": true,
+      "current_sha256": "ec673056482b7219c4e983bc602bc05cf35ba3f0d6315bead6f5b0f27ea8d2e0",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260930001000_wave3_landed_extensions.sql",
+      "version": "20260930001000",
+      "sha256": "b472394fcfff0cd7d0d8e2f123e503c6a95ea6521169af62807cafb6bed9718d",
+      "installed": false,
+      "ordinal": 41,
+      "requires_previous_candidates": true,
+      "current_sha256": "b472394fcfff0cd7d0d8e2f123e503c6a95ea6521169af62807cafb6bed9718d",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260930002000_wave3_count_partitions.sql",
+      "version": "20260930002000",
+      "sha256": "18e77c3bb7a9904e96650daa08eec5136758fc5e2d52cab03f6394d97c235613",
+      "installed": false,
+      "ordinal": 42,
+      "requires_previous_candidates": true,
+      "current_sha256": "18e77c3bb7a9904e96650daa08eec5136758fc5e2d52cab03f6394d97c235613",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260930003000_wave3_stock_disposition.sql",
+      "version": "20260930003000",
+      "sha256": "6dc6b2a9bddafa05b263aeb44f0c1ac0e2c68bcd1424869edd8a141e999dad83",
+      "installed": false,
+      "ordinal": 43,
+      "requires_previous_candidates": true,
+      "current_sha256": "6dc6b2a9bddafa05b263aeb44f0c1ac0e2c68bcd1424869edd8a141e999dad83",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260930004000_wave3_dashboard_metrics.sql",
+      "version": "20260930004000",
+      "sha256": "c915ac0a5bb6367f22ac83008a1a8fc00db9829978fa0cab8d621865b19dad4d",
+      "installed": false,
+      "ordinal": 44,
+      "requires_previous_candidates": true,
+      "current_sha256": "c915ac0a5bb6367f22ac83008a1a8fc00db9829978fa0cab8d621865b19dad4d",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260930005000_wave3_observability.sql",
+      "version": "20260930005000",
+      "sha256": "9afecc2a25596b7af50aa099fb0b9ee6fc5c916be06dd10eb52c023c5920031d",
+      "installed": false,
+      "ordinal": 45,
+      "requires_previous_candidates": true,
+      "current_sha256": "9afecc2a25596b7af50aa099fb0b9ee6fc5c916be06dd10eb52c023c5920031d",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20261003090000_wave3_negative_stock_policy.sql",
+      "version": "20261003090000",
+      "ordinal": 46,
+      "sha256": "9cc3aaa66c884397dbbc47919f5f758682129e403d7c334eaffdc4bd53736f4a",
+      "current_sha256": "9cc3aaa66c884397dbbc47919f5f758682129e403d7c334eaffdc4bd53736f4a",
+      "installed": false,
+      "installed_now": false,
+      "requires_previous_candidates": true
+    }
+  ],
+  "exact_order_sha256": "9bbf6c786b33d744770ba26308986857a209a25e64a08f5f082d6056b9af8240",
+  "compatibility": {
+    "evidence": "docs/verification/remaining-wave3/schema-compatibility-final-20260930.json",
+    "sha256": "87b4a091f2d77b6901fac14f37b769f864a4fb7fa13b66874a6dc94723ead8d3",
+    "status": "historical45_capture_retained_new46_policy_tail_requires_fresh_compatibility_review",
+    "breaking": 0,
+    "potential": 8,
+    "current_live_data_preflight_required": true,
+    "owner_decisions_pending": true,
+    "new_tail_review": null,
+    "caveat": "Zero breaking/eight potential warnings describe the historical 45 bodies only. They do not establish that the added tail has zero additional compatibility risks."
+  },
+  "phases": [
+    {
+      "name": "baseline",
+      "dependencies": [],
+      "description": "Pin checkout, ledger, catalogues, helper hashes and an owner-approved isolated snapshot",
+      "duration_hours": 0,
+      "duration_basis": "Not estimated; zero is a generator placeholder, not an installation ETA",
+      "ordinals": null,
+      "candidates": [],
+      "validation_criteria": [
+        "Record exact target and actual ledger after the phase",
+        "Validate scoped grants, source/query hashes and approved phase invariants",
+        "Keep installed, synthetic and native evidence separate"
+      ],
+      "rollback_triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      },
+      "tasks": [
+        "Follow the corresponding reviewed runbook phase and obtain its specific external approval"
+      ],
+      "risk_level": "high",
+      "resources_required": [
+        "Owner-selected isolated target/profile",
+        "Explicit installation, fixture and native authorization",
+        "Verified snapshot and documented restore owner"
+      ]
+    },
+    {
+      "name": "procurement",
+      "dependencies": [
+        "baseline"
+      ],
+      "description": "Apply only these reviewed candidate bodies in recorded dependency order",
+      "duration_hours": 0,
+      "duration_basis": "Not estimated; zero is a generator placeholder, not an installation ETA",
+      "ordinals": [
+        1,
+        12
+      ],
+      "candidates": [
+        {
+          "path": "supabase/migrations/20260912152000_product_unit_conversions.sql",
+          "version": "20260912152000",
+          "sha256": "1245dd3f3bfca3c00afa4477da67e6a02655ef9f3e25a1c848e5ca3f769f526c",
+          "installed": false,
+          "ordinal": 1,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260912153000_procurement_requisition_drafts.sql",
+          "version": "20260912153000",
+          "sha256": "9b751a04245677ca999b6e11a4b7935a2e577d5080961553df3af30161b49a2c",
+          "installed": false,
+          "ordinal": 2,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260913001000_procurement_requisition_workflow.sql",
+          "version": "20260913001000",
+          "sha256": "05533f3c9b038cc1e023c35869a62b987810d776fbba805621678eaa787579d5",
+          "installed": false,
+          "ordinal": 3,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260913002000_procurement_reference_options.sql",
+          "version": "20260913002000",
+          "sha256": "c56605aa3ab7fafe38dbab4777ca23f731e7a53fd9076ef30a1953fa49adc74c",
+          "installed": false,
+          "ordinal": 4,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260913003000_procurement_sourcing.sql",
+          "version": "20260913003000",
+          "sha256": "d4f92c0fb5c6d24c48d4c21c7184ef042a635abb654c7a53c92129fbc3503d44",
+          "installed": false,
+          "ordinal": 5,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260913004000_procurement_purchase_orders.sql",
+          "version": "20260913004000",
+          "sha256": "8a71252b8bf62a0a8a7325a4683ae770039cecd5c72dc30be131c428636e6795",
+          "installed": false,
+          "ordinal": 6,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260913005000_procurement_order_workflow.sql",
+          "version": "20260913005000",
+          "sha256": "dedb4da3b59ca593a349ecaf4c77fc1adf5dd9e3e56d903726291f6e5e98c077",
+          "installed": false,
+          "ordinal": 7,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260913006000_procurement_goods_receipts.sql",
+          "version": "20260913006000",
+          "sha256": "f38bc858ea03067f56f44208196312842484bd1263b4b9466dc58cb8a7220b76",
+          "installed": false,
+          "ordinal": 8,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260913007000_procurement_supplier_bills.sql",
+          "version": "20260913007000",
+          "sha256": "9212e1dea7c9abcb0e3224ff37bc5a3e1495ea73128bb450f99ef79c4c93c722",
+          "installed": false,
+          "ordinal": 9,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260914001000_procurement_supplier_settlement.sql",
+          "version": "20260914001000",
+          "sha256": "5b776e2dc0eb53a72fa51375f248ab24848768d3141c757233c7b97a4a654bf1",
+          "installed": false,
+          "ordinal": 10,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260915001000_payable_allocation_corrections.sql",
+          "version": "20260915001000",
+          "sha256": "d175cf49fe16783e2d413d46167e99777904b804873e96dbc185992fc2625666",
+          "installed": false,
+          "ordinal": 11,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260915002000_procurement_purchase_returns.sql",
+          "version": "20260915002000",
+          "sha256": "44292af187109e00c267a9be60b50a2de8243e97e421c0dee2f0bd7220e2acc6",
+          "installed": false,
+          "ordinal": 12,
+          "requires_previous_candidates": true
+        }
+      ],
+      "validation_criteria": [
+        "Record exact target and actual ledger after the phase",
+        "Validate scoped grants, source/query hashes and approved phase invariants",
+        "Keep installed, synthetic and native evidence separate"
+      ],
+      "rollback_triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      },
+      "tasks": [
+        "Review/apply ordinal 1: supabase/migrations/20260912152000_product_unit_conversions.sql at SHA-256 1245dd3f3bfca3c00afa4477da67e6a02655ef9f3e25a1c848e5ca3f769f526c",
+        "Review/apply ordinal 2: supabase/migrations/20260912153000_procurement_requisition_drafts.sql at SHA-256 9b751a04245677ca999b6e11a4b7935a2e577d5080961553df3af30161b49a2c",
+        "Review/apply ordinal 3: supabase/migrations/20260913001000_procurement_requisition_workflow.sql at SHA-256 05533f3c9b038cc1e023c35869a62b987810d776fbba805621678eaa787579d5",
+        "Review/apply ordinal 4: supabase/migrations/20260913002000_procurement_reference_options.sql at SHA-256 c56605aa3ab7fafe38dbab4777ca23f731e7a53fd9076ef30a1953fa49adc74c",
+        "Review/apply ordinal 5: supabase/migrations/20260913003000_procurement_sourcing.sql at SHA-256 d4f92c0fb5c6d24c48d4c21c7184ef042a635abb654c7a53c92129fbc3503d44",
+        "Review/apply ordinal 6: supabase/migrations/20260913004000_procurement_purchase_orders.sql at SHA-256 8a71252b8bf62a0a8a7325a4683ae770039cecd5c72dc30be131c428636e6795",
+        "Review/apply ordinal 7: supabase/migrations/20260913005000_procurement_order_workflow.sql at SHA-256 dedb4da3b59ca593a349ecaf4c77fc1adf5dd9e3e56d903726291f6e5e98c077",
+        "Review/apply ordinal 8: supabase/migrations/20260913006000_procurement_goods_receipts.sql at SHA-256 f38bc858ea03067f56f44208196312842484bd1263b4b9466dc58cb8a7220b76",
+        "Review/apply ordinal 9: supabase/migrations/20260913007000_procurement_supplier_bills.sql at SHA-256 9212e1dea7c9abcb0e3224ff37bc5a3e1495ea73128bb450f99ef79c4c93c722",
+        "Review/apply ordinal 10: supabase/migrations/20260914001000_procurement_supplier_settlement.sql at SHA-256 5b776e2dc0eb53a72fa51375f248ab24848768d3141c757233c7b97a4a654bf1",
+        "Review/apply ordinal 11: supabase/migrations/20260915001000_payable_allocation_corrections.sql at SHA-256 d175cf49fe16783e2d413d46167e99777904b804873e96dbc185992fc2625666",
+        "Review/apply ordinal 12: supabase/migrations/20260915002000_procurement_purchase_returns.sql at SHA-256 44292af187109e00c267a9be60b50a2de8243e97e421c0dee2f0bd7220e2acc6"
+      ],
+      "risk_level": "high",
+      "resources_required": [
+        "Owner-selected isolated target/profile",
+        "Explicit installation, fixture and native authorization",
+        "Verified snapshot and documented restore owner"
+      ]
+    },
+    {
+      "name": "inventory",
+      "dependencies": [
+        "procurement"
+      ],
+      "description": "Apply only these reviewed candidate bodies in recorded dependency order",
+      "duration_hours": 0,
+      "duration_basis": "Not estimated; zero is a generator placeholder, not an installation ETA",
+      "ordinals": [
+        13,
+        18
+      ],
+      "candidates": [
+        {
+          "path": "supabase/migrations/20260916001000_inventory_transfers.sql",
+          "version": "20260916001000",
+          "sha256": "de1d6141109130d2c29a8d253966f3d934fa412821baa2ef893ac4691c263dc5",
+          "installed": false,
+          "ordinal": 13,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260916002000_inventory_stock_counts.sql",
+          "version": "20260916002000",
+          "sha256": "90072604b03523e391fb12bd315032a4a4b968d28789ad0fbbe77a15d204b40b",
+          "installed": false,
+          "ordinal": 14,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260918001000_inventory_reservation_release.sql",
+          "version": "20260918001000",
+          "sha256": "fb7782b9389615e6a02bcc335d958bba84caa2662c8a85fb295f76120cf9c3e6",
+          "installed": false,
+          "ordinal": 15,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260919181407_inventory_receipt_provenance.sql",
+          "version": "20260919181407",
+          "sha256": "29becfdc43fef3bbc07a303eb8d79232f6ad3e77cd203d70dd2b82737b7b28e4",
+          "installed": false,
+          "ordinal": 16,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260919185538_inventory_landed_value.sql",
+          "version": "20260919185538",
+          "sha256": "b13ac607ae1418bd860a5b5012a6adbfcb381217b76f256bd6ca313463eb6d1b",
+          "installed": false,
+          "ordinal": 17,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260920202547_inventory_valuation_reports.sql",
+          "version": "20260920202547",
+          "sha256": "8d58f47813dbfac15882bc4c80dd64f650fdeb233f14a61b772468adbbceb0db",
+          "installed": false,
+          "ordinal": 18,
+          "requires_previous_candidates": true
+        }
+      ],
+      "validation_criteria": [
+        "Record exact target and actual ledger after the phase",
+        "Validate scoped grants, source/query hashes and approved phase invariants",
+        "Keep installed, synthetic and native evidence separate"
+      ],
+      "rollback_triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      },
+      "tasks": [
+        "Review/apply ordinal 13: supabase/migrations/20260916001000_inventory_transfers.sql at SHA-256 de1d6141109130d2c29a8d253966f3d934fa412821baa2ef893ac4691c263dc5",
+        "Review/apply ordinal 14: supabase/migrations/20260916002000_inventory_stock_counts.sql at SHA-256 90072604b03523e391fb12bd315032a4a4b968d28789ad0fbbe77a15d204b40b",
+        "Review/apply ordinal 15: supabase/migrations/20260918001000_inventory_reservation_release.sql at SHA-256 fb7782b9389615e6a02bcc335d958bba84caa2662c8a85fb295f76120cf9c3e6",
+        "Review/apply ordinal 16: supabase/migrations/20260919181407_inventory_receipt_provenance.sql at SHA-256 29becfdc43fef3bbc07a303eb8d79232f6ad3e77cd203d70dd2b82737b7b28e4",
+        "Review/apply ordinal 17: supabase/migrations/20260919185538_inventory_landed_value.sql at SHA-256 b13ac607ae1418bd860a5b5012a6adbfcb381217b76f256bd6ca313463eb6d1b",
+        "Review/apply ordinal 18: supabase/migrations/20260920202547_inventory_valuation_reports.sql at SHA-256 8d58f47813dbfac15882bc4c80dd64f650fdeb233f14a61b772468adbbceb0db"
+      ],
+      "risk_level": "high",
+      "resources_required": [
+        "Owner-selected isolated target/profile",
+        "Explicit installation, fixture and native authorization",
+        "Verified snapshot and documented restore owner"
+      ]
+    },
+    {
+      "name": "finance",
+      "dependencies": [
+        "inventory"
+      ],
+      "description": "Apply only these reviewed candidate bodies in recorded dependency order",
+      "duration_hours": 0,
+      "duration_basis": "Not estimated; zero is a generator placeholder, not an installation ETA",
+      "ordinals": [
+        19,
+        34
+      ],
+      "candidates": [
+        {
+          "path": "supabase/migrations/20260921041348_manual_journals.sql",
+          "version": "20260921041348",
+          "sha256": "8bea1e05398339b03979bf34569bcb76303c449923b346ece57da3d3d9e79bfd",
+          "installed": false,
+          "ordinal": 19,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260922001000_ar_ap_control_reconciliation.sql",
+          "version": "20260922001000",
+          "sha256": "9de77b0e06887469a682292311d9cd161d598dcb6f871a34a712dbc38aaa5e26",
+          "installed": false,
+          "ordinal": 20,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260923225202_bank_reconciliation.sql",
+          "version": "20260923225202",
+          "sha256": "6d914ceb736d69d2becf7130701509e1f617d8493798b5a8922fd9f268b7f6bd",
+          "installed": false,
+          "ordinal": 21,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260924185321_wave3_period_governance.sql",
+          "version": "20260924185321",
+          "sha256": "c6fae72402c4f47e638d7fd9d74b0f05907937e2ac93568ef3c48edb51e67517",
+          "installed": false,
+          "ordinal": 22,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260925002000_wave3_financial_statements.sql",
+          "version": "20260925002000",
+          "sha256": "7596ec3e5b1ac2b348e4b23371ff6c54818a5336d276fa3a03f14f1ecd5f17b6",
+          "installed": false,
+          "ordinal": 23,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260925003000_wave3_cash_flow.sql",
+          "version": "20260925003000",
+          "sha256": "5c9a3b6db7e562ef8dfdc3ae590c26215e01e23d4cc838b88edd74a48b6e354e",
+          "installed": false,
+          "ordinal": 24,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260925004000_wave3_budgets.sql",
+          "version": "20260925004000",
+          "sha256": "56e5ba5993f32297772a994fcdb39c595ee928de9081e6643a4478c4adf021af",
+          "installed": false,
+          "ordinal": 25,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260926001000_wave3_tax_summary.sql",
+          "version": "20260926001000",
+          "sha256": "dcef36d0dcbf6b5277e6a79f625314d7595434cd88ced42271baa1cfa86b4969",
+          "installed": false,
+          "ordinal": 26,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260926002000_wave3_tax_summary_hardening.sql",
+          "version": "20260926002000",
+          "sha256": "7976c8c944fd776729e4c67949706c1265bb0b5df04b076e83db301e8164ddee",
+          "installed": false,
+          "ordinal": 27,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260926003000_wave3_tax_control_reconciliation.sql",
+          "version": "20260926003000",
+          "sha256": "51fb81ab482fdd6e2091ed46add2e2efa0c377528950393469ef721f081fe17b",
+          "installed": false,
+          "ordinal": 28,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260926005000_wave3_governed_journal_tax.sql",
+          "version": "20260926005000",
+          "sha256": "78ae3cf5ee32b220f164431bdc0891dc5f87e04c7eeb079ae5665a9462ee2910",
+          "installed": false,
+          "ordinal": 29,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260926006000_wave3_tax_control_movements.sql",
+          "version": "20260926006000",
+          "sha256": "41c09e5c0f8b6e40c1fca225e4f04196101b1012ebb88ef954234eee4c1e682d",
+          "installed": false,
+          "ordinal": 30,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260926007000_wave3_grni_control_reconciliation.sql",
+          "version": "20260926007000",
+          "sha256": "b1864d4ac1612ebfc54439873ef5c8afab790051cf399869f55bc8ba4ff67f02",
+          "installed": false,
+          "ordinal": 31,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260926008000_wave3_close_control_review.sql",
+          "version": "20260926008000",
+          "sha256": "654fadae87a9b0b027d20aec58ce32ff0fe52a19f024e5182e4b24e5dc2da0ba",
+          "installed": false,
+          "ordinal": 32,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260926009000_wave3_governed_report_exports.sql",
+          "version": "20260926009000",
+          "sha256": "85238e684c967e8377221e55f911fcb9dfa64e7696110ee28eacffe8b6586386",
+          "installed": false,
+          "ordinal": 33,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260926010000_wave3_financial_dimensions.sql",
+          "version": "20260926010000",
+          "sha256": "34f530f465bc21eff2fd0d137c4fa4b7a8a54d9b82401d91f20110e9f055c900",
+          "installed": false,
+          "ordinal": 34,
+          "requires_previous_candidates": true
+        }
+      ],
+      "validation_criteria": [
+        "Record exact target and actual ledger after the phase",
+        "Validate scoped grants, source/query hashes and approved phase invariants",
+        "Keep installed, synthetic and native evidence separate"
+      ],
+      "rollback_triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      },
+      "tasks": [
+        "Review/apply ordinal 19: supabase/migrations/20260921041348_manual_journals.sql at SHA-256 8bea1e05398339b03979bf34569bcb76303c449923b346ece57da3d3d9e79bfd",
+        "Review/apply ordinal 20: supabase/migrations/20260922001000_ar_ap_control_reconciliation.sql at SHA-256 9de77b0e06887469a682292311d9cd161d598dcb6f871a34a712dbc38aaa5e26",
+        "Review/apply ordinal 21: supabase/migrations/20260923225202_bank_reconciliation.sql at SHA-256 6d914ceb736d69d2becf7130701509e1f617d8493798b5a8922fd9f268b7f6bd",
+        "Review/apply ordinal 22: supabase/migrations/20260924185321_wave3_period_governance.sql at SHA-256 c6fae72402c4f47e638d7fd9d74b0f05907937e2ac93568ef3c48edb51e67517",
+        "Review/apply ordinal 23: supabase/migrations/20260925002000_wave3_financial_statements.sql at SHA-256 7596ec3e5b1ac2b348e4b23371ff6c54818a5336d276fa3a03f14f1ecd5f17b6",
+        "Review/apply ordinal 24: supabase/migrations/20260925003000_wave3_cash_flow.sql at SHA-256 5c9a3b6db7e562ef8dfdc3ae590c26215e01e23d4cc838b88edd74a48b6e354e",
+        "Review/apply ordinal 25: supabase/migrations/20260925004000_wave3_budgets.sql at SHA-256 56e5ba5993f32297772a994fcdb39c595ee928de9081e6643a4478c4adf021af",
+        "Review/apply ordinal 26: supabase/migrations/20260926001000_wave3_tax_summary.sql at SHA-256 dcef36d0dcbf6b5277e6a79f625314d7595434cd88ced42271baa1cfa86b4969",
+        "Review/apply ordinal 27: supabase/migrations/20260926002000_wave3_tax_summary_hardening.sql at SHA-256 7976c8c944fd776729e4c67949706c1265bb0b5df04b076e83db301e8164ddee",
+        "Review/apply ordinal 28: supabase/migrations/20260926003000_wave3_tax_control_reconciliation.sql at SHA-256 51fb81ab482fdd6e2091ed46add2e2efa0c377528950393469ef721f081fe17b",
+        "Review/apply ordinal 29: supabase/migrations/20260926005000_wave3_governed_journal_tax.sql at SHA-256 78ae3cf5ee32b220f164431bdc0891dc5f87e04c7eeb079ae5665a9462ee2910",
+        "Review/apply ordinal 30: supabase/migrations/20260926006000_wave3_tax_control_movements.sql at SHA-256 41c09e5c0f8b6e40c1fca225e4f04196101b1012ebb88ef954234eee4c1e682d",
+        "Review/apply ordinal 31: supabase/migrations/20260926007000_wave3_grni_control_reconciliation.sql at SHA-256 b1864d4ac1612ebfc54439873ef5c8afab790051cf399869f55bc8ba4ff67f02",
+        "Review/apply ordinal 32: supabase/migrations/20260926008000_wave3_close_control_review.sql at SHA-256 654fadae87a9b0b027d20aec58ce32ff0fe52a19f024e5182e4b24e5dc2da0ba",
+        "Review/apply ordinal 33: supabase/migrations/20260926009000_wave3_governed_report_exports.sql at SHA-256 85238e684c967e8377221e55f911fcb9dfa64e7696110ee28eacffe8b6586386",
+        "Review/apply ordinal 34: supabase/migrations/20260926010000_wave3_financial_dimensions.sql at SHA-256 34f530f465bc21eff2fd0d137c4fa4b7a8a54d9b82401d91f20110e9f055c900"
+      ],
+      "risk_level": "high",
+      "resources_required": [
+        "Owner-selected isolated target/profile",
+        "Explicit installation, fixture and native authorization",
+        "Verified snapshot and documented restore owner"
+      ]
+    },
+    {
+      "name": "integrated_evidence",
+      "dependencies": [
+        "finance"
+      ],
+      "description": "Apply only these reviewed candidate bodies in recorded dependency order",
+      "duration_hours": 0,
+      "duration_basis": "Not estimated; zero is a generator placeholder, not an installation ETA",
+      "ordinals": [
+        35,
+        40
+      ],
+      "candidates": [
+        {
+          "path": "supabase/migrations/20260927001000_wave3_control_read_plan.sql",
+          "version": "20260927001000",
+          "sha256": "bea514edc6178a914c8c7ed3881c1a007bc01760ad60772a4549cb4c41499e49",
+          "installed": false,
+          "ordinal": 35,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260928001000_wave3_posted_journal_evidence.sql",
+          "version": "20260928001000",
+          "sha256": "1c0808dcdb36ebba8d320b1bf344c514e0c1ed7d23cf3e01581364adc219c4f5",
+          "installed": false,
+          "ordinal": 36,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260927200629_wave3_operational_evidence.sql",
+          "version": "20260927200629",
+          "sha256": "50a0ab28a3573a0bacc0415450e40ddb9deed5fd98196ee49df17e4357dba8f6",
+          "installed": false,
+          "ordinal": 37,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260927200703_wave3_historical_controls.sql",
+          "version": "20260927200703",
+          "sha256": "4d135f473782c8f6fa776fe2cb3190efc0bc34bf6e88f629968c3a0b86743990",
+          "installed": false,
+          "ordinal": 38,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260927200706_wave3_inventory_extensions.sql",
+          "version": "20260927200706",
+          "sha256": "a89834cd135096cf380e5f0446867c5a3b8b6c5c62f63e0f59011943e9e85eea",
+          "installed": false,
+          "ordinal": 39,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260929001000_wave3_notifications.sql",
+          "version": "20260929001000",
+          "sha256": "ec673056482b7219c4e983bc602bc05cf35ba3f0d6315bead6f5b0f27ea8d2e0",
+          "installed": false,
+          "ordinal": 40,
+          "requires_previous_candidates": true
+        }
+      ],
+      "validation_criteria": [
+        "Record exact target and actual ledger after the phase",
+        "Validate scoped grants, source/query hashes and approved phase invariants",
+        "Keep installed, synthetic and native evidence separate"
+      ],
+      "rollback_triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      },
+      "tasks": [
+        "Review/apply ordinal 35: supabase/migrations/20260927001000_wave3_control_read_plan.sql at SHA-256 bea514edc6178a914c8c7ed3881c1a007bc01760ad60772a4549cb4c41499e49",
+        "Review/apply ordinal 36: supabase/migrations/20260928001000_wave3_posted_journal_evidence.sql at SHA-256 1c0808dcdb36ebba8d320b1bf344c514e0c1ed7d23cf3e01581364adc219c4f5",
+        "Review/apply ordinal 37: supabase/migrations/20260927200629_wave3_operational_evidence.sql at SHA-256 50a0ab28a3573a0bacc0415450e40ddb9deed5fd98196ee49df17e4357dba8f6",
+        "Review/apply ordinal 38: supabase/migrations/20260927200703_wave3_historical_controls.sql at SHA-256 4d135f473782c8f6fa776fe2cb3190efc0bc34bf6e88f629968c3a0b86743990",
+        "Review/apply ordinal 39: supabase/migrations/20260927200706_wave3_inventory_extensions.sql at SHA-256 a89834cd135096cf380e5f0446867c5a3b8b6c5c62f63e0f59011943e9e85eea",
+        "Review/apply ordinal 40: supabase/migrations/20260929001000_wave3_notifications.sql at SHA-256 ec673056482b7219c4e983bc602bc05cf35ba3f0d6315bead6f5b0f27ea8d2e0"
+      ],
+      "risk_level": "high",
+      "resources_required": [
+        "Owner-selected isolated target/profile",
+        "Explicit installation, fixture and native authorization",
+        "Verified snapshot and documented restore owner"
+      ]
+    },
+    {
+      "name": "inventory_dashboard_observability",
+      "dependencies": [
+        "integrated_evidence"
+      ],
+      "description": "Apply only these reviewed candidate bodies in recorded dependency order",
+      "duration_hours": 0,
+      "duration_basis": "Not estimated; zero is a generator placeholder, not an installation ETA",
+      "ordinals": [
+        41,
+        45
+      ],
+      "candidates": [
+        {
+          "path": "supabase/migrations/20260930001000_wave3_landed_extensions.sql",
+          "version": "20260930001000",
+          "sha256": "b472394fcfff0cd7d0d8e2f123e503c6a95ea6521169af62807cafb6bed9718d",
+          "installed": false,
+          "ordinal": 41,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260930002000_wave3_count_partitions.sql",
+          "version": "20260930002000",
+          "sha256": "18e77c3bb7a9904e96650daa08eec5136758fc5e2d52cab03f6394d97c235613",
+          "installed": false,
+          "ordinal": 42,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260930003000_wave3_stock_disposition.sql",
+          "version": "20260930003000",
+          "sha256": "6dc6b2a9bddafa05b263aeb44f0c1ac0e2c68bcd1424869edd8a141e999dad83",
+          "installed": false,
+          "ordinal": 43,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260930004000_wave3_dashboard_metrics.sql",
+          "version": "20260930004000",
+          "sha256": "c915ac0a5bb6367f22ac83008a1a8fc00db9829978fa0cab8d621865b19dad4d",
+          "installed": false,
+          "ordinal": 44,
+          "requires_previous_candidates": true
+        },
+        {
+          "path": "supabase/migrations/20260930005000_wave3_observability.sql",
+          "version": "20260930005000",
+          "sha256": "9afecc2a25596b7af50aa099fb0b9ee6fc5c916be06dd10eb52c023c5920031d",
+          "installed": false,
+          "ordinal": 45,
+          "requires_previous_candidates": true
+        }
+      ],
+      "validation_criteria": [
+        "Record exact target and actual ledger after the phase",
+        "Validate scoped grants, source/query hashes and approved phase invariants",
+        "Keep installed, synthetic and native evidence separate"
+      ],
+      "rollback_triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      },
+      "tasks": [
+        "Review/apply ordinal 41: supabase/migrations/20260930001000_wave3_landed_extensions.sql at SHA-256 b472394fcfff0cd7d0d8e2f123e503c6a95ea6521169af62807cafb6bed9718d",
+        "Review/apply ordinal 42: supabase/migrations/20260930002000_wave3_count_partitions.sql at SHA-256 18e77c3bb7a9904e96650daa08eec5136758fc5e2d52cab03f6394d97c235613",
+        "Review/apply ordinal 43: supabase/migrations/20260930003000_wave3_stock_disposition.sql at SHA-256 6dc6b2a9bddafa05b263aeb44f0c1ac0e2c68bcd1424869edd8a141e999dad83",
+        "Review/apply ordinal 44: supabase/migrations/20260930004000_wave3_dashboard_metrics.sql at SHA-256 c915ac0a5bb6367f22ac83008a1a8fc00db9829978fa0cab8d621865b19dad4d",
+        "Review/apply ordinal 45: supabase/migrations/20260930005000_wave3_observability.sql at SHA-256 9afecc2a25596b7af50aa099fb0b9ee6fc5c916be06dd10eb52c023c5920031d"
+      ],
+      "risk_level": "high",
+      "resources_required": [
+        "Owner-selected isolated target/profile",
+        "Explicit installation, fixture and native authorization",
+        "Verified snapshot and documented restore owner"
+      ]
+    },
+    {
+      "name": "negative_stock_policy",
+      "dependencies": [
+        "inventory_dashboard_observability"
+      ],
+      "description": "Apply only these reviewed candidate bodies in recorded dependency order",
+      "duration_hours": 0,
+      "duration_basis": "Not estimated; zero is a generator placeholder, not an installation ETA",
+      "ordinals": [
+        46,
+        46
+      ],
+      "candidates": [
+        {
+          "path": "supabase/migrations/20261003090000_wave3_negative_stock_policy.sql",
+          "version": "20261003090000",
+          "ordinal": 46,
+          "sha256": "9cc3aaa66c884397dbbc47919f5f758682129e403d7c334eaffdc4bd53736f4a",
+          "current_sha256": "9cc3aaa66c884397dbbc47919f5f758682129e403d7c334eaffdc4bd53736f4a",
+          "installed": false,
+          "installed_now": false,
+          "requires_previous_candidates": true
+        }
+      ],
+      "validation_criteria": [
+        "Record exact target and actual ledger after the phase",
+        "Validate scoped grants, source/query hashes and approved phase invariants",
+        "Keep installed, synthetic and native evidence separate"
+      ],
+      "rollback_triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      },
+      "tasks": [
+        "Review/apply ordinal46: supabase/migrations/20261003090000_wave3_negative_stock_policy.sql at SHA-256 9cc3aaa66c884397dbbc47919f5f758682129e403d7c334eaffdc4bd53736f4a"
+      ],
+      "risk_level": "high",
+      "resources_required": [
+        "Owner-selected isolated target/profile",
+        "Explicit installation, fixture and native authorization",
+        "Verified snapshot and documented restore owner"
+      ],
+      "status": "prepared_not_installed",
+      "approval": "Existing isolated target/resource/actor/native/restore approval bindings remain required; the policy decision authorizes implementation only."
+    },
+    {
+      "name": "installed_synthetic_checks",
+      "dependencies": [
+        "negative_stock_policy"
+      ],
+      "description": "Run strict installed rollback fixtures, independent authenticated sessions and target-scale plans/p95",
+      "duration_hours": 0,
+      "duration_basis": "Not estimated; zero is a generator placeholder, not an installation ETA",
+      "ordinals": null,
+      "candidates": [],
+      "validation_criteria": [
+        "Record exact target and actual ledger after the phase",
+        "Validate scoped grants, source/query hashes and approved phase invariants",
+        "Keep installed, synthetic and native evidence separate"
+      ],
+      "rollback_triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      },
+      "tasks": [
+        "Follow the corresponding reviewed runbook phase and obtain its specific external approval"
+      ],
+      "risk_level": "high",
+      "resources_required": [
+        "Owner-selected isolated target/profile",
+        "Explicit installation, fixture and native authorization",
+        "Verified snapshot and documented restore owner"
+      ]
+    },
+    {
+      "name": "native_owner_acceptance",
+      "dependencies": [
+        "installed_synthetic_checks"
+      ],
+      "description": "Use separately approved synthetic Windows profile and isolated compiled binary, then obtain owner signoff",
+      "duration_hours": 0,
+      "duration_basis": "Not estimated; zero is a generator placeholder, not an installation ETA",
+      "ordinals": null,
+      "candidates": [],
+      "validation_criteria": [
+        "Record exact target and actual ledger after the phase",
+        "Validate scoped grants, source/query hashes and approved phase invariants",
+        "Keep installed, synthetic and native evidence separate"
+      ],
+      "rollback_triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      },
+      "tasks": [
+        "Follow the corresponding reviewed runbook phase and obtain its specific external approval"
+      ],
+      "risk_level": "high",
+      "resources_required": [
+        "Owner-selected isolated target/profile",
+        "Explicit installation, fixture and native authorization",
+        "Verified snapshot and documented restore owner"
+      ]
+    }
+  ],
+  "rollback": [
+    {
+      "name": "baseline",
+      "ordinals": null,
+      "triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      }
+    },
+    {
+      "name": "procurement",
+      "ordinals": [
+        1,
+        12
+      ],
+      "triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      }
+    },
+    {
+      "name": "inventory",
+      "ordinals": [
+        13,
+        18
+      ],
+      "triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      }
+    },
+    {
+      "name": "finance",
+      "ordinals": [
+        19,
+        34
+      ],
+      "triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      }
+    },
+    {
+      "name": "integrated_evidence",
+      "ordinals": [
+        35,
+        40
+      ],
+      "triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      }
+    },
+    {
+      "name": "inventory_dashboard_observability",
+      "ordinals": [
+        41,
+        45
+      ],
+      "triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      }
+    },
+    {
+      "name": "negative_stock_policy",
+      "ordinals": [
+        46,
+        46
+      ],
+      "triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      }
+    },
+    {
+      "name": "installed_synthetic_checks",
+      "ordinals": null,
+      "triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      }
+    },
+    {
+      "name": "native_owner_acceptance",
+      "ordinals": null,
+      "triggers": [
+        "Unexplained ledger, source, grant or signature drift",
+        "Failed migration or strict assertion",
+        "Unauthorized scope, partial effect or changed historical evidence",
+        "Measured target gate or native acceptance failure"
+      ],
+      "rollback": {
+        "before_writes": "Abort without changing the target",
+        "transaction_failure": "Rollback the failing transaction; stop further installation and retain diagnostics",
+        "successful_phase_before_business_writes": "Restore only the explicitly approved isolated snapshot, with owner authorization, or review an additive repair",
+        "after_business_writes": "Coordinated approved restore or additive forward repair; no journal, open-item, serial, attachment or ledger deletion",
+        "scope": "Never restore/reset shared acceptance or concurrent Wave 4; never execute generated destructive downgrade placeholders"
+      }
+    }
+  ],
+  "absent_required_rpcs": [
+    "post_goods_receipt",
+    "post_manual_journal",
+    "period_governance_command",
+    "bank_reconciliation_command",
+    "allocate_supplier_credit",
+    "reverse_goods_receipt",
+    "transition_purchase_requisition"
+  ],
+  "approval_binding_missing": [
+    "separate isolated project/direct host/PostgreSQL version/region/resources",
+    "exact46candidate body hashes and nonlexical order",
+    "eight documented semantic compatibility decisions and older-client handling",
+    "named restore point/restore owner/window",
+    "persistent synthetic fixture and sequence/resource budget",
+    "existing distinct authenticated actors and session IDs",
+    "fresh exact workload/race/count/postflight hashes and permitted effect scope",
+    "separate isolated compiled Windows profile/native stores/Storage prefix/critical checks",
+    "owner signoff after evidence review"
+  ],
+  "boundary": "Prepared exact 46-stack installation package only. Selected accounting policy is approved for development. No installation, persistent fixture, independent authenticated session, native launch or acceptance/production operation is authorized by this package.",
+  "generated_at": "2026-10-04T03:35:23.511Z",
+  "historical45_package": {
+    "file": "docs/verification/remaining-wave3/database-installation-package-20261003.json",
+    "sha256": "7d1732bb1e5effceb20c0c7e269a5dc8a5bc6809501ffd42821e9199c33f5cef"
+  },
+  "tail_policy_candidate": {
+    "ordinal": 46,
+    "path": "supabase/migrations/20261003090000_wave3_negative_stock_policy.sql",
+    "sha256": "9cc3aaa66c884397dbbc47919f5f758682129e403d7c334eaffdc4bd53736f4a",
+    "accounting_policy_approved": true,
+    "installation_approved": false
+  },
+  "fresh_strict_execution": null
+}

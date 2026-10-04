@@ -14,6 +14,7 @@ import 'src/features/disposition/disposition_controller.dart';
 import 'src/features/inventory_transfer/inventory_transfer_controller.dart';
 import 'src/features/stock_count/stock_count_controller.dart';
 import 'src/features/reservations/reservation_controller.dart';
+import 'src/features/negative_stock/negative_stock_policy_controller.dart';
 import 'src/features/receipt_trace/receipt_trace_controller.dart';
 import 'src/features/landed_value/landed_value_controller.dart';
 import 'src/features/inventory_valuation/inventory_valuation_controller.dart';
@@ -114,6 +115,9 @@ Future<void> main() async {
         ),
         reservationGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseReservationGateway(client),
+        ),
+        negativeStockPolicyRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabaseNegativeStockPolicyGateway(client),
         ),
         receiptTraceGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseReceiptTraceGateway(client),

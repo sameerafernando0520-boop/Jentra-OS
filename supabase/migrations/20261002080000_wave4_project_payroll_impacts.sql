@@ -44,7 +44,7 @@ declare entry projects.time_entries%rowtype;r projects.time_revisions%rowtype;pr
  start_local timestamp;end_local timestamp;start_utc timestamptz;end_utc timestamptz;
  cursor_utc timestamptz;break_start timestamptz;break_end timestamptz;break_seconds bigint;seconds bigint;
  bill_amount numeric;cost_amount numeric;cost_rate numeric;new_claim uuid;link uuid;allocation uuid;unit uuid;
- digest text;remove_source boolean:=false;original_revision uuid;
+ digest text;remove_source boolean:=false;original_revision uuid;original_effect projects.payroll_time_impacts%rowtype;
 begin
  if p_mode not in('read','validate','release','apply','reverse') or proposal is null or jsonb_typeof(proposal)<>'object' then
   raise exception using errcode='22023',message='PROJECT_PAYROLL_IMPACT_INVALID';end if;
@@ -64,14 +64,15 @@ begin
  if p_mode<>'read' then perform core.wave3_require_scope(t,'projects.time.approve',e,b);end if;
  select x.body into prior from projects.payroll_time_impacts x where x.correction_id=correction and x.entry_id=entry.id and x.mode=actual_mode;
  if prior is not null and p_mode in('apply','reverse') then
-  if entry.current_revision_id<>(prior->>'source_id')::uuid then raise exception using errcode='40001',message='PAYROLL_CORRECTION_SOURCE_CHANGED';end if;
+  if entry.current_revision_id is distinct from(prior->>'source_id')::uuid
+   or entry.version is distinct from(prior->>'source_version')::bigint
+   or claim is distinct from(prior->>'claim_id')::uuid then raise exception using errcode='40001',message='PAYROLL_CORRECTION_SOURCE_CHANGED';end if;
   return prior;
  end if;
  if entry.status<>'approved' and not(actual_mode='reverse' and entry.status='cancelled') then
   raise exception using errcode='55000',message='PROJECT_TIME_LINKED_IMPACT_REQUIRED';end if;
  select coalesce(jsonb_agg(a.allocation_id order by a.allocation_id),'[]') into allocation_ids
-  from projects.time_allocations a join people.work_allocations w on w.id=a.allocation_id
-  where a.revision_id=r.id and w.active;
+  from projects.time_allocations a where a.revision_id=r.id;
  select c.hourly_rate into cost_rate from projects.time_costs c where c.revision_id=r.id;
  if cost_rate is null then select c.hourly_rate into cost_rate from projects.resource_costs c where c.resource_slot_id=slot.id;end if;
  if cost_rate is null then raise exception using errcode='55000',message='PROJECT_COST_BASIS_REQUIRED';end if;
@@ -81,6 +82,19 @@ begin
   'calendar_version_id',cal.id,'timezone',cal.timezone,'cost_rate',cost_rate::text);
  if p_mode='read' then return jsonb_build_object('before',before_body,'source_id',r.id,'source_version',entry.version,
   'paid_seconds',r.payable_seconds,'claim_id',claim,'entry_id',entry.id,'project_id',pr.id,'project_code',pr.code,'project_name',pr.name);end if;
+ if actual_mode='reverse' then
+  select * into original_effect from projects.payroll_time_impacts x where x.tenant_id=t and x.legal_entity_id=e
+   and x.branch_id=b and x.entry_id=entry.id and x.correction_id=correction and x.mode='apply';
+  if original_effect.id is null or original_effect.replacement_revision_id is distinct from r.id
+   or entry.version is distinct from(original_effect.body->>'source_version')::bigint
+   or claim is distinct from(original_effect.body->>'claim_id')::uuid then
+   raise exception using errcode='40001',message='PAYROLL_CORRECTION_SOURCE_CHANGED';end if;
+  if direct_claim and(proposal->'before' is distinct from original_effect.body->'before'
+    or proposal->'after' is distinct from original_effect.body->'after')
+   or not direct_claim and(proposal->'allocation_impact'->'before' is distinct from original_effect.body->'before'
+    or proposal->'allocation_impact'->'after' is distinct from original_effect.body->'after') then
+   raise exception using errcode='40001',message='PAYROLL_CORRECTION_SOURCE_CHANGED';end if;
+ end if;
  if direct_claim then
   if not exists(select 1 from people.work_claims w where w.id=claim and w.tenant_id=t and w.legal_entity_id=e
    and w.branch_id=b and w.employee_id=employee and w.source_kind='project' and w.source_id=r.id and w.active)
@@ -153,10 +167,9 @@ begin
   'status',case when remove_source then 'cancelled' else 'approved' end,'billing',billing);
  if p_mode='apply' and direct_claim and (proposal->'before' is distinct from before_body or proposal->'after' is distinct from after_body) then
   raise exception using errcode='40001',message='PAYROLL_CORRECTION_SOURCE_CHANGED';end if;
- if p_mode in('release','apply','reverse') and not direct_claim and
-  ((proposal->'allocation_impact'->'before'->'revision' is distinct from to_jsonb(r)
-    or (proposal->'allocation_impact'->'before'->>'entry_version')::bigint is distinct from entry.version)
-   and actual_mode<>'reverse') then
+ if p_mode in('release','apply','reverse') and not direct_claim and actual_mode<>'reverse' and
+  (proposal->'allocation_impact'->'before' is distinct from before_body
+   or proposal->'allocation_impact'->'after' is distinct from after_body) then
   raise exception using errcode='40001',message='PAYROLL_CORRECTION_SOURCE_CHANGED';end if;
  body:=jsonb_build_object('before',before_body,'after',after_body,'source_id',revision_id,'source_version',entry.version+1,
   'paid_seconds',case when remove_source then 0 else seconds end,'claim_id',claim,'entry_id',entry.id,'project_id',pr.id,
@@ -173,7 +186,12 @@ begin
    where a.revision_id=r.id and w.active order by a.allocation_id loop perform people.revoke_work_allocation(t,e,employee,allocation);end loop;
   new_claim:=people_payroll.replace_claim(t,e,b,employee,claim,'project',revision_id,cal.id,start_utc,end_utc,breaks,correction);
  else new_claim:=(proposal->>'new_claim_id')::uuid;
-  if new_claim is null then raise exception using errcode='55000',message='PROJECT_ATTENDANCE_SOURCE_INVALID';end if;
+  if new_claim is null or not exists(select 1 from people.work_claims w where w.id=new_claim and w.tenant_id=t
+   and w.legal_entity_id=e and w.branch_id=b and w.employee_id=employee and w.active and w.source_kind='attendance'
+   and w.calendar_version_id=cal.id and w.start_utc=(attendance->>'start_utc')::timestamptz
+   and w.end_utc=(attendance->>'end_utc')::timestamptz
+   and w.break_seconds=people.work_break_seconds(w.start_utc,w.end_utc,attendance->'breaks')) then
+   raise exception using errcode='55000',message='PROJECT_ATTENDANCE_SOURCE_INVALID';end if;
  end if;
  perform projects.payroll_billing_impact(t,e,b,pr.id,r.id,
   (proposal-'operational_mode')||jsonb_build_object('billing_credit_line_ids',credit_ids),'apply');

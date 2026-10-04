@@ -1,5 +1,30 @@
 # Current source coverage review — 2026-10-03
 
+At the completed pre-policy desktop execution, the unchanged cumulative 189-path
+scope measured 26,359 / 32,388 lines (81.38508%). The locked 25-file pure-domain
+scope measured 643 / 677 branches (94.97784%). The raw and exact-declaration
+supplement are preserved separately as `requirements-coverage-pre-policy-raw-20261003.json`
+and `requirements-coverage-pre-policy-reviewed-20261003.json`. These figures are
+recorded execution evidence, not a percentage for subsequently edited sources.
+
+The later current-HEAD source-reuse audit binds `cbdb9f8166034bbb6e6112d68baf149cd1d7be84`
+and rejects stale records. Five quotation-related production files now differ
+from the pre-policy coverage capture. Concurrent Wave 4 source/test changes also
+prevent claims that the older whole-suite or isolated Windows build matches the
+entire current checkout. The audit records those differences without assigning
+ownership or overwriting concurrent work.
+
+The explicitly approved negative-stock policy requires five planned additional
+source paths, making the prepared cumulative list 194 paths while retaining all
+189 baseline paths. The planned domain model also extends the pure-domain
+branch denominator beyond the locked 25-file report. The additive pure-domain
+aggregation requires actual source-matched measurements and retains the 90%
+threshold. Neither prepared scope nor source presence is measurement; final
+coverage must include all real added paths and reject stale executable records.
+
+The remaining paragraphs preserve the earlier review chronology and explain
+why smaller or partially measured reports could not close the coverage gate.
+
 The cumulative approved-Wave-3 scope contains 189 Dart source paths: 119 prior
 paths plus 70 additionally discovered paths from the approved specification
 baseline. It retains full shared router/provider/shell/setup sources and excludes

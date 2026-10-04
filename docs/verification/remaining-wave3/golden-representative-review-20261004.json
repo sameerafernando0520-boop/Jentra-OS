@@ -1,0 +1,49 @@
+{
+  "observed_at": "2026-10-04T03:36:24.248452+00:00",
+  "reviewer": "/root/policy_client_final",
+  "boundary": "Read-only fresh representative failure images and preserved approved goldens. Does not waive strict comparators or generalize representative edge differences to all 67 current failures. Warehouse output was not refreshed because that file failed to compile.",
+  "measurements": [
+    {
+      "before": "apps/jentra_desktop/test/goldens/supplier_statement_light_200.png",
+      "after": "apps/jentra_desktop/test/failures/supplier_statement_light_200_testImage.png",
+      "before_sha256": "7f1c3c11835a857a11906a726544347f7f119a3aefe3ab040b595fcee309bdce",
+      "after_sha256": "40ce489b6511f401217768f2c1554a65dd00aed9f45e415e66b068954b7d6653",
+      "size": [
+        1024,
+        1300
+      ],
+      "different_pixels": 627,
+      "changed_alpha_pixels": 0,
+      "bbox": [
+        40,
+        202,
+        809,
+        784
+      ],
+      "maximum_channel_delta": 52,
+      "current_log_case": true
+    },
+    {
+      "before": "apps/jentra_desktop/test/goldens/quotation_history_1440_light.png",
+      "after": "apps/jentra_desktop/test/failures/quotation_history_1440_light_testImage.png",
+      "before_sha256": "eb70f863d0d195daccd4d9a573b87e169fe952437cb702ec146901f42f0eeb63",
+      "after_sha256": "db8151afd7cc21952e44e77bc2f5dd12d0f01cb7747d422232d17cdef9792afa",
+      "size": [
+        1440,
+        1000
+      ],
+      "different_pixels": 1977,
+      "changed_alpha_pixels": 0,
+      "bbox": [
+        20,
+        22,
+        1420,
+        980
+      ],
+      "maximum_channel_delta": 57,
+      "current_log_case": true
+    }
+  ],
+  "visual_observations": "Supplier statement dates, exact amounts, aging, labels and controls match visually; quotation revision/history values, labels and layout match visually. Visible difference distribution is consistent with rounded edges from the earlier controlled primitive raster probe. This is representative corroboration, not proof of a single cause for every golden.",
+  "protected_concurrent_work": "No source/navigation/golden was edited by this reviewer. Separate owner has changed service_workspace_light_200.png/service_workspace_dark_200.png and added service equipment/register goldens; those changes are preserved and are not this review approval."
+}

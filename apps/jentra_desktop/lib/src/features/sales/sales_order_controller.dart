@@ -231,7 +231,9 @@ final class SalesOrderController extends AsyncNotifier<SalesOrderState> {
       if (current != null && !state.isLoading) {
         state = AsyncData(
           current.copyWith(
-            connectivity: next.value ?? ConnectivityState.offline,
+            connectivity: !next.isLoading && !next.hasError
+                ? next.value ?? ConnectivityState.offline
+                : ConnectivityState.offline,
           ),
         );
       }
@@ -789,7 +791,11 @@ final class SalesOrderController extends AsyncNotifier<SalesOrderState> {
         current.slot == null) {
       return;
     }
-    if (!current.isOnline) {
+    final connection = ref.read(connectivityStateProvider);
+    if (!current.isOnline ||
+        connection.isLoading ||
+        connection.hasError ||
+        connection.value != ConnectivityState.online) {
       _fail(
         const DomainError(
           code: 'OFFLINE_COMMAND_BLOCKED',
@@ -853,6 +859,53 @@ final class SalesOrderController extends AsyncNotifier<SalesOrderState> {
         slot = current.slot!,
         store = _store,
         reader = _reader;
+    final capabilities = current.capabilities;
+    var accessLost = false;
+    void observeAccess() {
+      if (accessLost) return;
+      if (!ref.mounted) {
+        accessLost = true;
+        return;
+      }
+      final caps = ref.read(businessCapabilitiesProvider);
+      final connectivity = ref.read(connectivityStateProvider);
+      accessLost =
+          ref.read(activeTenantContextProvider) != context ||
+          caps.isLoading ||
+          caps.hasError ||
+          caps.value == null ||
+          caps.value!.length != capabilities.length ||
+          !caps.value!.containsAll(capabilities) ||
+          connectivity.isLoading ||
+          connectivity.hasError ||
+          connectivity.value != ConnectivityState.online;
+    }
+
+    final scopes = ref.listen(
+      activeTenantContextProvider,
+      (_, _) => observeAccess(),
+    );
+    final permissions = ref.listen(
+      businessCapabilitiesProvider,
+      (_, _) => observeAccess(),
+    );
+    final connections = ref.listen(
+      connectivityStateProvider,
+      (_, _) => observeAccess(),
+    );
+    void checkPreparationAccess() {
+      observeAccess();
+      if (accessLost ||
+          !_valid(generation, context) ||
+          selection != _selection) {
+        throw const DomainError(
+          code: 'ACCESS_CHANGED',
+          message: 'Business access or connection changed before sending. Your encrypted fields and any prepared request are retained. Review them and explicitly retry when authorized and online.',
+          retryable: true,
+        );
+      }
+    }
+
     _commandActive = true;
     state = AsyncData(
       current.copyWith(busy: true, error: null, statusMessage: null),
@@ -860,9 +913,10 @@ final class SalesOrderController extends AsyncNotifier<SalesOrderState> {
     QuotationPendingCommand? pending;
     try {
       await _edits;
-      if (!_valid(generation, context) || selection != _selection) return;
+      checkPreparationAccess();
       current = state.requireValue;
       pending = (await store.load(context, slot))?.pending;
+      checkPreparationAccess();
       if (verb == 'retry' && pending == null) {
         throw const DomainError(
           code: 'NOT_FOUND',
@@ -964,6 +1018,7 @@ final class SalesOrderController extends AsyncNotifier<SalesOrderState> {
             current.detail?.order.version;
         await store.save(context, slot, raw, expectedVersion: version);
         _failedEdits.remove(_editKey(context, slot));
+        checkPreparationAccess();
         pending = await store.prepare(
           context,
           slot,
@@ -972,14 +1027,7 @@ final class SalesOrderController extends AsyncNotifier<SalesOrderState> {
           expectedVersion: version,
         );
       }
-      if (!_valid(generation, context) || selection != _selection) return;
-      if (ref.read(connectivityStateProvider).value !=
-          ConnectivityState.online) {
-        throw const DomainError(
-          code: 'NETWORK_ERROR',
-          message: 'Connection changed. Retry the saved request when online.',
-        );
-      }
+      checkPreparationAccess();
       final result = await reader.executeOrder(pending.verb, pending.envelope);
       if (result.isFailure) throw result.error!;
       final entity = result.entity!;
@@ -994,6 +1042,24 @@ final class SalesOrderController extends AsyncNotifier<SalesOrderState> {
       await store.complete(context, slot, pending.envelope.commandId);
       pending = null;
       if (!_valid(generation, context) || selection != _selection) return;
+      if (accessLost) {
+        state = AsyncData(
+          state.requireValue.copyWith(
+            localDraft: null,
+            form: null,
+            detail: null,
+            slot: null,
+            credit: null,
+            busy: false,
+            recovered: false,
+            error: const DomainError(
+              code: 'ACCESS_CHANGED',
+              message: 'The original request was acknowledged. Business access or connection changed while it was pending. Refresh the current workspace to review the result.',
+            ),
+          ),
+        );
+        return;
+      }
       // Clear the committed form before follow-up reads, even if those reads fail.
       state = AsyncData(
         state.requireValue.copyWith(
@@ -1054,6 +1120,9 @@ final class SalesOrderController extends AsyncNotifier<SalesOrderState> {
         );
       }
     } finally {
+      scopes.close();
+      permissions.close();
+      connections.close();
       _commandActive = false;
       if (_valid(generation, context) && state.requireValue.busy) {
         state = AsyncData(state.requireValue.copyWith(busy: false));

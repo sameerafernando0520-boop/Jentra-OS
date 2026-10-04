@@ -1,5 +1,13 @@
 # Remaining Wave 3 verification checkpoint
 
+## Latest policy continuation — 2026-10-03
+
+The [current policy checkpoint](wave3-policy-current-checkpoint-20261003.md)
+records the explicit owner decision, current read-only refresh, 88 passing sales
+regressions, actual strict rollback failure and pending fresh policy/package
+verification. Earlier dated checkpoints below are historical. Installation,
+authenticated/native/load acceptance and owner signoff remain separate gates.
+
 ## Active continuation — 2026-10-01
 
 The [181-ID matrix](requirement-matrix-20261001.md) is current; September 30 and

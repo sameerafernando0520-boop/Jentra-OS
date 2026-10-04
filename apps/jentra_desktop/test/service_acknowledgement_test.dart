@@ -302,5 +302,36 @@ void main() {
       expect(c.error, isNull);
       c.dispose();
     });
+    test('fresh picker $code clears service plaintext', () async {
+      final c = create();
+      await input(c);
+      repository.authorizationFailure = DomainError(
+        code: code,
+        message: 'Synthetic picker denied',
+      );
+      await expectLater(c.choices('customer'), throwsA(isA<DomainError>()));
+      expect(c.denied, isTrue);
+      expect(c.form, isNull);
+      expect(c.records, isEmpty);
+      c.dispose();
+    });
+    test('late begin $code cannot deny replacement epoch', () async {
+      final c = create();
+      await c.initialize();
+      repository.authorizationGate = Completer<void>();
+      final work = c.begin('equipment');
+      await Future<void>.delayed(Duration.zero);
+      c.setOnline(false);
+      c.setOnline(true);
+      repository.authorizationFailure = DomainError(
+        code: code,
+        message: 'Synthetic obsolete begin denial',
+      );
+      repository.authorizationGate!.complete();
+      expect(await work, isFalse);
+      expect(c.denied, isFalse);
+      expect(c.error, isNull);
+      c.dispose();
+    });
   }
 }

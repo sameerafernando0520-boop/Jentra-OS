@@ -258,3 +258,36 @@ select pg_temp.wactor('creator');set local role authenticated;
 select throws_ok($q$select pg_temp.cc(pg_temp.correction_action('post','corr.geometry'),2,'corr.geometry.post')$q$,'42501',null,'source authority is rechecked before confirmed post replay');
 reset role;
 insert into core.role_permissions(tenant_id,role_id,permission_code) values(pg_temp.wid('tenant'),pg_temp.wid('creator.role'),'people.attendance.approve') on conflict do nothing;
+delete from core.role_permissions where role_id=pg_temp.wid('creator.role') and permission_code in('people.payroll.correction.prepare','people.attendance.manage');
+select pg_temp.wactor('creator');set local role authenticated;
+select ok(jsonb_array_length(api.people_payroll_correction_sources(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),
+ (select response->'entity'->>'original_calculation_id' from correction_client_samples where name='prepared')::uuid)->'items')>0,
+ 'independent source reader can inspect current facts without preparation authority');
+select throws_ok($q$select pg_temp.cc(pg_temp.correction_prepare(1800),0,'corr.prepare')$q$,'42501',null,
+ 'preparation authority remains required before confirmed prepare replay');
+reset role;
+insert into core.role_permissions(tenant_id,role_id,permission_code)
+select pg_temp.wid('tenant'),pg_temp.wid('creator.role'),p from unnest(array['people.payroll.correction.prepare','people.attendance.manage']) p on conflict do nothing;
+-- Real scoped common ownership rows exercise the bound before module effects.
+create temporary table correction_bound_claim as
+ select people.make_work_claim(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('manager'),
+ 'attendance',pg_temp.wid('corr.bound.source'),(pg_temp.wdate()+28)::timestamp+interval '9 hours' at time zone 'Asia/Colombo',
+ (pg_temp.wdate()+28)::timestamp+interval '10 hours' at time zone 'Asia/Colombo','[]',pg_temp.wid('calendar-version'),pg_temp.wid('creator')) id;
+insert into people.work_allocations(id,tenant_id,legal_entity_id,branch_id,employee_id,claim_id,source_kind,source_id,start_utc,end_utc,created_by)
+select pg_temp.wid('corr.bound.allocation.'||i),pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('manager'),c.id,
+ 'project',pg_temp.wid('corr.bound.project.source.'||i),w.start_utc+make_interval(secs=>i*2),w.start_utc+make_interval(secs=>i*2+1),pg_temp.wid('creator')
+from generate_series(1,51) i cross join correction_bound_claim c join people.work_claims w on w.id=c.id;
+select throws_ok($q$select people_payroll.linked_allocation_bound(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),
+ pg_temp.wid('manager'),(select id from correction_bound_claim),'[]')$q$,'55000','WORK_ALLOCATION_IMPACT_BOUND_REQUIRED',
+ '51 scoped distinct allocated sources fail before linked module effects');
+delete from people.work_allocations where id=pg_temp.wid('corr.bound.allocation.51');
+create function pg_temp.cbound_ok() returns boolean language plpgsql as $$begin
+ perform people_payroll.linked_allocation_bound(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),
+  pg_temp.wid('manager'),(select id from correction_bound_claim),'[]');return true;end $$;
+select ok(pg_temp.cbound_ok(),'50 scoped distinct allocated sources remain within bound');
+select throws_ok($q$select people_payroll.linked_allocation_bound(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('manager'),null,
+ (select jsonb_agg(jsonb_build_object('source_kind','project','impact',jsonb_build_object('entry_id',pg_temp.wid('corr.bound.project.entry.'||i))))
+  from generate_series(1,51) i))$q$,'55000','WORK_ALLOCATION_IMPACT_BOUND_REQUIRED',
+ '51 frozen removed origins fail the reversal bound without truncation');
+delete from people.work_allocations where claim_id=(select id from correction_bound_claim);
+select people.revoke_work_claim(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('manager'),(select id from correction_bound_claim));

@@ -14,7 +14,7 @@ select pg_temp.project_impact_command(jsonb_build_object('action','create','id',
  'start_date',pg_temp.wdate(),'end_date_exclusive',pg_temp.wdate()+1,'reason','Synthetic impact fixture'),0,'linked.project.create');
 select pg_temp.project_impact_command(jsonb_build_object('action','plan','id',pg_temp.wid('linked.project'),'plan_id',pg_temp.wid('linked.plan'),
  'terms','Synthetic exact linked labor','budget','1000.00','reason','Synthetic governed impact plan',
- 'tasks',jsonb_build_array(jsonb_build_object('id',pg_temp.wid('linked.task'),'name','Linked task','start_date',pg_temp.wdate(),
+ 'tasks',jsonb_build_array(jsonb_build_object('id',pg_temp.wid('linked.task'),'name','Linked task','owner_id',pg_temp.wid('manager'),'start_date',pg_temp.wdate(),
  'end_date_exclusive',pg_temp.wdate()+1,'planned_seconds',3600,'dependencies','[]'::jsonb)),
  'resources',jsonb_build_array(jsonb_build_object('id',pg_temp.wid('linked.slot'),'task_id',pg_temp.wid('linked.task'),'employee_id',pg_temp.wid('manager'),
  'calendar_version_id',pg_temp.wid('calendar-version'),'start_local',to_char(pg_temp.wdate()::timestamp+interval '9 hours','YYYY-MM-DD"T"HH24:MI:SS'),
@@ -66,6 +66,24 @@ select throws_ok($q$select pg_temp.cc(pg_temp.linked_correction('linked.invalid'
 insert into project_impact_samples values('prepared',pg_temp.cc(pg_temp.linked_correction('linked.correction',585),0,'linked.correction.prepare'));
 reset role;select pg_temp.wactor('reviewer');set local role authenticated;
 select pg_temp.cc(pg_temp.correction_action('approve','linked.correction'),1,'linked.correction.approve');
+reset role;
+create function pg_temp.project_allocation_probe(proof_change text,p_mode text default 'release') returns jsonb
+language plpgsql as $$declare source people_payroll.correction_sources%rowtype;effect jsonb;proposal jsonb;begin
+ select * into source from people_payroll.correction_sources where correction_id=pg_temp.wid('linked.correction');
+ effect:=source.impact->'after'->'allocation_impacts'->0;
+ proposal:=source.impact||jsonb_build_object('correction_id',source.correction_id,'attendance_after',source.impact->'after',
+  'allocation_impact',effect->'impact','new_claim_id',pg_temp.wid('not-a-scoped-attendance-claim'));
+ if proof_change='before' then proposal:=jsonb_set(proposal,'{allocation_impact,before,cost_rate}','"123.000000"');
+ elsif proof_change='after' then proposal:=jsonb_set(proposal,'{allocation_impact,after,cost_amount}','"123.000000"');end if;
+ return projects.payroll_allocation_impact(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('manager'),
+  (effect->>'allocation_id')::uuid,source.after_revision_id,proposal,p_mode);
+end $$;
+select throws_ok($q$select pg_temp.project_allocation_probe('before')$q$,'40001','PAYROLL_CORRECTION_SOURCE_CHANGED',
+ 'linked release rejects changed complete original cost proof');
+select throws_ok($q$select pg_temp.project_allocation_probe('after')$q$,'40001','PAYROLL_CORRECTION_SOURCE_CHANGED',
+ 'linked release rejects changed complete calculated cost proof');
+select throws_ok($q$select pg_temp.project_allocation_probe('none','apply')$q$,'55000','PROJECT_ATTENDANCE_SOURCE_INVALID',
+ 'linked mutation requires the actual scoped replacement attendance claim');
 reset role;select pg_temp.wactor('creator');set local role authenticated;
 insert into project_impact_samples values('posted',pg_temp.cc(pg_temp.correction_action('post','linked.correction'),2,'linked.correction.post'));
 reset role;
@@ -75,6 +93,11 @@ select is((select sum(extract(epoch from end_utc-start_utc))::bigint from people
 select is((select count(*)::integer from projects.billable_units where project_id=pg_temp.wid('linked.project') and status='available'),1,'correction creates exactly one current billable unit');
 select is((select count(*)::integer from projects.billable_units where project_id=pg_temp.wid('linked.project') and status='cancelled'),1,'original unbilled unit remains retained cancelled history');
 select is((select count(*)::integer from projects.payroll_time_impacts),1,'one immutable module impact per entry');
+select throws_ok($q$select projects.payroll_revision_impact(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),
+ pg_temp.wid('manager'),pg_temp.wid('linked.time'),(select active_claim_id from people.attendance_entries where id=pg_temp.wid('corr.attendance')),
+ gen_random_uuid(),jsonb_build_object('correction_id',pg_temp.wid('unrelated-correction'),'operational_mode','reverse'),
+ 'validate',false)$q$,'40001','PAYROLL_CORRECTION_SOURCE_CHANGED',
+ 'old or unrelated reversal cannot supersede the current linked project revision');
 select pg_temp.wactor('reviewer');set local role authenticated;
 insert into project_impact_samples values('reversed',pg_temp.cc(pg_temp.correction_action('reverse','linked.correction'),3,'linked.correction.reverse'));
 reset role;
@@ -93,6 +116,22 @@ select is((select payable_seconds from people.work_claims where employee_id=pg_t
 select is((select count(*)::integer from people.work_allocations where employee_id=pg_temp.wid('manager') and active),0,'governed removal leaves no invalid project allocation');
 select is((select status from projects.time_entries where id=pg_temp.wid('linked.time')),'cancelled','removed project source is visibly cancelled');
 select is((select count(*)::integer from projects.billable_units where project_id=pg_temp.wid('linked.project') and status='available'),0,'removed geometry leaves no invented billable units');
+insert into project_impact_samples values('removed_sources_request',jsonb_build_object('calculation_id',
+ (select id from people_payroll.employee_calculations where run_id=pg_temp.wid('corr.original'))));
+select pg_temp.wactor('reviewer');set local role authenticated;
+insert into project_impact_samples values('removed_sources',api.people_payroll_correction_sources(
+ pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),
+ (select (body->>'calculation_id')::uuid from project_impact_samples where name='removed_sources_request'),null));
+reset role;
+select is(jsonb_array_length((select body->'items'->0->'operational'->'allocations' from project_impact_samples where name='removed_sources')),1,
+ 'removed allocation remains one deduplicated authorized current source');
+select ok((select body->'items'->0->'operational'->'allocations'->0->>'active'='false'
+ and (body->'items'->0->'operational'->'allocations'->0->'operational'->>'source_id')::uuid=
+ (select current_revision_id from projects.time_entries where id=pg_temp.wid('linked.time'))
+ and (body->'items'->0->'operational'->'allocations'->0->'operational'->>'source_version')::bigint=
+ (select version from projects.time_entries where id=pg_temp.wid('linked.time'))
+ from project_impact_samples where name='removed_sources'),
+ 'reversal source picker binds removed allocation to current cancelled revision and version');
 select pg_temp.wactor('reviewer');set local role authenticated;
 select pg_temp.cc(pg_temp.correction_action('reverse','linked.remove'),3,'linked.remove.reverse');
 reset role;
@@ -111,7 +150,7 @@ select pg_temp.project_impact_command(jsonb_build_object('action','create','id',
  'start_date',pg_temp.wdate()+21,'end_date_exclusive',pg_temp.wdate()+22,'reason','Synthetic direct source fixture'),0,'direct.project.create');
 select pg_temp.project_impact_command(jsonb_build_object('action','plan','id',pg_temp.wid('direct.project'),'plan_id',pg_temp.wid('direct.plan'),
  'terms','Synthetic direct payroll geometry','budget','1000.00','reason','Synthetic governed direct source',
- 'tasks',jsonb_build_array(jsonb_build_object('id',pg_temp.wid('direct.task'),'name','Direct task','start_date',pg_temp.wdate()+21,
+ 'tasks',jsonb_build_array(jsonb_build_object('id',pg_temp.wid('direct.task'),'name','Direct task','owner_id',pg_temp.wid('manager'),'start_date',pg_temp.wdate()+21,
  'end_date_exclusive',pg_temp.wdate()+22,'planned_seconds',3600,'dependencies','[]'::jsonb)),
  'resources',jsonb_build_array(jsonb_build_object('id',pg_temp.wid('direct.slot'),'task_id',pg_temp.wid('direct.task'),'employee_id',pg_temp.wid('manager'),
  'calendar_version_id',pg_temp.wid('calendar-version'),'start_local',to_char((pg_temp.wdate()+21)::timestamp+interval '10 hours','YYYY-MM-DD"T"HH24:MI:SS'),

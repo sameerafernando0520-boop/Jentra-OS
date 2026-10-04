@@ -2921,5 +2921,5 @@ do $$declare failed text;begin
 end $$;
 set constraints all immediate;
 select * from finish(true);
-select jsonb_object_agg(label,body) project_finance_client_samples from project_finance_client_samples;
+select jsonb_object_agg(label,body) project_finance_client_samples,(select count(*) from project_assertions) assertions from project_finance_client_samples;
 rollback;

@@ -1,6 +1,6 @@
 # W4-05 expense, reimbursement and protected sales billing
 
-2026-10-01. Additive synthetic development; no installation authority is implied.
+2026-10-03. Additive synthetic development; no installation authority is implied.
 
 Expenses use one scoped project, employee and immutable revision. Up to fifty
 ordered task weights allocate the original converted gross using cumulative
@@ -35,7 +35,51 @@ are never authorization. Posting consumes all original units atomically with the
 installed invoice/journal and the module receipt. Cancellation releases only
 unposted reservations. Original posted units remain consumed after credits.
 
+Service imports use the protected installed-source adapter, never the internal
+cost amount as a sales price. The adapter exposes the current immutable labor
+revision identity, provider labor identity, version, digest, original whole
+seconds and explicitly approved billable amount. Finance retains that revision
+as the immutable unit source and the labor identity as `provider_source_id`.
+Preparation and posting recheck the effective source; posting alone calls the
+provider consumption command. A correction cannot supersede reserved units.
+Milestone units use an independently approved immutable revision as source and
+remain whole quantity-one invoice lines. The owner-only milestone terms provider
+returns frozen commercial amount, customer, currency, version, digest and payment
+days/terms. Preparation and posting validate that basis and require invoice due
+date equal to invoice date plus those frozen days. Conflicting terms require
+separate batches; the native source review shows the exact payment term. Ordinary
+milestone correction cancels an available original unit and cannot supersede a
+reserved or billed unit. Historical terms remain readable as immutable evidence.
+All cross-module commands acquire entity advisories in payroll, projects,
+service order, then sorted employee locks and source rows. Service source rows
+lock their ticket before their work order and labor row.
+
+The protected project/service payroll billing-impact helpers validate the exact
+current source revision. Available units are cancelled when their operational
+revision is superseded. Reserved units require explicit resolution. Billed units
+retain their original invoice, revenue and consumption; supersession requires
+independently approved and posted credits covering the whole original invoice
+line, including exact price, tax, currency and customer. The named posted-credit
+picker scopes these immutable lines to the selected current source revision.
+Operational reversal validates the current replacement revision and freshly
+selected current credits; it does not reuse the original correction's credits
+or revive a historical cancelled unit. The operational owner appends one new
+revision and unit. Immutable effect proof retains original units, invoice lines,
+selected credit lines, amounts, seconds and digest. No impact helper posts a
+credit or automatically rebills corrected work.
+
 As-of reports use both effective service/posting dates and recorded timestamps.
+Financial commands, source-credit validation, private reads and confirmed replay
+require current Projects and Finance entitlements, current capability and MFA.
+Service imports freeze protected internal labor cost separately from commercial
+billing value. A provider-only callback appends authoritative cost evidence after
+each source revision or cancellation, even when replacement work has not been
+imported for billing. Margin selects the latest eligible version of each labor
+source at both cutoffs; cancellation contributes zero and reversal contributes
+one fresh cost basis. Exact cost uses frozen hourly cost, original whole seconds
+and project currency precision. The bounded Service costs page retains immutable
+revision, version, digest, date and rate evidence behind project cost authority.
+Public billing choices never contain internal hourly cost or cost amount.
 Posted invoice revenue and linked original credits are distinguished from
 unposted drafts. Approved expense/time cost, open reimbursement obligations,
 approved capacity commitments, budget and unbilled sources retain source drill
@@ -43,6 +87,16 @@ down. Closure rejects editable expenses, unpaid obligations and unposted batches
 All pages are at most fifty rows. Native forms use named scoped selectors and
 encrypted actor/scope/action recovery, retaining exact uncertain requests and
 known confirmations before optional reads.
+
+Minimal acknowledgements are encrypted separately from pending drafts and retain
+only scope, action, command and idempotency identities, aggregate/project IDs and
+confirmed version. A validated late command or own-receipt response is recorded
+even after controller disposal. Recovery, resume and dispatch check that evidence
+before any retry. Draft cleanup failure therefore cannot reissue a known
+confirmed request after restart. Revocation clears all protected plaintext,
+including resident margin and decrypted recovery actions, while retaining
+encrypted pending evidence. These automated checks use an in-memory database
+and test keys; they do not establish Windows Credential Manager restart proof.
 
 Verification must prove API-only forced RLS, independent approvals, changed-body
 replay rejection, scope/MFA/revocation, exact allocation and obligation

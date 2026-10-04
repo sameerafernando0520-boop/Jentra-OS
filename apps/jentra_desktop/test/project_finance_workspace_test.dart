@@ -12,6 +12,7 @@ import 'package:jentra_domain/jentra_people.dart';
 import 'package:jentra_domain/jentra_projects.dart';
 import 'package:jentra_domain/jentra_project_finance.dart';
 import 'package:jentra_platform/jentra_platform.dart';
+import 'package:jentra_platform/jentra_project_finance_platform.dart';
 import 'package:jentra_desktop/src/features/projects/project_finance_controller.dart';
 import 'package:jentra_desktop/src/features/projects/project_finance_screen.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
@@ -53,11 +54,13 @@ class Repository implements ProjectFinanceRepository {
   bool deny = false, failRead = false;
   DomainError? failure;
   Completer<void>? readGate;
+  Completer<void>? commandGate, receiptGate, authorizeGate;
   final commands = <CommandEnvelope<Map<String, Object?>>>[];
   Map<String, Object?>? confirmation;
   int currentVersion = 3;
   @override
   Future<void> authorize(TenantContext s, String cap) async {
+    await authorizeGate?.future;
     if (deny || denyCapability == cap) {
       throw const DomainError(
         code: 'PERMISSION_DENIED',
@@ -139,6 +142,7 @@ class Repository implements ProjectFinanceRepository {
     if (failure != null) {
       throw failure!;
     }
+    await commandGate?.future;
     confirmation = {
       'request_id': c.commandId,
       'command_id': c.commandId,
@@ -163,7 +167,10 @@ class Repository implements ProjectFinanceRepository {
     TenantContext s,
     String commandId,
     String action,
-  ) async => confirmation;
+  ) async {
+    await receiptGate?.future;
+    return confirmation;
+  }
 }
 
 void main() {
@@ -273,6 +280,150 @@ void main() {
     expect(c.message, contains('Confirmed'));
   });
   test(
+    'AC-416 late validated command persists acknowledgement after disposal',
+    () async {
+      await c.begin('expense_post', row: c.rows.single);
+      c.change('reason', 'Private synthetic late confirmation');
+      repo.commandGate = Completer<void>();
+      final sending = c.send();
+      while (repo.commands.isEmpty) {
+        await Future<void>.delayed(const Duration(milliseconds: 1));
+      }
+      final request = c.pending!;
+      c.dispose();
+      repo.commandGate!.complete();
+      await sending;
+      expect(c.form, isNull);
+      expect(c.confirmed, isNull);
+      expect(
+        await ProjectFinanceCommandAcknowledgements(
+          projectFinanceDrafts(encrypted, request.action),
+        ).contains(request),
+        isTrue,
+      );
+      expect(
+        await projectFinanceDrafts(
+          encrypted,
+          request.action,
+        ).load(scope, request.envelope.payload['id'] as String),
+        isNull,
+      );
+      c = make();
+      await c.initialize();
+      expect(c.recovery, isEmpty);
+      expect(repo.commands, hasLength(1));
+    },
+  );
+  test(
+    'AC-416 connection change during authorization prevents dispatch',
+    () async {
+      await c.begin('expense_post', row: c.rows.single);
+      c.change('reason', 'Synthetic connectivity change');
+      repo.authorizeGate = Completer<void>();
+      final sending = c.send();
+      await Future<void>.delayed(const Duration(milliseconds: 5));
+      c.setOnline(false);
+      c.closeForm();
+      expect(c.form, isNotNull);
+      repo.authorizeGate!.complete();
+      await sending;
+      expect(repo.commands, isEmpty);
+      expect(c.pending, isNull);
+      c.setOnline(true);
+      await c.send();
+      expect(repo.commands, hasLength(1));
+      expect(c.confirmed, isNotNull);
+    },
+  );
+  test(
+    'AC-416 late own receipt persists acknowledgement after disposal',
+    () async {
+      await c.begin('expense_post', row: c.rows.single);
+      c.change('reason', 'Private synthetic receipt');
+      repo.failure = const DomainError(
+        code: 'UNCERTAIN_RESULT',
+        message: 'Interrupted',
+        retryable: true,
+      );
+      await c.send();
+      final request = c.pending!;
+      repo.failure = null;
+      await repo.command(request.envelope);
+      repo.receiptGate = Completer<void>();
+      final reading = c.reconcile();
+      await Future<void>.delayed(const Duration(milliseconds: 5));
+      c.dispose();
+      repo.receiptGate!.complete();
+      await reading;
+      expect(
+        await ProjectFinanceCommandAcknowledgements(
+          projectFinanceDrafts(encrypted, request.action),
+        ).contains(request),
+        isTrue,
+      );
+      c = make();
+      await c.initialize();
+      expect(c.recovery, isEmpty);
+      expect(c.confirmed, isNull);
+    },
+  );
+  test('AC-416 durable confirmation prevents restart dispatch after cleanup failure', () async {
+    await c.begin('expense_post', row: c.rows.single);
+    c.change('reason', 'Private synthetic cleanup failure');
+    repo.failure = const DomainError(
+      code: 'UNCERTAIN_RESULT',
+      message: 'Interrupted',
+      retryable: true,
+    );
+    await c.send();
+    final saved = c.recovery.single, request = c.pending!;
+    await db.customStatement(
+      "CREATE TRIGGER finance_cleanup_failure BEFORE DELETE ON encrypted_drafts WHEN OLD.entity_type='projects.finance.expense_post' BEGIN SELECT RAISE(ABORT,'synthetic_cleanup_failure'); END",
+    );
+    repo.failure = null;
+    await c.send();
+    expect(c.confirmed, isNotNull);
+    expect(c.message, contains('cleanup needs retry'));
+    expect(await c.canLeave(), isTrue);
+    final ackIds = await encrypted.pageIds(
+      tenantId: scope.tenantId,
+      entityType: ProjectFinanceCommandAcknowledgements.entityType,
+    );
+    final ack = await encrypted.find(ackIds.single);
+    expect(ack!.payload.keys.toSet(), {
+      'scope',
+      'action',
+      'command_id',
+      'idempotency_key',
+      'entity_id',
+      'project_id',
+      'version',
+    });
+    expect(jsonEncode(ack.payload), isNot(contains('Private synthetic')));
+    c.dispose();
+    c = make();
+    await c.initialize();
+    expect(c.recovery, isEmpty);
+    await c.resume(saved);
+    await c.send();
+    expect(repo.commands, hasLength(2));
+    expect(
+      await ProjectFinanceCommandAcknowledgements(
+        projectFinanceDrafts(encrypted, request.action),
+      ).contains(request),
+      isTrue,
+    );
+    await db.customStatement('DROP TRIGGER finance_cleanup_failure');
+    await c.resume(saved);
+    expect(
+      await projectFinanceDrafts(
+        encrypted,
+        request.action,
+      ).load(scope, request.envelope.payload['id'] as String),
+      isNull,
+    );
+  });
+  test(
     'AC-415 revocation clears protected views and preserves encrypted pending',
     () async {
       await c.begin('expense_post', row: c.rows.single);
@@ -376,6 +527,24 @@ void main() {
       expect(c.denied, isTrue);
     },
   );
+  test('AC-415 resident decrypted recovery is reauthorized independently of section', () async {
+    await c.begin('expense_post', row: c.rows.single);
+    c.change('reason', 'Private synthetic recovery');
+    await c.save();
+    final id = c.form!['id'] as String;
+    c.closeForm();
+    await c.load(ProjectFinanceSection.billing);
+    expect(c.recovery.single.draft.form['posting_date'], isNotNull);
+    repo.denyCapability = 'projects.expenses.post';
+    await c.checkAccess();
+    expect(c.denied, isTrue);
+    expect(c.recovery, isEmpty);
+    expect(c.form, isNull);
+    expect(
+      await projectFinanceDrafts(encrypted, 'expense_post').load(scope, id),
+      isNotNull,
+    );
+  });
   testWidgets(
     'AC-414 populated 1024 finance controls remain reachable at 200 percent',
     (tester) async {

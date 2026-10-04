@@ -231,4 +231,27 @@ void main() {
       throwsFormatException,
     );
   });
+  test('AC-428 protected service cost preserves exact seconds and revision basis', () {
+    final row = {
+      'id': id(1), 'provider_source_id': id(2), 'source_revision_id': id(3),
+      'source_version': 4, 'source_digest': 'a' * 64, 'currency_code': 'LKR',
+      'precision': 2, 'service_date': '2026-10-04', 'payable_seconds': 1,
+      'hourly_cost': '18', 'amount': '0.00', 'status': 'approved',
+      'recorded_at': '2026-10-04T00:00:00Z',
+    };
+    final parsed = ProjectFinanceRow.fromJson(ProjectFinanceSection.serviceCosts, row, 'LKR');
+    expect(parsed.values['payable_seconds'], 1);
+    expect(parsed.amount!.minorUnits, BigInt.zero);
+    for (final changed in [
+      {'amount': '0.01'}, {'hourly_cost': 18}, {'source_digest': 'bad'},
+      {'currency_code': 'USD'}, {'status': 'cancelled'}, {'payable_seconds': 0.5},
+    ]) {
+      expect(() => ProjectFinanceRow.fromJson(ProjectFinanceSection.serviceCosts, {...row, ...changed}, 'LKR'), throwsA(anything));
+    }
+  });
+  test('AC-428 service cost independently reconciles project margin', () {
+    final row = {...projectMap(samples['margin']), 'service_cost': '18', 'posted_revenue': '54', 'posted_credits': '0', 'expense_cost': '0', 'time_cost': '0', 'margin': '36'};
+    expect(ProjectMargin.fromJson(row).values['margin']!.toDecimalString(), '36.000000');
+    expect(() => ProjectMargin.fromJson({...row, 'margin': '54'}), throwsFormatException);
+  });
 }

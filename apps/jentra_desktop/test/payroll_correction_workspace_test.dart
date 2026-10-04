@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_domain/jentra_people.dart';
 import 'package:jentra_domain/jentra_payroll.dart';
@@ -60,6 +62,8 @@ class Server implements PayrollCorrectionRepository {
   }) async => const WorkforcePage([], null);
   List<Map<String, Object?>> rows = [summary()];
   List<Map<String, Object?>>? sourceRows;
+  final sections = <String, List<Map<String, Object?>>>{};
+  String? failure;
   bool deny = false, uncertain = false;
   Completer<void>? gate;
   Map<String, Object?>? last;
@@ -137,30 +141,32 @@ class Server implements PayrollCorrectionRepository {
     return {
       'correction': rows.first,
       'section': section,
-      'items': [
-        {
-          'id': id,
-          'before': {
-            'gross': '100.000000',
-            'deductions': '0.000000',
-            'employer_cost': '0.000000',
-            'net': '100.000000',
-          },
-          'after': {
-            'gross': '50.000000',
-            'deductions': '0.000000',
-            'employer_cost': '0.000000',
-            'net': '50.000000',
-          },
-          'difference': {
-            'gross': '-50.000000',
-            'deductions': '0.000000',
-            'employer_cost': '0.000000',
-            'net': '-50.000000',
-            'lines': <Object?>[],
-          },
-        },
-      ],
+      'items':
+          sections[section] ??
+          [
+            {
+              'id': id,
+              'before': {
+                'gross': '100.000000',
+                'deductions': '0.000000',
+                'employer_cost': '0.000000',
+                'net': '100.000000',
+              },
+              'after': {
+                'gross': '50.000000',
+                'deductions': '0.000000',
+                'employer_cost': '0.000000',
+                'net': '50.000000',
+              },
+              'difference': {
+                'gross': '-50.000000',
+                'deductions': '0.000000',
+                'employer_cost': '0.000000',
+                'net': '-50.000000',
+                'lines': <Object?>[],
+              },
+            },
+          ],
       'next_cursor': null,
     };
   }
@@ -178,6 +184,9 @@ class Server implements PayrollCorrectionRepository {
   ) async {
     writes++;
     last = command.payload;
+    if (failure != null) {
+      throw DomainError(code: failure!, message: 'Compare current fixture');
+    }
     if (uncertain) {
       throw const DomainError(
         code: 'UNCERTAIN_RESULT',
@@ -199,26 +208,54 @@ class Server implements PayrollCorrectionRepository {
 }
 
 class Base implements PayrollRepository {
+  int bankVersion = 1;
+  @override
+  Future<WorkforcePage<Map<String, Object?>>> accounts(
+    TenantContext scope,
+    String kind, {
+    String? after,
+  }) async => WorkforcePage([
+    {
+      'id': sealId,
+      'name': 'Synthetic scoped bank',
+      'currency_code': 'LKR',
+      'version': bankVersion,
+    },
+  ], null);
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  setUpAll(() async {
+    const base = 'packages/jentra_design_system/assets/fonts/';
+    await (FontLoader(JentraTypography.sansFamily)
+          ..addFont(rootBundle.load('${base}Manrope-Regular.ttf'))
+          ..addFont(rootBundle.load('${base}Manrope-SemiBold.ttf')))
+        .load();
+    await (FontLoader(
+      'MaterialIcons',
+    )..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
+  });
   late JentraLocalDatabase db;
   late Keys keys;
   late Server server;
   late PayrollCorrectionController c;
+  late Base base;
   final caps = {
     'people.payroll.view',
     'people.payroll.correction.prepare',
     'people.payroll.correction.approve',
     'people.payroll.post',
     'people.payroll.reverse',
+    'people.payroll.settle',
   };
   setUp(() {
     db = JentraLocalDatabase(NativeDatabase.memory());
     keys = Keys();
     server = Server();
+    base = Base();
     final drafts = SensitivePayrollCorrectionDraftStore(
       EncryptedDraftRepository(db, DraftCipher(keyStore: keys)),
       server.authorize,
@@ -226,7 +263,7 @@ void main() {
     c = PayrollCorrectionController(
       scope: scope,
       repository: server,
-      base: Base(),
+      base: base,
       drafts: drafts,
       permissions: caps,
       online: true,
@@ -347,6 +384,64 @@ void main() {
       expect(server.writes, 1);
     },
   );
+  test('recorded settlement recovery reloads named banks and compares current bank version without correction digest', () async {
+    server.rows = [summary(status: 'posted')];
+    server.sections['balances'] = [
+      {'id': sealId, 'kind': 'net', 'outstanding': '50.000000'},
+    ];
+    await c.initialize();
+    await c.open(c.rows.single, 'balances');
+    await c.beginAction('record');
+    c.update('bank_id', sealId);
+    c.update('bank_version', 1);
+    c.update('direction', 'recover');
+    c.update('evidence_reference', 'SYNTHETIC');
+    c.allocate(sealId, '20.000000');
+    c.update('reason', 'Synthetic recorded recovery');
+    await c.save();
+    await c.closeForm();
+    await c.resume(c.recovery.single);
+    expect(c.banks.single['name'], 'Synthetic scoped bank');
+    expect(c.detail!['section'], 'balances');
+    server.failure = 'VERSION_CONFLICT';
+    await c.submit();
+    expect(c.conflict, isTrue);
+    base.bankVersion = 2;
+    await c.compare();
+    await c.acceptComparison();
+    expect(c.form!.containsKey('digest'), isFalse);
+    expect(c.form!['bank_version'], 2);
+    expect(c.expectedVersion, 0);
+    server.failure = null;
+    await c.submit();
+    expect(c.confirmed, isNotNull);
+  });
+  test('settlement reversal comparison uses recorded settlement version and original identity', () async {
+    server.rows = [summary(status: 'posted')];
+    server.sections['settlements'] = [
+      {'id': sealId, 'version': 1, 'status': 'recorded'},
+    ];
+    await c.initialize();
+    await c.open(c.rows.single, 'settlements');
+    await c.beginAction(
+      'settlement_reverse',
+      settlement: server.sections['settlements']!.single,
+    );
+    c.update('reason', 'Synthetic original settlement reversal');
+    server.failure = 'VERSION_CONFLICT';
+    await c.submit();
+    server.sections['settlements'] = [
+      {'id': sealId, 'version': 2, 'status': 'recorded'},
+    ];
+    await c.compare();
+    await c.acceptComparison();
+    expect(c.expectedVersion, 2);
+    expect(c.form!['id'], sealId);
+    expect(c.form!.containsKey('digest'), isFalse);
+    server.failure = null;
+    await c.submit();
+    expect(c.confirmed, isNotNull);
+  });
   test('current access loss clears private visible data', () async {
     await c.initialize();
     await c.open(c.rows.single, 'calculation');
@@ -386,6 +481,146 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+  testWidgets(
+    'reopened source editor displays saved eligibility geometry and exact break fields',
+    (tester) async {
+      await c.beginPrepare();
+      await c.selectOriginal(c.originals.single);
+      c.replaceSource(
+        c.sources.single,
+        2700,
+        impact: {
+          'mode': 'geometry',
+          'expected_source_version': 3,
+          'start_local': '2026-10-01T09:00:00',
+          'end_local': '2026-10-01T10:00:00',
+          'start_offset_seconds': 19800,
+          'end_offset_seconds': 19800,
+          'breaks': [
+            {
+              'start_utc': '2026-10-01T04:00:00Z',
+              'end_utc': '2026-10-01T04:15:00Z',
+            },
+          ],
+        },
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: PayrollCorrectionSourceEditor(
+                controller: c,
+                source: c.sources.single,
+              ),
+            ),
+          ),
+        ),
+      );
+      final fields = tester
+          .widgetList<TextFormField>(find.byType(TextFormField))
+          .toList();
+      expect(fields.any((field) => field.initialValue == '2700'), isTrue);
+      expect(
+        fields.any((field) => field.initialValue == '2026-10-01T04:00:00Z'),
+        isTrue,
+      );
+      expect(
+        fields.any((field) => field.initialValue == '2026-10-01T04:15:00Z'),
+        isTrue,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+  testWidgets(
+    'reversal exposes current removed allocation evidence without adding a preparation edit',
+    (tester) async {
+      server.rows = [summary(status: 'posted')];
+      server.sourceRows = [
+        {
+          'id': sealId,
+          'seal_id': sealId,
+          'source_kind': 'attendance',
+          'paid_seconds': 3600,
+          'operational': {
+            'source_id': originalId,
+            'source_version': 4,
+            'before': <String, Object?>{},
+            'allocations': [
+              {
+                'active': false,
+                'source_kind': 'project',
+                'operational': {
+                  'entry_id': id,
+                  'project_name': 'Synthetic removed time',
+                  'source_id': sealId,
+                  'source_version': 5,
+                  'before': <String, Object?>{},
+                },
+              },
+            ],
+          },
+        },
+      ];
+      await c.initialize();
+      await c.open(c.rows.single, 'calculation');
+      await c.beginAction('reverse');
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PayrollCorrectionReverseCredits(
+              controller: c,
+              source: c.sources.single,
+            ),
+          ),
+        ),
+      );
+      expect(find.textContaining('removed allocation'), findsOneWidget);
+      final picker = tester.widget<PayrollCorrectionCreditPicker>(
+        find.byType(PayrollCorrectionCreditPicker),
+      );
+      expect(picker.sourceRevision, sealId);
+      picker.onChanged({originalId});
+      final impacts = c.form!['current_billing_impacts'] as List;
+      expect((impacts.single as Map)['allocation_credits'], [
+        {
+          'entry_id': id,
+          'source_revision_id': sealId,
+          'expected_source_version': 5,
+          'billing_credit_line_ids': [originalId],
+        },
+      ]);
+      c.form = {
+        'action': 'prepare',
+        'id': id,
+        'replacements': [
+          {
+            'seal_id': sealId,
+            'paid_seconds': 3600,
+            'impact': {
+              'mode': 'geometry',
+              'start_local': '2026-10-01T09:00:00',
+              'end_local': '2026-10-01T10:00:00',
+              'start_offset_seconds': 19800,
+              'end_offset_seconds': 19800,
+              'breaks': <Map<String, Object?>>[],
+            },
+          },
+        ],
+      };
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PayrollCorrectionSourceEditor(
+              controller: c,
+              source: c.sources.single,
+            ),
+          ),
+        ),
+      );
+      expect(find.byType(PayrollCorrectionAllocationEditor), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
   testWidgets('preparer cannot see independent approval action', (
     tester,
   ) async {
@@ -411,7 +646,7 @@ void main() {
         await c.selectOriginal(c.originals.single);
         await tester.pumpWidget(
           MaterialApp(
-            theme: dark ? ThemeData.dark() : ThemeData.light(),
+            theme: dark ? JentraTheme.dark() : JentraTheme.light(),
             builder: (context, child) => MediaQuery(
               data: MediaQuery.of(context)
                   .copyWith(textScaler: const TextScaler.linear(2)),
@@ -423,6 +658,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('SYNTHETIC_EMPLOYEE · SYN-001'), findsOneWidget);
         await tester.ensureVisible(find.text('Include source replacement'));
+        await tester.pumpAndSettle();
         expect(find.text('Submit exact proposal'), findsOneWidget);
         expect(tester.takeException(), isNull);
         await expectLater(

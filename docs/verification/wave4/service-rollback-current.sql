@@ -1757,7 +1757,11 @@ declare act text:=p_payload->>'action';cap text:=service.capability(act);id uuid
    if exists(select 1 from people.work_input_seals where claim_id=labor.claim_id) then raise exception using errcode='55000',message='PAYROLL_INPUT_SEALED';end if;
    foreach allocation in array labor.allocation_ids loop perform people.revoke_work_allocation(p_tenant_id,p_legal_entity_id,employee,allocation);end loop;
    if labor.owns_claim then perform people.revoke_work_claim(p_tenant_id,p_legal_entity_id,employee,labor.claim_id);end if;
-   update service.labor set status='cancelled',version=service.labor.version+1 where service.labor.id=id;end if;
+   update service.labor set status='cancelled',version=service.labor.version+1 where service.labor.id=id;
+   if to_regprocedure('projects.service_payroll_cost_impact(uuid,uuid,uuid,uuid,uuid)') is not null then
+    execute 'select projects.service_payroll_cost_impact($1,$2,$3,$4,$5)' using p_tenant_id,p_legal_entity_id,p_branch_id,labor.id,coalesce(labor.current_revision_id,labor.id);
+   end if;
+  end if;
  elsif act='plan' then kind:='plan';
   select * into eq from service.equipment where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and branch_id=p_branch_id and equipment.id=(p_payload->>'equipment_id')::uuid and status='active';
   select * into policy from service.sla_policies where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and branch_id=p_branch_id and sla_policies.id=(p_payload->>'policy_id')::uuid;
@@ -1868,7 +1872,7 @@ begin
  if p_mode not in('read','validate','release','apply','reverse') or revision is null or proposal is null or jsonb_typeof(proposal)<>'object' then
   raise exception using errcode='22023',message='SERVICE_PAYROLL_IMPACT_INVALID';end if;
  actual_mode:=case when p_mode='reverse' or proposal->>'operational_mode'='reverse' then 'reverse' else 'apply' end;
- perform service.require_access(t,e,b,case when p_mode in('release','apply','reverse') then 'service.approve' else 'service.work' end);
+ perform service.require_access(t,e,b,case when p_mode='read' then 'service.view' else 'service.approve' end);
  perform service.require_access(t,e,b,'service.cost.view');
  perform pg_advisory_xact_lock(hashtextextended('people.payroll:'||t||':'||e,0));
  perform pg_advisory_xact_lock(hashtextextended('projects:'||t||':'||e,0));
@@ -2024,6 +2028,9 @@ begin
  insert into service.labor_revisions(id,tenant_id,legal_entity_id,branch_id,labor_id,employee_id,version,correction_id,supersedes_id,snapshot,recorded_by)
   values(rid,t,e,b,l.id,employee,l.version+1,cid,l.current_revision_id,after_body,auth.uid());
  update service.labor set version=version+1,current_revision_id=rid,claim_id=new_claim,allocation_ids=allocs,billing_consumption_id=null,status=case when remove_source then 'cancelled' else 'approved' end where id=l.id;
+ if to_regprocedure('projects.service_payroll_cost_impact(uuid,uuid,uuid,uuid,uuid)') is not null then
+  execute 'select projects.service_payroll_cost_impact($1,$2,$3,$4,$5)' using t,e,b,l.id,rid;
+ end if;
  perform people.consume_organization(t,e,b,employee,'service_time',rid,sl::date,((el-interval '1 microsecond')::date)+1);
  if w.status='closed' and not remove_source and l.billing_kind='billable' then
   update service.work_orders set status='completed',closed_by=null,closed_at=null,version=version+1 where id=w.id;
@@ -2220,6 +2227,7 @@ insert into service_assertions select throws_ok($$select pg_temp.sc('evaluate','
 select pg_temp.wactor('outsider');
 insert into service_assertions select throws_ok($$select api.service_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),'ticket',pg_temp.wid('ticket'))$$,'42501','Permission denied or multi-factor authentication required.','AC-401 outsider denied');
 reset role;select pg_temp.wactor('reviewer');
+delete from core.role_permissions where role_id=pg_temp.wid('reviewer.role') and permission_code='service.work';
 insert into service_assertions select is(service.payroll_source(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('employee'),(select claim_id from service.labor where id=pg_temp.wid('labor')))->>'paid_seconds','3600','AC-411 one direct payroll claim');
 insert into service_assertions select is(service.billing_source(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('labor'))->>'source_version','2','AC-412 immutable approved billing source');
 insert into service_assertions select ok(not exists(select 1 from core.outbox_events where command_id in(select command_id from core.command_receipts where command_name like 'service.%') and payload::text like '%hourly_cost%'),'AC-404 generic outbox excludes internal cost');
@@ -2233,6 +2241,16 @@ insert into service_assertions select is(service.payroll_impact(pg_temp.wid('ten
  (select claim_id from service.labor where id=pg_temp.wid('labor')),pg_temp.wid('source-revision'),jsonb_build_object('expected_source_version',2,'mode','geometry',
  'start_local',pg_temp.wdate()::text||'T12:00:00','end_local',pg_temp.wdate()::text||'T12:30:00','start_offset_seconds',19800,'end_offset_seconds',19800,'breaks','[]'::jsonb),'validate')->'after'->>'amount','61.730000','AC-411 frozen service cost revised exactly');
 insert into service_assertions select is((select version from service.labor where id=pg_temp.wid('labor')),2::bigint,'AC-411 validation does not mutate source');
+insert into service_assertions select ok(not core.has_permission(pg_temp.wid('tenant'),'service.work',pg_temp.wid('entity'),pg_temp.wid('branch')),
+ 'AC-404 independent reviewer inspects and validates without service work');
+delete from core.role_permissions where role_id=pg_temp.wid('reviewer.role') and permission_code='service.approve';
+insert into service_assertions select throws_ok($q$select service.payroll_impact(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('employee'),
+ (select claim_id from service.labor where id=pg_temp.wid('labor')),pg_temp.wid('source-revision'),'{}','validate')$q$,
+ '42501','Permission denied or multi-factor authentication required.','AC-401 source validation requires operational approval');
+insert into service_assertions select is(service.payroll_impact(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('employee'),
+ (select claim_id from service.labor where id=pg_temp.wid('labor')),pg_temp.wid('source-revision'),'{}','read')->>'paid_seconds',
+ '3600','AC-404 read requires view and cost without work or approval');
+insert into core.role_permissions(tenant_id,role_id,permission_code) values(pg_temp.wid('tenant'),pg_temp.wid('reviewer.role'),'service.approve');
 insert into service_assertions select ok(not has_function_privilege('authenticated','service.payroll_impact(uuid,uuid,uuid,uuid,uuid,uuid,jsonb,text)','EXECUTE'),'AC-401 correction hook owner only');
 insert into service_assertions select ok(not has_function_privilege('authenticated','service.payroll_allocation_impact(uuid,uuid,uuid,uuid,uuid,uuid,jsonb,text)','EXECUTE'),'AC-401 allocation hook owner only');
 insert into service_assertions select is((select count(*) from service.events where aggregate_id=pg_temp.wid('ticket') and action in('accept','complete')),2::bigint,'AC-413 indirect ticket clocks retain history');
@@ -2242,6 +2260,24 @@ create trigger service_test_outbox_failure before insert on core.outbox_events f
 select pg_temp.wactor('creator');set local role authenticated;
 insert into service_assertions select throws_ok($$select pg_temp.sc('ticket','atomic-ticket',pg_temp.sticket('ATOMIC-SERVICE'))$$,'P0001','SERVICE_TEST_OUTBOX_FAILURE','EC-415 late outbox failure rolls back service');
 reset role;
+-- Civil holidays clip overnight working windows at local midnight.
+insert into people.work_calendars(id,tenant_id,legal_entity_id,code,name,created_by,updated_by)
+values(pg_temp.wid('sla.overnight'),pg_temp.wid('tenant'),pg_temp.wid('entity'),'SLA-OVERNIGHT','Synthetic overnight calendar',pg_temp.wid('creator'),pg_temp.wid('creator'));
+insert into people.work_calendar_versions(id,tenant_id,legal_entity_id,calendar_id,start_date,end_date_exclusive,timezone,weekly_intervals,date_overrides,published_by)
+values(pg_temp.wid('sla.overnight.holiday'),pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('sla.overnight'),pg_temp.wdate()-10,pg_temp.wdate()+10,'Asia/Colombo',
+ jsonb_build_array(jsonb_build_object('day_of_week',extract(isodow from pg_temp.wdate()-1)::integer,'start_minute',1320,'end_minute',120,'end_day_offset',1)),
+ jsonb_build_array(jsonb_build_object('date',pg_temp.wdate(),'is_working_day',false,'reason','Synthetic civil holiday')),pg_temp.wid('creator'));
+insert into service_assertions select is(service.elapsed(service.windows(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('sla.overnight.holiday'),pg_temp.wdate()-1,pg_temp.wdate()+1,'[]'),
+ ((pg_temp.wdate()-1)::timestamp at time zone 'Asia/Colombo'),((pg_temp.wdate()+1)::timestamp at time zone 'Asia/Colombo')),7200::bigint,'overnight holiday excludes incoming civil holiday hours');
+insert into people.work_calendar_versions(id,tenant_id,legal_entity_id,calendar_id,start_date,end_date_exclusive,timezone,weekly_intervals,date_overrides,published_by)
+values(pg_temp.wid('sla.overnight.working'),pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('sla.overnight'),pg_temp.wdate()+10,pg_temp.wdate()+20,'Asia/Colombo',
+ jsonb_build_array(jsonb_build_object('day_of_week',extract(isodow from pg_temp.wdate()+10)::integer,'start_minute',1320,'end_minute',120,'end_day_offset',1)),
+ '[]',pg_temp.wid('creator'));
+insert into service_assertions select is(service.elapsed(service.windows(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('sla.overnight.working'),pg_temp.wdate()+11,pg_temp.wdate()+12,'[]'),
+ ((pg_temp.wdate()+11)::timestamp at time zone 'Asia/Colombo'),((pg_temp.wdate()+12)::timestamp at time zone 'Asia/Colombo')),7200::bigint,'policy horizon captures incoming overnight work');
+insert into service_assertions select throws_ok($q$select service.windows(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('sla.overnight.holiday'),pg_temp.wdate()-1,pg_temp.wdate()+1,
+ jsonb_build_array(jsonb_build_object('date',pg_temp.wdate()-1,'start_minute',1320,'start_offset_seconds',19800,'end_offset_seconds',19800),
+ jsonb_build_object('date',pg_temp.wdate()-1,'start_minute',1320,'start_offset_seconds',19800,'end_offset_seconds',19800)))$q$,'22023','SERVICE_CALENDAR_OFFSET_INVALID','duplicate ambiguous boundary choices rejected');
 drop trigger service_test_outbox_failure on core.outbox_events;
 insert into service_assertions select ok(not exists(select 1 from service.tickets where id=pg_temp.wid('atomic-ticket')) and not exists(select 1 from service.events where aggregate_id=pg_temp.wid('atomic-ticket'))
  and not exists(select 1 from core.command_receipts where command_id=pg_temp.wid('atomic-ticket.ticket')),'EC-415 no partial ticket event or receipt');

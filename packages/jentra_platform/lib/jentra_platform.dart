@@ -15,4 +15,5 @@ export 'src/supabase_crm_gateway.dart';
 export 'src/supabase_foundation_gateway.dart';
 export 'src/supabase_lead_to_cash_gateway.dart';
 export 'src/supabase_platform.dart';
+export 'src/supabase_negative_stock_policy_gateway.dart';
 export 'src/tabular_codec.dart';

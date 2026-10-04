@@ -1,0 +1,28 @@
+{
+  "observed_at": "2026-10-03T17:08:48.829Z",
+  "project_id": "xpdoufauvrbdmxgngetv",
+  "transport": "connected_supabase_mcp",
+  "mcp_is_error": true,
+  "input": "docs/verification/remaining-wave3/database-strict-procurement-negative-stock-policy-basis-reviewed-20261003.sql",
+  "query_sha256": "aedcc0d8ec0717cbb5d1bc3d6c7d52c1e0cfb17ddad20339130e73bfc55a14fa",
+  "elapsed_ms": 122151,
+  "boundary": "One strict synthetic rollback request; error before completion. Not installed/native/load proof.",
+  "result": {
+    "error": {
+      "name": "HttpException",
+      "message": "Failed to run sql query: ERROR:  55000: INVENTORY_COST_UNAVAILABLE\nCONTEXT:  PL/pgSQL function inventory.capture_negative_stock_basis(uuid,uuid,uuid,uuid,uuid,jsonb) line 7 at RAISE\nSQL statement \"SELECT inventory.capture_negative_stock_basis(new.tenant_id,new.legal_entity_id,new.branch_id,new.warehouse_id,new.product_id,jsonb_build_object('movement_line_id',new.id,'snapshot_stage','after_aligned_movement'))\"\nPL/pgSQL function inventory.record_receipt_provenance() line 110 at PERFORM\nSQL statement \"insert into inventory.stock_movement_lines(id,tenant_id,legal_entity_id,branch_id,stock_movement_id,warehouse_id,product_id,source_line_id,original_movement_line_id,base_quantity,base_value,posting_date,created_by)\n values(pg_temp.fid(n||'.ml'),pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),pg_temp.fid(n||'.movement'),pg_temp.fid('warehouse'),pg_temp.fid(prefix||'.product'),pg_temp.fid(n||'.source'),pg_temp.fid(original||'.ml'),q,0,'2026-09-19',pg_temp.fid('creator'))\"\nPL/pgSQL function pg_temp_29.trace_move(text,numeric,text,text,text) line 5 at SQL statement\n"
+    }
+  },
+  "raw_tool_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"name\":\"HttpException\",\"message\":\"Failed to run sql query: ERROR:  55000: INVENTORY_COST_UNAVAILABLE\\nCONTEXT:  PL/pgSQL function inventory.capture_negative_stock_basis(uuid,uuid,uuid,uuid,uuid,jsonb) line 7 at RAISE\\nSQL statement \\\"SELECT inventory.capture_negative_stock_basis(new.tenant_id,new.legal_entity_id,new.branch_id,new.warehouse_id,new.product_id,jsonb_build_object('movement_line_id',new.id,'snapshot_stage','after_aligned_movement'))\\\"\\nPL/pgSQL function inventory.record_receipt_provenance() line 110 at PERFORM\\nSQL statement \\\"insert into inventory.stock_movement_lines(id,tenant_id,legal_entity_id,branch_id,stock_movement_id,warehouse_id,product_id,source_line_id,original_movement_line_id,base_quantity,base_value,posting_date,created_by)\\n values(pg_temp.fid(n||'.ml'),pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),pg_temp.fid(n||'.movement'),pg_temp.fid('warehouse'),pg_temp.fid(prefix||'.product'),pg_temp.fid(n||'.source'),pg_temp.fid(original||'.ml'),q,0,'2026-09-19',pg_temp.fid('creator'))\\\"\\nPL/pgSQL function pg_temp_29.trace_move(text,numeric,text,text,text) line 5 at SQL statement\\n\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error_code": "INVALID_ARGUMENT"
+    },
+    "isError": true
+  }
+}

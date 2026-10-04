@@ -30,8 +30,14 @@ An invalid retained allocation rejects instead of truncating. Explicit removal
 cancels the project source; reversal restores its frozen allocation even when no
 active allocation remains. The candidate introduced no persistent changes.
 
-That completed run is retained in `project-impacts-rollback-current.sql`, SHA256
+The original 138-assertion run had query SHA256
 `E42349AC277F0F159838AA65263C633A885A76FBE5AC30CB7F16887DA500B027`.
+Correction on October 4: the mutable `project-impacts-rollback-current.sql`
+was advanced to the later actual 164-assertion capture, SHA256
+`F53E4C0BBA6608659062548E52D7A72DA69B409606D145C2408E52A45DBC362D`.
+Do not associate its current bytes with the original 138-assertion run. New dated
+executed queries/results retain their exact source and are separate from prepared
+or mutable current files.
 The core project migration at that run is
 `C8B874B4FD1E9E2CC0E939DD45FD3546CD27D9F54A5154CAD24EDAE44BD0B98E`.
 The linked adapter at that run is

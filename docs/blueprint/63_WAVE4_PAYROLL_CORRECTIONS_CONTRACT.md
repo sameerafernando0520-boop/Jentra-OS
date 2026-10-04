@@ -23,6 +23,12 @@ All commands require current People entitlement, scope and MFA before replay.
 Post and reversal recheck source authority before confirmed replay. Private project
 and service snapshots require the separate costing permission; an unavailable
 linked provider or scope fails explicitly.
+Current source inspection requires payroll view, source view and any private
+costing authority. It does not require proposal preparation authority. Preparation
+separately checks source management/work authority, and decisions recheck every
+frozen linked allocation's approval authority before replay.
+Billed-source or selected-credit proof also requires current project billing and
+finance entitlement, scope and MFA before a confirmed command can be replayed.
 
 Cancelling payroll-consumed leave reverses each unreversed original grant debit,
 retires the payable claim and advances the request/account version atomically.
@@ -39,6 +45,13 @@ uses the original frozen impact list, including removed entries with no current
 allocation. Cost and bill values reproduce original frozen rates against revised
 exact seconds. Reserved billing fails; billed work requires separately posted
 original credit proof. Posting never creates a credit or customer invoice.
+Current reads deduplicate an entry's break segment allocations and enrich removed
+allocations from the frozen history with the module's actual current revision and
+version. Native reversal can select current posted credits for these retained
+origins; new preparation edits only active allocations.
+The union of current and frozen removed linked entries is limited to 50. Break
+segments map to their whole module entry before counting; an excess fails before
+source effects instead of truncating the reviewed impact.
 
 ## Reproduction, concurrency and decisions
 

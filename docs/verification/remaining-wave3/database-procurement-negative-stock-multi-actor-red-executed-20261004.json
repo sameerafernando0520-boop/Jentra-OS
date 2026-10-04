@@ -1,0 +1,28 @@
+{
+  "observed_at": "2026-10-04T01:52:25.883Z",
+  "project_id": "xpdoufauvrbdmxgngetv",
+  "transport": "connected_supabase_mcp",
+  "mcp_is_error": true,
+  "input": "docs/verification/remaining-wave3/database-strict-procurement-negative-stock-multi-actor-red-20261004.sql",
+  "query_sha256": "23d45680c2ae4af6ddd1ab8411ecbf1dbaeea1e1a9d3e5a3aa38837edc12f794",
+  "elapsed_ms": 42345,
+  "boundary": "One strict synthetic rollback request with finish(true). No installation/native/load proof.",
+  "result": {
+    "error": {
+      "name": "HttpException",
+      "message": "Failed to run sql query: ERROR:  P0001: 1 test failed of 997\nCONTEXT:  PL/pgSQL function _finish(integer,integer,integer,boolean) line 28 at RAISE\nSQL function \"finish\" statement 1\n"
+    }
+  },
+  "raw_tool_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"name\":\"HttpException\",\"message\":\"Failed to run sql query: ERROR:  P0001: 1 test failed of 997\\nCONTEXT:  PL/pgSQL function _finish(integer,integer,integer,boolean) line 28 at RAISE\\nSQL function \\\"finish\\\" statement 1\\n\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error_code": "INVALID_ARGUMENT"
+    },
+    "isError": true
+  }
+}

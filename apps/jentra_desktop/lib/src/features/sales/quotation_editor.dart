@@ -200,6 +200,7 @@ class _QuotationEditorState extends State<QuotationEditor> {
                   ? null
                   : () async {
                       final access = QuotationDialogAccess(context);
+                      final accessEpoch = access.readAccessEpoch;
                       _referenceDialogs.add(access);
                       try {
                         final item = await showQuotationReferencePicker(
@@ -220,7 +221,12 @@ class _QuotationEditorState extends State<QuotationEditor> {
                               ? widget.baseCurrency
                               : null,
                         );
-                        if (!mounted || !widget.enabled || item == null) return;
+                        if (!mounted ||
+                            !widget.enabled ||
+                            !access.currentRead(accessEpoch) ||
+                            item == null) {
+                          return;
+                        }
                         setState(() {
                           if (line == null) {
                             _form[field] = item.id;

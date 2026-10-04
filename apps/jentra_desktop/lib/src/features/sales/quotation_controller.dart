@@ -283,7 +283,9 @@ final class QuotationWorkspaceController
       if (current != null && !state.isLoading) {
         state = AsyncData(
           current.copyWith(
-            connectivity: next.value ?? ConnectivityState.offline,
+            connectivity: !next.isLoading && !next.hasError
+                ? next.value ?? ConnectivityState.offline
+                : ConnectivityState.offline,
           ),
         );
       }
@@ -668,7 +670,11 @@ final class QuotationWorkspaceController
   Future<void> _command(String verb, {String? reason}) async {
     var current = _current;
     if (current == null || _commandActive || current.busy) return;
-    if (!current.isOnline) {
+    final connection = ref.read(connectivityStateProvider);
+    if (!current.isOnline ||
+        connection.isLoading ||
+        connection.hasError ||
+        connection.value != ConnectivityState.online) {
       _fail(
         const DomainError(
           code: 'OFFLINE_COMMAND_BLOCKED',
@@ -735,6 +741,55 @@ final class QuotationWorkspaceController
       );
       return;
     }
+    // This attempt must observe loss through every asynchronous preparation,
+    // including a loss immediately followed by restoration of identical access.
+    final capabilities = current.capabilities;
+    var accessLost = false;
+    void observeAccess() {
+      if (accessLost) return;
+      if (!ref.mounted) {
+        accessLost = true;
+        return;
+      }
+      final caps = ref.read(businessCapabilitiesProvider);
+      final connectivity = ref.read(connectivityStateProvider);
+      accessLost =
+          ref.read(activeTenantContextProvider) != context ||
+          caps.isLoading ||
+          caps.hasError ||
+          caps.value == null ||
+          caps.value!.length != capabilities.length ||
+          !caps.value!.containsAll(capabilities) ||
+          connectivity.isLoading ||
+          connectivity.hasError ||
+          connectivity.value != ConnectivityState.online;
+    }
+
+    final scopes = ref.listen(
+      activeTenantContextProvider,
+      (_, _) => observeAccess(),
+    );
+    final permissions = ref.listen(
+      businessCapabilitiesProvider,
+      (_, _) => observeAccess(),
+    );
+    final connections = ref.listen(
+      connectivityStateProvider,
+      (_, _) => observeAccess(),
+    );
+    void checkPreparationAccess() {
+      observeAccess();
+      if (accessLost ||
+          !_valid(generation, context) ||
+          selection != _selection) {
+        throw const DomainError(
+          code: 'ACCESS_CHANGED',
+          message: 'Business access or connection changed before sending. Your encrypted fields and any prepared request are retained. Review them and explicitly retry when authorized and online.',
+          retryable: true,
+        );
+      }
+    }
+
     _commandActive = true;
     state = AsyncData(
       current.copyWith(busy: true, error: null, statusMessage: null),
@@ -742,11 +797,12 @@ final class QuotationWorkspaceController
     QuotationPendingCommand? pending;
     try {
       await _edits;
-      if (!_valid(generation, context) || selection != _selection) return;
+      checkPreparationAccess();
       current = state.requireValue;
       if (current.error != null) throw current.error!;
       if (verb == 'retry') {
         pending = (await store.load(context, slot))?.pending;
+        checkPreparationAccess();
         if (pending == null) {
           throw const DomainError(
             code: 'COMMAND_PENDING',
@@ -813,6 +869,7 @@ final class QuotationWorkspaceController
           expectedVersion: version,
         );
         _failedEdits.remove(_editKey(context, slot));
+        checkPreparationAccess();
         pending = await store.prepare(
           context,
           slot,
@@ -821,15 +878,7 @@ final class QuotationWorkspaceController
           expectedVersion: version,
         );
       }
-      if (!_valid(generation, context) || selection != _selection) return;
-      if (ref.read(connectivityStateProvider).value !=
-          ConnectivityState.online) {
-        throw const DomainError(
-          code: 'NETWORK_ERROR',
-          message: 'Connection changed before sending. Retry the saved request when online.',
-          retryable: true,
-        );
-      }
+      checkPreparationAccess();
       final envelope = pending.envelope;
       final payload = envelope.payload;
       final result = await switch (pending.verb) {
@@ -876,6 +925,24 @@ final class QuotationWorkspaceController
       await store.complete(context, slot, envelope.commandId);
       pending = null;
       if (!_valid(generation, context) || selection != _selection) return;
+      if (accessLost) {
+        // Acknowledged create input cannot become another create on a new save.
+        state = AsyncData(
+          state.requireValue.copyWith(
+            localDraft: null,
+            form: null,
+            detail: null,
+            slot: null,
+            busy: false,
+            recovered: false,
+            error: const DomainError(
+              code: 'ACCESS_CHANGED',
+              message: 'The original request was acknowledged. Business access or connection changed while it was pending. Refresh the current workspace to review the result.',
+            ),
+          ),
+        );
+        return;
+      }
       state = AsyncData(
         state.requireValue.copyWith(
           localDraft: null,
@@ -939,6 +1006,9 @@ final class QuotationWorkspaceController
         }
       }
     } finally {
+      scopes.close();
+      permissions.close();
+      connections.close();
       _commandActive = false;
       if (_valid(generation, context) && state.requireValue.busy) {
         state = AsyncData(state.requireValue.copyWith(busy: false));

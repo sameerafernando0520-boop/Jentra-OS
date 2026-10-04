@@ -21,8 +21,8 @@ create function pg_temp.project_create(p text default 'project') returns jsonb l
   'currency_code','LKR','start_date',pg_temp.wdate(),'end_date_exclusive',pg_temp.wdate()+2,'reason','Synthetic project creation') $$;
 create function pg_temp.project_plan(p text default 'project',pl text default 'plan') returns jsonb language sql as $$
  select jsonb_build_object('action','plan','id',pg_temp.wid(p),'plan_id',pg_temp.wid(pl),'terms','Synthetic whole-unit commercial terms','budget','1000.00','reason','Synthetic project plan',
- 'tasks',jsonb_build_array(jsonb_build_object('id',pg_temp.wid('task'),'name','Delivery','start_date',pg_temp.wdate(),'end_date_exclusive',pg_temp.wdate()+2,'planned_seconds',7200,'dependencies','[]'::jsonb),
- jsonb_build_object('id',pg_temp.wid('task2'),'name','Review','start_date',pg_temp.wdate(),'end_date_exclusive',pg_temp.wdate()+2,'planned_seconds',0,'dependencies',jsonb_build_array(pg_temp.wid('task')))),
+ 'tasks',jsonb_build_array(jsonb_build_object('id',pg_temp.wid('task'),'name','Delivery','owner_id',pg_temp.wid('employee'),'start_date',pg_temp.wdate(),'end_date_exclusive',pg_temp.wdate()+2,'planned_seconds',7200,'dependencies','[]'::jsonb),
+ jsonb_build_object('id',pg_temp.wid('task2'),'name','Review','owner_id',pg_temp.wid('employee'),'start_date',pg_temp.wdate(),'end_date_exclusive',pg_temp.wdate()+2,'planned_seconds',0,'dependencies',jsonb_build_array(pg_temp.wid('task')))),
  'resources',jsonb_build_array(jsonb_build_object('id',pg_temp.wid(pl||'-slot'),'task_id',pg_temp.wid('task'),'employee_id',pg_temp.wid('employee'),'calendar_version_id',pg_temp.wid('calendar-version'),
  'start_local',to_char(pg_temp.wdate()::timestamp+interval '10 hours','YYYY-MM-DD"T"HH24:MI:SS'),
  'end_local',to_char(pg_temp.wdate()::timestamp+interval '12 hours','YYYY-MM-DD"T"HH24:MI:SS'),
@@ -51,10 +51,20 @@ insert into project_responses values('create',pg_temp.pc(pg_temp.project_create(
 select is(pg_temp.pc(pg_temp.project_create(),0,'project-create'),(select body from project_responses where label='create'),'AC-401 exact project replay');
 select throws_ok($$select pg_temp.pc(pg_temp.project_create()||jsonb_build_object('name','Changed'),0,'project-create')$$,'22023','IDEMPOTENCY_MISMATCH','AC-401 changed body cannot replay');
 select throws_ok($$select pg_temp.pc(pg_temp.project_create('foreign'),0,'project-foreign','branch2')$$,'55000','PROJECT_MANAGER_COVERAGE_REQUIRED','AC-401 manager branch coverage enforced');
+select throws_ok($$select pg_temp.pc((pg_temp.project_plan()#-'{tasks,0,owner_id}'),1,'missing-task-owner')$$,
+ '22023','PROJECT_TASK_OWNER_REQUIRED','AC-410 every task needs an explicit accountable owner');
+select throws_ok($$select pg_temp.pc(jsonb_set(pg_temp.project_plan(),'{tasks,0,owner_id}',to_jsonb(pg_temp.wid('foreign-owner'))),1,'foreign-task-owner')$$,
+ '55000','PROJECT_TASK_OWNER_COVERAGE_REQUIRED','AC-401 task owner must have scoped dated employment');
 select throws_ok($$select pg_temp.pc(jsonb_set(pg_temp.project_plan(),'{resources,0,start_local}',
  to_jsonb(pg_temp.wdate()::text||'T10:00:00.500')),1,'fractional-plan')$$,
  '22023','WORK_LOCAL_BOUNDARY_INVALID','AC-411 fractional resource boundaries cannot be rounded to whole UTC seconds');
 insert into project_responses values('plan',pg_temp.pc(pg_temp.project_plan(),1,'project-plan'));
+reset role;
+select is((select owner_id from projects.tasks where plan_id=pg_temp.wid('plan') and id=pg_temp.wid('task')),
+ pg_temp.wid('employee'),'AC-410 frozen task records the selected accountable employee');
+select is((select owner_name from projects.tasks where plan_id=pg_temp.wid('plan') and id=pg_temp.wid('task')),
+ (select display_name from people.employees where id=pg_temp.wid('employee')),'AC-410 original named task owner is retained');
+select pg_temp.wactor('creator');set local role authenticated;
 select throws_ok($$select pg_temp.pc(pg_temp.plan_action('approve_plan'),2,'plan-self')$$,'42501','PROJECT_INDEPENDENT_APPROVAL_REQUIRED','AC-410 independent planning decision');
 select pg_temp.wactor('reviewer');
 insert into project_responses values('approve',pg_temp.pc(pg_temp.plan_action('approve_plan'),2,'plan-approve'));
@@ -115,8 +125,8 @@ reset role;
 select ok((select bool_and(not active) from projects.resource_slots where plan_id=pg_temp.wid('competing-plan')),'AC-410 failed competing approval is atomic');
 select pg_temp.wactor('creator');set local role authenticated;
 select throws_ok($$select pg_temp.pc(pg_temp.project_plan('competing','cycle-plan')||jsonb_build_object('tasks',
- jsonb_build_array(jsonb_build_object('id',pg_temp.wid('task'),'name','Delivery','start_date',pg_temp.wdate(),'end_date_exclusive',pg_temp.wdate()+2,'planned_seconds',7200,'dependencies',jsonb_build_array(pg_temp.wid('task2'))),
- jsonb_build_object('id',pg_temp.wid('task2'),'name','Review','start_date',pg_temp.wdate(),'end_date_exclusive',pg_temp.wdate()+2,'planned_seconds',0,'dependencies',jsonb_build_array(pg_temp.wid('task'))))),2,'cycle-plan')$$,'23514','PROJECT_TASK_CYCLE','AC-410 cycles rejected before effects');
+ jsonb_build_array(jsonb_build_object('id',pg_temp.wid('task'),'name','Delivery','owner_id',pg_temp.wid('employee'),'start_date',pg_temp.wdate(),'end_date_exclusive',pg_temp.wdate()+2,'planned_seconds',7200,'dependencies',jsonb_build_array(pg_temp.wid('task2'))),
+ jsonb_build_object('id',pg_temp.wid('task2'),'name','Review','owner_id',pg_temp.wid('employee'),'start_date',pg_temp.wdate(),'end_date_exclusive',pg_temp.wdate()+2,'planned_seconds',0,'dependencies',jsonb_build_array(pg_temp.wid('task'))))),2,'cycle-plan')$$,'23514','PROJECT_TASK_CYCLE','AC-410 cycles rejected before effects');
 select pg_temp.wactor('reviewer');
 insert into project_client_samples values('cost',api.projects_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('project'),'cost'));
 insert into project_client_samples values('resource_cost',api.projects_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('project'),'resource_cost'));

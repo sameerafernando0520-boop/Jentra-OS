@@ -185,29 +185,65 @@ void main() {
       );
     },
   );
-  test('reverse transport seals current replacement credits and expected source version', () async {
-    final payload = <String, Object?>{'action': 'reverse', 'id': w4Id,
-      'digest': 'a' * 64, 'posting_date': '2026-10-02', 'reason': 'Synthetic original-basis reversal',
-      'current_billing_impacts': [
-        {'seal_id': w4Id, 'source_revision_id': w4Revision, 'expected_source_version': 5,
-          'billing_credit_line_ids': [w4Command], 'allocation_credits': <Map<String, Object?>>[]},
-      ]};
-    h.gate = Completer<void>();
-    h.response = h.confirmed({...h.scope(), 'id': w4Id, 'version': 4, 'status': 'reversed'});
-    final request = CommandEnvelope<Map<String, Object?>>(
-      commandId: w4Command, idempotencyKey: w4Command, context: w4Scope,
-      payload: payload, expectedEntityVersion: 3, clientTimestamp: DateTime.utc(2026, 10, 2));
-    final future = gateway.executeCorrection(PayrollCorrectionCommandKind.correction, request);
-    (((payload['current_billing_impacts'] as List).single as Map)['billing_credit_line_ids'] as List).clear();
-    h.gate!.complete();
-    await future;
-    final sent = (jsonDecode(h.requests.last.body) as Map)['p_payload'] as Map;
-    expect((sent['current_billing_impacts'] as List).single, {
-      'seal_id': w4Id, 'source_revision_id': w4Revision, 'expected_source_version': 5,
-      'billing_credit_line_ids': [w4Command], 'allocation_credits': <Object?>[],
-    });
-    expect((jsonDecode(h.requests.last.body) as Map)['p_expected_version'], 3);
-  });
+  test(
+    'reverse transport seals current replacement credits and expected source version',
+    () async {
+      final payload = <String, Object?>{
+        'action': 'reverse',
+        'id': w4Id,
+        'digest': 'a' * 64,
+        'posting_date': '2026-10-02',
+        'reason': 'Synthetic original-basis reversal',
+        'current_billing_impacts': [
+          {
+            'seal_id': w4Id,
+            'source_revision_id': w4Revision,
+            'expected_source_version': 5,
+            'billing_credit_line_ids': [w4Command],
+            'allocation_credits': <Map<String, Object?>>[],
+          },
+        ],
+      };
+      h.gate = Completer<void>();
+      h.response = h.confirmed({
+        ...h.scope(),
+        'id': w4Id,
+        'version': 4,
+        'status': 'reversed',
+      });
+      final request = CommandEnvelope<Map<String, Object?>>(
+        commandId: w4Command,
+        idempotencyKey: w4Command,
+        context: w4Scope,
+        payload: payload,
+        expectedEntityVersion: 3,
+        clientTimestamp: DateTime.utc(2026, 10, 2),
+      );
+      final future = gateway.executeCorrection(
+        PayrollCorrectionCommandKind.correction,
+        request,
+      );
+      (((payload['current_billing_impacts'] as List).single
+                  as Map)['billing_credit_line_ids']
+              as List)
+          .clear();
+      h.gate!.complete();
+      await future;
+      final sent =
+          (jsonDecode(h.requests.last.body) as Map)['p_payload'] as Map;
+      expect((sent['current_billing_impacts'] as List).single, {
+        'seal_id': w4Id,
+        'source_revision_id': w4Revision,
+        'expected_source_version': 5,
+        'billing_credit_line_ids': [w4Command],
+        'allocation_credits': <Object?>[],
+      });
+      expect(
+        (jsonDecode(h.requests.last.body) as Map)['p_expected_version'],
+        3,
+      );
+    },
+  );
   test(
     'confirmation cannot leak payroll/private values or silently drop uncertainty',
     () async {

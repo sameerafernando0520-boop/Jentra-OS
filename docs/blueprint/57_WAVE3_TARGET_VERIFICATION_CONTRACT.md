@@ -13,6 +13,21 @@ project and production are forbidden. Approval strings in a file are not human
 authorization: the operator must have the corresponding explicit user approval.
 Secrets remain in environment variables and must never enter evidence.
 
+Current ordinal-46 preparation explicitly selects its installation package,
+ordered manifest and successful 45-to-46 schema review through `candidate_review`.
+Every candidate body and its exact ordinal hash must match current source; all
+45 historical bodies remain in their reviewed order before the policy tail.
+The selection must retain three complete strict rollback suites and the actual
+schema execution, with the four protected finance helpers unchanged. A legacy
+45-body recipe remains historical and cannot be relabelled as current 46-body
+preparation. Source bundles must contain the complete selected artifact and
+candidate set. Fixture, load, race and live-RPC preflight inputs retain the same
+selection; omission or a different selection fails before any dispatch.
+
+Offline selection checks use explicitly fictitious test artifacts. They prove
+the guard behavior only; they do not supply an observed schema, real target,
+installation authority, signed sessions, fixture population or performance data.
+
 Evidence files must be new. Execution reserves each final evidence path exclusively
 before the first HTTP command; an existing path, including a competing reservation,
 must fail without replacing earlier evidence or dispatching a command. Failed and

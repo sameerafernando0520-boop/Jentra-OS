@@ -1,0 +1,777 @@
+{
+  "boundary": "Fresh read-only refresh after later user continuation. No installation, authentication or business changes.",
+  "head": "cbdb9f8166034bbb6e6112d68baf149cd1d7be84",
+  "query": "select jsonb_build_object('observed_at',clock_timestamp(),'project_id','xpdoufauvrbdmxgngetv','migrations',(select jsonb_agg(jsonb_build_object('version',version,'name',name) order by version) from supabase_migrations.schema_migrations),'api_catalogue',(select jsonb_agg(jsonb_build_object('name',p.proname,'signature',pg_get_function_identity_arguments(p.oid),'returns',pg_get_function_result(p.oid),'source_md5',md5(pg_get_functiondef(p.oid)),'acl',p.proacl::text) order by p.proname,pg_get_function_identity_arguments(p.oid)) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='api'),'shared_helpers',(select jsonb_agg(jsonb_build_object('name',p.proname,'signature',pg_get_function_identity_arguments(p.oid),'source_md5',md5(pg_get_functiondef(p.oid))) order by p.proname) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='finance' and p.proname in ('flow_residual','wave3_lock_open_period','flow_post_journal','flow_allocate'))) as evidence;",
+  "migrations": [
+    {
+      "name": "create_greenfield_foundation",
+      "version": "20260831193714"
+    },
+    {
+      "name": "harden_foundation_rls_and_indexes",
+      "version": "20260831193857"
+    },
+    {
+      "name": "simplify_invitation_read_policy",
+      "version": "20260831194005"
+    },
+    {
+      "name": "optimize_invitation_auth_initplan",
+      "version": "20260901005825"
+    },
+    {
+      "name": "create_wave2_shared_foundation_schema",
+      "version": "20260901090317"
+    },
+    {
+      "name": "create_wave2_command_helpers",
+      "version": "20260901090331"
+    },
+    {
+      "name": "create_wave2_setup_upsert_command",
+      "version": "20260901090354"
+    },
+    {
+      "name": "create_wave2_special_commands",
+      "version": "20260901090406"
+    },
+    {
+      "name": "expose_wave2_versioned_api",
+      "version": "20260901090420"
+    },
+    {
+      "name": "cover_wave2_foreign_keys",
+      "version": "20260901090642"
+    },
+    {
+      "name": "validate_wave2_attachment_aggregates",
+      "version": "20260901091132"
+    },
+    {
+      "name": "enforce_wave2_fiscal_period_lifecycle",
+      "version": "20260903045702"
+    },
+    {
+      "name": "enforce_wave2_workflow_lifecycle",
+      "version": "20260903051423"
+    },
+    {
+      "name": "align_wave2_setup_contracts",
+      "version": "20260903110103"
+    },
+    {
+      "name": "bound_wave2_report_rows",
+      "version": "20260903110716"
+    },
+    {
+      "name": "wave3_operational_foundation",
+      "version": "20260904121647"
+    },
+    {
+      "name": "cover_wave3_foreign_keys",
+      "version": "20260904122313"
+    },
+    {
+      "name": "create_wave3_crm_pipeline_schema",
+      "version": "20260904125910"
+    },
+    {
+      "name": "create_wave3_crm_pipeline_commands",
+      "version": "20260904130000"
+    },
+    {
+      "name": "add_crm_pipeline_aging_summary",
+      "version": "20260904135959"
+    },
+    {
+      "name": "create_wave3_quotation_schema",
+      "version": "20260905050419"
+    },
+    {
+      "name": "create_wave3_quotation_commands",
+      "version": "20260905050428"
+    },
+    {
+      "name": "create_wave3_order_credit_reservation_schema",
+      "version": "20260905050436"
+    },
+    {
+      "name": "create_wave3_order_credit_reservation_commands",
+      "version": "20260905050444"
+    },
+    {
+      "name": "cover_wave3_lead_to_cash_foreign_keys",
+      "version": "20260905050839"
+    },
+    {
+      "name": "stabilize_wave3_discount_allocation",
+      "version": "20260905054457"
+    },
+    {
+      "name": "harden_crm_pipeline_ac302",
+      "version": "20260905123934"
+    },
+    {
+      "name": "complete_quotation_workspace_contracts",
+      "version": "20260906153036"
+    },
+    {
+      "name": "complete_sales_order_workspace",
+      "version": "20260907044241"
+    },
+    {
+      "name": "complete_delivery_receivables",
+      "version": "20260910135010"
+    },
+    {
+      "name": "harden_receivables_reference_indexes",
+      "version": "20260910135507"
+    },
+    {
+      "name": "governed_stock_openings",
+      "version": "20260910201410"
+    },
+    {
+      "name": "governed_warehouse_setup",
+      "version": "20260911065744"
+    },
+    {
+      "name": "stock_opening_approver_setup",
+      "version": "20260911130900"
+    },
+    {
+      "name": "wave4_employee_foundation",
+      "version": "20260925181927"
+    },
+    {
+      "name": "wave4_calendar_versions",
+      "version": "20260926082441"
+    },
+    {
+      "name": "wave4_private_hr",
+      "version": "20260929224939"
+    }
+  ],
+  "project_id": "xpdoufauvrbdmxgngetv",
+  "observed_at": "2026-10-03T15:33:51.382022+00:00",
+  "api_catalogue": [
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "accept_invitation",
+      "returns": "jsonb",
+      "signature": "p_token text",
+      "source_md5": "affe15933b1af94697ae4d8c6c92efa5"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "accept_stock_opening_invitation",
+      "returns": "jsonb",
+      "signature": "p_invitation_id uuid, p_idempotency_key uuid",
+      "source_md5": "c7fc450c6835fa15d1fbaa79933ff4a2"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "allocate_customer_receipt",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "c8117503c63f0197c0e398305ee860ab"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "bootstrap_tenant",
+      "returns": "jsonb",
+      "signature": "p_name text, p_slug text, p_legal_entity_name text, p_legal_entity_code text, p_branch_name text, p_branch_code text, p_timezone text, p_currency_code text, p_idempotency_key uuid",
+      "source_md5": "3070e464e6bd32566813473e864d9004"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "complete_attachment",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_attachment_id uuid, p_checksum_sha256 text, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "a008049739c8f950d7ed142524b4e385"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "convert_lead",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "2e2661a7cdb9b1128fbf80c32c677961"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "convert_quotation_to_order",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "6ee7ed2bce9d8822def3acefd0c2dab4"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "create_export_job",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_resource text, p_file_format text, p_filters jsonb, p_columns jsonb, p_row_count integer, p_file_name text, p_file_size bigint, p_idempotency_key uuid",
+      "source_md5": "d989c3adc23bed7052c6b756b2b8a7e6"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "create_invitation",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_email text, p_role_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_expires_in_hours integer",
+      "source_md5": "bfa23bee5111952190c23b4e4759dee5"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "customer_statement",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_customer_id uuid, p_currency_code text, p_as_of date, p_buckets integer[]",
+      "source_md5": "9ba7dadb5aa428ed49535eca6a5fcc9d"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "decide_operational_approval",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "32f883d110f9d700f1fa0dc4cc99c7a2"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "get_crm_pipeline_summary",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of_date date",
+      "source_md5": "34d463c2515ce8825e497e229a1f7c16"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "get_my_capabilities",
+      "returns": "TABLE(permission_code text)",
+      "signature": "p_tenant_id uuid",
+      "source_md5": "9bab5f828522fe1270c257791749005f"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "get_sales_order_credit_preview",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_sales_order_id uuid",
+      "source_md5": "b7dc76769be8637cbc7c531f915c65f0"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "import_setup_records",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_resource text, p_file_format text, p_file_name text, p_file_size bigint, p_rows jsonb, p_idempotency_key uuid",
+      "source_md5": "5e057bca42213113185a0f07415c77be"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "invite_stock_opening_approver",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_email text, p_idempotency_key uuid",
+      "source_md5": "70ce07485ee9fce723000375b4092721"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "list_my_stock_opening_invitations",
+      "returns": "TABLE(id uuid, tenant_name text, legal_entity_name text, branch_name text, expires_at timestamp with time zone)",
+      "signature": "",
+      "source_md5": "7bfbb1103e90f52de695f025941cf555"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "list_my_tenants",
+      "returns": "TABLE(tenant_id uuid, tenant_name text, tenant_slug text, tenant_status text, timezone text, default_currency_code text, membership_status text, joined_at timestamp with time zone)",
+      "signature": "",
+      "source_md5": "b8925c1780602effdeffced49788b17c"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "mark_notification_read",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_notification_id uuid, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "4af09c71fea297adb94f72fda3f666c1"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_calendar_command",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+      "source_md5": "93bedbbd726f12ac76b249f4e1dab1ef"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_calendar_detail",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_calendar_id uuid, p_version_id uuid",
+      "source_md5": "9d85f88a1039040bb8f43a068fa921c4"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_calendar_directory",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of date, p_search text, p_after uuid",
+      "source_md5": "43b1c1e88b8ea085e1da02117c0f83e9"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_calendar_history",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_calendar_id uuid, p_after uuid",
+      "source_md5": "09242c790decb808526b3d7d18153f5e"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_calendar_versions",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_calendar_id uuid, p_after uuid",
+      "source_md5": "c8a825ae933417094c496fad2275a8d0"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_employee_branches",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_search text",
+      "source_md5": "bf39fac632803ce9274639c5cd40be0f"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_employee_command",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+      "source_md5": "bf49d148124cfaefd84bdcc3dde0c0a9"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_employee_detail",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_as_of date, p_status text",
+      "source_md5": "111413c5f876b6ed948ff6c4a437a538"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_employee_directory",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of date, p_status text, p_search text, p_after uuid",
+      "source_md5": "379836c7edefb14a4394b533bb339bbe"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_employee_history",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+      "source_md5": "e66e63cc8c9d001ec726641a3e4cdda9"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_hr_access",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_capability text",
+      "source_md5": "00bfef34a457afc22e0fe0d4d38c276a"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_hr_command",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+      "source_md5": "02e2c3faf3757705b68f055621d12e46"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_hr_document_ticket",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_document_id uuid, p_operation text",
+      "source_md5": "6432fa182efa93736e3c87bd26069b16"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_hr_documents",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+      "source_md5": "e5ee93a79ccb9bada05eb267b10e4b5c"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_hr_erasure_status",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+      "source_md5": "61adecd002eaa68bd34f855ea922c5ac"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_hr_export_content",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_export_id uuid",
+      "source_md5": "0b663166d131a3081103fae885dac25d"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_hr_link_inbox",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+      "source_md5": "d9c47282dc707dd746be37af67e92f01"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_hr_links",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+      "source_md5": "b1204755a31e59d697b952bc47ed2133"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_hr_memberships",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+      "source_md5": "3a83640eb412aac80664df03a04ab280"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_hr_own_receipt",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid",
+      "source_md5": "ca583629fcda0e9cd392858f4be15c7f"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_hr_policy",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+      "source_md5": "ba48ace4fbd09706764905772632dbbd"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_hr_profile",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+      "source_md5": "726745c88be98b65ef61b5afd0ecba14"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_hr_review_history",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_review_id uuid, p_after uuid",
+      "source_md5": "3af7a9309b07abbb88a893a6a04b2be4"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_hr_reviews",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+      "source_md5": "4ed65fd85a4365d1d2cfd0962deb3533"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_hr_self",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+      "source_md5": "4c2b54290898520540a7c61bf9551cfa"
+    },
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "name": "people_hr_service_document",
+      "returns": "jsonb",
+      "signature": "p_ticket_id uuid, p_user_id uuid",
+      "source_md5": "b58e3e04a1b1a6c98a8e7722ed4eb941"
+    },
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "name": "people_hr_service_verify_upload",
+      "returns": "jsonb",
+      "signature": "p_ticket_id uuid, p_user_id uuid, p_checksum text, p_byte_size integer",
+      "source_md5": "6d4dad4e8d67e8442f2e7245cd0bfa71"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "people_hr_subjects",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_capability text, p_search text, p_after uuid",
+      "source_md5": "5c244dbdc406720e23c0ef94ad47c37f"
+    },
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "name": "people_hr_worker_claim",
+      "returns": "jsonb",
+      "signature": "p_limit integer",
+      "source_md5": "17bde809953453747ed6e0a30f5ad239"
+    },
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "name": "people_hr_worker_complete",
+      "returns": "jsonb",
+      "signature": "p_job_id uuid, p_lease_id uuid",
+      "source_md5": "cbad5dde0fcdc39f3dc9b6f8c7ccd340"
+    },
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "name": "people_hr_worker_register",
+      "returns": "jsonb",
+      "signature": "p_artifact_digest text, p_storage_probe_digest text",
+      "source_md5": "30a2775f964ad4ffc8549d1f8ada08a3"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "post_customer_receipt",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "cfea8df957cebb79a27fdca9cf183d01"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "post_delivery",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "da6234d6ed86a00093007f6a0f7c5fdb"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "post_sales_invoice",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "a624856e7a7ae5fe9a44ef30c33be311"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "post_sales_return",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "43ea1b1f09ecc29a07599d4a65a77c45"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "post_stock_opening",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "01c4b792e340576343f38b53bfa88c11"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "record_crm_activity",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "01c58b2f520803e82d9062817d29ce3a"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "register_attachment",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_payload jsonb, p_idempotency_key uuid",
+      "source_md5": "ad596cdfc66e74eaadf76eebd1aab5dd"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "reserve_document_number",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_sequence_id uuid, p_document_date date, p_idempotency_key uuid",
+      "source_md5": "60d291aa125ce6f64e03fd14341cc863"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "reserve_sales_order_stock",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "afa86633ab50cad741e74eb658119283"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "transition_operational_document",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "3bd7bdf704c332442e6de0eb21ba0eab"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "transition_stock_opening",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "9511bf6f8d13f6c1ab3cfc4e67dfa4d6"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "update_sales_order_fulfillment",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "8f82ee3b35ec61d830c1160f4f6b2251"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_account",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "4a41222d19ff5f69ea382f16cb39f714"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_approval_matrix_step",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "4a64d9f6ab425b8bb720e02d3e81bb7c"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_contact",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "55a1bd26e10b56254563baae32fdc779"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_customer_receipt",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "2ea8db45b711dbd018bdaf6e3ff76ea8"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_delivery",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "2fdf5f035c3d75e049b19d2edf93ccfc"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_document_sequence",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "30c445ff1159029a854f590ff687f39f"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_exchange_rate",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "22f339a48e5126523c7869d8f964ed25"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_fiscal_period",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "f24bbaca5ecd18143c140494310a8a8c"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_lead",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "e850799b1217af2eca9a5ba8e4b38bf2"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_opportunity",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "342eed60e0242c1eafc5c5aebcac108e"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_party",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "3db8ed3707ccafb0e3eed611d4d6a8ba"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_product",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "e2f59adf8ed7c0d2a79187761776ada0"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_receivables_setup",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "ff34b968c281edbbefc84516a26903f5"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_report_definition",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "520a2986d6a6c5c458363342d55becf5"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_sales_invoice",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "c870b662e243c713a470820d35584f46"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_sales_order",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "cec066c7ec4127c1840c5e3e63efe236"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_sales_quotation",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "348e90fa1e24df2480eef05c1f898059"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_sales_return",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "7481b959bb3e448900a854bfd6f1404f"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_stock_opening",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "source_md5": "c666adededec63c1d748d195b792342a"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_tax_definition",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "c30c552cf9842fee251b575d4cdc5ee5"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_unit",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "9bf1005623f139c6c70238610cfd788f"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_warehouse",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "c705b442484895a37a45d9164e266d00"
+    },
+    {
+      "acl": "{postgres=X/postgres,authenticated=X/postgres}",
+      "name": "upsert_workflow_definition",
+      "returns": "jsonb",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "source_md5": "a17eb8e99da3020a4888d0b13f25346b"
+    }
+  ],
+  "shared_helpers": [
+    {
+      "name": "flow_allocate",
+      "signature": "p_source uuid, p_target uuid, p_tenant uuid, p_entity uuid, p_branch uuid, p_payload jsonb, p_date date, p_request uuid, p_command uuid",
+      "source_md5": "e6e9f68ec7d8aca03be157816fe8eef6"
+    },
+    {
+      "name": "flow_post_journal",
+      "signature": "p_doc jsonb, p_lines jsonb, p_source_type text, p_source_id uuid, p_request uuid, p_command uuid",
+      "source_md5": "bebe95827a7e5ac3f2192d0f7acd38b4"
+    },
+    {
+      "name": "flow_residual",
+      "signature": "p_tenant uuid, p_id uuid, p_as_of date",
+      "source_md5": "c0933ed943663701bbc7e01a1c21831f"
+    },
+    {
+      "name": "wave3_lock_open_period",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_posting_date date",
+      "source_md5": "a316c04eef62ba1a43d49ea4d5261ca2"
+    }
+  ]
+}
+

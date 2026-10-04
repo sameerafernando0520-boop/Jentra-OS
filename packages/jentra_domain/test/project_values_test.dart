@@ -8,6 +8,7 @@ ProjectTaskBasis task(int n, List<int> dependencies, {String? project}) =>
     ProjectTaskBasis(
       id: uid(n),
       projectId: project ?? uid(999),
+      ownerId: uid(998),
       start: CivilDate.parse('2026-10-01'),
       endExclusive: CivilDate.parse('2026-10-04'),
       plannedSeconds: 7200,
@@ -45,6 +46,22 @@ ProjectBillableUnit unit(
 );
 
 void main() {
+  test('task ownership cannot be inferred from resource allocation', () {
+    expect(task(1, const []).ownerId, uid(998));
+    expect(
+      () => ProjectTaskBasis(
+        id: uid(1),
+        projectId: uid(999),
+        ownerId: 'unconfigured',
+        start: CivilDate.parse('2026-10-01'),
+        endExclusive: CivilDate.parse('2026-10-04'),
+        plannedSeconds: 0,
+        progressBasisPoints: 0,
+        dependencies: const [],
+      ),
+      throwsFormatException,
+    );
+  });
   test(
     'whole-second published-zone resolution retains negative UTC offsets',
     () {

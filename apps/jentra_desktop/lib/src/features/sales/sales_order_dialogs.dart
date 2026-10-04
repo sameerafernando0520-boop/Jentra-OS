@@ -4,6 +4,8 @@ import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 
 import '../../app_providers.dart';
+import '../negative_stock/negative_stock_policy_controller.dart'
+    show negativeStockPolicyRepositoryProvider;
 import 'sales_order_screen.dart' show orderStatus;
 
 class OrderCreditDialog extends ConsumerStatefulWidget {
@@ -276,11 +278,24 @@ class _ReservationState extends ConsumerState<OrderReservationDialog> {
   final _quantities = <String, String>{};
   final _quantityControllers = <String, TextEditingController>{};
   final _availability = <String, Map<String, Object?>>{};
+  final _overrideReason = TextEditingController();
+  NegativeStockPolicy? _policy;
+  bool _override = false;
+  bool _invalidated = false;
+  bool get _canOverride =>
+      _active &&
+      _policy?.active == true &&
+      (ref
+              .read(businessCapabilitiesProvider)
+              .value
+              ?.contains('inventory.stock.override') ??
+          false);
   bool _loading = true;
   String? _error;
   int _generation = 0;
   bool get _active =>
       mounted &&
+      !_invalidated &&
       ref.read(activeTenantContextProvider) == widget.scope &&
       !ref.read(businessCapabilitiesProvider).isLoading &&
       !ref.read(businessCapabilitiesProvider).hasError &&
@@ -289,6 +304,8 @@ class _ReservationState extends ConsumerState<OrderReservationDialog> {
               .value
               ?.contains('inventory.reservations.manage') ??
           false) &&
+      !ref.read(connectivityStateProvider).isLoading &&
+      !ref.read(connectivityStateProvider).hasError &&
       ref.read(connectivityStateProvider).value == ConnectivityState.online;
   List<SalesOrderLine> get _lines {
     final stocked = {
@@ -303,6 +320,20 @@ class _ReservationState extends ConsumerState<OrderReservationDialog> {
   @override
   void initState() {
     super.initState();
+    void observe() {
+      if (!_active && !_invalidated) {
+        _invalidated = true;
+        _generation++;
+        _availability.clear();
+        _policy = null;
+        _override = false;
+        if (mounted) setState(() {});
+      }
+    }
+
+    ref.listenManual(activeTenantContextProvider, (_, _) => observe());
+    ref.listenManual(businessCapabilitiesProvider, (_, _) => observe());
+    ref.listenManual(connectivityStateProvider, (_, _) => observe());
     Future.microtask(_load);
   }
 
@@ -310,6 +341,7 @@ class _ReservationState extends ConsumerState<OrderReservationDialog> {
   void dispose() {
     _generation++;
     _expires.dispose();
+    _overrideReason.dispose();
     for (final controller in _quantityControllers.values) {
       controller.dispose();
     }
@@ -323,6 +355,8 @@ class _ReservationState extends ConsumerState<OrderReservationDialog> {
       _loading = true;
       _error = null;
       _availability.clear();
+      _policy = null;
+      _override = false;
     });
     try {
       final reader = ref.read(salesOrderRepositoryProvider);
@@ -340,15 +374,59 @@ class _ReservationState extends ConsumerState<OrderReservationDialog> {
         );
         if (!_active || generation != _generation) return;
       }
+      final policyReader = ref.read(negativeStockPolicyRepositoryProvider);
+      NegativeStockPolicy? policy;
+      if (policyReader != null &&
+          (ref
+                  .read(businessCapabilitiesProvider)
+                  .value
+                  ?.contains('inventory.stock.override') ??
+              false)) {
+        try {
+          policy = await policyReader.readPolicy(widget.scope);
+          if (!_active || generation != _generation) return;
+        } on DomainError catch (error) {
+          if (!_active || generation != _generation) return;
+          if ({
+            'PERMISSION_DENIED',
+            'AUTHENTICATION_REQUIRED',
+            'MFA_REQUIRED',
+            'TENANT_ACCESS_DENIED',
+            'ACCESS_DENIED',
+          }.contains(error.code)) {
+            rethrow;
+          }
+        } on Object {
+          if (!_active || generation != _generation) return;
+        }
+      }
       setState(() {
+        _policy = policy;
         _availability.clear();
         for (final row in rows) {
           _availability[row['product_id']! as String] = row;
         }
         _loading = false;
       });
-    } on Object {
+    } on Object catch (problem) {
       if (_active && generation == _generation) {
+        if (problem is DomainError &&
+            {
+              'PERMISSION_DENIED',
+              'AUTHENTICATION_REQUIRED',
+              'MFA_REQUIRED',
+              'TENANT_ACCESS_DENIED',
+              'ACCESS_DENIED',
+            }.contains(problem.code)) {
+          setState(() {
+            _invalidated = true;
+            _availability.clear();
+            _policy = null;
+            _override = false;
+            _loading = false;
+          });
+          return;
+        }
         setState(() {
           _loading = false;
           _error = 'Could not load current availability. Try again before reserving.';
@@ -392,7 +470,7 @@ class _ReservationState extends ConsumerState<OrderReservationDialog> {
               '0',
           scale: 6,
         );
-        if (demand[line.productId]! > available.scaledValue) {
+        if (demand[line.productId]! > available.scaledValue && !_override) {
           throw FormatException(
             'Requested total exceeds current availability for ${line.description}.',
           );
@@ -407,12 +485,30 @@ class _ReservationState extends ConsumerState<OrderReservationDialog> {
       if (lines.isEmpty) {
         throw const FormatException('Enter at least one quantity to reserve.');
       }
+      NegativeStockOverride? override;
+      if (_override) {
+        if (!_canOverride) {
+          throw const FormatException(
+            'Reopen this dialog under the current active policy and stock-override capability.',
+          );
+        }
+        override = NegativeStockOverride(
+          policyVersion: _policy!.version,
+          reason: _overrideReason.text,
+        );
+        if (!override.validate().isValid) {
+          throw const FormatException(
+            'Enter an override reason of 1 to 1000 characters.',
+          );
+        }
+      }
       Navigator.pop(
         context,
         StockReservationDraft(
           salesOrderId: widget.detail.order.id,
           expiresAt: expiry,
           lines: lines,
+          negativeStockOverride: override,
         ),
       );
     } on FormatException catch (error) {
@@ -436,6 +532,27 @@ class _ReservationState extends ConsumerState<OrderReservationDialog> {
               'Enter quantities in base units. The server rechecks availability and remaining demand; another reservation may reduce the final allocation.',
             ),
             const SizedBox(height: 16),
+            if (_canOverride) ...[
+              CheckboxListTile(
+                key: const Key('negative-stock-override'),
+                title: const Text('Authorize a shortage reservation'),
+                subtitle: Text(
+                  'Policy version ${_policy!.version}. The server blocks unknown cost basis and lot or serial shortages; later receipts record linked cost corrections.',
+                ),
+                value: _override,
+                onChanged: (value) => setState(() => _override = value == true),
+              ),
+              if (_override)
+                TextField(
+                  key: const Key('negative-stock-override-reason'),
+                  controller: _overrideReason,
+                  maxLength: 1000,
+                  decoration: const InputDecoration(
+                    labelText: 'Shortage override reason',
+                  ),
+                ),
+              const SizedBox(height: 16),
+            ],
             TextField(
               key: const Key('order-reservation-expiry'),
               controller: _expires,

@@ -3886,18 +3886,44 @@ declare w people.work_claims%rowtype;a people.attendance_entries%rowtype;l peopl
  return r;end $$;
 create function people_payroll.correction_source_permission(t uuid,e uuid,b uuid,kind text,decision boolean)
 returns void language plpgsql security definer set search_path='' as $$begin
+ if kind='project' then
+  if to_regprocedure('projects.require_access(uuid,uuid,uuid,text,boolean)') is null then raise exception using errcode='55000',message='PAYROLL_SOURCE_IMPACT_PROVIDER_REQUIRED';end if;
+  execute 'select projects.require_access($1,$2,$3,$4,true)' using t,e,b,case when decision then 'projects.time.approve' else 'projects.view' end;
+  execute 'select projects.require_access($1,$2,$3,$4,true)' using t,e,b,'projects.cost.view';
+  return;
+ end if;
  if kind='service' then
   if to_regprocedure('service.require_access(uuid,uuid,uuid,text)') is null then raise exception using errcode='55000',message='PAYROLL_SOURCE_IMPACT_PROVIDER_REQUIRED';end if;
-  execute 'select service.require_access($1,$2,$3,$4)' using t,e,b,case when decision then 'service.approve' else 'service.work' end;
+  execute 'select service.require_access($1,$2,$3,$4)' using t,e,b,case when decision then 'service.approve' else 'service.view' end;
   execute 'select service.require_access($1,$2,$3,$4)' using t,e,b,'service.cost.view';
   return;
  end if;
  perform people.require_access(t,e,b,case kind
-  when 'attendance' then case when decision then 'people.attendance.approve' else 'people.attendance.manage' end
-  when 'leave' then case when decision then 'people.leave.approve' else 'people.leave.manage' end
-  when 'project' then case when decision then 'projects.time.approve' else 'projects.time.manage' end
-  when 'service' then case when decision then 'service.time.approve' else 'service.time.manage' end
-  else null end);end $$;
+  when 'attendance' then case when decision then 'people.attendance.approve' else 'people.attendance.view' end
+  when 'leave' then case when decision then 'people.leave.approve' else 'people.leave.view' end
+  else null end);
+end $$;
+create function people_payroll.correction_source_prepare(t uuid,e uuid,b uuid,kind text)
+returns void language plpgsql security definer set search_path='' as $$begin
+ perform people_payroll.correction_source_permission(t,e,b,kind,false);
+ if kind='project' then
+  execute 'select projects.require_access($1,$2,$3,$4,true)' using t,e,b,'projects.time.manage';
+ elsif kind='service' then
+  execute 'select service.require_access($1,$2,$3,$4)' using t,e,b,'service.work';
+ else
+  perform people.require_access(t,e,b,case kind when 'attendance' then 'people.attendance.manage' when 'leave' then 'people.leave.manage' else null end);
+ end if;
+end $$;
+create function people_payroll.correction_billing_permission(t uuid,e uuid,b uuid,proof jsonb)
+returns void language plpgsql security definer set search_path='' as $$begin
+ if proof->>'original_status'='billed'
+  or jsonb_array_length(coalesce(proof->'original_invoice_line_ids','[]'))>0
+  or jsonb_array_length(coalesce(proof->'billing_credit_line_ids',proof->'credit_line_ids','[]'))>0 then
+  if to_regprocedure('projects.finance_access(uuid,uuid,uuid,text,boolean)') is null then
+   raise exception using errcode='55000',message='PAYROLL_SOURCE_IMPACT_PROVIDER_REQUIRED';end if;
+  execute 'select projects.finance_access($1,$2,$3,$4,true)' using t,e,b,'projects.billing.manage';
+ end if;
+end $$;
 create function people_payroll.correction_summary(p_id uuid) returns jsonb language sql stable security definer set search_path='' as $$
  select jsonb_build_object('id',c.id,'tenant_id',c.tenant_id,'legal_entity_id',c.legal_entity_id,'branch_id',c.branch_id,
   'original_calculation_id',c.original_calculation_id,'employee_id',c.employee_id,'original_run_id',c.original_run_id,
@@ -3940,7 +3966,7 @@ returns jsonb language plpgsql stable security definer set search_path='' as $$d
   'items',items-50,'next_cursor',case when jsonb_array_length(items)>50 then items->49->>'id' end);end $$;
 create function api.people_payroll_correction_sources(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_calculation_id uuid,p_after uuid default null)
 returns jsonb language plpgsql stable security definer set search_path='' as $$declare c people_payroll.employee_calculations%rowtype;items jsonb;begin
- perform people_payroll.correction_access(p_tenant_id,p_legal_entity_id,p_branch_id,'people.payroll.correction.prepare',true);
+ perform people_payroll.correction_access(p_tenant_id,p_legal_entity_id,p_branch_id,'people.payroll.view',true);
  select ec.* into c from people_payroll.employee_calculations ec join people_payroll.runs r on r.id=ec.run_id
   where ec.tenant_id=p_tenant_id and ec.legal_entity_id=p_legal_entity_id and r.branch_id=p_branch_id and ec.id=p_calculation_id
   and r.status='posted' and ec.revision_id=r.current_revision_id;
@@ -3964,14 +3990,23 @@ returns jsonb language plpgsql stable security definer set search_path='' as $$d
  return jsonb_build_object('tenant_id',p_tenant_id,'legal_entity_id',p_legal_entity_id,'branch_id',p_branch_id,'items',items-50,
   'next_cursor',case when jsonb_array_length(items)>50 then items->49->>'id' end);end $$;
 create function api.people_payroll_correction_detail(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_correction_id uuid,p_section text,p_after uuid default null)
-returns jsonb language plpgsql stable security definer set search_path='' as $$declare c people_payroll.corrections%rowtype;items jsonb;begin
+returns jsonb language plpgsql stable security definer set search_path='' as $$declare c people_payroll.corrections%rowtype;items jsonb;source people_payroll.correction_sources%rowtype;effect jsonb;begin
  perform people_payroll.correction_access(p_tenant_id,p_legal_entity_id,p_branch_id,case when p_section='balances' then 'people.payroll.settle'
   when p_section='payslip' then 'people.payroll.payslip.view' else 'people.payroll.view' end,true);
  select * into c from people_payroll.corrections where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and branch_id=p_branch_id and id=p_correction_id;
  if c.id is null then raise exception using errcode='P0002',message='PAYROLL_CORRECTION_NOT_FOUND';end if;
  if p_section='calculation' then
   items:=jsonb_build_array(jsonb_build_object('id',c.id,'before',c.before_calculation,'after',c.after_calculation,'difference',c.difference,'reason',c.reason));
- elsif p_section='sources' then select coalesce(jsonb_agg(to_jsonb(q) order by q.id),'[]') into items from
+ elsif p_section='sources' then
+  for source in select * from people_payroll.correction_sources where correction_id=c.id loop
+   perform people_payroll.correction_source_permission(p_tenant_id,p_legal_entity_id,p_branch_id,source.source_kind,false);
+   perform people_payroll.correction_billing_permission(p_tenant_id,p_legal_entity_id,p_branch_id,coalesce(source.impact->'billing',source.impact->'after'->'billing'));
+   for effect in select value from jsonb_array_elements(coalesce(source.impact->'after'->'allocation_impacts','[]')) loop
+    perform people_payroll.correction_source_permission(p_tenant_id,p_legal_entity_id,p_branch_id,effect->>'source_kind',false);
+    perform people_payroll.correction_billing_permission(p_tenant_id,p_legal_entity_id,p_branch_id,coalesce(effect->'impact'->'billing',effect->'impact'->'after'->'billing'));
+   end loop;
+  end loop;
+  select coalesce(jsonb_agg(to_jsonb(q) order by q.id),'[]') into items from
   (select * from people_payroll.correction_sources where correction_id=c.id and(p_after is null or id>p_after) order by id limit 51) q;
  elsif p_section='balances' then select coalesce(jsonb_agg(to_jsonb(q)||jsonb_build_object('amount',q.amount::text,'outstanding',
   round((select coalesce(sum(amount),0) from people_payroll.correction_balance_effects where balance_id=q.id),6)::text) order by q.id),'[]') into items
@@ -3992,6 +4027,7 @@ returns jsonb language plpgsql security definer set search_path='' as $$
 declare act text:=p_payload->>'action';cid uuid;cap text;c people_payroll.corrections%rowtype;
  original people_payroll.employee_calculations%rowtype;r people_payroll.runs%rowtype;src people_payroll.correction_sources%rowtype;
  x jsonb;state jsonb;inputs jsonb;sources jsonb:='[]';changes jsonb:='[]';before_calc jsonb;after_calc jsonb;diff jsonb;impact jsonb;operational jsonb;replacement_id uuid;
+ allocation people.work_allocations%rowtype;linked_effect jsonb;
  seq bigint;predecessor uuid;paid bigint:=0;seen uuid[]:='{}';w people.work_input_seals%rowtype;
  hash text;replay jsonb;before_summary jsonb:='{}';after_summary jsonb;line jsonb;lines jsonb:='[]';v_amount numeric;
  account uuid;balance uuid;journal uuid;request uuid:=gen_random_uuid();rule people_payroll.rule_versions%rowtype;
@@ -4030,11 +4066,33 @@ begin
     and employee_id=original.employee_id and run_id=original.run_id and id=(x->>'seal_id')::uuid;
    if w.id is null then raise exception using errcode='42501',message='PAYROLL_CORRECTION_SOURCE_SCOPE_DENIED';end if;
    state:=people_payroll.correction_source_state(w.id);
-   perform people_payroll.correction_source_permission(p_tenant_id,p_legal_entity_id,p_branch_id,state->>'source_kind',false);
+   perform people_payroll.correction_source_prepare(p_tenant_id,p_legal_entity_id,p_branch_id,state->>'source_kind');
+   perform people_payroll.correction_billing_permission(p_tenant_id,p_legal_entity_id,p_branch_id,x->'impact');
+   for linked_effect in select value from jsonb_array_elements(coalesce(x->'impact'->'allocation_changes','[]')) loop
+    perform people_payroll.correction_billing_permission(p_tenant_id,p_legal_entity_id,p_branch_id,linked_effect);
+   end loop;
+   if state->>'source_kind'='attendance' then
+    for allocation in select * from people.work_allocations where claim_id=(state->>'claim_id')::uuid and active loop
+     perform people_payroll.correction_source_prepare(p_tenant_id,p_legal_entity_id,p_branch_id,allocation.source_kind);
+    end loop;
+   end if;
   end loop;
  elsif act in('approve','reject','post','reverse') then
   for src in select * from people_payroll.correction_sources where correction_id=cid loop
    perform people_payroll.correction_source_permission(p_tenant_id,p_legal_entity_id,p_branch_id,src.source_kind,true);
+   perform people_payroll.correction_billing_permission(p_tenant_id,p_legal_entity_id,p_branch_id,coalesce(src.impact->'billing',src.impact->'after'->'billing'));
+   for linked_effect in select value from jsonb_array_elements(coalesce(src.impact->'after'->'allocation_impacts','[]')) loop
+    perform people_payroll.correction_source_permission(p_tenant_id,p_legal_entity_id,p_branch_id,linked_effect->>'source_kind',true);
+    perform people_payroll.correction_billing_permission(p_tenant_id,p_legal_entity_id,p_branch_id,coalesce(linked_effect->'impact'->'billing',linked_effect->'impact'->'after'->'billing'));
+   end loop;
+  end loop;
+ end if;
+ if act='reverse' then
+  for x in select value from jsonb_array_elements(coalesce(p_payload->'current_billing_impacts','[]')) loop
+   perform people_payroll.correction_billing_permission(p_tenant_id,p_legal_entity_id,p_branch_id,x);
+   for linked_effect in select value from jsonb_array_elements(coalesce(x->'allocation_credits','[]')) loop
+    perform people_payroll.correction_billing_permission(p_tenant_id,p_legal_entity_id,p_branch_id,linked_effect);
+   end loop;
   end loop;
  end if;
  replay:=core.wave3_replay(p_tenant_id,'people.payroll.correction.'||act,p_command_id,p_idempotency_key,hash);
@@ -4481,6 +4539,29 @@ declare x jsonb;seen uuid[]:='{}';begin
   perform people_payroll.current_credit_ids(x->'billing_credit_line_ids');
  end loop;
 end $$;
+create function people_payroll.linked_allocation_bound(t uuid,e uuid,b uuid,employee uuid,claim uuid,frozen jsonb)
+returns void language plpgsql security definer set search_path='' as $$
+declare a people.work_allocations%rowtype;entry uuid;key text;seen text[]:='{}';x jsonb;begin
+ for a in select * from people.work_allocations where tenant_id=t and legal_entity_id=e and branch_id=b and employee_id=employee and claim_id=claim and active loop
+  entry:=null;
+  if a.source_kind='project' and to_regclass('projects.time_allocations') is not null then
+   execute 'select entry_id from projects.time_allocations where tenant_id=$1 and legal_entity_id=$2 and allocation_id=$3'
+    into entry using t,e,a.id;
+  elsif a.source_kind='service' and to_regclass('service.labor_allocations') is not null then
+   execute 'select labor_id from service.labor_allocations where tenant_id=$1 and legal_entity_id=$2 and branch_id=$3 and allocation_id=$4'
+    into entry using t,e,b,a.id;
+  end if;
+  key:=a.source_kind||':'||coalesce(entry,a.source_id)::text;
+  if not(key=any(seen)) then seen:=array_append(seen,key);end if;
+  if cardinality(seen)>50 then raise exception using errcode='55000',message='WORK_ALLOCATION_IMPACT_BOUND_REQUIRED';end if;
+ end loop;
+ for x in select value from jsonb_array_elements(coalesce(frozen,'[]')) loop
+  key:=(x->>'source_kind')||':'||coalesce(x->'impact'->>'entry_id',x->'impact'->'before'->>'entry_id',x->'impact'->'before'->>'id');
+  if key is null then raise exception using errcode='55000',message='WORK_ALLOCATION_IMPACT_REQUIRED';end if;
+  if not(key=any(seen)) then seen:=array_append(seen,key);end if;
+  if cardinality(seen)>50 then raise exception using errcode='55000',message='WORK_ALLOCATION_IMPACT_BOUND_REQUIRED';end if;
+ end loop;
+end $$;
 create function people_payroll.replace_claim(t uuid,e uuid,b uuid,employee uuid,old_claim uuid,
  kind text,source_id uuid,calendar uuid,p_start timestamptz,p_end timestamptz,p_breaks jsonb,correction_id uuid)
 returns uuid language plpgsql security definer set search_path='' as $$
@@ -4519,7 +4600,7 @@ declare w people.work_claims%rowtype;a people.attendance_entries%rowtype;r peopl
  body jsonb;before_body jsonb;after_body jsonb;target jsonb;result jsonb;effect jsonb;effects jsonb;
  start_local timestamp;end_local timestamp;start_utc timestamptz;end_utc timestamptz;break_seconds bigint;
  new_claim uuid;source_kind text:=proposal->>'source_kind';allocation people.work_allocations%rowtype;
- allocation_body jsonb;allocation_effects jsonb:='[]';change jsonb;change_ids uuid[]:='{}';linked_ids uuid[]:='{}';
+ allocation_body jsonb;allocation_effects jsonb:='[]';change jsonb;change_ids uuid[]:='{}';linked_ids uuid[]:='{}';linked_entry uuid;
 begin
  if p_mode not in('read','validate','apply','reverse') or revision is null then raise exception using errcode='22023',message='PAYROLL_SOURCE_IMPACT_INVALID';end if;
  select * into w from people.work_claims where tenant_id=t and legal_entity_id=e and branch_id=b and employee_id=employee and id=claim and active;
@@ -4538,15 +4619,40 @@ begin
   select * into r from people.attendance_revisions where id=a.current_revision_id;
   if a.id is null then raise exception using errcode='40001',message='PAYROLL_CORRECTION_SOURCE_CHANGED';end if;
   before_body:=to_jsonb(r)||jsonb_build_object('entry_version',a.version,'claim_id',claim);
+  perform people_payroll.linked_allocation_bound(t,e,b,employee,claim,
+   case when p_mode='read' then proposal->'snapshot'->'allocation_impacts' when p_mode='reverse' then proposal->'after'->'allocation_impacts' else '[]'::jsonb end);
   if p_mode='read' then
    for allocation in select * from people.work_allocations where claim_id=claim and active order by id loop
+    perform people_payroll.correction_source_permission(t,e,b,allocation.source_kind,false);
     if to_regprocedure(case allocation.source_kind when 'project' then 'projects.payroll_allocation_impact(uuid,uuid,uuid,uuid,uuid,uuid,jsonb,text)' else 'service.payroll_allocation_impact(uuid,uuid,uuid,uuid,uuid,uuid,jsonb,text)' end) is null then
      raise exception using errcode='55000',message='WORK_ALLOCATION_IMPACT_REQUIRED';
     else
      execute case allocation.source_kind when 'project' then 'select projects.payroll_allocation_impact($1,$2,$3,$4,$5,$6,$7,$8)' else 'select service.payroll_allocation_impact($1,$2,$3,$4,$5,$6,$7,$8)' end
       into allocation_body using t,e,b,employee,allocation.id,revision,proposal,'read';
     end if;
-    allocation_effects:=allocation_effects||jsonb_build_array(jsonb_build_object('allocation_id',allocation.id,'source_kind',allocation.source_kind,'source_id',allocation.source_id,'operational',allocation_body));
+    linked_entry:=coalesce((allocation_body->>'entry_id')::uuid,(allocation_body->'before'->>'entry_id')::uuid,(allocation_body->'before'->>'id')::uuid);
+    if linked_entry is null then raise exception using errcode='55000',message='WORK_ALLOCATION_IMPACT_REQUIRED';end if;
+    if not(linked_entry=any(linked_ids)) then
+     linked_ids:=array_append(linked_ids,linked_entry);
+     allocation_effects:=allocation_effects||jsonb_build_array(jsonb_build_object('allocation_id',allocation.id,'source_kind',allocation.source_kind,
+      'source_id',allocation.source_id,'active',true,'operational',allocation_body));
+    end if;
+   end loop;
+   -- Removed allocations retain a frozen origin but reversal must inspect the
+   -- current module revision. Never reuse the historical credit selection.
+   for effect in select value from jsonb_array_elements(coalesce(proposal->'snapshot'->'allocation_impacts','[]')) loop
+    linked_entry:=coalesce((effect->'impact'->>'entry_id')::uuid,(effect->'impact'->'before'->>'entry_id')::uuid,(effect->'impact'->'before'->>'id')::uuid);
+    if linked_entry is null then raise exception using errcode='55000',message='WORK_ALLOCATION_IMPACT_REQUIRED';end if;
+    if linked_entry=any(linked_ids) then continue;end if;
+    perform people_payroll.correction_source_permission(t,e,b,effect->>'source_kind',false);
+    if to_regprocedure(case effect->>'source_kind' when 'project' then 'projects.payroll_allocation_impact(uuid,uuid,uuid,uuid,uuid,uuid,jsonb,text)' else 'service.payroll_allocation_impact(uuid,uuid,uuid,uuid,uuid,uuid,jsonb,text)' end) is null then
+     raise exception using errcode='55000',message='WORK_ALLOCATION_IMPACT_REQUIRED';end if;
+    execute case effect->>'source_kind' when 'project' then 'select projects.payroll_allocation_impact($1,$2,$3,$4,$5,$6,$7,$8)' else 'select service.payroll_allocation_impact($1,$2,$3,$4,$5,$6,$7,$8)' end
+     into allocation_body using t,e,b,employee,(effect->>'allocation_id')::uuid,revision,
+      proposal||jsonb_build_object('operational_mode','reverse','current_claim_id',claim,'allocation_impact',coalesce(effect->'original_impact',effect->'impact')),'read';
+    linked_ids:=array_append(linked_ids,linked_entry);
+    allocation_effects:=allocation_effects||jsonb_build_array(jsonb_build_object('allocation_id',effect->'allocation_id','source_kind',effect->'source_kind',
+     'source_id',allocation_body->'source_id','active',false,'operational',allocation_body));
    end loop;
    return jsonb_build_object('before',before_body,'source_id',r.id,'source_version',a.version,'paid_seconds',r.payable_seconds,'claim_id',claim,'allocations',allocation_effects);
   end if;
@@ -4567,6 +4673,7 @@ begin
    'payable_seconds',extract(epoch from end_utc-start_utc)::bigint-break_seconds,'calendar_version_id',calendar.id);
   if p_mode<>'reverse' then
    for allocation in select * from people.work_allocations where claim_id=claim and active order by id loop
+    perform people_payroll.correction_source_permission(t,e,b,allocation.source_kind,true);
     execute case allocation.source_kind when 'project' then 'select projects.payroll_allocation_impact($1,$2,$3,$4,$5,$6,$7,$8)' else 'select service.payroll_allocation_impact($1,$2,$3,$4,$5,$6,$7,$8)' end
      into allocation_body using t,e,b,employee,allocation.id,revision,proposal,'read';
     if coalesce((allocation_body->>'entry_id')::uuid,(allocation_body->'before'->>'entry_id')::uuid,(allocation_body->'before'->>'id')::uuid) is null then
@@ -4587,6 +4694,7 @@ begin
   end if;
   if p_mode='reverse' then
    for effect in select value from jsonb_array_elements(proposal->'after'->'allocation_impacts') loop
+    perform people_payroll.correction_source_permission(t,e,b,effect->>'source_kind',true);
     if coalesce((effect->'impact'->>'entry_id')::uuid,(effect->'impact'->'before'->>'entry_id')::uuid,(effect->'impact'->'before'->>'id')::uuid) is null then
      raise exception using errcode='55000',message='WORK_ALLOCATION_IMPACT_REQUIRED';end if;
     linked_ids:=array_append(linked_ids,coalesce((effect->'impact'->>'entry_id')::uuid,(effect->'impact'->'before'->>'entry_id')::uuid,(effect->'impact'->'before'->>'id')::uuid));
@@ -4626,6 +4734,11 @@ begin
     (target->>'end_offset_seconds')::integer,start_utc,end_utc,target->'breaks',extract(epoch from end_utc-start_utc)::bigint,
     break_seconds,extract(epoch from end_utc-start_utc)::bigint-break_seconds,'Linked sealed payroll source correction',r.id,auth.uid());
    update people.attendance_entries set current_revision_id=revision,active_claim_id=new_claim,version=version+1,decided_by=auth.uid() where id=a.id;
+   insert into people.attendance_events(tenant_id,legal_entity_id,branch_id,employee_id,entry_id,revision_id,
+    action,before_status,after_status,reason,actor_id,command_id)
+    values(t,e,b,employee,a.id,revision,'correct','approved','approved',
+     case when p_mode='reverse' then 'Original geometry restored by linked payroll correction reversal' else 'Approved geometry appended by linked payroll source correction' end,
+     auth.uid(),revision);
    for effect in select value from jsonb_array_elements(allocation_effects) loop
     execute case effect->>'source_kind' when 'project' then 'select projects.payroll_allocation_impact($1,$2,$3,$4,$5,$6,$7,$8)' else 'select service.payroll_allocation_impact($1,$2,$3,$4,$5,$6,$7,$8)' end
      into allocation_body using t,e,b,employee,(effect->>'allocation_id')::uuid,revision,proposal||jsonb_build_object('attendance_after',after_body,'new_claim_id',new_claim,'operational_mode',p_mode,'current_claim_id',claim,'allocation_impact',coalesce(effect->'original_impact',effect->'impact')),p_mode;
@@ -4669,12 +4782,22 @@ begin
    update people.leave_accounts set version=version+1 where tenant_id=t and legal_entity_id=e and employee_id=employee and policy_id=l.policy_id;
    after_body:=proposal->'before';
   else new_claim:=claim;end if;
+  if p_mode in('apply','reverse') then
+   insert into people.leave_events(tenant_id,legal_entity_id,branch_id,employee_id,request_id,
+    action,before_status,after_status,reason,actor_id,command_id)
+    values(t,e,b,employee,l.id,case when p_mode='apply' then 'cancel' else 'approve' end,l.status,
+     case when p_mode='apply' then 'cancelled' else 'approved' end,
+     case when p_mode='apply' then 'Original grant debits restored by linked payroll leave cancellation' else 'Original grant debits reconsumed by linked payroll correction reversal' end,
+     auth.uid(),revision);
+  end if;
   return jsonb_build_object('before',before_body,'after',after_body,'source_id',case when p_mode='reverse' then revision else l.id end,
    'source_version',l.version+1,'paid_seconds',case when p_mode='reverse' then l.charge_seconds-l.unpaid_seconds else 0 end,'claim_id',new_claim);
  end if;
  raise exception using errcode='55000',message='PAYROLL_SOURCE_IMPACT_PROVIDER_REQUIRED';
 end $$;
-revoke all on function people_payroll.replace_claim(uuid,uuid,uuid,uuid,uuid,text,uuid,uuid,timestamptz,timestamptz,jsonb,uuid),
+revoke all on function people_payroll.correction_source_prepare(uuid,uuid,uuid,text),
+ people_payroll.correction_billing_permission(uuid,uuid,uuid,jsonb),people_payroll.linked_allocation_bound(uuid,uuid,uuid,uuid,uuid,jsonb),
+ people_payroll.replace_claim(uuid,uuid,uuid,uuid,uuid,text,uuid,uuid,timestamptz,timestamptz,jsonb,uuid),
  people_payroll.source_impact(uuid,uuid,uuid,uuid,uuid,uuid,jsonb,text),people_payroll.current_credit_ids(jsonb),
  people_payroll.current_allocation_credits(jsonb) from public,anon,authenticated;
 
@@ -4826,16 +4949,30 @@ insert into payroll_assertions select is((select payable_seconds from people.att
 select pg_temp.wactor('creator');set local role authenticated;
 select pg_temp.cc(pg_temp.correction_action('post','corr.geometry'),2,'corr.geometry.post');
 reset role;
+create function pg_temp.geometry_reverse_credits() returns jsonb language sql security definer as $$
+ select pg_temp.correction_action('reverse','corr.geometry')||jsonb_build_object('current_billing_impacts',jsonb_build_array(
+  jsonb_build_object('seal_id',s.seal_id,'source_revision_id',state.body->>'operational_source_id',
+   'expected_source_version',(state.body->>'operational_source_version')::bigint,
+   'billing_credit_line_ids','[]'::jsonb,'allocation_credits','[]'::jsonb)))
+ from people_payroll.correction_sources s cross join lateral(select people_payroll.correction_source_state(s.seal_id) body) state
+ where s.correction_id=pg_temp.wid('corr.geometry') $$;
 insert into payroll_assertions select is((select payable_seconds from people.attendance_revisions where id=(select current_revision_id from people.attendance_entries where id=pg_temp.wid('corr.attendance'))),7200::bigint,'geometry post appends authoritative approved attendance revision');
 insert into payroll_assertions select is((select count(*)::integer from people.attendance_revisions where entry_id=pg_temp.wid('corr.attendance')),2,'original attendance revision remains immutable');
 insert into payroll_assertions select is((select count(*)::integer from people.work_claims where employee_id=pg_temp.wid('manager') and active),1,'geometry replacement has one current payable owner');
 insert into payroll_assertions select throws_ok($q$select people.revoke_work_claim(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('manager'),
  (select active_claim_id from people.attendance_entries where id=pg_temp.wid('corr.attendance')))$q$,'55000','PAYROLL_INPUT_SEALED','replacement source retains ordinary payroll seal guard');
 select pg_temp.wactor('creator');set local role authenticated;
-select pg_temp.cc(pg_temp.correction_action('reverse','corr.geometry'),3,'corr.geometry.reverse');
+insert into payroll_assertions select throws_ok($q$select pg_temp.cc(pg_temp.geometry_reverse_credits()||jsonb_build_object('current_billing_impacts',jsonb_build_array(
+ (pg_temp.geometry_reverse_credits()->'current_billing_impacts'->0)||jsonb_build_object('expected_source_version',1))),3,'corr.geometry.stale.current')$q$,
+ '40001','PAYROLL_CORRECTION_SOURCE_CHANGED','current reverse source version is authoritative before credit proof');
+insert into payroll_assertions select throws_ok($q$select pg_temp.cc(pg_temp.geometry_reverse_credits()||jsonb_build_object('current_billing_impacts',jsonb_build_array(
+ (pg_temp.geometry_reverse_credits()->'current_billing_impacts'->0)||jsonb_build_object('billing_credit_line_ids',jsonb_build_array(pg_temp.wid('foreign.credit'))))),3,'corr.geometry.foreign.current')$q$,
+ '22023','PAYROLL_CURRENT_BILLING_IMPACT_INVALID','attendance cannot claim direct customer credit proof');
+select pg_temp.cc(pg_temp.geometry_reverse_credits(),3,'corr.geometry.reverse');
 reset role;
 insert into payroll_assertions select is((select payable_seconds from people.attendance_revisions where id=(select current_revision_id from people.attendance_entries where id=pg_temp.wid('corr.attendance'))),3600::bigint,'geometry reversal appends original-basis geometry as a fresh approved revision');
 insert into payroll_assertions select is((select count(*)::integer from people.attendance_revisions where entry_id=pg_temp.wid('corr.attendance')),3,'geometry reversal never rewrites prior revisions');
+insert into payroll_assertions select is((select count(*)::integer from people.attendance_events where entry_id=pg_temp.wid('corr.attendance') and action='correct'),2,'native attendance history retains linked apply and original-basis reversal');
 insert into payroll_assertions select is((select count(*)::integer from people.work_claims where employee_id=pg_temp.wid('manager') and active),1,'geometry reversal retains exactly one current payable owner');
 insert into payroll_assertions select ok(not has_function_privilege('authenticated','people_payroll.replace_claim(uuid,uuid,uuid,uuid,uuid,text,uuid,uuid,timestamptz,timestamptz,jsonb,uuid)','EXECUTE'),'trusted claim replacement unavailable to clients');
 insert into payroll_assertions select ok(not has_function_privilege('authenticated','people_payroll.source_impact(uuid,uuid,uuid,uuid,uuid,uuid,jsonb,text)','EXECUTE'),'trusted source impact unavailable to clients');
@@ -4914,10 +5051,49 @@ insert into payroll_assertions select is(api.people_leave_balance(pg_temp.wid('t
 reset role;
 insert into payroll_assertions select is((select status from people.leave_requests where id=pg_temp.wid('corr.leave.request')),'approved','leave reversal restores original approved operational request');
 insert into payroll_assertions select is((select count(*)::integer from people.leave_effects where request_id=pg_temp.wid('corr.leave.request')),3,'original debit cancellation and reversal remain immutable');
+insert into payroll_assertions select is((select count(*)::integer from people.leave_events where request_id=pg_temp.wid('corr.leave.request')),5,'native leave history retains linked cancellation and original-basis reversal');
 insert into payroll_assertions select is((select count(*)::integer from people.work_claims where employee_id=pg_temp.wid('manager') and source_kind='leave' and active),1,'leave reversal restores exactly one active payable owner');
 insert into payroll_assertions select is((select net from people_payroll.employee_calculations where run_id=pg_temp.wid('corr.leave.run')),100::numeric,'original posted leave calculation remains unchanged');
 insert into payroll_assertions select throws_ok($q$select people.revoke_work_claim(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('manager'),
  (select active_claim_id from people.leave_requests where id=pg_temp.wid('corr.leave.request')))$q$,'55000','PAYROLL_INPUT_SEALED','restored paid leave remains sealed against ordinary cancellation');
+delete from core.role_permissions where role_id=pg_temp.wid('creator.role') and permission_code='people.attendance.approve';
+select pg_temp.wactor('creator');set local role authenticated;
+insert into payroll_assertions select throws_ok($q$select pg_temp.cc(pg_temp.correction_action('post','corr.geometry'),2,'corr.geometry.post')$q$,'42501',null,'source authority is rechecked before confirmed post replay');
+reset role;
+insert into core.role_permissions(tenant_id,role_id,permission_code) values(pg_temp.wid('tenant'),pg_temp.wid('creator.role'),'people.attendance.approve') on conflict do nothing;
+delete from core.role_permissions where role_id=pg_temp.wid('creator.role') and permission_code in('people.payroll.correction.prepare','people.attendance.manage');
+select pg_temp.wactor('creator');set local role authenticated;
+insert into payroll_assertions select ok(jsonb_array_length(api.people_payroll_correction_sources(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),
+ (select response->'entity'->>'original_calculation_id' from correction_client_samples where name='prepared')::uuid)->'items')>0,
+ 'independent source reader can inspect current facts without preparation authority');
+insert into payroll_assertions select throws_ok($q$select pg_temp.cc(pg_temp.correction_prepare(1800),0,'corr.prepare')$q$,'42501',null,
+ 'preparation authority remains required before confirmed prepare replay');
+reset role;
+insert into core.role_permissions(tenant_id,role_id,permission_code)
+select pg_temp.wid('tenant'),pg_temp.wid('creator.role'),p from unnest(array['people.payroll.correction.prepare','people.attendance.manage']) p on conflict do nothing;
+-- Real scoped common ownership rows exercise the bound before module effects.
+create temporary table correction_bound_claim as
+ select people.make_work_claim(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('manager'),
+ 'attendance',pg_temp.wid('corr.bound.source'),(pg_temp.wdate()+28)::timestamp+interval '9 hours' at time zone 'Asia/Colombo',
+ (pg_temp.wdate()+28)::timestamp+interval '10 hours' at time zone 'Asia/Colombo','[]',pg_temp.wid('calendar-version'),pg_temp.wid('creator')) id;
+insert into people.work_allocations(id,tenant_id,legal_entity_id,branch_id,employee_id,claim_id,source_kind,source_id,start_utc,end_utc,created_by)
+select pg_temp.wid('corr.bound.allocation.'||i),pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('manager'),c.id,
+ 'project',pg_temp.wid('corr.bound.project.source.'||i),w.start_utc+make_interval(secs=>i*2),w.start_utc+make_interval(secs=>i*2+1),pg_temp.wid('creator')
+from generate_series(1,51) i cross join correction_bound_claim c join people.work_claims w on w.id=c.id;
+insert into payroll_assertions select throws_ok($q$select people_payroll.linked_allocation_bound(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),
+ pg_temp.wid('manager'),(select id from correction_bound_claim),'[]')$q$,'55000','WORK_ALLOCATION_IMPACT_BOUND_REQUIRED',
+ '51 scoped distinct allocated sources fail before linked module effects');
+delete from people.work_allocations where id=pg_temp.wid('corr.bound.allocation.51');
+create function pg_temp.cbound_ok() returns boolean language plpgsql as $$begin
+ perform people_payroll.linked_allocation_bound(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),
+  pg_temp.wid('manager'),(select id from correction_bound_claim),'[]');return true;end $$;
+insert into payroll_assertions select ok(pg_temp.cbound_ok(),'50 scoped distinct allocated sources remain within bound');
+insert into payroll_assertions select throws_ok($q$select people_payroll.linked_allocation_bound(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('manager'),null,
+ (select jsonb_agg(jsonb_build_object('source_kind','project','impact',jsonb_build_object('entry_id',pg_temp.wid('corr.bound.project.entry.'||i))))
+  from generate_series(1,51) i))$q$,'55000','WORK_ALLOCATION_IMPACT_BOUND_REQUIRED',
+ '51 frozen removed origins fail the reversal bound without truncation');
+delete from people.work_allocations where claim_id=(select id from correction_bound_claim);
+select people.revoke_work_claim(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('manager'),(select id from correction_bound_claim));
 
 
 -- UNAPPLIED W4-05 planning/common-time candidate. No persistent grants or plan changes.
@@ -4960,10 +5136,11 @@ create table projects.plans(
 );
 create table projects.tasks(
  tenant_id uuid not null,legal_entity_id uuid not null,project_id uuid not null,plan_id uuid not null,id uuid not null,
- name text not null,start_date date not null,end_date_exclusive date not null,planned_seconds bigint not null check(planned_seconds between 0 and 31622400),
+ name text not null,owner_id uuid not null,owner_name text not null,start_date date not null,end_date_exclusive date not null,planned_seconds bigint not null check(planned_seconds between 0 and 31622400),
  primary key(plan_id,id),unique(tenant_id,legal_entity_id,project_id,plan_id,id),
  check(length(name) between 1 and 160 and name=btrim(name) and name !~ '[[:cntrl:]]'),
- check(end_date_exclusive>start_date),
+ check(end_date_exclusive>start_date),check(length(owner_name) between 1 and 160),
+ foreign key(tenant_id,legal_entity_id,owner_id) references people.employees(tenant_id,legal_entity_id,id),
  foreign key(tenant_id,legal_entity_id,project_id,plan_id) references projects.plans(tenant_id,legal_entity_id,project_id,id)
 );
 create table projects.dependencies(
@@ -5168,14 +5345,19 @@ declare act text:=p_payload->>'action';cap text;id uuid;project_id uuid;employee
   employee_id:=(p_payload->>'manager_id')::uuid;
   perform id from people.employees where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and employees.id=employee_id for update;
  elsif act='plan' then
+  if jsonb_typeof(p_payload->'tasks') is distinct from 'array' or jsonb_array_length(p_payload->'tasks') not between 1 and 200 then
+   raise exception using errcode='22023',message='PROJECT_TASK_LIMIT';end if;
   if jsonb_typeof(p_payload->'resources') is distinct from 'array' or jsonb_array_length(p_payload->'resources')>366 then
    raise exception using errcode='22023',message='PROJECT_RESOURCE_LIMIT';end if;
   perform e.id from people.employees e where e.tenant_id=p_tenant_id and e.legal_entity_id=p_legal_entity_id and
-   e.id in(select (value->>'employee_id')::uuid from jsonb_array_elements(p_payload->'resources')) order by e.id for update;
+   e.id in(select (value->>'employee_id')::uuid from jsonb_array_elements(p_payload->'resources')
+    union select (value->>'owner_id')::uuid from jsonb_array_elements(p_payload->'tasks')) order by e.id for update;
  elsif act in('approve_plan','reject_plan','close') then
   perform e.id from people.employees e where e.tenant_id=p_tenant_id and e.legal_entity_id=p_legal_entity_id and e.id in(
    select s.employee_id from projects.resource_slots s where s.tenant_id=p_tenant_id and s.legal_entity_id=p_legal_entity_id
-    and s.project_id=project_id and (s.active or s.plan_id=(p_payload->>'plan_id')::uuid)) order by e.id for update;
+    and s.project_id=project_id and (s.active or s.plan_id=(p_payload->>'plan_id')::uuid)
+   union select t.owner_id from projects.tasks t where t.tenant_id=p_tenant_id and t.legal_entity_id=p_legal_entity_id
+    and t.project_id=project_id and t.plan_id=(p_payload->>'plan_id')::uuid) order by e.id for update;
  end if;
  select * into r from projects.register q where q.tenant_id=p_tenant_id and q.legal_entity_id=p_legal_entity_id
   and q.branch_id=p_branch_id and q.id=project_id for update;
@@ -5213,13 +5395,16 @@ declare act text:=p_payload->>'action';cap text;id uuid;project_id uuid;employee
    insert into projects.plans(id,tenant_id,legal_entity_id,project_id,version,basis_digest,terms,reason,prepared_by)
    values(plan_id,p_tenant_id,p_legal_entity_id,r.id,r.version+1,encode(extensions.digest(p_payload::text,'sha256'),'hex'),projects.text(p_payload->'terms',2000),reason,auth.uid());
    for x in select value from jsonb_array_elements(p_payload->'tasks') loop
-    if jsonb_typeof(x) is distinct from 'object' or exists(select 1 from jsonb_object_keys(x) k where k<>all(array['id','name','start_date','end_date_exclusive','planned_seconds','dependencies']))
+    if jsonb_typeof(x) is distinct from 'object' or exists(select 1 from jsonb_object_keys(x) k where k<>all(array['id','name','owner_id','start_date','end_date_exclusive','planned_seconds','dependencies']))
      or jsonb_typeof(x->'planned_seconds') is distinct from 'number' or coalesce(x->>'planned_seconds','') !~ '^(0|[1-9][0-9]{0,7})$'
      or jsonb_typeof(x->'dependencies') is distinct from 'array' or jsonb_array_length(x->'dependencies')>50
      or (x->>'start_date')::date<r.start_date or (x->>'end_date_exclusive')::date>r.end_date_exclusive
      or (x->>'planned_seconds')::bigint>((x->>'end_date_exclusive')::date-(x->>'start_date')::date)::bigint*86400 then
      raise exception using errcode='22023',message='PROJECT_TASK_INVALID';end if;
+    resolved:=projects.task_owner_validate(p_tenant_id,p_legal_entity_id,p_branch_id,(x->>'owner_id')::uuid,
+     (x->>'start_date')::date,(x->>'end_date_exclusive')::date);
     insert into projects.tasks values(p_tenant_id,p_legal_entity_id,r.id,plan_id,(x->>'id')::uuid,projects.text(x->'name',160),
+     (x->>'owner_id')::uuid,resolved->>'name',
      (x->>'start_date')::date,(x->>'end_date_exclusive')::date,(x->>'planned_seconds')::bigint);
    end loop;
    for x in select value from jsonb_array_elements(p_payload->'tasks') loop
@@ -5262,6 +5447,10 @@ declare act text:=p_payload->>'action';cap text;id uuid;project_id uuid;employee
     raise exception using errcode='55000',message='PROJECT_PLAN_STALE';end if;
    if p.prepared_by=auth.uid() then raise exception using errcode='42501',message='PROJECT_INDEPENDENT_APPROVAL_REQUIRED';end if;
    if act='approve_plan' then
+    for x in select to_jsonb(q) from projects.tasks q where q.plan_id=p.id order by q.owner_id,q.id loop
+     perform projects.task_owner_validate(p_tenant_id,p_legal_entity_id,p_branch_id,(x->>'owner_id')::uuid,
+      (x->>'start_date')::date,(x->>'end_date_exclusive')::date);
+    end loop;
     for slot in select * from projects.resource_slots q where q.plan_id=p.id order by q.employee_id,q.id loop
      perform projects.slot_validate(p_tenant_id,p_legal_entity_id,p_branch_id,slot.employee_id,slot.calendar_version_id,
       slot.start_local,slot.end_local,slot.start_offset_seconds,slot.end_offset_seconds);
@@ -5473,6 +5662,18 @@ declare q numeric;r numeric;divisor numeric;begin
  if r*2>divisor or(r*2=divisor and mod(q,2)=1) then q:=q+1;end if;
  return sign(n)*q*power(10::numeric,6-p_precision)/1000000;
 end $$;
+create function projects.task_owner_validate(t uuid,e uuid,b uuid,employee uuid,p_start date,p_end date)
+returns jsonb language plpgsql stable set search_path='' as $$declare name text;begin
+ if employee is null or p_start is null or p_end is null or p_end<=p_start then
+  raise exception using errcode='22023',message='PROJECT_TASK_OWNER_REQUIRED';end if;
+ select p.display_name into name from people.employees p where p.tenant_id=t and p.legal_entity_id=e and p.id=employee
+ and exists(select 1 from people.employment_assignments a join people.employment_spells s on s.id=a.spell_id
+  where a.tenant_id=t and a.legal_entity_id=e and a.branch_id=b and a.employee_id=employee
+  and daterange(a.start_date,a.end_date_exclusive,'[)') @> daterange(p_start,p_end,'[)')
+  and daterange(s.start_date,s.end_date_exclusive,'[)') @> daterange(p_start,p_end,'[)'));
+ if name is null then raise exception using errcode='55000',message='PROJECT_TASK_OWNER_COVERAGE_REQUIRED';end if;
+ return jsonb_build_object('id',employee,'name',name);
+end $$;
 create function projects.slot_validate(t uuid,e uuid,b uuid,employee uuid,calendar uuid,start_local timestamp,end_local timestamp,
  start_offset integer,end_offset integer) returns jsonb language plpgsql security definer set search_path='' as $$
 declare c people.work_calendar_versions%rowtype;s timestamptz;z timestamptz;d date;pattern jsonb;x jsonb;start_min integer;end_min integer;matched boolean:=false;begin
@@ -5549,7 +5750,7 @@ declare r projects.register%rowtype;rows jsonb;plan uuid;begin
    'decision',(select jsonb_build_object('decision',d.decision,'digest',d.digest,'reason',d.reason,'decided_by',d.decided_by,'decided_at',d.decided_at) from projects.plan_decisions d where d.plan_id=q.id)) order by q.id),'[]') into rows
    from(select * from projects.plans where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and project_id=r.id and(p_parent_id is null or id=p_parent_id) and(p_after is null or id>p_after) order by id limit 50) q;
  elsif p_kind='tasks' then
-  select coalesce(jsonb_agg(jsonb_build_object('id',q.id,'project_id',q.project_id,'plan_id',q.plan_id,'name',q.name,'start_date',q.start_date,
+  select coalesce(jsonb_agg(jsonb_build_object('id',q.id,'project_id',q.project_id,'plan_id',q.plan_id,'name',q.name,'owner_id',q.owner_id,'owner_name',q.owner_name,'start_date',q.start_date,
    'end_date_exclusive',q.end_date_exclusive,'planned_seconds',q.planned_seconds,'dependencies',(select coalesce(jsonb_agg(d.prerequisite_id order by d.prerequisite_id),'[]') from projects.dependencies d where d.plan_id=q.plan_id and d.task_id=q.id),
    'progress',coalesce((select z.progress from projects.task_progress z where z.project_id=r.id and z.plan_id=q.plan_id and z.task_id=q.id order by z.project_version desc limit 1),0)) order by q.id),'[]') into rows
    from(select * from projects.tasks where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and project_id=r.id and plan_id=plan and(p_after is null or id>p_after) order by id limit 50) q;
@@ -5762,6 +5963,57 @@ create index reimbursement_effect_scope_idx on projects.reimbursement_effects(ob
 create index billing_scope_idx on projects.billing_batches(tenant_id,legal_entity_id,branch_id,project_id,id);
 create index billing_link_source_idx on projects.billing_links(unit_id,batch_id);
 create index finance_event_scope_idx on projects.finance_events(tenant_id,legal_entity_id,branch_id,project_id,id);
+create table projects.service_cost_revisions(
+ id uuid primary key default gen_random_uuid(),tenant_id uuid not null,legal_entity_id uuid not null,branch_id uuid not null,project_id uuid not null,
+ provider_source_id uuid not null,source_revision_id uuid not null,source_version bigint not null check(source_version>0),source_digest text not null check(source_digest~'^[a-f0-9]{64}$'),
+ currency_code text not null,precision integer not null check(precision between 0 and 6),service_date date not null,payable_seconds bigint not null check(payable_seconds>=0),
+ hourly_cost numeric(20,6) not null check(hourly_cost>=0),amount numeric(20,6) not null check(amount>=0),status text not null check(status in('approved','cancelled')),
+ recorded_by uuid not null references auth.users(id),recorded_at timestamptz not null default clock_timestamp(),
+ unique(tenant_id,legal_entity_id,provider_source_id,source_version),
+ foreign key(tenant_id,legal_entity_id,project_id) references projects.register(tenant_id,legal_entity_id,id)
+);
+alter table projects.service_cost_revisions enable row level security;alter table projects.service_cost_revisions force row level security;
+revoke all on projects.service_cost_revisions from public,anon,authenticated,service_role;
+create trigger immutable before update or delete on projects.service_cost_revisions for each row execute function projects.immutable();
+create index service_cost_scope_idx on projects.service_cost_revisions(tenant_id,legal_entity_id,branch_id,project_id,id);
+create index service_cost_asof_idx on projects.service_cost_revisions(project_id,provider_source_id,source_version desc,recorded_at);
+-- Provider-only: financial import captures internal cost without putting it in
+-- the billing source response. Linked corrections call this after their new
+-- immutable revision and effective pointer are stored in the same transaction.
+create function projects.service_payroll_cost_impact(t uuid,e uuid,b uuid,labor uuid,revision uuid) returns void
+language plpgsql security definer set search_path='' as $$
+declare project uuid;source jsonb;old projects.service_cost_revisions%rowtype;currency text;cost numeric;rate numeric;seconds bigint;
+ service_date date;timezone text;status text;version bigint;digest text;precision integer;begin
+ select u.project_id into project from projects.billable_units u where u.tenant_id=t and u.legal_entity_id=e and u.branch_id=b
+  and u.source_kind='service' and u.provider_source_id=labor order by u.id limit 1;
+ if project is null then return;end if;
+ if to_regprocedure('service.snapshot(text,uuid)') is null then raise exception using errcode='55000',message='PROJECT_SERVICE_COST_PROVIDER_REQUIRED';end if;
+ execute 'select service.snapshot(''labor'',$1)' into source using labor;
+ if source is null or source->>'tenant_id' is distinct from t::text or source->>'legal_entity_id' is distinct from e::text
+  or source->>'branch_id' is distinct from b::text or coalesce(source->>'current_revision_id',source->>'id') is distinct from revision::text then
+  raise exception using errcode='40001',message='PROJECT_SERVICE_SOURCE_CONFLICT';end if;
+ select r.currency_code,r.precision into currency,precision from projects.register r where r.id=project;
+ if source->>'currency_code' is distinct from currency or(source->>'precision')::integer is distinct from precision then
+  raise exception using errcode='22023',message='PROJECT_SERVICE_COST_BASIS_INVALID';end if;
+ status:=source->>'status';version:=(source->>'version')::bigint;digest:=source->>'digest';
+ if status not in('approved','cancelled') or version is null or version<1 or digest is null or digest!~'^[a-f0-9]{64}$' then
+  raise exception using errcode='22023',message='PROJECT_SERVICE_COST_BASIS_INVALID';end if;
+ rate:=projects.amount(source->'hourly_cost');seconds:=case when status='cancelled' then 0 else(source->>'seconds')::bigint end;
+ cost:=case when status='cancelled' then 0 else projects.amount(source->'amount') end;
+ if seconds is null or seconds not between 0 and 2678400 or cost<>projects.ratio(rate*1000000*seconds,3600,precision) then
+  raise exception using errcode='22023',message='PROJECT_SERVICE_COST_BASIS_INVALID';end if;
+ if source->>'start_local' is not null then service_date:=(source->>'start_local')::timestamp::date;
+ else select c.timezone into timezone from people.work_calendar_versions c where c.id=(source->>'calendar_version_id')::uuid;
+  service_date:=((source->>'start_utc')::timestamptz at time zone timezone)::date;end if;
+ if service_date is null then raise exception using errcode='22023',message='PROJECT_SERVICE_COST_BASIS_INVALID';end if;
+ select * into old from projects.service_cost_revisions x where x.tenant_id=t and x.legal_entity_id=e and x.provider_source_id=labor and x.source_version=version;
+ if old.id is not null then
+  if old.project_id<>project or old.source_revision_id<>revision or old.source_digest<>digest or old.amount<>cost or old.payable_seconds<>seconds or old.status<>status then
+   raise exception using errcode='40001',message='PROJECT_SERVICE_COST_SOURCE_CONFLICT';end if;return;end if;
+ insert into projects.service_cost_revisions(tenant_id,legal_entity_id,branch_id,project_id,provider_source_id,source_revision_id,source_version,source_digest,currency_code,precision,service_date,payable_seconds,hourly_cost,amount,status,recorded_by)
+ values(t,e,b,project,labor,revision,version,digest,currency,precision,service_date,seconds,rate,cost,status,auth.uid());
+ if status='cancelled' then update projects.billable_units set status='cancelled' where tenant_id=t and legal_entity_id=e and provider_source_id=labor and source_kind='service' and status='available';end if;
+end $$;
 create function projects.finance_access(t uuid,e uuid,b uuid,cap text,w boolean default true) returns void language plpgsql security definer set search_path='' as $$begin
  perform projects.require_access(t,e,b,'projects.view',w);
  if cap not in('projects.cost.view','projects.expenses.manage','projects.expenses.approve','projects.expenses.post','projects.expenses.settle','projects.billing.manage','projects.margin.view') then raise exception using errcode='42501',message='PROJECT_FINANCE_SCOPE_DENIED';end if;
@@ -5982,8 +6234,10 @@ begin
   execute 'select service.billing_source($1,$2,$3,$4)' into doc using p_tenant_id,p_legal_entity_id,p_branch_id,(p_payload->>'service_source_id')::uuid;
   if doc->>'customer_id' is distinct from r.customer_id::text or doc->>'currency_code' is distinct from r.currency_code or(doc->>'source_version')::bigint is distinct from(p_payload->>'source_version')::bigint or doc->>'digest' is distinct from p_payload->>'source_digest' then raise exception using errcode='40001',message='PROJECT_SERVICE_SOURCE_CONFLICT';end if;
   amount:=projects.amount(doc->'amount');if amount<>round(amount,r.precision) or(doc->>'seconds')::bigint not between 1 and 2678400 then raise exception using errcode='22023',message='PROJECT_SERVICE_SOURCE_INVALID';end if;
+  if exists(select 1 from projects.billable_units where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and source_kind='service' and provider_source_id=(p_payload->>'service_source_id')::uuid and project_id<>project) then raise exception using errcode='55000',message='PROJECT_SERVICE_PROJECT_IMPACT_REQUIRED';end if;
   insert into projects.billable_units(id,tenant_id,legal_entity_id,project_id,branch_id,source_kind,source_id,provider_source_id,source_version,source_digest,amount,payable_seconds)
    values(id,p_tenant_id,p_legal_entity_id,project,p_branch_id,'service',(doc->>'source_id')::uuid,(p_payload->>'service_source_id')::uuid,(doc->>'source_version')::bigint,doc->>'digest',amount,(doc->>'seconds')::bigint);
+  perform projects.service_payroll_cost_impact(p_tenant_id,p_legal_entity_id,p_branch_id,(p_payload->>'service_source_id')::uuid,(doc->>'source_id')::uuid);
   outcome:=jsonb_build_object('id',id,'project_id',project,'version',1,'status','available');
  elsif act like 'billing_%' then
   if act='billing_prepare' then
@@ -6082,6 +6336,12 @@ declare items jsonb;cap text;begin
  elsif p_kind='units' then
   select coalesce(jsonb_agg(q.body order by q.id),'[]') into items from(select u.id,jsonb_build_object('id',u.id,'source_kind',u.source_kind,'source_id',u.source_id,'source_version',u.source_version,'source_digest',u.source_digest,'source_name',case u.source_kind when 'time' then coalesce((select left(t.name,180)||' · '||v.start_local::date from projects.time_revisions v join projects.tasks t on t.id=v.task_id and t.plan_id=v.plan_id where v.id=u.source_id),'Approved project time') when 'expense' then coalesce((select left(v.purpose,180) from projects.expenses x join projects.expense_revisions v on v.id=x.current_revision_id where x.id=u.source_id),'Approved project expense') when 'service' then 'Approved service labor · '||u.payable_seconds||' seconds' else 'Approved project milestone' end,'amount',u.amount::text,'payable_seconds',u.payable_seconds,'status',u.status) body
    from projects.billable_units u where u.tenant_id=p_tenant_id and u.legal_entity_id=p_legal_entity_id and u.branch_id=p_branch_id and u.project_id=p_project_id and(p_after is null or u.id>p_after) and(p_target_id is null or u.id=p_target_id) order by u.id limit 50) q;
+ elsif p_kind='serviceCosts' then
+  select coalesce(jsonb_agg(q.body order by q.id),'[]') into items from(select c.id,jsonb_build_object('id',c.id,'provider_source_id',c.provider_source_id,
+   'source_revision_id',c.source_revision_id,'source_version',c.source_version,'source_digest',c.source_digest,'currency_code',c.currency_code,
+   'precision',c.precision,'service_date',c.service_date,'payable_seconds',c.payable_seconds,'hourly_cost',c.hourly_cost::text,'amount',c.amount::text,'status',c.status,'recorded_at',c.recorded_at) body
+   from projects.service_cost_revisions c where c.tenant_id=p_tenant_id and c.legal_entity_id=p_legal_entity_id and c.branch_id=p_branch_id and c.project_id=p_project_id
+   and(p_after is null or c.id>p_after) and(p_target_id is null or c.id=p_target_id) order by c.id limit 50) q;
  elsif p_kind='history' then
   select coalesce(jsonb_agg(q.body order by q.id),'[]') into items from(select h.id,jsonb_build_object('id',h.id,'aggregate_id',h.aggregate_id,'action',h.action,'version',h.version,'reason',h.reason,'actor_id',h.actor_id,'recorded_at',h.recorded_at) body
    from projects.finance_events h where h.tenant_id=p_tenant_id and h.legal_entity_id=p_legal_entity_id and h.branch_id=p_branch_id and h.project_id=p_project_id and(p_after is null or h.id>p_after) and(p_target_id is null or h.id=p_target_id) order by h.id limit 50) q;
@@ -6139,7 +6399,7 @@ returns jsonb language plpgsql stable security definer set search_path='' as $$d
 end $$;
 create function api.projects_margin(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_project_id uuid,p_as_of timestamptz,p_effective_date date)
 returns jsonb language plpgsql stable security definer set search_path='' as $$
-declare revenue numeric;credits numeric;expense_cost numeric;time_cost numeric;commitments numeric;budget numeric;obligations numeric;plan uuid;currency text;begin
+declare revenue numeric;credits numeric;expense_cost numeric;time_cost numeric;service_cost numeric;commitments numeric;budget numeric;obligations numeric;plan uuid;currency text;begin
  perform projects.finance_access(p_tenant_id,p_legal_entity_id,p_branch_id,'projects.margin.view');
  if p_as_of is null or p_effective_date is null or p_as_of>clock_timestamp() then raise exception using errcode='22023',message='PROJECT_MARGIN_DATE_INVALID';end if;
  select currency_code into currency from projects.register where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and branch_id=p_branch_id and id=p_project_id;if currency is null then raise exception using errcode='P0002',message='PROJECT_NOT_FOUND';end if;
@@ -6148,10 +6408,13 @@ declare revenue numeric;credits numeric;expense_cost numeric;time_cost numeric;c
  select coalesce(sum(projects.ratio(s.planned_seconds*c.hourly_rate*1000000,3600,r.precision)),0) into commitments from projects.resource_slots s join projects.resource_costs c on c.resource_slot_id=s.id join projects.register r on r.id=s.project_id where s.plan_id=plan;
  select coalesce(sum(v.base_gross),0) into expense_cost from projects.expense_revisions v join projects.expense_decisions d on d.revision_id=v.id where v.project_id=p_project_id and d.decision='approved' and d.recorded_at<=p_as_of and v.service_date<=p_effective_date and not exists(select 1 from projects.reimbursement_effects ef join projects.reimbursements o on o.id=ef.obligation_id where o.revision_id=v.id and ef.kind='expense_reverse' and ef.recorded_at<=p_as_of and ef.posting_date<=p_effective_date);
  select coalesce(sum(c.amount),0) into time_cost from projects.time_costs c join projects.time_revisions v on v.id=c.revision_id where c.project_id=p_project_id and v.start_local::date<=p_effective_date and exists(select 1 from projects.time_events ev where ev.revision_id=v.id and ev.action='time_approve' and ev.recorded_at<=p_as_of) and not exists(select 1 from projects.time_events ev where ev.revision_id=v.id and ev.action='time_cancel' and ev.recorded_at<=p_as_of);
+ select coalesce(sum(q.amount),0) into service_cost from(select distinct on(c.provider_source_id) c.amount from projects.service_cost_revisions c
+  where c.tenant_id=p_tenant_id and c.legal_entity_id=p_legal_entity_id and c.branch_id=p_branch_id and c.project_id=p_project_id and c.recorded_at<=p_as_of
+   and c.service_date<=p_effective_date order by c.provider_source_id,c.source_version desc,c.recorded_at desc) q;
  select coalesce(sum(round(l.taxable_amount*i.exchange_rate,i.rounding_scale)),0) into revenue from projects.billing_batches b join sales.sales_invoices i on i.id=b.invoice_id join sales.sales_invoice_lines l on l.document_id=i.id where b.project_id=p_project_id and i.status='posted' and i.posted_at<=p_as_of and i.document_date<=p_effective_date;
  select coalesce(sum(round(l.taxable_amount*i.exchange_rate,i.rounding_scale)),0) into credits from sales.sales_return_lines l join sales.sales_returns i on i.id=l.document_id join projects.billing_links bl on bl.invoice_line_id=l.sales_invoice_line_id join projects.billing_batches b on b.id=bl.batch_id where b.project_id=p_project_id and i.status='posted' and i.posted_at<=p_as_of and i.document_date<=p_effective_date;
  select coalesce(sum(ef.amount),0) into obligations from projects.reimbursements o join projects.reimbursement_effects ef on ef.obligation_id=o.id where o.project_id=p_project_id and ef.recorded_at<=p_as_of and ef.posting_date<=p_effective_date;
- return jsonb_build_object('tenant_id',p_tenant_id,'legal_entity_id',p_legal_entity_id,'branch_id',p_branch_id,'project_id',p_project_id,'as_of',p_as_of,'effective_date',p_effective_date,'currency_code',currency,'budget',budget::text,'commitments',commitments::text,'time_cost',time_cost::text,'expense_cost',expense_cost::text,'posted_revenue',revenue::text,'posted_credits',credits::text,'margin',(revenue-credits-time_cost-expense_cost)::text,'outstanding_reimbursements',obligations::text);
+ return jsonb_build_object('tenant_id',p_tenant_id,'legal_entity_id',p_legal_entity_id,'branch_id',p_branch_id,'project_id',p_project_id,'as_of',p_as_of,'effective_date',p_effective_date,'currency_code',currency,'budget',budget::text,'commitments',commitments::text,'time_cost',time_cost::text,'service_cost',service_cost::text,'expense_cost',expense_cost::text,'posted_revenue',revenue::text,'posted_credits',credits::text,'margin',(revenue-credits-time_cost-service_cost-expense_cost)::text,'outstanding_reimbursements',obligations::text);
 end $$;
 -- Cross-provider payroll hook. Never callable by client roles. Credits must
 -- already be posted by the actual sales return workflow and consume each original
@@ -6189,7 +6452,7 @@ declare u projects.billable_units%rowtype;ln record;ids uuid[];matched uuid[]:='
    if u.status not in('available','billed','waived') then raise exception using errcode='55000',message='PROJECT_BILLING_IMPACT_REQUIRED';end if;
    unit_ids:=array[u.id];
    if u.status='billed' then
-    perform core.wave3_require_scope(t,'projects.billing.manage',e,b);
+    perform projects.finance_access(t,e,b,'projects.billing.manage');
     for ln in select l.* from sales.sales_invoice_lines l join projects.billing_links bl on bl.invoice_line_id=l.id join projects.billing_batches bb on bb.id=bl.batch_id where bl.unit_id=u.id and bb.status='posted' order by l.id loop
      select coalesce(sum(cr.taxable_amount),0),coalesce(sum(cr.tax_amount),0),coalesce(sum(cr.line_total),0),coalesce(sum(cr.base_quantity),0),coalesce(array_agg(cr.id order by cr.id),'{}')
       into full_net,full_tax,full_total,qty,matched from sales.sales_return_lines cr join sales.sales_returns h on h.id=cr.document_id join sales.sales_invoices original on original.id=ln.document_id
@@ -6774,7 +7037,11 @@ declare act text:=p_payload->>'action';cap text:=service.capability(act);id uuid
    if exists(select 1 from people.work_input_seals where claim_id=labor.claim_id) then raise exception using errcode='55000',message='PAYROLL_INPUT_SEALED';end if;
    foreach allocation in array labor.allocation_ids loop perform people.revoke_work_allocation(p_tenant_id,p_legal_entity_id,employee,allocation);end loop;
    if labor.owns_claim then perform people.revoke_work_claim(p_tenant_id,p_legal_entity_id,employee,labor.claim_id);end if;
-   update service.labor set status='cancelled',version=service.labor.version+1 where service.labor.id=id;end if;
+   update service.labor set status='cancelled',version=service.labor.version+1 where service.labor.id=id;
+   if to_regprocedure('projects.service_payroll_cost_impact(uuid,uuid,uuid,uuid,uuid)') is not null then
+    execute 'select projects.service_payroll_cost_impact($1,$2,$3,$4,$5)' using p_tenant_id,p_legal_entity_id,p_branch_id,labor.id,coalesce(labor.current_revision_id,labor.id);
+   end if;
+  end if;
  elsif act='plan' then kind:='plan';
   select * into eq from service.equipment where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and branch_id=p_branch_id and equipment.id=(p_payload->>'equipment_id')::uuid and status='active';
   select * into policy from service.sla_policies where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and branch_id=p_branch_id and sla_policies.id=(p_payload->>'policy_id')::uuid;
@@ -6885,7 +7152,7 @@ begin
  if p_mode not in('read','validate','release','apply','reverse') or revision is null or proposal is null or jsonb_typeof(proposal)<>'object' then
   raise exception using errcode='22023',message='SERVICE_PAYROLL_IMPACT_INVALID';end if;
  actual_mode:=case when p_mode='reverse' or proposal->>'operational_mode'='reverse' then 'reverse' else 'apply' end;
- perform service.require_access(t,e,b,case when p_mode in('release','apply','reverse') then 'service.approve' else 'service.work' end);
+ perform service.require_access(t,e,b,case when p_mode='read' then 'service.view' else 'service.approve' end);
  perform service.require_access(t,e,b,'service.cost.view');
  perform pg_advisory_xact_lock(hashtextextended('people.payroll:'||t||':'||e,0));
  perform pg_advisory_xact_lock(hashtextextended('projects:'||t||':'||e,0));
@@ -7041,6 +7308,9 @@ begin
  insert into service.labor_revisions(id,tenant_id,legal_entity_id,branch_id,labor_id,employee_id,version,correction_id,supersedes_id,snapshot,recorded_by)
   values(rid,t,e,b,l.id,employee,l.version+1,cid,l.current_revision_id,after_body,auth.uid());
  update service.labor set version=version+1,current_revision_id=rid,claim_id=new_claim,allocation_ids=allocs,billing_consumption_id=null,status=case when remove_source then 'cancelled' else 'approved' end where id=l.id;
+ if to_regprocedure('projects.service_payroll_cost_impact(uuid,uuid,uuid,uuid,uuid)') is not null then
+  execute 'select projects.service_payroll_cost_impact($1,$2,$3,$4,$5)' using t,e,b,l.id,rid;
+ end if;
  perform people.consume_organization(t,e,b,employee,'service_time',rid,sl::date,((el-interval '1 microsecond')::date)+1);
  if w.status='closed' and not remove_source and l.billing_kind='billable' then
   update service.work_orders set status='completed',closed_by=null,closed_at=null,version=version+1 where id=w.id;
@@ -7089,6 +7359,7 @@ insert into billing.plan_entitlements(plan_code,entitlement_code,enabled) values
 insert into core.role_permissions(tenant_id,role_id,permission_code)
 select pg_temp.wid('tenant'),pg_temp.wid(x||'.role'),p.code from unnest(array['creator','reviewer']) x cross join core.permissions p
 where p.module='service' or p.code='people.payroll.post' on conflict do nothing;
+delete from core.role_permissions where role_id=pg_temp.wid('reviewer.role') and permission_code='service.work';
 create temporary table service_impact_samples(name text primary key,body jsonb);
 grant select,insert on service_impact_samples to authenticated;
 create function pg_temp.sic(p jsonb,v bigint,key text) returns jsonb language sql as $$
@@ -7313,10 +7584,19 @@ select pg_temp.wactor('creator');set local role authenticated;
 select pg_temp.sbf(pg_temp.sb_action('billing_submit',1),1,'sb.submit');
 reset role;select pg_temp.wactor('reviewer');set local role authenticated;
 select pg_temp.sbf(pg_temp.sb_action('billing_decide',2)||'{"decision":"approved"}',2,'sb.approve');
-reset role;select pg_temp.wactor('creator');set local role authenticated;
+reset role;select pg_temp.wactor('reviewer');set local role authenticated;
 select pg_temp.sbf(pg_temp.sb_action('billing_post',3),3,'sb.post');
 reset role;
 insert into payroll_assertions select ok((select billing_consumption_id=pg_temp.wid('sb.batch') from service.labor where id=pg_temp.wid('sd.labor')),'actual invoice posting consumes current service source');
+insert into service_impact_samples values('posted_margin',api.projects_margin(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sb.project'),clock_timestamp(),(now() at time zone 'UTC')::date));
+insert into payroll_assertions select is((select body->>'service_cost' from service_impact_samples where name='posted_margin'),'18.000000','project margin includes exact imported service cost');
+insert into payroll_assertions select is((select body->>'margin' from service_impact_samples where name='posted_margin'),'36.000000','project margin reconciles service revenue54 less cost18');
+insert into service_impact_samples values('before_service_correction',jsonb_build_object('as_of',clock_timestamp()));
+insert into payroll_assertions select ok(not ((select body from service_impact_samples where name='billing_source') ?| array['hourly_cost','cost_amount','internal_cost']), 'public billing source excludes private service cost');
+select pg_temp.wactor('reader');set local role authenticated;
+insert into payroll_assertions select throws_ok($q$select api.projects_finance_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sb.project'),'serviceCosts',null,null)$q$,
+ '42501','Permission denied or multi-factor authentication required.','service cost drilldown requires private cost authority');
+reset role;select pg_temp.wactor('reviewer');
 insert into payroll_assertions select throws_ok($q$select service.payroll_billing_impact(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sd.labor'),
  (select current_revision_id from service.labor where id=pg_temp.wid('sd.labor')),jsonb_build_object('correction_id',pg_temp.wid('sb.correction')),'validate')$q$,'55000','PROJECT_POSTED_ORIGINAL_CREDIT_REQUIRED','consumed service requires actual original posted credit');
 create function pg_temp.sb_credit() returns jsonb language sql security definer set search_path='' as $$
@@ -7331,7 +7611,7 @@ select api.transition_operational_document(pg_temp.wid('tenant'),pg_temp.wid('en
 reset role;select pg_temp.wactor('reviewer');set local role authenticated;
 select api.transition_operational_document(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),gen_random_uuid(),gen_random_uuid(),now(),
  jsonb_build_object('document_type','sales_return','document_id',pg_temp.wid('sb.credit'),'action',null,'decision','approved','note','Independent original credit'),2);
-reset role;select pg_temp.wactor('creator');set local role authenticated;
+reset role;select pg_temp.wactor('reviewer');set local role authenticated;
 select api.post_sales_return(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),gen_random_uuid(),gen_random_uuid(),now(),jsonb_build_object('id',pg_temp.wid('sb.credit')),3);
 reset role;
 create function pg_temp.sb_correction() returns jsonb language sql security definer set search_path='' as $$
@@ -7349,11 +7629,19 @@ insert into payroll_assertions select is((select status from projects.billable_u
 insert into payroll_assertions select is(service.snapshot('labor',pg_temp.wid('sd.labor'))->>'seconds','2700','credited consumed service now has truthful linked replacement');
 insert into payroll_assertions select ok((select billing_consumption_id is null from service.labor where id=pg_temp.wid('sd.labor')),'replacement service source awaits its own separate invoice');
 insert into payroll_assertions select is((select count(*)::integer from sales.sales_returns where id=pg_temp.wid('sb.credit') and status='posted'),1,'original sales credit retained as posted evidence');
+insert into payroll_assertions select is(api.projects_margin(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sb.project'),clock_timestamp(),(now() at time zone 'UTC')::date)->>'service_cost',
+ '13.500000','linked correction updates project service cost without new billing import');
+insert into payroll_assertions select is(api.projects_margin(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sb.project'),
+ (select (body->>'as_of')::timestamptz from service_impact_samples where name='before_service_correction'),(now() at time zone 'UTC')::date)->>'service_cost',
+ '18.000000','historical as-of retains original service cost');
 select pg_temp.wactor('reviewer');set local role authenticated;
 select pg_temp.cc(pg_temp.correction_action('reverse','sb.correction'),3,'sb.correction.reverse');
 reset role;
 insert into payroll_assertions select is(service.snapshot('labor',pg_temp.wid('sd.labor'))->>'seconds','3600','billed source operational reverse restores basis as new revision');
 insert into payroll_assertions select is((select status from projects.billable_units where id=pg_temp.wid('sb.source')),'billed','operational reverse cannot revive original consumed unit');
+insert into payroll_assertions select is(api.projects_margin(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sb.project'),clock_timestamp(),(now() at time zone 'UTC')::date)->>'service_cost',
+ '18.000000','operational reversal appends restored project service cost');
+insert into payroll_assertions select ok(not has_table_privilege('authenticated','projects.service_cost_revisions','SELECT'), 'service cost immutable revisions remain API only');
 
 do $$declare failed text;begin
  select string_agg(message,chr(10)) into failed from payroll_assertions where message like 'not ok%';

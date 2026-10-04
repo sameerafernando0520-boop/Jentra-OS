@@ -241,9 +241,11 @@ final class ProjectTask extends ProjectRow {
   ProjectTask.fromJson(Map<String, Object?> r, String project)
     : planId = projectIdentity(r['plan_id']),
       name = projectText(r['name'], 160),
+      ownerName = projectText(r['owner_name'], 160),
       basis = ProjectTaskBasis(
         id: projectIdentity(r['id']),
         projectId: project,
+        ownerId: projectIdentity(r['owner_id']),
         start: CivilDate.parse(r['start_date'] as String),
         endExclusive: CivilDate.parse(r['end_date_exclusive'] as String),
         plannedSeconds: workforceInteger(r['planned_seconds']),
@@ -256,6 +258,8 @@ final class ProjectTask extends ProjectRow {
       'project_id',
       'plan_id',
       'name',
+      'owner_id',
+      'owner_name',
       'start_date',
       'end_date_exclusive',
       'planned_seconds',
@@ -264,7 +268,7 @@ final class ProjectTask extends ProjectRow {
     });
     _parent(r, project);
   }
-  final String planId, name;
+  final String planId, name, ownerName;
   final ProjectTaskBasis basis;
 }
 
@@ -763,6 +767,7 @@ final class ProjectCommands {
             calendarFields(t, {
               'id',
               'name',
+              'owner_id',
               'start_date',
               'end_date_exclusive',
               'planned_seconds',
@@ -772,6 +777,7 @@ final class ProjectCommands {
             return ProjectTaskBasis(
               id: projectIdentity(t['id']),
               projectId: p['id'] as String,
+              ownerId: projectIdentity(t['owner_id']),
               start: CivilDate.parse(t['start_date'] as String),
               endExclusive: CivilDate.parse(t['end_date_exclusive'] as String),
               plannedSeconds: workforceInteger(t['planned_seconds']),

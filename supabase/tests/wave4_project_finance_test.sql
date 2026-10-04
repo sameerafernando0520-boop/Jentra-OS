@@ -1,5 +1,6 @@
 -- Runs after the actual project candidate suite, inside the same outer rollback.
 reset role;select pg_temp.wactor('creator');
+insert into billing.plan_entitlements(plan_code,entitlement_code,enabled) values('w4_integrated_rollback','module.finance',true) on conflict(plan_code,entitlement_code) do update set enabled=true;
 insert into core.role_permissions(tenant_id,role_id,permission_code)
 select pg_temp.wid('tenant'),pg_temp.wid(x||'.role'),p.code from unnest(array['creator','reviewer']) x cross join core.permissions p where p.module in('sales','workflow','finance') on conflict do nothing;
 insert into core.role_permissions(tenant_id,role_id,permission_code)
@@ -96,7 +97,7 @@ select ok(not exists(select 1 from core.command_receipts where tenant_id=pg_temp
 select pg_temp.wactor('reader');set local role authenticated;
 select throws_ok($$select api.projects_finance_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('finance'),'expenses')$$,'42501',null,'ordinary project viewer has no private costs');
 select pg_temp.wactor('creator','aal1');select throws_ok($$select pg_temp.pfc(pg_temp.pfe(),0,'create')$$,'42501',null,'finance MFA checked before replay');reset role;
-select ok((select count(*)=13 and bool_and(relrowsecurity and relforcerowsecurity) from pg_class where relnamespace='projects'::regnamespace and relname=any(array['expenses','expense_revisions','expense_allocations','expense_decisions','expense_ownership','reimbursements','reimbursement_effects','expense_settlements','billing_batches','billing_links','billing_intents','finance_events','payroll_billing_effects'])),'all finance-owned tables force RLS');
+select ok((select count(*)=14 and bool_and(relrowsecurity and relforcerowsecurity) from pg_class where relnamespace='projects'::regnamespace and relname=any(array['expenses','expense_revisions','expense_allocations','expense_decisions','expense_ownership','reimbursements','reimbursement_effects','expense_settlements','billing_batches','billing_links','billing_intents','finance_events','payroll_billing_effects','service_cost_revisions'])),'all finance-owned tables force RLS');
 select ok(not has_function_privilege('authenticated','projects.payroll_billing_impact(uuid,uuid,uuid,uuid,uuid,jsonb,text)','EXECUTE'),'payroll billing impact is protected provider-only');
 select pg_temp.wactor('creator');
 create function pg_temp.pf_late_failure() returns trigger language plpgsql as $$begin if new.aggregate_id=pg_temp.wid('pf.late') then raise exception using errcode='P0001',message='SYNTHETIC_FINANCE_LATE_FAILURE';end if;return new;end $$;
@@ -139,3 +140,33 @@ select is(projects.payroll_billing_impact(pg_temp.wid('tenant'),pg_temp.wid('ent
 select projects.payroll_billing_impact(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('finance'),pg_temp.wid('pf.credit.revision'),jsonb_build_object('correction_id',pg_temp.wid('pf.credit.correction'),'billing_credit_line_ids',jsonb_build_array(pg_temp.wid('pf.credit.line'))),'apply');
 select is((select status from projects.billable_units where id=pg_temp.wid('pf.credit.unit')),'billed','posted original credits never release billed source');
 select is((api.projects_margin(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('finance'),clock_timestamp(),pg_temp.wdate())->>'posted_credits')::numeric,12::numeric,'as-of margin includes exact original credit revenue');
+-- Private cost rows exercise exact source-version, recorded/effective cutoffs.
+-- Real service imports and linked callbacks are exercised by the service suite.
+insert into project_finance_client_samples values('cost_asof',to_jsonb(clock_timestamp()-interval '10 seconds'));
+insert into projects.service_cost_revisions(id,tenant_id,legal_entity_id,branch_id,project_id,provider_source_id,source_revision_id,source_version,source_digest,currency_code,precision,service_date,payable_seconds,hourly_cost,amount,status,recorded_by,recorded_at)
+select pg_temp.wid('pf.service.cost.'||v),pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('finance'),pg_temp.wid('pf.service.labor'),pg_temp.wid('pf.service.revision.'||v),v,repeat('c',64),'LKR',2,pg_temp.wdate(),
+ case when v=3 then 0 when v=2 then 1800 else 3600 end,18,case when v=3 then 0 when v=2 then 9 else 18 end,
+ case when v=3 then 'cancelled' else 'approved' end,pg_temp.wid('creator'),
+ ((select body#>>'{}' from project_finance_client_samples where label='cost_asof')::timestamptz)+(v-1)*interval '1 second'
+from generate_series(1,4) v;
+create function pg_temp.pf_cost_margin(v integer,d date default pg_temp.wdate()) returns jsonb language sql as $$
+ select api.projects_margin(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('finance'),
+ ((select body#>>'{}' from project_finance_client_samples where label='cost_asof')::timestamptz)+(v-1)*interval '1 second',d) $$;
+select is(pg_temp.pf_cost_margin(1)->>'service_cost','18.000000','AC-428 as-of margin includes original protected service cost');
+select is(pg_temp.pf_cost_margin(2)->>'service_cost','9.000000','AC-428 correction replaces cost at its recorded cutoff');
+select is(pg_temp.pf_cost_margin(3)->>'service_cost','0.000000','AC-428 immutable zero removal stops original service cost');
+select is(pg_temp.pf_cost_margin(4)->>'service_cost','18.000000','AC-428 fresh reversal restores cost exactly once');
+select is(pg_temp.pf_cost_margin(4,pg_temp.wdate()-1)->>'service_cost','0','AC-428 service date independently bounds margin');
+select is((api.projects_margin(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('finance'),clock_timestamp(),pg_temp.wdate())->>'margin')::numeric,-17.98::numeric,'AC-428 service cost subtraction reconciles original revenue and expense');
+select throws_ok($$update projects.service_cost_revisions set amount=0 where id=pg_temp.wid('pf.service.cost.1')$$,'55000','PROJECT_HISTORY_IMMUTABLE','AC-428 historical internal service cost cannot be edited');
+select ok(not has_function_privilege('authenticated','projects.service_payroll_cost_impact(uuid,uuid,uuid,uuid,uuid)','EXECUTE') and not has_table_privilege('authenticated','projects.service_cost_revisions','SELECT'),'AC-428 private cost provider and table have no client access');
+set local role authenticated;select pg_temp.wactor('creator');
+insert into project_finance_client_samples values('serviceCosts',api.projects_finance_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('finance'),'serviceCosts'));
+select pg_temp.wactor('reader');
+select throws_ok($$select api.projects_finance_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('finance'),'serviceCosts')$$,'42501',null,'AC-428 ordinary project view cannot reveal internal service costs');
+reset role;update billing.plan_entitlements set enabled=false where plan_code='w4_integrated_rollback' and entitlement_code='module.finance';
+select pg_temp.wactor('creator');set local role authenticated;
+select throws_ok($$select pg_temp.pfc(pg_temp.pfe(),0,'create')$$,'42501','PROJECT_FINANCE_ENTITLEMENT_REQUIRED','financial entitlement is checked before confirmed replay');
+select throws_ok($$select pg_temp.pf_cost_margin(1)$$,'42501','PROJECT_FINANCE_ENTITLEMENT_REQUIRED','financial entitlement gates private margin reads');
+reset role;update billing.plan_entitlements set enabled=true where plan_code='w4_integrated_rollback' and entitlement_code='module.finance';
+delete from project_finance_client_samples where label='cost_asof';

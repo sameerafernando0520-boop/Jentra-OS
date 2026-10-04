@@ -62,3 +62,14 @@ offline under their current matching scope/capabilities. Their confirmations
 validate the originating scope/capability lifetime and existing slot/document
 checks after return without adding an online requirement to local input handling.
 These local actions create no authoritative command or posted ledger effect.
+
+An authoritative quotation or sales-order command keeps its own original access observation
+after its confirmation has returned. Scope, capability or connection loss during
+queued edits, encrypted save, recovery load or envelope preparation invalidates
+that attempt permanently, even if identical access returns before transport.
+Every awaited preparation result is checked before advancing to the next step.
+An already prepared encrypted request stays available for an explicit retry;
+an attempt stopped before preparation retains its editable encrypted fields.
+Confirmed server acknowledgement still completes the original durable request
+atomically after access loss or disposal, while obsolete private results are not
+presented in the current workspace.

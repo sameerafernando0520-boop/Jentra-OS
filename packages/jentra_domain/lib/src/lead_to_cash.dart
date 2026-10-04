@@ -1,6 +1,7 @@
 import 'exact_decimal.dart';
 import 'money.dart';
 import 'validation.dart';
+import 'negative_stock_policy.dart';
 
 enum OperationalDocumentType {
   salesQuotation('sales_quotation'),
@@ -1342,13 +1343,16 @@ final class StockReservationDraft {
     required this.salesOrderId,
     required this.expiresAt,
     required this.lines,
+    this.negativeStockOverride,
   });
 
   final String salesOrderId;
   final DateTime expiresAt;
   final List<StockReservationLineDraft> lines;
+  final NegativeStockOverride? negativeStockOverride;
 
   ValidationResult validate() => ValidationResult([
+    ...?negativeStockOverride?.validate().issues,
     if (salesOrderId.trim().isEmpty)
       const ValidationIssue(field: 'sales_order_id', message: 'Required.'),
     if (lines.isEmpty)
@@ -1365,6 +1369,8 @@ final class StockReservationDraft {
     'sales_order_id': salesOrderId,
     'expires_at': expiresAt.toUtc().toIso8601String(),
     'lines': lines.map((line) => line.toJson()).toList(growable: false),
+    if (negativeStockOverride != null)
+      'negative_stock_override': negativeStockOverride!.toJson(),
   };
 }
 

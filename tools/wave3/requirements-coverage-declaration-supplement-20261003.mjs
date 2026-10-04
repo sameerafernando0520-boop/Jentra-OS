@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import assert from 'node:assert/strict';
+import {artifactTag, writeNewJson} from './strict-candidate-evidence.mjs';
 
 const reviewed = new Map([
   ['packages/jentra_domain/lib/src/crm_repository.dart', '74a23abff32478905d6a72c6ffa217ba069943cea18a19002cba4ec11531e1c1'],
@@ -61,15 +62,15 @@ if (process.argv.includes('--self-test')) {
 } else {
   const root = 'docs/verification/remaining-wave3/';
   const read = file => JSON.parse(fs.readFileSync(file, 'utf8'));
-  const rawFile = root + 'requirements-coverage-source-checked-20261003.json';
-  const diagnosticFile = root + 'requirements-declaration-diagnostic-20261003.json';
-  const captureFile = root + 'client-sources-full-desktop-20261003.json';
+  const [rawFile = root + 'requirements-coverage-source-checked-20261003.json', diagnosticFile = root + 'requirements-declaration-diagnostic-20261003.json', captureFile = root + 'client-sources-full-desktop-20261003.json', selectedTag = '20261003'] = process.argv.slice(2);
+  const tag = artifactTag(selectedTag);
   for (const [file, expected] of reviewed) if (crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex') !== expected) throw Error('Reviewed source changed');
   const out = supplement(read(rawFile), read(diagnosticFile), [read(captureFile)]);
   out.raw_report = {file: rawFile, sha256: crypto.createHash('sha256').update(fs.readFileSync(rawFile)).digest('hex')};
   out.declaration_diagnostic = diagnosticFile;
   out.declaration_paired_execution_capture = captureFile;
   out.generated_at = new Date().toISOString();
-  fs.writeFileSync(root + 'requirements-coverage-declaration-reviewed-20261003.json', JSON.stringify(out, null, 2) + '\n');
-  console.log(JSON.stringify({gates: out.gates, remaining_unmeasured: out.changed_dart.unmeasured_executable, line_percent: out.changed_dart.line_percent}));
+  const output = root + `requirements-coverage-declaration-reviewed-${tag}.json`;
+  writeNewJson(output, out);
+  console.log(JSON.stringify({output, gates: out.gates, remaining_unmeasured: out.changed_dart.unmeasured_executable, line_percent: out.changed_dart.line_percent}));
 }

@@ -284,4 +284,9 @@ void main() {
       );
     },
   );
+  test('AC-428 missing finance entitlement has a safe native reason', () async {
+    h.status = 400;
+    h.response = {'code': '42501', 'message': 'PROJECT_FINANCE_ENTITLEMENT_REQUIRED'};
+    await expectLater(g.authorize(financeScope, 'projects.cost.view'), throwsA(isA<DomainError>().having((e) => e.code, 'code', 'FEATURE_NOT_ENTITLED').having((e) => e.message, 'reason', contains('Projects and Finance'))));
+  });
 }

@@ -116,6 +116,8 @@ final class ServiceController extends ChangeNotifier {
   final labels = <String, String>{};
   final recoveryCursors = <String, String?>{};
   bool get current => !_disposed && !denied;
+  int get accessEpoch => _epoch;
+  int get formEpoch => _formEpoch;
   bool has(String cap) => permissions.contains(cap);
   String? get action => form?['action'] as String?;
   ScopedPendingCommand? get pending => local?.pending;
@@ -246,7 +248,8 @@ final class ServiceController extends ChangeNotifier {
   }
 
   Future<bool> selectKind(ServiceKind next) async {
-    if (!await canLeave()) {
+    final epoch = _epoch;
+    if (!await canLeave() || !_live(epoch)) {
       return false;
     }
     kind = next;
@@ -333,9 +336,6 @@ final class ServiceController extends ChangeNotifier {
           }
         }
       } catch (e) {
-        if (e is DomainError && e.code == 'PERMISSION_DENIED') {
-          continue;
-        }
         if (_live(epoch)) {
           _failure(e);
         }
@@ -355,7 +355,8 @@ final class ServiceController extends ChangeNotifier {
         !has(ServiceCommands.capability(a))) {
       return false;
     }
-    if (!await canLeave()) {
+    final entryEpoch = _epoch;
+    if (!await canLeave() || !_live(entryEpoch)) {
       return false;
     }
     final epoch = _epoch, formEpoch = ++_formEpoch;
@@ -497,7 +498,9 @@ final class ServiceController extends ChangeNotifier {
       _notify();
       return true;
     } catch (e) {
-      _failure(e);
+      if (_live(epoch) && formEpoch == _formEpoch) {
+        _failure(e);
+      }
       return false;
     }
   }
@@ -563,53 +566,60 @@ final class ServiceController extends ChangeNotifier {
         a = action!,
         parent =
             form?[choice == 'claim' ? 'employee_id' : 'customer_id'] as String?;
-    await repository.authorize(scope, ServiceCommands.capability(a));
-    if (!_live(epoch) || formEpoch != _formEpoch) {
-      throw const DomainError(
-        code: 'PERMISSION_DENIED',
-        message: 'The service form changed.',
-      );
+    try {
+      await repository.authorize(scope, ServiceCommands.capability(a));
+      if (!_live(epoch) || formEpoch != _formEpoch) {
+        throw const DomainError(
+          code: 'STATE_CONFLICT',
+          message: 'The service form changed.',
+        );
+      }
+      ServicePage<ServiceChoice> result;
+      if ({
+        'customer',
+        'contact',
+        'employee',
+        'calendar',
+        'claim',
+      }.contains(choice)) {
+        result = await repository.choices(
+          scope,
+          choice,
+          after: after,
+          parent: parent,
+        );
+      } else {
+        final k = ServiceKind.values.byName(choice),
+            page = await repository.list(scope, k, after: after);
+        result = ServicePage(
+          page.items
+              .map(
+                (r) => ServiceChoice.fromJson({
+                  'id': r.id,
+                  'name': r.label,
+                  'version': r.version,
+                }),
+              )
+              .toList(),
+          page.nextCursor,
+        );
+      }
+      if (!_live(epoch) ||
+          formEpoch != _formEpoch ||
+          action != a ||
+          form?[choice == 'claim' ? 'employee_id' : 'customer_id'] != parent) {
+        throw const DomainError(
+          code: 'STATE_CONFLICT',
+          message: 'The service form changed.',
+        );
+      }
+      return result;
+    } catch (e) {
+      if (_live(epoch) && formEpoch == _formEpoch) {
+        _failure(e);
+      }
+      rethrow;
     }
-    ServicePage<ServiceChoice> result;
-    if ({
-      'customer',
-      'contact',
-      'employee',
-      'calendar',
-      'claim',
-    }.contains(choice)) {
-      result = await repository.choices(
-        scope,
-        choice,
-        after: after,
-        parent: parent,
-      );
-    } else {
-      final k = ServiceKind.values.byName(choice),
-          page = await repository.list(scope, k, after: after);
-      result = ServicePage(
-        page.items
-            .map(
-              (r) => ServiceChoice.fromJson({
-                'id': r.id,
-                'name': r.label,
-                'version': r.version,
-              }),
-            )
-            .toList(),
-        page.nextCursor,
-      );
-    }
-    if (!_live(epoch) ||
-        formEpoch != _formEpoch ||
-        action != a ||
-        form?[choice == 'claim' ? 'employee_id' : 'customer_id'] != parent) {
-      throw const DomainError(
-        code: 'PERMISSION_DENIED',
-        message: 'The service form changed.',
-      );
-    }
-    return result;
   }
 
   Future<void> save() async {
@@ -626,16 +636,23 @@ final class ServiceController extends ChangeNotifier {
         id = form!['id'] as String,
         data = Map<String, Object?>.from(form!),
         version = expectedVersion;
-    await repository.authorize(scope, ServiceCommands.capability(a));
-    if (!_live(epoch) || formEpoch != _formEpoch) {
-      return;
-    }
-    await drafts[a]!.save(scope, id, a, data, version);
-    if (_live(epoch) && formEpoch == _formEpoch) {
-      final row = await drafts[a]!.load(scope, id);
-      if (_live(epoch) && formEpoch == _formEpoch) {
-        local = row;
+    try {
+      await repository.authorize(scope, ServiceCommands.capability(a));
+      if (!_live(epoch) || formEpoch != _formEpoch) {
+        return;
       }
+      await drafts[a]!.save(scope, id, a, data, version);
+      if (_live(epoch) && formEpoch == _formEpoch) {
+        final row = await drafts[a]!.load(scope, id);
+        if (_live(epoch) && formEpoch == _formEpoch) {
+          local = row;
+        }
+      }
+    } catch (e) {
+      if (_live(epoch) && formEpoch == _formEpoch) {
+        _failure(e);
+      }
+      rethrow;
     }
   }
 
@@ -643,15 +660,18 @@ final class ServiceController extends ChangeNotifier {
     if (busy || _sending) {
       return false;
     }
+    final epoch = _epoch;
     if (form != null && pending == null && !conflicted && confirmed == null) {
       try {
         await save();
       } catch (e) {
-        _failure(e);
+        if (_live(epoch)) {
+          _failure(e);
+        }
         return false;
       }
     }
-    return true;
+    return _live(epoch);
   }
 
   Map<String, Object?> _confirm(
@@ -740,14 +760,24 @@ final class ServiceController extends ChangeNotifier {
               retryable: request != null,
             );
       if (request != null) {
-        try{await drafts[a]!.recordFailure(
-          scope,
-          id,
-          request.envelope.commandId,
-          safe,
-        );}catch(storage){if(_live(epoch)){_failure(storage);}return;}
+        try {
+          await drafts[a]!.recordFailure(
+            scope,
+            id,
+            request.envelope.commandId,
+            safe,
+          );
+        } catch (storage) {
+          if (_live(epoch)) {
+            _failure(storage);
+          }
+          return;
+        }
         if (_live(epoch)) {
-          local = await drafts[a]!.load(scope, id);
+          final row = await drafts[a]!.load(scope, id);
+          if (_live(epoch)) {
+            local = row;
+          }
         }
       }
       if (_live(epoch)) {
@@ -841,23 +871,25 @@ final class ServiceController extends ChangeNotifier {
   }
 
   Future<void> compare() async {
-    if (!conflicted || busy || form == null) {
+    if (!current || !online || !conflicted || busy || form == null) {
       return;
     }
-    final epoch = _epoch;
+    final epoch = _epoch,
+        formEpoch = _formEpoch,
+        a = action!,
+        id = form!['id'] as String;
     try {
-      await repository.authorize(scope, ServiceCommands.capability(action!));
-      final d = await repository.detail(
-        scope,
-        ServiceCommands.kind(action!),
-        form!['id'] as String,
-      );
-      if (_live(epoch)) {
+      await repository.authorize(scope, ServiceCommands.capability(a));
+      if (!_live(epoch) || formEpoch != _formEpoch) {
+        return;
+      }
+      final d = await repository.detail(scope, ServiceCommands.kind(a), id);
+      if (_live(epoch) && formEpoch == _formEpoch) {
         comparison = d;
         _notify();
       }
     } catch (e) {
-      if (_live(epoch)) {
+      if (_live(epoch) && formEpoch == _formEpoch) {
         _failure(e);
       }
     }

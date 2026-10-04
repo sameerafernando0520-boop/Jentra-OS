@@ -516,6 +516,7 @@ class _ServiceEditorState extends State<ServiceEditor> {
   };
   Future<void> _choose(String field) async {
     final formId = c.form?['id'], formAction = c.action;
+    final accessEpoch = c.accessEpoch, formEpoch = c.formEpoch;
     final choice = await showDialog<ServiceChoice>(
       context: context,
       builder: (context) => _ServicePicker(
@@ -527,6 +528,9 @@ class _ServiceEditorState extends State<ServiceEditor> {
     if (choice != null &&
         mounted &&
         c.current &&
+        c.online &&
+        c.accessEpoch == accessEpoch &&
+        c.formEpoch == formEpoch &&
         c.form?['id'] == formId &&
         c.action == formAction) {
       await c.choose(field, choice);
@@ -775,20 +779,47 @@ class _ServicePickerState extends State<_ServicePicker> {
   String? cursor, error;
   bool busy = false;
   String search = '';
+  late final int accessEpoch, formEpoch;
+  bool get current =>
+      widget.controller.current &&
+      widget.controller.online &&
+      widget.controller.accessEpoch == accessEpoch &&
+      widget.controller.formEpoch == formEpoch;
   @override
   void initState() {
     super.initState();
+    accessEpoch = widget.controller.accessEpoch;
+    formEpoch = widget.controller.formEpoch;
+    widget.controller.addListener(_changed);
     unawaited(load());
   }
 
+  void _changed() {
+    if (mounted && !current) {
+      setState(() {
+        rows = [];
+        cursor = null;
+        search = '';
+        error = 'Service scope or form changed. Reopen the picker after checking current access.';
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_changed);
+    super.dispose();
+  }
+
   Future<void> load({bool more = false}) async {
+    if (!current) return;
     setState(() => busy = true);
     try {
       final page = await widget.controller.choices(
         widget.kind,
         after: more ? cursor : null,
       );
-      if (!mounted || !widget.controller.current) {
+      if (!mounted || !current) {
         return;
       }
       setState(() {
@@ -834,7 +865,7 @@ class _ServicePickerState extends State<_ServicePicker> {
                   ListTile(
                     title: Text(row.name),
                     subtitle: Text('Version ${row.version}'),
-                    onTap: widget.controller.current
+                    onTap: current
                         ? () => Navigator.of(context).pop(row)
                         : null,
                   ),
@@ -854,7 +885,7 @@ class _ServicePickerState extends State<_ServicePicker> {
     actions: [
       if (error != null)
         TextButton(
-          onPressed: busy ? null : () => unawaited(load()),
+          onPressed: busy || !current ? null : () => unawaited(load()),
           child: const Text('Retry'),
         ),
       TextButton(

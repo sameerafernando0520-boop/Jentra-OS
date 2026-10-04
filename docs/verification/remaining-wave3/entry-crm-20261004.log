@@ -1,0 +1,49 @@
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/main_preview_startup_test.dart
+00:00 +0: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/crm_workspace_test.dart: (setUpAll)
+00:00 +0: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/main_preview_startup_test.dart: unconfigured startup renders a preview without native stores or a backend
+00:00 +1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/main_preview_startup_test.dart: unconfigured startup renders a preview without native stores or a backend
+00:07 +2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/crm_workspace_test.dart: CRM direct route fails closed without a view capability — AC-322
+00:07 +3: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/crm_workspace_test.dart: CRM exposes an accessible loading state — AC-321
+00:09 +4: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/crm_workspace_test.dart: CRM exposes retryable error and empty states — AC-321 / FR-395
+00:14 +5: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/crm_workspace_test.dart: CRM renders currency-separated pipeline, detail, and timeline — AC-302 / AC-321
+00:20 +6: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/crm_workspace_test.dart: CRM search submits a bounded literal query — FR-389
+00:21 +7: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/crm_workspace_test.dart: CRM creates a lead with stable command identities and exact value — AC-302
+00:24 +8: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/crm_workspace_test.dart: CRM remains reachable at 200% text scale — NFR-314 / NFR-315
+00:25 +9: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/crm_workspace_test.dart: CRM desktop composition matches its approved visual contract — AC-321
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following assertion was thrown while running async test code:
+Golden "goldens/crm_1440_light_comfortable.png": Pixel test failed, 0.21%, 24160px diff detected.
+Failure feedback can be found at
+/C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/failures
+
+When the exception was thrown, this was the stack:
+#0      LocalFileComparator.compare (package:flutter_test/src/_goldens_io.dart:108:5)
+<asynchronous suspension>
+#1      MatchesGoldenFile.matchAsync.<anonymous closure> (package:flutter_test/src/_matchers_io.dart:124:32)
+<asynchronous suspension>
+<asynchronous suspension>
+#3      _expect.<anonymous closure> (package:matcher/src/expect/expect.dart:153:17)
+<asynchronous suspension>
+<asynchronous suspension>
+#5      expectLater.<anonymous closure> (package:flutter_test/src/widget_tester.dart:508:19)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/crm_workspace_test.dart:216:7)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The exception was caught asynchronously.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:37 +9 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/crm_workspace_test.dart: CRM desktop composition matches its approved visual contract — AC-321 [E]
+  Test failed. See exception logs above.
+  The test description was: CRM desktop composition matches its approved visual contract — AC-321
+  
+00:37 +9 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/crm_workspace_test.dart: (tearDownAll)
+00:41 +9 -1: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/crm_workspace_test.dart: CRM desktop composition matches its approved visual contract — AC-321

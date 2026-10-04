@@ -1,6 +1,6 @@
 # W4-06 synthetic service delivery contract
 
-Prepared 2026-10-01. This is an additive development candidate, with installation
+Prepared 2026-10-01; source review refreshed 2026-10-04. This is an additive development candidate, with installation
 and authenticated acceptance remaining separate gates. It implements FR-429–434
 and automated AC-413–415 evidence. No existing plan or role receives a grant.
 
@@ -23,7 +23,10 @@ provider; identity registration never capitalizes or changes stock value.
 
 SLA policies freeze a published calendar version, a bounded date horizon (at most
 366 days), response and resolution budgets in whole seconds, and UTC working slots.
-Slots are derived from immutable civil patterns/holiday overrides. IANA boundaries
+Slots are derived from immutable civil patterns/holiday overrides. Overnight
+patterns split at civil midnight, so each portion uses that date's holiday basis;
+the incoming portion from the day before the horizon is retained. Offset choices
+are unique by civil date and minute. IANA boundaries
 round-trip through the existing resolver. Clock folds require explicit offset
 choices and clock gaps are rejected. No implicit offset is accepted. The algorithm
 counts half-open working windows, excludes paused intervals, and calculates due
@@ -35,8 +38,9 @@ cannot rewrite policy or earlier due evidence. Evaluation is explicit and bounde
 there is no activated scheduler.
 
 Dispatch requires an eligible employee and frozen calendar assignment covering the
-entire planned interval. Employee locks precede ticket/order locks, then dispatch
-and common time rows. A GiST exclusion constraint prevents overlapping active
+entire planned interval. Cross-module entity advisories are acquired in payroll,
+projects, service order, followed by sorted employees, tickets/orders, labor and
+common time rows. A GiST exclusion constraint prevents overlapping active
 dispatch bookings across modules' service orders. Labor is a separate exact UTC
 interval with at most 16 ordered breaks and a 36-hour maximum. Approval either
 allocates an existing approved claim segment or creates a service claim with
@@ -45,7 +49,12 @@ contract. Payroll-paid seconds are never created twice. Costs use explicit froze
 synthetic hourly rates, independently from private payroll; internal cost has a
 separate permission. Claimed time is immutable. Cancellation revokes only the
 original allocation/claim and rejects sealed or billed impact rather than erasing
-history. Off-cycle sealed corrections require the payroll correction provider.
+history. The protected payroll correction provider groups every break-separated
+allocation of one labor entry into one immutable replacement revision. Explicit
+geometry and removal decisions retain original allocation provenance; reversal
+appends a fresh restored revision using the actual current source epoch. Private
+inspection requires service view and cost view; validation and mutation require
+service approval, while preparation separately requires service work.
 
 Work orders progress through dispatched, accepted, working, completed and closed,
 with cancelled terminal history. Completion records attributable resolution.
@@ -60,9 +69,16 @@ order provenance. Service part commands therefore return an explicit provider
 unavailable result before a business mutation. The adapter boundary retains
 reservation/issue/return identities and original cost basis when such an installed
 provider exists; installing another task's Wave 3 candidates is forbidden. Sales
-posting exists, but service source consumption needs the reviewed projects billing
-intent adapter. Eligible labor retains original whole seconds and exact frozen
-rate/currency; adapters must consume one immutable unit once and atomically. No
+posting exists. The projects billing intent adapter imports the exact current
+immutable labor revision, with its labor provider identity, version and digest.
+Reservation and atomic posting revalidate that source. Reserved units block source
+correction; billed units require a separately approved and posted full original
+sales credit. A linked correction preserves the billed original and credit, then
+appends an eligible replacement. Reversing a replacement validates its current
+reservation/billing and fresh credit proof rather than reusing an original credit.
+Eligible labor retains original whole seconds and explicit exact frozen billing
+rate/currency independently of internal cost; adapters consume one immutable unit
+once and atomically. No
 standalone invoiced flag or fabricated journal is accepted.
 
 Maintenance plans freeze equipment, policy, calendar or meter basis, interval and

@@ -114,8 +114,79 @@ create index reimbursement_effect_scope_idx on projects.reimbursement_effects(ob
 create index billing_scope_idx on projects.billing_batches(tenant_id,legal_entity_id,branch_id,project_id,id);
 create index billing_link_source_idx on projects.billing_links(unit_id,batch_id);
 create index finance_event_scope_idx on projects.finance_events(tenant_id,legal_entity_id,branch_id,project_id,id);
+create table projects.service_cost_revisions(
+ id uuid primary key default gen_random_uuid(),tenant_id uuid not null,legal_entity_id uuid not null,branch_id uuid not null,project_id uuid not null,
+ provider_source_id uuid not null,source_revision_id uuid not null,source_version bigint not null check(source_version>0),source_digest text not null check(source_digest~'^[a-f0-9]{64}$'),
+ currency_code text not null,precision integer not null check(precision between 0 and 6),service_date date not null,payable_seconds bigint not null check(payable_seconds>=0),
+ hourly_cost numeric(20,6) not null check(hourly_cost>=0),amount numeric(20,6) not null check(amount>=0),status text not null check(status in('approved','cancelled')),
+ recorded_by uuid not null references auth.users(id),recorded_at timestamptz not null default clock_timestamp(),
+ unique(tenant_id,legal_entity_id,provider_source_id,source_version),
+ foreign key(tenant_id,legal_entity_id,project_id) references projects.register(tenant_id,legal_entity_id,id)
+);
+alter table projects.service_cost_revisions enable row level security;alter table projects.service_cost_revisions force row level security;
+revoke all on projects.service_cost_revisions from public,anon,authenticated,service_role;
+create trigger immutable before update or delete on projects.service_cost_revisions for each row execute function projects.immutable();
+create index service_cost_scope_idx on projects.service_cost_revisions(tenant_id,legal_entity_id,branch_id,project_id,id);
+create index service_cost_asof_idx on projects.service_cost_revisions(project_id,provider_source_id,source_version desc,recorded_at);
+-- Provider-only: financial import captures internal cost without putting it in
+-- the billing source response. Linked corrections call this after their new
+-- immutable revision and effective pointer are stored in the same transaction.
+create function projects.service_payroll_cost_impact(t uuid,e uuid,b uuid,labor uuid,revision uuid) returns void
+language plpgsql security definer set search_path='' as $$
+declare project uuid;source jsonb;old projects.service_cost_revisions%rowtype;currency text;cost numeric;rate numeric;seconds bigint;
+ service_date date;timezone text;status text;version bigint;digest text;precision integer;begin
+ select u.project_id into project from projects.billable_units u where u.tenant_id=t and u.legal_entity_id=e and u.branch_id=b
+  and u.source_kind='service' and u.provider_source_id=labor order by u.id limit 1;
+ if project is null then return;end if;
+ if to_regprocedure('service.snapshot(text,uuid)') is null then raise exception using errcode='55000',message='PROJECT_SERVICE_COST_PROVIDER_REQUIRED';end if;
+ execute 'select service.snapshot(''labor'',$1)' into source using labor;
+ if source is null or source->>'tenant_id' is distinct from t::text or source->>'legal_entity_id' is distinct from e::text
+  or source->>'branch_id' is distinct from b::text or coalesce(source->>'current_revision_id',source->>'id') is distinct from revision::text then
+  raise exception using errcode='40001',message='PROJECT_SERVICE_SOURCE_CONFLICT';end if;
+ select r.currency_code,r.precision into currency,precision from projects.register r where r.id=project;
+ if source->>'currency_code' is distinct from currency or(source->>'precision')::integer is distinct from precision then
+  raise exception using errcode='22023',message='PROJECT_SERVICE_COST_BASIS_INVALID';end if;
+ status:=source->>'status';version:=(source->>'version')::bigint;digest:=source->>'digest';
+ if status not in('approved','cancelled') or version is null or version<1 or digest is null or digest!~'^[a-f0-9]{64}$' then
+  raise exception using errcode='22023',message='PROJECT_SERVICE_COST_BASIS_INVALID';end if;
+ rate:=projects.amount(source->'hourly_cost');seconds:=case when status='cancelled' then 0 else(source->>'seconds')::bigint end;
+ cost:=case when status='cancelled' then 0 else projects.amount(source->'amount') end;
+ if seconds is null or seconds not between 0 and 2678400 or cost<>projects.ratio(rate*1000000*seconds,3600,precision) then
+  raise exception using errcode='22023',message='PROJECT_SERVICE_COST_BASIS_INVALID';end if;
+ if source->>'start_local' is not null then service_date:=(source->>'start_local')::timestamp::date;
+ else select c.timezone into timezone from people.work_calendar_versions c where c.id=(source->>'calendar_version_id')::uuid;
+  service_date:=((source->>'start_utc')::timestamptz at time zone timezone)::date;end if;
+ if service_date is null then raise exception using errcode='22023',message='PROJECT_SERVICE_COST_BASIS_INVALID';end if;
+ select * into old from projects.service_cost_revisions x where x.tenant_id=t and x.legal_entity_id=e and x.provider_source_id=labor and x.source_version=version;
+ if old.id is not null then
+  if old.project_id<>project or old.source_revision_id<>revision or old.source_digest<>digest or old.amount<>cost or old.payable_seconds<>seconds or old.status<>status
+   or old.hourly_cost<>rate or old.currency_code<>currency or old.precision<>precision or old.service_date<>service_date then
+   raise exception using errcode='40001',message='PROJECT_SERVICE_COST_SOURCE_CONFLICT';end if;return;end if;
+ insert into projects.service_cost_revisions(tenant_id,legal_entity_id,branch_id,project_id,provider_source_id,source_revision_id,source_version,source_digest,currency_code,precision,service_date,payable_seconds,hourly_cost,amount,status,recorded_by)
+ values(t,e,b,project,labor,revision,version,digest,currency,precision,service_date,seconds,rate,cost,status,auth.uid());
+ if status='cancelled' then update projects.billable_units set status='cancelled' where tenant_id=t and legal_entity_id=e and provider_source_id=labor and source_kind='service' and status='available';end if;
+end $$;
+create function projects.milestone_terms(t uuid,e uuid,b uuid,u projects.billable_units) returns jsonb
+language plpgsql stable security definer set search_path='' as $$declare terms jsonb;begin
+ if u.source_kind<>'milestone' then return '{}'::jsonb;end if;
+ if to_regprocedure('projects.milestone_billing_terms(uuid,uuid,uuid,uuid)') is null then raise exception using errcode='55000',message='PROJECT_MILESTONE_PROVIDER_REQUIRED';end if;
+ execute 'select projects.milestone_billing_terms($1,$2,$3,$4)' into terms using t,e,b,u.source_id;
+ if terms is null or jsonb_typeof(terms)<>'object' or not(terms ?& array['payment_due_days','payment_terms','customer_id','currency_code','amount','source_version','digest'])
+  or exists(select 1 from jsonb_object_keys(terms) k where k<>all(array['payment_due_days','payment_terms','customer_id','currency_code','amount','source_version','digest']))
+  or jsonb_typeof(terms->'payment_due_days') is distinct from 'number' or terms->>'payment_due_days'!~'^[0-9]+$'
+  or(terms->>'payment_due_days')::numeric not between 0 and 365 then raise exception using errcode='22023',message='PROJECT_MILESTONE_TERMS_INVALID';end if;
+ perform projects.text(terms->'payment_terms',500);
+ if(terms->>'source_version')::bigint is distinct from u.source_version or terms->>'digest' is distinct from u.source_digest or projects.amount(terms->'amount') is distinct from u.amount
+  or not exists(select 1 from projects.register r where r.id=u.project_id and r.tenant_id=t and r.legal_entity_id=e and r.branch_id=b
+   and r.customer_id::text=terms->>'customer_id' and r.currency_code=terms->>'currency_code') then raise exception using errcode='40001',message='PROJECT_MILESTONE_SOURCE_CONFLICT';end if;
+ return terms;
+end $$;
 create function projects.finance_access(t uuid,e uuid,b uuid,cap text,w boolean default true) returns void language plpgsql security definer set search_path='' as $$begin
  perform projects.require_access(t,e,b,'projects.view',w);
+ if not exists(select 1 from billing.tenant_subscriptions s join billing.plan_entitlements p on p.plan_code=s.plan_code
+  where s.tenant_id=t and p.entitlement_code='module.finance' and p.enabled and
+  ((s.status='trialing' and s.trial_ends_at>now()) or(s.status='active' and (s.current_period_ends_at is null or s.current_period_ends_at>now())))) then
+  raise exception using errcode='42501',message='PROJECT_FINANCE_ENTITLEMENT_REQUIRED';end if;
  if cap not in('projects.cost.view','projects.expenses.manage','projects.expenses.approve','projects.expenses.post','projects.expenses.settle','projects.billing.manage','projects.margin.view') then raise exception using errcode='42501',message='PROJECT_FINANCE_SCOPE_DENIED';end if;
  perform core.wave3_require_scope(t,cap,e,b);
  if cap<>'projects.billing.manage' then perform core.wave3_require_scope(t,'projects.cost.view',e,b);end if;
@@ -334,8 +405,10 @@ begin
   execute 'select service.billing_source($1,$2,$3,$4)' into doc using p_tenant_id,p_legal_entity_id,p_branch_id,(p_payload->>'service_source_id')::uuid;
   if doc->>'customer_id' is distinct from r.customer_id::text or doc->>'currency_code' is distinct from r.currency_code or(doc->>'source_version')::bigint is distinct from(p_payload->>'source_version')::bigint or doc->>'digest' is distinct from p_payload->>'source_digest' then raise exception using errcode='40001',message='PROJECT_SERVICE_SOURCE_CONFLICT';end if;
   amount:=projects.amount(doc->'amount');if amount<>round(amount,r.precision) or(doc->>'seconds')::bigint not between 1 and 2678400 then raise exception using errcode='22023',message='PROJECT_SERVICE_SOURCE_INVALID';end if;
+  if exists(select 1 from projects.billable_units where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and source_kind='service' and provider_source_id=(p_payload->>'service_source_id')::uuid and project_id<>project) then raise exception using errcode='55000',message='PROJECT_SERVICE_PROJECT_IMPACT_REQUIRED';end if;
   insert into projects.billable_units(id,tenant_id,legal_entity_id,project_id,branch_id,source_kind,source_id,provider_source_id,source_version,source_digest,amount,payable_seconds)
    values(id,p_tenant_id,p_legal_entity_id,project,p_branch_id,'service',(doc->>'source_id')::uuid,(p_payload->>'service_source_id')::uuid,(doc->>'source_version')::bigint,doc->>'digest',amount,(doc->>'seconds')::bigint);
+  perform projects.service_payroll_cost_impact(p_tenant_id,p_legal_entity_id,p_branch_id,(p_payload->>'service_source_id')::uuid,(doc->>'source_id')::uuid);
   outcome:=jsonb_build_object('id',id,'project_id',project,'version',1,'status','available');
  elsif act like 'billing_%' then
   if act='billing_prepare' then
@@ -351,6 +424,10 @@ begin
      perform core.wave3_require_scope(p_tenant_id,'service.billing',p_legal_entity_id,p_branch_id);
      execute 'select service.billing_source($1,$2,$3,$4)' into doc using p_tenant_id,p_legal_entity_id,p_branch_id,u.provider_source_id;
      if(doc->>'source_id')::uuid<>u.source_id or(doc->>'source_version')::bigint<>u.source_version or doc->>'digest'<>u.source_digest or(doc->>'amount')::numeric<>u.amount or doc->>'customer_id' is distinct from r.customer_id::text then raise exception using errcode='40001',message='PROJECT_SERVICE_SOURCE_CONFLICT';end if;
+    end if;
+    if u.source_kind='milestone' then
+     doc:=projects.milestone_terms(p_tenant_id,p_legal_entity_id,p_branch_id,u);
+     if(p_payload->>'due_date')::date is distinct from posting_date+(doc->>'payment_due_days')::integer then raise exception using errcode='22023',message='PROJECT_MILESTONE_DUE_DATE_REQUIRED';end if;
     end if;
     select * into product from inventory.products where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and products.id=(allocation->>'product_id')::uuid and status='active' and kind='service' and can_sell for share;
     if product.id is null or product.version is distinct from(allocation->>'product_version')::bigint then raise exception using errcode='40001',message='PROJECT_BILLING_PRODUCT_CONFLICT';end if;
@@ -378,6 +455,10 @@ begin
    doc:=sales.flow_document('sales_invoice',p_tenant_id,b.invoice_id,true);invoice_version:=(p_payload->>'invoice_version')::bigint;
    if invoice_version is distinct from(doc->>'version')::bigint then raise exception using errcode='40001',message='PROJECT_INVOICE_VERSION_CONFLICT';end if;
    if act='billing_post' then
+    for u in select z.* from projects.billable_units z where z.id in(select unit_id from projects.billing_links where batch_id=id) and z.source_kind='milestone' order by z.id loop
+     outcome:=projects.milestone_terms(p_tenant_id,p_legal_entity_id,p_branch_id,u);
+     if(doc->>'due_date')::date is distinct from(doc->>'document_date')::date+(outcome->>'payment_due_days')::integer then raise exception using errcode='22023',message='PROJECT_MILESTONE_DUE_DATE_REQUIRED';end if;
+    end loop;
     for u in select z.* from projects.billable_units z where z.id in(select unit_id from projects.billing_links where batch_id=id) and z.source_kind='service' order by z.id loop
      perform core.wave3_require_scope(p_tenant_id,'service.billing',p_legal_entity_id,p_branch_id);
      execute 'select service.consume_billing_source($1,$2,$3,$4,$5,$6,$7)' using p_tenant_id,p_legal_entity_id,p_branch_id,u.provider_source_id,u.source_version,u.source_digest,id;
@@ -432,8 +513,15 @@ declare items jsonb;cap text;begin
   select coalesce(jsonb_agg(q.body order by q.id),'[]') into items from(select b.id,jsonb_build_object('id',b.id,'version',b.version,'status',b.status,'invoice_id',b.invoice_id,'digest',b.digest,'prepared_by',b.prepared_by,'invoice_status',i.status,'invoice_version',i.version,'document_date',i.document_date,'currency_code',i.currency_code,'total',i.grand_total::text,'unit_count',(select count(*) from projects.billing_links where batch_id=b.id)) body
    from projects.billing_batches b join sales.sales_invoices i on i.id=b.invoice_id where b.tenant_id=p_tenant_id and b.legal_entity_id=p_legal_entity_id and b.branch_id=p_branch_id and b.project_id=p_project_id and(p_after is null or b.id>p_after) and(p_target_id is null or b.id=p_target_id) order by b.id limit 50) q;
  elsif p_kind='units' then
-  select coalesce(jsonb_agg(q.body order by q.id),'[]') into items from(select u.id,jsonb_build_object('id',u.id,'source_kind',u.source_kind,'source_id',u.source_id,'source_version',u.source_version,'source_digest',u.source_digest,'source_name',case u.source_kind when 'time' then coalesce((select left(t.name,180)||' · '||v.start_local::date from projects.time_revisions v join projects.tasks t on t.id=v.task_id and t.plan_id=v.plan_id where v.id=u.source_id),'Approved project time') when 'expense' then coalesce((select left(v.purpose,180) from projects.expenses x join projects.expense_revisions v on v.id=x.current_revision_id where x.id=u.source_id),'Approved project expense') when 'service' then 'Approved service labor · '||u.payable_seconds||' seconds' else 'Approved project milestone' end,'amount',u.amount::text,'payable_seconds',u.payable_seconds,'status',u.status) body
+  select coalesce(jsonb_agg(q.body order by q.id),'[]') into items from(select u.id,jsonb_build_object('id',u.id,'source_kind',u.source_kind,'source_id',u.source_id,'source_version',u.source_version,'source_digest',u.source_digest,'source_name',case u.source_kind when 'time' then coalesce((select left(t.name,180)||' · '||v.start_local::date from projects.time_revisions v join projects.tasks t on t.id=v.task_id and t.plan_id=v.plan_id where v.id=u.source_id),'Approved project time') when 'expense' then coalesce((select left(v.purpose,180) from projects.expenses x join projects.expense_revisions v on v.id=x.current_revision_id where x.id=u.source_id),'Approved project expense') when 'service' then 'Approved service labor · '||u.payable_seconds||' seconds' else 'Approved project milestone' end,'amount',u.amount::text,'payable_seconds',u.payable_seconds,'status',u.status)
+   ||case when u.source_kind='milestone' then projects.milestone_terms(p_tenant_id,p_legal_entity_id,p_branch_id,u)-array['customer_id','currency_code','amount','source_version','digest'] else '{}'::jsonb end body
    from projects.billable_units u where u.tenant_id=p_tenant_id and u.legal_entity_id=p_legal_entity_id and u.branch_id=p_branch_id and u.project_id=p_project_id and(p_after is null or u.id>p_after) and(p_target_id is null or u.id=p_target_id) order by u.id limit 50) q;
+ elsif p_kind='serviceCosts' then
+  select coalesce(jsonb_agg(q.body order by q.id),'[]') into items from(select c.id,jsonb_build_object('id',c.id,'provider_source_id',c.provider_source_id,
+   'source_revision_id',c.source_revision_id,'source_version',c.source_version,'source_digest',c.source_digest,'currency_code',c.currency_code,
+   'precision',c.precision,'service_date',c.service_date,'payable_seconds',c.payable_seconds,'hourly_cost',c.hourly_cost::text,'amount',c.amount::text,'status',c.status,'recorded_at',c.recorded_at) body
+   from projects.service_cost_revisions c where c.tenant_id=p_tenant_id and c.legal_entity_id=p_legal_entity_id and c.branch_id=p_branch_id and c.project_id=p_project_id
+   and(p_after is null or c.id>p_after) and(p_target_id is null or c.id=p_target_id) order by c.id limit 50) q;
  elsif p_kind='history' then
   select coalesce(jsonb_agg(q.body order by q.id),'[]') into items from(select h.id,jsonb_build_object('id',h.id,'aggregate_id',h.aggregate_id,'action',h.action,'version',h.version,'reason',h.reason,'actor_id',h.actor_id,'recorded_at',h.recorded_at) body
    from projects.finance_events h where h.tenant_id=p_tenant_id and h.legal_entity_id=p_legal_entity_id and h.branch_id=p_branch_id and h.project_id=p_project_id and(p_after is null or h.id>p_after) and(p_target_id is null or h.id=p_target_id) order by h.id limit 50) q;
@@ -491,7 +579,7 @@ returns jsonb language plpgsql stable security definer set search_path='' as $$d
 end $$;
 create function api.projects_margin(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_project_id uuid,p_as_of timestamptz,p_effective_date date)
 returns jsonb language plpgsql stable security definer set search_path='' as $$
-declare revenue numeric;credits numeric;expense_cost numeric;time_cost numeric;commitments numeric;budget numeric;obligations numeric;plan uuid;currency text;begin
+declare revenue numeric;credits numeric;expense_cost numeric;time_cost numeric;service_cost numeric;commitments numeric;budget numeric;obligations numeric;plan uuid;currency text;begin
  perform projects.finance_access(p_tenant_id,p_legal_entity_id,p_branch_id,'projects.margin.view');
  if p_as_of is null or p_effective_date is null or p_as_of>clock_timestamp() then raise exception using errcode='22023',message='PROJECT_MARGIN_DATE_INVALID';end if;
  select currency_code into currency from projects.register where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and branch_id=p_branch_id and id=p_project_id;if currency is null then raise exception using errcode='P0002',message='PROJECT_NOT_FOUND';end if;
@@ -500,10 +588,13 @@ declare revenue numeric;credits numeric;expense_cost numeric;time_cost numeric;c
  select coalesce(sum(projects.ratio(s.planned_seconds*c.hourly_rate*1000000,3600,r.precision)),0) into commitments from projects.resource_slots s join projects.resource_costs c on c.resource_slot_id=s.id join projects.register r on r.id=s.project_id where s.plan_id=plan;
  select coalesce(sum(v.base_gross),0) into expense_cost from projects.expense_revisions v join projects.expense_decisions d on d.revision_id=v.id where v.project_id=p_project_id and d.decision='approved' and d.recorded_at<=p_as_of and v.service_date<=p_effective_date and not exists(select 1 from projects.reimbursement_effects ef join projects.reimbursements o on o.id=ef.obligation_id where o.revision_id=v.id and ef.kind='expense_reverse' and ef.recorded_at<=p_as_of and ef.posting_date<=p_effective_date);
  select coalesce(sum(c.amount),0) into time_cost from projects.time_costs c join projects.time_revisions v on v.id=c.revision_id where c.project_id=p_project_id and v.start_local::date<=p_effective_date and exists(select 1 from projects.time_events ev where ev.revision_id=v.id and ev.action='time_approve' and ev.recorded_at<=p_as_of) and not exists(select 1 from projects.time_events ev where ev.revision_id=v.id and ev.action='time_cancel' and ev.recorded_at<=p_as_of);
+ select coalesce(sum(q.amount),0) into service_cost from(select distinct on(c.provider_source_id) c.amount from projects.service_cost_revisions c
+  where c.tenant_id=p_tenant_id and c.legal_entity_id=p_legal_entity_id and c.branch_id=p_branch_id and c.project_id=p_project_id and c.recorded_at<=p_as_of
+   and c.service_date<=p_effective_date order by c.provider_source_id,c.source_version desc,c.recorded_at desc) q;
  select coalesce(sum(round(l.taxable_amount*i.exchange_rate,i.rounding_scale)),0) into revenue from projects.billing_batches b join sales.sales_invoices i on i.id=b.invoice_id join sales.sales_invoice_lines l on l.document_id=i.id where b.project_id=p_project_id and i.status='posted' and i.posted_at<=p_as_of and i.document_date<=p_effective_date;
  select coalesce(sum(round(l.taxable_amount*i.exchange_rate,i.rounding_scale)),0) into credits from sales.sales_return_lines l join sales.sales_returns i on i.id=l.document_id join projects.billing_links bl on bl.invoice_line_id=l.sales_invoice_line_id join projects.billing_batches b on b.id=bl.batch_id where b.project_id=p_project_id and i.status='posted' and i.posted_at<=p_as_of and i.document_date<=p_effective_date;
  select coalesce(sum(ef.amount),0) into obligations from projects.reimbursements o join projects.reimbursement_effects ef on ef.obligation_id=o.id where o.project_id=p_project_id and ef.recorded_at<=p_as_of and ef.posting_date<=p_effective_date;
- return jsonb_build_object('tenant_id',p_tenant_id,'legal_entity_id',p_legal_entity_id,'branch_id',p_branch_id,'project_id',p_project_id,'as_of',p_as_of,'effective_date',p_effective_date,'currency_code',currency,'budget',budget::text,'commitments',commitments::text,'time_cost',time_cost::text,'expense_cost',expense_cost::text,'posted_revenue',revenue::text,'posted_credits',credits::text,'margin',(revenue-credits-time_cost-expense_cost)::text,'outstanding_reimbursements',obligations::text);
+ return jsonb_build_object('tenant_id',p_tenant_id,'legal_entity_id',p_legal_entity_id,'branch_id',p_branch_id,'project_id',p_project_id,'as_of',p_as_of,'effective_date',p_effective_date,'currency_code',currency,'budget',budget::text,'commitments',commitments::text,'time_cost',time_cost::text,'service_cost',service_cost::text,'expense_cost',expense_cost::text,'posted_revenue',revenue::text,'posted_credits',credits::text,'margin',(revenue-credits-time_cost-service_cost-expense_cost)::text,'outstanding_reimbursements',obligations::text);
 end $$;
 -- Cross-provider payroll hook. Never callable by client roles. Credits must
 -- already be posted by the actual sales return workflow and consume each original
@@ -541,7 +632,7 @@ declare u projects.billable_units%rowtype;ln record;ids uuid[];matched uuid[]:='
    if u.status not in('available','billed','waived') then raise exception using errcode='55000',message='PROJECT_BILLING_IMPACT_REQUIRED';end if;
    unit_ids:=array[u.id];
    if u.status='billed' then
-    perform core.wave3_require_scope(t,'projects.billing.manage',e,b);
+    perform projects.finance_access(t,e,b,'projects.billing.manage');
     for ln in select l.* from sales.sales_invoice_lines l join projects.billing_links bl on bl.invoice_line_id=l.id join projects.billing_batches bb on bb.id=bl.batch_id where bl.unit_id=u.id and bb.status='posted' order by l.id loop
      select coalesce(sum(cr.taxable_amount),0),coalesce(sum(cr.tax_amount),0),coalesce(sum(cr.line_total),0),coalesce(sum(cr.base_quantity),0),coalesce(array_agg(cr.id order by cr.id),'{}')
       into full_net,full_tax,full_total,qty,matched from sales.sales_return_lines cr join sales.sales_returns h on h.id=cr.document_id join sales.sales_invoices original on original.id=ln.document_id

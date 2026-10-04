@@ -563,7 +563,7 @@ final class ProjectFinanceController extends ChangeNotifier {
       'tax_version': tax?.version,
       'description': description,
     });
-    labels[unit.id] = unit.title;
+    labels[unit.id] = unit.values['payment_due_days'] == null ? unit.title : '${unit.title} · due ${unit.values['payment_due_days']} days after invoice · ${unit.values['payment_terms']}';
     labels[product.id] = product.name;
     change('units', list);
   }
@@ -597,12 +597,22 @@ final class ProjectFinanceController extends ChangeNotifier {
       if (!current) {
         return;
       }
-      recovery = [
-        ...recovery.where((d) => d.action != a || more),
-        ...page.items
-            .where((d) => d.form['project_id'] == projectId)
-            .map((d) => ProjectFinanceSavedDraft(a, d)),
-      ];
+      final items = <ProjectFinanceSavedDraft>[];
+      for (final d in page.items.where(
+        (d) => d.form['project_id'] == projectId,
+      )) {
+        if (d.pending != null && await _acknowledged(d.pending!)) {
+          recovery.removeWhere(
+            (v) => v.action == a && v.draft.aggregateId == d.aggregateId,
+          );
+        } else {
+          items.add(ProjectFinanceSavedDraft(a, d));
+        }
+        if (!current) {
+          return;
+        }
+      }
+      recovery = [...recovery.where((d) => d.action != a || more), ...items];
       recoveryCursors[a] = page.nextCursor;
     }
   }
@@ -655,6 +665,12 @@ final class ProjectFinanceController extends ChangeNotifier {
     }
     if (value.form['project_id'] != projectId) {
       throw const FormatException('Draft project changed.');
+    }
+    if (value.pending != null && await _acknowledged(value.pending!)) {
+      return;
+    }
+    if (!current) {
+      return;
     }
     form = projectMap(
       jsonDecode(jsonEncode(value.pending?.envelope.payload ?? value.form)),
@@ -710,29 +726,22 @@ final class ProjectFinanceController extends ChangeNotifier {
     ScopedPendingCommand p,
   ) async {
     final entity = verify(r, p);
-    if (!current) {
-      return;
+    if (current) {
+      confirmed = entity;
+      message = 'Confirmed. The original finance request succeeded.';
+      _notify();
     }
-    confirmed = entity;
-    message = 'Confirmed. The original finance request succeeded.';
-    _notify();
     try {
-      await drafts[p.action]!.complete(
-        scope,
-        p.envelope.payload['id'] as String,
-        p.envelope.commandId,
-      );
-      if (!current) {
-        return;
-      }
-      local = null;
-      recovery.removeWhere(
-        (d) => d.action == p.action && d.draft.aggregateId == entity['id'],
-      );
+      await ProjectFinanceCommandAcknowledgements(drafts[p.action]!).save(p, r);
     } catch (_) {
       if (current) {
-        message = 'Confirmed. Retain the original receipt while encrypted cleanup is reconciled.';
+        message =
+            'Confirmed. Saving the encrypted acknowledgement needs retry.';
       }
+      return;
+    }
+    await _cleanupConfirmed(p);
+    if (!current) {
       return;
     }
     try {
@@ -744,13 +753,63 @@ final class ProjectFinanceController extends ChangeNotifier {
     }
   }
 
+  Future<void> _cleanupConfirmed(ScopedPendingCommand p) async {
+    try {
+      final saved = await drafts[p.action]!.load(
+        p.envelope.context,
+        p.envelope.payload['id'] as String,
+      );
+      if (saved != null) {
+        await drafts[p.action]!.complete(
+          p.envelope.context,
+          p.envelope.payload['id'] as String,
+          p.envelope.commandId,
+        );
+      }
+      if (!current) {
+        return;
+      }
+      if (pending?.envelope.commandId == p.envelope.commandId) {
+        local = null;
+      }
+      recovery.removeWhere(
+        (d) =>
+            d.action == p.action &&
+            d.draft.aggregateId == p.envelope.payload['id'],
+      );
+    } catch (_) {
+      if (current) {
+        message = 'Confirmed. Encrypted draft cleanup needs retry; this request will not be dispatched again.';
+      }
+    }
+  }
+
+  Future<bool> _acknowledged(ScopedPendingCommand p) async {
+    if (!await ProjectFinanceCommandAcknowledgements(drafts[p.action]!)
+        .contains(p)) {
+      return false;
+    }
+    if (current &&
+        form?['id'] == p.envelope.payload['id'] &&
+        action == p.action) {
+      confirmed = {
+        'id': p.envelope.payload['id'],
+        'project_id': projectId,
+        'version': p.envelope.expectedEntityVersion! + 1,
+      };
+      message = 'Confirmed. The encrypted acknowledgement retains the original result.';
+    }
+    await _cleanupConfirmed(p);
+    return true;
+  }
+
   Future<void> send() => _run(() async {
     if (form == null || conflict || confirmed != null) {
       return;
     }
     final a = action!, id = form!['id'] as String;
     await _access(projectFinanceCapability(a));
-    if (!current) {
+    if (!current || !online) {
       return;
     }
     if (pending == null &&
@@ -771,21 +830,22 @@ final class ProjectFinanceController extends ChangeNotifier {
       form!,
       expectedVersion,
     );
-    if (!current) {
+    if (!current || !online) {
       return;
     }
     local = await drafts[a]!.load(scope, id);
-    if (!current) {
+    if (!current || !online) {
       return;
     }
     if (local != null) {
       _cache(a, local!);
     }
+    if (await _acknowledged(sealed) || !current || !online) {
+      return;
+    }
     try {
       final r = await repository.command(sealed.envelope);
-      if (current) {
-        await _confirmed(r, sealed);
-      }
+      await _confirmed(r, sealed);
     } on DomainError catch (e) {
       await drafts[a]!.recordFailure(scope, id, sealed.envelope.commandId, e);
       if (!current) {
@@ -825,13 +885,15 @@ final class ProjectFinanceController extends ChangeNotifier {
     if (!current) {
       return;
     }
-    final r = await repository.receipt(scope, p.envelope.commandId, p.action);
-    if (!current) {
+    if (await _acknowledged(p) || !current || !online) {
       return;
     }
+    final r = await repository.receipt(scope, p.envelope.commandId, p.action);
     if (r == null) {
-      message =
-          'No original receipt is recorded. Retry this exact sealed request.';
+      if (current) {
+        message =
+            'No original receipt is recorded. Retry this exact sealed request.';
+      }
     } else {
       await _confirmed(r, p);
     }
@@ -892,7 +954,7 @@ final class ProjectFinanceController extends ChangeNotifier {
     }
   });
   void closeForm() {
-    if (pending != null || conflict) {
+    if (busy || confirmed == null && (pending != null || conflict)) {
       return;
     }
     form = null;
@@ -909,10 +971,16 @@ final class ProjectFinanceController extends ChangeNotifier {
     if (!current) {
       return true;
     }
-    if (busy || pending != null || conflict) {
+    if (busy) {
       return false;
     }
-    if (form == null || confirmed != null) {
+    if (confirmed != null) {
+      return true;
+    }
+    if (pending != null || conflict) {
+      return false;
+    }
+    if (form == null) {
       return true;
     }
     await save();

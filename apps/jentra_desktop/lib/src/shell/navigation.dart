@@ -79,6 +79,11 @@ const jentraDestinations = <JentraDestination>[
     icon: Icons.bookmark_border,
   ),
   JentraDestination(
+    label: 'Negative-stock policy',
+    path: '/inventory/negative-stock-policy',
+    icon: Icons.policy_outlined,
+  ),
+  JentraDestination(
     label: 'Receipt quantity trace',
     path: '/inventory/receipt-trace',
     icon: Icons.account_tree_outlined,
@@ -334,6 +339,11 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
         (item.path != '/inventory/reservations' ||
             (capabilities?.contains('inventory.reservations.manage') ??
                 false)) &&
+        (item.path != '/inventory/negative-stock-policy' ||
+            const [
+              'inventory.stock.view',
+              'inventory.stock.policy.manage',
+            ].every((p) => capabilities?.contains(p) ?? false)) &&
         (item.path != '/inventory/counts' ||
             (capabilities != null &&
                 capabilities.contains('inventory.cost.view') &&

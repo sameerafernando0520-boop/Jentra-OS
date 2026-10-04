@@ -60,7 +60,9 @@ final class ProjectCommandAcknowledgements {
     if (row.tenantId != command.context.tenantId ||
         row.entityType != 'projects.command.acknowledgement' ||
         body.length != 6 ||
-        TenantContext.fromJson(Map<String, Object?>.from(body['scope'] as Map)) !=
+        TenantContext.fromJson(
+              Map<String, Object?>.from(body['scope'] as Map),
+            ) !=
             command.context ||
         body['action'] != request.action ||
         body['command_id'] != command.commandId ||

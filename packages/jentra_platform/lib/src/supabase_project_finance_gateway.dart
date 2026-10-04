@@ -48,7 +48,7 @@ final class SupabaseProjectFinanceGateway implements ProjectFinanceRepository {
     } on PostgrestException catch (e) {
       final code = switch ((e.code, e.message)) {
         ('PGRST202', _) => 'FEATURE_NOT_INSTALLED',
-        ('42501', 'PROJECT_ENTITLEMENT_REQUIRED') => 'FEATURE_NOT_ENTITLED',
+        ('42501', 'PROJECT_ENTITLEMENT_REQUIRED' || 'PROJECT_FINANCE_ENTITLEMENT_REQUIRED') => 'FEATURE_NOT_ENTITLED',
         ('42501', _) => 'PERMISSION_DENIED',
         ('40001', _) => 'VERSION_CONFLICT',
         ('22023', 'IDEMPOTENCY_MISMATCH') => 'IDEMPOTENCY_MISMATCH',
@@ -74,7 +74,7 @@ final class SupabaseProjectFinanceGateway implements ProjectFinanceRepository {
           'FEATURE_NOT_INSTALLED' =>
             'Project finance is awaiting development installation.',
           'FEATURE_NOT_ENTITLED' =>
-            'The current plan does not provide project finance.',
+            'The current plan requires both Projects and Finance access for project finance.',
           'PERMISSION_DENIED' =>
             'Current scope, capability or MFA does not allow this action.',
           'VERSION_CONFLICT' =>
@@ -82,7 +82,7 @@ final class SupabaseProjectFinanceGateway implements ProjectFinanceRepository {
           'STATE_CONFLICT' =>
             'The expense, obligation or invoice state prevents this action.',
           'VALIDATION_ERROR' =>
-            'Check exact amounts, dates and named source evidence.',
+            e.message == 'PROJECT_MILESTONE_DUE_DATE_REQUIRED' ? 'Use the invoice date plus each milestone’s frozen payment days. Different terms require separate invoices.' : 'Check exact amounts, dates and named source evidence.',
           'IDEMPOTENCY_MISMATCH' =>
             'Reconcile the original request associated with this key.',
           'RESOURCE_NOT_FOUND' =>

@@ -1,5 +1,13 @@
 # Remaining Wave 3 development status
 
+## Latest policy continuation — 2026-10-03
+
+Read the [current policy checkpoint](../verification/remaining-wave3/wave3-policy-current-checkpoint-20261003.md)
+for the approved policy, current HEAD/ledger, completed 88 sales regressions,
+actual failed rollback iteration and remaining verification. The older snapshots
+below retain their original evidence dates. They are not proof of the new policy
+candidate or the current concurrent checkout. Wave 3 remains open.
+
 ## Active continuation — 2026-10-03
 
 Resumed at clean HEAD `7c08ea890746b1914c2f6e825523482a9146114c`.

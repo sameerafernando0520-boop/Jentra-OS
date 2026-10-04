@@ -8,6 +8,7 @@ import 'package:jentra_domain/jentra_projects.dart';
 
 import 'app_providers.dart';
 import 'features/manual_journal/manual_journal_controller.dart';
+import 'features/negative_stock/negative_stock_policy_screen.dart';
 import 'features/manual_journal/manual_journal_screen.dart';
 import 'features/control_reconciliation/control_reconciliation_controller.dart';
 import 'features/control_reconciliation/control_reconciliation_screen.dart';
@@ -219,6 +220,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             onExit: (context, state) async =>
                 await ref.read(reservationControllerProvider)?.canLeave() ??
                 true,
+          ),
+          GoRoute(
+            path: '/inventory/negative-stock-policy',
+            builder: (context, state) => const NegativeStockPolicyScreen(),
           ),
           GoRoute(
             path: '/inventory/landed-extensions',

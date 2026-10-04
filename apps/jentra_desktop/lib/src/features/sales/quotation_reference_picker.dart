@@ -22,39 +22,12 @@ Future<QuotationReference?> showQuotationReferencePicker(
   final capabilities = original.value;
   if (scope == null || capabilities == null) return null;
   final access = originAccess ?? QuotationDialogAccess(context);
-  bool current() {
-    if (!context.mounted) return false;
-    final caps = container.read(businessCapabilitiesProvider);
-    final connection = container.read(connectivityStateProvider);
-    return container.read(activeTenantContextProvider) == scope &&
-        !caps.isLoading &&
-        !caps.hasError &&
-        caps.value?.contains(permission) == true &&
-        caps.value!.length == capabilities.length &&
-        caps.value!.containsAll(capabilities) &&
-        !connection.isLoading &&
-        !connection.hasError &&
-        connection.value == ConnectivityState.online;
-  }
-
-  void observe() {
-    if (!current()) access.denyReadAccess();
-  }
-
-  final scopes = container.listen(
-    activeTenantContextProvider,
-    (_, _) => observe(),
+  access.observeScope(
+    container: container,
+    scope: scope,
+    capabilities: capabilities,
+    permission: permission,
   );
-  final caps = container.listen(
-    businessCapabilitiesProvider,
-    (_, _) => observe(),
-  );
-  final connections = container.listen(
-    connectivityStateProvider,
-    (_, _) => observe(),
-  );
-  ModalRoute.of(context)?.popped.then((_) => access.denyReadAccess());
-  observe();
   try {
     return await showOperationalReadDialog<QuotationReference>(
       context,
@@ -70,9 +43,6 @@ Future<QuotationReference?> showQuotationReferencePicker(
       ),
     );
   } finally {
-    scopes.close();
-    caps.close();
-    connections.close();
     if (originAccess == null) access.dispose();
   }
 }

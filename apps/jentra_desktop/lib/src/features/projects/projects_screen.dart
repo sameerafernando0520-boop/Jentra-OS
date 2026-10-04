@@ -301,6 +301,7 @@ class _ProjectsWorkspaceState extends State<ProjectsWorkspace> {
       case ProjectTask():
         title = row.name;
         facts.addAll([
+          'Task owner: ${row.ownerName}',
           '${row.basis.start.value} to ${row.basis.endExclusive.value} (exclusive)',
           'Planned ${row.basis.plannedSeconds} seconds · progress ${(row.basis.progressBasisPoints / 100).toStringAsFixed(2)}%',
           'Dependencies: ${row.basis.dependencies.length} immutable task references',
@@ -681,6 +682,9 @@ class _ProjectsWorkspaceState extends State<ProjectsWorkspace> {
           '${t['start_date']} to ${t['end_date_exclusive']} (exclusive) · ${t['planned_seconds']} planned seconds',
         ),
         Text(
+          'Task owner: ${c.labels[t['owner_id']] ?? 'Original selected employee'}',
+        ),
+        Text(
           'Prerequisites: ${(t['dependencies'] as List).map((id) => (c.form!['tasks'] as List).map(projectMap).firstWhere((v) => v['id'] == id)['name']).join(', ')}',
         ),
         _button(
@@ -738,7 +742,7 @@ class _ProjectsWorkspaceState extends State<ProjectsWorkspace> {
       SelectableText('Exact approval digest: ${review.plan.digest}'),
       for (final t in review.tasks)
         Text(
-          '${t.name}: ${t.basis.start.value} to ${t.basis.endExclusive.value} (exclusive), ${t.basis.plannedSeconds} seconds; prerequisites ${t.basis.dependencies.map((id) => names[id]).join(', ')}',
+          '${t.name} · owner ${t.ownerName}: ${t.basis.start.value} to ${t.basis.endExclusive.value} (exclusive), ${t.basis.plannedSeconds} seconds; prerequisites ${t.basis.dependencies.map((id) => names[id]).join(', ')}',
         ),
       for (final s in review.resources)
         Padding(
@@ -755,11 +759,21 @@ class _ProjectsWorkspaceState extends State<ProjectsWorkspace> {
         start = TextEditingController(text: c.selected!.start.value),
         end = TextEditingController(text: c.selected!.end.value);
     final dependencies = <String>{};
+    ProjectChoice? owner;
     try {
       await showDialog<void>(
         context: context,
         builder: (context) => StatefulBuilder(
           builder: (context, update) => _ProjectDialog('Add task', [
+            OutlinedButton(
+              onPressed: () async {
+                final selected = await _choice('employees');
+                if (context.mounted && selected != null) {
+                  update(() => owner = selected);
+                }
+              },
+              child: Text(owner?.name ?? 'Choose task owner'),
+            ),
             TextField(
               controller: name,
               decoration: const InputDecoration(labelText: 'Task name'),
@@ -789,17 +803,20 @@ class _ProjectsWorkspaceState extends State<ProjectsWorkspace> {
                 }),
               ),
             FilledButton(
-              onPressed: () => _safe(() async {
-                c.addTask(
-                  name.text,
-                  start.text,
-                  end.text,
-                  dependencies: dependencies,
-                );
-                if (context.mounted) {
-                  Navigator.pop(context);
-                }
-              }),
+              onPressed: owner == null
+                  ? null
+                  : () => _safe(() async {
+                      c.addTask(
+                        name.text,
+                        start.text,
+                        end.text,
+                        owner: owner!,
+                        dependencies: dependencies,
+                      );
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
+                    }),
               child: const Text('Add task'),
             ),
           ]),

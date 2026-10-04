@@ -12,60 +12,82 @@ Future<T?> showScopedQuotationDialog<T>(
   required Set<String> capabilities,
   required WidgetBuilder builder,
   bool requireOnline = true,
+  QuotationDialogAccess? originAccess,
 }) async {
   final container = ProviderScope.containerOf(context, listen: false);
-  final access = QuotationDialogAccess(context);
-  void observe() {
-    if (!context.mounted) {
-      access.denyReadAccess();
-      return;
-    }
-    final caps = container.read(businessCapabilitiesProvider);
-    final connection = container.read(connectivityStateProvider);
-    if (container.read(activeTenantContextProvider) != scope ||
-        caps.isLoading ||
-        caps.hasError ||
-        caps.value == null ||
-        caps.value!.length != capabilities.length ||
-        !caps.value!.containsAll(capabilities) ||
-        (requireOnline &&
-            (connection.isLoading ||
-                connection.hasError ||
-                connection.value != ConnectivityState.online))) {
-      access.denyReadAccess();
-    }
-  }
-
-  final scopes = container.listen(
-    activeTenantContextProvider,
-    (_, _) => observe(),
+  final access = originAccess ?? QuotationDialogAccess(context);
+  access.observeScope(
+    container: container,
+    scope: scope,
+    capabilities: capabilities,
+    requireOnline: requireOnline,
   );
-  final caps = container.listen(
-    businessCapabilitiesProvider,
-    (_, _) => observe(),
-  );
-  final connections = container.listen(
-    connectivityStateProvider,
-    (_, _) => observe(),
-  );
-  ModalRoute.of(context)?.popped.then((_) => access.denyReadAccess());
-  observe();
   try {
     return await showOperationalReadDialog<T>(context, access, builder);
   } finally {
-    scopes.close();
-    caps.close();
-    connections.close();
-    access.dispose();
+    if (originAccess == null) access.dispose();
   }
 }
 
 final class QuotationDialogAccess extends ChangeNotifier
     implements OperationalReadAccess {
-  QuotationDialogAccess(this.origin);
+  QuotationDialogAccess(this.origin) {
+    ModalRoute.of(origin)?.popped.then((_) => denyReadAccess());
+  }
   final BuildContext origin;
-  bool _active = true, _disposed = false;
+  final _closeObservers = <VoidCallback>[];
+  bool _active = true, _disposed = false, _observing = false;
   int _epoch = 0;
+
+  /// The caller retains these observers through consuming the awaited result.
+  void observeScope({
+    required ProviderContainer container,
+    required TenantContext scope,
+    required Set<String> capabilities,
+    bool requireOnline = true,
+    String? permission,
+  }) {
+    if (_disposed || _observing) return;
+    _observing = true;
+    void observe() {
+      if (_disposed || !_active) return;
+      if (!origin.mounted) {
+        denyReadAccess();
+        return;
+      }
+      final caps = container.read(businessCapabilitiesProvider);
+      final connection = container.read(connectivityStateProvider);
+      if (container.read(activeTenantContextProvider) != scope ||
+          caps.isLoading ||
+          caps.hasError ||
+          caps.value == null ||
+          caps.value!.length != capabilities.length ||
+          !caps.value!.containsAll(capabilities) ||
+          (permission != null && !caps.value!.contains(permission)) ||
+          (requireOnline &&
+              (connection.isLoading ||
+                  connection.hasError ||
+                  connection.value != ConnectivityState.online))) {
+        denyReadAccess();
+      }
+    }
+
+    final scopes = container.listen(
+      activeTenantContextProvider,
+      (_, _) => observe(),
+    );
+    final caps = container.listen(
+      businessCapabilitiesProvider,
+      (_, _) => observe(),
+    );
+    final connections = container.listen(
+      connectivityStateProvider,
+      (_, _) => observe(),
+    );
+    _closeObservers.addAll([scopes.close, caps.close, connections.close]);
+    observe();
+  }
+
   @override
   int get readAccessEpoch => _epoch;
   @override
@@ -89,6 +111,10 @@ final class QuotationDialogAccess extends ChangeNotifier
   @override
   void dispose() {
     _disposed = true;
+    for (final close in _closeObservers) {
+      close();
+    }
+    _closeObservers.clear();
     super.dispose();
   }
 }

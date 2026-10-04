@@ -1,11 +1,27 @@
 # Wave 4 kickoff and delivery status
 
-Updated: 2026-10-02. User instruction: complete all remaining approved synthetic
+Updated: 2026-10-04. User instruction: complete all remaining approved synthetic
 Wave 4 development and continue independent work across pending gates. On October
 1 the user explicitly authorized additional agents for development and reviews,
 superseding the earlier solo-work preference.
 
 ## Current checkpoint
+
+October 4: three workers resumed their saved finance/service/payroll correction
+source after usage interruptions. Explicit project task ownership passed 55
+rollback assertions with eleven actual API projections and 11 domain checks.
+The actual billed-project payroll correction fixture passed 190 against its
+captured source. Service isolated native 45 and eight inspected previews pass.
+Correction domain 12/platform 16 pass; readable native 14 update passed, final
+no-update verification pending. Further linked-source proof hardening, governed
+milestones, service cost in dated margin, source-bound integrated checks and the
+isolated release build are in progress. Live development remains at 37 migrations;
+the synthetic tenant is absent. See the
+[October 4 checkpoint](../verification/wave4/resume-checkpoint-20261004.md).
+**Wave 4 is not complete.** Installation/authenticated native/contention/load/
+Credential Manager restart/private worker/owner evidence remain separate gates.
+
+The following entries are dated historical checkpoints.
 
 October 2: core project planning/time checks now pass 49 rollback assertions,
 10 domain, 18 gateway and 26 native tests with clean focused analyzers. The trusted

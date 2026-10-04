@@ -1,0 +1,116 @@
+{
+  "head": "cbdb9f8166034bbb6e6112d68baf149cd1d7be84",
+  "database_package": "docs/verification/remaining-wave3/database-installation-package-negative-stock-policy-role-reviewed-20261004-46.json",
+  "coverage_scope": "docs/verification/remaining-wave3/requirements-coverage-paths-negative-stock-policy-20261003.txt",
+  "coverage_raw": "docs/verification/remaining-wave3/requirements-coverage-source-checked-20261004-boot-client.json",
+  "coverage_reviewed": "docs/verification/remaining-wave3/requirements-coverage-policy-declaration-reviewed-20261004-boot-client.json",
+  "coverage_additional_pure_domain": "docs/verification/remaining-wave3/requirements-coverage-additional-pure-domain-20261004-boot-client.json",
+  "desktop_failure_classification": "docs/verification/remaining-wave3/desktop-current-failure-classification-20261004.json",
+  "policy": {
+    "selection": "last_authoritative_positive_moving_average",
+    "approved": true,
+    "implemented_verified": false,
+    "owner_reply": "Approve interim issues at the last authoritative positive moving-average cost, block unknown cost basis, and post linked later-receipt variance corrections.",
+    "contract": "docs/blueprint/64_WAVE3_NEGATIVE_STOCK_POLICY_CONTRACT.md",
+    "candidate": "supabase/migrations/20261003090000_wave3_negative_stock_policy.sql",
+    "assertions": "supabase/tests/wave3_negative_stock_policy_20261003_test.sql",
+    "dart_sources": [
+      "packages/jentra_domain/lib/src/negative_stock_policy.dart",
+      "packages/jentra_domain/lib/src/negative_stock_policy_repository.dart",
+      "packages/jentra_domain/lib/src/lead_to_cash.dart",
+      "packages/jentra_platform/lib/src/supabase_negative_stock_policy_gateway.dart",
+      "packages/jentra_platform/lib/src/quotation_draft_store.dart",
+      "apps/jentra_desktop/lib/src/features/negative_stock/negative_stock_policy_controller.dart",
+      "apps/jentra_desktop/lib/src/features/negative_stock/negative_stock_policy_screen.dart",
+      "apps/jentra_desktop/lib/src/features/sales/quotation_controller.dart",
+      "apps/jentra_desktop/lib/src/features/sales/sales_order_controller.dart",
+      "apps/jentra_desktop/lib/src/features/sales/sales_order_dialogs.dart",
+      "apps/jentra_desktop/lib/src/features/sales/sales_order_screen.dart",
+      "apps/jentra_desktop/lib/main.dart",
+      "apps/jentra_desktop/lib/src/router.dart",
+      "apps/jentra_desktop/lib/src/shell/navigation.dart"
+    ]
+  },
+  "checks": [
+    {
+      "kind": "domain-current-policy-scope",
+      "file": "docs/verification/remaining-wave3/domain-policy-scope-green-20261003.log",
+      "source_capture": "docs/verification/remaining-wave3/client-sources-domain-policy-scope-green-20261003.json",
+      "passed": 318,
+      "failed": 0,
+      "complete": true,
+      "boundary": "Actual completed named synthetic local checks; complete source-capture drift remains visible and no native/install/load/owner acceptance is inferred."
+    },
+    {
+      "kind": "platform-whole-recorded",
+      "file": "docs/verification/remaining-wave3/platform-policy-full-20261003.log",
+      "source_capture": "docs/verification/remaining-wave3/client-sources-platform-policy-full-20261003.json",
+      "passed": 1018,
+      "failed": 0,
+      "complete": true,
+      "boundary": "Actual completed named synthetic local checks; complete source-capture drift remains visible and no native/install/load/owner acceptance is inferred."
+    },
+    {
+      "kind": "desktop-whole-recorded",
+      "file": "docs/verification/remaining-wave3/desktop-current-20261004.log",
+      "source_capture": "docs/verification/remaining-wave3/client-sources-desktop-current-20261004.json",
+      "passed": 1617,
+      "failed": 76,
+      "complete": true,
+      "boundary": "Actual completed named synthetic local checks; complete source-capture drift remains visible and no native/install/load/owner acceptance is inferred."
+    },
+    {
+      "kind": "policy-controller-scoped-recovery",
+      "file": "docs/verification/remaining-wave3/policy-controller-20261004.log",
+      "source_capture": "docs/verification/remaining-wave3/client-sources-policy-controller-20261004.json",
+      "passed": 43,
+      "failed": 0,
+      "complete": true,
+      "boundary": "Actual completed named synthetic local checks; complete source-capture drift remains visible and no native/install/load/owner acceptance is inferred."
+    },
+    {
+      "kind": "policy-widget-render-scoped-recovery",
+      "file": "docs/verification/remaining-wave3/policy-widgets-final-20261004.log",
+      "source_capture": "docs/verification/remaining-wave3/client-sources-policy-widgets-final-20261004.json",
+      "passed": 20,
+      "failed": 0,
+      "complete": true,
+      "boundary": "Actual completed named synthetic local checks; complete source-capture drift remains visible and no native/install/load/owner acceptance is inferred."
+    },
+    {
+      "kind": "sales-command-dialog-original-ack",
+      "file": "docs/verification/remaining-wave3/sales-checked-20261004.log",
+      "source_capture": "docs/verification/remaining-wave3/client-sources-sales-checked-20261004.json",
+      "passed": 88,
+      "failed": 0,
+      "complete": true,
+      "boundary": "Actual completed named synthetic local checks; complete source-capture drift remains visible and no native/install/load/owner acceptance is inferred."
+    },
+    {
+      "kind": "preview-boot-crm-companion",
+      "file": "docs/verification/remaining-wave3/entry-crm-20261004.log",
+      "source_capture": "docs/verification/remaining-wave3/client-sources-entry-crm-20261004.json",
+      "passed": 9,
+      "failed": 1,
+      "complete": true,
+      "boundary": "Actual completed named synthetic local checks; complete source-capture drift remains visible and no native/install/load/owner acceptance is inferred."
+    },
+    {
+      "kind": "authorized-current-libraries-analyzer",
+      "file": "docs/verification/remaining-wave3/analyzer-closure-authorized-20261004.log",
+      "source_capture": "docs/verification/remaining-wave3/client-sources-analyze-closure-20261004.json",
+      "complete": true,
+      "outcome": "No issues found; actual libraries only, not full protected test analysis or native proof."
+    }
+  ],
+  "additional_review": [
+    "docs/verification/remaining-wave3/acceptance-binding-procedure-20261004.md",
+    "docs/verification/remaining-wave3/verification-resume-review-20261004.md",
+    "docs/verification/remaining-wave3/supabase-transport-failure-20261004.json",
+    "docs/verification/remaining-wave3/database-procurement-negative-stock-author-event-executed-20261004.json",
+    "docs/verification/remaining-wave3/database-procurement-negative-stock-policy-event-executed-20261004.json",
+    "docs/verification/remaining-wave3/database-procurement-negative-stock-multi-actor-red-executed-20261004.json",
+    "docs/verification/remaining-wave3/policy-visual-review-20261004.json",
+    "docs/verification/remaining-wave3/policy-visual-review-20261004.md"
+  ]
+}

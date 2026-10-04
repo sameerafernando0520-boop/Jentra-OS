@@ -1,0 +1,28 @@
+{
+  "observed_at": "2026-10-04T02:01:19.193Z",
+  "project_id": "xpdoufauvrbdmxgngetv",
+  "transport": "connected_supabase_mcp",
+  "mcp_is_error": true,
+  "input": "docs/verification/remaining-wave3/database-strict-procurement-negative-stock-author-event-reviewed-20261004.sql",
+  "query_sha256": "507e12de10d36ab08b92af3344058c116ee2835edec575c151a24c423af4ba57",
+  "elapsed_ms": 37462,
+  "boundary": "One strict synthetic rollback request with finish(true). No installation/native/load proof.",
+  "result": {
+    "error": {
+      "name": "HttpException",
+      "message": "Failed to run sql query: ERROR:  22023: IDEMPOTENCY_MISMATCH\nCONTEXT:  PL/pgSQL function core.wave3_replay(uuid,text,uuid,uuid,text) line 32 at RAISE\nPL/pgSQL function api.configure_negative_stock_policy(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint) line 10 at assignment\nSQL statement \"select api.configure_negative_stock_policy($1,$2,$3,$4,$5,$6,$7,$8)\"\nPL/pgSQL function pg_temp_35.call(text,jsonb,bigint,text) line 2 at EXECUTE\n"
+    }
+  },
+  "raw_tool_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"name\":\"HttpException\",\"message\":\"Failed to run sql query: ERROR:  22023: IDEMPOTENCY_MISMATCH\\nCONTEXT:  PL/pgSQL function core.wave3_replay(uuid,text,uuid,uuid,text) line 32 at RAISE\\nPL/pgSQL function api.configure_negative_stock_policy(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint) line 10 at assignment\\nSQL statement \\\"select api.configure_negative_stock_policy($1,$2,$3,$4,$5,$6,$7,$8)\\\"\\nPL/pgSQL function pg_temp_35.call(text,jsonb,bigint,text) line 2 at EXECUTE\\n\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error_code": "INVALID_ARGUMENT"
+    },
+    "isError": true
+  }
+}

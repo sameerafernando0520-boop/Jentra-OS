@@ -98,6 +98,7 @@ class _OrderWorkspace extends ConsumerStatefulWidget {
 class _OrderWorkspaceState extends ConsumerState<_OrderWorkspace> {
   final _search = TextEditingController();
   final _creditAccess = <_CreditDialogAccess>{};
+  final _reservationAccess = <QuotationDialogAccess>{};
   int _tab = 0;
   SalesOrderController get controller => ref.read(salesOrderProvider.notifier);
   @override
@@ -105,6 +106,10 @@ class _OrderWorkspaceState extends ConsumerState<_OrderWorkspace> {
     for (final access in _creditAccess) {
       access.invalidate();
     }
+    for (final access in _reservationAccess) {
+      access.denyReadAccess();
+    }
+    _reservationAccess.clear();
     _search.dispose();
     super.dispose();
   }
@@ -758,16 +763,34 @@ class _OrderWorkspaceState extends ConsumerState<_OrderWorkspace> {
   }
 
   Future<void> _reserve(SalesOrderState s) async {
-    final draft = await showDialog<StockReservationDraft>(
-      context: context,
-      builder: (_) => QuotationScopeGuard(
+    final origin = controller;
+    final access = QuotationDialogAccess(context);
+    final epoch = access.readAccessEpoch;
+    _reservationAccess.add(access);
+    try {
+      final draft = await showScopedQuotationDialog<StockReservationDraft>(
+        context,
         scope: s.context,
         capabilities: s.capabilities,
-        child: OrderReservationDialog(scope: s.context, detail: s.detail!),
-      ),
-    );
-    if (mounted && draft != null && widget.state.context == s.context) {
-      await controller.reserve(draft);
+        originAccess: access,
+        builder: (_) => QuotationScopeGuard(
+          scope: s.context,
+          capabilities: s.capabilities,
+          child: OrderReservationDialog(scope: s.context, detail: s.detail!),
+        ),
+      );
+      if (mounted &&
+          draft != null &&
+          access.currentRead(epoch) &&
+          widget.state.context == s.context &&
+          widget.state.detail?.order.id == s.detail?.order.id &&
+          widget.state.detail?.order.version == s.detail?.order.version &&
+          identical(ref.read(salesOrderProvider.notifier), origin)) {
+        await origin.reserve(draft);
+      }
+    } finally {
+      _reservationAccess.remove(access);
+      access.dispose();
     }
   }
 }
@@ -869,6 +892,7 @@ class _FulfillmentState extends State<SalesOrderFulfillmentEditor> {
             onPressed: widget.enabled && widget.online
                 ? () async {
                     final access = QuotationDialogAccess(context);
+                    final accessEpoch = access.readAccessEpoch;
                     _referenceDialogs.add(access);
                     try {
                       final item = await showQuotationReferencePicker(
@@ -878,7 +902,12 @@ class _FulfillmentState extends State<SalesOrderFulfillmentEditor> {
                         kind: QuotationReferenceKind.warehouse,
                         permission: 'sales.orders.manage',
                       );
-                      if (!mounted || !widget.enabled || item == null) return;
+                      if (!mounted ||
+                          !widget.enabled ||
+                          !access.currentRead(accessEpoch) ||
+                          item == null) {
+                        return;
+                      }
                       setState(() {
                         _warehouse = item.id;
                         _warehouseLabel = item.label;

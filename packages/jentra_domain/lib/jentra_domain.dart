@@ -6,6 +6,8 @@ export 'src/sales_order_workspace.dart';
 export 'src/quotation_references.dart';
 
 export 'src/commands.dart';
+export 'src/negative_stock_policy.dart';
+export 'src/negative_stock_policy_repository.dart';
 export 'src/attachment_policy.dart';
 export 'src/business_setup.dart';
 export 'src/business_setup_repository.dart';

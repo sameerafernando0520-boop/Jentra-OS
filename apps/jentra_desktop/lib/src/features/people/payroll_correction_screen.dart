@@ -247,8 +247,35 @@ class PayrollCorrectionWorkspace extends StatelessWidget {
               if (row['impact'] != null) ...[
                 const Text('Operational source impact'),
                 Text('${workforceMap(row['impact'])['mode']}'),
+                const Text('Before'),
                 _facts(workforceMap(row['impact'])['before']),
+                const Text('After'),
                 _facts(workforceMap(row['impact'])['after']),
+                for (final value
+                    in workforceMap(
+                              workforceMap(row['impact'])['after'],
+                            )['allocation_impacts']
+                            as List? ??
+                        const [])
+                  Builder(
+                    builder: (context) {
+                      final allocation = workforceMap(value),
+                          impact = workforceMap(allocation['impact']);
+                      final before = workforceMap(impact['before']);
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Linked ${allocation['source_kind']} · ${impact['project_name'] ?? before['project_name'] ?? impact['order_name'] ?? 'approved work'}',
+                          ),
+                          const Text('Original linked basis'),
+                          _facts(impact['before']),
+                          const Text('Revised linked basis'),
+                          _facts(impact['after']),
+                        ],
+                      );
+                    },
+                  ),
               ],
             ],
           ),
@@ -279,16 +306,41 @@ class PayrollCorrectionWorkspace extends StatelessWidget {
     if (value is! Map) {
       return const SizedBox.shrink();
     }
-    return Text(
-      [
-        'start_local',
-        'end_local',
-        'status',
-        'charge_seconds',
-        'payable_seconds',
-        'unpaid_seconds',
-        'balance_version',
-      ].where(value.containsKey).map((k) => '$k: ${value[k]}').join(' · '),
+    final data = {
+      if (value['revision'] is Map) ...workforceMap(value['revision']),
+      ...workforceMap(value),
+    };
+    const labels = {
+      'start_local': 'Start local',
+      'end_local': 'End local',
+      'status': 'Status',
+      'charge_seconds': 'Leave charged seconds',
+      'payable_seconds': 'Worked paid seconds',
+      'seconds': 'Worked paid seconds',
+      'unpaid_seconds': 'Unpaid leave seconds',
+      'balance_version': 'Leave balance version',
+      'cost_rate': 'Original cost per hour',
+      'hourly_cost': 'Original cost per hour',
+      'hourly_billing': 'Original bill per hour',
+      'amount': 'Internal cost',
+      'cost_amount': 'Internal cost',
+      'billable_amount': 'Customer bill amount',
+      'bill_amount': 'Customer bill amount',
+    };
+    final effects = (data['effects'] ?? data['original_effects']) as List?;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final entry in labels.entries)
+          if (data.containsKey(entry.key))
+            Text('${entry.value}: ${data[entry.key]}'),
+        if (data['breaks'] is List)
+          Text('Unpaid breaks: ${(data['breaks'] as List).length}'),
+        if (effects != null)
+          Text(
+            'Original grant debit effects: ${effects.length} · ${effects.map(workforceMap).fold<int>(0, (total, row) => total + (row['seconds'] as num).toInt()).abs()} seconds',
+          ),
+      ],
     );
   }
 
@@ -320,15 +372,17 @@ class PayrollCorrectionWorkspace extends StatelessWidget {
 class PayrollCorrectionEditor extends StatelessWidget {
   const PayrollCorrectionEditor({required this.controller, super.key});
   final PayrollCorrectionController controller;
-  Widget _field(String key, String label, {TextInputType? keyboard}) =>
-      TextFormField(
-        key: ValueKey('${controller.form?['id']}:$key'),
-        initialValue: controller.form?[key]?.toString() ?? '',
-        enabled: !controller.locked,
-        keyboardType: keyboard,
-        decoration: InputDecoration(labelText: label),
-        onChanged: (v) => controller.update(key, v),
-      );
+  Widget _field(String key, String label, {TextInputType? keyboard}) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8),
+    child: TextFormField(
+      key: ValueKey('${controller.form?['id']}:$key'),
+      initialValue: controller.form?[key]?.toString() ?? '',
+      enabled: !controller.locked,
+      keyboardType: keyboard,
+      decoration: InputDecoration(labelText: label),
+      onChanged: (v) => controller.update(key, v),
+    ),
+  );
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: controller,
@@ -428,6 +482,8 @@ class PayrollCorrectionEditor extends StatelessWidget {
                       if (c.kind == PayrollCorrectionCommandKind.settlement &&
                           c.action == 'record') ...[
                         DropdownButtonFormField<String>(
+                          isExpanded: true,
+                          itemHeight: null,
                           initialValue: p['direction'] as String?,
                           decoration: const InputDecoration(
                             labelText: 'Recorded direction',
@@ -447,6 +503,8 @@ class PayrollCorrectionEditor extends StatelessWidget {
                               : (v) => c.update('direction', v),
                         ),
                         DropdownButtonFormField<String>(
+                          isExpanded: true,
+                          itemHeight: null,
                           initialValue: p['bank_id'] as String?,
                           decoration: const InputDecoration(
                             labelText: 'Scoped bank account',
@@ -481,6 +539,16 @@ class PayrollCorrectionEditor extends StatelessWidget {
                               final balance = workforceMap(value);
                               return TextFormField(
                                 key: ValueKey(balance['id']),
+                                initialValue:
+                                    (p['allocations'] as List? ?? const [])
+                                            .map(workforceMap)
+                                            .where(
+                                              (row) =>
+                                                  row['balance_id'] ==
+                                                  balance['id'],
+                                            )
+                                            .firstOrNull?['amount']
+                                        as String?,
                                 enabled: !c.locked,
                                 decoration: InputDecoration(
                                   labelText:
@@ -586,31 +654,53 @@ class _PayrollCorrectionSourceEditorState
       endOffset = '';
   final allocationChanges = <String, Map<String, Object?>>{};
   final billingCredits = <String>{};
+  List<Map<String, Object?>> breaks = [];
   @override
   void initState() {
     super.initState();
     final s = widget.source,
         op = workforceMap(s['operational']),
         before = workforceMap(op['before']);
-    seconds = '${s['paid_seconds']}';
+    final saved = (widget.controller.form?['replacements'] as List? ?? const [])
+        .map(workforceMap)
+        .where((row) => row['seal_id'] == s['seal_id'])
+        .firstOrNull;
+    final impact = saved?['impact'] == null
+        ? null
+        : workforceMap(saved!['impact']);
+    mode = impact?['mode'] as String? ?? 'eligibility';
+    seconds = '${saved?['paid_seconds'] ?? s['paid_seconds']}';
     final geometry = before['revision'] is Map
         ? workforceMap(before['revision'])
         : before;
-    start = '${geometry['start_local'] ?? ''}'.replaceFirst(' ', 'T');
-    end = '${geometry['end_local'] ?? ''}'.replaceFirst(' ', 'T');
-    startOffset = '${geometry['start_offset_seconds'] ?? ''}';
-    endOffset = '${geometry['end_offset_seconds'] ?? ''}';
+    start = '${impact?['start_local'] ?? geometry['start_local'] ?? ''}'
+        .replaceFirst(' ', 'T');
+    end = '${impact?['end_local'] ?? geometry['end_local'] ?? ''}'.replaceFirst(
+      ' ',
+      'T',
+    );
+    startOffset =
+        '${impact?['start_offset_seconds'] ?? geometry['start_offset_seconds'] ?? ''}';
+    endOffset =
+        '${impact?['end_offset_seconds'] ?? geometry['end_offset_seconds'] ?? ''}';
+    billingCredits.addAll(
+      (impact?['billing_credit_line_ids'] as List? ?? const []).cast<String>(),
+    );
+    breaks =
+        (impact?['breaks'] as List? ?? geometry['breaks'] as List? ?? const [])
+            .map(workforceMap)
+            .toList();
+    for (final value in impact?['allocation_changes'] as List? ?? const []) {
+      final change = workforceMap(value);
+      allocationChanges[change['entry_id'] as String] = change;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final c = widget.controller,
         s = widget.source,
-        op = workforceMap(s['operational']),
-        before = workforceMap(op['before']);
-    final geometry = before['revision'] is Map
-        ? workforceMap(before['revision'])
-        : before;
+        op = workforceMap(s['operational']);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -620,7 +710,10 @@ class _PayrollCorrectionSourceEditorState
             Text(
               '${s['source_kind']} · ${s['start_utc']} → ${s['end_utc']} · ${s['paid_seconds']} paid seconds',
             ),
+            const SizedBox(height: 16),
             DropdownButtonFormField<String>(
+              isExpanded: true,
+              itemHeight: null,
               initialValue: mode,
               decoration: const InputDecoration(labelText: 'Linked change'),
               items: [
@@ -676,8 +769,10 @@ class _PayrollCorrectionSourceEditorState
                 ),
                 onChanged: (v) => endOffset = v,
               ),
-              const Text(
-                'Existing exact break evidence is retained and must fit the revised interval.',
+              PayrollCorrectionBreakEditor(
+                breaks: breaks,
+                locked: c.locked,
+                onChanged: (values) => setState(() => breaks = values),
               ),
               if ({'project', 'service'}.contains(s['source_kind']))
                 PayrollCorrectionCreditPicker(
@@ -690,16 +785,21 @@ class _PayrollCorrectionSourceEditorState
                       ..addAll(ids);
                   }),
                 ),
-              for (final value in op['allocations'] as List? ?? const [])
+              for (final value
+                  in (op['allocations'] as List? ?? const []).where(
+                    (value) => workforceMap(value)['active'] != false,
+                  ))
                 PayrollCorrectionAllocationEditor(
                   controller: c,
                   allocation: workforceMap(value),
+                  saved: allocationChanges,
                   locked: c.locked,
                   onChanged: (entry, change) =>
                       allocationChanges[entry] = change,
                 ),
             ],
-            if (mode != 'cancel_leave')
+            if (mode != 'cancel_leave') ...[
+              const SizedBox(height: 16),
               TextFormField(
                 initialValue: seconds,
                 enabled: !c.locked,
@@ -709,6 +809,7 @@ class _PayrollCorrectionSourceEditorState
                 ),
                 onChanged: (v) => seconds = v,
               ),
+            ],
             TextButton(
               onPressed: c.locked
                   ? null
@@ -734,7 +835,7 @@ class _PayrollCorrectionSourceEditorState
                                     startOffset,
                                   ),
                                   'end_offset_seconds': int.tryParse(endOffset),
-                                  'breaks': geometry['breaks'] ?? <Object?>[],
+                                  'breaks': breaks,
                                   if (billingCredits.isNotEmpty)
                                     'billing_credit_line_ids': billingCredits
                                         .toList(),
@@ -763,9 +864,11 @@ class PayrollCorrectionAllocationEditor extends StatefulWidget {
     required this.allocation,
     required this.locked,
     required this.onChanged,
+    required this.saved,
     super.key,
   });
   final PayrollCorrectionController controller;
+  final Map<String, Map<String, Object?>> saved;
   final Map<String, Object?> allocation;
   final bool locked;
   final void Function(String, Map<String, Object?>) onChanged;
@@ -784,6 +887,7 @@ class _PayrollCorrectionAllocationEditorState
   late Map<String, Object?> operational, before, geometry;
   late String entry;
   final billingCredits = <String>{};
+  List<Map<String, Object?>> breaks = [];
   @override
   void initState() {
     super.initState();
@@ -795,10 +899,25 @@ class _PayrollCorrectionAllocationEditorState
     entry =
         (operational['entry_id'] ?? before['entry_id'] ?? before['id'])
             as String;
-    start = '${geometry['start_local'] ?? ''}'.replaceFirst(' ', 'T');
-    end = '${geometry['end_local'] ?? ''}'.replaceFirst(' ', 'T');
-    startOffset = '${geometry['start_offset_seconds'] ?? ''}';
-    endOffset = '${geometry['end_offset_seconds'] ?? ''}';
+    final saved = widget.saved[entry];
+    mode = saved?['mode'] as String? ?? 'retain';
+    start = '${saved?['start_local'] ?? geometry['start_local'] ?? ''}'
+        .replaceFirst(' ', 'T');
+    end = '${saved?['end_local'] ?? geometry['end_local'] ?? ''}'.replaceFirst(
+      ' ',
+      'T',
+    );
+    startOffset =
+        '${saved?['start_offset_seconds'] ?? geometry['start_offset_seconds'] ?? ''}';
+    endOffset =
+        '${saved?['end_offset_seconds'] ?? geometry['end_offset_seconds'] ?? ''}';
+    billingCredits.addAll(
+      (saved?['billing_credit_line_ids'] as List? ?? const []).cast<String>(),
+    );
+    breaks =
+        (saved?['breaks'] as List? ?? geometry['breaks'] as List? ?? const [])
+            .map(workforceMap)
+            .toList();
   }
 
   void save() => widget.onChanged(entry, {
@@ -811,7 +930,7 @@ class _PayrollCorrectionAllocationEditorState
       'end_local': end,
       'start_offset_seconds': int.tryParse(startOffset),
       'end_offset_seconds': int.tryParse(endOffset),
-      'breaks': geometry['breaks'] ?? const <Object?>[],
+      'breaks': breaks,
     },
   });
   @override
@@ -824,6 +943,8 @@ class _PayrollCorrectionAllocationEditorState
           'Linked ${widget.allocation['source_kind']} allocation · ${operational['project_name'] ?? before['project_name'] ?? before['work_order_id'] ?? entry}',
         ),
         DropdownButtonFormField<String>(
+          isExpanded: true,
+          itemHeight: null,
           initialValue: mode,
           decoration: const InputDecoration(labelText: 'Allocation impact'),
           items: const [
@@ -861,6 +982,14 @@ class _PayrollCorrectionAllocationEditorState
           },
         ),
         if (mode == 'geometry') ...[
+          PayrollCorrectionBreakEditor(
+            breaks: breaks,
+            locked: widget.locked,
+            onChanged: (values) {
+              setState(() => breaks = values);
+              save();
+            },
+          ),
           TextFormField(
             initialValue: start,
             enabled: !widget.locked,
@@ -908,6 +1037,77 @@ class _PayrollCorrectionAllocationEditorState
         ],
       ],
     ),
+  );
+}
+
+class PayrollCorrectionBreakEditor extends StatelessWidget {
+  const PayrollCorrectionBreakEditor({
+    required this.breaks,
+    required this.locked,
+    required this.onChanged,
+    super.key,
+  });
+  final List<Map<String, Object?>> breaks;
+  final bool locked;
+  final ValueChanged<List<Map<String, Object?>>> onChanged;
+  void update(int index, String key, String value) => onChanged([
+    for (var i = 0; i < breaks.length; i++)
+      if (i == index) {...breaks[i], key: value} else {...breaks[i]},
+  ]);
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      const Text(
+        'Exact unpaid breaks. Enter UTC timestamps as YYYY-MM-DDTHH:MM:SSZ; breaks must fit the revised interval.',
+      ),
+      for (var i = 0; i < breaks.length; i++)
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              children: [
+                TextFormField(
+                  key: ValueKey('$i:start:${breaks.length}'),
+                  initialValue: breaks[i]['start_utc'] as String?,
+                  enabled: !locked,
+                  decoration: InputDecoration(
+                    labelText: 'Break ${i + 1} start UTC',
+                  ),
+                  onChanged: (value) => update(i, 'start_utc', value),
+                ),
+                TextFormField(
+                  key: ValueKey('$i:end:${breaks.length}'),
+                  initialValue: breaks[i]['end_utc'] as String?,
+                  enabled: !locked,
+                  decoration: InputDecoration(
+                    labelText: 'Break ${i + 1} end UTC',
+                  ),
+                  onChanged: (value) => update(i, 'end_utc', value),
+                ),
+                TextButton(
+                  onPressed: locked
+                      ? null
+                      : () => onChanged([
+                          for (var j = 0; j < breaks.length; j++)
+                            if (j != i) {...breaks[j]},
+                        ]),
+                  child: Text('Remove break ${i + 1}'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      TextButton(
+        onPressed: locked || breaks.length >= 100
+            ? null
+            : () => onChanged([
+                ...breaks,
+                {'start_utc': '', 'end_utc': ''},
+              ]),
+        child: const Text('Add exact unpaid break'),
+      ),
+    ],
   );
 }
 
@@ -1023,7 +1223,7 @@ class PayrollCorrectionReverseCredits extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Current linked work · ${allocation['project_name'] ?? before['work_order_id'] ?? entry}',
+                    'Current linked work${workforceMap(value)['active'] == false ? ' · removed allocation' : ''} · ${allocation['project_name'] ?? before['work_order_id'] ?? entry}',
                   ),
                   PayrollCorrectionCreditPicker(
                     controller: controller,

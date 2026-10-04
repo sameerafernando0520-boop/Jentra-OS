@@ -21,6 +21,6 @@ end $$;
 $taskQuery=(@('begin;',"set local lock_timeout='3s';","set local statement_timeout='60s';")+$taskMigrations+@(
  'create temporary table project_assertions(message text);','grant insert on project_assertions to authenticated,service_role;',
  $taskFixture,$taskTests,$taskDiagnostic,'set constraints all immediate;','select * from finish(true);'
-)+$(if($ClientSamples){'select jsonb_object_agg(label,body) project_client_samples from project_client_samples;'}else{''})+@('rollback;'))-join [Environment]::NewLine
+)+$(if($ClientSamples){'select (select count(*) from project_assertions) assertions,jsonb_object_agg(label,body) project_client_samples from project_client_samples;'}else{'select count(*) assertions from project_assertions;'})+@('rollback;'))-join [Environment]::NewLine
 if($taskQuery -match '(?im)^\s*commit\s*;' -or $taskQuery.TrimEnd() -notmatch 'rollback;$'){throw 'Project verification must end in rollback.'}
 $taskQuery

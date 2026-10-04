@@ -1,5 +1,22 @@
 # Independent approved Wave3 requirements/database refresh — 2026-10-03
 
+This document preserves the earlier review state. The owner subsequently
+approved the negative-stock policy explicitly: interim issues use the last
+authoritative positive moving-average cost, unknown cost basis is blocked, and
+later receipts post linked variance corrections. The earlier statements below
+that this decision is unapproved are historical. The selected-policy contract
+is `docs/blueprint/64_WAVE3_NEGATIVE_STOCK_POLICY_CONTRACT.md`; additive ordinal46
+development and fresh verification are in progress. Approval of this accounting
+policy does not approve installation, persistent fixtures, authenticated native
+acceptance, target load or release signoff.
+
+Current requirement resolution will be recorded by the final dated exact181
+matrix after source-matched execution. The initial management-runner HTTP401
+did not execute SQL. The first actual connected-MCP strict136 policy stack
+failed with `INVENTORY_COST_UNAVAILABLE` in an older quantity-only fixture before
+TAP completion; its exact query and failed response remain preserved. Prepared
+later source revisions do not count as successful database execution.
+
 All181 approved IDs and exact normalized full wording are independently re-extracted from the approved specification:95FR,26AC,40EC,20NFR. Current HEAD is 7c08ea890746b1914c2f6e825523482a9146114c. The companion JSON records current source hashes per ID and separately marks historical execution evidence. No requirement is added.
 
 Fresh read-only [refresh-resume-20261003.json](../../../docs/verification/remaining-wave3/refresh-resume-20261003.json) records 37 installed migrations,85 API functions and four unchanged shared finance helpers. All45 candidate bodies match the prior reviewed SHA-256 and remain unapplied. Ordinal36 posted-journal evidence precedes37 operational evidence; lexical filename order is unsuitable.
