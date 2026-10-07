@@ -1,0 +1,52 @@
+00:00 +0: loading C:/jw4-integrated-20261004-a/apps/jentra_desktop/test/expense_evidence_workspace_test.dart
+00:00 +0: (setUpAll)
+00:01 +0: lost policy response is discoverable after controller recreation and resolves original identity
+Synthetic evidence diagnostic: FormatException: Calendar response contains missing or unexpected fields.
+#0      calendarFields (package:jentra_domain/src/calendar_repository.dart:21:5)
+#1      new ExpenseEvidenceConfirmation.fromJson (package:jentra_domain/src/expense_evidence.dart:148:5)
+#2      Server.command (file:///C:/jw4-integrated-20261004-a/apps/jentra_desktop/test/expense_evidence_workspace_test.dart:155:48)
+#3      ExpenseEvidenceController._send (package:jentra_desktop/src/features/projects/expense_evidence_controller.dart:216:30)
+<asynchronous suspension>
+#4      ExpenseEvidenceController.createPolicy.<anonymous closure> (package:jentra_desktop/src/features/projects/expense_evidence_controller.dart:402:9)
+<asynchronous suspension>
+#5      ExpenseEvidenceController._operation (package:jentra_desktop/src/features/projects/expense_evidence_controller.dart:57:7)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///C:/jw4-integrated-20261004-a/apps/jentra_desktop/test/expense_evidence_workspace_test.dart:313:5)
+<asynchronous suspension>
+#7      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:253:15)
+<asynchronous suspension>
+#8      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:250:11)
+<asynchronous suspension>
+#9      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:318:9)
+<asynchronous suspension>
+
+Synthetic evidence diagnostic: FormatException: Calendar response contains missing or unexpected fields.
+#0      calendarFields (package:jentra_domain/src/calendar_repository.dart:21:5)
+#1      new ExpenseEvidenceConfirmation.fromJson (package:jentra_domain/src/expense_evidence.dart:148:5)
+#2      Server.command (file:///C:/jw4-integrated-20261004-a/apps/jentra_desktop/test/expense_evidence_workspace_test.dart:155:48)
+#3      ExpenseEvidenceController.retryPolicy.<anonymous closure> (package:jentra_desktop/src/features/projects/expense_evidence_controller.dart:438:39)
+<asynchronous suspension>
+#4      ExpenseEvidenceController._operation (package:jentra_desktop/src/features/projects/expense_evidence_controller.dart:57:7)
+<asynchronous suspension>
+#5      main.<anonymous closure> (file:///C:/jw4-integrated-20261004-a/apps/jentra_desktop/test/expense_evidence_workspace_test.dart:325:5)
+<asynchronous suspension>
+#6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:253:15)
+<asynchronous suspension>
+#7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:250:11)
+<asynchronous suspension>
+#8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:318:9)
+<asynchronous suspension>
+
+00:04 +0 -1: lost policy response is discoverable after controller recreation and resolves original identity [E]
+  Expected: <null>
+    Actual: 'Check the bounded evidence fields or retry the exact saved request.'
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\expense_evidence_workspace_test.dart 326:5     main.<fn>
+  
+00:04 +0 -1: (tearDownAll)
+00:04 +0 -1: Some tests failed.
+
+Failing tests:
+  C:/jw4-integrated-20261004-a/apps/jentra_desktop/test/expense_evidence_workspace_test.dart: lost policy response is discoverable after controller recreation and resolves original identity

@@ -1,0 +1,169 @@
+import 'dart:convert';
+import 'package:jentra_domain/analytics.dart';
+import 'package:jentra_domain/jentra_domain.dart' show DomainError;
+import '../draft_repository.dart';
+
+/// Original identities and bounded parameters only; no results or credentials.
+final class Wave5CommandStore {
+  Wave5CommandStore(this.drafts, this.authorize, {required this.namespace}) {
+    if (!{'pipeline', 'proposal', 'subscription'}.contains(namespace)) {
+      throw const FormatException('Unknown command recovery namespace.');
+    }
+  }
+  final EncryptedDraftRepository drafts;
+  final Future<void> Function(ProcessMetricScope, String) authorize;
+  final String namespace;
+  String _key(ProcessMetricScope scope, String actor) {
+    ProcessMetricScope(tenantId: actor, legalEntityId: actor);
+    return 'w5:$namespace:command:${base64Url.encode(utf8.encode(jsonEncode([actor, scope.tenantId, scope.legalEntityId, scope.branchId])))}';
+  }
+
+  void validate(Map<String, Object?> envelope) {
+    try {
+      _validateWire(envelope);
+    } on DomainError {
+      throw const FormatException(
+        'Invalid recovery identifiers or UTC parameters.',
+      );
+    }
+  }
+
+  void _validateWire(Map<String, Object?> envelope) {
+    if (envelope.length != 5 ||
+        !envelope.keys.toSet().containsAll({
+          'commandId',
+          'idempotencyKey',
+          'clientTimestamp',
+          'action',
+          'payload',
+        }) ||
+        envelope['commandId'] is! String ||
+        envelope['idempotencyKey'] is! String ||
+        envelope['clientTimestamp'] is! String ||
+        envelope['payload'] is! Map<String, Object?> ||
+        utf8.encode(jsonEncode(envelope)).length > 8192) {
+      throw const FormatException('Invalid recovery envelope.');
+    }
+    ProcessMetricScope(
+      tenantId: envelope['commandId'] as String,
+      legalEntityId: envelope['idempotencyKey'] as String,
+    );
+    parseProcessMetricUtc(envelope['clientTimestamp'] as String);
+    final payload = envelope['payload'] as Map<String, Object?>;
+    final allowed = namespace == 'pipeline'
+        ? {
+            'freeze': {'horizonStart', 'horizonEnd'},
+          }
+        : namespace == 'subscription'
+        ? {
+            'schedule': {
+              'expectedVersion',
+              'plan',
+              'seats',
+              'trialStart',
+              'trialEnd',
+            },
+          }
+        : {
+            'create': {'sourceId', 'expiresAt'},
+            'decide': {'proposalId', 'parametersHash', 'decision'},
+            'execute': {'proposalId'},
+          };
+    final fields = allowed[envelope['action']];
+    if (fields == null ||
+        payload.length != fields.length ||
+        !payload.keys.toSet().containsAll(fields) ||
+        payload.values.any((v) => v is! String)) {
+      throw const FormatException('Unsupported recovered command parameters.');
+    }
+    for (final key in ['sourceId', 'proposalId']) {
+      if (payload.containsKey(key)) {
+        final id = payload[key] as String;
+        ProcessMetricScope(tenantId: id, legalEntityId: id);
+      }
+    }
+    if (payload.containsKey('expiresAt')) {
+      parseProcessMetricUtc(payload['expiresAt'] as String);
+    }
+    if (payload.containsKey('parametersHash') &&
+        !RegExp(
+          r'^[0-9a-f]{64}$',
+        ).hasMatch(payload['parametersHash'] as String)) {
+      throw const FormatException('Invalid recovered approval hash.');
+    }
+    if (payload.containsKey('decision') &&
+        !{'approved', 'rejected'}.contains(payload['decision'])) {
+      throw const FormatException('Invalid recovered decision.');
+    }
+    if (namespace == 'subscription') {
+      if (!RegExp(
+            r'^[1-9][0-9]{0,18}$',
+          ).hasMatch(payload['expectedVersion'] as String) ||
+          BigInt.parse(payload['expectedVersion'] as String) >
+              BigInt.parse('9223372036854775807') ||
+          !RegExp(
+            r'^[a-z][a-z0-9_]{0,63}$',
+          ).hasMatch(payload['plan'] as String) ||
+          !RegExp(r'^[1-9][0-9]{0,4}$').hasMatch(payload['seats'] as String) ||
+          int.parse(payload['seats'] as String) > 10000) {
+        throw const FormatException(
+          'Invalid recovered subscription parameters.',
+        );
+      }
+      final start = parseProcessMetricUtc(payload['trialStart'] as String),
+          end = parseProcessMetricUtc(payload['trialEnd'] as String);
+      if (!end.isAfter(start) ||
+          end.difference(start) > const Duration(days: 366)) {
+        throw const FormatException('Invalid recovered trial.');
+      }
+    }
+    if (namespace == 'pipeline') {
+      final start = parseProcessMetricUtc(
+            '${payload['horizonStart']}T00:00:00Z',
+          ),
+          end = parseProcessMetricUtc('${payload['horizonEnd']}T00:00:00Z');
+      if (!end.isAfter(start) ||
+          end.difference(start) > const Duration(days: 366)) {
+        throw const FormatException('Invalid recovered forecast horizon.');
+      }
+    }
+  }
+
+  Future<void> save(
+    ProcessMetricScope scope,
+    String actor,
+    Map<String, Object?> envelope,
+  ) async {
+    validate(envelope);
+    await authorize(scope, actor);
+    await drafts.save(
+      id: _key(scope, actor),
+      tenantId: scope.tenantId,
+      entityType: 'wave5_${namespace}_command',
+      payload: envelope,
+      localVersion: 1,
+    );
+  }
+
+  Future<Map<String, Object?>?> restore(
+    ProcessMetricScope scope,
+    String actor,
+  ) async {
+    final key = _key(scope, actor);
+    await authorize(scope, actor);
+    final found = await drafts.find(key);
+    await authorize(scope, actor);
+    if (found == null) return null;
+    if (found.tenantId != scope.tenantId ||
+        found.entityType != 'wave5_${namespace}_command') {
+      throw const FormatException('Recovery context changed.');
+    }
+    validate(found.payload);
+    return Map.unmodifiable(found.payload);
+  }
+
+  Future<void> remove(ProcessMetricScope scope, String actor) async {
+    await authorize(scope, actor);
+    await drafts.delete(_key(scope, actor));
+  }
+}

@@ -4,8 +4,12 @@ import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_domain/jentra_people.dart';
 import 'package:jentra_domain/jentra_projects.dart';
 import 'package:jentra_domain/jentra_project_finance.dart';
+import 'package:jentra_domain/jentra_expense_evidence.dart';
+import 'package:jentra_platform/jentra_expense_evidence_platform.dart';
 
 import 'project_finance_controller.dart';
+import 'expense_evidence_screen.dart';
+import '../../app_providers.dart';
 
 final class ProjectFinanceScreen extends ConsumerStatefulWidget {
   const ProjectFinanceScreen({
@@ -26,6 +30,159 @@ final class ProjectFinanceScreen extends ConsumerStatefulWidget {
 
 final class _ProjectFinanceScreenState
     extends ConsumerState<ProjectFinanceScreen> {
+  Future<void> _evidence(
+    ProjectFinanceController c, {
+    required bool editable,
+  }) async {
+    final repository = ref.read(projectExpenseEvidenceRepositoryProvider);
+    if (repository == null || !c.current || !c.has(expenseEvidenceView)) return;
+    final expenseId = editable ? c.form!['id'] as String : c.review!.id;
+    final raw = editable
+        ? c.form!['evidence_documents']
+        : c.review!.values['evidence_documents'];
+    final proofs = expenseEvidenceProofs(raw ?? const []);
+    if (!await c.openEvidence(expenseId)) return;
+    if (!mounted || !c.current) {
+      c.closeEvidence(expenseId);
+      return;
+    }
+    final encrypted = ref.read(encryptedDraftRepositoryProvider);
+    final drafts = SensitiveExpenseEvidenceDraftStore(encrypted, (
+      scope,
+      project,
+      expense,
+      cap,
+    ) async {
+      await repository.authorize(scope, project, expense, cap);
+    });
+    try {
+      await showDialog<void>(
+        context: context,
+        builder: (context) => Dialog(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 960, maxHeight: 720),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Text('Protected expense documents'),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close),
+                        tooltip: 'Close documents',
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Consumer(
+                    builder: (context, dialogRef, _) {
+                      final active =
+                          widget.controller ??
+                          dialogRef.watch(
+                            projectFinanceControllerProvider((
+                              widget.projectId,
+                              widget.currency,
+                              widget.precision,
+                            )),
+                          );
+                      return ListenableBuilder(
+                        listenable: c,
+                        builder: (context, _) {
+                          if (!identical(active, c) ||
+                              !c.current ||
+                              !c.online) {
+                            return const Center(
+                              child: Text(
+                                'Protected documents cleared. Refresh current access before reopening.',
+                              ),
+                            );
+                          }
+                          return ExpenseEvidencePanel(
+                            scope: c.scope,
+                            projectId: c.projectId,
+                            expenseId: expenseId,
+                            repository: repository,
+                            drafts: drafts,
+                            initialProofs: proofs,
+                            editable: editable,
+                            onChanged: editable
+                                ? (selected) {
+                                    if (c.current &&
+                                        !c.locked &&
+                                        c.form?['id'] == expenseId) {
+                                      c.change(
+                                        'evidence_documents',
+                                        selected
+                                            .map((p) => p.toJson())
+                                            .toList(),
+                                      );
+                                    }
+                                  }
+                                : null,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    } finally {
+      c.closeEvidence(expenseId);
+    }
+  }
+
+  Widget _evidenceCard(ProjectFinanceController c, {required bool editable}) {
+    final raw = editable
+        ? c.form!['evidence_documents']
+        : c.review!.values['evidence_documents'];
+    final count = expenseEvidenceProofs(raw ?? const []).length;
+    final available =
+        ref.watch(projectExpenseEvidenceRepositoryProvider) != null &&
+        c.has(expenseEvidenceView);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '$count protected document ${count == 1 ? 'proof' : 'proofs'} ${editable ? 'selected' : 'frozen with this revision'}',
+            ),
+            if (!available)
+              const Text(
+                'Private document access is unavailable in this session.',
+              ),
+            TextButton.icon(
+              onPressed:
+                  available &&
+                      c.current &&
+                      c.online &&
+                      !c.busy &&
+                      (!editable || !c.locked)
+                  ? () => _evidence(c, editable: editable)
+                  : null,
+              icon: const Icon(Icons.attach_file),
+              label: Text(
+                editable
+                    ? 'Select protected documents'
+                    : 'Review protected documents',
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<ProjectFinanceChoice?> _choice(
     ProjectFinanceController c,
     String kind,
@@ -272,7 +429,7 @@ final class _ProjectFinanceScreenState
             ),
             const SizedBox(height: 12),
             const Text(
-              'Synthetic development. Recorded reimbursement settlement does not execute a bank payment. Supplier AP and protected expense attachments are unavailable.',
+              'Synthetic development. Recorded reimbursement settlement does not execute a bank payment. Supplier AP is unavailable. Protected documents require current private access and verified storage availability.',
             ),
             if (c.busy) const LinearProgressIndicator(),
             if (c.error != null)
@@ -481,11 +638,17 @@ final class _ProjectFinanceScreenState
             if (row.section == ProjectFinanceSection.history)
               Text('${row.values['action']} · ${row.values['recorded_at']}'),
             if (row.values['payment_due_days'] != null)
-              Text('Payment due ${row.values['payment_due_days']} days after invoice · ${row.values['payment_terms']}'),
+              Text(
+                'Payment due ${row.values['payment_due_days']} days after invoice · ${row.values['payment_terms']}',
+              ),
             if (row.section == ProjectFinanceSection.serviceCosts) ...[
-              Text('Original ${row.values['payable_seconds']} seconds · hourly cost ${row.values['hourly_cost']} ${row.values['currency_code']}'),
+              Text(
+                'Original ${row.values['payable_seconds']} seconds · hourly cost ${row.values['hourly_cost']} ${row.values['currency_code']}',
+              ),
               Text('Recorded ${row.values['recorded_at']}'),
-              const Text('Immutable service revision. Later corrections keep this original basis.'),
+              const Text(
+                'Immutable service revision. Later corrections keep this original basis.',
+              ),
             ],
             Wrap(
               spacing: 8,
@@ -609,6 +772,7 @@ final class _ProjectFinanceScreenState
                 'Approved service labor',
               ),
             if (c.review?.section == ProjectFinanceSection.expenses) ...[
+              _evidenceCard(c, editable: false),
               for (final k in [
                 'base_net',
                 'base_tax',
@@ -634,7 +798,8 @@ final class _ProjectFinanceScreenState
               _field(c, 'external_reference', 'Original external reference'),
               _field(c, 'service_date', 'Service date YYYY-MM-DD'),
               _field(c, 'purpose', 'Purpose', lines: 2),
-              _field(c, 'evidence_reference', 'Synthetic evidence reference'),
+              _field(c, 'evidence_reference', 'Evidence narrative reference'),
+              _evidenceCard(c, editable: true),
               _field(c, 'original_currency', 'Original currency'),
               _field(c, 'net', 'Original net'),
               _field(c, 'tax', 'Original tax'),

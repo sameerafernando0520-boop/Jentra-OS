@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'calendar_repository.dart';
 import 'commands.dart';
 import 'employee.dart';
+import 'expense_evidence.dart';
 import 'money.dart';
 import 'project_values.dart';
 import 'projects_repository.dart';
@@ -69,6 +70,7 @@ Set<String> projectFinanceFields(String action) {
       'service_date',
       'purpose',
       'evidence_reference',
+      'evidence_documents',
       'original_currency',
       'original_precision',
       'net',
@@ -142,6 +144,7 @@ void validateProjectFinanceCommand(String action, Map<String, Object?> p) {
     projectDigest(p['source_digest']);
   }
   if (action == 'expense_create' || action == 'expense_correct') {
+    expenseEvidenceProofs(p['evidence_documents'] ?? const []);
     for (final k in [
       'employee_id',
       'expense_account_id',
@@ -313,6 +316,7 @@ final class ProjectFinanceRow {
           'purpose',
           'service_date',
           'evidence_reference',
+          'evidence_documents',
           'original_currency',
           'base_currency',
           'original_precision',
@@ -357,6 +361,7 @@ final class ProjectFinanceRow {
         projectIdentity(j['revision_id']);
         projectIdentity(j['employee_id']);
         projectDigest(j['digest']);
+        expenseEvidenceProofs(j['evidence_documents']);
         final c = j['original_currency'] as String,
             base = j['base_currency'] as String;
         final net = projectAmount(j['net'] as String, c),
@@ -522,7 +527,10 @@ final class ProjectFinanceRow {
           'source_version',
           'source_digest',
           if (j.containsKey('source_name')) 'source_name',
-          if (j['source_kind'] == 'milestone') ...{'payment_terms', 'payment_due_days'},
+          if (j['source_kind'] == 'milestone') ...{
+            'payment_terms',
+            'payment_due_days',
+          },
           'amount',
           'payable_seconds',
           'status',
@@ -531,7 +539,7 @@ final class ProjectFinanceRow {
           j['source_kind'] as String,
         );
         if (source == ProjectBillingSource.milestone) {
-          projectText(j['payment_terms'], 500);
+          projectText(j['payment_terms'], 1000);
           final days = workforceInteger(j['payment_due_days']);
           if (days < 0 || days > 365) {
             throw const FormatException('Milestone payment term changed.');
@@ -565,9 +573,19 @@ final class ProjectFinanceRow {
         break;
       case ProjectFinanceSection.serviceCosts:
         allow = {
-          ...common, 'provider_source_id', 'source_revision_id', 'source_version',
-          'source_digest', 'currency_code', 'precision', 'service_date',
-          'payable_seconds', 'hourly_cost', 'amount', 'status', 'recorded_at',
+          ...common,
+          'provider_source_id',
+          'source_revision_id',
+          'source_version',
+          'source_digest',
+          'currency_code',
+          'precision',
+          'service_date',
+          'payable_seconds',
+          'hourly_cost',
+          'amount',
+          'status',
+          'recorded_at',
         };
         projectIdentity(j['provider_source_id']);
         projectIdentity(j['source_revision_id']);
@@ -579,15 +597,23 @@ final class ProjectFinanceRow {
           throw const FormatException('Service cost currency changed.');
         }
         final seconds = workforceInteger(j['payable_seconds']);
-        if (seconds < 0 || seconds > 2678400 || status == 'cancelled' && seconds != 0) {
+        if (seconds < 0 ||
+            seconds > 2678400 ||
+            status == 'cancelled' && seconds != 0) {
           throw const FormatException('Service cost duration changed.');
         }
         final rate = projectAmount(j['hourly_cost'] as String, currency);
         amount = projectAmount(j['amount'] as String, currency);
-        if (projectRoundRatio(rate.minorUnits * BigInt.from(seconds), BigInt.from(3600), precision) != amount.minorUnits) {
+        if (projectRoundRatio(
+              rate.minorUnits * BigInt.from(seconds),
+              BigInt.from(3600),
+              precision,
+            ) !=
+            amount.minorUnits) {
           throw const FormatException('Service cost evidence changed.');
         }
-        title = 'Service labor cost · ${CivilDate.parse(j['service_date'] as String).value}';
+        title =
+            'Service labor cost · ${CivilDate.parse(j['service_date'] as String).value}';
         DateTime.parse(j['recorded_at'] as String);
         break;
       case ProjectFinanceSection.history:
@@ -724,6 +750,11 @@ final class ProjectMargin {
 
 abstract interface class ProjectFinanceRepository {
   Future<void> authorize(TenantContext scope, String capability);
+  Future<void> authorizeEvidence(
+    TenantContext scope,
+    String projectId,
+    String expenseId,
+  );
   Future<ProjectFinancePage<ProjectFinanceRow>> detail(
     TenantContext scope,
     String projectId,

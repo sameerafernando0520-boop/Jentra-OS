@@ -1,0 +1,87 @@
+{
+  "artifact_tag": "20261006-final",
+  "head": "d7a2022faf2631e15b9ba2bc181c8b6fa9d83acc",
+  "database_package": "docs/verification/remaining-wave3/database-installation-package-negative-stock-policy-20261006-final-reviewed-46-reviewed.json",
+  "coverage_scope": "docs/verification/remaining-wave3/requirements-coverage-paths-negative-stock-policy-20261003.txt",
+  "coverage_raw": "docs/verification/remaining-wave3/requirements-coverage-source-checked-20261006-final.json",
+  "coverage_reviewed": "docs/verification/remaining-wave3/requirements-coverage-policy-declaration-reviewed-20261006-final.json",
+  "coverage_additional_pure_domain": "docs/verification/remaining-wave3/requirements-coverage-additional-pure-domain-20261006-final.json",
+  "desktop_failure_classification": "docs/verification/remaining-wave3/desktop-result-20261006.json",
+  "policy": {
+    "selection": "last_authoritative_positive_moving_average",
+    "approved": true,
+    "owner_reply": "Approve interim issues at the last authoritative positive moving-average cost, block unknown cost basis, and post linked later-receipt variance corrections.",
+    "contract": "docs/blueprint/64_WAVE3_NEGATIVE_STOCK_POLICY_CONTRACT.md",
+    "candidate": "supabase/migrations/20261003090000_wave3_negative_stock_policy.sql",
+    "assertions": "supabase/tests/wave3_negative_stock_policy_20261003_test.sql",
+    "dart_sources": [
+      "packages/jentra_domain/lib/src/negative_stock_policy.dart",
+      "packages/jentra_domain/lib/src/negative_stock_policy_repository.dart",
+      "packages/jentra_domain/lib/src/lead_to_cash.dart",
+      "packages/jentra_platform/lib/src/supabase_negative_stock_policy_gateway.dart",
+      "packages/jentra_platform/lib/src/quotation_draft_store.dart",
+      "apps/jentra_desktop/lib/src/features/negative_stock/negative_stock_policy_controller.dart",
+      "apps/jentra_desktop/lib/src/features/negative_stock/negative_stock_policy_screen.dart",
+      "apps/jentra_desktop/lib/src/features/sales/quotation_controller.dart",
+      "apps/jentra_desktop/lib/src/features/sales/sales_order_controller.dart",
+      "apps/jentra_desktop/lib/src/features/sales/sales_order_dialogs.dart",
+      "apps/jentra_desktop/lib/src/features/sales/sales_order_screen.dart",
+      "apps/jentra_desktop/lib/main.dart",
+      "apps/jentra_desktop/lib/src/router.dart",
+      "apps/jentra_desktop/lib/src/shell/navigation.dart"
+    ],
+    "implemented": true,
+    "execution": "docs/verification/remaining-wave3/database-procurement-negative-stock-final-reviewed-20261006.json",
+    "query": "docs/verification/remaining-wave3/database-strict-procurement-negative-stock-final-reviewed-20261006.sql",
+    "pure_domain_sources": [
+      "packages/jentra_domain/lib/src/negative_stock_policy.dart"
+    ]
+  },
+  "checks": [
+    {
+      "kind": "desktop-whole-current",
+      "file": "docs/verification/remaining-wave3/desktop-full-final-20261006.log",
+      "passed": 1775,
+      "failed": 83,
+      "complete": true,
+      "source_capture": "docs/verification/remaining-wave3/client-sources-final-start-20261006.json"
+    },
+    {
+      "kind": "platform-whole-current",
+      "file": "docs/verification/remaining-wave3/platform-full-final-20261006.log",
+      "passed": 1062,
+      "failed": 0,
+      "complete": true,
+      "source_capture": "docs/verification/remaining-wave3/client-sources-final-start-20261006.json"
+    },
+    {
+      "kind": "domain-whole-current",
+      "file": "docs/verification/remaining-wave3/domain-full-final-20261006.log",
+      "passed": 340,
+      "failed": 0,
+      "complete": true,
+      "source_capture": "docs/verification/remaining-wave3/client-sources-final-start-20261006.json"
+    },
+    {
+      "kind": "whole-workspace-analyzer",
+      "file": "docs/verification/remaining-wave3/analyzer-final-20261006.log",
+      "complete": true,
+      "outcome": "No issues found",
+      "source_capture": "docs/verification/remaining-wave3/client-sources-final-start-20261006.json"
+    },
+    {
+      "kind": "isolated-windows-release",
+      "file": "docs/verification/remaining-wave3/windows-build-final-20261006.json",
+      "complete": true,
+      "outcome": "Compiled; not launched",
+      "build_source_hashes": "docs/verification/remaining-wave3/windows-build-final-source-hashes-20261006.json"
+    }
+  ],
+  "additional_review": [
+    "docs/verification/remaining-wave3/candidate-review-selection-verified-20261006.json",
+    "docs/verification/remaining-wave3/schema-negative-stock-policy-20261006-final-reviewed-46.json",
+    "docs/verification/remaining-wave3/policy-visual-reuse-audit-20261006.json",
+    "docs/verification/remaining-wave3/desktop-result-20261006.json",
+    "docs/verification/remaining-wave3/desktop-final-20261006-source-integrity.json"
+  ]
+}

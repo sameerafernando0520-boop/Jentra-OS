@@ -434,3 +434,16 @@ entrypoint = "./functions/people-private-purge/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/people-private-purge/*.html" ]
+
+# Uninstalled Wave 4 private expense candidates. Activation needs its own review.
+[functions.expense-private-documents]
+enabled = true
+verify_jwt = true
+import_map = "./functions/expense-private-documents/deno.json"
+entrypoint = "./functions/expense-private-documents/index.ts"
+
+[functions.expense-private-purge]
+enabled = true
+verify_jwt = false
+import_map = "./functions/expense-private-purge/deno.json"
+entrypoint = "./functions/expense-private-purge/index.ts"

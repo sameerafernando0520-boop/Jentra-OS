@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jentra_domain/jentra_service.dart';
 
 import '../../app_providers.dart';
@@ -191,6 +192,20 @@ class _ServiceWorkspaceState extends State<ServiceWorkspace> {
                 'Approved billable labor is preserved for the billing workspace. The direct service invoice adapter is unavailable.',
               ),
             const SizedBox(height: 16),
+            if (c.has('service.configure') && c.has('assets.view'))
+              Align(
+                alignment: Alignment.centerLeft,
+                child: OutlinedButton(
+                  onPressed: c.online && !c.busy
+                      ? () async {
+                          if (await c.canLeave() && context.mounted) {
+                            context.go('/service/internal-assets');
+                          }
+                        }
+                      : null,
+                  child: const Text('Internal asset equipment'),
+                ),
+              ),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -632,6 +647,8 @@ class _ServiceEditorState extends State<ServiceEditor> {
                 'breaks',
                 'offsets',
                 'provider_id',
+                'provider_version',
+                'provider_digest',
               }.contains(x) &&
               !(a == 'generate' && {'ticket_id', 'order_id'}.contains(x)),
         ))

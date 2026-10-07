@@ -241,6 +241,13 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
   for (final item in jentraDestinations) {
     pendingSection = item.section ?? pendingSection;
     final permitted =
+        (item.path != '/analytics' ||
+            ({'analytics.view'}
+                    .every((p) => capabilities?.contains(p) ?? false) &&
+                {
+                  'crm.opportunities.view',
+                  'crm.opportunities.manage',
+                }.any((p) => capabilities?.contains(p) ?? false))) &&
         (item.path != '/setup' || canOpenSetup) &&
         (item.path != '/operations/notifications' ||
             (capabilities?.contains('core.roles.manage') ?? false)) &&

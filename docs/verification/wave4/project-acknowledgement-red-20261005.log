@@ -1,0 +1,53 @@
+00:00 +0: loading C:/jw4-integrated-20261004-a/packages/jentra_platform/test/project_command_acknowledgement_test.dart
+00:00 +0: exact request survives recreation without financial receipt data
+00:00 +0 -1: exact request survives recreation without financial receipt data [E]
+  Expected: Set:[
+              'scope',
+              'action',
+              'command_id',
+              'idempotency_key',
+              'entity_id',
+              'version',
+              'request_digest'
+            ]
+    Actual: Set:['scope', 'action', 'command_id', 'idempotency_key', 'entity_id', 'version']
+     Which: does not contain 'request_digest'
+  
+  package:matcher                                      expect
+  package:flutter_test/src/widget_tester.dart 473:18   expect
+  test\project_command_acknowledgement_test.dart 85:7  main.<fn>
+  
+00:00 +0 -1: changed body with the same identities cannot borrow confirmation
+00:00 +0 -2: changed body with the same identities cannot borrow confirmation [E]
+  Expected: throws <Instance of 'DomainError'>
+    Actual: <Instance of 'Future<bool>'>
+     Which: emitted <true>
+  
+  package:matcher                                        expectLater
+  package:flutter_test/src/widget_tester.dart 507:8      expectLater
+  test\project_command_acknowledgement_test.dart 108:13  main.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                             _CustomZone.registerUnaryCallback
+  test\project_command_acknowledgement_test.dart 107:7   main.<fn>
+  
+00:00 +0 -2: changed issued timestamp cannot borrow confirmation
+00:00 +0 -3: changed issued timestamp cannot borrow confirmation [E]
+  Expected: throws <Instance of 'DomainError'>
+    Actual: <Instance of 'Future<bool>'>
+     Which: emitted <true>
+  
+  package:matcher                                        expectLater
+  package:flutter_test/src/widget_tester.dart 507:8      expectLater
+  test\project_command_acknowledgement_test.dart 124:11  main.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                             _CustomZone.registerUnaryCallback
+  test\project_command_acknowledgement_test.dart 123:5   main.<fn>
+  
+00:00 +0 -3: object key ordering does not change the original request identity
+00:00 +1 -3: foreign scope confirmation is rejected before storage
+00:00 +2 -3: Some tests failed.
+
+Failing tests:
+  C:/jw4-integrated-20261004-a/packages/jentra_platform/test/project_command_acknowledgement_test.dart: changed body with the same identities cannot borrow confirmation
+  C:/jw4-integrated-20261004-a/packages/jentra_platform/test/project_command_acknowledgement_test.dart: changed issued timestamp cannot borrow confirmation
+  C:/jw4-integrated-20261004-a/packages/jentra_platform/test/project_command_acknowledgement_test.dart: exact request survives recreation without financial receipt data

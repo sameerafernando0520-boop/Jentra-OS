@@ -1,0 +1,176 @@
+00:00 +0: loading C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/pipeline_forecast_gateway_test.dart
+00:00 +0: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/pipeline_forecast_gateway_test.dart: actual SQL frozen bytes verify and match independent exact forecast
+00:00 +1: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/pipeline_forecast_gateway_test.dart: changed captured bytes and scope fail closed
+00:00 +2: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/pipeline_forecast_gateway_test.dart: evidence cannot diverge from hash-bound bytes
+00:00 +3: loading C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/process_filter_store_test.dart
+00:02 +3: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/process_filter_store_test.dart: recreated encrypted store restores filters, binds actor and retains no evidence rows
+00:02 +4: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/process_filter_store_test.dart: revocation prevents decryption of a persisted filter
+00:03 +5: loading C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/process_metric_gateway_test.dart
+00:04 +5: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/process_metric_gateway_test.dart: actual SQL wire verifies against independent Dart canonical SHA256 and exact summary
+00:04 +6: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/process_metric_gateway_test.dart: changed observations cannot pass digest verification
+00:04 +7: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/process_metric_gateway_test.dart: different valid cutoff response rejected before calculation
+00:04 +8: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/process_metric_gateway_test.dart: server diagnostics are sanitized and missing RPC is unavailable
+00:04 +9: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/process_metric_gateway_test.dart: detail rejects injected private fields and foreign event
+00:05 +10: loading C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/process_metric_hasher_test.dart
+00:07 +10: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/process_metric_hasher_test.dart: AC-558 nonempty canonical projection matches independent Python vector
+00:07 +11: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/process_metric_hasher_test.dart: AC-558 SHA-256 matches independent empty and ASCII vectors
+00:07 +12: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/process_metric_hasher_test.dart: AC-558 SHA-256 preserves binary bytes without text conversion
+00:07 +13: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/process_metric_hasher_test.dart: AC-558 canonical empty snapshot matches independent Python vector
+00:07 +14: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/process_metric_hasher_test.dart: AC-551 captured source digest changes when cutoff changes
+00:07 +15: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/process_metric_hasher_test.dart: AC-558 snapshot identity does not replace the captured value digest
+00:07 +16: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/process_metric_hasher_test.dart: AC-555 oversized digest payload fails before hashing
+00:07 +17: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/process_metric_hasher_test.dart: AC-558 invalid byte values cannot be normalized into evidence
+00:07 +18: loading C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/wave5_command_store_test.dart
+00:09 +18: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/wave5_command_store_test.dart: closed database reopens encrypted original command and isolates namespaces
+00:09 +19: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/wave5_command_store_test.dart: revocation before and after decryption rejects recovered commands
+00:09 +20: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/wave5_command_store_test.dart: unsupported, executable and malformed recovery parameters never persist
+00:09 +20 -1: C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/wave5_command_store_test.dart: unsupported, executable and malformed recovery parameters never persist [E]
+  Expected: throws <Instance of 'FormatException'>
+    Actual: <Instance of 'Future<void>'>
+     Which: threw DomainError:<DomainError(VALIDATION_ERROR, A valid scoped identifier is required.)>
+            stack package:jentra_domain/src/analytics/process_metrics.dart 529:5        _invalid
+                  package:jentra_domain/src/analytics/process_metrics.dart 500:5        _uuid
+                  package:jentra_domain/src/analytics/process_metrics.dart 36:19        new ProcessMetricScope
+                  package:jentra_platform/src/analytics/wave5_command_store.dart 36:5   Wave5CommandStore.validate
+                  package:jentra_platform/src/analytics/wave5_command_store.dart 126:5  Wave5CommandStore.save
+                  test\analytics\wave5_command_store_test.dart 124:33                   main.<fn>
+                  ===== asynchronous gap ===========================
+                  package:matcher                                                       expectLater
+                  package:flutter_test/src/widget_tester.dart 507:8                     expectLater
+                  test\analytics\wave5_command_store_test.dart 124:15                   main.<fn>
+                  ===== asynchronous gap ===========================
+                  dart:async                                                            _CustomZone.registerUnaryCallback
+                  test\analytics\wave5_command_store_test.dart 124:9                    main.<fn>
+                  
+            which is not an instance of 'FormatException'
+  
+  package:matcher                                      expectLater
+  package:flutter_test/src/widget_tester.dart 507:8    expectLater
+  test\analytics\wave5_command_store_test.dart 124:15  main.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                           _CustomZone.registerUnaryCallback
+  test\analytics\wave5_command_store_test.dart 124:9   main.<fn>
+  
+00:10 +20 -1: loading C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/wave5_control_gateway_test.dart
+test/analytics/wave5_control_gateway_test.dart:25:30: Error: Undefined name 'scope'.
+        {...raw, 'tenantId': scope.legalEntityId},
+                             ^^^^^
+test/analytics/wave5_control_gateway_test.dart:39:41: Error: Undefined name 'scope'.
+        ).authorizeSubscriptionRecovery(scope, scope.legalEntityId),
+                                        ^^^^^
+test/analytics/wave5_control_gateway_test.dart:39:48: Error: Undefined name 'scope'.
+        ).authorizeSubscriptionRecovery(scope, scope.legalEntityId),
+                                               ^^^^^
+test/analytics/wave5_control_gateway_test.dart:25:30: Error: Local variable 'scope' can't be referenced before it is declared.
+        {...raw, 'tenantId': scope.legalEntityId},
+                             ^^^^^
+test/analytics/wave5_control_gateway_test.dart:54:9: Context: This is the declaration of the variable 'scope'.
+  final scope = ProcessMetricScope(
+        ^^^^^
+test/analytics/wave5_control_gateway_test.dart:39:41: Error: Local variable 'scope' can't be referenced before it is declared.
+        ).authorizeSubscriptionRecovery(scope, scope.legalEntityId),
+                                        ^^^^^
+test/analytics/wave5_control_gateway_test.dart:54:9: Context: This is the declaration of the variable 'scope'.
+  final scope = ProcessMetricScope(
+        ^^^^^
+test/analytics/wave5_control_gateway_test.dart:39:48: Error: Local variable 'scope' can't be referenced before it is declared.
+        ).authorizeSubscriptionRecovery(scope, scope.legalEntityId),
+                                               ^^^^^
+test/analytics/wave5_control_gateway_test.dart:54:9: Context: This is the declaration of the variable 'scope'.
+  final scope = ProcessMetricScope(
+        ^^^^^
+test/analytics/wave5_control_gateway_test.dart:62:64: Error: Undefined name 'scope'.
+      final verified = await VerifiedHumanProposal.verify(raw, scope);
+                                                               ^^^^^
+test/analytics/wave5_control_gateway_test.dart:73:10: Error: Undefined name 'scope'.
+      }, scope),
+         ^^^^^
+test/analytics/wave5_control_gateway_test.dart:80:10: Error: Undefined name 'scope'.
+      }, scope),
+         ^^^^^
+test/analytics/wave5_control_gateway_test.dart:91:27: Error: Undefined name 'scope'.
+      ).authorizeRecovery(scope, actor);
+                          ^^^^^
+test/analytics/wave5_control_gateway_test.dart:95:29: Error: Undefined name 'scope'.
+        ).authorizeRecovery(scope, wrong),
+                            ^^^^^
+test/analytics/wave5_control_gateway_test.dart:101:29: Error: Undefined name 'scope'.
+        ).authorizeRecovery(scope, wrong),
+                            ^^^^^
+test/analytics/wave5_control_gateway_test.dart:107:37: Error: Undefined name 'scope'.
+        ).authorizeProposalRecovery(scope, wrong),
+                                    ^^^^^
+test/analytics/wave5_control_gateway_test.dart:173:21: Error: Undefined name 'scope'.
+        'tenantId': scope.tenantId,
+                    ^^^^^
+test/analytics/wave5_control_gateway_test.dart:188:11: Error: Undefined name 'scope'.
+          scope.tenantId,
+          ^^^^^
+test/analytics/wave5_control_gateway_test.dart:197:17: Error: Undefined name 'scope'.
+        ).usage(scope.tenantId, 'ai.tokens', '2026-10-01T00:00:00Z'),
+                ^^^^^
+00:10 +20 -2: loading C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/wave5_control_gateway_test.dart [E]
+  Failed to load "C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/wave5_control_gateway_test.dart":
+  Compilation failed for testPath=C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/wave5_control_gateway_test.dart: test/analytics/wave5_control_gateway_test.dart:25:30: Error: Undefined name 'scope'.
+          {...raw, 'tenantId': scope.legalEntityId},
+                               ^^^^^
+  test/analytics/wave5_control_gateway_test.dart:39:41: Error: Undefined name 'scope'.
+          ).authorizeSubscriptionRecovery(scope, scope.legalEntityId),
+                                          ^^^^^
+  test/analytics/wave5_control_gateway_test.dart:39:48: Error: Undefined name 'scope'.
+          ).authorizeSubscriptionRecovery(scope, scope.legalEntityId),
+                                                 ^^^^^
+  test/analytics/wave5_control_gateway_test.dart:25:30: Error: Local variable 'scope' can't be referenced before it is declared.
+          {...raw, 'tenantId': scope.legalEntityId},
+                               ^^^^^
+  test/analytics/wave5_control_gateway_test.dart:54:9: Context: This is the declaration of the variable 'scope'.
+    final scope = ProcessMetricScope(
+          ^^^^^
+  test/analytics/wave5_control_gateway_test.dart:39:41: Error: Local variable 'scope' can't be referenced before it is declared.
+          ).authorizeSubscriptionRecovery(scope, scope.legalEntityId),
+                                          ^^^^^
+  test/analytics/wave5_control_gateway_test.dart:54:9: Context: This is the declaration of the variable 'scope'.
+    final scope = ProcessMetricScope(
+          ^^^^^
+  test/analytics/wave5_control_gateway_test.dart:39:48: Error: Local variable 'scope' can't be referenced before it is declared.
+          ).authorizeSubscriptionRecovery(scope, scope.legalEntityId),
+                                                 ^^^^^
+  test/analytics/wave5_control_gateway_test.dart:54:9: Context: This is the declaration of the variable 'scope'.
+    final scope = ProcessMetricScope(
+          ^^^^^
+  test/analytics/wave5_control_gateway_test.dart:62:64: Error: Undefined name 'scope'.
+        final verified = await VerifiedHumanProposal.verify(raw, scope);
+                                                                 ^^^^^
+  test/analytics/wave5_control_gateway_test.dart:73:10: Error: Undefined name 'scope'.
+        }, scope),
+           ^^^^^
+  test/analytics/wave5_control_gateway_test.dart:80:10: Error: Undefined name 'scope'.
+        }, scope),
+           ^^^^^
+  test/analytics/wave5_control_gateway_test.dart:91:27: Error: Undefined name 'scope'.
+        ).authorizeRecovery(scope, actor);
+                            ^^^^^
+  test/analytics/wave5_control_gateway_test.dart:95:29: Error: Undefined name 'scope'.
+          ).authorizeRecovery(scope, wrong),
+                              ^^^^^
+  test/analytics/wave5_control_gateway_test.dart:101:29: Error: Undefined name 'scope'.
+          ).authorizeRecovery(scope, wrong),
+                              ^^^^^
+  test/analytics/wave5_control_gateway_test.dart:107:37: Error: Undefined name 'scope'.
+          ).authorizeProposalRecovery(scope, wrong),
+                                      ^^^^^
+  test/analytics/wave5_control_gateway_test.dart:173:21: Error: Undefined name 'scope'.
+          'tenantId': scope.tenantId,
+                      ^^^^^
+  test/analytics/wave5_control_gateway_test.dart:188:11: Error: Undefined name 'scope'.
+            scope.tenantId,
+            ^^^^^
+  test/analytics/wave5_control_gateway_test.dart:197:17: Error: Undefined name 'scope'.
+          ).usage(scope.tenantId, 'ai.tokens', '2026-10-01T00:00:00Z'),
+                  ^^^^^
+  .
+00:10 +20 -2: Some tests failed.
+
+Failing tests:
+  C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/wave5_command_store_test.dart: unsupported, executable and malformed recovery parameters never persist
+  C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/wave5_control_gateway_test.dart: loading C:/jw4-wave5-20261006/packages/jentra_platform/test/analytics/wave5_control_gateway_test.dart

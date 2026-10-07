@@ -912,7 +912,7 @@ class _AssetsEditorState extends State<AssetsEditor> {
                                 child: const Text('Discard editable draft'),
                               ),
                             ],
-                            if (c.pending != null && c.confirmed == null) ...[
+                            if (c.pending != null) ...[
                               FilledButton(
                                 onPressed: c.busy || !c.online
                                     ? null

@@ -271,8 +271,8 @@ select pg_temp.wid('tenant'),pg_temp.wid('creator.role'),p from unnest(array['pe
 -- Real scoped common ownership rows exercise the bound before module effects.
 create temporary table correction_bound_claim as
  select people.make_work_claim(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('manager'),
- 'attendance',pg_temp.wid('corr.bound.source'),(pg_temp.wdate()+28)::timestamp+interval '9 hours' at time zone 'Asia/Colombo',
- (pg_temp.wdate()+28)::timestamp+interval '10 hours' at time zone 'Asia/Colombo','[]',pg_temp.wid('calendar-version'),pg_temp.wid('creator')) id;
+ 'attendance',pg_temp.wid('corr.bound.source'),((pg_temp.wdate()+28)::timestamp+interval '9 hours') at time zone 'Asia/Colombo',
+ ((pg_temp.wdate()+28)::timestamp+interval '10 hours') at time zone 'Asia/Colombo','[]',pg_temp.wid('calendar-version'),pg_temp.wid('creator')) id;
 insert into people.work_allocations(id,tenant_id,legal_entity_id,branch_id,employee_id,claim_id,source_kind,source_id,start_utc,end_utc,created_by)
 select pg_temp.wid('corr.bound.allocation.'||i),pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('manager'),c.id,
  'project',pg_temp.wid('corr.bound.project.source.'||i),w.start_utc+make_interval(secs=>i*2),w.start_utc+make_interval(secs=>i*2+1),pg_temp.wid('creator')
@@ -280,7 +280,7 @@ from generate_series(1,51) i cross join correction_bound_claim c join people.wor
 select throws_ok($q$select people_payroll.linked_allocation_bound(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),
  pg_temp.wid('manager'),(select id from correction_bound_claim),'[]')$q$,'55000','WORK_ALLOCATION_IMPACT_BOUND_REQUIRED',
  '51 scoped distinct allocated sources fail before linked module effects');
-delete from people.work_allocations where id=pg_temp.wid('corr.bound.allocation.51');
+select people.revoke_work_allocation(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('manager'),pg_temp.wid('corr.bound.allocation.51'));
 create function pg_temp.cbound_ok() returns boolean language plpgsql as $$begin
  perform people_payroll.linked_allocation_bound(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),
   pg_temp.wid('manager'),(select id from correction_bound_claim),'[]');return true;end $$;
@@ -289,5 +289,6 @@ select throws_ok($q$select people_payroll.linked_allocation_bound(pg_temp.wid('t
  (select jsonb_agg(jsonb_build_object('source_kind','project','impact',jsonb_build_object('entry_id',pg_temp.wid('corr.bound.project.entry.'||i))))
   from generate_series(1,51) i))$q$,'55000','WORK_ALLOCATION_IMPACT_BOUND_REQUIRED',
  '51 frozen removed origins fail the reversal bound without truncation');
-delete from people.work_allocations where claim_id=(select id from correction_bound_claim);
+select people.revoke_work_allocation(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('manager'),a.id)
+from people.work_allocations a where a.claim_id=(select id from correction_bound_claim) and a.active order by a.id;
 select people.revoke_work_claim(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('manager'),(select id from correction_bound_claim));

@@ -1,5 +1,21 @@
 # Remaining Wave 3 development status
 
+## Current final continuation — 2026-10-06
+
+See the [current checkpoint](../verification/remaining-wave3/final-development-checkpoint-20261006.md).
+The fixed negative-stock candidate and tracking-change regression pass all three
+strict 46-body rollback suites: 1,205 procurement/finance, 155 inventory and 182
+receivables assertions. Historical 45-body candidates and shared finance helpers
+are preserved; 37 migrations remain installed and all 46 candidates unapplied.
+Whole-workspace analysis passes in a fresh isolated copy. Full desktop regression
+completed 1,775 passed / 83 pixel golden failures; platform 1,062 and domain 340
+passed. Current 194-path coverage passes at 81.5571% lines and 94.3056% selected
+pure-domain branches. All 83 image comparisons are preserved for review. The
+current isolated Windows release build passes with all 994 source hashes matching.
+The final matrix retains all 181 approved IDs and has no missing policy development
+items. Installation, genuine sessions/load, authenticated native/restart,
+visual approval and owner signoff remain open. Wave 3 is not fully complete.
+
 ## Latest policy continuation — 2026-10-03
 
 Read the [current policy checkpoint](../verification/remaining-wave3/wave3-policy-current-checkpoint-20261003.md)

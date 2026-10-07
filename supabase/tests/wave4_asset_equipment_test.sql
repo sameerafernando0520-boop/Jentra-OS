@@ -1,0 +1,103 @@
+-- Actual operational link to governed fixed-asset opening, depreciation and transfer.
+reset role;select pg_temp.wactor('creator');
+insert into core.role_permissions(tenant_id,role_id,permission_code) values(pg_temp.wid('tenant'),pg_temp.wid('creator.role'),'service.configure');
+-- Test-only snapshot builders read synthetic owner facts; all mutations still use named APIs.
+alter function pg_temp.adep(text) security definer;
+alter function pg_temp.aproposal(text,text) security definer;
+alter function pg_temp.areverse(text) security definer;
+create temporary table asset_equipment_samples(label text primary key,body jsonb);
+grant select,insert on asset_equipment_samples to authenticated;
+create temporary table asset_equipment_input as select jsonb_build_object('action','equipment','id',pg_temp.wid('internal-equipment'),'kind','asset','customer_id',null,
+ 'code','INTERNAL-EQ','name','Internal fixed asset equipment','identity','INTERNAL-ASSET-PAGED','provider_id',pg_temp.wid('asset.paged'),
+ 'provider_version',a.version,'provider_digest',service.asset_source(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),a.id)->>'digest','reason','Governed internal maintenance association') body
+ from assets.register a where a.id=pg_temp.wid('asset.paged');
+grant select on asset_equipment_input to authenticated;
+create function pg_temp.aec(p jsonb,k text,b text default 'branch') returns jsonb language sql as $$select api.service_asset_equipment_command(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid(b),pg_temp.wid('link.'||k),pg_temp.wid('link.'||k),now(),p,0)$$;
+select ok((select relrowsecurity and relforcerowsecurity from pg_class where oid='service.asset_equipment_links'::regclass),'AC-401 immutable link forces RLS');
+select ok(not has_table_privilege('authenticated','service.asset_equipment_links','SELECT') and not has_function_privilege('authenticated','service.asset_source(uuid,uuid,uuid,uuid,boolean,boolean)','EXECUTE'),'AC-401 source helper and table are owner-only');
+select ok(not has_function_privilege('authenticated','api.service_command_customer_base(uuid,uuid,uuid,uuid,uuid,timestamptz,jsonb,bigint)','EXECUTE'),'AC-401 original command cannot bypass asset guards');
+create temporary table link_before_effects as select count(*) n from assets.effects;
+set local role authenticated;
+insert into asset_equipment_samples values('sources',api.service_asset_sources(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch')));
+select throws_ok($$select pg_temp.aec((select body from asset_equipment_input)||jsonb_build_object('provider_version',1),'stale')$$,'40001','SERVICE_ASSET_SOURCE_CHANGED','AC-414 stale selected asset version rejected');
+select throws_ok($$select pg_temp.aec((select body from asset_equipment_input)||jsonb_build_object('provider_digest',repeat('0',64)),'digest')$$,'40001','SERVICE_ASSET_SOURCE_CHANGED','AC-414 changed operational source digest rejected');
+select throws_ok($$select pg_temp.aec((select body from asset_equipment_input)||jsonb_build_object('customer_id',pg_temp.wid('customer')),'fakecustomer')$$,'22023','SERVICE_ASSET_COMMAND_INVALID','AC-414 no invented customer for internal asset');
+select throws_ok($$select pg_temp.aec((select body from asset_equipment_input),'otherbranch','branch2')$$,'55000','SERVICE_ASSET_NOT_ELIGIBLE','AC-401 internal asset must belong to current accountable branch');
+insert into asset_equipment_samples values('receipt',pg_temp.aec((select body from asset_equipment_input),'create'));
+select is(pg_temp.aec((select body from asset_equipment_input),'create'),(select body from asset_equipment_samples where label='receipt'),'AC-414 exact actor replay gives original link receipt');
+select throws_ok($$select pg_temp.aec((select body from asset_equipment_input)||jsonb_build_object('id',pg_temp.wid('duplicate-link'),'code','DUPLICATE','identity','DUPLICATE-LINK'),'duplicate')$$,'23505',null,'AC-416 asset links only once');
+insert into asset_equipment_samples values('link',api.service_asset_link(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('internal-equipment')));
+reset role;
+select is((select count(*) from assets.effects),(select n from link_before_effects),'AC-416 equipment association creates no capitalization or accounting effect');
+select ok(not ((select body from asset_equipment_samples where label='sources')::text ~ '"(cost|book_id|accumulated|impairment|cost_account_id)"'),'AC-401 public operational source contains no asset book or cost');
+select throws_ok($$update service.asset_equipment_links set reason='Changed' where equipment_id=pg_temp.wid('internal-equipment')$$,'55000','SERVICE_HISTORY_IMMUTABLE','AC-415 original association basis cannot be overwritten');
+update billing.plan_entitlements set enabled=false where plan_code='w4_integrated_rollback' and entitlement_code='module.assets';
+set local role authenticated;
+select throws_ok($$select pg_temp.aec((select body from asset_equipment_input),'create')$$,'42501','ASSET_ENTITLEMENT_REQUIRED','AC-401 asset entitlement checked before original receipt replay');
+select throws_ok($$select api.service_asset_own_receipt(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('link.create'))$$,'42501','ASSET_ENTITLEMENT_REQUIRED','AC-401 own receipt rechecks both entitlements');
+reset role;update billing.plan_entitlements set enabled=true where plan_code='w4_integrated_rollback' and entitlement_code='module.assets';
+delete from core.role_permissions where tenant_id=pg_temp.wid('tenant') and role_id=pg_temp.wid('creator.role') and permission_code='assets.view';
+set local role authenticated;
+select throws_ok($$select api.service_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),'equipment',pg_temp.wid('internal-equipment'))$$,'42501','SERVICE_ASSET_ACCESS_REQUIRED','AC-401 internal equipment historical read requires asset permission');
+select ok(exists(select 1 from jsonb_array_elements(api.service_list(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),'equipment')->'items') x where x->>'kind'='customer') and not exists(select 1 from jsonb_array_elements(api.service_list(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),'equipment')->'items') x where x->>'kind'='asset'),'AC-401 mixed register preserves authorized customer equipment and filters internal rows before paging');
+select throws_ok($$select pg_temp.aec((select body from asset_equipment_input),'create')$$,'42501','Permission denied or multi-factor authentication required.','AC-401 revoked asset permission checked before replay');
+reset role;insert into core.role_permissions(tenant_id,role_id,permission_code) values(pg_temp.wid('tenant'),pg_temp.wid('creator.role'),'assets.view');
+set local role authenticated;
+select pg_temp.sc('ticket','internal-ticket',pg_temp.sticket('INTERNAL-TICKET')||jsonb_build_object('customer_id',null,'equipment_id',pg_temp.wid('internal-equipment')));
+select pg_temp.sc('order','internal-order',jsonb_build_object('ticket_id',pg_temp.wid('internal-ticket')));
+select throws_ok($$select pg_temp.sc('labor','internal-labor',jsonb_build_object('order_id',pg_temp.wid('internal-order'),'billing_kind','billable'))$$,'55000','SERVICE_INTERNAL_NONBILLABLE','AC-414 internal labor cannot create customer billing');
+select throws_ok($$select pg_temp.sc('complete','internal-order',jsonb_build_object('customer_confirmed',true),1,'fakeconfirm')$$,'22023','SERVICE_INTERNAL_CONFIRMATION_REQUIRED','AC-414 internal completion cannot fabricate customer acceptance');
+select pg_temp.sc('plan','internal-plan',jsonb_build_object('equipment_id',pg_temp.wid('internal-equipment'),'policy_id',pg_temp.wid('policy'),'name','Internal annual maintenance','basis','calendar','interval_units',30,'next_date',pg_temp.wdate(),'next_meter',null));
+select pg_temp.sc('generate','internal-plan',jsonb_build_object('ticket_id',pg_temp.wid('internal-pm-ticket'),'order_id',pg_temp.wid('internal-pm-order'),'occurrence_id',pg_temp.wid('internal-occurrence'),'observed_utc',pg_temp.sutc(12)),1,'internal-generate');
+insert into asset_equipment_samples values('internal-ticket',api.service_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),'ticket',pg_temp.wid('internal-pm-ticket')));
+reset role;
+select ok((select customer_id is null and contact_id is null from service.tickets where id=pg_temp.wid('internal-pm-ticket')),'AC-415 actual maintenance occurrence retains internal identity with no customer');
+select is((select count(*)::integer from service.maintenance_occurrences where plan_id=pg_temp.wid('internal-plan')),1,'AC-415 internal occurrence has one attributable work order');
+set local role authenticated;
+select pg_temp.acmd(pg_temp.adep('paged'),3,'link-depreciate');
+select is(pg_temp.aec((select body from asset_equipment_input),'create'),(select body from asset_equipment_samples where label='receipt'),'AC-415 harmless depreciation retains original link replay');
+select pg_temp.sc('dispatch','internal-order',jsonb_build_object('employee_id',pg_temp.wid('employee'),'calendar_version_id',pg_temp.wid('calendar-version'),'start_utc',pg_temp.sutc(15),'end_utc',pg_temp.sutc(16),'booking_id',pg_temp.wid('internal-booking')),1,'internal-dispatch');
+select pg_temp.sc('accept','internal-order',jsonb_build_object('observed_utc',pg_temp.sutc(15)),2,'internal-accept');
+select pg_temp.sc('start','internal-order',jsonb_build_object('observed_utc',pg_temp.sutc(15)),3,'internal-start');
+select pg_temp.sc('labor','internal-nonbillable-labor',jsonb_build_object('order_id',pg_temp.wid('internal-order'),'employee_id',pg_temp.wid('employee'),'calendar_version_id',pg_temp.wid('calendar-version'),'start_utc',pg_temp.sutc(15),'end_utc',pg_temp.sutc(16),'breaks','[]'::jsonb,'claim_id',null,'hourly_cost','12','currency_code','LKR','precision',2,'billing_kind','nonbillable','hourly_billing','0','billing_reference','Internal maintenance, no customer billing'));
+select pg_temp.wactor('reviewer');select pg_temp.sc('approve_labor','internal-nonbillable-labor','{}',1,'internal-approve');
+select pg_temp.wactor('creator');
+select pg_temp.sc('complete','internal-order',jsonb_build_object('observed_utc',pg_temp.sutc(16),'resolution','Internal maintenance completed','customer_confirmed',false,'exception_reason','Internal custodian confirmed maintenance; no customer exists'),4,'internal-complete');
+reset role;
+select ok((select status='approved' and billing_kind='nonbillable' and seconds=3600 and billable_amount=0 from service.labor where id=pg_temp.wid('internal-nonbillable-labor')),'AC-414 internal actual labor retains common work and exact nonbillable cost');
+select throws_ok($$select service.billing_source(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('internal-nonbillable-labor'))$$,'55000','SERVICE_INTERNAL_NONBILLABLE','AC-414 protected billing provider explicitly rejects internal no-customer source');
+select lives_ok($$select service.asset_equipment_guard(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('internal-equipment'),true)$$,'AC-414 current eligibility tolerates harmless asset version change');
+set local role authenticated;
+select pg_temp.acmd(pg_temp.aprop('transfer',jsonb_build_object('destination_branch_id',pg_temp.wid('branch2'),'location_id',pg_temp.wid('asset.location.branch2'),'custodian_id',null),'paged','link-transfer'),4,'link-transfer-propose');
+select pg_temp.wactor('reviewer');select pg_temp.acmd(pg_temp.aproposal('approve','paged'),5,'link-transfer-approve');
+select pg_temp.wactor('creator');select pg_temp.acmd(pg_temp.aproposal('post','paged'),6,'link-transfer-post');
+select throws_ok($$select pg_temp.sc('dispatch','internal-order','{}',1,'after-transfer')$$,'55000','SERVICE_ASSET_NOT_ELIGIBLE','AC-414 transferred asset blocks governed dispatch before staffing mutation');
+select throws_ok($$select pg_temp.sc('generate','internal-plan',jsonb_build_object('observed_utc',pg_temp.sutc(12)),2,'generate-transferred')$$,'55000','SERVICE_ASSET_NOT_ELIGIBLE','AC-415 transferred asset blocks occurrence before creation');
+select lives_ok($$select pg_temp.sc('generate','internal-plan',jsonb_build_object('ticket_id',pg_temp.wid('internal-pm-ticket'),'order_id',pg_temp.wid('internal-pm-order'),'occurrence_id',pg_temp.wid('internal-occurrence'),'observed_utc',pg_temp.sutc(12)),1,'internal-generate')$$,'AC-415 exact original occurrence replay remains historical after transfer');
+select throws_ok($$select api.service_command(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('internal-generate'),pg_temp.wid('internal-generate'),null,
+ jsonb_build_object('action','generate','id',pg_temp.wid('internal-plan'),'reason','Synthetic service evidence','ticket_id',pg_temp.wid('internal-pm-ticket'),'order_id',pg_temp.wid('internal-pm-order'),'occurrence_id',pg_temp.wid('internal-occurrence'),'observed_utc',pg_temp.sutc(12)),1)$$,'22023','SERVICE_COMMAND_INVALID','AC-401 internal original replay still rejects null issued timestamp');
+select throws_ok($$select api.service_command(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('internal-generate'),pg_temp.wid('internal-generate'),clock_timestamp()+interval '10 minutes',
+ jsonb_build_object('action','generate','id',pg_temp.wid('internal-plan'),'reason','Synthetic service evidence','ticket_id',pg_temp.wid('internal-pm-ticket'),'order_id',pg_temp.wid('internal-pm-order'),'occurrence_id',pg_temp.wid('internal-occurrence'),'observed_utc',pg_temp.sutc(12)),1)$$,'22023','SERVICE_COMMAND_INVALID','AC-401 internal original replay still rejects future issued timestamp');
+reset role;
+select is((select source_basis from service.asset_equipment_links where equipment_id=pg_temp.wid('internal-equipment')),(select body->'source_basis' from asset_equipment_samples where label='link'),'AC-415 transfer never rewrites original operational source');
+set local role authenticated;
+select pg_temp.acmd(pg_temp.areverse('paged'),7,'link-transfer-reverse','branch2');
+select pg_temp.acmd(pg_temp.aprop('dispose',jsonb_build_object('proceeds','0','proceeds_account_id',pg_temp.wid('asset.account.bank'),'gain_account_id',pg_temp.wid('asset.account.gain'),'loss_account_id',pg_temp.wid('asset.account.loss')),'paged','link-dispose'),8,'link-dispose-propose');
+select pg_temp.wactor('reviewer');select pg_temp.acmd(pg_temp.aproposal('approve','paged'),9,'link-dispose-approve');
+select pg_temp.wactor('creator');select pg_temp.acmd(pg_temp.aproposal('post','paged'),10,'link-dispose-post');
+select throws_ok($$select pg_temp.sc('dispatch','internal-pm-order','{}',1,'after-disposal')$$,'55000','SERVICE_ASSET_NOT_ELIGIBLE','AC-414 disposed asset blocks dispatch before mutation');
+select throws_ok($$select pg_temp.sc('generate','internal-plan',jsonb_build_object('observed_utc',pg_temp.sutc(12)),2,'generate-disposed')$$,'55000','SERVICE_ASSET_NOT_ELIGIBLE','AC-415 disposed asset blocks new occurrence');
+reset role;
+-- Late immutable event failure leaves no equipment or immutable link residue.
+create function pg_temp.link_late_failure() returns trigger language plpgsql as $$begin if new.aggregate_id=pg_temp.wid('late-link') then raise exception using errcode='P0001',message='SYNTHETIC_LINK_LATE_FAILURE';end if;return new;end $$;
+create trigger synthetic_link_failure before insert on service.events for each row execute function pg_temp.link_late_failure();
+create temporary table late_link_input as select(select body from asset_equipment_input)||jsonb_build_object('id',pg_temp.wid('late-link'),'code','LATE-LINK','identity','LATE-LINK','provider_id',a.id,'provider_version',a.version,'provider_digest',service.asset_source(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),a.id)->>'digest') body from assets.register a where a.id=pg_temp.wid('asset.a') and a.branch_id=pg_temp.wid('branch');
+-- Asset a may have transferred in its own suite; use an eligible unlinked active asset instead.
+delete from late_link_input;
+insert into late_link_input select(select body from asset_equipment_input)||jsonb_build_object('id',pg_temp.wid('late-link'),'code','LATE-LINK','identity','LATE-LINK','provider_id',a.id,'provider_version',a.version,'provider_digest',service.asset_source(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),a.id)->>'digest') from assets.register a where a.tenant_id=pg_temp.wid('tenant') and a.branch_id=pg_temp.wid('branch') and a.status='active' and not exists(select 1 from service.asset_equipment_links l where l.asset_id=a.id) order by a.id limit 1;
+grant select on late_link_input to authenticated;
+set local role authenticated;
+select throws_ok($$select pg_temp.aec((select body from late_link_input),'late')$$,'P0001','SYNTHETIC_LINK_LATE_FAILURE','AC-414 late audit failure rolls back complete asset association');
+reset role;
+select ok(not exists(select 1 from service.equipment where id=pg_temp.wid('late-link')) and not exists(select 1 from service.asset_equipment_links where equipment_id=pg_temp.wid('late-link')) and not exists(select 1 from core.command_receipts where command_id=pg_temp.wid('link.late')),'AC-414 late failure has no equipment/link/receipt residue');
+drop trigger synthetic_link_failure on service.events;

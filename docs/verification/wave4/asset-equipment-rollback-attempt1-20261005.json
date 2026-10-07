@@ -1,0 +1,12 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"error\":{\"name\":\"HttpException\",\"message\":\"Failed to run sql query: ERROR:  42501: Permission denied or multi-factor authentication required.\\nCONTEXT:  PL/pgSQL function core.require_permission(uuid,text,uuid,uuid) line 12 at RAISE\\nSQL statement \\\"SELECT core.require_permission(\\n    p_tenant_id, p_permission_code, p_legal_entity_id, p_branch_id\\n  )\\\"\\nPL/pgSQL function core.wave3_require_scope(uuid,text,uuid,uuid) line 3 at PERFORM\\nSQL statement \\\"SELECT core.wave3_require_scope(t,cap,e,b)\\\"\\nPL/pgSQL function service.require_access(uuid,uuid,uuid,text) line 4 at PERFORM\\nSQL statement \\\"SELECT service.require_access(p_tenant_id,p_legal_entity_id,p_branch_id,'service.configure')\\\"\\nPL/pgSQL function api.service_asset_sources(uuid,uuid,uuid,uuid) line 2 at PERFORM\\n\"}}"
+    }
+  ],
+  "structuredContent": {
+    "error_code": "INVALID_ARGUMENT"
+  },
+  "isError": true
+}

@@ -1,4 +1,3 @@
-import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_domain/jentra_people.dart';
 import 'package:jentra_domain/jentra_payroll.dart';
 import 'package:test/test.dart';

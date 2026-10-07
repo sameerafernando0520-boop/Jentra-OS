@@ -152,7 +152,9 @@ final class AssetsController extends ChangeNotifier {
   }
 
   void setOnline(bool value) {
+    if (online == value) return;
     online = value;
+    _epoch++;
     _notify();
   }
 
@@ -201,6 +203,7 @@ final class AssetsController extends ChangeNotifier {
   }
 
   Future<void> _access(String capability) async {
+    final epoch = _epoch;
     _connected();
     if (!has(capability)) {
       throw const DomainError(
@@ -212,20 +215,31 @@ final class AssetsController extends ChangeNotifier {
     try {
       state = await repository.authorize(scope, capability);
     } on DomainError catch (cause) {
-      if ({
-            'PERMISSION_DENIED',
-            'AUTHENTICATION_REQUIRED',
-            'FEATURE_NOT_ENTITLED',
-          }.contains(cause.code) &&
-          current) {
-        _deny();
+      if (!current || epoch != _epoch || !online) {
+        throw const DomainError(
+          code: 'ACCESS_RECHECK_REQUIRED',
+          message: 'Asset access changed during this check. Recheck before continuing.',
+        );
       }
+      if (_revoked(cause)) _deny();
       rethrow;
     }
-    if (current) {
-      providers = state;
+    if (!current || epoch != _epoch || !online) {
+      throw const DomainError(
+        code: 'ACCESS_RECHECK_REQUIRED',
+        message: 'Asset access changed during this check. Recheck before continuing.',
+      );
     }
+    providers = state;
   }
+
+  bool _revoked(DomainError cause) => const {
+    'PERMISSION_DENIED',
+    'AUTHENTICATION_REQUIRED',
+    'FEATURE_NOT_ENTITLED',
+    'MFA_REQUIRED',
+    'ACCESS_DENIED',
+  }.contains(cause.code);
 
   Future<void> _run(Future<void> Function() work) async {
     if (busy || !current) {
@@ -237,11 +251,7 @@ final class AssetsController extends ChangeNotifier {
     try {
       await work();
     } on DomainError catch (cause) {
-      if ({
-        'PERMISSION_DENIED',
-        'AUTHENTICATION_REQUIRED',
-        'FEATURE_NOT_ENTITLED',
-      }.contains(cause.code)) {
+      if (_revoked(cause)) {
         _deny();
       } else if (current) {
         error = cause.message;
@@ -267,13 +277,14 @@ final class AssetsController extends ChangeNotifier {
       if (action != null) {
         await _access(AssetCommands.capability(action!));
       }
+      for (final capability
+          in recovery
+              .map((row) => AssetCommands.capability(row.action))
+              .toSet()) {
+        await _access(capability);
+      }
     } on DomainError catch (cause) {
-      if ({
-            'PERMISSION_DENIED',
-            'AUTHENTICATION_REQUIRED',
-            'FEATURE_NOT_ENTITLED',
-          }.contains(cause.code) &&
-          current) {
+      if (_revoked(cause) && current) {
         _deny();
       }
     } catch (_) {
@@ -293,8 +304,9 @@ final class AssetsController extends ChangeNotifier {
   });
   Future<void> _register({bool more = false}) async {
     _connected();
+    final epoch = _epoch;
     final page = await repository.register(scope, after: more ? cursor : null);
-    if (!current) {
+    if (!current || epoch != _epoch || !online) {
       return;
     }
     records = [if (more) ...records, ...page.items];
@@ -314,6 +326,7 @@ final class AssetsController extends ChangeNotifier {
     }
   });
   Future<void> _recover({String? more}) async {
+    final epoch = _epoch;
     final rows = <AssetSavedDraft>[if (more != null) ...recovery];
     for (final a in assetActions) {
       if (more != null && a != more || !has(AssetCommands.capability(a))) {
@@ -322,20 +335,20 @@ final class AssetsController extends ChangeNotifier {
       // Each action has its own encrypted namespace, so original authority is
       // checked before any draft body from that namespace is decrypted.
       await _access(AssetCommands.capability(a));
-      if (!current) {
+      if (!current || epoch != _epoch || !online) {
         return;
       }
       final page = await drafts[a]!.page(
         scope,
         after: more == a ? recoveryCursors[a] : null,
       );
-      if (!current) {
+      if (!current || epoch != _epoch || !online) {
         return;
       }
       rows.addAll(page.items.map((d) => AssetSavedDraft(a, d)));
       recoveryCursors[a] = page.nextCursor;
     }
-    if (current) {
+    if (current && epoch == _epoch && online) {
       recovery = rows;
     }
   }
@@ -347,13 +360,15 @@ final class AssetsController extends ChangeNotifier {
     AssetHistoryKind kind, {
     bool more = false,
   }) async {
+    _connected();
+    final epoch = _epoch;
     final row = await repository.detail(
       scope,
       id,
       kind,
       after: more ? historyCursor : null,
     );
-    if (!current) {
+    if (!current || epoch != _epoch || !online) {
       return;
     }
     selected = row;
@@ -398,6 +413,8 @@ final class AssetsController extends ChangeNotifier {
         }
       });
   Future<void> _schedule(String book, {bool more = false}) async {
+    _connected();
+    final epoch = _epoch;
     if (selected == null) {
       return;
     }
@@ -407,7 +424,7 @@ final class AssetsController extends ChangeNotifier {
       book,
       after: more ? scheduleCursor ?? 0 : 0,
     );
-    if (!current) {
+    if (!current || epoch != _epoch || !online) {
       return;
     }
     schedule = page;
@@ -682,21 +699,20 @@ final class AssetsController extends ChangeNotifier {
     try {
       await repository.authorize(context, 'assets.view');
     } on DomainError catch (cause) {
+      if (!current || epoch != _epoch || !online) {
+        return const AssetPage([], null);
+      }
       if (cause.code == 'AUTHENTICATION_REQUIRED' ||
-          context.branchId == scope.branchId &&
-              {
-                'PERMISSION_DENIED',
-                'FEATURE_NOT_ENTITLED',
-              }.contains(cause.code)) {
+          context.branchId == scope.branchId && _revoked(cause)) {
         _deny();
       }
       rethrow;
     }
-    if (!current || epoch != _epoch) {
+    if (!current || epoch != _epoch || !online) {
       return const AssetPage([], null);
     }
     final page = await repository.pickers(context, kind, after: after);
-    if (!current || epoch != _epoch) {
+    if (!current || epoch != _epoch || !online) {
       return const AssetPage([], null);
     }
     for (final row in page.items) {
@@ -718,6 +734,7 @@ final class AssetsController extends ChangeNotifier {
   }
 
   Future<void> destination(String id) => _run(() async {
+    final epoch = _epoch;
     if (form?['kind'] != 'transfer' ||
         pending != null ||
         conflict ||
@@ -731,7 +748,7 @@ final class AssetsController extends ChangeNotifier {
       );
     }
     await repository.authorize(scope.copyWith(branchId: id), 'assets.transfer');
-    if (!current) {
+    if (!current || epoch != _epoch || !online) {
       return;
     }
     form = {
@@ -743,6 +760,7 @@ final class AssetsController extends ChangeNotifier {
     _epoch++;
   });
   Future<void> _save() async {
+    final epoch = _epoch;
     if (form == null ||
         local?.pending != null ||
         conflict ||
@@ -752,16 +770,16 @@ final class AssetsController extends ChangeNotifier {
     final a = action!, id = form!['id'] as String;
     if (online) {
       await _access(AssetCommands.capability(a));
-      if (!current) {
+      if (!current || epoch != _epoch || !online) {
         return;
       }
     }
     await drafts[a]!.save(scope, id, a, form!, expectedVersion);
-    if (!current) {
+    if (!current || epoch != _epoch) {
       return;
     }
     local = await drafts[a]!.load(scope, id);
-    if (current && local != null) {
+    if (current && epoch == _epoch && local != null) {
       recovery = [
         ...recovery.where((d) => d.action != a || d.aggregateId != id),
         AssetSavedDraft(a, local!),
@@ -771,6 +789,7 @@ final class AssetsController extends ChangeNotifier {
 
   Future<void> save() => _run(_save);
   Future<void> resume(AssetSavedDraft row) => _run(() async {
+    var epoch = _epoch;
     if (form != null) {
       await _save();
       if (!current) {
@@ -778,11 +797,12 @@ final class AssetsController extends ChangeNotifier {
       }
     }
     await _access(AssetCommands.capability(row.action));
-    if (!current) {
+    epoch = _epoch;
+    if (!current || !online) {
       return;
     }
     final loaded = await drafts[row.action]!.load(scope, row.aggregateId);
-    if (!current || loaded == null) {
+    if (!current || epoch != _epoch || !online || loaded == null) {
       return;
     }
     _clearForm();
@@ -792,6 +812,14 @@ final class AssetsController extends ChangeNotifier {
           as Map,
     );
     expectedVersion = loaded.version;
+    final resumedEpoch = _epoch;
+    if (loaded.pending != null &&
+        await AssetCommandAcknowledgements(drafts[row.action]!)
+            .contains(loaded.pending!)) {
+      if (!current || resumedEpoch != _epoch) return;
+      confirmed = {'id': row.aggregateId};
+      message = 'Confirmed. The original asset request succeeded; reconcile encrypted cleanup before issuing another request.';
+    }
     if (!{'location', 'opening'}.contains(row.action)) {
       selected = null;
       books = [];
@@ -803,11 +831,8 @@ final class AssetsController extends ChangeNotifier {
       try {
         await _detail(row.aggregateId, AssetHistoryKind.books);
       } on DomainError catch (cause) {
-        if ({
-          'PERMISSION_DENIED',
-          'AUTHENTICATION_REQUIRED',
-          'FEATURE_NOT_ENTITLED',
-        }.contains(cause.code)) {
+        if (!current || resumedEpoch != _epoch) return;
+        if (_revoked(cause)) {
           _deny();
         } else if (current) {
           message = 'The saved request is ready for reconciliation. Its optional current proposal review could not be refreshed.';
@@ -886,48 +911,56 @@ final class AssetsController extends ChangeNotifier {
   Future<void> _confirmed(
     Map<String, Object?> result,
     ScopedPendingCommand sealed,
+    int epoch,
   ) async {
     final e = _verify(result, sealed.envelope);
-    if (!current) {
+    if (current && epoch == _epoch) {
+      confirmed = e;
+      message = 'Confirmed. The original request succeeded.';
+      _notify();
+    }
+    try {
+      await AssetCommandAcknowledgements(drafts[sealed.action]!)
+          .save(sealed, e);
+    } catch (_) {
+      if (current && epoch == _epoch) {
+        message = 'Confirmed. Saving the encrypted confirmation failed. Keep the original request and reconcile its receipt before issuing another request.';
+      }
       return;
     }
-    confirmed = e;
-    message = 'Confirmed. The original request succeeded.';
-    _notify();
     try {
       await drafts[sealed.action]!.complete(
         scope,
-        form!['id'] as String,
+        sealed.envelope.payload['id'] as String,
         sealed.envelope.commandId,
       );
-      if (!current) {
+      if (!current || epoch != _epoch) {
         return;
       }
       local = null;
     } catch (_) {
-      if (current) {
+      if (current && epoch == _epoch) {
         message = 'Confirmed. Encrypted recovery cleanup needs reconciliation; do not submit another request.';
       }
       return;
     }
+    if (!current || epoch != _epoch || !online) return;
     try {
+      await _access('assets.view');
       await _register();
-      if (current) {
+      if (current && epoch == _epoch && online) {
         await _recover();
       }
     } on DomainError catch (cause) {
-      if ({
-        'PERMISSION_DENIED',
-        'AUTHENTICATION_REQUIRED',
-        'FEATURE_NOT_ENTITLED',
-      }.contains(cause.code)) {
+      if (!current || epoch != _epoch) return;
+      if (_revoked(cause)) {
         _deny();
       } else if (current) {
         message =
             'Confirmed. Refresh the register when the service is available.';
       }
     } catch (_) {
-      if (current) {
+      if (current && epoch == _epoch) {
         message =
             'Confirmed. Refresh the register when the service is available.';
       }
@@ -935,12 +968,13 @@ final class AssetsController extends ChangeNotifier {
   }
 
   Future<void> send() => _run(() async {
+    final epoch = _epoch;
     if (form == null || conflict || confirmed != null) {
       return;
     }
     final a = action!, id = form!['id'] as String;
     await _access(AssetCommands.capability(a));
-    if (!current) {
+    if (!current || epoch != _epoch || !online) {
       return;
     }
     final sealed = await drafts[a]!.prepare(
@@ -950,11 +984,11 @@ final class AssetsController extends ChangeNotifier {
       form!,
       expectedVersion,
     );
-    if (!current) {
+    if (!current || epoch != _epoch || !online) {
       return;
     }
     local = await drafts[a]!.load(scope, id);
-    if (!current) {
+    if (!current || epoch != _epoch || !online) {
       return;
     }
     if (local != null) {
@@ -966,10 +1000,16 @@ final class AssetsController extends ChangeNotifier {
     _sending = true;
     _notify();
     try {
-      final result = await repository.execute(sealed.envelope);
-      if (current) {
-        await _confirmed(result, sealed);
+      if (await AssetCommandAcknowledgements(drafts[a]!).contains(sealed)) {
+        if (current && epoch == _epoch) {
+          confirmed = {'id': id};
+          message = 'Confirmed. The original asset request already succeeded; reconcile encrypted cleanup before issuing another request.';
+        }
+        return;
       }
+      if (!current || epoch != _epoch || !online) return;
+      final result = await repository.execute(sealed.envelope);
+      await _confirmed(result, sealed, epoch);
     } on DomainError catch (cause) {
       await drafts[a]!.recordFailure(
         scope,
@@ -977,22 +1017,18 @@ final class AssetsController extends ChangeNotifier {
         sealed.envelope.commandId,
         cause,
       );
-      if (!current) {
+      if (!current || epoch != _epoch) {
         return;
       }
       local = await drafts[a]!.load(scope, id);
-      if (!current) {
+      if (!current || epoch != _epoch) {
         return;
       }
       recovery = [
         ...recovery.where((d) => d.action != a || d.aggregateId != id),
         if (local != null) AssetSavedDraft(a, local!),
       ];
-      if ({
-        'PERMISSION_DENIED',
-        'AUTHENTICATION_REQUIRED',
-        'FEATURE_NOT_ENTITLED',
-      }.contains(cause.code)) {
+      if (_revoked(cause)) {
         _deny();
       } else {
         error = cause.message;
@@ -1010,9 +1046,9 @@ final class AssetsController extends ChangeNotifier {
         sealed.envelope.commandId,
         failure,
       );
-      if (current) {
+      if (current && epoch == _epoch) {
         local = await drafts[a]!.load(scope, id);
-        if (current) {
+        if (current && epoch == _epoch) {
           error = failure.message;
         }
       }
@@ -1021,12 +1057,13 @@ final class AssetsController extends ChangeNotifier {
     }
   });
   Future<void> reconcile() => _run(() async {
+    final epoch = _epoch;
     final sealed = pending;
-    if (sealed == null || confirmed != null) {
+    if (sealed == null) {
       return;
     }
     await _access(AssetCommands.capability(sealed.action));
-    if (!current) {
+    if (!current || epoch != _epoch || !online) {
       return;
     }
     final row = await repository.ownReceipt(
@@ -1034,11 +1071,12 @@ final class AssetsController extends ChangeNotifier {
       sealed.envelope.idempotencyKey,
       sealed.action,
     );
-    if (!current) {
-      return;
-    }
     if (row == null) {
-      message = 'No matching receipt was found. Retry only the exact encrypted request.';
+      if (current && epoch == _epoch) {
+        message = confirmed == null
+            ? 'No matching receipt was found. Retry only the exact encrypted request.'
+            : 'Confirmed. Retain the original encrypted request until its cleanup can be reconciled.';
+      }
       return;
     }
     if (row['command_id'] != sealed.envelope.commandId ||
@@ -1048,14 +1086,15 @@ final class AssetsController extends ChangeNotifier {
         message: 'The receipt does not match this encrypted request.',
       );
     }
-    await _confirmed(assetMap(row['response']), sealed);
+    await _confirmed(assetMap(row['response']), sealed, epoch);
   });
   Future<void> compare() => _run(() async {
+    final epoch = _epoch;
     if (!conflict || form == null || {'location', 'opening'}.contains(action)) {
       return;
     }
     await _access('assets.view');
-    if (!current) {
+    if (!current || epoch != _epoch || !online) {
       return;
     }
     final row = await repository.detail(
@@ -1063,17 +1102,18 @@ final class AssetsController extends ChangeNotifier {
       form!['id'] as String,
       AssetHistoryKind.books,
     );
-    if (current) {
+    if (current && epoch == _epoch && online) {
       comparison = row;
     }
   });
   Future<void> adoptComparison() => _run(() async {
+    final epoch = _epoch;
     if (!conflict || comparison == null || form == null || pending != null) {
       return;
     }
     final a = action!;
     await _access(AssetCommands.capability(a));
-    if (!current) {
+    if (!current || epoch != _epoch || !online) {
       return;
     }
     final compared = comparison!,
@@ -1082,7 +1122,7 @@ final class AssetsController extends ChangeNotifier {
           form!['id'] as String,
           AssetHistoryKind.books,
         );
-    if (!current) {
+    if (!current || epoch != _epoch || !online) {
       return;
     }
     if (fresh.asset.version != compared.asset.version) {
@@ -1117,11 +1157,11 @@ final class AssetsController extends ChangeNotifier {
       fresh.asset.version,
       resolveConflict: true,
     );
-    if (!current) {
+    if (!current || epoch != _epoch || !online) {
       return;
     }
     local = await drafts[a]!.load(scope, next['id'] as String);
-    if (!current) {
+    if (!current || epoch != _epoch || !online) {
       return;
     }
     form = next;

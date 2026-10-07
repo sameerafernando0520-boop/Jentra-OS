@@ -45,7 +45,7 @@ export function verifyCandidateOrder(query, candidates, readSource = file => fs.
 }
 
 export function artifactTag(value = '20261003') {
-  if (!/^2026100[34](?:-[a-z0-9]+)*$/.test(value)) throw Error('Use an explicit 20261003/20261004 artifact tag with optional lowercase iteration words.');
+  if (!/^2026100[3456](?:-[a-z0-9]+)*$/.test(value)) throw Error('Use an explicit 20261003/20261004/20261005/20261006 artifact tag with optional lowercase iteration words.');
   return value;
 }
 
@@ -66,6 +66,9 @@ if (process.argv[1]?.replaceAll('\\', '/').endsWith('/strict-candidate-evidence.
   ]) assert.throws(() => strictTapPlan(bad));
   const execution = {project_id: 'xpdoufauvrbdmxgngetv', transport: 'connected_supabase_mcp', mcp_is_error: false, query_sha256: 'exact', observed_at: '2026-10-03T00:00:00Z', result: good};
   const query = 'begin;\nselect finish(true);\nrollback;';
+  assert.equal(artifactTag('20261005-role-reviewed'), '20261005-role-reviewed');
+  assert.equal(artifactTag('20261006-tracking-fixed'), '20261006-tracking-fixed');
+  assert.throws(() => artifactTag('20261007'));
   assert.equal(verifyStrictExecution(execution, query, 'exact').assertions, 2);
   for (const mutation of [{mcp_is_error: true}, {project_id: 'another'}, {query_sha256: 'changed'}, {observed_at: null}]) assert.throws(() => verifyStrictExecution({...execution, ...mutation}, query, 'exact'));
   assert.throws(() => verifyStrictExecution(execution, query.replace('rollback;', 'commit;'), 'exact'));

@@ -3,7 +3,9 @@ import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_domain/jentra_people.dart';
 import 'package:jentra_domain/jentra_projects.dart';
 import 'package:jentra_domain/jentra_project_finance.dart';
+import 'package:jentra_domain/jentra_expense_evidence.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'supabase_expense_evidence_gateway.dart';
 
 final class SupabaseProjectFinanceGateway implements ProjectFinanceRepository {
   SupabaseProjectFinanceGateway(
@@ -48,7 +50,12 @@ final class SupabaseProjectFinanceGateway implements ProjectFinanceRepository {
     } on PostgrestException catch (e) {
       final code = switch ((e.code, e.message)) {
         ('PGRST202', _) => 'FEATURE_NOT_INSTALLED',
-        ('42501', 'PROJECT_ENTITLEMENT_REQUIRED' || 'PROJECT_FINANCE_ENTITLEMENT_REQUIRED') => 'FEATURE_NOT_ENTITLED',
+        (
+          '42501',
+          'PROJECT_ENTITLEMENT_REQUIRED' ||
+              'PROJECT_FINANCE_ENTITLEMENT_REQUIRED',
+        ) =>
+          'FEATURE_NOT_ENTITLED',
         ('42501', _) => 'PERMISSION_DENIED',
         ('40001', _) => 'VERSION_CONFLICT',
         ('22023', 'IDEMPOTENCY_MISMATCH') => 'IDEMPOTENCY_MISMATCH',
@@ -82,7 +89,9 @@ final class SupabaseProjectFinanceGateway implements ProjectFinanceRepository {
           'STATE_CONFLICT' =>
             'The expense, obligation or invoice state prevents this action.',
           'VALIDATION_ERROR' =>
-            e.message == 'PROJECT_MILESTONE_DUE_DATE_REQUIRED' ? 'Use the invoice date plus each milestone’s frozen payment days. Different terms require separate invoices.' : 'Check exact amounts, dates and named source evidence.',
+            e.message == 'PROJECT_MILESTONE_DUE_DATE_REQUIRED'
+                ? 'Use the invoice date plus each milestone’s frozen payment days. Different terms require separate invoices.'
+                : 'Check exact amounts, dates and named source evidence.',
           'IDEMPOTENCY_MISMATCH' =>
             'Reconcile the original request associated with this key.',
           'RESOURCE_NOT_FOUND' =>
@@ -106,6 +115,17 @@ final class SupabaseProjectFinanceGateway implements ProjectFinanceRepository {
         retryable: true,
       );
     }
+  }
+
+  @override
+  Future<void> authorizeEvidence(
+    TenantContext scope,
+    String projectId,
+    String expenseId,
+  ) async {
+    await SupabaseExpenseEvidenceGateway(
+      client,
+    ).authorize(scope, projectId, expenseId, expenseEvidenceView);
   }
 
   @override
@@ -140,7 +160,7 @@ final class SupabaseProjectFinanceGateway implements ProjectFinanceRepository {
         r['capability'] != capability ||
         r['authorized'] != true ||
         r['supplier_ap_available'] != false ||
-        r['attachments_available'] != false ||
+        r['attachments_available'] is! bool ||
         r['sales_available'] != true) {
       throw const FormatException('Finance provider authorization changed.');
     }

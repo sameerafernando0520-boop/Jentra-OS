@@ -1,0 +1,230 @@
+{
+  "reviewedAt": "2026-10-07T19:14:06.232364+00:00",
+  "status": "unapplied; owner authorization pending",
+  "targetProjectId": "xpdoufauvrbdmxgngetv",
+  "environment": "synthetic development",
+  "installedMigrationCount": 37,
+  "installedLatestVersion": "20260929224939",
+  "installedApiFunctionCount": 85,
+  "baseline": "docs/verification/wave5/live-baseline-20261008.json",
+  "strictAssertions": 126,
+  "candidateEffectsRolledBack": true,
+  "strictQueryNormalizedSqlSha256": "d8ba47953f549697a91e53ecdacfb0ed3d69613de14074a5af3ff2b116ad4c7a",
+  "strictQueryBytesSha256": "a185a8668d4ff801231e0e67ec77789a57eda53e2e5cd41cdacf29f644add0de",
+  "candidatesInOrder": [
+    {
+      "path": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+      "bytesSha256": "be586326b7d8ec380a5524a5d8232e67639d677eb192b9fe29da135ee9ffe997",
+      "normalizedSqlSha256": "81428371f02b3fe199ae811ba164f6c8c5f4dde3292ab8d1918c5ac938350e48",
+      "functions": [
+        {
+          "name": "analytics.process_access",
+          "arguments": "t uuid,e uuid,b uuid"
+        },
+        {
+          "name": "analytics.process_utc",
+          "arguments": "v timestamptz"
+        },
+        {
+          "name": "api.analytics_process_snapshot",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid, p_window_start timestamptz,p_window_end timestamptz,p_as_of timestamptz,p_recorded_through timestamptz"
+        },
+        {
+          "name": "api.analytics_process_event",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_event_id uuid"
+        },
+        {
+          "name": "api.analytics_process_authorize",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid"
+        }
+      ],
+      "tables": []
+    },
+    {
+      "path": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+      "bytesSha256": "1ea4ab076cb3deaa9d0f7f92b56c47effc1a0ad45e14839156a2fd6a2d1bd8ed",
+      "normalizedSqlSha256": "f5a116125b921cd067e35c311a7bc5d6f1e7c8505cc7737fbf833cab87e13148",
+      "functions": [
+        {
+          "name": "analytics.pipeline_access",
+          "arguments": "t uuid,e uuid,b uuid"
+        },
+        {
+          "name": "analytics.immutable_evidence",
+          "arguments": ""
+        },
+        {
+          "name": "api.analytics_pipeline_authorize",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid"
+        },
+        {
+          "name": "api.freeze_pipeline_forecast",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid, p_command_id uuid,p_idempotency_key uuid,p_client_timestamp timestamptz,p_horizon_start date,p_horizon_end date"
+        },
+        {
+          "name": "api.get_pipeline_forecast",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_forecast_id uuid"
+        }
+      ],
+      "tables": [
+        "analytics.pipeline_forecasts"
+      ]
+    },
+    {
+      "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "bytesSha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e",
+      "normalizedSqlSha256": "7ee92f5e8fdf3f6efdead52531341ad4fad6965e4d5a1a2ae05a5171151b905b",
+      "functions": [
+        {
+          "name": "intelligence_control.worker_required",
+          "arguments": ""
+        },
+        {
+          "name": "intelligence_control.quota_limit",
+          "arguments": "t uuid,metric text"
+        },
+        {
+          "name": "api.wave5_reserve_usage",
+          "arguments": "p_tenant_id uuid,p_invocation_id uuid,p_metric_code text, p_period_start timestamptz,p_period_end timestamptz,p_quantity text"
+        },
+        {
+          "name": "api.wave5_settle_usage",
+          "arguments": "p_tenant_id uuid,p_invocation_id uuid,p_event_id uuid,p_quantity text"
+        },
+        {
+          "name": "api.wave5_correct_usage",
+          "arguments": "p_tenant_id uuid,p_event_id uuid,p_original_event_id uuid,p_quantity text,p_reason_code text"
+        },
+        {
+          "name": "api.get_wave5_usage_allowance",
+          "arguments": "p_tenant_id uuid,p_metric_code text,p_period_start timestamptz"
+        }
+      ],
+      "tables": [
+        "intelligence_control.quota_periods",
+        "intelligence_control.usage_reservations",
+        "intelligence_control.usage_events",
+        "intelligence_control.usage_corrections"
+      ]
+    },
+    {
+      "path": "supabase/migrations/20261006153000_wave5_operator_isolation.sql",
+      "bytesSha256": "29ce2ed18e40fb3fbf916e11b9ae82742eb75a52f252085eed48da9af9d88e8b",
+      "normalizedSqlSha256": "29ce2ed18e40fb3fbf916e11b9ae82742eb75a52f252085eed48da9af9d88e8b",
+      "functions": [
+        {
+          "name": "intelligence_control.operator_required",
+          "arguments": "cap text"
+        },
+        {
+          "name": "api.issue_operator_tenant_grant",
+          "arguments": "p_tenant_id uuid,p_operator_id uuid,p_reason text,p_expires_at timestamptz,p_idempotency_key uuid"
+        },
+        {
+          "name": "intelligence_control.health_projection",
+          "arguments": "t uuid"
+        },
+        {
+          "name": "api.get_operator_health",
+          "arguments": ""
+        },
+        {
+          "name": "api.get_operator_tenant_health",
+          "arguments": "p_tenant_id uuid,p_grant_id uuid"
+        },
+        {
+          "name": "api.record_wave5_health_probe",
+          "arguments": "p_id uuid,p_tenant_id uuid,p_code text,p_value text,p_observed_at timestamptz"
+        }
+      ],
+      "tables": [
+        "intelligence_control.operators",
+        "intelligence_control.operator_tenant_grants",
+        "intelligence_control.operator_access_events",
+        "intelligence_control.health_probes"
+      ]
+    },
+    {
+      "path": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+      "bytesSha256": "b75e9cf94107fd9a959ced43f9e643b163ed579f95fb68c8de7b9e739b10d02e",
+      "normalizedSqlSha256": "e11dec927537dfc6eaf8fca58eb821768e2208dba1ff97ea47b5bab2a51e7b78",
+      "functions": [
+        {
+          "name": "intelligence_control.proposal_access",
+          "arguments": "t uuid,e uuid,b uuid,cap text"
+        },
+        {
+          "name": "api.wave5_proposal_authorize",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid"
+        },
+        {
+          "name": "api.get_ai_forecast_evidence",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_forecast_id uuid"
+        },
+        {
+          "name": "api.wave5_proposal_command",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_command_id uuid, p_idempotency_key uuid,p_client_timestamp timestamptz,p_action text,p_payload jsonb"
+        },
+        {
+          "name": "api.get_wave5_proposal",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_proposal_id uuid"
+        }
+      ],
+      "tables": [
+        "intelligence_control.proposals",
+        "intelligence_control.proposal_decisions",
+        "intelligence_control.proposal_executions"
+      ]
+    },
+    {
+      "path": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "bytesSha256": "339e9e86074887d164dd339eb17ac54943c39fca0caf50db575c48529456a9f5",
+      "normalizedSqlSha256": "08c3f24653cfc9118c6b74db317e7ed97b4a76a06a80f43a92db3c0d7265f6cb",
+      "functions": [
+        {
+          "name": "api.schedule_synthetic_subscription",
+          "arguments": "p_tenant_id uuid,p_command_id uuid,p_idempotency_key uuid,p_client_timestamp timestamptz, p_expected_version bigint,p_plan_code text,p_seats integer,p_trial_starts_at timestamptz,p_trial_ends_at timestamptz"
+        },
+        {
+          "name": "api.apply_synthetic_subscription",
+          "arguments": "p_tenant_id uuid,p_revision_id uuid"
+        },
+        {
+          "name": "intelligence_control.synthetic_seat_guard",
+          "arguments": ""
+        },
+        {
+          "name": "api.wave5_subscription_authorize",
+          "arguments": "p_tenant_id uuid"
+        },
+        {
+          "name": "api.get_wave5_subscription",
+          "arguments": "p_tenant_id uuid"
+        }
+      ],
+      "tables": [
+        "intelligence_control.synthetic_tenants",
+        "intelligence_control.subscription_revisions",
+        "intelligence_control.subscription_activations"
+      ]
+    }
+  ],
+  "newApiFunctionCount": 22,
+  "syntheticTenant": null,
+  "syntheticEntity": null,
+  "syntheticBranches": [],
+  "actorAccountLabels": {},
+  "syntheticPlanCode": null,
+  "excluded": [
+    "all other unapplied Wave 3/4 candidates",
+    "SQL test fixtures",
+    "tenant/account/operator/grant bootstrap",
+    "role assignments",
+    "enabling existing shared plan entitlements",
+    "real billing",
+    "credentials/vault keys/model provisioning",
+    "external sends",
+    "worker deployment"
+  ],
+  "approvalRecorded": false
+}

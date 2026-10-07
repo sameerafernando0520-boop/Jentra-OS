@@ -1,0 +1,517 @@
+{
+  "generated_at": "2026-10-06T06:14:40.024Z",
+  "head": "d7a2022faf2631e15b9ba2bc181c8b6fa9d83acc",
+  "project_id": "xpdoufauvrbdmxgngetv",
+  "installed_count": 37,
+  "latest_installed": {
+    "name": "wave4_private_hr",
+    "version": "20260929224939"
+  },
+  "api_functions": 85,
+  "shared_helpers": [
+    {
+      "name": "flow_allocate",
+      "signature": "p_source uuid, p_target uuid, p_tenant uuid, p_entity uuid, p_branch uuid, p_payload jsonb, p_date date, p_request uuid, p_command uuid",
+      "source_md5": "e6e9f68ec7d8aca03be157816fe8eef6"
+    },
+    {
+      "name": "flow_post_journal",
+      "signature": "p_doc jsonb, p_lines jsonb, p_source_type text, p_source_id uuid, p_request uuid, p_command uuid",
+      "source_md5": "bebe95827a7e5ac3f2192d0f7acd38b4"
+    },
+    {
+      "name": "flow_residual",
+      "signature": "p_tenant uuid, p_id uuid, p_as_of date DEFAULT NULL::date",
+      "source_md5": "c0933ed943663701bbc7e01a1c21831f"
+    },
+    {
+      "name": "wave3_lock_open_period",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_posting_date date",
+      "source_md5": "a316c04eef62ba1a43d49ea4d5261ca2"
+    }
+  ],
+  "candidate_count": 46,
+  "candidates": [
+    {
+      "path": "supabase/migrations/20260912152000_product_unit_conversions.sql",
+      "version": "20260912152000",
+      "sha256": "1245dd3f3bfca3c00afa4477da67e6a02655ef9f3e25a1c848e5ca3f769f526c",
+      "installed": false,
+      "ordinal": 1,
+      "requires_previous_candidates": true,
+      "current_sha256": "1245dd3f3bfca3c00afa4477da67e6a02655ef9f3e25a1c848e5ca3f769f526c",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260912153000_procurement_requisition_drafts.sql",
+      "version": "20260912153000",
+      "sha256": "9b751a04245677ca999b6e11a4b7935a2e577d5080961553df3af30161b49a2c",
+      "installed": false,
+      "ordinal": 2,
+      "requires_previous_candidates": true,
+      "current_sha256": "9b751a04245677ca999b6e11a4b7935a2e577d5080961553df3af30161b49a2c",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260913001000_procurement_requisition_workflow.sql",
+      "version": "20260913001000",
+      "sha256": "05533f3c9b038cc1e023c35869a62b987810d776fbba805621678eaa787579d5",
+      "installed": false,
+      "ordinal": 3,
+      "requires_previous_candidates": true,
+      "current_sha256": "05533f3c9b038cc1e023c35869a62b987810d776fbba805621678eaa787579d5",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260913002000_procurement_reference_options.sql",
+      "version": "20260913002000",
+      "sha256": "c56605aa3ab7fafe38dbab4777ca23f731e7a53fd9076ef30a1953fa49adc74c",
+      "installed": false,
+      "ordinal": 4,
+      "requires_previous_candidates": true,
+      "current_sha256": "c56605aa3ab7fafe38dbab4777ca23f731e7a53fd9076ef30a1953fa49adc74c",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260913003000_procurement_sourcing.sql",
+      "version": "20260913003000",
+      "sha256": "d4f92c0fb5c6d24c48d4c21c7184ef042a635abb654c7a53c92129fbc3503d44",
+      "installed": false,
+      "ordinal": 5,
+      "requires_previous_candidates": true,
+      "current_sha256": "d4f92c0fb5c6d24c48d4c21c7184ef042a635abb654c7a53c92129fbc3503d44",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260913004000_procurement_purchase_orders.sql",
+      "version": "20260913004000",
+      "sha256": "8a71252b8bf62a0a8a7325a4683ae770039cecd5c72dc30be131c428636e6795",
+      "installed": false,
+      "ordinal": 6,
+      "requires_previous_candidates": true,
+      "current_sha256": "8a71252b8bf62a0a8a7325a4683ae770039cecd5c72dc30be131c428636e6795",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260913005000_procurement_order_workflow.sql",
+      "version": "20260913005000",
+      "sha256": "dedb4da3b59ca593a349ecaf4c77fc1adf5dd9e3e56d903726291f6e5e98c077",
+      "installed": false,
+      "ordinal": 7,
+      "requires_previous_candidates": true,
+      "current_sha256": "dedb4da3b59ca593a349ecaf4c77fc1adf5dd9e3e56d903726291f6e5e98c077",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260913006000_procurement_goods_receipts.sql",
+      "version": "20260913006000",
+      "sha256": "f38bc858ea03067f56f44208196312842484bd1263b4b9466dc58cb8a7220b76",
+      "installed": false,
+      "ordinal": 8,
+      "requires_previous_candidates": true,
+      "current_sha256": "f38bc858ea03067f56f44208196312842484bd1263b4b9466dc58cb8a7220b76",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260913007000_procurement_supplier_bills.sql",
+      "version": "20260913007000",
+      "sha256": "9212e1dea7c9abcb0e3224ff37bc5a3e1495ea73128bb450f99ef79c4c93c722",
+      "installed": false,
+      "ordinal": 9,
+      "requires_previous_candidates": true,
+      "current_sha256": "9212e1dea7c9abcb0e3224ff37bc5a3e1495ea73128bb450f99ef79c4c93c722",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260914001000_procurement_supplier_settlement.sql",
+      "version": "20260914001000",
+      "sha256": "5b776e2dc0eb53a72fa51375f248ab24848768d3141c757233c7b97a4a654bf1",
+      "installed": false,
+      "ordinal": 10,
+      "requires_previous_candidates": true,
+      "current_sha256": "5b776e2dc0eb53a72fa51375f248ab24848768d3141c757233c7b97a4a654bf1",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260915001000_payable_allocation_corrections.sql",
+      "version": "20260915001000",
+      "sha256": "d175cf49fe16783e2d413d46167e99777904b804873e96dbc185992fc2625666",
+      "installed": false,
+      "ordinal": 11,
+      "requires_previous_candidates": true,
+      "current_sha256": "d175cf49fe16783e2d413d46167e99777904b804873e96dbc185992fc2625666",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260915002000_procurement_purchase_returns.sql",
+      "version": "20260915002000",
+      "sha256": "44292af187109e00c267a9be60b50a2de8243e97e421c0dee2f0bd7220e2acc6",
+      "installed": false,
+      "ordinal": 12,
+      "requires_previous_candidates": true,
+      "current_sha256": "44292af187109e00c267a9be60b50a2de8243e97e421c0dee2f0bd7220e2acc6",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260916001000_inventory_transfers.sql",
+      "version": "20260916001000",
+      "sha256": "de1d6141109130d2c29a8d253966f3d934fa412821baa2ef893ac4691c263dc5",
+      "installed": false,
+      "ordinal": 13,
+      "requires_previous_candidates": true,
+      "current_sha256": "de1d6141109130d2c29a8d253966f3d934fa412821baa2ef893ac4691c263dc5",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260916002000_inventory_stock_counts.sql",
+      "version": "20260916002000",
+      "sha256": "90072604b03523e391fb12bd315032a4a4b968d28789ad0fbbe77a15d204b40b",
+      "installed": false,
+      "ordinal": 14,
+      "requires_previous_candidates": true,
+      "current_sha256": "90072604b03523e391fb12bd315032a4a4b968d28789ad0fbbe77a15d204b40b",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260918001000_inventory_reservation_release.sql",
+      "version": "20260918001000",
+      "sha256": "fb7782b9389615e6a02bcc335d958bba84caa2662c8a85fb295f76120cf9c3e6",
+      "installed": false,
+      "ordinal": 15,
+      "requires_previous_candidates": true,
+      "current_sha256": "fb7782b9389615e6a02bcc335d958bba84caa2662c8a85fb295f76120cf9c3e6",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260919181407_inventory_receipt_provenance.sql",
+      "version": "20260919181407",
+      "sha256": "29becfdc43fef3bbc07a303eb8d79232f6ad3e77cd203d70dd2b82737b7b28e4",
+      "installed": false,
+      "ordinal": 16,
+      "requires_previous_candidates": true,
+      "current_sha256": "29becfdc43fef3bbc07a303eb8d79232f6ad3e77cd203d70dd2b82737b7b28e4",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260919185538_inventory_landed_value.sql",
+      "version": "20260919185538",
+      "sha256": "b13ac607ae1418bd860a5b5012a6adbfcb381217b76f256bd6ca313463eb6d1b",
+      "installed": false,
+      "ordinal": 17,
+      "requires_previous_candidates": true,
+      "current_sha256": "b13ac607ae1418bd860a5b5012a6adbfcb381217b76f256bd6ca313463eb6d1b",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260920202547_inventory_valuation_reports.sql",
+      "version": "20260920202547",
+      "sha256": "8d58f47813dbfac15882bc4c80dd64f650fdeb233f14a61b772468adbbceb0db",
+      "installed": false,
+      "ordinal": 18,
+      "requires_previous_candidates": true,
+      "current_sha256": "8d58f47813dbfac15882bc4c80dd64f650fdeb233f14a61b772468adbbceb0db",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260921041348_manual_journals.sql",
+      "version": "20260921041348",
+      "sha256": "8bea1e05398339b03979bf34569bcb76303c449923b346ece57da3d3d9e79bfd",
+      "installed": false,
+      "ordinal": 19,
+      "requires_previous_candidates": true,
+      "current_sha256": "8bea1e05398339b03979bf34569bcb76303c449923b346ece57da3d3d9e79bfd",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260922001000_ar_ap_control_reconciliation.sql",
+      "version": "20260922001000",
+      "sha256": "9de77b0e06887469a682292311d9cd161d598dcb6f871a34a712dbc38aaa5e26",
+      "installed": false,
+      "ordinal": 20,
+      "requires_previous_candidates": true,
+      "current_sha256": "9de77b0e06887469a682292311d9cd161d598dcb6f871a34a712dbc38aaa5e26",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260923225202_bank_reconciliation.sql",
+      "version": "20260923225202",
+      "sha256": "6d914ceb736d69d2becf7130701509e1f617d8493798b5a8922fd9f268b7f6bd",
+      "installed": false,
+      "ordinal": 21,
+      "requires_previous_candidates": true,
+      "current_sha256": "6d914ceb736d69d2becf7130701509e1f617d8493798b5a8922fd9f268b7f6bd",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260924185321_wave3_period_governance.sql",
+      "version": "20260924185321",
+      "sha256": "c6fae72402c4f47e638d7fd9d74b0f05907937e2ac93568ef3c48edb51e67517",
+      "installed": false,
+      "ordinal": 22,
+      "requires_previous_candidates": true,
+      "current_sha256": "c6fae72402c4f47e638d7fd9d74b0f05907937e2ac93568ef3c48edb51e67517",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260925002000_wave3_financial_statements.sql",
+      "version": "20260925002000",
+      "sha256": "7596ec3e5b1ac2b348e4b23371ff6c54818a5336d276fa3a03f14f1ecd5f17b6",
+      "installed": false,
+      "ordinal": 23,
+      "requires_previous_candidates": true,
+      "current_sha256": "7596ec3e5b1ac2b348e4b23371ff6c54818a5336d276fa3a03f14f1ecd5f17b6",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260925003000_wave3_cash_flow.sql",
+      "version": "20260925003000",
+      "sha256": "5c9a3b6db7e562ef8dfdc3ae590c26215e01e23d4cc838b88edd74a48b6e354e",
+      "installed": false,
+      "ordinal": 24,
+      "requires_previous_candidates": true,
+      "current_sha256": "5c9a3b6db7e562ef8dfdc3ae590c26215e01e23d4cc838b88edd74a48b6e354e",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260925004000_wave3_budgets.sql",
+      "version": "20260925004000",
+      "sha256": "56e5ba5993f32297772a994fcdb39c595ee928de9081e6643a4478c4adf021af",
+      "installed": false,
+      "ordinal": 25,
+      "requires_previous_candidates": true,
+      "current_sha256": "56e5ba5993f32297772a994fcdb39c595ee928de9081e6643a4478c4adf021af",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260926001000_wave3_tax_summary.sql",
+      "version": "20260926001000",
+      "sha256": "dcef36d0dcbf6b5277e6a79f625314d7595434cd88ced42271baa1cfa86b4969",
+      "installed": false,
+      "ordinal": 26,
+      "requires_previous_candidates": true,
+      "current_sha256": "dcef36d0dcbf6b5277e6a79f625314d7595434cd88ced42271baa1cfa86b4969",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260926002000_wave3_tax_summary_hardening.sql",
+      "version": "20260926002000",
+      "sha256": "7976c8c944fd776729e4c67949706c1265bb0b5df04b076e83db301e8164ddee",
+      "installed": false,
+      "ordinal": 27,
+      "requires_previous_candidates": true,
+      "current_sha256": "7976c8c944fd776729e4c67949706c1265bb0b5df04b076e83db301e8164ddee",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260926003000_wave3_tax_control_reconciliation.sql",
+      "version": "20260926003000",
+      "sha256": "51fb81ab482fdd6e2091ed46add2e2efa0c377528950393469ef721f081fe17b",
+      "installed": false,
+      "ordinal": 28,
+      "requires_previous_candidates": true,
+      "current_sha256": "51fb81ab482fdd6e2091ed46add2e2efa0c377528950393469ef721f081fe17b",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260926005000_wave3_governed_journal_tax.sql",
+      "version": "20260926005000",
+      "sha256": "78ae3cf5ee32b220f164431bdc0891dc5f87e04c7eeb079ae5665a9462ee2910",
+      "installed": false,
+      "ordinal": 29,
+      "requires_previous_candidates": true,
+      "current_sha256": "78ae3cf5ee32b220f164431bdc0891dc5f87e04c7eeb079ae5665a9462ee2910",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260926006000_wave3_tax_control_movements.sql",
+      "version": "20260926006000",
+      "sha256": "41c09e5c0f8b6e40c1fca225e4f04196101b1012ebb88ef954234eee4c1e682d",
+      "installed": false,
+      "ordinal": 30,
+      "requires_previous_candidates": true,
+      "current_sha256": "41c09e5c0f8b6e40c1fca225e4f04196101b1012ebb88ef954234eee4c1e682d",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260926007000_wave3_grni_control_reconciliation.sql",
+      "version": "20260926007000",
+      "sha256": "b1864d4ac1612ebfc54439873ef5c8afab790051cf399869f55bc8ba4ff67f02",
+      "installed": false,
+      "ordinal": 31,
+      "requires_previous_candidates": true,
+      "current_sha256": "b1864d4ac1612ebfc54439873ef5c8afab790051cf399869f55bc8ba4ff67f02",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260926008000_wave3_close_control_review.sql",
+      "version": "20260926008000",
+      "sha256": "654fadae87a9b0b027d20aec58ce32ff0fe52a19f024e5182e4b24e5dc2da0ba",
+      "installed": false,
+      "ordinal": 32,
+      "requires_previous_candidates": true,
+      "current_sha256": "654fadae87a9b0b027d20aec58ce32ff0fe52a19f024e5182e4b24e5dc2da0ba",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260926009000_wave3_governed_report_exports.sql",
+      "version": "20260926009000",
+      "sha256": "85238e684c967e8377221e55f911fcb9dfa64e7696110ee28eacffe8b6586386",
+      "installed": false,
+      "ordinal": 33,
+      "requires_previous_candidates": true,
+      "current_sha256": "85238e684c967e8377221e55f911fcb9dfa64e7696110ee28eacffe8b6586386",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260926010000_wave3_financial_dimensions.sql",
+      "version": "20260926010000",
+      "sha256": "34f530f465bc21eff2fd0d137c4fa4b7a8a54d9b82401d91f20110e9f055c900",
+      "installed": false,
+      "ordinal": 34,
+      "requires_previous_candidates": true,
+      "current_sha256": "34f530f465bc21eff2fd0d137c4fa4b7a8a54d9b82401d91f20110e9f055c900",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260927001000_wave3_control_read_plan.sql",
+      "version": "20260927001000",
+      "sha256": "bea514edc6178a914c8c7ed3881c1a007bc01760ad60772a4549cb4c41499e49",
+      "installed": false,
+      "ordinal": 35,
+      "requires_previous_candidates": true,
+      "current_sha256": "bea514edc6178a914c8c7ed3881c1a007bc01760ad60772a4549cb4c41499e49",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260928001000_wave3_posted_journal_evidence.sql",
+      "version": "20260928001000",
+      "sha256": "1c0808dcdb36ebba8d320b1bf344c514e0c1ed7d23cf3e01581364adc219c4f5",
+      "installed": false,
+      "ordinal": 36,
+      "requires_previous_candidates": true,
+      "current_sha256": "1c0808dcdb36ebba8d320b1bf344c514e0c1ed7d23cf3e01581364adc219c4f5",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260927200629_wave3_operational_evidence.sql",
+      "version": "20260927200629",
+      "sha256": "50a0ab28a3573a0bacc0415450e40ddb9deed5fd98196ee49df17e4357dba8f6",
+      "installed": false,
+      "ordinal": 37,
+      "requires_previous_candidates": true,
+      "current_sha256": "50a0ab28a3573a0bacc0415450e40ddb9deed5fd98196ee49df17e4357dba8f6",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260927200703_wave3_historical_controls.sql",
+      "version": "20260927200703",
+      "sha256": "4d135f473782c8f6fa776fe2cb3190efc0bc34bf6e88f629968c3a0b86743990",
+      "installed": false,
+      "ordinal": 38,
+      "requires_previous_candidates": true,
+      "current_sha256": "4d135f473782c8f6fa776fe2cb3190efc0bc34bf6e88f629968c3a0b86743990",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260927200706_wave3_inventory_extensions.sql",
+      "version": "20260927200706",
+      "sha256": "a89834cd135096cf380e5f0446867c5a3b8b6c5c62f63e0f59011943e9e85eea",
+      "installed": false,
+      "ordinal": 39,
+      "requires_previous_candidates": true,
+      "current_sha256": "a89834cd135096cf380e5f0446867c5a3b8b6c5c62f63e0f59011943e9e85eea",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260929001000_wave3_notifications.sql",
+      "version": "20260929001000",
+      "sha256": "ec673056482b7219c4e983bc602bc05cf35ba3f0d6315bead6f5b0f27ea8d2e0",
+      "installed": false,
+      "ordinal": 40,
+      "requires_previous_candidates": true,
+      "current_sha256": "ec673056482b7219c4e983bc602bc05cf35ba3f0d6315bead6f5b0f27ea8d2e0",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260930001000_wave3_landed_extensions.sql",
+      "version": "20260930001000",
+      "sha256": "b472394fcfff0cd7d0d8e2f123e503c6a95ea6521169af62807cafb6bed9718d",
+      "installed": false,
+      "ordinal": 41,
+      "requires_previous_candidates": true,
+      "current_sha256": "b472394fcfff0cd7d0d8e2f123e503c6a95ea6521169af62807cafb6bed9718d",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260930002000_wave3_count_partitions.sql",
+      "version": "20260930002000",
+      "sha256": "18e77c3bb7a9904e96650daa08eec5136758fc5e2d52cab03f6394d97c235613",
+      "installed": false,
+      "ordinal": 42,
+      "requires_previous_candidates": true,
+      "current_sha256": "18e77c3bb7a9904e96650daa08eec5136758fc5e2d52cab03f6394d97c235613",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260930003000_wave3_stock_disposition.sql",
+      "version": "20260930003000",
+      "sha256": "6dc6b2a9bddafa05b263aeb44f0c1ac0e2c68bcd1424869edd8a141e999dad83",
+      "installed": false,
+      "ordinal": 43,
+      "requires_previous_candidates": true,
+      "current_sha256": "6dc6b2a9bddafa05b263aeb44f0c1ac0e2c68bcd1424869edd8a141e999dad83",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260930004000_wave3_dashboard_metrics.sql",
+      "version": "20260930004000",
+      "sha256": "c915ac0a5bb6367f22ac83008a1a8fc00db9829978fa0cab8d621865b19dad4d",
+      "installed": false,
+      "ordinal": 44,
+      "requires_previous_candidates": true,
+      "current_sha256": "c915ac0a5bb6367f22ac83008a1a8fc00db9829978fa0cab8d621865b19dad4d",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20260930005000_wave3_observability.sql",
+      "version": "20260930005000",
+      "sha256": "9afecc2a25596b7af50aa099fb0b9ee6fc5c916be06dd10eb52c023c5920031d",
+      "installed": false,
+      "ordinal": 45,
+      "requires_previous_candidates": true,
+      "current_sha256": "9afecc2a25596b7af50aa099fb0b9ee6fc5c916be06dd10eb52c023c5920031d",
+      "installed_now": false
+    },
+    {
+      "path": "supabase/migrations/20261003090000_wave3_negative_stock_policy.sql",
+      "version": "20261003090000",
+      "ordinal": 46,
+      "sha256": "b11c16acddee4cf02a7f706f7e0ff991cbebdd4b5c6d0e02412e657c77334959",
+      "current_sha256": "b11c16acddee4cf02a7f706f7e0ff991cbebdd4b5c6d0e02412e657c77334959",
+      "installed": false,
+      "installed_now": false,
+      "requires_previous_candidates": true
+    }
+  ],
+  "exact_order_sha256": "cbb8701cbf1550c03d9b1cc8ada1e04f97062bc6b318f8330c6799c56472344c",
+  "historical45": {
+    "file": "docs/verification/remaining-wave3/migration-order-final-20260930-45.json",
+    "sha256": "f511ca6f0f99681c4ce87872b94edd7af53173f16ae9bdec843e8c2e52f8f08c"
+  },
+  "composition": {
+    "file": "docs/verification/remaining-wave3/database-strict-procurement-negative-stock-final-reviewed-20261006.sql",
+    "sha256": "08b0181a289874081017794d6f7db9b0e4a8003607824cdb88fb167713c5eda5",
+    "strict_finish": true,
+    "final_rollback": true
+  },
+  "assertions": {
+    "file": "supabase/tests/wave3_negative_stock_policy_20261003_test.sql",
+    "sha256": "2bcc10fe3e6432d137c63177bf4c2e51a0f59557406bc37b189f8d345b9a7aed"
+  },
+  "live_refresh": {
+    "file": "docs/verification/remaining-wave3/refresh-tracking-reviewed-20261006.json",
+    "sha256": "cecb221e867d5b9748fc751b180f2ec0f4f8687cd4d9df51dafe61cd4142251a",
+    "observed_at": "2026-10-06T06:01:00.325Z"
+  },
+  "boundary": "Source/dependency/strict-rollback preparation only. No SQL sent by this script; no installation. Historical 45-stack results do not verify the new 46-stack composition."
+}

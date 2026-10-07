@@ -1,0 +1,19 @@
+{
+  "observed_at": "2026-10-06T05:59:50.273Z",
+  "project_id": "xpdoufauvrbdmxgngetv",
+  "transport": "connected_supabase_mcp",
+  "mcp_is_error": true,
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"name\":\"HttpException\",\"message\":\"Failed to run sql query: ERROR:  55000: PERIOD_CLOSED\\nCONTEXT:  PL/pgSQL function finance.wave3_lock_open_period(uuid,uuid,date) line 22 at RAISE\\nSQL statement \\\"SELECT finance.wave3_lock_open_period(p_tenant_id,p_legal_entity_id,v_date)\\\"\\nPL/pgSQL function api.post_stock_adjustment(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint) line 18 at PERFORM\\nSQL statement \\\"select api.post_stock_adjustment($1,$2,$3,$4,$5,$6,$7,$8)\\\"\\nPL/pgSQL function pg_temp_11.count_call(text,jsonb,bigint,text) line 3 at EXECUTE\\n\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error_code": "INVALID_ARGUMENT"
+    },
+    "isError": true
+  },
+  "boundary": "Strict inventory run failed PERIOD_CLOSED in current-date count fixture; rollback only."
+}

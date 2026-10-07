@@ -546,6 +546,38 @@ final class ServiceController extends ChangeNotifier {
     if (locked) {
       return;
     }
+    final epoch = _epoch, formEpoch = _formEpoch;
+    if (field == 'equipment_id' && action == 'ticket') {
+      try {
+        final detail = await repository.detail(
+          scope,
+          ServiceKind.equipment,
+          choice.id,
+        );
+        if (!_live(epoch) || formEpoch != _formEpoch || locked) {
+          return;
+        }
+        if (detail.record.version != choice.version) {
+          throw const DomainError(
+            code: 'VERSION_CONFLICT',
+            message: 'The equipment changed. Choose its current named source.',
+          );
+        }
+        final equipment = detail.record.toJson();
+        if (equipment['kind'] == 'asset') {
+          edit('customer_id', null);
+          edit('contact_id', null);
+          labels['customer_id'] = 'Internal equipment has no customer';
+          labels.remove('contact_id');
+        } else {
+          edit('customer_id', equipment['customer_id']);
+          labels['customer_id'] = 'Recorded equipment customer';
+        }
+      } catch (e) {
+        if (_live(epoch) && formEpoch == _formEpoch) _failure(e);
+        return;
+      }
+    }
     edit(field, choice.id);
     labels[field] = choice.name;
     _notify();
@@ -728,6 +760,12 @@ final class ServiceController extends ChangeNotifier {
         await repository.execute(a, request.envelope),
         request,
       );
+      if (_live(epoch)) {
+        confirmed = result;
+        message =
+            'Service change confirmed. Invoice and payment remain separate.';
+        _notify();
+      }
       await ServiceCommandAcknowledgements(drafts[a]!).save(request, result);
       if (!_live(epoch)) {
         await drafts[a]!.complete(scope, id, request.envelope.commandId);
@@ -781,6 +819,9 @@ final class ServiceController extends ChangeNotifier {
         }
       }
       if (_live(epoch)) {
+        if (confirmed != null && safe.code == 'LOCAL_STORAGE_FULL') {
+          message = 'Service change confirmed. Saving the encrypted confirmation failed; reconcile the original request after restoring local storage.';
+        }
         _failure(safe);
       }
     } finally {
@@ -847,6 +888,11 @@ final class ServiceController extends ChangeNotifier {
         }
       } else {
         final result = _confirm(raw, request);
+        if (_live(epoch)) {
+          confirmed = result;
+          message = 'Original service change confirmed.';
+          _notify();
+        }
         await ServiceCommandAcknowledgements(drafts[a]!).save(request, result);
         if (!_live(epoch)) {
           await drafts[a]!.complete(scope, id, request.envelope.commandId);

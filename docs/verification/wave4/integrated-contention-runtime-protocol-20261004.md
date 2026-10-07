@@ -109,3 +109,32 @@ Attach pass/fail/evidence for AC-401 through AC-420 and EC-401 through EC-416.
 The owner reviews actual evidence and unresolved exceptions. Keep Wave 4 open
 until installation, runtime, real contention/load, restart and signoff evidence
 are present. This protocol is runnable preparation, not their completion.
+
+## October 5 observation validator
+
+`scripts/wave4/evaluate_runtime_evidence.py` validates captured observations;
+it does not execute commands, connect to a database or create runtime evidence.
+Run it with `--input` and `--output` paths inside this repository. The input JSON
+contains `context` (source snapshot and installed ledger SHA-256, synthetic
+tenant/entity/branch, workload/dataset and actor basis), `latency` and `races`.
+Do not include secrets or private values. Preserve original raw observations.
+
+Each latency family has `name`, `kind` (`read` or `command`), `warmup` and
+`measured` arrays of `{id, elapsed_ms, outcome}`. Durations are exact decimal
+strings; outcomes are `success`, `failure` or `unavailable`. It requires at least
+20 warmup and 100 measured observations, retains failures and uses nearest-rank
+p95. Cold/warm and distinct scopes remain separately named documented workloads.
+
+Each race has a protocol family `name`, `direction` (`forward` or `reversed`),
+`session_a`/`session_b` with distinct backend PID, command ID and offset-aware
+`started`/`finished`/`committed` timestamps, and an independent `observer` PID,
+`observed_at`, `waiting_pid`, `blocking_pids` and `wait_event_type: Lock`.
+It rejects sequential calls, reused sessions, missing actual blocking and invalid
+chronology. `postconditions` contain actual `{query, result, passed}` observations.
+Both actor/command orderings are required for every matrix family. Missing or
+failed results remain visible. These validation tests use synthetic records and
+reused command identities or identical lock observations cannot fill other rows.
+Every family/order requires its own attributable measurements. The tests
+are not contention/load passes. Input authenticity, installation, authenticated
+native, actual Credential Manager restart and owner acceptance remain open even
+when supplied observations are statistically and structurally consistent.

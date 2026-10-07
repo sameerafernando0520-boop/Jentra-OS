@@ -210,6 +210,16 @@ class _ProjectsWorkspaceState extends State<ProjectsWorkspace> {
     final r = c.selected!;
     return _card(r.name, [
       _buttons([
+        _button(
+          'Milestones',
+          () => unawaited(
+            _safe(() async {
+              if (!await c.canLeave() || !mounted) return;
+              context.go('/projects/${r.id}/milestones', extra: r);
+            }),
+          ),
+          enabled: !c.locked,
+        ),
         if (c.has('projects.cost.view') || c.has('projects.billing.manage'))
           _button(
             'Expenses and billing',

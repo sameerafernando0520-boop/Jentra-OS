@@ -1,0 +1,41 @@
+test_cloned_overlap_cannot_fill_matrix (__main__.RuntimeEvidenceTests.test_cloned_overlap_cannot_fill_matrix) ... FAIL
+test_command_target_is_1500 (__main__.RuntimeEvidenceTests.test_command_target_is_1500) ... ok
+test_duplicate_samples_rejected (__main__.RuntimeEvidenceTests.test_duplicate_samples_rejected) ... ok
+test_failed_postcondition_retained (__main__.RuntimeEvidenceTests.test_failed_postcondition_retained) ... ok
+test_failures_are_retained_and_block_target_claim (__main__.RuntimeEvidenceTests.test_failures_are_retained_and_block_target_claim) ... ok
+test_fractional_observations_are_exact (__main__.RuntimeEvidenceTests.test_fractional_observations_are_exact) ... ok
+test_genuine_three_session_overlap_is_consistent (__main__.RuntimeEvidenceTests.test_genuine_three_session_overlap_is_consistent) ... ok
+test_insufficient_measurements_rejected (__main__.RuntimeEvidenceTests.test_insufficient_measurements_rejected) ... ok
+test_insufficient_warmup_rejected (__main__.RuntimeEvidenceTests.test_insufficient_warmup_rejected) ... ok
+test_missing_query_result_rejected (__main__.RuntimeEvidenceTests.test_missing_query_result_rejected) ... ok
+test_missing_real_blocker_rejected (__main__.RuntimeEvidenceTests.test_missing_real_blocker_rejected) ... ok
+test_naive_timezone_rejected (__main__.RuntimeEvidenceTests.test_naive_timezone_rejected) ... ok
+test_nearest_rank_is_observation_95 (__main__.RuntimeEvidenceTests.test_nearest_rank_is_observation_95) ... ok
+test_no_observations_never_complete (__main__.RuntimeEvidenceTests.test_no_observations_never_complete) ... ok
+test_non_string_command_identity_rejected (__main__.RuntimeEvidenceTests.test_non_string_command_identity_rejected) ... FAIL
+test_reused_backend_rejected (__main__.RuntimeEvidenceTests.test_reused_backend_rejected) ... ok
+test_sequential_calls_rejected (__main__.RuntimeEvidenceTests.test_sequential_calls_rejected) ... ok
+test_unavailable_is_never_latency_success (__main__.RuntimeEvidenceTests.test_unavailable_is_never_latency_success) ... ok
+
+======================================================================
+FAIL: test_cloned_overlap_cannot_fill_matrix (__main__.RuntimeEvidenceTests.test_cloned_overlap_cannot_fill_matrix)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\sheha\Desktop\Jentra OS\scripts\wave4\test_runtime_evidence.py", line 132, in test_cloned_overlap_cannot_fill_matrix
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_non_string_command_identity_rejected (__main__.RuntimeEvidenceTests.test_non_string_command_identity_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\sheha\Desktop\Jentra OS\scripts\wave4\test_runtime_evidence.py", line 119, in test_non_string_command_identity_rejected
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.007s
+
+FAILED (failures=2)

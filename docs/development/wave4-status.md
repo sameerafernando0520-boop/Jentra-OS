@@ -1,11 +1,68 @@
 # Wave 4 kickoff and delivery status
 
-Updated: 2026-10-04. User instruction: complete all remaining approved synthetic
+Updated: 2026-10-06. User instruction: complete all remaining approved synthetic
 Wave 4 development and continue independent work across pending gates. On October
 1 the user explicitly authorized additional agents for development and reviews,
 superseding the earlier solo-work preference.
 
 ## Current checkpoint
+
+October 6 final verification: [current checkpoint](../verification/wave4/resume-checkpoint-20261006-final.md)
+and [86-ID review](../verification/wave4/requirement-review-final-20261006.json)
+verify the completed source integration. All 994 actual execution/build files
+match the current workspace and isolated copy. Domain full serial 340 and platform
+full 1,062 pass; full desktop has 1,775 passes and 83 pixel comparisons. Within
+the required Wave 4 files only two payroll previews fail because the new Linked
+corrections button differs from the approved baselines; those images remain
+unchanged. Whole analysis and current Windows release compilation pass.
+Fresh combined candidate SQL passes 14 strict preservation/security assertions
+across all 15 migrations and 111 protected tables. Fresh expense handler 14 and
+runtime validator 20 pass. The [specific installation review](../verification/wave4/install-review-final-20261006.md)
+is ready; owner installation/deployment decision, synthetic workspace/restore
+binding, absent generic stock/procurement providers and installed/authenticated/
+contention/load/restart/visual/signoff evidence remain open. Wave 4 is not complete.
+The older dated current-checkpoint text below retains its original evidence boundary.
+
+October 5: resumed finance, service and correction workers from interrupted
+checkpoints. Latest actual project/billed payroll correction rollback passes 201;
+finance passes 110 after correcting the dated service-cost margin selection.
+Finance domain 11/gateway 17 and correction domain 12/platform 16/native 14 pass.
+Correction final update/no-update tests and both readable previews are verified.
+Service standalone SQL passes 48 and combined payroll/private-cost SQL passes
+186. Current service recovery passes 48 native tests. Milestones pass 144 actual
+rollback assertions and domain 4/gateway 5/native 20 checks, including an invoice
+from approved terms. The later actual 147 verifies the corrected payment-term
+maximum and rejection boundary. Private expense evidence and finance integration pass
+180 actual rollback assertions against the final protected SQL; its complete
+client/recovery checks are being finished; both actual Deno entry checks pass.
+Finance current domain 13/gateway 19/native 33 and eight inspected previews pass.
+Internal asset equipment has an additive operational source adapter and native
+workspace; final SQL passes 171, with current client checks next.
+Asset late-confirmation/current-authority/MFA
+recovery now passes 27 native tests and five exact-envelope acknowledgement tests.
+Project native tests pass 36; eight current owner/route previews were inspected.
+The earlier source-bound gate verified 120 files, clean analysis, 24 domain,
+43 platform and 63 native tests at its recorded snapshot. A later project
+confirmation defect was reproduced and fixed: canonical full-envelope binding
+passes five platform regressions and all 36 project native tests. That changed
+source supersedes the earlier gate's current-source claim. The runtime observation
+validator passes 20 tests, including rejection of relabeled/reused race proofs;
+the validator does not execute real contention or load. Final current integration
+checks/build and independent reviews remain open.
+All 15 unapplied SQL candidates compose together: actual 14 strict security and
+preservation checks pass over 111 protected tables, with existing grants, plans,
+subscriptions, finance helpers and ledger unchanged. Post-rollback verification
+retains 37 migrations and no candidate tables or fixture tenants. The owner
+confirmed the development URL; no matching persisted W4 workspace was found by
+name or slug. The current in-app workspace identity remains requested.
+See the [current checkpoint](../verification/wave4/resume-checkpoint-20261005.md).
+External HEAD is `d7a2022`; no Git writes or persistent installs were
+performed in this continuation. The read-only development refresh still shows 37
+migrations, no synthetic tenant and no private worker readiness. **Wave 4 is not
+complete.** Source gaps, installation, true contention/load, authenticated native,
+Credential Manager restart and owner acceptance require their own evidence.
+
+The following entries are dated historical checkpoints.
 
 October 4: three workers resumed their saved finance/service/payroll correction
 source after usage interruptions. Explicit project task ownership passed 55

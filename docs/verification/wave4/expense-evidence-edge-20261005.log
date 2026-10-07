@@ -1,0 +1,22 @@
+✔ upload verifies stored bytes then completes the exact sealed command (74.4642ms)
+✔ duplicate upload only retries after reading and matching stored content (3.4726ms)
+✔ malformed metadata, wrong scope and oversized streams have no activation (2.9217ms)
+✔ download returns no URL and rechecks authorization after reading (1.3181ms)
+✔ revocation during storage read discards all bytes and raw error values (1.002ms)
+✔ export passes its distinct operation, never infers export from download (1.7697ms)
+✔ unknown storage failure is safe and leaves confirmation absent (3.3033ms)
+✔ expense privacy unit is checked independently of the project (1.8574ms)
+✔ unverified upload and revoked policy never activate evidence (1.7037ms)
+✔ caller cannot inject a storage path, URL, filename or raw completion payload (2.2469ms)
+✔ readiness requires successful upload, readback and verified probe removal (2.4106ms)
+✔ failed probe deletion never registers readiness (1.8168ms)
+✔ purge confirms only jobs whose objects were actually removed (2.4679ms)
+✔ worker rejects missing artifact and oversize jobs before side effects (0.6868ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 138.8793

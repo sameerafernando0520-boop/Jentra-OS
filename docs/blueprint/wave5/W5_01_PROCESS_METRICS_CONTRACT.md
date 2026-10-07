@@ -329,8 +329,12 @@ value primitives; do not add another package or change shared export barrels.
    handoff. Record installed-development approval, real signed-in synthetic
    access, native restart, contention/load and owner acceptance separately.
 
-No current evidence establishes that the proposed read, domain calculation,
-or screen is implemented. Domain completion cannot satisfy AC-554/556 on its own.
+The September 30 checkpoint below preceded implementation. The October 6
+continuation implements the bounded rollback read provider, gateway, domain
+calculation, encrypted filters and native workspace; current evidence is linked
+from `docs/development/wave5-status.md`. Installed/authenticated acceptance,
+native restart, contention/load and owner signoff remain separate. Domain or
+widget completion cannot satisfy those runtime gates on its own.
 
 ## Out of Scope
 

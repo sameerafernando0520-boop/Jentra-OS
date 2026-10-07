@@ -4088,7 +4088,22 @@ begin
   end loop;
  end if;
  if act='reverse' then
+  if jsonb_typeof(coalesce(p_payload->'current_billing_impacts','[]')) is distinct from 'array'
+   or jsonb_array_length(coalesce(p_payload->'current_billing_impacts','[]'))>50 then
+   raise exception using errcode='22023',message='PAYROLL_CURRENT_BILLING_IMPACT_INVALID';end if;
   for x in select value from jsonb_array_elements(coalesce(p_payload->'current_billing_impacts','[]')) loop
+   -- Reject impossible source/credit combinations before looking up a linked
+   -- finance provider, including on a confirmed command replay.
+   if jsonb_typeof(x) is distinct from 'object' or coalesce(x->>'seal_id','') !~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+    or jsonb_typeof(x->'billing_credit_line_ids') is distinct from 'array' or jsonb_typeof(x->'allocation_credits') is distinct from 'array' then
+    raise exception using errcode='22023',message='PAYROLL_CURRENT_BILLING_IMPACT_INVALID';end if;
+   select * into src from people_payroll.correction_sources where correction_id=cid and seal_id=(x->>'seal_id')::uuid;
+   if src.id is null or src.impact is null or src.source_kind not in('attendance','project','service')
+    or(src.source_kind='attendance' and jsonb_array_length(x->'billing_credit_line_ids')<>0)
+    or(src.source_kind<>'attendance' and jsonb_array_length(x->'allocation_credits')<>0) then
+    raise exception using errcode='22023',message='PAYROLL_CURRENT_BILLING_IMPACT_INVALID';end if;
+   perform people_payroll.current_credit_ids(x->'billing_credit_line_ids');
+   perform people_payroll.current_allocation_credits(x->'allocation_credits');
    perform people_payroll.correction_billing_permission(p_tenant_id,p_legal_entity_id,p_branch_id,x);
    for linked_effect in select value from jsonb_array_elements(coalesce(x->'allocation_credits','[]')) loop
     perform people_payroll.correction_billing_permission(p_tenant_id,p_legal_entity_id,p_branch_id,linked_effect);
@@ -5074,8 +5089,8 @@ select pg_temp.wid('tenant'),pg_temp.wid('creator.role'),p from unnest(array['pe
 -- Real scoped common ownership rows exercise the bound before module effects.
 create temporary table correction_bound_claim as
  select people.make_work_claim(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('manager'),
- 'attendance',pg_temp.wid('corr.bound.source'),(pg_temp.wdate()+28)::timestamp+interval '9 hours' at time zone 'Asia/Colombo',
- (pg_temp.wdate()+28)::timestamp+interval '10 hours' at time zone 'Asia/Colombo','[]',pg_temp.wid('calendar-version'),pg_temp.wid('creator')) id;
+ 'attendance',pg_temp.wid('corr.bound.source'),((pg_temp.wdate()+28)::timestamp+interval '9 hours') at time zone 'Asia/Colombo',
+ ((pg_temp.wdate()+28)::timestamp+interval '10 hours') at time zone 'Asia/Colombo','[]',pg_temp.wid('calendar-version'),pg_temp.wid('creator')) id;
 insert into people.work_allocations(id,tenant_id,legal_entity_id,branch_id,employee_id,claim_id,source_kind,source_id,start_utc,end_utc,created_by)
 select pg_temp.wid('corr.bound.allocation.'||i),pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('manager'),c.id,
  'project',pg_temp.wid('corr.bound.project.source.'||i),w.start_utc+make_interval(secs=>i*2),w.start_utc+make_interval(secs=>i*2+1),pg_temp.wid('creator')
@@ -5083,7 +5098,7 @@ from generate_series(1,51) i cross join correction_bound_claim c join people.wor
 insert into payroll_assertions select throws_ok($q$select people_payroll.linked_allocation_bound(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),
  pg_temp.wid('manager'),(select id from correction_bound_claim),'[]')$q$,'55000','WORK_ALLOCATION_IMPACT_BOUND_REQUIRED',
  '51 scoped distinct allocated sources fail before linked module effects');
-delete from people.work_allocations where id=pg_temp.wid('corr.bound.allocation.51');
+select people.revoke_work_allocation(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('manager'),pg_temp.wid('corr.bound.allocation.51'));
 create function pg_temp.cbound_ok() returns boolean language plpgsql as $$begin
  perform people_payroll.linked_allocation_bound(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),
   pg_temp.wid('manager'),(select id from correction_bound_claim),'[]');return true;end $$;
@@ -5092,7 +5107,8 @@ insert into payroll_assertions select throws_ok($q$select people_payroll.linked_
  (select jsonb_agg(jsonb_build_object('source_kind','project','impact',jsonb_build_object('entry_id',pg_temp.wid('corr.bound.project.entry.'||i))))
   from generate_series(1,51) i))$q$,'55000','WORK_ALLOCATION_IMPACT_BOUND_REQUIRED',
  '51 frozen removed origins fail the reversal bound without truncation');
-delete from people.work_allocations where claim_id=(select id from correction_bound_claim);
+select people.revoke_work_allocation(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('manager'),a.id)
+from people.work_allocations a where a.claim_id=(select id from correction_bound_claim) and a.active order by a.id;
 select people.revoke_work_claim(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('manager'),(select id from correction_bound_claim));
 
 
@@ -5481,6 +5497,9 @@ declare act text:=p_payload->>'action';cap text;id uuid;project_id uuid;employee
    values(p_tenant_id,p_legal_entity_id,r.id,r.current_plan_id,task_id,progress,r.version+1,reason,auth.uid());
    update projects.register set version=version+1 where register.id=r.id;
   elsif act='close' then
+   if to_regprocedure('projects.milestone_closure_guard(uuid,uuid,uuid)') is not null then
+    execute 'select projects.milestone_closure_guard($1,$2,$3)' using p_tenant_id,p_legal_entity_id,r.id;
+   end if;
    perform projects.finance_closure_guard(p_tenant_id,p_legal_entity_id,r.id);
    if r.current_plan_id is null or exists(select 1 from projects.plans where plans.project_id=r.id and status='pending')
     or exists(select 1 from projects.tasks q where q.plan_id=r.current_plan_id and coalesce((select z.progress from projects.task_progress z
@@ -6008,14 +6027,34 @@ declare project uuid;source jsonb;old projects.service_cost_revisions%rowtype;cu
  if service_date is null then raise exception using errcode='22023',message='PROJECT_SERVICE_COST_BASIS_INVALID';end if;
  select * into old from projects.service_cost_revisions x where x.tenant_id=t and x.legal_entity_id=e and x.provider_source_id=labor and x.source_version=version;
  if old.id is not null then
-  if old.project_id<>project or old.source_revision_id<>revision or old.source_digest<>digest or old.amount<>cost or old.payable_seconds<>seconds or old.status<>status then
+  if old.project_id<>project or old.source_revision_id<>revision or old.source_digest<>digest or old.amount<>cost or old.payable_seconds<>seconds or old.status<>status
+   or old.hourly_cost<>rate or old.currency_code<>currency or old.precision<>precision or old.service_date<>service_date then
    raise exception using errcode='40001',message='PROJECT_SERVICE_COST_SOURCE_CONFLICT';end if;return;end if;
  insert into projects.service_cost_revisions(tenant_id,legal_entity_id,branch_id,project_id,provider_source_id,source_revision_id,source_version,source_digest,currency_code,precision,service_date,payable_seconds,hourly_cost,amount,status,recorded_by)
  values(t,e,b,project,labor,revision,version,digest,currency,precision,service_date,seconds,rate,cost,status,auth.uid());
- if status='cancelled' then update projects.billable_units set status='cancelled' where tenant_id=t and legal_entity_id=e and provider_source_id=labor and source_kind='service' and status='available';end if;
+ if status='cancelled' then update projects.billable_units u set status='cancelled' where u.tenant_id=t and u.legal_entity_id=e and u.provider_source_id=labor and u.source_kind='service' and u.status='available';end if;
+end $$;
+create function projects.milestone_terms(t uuid,e uuid,b uuid,u projects.billable_units) returns jsonb
+language plpgsql stable security definer set search_path='' as $$declare terms jsonb;begin
+ if u.source_kind<>'milestone' then return '{}'::jsonb;end if;
+ if to_regprocedure('projects.milestone_billing_terms(uuid,uuid,uuid,uuid)') is null then raise exception using errcode='55000',message='PROJECT_MILESTONE_PROVIDER_REQUIRED';end if;
+ execute 'select projects.milestone_billing_terms($1,$2,$3,$4)' into terms using t,e,b,u.source_id;
+ if terms is null or jsonb_typeof(terms)<>'object' or not(terms ?& array['payment_due_days','payment_terms','customer_id','currency_code','amount','source_version','digest'])
+  or exists(select 1 from jsonb_object_keys(terms) k where k<>all(array['payment_due_days','payment_terms','customer_id','currency_code','amount','source_version','digest']))
+  or jsonb_typeof(terms->'payment_due_days') is distinct from 'number' or terms->>'payment_due_days'!~'^[0-9]+$'
+  or(terms->>'payment_due_days')::numeric not between 0 and 365 then raise exception using errcode='22023',message='PROJECT_MILESTONE_TERMS_INVALID';end if;
+ perform projects.text(terms->'payment_terms',500);
+ if(terms->>'source_version')::bigint is distinct from u.source_version or terms->>'digest' is distinct from u.source_digest or projects.amount(terms->'amount') is distinct from u.amount
+  or not exists(select 1 from projects.register r where r.id=u.project_id and r.tenant_id=t and r.legal_entity_id=e and r.branch_id=b
+   and r.customer_id::text=terms->>'customer_id' and r.currency_code=terms->>'currency_code') then raise exception using errcode='40001',message='PROJECT_MILESTONE_SOURCE_CONFLICT';end if;
+ return terms;
 end $$;
 create function projects.finance_access(t uuid,e uuid,b uuid,cap text,w boolean default true) returns void language plpgsql security definer set search_path='' as $$begin
  perform projects.require_access(t,e,b,'projects.view',w);
+ if not exists(select 1 from billing.tenant_subscriptions s join billing.plan_entitlements p on p.plan_code=s.plan_code
+  where s.tenant_id=t and p.entitlement_code='module.finance' and p.enabled and
+  ((s.status='trialing' and s.trial_ends_at>now()) or(s.status='active' and (s.current_period_ends_at is null or s.current_period_ends_at>now())))) then
+  raise exception using errcode='42501',message='PROJECT_FINANCE_ENTITLEMENT_REQUIRED';end if;
  if cap not in('projects.cost.view','projects.expenses.manage','projects.expenses.approve','projects.expenses.post','projects.expenses.settle','projects.billing.manage','projects.margin.view') then raise exception using errcode='42501',message='PROJECT_FINANCE_SCOPE_DENIED';end if;
  perform core.wave3_require_scope(t,cap,e,b);
  if cap<>'projects.billing.manage' then perform core.wave3_require_scope(t,'projects.cost.view',e,b);end if;
@@ -6254,6 +6293,10 @@ begin
      execute 'select service.billing_source($1,$2,$3,$4)' into doc using p_tenant_id,p_legal_entity_id,p_branch_id,u.provider_source_id;
      if(doc->>'source_id')::uuid<>u.source_id or(doc->>'source_version')::bigint<>u.source_version or doc->>'digest'<>u.source_digest or(doc->>'amount')::numeric<>u.amount or doc->>'customer_id' is distinct from r.customer_id::text then raise exception using errcode='40001',message='PROJECT_SERVICE_SOURCE_CONFLICT';end if;
     end if;
+    if u.source_kind='milestone' then
+     doc:=projects.milestone_terms(p_tenant_id,p_legal_entity_id,p_branch_id,u);
+     if(p_payload->>'due_date')::date is distinct from posting_date+(doc->>'payment_due_days')::integer then raise exception using errcode='22023',message='PROJECT_MILESTONE_DUE_DATE_REQUIRED';end if;
+    end if;
     select * into product from inventory.products where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and products.id=(allocation->>'product_id')::uuid and status='active' and kind='service' and can_sell for share;
     if product.id is null or product.version is distinct from(allocation->>'product_version')::bigint then raise exception using errcode='40001',message='PROJECT_BILLING_PRODUCT_CONFLICT';end if;
     if allocation->>'tax_definition_id' is not null then
@@ -6280,6 +6323,10 @@ begin
    doc:=sales.flow_document('sales_invoice',p_tenant_id,b.invoice_id,true);invoice_version:=(p_payload->>'invoice_version')::bigint;
    if invoice_version is distinct from(doc->>'version')::bigint then raise exception using errcode='40001',message='PROJECT_INVOICE_VERSION_CONFLICT';end if;
    if act='billing_post' then
+    for u in select z.* from projects.billable_units z where z.id in(select unit_id from projects.billing_links where batch_id=id) and z.source_kind='milestone' order by z.id loop
+     outcome:=projects.milestone_terms(p_tenant_id,p_legal_entity_id,p_branch_id,u);
+     if(doc->>'due_date')::date is distinct from(doc->>'document_date')::date+(outcome->>'payment_due_days')::integer then raise exception using errcode='22023',message='PROJECT_MILESTONE_DUE_DATE_REQUIRED';end if;
+    end loop;
     for u in select z.* from projects.billable_units z where z.id in(select unit_id from projects.billing_links where batch_id=id) and z.source_kind='service' order by z.id loop
      perform core.wave3_require_scope(p_tenant_id,'service.billing',p_legal_entity_id,p_branch_id);
      execute 'select service.consume_billing_source($1,$2,$3,$4,$5,$6,$7)' using p_tenant_id,p_legal_entity_id,p_branch_id,u.provider_source_id,u.source_version,u.source_digest,id;
@@ -6334,7 +6381,8 @@ declare items jsonb;cap text;begin
   select coalesce(jsonb_agg(q.body order by q.id),'[]') into items from(select b.id,jsonb_build_object('id',b.id,'version',b.version,'status',b.status,'invoice_id',b.invoice_id,'digest',b.digest,'prepared_by',b.prepared_by,'invoice_status',i.status,'invoice_version',i.version,'document_date',i.document_date,'currency_code',i.currency_code,'total',i.grand_total::text,'unit_count',(select count(*) from projects.billing_links where batch_id=b.id)) body
    from projects.billing_batches b join sales.sales_invoices i on i.id=b.invoice_id where b.tenant_id=p_tenant_id and b.legal_entity_id=p_legal_entity_id and b.branch_id=p_branch_id and b.project_id=p_project_id and(p_after is null or b.id>p_after) and(p_target_id is null or b.id=p_target_id) order by b.id limit 50) q;
  elsif p_kind='units' then
-  select coalesce(jsonb_agg(q.body order by q.id),'[]') into items from(select u.id,jsonb_build_object('id',u.id,'source_kind',u.source_kind,'source_id',u.source_id,'source_version',u.source_version,'source_digest',u.source_digest,'source_name',case u.source_kind when 'time' then coalesce((select left(t.name,180)||' · '||v.start_local::date from projects.time_revisions v join projects.tasks t on t.id=v.task_id and t.plan_id=v.plan_id where v.id=u.source_id),'Approved project time') when 'expense' then coalesce((select left(v.purpose,180) from projects.expenses x join projects.expense_revisions v on v.id=x.current_revision_id where x.id=u.source_id),'Approved project expense') when 'service' then 'Approved service labor · '||u.payable_seconds||' seconds' else 'Approved project milestone' end,'amount',u.amount::text,'payable_seconds',u.payable_seconds,'status',u.status) body
+  select coalesce(jsonb_agg(q.body order by q.id),'[]') into items from(select u.id,jsonb_build_object('id',u.id,'source_kind',u.source_kind,'source_id',u.source_id,'source_version',u.source_version,'source_digest',u.source_digest,'source_name',case u.source_kind when 'time' then coalesce((select left(t.name,180)||' · '||v.start_local::date from projects.time_revisions v join projects.tasks t on t.id=v.task_id and t.plan_id=v.plan_id where v.id=u.source_id),'Approved project time') when 'expense' then coalesce((select left(v.purpose,180) from projects.expenses x join projects.expense_revisions v on v.id=x.current_revision_id where x.id=u.source_id),'Approved project expense') when 'service' then 'Approved service labor · '||u.payable_seconds||' seconds' else 'Approved project milestone' end,'amount',u.amount::text,'payable_seconds',u.payable_seconds,'status',u.status)
+   ||case when u.source_kind='milestone' then projects.milestone_terms(p_tenant_id,p_legal_entity_id,p_branch_id,u)-array['customer_id','currency_code','amount','source_version','digest'] else '{}'::jsonb end body
    from projects.billable_units u where u.tenant_id=p_tenant_id and u.legal_entity_id=p_legal_entity_id and u.branch_id=p_branch_id and u.project_id=p_project_id and(p_after is null or u.id>p_after) and(p_target_id is null or u.id=p_target_id) order by u.id limit 50) q;
  elsif p_kind='serviceCosts' then
   select coalesce(jsonb_agg(q.body order by q.id),'[]') into items from(select c.id,jsonb_build_object('id',c.id,'provider_source_id',c.provider_source_id,
@@ -6408,9 +6456,9 @@ declare revenue numeric;credits numeric;expense_cost numeric;time_cost numeric;s
  select coalesce(sum(projects.ratio(s.planned_seconds*c.hourly_rate*1000000,3600,r.precision)),0) into commitments from projects.resource_slots s join projects.resource_costs c on c.resource_slot_id=s.id join projects.register r on r.id=s.project_id where s.plan_id=plan;
  select coalesce(sum(v.base_gross),0) into expense_cost from projects.expense_revisions v join projects.expense_decisions d on d.revision_id=v.id where v.project_id=p_project_id and d.decision='approved' and d.recorded_at<=p_as_of and v.service_date<=p_effective_date and not exists(select 1 from projects.reimbursement_effects ef join projects.reimbursements o on o.id=ef.obligation_id where o.revision_id=v.id and ef.kind='expense_reverse' and ef.recorded_at<=p_as_of and ef.posting_date<=p_effective_date);
  select coalesce(sum(c.amount),0) into time_cost from projects.time_costs c join projects.time_revisions v on v.id=c.revision_id where c.project_id=p_project_id and v.start_local::date<=p_effective_date and exists(select 1 from projects.time_events ev where ev.revision_id=v.id and ev.action='time_approve' and ev.recorded_at<=p_as_of) and not exists(select 1 from projects.time_events ev where ev.revision_id=v.id and ev.action='time_cancel' and ev.recorded_at<=p_as_of);
- select coalesce(sum(q.amount),0) into service_cost from(select distinct on(c.provider_source_id) c.amount from projects.service_cost_revisions c
+ select coalesce(sum(q.amount),0) into service_cost from(select distinct on(c.provider_source_id) c.amount,c.service_date from projects.service_cost_revisions c
   where c.tenant_id=p_tenant_id and c.legal_entity_id=p_legal_entity_id and c.branch_id=p_branch_id and c.project_id=p_project_id and c.recorded_at<=p_as_of
-   and c.service_date<=p_effective_date order by c.provider_source_id,c.source_version desc,c.recorded_at desc) q;
+   order by c.provider_source_id,c.source_version desc,c.recorded_at desc) q where q.service_date<=p_effective_date;
  select coalesce(sum(round(l.taxable_amount*i.exchange_rate,i.rounding_scale)),0) into revenue from projects.billing_batches b join sales.sales_invoices i on i.id=b.invoice_id join sales.sales_invoice_lines l on l.document_id=i.id where b.project_id=p_project_id and i.status='posted' and i.posted_at<=p_as_of and i.document_date<=p_effective_date;
  select coalesce(sum(round(l.taxable_amount*i.exchange_rate,i.rounding_scale)),0) into credits from sales.sales_return_lines l join sales.sales_returns i on i.id=l.document_id join projects.billing_links bl on bl.invoice_line_id=l.sales_invoice_line_id join projects.billing_batches b on b.id=bl.batch_id where b.project_id=p_project_id and i.status='posted' and i.posted_at<=p_as_of and i.document_date<=p_effective_date;
  select coalesce(sum(ef.amount),0) into obligations from projects.reimbursements o join projects.reimbursement_effects ef on ef.obligation_id=o.id where o.project_id=p_project_id and ef.recorded_at<=p_as_of and ef.posting_date<=p_effective_date;
@@ -7532,6 +7580,7 @@ insert into payroll_assertions select is((select count(*)::integer from people.w
 
 -- Real installed sales posting and independently posted original credit govern billed service revisions.
 insert into billing.plan_entitlements(plan_code,entitlement_code,enabled) values('w4_integrated_rollback','module.projects',true) on conflict do nothing;
+insert into billing.plan_entitlements(plan_code,entitlement_code,enabled) values('w4_integrated_rollback','module.finance',true) on conflict do nothing;
 insert into core.role_permissions(tenant_id,role_id,permission_code)
 select pg_temp.wid('tenant'),pg_temp.wid(x||'.role'),p.code from unnest(array['creator','reviewer']) x cross join core.permissions p where p.module in('projects','sales','workflow','finance') on conflict do nothing;
 insert into finance.accounts(id,tenant_id,legal_entity_id,code,name,account_type,normal_balance,created_by,updated_by)
@@ -7642,6 +7691,38 @@ insert into payroll_assertions select is((select status from projects.billable_u
 insert into payroll_assertions select is(api.projects_margin(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sb.project'),clock_timestamp(),(now() at time zone 'UTC')::date)->>'service_cost',
  '18.000000','operational reversal appends restored project service cost');
 insert into payroll_assertions select ok(not has_table_privilege('authenticated','projects.service_cost_revisions','SELECT'), 'service cost immutable revisions remain API only');
+-- An unsealed available import cancellation contributes a dated zero cost and
+-- cancels the stale available unit, without deleting its original cost evidence.
+select pg_temp.wactor('creator');set local role authenticated;
+select pg_temp.sic(jsonb_build_object('action','ticket','id',pg_temp.wid('sb.cancel.ticket'),'code','SB-CANCEL','name','Synthetic unsealed service cancellation',
+ 'classification','repair','customer_id',pg_temp.wid('customer'),'contact_id',null,'equipment_id',pg_temp.wid('si.eq'),'coverage_id',null,
+ 'policy_id',pg_temp.wid('sd.policy'),'priority','normal','owner_id',null,'observed_utc',pg_temp.sidu(720),'reason','Synthetic unsealed source'),0,'sb.cancel.ticket');
+select pg_temp.sic(jsonb_build_object('action','order','id',pg_temp.wid('sb.cancel.order'),'ticket_id',pg_temp.wid('sb.cancel.ticket'),'reason','Synthetic cancellation source'),0,'sb.cancel.order');
+select pg_temp.sic(jsonb_build_object('action','dispatch','id',pg_temp.wid('sb.cancel.order'),'employee_id',pg_temp.wid('third'),
+ 'calendar_version_id',pg_temp.wid('calendar-version'),'start_utc',pg_temp.sidu(720),'end_utc',pg_temp.sidu(780),'booking_id',pg_temp.wid('sb.cancel.booking'),'reason','Synthetic independent interval'),1,'sb.cancel.dispatch');
+select pg_temp.sic(jsonb_build_object('action','accept','id',pg_temp.wid('sb.cancel.order'),'observed_utc',pg_temp.sidu(720),'reason','Synthetic acceptance'),2,'sb.cancel.accept');
+select pg_temp.sic(jsonb_build_object('action','labor','id',pg_temp.wid('sb.cancel.labor'),'order_id',pg_temp.wid('sb.cancel.order'),'employee_id',pg_temp.wid('third'),
+ 'calendar_version_id',pg_temp.wid('calendar-version'),'start_utc',pg_temp.sidu(720),'end_utc',pg_temp.sidu(780),'breaks','[]'::jsonb,'claim_id',null,
+ 'hourly_cost','6.00','currency_code','LKR','precision',2,'billing_kind','billable','hourly_billing','3.00','billing_reference','Synthetic separate cost', 'reason','Synthetic unsealed source'),0,'sb.cancel.labor');
+reset role;select pg_temp.wactor('reviewer');set local role authenticated;
+select pg_temp.sic(jsonb_build_object('action','approve_labor','id',pg_temp.wid('sb.cancel.labor'),'reason','Independent unsealed labor approval'),1,'sb.cancel.approve');
+reset role;select pg_temp.wactor('creator');set local role authenticated;
+select pg_temp.sic(jsonb_build_object('action','complete','id',pg_temp.wid('sb.cancel.order'),'observed_utc',pg_temp.sidu(780),'resolution','Synthetic finished work',
+ 'customer_confirmed',true,'reason','Synthetic completion'),3,'sb.cancel.complete');
+reset role;
+insert into service_impact_samples values('cancel_source',service.billing_source(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sb.cancel.labor')));
+set local role authenticated;
+select pg_temp.sbf(jsonb_build_object('action','service_source','id',pg_temp.wid('sb.cancel.unit'),'project_id',pg_temp.wid('sb.project'),
+ 'service_source_id',pg_temp.wid('sb.cancel.labor'),'source_version',2,'source_digest',(select body->>'digest' from service_impact_samples where name='cancel_source'),'reason','Synthetic available import'),0,'sb.cancel.import');
+reset role;
+insert into payroll_assertions select is(api.projects_margin(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sb.project'),clock_timestamp(),(now() at time zone 'UTC')::date)->>'service_cost',
+ '24.000000','available imported approved work adds exact cost before cancellation');
+select pg_temp.wactor('reviewer');set local role authenticated;
+select pg_temp.sic(jsonb_build_object('action','cancel_labor','id',pg_temp.wid('sb.cancel.labor'),'reason','Governed unsealed cancellation'),2,'sb.cancel.command');
+reset role;
+insert into payroll_assertions select is(api.projects_margin(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sb.project'),clock_timestamp(),(now() at time zone 'UTC')::date)->>'service_cost',
+ '18.000000','cancellation appends zero effective cost');
+insert into payroll_assertions select is((select status from projects.billable_units where id=pg_temp.wid('sb.cancel.unit')),'cancelled','unsealed source cancellation resolves stale available import');
 
 do $$declare failed text;begin
  select string_agg(message,chr(10)) into failed from payroll_assertions where message like 'not ok%';

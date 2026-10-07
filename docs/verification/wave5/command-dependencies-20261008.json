@@ -1,0 +1,111 @@
+{
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "operation": "read-only command helper fingerprints",
+  "checked_at": "2026-10-07 19:15:08.750185+00",
+  "functions": [
+    {
+      "name": "has_permission",
+      "schema": "core",
+      "returns": "boolean",
+      "arguments": "p_tenant_id uuid, p_permission_code text, p_legal_entity_id uuid, p_branch_id uuid",
+      "securityDefiner": true,
+      "definitionSha256": "df550dbe759cae15e1ab9b9d9cd34ce1b2c32927ad95784eb2a88fd02bf5dc09"
+    },
+    {
+      "name": "require_permission",
+      "schema": "core",
+      "returns": "void",
+      "arguments": "p_tenant_id uuid, p_permission_code text, p_legal_entity_id uuid, p_branch_id uuid",
+      "securityDefiner": false,
+      "definitionSha256": "f42f67cf2e94ee8b74c83b542f35bb6bda663f9bf62e794dc6f521a13074077c"
+    },
+    {
+      "name": "wave2_assert_expected_version",
+      "schema": "core",
+      "returns": "void",
+      "arguments": "p_current_version bigint, p_expected_version bigint",
+      "securityDefiner": false,
+      "definitionSha256": "ec48005f6e8ab2efcf873f94f4b76dc703a3093c17602f7cb53e85c2749e4e16"
+    },
+    {
+      "name": "wave2_derived_uuid",
+      "schema": "core",
+      "returns": "uuid",
+      "arguments": "p_parent uuid, p_ordinal integer",
+      "securityDefiner": false,
+      "definitionSha256": "a0e0a2105242dd42369e79061cf7723d9caf3ebcb66aebe5575005767d7c00a7"
+    },
+    {
+      "name": "wave2_finish_command",
+      "schema": "core",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_command_name text, p_aggregate_type text, p_aggregate_id uuid, p_idempotency_key uuid, p_request_hash text, p_before jsonb, p_entity jsonb, p_legal_entity_id uuid, p_branch_id uuid, p_warnings jsonb, p_request_id uuid",
+      "securityDefiner": true,
+      "definitionSha256": "78280478596557d4ff61b293cf762f890404a4094260716a17c3a1bcac9fc4a0"
+    },
+    {
+      "name": "wave2_permission",
+      "schema": "core",
+      "returns": "text",
+      "arguments": "p_resource text, p_manage boolean",
+      "securityDefiner": false,
+      "definitionSha256": "bef16c6f5800e9e0d494e70bb6410681e01f914eab1768947610c48fbe740047"
+    },
+    {
+      "name": "wave2_replay",
+      "schema": "core",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_command_name text, p_idempotency_key uuid, p_request_hash text",
+      "securityDefiner": true,
+      "definitionSha256": "39a6111fcd32863de490dfe3ff2d3bf7c25fa08e609ee4e0f01b7a35b4aa1e28"
+    },
+    {
+      "name": "wave2_request_hash",
+      "schema": "core",
+      "returns": "text",
+      "arguments": "p_command_name text, p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint",
+      "securityDefiner": false,
+      "definitionSha256": "767a203f5690d49ccf8a737dcd8e68245cba628262dc7367f5b9d1d6260abdcd"
+    },
+    {
+      "name": "wave3_assert_expected_version",
+      "schema": "core",
+      "returns": "void",
+      "arguments": "p_current_version bigint, p_expected_version bigint, p_current_entity jsonb",
+      "securityDefiner": false,
+      "definitionSha256": "3f83c0d0bfe254fa3776ecd946640d4024840f9bd0d7d5ef3f4b8845c8fbe8bc"
+    },
+    {
+      "name": "wave3_finish_command",
+      "schema": "core",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_command_name text, p_command_id uuid, p_aggregate_type text, p_aggregate_id uuid, p_idempotency_key uuid, p_request_hash text, p_before jsonb, p_entity jsonb, p_legal_entity_id uuid, p_branch_id uuid, p_source_context jsonb, p_process_event jsonb, p_outbox_events jsonb, p_warnings jsonb, p_request_id uuid, p_correlation_id uuid",
+      "securityDefiner": true,
+      "definitionSha256": "a39d0846be9c1647dde9778f3c245499da7768b06dc7434e35c20cd0b877fdb1"
+    },
+    {
+      "name": "wave3_replay",
+      "schema": "core",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_command_name text, p_command_id uuid, p_idempotency_key uuid, p_request_hash text",
+      "securityDefiner": true,
+      "definitionSha256": "6340ce8a5e18cd200f8937e1985e02a362f0aac18eb8a276a7df11c1b7fc1c91"
+    },
+    {
+      "name": "wave3_request_hash",
+      "schema": "core",
+      "returns": "text",
+      "arguments": "p_command_name text, p_command_id uuid, p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_payload jsonb, p_expected_version bigint",
+      "securityDefiner": false,
+      "definitionSha256": "024ba0bb89bb2c3c267e2f1d0d63103e01d3b685bb0a9c64eb29a3c8876d0442"
+    },
+    {
+      "name": "wave3_require_scope",
+      "schema": "core",
+      "returns": "void",
+      "arguments": "p_tenant_id uuid, p_permission_code text, p_legal_entity_id uuid, p_branch_id uuid",
+      "securityDefiner": true,
+      "definitionSha256": "380e88414ada1e93bab0d86c3a2ca10c0617d4d80d9b6a1772e32cb829332815"
+    }
+  ]
+}

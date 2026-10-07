@@ -403,7 +403,22 @@ begin
   end loop;
  end if;
  if act='reverse' then
+  if jsonb_typeof(coalesce(p_payload->'current_billing_impacts','[]')) is distinct from 'array'
+   or jsonb_array_length(coalesce(p_payload->'current_billing_impacts','[]'))>50 then
+   raise exception using errcode='22023',message='PAYROLL_CURRENT_BILLING_IMPACT_INVALID';end if;
   for x in select value from jsonb_array_elements(coalesce(p_payload->'current_billing_impacts','[]')) loop
+   -- Reject impossible source/credit combinations before looking up a linked
+   -- finance provider, including on a confirmed command replay.
+   if jsonb_typeof(x) is distinct from 'object' or coalesce(x->>'seal_id','') !~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+    or jsonb_typeof(x->'billing_credit_line_ids') is distinct from 'array' or jsonb_typeof(x->'allocation_credits') is distinct from 'array' then
+    raise exception using errcode='22023',message='PAYROLL_CURRENT_BILLING_IMPACT_INVALID';end if;
+   select * into src from people_payroll.correction_sources where correction_id=cid and seal_id=(x->>'seal_id')::uuid;
+   if src.id is null or src.impact is null or src.source_kind not in('attendance','project','service')
+    or(src.source_kind='attendance' and jsonb_array_length(x->'billing_credit_line_ids')<>0)
+    or(src.source_kind<>'attendance' and jsonb_array_length(x->'allocation_credits')<>0) then
+    raise exception using errcode='22023',message='PAYROLL_CURRENT_BILLING_IMPACT_INVALID';end if;
+   perform people_payroll.current_credit_ids(x->'billing_credit_line_ids');
+   perform people_payroll.current_allocation_credits(x->'allocation_credits');
    perform people_payroll.correction_billing_permission(p_tenant_id,p_legal_entity_id,p_branch_id,x);
    for linked_effect in select value from jsonb_array_elements(coalesce(x->'allocation_credits','[]')) loop
     perform people_payroll.correction_billing_permission(p_tenant_id,p_legal_entity_id,p_branch_id,linked_effect);

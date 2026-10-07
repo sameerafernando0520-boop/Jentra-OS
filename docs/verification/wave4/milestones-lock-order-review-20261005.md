@@ -1,0 +1,9 @@
+# Milestone lock call-path review, 2026-10-05
+
+Current migration20261004090000 SHA683FA20C6D5E118F0496BF21F1A117E33686340DA2B407ADAF1E1E5E06E93FD1 is unchanged after the final147 rollback. Its command acquires the projects entity advisory, then the one accountable employee row, project register, milestone and billable unit rows. This is the projects/employee subset of the shared payroll→projects→service→employee→source order.
+
+The complete command call path was inspected: projects.require_access reads scope/entitlement/MFA; core.wave3_replay precedes locks; projects.text/amount/ratio and milestone_owner read or validate facts; the owner helper reads employment coverage; core.wave3_assert_expected_version and core.wave3_finish_command enforce version/receipt. Milestone revision/event inserts have only the immutable-history trigger; billable unit changes use the existing project tables. No function on this command path acquires a payroll or service advisory after the employee row. The protected milestone_billing_terms helper is a historical read only. Finance invoice prepare/post owns its separate established advisory order and does not run the milestone command recursively.
+
+Concurrent payroll/project/service orchestration acquires projects before its employee rows, so the milestone command cannot retain an employee and then wait backwards for those entity locks. Adding unused payroll/service advisories would serialize unrelated work without resolving a demonstrated inversion. The current subset ordering is retained. Any future hook that takes payroll/service locks from a milestone command must be reviewed and moved before the employee/source locks.
+
+This static source audit and the actual147 rollback do not prove overlapping independent-session execution, lock wait limits, deadlock freedom under load or installed behavior. Real contention/load remains open.

@@ -1,0 +1,23 @@
+✔ unsafe IPv4, IPv6, mapped and noncanonical addresses fail (3.8058ms)
+✔ all DNS answers and each attempt must remain safe (1.1742ms)
+✔ event scope and private payload injection rejected before delivery (0.3281ms)
+✔ signature binds exact bytes, event identity, timestamp and rotating key version (3.8289ms)
+✔ bounded retries retain stable event identity and reach dead letter (0.3026ms)
+✔ injected transport sees pinned public address and revocation prevents send (1.0524ms)
+✔ unknown transport result retains a retry attempt without raw errors (0.3298ms)
+✔ integration credentials bind expiry, revocation, scope, hash, command and allowance (1.1535ms)
+✔ exhausted attempts fail before authority, DNS or transport (0.3203ms)
+✔ missing providers fail before claiming or executing (4.4156ms)
+✔ claimed committed job reserves before sending and records ACK before settlement (6.9013ms)
+✔ unknown transport retains reservation and sanitized retry evidence (0.8124ms)
+✔ revocation during DNS prevents send and settlement (0.4387ms)
+✔ subscription worker invokes existing server activation with exact identities (0.7742ms)
+✔ external command validates request, credentials and durable allowance before dispatch (15.2239ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 190.1539

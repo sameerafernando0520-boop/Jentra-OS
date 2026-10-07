@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cryptography/cryptography.dart';
 
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_domain/jentra_service.dart';
@@ -14,6 +15,21 @@ final class ServiceCommandAcknowledgements {
 
   String _key(ScopedPendingCommand request) =>
       'service.ack:${base64Url.encode(utf8.encode(jsonEncode(request.envelope.context.toJson())))}:${request.envelope.commandId}';
+  Object? _canonical(Object? value) {
+    if (value is Map) {
+      final keys = value.keys.cast<String>().toList()..sort();
+      return {for (final key in keys) key: _canonical(value[key])};
+    }
+    if (value is List) return value.map(_canonical).toList();
+    return value;
+  }
+
+  Future<String> _digest(ScopedPendingCommand request) async {
+    final hash = await Sha256().hash(
+      utf8.encode(jsonEncode(_canonical(request.envelope.toJson((p) => p)))),
+    );
+    return hash.bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+  }
 
   Future<void> save(
     ScopedPendingCommand request,
@@ -47,6 +63,7 @@ final class ServiceCommandAcknowledgements {
           'idempotency_key': command.idempotencyKey,
           'entity_id': command.payload['id'],
           'version': entity['version'],
+          'request_digest': await _digest(request),
         },
         localVersion: 1,
         serverVersion: entity['version'] as int,
@@ -64,7 +81,7 @@ final class ServiceCommandAcknowledgements {
     final body = row.payload;
     if (row.tenantId != command.context.tenantId ||
         row.entityType != 'service.command.acknowledgement' ||
-        body.length != 6 ||
+        body.length != 7 ||
         TenantContext.fromJson(
               Map<String, Object?>.from(body['scope'] as Map),
             ) !=
@@ -73,7 +90,8 @@ final class ServiceCommandAcknowledgements {
         body['command_id'] != command.commandId ||
         body['idempotency_key'] != command.idempotencyKey ||
         body['entity_id'] != command.payload['id'] ||
-        body['version'] != command.expectedEntityVersion! + 1) {
+        body['version'] != command.expectedEntityVersion! + 1 ||
+        body['request_digest'] != await _digest(request)) {
       throw const DomainError(
         code: 'DRAFT_SCOPE_MISMATCH',
         message:

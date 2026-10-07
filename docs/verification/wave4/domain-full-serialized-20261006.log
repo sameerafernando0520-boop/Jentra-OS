@@ -1,0 +1,386 @@
+00:00 +0: loading test\analytics\process_metrics_test.dart
+00:00 +0: test\analytics\process_metrics_test.dart: AC-558 EC-558 verifier failures preserve domain errors and redact unknown errors
+00:00 +1: test\analytics\process_metrics_test.dart: AC-555 forged row/identity counts do not evade input limits
+00:00 +2: test\analytics\process_metrics_test.dart: AC-558 malformed container shapes and foreign selection fail safely
+00:00 +3: test\analytics\process_metrics_test.dart: AC-551 EC-551 half-open entry and inclusive recorded/completion cutoffs
+00:00 +4: test\analytics\process_metrics_test.dart: AC-552 EC-554 exact P50/P90 over every permutation including zero
+00:00 +5: test\analytics\process_metrics_test.dart: AC-552 nearest rank is discrete for even, single and tied populations
+00:00 +6: test\analytics\process_metrics_test.dart: AC-553 EC-554 empty, valid zero and open-only samples remain distinct
+00:00 +7: test\analytics\process_metrics_test.dart: AC-553 EC-555 invalid duration/minutes conserve counts and mark partial
+00:00 +8: test\analytics\process_metrics_test.dart: AC-553 default-zero and positive minutes cannot certify other measures
+00:00 +9: test\analytics\process_metrics_test.dart: AC-558 EC-557 strict UTC rejects normalized invalid calendar values
+00:00 +10: test\analytics\process_metrics_test.dart: AC-558 manifest instants and generation time require ordered UTC
+00:00 +11: test\analytics\process_metrics_test.dart: AC-558 exact minute parser rejects numeric coercion and silent rounding
+00:00 +12: test\analytics\process_metrics_test.dart: AC-555 EC-553 duplicate event IDs fail; shared document IDs remain distinct
+00:00 +13: test\analytics\process_metrics_test.dart: AC-555 incomplete, mismatched and unsorted manifests fail closed
+00:00 +14: test\analytics\process_metrics_test.dart: AC-558 EC-556 foreign tenant/entity/branch and null entity are denied
+00:00 +15: test\analytics\process_metrics_test.dart: AC-558 null branch permits authorized mixed-branch observations only within entity
+00:00 +16: test\analytics\process_metrics_test.dart: AC-558 unsupported source revision or document kind fails before calculation
+00:00 +17: test\analytics\process_metrics_test.dart: AC-555 EC-557 10000 rows succeed and 10001 fail without partial totals
+00:00 +18: test\analytics\process_metrics_test.dart: AC-555 EC-557 366-day cohort succeeds; one microsecond excess fails
+00:00 +19: test\analytics\process_metrics_test.dart: AC-552 durations larger than safe JSON integers serialize exactly as strings
+00:00 +20: test\analytics\process_metrics_test.dart: AC-558 source projection rejects private/unknown fields and missing required fields
+00:00 +21: test\analytics\process_metrics_test.dart: AC-551 EC-552 canonical captured bytes freeze source values and selection
+00:00 +22: test\analytics\process_metrics_test.dart: AC-558 manifest/hash verification rejects wrong or malformed digest
+00:00 +23: test\analytics\process_metrics_test.dart: AC-558 verified observations/manifests/results are immutable
+00:00 +24: test\analytics\process_metrics_test.dart: AC-558 identifiers canonicalize case and reject malformed UUIDs safely
+00:00 +25: loading test\assets_repository_test.dart
+00:00 +25: test\assets_repository_test.dart: asset register proves cost/depreciation/impairment conservation
+00:00 +26: test\assets_repository_test.dart: frozen book rejects unsupported methods and preserves separate reserves
+00:00 +27: test\assets_repository_test.dart: commands reject ignored kind fields, unsupported providers and unsafe numbers
+00:00 +28: test\assets_repository_test.dart: explicit state transitions reject impossible active and draft books
+00:00 +29: loading test\asset_equipment_test.dart
+00:00 +29: test\asset_equipment_test.dart: AC-401 operational source rejects another scope or private book facts
+00:00 +30: test\asset_equipment_test.dart: AC-414 source must be active with exact integer version and digest
+00:00 +31: test\asset_equipment_test.dart: AC-415 immutable source copies cannot change linked basis
+00:00 +32: test\asset_equipment_test.dart: AC-414 link commands retain selected source and reject invented customer
+00:01 +33: loading test\calendar_contract_test.dart
+00:01 +33: test\calendar_contract_test.dart: calendar commands reject unknown fields, invalid identities and unbounded dates
+00:01 +34: test\calendar_contract_test.dart: wire patterns round trip and retain immutable snapshots
+00:01 +35: test\calendar_contract_test.dart: coverage makes the exclusive end and missing dates explicit
+00:01 +36: loading test\calendar_resolution_test.dart
+00:01 +36: test\calendar_resolution_test.dart: AC-405 fold requires an explicit offset and freezes exact evidence
+00:01 +37: test\calendar_resolution_test.dart: AC-405 a gap is unavailable rather than normalized forward
+00:01 +38: test\calendar_resolution_test.dart: AC-405 UTC/offset must round trip to the precise local boundary
+00:01 +39: test\calendar_resolution_test.dart: AC-401 unexpected/private response fields are rejected
+00:01 +40: test\calendar_resolution_test.dart: AC-405 duplicate or reversed UTC candidates are rejected
+00:01 +41: test\calendar_resolution_test.dart: AC-405 historical second offsets are retained exactly
+00:01 +42: loading test\clock_import_test.dart
+00:01 +42: test\clock_import_test.dart: CSV accepts quoted commas and CRLF without losing exact source identity
+00:01 +43: test\clock_import_test.dart: malformed or normalized dates, duplicate keys and hidden fields fail
+00:01 +44: test\clock_import_test.dart: file and row bounds reject before creating a command
+00:01 +45: loading test\count_partition_test.dart
+00:01 +45: test\count_partition_test.dart: progress conserves exact values beyond binary floating point precision
+00:01 +46: test\count_partition_test.dart: missing and duplicate partition identities cannot claim completion
+00:01 +47: test\count_partition_test.dart: capture request includes exact approved scope fields without caller baseline
+00:01 +48: loading test\disposition_test.dart
+00:01 +48: test\disposition_test.dart: maximum decimal quantity remains exact and cannot override pooled preview
+00:01 +49: test\disposition_test.dart: numeric JSON, zero and excess precision are rejected
+00:01 +50: test\disposition_test.dart: serial selection equals exact converted base units and rejects duplicates
+00:01 +51: test\disposition_test.dart: lot identity and bounded line range are mandatory
+00:01 +52: test\disposition_test.dart: reversal payload never supplies quantity value or provenance
+00:01 +53: loading test\employee_test.dart
+00:01 +53: test\employee_test.dart: AC-402 civil dates reject rollover and preserve leap-day boundaries
+00:01 +54: test\employee_test.dart: AC-403 adjacent employment ranges do not overlap
+00:01 +55: test\employee_test.dart: AC-402 input rejects unknown, private and malformed employee fields
+00:01 +56: test\employee_test.dart: AC-401 response validation binds exact scope and versions
+00:01 +57: loading test\expense_evidence_test.dart
+00:01 +57: test\expense_evidence_test.dart: policy confirmation requires its minimal entity shape and no document fields
+00:01 +58: test\expense_evidence_test.dart: proof retains immutable content version independent of lifecycle
+00:01 +59: test\expense_evidence_test.dart: paths URLs bytes and unknown fields cannot enter financial proof
+00:01 +60: test\expense_evidence_test.dart: proof selection is bounded unique and canonical
+00:01 +61: test\expense_evidence_test.dart: reservation snapshot cannot mutate after command validation
+00:01 +62: test\expense_evidence_test.dart: uploads reject unsupported MIME fractional bytes and unbounded metadata
+00:01 +63: test\expense_evidence_test.dart: policy requires explicit bounded interval and has no document scope
+00:01 +64: test\expense_evidence_test.dart: retention and upload have distinct current capabilities
+00:01 +65: loading test\fixed_asset_schedule_test.dart
+00:01 +65: test\fixed_asset_schedule_test.dart: cumulative half-even allocation conserves tiny depreciable values
+00:02 +66: test\fixed_asset_schedule_test.dart: opening accumulated value and residual are independently preserved
+00:02 +67: test\fixed_asset_schedule_test.dart: reducing balance retains exact rate and final life residue
+00:02 +68: test\fixed_asset_schedule_test.dart: explicit month conventions retain civil boundaries including leap years
+00:02 +69: test\fixed_asset_schedule_test.dart: prospective revision preserves posted basis and old schedule facts
+00:02 +70: test\fixed_asset_schedule_test.dart: invalid basis, rates, fractional precision and calendar overflow reject
+00:02 +71: test\fixed_asset_schedule_test.dart: disposal proceeds reconcile cost removed, accumulation and signed gain
+00:02 +72: test\fixed_asset_schedule_test.dart: impairment preserves depreciation history and final residual
+00:02 +73: test\fixed_asset_schedule_test.dart: calendar overflow and exact amount bounds are explicit
+00:02 +74: loading test\goods_receipt_test.dart
+00:02 +74: test\goods_receipt_test.dart: accepted base quantities use frozen rational strings; rejection is separate
+00:02 +75: test\goods_receipt_test.dart: invalid financial transport and nonterminating unit conversion fail closed
+00:02 +76: test\goods_receipt_test.dart: large exact receipt quantities retain all digits across 500 rational inputs
+00:02 +77: loading test\inventory_transfer_test.dart
+00:02 +77: test\inventory_transfer_test.dart: transfer quantity remains exact above binary integer precision
+00:02 +78: test\inventory_transfer_test.dart: fractional base micro-units and numeric inputs are rejected
+00:02 +79: test\inventory_transfer_test.dart: serial count compares exact base quantity
+00:02 +80: loading test\jentra_domain_test.dart
+00:02 +80: test\jentra_domain_test.dart: Money — FR-15 / AC-8 keeps six-decimal precision without binary floating point
+00:02 +81: test\jentra_domain_test.dart: Money — FR-15 / AC-8 rounds excess precision half away from zero
+00:02 +82: test\jentra_domain_test.dart: Money — FR-15 / AC-8 rejects cross-currency arithmetic
+00:02 +83: test\jentra_domain_test.dart: Money — FR-15 / AC-8 uses exact rational multiplication for tax
+00:02 +84: test\jentra_domain_test.dart: DocumentLifecycle — FR-14 / AC-8 / EC-8 prevents direct posted mutation and deletion
+00:02 +85: test\jentra_domain_test.dart: DocumentLifecycle — FR-14 / AC-8 / EC-8 permits the canonical approval path
+00:02 +86: test\jentra_domain_test.dart: TenantContext exposes accounting and operational scope — FR-2
+00:02 +87: test\jentra_domain_test.dart: authoritative commands are blocked offline — FR-12 / AC-5
+00:02 +88: loading test\landed_extension_test.dart
+00:02 +88: test\landed_extension_test.dart: large six-place held and consumed amounts conserve exact total
+00:02 +89: test\landed_extension_test.dart: substituted manual weights and numeric money fail closed
+00:02 +90: test\landed_extension_test.dart: linked corrections cannot change immutable allocation inputs
+00:02 +91: test\landed_extension_test.dart: duplicate receipt and missing legs never produce a partial allocation
+00:02 +92: loading test\milestones_test.dart
+00:02 +92: test\milestones_test.dart: commercial amount stays exact beyond double precision
+00:03 +93: test\milestones_test.dart: commercial request requires dated named sources and bounded explicit payment duration
+00:03 +94: test\milestones_test.dart: decision binds immutable digest rather than editable commercial terms
+00:03 +95: test\milestones_test.dart: known receipt must match original actor scope project identity and version
+00:03 +96: loading test\negative_stock_policy_20261003_test.dart
+00:03 +96: test\negative_stock_policy_20261003_test.dart: absent policy is explicitly inactive and exact version zero
+00:03 +97: test\negative_stock_policy_20261003_test.dart: policy version exceeds JavaScript exact integer range without rounding
+00:03 +98: test\negative_stock_policy_20261003_test.dart: policy rejects malformed tenant_id null
+00:03 +99: test\negative_stock_policy_20261003_test.dart: policy rejects malformed legal_entity_id null
+00:03 +100: test\negative_stock_policy_20261003_test.dart: policy rejects malformed tenant_id 
+00:03 +101: test\negative_stock_policy_20261003_test.dart: policy rejects malformed legal_entity_id 3
+00:03 +102: test\negative_stock_policy_20261003_test.dart: policy rejects malformed policy_version 1
+00:03 +103: test\negative_stock_policy_20261003_test.dart: policy rejects malformed policy_version -1
+00:03 +104: test\negative_stock_policy_20261003_test.dart: policy rejects malformed policy_version 01
+00:03 +105: test\negative_stock_policy_20261003_test.dart: policy rejects malformed basis receipt_cost
+00:03 +106: test\negative_stock_policy_20261003_test.dart: policy rejects malformed cover_order latest
+00:03 +107: test\negative_stock_policy_20261003_test.dart: policy rejects malformed tracking_scope serial
+00:03 +108: test\negative_stock_policy_20261003_test.dart: policy rejects malformed active true
+00:03 +109: test\negative_stock_policy_20261003_test.dart: policy rejects malformed id null
+00:03 +110: test\negative_stock_policy_20261003_test.dart: policy rejects malformed reason null
+00:03 +111: test\negative_stock_policy_20261003_test.dart: policy rejects malformed created_by null
+00:03 +112: test\negative_stock_policy_20261003_test.dart: policy rejects malformed created_at null
+00:03 +113: test\negative_stock_policy_20261003_test.dart: policy rejects malformed created_at invalid
+00:03 +114: test\negative_stock_policy_20261003_test.dart: zero policy cannot claim an active or attributed identity
+00:03 +115: test\negative_stock_policy_20261003_test.dart: override reason and positive version are required, exact wire is immutable
+00:03 +116: test\negative_stock_policy_20261003_test.dart: reservation normal wire is unchanged and opt-in override is additive
+00:03 +117: test\negative_stock_policy_20261003_test.dart: known zero cost and exact large ledger id remain valid
+00:03 +118: test\negative_stock_policy_20261003_test.dart: receipt and customer return corrections reconcile all minor units
+00:03 +119: test\negative_stock_policy_20261003_test.dart: deficit rejects invalid quantity 3
+00:03 +120: test\negative_stock_policy_20261003_test.dart: deficit rejects invalid quantity 1.0000001
+00:03 +121: test\negative_stock_policy_20261003_test.dart: deficit rejects invalid quantity -1
+00:03 +122: test\negative_stock_policy_20261003_test.dart: deficit rejects invalid quantity 0
+00:03 +123: test\negative_stock_policy_20261003_test.dart: deficit rejects invalid provisional_value -1
+00:03 +124: test\negative_stock_policy_20261003_test.dart: deficit rejects invalid open_quantity -1
+00:03 +125: test\negative_stock_policy_20261003_test.dart: deficit rejects invalid open_quantity 4
+00:03 +126: test\negative_stock_policy_20261003_test.dart: deficit rejects invalid policy_version 0
+00:03 +127: test\negative_stock_policy_20261003_test.dart: deficit rejects invalid warehouse_id 
+00:03 +128: test\negative_stock_policy_20261003_test.dart: deficit rejects invalid command_id null
+00:03 +129: test\negative_stock_policy_20261003_test.dart: cover rejects invalid kind manual
+00:03 +130: test\negative_stock_policy_20261003_test.dart: cover rejects invalid actual_value -1
+00:03 +131: test\negative_stock_policy_20261003_test.dart: cover rejects invalid variance 6
+00:03 +132: test\negative_stock_policy_20261003_test.dart: cover rejects invalid movement_line_id null
+00:03 +133: test\negative_stock_policy_20261003_test.dart: bounded page advances exact ledger cursor and seals rows
+00:03 +134: test\negative_stock_policy_20261003_test.dart: malformed or unbounded evidence page is rejected null {items: null}
+00:03 +135: test\negative_stock_policy_20261003_test.dart: malformed or unbounded evidence page is rejected 1 {items: [null]}
+00:03 +136: test\negative_stock_policy_20261003_test.dart: malformed or unbounded evidence page is rejected 2 {items: [{id: 1, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 1, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}]}
+00:03 +137: test\negative_stock_policy_20261003_test.dart: malformed or unbounded evidence page is rejected 0 {items: [], next_cursor: 1}
+00:03 +138: test\negative_stock_policy_20261003_test.dart: malformed or unbounded evidence page is rejected 1 {items: [{id: 1, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}], next_cursor: 2}
+00:03 +139: test\negative_stock_policy_20261003_test.dart: malformed or unbounded evidence page is rejected 51 {items: [{id: 1, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 2, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 3, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 4, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 5, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 6, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 7, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 8, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 9, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 10, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 11, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 12, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 13, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 14, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 15, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 16, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 17, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 18, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 19, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 20, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 21, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 22, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 23, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 24, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 25, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 26, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 27, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 28, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 29, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 30, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 31, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 32, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 33, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 34, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 35, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 36, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 37, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 38, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 39, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 40, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 41, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 42, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 43, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 44, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 45, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 46, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 47, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 48, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 49, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 50, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}, {id: 51, quantity: 3.000000, provisional_value: 0.000000, posting_date: 2026-10-03, command_id: command, created_at: 2026-10-03T00:00:00Z, created_by: actor, open_quantity: 3.000000, issue_movement_line_id: issue, policy_id: policy, policy_version: 9007199254740993, basis_id: 1, warehouse_id: warehouse, product_id: product}]}
+00:03 +140: test\negative_stock_policy_20261003_test.dart: empty final page has no artificial cursor
+00:03 +141: loading test\organization_test.dart
+00:03 +141: test\organization_test.dart: AC-403 open department and finite assignment dates remain distinct
+00:03 +142: test\organization_test.dart: AC-403 impossible, empty and excessive coverage rejected
+00:03 +143: test\organization_test.dart: AC-401 unknown private and missing command fields rejected
+00:03 +144: test\organization_test.dart: AC-403 self department and manager links rejected locally
+00:03 +145: test\organization_test.dart: AC-401 command and response versions reject unsafe JSON integers
+00:03 +146: test\organization_test.dart: AC-403 end uses an explicit original revision and bounded prefix
+00:03 +147: test\organization_test.dart: AC-401 directory response excludes private fields and normalized dates
+00:03 +148: loading test\payroll_calculation_test.dart
+00:03 +148: test\payroll_calculation_test.dart: earning, deduction and employer cost reproduce from exact frozen ratios
+00:03 +149: test\payroll_calculation_test.dart: ties use the published rounding mode including signed differences
+00:03 +150: test\payroll_calculation_test.dart: paid-time fixed proration caps at a whole salary and preserves separate cap evidence
+00:03 +151: test\payroll_calculation_test.dart: zero paid seconds cannot invent hourly pay and missing planned basis fails
+00:03 +152: test\payroll_calculation_test.dart: duplicate versions, uncovered period, mixed currency and excess deductions fail
+00:03 +153: test\payroll_calculation_test.dart: six-place decimal contract rejects floating-point or silently rounded rates
+00:03 +154: test\payroll_calculation_test.dart: journal precision bounds apply to line and employee totals
+00:03 +155: loading test\payroll_correction_repository_test.dart
+00:03 +155: test\payroll_correction_repository_test.dart: legitimate geometry keeps whole seconds, version and original identity
+00:04 +156: test\payroll_correction_repository_test.dart: duplicate or foreign fields fail before source side effects
+00:04 +157: test\payroll_correction_repository_test.dart: fractional seconds and unselected offsets are rejected
+00:04 +158: test\payroll_correction_repository_test.dart: geometry breaks preserve exact whole-second ordered UTC evidence
+00:04 +159: test\payroll_correction_repository_test.dart: leave cancellation cannot retain pay and allocations retain unique identities
+00:04 +160: test\payroll_correction_repository_test.dart: settlement allocations have explicit signed direction and exact positive amounts
+00:04 +161: test\payroll_correction_repository_test.dart: reversal separates current billing identity from frozen original proof
+00:04 +162: loading test\payroll_correction_test.dart
+00:04 +162: test\payroll_correction_test.dart: difference rounds complete corrected pay rather than the difference
+00:04 +163: test\payroll_correction_test.dart: signed ratios reconcile over chained corrections using original rules
+00:04 +164: test\payroll_correction_test.dart: cap changes are recomputed against original full earning basis
+00:04 +165: test\payroll_correction_test.dart: seal totals, duplicate replacements and stale prior revisions fail
+00:04 +166: test\payroll_correction_test.dart: zero replacement preserves immutable sources without implicit net clamping
+00:04 +167: loading test\payroll_repository_test.dart
+00:04 +167: test\payroll_repository_test.dart: each explanation reproduces exact rounding and configured cap
+00:04 +168: test\payroll_repository_test.dart: run evidence rejects self approval, invalid lifecycle and response mutation
+00:04 +169: test\payroll_repository_test.dart: private totals conserve gross less deductions with exact decimal strings
+00:04 +170: test\payroll_repository_test.dart: rule vocabulary and private account attribution are strict
+00:04 +171: test\payroll_repository_test.dart: commands bind revision, employee bounds and exact settlement money
+00:04 +172: test\payroll_repository_test.dart: client explanation serializes the SQL vocabulary
+00:04 +173: loading test\private_hr_test.dart
+00:04 +173: test\private_hr_test.dart: private contact allowlist excludes compensation, identity and bank fields
+00:04 +174: test\private_hr_test.dart: private text is bounded and review decisions are explicit actions
+00:04 +175: test\private_hr_test.dart: review objective bounds, dated eligibility and no automatic score
+00:04 +176: test\private_hr_test.dart: operational subject cannot contain a private contact or a document path
+00:04 +177: test\private_hr_test.dart: document metadata has exact checksum/size and cannot accept content URLs
+00:04 +178: test\private_hr_test.dart: contact reads reject unexpected fields and freeze nested caller aliases
+00:04 +179: loading test\procurement_comparison_test.dart
+00:04 +179: test\procurement_comparison_test.dart: AC-309 compares complete responses using exact base amounts
+00:04 +180: test\procurement_comparison_test.dart: AC-309 duplicate or unknown source lines cannot inflate comparison
+00:04 +181: test\procurement_comparison_test.dart: AC-309 missing lines are incomplete and binary numeric JSON is denied
+00:04 +182: loading test\procurement_test.dart
+00:05 +182: test\procurement_test.dart: AC-309 exact estimates retain large values and fractional cents
+00:05 +183: test\procurement_test.dart: AC-309 financial JSON numbers and excess precision are rejected
+00:05 +184: test\procurement_test.dart: AC-309 rational base quantity must be exactly representable
+00:05 +185: test\procurement_test.dart: AC-309 immutable line snapshots retain source identity
+00:05 +186: test\procurement_test.dart: AC-309 exact estimate agrees with integer arithmetic across inputs
+00:05 +187: loading test\project_finance_test.dart
+00:05 +187: test\project_finance_test.dart: AC-414 expense preserves exact minor units and no-tax evidence
+00:05 +188: test\project_finance_test.dart: AC-414 allocation identities and whole positive weights are bounded
+00:05 +189: test\project_finance_test.dart: AC-414 protected expense attachments and unexpected fields fail closed
+00:05 +190: test\project_finance_test.dart: AC-415 service import freezes source version and digest
+00:05 +191: test\project_finance_test.dart: FR426 expense proofs accept only bounded immutable content identities
+00:05 +192: test\project_finance_test.dart: FR426 actual attached expense projection retains original proof without private document metadata
+00:05 +193: test\project_finance_test.dart: AC-414 actual rollback expense projection reconciles FX and allocations
+00:05 +194: test\project_finance_test.dart: AC-415 service units retain exact seconds and immutable revision evidence
+00:05 +195: test\project_finance_test.dart: AC-415 as-of margin retains and reconciles original posted revenue
+00:05 +196: test\project_finance_test.dart: AC-415 service named choices reject malformed frozen evidence
+00:05 +197: test\project_finance_test.dart: AC-428 protected service cost preserves exact seconds and revision basis
+00:05 +198: test\project_finance_test.dart: AC-428 service cost independently reconciles project margin
+00:05 +199: test\project_finance_test.dart: AC-415 milestone units retain frozen payment terms and no duration
+00:05 +200: loading test\project_values_test.dart
+00:05 +200: test\project_values_test.dart: task ownership cannot be inferred from resource allocation
+00:05 +201: test\project_values_test.dart: whole-second published-zone resolution retains negative UTC offsets
+00:05 +202: test\project_values_test.dart: service billing retains whole units with original exact seconds
+00:05 +203: test\project_values_test.dart: whole-second time pricing retains even and odd ties without fractional hours
+00:05 +204: test\project_values_test.dart: large rational quotients and signed ties use integer half-even
+00:05 +205: test\project_values_test.dart: expense FX conserves gross and records rather than hides tax residue
+00:05 +206: test\project_values_test.dart: expense currency, precision, tax evidence and rate ownership cannot be guessed
+00:05 +207: test\project_values_test.dart: ordered tiny expense allocations conserve exact gross and final residue
+00:05 +208: test\project_values_test.dart: dependency graph yields stable prerequisites and rejects cycles and foreign references
+00:05 +209: test\project_values_test.dart: whole billing units retain seconds and reject duplicate sources and mixed scope
+00:05 +210: test\project_values_test.dart: closure requires explicit resolution of every open source family
+00:05 +211: loading test\purchase_return_amount_test.dart
+00:05 +211: test\purchase_return_amount_test.dart: successive returns retain separate half-cent net and tax rounding
+00:05 +212: test\purchase_return_amount_test.dart: many partial returns exhaust the frozen value exactly
+00:05 +213: test\purchase_return_amount_test.dart: unbilled receipt preview starts after previously consumed quantity
+00:05 +214: test\purchase_return_amount_test.dart: excess and numeric inputs fail rather than approximating
+00:05 +215: loading test\receivables_test.dart
+00:06 +215: test\receivables_test.dart: financial wire values never accept JSON numbers or excess precision
+00:06 +216: test\receivables_test.dart: receipt input requires bank and exact positive amount
+00:06 +217: test\receivables_test.dart: return requires source, quantity, reason and disposition
+00:06 +218: test\receivables_test.dart: permissions separate editing, posting and allocation
+00:06 +219: test\receivables_test.dart: draft retains immutable exact payload
+00:06 +220: loading test\service_values_test.dart
+00:06 +220: test\service_values_test.dart: SLA counts half-open working windows and remaining budgets
+00:06 +221: test\service_values_test.dart: SLA rejects overlaps and backward evaluation
+00:06 +222: test\service_values_test.dart: labor cost retains seconds and exact half-even rounding
+00:06 +223: test\service_values_test.dart: meter reset and rollover conserve cumulative units
+00:06 +224: test\service_values_test.dart: UTC and financial inputs reject fractional and floating evidence
+00:06 +225: test\service_values_test.dart: ownership validates breaks and billing separately from cost
+00:06 +226: loading test\stock_count_quantity_test.dart
+00:06 +226: test\stock_count_quantity_test.dart: count identity limit includes 500 and rejects 501 without truncation
+00:06 +227: test\stock_count_quantity_test.dart: identity quantities sum exactly beyond binary precision
+00:06 +228: test\stock_count_quantity_test.dart: serial quantities are exact presence values
+00:06 +229: test\stock_count_quantity_test.dart: duplicate identities and numeric or overprecision values are rejected
+00:06 +230: loading test\stock_opening_test.dart
+00:06 +230: test\stock_opening_test.dart: opening keeps an immutable exact decimal snapshot
+00:06 +231: test\stock_opening_test.dart: malformed quantities and duplicate serials fail validation
+00:06 +232: test\stock_opening_test.dart: stock opening access requires cost plus an operational capability
+00:06 +233: loading test\warehouse_setup_test.dart
+00:06 +233: test\warehouse_setup_test.dart: warehouse setup is scoped and uses its governed command
+00:06 +234: test\warehouse_setup_test.dart: warehouse validation requires branch and valid code and name
+00:06 +235: loading test\wave2_business_setup_test.dart
+00:07 +235: test\wave2_business_setup_test.dart: ExactDecimal — FR-208 / FR-210 / NFR-206 preserves configured fixed scale without binary floating point
+00:07 +236: test\wave2_business_setup_test.dart: ExactDecimal — FR-208 / FR-210 / NFR-206 rounds excess precision half away from zero
+00:07 +237: test\wave2_business_setup_test.dart: ExactDecimal — FR-208 / FR-210 / NFR-206 compares only values with the same scale
+00:07 +238: test\wave2_business_setup_test.dart: BusinessSetupValidator — AC-202 through AC-209 accepts an exact dated cross-currency exchange rate
+00:07 +239: test\wave2_business_setup_test.dart: BusinessSetupValidator — AC-202 through AC-209 rejects same-currency and non-positive exchange rates
+00:07 +240: test\wave2_business_setup_test.dart: BusinessSetupValidator — AC-202 through AC-209 enforces tax percentage and validity bounds
+00:07 +241: test\wave2_business_setup_test.dart: BusinessSetupValidator — AC-202 through AC-209 rejects a self-parent account and reversed approval range
+00:07 +242: test\wave2_business_setup_test.dart: BusinessSetupValidator — AC-202 through AC-209 requires scoped product and document-sequence fields
+00:07 +243: test\wave2_business_setup_test.dart: BusinessSetupValidator — AC-202 through AC-209 accepts only canonical workflow states and transition pairs
+00:07 +244: test\wave2_business_setup_test.dart: Setup contracts — FR-201 / FR-240 / NFR-202 resource metadata carries public API and permission contracts
+00:07 +245: test\wave2_business_setup_test.dart: Setup contracts — FR-201 / FR-240 / NFR-202 list queries enforce a bounded cursor page
+00:07 +246: test\wave2_business_setup_test.dart: Setup contracts — FR-201 / FR-240 / NFR-202 records preserve exact decimal strings and optimistic versions
+00:07 +247: test\wave2_business_setup_test.dart: Attachment policy — AC-210 / NFR-209 allows only private Wave 2 document formats under 25 MiB
+00:07 +248: test\wave2_business_setup_test.dart: Attachment policy — AC-210 / NFR-209 rejects traversal, executable MIME, and oversized files
+00:07 +249: loading test\wave2_domain_invariants_test.dart
+00:07 +249: test\wave2_domain_invariants_test.dart: ExactDecimal invariants — NFR-206 / AC-203 constructs zero and scaled values with stable predicates
+00:07 +250: test\wave2_domain_invariants_test.dart: ExactDecimal invariants — NFR-206 / AC-203 rejects malformed values and unsupported scales
+00:07 +251: test\wave2_domain_invariants_test.dart: ExactDecimal invariants — NFR-206 / AC-203 supports exact arithmetic, ordering, and scale enforcement
+00:07 +252: test\wave2_domain_invariants_test.dart: ExactDecimal invariants — NFR-206 / AC-203 rescales in both directions with half-away-from-zero rounding
+00:07 +253: test\wave2_domain_invariants_test.dart: ExactDecimal invariants — NFR-206 / AC-203 supports zero-scale formatting, value equality, and hashes
+00:07 +254: test\wave2_domain_invariants_test.dart: TabularDocument invariants — AC-212 / AC-213 maps short rows, ignores surplus cells, and reports dimensions
+00:07 +255: test\wave2_domain_invariants_test.dart: TabularDocument invariants — AC-212 / AC-213 creates a deeply immutable copy
+00:07 +256: test\wave2_domain_invariants_test.dart: TabularDocument invariants — AC-212 / AC-213 compares headers and every row by value
+00:07 +257: test\wave2_domain_invariants_test.dart: Setup import preview — FR-232 / AC-212 reports normalized spreadsheet row and field errors before apply
+00:07 +258: test\wave2_domain_invariants_test.dart: Setup import preview — FR-232 / AC-212 allows a non-empty valid import preview
+00:07 +259: test\wave2_domain_invariants_test.dart: Business setup metadata — FR-201 / NFR-202 defines complete unique API and authorization metadata
+00:07 +260: test\wave2_domain_invariants_test.dart: Business setup validation coverage — AC-202 through AC-209 accepts a valid payload for every setup resource
+00:07 +261: test\wave2_domain_invariants_test.dart: Business setup validation coverage — AC-202 through AC-209 reports required fields across the configurable resources
+00:07 +262: test\wave2_domain_invariants_test.dart: Business setup validation coverage — AC-202 through AC-209 rejects malformed scalar values and unsupported statuses
+00:07 +263: test\wave2_domain_invariants_test.dart: Business setup validation coverage — AC-202 through AC-209 rejects invalid dates and malformed workflow structures
+00:07 +264: test\wave2_domain_invariants_test.dart: Business setup validation coverage — AC-202 through AC-209 aligns desktop scalar choices and report bounds with Postgres
+00:07 +265: test\wave2_domain_invariants_test.dart: Business setup validation coverage — AC-202 through AC-209 validates revisions, account currencies, and approval currency
+00:07 +266: test\wave2_domain_invariants_test.dart: Business setup validation coverage — AC-202 through AC-209 allows draft status only for workflow definitions
+00:07 +267: test\wave2_domain_invariants_test.dart: Setup record and query normalization — FR-240 / NFR-202 parses numeric versions, dates, fallbacks, and extension fields
+00:07 +268: test\wave2_domain_invariants_test.dart: Setup record and query normalization — FR-240 / NFR-202 retains cursor, filter, and ordering options
+00:07 +269: loading test\wave3_commercial_edges_test.dart
+00:07 +269: test\wave3_commercial_edges_test.dart: CRM lifecycle validation distinguishes required data, qualification, loss and exact exposure
+00:07 +270: test\wave3_commercial_edges_test.dart: opportunity win/loss invariants reject incomplete close decisions and preserve exact probability
+00:07 +271: test\wave3_commercial_edges_test.dart: CRM activities require accountable times and completion outcomes
+00:07 +272: test\wave3_commercial_edges_test.dart: conversion validates selected-party context and opportunity probability boundaries
+00:07 +273: test\wave3_commercial_edges_test.dart: CRM filters restore or explicitly clear all contextual selection state
+00:07 +274: test\wave3_commercial_edges_test.dart: CRM read objects reject malformed scope, exact amounts, dates and integer versions
+00:07 +275: test\wave3_commercial_edges_test.dart: commercial drafts revalidate exact rates, revisions, header discounts and line requirements
+00:07 +276: loading test\wave3_crm_domain_test.dart
+00:07 +276: test\wave3_crm_domain_test.dart: Wave 3 CRM read contracts — FR-313..FR-318 / NFR-302 parses an opportunity without crossing binary floating point
+00:07 +277: test\wave3_crm_domain_test.dart: Wave 3 CRM read contracts — FR-313..FR-318 / NFR-302 parses a lead with intentionally absent probability and weighting
+00:07 +278: test\wave3_crm_domain_test.dart: Wave 3 CRM read contracts — FR-313..FR-318 / NFR-302 rejects malformed numeric and entry-type boundaries
+00:07 +279: test\wave3_crm_domain_test.dart: Wave 3 CRM read contracts — FR-313..FR-318 / NFR-302 keeps pipeline totals separated by currency and explicit as-of date
+00:07 +280: test\wave3_crm_domain_test.dart: Wave 3 CRM read contracts — FR-313..FR-318 / NFR-302 normalizes and bounds stable pipeline queries
+00:07 +281: test\wave3_crm_domain_test.dart: Wave 3 CRM mutation inputs — AC-302 / AC-322 lead draft validates required fields and emits exact values
+00:07 +282: test\wave3_crm_domain_test.dart: Wave 3 CRM mutation inputs — AC-302 / AC-322 opportunity draft enforces probability and won/lost reasons
+00:07 +283: test\wave3_crm_domain_test.dart: Wave 3 CRM mutation inputs — AC-302 / AC-322 completed activity requires coherent time and outcome
+00:07 +284: test\wave3_crm_domain_test.dart: Wave 3 CRM mutation inputs — AC-302 / AC-322 conversion input preserves selected links and exact probability
+00:08 +285: loading test\wave3_exact_rules_edges_test.dart
+00:08 +285: test\wave3_exact_rules_edges_test.dart: quotation pricing rejects conflicting, excessive and malformed discounts before calculation
+00:08 +286: test\wave3_exact_rules_edges_test.dart: commercial source selection, reservations and credit previews reject incomplete context
+00:08 +287: test\wave3_exact_rules_edges_test.dart: header discounts retain conflicting intent and report exact field errors
+00:08 +288: test\wave3_exact_rules_edges_test.dart: Money preserves signed exact arithmetic and rejects currency mixing
+00:08 +289: test\wave3_exact_rules_edges_test.dart: procurement comparison detects incomplete, repeated and mismatched offers
+00:08 +290: test\wave3_exact_rules_edges_test.dart: unit conversions and count identities reject overflow and fractional serials
+00:08 +291: test\wave3_exact_rules_edges_test.dart: partial return amounts conserve the final source amount at every supported precision
+00:08 +292: test\wave3_exact_rules_edges_test.dart: receivable drafts require coherent source links, dates and immutable exact line inputs
+00:08 +293: test\wave3_exact_rules_edges_test.dart: receivable read snapshots preserve immutable totals, source inputs and receipt intent
+00:08 +294: loading test\wave3_lead_to_cash_domain_test.dart
+00:08 +294: test\wave3_lead_to_cash_domain_test.dart: Wave 3 quotation pricing — AC-303 / NFR-302 calculates exclusive and inclusive tax without binary floating point
+00:08 +295: test\wave3_lead_to_cash_domain_test.dart: Wave 3 quotation pricing — AC-303 / NFR-302 allocates an amount header discount exactly and preserves base rate
+00:08 +296: test\wave3_lead_to_cash_domain_test.dart: Wave 3 quotation pricing — AC-303 / NFR-302 keeps every rounded proportional discount allocation non-negative
+00:08 +297: test\wave3_lead_to_cash_domain_test.dart: Wave 3 quotation pricing — AC-303 / NFR-302 rejects incoherent units, discounts, currencies, and rates
+00:08 +298: test\wave3_lead_to_cash_domain_test.dart: Wave 3 quotation contracts — FR-319..FR-321 draft emits only decimal strings and version-aware revision intent
+00:08 +299: test\wave3_lead_to_cash_domain_test.dart: Wave 3 quotation contracts — FR-319..FR-321 parses exact quotation and immutable revision read models
+00:08 +300: test\wave3_lead_to_cash_domain_test.dart: Wave 3 quotation contracts — FR-319..FR-321 transition and approval decisions serialize explicit intent
+00:08 +301: test\wave3_lead_to_cash_domain_test.dart: Wave 3 order, credit, and reservation contracts — AC-304 parses traced sales-order quantities as exact decimals
+00:08 +302: test\wave3_lead_to_cash_domain_test.dart: Wave 3 order, credit, and reservation contracts — AC-304 credit decision never combines different currencies
+00:08 +303: test\wave3_lead_to_cash_domain_test.dart: Wave 3 order, credit, and reservation contracts — AC-304 reservation input stays bounded, online, and exact
+00:08 +304: loading test\wave3_order_workspace_test.dart
+00:08 +304: test\wave3_order_workspace_test.dart: AC-304 order input preserves exact prices, units and delivery fields
+00:08 +305: test\wave3_order_workspace_test.dart: AC-304 order input rejects numeric JSON and invalid dates
+00:08 +306: test\wave3_order_workspace_test.dart: AC-304 order input requires a product on every line
+00:08 +307: test\wave3_order_workspace_test.dart: AC-304 order queries bound pages and distinguish order states
+00:08 +308: test\wave3_order_workspace_test.dart: AC-304 credit preview keeps limit currency separate and overdue inside due
+00:08 +309: loading test\wave3_protocol_edges_test.dart
+00:08 +309: test\wave3_protocol_edges_test.dart: partition pages preserve identity order and exact cutoff through continuation
+00:09 +310: test\wave3_protocol_edges_test.dart: partition completeness never hides missing, cancelled or malformed evidence
+00:09 +311: test\wave3_protocol_edges_test.dart: disposition rejects malformed headers, conversions and repeated identities atomically
+00:09 +312: test\wave3_protocol_edges_test.dart: landed inputs retain governed basis and seal before posting
+00:09 +313: test\wave3_protocol_edges_test.dart: landed evidence rejects incomplete quantities, totals and substituted source lineage
+00:09 +314: loading test\wave3_quotation_workspace_test.dart
+00:09 +314: test\wave3_quotation_workspace_test.dart: AC-303 draft codec preserves exact inputs and stable line identities
+00:09 +315: test\wave3_quotation_workspace_test.dart: AC-303 draft codec rejects numeric JSON and excess precision
+00:09 +316: test\wave3_quotation_workspace_test.dart: AC-303 server snapshots reconstruct discounts without double application
+00:09 +317: test\wave3_quotation_workspace_test.dart: AC-303 quotation paging is bounded and rejects malformed cursors
+00:09 +318: test\wave3_quotation_workspace_test.dart: AC-303 recall is explicit and requires a reason
+00:09 +319: test\wave3_quotation_workspace_test.dart: AC-303 malformed revision flags cannot silently change command intent
+00:09 +320: test\wave3_quotation_workspace_test.dart: AC-303 malformed tax flags cannot silently change tax treatment
+00:09 +321: loading test\workforce_test.dart
+00:09 +321: test\workforce_test.dart: valid attendance resolves exact selected offsets and contained breaks
+00:09 +322: test\workforce_test.dart: invalid dates and clock overflow cannot normalize to another interval
+00:09 +323: test\workforce_test.dart: missing fields, unrelated fields and one-sided raw pairing fail
+00:09 +324: test\workforce_test.dart: leave approval requires exact balance version and a private reason
+00:09 +325: test\workforce_test.dart: leave adjustments retain signed exact seconds and bounded source key
+00:09 +326: loading test\work_calendar_test.dart
+00:09 +326: test\work_calendar_test.dart: AC-405 overnight Sunday work is checked against Monday
+00:09 +327: test\work_calendar_test.dart: AC-405 zero, overlong and malformed local intervals are denied
+00:09 +328: test\work_calendar_test.dart: AC-405 dated exceptions cannot collide or use invalid civil dates
+00:09 +329: test\work_calendar_test.dart: validated schedule cannot be changed through caller-owned lists
+00:09 +330: test\work_calendar_test.dart: working override must use configured hours, including overnight spill
+00:09 +331: test\work_calendar_test.dart: calendar editor rejects unbounded weekly payloads before submission
+00:09 +332: loading test\work_time_test.dart
+00:09 +332: test\work_time_test.dart: AC-405 exact UTC duration excludes breaks once
+00:09 +333: test\work_time_test.dart: AC-405 a fold interval uses elapsed UTC time
+00:09 +334: test\work_time_test.dart: AC-405 malformed, fractional, reversed and long intervals fail
+00:09 +335: test\work_time_test.dart: AC-405 breaks must be contained, ordered, disjoint and partial
+00:09 +336: test\work_time_test.dart: AC-411 half-open segments can touch but cannot overlap
+00:09 +337: test\work_time_test.dart: AC-406 deterministic leave allocation uses earliest expiry first
+00:09 +338: test\work_time_test.dart: AC-406 cancellation restores only the original grant and once
+00:09 +339: test\work_time_test.dart: AC-406 overdraw and unknown grants are rejected
+00:09 +340: All tests passed!

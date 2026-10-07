@@ -11,6 +11,7 @@ import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_domain/jentra_assets.dart';
 import 'package:jentra_domain/jentra_people.dart';
 import 'package:jentra_platform/jentra_platform.dart';
+import 'package:jentra_platform/jentra_assets_platform.dart';
 import 'package:jentra_desktop/src/features/assets/assets_controller.dart';
 import 'package:jentra_desktop/src/features/assets/assets_screen.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
@@ -100,12 +101,22 @@ class Repository implements AssetRepository {
   String? refreshFailure;
   DomainError? failure;
   Completer<void>? registerGate;
+  Completer<void>? authorizationGate, executeGate;
+  Completer<Map<String, Object?>?>? receiptGate;
+  String? authorizationFailure;
   final commands = <CommandEnvelope<Map<String, Object?>>>[];
   @override
   Future<AssetProviderState> authorize(
     TenantContext s,
     String capability,
   ) async {
+    await authorizationGate?.future;
+    if (authorizationFailure != null) {
+      throw DomainError(
+        code: authorizationFailure!,
+        message: 'Access changed.',
+      );
+    }
     if (deny) {
       throw const DomainError(
         code: 'PERMISSION_DENIED',
@@ -182,12 +193,13 @@ class Repository implements AssetRepository {
     TenantContext s,
     String key,
     String action,
-  ) async => null;
+  ) async => receiptGate == null ? null : await receiptGate!.future;
   @override
   Future<Map<String, Object?>> execute(
     CommandEnvelope<Map<String, Object?>> command,
   ) async {
     commands.add(command);
+    await executeGate?.future;
     if (failure != null) {
       throw failure!;
     }
@@ -239,6 +251,152 @@ void main() {
   tearDown(() async {
     await db.close();
   });
+  Future<String> location(AssetsController c) async {
+    await c.begin('location');
+    c.update('code', 'LAB');
+    c.update('name', 'Synthetic location');
+    c.update('reason', 'Synthetic configuration');
+    return c.form!['id'] as String;
+  }
+
+  test(
+    'late confirmation survives disposal without another dispatch',
+    () async {
+      final c = create();
+      await c.initialize();
+      final localId = await location(c);
+      repository.executeGate = Completer<void>();
+      final sending = c.send();
+      while (repository.commands.isEmpty) {
+        await Future<void>.delayed(Duration.zero);
+      }
+      final sealed = c.pending!;
+      c.dispose();
+      repository.executeGate!.complete();
+      await sending;
+      expect(await c.drafts['location']!.load(scope, localId), isNull);
+      expect(
+        await AssetCommandAcknowledgements(c.drafts['location']!)
+            .contains(sealed),
+        isTrue,
+      );
+      expect(c.confirmed, isNull);
+      expect(repository.commands, hasLength(1));
+    },
+  );
+  test(
+    'confirmed cleanup failure survives restart and prevents reissue',
+    () async {
+      final c = create();
+      await c.initialize();
+      await location(c);
+      await db.customStatement(
+        "CREATE TEMP TRIGGER fail_asset_cleanup BEFORE DELETE ON encrypted_drafts BEGIN SELECT RAISE(ABORT, 'synthetic cleanup failure'); END",
+      );
+      await c.send();
+      final sealed = c.pending!;
+      expect(c.confirmed, isNotNull);
+      expect(c.pending, isNotNull);
+      expect(
+        await AssetCommandAcknowledgements(c.drafts['location']!)
+            .contains(sealed),
+        isTrue,
+      );
+      c.dispose();
+      final restarted = create();
+      await restarted.initialize();
+      await restarted.resume(restarted.recovery.single);
+      expect(restarted.confirmed, isNotNull);
+      await restarted.send();
+      expect(repository.commands, hasLength(1));
+      expect(restarted.pending!.envelope.commandId, sealed.envelope.commandId);
+      restarted.dispose();
+    },
+  );
+  test(
+    'confirmation storage failure retains known success and exact uncertainty',
+    () async {
+      final c = create();
+      await c.initialize();
+      await location(c);
+      await db.customStatement(
+        "CREATE TEMP TRIGGER fail_asset_ack BEFORE INSERT ON encrypted_drafts WHEN NEW.entity_type = 'assets.command.acknowledgement' BEGIN SELECT RAISE(ABORT, 'synthetic acknowledgement failure'); END",
+      );
+      await c.send();
+      expect(c.confirmed, isNotNull);
+      expect(c.pending, isNotNull);
+      expect(c.message, contains('Saving the encrypted confirmation failed'));
+      await c.send();
+      expect(repository.commands, hasLength(1));
+      c.dispose();
+    },
+  );
+  test('old authority response cannot authorize a reconnected send', () async {
+    final c = create();
+    await c.initialize();
+    await location(c);
+    repository.authorizationGate = Completer<void>();
+    final sending = c.send();
+    await Future<void>.delayed(Duration.zero);
+    c.setOnline(false);
+    c.setOnline(true);
+    repository.authorizationGate!.complete();
+    await sending;
+    expect(c.error, contains('Recheck before continuing'));
+    expect(repository.commands, isEmpty);
+    expect(c.pending, isNull);
+    expect(c.current, isTrue);
+    c.dispose();
+  });
+  test('old authority denial cannot clear a replacement connection', () async {
+    final c = create();
+    await c.initialize();
+    await location(c);
+    repository.authorizationGate = Completer<void>();
+    repository.authorizationFailure = 'PERMISSION_DENIED';
+    final checking = c.checkAccess();
+    await Future<void>.delayed(Duration.zero);
+    c.setOnline(false);
+    c.setOnline(true);
+    repository.authorizationGate!.complete();
+    await checking;
+    expect(c.current, isTrue);
+    expect(c.form, isNotNull);
+    c.dispose();
+  });
+  test(
+    'MFA loss clears decrypted recovery and financial projections',
+    () async {
+      final c = create();
+      await c.initialize();
+      final localId = await location(c);
+      await c.save();
+      repository.authorizationFailure = 'MFA_REQUIRED';
+      await c.checkAccess();
+      expect(c.current, isFalse);
+      expect(c.records, isEmpty);
+      expect(c.recovery, isEmpty);
+      expect(c.form, isNull);
+      expect(await c.drafts['location']!.load(scope, localId), isNotNull);
+      c.dispose();
+    },
+  );
+  test(
+    'old directory response cannot populate a replacement connection',
+    () async {
+      final c = create();
+      repository.registerGate = Completer<void>();
+      final loading = c.initialize();
+      await Future<void>.delayed(Duration.zero);
+      c.setOnline(false);
+      c.setOnline(true);
+      repository.registerGate!.complete();
+      await loading;
+      expect(c.records, isEmpty);
+      expect(c.current, isTrue);
+      c.dispose();
+    },
+  );
   test(
     'permission loss during optional confirmed refresh clears all visible data',
     () async {

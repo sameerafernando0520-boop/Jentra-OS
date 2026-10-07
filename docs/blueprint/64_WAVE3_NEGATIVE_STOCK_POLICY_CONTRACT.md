@@ -6,6 +6,12 @@ variance corrections. This is an additive development candidate. Production
 installation, authenticated native acceptance, load proof and owner signoff are
 separate gates.
 
+A later catalog change to lot or serial tracking cannot bypass an outstanding
+untracked deficit. A tracked movement on that stock stream fails atomically with
+`NEGATIVE_STOCK_TRACKING_REQUIRES_CORRECTION` while any original deficit remains
+uncovered. Quantity, value, receipt, tracking identities and correction lineage
+remain unchanged. Streams without outstanding deficits retain normal tracking.
+
 ## Policy and reachability
 
 The entity policy is OFF when no version exists. A scoped privileged command

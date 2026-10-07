@@ -1,0 +1,17 @@
+{
+  "status": "FAILED_CANDIDATE_ROLLBACK",
+  "query_path": "docs/verification/wave4/project-billed-payroll-rollback-prepared-20261005.sql",
+  "query_file_sha256": "E415061B97690241E1D904701A627951A199742117A9ED2D1F21A6A4DEE91278",
+  "connector_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"name\":\"HttpException\",\"message\":\"Failed to run sql query: ERROR:  42883: function pg_catalog.timezone(unknown, interval) does not exist\\nLINE 5077:  'attendance',pg_temp.wid('corr.bound.source'),(pg_temp.wdate()+28)::timestamp+interval '9 hours' at time zone 'Asia/Colombo',\\n                                                                                                             ^\\nHINT:  No function matches the given name and argument types. You might need to add explicit type casts.\\n\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error_code": "INVALID_ARGUMENT"
+    },
+    "isError": true
+  }
+}

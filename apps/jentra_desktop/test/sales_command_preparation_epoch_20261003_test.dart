@@ -130,23 +130,26 @@ void main() {
           if (change == 'offline pulse') {
             publish(const AsyncData(ConnectivityState.offline));
           } else if (change == 'retained loading') {
-            // ignore: invalid_use_of_internal_member
             publish(
+              // Preserve prior online data to reproduce Riverpod's retained state.
+              // ignore: invalid_use_of_internal_member
               const AsyncLoading<ConnectivityState>().copyWithPrevious(
                 const AsyncData(ConnectivityState.online),
               ),
             );
           } else if (change == 'retained error') {
-            // ignore: invalid_use_of_internal_member
             publish(
               AsyncError<ConnectivityState>(
                 StateError('connection unknown'),
                 StackTrace.current,
+                // Preserve prior online data to exercise the error-with-value guard.
+                // ignore: invalid_use_of_internal_member
               ).copyWithPrevious(const AsyncData(ConnectivityState.online)),
             );
           }
-          if (change != 'current')
+          if (change != 'current') {
             publish(const AsyncData(ConnectivityState.online));
+          }
           if (change == 'ack pulse') {
             void pulse() {
               publish(const AsyncData(ConnectivityState.offline));

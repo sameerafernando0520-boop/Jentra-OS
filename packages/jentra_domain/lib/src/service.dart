@@ -686,6 +686,8 @@ final class ServiceCommands {
       'kind',
       'customer_id',
       'provider_id',
+      'provider_version',
+      'provider_digest',
     },
     'coverage': {
       'equipment_id',
@@ -868,6 +870,8 @@ final class ServiceCommands {
       if ({
         'customer_id',
         'provider_id',
+        'provider_version',
+        'provider_digest',
         'contact_id',
         'coverage_id',
         'owner_id',
@@ -894,9 +898,23 @@ final class ServiceCommands {
       }
     }
     if (action == 'equipment') {
-      if (row['kind'] != 'customer' ||
+      if (row['kind'] == 'asset') {
+        calendarUuid(row['provider_id']);
+        serviceInt(row['provider_version'], min: 1);
+        if (row['customer_id'] != null ||
+            row['provider_digest'] is! String ||
+            !RegExp(
+              r'^[0-9a-f]{64}$',
+            ).hasMatch(row['provider_digest'] as String)) {
+          throw const FormatException(
+            'Choose an exact current internal asset source.',
+          );
+        }
+      } else if (row['kind'] != 'customer' ||
           row['customer_id'] == null ||
-          row['provider_id'] != null) {
+          row['provider_id'] != null ||
+          row['provider_version'] != null ||
+          row['provider_digest'] != null) {
         throw const DomainError(
           code: 'SERVICE_EQUIPMENT_PROVIDER_UNAVAILABLE',
           message:
@@ -905,9 +923,12 @@ final class ServiceCommands {
       }
     }
     if (action == 'ticket') {
-      if (row['customer_id'] == null ||
-          !{'low', 'normal', 'high', 'urgent'}.contains(row['priority'])) {
-        throw const FormatException('Customer and priority are required.');
+      if (row['equipment_id'] == null ||
+          !{'low', 'normal', 'high', 'urgent'}.contains(row['priority']) ||
+          row['customer_id'] == null && row['contact_id'] != null) {
+        throw const FormatException(
+          'Equipment and priority are required; internal equipment has no contact.',
+        );
       }
     }
     if ({'labor', 'dispatch'}.contains(action)) {

@@ -131,7 +131,7 @@ values(pg_temp.fid('tenant'),pg_temp.fid('creator.membership'),pg_temp.fid('nega
 select pg_temp.ns_product('main');select pg_temp.ns_order('main.order','main','4');
 insert into procurement_test_results select throws_ok($$select pg_temp.call('reserve_sales_order_stock',pg_temp.ns_reserve_payload('main.order','4',false)||
  '{"source_context":{"negative_stock_override":{"policy_version":"1","reason":"Forged nested client metadata"}}}',(select version from sales.sales_orders where id=pg_temp.fid('negative.main.order')))$$,'22023','NEGATIVE_STOCK_OVERRIDE_INPUT_INVALID','normal reservation rejects client forgery of the reserved authorization key');
-insert into procurement_test_results select throws_ok($$select pg_temp.ns_reserve('main.order','4')$$,'55000','NEGATIVE_STOCK_POLICY_INACTIVE','OFF rejects explicit shortage override');
+insert into procurement_test_results select throws_ok($$select pg_temp.ns_reserve('main.order','4',true,null,'1')$$,'55000','NEGATIVE_STOCK_POLICY_INACTIVE','OFF rejects explicit shortage override');
 insert into negative_stock_responses values('normal.reserve',pg_temp.ns_reserve('main.order','4',false,'negative.normal.reserve'));
 insert into procurement_test_results select is((select allocated_quantity from inventory.stock_balances where id=pg_temp.fid('negative.main.balance')),1::numeric,'OFF legacy reservation clamps to physical availability');
 insert into procurement_test_results select is((select count(*) from inventory.negative_stock_overrides),0::bigint,'normal OFF path creates no override audit');
@@ -225,11 +225,31 @@ insert into procurement_test_results select throws_ok($$select pg_temp.call('rev
  '55000','NEGATIVE_STOCK_RECEIPT_REVERSAL_REQUIRES_CORRECTION','covered receipt is not reversible as unused stock');
 insert into procurement_test_results select is(pg_temp.ns_q('main'),-1::numeric,'refused receipt reversal retains deficit projection');
 
--- Closed-period and late outbox failures roll back receipt, cover, journal, PO.
+-- Hard-locked-period and late outbox failures roll back receipt, cover, journal, PO.
+-- The full-stack period fixture deliberately contains close-control exceptions.
+-- These labelled private events establish only a synthetic hard-locked state
+-- for the independent receipt guard. They do not claim governed close/reopen
+-- acceptance. Each transition still satisfies the actual lifecycle trigger.
+create function pg_temp.ns_fixture_period_state(target text,k text) returns void language plpgsql as $$
+declare p finance.fiscal_periods%rowtype;act text;begin
+ select * into strict p from finance.fiscal_periods where id=pg_temp.fid('period') for update;
+ act:=case when p.state='open' and target='soft_locked' then 'soft_lock'
+  when p.state='soft_locked' and target='hard_locked' then 'hard_lock'
+  when p.state='hard_locked' and target='open' then 'reopened' end;
+ if act is null then raise exception using errcode='P0001',message='NEGATIVE_STOCK_SYNTHETIC_PERIOD_TRANSITION_INVALID';end if;
+ insert into finance.period_events(id,tenant_id,legal_entity_id,period_id,action,from_state,to_state,period_version,
+  reason,exceptions,actor_id,transaction_id)
+ values(pg_temp.fid(k),p.tenant_id,p.legal_entity_id,p.id,act,p.state,target,p.version,
+  'Synthetic negative-stock receipt guard state only','[]',auth.uid(),txid_current());
+ update finance.fiscal_periods set state=target,updated_by=auth.uid() where id=p.id;
+end $$;
 select pg_temp.ns_po('main.po1','main',1,9);
-update finance.fiscal_periods set state='closed' where id=pg_temp.fid('period');
-insert into procurement_test_results select throws_ok($$select pg_temp.ns_receipt('main.receipt1','main.po1','1')$$,'55000','PERIOD_CLOSED','receipt correction cannot rewrite closed period');
-update finance.fiscal_periods set state='open' where id=pg_temp.fid('period');
+select pg_temp.ns_fixture_period_state('soft_locked','negative.fixture.period.soft');
+select pg_temp.ns_fixture_period_state('hard_locked','negative.fixture.period.hard');
+insert into procurement_test_results select is((select state from finance.fiscal_periods where id=pg_temp.fid('period')),'hard_locked','receipt guard fixture reaches the supported hard-locked state');
+insert into procurement_test_results select throws_ok($$select pg_temp.ns_receipt('main.receipt1','main.po1','1')$$,'55000','PERIOD_CLOSED','receipt correction cannot rewrite a hard-locked period');
+select pg_temp.ns_fixture_period_state('open','negative.fixture.period.reopen');
+insert into procurement_test_results select is((select state from finance.fiscal_periods where id=pg_temp.fid('period')),'open','receipt guard fixture restores its supported open state');
 update finance.accounts set status='inactive' where id=pg_temp.fid('negative.cogs');
 insert into procurement_test_results select throws_ok($$select pg_temp.ns_receipt('main.receipt1','main.po1','1')$$,'55000','ACCOUNT_MAPPING_INVALID','inactive original posting account rejects correction without fallback');
 update finance.accounts set status='active' where id=pg_temp.fid('negative.cogs');
@@ -316,7 +336,7 @@ select pg_temp.ns_po('rounded.po','rounded',3,2.333333);
 select pg_temp.ns_receipt('rounded.receipt1','rounded.po','1');select pg_temp.ns_receipt('rounded.receipt2','rounded.po','1');select pg_temp.ns_receipt('rounded.receipt3','rounded.po','1');
 insert into procurement_test_results select is((select array_agg(c.provisional_value order by c.id) from inventory.negative_stock_covers c join inventory.negative_stock_deficits d on d.id=c.deficit_id where d.product_id=pg_temp.fid('negative.rounded')),
  array[2.333333,2.333334,2.333333]::numeric[],'cumulative provisional allocation preserves final minor unit');
-insert into procurement_test_results select is((select sum(provisional_value) from inventory.negative_stock_covers c join inventory.negative_stock_deficits d on d.id=c.deficit_id where d.product_id=pg_temp.fid('negative.rounded')),7::numeric,'partial covers sum to exact original provisional7');
+insert into procurement_test_results select is((select sum(c.provisional_value) from inventory.negative_stock_covers c join inventory.negative_stock_deficits d on d.id=c.deficit_id where d.product_id=pg_temp.fid('negative.rounded')),7::numeric,'partial covers sum to exact original provisional7');
 insert into procurement_test_results select is((select sum(actual_value) from inventory.negative_stock_covers c join inventory.negative_stock_deficits d on d.id=c.deficit_id where d.product_id=pg_temp.fid('negative.rounded')),7::numeric,'receipt rounded shares sum to approved receipt7');
 insert into procurement_test_results select is(pg_temp.ns_v('rounded'),0::numeric,'partial rounding corrections leave no carrying residue');
 
@@ -368,7 +388,17 @@ insert into workflow.approval_matrix_steps(id,tenant_id,workflow_definition_id,r
 values(pg_temp.fid('negative.count.step'),pg_temp.fid('tenant'),pg_temp.fid('negative.count.workflow'),pg_temp.fid('approver.role'),1,pg_temp.fid('creator'),pg_temp.fid('creator'));
 insert into core.role_permissions(tenant_id,role_id,permission_code)
 values(pg_temp.fid('tenant'),pg_temp.fid('approver.role'),'inventory.cost.view') on conflict do nothing;
-insert into negative_stock_responses values('normal.count.payload',jsonb_build_object('id',pg_temp.fid('negative.normal.count'),'warehouse_id',pg_temp.fid('warehouse'),'document_date','2026-09-29',
+-- Count cutoff defaults to transaction time; its civil date must use the same
+-- UTC clock so this preserved fixture remains valid after September 29.
+-- Supply an isolated one-day open period when the original September period
+-- does not cover that clock. Existing periods and lifecycle guards stay intact.
+insert into finance.fiscal_periods(id,tenant_id,legal_entity_id,name,start_date,end_date,created_by,updated_by)
+select pg_temp.fid('negative.count.current.period'),pg_temp.fid('tenant'),pg_temp.fid('entity'),
+ 'Synthetic current count day',(current_timestamp at time zone 'UTC')::date,(current_timestamp at time zone 'UTC')::date,
+ pg_temp.fid('creator'),pg_temp.fid('creator')
+where not exists(select 1 from finance.fiscal_periods where tenant_id=pg_temp.fid('tenant') and legal_entity_id=pg_temp.fid('entity')
+ and (current_timestamp at time zone 'UTC')::date between start_date and end_date);
+insert into negative_stock_responses values('normal.count.payload',jsonb_build_object('id',pg_temp.fid('negative.normal.count'),'warehouse_id',pg_temp.fid('warehouse'),'document_date',(current_timestamp at time zone 'UTC')::date::text,
  'reason','Approved normal count loss','offset_account_id',pg_temp.fid('negative.cogs'),
  'lines',jsonb_build_array(jsonb_build_object('line_id',pg_temp.fid('negative.normal.count.line'),'product_id',pg_temp.fid('negative.count-basis'),'counted_quantity','0','empty_unit_cost','0'))));
 insert into negative_stock_responses values('normal.count.upsert',pg_temp.call('upsert_stock_count',(select response from negative_stock_responses where name='normal.count.payload'),null,'negative.normal.count.upsert'));
@@ -532,3 +562,56 @@ insert into procurement_test_results select is((select allocated_quantity from i
 insert into procurement_test_results select is(pg_temp.call('reserve_sales_order_stock',(select response from negative_stock_responses where name='same-state.override.payload'),
  (select (response#>>'{entity,version}')::bigint from negative_stock_responses where name='same-state.override.first'),'negative.same-state.override.second'),
  (select response from negative_stock_responses where name='same-state.override.second'),'same-state override receipt replays exactly');
+
+-- Additive synthetic regression proposal, after the full policy fixture only.
+-- A public catalog change must not let tracked goods receipts settle an older
+-- untracked deficit without its cover and variance lineage. The enclosing
+-- strict finalizer and transaction roll every candidate/fixture effect back.
+select pg_temp.actor('creator');
+insert into core.role_permissions(tenant_id,role_id,permission_code)
+values(pg_temp.fid('tenant'),pg_temp.fid('creator.role'),'inventory.catalog.manage') on conflict do nothing;
+select pg_temp.ns_product('tracking-drift',1,5);
+select pg_temp.ns_issue('tracking-drift.issue','tracking-drift','2');
+insert into procurement_test_results select is(pg_temp.ns_open('tracking-drift'),1::numeric,'tracking change regression begins with one genuine open untracked deficit');
+insert into procurement_test_results select lives_ok($$select api.upsert_product(pg_temp.fid('tenant'),pg_temp.fid('entity'),
+ jsonb_build_object('id',pg_temp.fid('negative.tracking-drift'),'sku','NS-TRACKING-DRIFT','name','Negative stock tracking-drift','kind','stocked',
+ 'base_unit_id',pg_temp.fid('unit'),'tracking_mode','lot','revenue_account_id',pg_temp.fid('negative.revenue'),
+ 'inventory_account_id',pg_temp.fid('negative.inventory'),'cogs_account_id',pg_temp.fid('negative.cogs')),
+ (select version from inventory.products where id=pg_temp.fid('negative.tracking-drift')),pg_temp.fid('negative.tracking-drift.catalog'))$$,
+ 'public catalog update can change the current tracking master while the original issue remains immutable');
+insert into procurement_test_results select is((select tracking_mode from inventory.products where id=pg_temp.fid('negative.tracking-drift')),'lot','tracking regression uses the actual changed catalog master');
+select pg_temp.ns_po('tracking-drift.po','tracking-drift',1,7);
+insert into negative_stock_responses values('tracking-drift.receipt.payload',jsonb_set(pg_temp.ns_receipt_payload('tracking-drift.receipt','tracking-drift.po','1'),
+ '{lines,0,lot_code}','"TRACKING-DRIFT-LOT"'));
+insert into procurement_test_results select throws_ok($$select pg_temp.call('post_goods_receipt',
+ (select response from negative_stock_responses where name='tracking-drift.receipt.payload'),
+ (select version from procurement.purchase_orders where id=pg_temp.fid('negative.tracking-drift.po')),'negative.tracking-drift.receipt')$$,
+ '55000','NEGATIVE_STOCK_TRACKING_REQUIRES_CORRECTION','tracked goods receipt cannot bypass the original untracked deficit cover');
+insert into procurement_test_results select is(pg_temp.ns_q('tracking-drift'),-1::numeric,'refused tracked receipt leaves the signed stock quantity unchanged');
+insert into procurement_test_results select is(pg_temp.ns_v('tracking-drift'),-5::numeric,'refused tracked receipt leaves the provisional carrying value unchanged');
+insert into procurement_test_results select is(pg_temp.ns_open('tracking-drift'),1::numeric,'refused tracked receipt preserves the original uncovered deficit');
+insert into procurement_test_results select is((select count(*) from procurement.goods_receipts where command_id=pg_temp.fid('negative.tracking-drift.receipt')),0::bigint,'refused tracked receipt leaves no completed receipt');
+insert into procurement_test_results select is((select count(*) from inventory.lots where product_id=pg_temp.fid('negative.tracking-drift') and code='TRACKING-DRIFT-LOT'),0::bigint,'refused tracked receipt rolls back its new lot identity');
+
+-- The correction guard is temporary: settle the original untracked deficit,
+-- then prove normal tracked receipts on that stream remain available.
+create function pg_temp.ns_tracking_mode(mode text,k text) returns jsonb language sql as $$
+ select api.upsert_product(pg_temp.fid('tenant'),pg_temp.fid('entity'),
+  jsonb_build_object('id',pg_temp.fid('negative.tracking-drift'),'sku','NS-TRACKING-DRIFT','name','Negative stock tracking-drift','kind','stocked',
+   'base_unit_id',pg_temp.fid('unit'),'tracking_mode',mode,'revenue_account_id',pg_temp.fid('negative.revenue'),
+   'inventory_account_id',pg_temp.fid('negative.inventory'),'cogs_account_id',pg_temp.fid('negative.cogs')),
+  (select version from inventory.products where id=pg_temp.fid('negative.tracking-drift')),pg_temp.fid(k))
+$$;
+select pg_temp.ns_tracking_mode('none','negative.tracking-drift.restore');
+insert into procurement_test_results select lives_ok($$select pg_temp.ns_receipt('tracking-drift.corrected','tracking-drift.po','1')$$,
+ 'original untracked receipt settles deficit with its required immutable correction');
+insert into procurement_test_results select is(pg_temp.ns_open('tracking-drift'),0::numeric,'corrected stream has no uncovered deficit');
+insert into procurement_test_results select is(pg_temp.ns_v('tracking-drift'),0::numeric,'corrected stream retains no signed carrying residue');
+select pg_temp.ns_tracking_mode('lot','negative.tracking-drift.enable');
+select pg_temp.ns_po('tracking-drift.tracked.po','tracking-drift',1,3);
+insert into procurement_test_results select lives_ok($$select pg_temp.call('post_goods_receipt',
+ jsonb_set(pg_temp.ns_receipt_payload('tracking-drift.tracked','tracking-drift.tracked.po','1'),'{lines,0,lot_code}','"TRACKING-AFTER-CORRECTION"'),
+ (select version from procurement.purchase_orders where id=pg_temp.fid('negative.tracking-drift.tracked.po')),'negative.tracking-drift.tracked')$$,
+ 'tracked receipt remains reachable after the original deficit is corrected');
+insert into procurement_test_results select is(pg_temp.ns_q('tracking-drift'),1::numeric,'normal tracked receipt adds one real unit after correction');
+insert into procurement_test_results select is(pg_temp.ns_v('tracking-drift'),3::numeric,'normal tracked receipt adds its exact actual value after correction');

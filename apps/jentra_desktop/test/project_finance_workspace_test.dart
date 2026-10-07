@@ -11,10 +11,13 @@ import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_domain/jentra_people.dart';
 import 'package:jentra_domain/jentra_projects.dart';
 import 'package:jentra_domain/jentra_project_finance.dart';
+import 'package:jentra_domain/jentra_expense_evidence.dart';
 import 'package:jentra_platform/jentra_platform.dart';
 import 'package:jentra_platform/jentra_project_finance_platform.dart';
 import 'package:jentra_desktop/src/features/projects/project_finance_controller.dart';
 import 'package:jentra_desktop/src/features/projects/project_finance_screen.dart';
+import 'package:jentra_desktop/src/features/projects/expense_evidence_screen.dart';
+import 'package:jentra_desktop/src/app_providers.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
 
 final samples = projectMap(
@@ -33,6 +36,7 @@ final scope = TenantContext(
   actorId: '10000000-0000-0000-0000-000000000004',
 );
 final allCaps = {
+  expenseEvidenceView,
   'projects.cost.view',
   'projects.margin.view',
   'projects.billing.manage',
@@ -55,9 +59,20 @@ class Repository implements ProjectFinanceRepository {
   DomainError? failure;
   Completer<void>? readGate;
   Completer<void>? commandGate, receiptGate, authorizeGate;
+  Completer<void>? evidenceGate;
   final commands = <CommandEnvelope<Map<String, Object?>>>[];
   Map<String, Object?>? confirmation;
   int currentVersion = 3;
+  @override
+  Future<void> authorizeEvidence(
+    TenantContext s,
+    String projectId,
+    String expenseId,
+  ) async {
+    await evidenceGate?.future;
+    await authorize(s, 'projects.expenses.evidence.view');
+  }
+
   @override
   Future<void> authorize(TenantContext s, String cap) async {
     await authorizeGate?.future;
@@ -171,6 +186,57 @@ class Repository implements ProjectFinanceRepository {
     await receiptGate?.future;
     return confirmation;
   }
+}
+
+class EvidenceRepository implements ExpenseEvidenceRepository {
+  final calls = <(TenantContext, String?, String?, String)>[];
+  @override
+  Future<bool> authorize(
+    TenantContext s,
+    String? p,
+    String? x,
+    String cap,
+  ) async {
+    calls.add((s, p, x, cap));
+    if (cap != expenseEvidenceView && cap != expenseEvidenceManage) {
+      throw const DomainError(
+        code: 'PERMISSION_DENIED',
+        message: 'Synthetic action unavailable.',
+      );
+    }
+    return false;
+  }
+
+  @override
+  Future<ExpenseEvidencePage> documents(
+    TenantContext s,
+    String p,
+    String x, {
+    String? after,
+  }) async => const ExpenseEvidencePage([], null);
+  @override
+  Future<ExpenseEvidenceConfirmation> command(
+    CommandEnvelope<Map<String, Object?>> input,
+  ) => throw UnsupportedError('No synthetic mutation.');
+  @override
+  Future<ExpenseEvidenceConfirmation?> receipt(
+    TenantContext s,
+    String id,
+  ) async => null;
+  @override
+  Future<ExpenseEvidenceConfirmation> upload(
+    CommandEnvelope<Map<String, Object?>> input,
+    ExpenseEvidenceDocument doc,
+    Uint8List bytes,
+  ) => throw UnsupportedError('No synthetic upload.');
+  @override
+  Future<Uint8List> document(
+    TenantContext s,
+    String p,
+    String x,
+    ExpenseEvidenceDocument doc, {
+    bool export = false,
+  }) => throw UnsupportedError('No synthetic private bytes.');
 }
 
 void main() {
@@ -367,6 +433,39 @@ void main() {
       expect(c.confirmed, isNull);
     },
   );
+  test('AC-416 reconnect requires fresh authority before dispatch', () async {
+    await c.begin('expense_post', row: c.rows.single);
+    c.change('reason', 'Synthetic rapid reconnect');
+    repo.authorizeGate = Completer<void>();
+    final sending = c.send();
+    await Future<void>.delayed(const Duration(milliseconds: 5));
+    c.setOnline(false);
+    c.setOnline(true);
+    repo.authorizeGate!.complete();
+    await sending;
+    expect(repo.commands, isEmpty);
+    expect(c.pending, isNull);
+    repo.authorizeGate = null;
+    await c.send();
+    expect(repo.commands, hasLength(1));
+    expect(c.confirmed, isNotNull);
+  });
+  test(
+    'AC-428 protected service costs retain original zero cancellation basis',
+    () async {
+      await c.load(ProjectFinanceSection.serviceCosts);
+      expect(c.rows, hasLength(4));
+      expect(
+        c.rows.where((r) => r.status == 'cancelled').single.amount!.minorUnits,
+        BigInt.zero,
+      );
+      repo.denyCapability = 'projects.cost.view';
+      await c.checkAccess();
+      expect(c.denied, isTrue);
+      expect(c.rows, isEmpty);
+      expect(c.report, isNull);
+    },
+  );
   test('AC-416 durable confirmation prevents restart dispatch after cleanup failure', () async {
     await c.begin('expense_post', row: c.rows.single);
     c.change('reason', 'Private synthetic cleanup failure');
@@ -398,6 +497,7 @@ void main() {
       'entity_id',
       'project_id',
       'version',
+      'request_digest',
     });
     expect(jsonEncode(ack.payload), isNot(contains('Private synthetic')));
     c.dispose();
@@ -423,6 +523,38 @@ void main() {
       isNull,
     );
   });
+  test(
+    'AC-416 known confirmation survives acknowledgement storage failure',
+    () async {
+      await c.begin('expense_post', row: c.rows.single);
+      c.change('reason', 'Synthetic acknowledgement storage failure');
+      await db.customStatement(
+        "CREATE TEMP TRIGGER finance_ack_insert_failure BEFORE INSERT ON encrypted_drafts WHEN NEW.entity_type='projects.finance.command.acknowledgement' BEGIN SELECT RAISE(ABORT,'Synthetic acknowledgement failure'); END",
+      );
+      await c.send();
+      expect(c.confirmed, isNotNull);
+      expect(c.pending, isNotNull);
+      expect(
+        c.message,
+        contains('Saving the encrypted acknowledgement needs retry'),
+      );
+      final original = c.pending!.envelope;
+      await c.send();
+      expect(repo.commands, hasLength(1));
+      c.dispose();
+      await db.customStatement('DROP TRIGGER finance_ack_insert_failure');
+      c = make();
+      await c.initialize();
+      expect(
+        c.recovery.single.draft.pending!.envelope.commandId,
+        original.commandId,
+      );
+      await c.resume(c.recovery.single);
+      await c.reconcile();
+      expect(c.confirmed, isNotNull);
+      expect(repo.commands, hasLength(1));
+    },
+  );
   test(
     'AC-415 revocation clears protected views and preserves encrypted pending',
     () async {
@@ -527,6 +659,188 @@ void main() {
       expect(c.denied, isTrue);
     },
   );
+  test('FR426 resident selected proofs clear when private evidence authority changes', () async {
+    await c.begin('expense_create');
+    final expense = projectMap(
+      (projectMap(samples['attachedExpenses'])['rows'] as List).single,
+    );
+    c.change('evidence_documents', expense['evidence_documents']);
+    repo.denyCapability = 'projects.expenses.evidence.view';
+    await c.checkAccess();
+    expect(c.denied, isTrue);
+    expect(c.form, isNull);
+    expect(c.review, isNull);
+    expect(c.recovery, isEmpty);
+  });
+  test(
+    'FR426 stale private authorization cannot open evidence after reconnect',
+    () async {
+      await c.begin('expense_create');
+      repo.evidenceGate = Completer<void>();
+      final opening = c.openEvidence(c.form!['id'] as String);
+      await Future<void>.delayed(const Duration(milliseconds: 5));
+      c.setOnline(false);
+      c.setOnline(true);
+      repo.evidenceGate!.complete();
+      expect(await opening, isFalse);
+      expect(c.denied, isFalse);
+      expect(c.error, contains('Refresh current private'));
+    },
+  );
+  testWidgets(
+    'FR426 open document panel uses original expense scope and clears on revocation',
+    (tester) async {
+      final evidence = EvidenceRepository();
+      await c.begin('expense_create');
+      final expenseId = c.form!['id'] as String;
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            projectExpenseEvidenceRepositoryProvider.overrideWithValue(
+              evidence,
+            ),
+            encryptedDraftRepositoryProvider.overrideWithValue(encrypted),
+          ],
+          child: MaterialApp(
+            home: Scaffold(
+              body: ProjectFinanceScreen(
+                projectId: project,
+                projectName: 'Synthetic project',
+                currency: 'LKR',
+                precision: 2,
+                controller: c,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('Select protected documents'),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Select protected documents'));
+      await tester.pumpAndSettle();
+      final panel = tester.widget<ExpenseEvidencePanel>(
+        find.byType(ExpenseEvidencePanel),
+      );
+      expect(panel.scope, scope);
+      expect(panel.projectId, project);
+      expect(panel.expenseId, expenseId);
+      expect(panel.initialProofs, isEmpty);
+      expect(
+        evidence.calls,
+        contains((scope, project, expenseId, expenseEvidenceView)),
+      );
+      repo.denyCapability = expenseEvidenceView;
+      await c.checkAccess();
+      await tester.pumpAndSettle();
+      expect(find.byType(ExpenseEvidencePanel), findsNothing);
+      expect(
+        find.text(
+          'Protected documents cleared. Refresh current access before reopening.',
+        ),
+        findsOneWidget,
+      );
+      expect(c.form, isNull);
+      expect(tester.takeException(), isNull);
+      await tester.tap(find.byTooltip('Close documents'));
+      await tester.pumpAndSettle();
+    },
+  );
+  test('FR426 encrypted selected proof recovery is reauthorized before plaintext installation', () async {
+    final wire = projectMap(
+      (projectMap(samples['attachedExpenses'])['rows'] as List).single,
+    );
+    final form = {
+      for (final k in projectFinanceFields(
+        'expense_correct',
+      ).difference({'action', 'reason'}))
+        k: wire[k],
+      'action': 'expense_correct',
+      'reason': 'Synthetic protected recovery',
+    };
+    form['allocations'] = (wire['allocations'] as List).map((x) {
+      final v = projectMap(x);
+      return {'task_id': v['task_id'], 'weight': v['weight']};
+    }).toList();
+    await projectFinanceDrafts(encrypted, 'expense_correct').save(
+      scope,
+      wire['id'] as String,
+      'expense_correct',
+      form,
+      wire['version'] as int,
+    );
+    c.dispose();
+    repo.denyCapability = 'projects.expenses.evidence.view';
+    c = ProjectFinanceController(
+      scope: scope,
+      projectId: project,
+      currency: 'LKR',
+      precision: 2,
+      repository: repo,
+      permissions: allCaps,
+      drafts: {
+        for (final action in projectFinanceActions)
+          action: projectFinanceDrafts(encrypted, action),
+      },
+      online: true,
+    );
+    await c.initialize();
+    expect(c.denied, isTrue);
+    expect(c.recovery, isEmpty);
+    expect(
+      await projectFinanceDrafts(
+        encrypted,
+        'expense_correct',
+      ).load(scope, wire['id'] as String),
+      isNotNull,
+    );
+  });
+  test('FR426 financial confirmation cannot be borrowed by a changed exact request', () async {
+    await c.begin('expense_post', row: c.rows.single);
+    c.change('reason', 'Synthetic exact confirmation');
+    repo.failure = const DomainError(
+      code: 'UNCERTAIN_RESULT',
+      message: 'Synthetic interruption',
+      retryable: true,
+    );
+    await c.send();
+    final original = c.pending!;
+    repo.failure = null;
+    final response = await repo.command(original.envelope);
+    final acknowledgement = ProjectFinanceCommandAcknowledgements(
+      c.drafts[original.action]!,
+    );
+    await acknowledgement.save(original, response);
+    expect(
+      await acknowledgement.contains(
+        ScopedPendingCommand.fromJson(original.toJson()),
+      ),
+      isTrue,
+    );
+    final modified = original.toJson(),
+        envelope = projectMap(modified['envelope']);
+    envelope['payload'] = {
+      ...projectMap(envelope['payload']),
+      'reason': 'Changed private request',
+    };
+    modified['envelope'] = envelope;
+    await expectLater(
+      acknowledgement.contains(ScopedPendingCommand.fromJson(modified)),
+      throwsA(isA<DomainError>()),
+    );
+    final timestamp = original.toJson(),
+        issued = projectMap(timestamp['envelope']);
+    issued['client_timestamp'] = DateTime.utc(2026, 10, 6).toIso8601String();
+    timestamp['envelope'] = issued;
+    await expectLater(
+      acknowledgement.contains(ScopedPendingCommand.fromJson(timestamp)),
+      throwsA(isA<DomainError>()),
+    );
+  });
   test('AC-415 resident decrypted recovery is reauthorized independently of section', () async {
     await c.begin('expense_post', row: c.rows.single);
     c.change('reason', 'Private synthetic recovery');

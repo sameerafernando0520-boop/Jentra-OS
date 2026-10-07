@@ -1,0 +1,521 @@
+{
+  "migrations": [
+    {
+      "name": "create_greenfield_foundation",
+      "version": "20260831193714"
+    },
+    {
+      "name": "harden_foundation_rls_and_indexes",
+      "version": "20260831193857"
+    },
+    {
+      "name": "simplify_invitation_read_policy",
+      "version": "20260831194005"
+    },
+    {
+      "name": "optimize_invitation_auth_initplan",
+      "version": "20260901005825"
+    },
+    {
+      "name": "create_wave2_shared_foundation_schema",
+      "version": "20260901090317"
+    },
+    {
+      "name": "create_wave2_command_helpers",
+      "version": "20260901090331"
+    },
+    {
+      "name": "create_wave2_setup_upsert_command",
+      "version": "20260901090354"
+    },
+    {
+      "name": "create_wave2_special_commands",
+      "version": "20260901090406"
+    },
+    {
+      "name": "expose_wave2_versioned_api",
+      "version": "20260901090420"
+    },
+    {
+      "name": "cover_wave2_foreign_keys",
+      "version": "20260901090642"
+    },
+    {
+      "name": "validate_wave2_attachment_aggregates",
+      "version": "20260901091132"
+    },
+    {
+      "name": "enforce_wave2_fiscal_period_lifecycle",
+      "version": "20260903045702"
+    },
+    {
+      "name": "enforce_wave2_workflow_lifecycle",
+      "version": "20260903051423"
+    },
+    {
+      "name": "align_wave2_setup_contracts",
+      "version": "20260903110103"
+    },
+    {
+      "name": "bound_wave2_report_rows",
+      "version": "20260903110716"
+    },
+    {
+      "name": "wave3_operational_foundation",
+      "version": "20260904121647"
+    },
+    {
+      "name": "cover_wave3_foreign_keys",
+      "version": "20260904122313"
+    },
+    {
+      "name": "create_wave3_crm_pipeline_schema",
+      "version": "20260904125910"
+    },
+    {
+      "name": "create_wave3_crm_pipeline_commands",
+      "version": "20260904130000"
+    },
+    {
+      "name": "add_crm_pipeline_aging_summary",
+      "version": "20260904135959"
+    },
+    {
+      "name": "create_wave3_quotation_schema",
+      "version": "20260905050419"
+    },
+    {
+      "name": "create_wave3_quotation_commands",
+      "version": "20260905050428"
+    },
+    {
+      "name": "create_wave3_order_credit_reservation_schema",
+      "version": "20260905050436"
+    },
+    {
+      "name": "create_wave3_order_credit_reservation_commands",
+      "version": "20260905050444"
+    },
+    {
+      "name": "cover_wave3_lead_to_cash_foreign_keys",
+      "version": "20260905050839"
+    },
+    {
+      "name": "stabilize_wave3_discount_allocation",
+      "version": "20260905054457"
+    },
+    {
+      "name": "harden_crm_pipeline_ac302",
+      "version": "20260905123934"
+    },
+    {
+      "name": "complete_quotation_workspace_contracts",
+      "version": "20260906153036"
+    },
+    {
+      "name": "complete_sales_order_workspace",
+      "version": "20260907044241"
+    },
+    {
+      "name": "complete_delivery_receivables",
+      "version": "20260910135010"
+    },
+    {
+      "name": "harden_receivables_reference_indexes",
+      "version": "20260910135507"
+    },
+    {
+      "name": "governed_stock_openings",
+      "version": "20260910201410"
+    },
+    {
+      "name": "governed_warehouse_setup",
+      "version": "20260911065744"
+    },
+    {
+      "name": "stock_opening_approver_setup",
+      "version": "20260911130900"
+    },
+    {
+      "name": "wave4_employee_foundation",
+      "version": "20260925181927"
+    },
+    {
+      "name": "wave4_calendar_versions",
+      "version": "20260926082441"
+    },
+    {
+      "name": "wave4_private_hr",
+      "version": "20260929224939"
+    }
+  ],
+  "api_catalogue": [
+    {
+      "name": "accept_invitation",
+      "signature": "p_token text"
+    },
+    {
+      "name": "accept_stock_opening_invitation",
+      "signature": "p_invitation_id uuid, p_idempotency_key uuid"
+    },
+    {
+      "name": "allocate_customer_receipt",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "bootstrap_tenant",
+      "signature": "p_name text, p_slug text, p_legal_entity_name text, p_legal_entity_code text, p_branch_name text, p_branch_code text, p_timezone text, p_currency_code text, p_idempotency_key uuid"
+    },
+    {
+      "name": "complete_attachment",
+      "signature": "p_tenant_id uuid, p_attachment_id uuid, p_checksum_sha256 text, p_expected_version bigint, p_idempotency_key uuid"
+    },
+    {
+      "name": "convert_lead",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "convert_quotation_to_order",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "create_export_job",
+      "signature": "p_tenant_id uuid, p_resource text, p_file_format text, p_filters jsonb, p_columns jsonb, p_row_count integer, p_file_name text, p_file_size bigint, p_idempotency_key uuid"
+    },
+    {
+      "name": "create_invitation",
+      "signature": "p_tenant_id uuid, p_email text, p_role_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_expires_in_hours integer"
+    },
+    {
+      "name": "customer_statement",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_customer_id uuid, p_currency_code text, p_as_of date, p_buckets integer[]"
+    },
+    {
+      "name": "decide_operational_approval",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "get_crm_pipeline_summary",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of_date date"
+    },
+    {
+      "name": "get_my_capabilities",
+      "signature": "p_tenant_id uuid"
+    },
+    {
+      "name": "get_sales_order_credit_preview",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_sales_order_id uuid"
+    },
+    {
+      "name": "import_setup_records",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_resource text, p_file_format text, p_file_name text, p_file_size bigint, p_rows jsonb, p_idempotency_key uuid"
+    },
+    {
+      "name": "invite_stock_opening_approver",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_email text, p_idempotency_key uuid"
+    },
+    {
+      "name": "list_my_stock_opening_invitations",
+      "signature": ""
+    },
+    {
+      "name": "list_my_tenants",
+      "signature": ""
+    },
+    {
+      "name": "mark_notification_read",
+      "signature": "p_tenant_id uuid, p_notification_id uuid, p_expected_version bigint, p_idempotency_key uuid"
+    },
+    {
+      "name": "people_calendar_command",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint"
+    },
+    {
+      "name": "people_calendar_detail",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_calendar_id uuid, p_version_id uuid"
+    },
+    {
+      "name": "people_calendar_directory",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of date, p_search text, p_after uuid"
+    },
+    {
+      "name": "people_calendar_history",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_calendar_id uuid, p_after uuid"
+    },
+    {
+      "name": "people_calendar_versions",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_calendar_id uuid, p_after uuid"
+    },
+    {
+      "name": "people_employee_branches",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_search text"
+    },
+    {
+      "name": "people_employee_command",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint"
+    },
+    {
+      "name": "people_employee_detail",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_as_of date, p_status text"
+    },
+    {
+      "name": "people_employee_directory",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of date, p_status text, p_search text, p_after uuid"
+    },
+    {
+      "name": "people_employee_history",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid"
+    },
+    {
+      "name": "people_hr_access",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_capability text"
+    },
+    {
+      "name": "people_hr_command",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint"
+    },
+    {
+      "name": "people_hr_document_ticket",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_document_id uuid, p_operation text"
+    },
+    {
+      "name": "people_hr_documents",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid"
+    },
+    {
+      "name": "people_hr_erasure_status",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid"
+    },
+    {
+      "name": "people_hr_export_content",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_export_id uuid"
+    },
+    {
+      "name": "people_hr_link_inbox",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid"
+    },
+    {
+      "name": "people_hr_links",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid"
+    },
+    {
+      "name": "people_hr_memberships",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid"
+    },
+    {
+      "name": "people_hr_own_receipt",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid"
+    },
+    {
+      "name": "people_hr_policy",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid"
+    },
+    {
+      "name": "people_hr_profile",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid"
+    },
+    {
+      "name": "people_hr_review_history",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_review_id uuid, p_after uuid"
+    },
+    {
+      "name": "people_hr_reviews",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid"
+    },
+    {
+      "name": "people_hr_self",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid"
+    },
+    {
+      "name": "people_hr_service_document",
+      "signature": "p_ticket_id uuid, p_user_id uuid"
+    },
+    {
+      "name": "people_hr_service_verify_upload",
+      "signature": "p_ticket_id uuid, p_user_id uuid, p_checksum text, p_byte_size integer"
+    },
+    {
+      "name": "people_hr_subjects",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_capability text, p_search text, p_after uuid"
+    },
+    {
+      "name": "people_hr_worker_claim",
+      "signature": "p_limit integer"
+    },
+    {
+      "name": "people_hr_worker_complete",
+      "signature": "p_job_id uuid, p_lease_id uuid"
+    },
+    {
+      "name": "people_hr_worker_register",
+      "signature": "p_artifact_digest text, p_storage_probe_digest text"
+    },
+    {
+      "name": "post_customer_receipt",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "post_delivery",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "post_sales_invoice",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "post_sales_return",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "post_stock_opening",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "record_crm_activity",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "register_attachment",
+      "signature": "p_tenant_id uuid, p_payload jsonb, p_idempotency_key uuid"
+    },
+    {
+      "name": "reserve_document_number",
+      "signature": "p_tenant_id uuid, p_sequence_id uuid, p_document_date date, p_idempotency_key uuid"
+    },
+    {
+      "name": "reserve_sales_order_stock",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "transition_operational_document",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "transition_stock_opening",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "update_sales_order_fulfillment",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "upsert_account",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid"
+    },
+    {
+      "name": "upsert_approval_matrix_step",
+      "signature": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid"
+    },
+    {
+      "name": "upsert_contact",
+      "signature": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid"
+    },
+    {
+      "name": "upsert_customer_receipt",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "upsert_delivery",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "upsert_document_sequence",
+      "signature": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid"
+    },
+    {
+      "name": "upsert_exchange_rate",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid"
+    },
+    {
+      "name": "upsert_fiscal_period",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid"
+    },
+    {
+      "name": "upsert_lead",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "upsert_opportunity",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "upsert_party",
+      "signature": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid"
+    },
+    {
+      "name": "upsert_product",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid"
+    },
+    {
+      "name": "upsert_receivables_setup",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "upsert_report_definition",
+      "signature": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid"
+    },
+    {
+      "name": "upsert_sales_invoice",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "upsert_sales_order",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "upsert_sales_quotation",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "upsert_sales_return",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "upsert_stock_opening",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint"
+    },
+    {
+      "name": "upsert_tax_definition",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid"
+    },
+    {
+      "name": "upsert_unit",
+      "signature": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid"
+    },
+    {
+      "name": "upsert_warehouse",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid"
+    },
+    {
+      "name": "upsert_workflow_definition",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid"
+    }
+  ],
+  "shared_helpers": [
+    {
+      "name": "flow_allocate",
+      "signature": "p_source uuid, p_target uuid, p_tenant uuid, p_entity uuid, p_branch uuid, p_payload jsonb, p_date date, p_request uuid, p_command uuid",
+      "source_md5": "e6e9f68ec7d8aca03be157816fe8eef6"
+    },
+    {
+      "name": "flow_post_journal",
+      "signature": "p_doc jsonb, p_lines jsonb, p_source_type text, p_source_id uuid, p_request uuid, p_command uuid",
+      "source_md5": "bebe95827a7e5ac3f2192d0f7acd38b4"
+    },
+    {
+      "name": "flow_residual",
+      "signature": "p_tenant uuid, p_id uuid, p_as_of date DEFAULT NULL::date",
+      "source_md5": "c0933ed943663701bbc7e01a1c21831f"
+    },
+    {
+      "name": "wave3_lock_open_period",
+      "signature": "p_tenant_id uuid, p_legal_entity_id uuid, p_posting_date date",
+      "source_md5": "a316c04eef62ba1a43d49ea4d5261ca2"
+    }
+  ],
+  "candidate_tables_remaining": 0,
+  "head": "d7a2022faf2631e15b9ba2bc181c8b6fa9d83acc",
+  "project_id": "xpdoufauvrbdmxgngetv",
+  "observed_at": "2026-10-06T06:01:00.325Z",
+  "hash_basis": "md5(pg_get_functiondef(oid)); corrected separately observed prosrc-only digest basis"
+}

@@ -1,0 +1,141 @@
+{
+  "observed_at": "2026-10-06T08:00:18.739069+00:00",
+  "execution_capture": "docs\\verification\\remaining-wave3\\client-sources-final-start-20261006.json",
+  "execution_capture_sha256": "b97bccdab7096fe584aca4fd64b41d971f3e690103d92c4937030128f3111bbf",
+  "source_files": 994,
+  "current_source_match": true,
+  "source_mismatches": [],
+  "checks": [
+    {
+      "package": "packages/jentra_domain",
+      "log": "docs\\verification\\wave4\\domain-full-serialized-20261006.log",
+      "log_sha256": "df20c403b6834661978955890d1a5fd908e1b430d01d4525003932239352905b",
+      "whole_suite_passed": 340,
+      "whole_suite_failed": 0,
+      "required_vertical_files": [
+        "packages/jentra_domain/test/employee_test.dart",
+        "packages/jentra_domain/test/work_calendar_test.dart",
+        "packages/jentra_domain/test/calendar_contract_test.dart",
+        "packages/jentra_domain/test/calendar_resolution_test.dart",
+        "packages/jentra_domain/test/organization_test.dart",
+        "packages/jentra_domain/test/private_hr_test.dart",
+        "packages/jentra_domain/test/workforce_test.dart",
+        "packages/jentra_domain/test/clock_import_test.dart",
+        "packages/jentra_domain/test/payroll_calculation_test.dart",
+        "packages/jentra_domain/test/payroll_repository_test.dart",
+        "packages/jentra_domain/test/payroll_correction_test.dart",
+        "packages/jentra_domain/test/payroll_correction_repository_test.dart",
+        "packages/jentra_domain/test/project_values_test.dart",
+        "packages/jentra_domain/test/project_finance_test.dart",
+        "packages/jentra_domain/test/milestones_test.dart",
+        "packages/jentra_domain/test/service_values_test.dart",
+        "packages/jentra_domain/test/fixed_asset_schedule_test.dart",
+        "packages/jentra_domain/test/assets_repository_test.dart",
+        "packages/jentra_domain/test/expense_evidence_test.dart",
+        "packages/jentra_domain/test/asset_equipment_test.dart"
+      ],
+      "required_vertical_failures": [],
+      "required_verticals_pass": true
+    },
+    {
+      "package": "packages/jentra_platform",
+      "log": "docs\\verification\\remaining-wave3\\platform-full-final-20261006.log",
+      "log_sha256": "b2ae3daf7fc51b44eec1135c64fe9580d0bfc4363a0616f6f16a7c525c976980",
+      "whole_suite_passed": 1062,
+      "whole_suite_failed": 0,
+      "required_vertical_files": [
+        "packages/jentra_platform/test/employee_draft_store_test.dart",
+        "packages/jentra_platform/test/calendar_draft_store_test.dart",
+        "packages/jentra_platform/test/calendar_gateway_test.dart",
+        "packages/jentra_platform/test/organization_gateway_test.dart",
+        "packages/jentra_platform/test/organization_draft_store_test.dart",
+        "packages/jentra_platform/test/private_hr_gateway_test.dart",
+        "packages/jentra_platform/test/private_hr_draft_test.dart",
+        "packages/jentra_platform/test/workforce_gateway_test.dart",
+        "packages/jentra_platform/test/clock_import_adapter_test.dart",
+        "packages/jentra_platform/test/sensitive_leave_draft_test.dart",
+        "packages/jentra_platform/test/payroll_gateway_test.dart",
+        "packages/jentra_platform/test/sensitive_payroll_draft_test.dart",
+        "packages/jentra_platform/test/payroll_correction_gateway_test.dart",
+        "packages/jentra_platform/test/sensitive_payroll_correction_draft_test.dart",
+        "packages/jentra_platform/test/projects_gateway_test.dart",
+        "packages/jentra_platform/test/project_command_acknowledgement_test.dart",
+        "packages/jentra_platform/test/project_finance_gateway_test.dart",
+        "packages/jentra_platform/test/milestone_gateway_test.dart",
+        "packages/jentra_platform/test/service_gateway_test.dart",
+        "packages/jentra_platform/test/assets_gateway_test.dart",
+        "packages/jentra_platform/test/asset_command_acknowledgement_test.dart",
+        "packages/jentra_platform/test/expense_evidence_gateway_test.dart",
+        "packages/jentra_platform/test/sensitive_expense_evidence_draft_test.dart",
+        "packages/jentra_platform/test/expense_evidence_files_test.dart",
+        "packages/jentra_platform/test/asset_equipment_gateway_test.dart"
+      ],
+      "required_vertical_failures": [],
+      "required_verticals_pass": true
+    },
+    {
+      "package": "apps/jentra_desktop",
+      "log": "docs\\verification\\remaining-wave3\\desktop-full-final-20261006.log",
+      "log_sha256": "3dc0ce6dd12794b40c5c3f403fc272e0c715f6b662a4ecd1e295a76dc36c7488",
+      "whole_suite_passed": 1775,
+      "whole_suite_failed": 83,
+      "required_vertical_files": [
+        "apps/jentra_desktop/test/employee_workspace_test.dart",
+        "apps/jentra_desktop/test/calendar_workspace_test.dart",
+        "apps/jentra_desktop/test/calendar_resolution_dialog_test.dart",
+        "apps/jentra_desktop/test/organization_workspace_test.dart",
+        "apps/jentra_desktop/test/private_hr_workspace_test.dart",
+        "apps/jentra_desktop/test/workforce_workspace_test.dart",
+        "apps/jentra_desktop/test/payroll_workspace_test.dart",
+        "apps/jentra_desktop/test/payroll_correction_workspace_test.dart",
+        "apps/jentra_desktop/test/projects_workspace_test.dart",
+        "apps/jentra_desktop/test/project_finance_workspace_test.dart",
+        "apps/jentra_desktop/test/milestones_workspace_test.dart",
+        "apps/jentra_desktop/test/service_workspace_test.dart",
+        "apps/jentra_desktop/test/service_acknowledgement_test.dart",
+        "apps/jentra_desktop/test/assets_workspace_test.dart",
+        "apps/jentra_desktop/test/expense_evidence_workspace_test.dart",
+        "apps/jentra_desktop/test/asset_equipment_workspace_test.dart"
+      ],
+      "required_vertical_failures": [
+        {
+          "test_file": "payroll_workspace_test.dart",
+          "test": "payroll workspace light at 200 percent text scale"
+        },
+        {
+          "test_file": "payroll_workspace_test.dart",
+          "test": "payroll workspace dark at 200 percent text scale"
+        }
+      ],
+      "required_verticals_pass": false
+    }
+  ],
+  "analyzer": {
+    "log": "docs\\verification\\remaining-wave3\\analyzer-final-20261006.log",
+    "sha256": "cf49505ec00e00f605a06b6d55f8f3af4e4b64b49fb39203d311b6ad698c4164",
+    "passed": true
+  },
+  "build": {
+    "observed_at": "2026-10-06T07:41:08.256006+00:00",
+    "status": "compiled",
+    "exit_code": 0,
+    "binary": "C:\\jw4-wave3-final-20261006\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\jentra_desktop.exe",
+    "sha256": "16c56ede431524ef266eb167a1675a767deb0135919d194662505d7c6b34679d",
+    "source_files": 994,
+    "current_source_match": true,
+    "log": "C:\\Users\\sheha\\Desktop\\Jentra OS\\docs\\verification\\remaining-wave3\\windows-build-final-20261006.log",
+    "log_sha256": "e846b9045a1a74fa251269e38da795525f9f9be0b2d6a96657d8629371d8829c",
+    "boundary": "Isolated current-source release compilation only. No launch, authenticated session, profile/store change, installed acceptance or owner signoff."
+  },
+  "composition": {
+    "evidence": "docs\\verification\\wave4\\install-composition-current-evidence-20261005.json",
+    "sha256": "b2f7e2d114491244e9f80062511111c3384cdebbc3d089837599dcc8a13f6428",
+    "actual_assertions": 14,
+    "candidate_migrations": 15,
+    "candidate_tables": 111,
+    "execution_date": "2026-10-05",
+    "source_match_reverified": true
+  },
+  "boundary": "Source-verified reuse of actual completed Oct6 full client executions and Oct5 strict rollback composition. No new execution date assigned to retained tests/SQL. Compiled, not launched. Not installed, authenticated runtime, overlapping contention, load, restart, visual or owner acceptance.",
+  "wave4_complete": false
+}

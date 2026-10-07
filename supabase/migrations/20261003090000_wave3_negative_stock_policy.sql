@@ -277,7 +277,18 @@ declare m inventory.stock_movements%rowtype;bal inventory.stock_balances%rowtype
  d inventory.negative_stock_deficits%rowtype;pos record;allocation record;entry record;basis inventory.negative_stock_cost_bases%rowtype;
  remaining numeric;prior numeric;take numeric;eid bigint;def_entry bigint;covered numeric:=0;actual numeric;provisional numeric;variance numeric;
  jid uuid;correction_id uuid;currency text;steps integer:=0;open_q numeric;all_open numeric;origin uuid;begin
- if line.lot_id is not null or cardinality(line.serial_ids)>0 then return false;end if;
+ -- A changed catalog must not route a tracked receipt around an older
+ -- untracked deficit and its immutable cost-cover correction.
+ if line.lot_id is not null or cardinality(line.serial_ids)>0
+  or exists(select 1 from inventory.products p where p.tenant_id=line.tenant_id and p.id=line.product_id and p.tracking_mode<>'none') then
+  perform pg_advisory_xact_lock(hashtextextended(line.tenant_id::text||':'||line.warehouse_id::text||':'||line.product_id::text,0));
+  if exists(select 1 from inventory.negative_stock_deficits x where x.tenant_id=line.tenant_id
+   and x.warehouse_id=line.warehouse_id and x.product_id=line.product_id
+   and inventory.negative_stock_open_quantity(x.tenant_id,x.id)>0) then
+   raise exception using errcode='55000',message='NEGATIVE_STOCK_TRACKING_REQUIRES_CORRECTION';
+  end if;
+  if line.lot_id is not null or cardinality(line.serial_ids)>0 then return false;end if;
+ end if;
  select * into m from inventory.stock_movements where tenant_id=line.tenant_id and id=line.stock_movement_id;
  select * into d from inventory.negative_stock_deficits where tenant_id=line.tenant_id and issue_movement_line_id=line.id;
  select coalesce(sum(inventory.negative_stock_open_quantity(x.tenant_id,x.id)),0) into all_open from inventory.negative_stock_deficits x

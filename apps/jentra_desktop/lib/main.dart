@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_platform/jentra_receivables_platform.dart';
 import 'package:jentra_platform/jentra_procurement_platform.dart';
+import 'package:jentra_platform/analytics_platform.dart';
+
+import 'src/features/analytics/process_metric_screen.dart';
+import 'src/features/analytics/pipeline_forecast_screen.dart';
+import 'src/features/analytics/wave5_control_screen.dart';
 
 import 'src/features/procurement/procurement_controller.dart';
 
@@ -42,11 +47,16 @@ import 'package:jentra_platform/jentra_assets_platform.dart';
 import 'package:jentra_platform/jentra_projects_platform.dart';
 import 'package:jentra_platform/jentra_project_finance_platform.dart';
 import 'package:jentra_platform/jentra_service_platform.dart';
+import 'package:jentra_platform/jentra_milestones_platform.dart';
+import 'package:jentra_platform/jentra_expense_evidence_platform.dart';
+import 'package:jentra_platform/jentra_asset_equipment_platform.dart';
 
 import 'src/features/assets/assets_controller.dart';
 import 'src/features/projects/projects_controller.dart';
 import 'src/features/projects/project_finance_controller.dart';
+import 'src/features/projects/milestones_controller.dart';
 import 'src/features/service/service_controller.dart';
+import 'src/features/service/asset_equipment_controller.dart';
 
 import 'src/features/people/employee_controller.dart';
 import 'src/features/people/calendar_controller.dart';
@@ -173,6 +183,15 @@ Future<void> main() async {
         employeeRepositoryProvider.overrideWithValue(
           client == null ? null : SupabaseEmployeeGateway(client),
         ),
+        processMetricRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabaseProcessMetricGateway(client),
+        ),
+        pipelineForecastRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabasePipelineForecastGateway(client),
+        ),
+        wave5ControlRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabaseWave5ControlGateway(client),
+        ),
         calendarRepositoryProvider.overrideWithValue(
           client == null ? null : SupabaseCalendarGateway(client),
         ),
@@ -197,8 +216,17 @@ Future<void> main() async {
         projectFinanceRepositoryProvider.overrideWithValue(
           client == null ? null : SupabaseProjectFinanceGateway(client),
         ),
+        projectExpenseEvidenceRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabaseExpenseEvidenceGateway(client),
+        ),
+        milestoneRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabaseMilestoneGateway(client),
+        ),
         serviceRepositoryProvider.overrideWithValue(
           client == null ? null : SupabaseServiceGateway(client),
+        ),
+        assetEquipmentRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabaseAssetEquipmentGateway(client),
         ),
       ],
       child: const JentraApp(),

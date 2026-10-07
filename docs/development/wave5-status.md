@@ -1,103 +1,28 @@
-# Wave 5 session status
+# Wave 5 development status
 
-Updated 2026-09-30, Asia/Colombo. The owner approved the Wave 5 and W5-01
-contracts by requesting “continue”. The isolated W5-01 domain calculation and
-platform SHA-256 adapter are implemented and verified. No full Wave 5 or W5-01
-native/installed acceptance is claimed.
+Updated October 8, 2026. **Wave 5 remains incomplete.** Additive process/pipeline/control development is reviewable and verified; upstream financial authority, persistent integration adapters and integrated acceptance are still open. The October 6 source/tests/build were checked against the current checkout on October 8. The worker unknown-outcome fix and its tests are from October 8.
 
-## Reviewable starting point
+| Slice | Current development behavior | Remaining work |
+|---|---|---|
+| W5-01 Process | Exact event-duration P50/P90, immutable source digest/cutoffs, scoped read/detail RPC candidate, verified gateway, encrypted filters and native workspace | Install/authenticate; native restart/keyboard/runtime/load/owner gates. Stage dwell/work/rework remain uncertified |
+| W5-02 Pipeline | Freeze/reopen current scoped opportunity revisions and exact per-currency weighted totals; immutable command evidence and original uncertain-command recovery | Reviewed historical stage/value/owner and realized-result providers; installed/authenticated acceptance |
+| W5-03 Ratios/cash | Exact ratio publication compatibility and dated-control/residual cash primitives; absent families remain unavailable | Named authoritative statement/classification and remaining-obligation adapters; durable immutable scenarios/overrides/encrypted drafts; native integration and governed export/download/reopen |
+| W5-04 AI controls | Human-origin immutable proposals, hash-bound distinct MFA decision, live source/cohort/approver recheck, stable single command, encrypted pending recovery | Server model/redaction provider and trusted token worker; real authenticated MFA and concurrent execution evidence |
+| W5-05 Integrations | Scoped allowlist/credential policy, DNS-pinned HTTPS, exact HMAC bytes, bounded known retries, unknown reconciliation state and injected worker orchestration | Persistent subscription/key rotation/credential/outbox lease/attempt/dead-letter/replay/throttle/dispatcher/scheduler adapters; approved receiver/vault and real worker evidence |
+| W5-06 Billing | Existing billing authority, explicit synthetic trial/seat revision and worker activation candidates; exact immutable trusted metering/corrections; shared billing lock/seat guard; native trial recovery | Approved private synthetic tenant/plan/actors; installation and trusted worker; independent-session quota/seat races |
+| W5-07 Operator | Separate operator authority, reasoned expiring MFA grant, immutable access audit, redacted health and unknown missing/stale probes | Approved synthetic operator/grants, real probes, installed/authenticated acceptance |
+| W5-08 Acceptance | Evidence matrix, strict rollback, current-source attribution, rendered review and Windows build | Full feature completion, installation, authenticated native restart/keyboard, actual worker/receiver, 500-tenant/2,000-session load and owner signoff |
 
-- [Wave 5 intelligence and control specification](../blueprint/wave5/WAVE5_INTELLIGENCE_AND_CONTROL_SPEC.md)
-  defines scope, exact evidence, permissions, human AI approval, integrations,
-  synthetic SaaS control, operator isolation, and eight delivery slices.
-- [W5-01 process metric contract](../blueprint/wave5/W5_01_PROCESS_METRICS_CONTRACT.md)
-  starts with independent exact domain calculations. Both documents are Approved.
+The live read-only refresh remains **37 migrations**, latest `20260929224939`, **85 API functions**. Neither Wave 5 schema is installed; checked financial statement, attendance and payroll source relations are absent. All six Wave 5 candidates are unapplied. Existing concurrent W3/W4 candidates and local acceptance stores are preserved.
 
-The engineering spec-driven workflow's approval gate is satisfied for this
-specification and W5-01. Later slices still require their detailed contracts;
-installation, external services and production retain their stated boundaries.
+Verification is bounded to the owned changes:
 
-## Parallel-session ownership
+- 126 strict SQL assertions passed; every candidate effect rolled back. Sequential 100-retry cases are not contention evidence.
+- 61 focused domain and 29 platform tests passed; 46 Wave 5 desktop/controller/render cases passed. The broader desktop run finished 57 passes and 13 shared dashboard/setup golden failures. Their case names match the earlier pre-W5 run; pixel equivalence is not claimed and approved goldens were not rewritten.
+- 15 injected worker tests passed on October 8. Timeout outcomes are `unknown`, have no automatic retry delay, and keep their reservation pending reconciliation. No real request was sent.
+- Full workspace analysis reported zero issues. Critical changed domain branches reached 193/199 (96.98%); this is not whole-wave coverage or fixture coverage for unimplemented features.
+- The Windows release build succeeded on October 6. All 1,025 selected client sources and the isolate still match on October 8. The executable and 34 release files are hashed. No installer, real signed-in launch or native acceptance is claimed.
+- 36 synthetic rendered variants covered three workspaces, both themes/densities, three viewports and 200% text. Twelve fresh captures are retained and four were visually inspected. Real native keyboard/owner review remains open.
+- Structured credential and projection-key scans found zero findings in those release files, six selected logs and four SQL projection wires. Actual export/model/runtime data are absent; this limited scan does not close NFR-507.
 
-At kickoff, the existing chats `Start Wave` (Wave 4) and `Complete Wave 3
-verification` were active. The continuation snapshot found Wave 4 interrupted/
-idle and Wave 3 active; both chats' source ownership remains protected. This
-session inspected state without messaging either chat.
-The shared checkout is dirty and must be preserved. The source preflight was
-`main`, HEAD `f9cc342815e2446fb3f26204d5e65e03c1b2a140`.
-HEAD and provider fingerprints must be refreshed before implementation because
-other chats can continue changing them.
-
-This session owns new paths in `docs/blueprint/wave5/`,
-`docs/development/wave5-status.md`, `docs/verification/wave5/`,
-`packages/jentra_domain/lib/analytics.dart`, the domain `src/analytics/` and
-`test/analytics/` directories, `packages/jentra_platform/lib/analytics_platform.dart`,
-and the platform `src/analytics/` and `test/analytics/` directories.
-Existing Wave 3/4 source, migrations, docs, tests, evidence, running app,
-authentication and shared main/router/navigation remain under their current
-owners. No stage, commit, push, migration application or deployment occurred
-in this session.
-
-## September 30 live development preflight
-
-Read-only Supabase checks against `xpdoufauvrbdmxgngetv` found 37 installed
-migrations, last `20260929224939_wave4_private_hr`. The installed ledger includes
-process telemetry, CRM pipeline, employee/calendar and private-HR foundations.
-
-`workflow.process_events` and `api.process_events` exist. The base table has
-enabled/forced RLS; the view has `security_invoker=true`. The API includes
-`get_crm_pipeline_summary`. Basic billing plans, entitlements and subscriptions
-exist. The `ai` schema exists; its presence is not proof of Wave 5 AI delivery.
-No `analytics` schema was present. Specific probes for supplier-bill controls,
-attendance intervals and payroll runs returned absent. Provider completeness,
-semantic completeness, authenticated access and runtime remain unverified.
-The capability probe verified `analytics.view`, `workflow.process.view` and CRM
-source permissions. It found no entitlement using the proposed exact code
-`analytics`; synthetic setup remains a named server-integration gate.
-
-## Proceeding order
-
-| Work | Current state / next step |
-|---|---|
-| Wave 5 contract | Approved by owner “continue” on September 30 |
-| W5-01 exact process domain | Implemented; 25 focused tests, full domain regression 194/194, clean analysis; 95.06% branch coverage |
-| W5-01 SHA-256 adapter | Implemented using existing cryptography dependency; 8/8 platform tests including independent Python vectors and tampering |
-| W5-01 adapter/native | Follow domain, producer semantic/permission checks and additive candidate tests |
-| Pipeline forecasts | New slice contract and verified historical CRM basis required |
-| Financial ratios/cash forecast | Exact domain design can proceed after approval; installed authoritative finance/obligation providers gate integration |
-| AI proposal controls | Provider-neutral contract/state machine first; live provider/execution remains explicitly gated |
-| Webhook/API | Injected tests first; credentials/egress and real deliveries need separate authorization |
-| Plans/trials/metering | Synthetic controls only; existing billing authority remains the provider |
-| Operator dashboard | Separate access/health contract required; tenant owner access is insufficient |
-| Full acceptance | Installed providers, authenticated native/restart, real contention/load, workers and owner signoff remain open |
-
-Document-validation evidence is kept in [the Wave 5 verification folder](../verification/wave5/).
-Specification validation is evidence about documentation, not deployed behavior.
-
-Strict validation passed for both contracts at 100/100 with zero findings.
-All 46 functional and 14 non-functional requirements map to the 25 acceptance
-criteria; both documents define 24 edge cases in total. Identifier continuity,
-Given/When/Then structure, all 12 local links and conflict-marker checks passed.
-The report is `spec-validation-20260930.json` in the verification folder.
-The calculation validates complete immutable source manifests, exact UTC and
-numeric(20,6) minute strings, scope, row/window bounds, unique identities and
-canonical SHA-256 evidence before computing nearest-rank P50/P90 in BigInt
-microseconds. Empty, zero, open, invalid and excluded observations remain
-distinct. Stage dwell/throughput/work/rework measures remain explicitly
-uncertified. Verification does not grant source permissions.
-
-The platform uses the existing `cryptography` dependency through a pure domain
-hashing port. No dependency manifest or lockfile was changed. Full domain
-regression passed 194 tests with zero failures/skips; focused platform passed
-8 tests. New domain/platform analysis has zero findings. Coverage of the new
-calculation is 242/246 lines (98.37%) and 77/81 branches (95.06%).
-
-The refreshed before/after installed ledger remains at 37 migrations through
-`20260929224939_wave4_private_hr`. This session made no database mutation.
-The next step is the bounded permission-aware server provider and its candidate
-tests, followed by the native workspace and recovery. SQL, native widget/render,
-Windows build, installation, real authenticated runtime and target-scale load
-are not yet verified for W5-01.
-
-See [the process-foundation checkpoint](../verification/wave5/process-foundation-20260930.md)
-for commands, exact source evidence and remaining acceptance gates.
+See the [current checkpoint](../verification/wave5/checkpoint-20261008.md), [109-ID requirement matrix](../verification/wave5/requirement-matrix-20261008.md), [exact installation review](../verification/wave5/installation-review-20261008.md) and [integrated runtime protocol](../verification/wave5/integrated-runtime-protocol-20261006.md). FR-534 requires separately recorded owner target/list approval before persistent installation. The review excludes all synthetic bootstrap, entitlement activation, real billing and external provisioning/delivery.

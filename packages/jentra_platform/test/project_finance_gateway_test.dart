@@ -204,6 +204,76 @@ void main() {
     expect(wire.containsKey('actor_id'), isFalse);
     expect(h.requests.single.headers['content-profile'], 'api');
   });
+  test(
+    'FR426 actual scoped expense proofs remain minimal and reject private fields',
+    () async {
+      final original = projectMap(financeSamples['attachedExpenses']);
+      h.response = original;
+      final page = await g.detail(
+        financeScope,
+        financeProject,
+        'LKR',
+        ProjectFinanceSection.expenses,
+      );
+      final row = page.rows.single;
+      expect((row.values['evidence_documents'] as List), isNotEmpty);
+      final wire = projectMap((original['rows'] as List).single);
+      h.response = {
+        ...original,
+        'rows': [
+          {
+            ...wire,
+            'evidence_documents': [
+              {
+                ...projectMap((wire['evidence_documents'] as List).single),
+                'checksum': 'a' * 64,
+              },
+            ],
+          },
+        ],
+      };
+      await expectLater(
+        g.detail(
+          financeScope,
+          financeProject,
+          'LKR',
+          ProjectFinanceSection.expenses,
+        ),
+        throwsFormatException,
+      );
+    },
+  );
+  test(
+    'FR426 provider authority is checked in the exact expense scope',
+    () async {
+      final expense = projectMap(
+        (projectMap(financeSamples['attachedExpenses'])['rows'] as List).single,
+      )['id'];
+      h.response = {
+        'tenant_id': financeScope.tenantId,
+        'legal_entity_id': financeScope.legalEntityId,
+        'branch_id': financeScope.branchId,
+        'actor_id': financeScope.actorId,
+        'project_id': financeProject,
+        'expense_id': expense,
+        'authorized': true,
+        'available': false,
+      };
+      await g.authorizeEvidence(
+        financeScope,
+        financeProject,
+        expense as String,
+      );
+      final wire = projectMap(jsonDecode(h.requests.single.body));
+      expect(wire['p_project_id'], financeProject);
+      expect(wire['p_expense_id'], expense);
+      h.response = {...projectMap(h.response), 'expense_id': w4Id};
+      await expectLater(
+        g.authorizeEvidence(financeScope, financeProject, expense),
+        throwsFormatException,
+      );
+    },
+  );
   test('AC-415 malformed acknowledgement stays uncertain', () async {
     h.response = {
       'request_id': w4Command,
@@ -286,7 +356,21 @@ void main() {
   );
   test('AC-428 missing finance entitlement has a safe native reason', () async {
     h.status = 400;
-    h.response = {'code': '42501', 'message': 'PROJECT_FINANCE_ENTITLEMENT_REQUIRED'};
-    await expectLater(g.authorize(financeScope, 'projects.cost.view'), throwsA(isA<DomainError>().having((e) => e.code, 'code', 'FEATURE_NOT_ENTITLED').having((e) => e.message, 'reason', contains('Projects and Finance'))));
+    h.response = {
+      'code': '42501',
+      'message': 'PROJECT_FINANCE_ENTITLEMENT_REQUIRED',
+    };
+    await expectLater(
+      g.authorize(financeScope, 'projects.cost.view'),
+      throwsA(
+        isA<DomainError>()
+            .having((e) => e.code, 'code', 'FEATURE_NOT_ENTITLED')
+            .having(
+              (e) => e.message,
+              'reason',
+              contains('Projects and Finance'),
+            ),
+      ),
+    );
   });
 }

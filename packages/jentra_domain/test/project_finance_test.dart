@@ -14,6 +14,7 @@ Map<String, Object?> expense() => {
   'service_date': '2026-10-01',
   'purpose': 'Approved project expense',
   'evidence_reference': 'synthetic-receipt',
+  'evidence_documents': <Map<String, Object?>>[],
   'original_currency': 'LKR',
   'original_precision': 2,
   'net': '0.03',
@@ -140,6 +141,70 @@ void main() {
     );
   });
   test(
+    'FR426 expense proofs accept only bounded immutable content identities',
+    () {
+      final proof = {'id': id(8), 'version': 1, 'digest': 'a' * 64};
+      validateProjectFinanceCommand('expense_create', {
+        ...expense(),
+        'evidence_documents': [proof],
+      });
+      for (final invalid in [
+        [proof, proof],
+        [
+          {...proof, 'version': 2},
+        ],
+        [
+          {...proof, 'digest': 'not-a-digest'},
+        ],
+        [
+          {...proof, 'object_path': 'private/guess'},
+        ],
+        List.generate(11, (i) => {...proof, 'id': id(i + 20)}),
+      ]) {
+        expect(
+          () => validateProjectFinanceCommand('expense_create', {
+            ...expense(),
+            'evidence_documents': invalid,
+          }),
+          throwsFormatException,
+        );
+      }
+    },
+  );
+  test(
+    'FR426 actual attached expense projection retains original proof without private document metadata',
+    () {
+      final wire = projectMap(
+        projectMap(samples['attachedExpenses'])['rows'] is List
+            ? (projectMap(samples['attachedExpenses'])['rows'] as List).single
+            : null,
+      );
+      final row = ProjectFinanceRow.fromJson(
+        ProjectFinanceSection.expenses,
+        wire,
+        'LKR',
+      );
+      expect(
+        (row.values['evidence_documents'] as List).single,
+        wire['evidence_documents'] is List
+            ? (wire['evidence_documents'] as List).single
+            : null,
+      );
+      expect(
+        () => ProjectFinanceRow.fromJson(ProjectFinanceSection.expenses, {
+          ...wire,
+          'evidence_documents': [
+            {
+              ...projectMap((wire['evidence_documents'] as List).single),
+              'mime': 'text/plain',
+            },
+          ],
+        }, 'LKR'),
+        throwsFormatException,
+      );
+    },
+  );
+  test(
     'AC-414 actual rollback expense projection reconciles FX and allocations',
     () {
       final row = projectMap(
@@ -231,27 +296,114 @@ void main() {
       throwsFormatException,
     );
   });
-  test('AC-428 protected service cost preserves exact seconds and revision basis', () {
-    final row = {
-      'id': id(1), 'provider_source_id': id(2), 'source_revision_id': id(3),
-      'source_version': 4, 'source_digest': 'a' * 64, 'currency_code': 'LKR',
-      'precision': 2, 'service_date': '2026-10-04', 'payable_seconds': 1,
-      'hourly_cost': '18', 'amount': '0.00', 'status': 'approved',
-      'recorded_at': '2026-10-04T00:00:00Z',
-    };
-    final parsed = ProjectFinanceRow.fromJson(ProjectFinanceSection.serviceCosts, row, 'LKR');
-    expect(parsed.values['payable_seconds'], 1);
-    expect(parsed.amount!.minorUnits, BigInt.zero);
-    for (final changed in [
-      {'amount': '0.01'}, {'hourly_cost': 18}, {'source_digest': 'bad'},
-      {'currency_code': 'USD'}, {'status': 'cancelled'}, {'payable_seconds': 0.5},
-    ]) {
-      expect(() => ProjectFinanceRow.fromJson(ProjectFinanceSection.serviceCosts, {...row, ...changed}, 'LKR'), throwsA(anything));
-    }
-  });
+  test(
+    'AC-428 protected service cost preserves exact seconds and revision basis',
+    () {
+      final row = {
+        'id': id(1),
+        'provider_source_id': id(2),
+        'source_revision_id': id(3),
+        'source_version': 4,
+        'source_digest': 'a' * 64,
+        'currency_code': 'LKR',
+        'precision': 2,
+        'service_date': '2026-10-04',
+        'payable_seconds': 1,
+        'hourly_cost': '18',
+        'amount': '0.00',
+        'status': 'approved',
+        'recorded_at': '2026-10-04T00:00:00Z',
+      };
+      final parsed = ProjectFinanceRow.fromJson(
+        ProjectFinanceSection.serviceCosts,
+        row,
+        'LKR',
+      );
+      expect(parsed.values['payable_seconds'], 1);
+      expect(parsed.amount!.minorUnits, BigInt.zero);
+      for (final changed in [
+        {'amount': '0.01'},
+        {'hourly_cost': 18},
+        {'source_digest': 'bad'},
+        {'currency_code': 'USD'},
+        {'status': 'cancelled'},
+        {'payable_seconds': 0.5},
+      ]) {
+        expect(
+          () => ProjectFinanceRow.fromJson(ProjectFinanceSection.serviceCosts, {
+            ...row,
+            ...changed,
+          }, 'LKR'),
+          throwsA(anything),
+        );
+      }
+    },
+  );
   test('AC-428 service cost independently reconciles project margin', () {
-    final row = {...projectMap(samples['margin']), 'service_cost': '18', 'posted_revenue': '54', 'posted_credits': '0', 'expense_cost': '0', 'time_cost': '0', 'margin': '36'};
-    expect(ProjectMargin.fromJson(row).values['margin']!.toDecimalString(), '36.000000');
-    expect(() => ProjectMargin.fromJson({...row, 'margin': '54'}), throwsFormatException);
+    final row = {
+      ...projectMap(samples['margin']),
+      'service_cost': '18',
+      'posted_revenue': '54',
+      'posted_credits': '0',
+      'expense_cost': '0',
+      'time_cost': '0',
+      'margin': '36',
+    };
+    expect(
+      ProjectMargin.fromJson(row).values['margin']!.toDecimalString(),
+      '36.000000',
+    );
+    expect(
+      () => ProjectMargin.fromJson({...row, 'margin': '54'}),
+      throwsFormatException,
+    );
   });
+  test(
+    'AC-415 milestone units retain frozen payment terms and no duration',
+    () {
+      final row = {
+        'id': id(1),
+        'source_kind': 'milestone',
+        'source_id': id(2),
+        'source_version': 3,
+        'source_digest': 'a' * 64,
+        'source_name': 'Approved delivery milestone',
+        'amount': '54',
+        'payable_seconds': null,
+        'status': 'available',
+        'payment_terms': 'Synthetic net thirty',
+        'payment_due_days': 30,
+      };
+      expect(
+        ProjectFinanceRow.fromJson(
+          ProjectFinanceSection.units,
+          row,
+          'LKR',
+        ).values['payment_due_days'],
+        30,
+      );
+      for (final change in [
+        {'payment_due_days': 366},
+        {'payment_due_days': 0.5},
+        {'payment_terms': ''},
+        {'payment_terms': 'x' * 1001},
+        {'payable_seconds': 1},
+      ]) {
+        expect(
+          () => ProjectFinanceRow.fromJson(ProjectFinanceSection.units, {
+            ...row,
+            ...change,
+          }, 'LKR'),
+          throwsA(anything),
+        );
+      }
+      expect(
+        ProjectFinanceRow.fromJson(ProjectFinanceSection.units, {
+          ...row,
+          'payment_terms': 'x' * 1000,
+        }, 'LKR').values['payment_terms'],
+        'x' * 1000,
+      );
+    },
+  );
 }

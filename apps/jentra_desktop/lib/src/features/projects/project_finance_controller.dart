@@ -7,6 +7,7 @@ import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_domain/jentra_people.dart';
 import 'package:jentra_domain/jentra_projects.dart';
 import 'package:jentra_domain/jentra_project_finance.dart';
+import 'package:jentra_domain/jentra_expense_evidence.dart';
 import 'package:jentra_platform/jentra_platform.dart';
 import 'package:jentra_platform/jentra_project_finance_platform.dart';
 import 'package:uuid/uuid.dart';
@@ -16,6 +17,8 @@ import '../../app_providers.dart';
 final projectFinanceRepositoryProvider = Provider<ProjectFinanceRepository?>(
   (ref) => null,
 );
+final projectExpenseEvidenceRepositoryProvider =
+    Provider<ExpenseEvidenceRepository?>((ref) => null);
 const projectFinanceDefiniteFailures = {
   'VERSION_CONFLICT',
   'VALIDATION_ERROR',
@@ -120,6 +123,7 @@ final class ProjectFinanceController extends ChangeNotifier {
   int expectedVersion = 0;
   final labels = <String, String>{};
   List<ProjectFinanceSavedDraft> recovery = [];
+  final _evidenceViews = <String>{};
   final recoveryCursors = <String, String?>{};
   bool get current => !_disposed && !denied;
   bool has(String cap) => permissions.contains(cap);
@@ -142,6 +146,9 @@ final class ProjectFinanceController extends ChangeNotifier {
   }
 
   void setOnline(bool v) {
+    if (online != v) {
+      _epoch++;
+    }
     online = v;
     _notify();
   }
@@ -150,6 +157,8 @@ final class ProjectFinanceController extends ChangeNotifier {
     'PERMISSION_DENIED',
     'AUTHENTICATION_REQUIRED',
     'FEATURE_NOT_ENTITLED',
+    'MFA_REQUIRED',
+    'ACCESS_DENIED',
   }.contains(e.code);
   void _deny() {
     denied = true;
@@ -162,6 +171,7 @@ final class ProjectFinanceController extends ChangeNotifier {
     review = null;
     comparison = null;
     recovery = [];
+    _evidenceViews.clear();
     labels.clear();
     next = null;
     error = 'Project finance access changed. Select an authorized scope.';
@@ -170,6 +180,7 @@ final class ProjectFinanceController extends ChangeNotifier {
   }
 
   Future<void> _access(String c) async {
+    final epoch = _epoch;
     if (!online) {
       throw const DomainError(
         code: 'OFFLINE',
@@ -184,7 +195,21 @@ final class ProjectFinanceController extends ChangeNotifier {
     }
     try {
       await repository.authorize(scope, c);
+      if (!current || epoch != _epoch || !online) {
+        throw const DomainError(
+          code: 'ACCESS_RECHECK_REQUIRED',
+          message:
+              'Connection changed. Refresh current project finance authority.',
+        );
+      }
     } on DomainError catch (e) {
+      if (!current || epoch != _epoch || !online) {
+        throw const DomainError(
+          code: 'ACCESS_RECHECK_REQUIRED',
+          message:
+              'Connection changed. Refresh current project finance authority.',
+        );
+      }
       if (_revoked(e)) {
         _deny();
       }
@@ -217,6 +242,38 @@ final class ProjectFinanceController extends ChangeNotifier {
     }
   }
 
+  Future<void> _evidenceAccess(String expenseId) async {
+    final epoch = _epoch;
+    try {
+      await repository.authorizeEvidence(scope, projectId, expenseId);
+    } on DomainError catch (cause) {
+      if (!current || epoch != _epoch || !online) {
+        throw const DomainError(
+          code: 'ACCESS_RECHECK_REQUIRED',
+          message: 'Refresh current private document authority.',
+        );
+      }
+      if (_revoked(cause)) _deny();
+      rethrow;
+    }
+    if (!current || epoch != _epoch || !online) {
+      throw const DomainError(
+        code: 'ACCESS_RECHECK_REQUIRED',
+        message: 'Refresh current private document authority.',
+      );
+    }
+  }
+
+  Future<bool> openEvidence(String expenseId) async {
+    await _run(() async {
+      await _evidenceAccess(expenseId);
+      _evidenceViews.add(expenseId);
+    });
+    return current && _evidenceViews.contains(expenseId);
+  }
+
+  void closeEvidence(String expenseId) => _evidenceViews.remove(expenseId);
+
   Future<void> initialize() => _run(() async {
     section = has('projects.cost.view')
         ? ProjectFinanceSection.expenses
@@ -245,6 +302,31 @@ final class ProjectFinanceController extends ChangeNotifier {
         if (!current) {
           return;
         }
+      }
+      final expenseIds = <String>{
+        ..._evidenceViews,
+        for (final row in rows)
+          if (row.section == ProjectFinanceSection.expenses &&
+              (row.values['evidence_documents'] as List).isNotEmpty)
+            row.id,
+        if (review?.section == ProjectFinanceSection.expenses &&
+            (review!.values['evidence_documents'] as List).isNotEmpty)
+          review!.id,
+        if (form != null &&
+            (form!['evidence_documents'] as List?)?.isNotEmpty == true)
+          form!['id'] as String,
+        for (final saved in recovery)
+          if (((saved.draft.pending?.envelope.payload ??
+                          saved.draft.form)['evidence_documents']
+                      as List?)
+                  ?.isNotEmpty ==
+              true)
+            saved.draft.aggregateId,
+      };
+      final epoch = _epoch;
+      for (final expenseId in expenseIds) {
+        await _evidenceAccess(expenseId);
+        if (!current || epoch != _epoch || !online) return;
       }
     } catch (_) {}
   }
@@ -329,6 +411,7 @@ final class ProjectFinanceController extends ChangeNotifier {
   }
 
   Future<ProjectFinanceRow> _currentRow(ProjectFinanceRow row) async {
+    final epoch = _epoch;
     await _access(cap(row.section));
     final page = await repository.detail(
       scope,
@@ -337,6 +420,12 @@ final class ProjectFinanceController extends ChangeNotifier {
       row.section,
       targetId: row.id,
     );
+    if (!current || epoch != _epoch || !online) {
+      throw const DomainError(
+        code: 'ACCESS_RECHECK_REQUIRED',
+        message: 'Refresh current source authority before reviewing this row.',
+      );
+    }
     if (page.rows.length != 1) {
       throw const DomainError(
         code: 'RESOURCE_NOT_FOUND',
@@ -399,6 +488,7 @@ final class ProjectFinanceController extends ChangeNotifier {
           'service_date': today,
           'purpose': '',
           'evidence_reference': '',
+          'evidence_documents': <Map<String, Object?>>[],
           'original_currency': currency,
           'original_precision': precision,
           'net': '0.00',
@@ -563,7 +653,9 @@ final class ProjectFinanceController extends ChangeNotifier {
       'tax_version': tax?.version,
       'description': description,
     });
-    labels[unit.id] = unit.values['payment_due_days'] == null ? unit.title : '${unit.title} · due ${unit.values['payment_due_days']} days after invoice · ${unit.values['payment_terms']}';
+    labels[unit.id] = unit.values['payment_due_days'] == null
+        ? unit.title
+        : '${unit.title} · due ${unit.values['payment_due_days']} days after invoice · ${unit.values['payment_terms']}';
     labels[product.id] = product.name;
     change('units', list);
   }
@@ -582,33 +674,39 @@ final class ProjectFinanceController extends ChangeNotifier {
   }
 
   Future<void> _recover({String? action, bool more = false}) async {
+    final epoch = _epoch;
     for (final a in action == null ? projectFinanceActions : {action}) {
       if (!has(projectFinanceCapability(a))) {
         continue;
       }
       await _access(projectFinanceCapability(a));
-      if (!current) {
+      if (!current || epoch != _epoch) {
         return;
       }
       final page = await drafts[a]!.page(
         scope,
         after: more ? recoveryCursors[a] : null,
       );
-      if (!current) {
+      if (!current || epoch != _epoch) {
         return;
       }
       final items = <ProjectFinanceSavedDraft>[];
       for (final d in page.items.where(
         (d) => d.form['project_id'] == projectId,
       )) {
-        if (d.pending != null && await _acknowledged(d.pending!)) {
+        final body = d.pending?.envelope.payload ?? d.form;
+        if ((body['evidence_documents'] as List?)?.isNotEmpty == true) {
+          await _evidenceAccess(d.aggregateId);
+          if (!current || epoch != _epoch || !online) return;
+        }
+        if (d.pending != null && await _acknowledged(d.pending!, epoch)) {
           recovery.removeWhere(
             (v) => v.action == a && v.draft.aggregateId == d.aggregateId,
           );
         } else {
           items.add(ProjectFinanceSavedDraft(a, d));
         }
-        if (!current) {
+        if (!current || epoch != _epoch) {
           return;
         }
       }
@@ -652,6 +750,7 @@ final class ProjectFinanceController extends ChangeNotifier {
     }
   });
   Future<void> resume(ProjectFinanceSavedDraft d) => _run(() async {
+    final epoch = _epoch;
     if (pending != null || confirmed != null) {
       throw const DomainError(
         code: 'COMMAND_PENDING',
@@ -660,16 +759,21 @@ final class ProjectFinanceController extends ChangeNotifier {
     }
     await _access(projectFinanceCapability(d.action));
     final value = await drafts[d.action]!.load(scope, d.draft.aggregateId);
-    if (!current || value == null) {
+    if (!current || epoch != _epoch || value == null) {
       return;
     }
     if (value.form['project_id'] != projectId) {
       throw const FormatException('Draft project changed.');
     }
-    if (value.pending != null && await _acknowledged(value.pending!)) {
+    final recoveredBody = value.pending?.envelope.payload ?? value.form;
+    if ((recoveredBody['evidence_documents'] as List?)?.isNotEmpty == true) {
+      await _evidenceAccess(value.aggregateId);
+      if (!current || epoch != _epoch || !online) return;
+    }
+    if (value.pending != null && await _acknowledged(value.pending!, epoch)) {
       return;
     }
-    if (!current) {
+    if (!current || epoch != _epoch) {
       return;
     }
     form = projectMap(
@@ -724,9 +828,10 @@ final class ProjectFinanceController extends ChangeNotifier {
   Future<void> _confirmed(
     Map<String, Object?> r,
     ScopedPendingCommand p,
+    int epoch,
   ) async {
     final entity = verify(r, p);
-    if (current) {
+    if (current && epoch == _epoch) {
       confirmed = entity;
       message = 'Confirmed. The original finance request succeeded.';
       _notify();
@@ -734,26 +839,26 @@ final class ProjectFinanceController extends ChangeNotifier {
     try {
       await ProjectFinanceCommandAcknowledgements(drafts[p.action]!).save(p, r);
     } catch (_) {
-      if (current) {
+      if (current && epoch == _epoch) {
         message =
             'Confirmed. Saving the encrypted acknowledgement needs retry.';
       }
       return;
     }
-    await _cleanupConfirmed(p);
-    if (!current) {
+    await _cleanupConfirmed(p, epoch);
+    if (!current || epoch != _epoch || !online) {
       return;
     }
     try {
       await _load(section);
     } catch (_) {
-      if (current) {
+      if (current && epoch == _epoch) {
         message = 'Confirmed. The optional project view is unavailable; refresh it later.';
       }
     }
   }
 
-  Future<void> _cleanupConfirmed(ScopedPendingCommand p) async {
+  Future<void> _cleanupConfirmed(ScopedPendingCommand p, int epoch) async {
     try {
       final saved = await drafts[p.action]!.load(
         p.envelope.context,
@@ -766,7 +871,7 @@ final class ProjectFinanceController extends ChangeNotifier {
           p.envelope.commandId,
         );
       }
-      if (!current) {
+      if (!current || epoch != _epoch) {
         return;
       }
       if (pending?.envelope.commandId == p.envelope.commandId) {
@@ -778,18 +883,19 @@ final class ProjectFinanceController extends ChangeNotifier {
             d.draft.aggregateId == p.envelope.payload['id'],
       );
     } catch (_) {
-      if (current) {
+      if (current && epoch == _epoch) {
         message = 'Confirmed. Encrypted draft cleanup needs retry; this request will not be dispatched again.';
       }
     }
   }
 
-  Future<bool> _acknowledged(ScopedPendingCommand p) async {
+  Future<bool> _acknowledged(ScopedPendingCommand p, int epoch) async {
     if (!await ProjectFinanceCommandAcknowledgements(drafts[p.action]!)
         .contains(p)) {
       return false;
     }
     if (current &&
+        epoch == _epoch &&
         form?['id'] == p.envelope.payload['id'] &&
         action == p.action) {
       confirmed = {
@@ -799,17 +905,18 @@ final class ProjectFinanceController extends ChangeNotifier {
       };
       message = 'Confirmed. The encrypted acknowledgement retains the original result.';
     }
-    await _cleanupConfirmed(p);
+    await _cleanupConfirmed(p, epoch);
     return true;
   }
 
   Future<void> send() => _run(() async {
+    final epoch = _epoch;
     if (form == null || conflict || confirmed != null) {
       return;
     }
     final a = action!, id = form!['id'] as String;
     await _access(projectFinanceCapability(a));
-    if (!current || !online) {
+    if (!current || epoch != _epoch || !online) {
       return;
     }
     if (pending == null &&
@@ -830,29 +937,32 @@ final class ProjectFinanceController extends ChangeNotifier {
       form!,
       expectedVersion,
     );
-    if (!current || !online) {
+    if (!current || epoch != _epoch || !online) {
       return;
     }
     local = await drafts[a]!.load(scope, id);
-    if (!current || !online) {
+    if (!current || epoch != _epoch || !online) {
       return;
     }
     if (local != null) {
       _cache(a, local!);
     }
-    if (await _acknowledged(sealed) || !current || !online) {
+    if (await _acknowledged(sealed, epoch) ||
+        !current ||
+        epoch != _epoch ||
+        !online) {
       return;
     }
     try {
       final r = await repository.command(sealed.envelope);
-      await _confirmed(r, sealed);
+      await _confirmed(r, sealed, epoch);
     } on DomainError catch (e) {
       await drafts[a]!.recordFailure(scope, id, sealed.envelope.commandId, e);
-      if (!current) {
+      if (!current || epoch != _epoch) {
         return;
       }
       local = await drafts[a]!.load(scope, id);
-      if (current && local != null) {
+      if (current && epoch == _epoch && local != null) {
         _cache(a, local!);
       }
       if (_revoked(e)) {
@@ -867,9 +977,9 @@ final class ProjectFinanceController extends ChangeNotifier {
         retryable: true,
       );
       await drafts[a]!.recordFailure(scope, id, sealed.envelope.commandId, e);
-      if (current) {
+      if (current && epoch == _epoch) {
         local = await drafts[a]!.load(scope, id);
-        if (current && local != null) {
+        if (current && epoch == _epoch && local != null) {
           _cache(a, local!);
         }
         error = e.message;
@@ -877,6 +987,7 @@ final class ProjectFinanceController extends ChangeNotifier {
     }
   });
   Future<void> reconcile() => _run(() async {
+    final epoch = _epoch;
     final p = pending;
     if (p == null) {
       return;
@@ -885,20 +996,24 @@ final class ProjectFinanceController extends ChangeNotifier {
     if (!current) {
       return;
     }
-    if (await _acknowledged(p) || !current || !online) {
+    if (await _acknowledged(p, epoch) ||
+        !current ||
+        epoch != _epoch ||
+        !online) {
       return;
     }
     final r = await repository.receipt(scope, p.envelope.commandId, p.action);
     if (r == null) {
-      if (current) {
+      if (current && epoch == _epoch) {
         message =
             'No original receipt is recorded. Retry this exact sealed request.';
       }
     } else {
-      await _confirmed(r, p);
+      await _confirmed(r, p, epoch);
     }
   });
   Future<void> compare() => _run(() async {
+    final epoch = _epoch;
     if (!conflict || form == null) {
       return;
     }
@@ -907,6 +1022,7 @@ final class ProjectFinanceController extends ChangeNotifier {
         : action == 'settlement_reverse'
         ? ProjectFinanceSection.settlements
         : ProjectFinanceSection.expenses;
+    await _access(projectFinanceCapability(action!));
     final p = await repository.detail(
       scope,
       projectId,
@@ -914,7 +1030,7 @@ final class ProjectFinanceController extends ChangeNotifier {
       s,
       targetId: form!['id'] as String,
     );
-    if (current) {
+    if (current && epoch == _epoch) {
       comparison = p.rows.single;
     }
   });
@@ -1000,6 +1116,7 @@ final class ProjectFinanceController extends ChangeNotifier {
     review = null;
     comparison = null;
     recovery = [];
+    _evidenceViews.clear();
     labels.clear();
     super.dispose();
   }

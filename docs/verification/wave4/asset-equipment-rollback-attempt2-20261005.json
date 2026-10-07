@@ -1,0 +1,12 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"error\":{\"name\":\"HttpException\",\"message\":\"Failed to run sql query: ERROR:  42501: permission denied for schema assets\\nQUERY:  \\n select jsonb_build_object('action','depreciate','id',r.id,'book_id',r.current_book_id,'period_index',r.posted_periods+1,'reason','Synthetic exact period')\\n from assets.register r where r.id=pg_temp.wid('asset.'||k) \\nCONTEXT:  SQL function \\\"adep\\\" during inlining\\n\"}}"
+    }
+  ],
+  "structuredContent": {
+    "error_code": "INVALID_ARGUMENT"
+  },
+  "isError": true
+}

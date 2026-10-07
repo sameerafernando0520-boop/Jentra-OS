@@ -1,0 +1,20 @@
+{
+  "observed_at": "2026-10-06T05:50:45.375Z",
+  "project_id": "xpdoufauvrbdmxgngetv",
+  "transport": "connected_supabase_mcp",
+  "mcp_is_error": true,
+  "input": "docs/verification/remaining-wave3/database-strict-procurement-negative-stock-resume2-20261006.sql",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"name\":\"HttpException\",\"message\":\"Failed to run sql query: ERROR:  22023: COUNT_DATE_BEFORE_CUTOFF\\nCONTEXT:  PL/pgSQL function inventory.count_normalize_unpartitioned(uuid,uuid,uuid,jsonb,jsonb) line 23 at RAISE\\nPL/pgSQL function inventory.count_normalize(uuid,uuid,uuid,jsonb,jsonb) line 33 at RETURN\\nPL/pgSQL function api.upsert_stock_count_without_negative_policy(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint) line 17 at assignment\\nPL/pgSQL function api.upsert_stock_count(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,jsonb,bigint) line 14 at RETURN\\nSQL statement \\\"select api.upsert_stock_count($1,$2,$3,$4,$5,$6,$7,$8)\\\"\\nPL/pgSQL function pg_temp_27.call(text,jsonb,bigint,text) line 2 at EXECUTE\\n\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error_code": "INVALID_ARGUMENT"
+    },
+    "isError": true
+  },
+  "boundary": "Strict synthetic rollback; failed execution."
+}

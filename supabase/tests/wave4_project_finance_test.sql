@@ -162,6 +162,12 @@ select throws_ok($$update projects.service_cost_revisions set amount=0 where id=
 select ok(not has_function_privilege('authenticated','projects.service_payroll_cost_impact(uuid,uuid,uuid,uuid,uuid)','EXECUTE') and not has_table_privilege('authenticated','projects.service_cost_revisions','SELECT'),'AC-428 private cost provider and table have no client access');
 set local role authenticated;select pg_temp.wactor('creator');
 insert into project_finance_client_samples values('serviceCosts',api.projects_finance_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('finance'),'serviceCosts'));
+reset role;
+insert into projects.service_cost_revisions(id,tenant_id,legal_entity_id,branch_id,project_id,provider_source_id,source_revision_id,source_version,source_digest,currency_code,precision,service_date,payable_seconds,hourly_cost,amount,status,recorded_by)
+values(pg_temp.wid('pf.service.cost.5'),pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('finance'),pg_temp.wid('pf.service.labor'),pg_temp.wid('pf.service.revision.5'),5,repeat('d',64),'LKR',2,pg_temp.wdate()+1,3600,18,18,'approved',pg_temp.wid('creator'));
+select is((api.projects_margin(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('finance'),clock_timestamp(),pg_temp.wdate())->>'service_cost')::numeric,0::numeric,'AC-428 moving source date cannot resurrect superseded earlier cost');
+select is((api.projects_margin(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('finance'),clock_timestamp(),pg_temp.wdate()+1)->>'service_cost')::numeric,18::numeric,'AC-428 current moved source cost appears once at its actual service date');
+set local role authenticated;
 select pg_temp.wactor('reader');
 select throws_ok($$select api.projects_finance_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('finance'),'serviceCosts')$$,'42501',null,'AC-428 ordinary project view cannot reveal internal service costs');
 reset role;update billing.plan_entitlements set enabled=false where plan_code='w4_integrated_rollback' and entitlement_code='module.finance';

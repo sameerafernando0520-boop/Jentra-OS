@@ -1,5 +1,17 @@
 # Remaining Wave 3 verification checkpoint
 
+## Current continuation — 2026-10-06
+
+Read the [current development checkpoint](final-development-checkpoint-20261006.md).
+All three current 46-candidate strict rollback suites pass (1,205 / 155 / 182).
+The reproduced catalog-tracking deficit bypass is fixed and regression-tested.
+Whole-workspace analysis passes. Full desktop: 1,775 passed / 83 pixel golden
+failures; platform: 1,062 passed; domain: 340 passed. Both current 194-path coverage
+gates pass. Visual comparisons are retained and the isolated Windows release build
+passes with current-source match. [Final 181-ID matrix](requirement-matrix-20261006-final.md)
+records no missing policy development IDs. All candidates remain unapplied; installed/native/load
+and owner acceptance remain separate open gates.
+
 ## Latest policy continuation — 2026-10-03
 
 The [current policy checkpoint](wave3-policy-current-checkpoint-20261003.md)

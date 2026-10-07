@@ -9,8 +9,9 @@ import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_domain/jentra_service.dart';
 import 'package:jentra_platform/jentra_platform.dart';
 import 'package:jentra_platform/src/service_command_acknowledgement.dart';
+import 'package:jentra_platform/src/scoped_command_draft_store.dart';
 
-import 'security_review_sealing_test.dart' show PausedKeys;
+import 'support/service_paused_keys.dart';
 
 const scope = TenantContext(
   tenantId: '11111111-1111-4111-a111-111111111111',
@@ -231,6 +232,69 @@ void main() {
         );
         expect(c.confirmed, isNull);
         if (mode != 'dispose') c.dispose();
+      },
+    );
+  }
+  test(
+    'known service confirmation survives encrypted acknowledgement failure',
+    () async {
+      final c = create();
+      await input(c);
+      await db.customStatement(
+        "CREATE TEMP TRIGGER service_ack_insert_failure BEFORE INSERT ON encrypted_drafts WHEN NEW.entity_type='service.command.acknowledgement' BEGIN SELECT RAISE(ABORT,'Synthetic acknowledgement failure'); END",
+      );
+      await c.send();
+      expect(c.confirmed, isNotNull);
+      expect(c.pending, isNotNull);
+      expect(c.message, contains('Saving the encrypted confirmation failed'));
+      await c.send();
+      expect(repository.commands, hasLength(1));
+      await db.customStatement('DROP TRIGGER service_ack_insert_failure');
+      await c.reconcile();
+      expect(await c.drafts['equipment']!.load(scope, id), isNull);
+      c.dispose();
+    },
+  );
+  for (final altered in ['body', 'timestamp']) {
+    test(
+      'service acknowledgement rejects altered $altered with reused identities',
+      () async {
+        final c = create();
+        await input(c);
+        repository.commandGate = Completer<void>();
+        final work = c.send();
+        await until(() => repository.commands.isNotEmpty);
+        final original = c.pending!;
+        repository.commandGate!.complete();
+        await work;
+        final e = original.envelope;
+        final changed = ScopedPendingCommand(
+          original.action,
+          CommandEnvelope<Map<String, Object?>>(
+            commandId: e.commandId,
+            idempotencyKey: e.idempotencyKey,
+            context: e.context,
+            expectedEntityVersion: e.expectedEntityVersion,
+            clientTimestamp: altered == 'timestamp'
+                ? e.clientTimestamp.add(const Duration(seconds: 1))
+                : e.clientTimestamp,
+            payload: altered == 'body'
+                ? {...e.payload, 'name': 'Changed equipment'}
+                : e.payload,
+          ),
+        );
+        await expectLater(
+          ServiceCommandAcknowledgements(c.drafts['equipment']!)
+              .contains(changed),
+          throwsA(
+            isA<DomainError>().having(
+              (e) => e.code,
+              'code',
+              'DRAFT_SCOPE_MISMATCH',
+            ),
+          ),
+        );
+        c.dispose();
       },
     );
   }

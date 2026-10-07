@@ -1,0 +1,109 @@
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/assets_workspace_test.dart
+../../runtime/platform/allocation.cc: 30: error: Out of memory.
+version=3.13.4 (stable) (Tue Sep 15 01:01:15 2026 -0700) on "windows_x64"
+pid=24492, thread=4132, isolate_group=main(0000016450F1D730), isolate=main(0000016450E43FC0)
+os=windows, arch=x64, comp=no, sim=no
+isolate_instructions=16452d28000, vm_instructions=0
+fp=14802fe140, sp=14802fe100, pc=7ff6baf091a8
+  pc 0x00007ff6baf091a8 fp 0x00000014802fe140 Dart_IsolateRunnableLatencyMetric+0x3c2c8
+-- End of DumpStackTrace
+  pc 0x0000000000000000 fp 0x00000014802fea68 sp 0x0000000000000000 [Stub] Exit frame
+  pc 0x0000016452d2b95e fp 0x00000014802fea90 sp 0x00000014802fea78 [Optimized] _SendPort@1026248._sendInternal@1026248+0x42
+  pc 0x0000016452e57bcf fp 0x00000014802feb30 sp 0x00000014802feaa0 [Optimized] _IOService@16069316._dispatch@16069316+0x25f
+  pc 0x0000016452e577a9 fp 0x00000014802feb88 sp 0x00000014802feb40 [Optimized] _RandomAccessFile@16069316._dispatch@16069316+0x191
+  pc 0x0000016452e60147 fp 0x00000014802fec20 sp 0x00000014802feb98 [Optimized] _RandomAccessFile@16069316.writeFrom+0x223
+  pc 0x0000016452e5fddc fp 0x00000014802fecb0 sp 0x00000014802fec30 [Optimized] _FileStreamConsumer@16069316.addStream.<anonymous closure>.<anonymous closure>+0x88
+  pc 0x00000164532105b6 fp 0x00000014802fed50 sp 0x00000014802fecc0 [Optimized] _RootZone@5048458.runUnaryGuarded+0x8e
+  pc 0x0000016452fce4e3 fp 0x00000014802feda0 sp 0x00000014802fed60 [Optimized] _BufferingStreamSubscription@5048458._sendData@5048458+0xc3
+  pc 0x000001645325f6e1 fp 0x00000014802fedc0 sp 0x00000014802fedb0 [Optimized] _DelayedData@5048458.perform+0x4d
+  pc 0x0000016452e0ed3d fp 0x00000014802fede8 sp 0x00000014802fedd0 [Optimized] _PendingEvents@5048458.handleNext+0xa5
+  pc 0x0000016452e0ec83 fp 0x00000014802fedf8 sp 0x00000014802fedf8 [Optimized] _PendingEvents@5048458.schedule.<anonymous closure>+0x43
+  pc 0x0000016452d2af82 fp 0x00000014802fee18 sp 0x00000014802fee08 [Optimized] _microtaskLoop@5048458+0xd6
+  pc 0x0000016452d2adf5 fp 0x00000014802fee68 sp 0x00000014802fee28 [Optimized] _startMicrotaskLoop@5048458+0x29
+  pc 0x0000016452d2adbb fp 0x00000014802fee78 sp 0x00000014802fee78 [Optimized] _startMicrotaskLoop@5048458+0x13
+  pc 0x0000016452d461c2 fp 0x00000014802fee90 sp 0x00000014802fee88 [Optimized] _runPendingImmediateCallback@1026248+0x4a
+  pc 0x00000164534393bd fp 0x00000014802feeb8 sp 0x00000014802feea0 [Optimized] _RawReceivePort@1026248._handleMessage@1026248+0xcd
+  pc 0x000001645343ea93 fp 0x00000014802fefe0 sp 0x00000014802feec8 [Stub] Entry frame
+00:00 +0 -1: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/assets_workspace_test.dart [E]
+  Error: The Dart compiler exited unexpectedly.
+  package:flutter_tools/src/base/common.dart 34:3  throwToolExit
+  package:flutter_tools/src/compile.dart 1011:15   DefaultResidentCompiler._compile.<fn>
+  dart:async/zone_root.dart 27:47                  _rootRun
+  dart:async/zone.dart 810:35                      _CustomZone.run
+  dart:async/zone.dart 702:7                       _CustomZone.runGuarded
+  dart:async/stream_impl.dart 434:13               _BufferingStreamSubscription._sendDone.sendDone
+  dart:async/stream_impl.dart 444:7                _BufferingStreamSubscription._sendDone
+  dart:async/stream_impl.dart 333:7                _BufferingStreamSubscription._close
+  dart:async/stream_transformers.dart 91:11        _SinkTransformerStreamSubscription._close
+  dart:async/stream_transformers.dart 21:11        _EventSinkWrapper.close
+  dart:convert/string_conversion.dart 244:11       _StringAdapterSink.close
+  dart:convert/line_splitter.dart 141:11           _LineSplitterSink.close
+  dart:async/stream_transformers.dart 136:24       _SinkTransformerStreamSubscription._handleDone
+  dart:async/zone_root.dart 27:47                  _rootRun
+  dart:async/zone.dart 810:35                      _CustomZone.run
+  dart:async/zone.dart 702:7                       _CustomZone.runGuarded
+  dart:async/stream_impl.dart 434:13               _BufferingStreamSubscription._sendDone.sendDone
+  dart:async/stream_impl.dart 444:7                _BufferingStreamSubscription._sendDone
+  dart:async/stream_impl.dart 333:7                _BufferingStreamSubscription._close
+  dart:async/stream_transformers.dart 91:11        _SinkTransformerStreamSubscription._close
+  dart:async/stream_transformers.dart 21:11        _EventSinkWrapper.close
+  dart:async/stream_transformers.dart 258:12       _HandlerEventSink.close
+  dart:async/stream_transformers.dart 136:24       _SinkTransformerStreamSubscription._handleDone
+  dart:async/zone_root.dart 27:47                  _rootRun
+  dart:async/zone.dart 810:35                      _CustomZone.run
+  dart:async/zone.dart 702:7                       _CustomZone.runGuarded
+  dart:async/stream_impl.dart 434:13               _BufferingStreamSubscription._sendDone.sendDone
+  dart:async/stream_impl.dart 444:7                _BufferingStreamSubscription._sendDone
+  dart:async/stream_impl.dart 333:7                _BufferingStreamSubscription._close
+  dart:async/stream_transformers.dart 91:11        _SinkTransformerStreamSubscription._close
+  dart:async/stream_transformers.dart 21:11        _EventSinkWrapper.close
+  dart:convert/string_conversion.dart 244:11       _StringAdapterSink.close
+  dart:convert/string_conversion.dart 304:20       _Utf8ConversionSink.close
+  dart:convert/chunked_conversion.dart 79:18       _ConverterStreamEventSink.close
+  dart:async/stream_transformers.dart 136:24       _SinkTransformerStreamSubscription._handleDone
+  dart:async/zone_root.dart 27:47                  _rootRun
+  dart:async/zone.dart 810:35                      _CustomZone.run
+  dart:async/zone.dart 702:7                       _CustomZone.runGuarded
+  dart:async/stream_impl.dart 434:13               _BufferingStreamSubscription._sendDone.sendDone
+  dart:async/stream_impl.dart 444:7                _BufferingStreamSubscription._sendDone
+  dart:async/stream_impl.dart 333:7                _BufferingStreamSubscription._close
+  dart:async/stream_controller.dart 806:19         _SyncStreamControllerDispatch._sendDone
+  dart:async/stream_controller.dart 652:7          _StreamController._closeUnchecked
+  dart:async/stream_controller.dart 645:5          _StreamController.close
+  dart:io-patch/socket_patch.dart 2913:21          _Socket._onData
+  dart:async/zone_root.dart 56:13                  _rootRunUnary
+  dart:async/zone.dart 816:35                      _CustomZone.runUnary
+  dart:async/zone.dart 710:7                       _CustomZone.runUnaryGuarded
+  dart:async/stream_impl.dart 381:11               _BufferingStreamSubscription._sendData
+  dart:async/stream_impl.dart 312:7                _BufferingStreamSubscription._add
+  dart:async/stream_controller.dart 798:19         _SyncStreamControllerDispatch._sendData
+  dart:async/stream_controller.dart 663:7          _StreamController._add
+  dart:async/stream_controller.dart 618:5          _StreamController.add
+  dart:io-patch/socket_patch.dart 2351:33          new _RawSocket.<fn>
+  dart:io-patch/socket_patch.dart 1672:18          _NativeSocket.issueReadEvent.issue
+  dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+  dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+  dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+  dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+  
+  Null check operator used on a null value
+  package:flutter_tools/src/test/test_compiler.dart 271:34  TestCompiler._onCompilationRequest
+  
+  Error: The Dart compiler exited unexpectedly.
+  package:flutter_tools/src/base/common.dart 34:3  throwToolExit
+  package:flutter_tools/src/compile.dart 1024:11   DefaultResidentCompiler._compile.<fn>
+  dart:async/zone_root.dart 48:47                  _rootRunUnary
+  dart:async/zone.dart 816:35                      _CustomZone.runUnary
+  dart:async/future_impl.dart 948:45               Future._propagateToListeners.handleValueCallback
+  dart:async/future_impl.dart 977:13               Future._propagateToListeners
+  dart:async/future_impl.dart 720:5                Future._completeWithValue
+  dart:async/future_impl.dart 804:7                Future._asyncCompleteWithValue.<fn>
+  dart:async/zone_root.dart 35:13                  _rootRun
+  dart:async/zone.dart 810:35                      _CustomZone.run
+  dart:async/zone.dart 702:7                       _CustomZone.runGuarded
+  dart:async/zone.dart 743:23                      _CustomZone.bindCallbackGuarded.<fn>
+  dart:async/schedule_microtask.dart 40:35         _microtaskLoop
+  dart:async/schedule_microtask.dart 49:5          _startMicrotaskLoop
+  dart:isolate-patch/isolate_patch.dart 127:13     _runPendingImmediateCallback
+  dart:isolate-patch/isolate_patch.dart 193:5      _RawReceivePort._handleMessage
+  

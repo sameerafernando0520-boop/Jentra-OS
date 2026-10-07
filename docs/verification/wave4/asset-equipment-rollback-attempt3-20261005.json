@@ -1,0 +1,12 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"error\":{\"name\":\"HttpException\",\"message\":\"Failed to run sql query: ERROR:  42501: permission denied for schema assets\\nQUERY:  \\n select jsonb_build_object('action','reverse','id',r.id,'effect_id',r.last_effect_id,'reason','Synthetic original effect reversal')\\n from assets.register r where r.id=pg_temp.wid('asset.'||k) \\nCONTEXT:  SQL function \\\"areverse\\\" during inlining\\n\"}}"
+    }
+  ],
+  "structuredContent": {
+    "error_code": "INVALID_ARGUMENT"
+  },
+  "isError": true
+}

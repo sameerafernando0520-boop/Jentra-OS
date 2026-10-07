@@ -28,7 +28,7 @@ create table projects.expenses(
 );
 create table projects.expense_revisions(
  id uuid primary key,tenant_id uuid not null,legal_entity_id uuid not null,project_id uuid not null,expense_id uuid not null,version bigint not null,
- service_date date not null,purpose text not null,evidence_reference text not null,original_currency text not null references core.currencies(code),base_currency text not null references core.currencies(code),
+ service_date date not null,purpose text not null,evidence_reference text not null,evidence_documents jsonb not null default '[]' check(jsonb_typeof(evidence_documents)='array' and jsonb_array_length(evidence_documents)<=10),original_currency text not null references core.currencies(code),base_currency text not null references core.currencies(code),
  original_precision integer not null check(original_precision between 0 and 6),base_precision integer not null check(base_precision between 0 and 6),
  net numeric(20,6) not null check(net>=0),tax numeric(20,6) not null check(tax>=0),gross numeric(20,6) not null check(gross>0 and gross=net+tax),
  base_net numeric(20,6) not null check(base_net>=0),base_tax numeric(20,6) not null check(base_tax>=0),base_gross numeric(20,6) not null check(base_gross>0 and base_gross=base_net+base_tax),tax_rounding_residue numeric(20,6) not null,
@@ -164,7 +164,7 @@ declare project uuid;source jsonb;old projects.service_cost_revisions%rowtype;cu
    raise exception using errcode='40001',message='PROJECT_SERVICE_COST_SOURCE_CONFLICT';end if;return;end if;
  insert into projects.service_cost_revisions(tenant_id,legal_entity_id,branch_id,project_id,provider_source_id,source_revision_id,source_version,source_digest,currency_code,precision,service_date,payable_seconds,hourly_cost,amount,status,recorded_by)
  values(t,e,b,project,labor,revision,version,digest,currency,precision,service_date,seconds,rate,cost,status,auth.uid());
- if status='cancelled' then update projects.billable_units set status='cancelled' where tenant_id=t and legal_entity_id=e and provider_source_id=labor and source_kind='service' and status='available';end if;
+ if status='cancelled' then update projects.billable_units u set status='cancelled' where u.tenant_id=t and u.legal_entity_id=e and u.provider_source_id=labor and u.source_kind='service' and u.status='available';end if;
 end $$;
 create function projects.milestone_terms(t uuid,e uuid,b uuid,u projects.billable_units) returns jsonb
 language plpgsql stable security definer set search_path='' as $$declare terms jsonb;begin
@@ -175,7 +175,7 @@ language plpgsql stable security definer set search_path='' as $$declare terms j
   or exists(select 1 from jsonb_object_keys(terms) k where k<>all(array['payment_due_days','payment_terms','customer_id','currency_code','amount','source_version','digest']))
   or jsonb_typeof(terms->'payment_due_days') is distinct from 'number' or terms->>'payment_due_days'!~'^[0-9]+$'
   or(terms->>'payment_due_days')::numeric not between 0 and 365 then raise exception using errcode='22023',message='PROJECT_MILESTONE_TERMS_INVALID';end if;
- perform projects.text(terms->'payment_terms',500);
+ perform projects.text(terms->'payment_terms',1000);
  if(terms->>'source_version')::bigint is distinct from u.source_version or terms->>'digest' is distinct from u.source_digest or projects.amount(terms->'amount') is distinct from u.amount
   or not exists(select 1 from projects.register r where r.id=u.project_id and r.tenant_id=t and r.legal_entity_id=e and r.branch_id=b
    and r.customer_id::text=terms->>'customer_id' and r.currency_code=terms->>'currency_code') then raise exception using errcode='40001',message='PROJECT_MILESTONE_SOURCE_CONFLICT';end if;
@@ -197,6 +197,19 @@ create function projects.finance_cap(act text) returns text language sql immutab
  when act in('expense_post','expense_reverse') then 'projects.expenses.post'
  when act in('settle','settlement_reverse') then 'projects.expenses.settle'
  when act in('service_source','billing_prepare','billing_submit','billing_decide','billing_post','billing_cancel') then 'projects.billing.manage' end $$;
+create function projects.expense_proofs(t uuid,e uuid,b uuid,p uuid,x uuid,proofs jsonb,mode text) returns jsonb
+language plpgsql security definer set search_path='' as $$declare canonical jsonb;begin
+ if mode not in('freeze','read','decision') or jsonb_typeof(proofs) is distinct from 'array' or jsonb_array_length(proofs)>10 then
+  raise exception using errcode='22023',message='EXPENSE_EVIDENCE_PROOF_INVALID';end if;
+ if to_regprocedure('projects.expense_evidence_assert(uuid,uuid,uuid,uuid,uuid,jsonb,text)') is null then
+  if jsonb_array_length(proofs)>0 then raise exception using errcode='55000',message='PROJECT_ATTACHMENT_PROVIDER_REQUIRED';end if;
+  return '[]'::jsonb;
+ end if;
+ execute 'select projects.expense_evidence_assert($1,$2,$3,$4,$5,$6,$7)' into canonical using t,e,b,p,x,proofs,mode;
+ if canonical is null or jsonb_typeof(canonical) is distinct from 'array' or jsonb_array_length(canonical)<>jsonb_array_length(proofs) then
+  raise exception using errcode='55000',message='PROJECT_ATTACHMENT_PROVIDER_INVALID';end if;
+ return canonical;
+end $$;
 create function projects.expense_summary(p uuid) returns jsonb language sql stable security definer set search_path='' as $$
  select jsonb_build_object('id',x.id,'tenant_id',x.tenant_id,'legal_entity_id',x.legal_entity_id,'branch_id',x.branch_id,'project_id',x.project_id,'employee_id',x.employee_id,
  'version',x.version,'status',x.status,'revision_id',x.current_revision_id) from projects.expenses x where id=p $$;
@@ -224,12 +237,12 @@ declare act text:=p_payload->>'action';id uuid:=(p_payload->>'id')::uuid;project
  r projects.register%rowtype;x projects.expenses%rowtype;v projects.expense_revisions%rowtype;fx finance.exchange_rates%rowtype;taxdef finance.tax_definitions%rowtype;
  o projects.reimbursements%rowtype;s projects.expense_settlements%rowtype;b projects.billing_batches%rowtype;u projects.billable_units%rowtype;product inventory.products%rowtype;bank finance.cash_bank_accounts%rowtype;
  allowed text[];new_revision uuid:=gen_random_uuid();base text;scale integer;original_scale integer;net numeric;tax numeric;gross numeric;base_net numeric;base_tax numeric;base_gross numeric;bill numeric;ratio_n numeric:=10000000000;ratio_d numeric:=10000000000;
- fxdata jsonb;taxdata jsonb:='{}';allocation jsonb;weight_total numeric;weight_sum numeric:=0;allocated numeric:=0;part numeric;ord integer:=0;digest text;
+ fxdata jsonb;taxdata jsonb:='{}';allocation jsonb;weight_total numeric;weight_sum numeric:=0;allocated numeric:=0;part numeric;ord integer:=0;digest text;proofs jsonb:='[]';proof_revision uuid;proof_mode text;
  lines jsonb:='[]';doc jsonb;answer jsonb;outcome jsonb;before_state jsonb:='{}';journal uuid;request uuid:=gen_random_uuid();posting_date date;amount numeric;outstanding numeric;invoice uuid;invoice_version bigint;unit_ids uuid[];line uuid;service_ids uuid[];service_employees uuid[];
 begin
  if jsonb_typeof(p_payload) is distinct from 'object' or octet_length(p_payload::text)>65536 or id is null or project is null or p_command_id is null or p_idempotency_key is null or p_issued_at is null or p_issued_at>clock_timestamp()+interval '5 minutes' or p_expected_version is null or p_expected_version not between 0 and 9007199254740990 then raise exception using errcode='22023',message='PROJECT_FINANCE_COMMAND_INVALID';end if;
  perform projects.finance_access(p_tenant_id,p_legal_entity_id,p_branch_id,projects.finance_cap(act));reason:=projects.text(p_payload->'reason',1000);
- allowed:=case when act in('expense_create','expense_correct') then array['action','id','project_id','employee_id','external_reference','service_date','purpose','evidence_reference','original_currency','original_precision','net','tax','gross','tax_definition_id','tax_version','no_tax_reason','exchange_rate_id','exchange_rate_version','expense_account_id','tax_account_id','liability_account_id','billable','bill_amount','allocations','reason']
+ allowed:=case when act in('expense_create','expense_correct') then array['action','id','project_id','employee_id','external_reference','service_date','purpose','evidence_reference','evidence_documents','original_currency','original_precision','net','tax','gross','tax_definition_id','tax_version','no_tax_reason','exchange_rate_id','exchange_rate_version','expense_account_id','tax_account_id','liability_account_id','billable','bill_amount','allocations','reason']
  when act in('expense_approve','expense_reject') then array['action','id','project_id','digest','reason']
  when act in('expense_post','expense_reverse') then array['action','id','project_id','posting_date','reason']
  when act='settle' then array['action','id','project_id','obligation_id','posting_date','amount','bank_id','bank_version','evidence_reference','reason']
@@ -240,13 +253,28 @@ begin
  when act='billing_decide' then array['action','id','project_id','invoice_version','decision','reason']
  else array['action','id','project_id','reason'] end;
  if exists(select 1 from jsonb_object_keys(p_payload) k where k<>all(allowed)) then raise exception using errcode='22023',message='PROJECT_FINANCE_FIELDS_INVALID';end if;
- hash:=core.wave3_request_hash('projects.finance.'||act,p_command_id,p_tenant_id,p_legal_entity_id,p_branch_id,p_payload,p_expected_version);
- replay:=core.wave3_replay(p_tenant_id,'projects.finance.'||act,p_command_id,p_idempotency_key,hash);if replay is not null then return replay;end if;
  -- Shared provider lock order: payroll -> projects -> service advisories,
  -- then sorted employees, tickets, work orders, labor and project source rows.
  perform pg_advisory_xact_lock(hashtextextended('people.payroll:'||p_tenant_id||':'||p_legal_entity_id,0));
  perform pg_advisory_xact_lock(hashtextextended('projects:'||p_tenant_id||':'||p_legal_entity_id,0));
  perform pg_advisory_xact_lock(hashtextextended('service:'||p_tenant_id||':'||p_legal_entity_id,0));
+ -- Financial evidence is current authority and active immutable content, even
+ -- for a confirmed replay. Check documents before employee/project source rows.
+ if act like 'expense_%' then
+  if act<>'expense_create' then
+   select (cr.response#>>'{entity,revision_id}')::uuid into proof_revision from core.command_receipts cr
+    where cr.tenant_id=p_tenant_id and cr.actor_id=auth.uid() and cr.command_name='projects.finance.'||act and cr.command_id=p_command_id;
+   if proof_revision is null then select xx.current_revision_id into proof_revision from projects.expenses xx where xx.tenant_id=p_tenant_id and xx.legal_entity_id=p_legal_entity_id and xx.branch_id=p_branch_id and xx.project_id=project and xx.id=id;end if;
+   select * into v from projects.expense_revisions vv where vv.id=proof_revision and vv.tenant_id=p_tenant_id and vv.legal_entity_id=p_legal_entity_id and vv.project_id=project and vv.expense_id=id;
+   if v.id is not null then
+    proof_mode:=case when act in('expense_submit','expense_approve','expense_post') then 'decision' else 'read' end;
+    perform projects.expense_proofs(p_tenant_id,p_legal_entity_id,p_branch_id,project,id,v.evidence_documents,proof_mode);
+   end if;
+  end if;
+  if act in('expense_create','expense_correct') then proofs:=projects.expense_proofs(p_tenant_id,p_legal_entity_id,p_branch_id,project,id,coalesce(p_payload->'evidence_documents','[]'::jsonb),'freeze');end if;
+ end if;
+ hash:=core.wave3_request_hash('projects.finance.'||act,p_command_id,p_tenant_id,p_legal_entity_id,p_branch_id,p_payload,p_expected_version);
+ replay:=core.wave3_replay(p_tenant_id,'projects.finance.'||act,p_command_id,p_idempotency_key,hash);if replay is not null then return replay;end if;
  if act='service_source' then service_ids:=array[(p_payload->>'service_source_id')::uuid];
  elsif act='billing_prepare' then select array_agg(z.provider_source_id order by z.provider_source_id) into service_ids from projects.billable_units z where z.tenant_id=p_tenant_id and z.legal_entity_id=p_legal_entity_id and z.branch_id=p_branch_id and z.project_id=project and z.source_kind='service' and z.id in(select(value->>'unit_id')::uuid from jsonb_array_elements(p_payload->'units'));
  elsif act='billing_post' then select array_agg(z.provider_source_id order by z.provider_source_id) into service_ids from projects.billable_units z join projects.billing_links bl on bl.unit_id=z.id where bl.batch_id=id and z.tenant_id=p_tenant_id and z.legal_entity_id=p_legal_entity_id and z.branch_id=p_branch_id and z.project_id=project and z.source_kind='service';end if;
@@ -309,14 +337,14 @@ begin
    if jsonb_typeof(p_payload->'allocations') is distinct from 'array' or jsonb_array_length(p_payload->'allocations') not between 1 and 50 or(select count(distinct z->>'task_id') from jsonb_array_elements(p_payload->'allocations') z)<>jsonb_array_length(p_payload->'allocations') then raise exception using errcode='22023',message='PROJECT_EXPENSE_ALLOCATION_INVALID';end if;
    select sum((z->>'weight')::numeric) into weight_total from jsonb_array_elements(p_payload->'allocations') z;
    if weight_total>9007199254740990 or weight_total<=0 then raise exception using errcode='22023',message='PROJECT_EXPENSE_ALLOCATION_INVALID';end if;
-   digest:=encode(extensions.digest(convert_to((p_payload-array['action','reason'])::text,'UTF8'),'sha256'),'hex');
+   digest:=encode(extensions.digest(convert_to(((p_payload-array['action','reason'])||jsonb_build_object('evidence_documents',proofs))::text,'UTF8'),'sha256'),'hex');
    if act='expense_create' then insert into projects.expenses(id,tenant_id,legal_entity_id,branch_id,project_id,employee_id,current_revision_id,external_reference,created_by)
     values(id,p_tenant_id,p_legal_entity_id,p_branch_id,project,(p_payload->>'employee_id')::uuid,new_revision,p_payload->>'external_reference',auth.uid());
    else update projects.expenses set version=version+1,current_revision_id=new_revision,status='draft',submitted_by=null where expenses.id=id;end if;
-   insert into projects.expense_revisions(id,tenant_id,legal_entity_id,project_id,expense_id,version,service_date,purpose,evidence_reference,original_currency,base_currency,original_precision,base_precision,
+   insert into projects.expense_revisions(id,tenant_id,legal_entity_id,project_id,expense_id,version,service_date,purpose,evidence_reference,evidence_documents,original_currency,base_currency,original_precision,base_precision,
     net,tax,gross,base_net,base_tax,base_gross,tax_rounding_residue,tax_definition_id,tax_version,tax_basis,no_tax_reason,exchange_rate_id,exchange_rate_version,fx_numerator,fx_denominator,fx_basis,
     expense_account_id,tax_account_id,liability_account_id,billable,bill_amount,digest,reason,recorded_by,supersedes_id)
-   values(new_revision,p_tenant_id,p_legal_entity_id,project,id,p_expected_version+1,posting_date,p_payload->>'purpose',p_payload->>'evidence_reference',p_payload->>'original_currency',base,original_scale,scale,
+   values(new_revision,p_tenant_id,p_legal_entity_id,project,id,p_expected_version+1,posting_date,p_payload->>'purpose',p_payload->>'evidence_reference',proofs,p_payload->>'original_currency',base,original_scale,scale,
     net,tax,gross,base_net,base_tax,base_gross,base_tax-projects.ratio(tax*1000000*ratio_n,ratio_d,scale),(p_payload->>'tax_definition_id')::uuid,(p_payload->>'tax_version')::bigint,taxdata,p_payload->>'no_tax_reason',
     (p_payload->>'exchange_rate_id')::uuid,(p_payload->>'exchange_rate_version')::bigint,ratio_n,ratio_d,fxdata,(p_payload->>'expense_account_id')::uuid,(p_payload->>'tax_account_id')::uuid,(p_payload->>'liability_account_id')::uuid,
     (p_payload->>'billable')::boolean,bill,digest,reason,auth.uid(),v.id);
@@ -484,12 +512,18 @@ begin
  return core.wave3_finish_command(p_tenant_id,'projects.finance.'||act,p_command_id,'projects.finance',id,p_idempotency_key,hash,before_state,outcome,p_legal_entity_id,p_branch_id,p_source_context=>jsonb_build_object('action',act),p_request_id=>request);
 end $$;
 create function api.projects_finance_authorize(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_capability text)
-returns jsonb language plpgsql stable security definer set search_path='' as $$begin
+returns jsonb language plpgsql security definer set search_path='' as $$declare attachments boolean:=false;access jsonb;begin
  perform projects.finance_access(p_tenant_id,p_legal_entity_id,p_branch_id,p_capability);
- return jsonb_build_object('tenant_id',p_tenant_id,'legal_entity_id',p_legal_entity_id,'branch_id',p_branch_id,'actor_id',auth.uid(),'capability',p_capability,'authorized',true,'supplier_ap_available',false,'attachments_available',false,'sales_available',true);
+ if to_regprocedure('api.projects_expense_evidence_access(uuid,uuid,uuid,uuid,uuid,text)') is not null then
+  begin
+   execute 'select api.projects_expense_evidence_access($1,$2,$3,null,null,$4)' into access using p_tenant_id,p_legal_entity_id,p_branch_id,'projects.expenses.evidence.view';
+   attachments:=coalesce((access->>'available')::boolean,false);
+  exception when insufficient_privilege then attachments:=false;end;
+ end if;
+ return jsonb_build_object('tenant_id',p_tenant_id,'legal_entity_id',p_legal_entity_id,'branch_id',p_branch_id,'actor_id',auth.uid(),'capability',p_capability,'authorized',true,'supplier_ap_available',false,'attachments_available',attachments,'sales_available',true);
 end $$;
 create function api.projects_finance_detail(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_project_id uuid,p_kind text,p_after uuid default null,p_target_id uuid default null)
-returns jsonb language plpgsql stable security definer set search_path='' as $$
+returns jsonb language plpgsql security definer set search_path='' as $$
 declare items jsonb;cap text;begin
  cap:=case when p_kind in('billing','units') then 'projects.billing.manage' when p_kind='obligations' or p_kind='settlements' then 'projects.expenses.settle' else 'projects.cost.view' end;
  perform projects.finance_access(p_tenant_id,p_legal_entity_id,p_branch_id,cap);
@@ -497,6 +531,7 @@ declare items jsonb;cap text;begin
  if p_kind='expenses' then
   select coalesce(jsonb_agg(q.body order by q.id),'[]') into items from(select x.id,
    projects.expense_summary(x.id)||jsonb_build_object('employee_name',emp.display_name,'external_reference',x.external_reference,'purpose',v.purpose,'service_date',v.service_date,'evidence_reference',v.evidence_reference,
+    'evidence_documents',projects.expense_proofs(p_tenant_id,p_legal_entity_id,p_branch_id,p_project_id,x.id,v.evidence_documents,'read'),
     'original_currency',v.original_currency,'base_currency',v.base_currency,'original_precision',v.original_precision,'base_precision',v.base_precision,'net',v.net::text,'tax',v.tax::text,'gross',v.gross::text,'base_net',v.base_net::text,'base_tax',v.base_tax::text,'base_gross',v.base_gross::text,'tax_rounding_residue',v.tax_rounding_residue::text,
     'tax_definition_id',v.tax_definition_id,'tax_version',v.tax_version,'tax_basis',v.tax_basis,'no_tax_reason',v.no_tax_reason,'exchange_rate_id',v.exchange_rate_id,'exchange_rate_version',v.exchange_rate_version,'fx_numerator',v.fx_numerator::text,'fx_denominator',v.fx_denominator::text,'fx_basis',v.fx_basis,
     'expense_account_id',v.expense_account_id,'tax_account_id',v.tax_account_id,'liability_account_id',v.liability_account_id,'billable',v.billable,'bill_amount',v.bill_amount::text,'digest',v.digest,'recorded_by',v.recorded_by,'reason',v.reason,
@@ -571,11 +606,17 @@ create or replace function projects.finance_closure_guard(p_tenant uuid,p_entity
  or exists(select 1 from projects.billing_batches where tenant_id=p_tenant and legal_entity_id=p_entity and project_id=p_project and status='prepared') then raise exception using errcode='55000',message='PROJECT_FINANCE_CLOSURE_IMPACT_REQUIRED';end if;
 end $$;
 create function api.projects_finance_own_receipt(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_command_id uuid,p_action text)
-returns jsonb language plpgsql stable security definer set search_path='' as $$declare response jsonb;begin
+returns jsonb language plpgsql security definer set search_path='' as $$declare response jsonb;v projects.expense_revisions%rowtype;begin
  perform projects.finance_access(p_tenant_id,p_legal_entity_id,p_branch_id,projects.finance_cap(p_action));
  select r.response into response from core.command_receipts r where r.tenant_id=p_tenant_id and r.command_name='projects.finance.'||p_action and r.command_id=p_command_id and r.actor_id=auth.uid();
  if response is null then return null;end if;
- if(response#>>'{entity,tenant_id}')::uuid<>p_tenant_id or(response#>>'{entity,legal_entity_id}')::uuid<>p_legal_entity_id or(response#>>'{entity,branch_id}')::uuid<>p_branch_id then raise exception using errcode='42501',message='PROJECT_FINANCE_SCOPE_DENIED';end if;return response;
+ if(response#>>'{entity,tenant_id}')::uuid<>p_tenant_id or(response#>>'{entity,legal_entity_id}')::uuid<>p_legal_entity_id or(response#>>'{entity,branch_id}')::uuid<>p_branch_id then raise exception using errcode='42501',message='PROJECT_FINANCE_SCOPE_DENIED';end if;
+ if p_action like 'expense_%' then
+  select * into v from projects.expense_revisions vv where vv.id=(response#>>'{entity,revision_id}')::uuid and vv.tenant_id=p_tenant_id and vv.legal_entity_id=p_legal_entity_id and vv.expense_id=(response#>>'{entity,id}')::uuid and vv.project_id=(response#>>'{entity,project_id}')::uuid;
+  if v.id is null then raise exception using errcode='55000',message='PROJECT_EXPENSE_EVIDENCE_REQUIRED';end if;
+  perform projects.expense_proofs(p_tenant_id,p_legal_entity_id,p_branch_id,v.project_id,v.expense_id,v.evidence_documents,'read');
+ end if;
+ return response;
 end $$;
 create function api.projects_margin(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_project_id uuid,p_as_of timestamptz,p_effective_date date)
 returns jsonb language plpgsql stable security definer set search_path='' as $$
@@ -588,9 +629,9 @@ declare revenue numeric;credits numeric;expense_cost numeric;time_cost numeric;s
  select coalesce(sum(projects.ratio(s.planned_seconds*c.hourly_rate*1000000,3600,r.precision)),0) into commitments from projects.resource_slots s join projects.resource_costs c on c.resource_slot_id=s.id join projects.register r on r.id=s.project_id where s.plan_id=plan;
  select coalesce(sum(v.base_gross),0) into expense_cost from projects.expense_revisions v join projects.expense_decisions d on d.revision_id=v.id where v.project_id=p_project_id and d.decision='approved' and d.recorded_at<=p_as_of and v.service_date<=p_effective_date and not exists(select 1 from projects.reimbursement_effects ef join projects.reimbursements o on o.id=ef.obligation_id where o.revision_id=v.id and ef.kind='expense_reverse' and ef.recorded_at<=p_as_of and ef.posting_date<=p_effective_date);
  select coalesce(sum(c.amount),0) into time_cost from projects.time_costs c join projects.time_revisions v on v.id=c.revision_id where c.project_id=p_project_id and v.start_local::date<=p_effective_date and exists(select 1 from projects.time_events ev where ev.revision_id=v.id and ev.action='time_approve' and ev.recorded_at<=p_as_of) and not exists(select 1 from projects.time_events ev where ev.revision_id=v.id and ev.action='time_cancel' and ev.recorded_at<=p_as_of);
- select coalesce(sum(q.amount),0) into service_cost from(select distinct on(c.provider_source_id) c.amount from projects.service_cost_revisions c
+ select coalesce(sum(q.amount),0) into service_cost from(select distinct on(c.provider_source_id) c.amount,c.service_date from projects.service_cost_revisions c
   where c.tenant_id=p_tenant_id and c.legal_entity_id=p_legal_entity_id and c.branch_id=p_branch_id and c.project_id=p_project_id and c.recorded_at<=p_as_of
-   and c.service_date<=p_effective_date order by c.provider_source_id,c.source_version desc,c.recorded_at desc) q;
+   order by c.provider_source_id,c.source_version desc,c.recorded_at desc) q where q.service_date<=p_effective_date;
  select coalesce(sum(round(l.taxable_amount*i.exchange_rate,i.rounding_scale)),0) into revenue from projects.billing_batches b join sales.sales_invoices i on i.id=b.invoice_id join sales.sales_invoice_lines l on l.document_id=i.id where b.project_id=p_project_id and i.status='posted' and i.posted_at<=p_as_of and i.document_date<=p_effective_date;
  select coalesce(sum(round(l.taxable_amount*i.exchange_rate,i.rounding_scale)),0) into credits from sales.sales_return_lines l join sales.sales_returns i on i.id=l.document_id join projects.billing_links bl on bl.invoice_line_id=l.sales_invoice_line_id join projects.billing_batches b on b.id=bl.batch_id where b.project_id=p_project_id and i.status='posted' and i.posted_at<=p_as_of and i.document_date<=p_effective_date;
  select coalesce(sum(ef.amount),0) into obligations from projects.reimbursements o join projects.reimbursement_effects ef on ef.obligation_id=o.id where o.project_id=p_project_id and ef.recorded_at<=p_as_of and ef.posting_date<=p_effective_date;

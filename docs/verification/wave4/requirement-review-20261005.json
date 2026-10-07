@@ -1,0 +1,2162 @@
+{
+  "review_date": "2026-10-05",
+  "observed_at": "2026-10-05T18:04:50.275132+00:00",
+  "head": "d7a2022faf2631e15b9ba2bc181c8b6fa9d83acc",
+  "specification": {
+    "path": "docs/blueprint/40_WAVE4_WORKFORCE_AND_DELIVERY_SPEC.md",
+    "sha256": "eac32785a17f7b2d503c2fc8df46fa19a5b3225ddc6d5072307f80521723c878"
+  },
+  "counts": {
+    "FR": 40,
+    "NFR": 10,
+    "AC": 20,
+    "EC": 16
+  },
+  "total": 86,
+  "completion_claim": false,
+  "evidence_limit": "All 86 IDs traced; source hashes and dated automated evidence are not installed, contention, authenticated native, load, restart or owner acceptance. No numerical completion percentage is inferred.",
+  "modules": {
+    "employee": {
+      "sources": [
+        {
+          "path": "supabase/migrations/20260925181927_wave4_employee_foundation.sql",
+          "sha256": "cf87ff4fef5041394d28faaf265d98762d90fcc14fe1b0de4a6828477d695bfc"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/employee.dart",
+          "sha256": "4fbf1dfe42c979976c79ace8a3ede419a7f588c684f340d799361cee514b3d20"
+        },
+        {
+          "path": "packages/jentra_platform/lib/src/supabase_employee_gateway.dart",
+          "sha256": "ff5a4ff134f8ae42d35df45e8036ebe76582714ab1b642ed884416b38d1c62b3"
+        },
+        {
+          "path": "apps/jentra_desktop/lib/src/features/people/employee_controller.dart",
+          "sha256": "c97926871ca9a6e315ec523c702b8eb8d4651f8a047404744f1cc072cfce993a"
+        }
+      ],
+      "installed": true,
+      "remaining": "Authenticated timeline/consumed history, real overlap, native restart and owner evidence"
+    },
+    "calendar": {
+      "sources": [
+        {
+          "path": "supabase/migrations/20260926082441_wave4_calendar_versions.sql",
+          "sha256": "857b26043339d3802a0d9421d134b70f1a114428e3232e73b47e509d295a1244"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/work_calendar.dart",
+          "sha256": "c4585396f741f0d923a0b505a933678cf8bcc818e379fbf974139d1b33912671"
+        },
+        {
+          "path": "packages/jentra_platform/lib/src/supabase_calendar_gateway.dart",
+          "sha256": "f96b03d00bc02d34dfae18c4c7a14ed2a3e21d3d289a3769dcaa394e65b07d7d"
+        },
+        {
+          "path": "apps/jentra_desktop/lib/src/features/people/calendar_controller.dart",
+          "sha256": "d717298d23ed5889667565a25ac139a70a8cadc115424645fed799b8694115c6"
+        },
+        {
+          "path": "supabase/migrations/20260926160000_wave4_calendar_resolution.sql",
+          "sha256": "6abd4dceddbb3124b4bfa01efd97ecafabd59f03ee1f85f48b5bc2a2f5685053"
+        }
+      ],
+      "installed": true,
+      "remaining": "Installed resolution/assignment dependencies and authenticated/native/contention evidence"
+    },
+    "organization": {
+      "sources": [
+        {
+          "path": "supabase/migrations/20260926161000_wave4_organization.sql",
+          "sha256": "6f682652564a030e8a3a6960999aa9c51aa96486ab0f7219d4347f5445e31c45"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/organization.dart",
+          "sha256": "7c0d4a8e09e064637a86e0cbd2df7ae1b1b2875139b628f5c9a3ec684e473845"
+        },
+        {
+          "path": "packages/jentra_platform/lib/src/supabase_organization_gateway.dart",
+          "sha256": "33fe57dbe8d6779c232f5eba92f0282c50946925b61cfd7992f71468712d5789"
+        },
+        {
+          "path": "apps/jentra_desktop/lib/src/features/people/organization_controller.dart",
+          "sha256": "6622fb61bd9253d0ee8efe342616c4e9ea15ceca26579ed5ad112786f884b6e2"
+        }
+      ],
+      "installed": false,
+      "remaining": "Specific installation approval, installed/native and graph contention evidence"
+    },
+    "private_hr": {
+      "sources": [
+        {
+          "path": "supabase/migrations/20260929224939_wave4_private_hr.sql",
+          "sha256": "37e14c5a789b9d73bc7b5738cc087c4e5a59d4bf74f2e075cd2baf70cf87c6c3"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/private_hr.dart",
+          "sha256": "14281ed1ca0702f4f98c2f88ef3b0f2d40e3a17ae0c1b5132ea768bcb8b81c94"
+        },
+        {
+          "path": "packages/jentra_platform/lib/src/supabase_private_hr_gateway.dart",
+          "sha256": "94854d7bb70ccb7db014e9a8cabf5d22b925efa9ed8fe1779569e275754ef12a"
+        },
+        {
+          "path": "apps/jentra_desktop/lib/src/features/people/private_hr_controller.dart",
+          "sha256": "edb8c53b6982d030acac41af55b72d547a00f66d7bcfa9f0f9a7e6c4f7de59e1"
+        }
+      ],
+      "installed": true,
+      "remaining": "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance"
+    },
+    "workforce": {
+      "sources": [
+        {
+          "path": "supabase/migrations/20260928082234_wave4_attendance_intervals.sql",
+          "sha256": "21cb1745977492f343f2992ccc915400f9320a82957f342d943e36a50db60ad6"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/workforce.dart",
+          "sha256": "77d952a5dd1b682e332c752d35572b9ca587022000fc7ebd06927db337641e71"
+        },
+        {
+          "path": "packages/jentra_platform/lib/src/supabase_workforce_gateway.dart",
+          "sha256": "9f51000abb8a06697f7aa1522a38af1c4c5a85d1156265d68a1d7dcdcae35307"
+        },
+        {
+          "path": "apps/jentra_desktop/lib/src/features/people/workforce_controller.dart",
+          "sha256": "58e86755e5a59176845d228623ed7e72af92d8b6d3b304f2ee8df402a4e6b6d9"
+        },
+        {
+          "path": "supabase/migrations/20260928083449_wave4_leave_ledger.sql",
+          "sha256": "1fbdd603a68f1962291c85a90739f599ee629fef27e5714ee6c00e8a0e37d4b3"
+        },
+        {
+          "path": "supabase/migrations/20260930070500_wave4_clock_batches.sql",
+          "sha256": "6775123b8ef94c61572ebe2c321557a5b0ab3eb976189115da14a374145baffd"
+        }
+      ],
+      "installed": false,
+      "remaining": "Installed/authenticated work/leave correction and real balance/ownership contention"
+    },
+    "payroll": {
+      "sources": [
+        {
+          "path": "supabase/migrations/20260930070000_wave4_synthetic_payroll.sql",
+          "sha256": "5517cc4559c3f91901525b38ec8fbf03633da49c587a0d034a885405a43465b2"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/payroll_repository.dart",
+          "sha256": "909620f20a90ef3ff3c07773ae65d39caf5ae04a74ada41e4137f1fbcafc9769"
+        },
+        {
+          "path": "packages/jentra_platform/lib/src/supabase_payroll_gateway.dart",
+          "sha256": "af86b6498a0be9c399424773118ec2f4e495a7963f9ed314dfcdd0ba7f193f71"
+        },
+        {
+          "path": "apps/jentra_desktop/lib/src/features/people/payroll_controller.dart",
+          "sha256": "d037938a2538ec1511a38e73ef72bea1f44d1aac58f7673bc954e4d27ff08ac4"
+        }
+      ],
+      "installed": false,
+      "remaining": "Current full integration/build/install, real posting/settlement contention and walkthrough"
+    },
+    "corrections": {
+      "sources": [
+        {
+          "path": "supabase/migrations/20261001110000_wave4_payroll_corrections.sql",
+          "sha256": "709170a703a5fd6808ba15de27a4b6cfcb33470da977203b960e2d04e67437cf"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/payroll_correction.dart",
+          "sha256": "8134e7b610ddc2c3e27f5ba0ea3d1aeebc4f274c0dc18fd1f0aef0ed3c049f4c"
+        },
+        {
+          "path": "packages/jentra_platform/lib/src/supabase_payroll_correction_gateway.dart",
+          "sha256": "94b7d2e2a0d7893836ddb7c5b20c3f7e888b141185a3e8ffda63d1ef03111801"
+        },
+        {
+          "path": "apps/jentra_desktop/lib/src/features/people/payroll_correction_controller.dart",
+          "sha256": "303e0c426d330f26b3ec383f4bce218ac5ea217220e6b44ba2737b3184d5f176"
+        },
+        {
+          "path": "supabase/migrations/20261002080000_wave4_project_payroll_impacts.sql",
+          "sha256": "19a784b4405288cbb4c9fa1403ab4eda52ae75b76712a85e739431bf1dd7ef54"
+        }
+      ],
+      "installed": false,
+      "remaining": "Full integrated source/install, actual competing billing/source correction and owner evidence"
+    },
+    "projects": {
+      "sources": [
+        {
+          "path": "supabase/migrations/20261001080000_wave4_projects_time.sql",
+          "sha256": "52ca0ba293d0a621304e01135db1424e69ebff579f14712b6b6c29d8c031e740"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/project_values.dart",
+          "sha256": "5d5e0ccfdf60cdf1f4a1d5b29e5da2a0c3d7df7ba619bd9568acded2f2283be5"
+        },
+        {
+          "path": "packages/jentra_platform/lib/src/supabase_projects_gateway.dart",
+          "sha256": "c21f7f4c3a298ca95c55007afdde858d295fe19cddcfb63861b636d245ed7141"
+        },
+        {
+          "path": "apps/jentra_desktop/lib/src/features/projects/projects_controller.dart",
+          "sha256": "acfb9af5422e885e5f3a3654164eabe4a6980b554039fa73f4077440af745a19"
+        }
+      ],
+      "installed": false,
+      "remaining": "Full current build/install, authenticated plan/time/cost and source contention"
+    },
+    "finance": {
+      "sources": [
+        {
+          "path": "supabase/migrations/20261001100000_wave4_project_expenses_billing.sql",
+          "sha256": "0430f55698a28ee7c26a609bc982a96cbc20319d204c3d5546f9a6ae4272efef"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/project_finance.dart",
+          "sha256": "3d23f1fdf4734e21bd14bff0ae77f40dd1e7873b34baf1358a181ddca2c01636"
+        },
+        {
+          "path": "packages/jentra_platform/lib/src/supabase_project_finance_gateway.dart",
+          "sha256": "02036f0a2b71e185b24103414b0e04bda52d1522f98871b5d21c96012250f38a"
+        },
+        {
+          "path": "apps/jentra_desktop/lib/src/features/projects/project_finance_controller.dart",
+          "sha256": "20334900d9f91fd9968d6d9364804b59a783f52e2f19c328cf2ea7998dbee799"
+        }
+      ],
+      "installed": false,
+      "remaining": "Final protected client/recovery/build review, installation and real billing contention"
+    },
+    "milestones": {
+      "sources": [
+        {
+          "path": "supabase/migrations/20261004090000_project_milestones.sql",
+          "sha256": "683fa20c6d5e118f0496bf21f1a117e33686340da2b407adaf1e1e5e06e93fd1"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/milestones.dart",
+          "sha256": "5f41814e2182c05d0e3469090e5c4a2a8fce0bb27bef66137788c0ded9fe06f0"
+        },
+        {
+          "path": "packages/jentra_platform/lib/src/supabase_milestone_gateway.dart",
+          "sha256": "5656d18e22b69d35d1b978f5a1393a3957ecbd1a72e31ef6f03d87c565d98636"
+        },
+        {
+          "path": "apps/jentra_desktop/lib/src/features/projects/milestones_controller.dart",
+          "sha256": "32613679ed535c5d7aef7b83e2bd1e718566894551d3fe7a56c8f278df6fad21"
+        }
+      ],
+      "installed": false,
+      "remaining": "Final current client/recovery review, installation and concurrent approval/billing"
+    },
+    "service": {
+      "sources": [
+        {
+          "path": "supabase/migrations/20261001090000_wave4_service.sql",
+          "sha256": "28de902e665845c5eb4d26e0a8b3db621a76ccd908d11987126a9932a5679b84"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/service.dart",
+          "sha256": "a0a4e270370052b024bc7c71bc4071532b03543899b9921bb354a2b142feb7e4"
+        },
+        {
+          "path": "packages/jentra_platform/lib/src/supabase_service_gateway.dart",
+          "sha256": "8019f6daacab87aa0554fea041faf6871049f86f8817f8247300fa7bb15cb1d8"
+        },
+        {
+          "path": "apps/jentra_desktop/lib/src/features/service/service_controller.dart",
+          "sha256": "f8b5531d0dc7de50d1d4deab40d98930308d412e0ca021679ca86920fff09fa1"
+        }
+      ],
+      "installed": false,
+      "remaining": "Stock parts provider, final client/build/install and actual dispatch/occurrence races"
+    },
+    "assets": {
+      "sources": [
+        {
+          "path": "supabase/migrations/20260930071000_wave4_fixed_assets.sql",
+          "sha256": "d76ab9fef3720aea51de71288defb6fdae8fa93d82fffb83ecc49566fbbb5bf8"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/assets_repository.dart",
+          "sha256": "65c712ec2613ff9704ebbc07a764536f348b9d1bf86a654d9b7612c5592451d7"
+        },
+        {
+          "path": "packages/jentra_platform/lib/src/supabase_assets_gateway.dart",
+          "sha256": "d7d30c515d5aea7cac7f5067152ad1bb0a76531ee08b778e59caf8d4e64af201"
+        },
+        {
+          "path": "apps/jentra_desktop/lib/src/features/assets/assets_controller.dart",
+          "sha256": "02a74d845e623e6abde2d3ca4aac3de6f2496cecfc34dfa67525dace20eedd28"
+        }
+      ],
+      "installed": false,
+      "remaining": "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race"
+    },
+    "asset_equipment": {
+      "sources": [
+        {
+          "path": "supabase/migrations/20261005090000_service_asset_equipment.sql",
+          "sha256": "04070c4c9d8e2d129c62b95360ae72dba17145c010f86e9337a7ec0718e89a68"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/asset_equipment.dart",
+          "sha256": "ce43aa1166e7d36f500ce3b02e0b55abda8b0b628d7f9bf7f22d2d447387e691"
+        },
+        {
+          "path": "packages/jentra_platform/lib/src/supabase_asset_equipment_gateway.dart",
+          "sha256": "52541cd0fa757d9850ea8438a541e981dd8dfe7d4481196fb8fc4e781f470be2"
+        },
+        {
+          "path": "apps/jentra_desktop/lib/src/features/service/asset_equipment_controller.dart",
+          "sha256": "f443caa50be72139c9b1a9072676911194ba0dc845d76205b3d7c410984a9921"
+        }
+      ],
+      "installed": false,
+      "remaining": "Final operational source/client/recovery reviews, current build/install and real asset/service overlap"
+    },
+    "expense_evidence": {
+      "sources": [
+        {
+          "path": "supabase/migrations/20261005120000_wave4_project_expense_evidence.sql",
+          "sha256": "990077dbed0e07e74eb593e77a51cc7ba0b62b5ab50c29700a39d4f235d67aba"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/expense_evidence.dart",
+          "sha256": "79fe98f741d11939145e9a37e6a52e6dd14414104b33d2fd0abbce5deff9f4ad"
+        },
+        {
+          "path": "packages/jentra_platform/lib/src/supabase_expense_evidence_gateway.dart",
+          "sha256": "566abb07a8452de103921cf71064c722e52fc4f77cb7fdaef6306fcfadb278fd"
+        },
+        {
+          "path": "packages/jentra_platform/lib/src/sensitive_expense_evidence_draft_store.dart",
+          "sha256": "1069428f449e673b3dd08b58afeb6617adf4a2a7fd83c4e044044d89fc736e13"
+        },
+        {
+          "path": "apps/jentra_desktop/lib/src/features/projects/expense_evidence_controller.dart",
+          "sha256": "b34c174ddbce12a2b65163a3489ac6bdee7d200f5cd25210c415cb0a55c4ae53"
+        },
+        {
+          "path": "apps/jentra_desktop/lib/src/features/projects/expense_evidence_screen.dart",
+          "sha256": "854505ff292bd6e3c5519ff560514047aa22842d56355109269d317bca231815"
+        },
+        {
+          "path": "supabase/functions/expense-private-documents/index.ts",
+          "sha256": "46f37ad32205dd35040ac10a8bb664a51f1105735a3abe94f93ba0df3f06188f"
+        },
+        {
+          "path": "supabase/functions/expense-private-documents/handler.mjs",
+          "sha256": "b394f44eba0702919c03532cbc6b5ce32aa5ca6666a9a053a2b8c2f028d3fa79"
+        },
+        {
+          "path": "supabase/functions/expense-private-purge/index.ts",
+          "sha256": "f6dcd05ae4a459f3b7f7368cfe6b1b204bd60b52f05800381c046c39d833c8fe"
+        },
+        {
+          "path": "supabase/functions/expense-private-purge/handler.mjs",
+          "sha256": "741f2a75b266f8ad28f5c380e221d2d7c2e2605ff6d66c8883c1e629c88310f9"
+        }
+      ],
+      "installed": false,
+      "remaining": "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+    }
+  },
+  "evidence": [
+    {
+      "path": "docs/verification/wave4/resume-checkpoint-20261005.md",
+      "sha256": "2d1dec723bca9dc118902122324ee3954707d8e0a309104c7511715683305f9f"
+    },
+    {
+      "path": "docs/verification/wave4/live-refresh-20261005.json",
+      "sha256": "9306e309d340f1257f452002041423e34a7fa12798fd8996a202a18f4f4f120d"
+    },
+    {
+      "path": "docs/verification/wave4/project-finance-rollback-result-20261005.json",
+      "sha256": "064b008896954ce985073897cef26a3f2b395ee890d2cd8377b75aa739875756"
+    },
+    {
+      "path": "docs/verification/wave4/project-billed-payroll-rollback-result-20261005.json",
+      "sha256": "ce5cf250e7518a07eb1e662c0a0435c6259e848cbe0edc2e5c8ab652359ceea0"
+    },
+    {
+      "path": "docs/verification/wave4/service-rollback-result-20261005.json",
+      "sha256": "1e9d94916e55ce824d366a89b5a458cbcb2ea8b5cdc64f81610693e6e18a32f9"
+    },
+    {
+      "path": "docs/verification/wave4/service-payroll-rollback-result-20261005.json",
+      "sha256": "4fd125a8adec3fef48be70f6397df3da85a1e1a5b21ee8a1ed8eee8d89afa1f4"
+    },
+    {
+      "path": "docs/verification/wave4/milestones-rollback-access-result-20261005.json",
+      "sha256": "b8b1f1542cfa3809fdfd65cd3a454af301b75c7403c602d74dc4056841763a4e"
+    },
+    {
+      "path": "docs/verification/wave4/project-expense-evidence-integration-final-result-20261005.json",
+      "sha256": "d17d5ed90fef51e12582023d8fac4ff2f1584f213675d45bb5999cd7355f70f6"
+    },
+    {
+      "path": "docs/verification/wave4/project-acknowledgement-evidence-20261005.json",
+      "sha256": "d4b98784113549e6054d22b3a67605d4eb565c56bfbbfe366d6650423de62c03"
+    },
+    {
+      "path": "docs/verification/wave4/installed-foundation-source-hashes-20261005.json",
+      "sha256": "bc55501205f7602887cc784878d97610ea8898c1a176941294fb3be1aaffdcfc"
+    },
+    {
+      "path": "docs/verification/wave4/installed-security-provider-refresh-20261005.json",
+      "sha256": "caeb928c59ccb36795ffde15656ec75508cafb2e728cde46d1a757cedf0cc1d7"
+    },
+    {
+      "path": "docs/verification/wave4/runtime-evidence-standards-review-20261005.md",
+      "sha256": "4bd19c341a9dec8a6843ba63656f5656502a86cca9360bdb50caffaa8ac258db"
+    },
+    {
+      "path": "docs/verification/wave4/integrated-contention-runtime-protocol-20261004.md",
+      "sha256": "5a577134ea405c5fdbe0c26ef6e6292db951c9c571e3c0f50865b135ef4ad3b8"
+    }
+  ],
+  "root_gate": {
+    "report": {
+      "path": ".agent-harness/wave4-20261005/reports/root_recovery.json",
+      "sha256": "ac5913ea9761b0409690cc28374f6b630ff69de1e9b4660876c3a659471a1790"
+    },
+    "workspace_source_mismatches": [
+      "packages/jentra_platform/lib/src/project_command_acknowledgement.dart"
+    ],
+    "all_recorded_commands_passed": true
+  },
+  "requirements": [
+    {
+      "id": "AC-401",
+      "requirement": "Given another tenant/denied branch, when any read, mutation, replay, file or export is requested, then no protected data or business side effect is returned.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "AC-402",
+      "requirement": "Given valid synthetic inputs, when an employee is created/changed, then one identity and an attributable nonoverlapping timeline appear with exact versions.",
+      "modules": [
+        "employee"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence"
+      ]
+    },
+    {
+      "id": "AC-403",
+      "requirement": "Given employment end, rehire or transfer, when applied, then history remains, dates/scopes are validated and account access is not implicitly changed.",
+      "modules": [
+        "employee",
+        "organization"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Specific installation approval, installed/native and graph contention evidence"
+      ]
+    },
+    {
+      "id": "AC-404",
+      "requirement": "Given directory-only or review-limited access, when private HR/pay or another review is requested, then access is denied without private leakage.",
+      "modules": [
+        "private_hr",
+        "payroll",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "AC-405",
+      "requirement": "Given overnight/duplicate/overlapping/clock-transition attendance, when calculated or corrected, then exact approved duration follows frozen rules and retains original facts.",
+      "modules": [
+        "calendar",
+        "workforce"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Installed/authenticated work/leave correction and real balance/ownership contention"
+      ]
+    },
+    {
+      "id": "AC-406",
+      "requirement": "Given competing leave requests, when decided concurrently, then balances respect policy and cancellation restores only its original effects.",
+      "modules": [
+        "workforce",
+        "corrections"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence"
+      ]
+    },
+    {
+      "id": "AC-407",
+      "requirement": "Given synthetic pay rules, when calculated and approved, then all lines reproduce exactly and changed inputs invalidate posting readiness.",
+      "modules": [
+        "payroll"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Current full integration/build/install, real posting/settlement contention and walkthrough"
+      ]
+    },
+    {
+      "id": "AC-408",
+      "requirement": "Given an approved run, when concurrent posting/reversal or a late failure occurs, then one complete balanced result or no business effect exists.",
+      "modules": [
+        "payroll",
+        "corrections"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence"
+      ]
+    },
+    {
+      "id": "AC-409",
+      "requirement": "Given a posted unpaid run, when exporting or recording settlement, then access is checked independently and payment state requires settlement evidence.",
+      "modules": [
+        "payroll"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Current full integration/build/install, real posting/settlement contention and walkthrough"
+      ]
+    },
+    {
+      "id": "AC-410",
+      "requirement": "Given a project plan, when budgets/dependencies change, then revisions survive and circular task dependencies are rejected.",
+      "modules": [
+        "projects"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Full current build/install, authenticated plan/time/cost and source contention"
+      ]
+    },
+    {
+      "id": "AC-411",
+      "requirement": "Given duplicate work intervals or expense sources, when approved across modules, then duplicate payable/billable facts are rejected.",
+      "modules": [
+        "projects",
+        "finance",
+        "expense_evidence",
+        "service"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races"
+      ]
+    },
+    {
+      "id": "AC-412",
+      "requirement": "Given eligible project sources, when billed concurrently, then each unit is consumed once and dated margin reconciles to its stated basis.",
+      "modules": [
+        "finance",
+        "milestones"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing"
+      ]
+    },
+    {
+      "id": "AC-413",
+      "requirement": "Given a paused/reprioritized ticket, when SLA is evaluated, then frozen policy reproduces its due calculation and earlier breaches remain.",
+      "modules": [
+        "service"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races"
+      ]
+    },
+    {
+      "id": "AC-414",
+      "requirement": "Given a work order, when dispatched/completed/reversed, then staffing, time, parts, cost and billing eligibility stay consistent.",
+      "modules": [
+        "service",
+        "projects"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Full current build/install, authenticated plan/time/cost and source contention"
+      ]
+    },
+    {
+      "id": "AC-415",
+      "requirement": "Given equipment and due maintenance, when retried or a meter resets, then one attributable occurrence/work order exists with retained due evidence.",
+      "modules": [
+        "service",
+        "assets",
+        "asset_equipment"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap"
+      ]
+    },
+    {
+      "id": "AC-416",
+      "requirement": "Given a cost source, when capitalized twice or after stock consumption, then source eligibility prevents duplicated asset/stock value.",
+      "modules": [
+        "assets"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race"
+      ]
+    },
+    {
+      "id": "AC-417",
+      "requirement": "Given an asset book, when revised or posted concurrently through its final period, then totals conserve depreciable value and each period posts once.",
+      "modules": [
+        "assets"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race"
+      ]
+    },
+    {
+      "id": "AC-418",
+      "requirement": "Given disposal or impairment, when posted/reversed, then original cost, accumulated depreciation and gain/loss remain auditable.",
+      "modules": [
+        "assets"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race"
+      ]
+    },
+    {
+      "id": "AC-419",
+      "requirement": "Given narrow/large-text UI and restarted uncertain drafts, when resumed, then controls remain usable and only the original authorized request is retried.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "AC-420",
+      "requirement": "Given all slice evidence, when readiness is reviewed, then performance/security/build/runtime results and remaining gates are reported separately.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "EC-401",
+      "requirement": "Concurrent same-code employee creation \u2192 one success and one safe conflict; lost response with the original key returns the same created identity.",
+      "modules": [
+        "employee"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence"
+      ]
+    },
+    {
+      "id": "EC-402",
+      "requirement": "Changed body/scope reuses a key \u2192 no mutation; replay after revocation \u2192 deny without revealing the prior response.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "EC-403",
+      "requirement": "Backdated employment change intersects approved payroll/time \u2192 explicit downstream correction, never silent rewriting of consumed history.",
+      "modules": [
+        "employee",
+        "organization",
+        "corrections"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence"
+      ]
+    },
+    {
+      "id": "EC-404",
+      "requirement": "Same-day branch transfer \u2192 adjacent half-open intervals; destination access cannot reveal source-branch private history.",
+      "modules": [
+        "employee",
+        "private_hr"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance"
+      ]
+    },
+    {
+      "id": "EC-405",
+      "requirement": "Calendar changed after leave/SLA approval \u2192 original policy remains until an explicit attributable recalculation.",
+      "modules": [
+        "calendar",
+        "workforce",
+        "service"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races"
+      ]
+    },
+    {
+      "id": "EC-406",
+      "requirement": "Interval crosses midnight, clock fold/gap \u2192 explicit zone resolution; negative or unresolvable duration is rejected.",
+      "modules": [
+        "calendar",
+        "workforce"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Installed/authenticated work/leave correction and real balance/ownership contention"
+      ]
+    },
+    {
+      "id": "EC-407",
+      "requirement": "Leave cancelled after payroll consumption \u2192 linked later adjustment.",
+      "modules": [
+        "workforce",
+        "corrections"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence"
+      ]
+    },
+    {
+      "id": "EC-408",
+      "requirement": "Negative net pay or deduction over configured cap \u2192 block approval/posting until allowed policy resolves it; no silent clamping.",
+      "modules": [
+        "payroll"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Current full integration/build/install, real posting/settlement contention and walkthrough"
+      ]
+    },
+    {
+      "id": "EC-409",
+      "requirement": "Employment ends mid-period \u2192 frozen proration/final-settlement basis.",
+      "modules": [
+        "employee",
+        "payroll"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough"
+      ]
+    },
+    {
+      "id": "EC-410",
+      "requirement": "Posting response lost \u2192 sealed uncertain request and identical retry; optional refresh failure cannot undo a confirmed posting result.",
+      "modules": [
+        "payroll",
+        "corrections"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence"
+      ]
+    },
+    {
+      "id": "EC-411",
+      "requirement": "Expense reaches reimbursement and supplier billing \u2192 unique source consumption rejects duplicate liability; corrections retain lineage.",
+      "modules": [
+        "finance",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "EC-412",
+      "requirement": "Part unavailable or concurrent billing consumes remaining time \u2192 atomic rejection with fresh authorized remaining quantities.",
+      "modules": [
+        "service",
+        "finance"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Final protected client/recovery/build review, installation and real billing contention"
+      ]
+    },
+    {
+      "id": "EC-413",
+      "requirement": "Scheduler repeats or meter rolls over \u2192 occurrence identity and explicit reading event prevent duplicate maintenance and lost due history.",
+      "modules": [
+        "service"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races"
+      ]
+    },
+    {
+      "id": "EC-414",
+      "requirement": "Disposal races depreciation \u2192 serialized state/period checks produce one consistent outcome with no post-disposal depreciation absent reversal.",
+      "modules": [
+        "assets"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race"
+      ]
+    },
+    {
+      "id": "EC-415",
+      "requirement": "Scope changes during an in-flight private read \u2192 discard old-context result, clear sensitive cache and lock the old draft.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "EC-416",
+      "requirement": "Provider/rule/mapping unavailable \u2192 actionable unavailable state, never placeholder success.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "FR-401",
+      "requirement": "Every aggregate MUST enforce tenant, entity and applicable branch, authenticated actor, entitlement, capability and optimistic version.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "FR-402",
+      "requirement": "Mutations MUST use named authenticated API commands. Business changes, receipt, redacted audit, lifecycle telemetry and required outbox events MUST commit atomically. Replay MUST recheck current access before returning a stored result.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "FR-403",
+      "requirement": "Operational directory fields, HR-private fields and compensation/bank data MUST have separate read contracts and permissions. Module access MUST NOT imply payroll, private-attachment or private-export access.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "FR-404",
+      "requirement": "Drafts MUST be encrypted and scoped to actor/tenant/entity/branch. Uncertain responses MUST preserve the original request for retry. Revocation/sign-out MUST clear visible sensitive data and lock local content.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "FR-405",
+      "requirement": "Lists, pickers, history, imports and exports MUST be bounded, permission filtered and literal-search safe. Omitted scope MUST NOT broaden access.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "FR-406",
+      "requirement": "An authorized operator MUST create an entity-scoped employee with a unique code, display name and dated employment with branch, job and employment type. Codes MUST remain reserved after employment ends.",
+      "modules": [
+        "employee",
+        "organization",
+        "corrections"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence"
+      ]
+    },
+    {
+      "id": "FR-407",
+      "requirement": "Assignment changes MUST preserve effective/recorded dates, actor, reason and history. Concurrent commands MUST NOT produce overlapping primary assignments or employment spells for the same employee in that entity.",
+      "modules": [
+        "employee",
+        "organization",
+        "corrections"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence"
+      ]
+    },
+    {
+      "id": "FR-408",
+      "requirement": "Employment end/rehire MUST preserve attendance, leave, payroll and work evidence. Corrections affecting approved sources MUST require explicit impact resolution. Termination MUST NOT delete an authentication account.",
+      "modules": [
+        "employee",
+        "organization",
+        "corrections"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence"
+      ]
+    },
+    {
+      "id": "FR-409",
+      "requirement": "HR-private details/documents MUST require explicit permissions. Account linking/self-service MUST use a separately governed verified link; matching an email address MUST NOT establish identity.",
+      "modules": [
+        "private_hr"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance"
+      ]
+    },
+    {
+      "id": "FR-410",
+      "requirement": "Department, manager, role and calendar assignments MUST be scoped and effective-dated; manager relationships MUST reject self-links and cycles.",
+      "modules": [
+        "organization",
+        "calendar"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence"
+      ]
+    },
+    {
+      "id": "FR-411",
+      "requirement": "Employee objectives/reviews MUST support attributable draft, submission, review and acknowledgement with restricted visibility. Acknowledgement MUST NOT imply agreement or change compensation automatically.",
+      "modules": [
+        "private_hr"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance"
+      ]
+    },
+    {
+      "id": "FR-412",
+      "requirement": "Versioned calendars MUST specify time zone, working intervals, holidays and policy dates. Overnight and ambiguous/nonexistent local times MUST have explicit handling before an interval is accepted.",
+      "modules": [
+        "calendar",
+        "organization",
+        "workforce"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Installed/authenticated work/leave correction and real balance/ownership contention"
+      ]
+    },
+    {
+      "id": "FR-413",
+      "requirement": "Attendance MUST preserve raw/manual source identity, instants, breaks, calculated duration, correction reason and approval. Duplicate imports or overlapping intervals MUST NOT double count payable time.",
+      "modules": [
+        "workforce"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Installed/authenticated work/leave correction and real balance/ownership contention"
+      ]
+    },
+    {
+      "id": "FR-414",
+      "requirement": "Leave policies MUST configure units, accrual, carry-forward, expiry and eligibility. Balances MUST derive from attributable ledger entries; adjustments MUST append a reasoned entry rather than overwrite a balance.",
+      "modules": [
+        "workforce"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Installed/authenticated work/leave correction and real balance/ownership contention"
+      ]
+    },
+    {
+      "id": "FR-415",
+      "requirement": "Leave submission, independent decision and cancellation MUST lock relevant balance/intervals, reject disallowed overlap/insufficient balance and reverse only original entitlement effects. Attendance/approved-leave conflicts require resolution.",
+      "modules": [
+        "workforce"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Installed/authenticated work/leave correction and real balance/ownership contention"
+      ]
+    },
+    {
+      "id": "FR-416",
+      "requirement": "Approved work/leave consumed by payroll MUST be sealed by version. Later corrections MUST produce explicit differences for an eligible later run.",
+      "modules": [
+        "workforce",
+        "payroll",
+        "corrections"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence"
+      ]
+    },
+    {
+      "id": "FR-417",
+      "requirement": "Pay components/rules MUST be versioned and effective-dated with earning, deduction/employer-cost classification, proration, rounding and limits. Development fixtures MUST be visibly synthetic without statutory-validity claims.",
+      "modules": [
+        "payroll"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Current full integration/build/install, real posting/settlement contention and walkthrough"
+      ]
+    },
+    {
+      "id": "FR-418",
+      "requirement": "A run MUST freeze entity, period, employees, assignments, approved inputs, rates, policies and exact per-component calculation evidence. Preview MUST explain every gross, deduction, employer-cost and net line.",
+      "modules": [
+        "payroll"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Current full integration/build/install, real posting/settlement contention and walkthrough"
+      ]
+    },
+    {
+      "id": "FR-419",
+      "requirement": "Approval MUST be independent of preparation where required and bind to the precise revision. Material changes MUST invalidate approval; stale input versions MUST block posting.",
+      "modules": [
+        "payroll"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Current full integration/build/install, real posting/settlement contention and walkthrough"
+      ]
+    },
+    {
+      "id": "FR-420",
+      "requirement": "Posting MUST atomically create payroll obligations, balanced journal effects, immutable payslip facts, audit and receipts once per run. Payroll liabilities MUST be distinct from supplier AP and reconcile to their own control attribution.",
+      "modules": [
+        "payroll",
+        "corrections"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence"
+      ]
+    },
+    {
+      "id": "FR-421",
+      "requirement": "Reversal/correction MUST retain posted originals, reject incompatible settlement/period state and restore original effects once. Off-cycle adjustments MUST reference original employment, period and component basis.",
+      "modules": [
+        "payroll",
+        "corrections"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence"
+      ]
+    },
+    {
+      "id": "FR-422",
+      "requirement": "Payslips, exports and recorded settlement MUST have separate permissions. Posting MUST NOT imply payment, bank reconciliation or statutory filing. Settlement evidence/reversal MUST reconcile to payroll obligations.",
+      "modules": [
+        "payroll"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Current full integration/build/install, real posting/settlement contention and walkthrough"
+      ]
+    },
+    {
+      "id": "FR-423",
+      "requirement": "Projects MUST define entity, accountable branch, customer where billable, manager, dates, currency, approved budget versions and milestone or time/material terms.",
+      "modules": [
+        "projects",
+        "milestones"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final current client/recovery review, installation and concurrent approval/billing"
+      ]
+    },
+    {
+      "id": "FR-424",
+      "requirement": "Tasks/resource plans MUST retain owners, dependencies, progress and capacity basis; circular task dependencies MUST be rejected.",
+      "modules": [
+        "projects",
+        "milestones"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final current client/recovery review, installation and concurrent approval/billing"
+      ]
+    },
+    {
+      "id": "FR-425",
+      "requirement": "Time entries MUST reference eligible employment and project/task or work order, exact duration and service date. Approval MUST reject prohibited overlap and duplicate consumption of the same work interval across modules.",
+      "modules": [
+        "projects",
+        "workforce",
+        "service",
+        "corrections"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence"
+      ]
+    },
+    {
+      "id": "FR-426",
+      "requirement": "Expenses MUST preserve exact currency/rate/tax evidence, attachments, allocations and approval. Reimbursement and supplier billing MUST NOT create duplicate obligations for the same expense source.",
+      "modules": [
+        "finance",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "FR-427",
+      "requirement": "Billing MUST consume approved unbilled time/expense or eligible milestones through existing sales commands with source quantities and frozen rate/tax basis. Concurrent requests MUST NOT bill a source unit twice.",
+      "modules": [
+        "finance",
+        "milestones",
+        "service"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races"
+      ]
+    },
+    {
+      "id": "FR-428",
+      "requirement": "Project cost, commitments, revenue, budget and margin MUST state as-of date, currency and source basis. Internal cost requires permission; project closure MUST explicitly resolve open work and unbilled obligations.",
+      "modules": [
+        "projects",
+        "finance",
+        "milestones"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing"
+      ]
+    },
+    {
+      "id": "FR-429",
+      "requirement": "Tickets MUST preserve customer/contact, equipment, priority, contract or warranty, classification, owner and triage/resolution history.",
+      "modules": [
+        "service"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races"
+      ]
+    },
+    {
+      "id": "FR-430",
+      "requirement": "SLA calculations MUST freeze calendar/policy versions and retain start, pause/resume reasons and due-time evidence. Reprioritization MUST NOT erase an earlier breach; authorized recalculation MUST retain both versions.",
+      "modules": [
+        "service"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races"
+      ]
+    },
+    {
+      "id": "FR-431",
+      "requirement": "Dispatch MUST validate staff scope, eligibility, availability and required equipment. Work orders MUST support assignment, acceptance, work, completion, customer confirmation or reasoned exception, and configured independent closure.",
+      "modules": [
+        "service"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races"
+      ]
+    },
+    {
+      "id": "FR-432",
+      "requirement": "Parts MUST use existing stock reservation/issue/return commands. Labor MUST reuse time capture. Completion MUST preserve cost and billing eligibility without implying invoice, payment or customer acceptance.",
+      "modules": [
+        "service"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races"
+      ]
+    },
+    {
+      "id": "FR-433",
+      "requirement": "Equipment MUST distinguish customer equipment, internal fixed assets and stock identities. Warranty/contracts MUST preserve dates and coverage evidence; linking equipment MUST NOT automatically capitalize stock.",
+      "modules": [
+        "service",
+        "asset_equipment"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap"
+      ]
+    },
+    {
+      "id": "FR-434",
+      "requirement": "Preventive maintenance MUST use calendar/meter schedules, preserve readings and create at most one work order per occurrence. Resets, rollover, deferrals and retries MUST preserve original due history and reason.",
+      "modules": [
+        "service",
+        "asset_equipment"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap"
+      ]
+    },
+    {
+      "id": "FR-435",
+      "requirement": "Capitalization MUST reference eligible procurement or governed opening evidence, ownership, location, custodian, cost components and in-service date. A source cost MUST NOT be capitalized twice or remain simultaneously in stock value.",
+      "modules": [
+        "assets"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race"
+      ]
+    },
+    {
+      "id": "FR-436",
+      "requirement": "Depreciation books MUST freeze cost, residual, useful life, method, calendar and conventions. Exact schedules MUST cap depreciation at depreciable value and allocate final rounding residue deterministically. Changes MUST be prospective and attributable unless a separately governed correction is required.",
+      "modules": [
+        "assets"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race"
+      ]
+    },
+    {
+      "id": "FR-437",
+      "requirement": "Depreciation posting MUST lock asset/book/period and create journals once. Closed periods or stale schedules MUST block it. Reversals MUST restore original values without rewriting old schedules.",
+      "modules": [
+        "assets"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race"
+      ]
+    },
+    {
+      "id": "FR-438",
+      "requirement": "Asset transfers, impairment, configured revaluation and disposal MUST retain cost/depreciation history, approval, proceeds and gain/loss evidence. Disposed assets MUST reject depreciation absent a governed reversal.",
+      "modules": [
+        "assets"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race"
+      ]
+    },
+    {
+      "id": "FR-439",
+      "requirement": "Native workspaces MUST have loading/error/empty/populated states, named pickers, permitted actions, history, keyboard access and recovery. Notifications, deep links, exports and attachments MUST recheck aggregate access.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "FR-440",
+      "requirement": "Each slice MUST report source, tests, candidate/install status, rendered review, build, authenticated runtime and owner acceptance separately. Missing providers MUST produce actionable unavailable states, never fabricated success.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "NFR-401",
+      "requirement": "Tenant tables MUST have RLS and cross-tenant/entity/branch tests. Privileged functions MUST use an empty search path and explicit execution grants.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "NFR-402",
+      "requirement": "Compensation, health/identity details and bank data MUST be absent from directory responses, generic audit payloads, logs, notifications and global search.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "NFR-403",
+      "requirement": "Financial arithmetic MUST specify precision, rounding and conservation properties. Duration calculation MUST avoid premature fractional-hour conversion.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "NFR-404",
+      "requirement": "Contention tests MUST use real separate sessions for employment overlap, leave, payroll posting, billing consumption, parts issues and depreciation. Sequential replay tests are not contention evidence.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "NFR-405",
+      "requirement": "Ordinary paged reads SHOULD meet 500 ms p95 and ordinary commands 1.5 s p95 on a documented development load. Payroll/report jobs MUST be bounded and expose progress/failure; they MUST NOT hold an unbounded UI request open.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "NFR-406",
+      "requirement": "Default pages MUST contain at most 50 rows, maximum 200. Proposed payroll bounds are 200 employees/run and 100 components/employee. Oversize requests MUST fail before effects; partitioning requires an explicit contract.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "NFR-407",
+      "requirement": "Light/dark, both densities, keyboard/focus, 1024x720 through 1920x1080 and 200% text scale MUST receive rendered verification.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "NFR-408",
+      "requirement": "Encrypted drafts and uncertain retries MUST survive restart. Real Windows Credential Manager recovery acceptance requires a native restart test.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "NFR-409",
+      "requirement": "Candidate checks MUST preserve acceptance data. Authentication/MFA is user-managed; no production change, external execution, commit or push is implied.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    },
+    {
+      "id": "NFR-410",
+      "requirement": "Relevant analyzer, invariant/security, gateway/recovery, UI and isolated Windows-build checks MUST pass with attributable evidence.",
+      "modules": [
+        "employee",
+        "calendar",
+        "organization",
+        "private_hr",
+        "workforce",
+        "payroll",
+        "corrections",
+        "projects",
+        "finance",
+        "milestones",
+        "service",
+        "assets",
+        "asset_equipment",
+        "expense_evidence"
+      ],
+      "state": "partial; required acceptance remains open",
+      "required_evidence_complete": false,
+      "remaining": [
+        "Authenticated timeline/consumed history, real overlap, native restart and owner evidence",
+        "Installed resolution/assignment dependencies and authenticated/native/contention evidence",
+        "Specific installation approval, installed/native and graph contention evidence",
+        "Trusted worker readiness, real synthetic owner scope and two-user private-byte acceptance",
+        "Installed/authenticated work/leave correction and real balance/ownership contention",
+        "Current full integration/build/install, real posting/settlement contention and walkthrough",
+        "Full integrated source/install, actual competing billing/source correction and owner evidence",
+        "Full current build/install, authenticated plan/time/cost and source contention",
+        "Final protected client/recovery/build review, installation and real billing contention",
+        "Final current client/recovery review, installation and concurrent approval/billing",
+        "Stock parts provider, final client/build/install and actual dispatch/occurrence races",
+        "Procurement/stock providers, internal maintenance links, current build/install and depreciation/disposal race",
+        "Final operational source/client/recovery reviews, current build/install and real asset/service overlap",
+        "Complete protected proof/domain/gateway/native/recovery checks and review; specific installation/deployment approval and trusted worker activation"
+      ]
+    }
+  ]
+}

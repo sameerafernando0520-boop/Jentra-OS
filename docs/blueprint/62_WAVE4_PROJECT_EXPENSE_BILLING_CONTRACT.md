@@ -1,6 +1,6 @@
 # W4-05 expense, reimbursement and protected sales billing
 
-2026-10-03. Additive synthetic development; no installation authority is implied.
+2026-10-05. Additive synthetic development; no installation authority is implied.
 
 Expenses use one scoped project, employee and immutable revision. Up to fifty
 ordered task weights allocate the original converted gross using cumulative
@@ -14,10 +14,26 @@ verified. Reimbursement uses a separate base-currency obligation with original
 journal effects, partial recorded settlement and exact original-effect reversals;
 neither journal posting nor settlement recording executes a bank payment.
 
-Private attachments remain explicitly unavailable: no generic file grant, URL,
-bucket path or private document is accepted as expense evidence. A bounded
-synthetic evidence reference is attributable metadata. A future protected
-attachment adapter must prove per-expense authorization before activation.
+Protected evidence uses the distinct expense-private provider and bucket. No
+generic file grant, URL or bucket path is accepted as expense evidence. A bounded
+narrative reference remains attributable metadata; actual documents use up to ten
+unique minimal proofs `{id,version,digest}`. Content version1 is immutable and
+separate from the document lifecycle version. The owner-only freeze/read/decision
+helper validates full tenant/entity/branch/project/expense scope, current private
+view and cost authority, both entitlements and MFA, then canonicalizes proofs.
+Create/correct freeze canonical proofs into the immutable revision and digest;
+correct also rechecks its original proof. Submit/approve/post require active
+content and fresh worker readiness before confirmed replay. Detail and own
+receipt read the original frozen revision proof with current authorization;
+legitimately retired/purged bytes retain immutable financial history. Generic
+confirmations contain no proof array, file path, checksum or document purpose.
+The native scoped panel supports named verified documents, private view/export,
+retention holds and encrypted metadata recovery; bytes and local paths remain
+memory-only. Resident/restored selected proofs recheck current private authority.
+Explicit empty evidence remains valid for synthetic narrative fixtures without
+attachment grants or activation. Runtime availability requires the separately
+approved retention policy and verified worker; candidate presence alone is not
+provider activation or authorization to upload real content.
 
 Expense, reimbursement, settlement, billing and margin capabilities are separate.
 Every API checks current module entitlement, membership and branch scope; commands
@@ -45,7 +61,7 @@ provider consumption command. A correction cannot supersede reserved units.
 Milestone units use an independently approved immutable revision as source and
 remain whole quantity-one invoice lines. The owner-only milestone terms provider
 returns frozen commercial amount, customer, currency, version, digest and payment
-days/terms. Preparation and posting validate that basis and require invoice due
+days/terms (up to1000 characters, matching the milestone owner). Preparation and posting validate that basis and require invoice due
 date equal to invoice date plus those frozen days. Conflicting terms require
 separate batches; the native source review shows the exact payment term. Ordinary
 milestone correction cancels an available original unit and cannot supersede a
@@ -76,7 +92,9 @@ billing value. A provider-only callback appends authoritative cost evidence afte
 each source revision or cancellation, even when replacement work has not been
 imported for billing. Margin selects the latest eligible version of each labor
 source at both cutoffs; cancellation contributes zero and reversal contributes
-one fresh cost basis. Exact cost uses frozen hourly cost, original whole seconds
+one fresh cost basis. Select the latest recorded source version before applying
+its service date, so moving a source date cannot resurrect a superseded cost.
+Exact cost uses frozen hourly cost, original whole seconds
 and project currency precision. The bounded Service costs page retains immutable
 revision, version, digest, date and rate evidence behind project cost authority.
 Public billing choices never contain internal hourly cost or cost amount.
@@ -89,8 +107,10 @@ encrypted actor/scope/action recovery, retaining exact uncertain requests and
 known confirmations before optional reads.
 
 Minimal acknowledgements are encrypted separately from pending drafts and retain
-only scope, action, command and idempotency identities, aggregate/project IDs and
-confirmed version. A validated late command or own-receipt response is recorded
+only scope, action, command and idempotency identities, aggregate/project IDs,
+confirmed version and a canonical SHA256 digest of the complete original request.
+Changed payload or issued timestamp cannot borrow a saved confirmation with the
+same IDs. A validated late command or own-receipt response is recorded
 even after controller disposal. Recovery, resume and dispatch check that evidence
 before any retry. Draft cleanup failure therefore cannot reissue a known
 confirmed request after restart. Revocation clears all protected plaintext,

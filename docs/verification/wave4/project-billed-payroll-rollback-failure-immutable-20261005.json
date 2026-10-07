@@ -1,0 +1,16 @@
+{
+  "status": "FAILED_CANDIDATE_ROLLBACK",
+  "query_path": "docs/verification/wave4/project-billed-payroll-rollback-prepared-immutable-20261005.sql",
+  "connector_response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"name\":\"HttpException\",\"message\":\"Failed to run sql query: ERROR:  P0001: not ok 111 - attendance cannot claim direct customer credit proof\\n# Failed test 111: \\\"attendance cannot claim direct customer credit proof\\\"\\n#       caught: 55000: PAYROLL_SOURCE_IMPACT_PROVIDER_REQUIRED\\n#       wanted: 22023: PAYROLL_CURRENT_BILLING_IMPACT_INVALID\\nCONTEXT:  PL/pgSQL function inline_code_block line 3 at RAISE\\n\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error_code": "INVALID_ARGUMENT"
+    },
+    "isError": true
+  }
+}

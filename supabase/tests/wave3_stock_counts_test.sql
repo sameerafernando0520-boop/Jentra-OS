@@ -1,5 +1,12 @@
 -- Included in the same rollback-only, separately namespaced inventory fixture.
 select pg_temp.actor('actor');
+-- Count cutoff uses today's UTC clock; supply only the missing synthetic day
+-- without changing the original transfer period or its lifecycle.
+insert into finance.fiscal_periods(id,tenant_id,legal_entity_id,name,start_date,end_date,created_by,updated_by)
+select pg_temp.fid('count.current.period'),pg_temp.fid('t'),pg_temp.fid('e'),'Synthetic current count day',
+ (current_timestamp at time zone 'UTC')::date,(current_timestamp at time zone 'UTC')::date,pg_temp.fid('actor'),pg_temp.fid('actor')
+where not exists(select 1 from finance.fiscal_periods where tenant_id=pg_temp.fid('t') and legal_entity_id=pg_temp.fid('e')
+ and (current_timestamp at time zone 'UTC')::date between start_date and end_date);
 insert into core.role_permissions(tenant_id,role_id,permission_code) values(pg_temp.fid('t'),pg_temp.fid('r'),'inventory.adjustments.post') on conflict do nothing;
 insert into finance.accounts(id,tenant_id,legal_entity_id,code,name,account_type,normal_balance,created_by,updated_by)
 select pg_temp.fid(n),pg_temp.fid('t'),pg_temp.fid('e'),c,n,k,b,pg_temp.fid('actor'),pg_temp.fid('actor')

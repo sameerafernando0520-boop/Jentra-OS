@@ -7,6 +7,8 @@ import 'package:jentra_domain/jentra_receivables.dart';
 import 'package:jentra_domain/jentra_projects.dart';
 
 import 'app_providers.dart';
+import 'features/analytics/analytics_screen.dart';
+import 'features/analytics/wave5_control_screen.dart';
 import 'features/manual_journal/manual_journal_controller.dart';
 import 'features/negative_stock/negative_stock_policy_screen.dart';
 import 'features/manual_journal/manual_journal_screen.dart';
@@ -51,8 +53,12 @@ import 'features/projects/projects_controller.dart';
 import 'features/projects/projects_screen.dart';
 import 'features/projects/project_finance_controller.dart';
 import 'features/projects/project_finance_screen.dart';
+import 'features/projects/milestones_controller.dart';
+import 'features/projects/milestones_screen.dart';
 import 'features/service/service_controller.dart';
 import 'features/service/service_screen.dart';
+import 'features/service/asset_equipment_controller.dart';
+import 'features/service/asset_equipment_screen.dart';
 import 'features/auth/login_screen.dart';
 import 'features/catalogue/component_catalogue_screen.dart';
 import 'features/crm/crm_screen.dart';
@@ -470,6 +476,29 @@ final routerProvider = Provider<GoRouter>((ref) {
                 await ref.read(projectsControllerProvider)?.canLeave() ?? true,
           ),
           GoRoute(
+            path: '/projects/:projectId/milestones',
+            builder: (context, state) {
+              final project = state.extra;
+              if (project is! ProjectRecord ||
+                  project.id != state.pathParameters['projectId']) {
+                return const Center(
+                  child: Text(
+                    'Open a project from the register to review its milestones.',
+                  ),
+                );
+              }
+              return MilestonesWorkspace(projectId: project.id);
+            },
+            onExit: (context, state) async {
+              final project = state.extra;
+              return project is! ProjectRecord ||
+                  (await ref
+                          .read(milestoneControllerProvider(project.id))
+                          ?.canLeave() ??
+                      true);
+            },
+          ),
+          GoRoute(
             path: '/projects/:projectId/finance',
             builder: (context, state) {
               final project = state.extra;
@@ -509,21 +538,25 @@ final routerProvider = Provider<GoRouter>((ref) {
             onExit: (context, state) async =>
                 await ref.read(serviceControllerProvider)?.canLeave() ?? true,
           ),
+          GoRoute(
+            path: '/service/internal-assets',
+            builder: (context, state) => const AssetEquipmentWorkspace(),
+            onExit: (context, state) async =>
+                await ref
+                    .read(assetEquipmentControllerProvider)
+                    ?.service
+                    .canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/analytics',
+            builder: (context, state) => const AnalyticsScreen(),
+          ),
           for (final module in const [
             (
               'finance',
               'Finance',
               'Ledger, AR/AP, cash, tax and financial reporting.',
-            ),
-            (
-              'analytics',
-              'Analytics',
-              'Role-aware operating and financial intelligence.',
-            ),
-            (
-              'control',
-              'Jentra Control',
-              'Plans, entitlements, usage and tenant operations.',
             ),
           ])
             GoRoute(
@@ -533,6 +566,10 @@ final routerProvider = Provider<GoRouter>((ref) {
                 description: module.$3,
               ),
             ),
+          GoRoute(
+            path: '/control',
+            builder: (context, state) => const Wave5ControlScreen(),
+          ),
           GoRoute(
             path: '/catalogue',
             builder: (context, state) => const ComponentCatalogueScreen(),

@@ -1,0 +1,1947 @@
+{
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "operation": "read-only ledger and contract fingerprint refresh",
+  "ledger": [
+    {
+      "name": "create_greenfield_foundation",
+      "version": "20260831193714"
+    },
+    {
+      "name": "harden_foundation_rls_and_indexes",
+      "version": "20260831193857"
+    },
+    {
+      "name": "simplify_invitation_read_policy",
+      "version": "20260831194005"
+    },
+    {
+      "name": "optimize_invitation_auth_initplan",
+      "version": "20260901005825"
+    },
+    {
+      "name": "create_wave2_shared_foundation_schema",
+      "version": "20260901090317"
+    },
+    {
+      "name": "create_wave2_command_helpers",
+      "version": "20260901090331"
+    },
+    {
+      "name": "create_wave2_setup_upsert_command",
+      "version": "20260901090354"
+    },
+    {
+      "name": "create_wave2_special_commands",
+      "version": "20260901090406"
+    },
+    {
+      "name": "expose_wave2_versioned_api",
+      "version": "20260901090420"
+    },
+    {
+      "name": "cover_wave2_foreign_keys",
+      "version": "20260901090642"
+    },
+    {
+      "name": "validate_wave2_attachment_aggregates",
+      "version": "20260901091132"
+    },
+    {
+      "name": "enforce_wave2_fiscal_period_lifecycle",
+      "version": "20260903045702"
+    },
+    {
+      "name": "enforce_wave2_workflow_lifecycle",
+      "version": "20260903051423"
+    },
+    {
+      "name": "align_wave2_setup_contracts",
+      "version": "20260903110103"
+    },
+    {
+      "name": "bound_wave2_report_rows",
+      "version": "20260903110716"
+    },
+    {
+      "name": "wave3_operational_foundation",
+      "version": "20260904121647"
+    },
+    {
+      "name": "cover_wave3_foreign_keys",
+      "version": "20260904122313"
+    },
+    {
+      "name": "create_wave3_crm_pipeline_schema",
+      "version": "20260904125910"
+    },
+    {
+      "name": "create_wave3_crm_pipeline_commands",
+      "version": "20260904130000"
+    },
+    {
+      "name": "add_crm_pipeline_aging_summary",
+      "version": "20260904135959"
+    },
+    {
+      "name": "create_wave3_quotation_schema",
+      "version": "20260905050419"
+    },
+    {
+      "name": "create_wave3_quotation_commands",
+      "version": "20260905050428"
+    },
+    {
+      "name": "create_wave3_order_credit_reservation_schema",
+      "version": "20260905050436"
+    },
+    {
+      "name": "create_wave3_order_credit_reservation_commands",
+      "version": "20260905050444"
+    },
+    {
+      "name": "cover_wave3_lead_to_cash_foreign_keys",
+      "version": "20260905050839"
+    },
+    {
+      "name": "stabilize_wave3_discount_allocation",
+      "version": "20260905054457"
+    },
+    {
+      "name": "harden_crm_pipeline_ac302",
+      "version": "20260905123934"
+    },
+    {
+      "name": "complete_quotation_workspace_contracts",
+      "version": "20260906153036"
+    },
+    {
+      "name": "complete_sales_order_workspace",
+      "version": "20260907044241"
+    },
+    {
+      "name": "complete_delivery_receivables",
+      "version": "20260910135010"
+    },
+    {
+      "name": "harden_receivables_reference_indexes",
+      "version": "20260910135507"
+    },
+    {
+      "name": "governed_stock_openings",
+      "version": "20260910201410"
+    },
+    {
+      "name": "governed_warehouse_setup",
+      "version": "20260911065744"
+    },
+    {
+      "name": "stock_opening_approver_setup",
+      "version": "20260911130900"
+    },
+    {
+      "name": "wave4_employee_foundation",
+      "version": "20260925181927"
+    },
+    {
+      "name": "wave4_calendar_versions",
+      "version": "20260926082441"
+    },
+    {
+      "name": "wave4_private_hr",
+      "version": "20260929224939"
+    }
+  ],
+  "checkedAt": "2026-10-07T19:07:11.046218+00:00",
+  "payrollRuns": null,
+  "providerRls": [
+    {
+      "table": "plan_entitlements",
+      "forced": false,
+      "schema": "billing",
+      "enabled": true
+    },
+    {
+      "table": "tenant_subscriptions",
+      "forced": false,
+      "schema": "billing",
+      "enabled": true
+    },
+    {
+      "table": "command_receipts",
+      "forced": true,
+      "schema": "core",
+      "enabled": true
+    },
+    {
+      "table": "memberships",
+      "forced": false,
+      "schema": "core",
+      "enabled": true
+    },
+    {
+      "table": "outbox_events",
+      "forced": true,
+      "schema": "core",
+      "enabled": true
+    },
+    {
+      "table": "opportunities",
+      "forced": true,
+      "schema": "crm",
+      "enabled": true
+    },
+    {
+      "table": "process_events",
+      "forced": true,
+      "schema": "workflow",
+      "enabled": true
+    }
+  ],
+  "latestVersion": "20260929224939",
+  "migrationCount": 37,
+  "analyticsSchema": null,
+  "providerColumns": [
+    {
+      "type": "text",
+      "scale": null,
+      "table": "plan_entitlements",
+      "column": "plan_code",
+      "schema": "billing",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "plan_entitlements",
+      "column": "entitlement_code",
+      "schema": "billing",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "bool",
+      "scale": null,
+      "table": "plan_entitlements",
+      "column": "enabled",
+      "schema": "billing",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "numeric",
+      "scale": 6,
+      "table": "plan_entitlements",
+      "column": "numeric_limit",
+      "schema": "billing",
+      "nullable": "YES",
+      "precision": 20
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "tenant_subscriptions",
+      "column": "id",
+      "schema": "billing",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "tenant_subscriptions",
+      "column": "tenant_id",
+      "schema": "billing",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "tenant_subscriptions",
+      "column": "plan_code",
+      "schema": "billing",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "tenant_subscriptions",
+      "column": "status",
+      "schema": "billing",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "int4",
+      "scale": 0,
+      "table": "tenant_subscriptions",
+      "column": "seats",
+      "schema": "billing",
+      "nullable": "NO",
+      "precision": 32
+    },
+    {
+      "type": "timestamptz",
+      "scale": null,
+      "table": "tenant_subscriptions",
+      "column": "trial_ends_at",
+      "schema": "billing",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "timestamptz",
+      "scale": null,
+      "table": "tenant_subscriptions",
+      "column": "current_period_ends_at",
+      "schema": "billing",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "int8",
+      "scale": 0,
+      "table": "tenant_subscriptions",
+      "column": "version",
+      "schema": "billing",
+      "nullable": "NO",
+      "precision": 64
+    },
+    {
+      "type": "timestamptz",
+      "scale": null,
+      "table": "tenant_subscriptions",
+      "column": "created_at",
+      "schema": "billing",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "timestamptz",
+      "scale": null,
+      "table": "tenant_subscriptions",
+      "column": "updated_at",
+      "schema": "billing",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "command_receipts",
+      "column": "id",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "command_receipts",
+      "column": "tenant_id",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "command_receipts",
+      "column": "actor_id",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "command_receipts",
+      "column": "idempotency_key",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "command_receipts",
+      "column": "command_name",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "command_receipts",
+      "column": "request_id",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "jsonb",
+      "scale": null,
+      "table": "command_receipts",
+      "column": "response",
+      "schema": "core",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "jsonb",
+      "scale": null,
+      "table": "command_receipts",
+      "column": "error",
+      "schema": "core",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "timestamptz",
+      "scale": null,
+      "table": "command_receipts",
+      "column": "created_at",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "command_receipts",
+      "column": "request_hash",
+      "schema": "core",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "command_receipts",
+      "column": "command_id",
+      "schema": "core",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "command_receipts",
+      "column": "correlation_id",
+      "schema": "core",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "command_receipts",
+      "column": "aggregate_type",
+      "schema": "core",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "command_receipts",
+      "column": "aggregate_id",
+      "schema": "core",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "command_receipts",
+      "column": "legal_entity_id",
+      "schema": "core",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "command_receipts",
+      "column": "branch_id",
+      "schema": "core",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "jsonb",
+      "scale": null,
+      "table": "command_receipts",
+      "column": "source_context",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "timestamptz",
+      "scale": null,
+      "table": "command_receipts",
+      "column": "completed_at",
+      "schema": "core",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "memberships",
+      "column": "id",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "memberships",
+      "column": "tenant_id",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "memberships",
+      "column": "user_id",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "memberships",
+      "column": "status",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "memberships",
+      "column": "invited_by",
+      "schema": "core",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "timestamptz",
+      "scale": null,
+      "table": "memberships",
+      "column": "joined_at",
+      "schema": "core",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "int8",
+      "scale": 0,
+      "table": "memberships",
+      "column": "version",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": 64
+    },
+    {
+      "type": "timestamptz",
+      "scale": null,
+      "table": "memberships",
+      "column": "created_at",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "timestamptz",
+      "scale": null,
+      "table": "memberships",
+      "column": "updated_at",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "outbox_events",
+      "column": "id",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "outbox_events",
+      "column": "tenant_id",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "outbox_events",
+      "column": "topic",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "outbox_events",
+      "column": "aggregate_type",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "outbox_events",
+      "column": "aggregate_id",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "jsonb",
+      "scale": null,
+      "table": "outbox_events",
+      "column": "payload",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "outbox_events",
+      "column": "status",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "int4",
+      "scale": 0,
+      "table": "outbox_events",
+      "column": "attempts",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": 32
+    },
+    {
+      "type": "timestamptz",
+      "scale": null,
+      "table": "outbox_events",
+      "column": "available_at",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "timestamptz",
+      "scale": null,
+      "table": "outbox_events",
+      "column": "processed_at",
+      "schema": "core",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "outbox_events",
+      "column": "last_error",
+      "schema": "core",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "timestamptz",
+      "scale": null,
+      "table": "outbox_events",
+      "column": "created_at",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "outbox_events",
+      "column": "actor_id",
+      "schema": "core",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "outbox_events",
+      "column": "request_id",
+      "schema": "core",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "outbox_events",
+      "column": "command_id",
+      "schema": "core",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "outbox_events",
+      "column": "correlation_id",
+      "schema": "core",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "jsonb",
+      "scale": null,
+      "table": "outbox_events",
+      "column": "source_context",
+      "schema": "core",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "opportunities",
+      "column": "id",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "opportunities",
+      "column": "tenant_id",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "opportunities",
+      "column": "legal_entity_id",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "opportunities",
+      "column": "branch_id",
+      "schema": "crm",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "opportunities",
+      "column": "code",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "opportunities",
+      "column": "source_lead_id",
+      "schema": "crm",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "opportunities",
+      "column": "party_id",
+      "schema": "crm",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "opportunities",
+      "column": "contact_id",
+      "schema": "crm",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "opportunities",
+      "column": "prospect_name",
+      "schema": "crm",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "opportunities",
+      "column": "owner_id",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "opportunities",
+      "column": "stage",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "numeric",
+      "scale": 2,
+      "table": "opportunities",
+      "column": "probability",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": 5
+    },
+    {
+      "type": "numeric",
+      "scale": 6,
+      "table": "opportunities",
+      "column": "expected_value",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": 20
+    },
+    {
+      "type": "numeric",
+      "scale": 6,
+      "table": "opportunities",
+      "column": "weighted_value",
+      "schema": "crm",
+      "nullable": "YES",
+      "precision": 20
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "opportunities",
+      "column": "currency_code",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "date",
+      "scale": null,
+      "table": "opportunities",
+      "column": "expected_close_date",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "opportunities",
+      "column": "next_action",
+      "schema": "crm",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "jsonb",
+      "scale": null,
+      "table": "opportunities",
+      "column": "products_of_interest",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "opportunities",
+      "column": "forecast_bucket",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "opportunities",
+      "column": "won_loss_reason",
+      "schema": "crm",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "opportunities",
+      "column": "status",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "int8",
+      "scale": 0,
+      "table": "opportunities",
+      "column": "version",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": 64
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "opportunities",
+      "column": "request_id",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "opportunities",
+      "column": "command_id",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "opportunities",
+      "column": "correlation_id",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "jsonb",
+      "scale": null,
+      "table": "opportunities",
+      "column": "source_context",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "timestamptz",
+      "scale": null,
+      "table": "opportunities",
+      "column": "client_timestamp",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "opportunities",
+      "column": "created_by",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "opportunities",
+      "column": "updated_by",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "timestamptz",
+      "scale": null,
+      "table": "opportunities",
+      "column": "created_at",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "timestamptz",
+      "scale": null,
+      "table": "opportunities",
+      "column": "updated_at",
+      "schema": "crm",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "process_events",
+      "column": "id",
+      "schema": "workflow",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "process_events",
+      "column": "tenant_id",
+      "schema": "workflow",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "process_events",
+      "column": "legal_entity_id",
+      "schema": "workflow",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "process_events",
+      "column": "branch_id",
+      "schema": "workflow",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "process_events",
+      "column": "workflow_instance_id",
+      "schema": "workflow",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "process_events",
+      "column": "workflow_definition_id",
+      "schema": "workflow",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "int4",
+      "scale": 0,
+      "table": "process_events",
+      "column": "workflow_revision",
+      "schema": "workflow",
+      "nullable": "YES",
+      "precision": 32
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "process_events",
+      "column": "document_type",
+      "schema": "workflow",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "process_events",
+      "column": "document_id",
+      "schema": "workflow",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "process_events",
+      "column": "from_status",
+      "schema": "workflow",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "process_events",
+      "column": "to_status",
+      "schema": "workflow",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "process_events",
+      "column": "actor_id",
+      "schema": "workflow",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "process_events",
+      "column": "owner_id",
+      "schema": "workflow",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "timestamptz",
+      "scale": null,
+      "table": "process_events",
+      "column": "entered_at",
+      "schema": "workflow",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "timestamptz",
+      "scale": null,
+      "table": "process_events",
+      "column": "completed_at",
+      "schema": "workflow",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "numeric",
+      "scale": 6,
+      "table": "process_events",
+      "column": "active_minutes",
+      "schema": "workflow",
+      "nullable": "NO",
+      "precision": 20
+    },
+    {
+      "type": "numeric",
+      "scale": 6,
+      "table": "process_events",
+      "column": "wait_minutes",
+      "schema": "workflow",
+      "nullable": "NO",
+      "precision": 20
+    },
+    {
+      "type": "text",
+      "scale": null,
+      "table": "process_events",
+      "column": "reason",
+      "schema": "workflow",
+      "nullable": "YES",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "process_events",
+      "column": "request_id",
+      "schema": "workflow",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "process_events",
+      "column": "command_id",
+      "schema": "workflow",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "uuid",
+      "scale": null,
+      "table": "process_events",
+      "column": "correlation_id",
+      "schema": "workflow",
+      "nullable": "NO",
+      "precision": null
+    },
+    {
+      "type": "timestamptz",
+      "scale": null,
+      "table": "process_events",
+      "column": "created_at",
+      "schema": "workflow",
+      "nullable": "NO",
+      "precision": null
+    }
+  ],
+  "apiFunctionCount": 85,
+  "financialReports": null,
+  "attendanceIntervals": null,
+  "functionFingerprints": [
+    {
+      "name": "accept_invitation",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_token text",
+      "securityDefiner": false,
+      "definitionSha256": "caaa05b692d7215233b9be947c3f3d5cf4f4540b4e2cf5f39fb49577f93131c7"
+    },
+    {
+      "name": "accept_stock_opening_invitation",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_invitation_id uuid, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "cb2aba2c1a13c8b889635d63ea6c31e72c9b973dfb7cf0887900f0cbbce3216d"
+    },
+    {
+      "name": "allocate_customer_receipt",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "c4a8efd7a622515fba3fd4dd5028793bf15fabe6daa649149bac4d3f06822a85"
+    },
+    {
+      "name": "bootstrap_tenant",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_name text, p_slug text, p_legal_entity_name text, p_legal_entity_code text, p_branch_name text, p_branch_code text, p_timezone text, p_currency_code text, p_idempotency_key uuid",
+      "securityDefiner": false,
+      "definitionSha256": "8b30ab19697b6d937e076d61ba047e20512b7bf11505ae27e2811c428cfb246f"
+    },
+    {
+      "name": "complete_attachment",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_attachment_id uuid, p_checksum_sha256 text, p_expected_version bigint, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "c1c51b49c5ac7e804f1cf7ebc37f40994a9337f1a8d6809a1f1aadb8abb5880d"
+    },
+    {
+      "name": "convert_lead",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "2c4294b8d0b6d381e3a834aaa5980c19f6c94241ff2f25b281ada3251fe79105"
+    },
+    {
+      "name": "convert_quotation_to_order",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "98feed7cd9cf7f139d95fda95b7ff557f6f851ad44fab92449de9783d688e235"
+    },
+    {
+      "name": "create_export_job",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_resource text, p_file_format text, p_filters jsonb, p_columns jsonb, p_row_count integer, p_file_name text, p_file_size bigint, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "b8725570901c3a3ae44ec9bbff14667f8aeae521fa9a064f665098389462302a"
+    },
+    {
+      "name": "create_invitation",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_email text, p_role_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_expires_in_hours integer",
+      "securityDefiner": false,
+      "definitionSha256": "c67aba71ac4f0037559730f104c5765563d806689ca1a61ede1939ad7e0d369d"
+    },
+    {
+      "name": "customer_statement",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_customer_id uuid, p_currency_code text, p_as_of date, p_buckets integer[]",
+      "securityDefiner": true,
+      "definitionSha256": "0d356feb1dcb12c0b61c204b298fcf094018426fc528ca4202a350e42ce3fe48"
+    },
+    {
+      "name": "decide_operational_approval",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "1de179632e84b87621f190146f4f79db504276345aaf071addca409fd6d599dd"
+    },
+    {
+      "name": "get_crm_pipeline_summary",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of_date date",
+      "securityDefiner": false,
+      "definitionSha256": "41763c3d18de7da6f3d5016c87083f4dae54e916a48033535b17f4dc57a7d664"
+    },
+    {
+      "name": "get_my_capabilities",
+      "schema": "api",
+      "returns": "TABLE(permission_code text)",
+      "arguments": "p_tenant_id uuid",
+      "securityDefiner": false,
+      "definitionSha256": "4bbd85638248f503f585f2d8b3e639c6f4234982370634e28c4b8855006900bd"
+    },
+    {
+      "name": "get_sales_order_credit_preview",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_sales_order_id uuid",
+      "securityDefiner": true,
+      "definitionSha256": "db2ca6d476505c189bfb47acfc422e586506328cfceebd27e90b60cb9817302e"
+    },
+    {
+      "name": "import_setup_records",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_resource text, p_file_format text, p_file_name text, p_file_size bigint, p_rows jsonb, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "fa0050e8e180f68e5b51fb397a138abaa1637082e33d512582ea7d5cd894fe01"
+    },
+    {
+      "name": "invite_stock_opening_approver",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_email text, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "a8b5f28d4e9bb25c3f02fa1ef6255464e2e5860dbc7831f6bebc4a68b9172c03"
+    },
+    {
+      "name": "list_my_stock_opening_invitations",
+      "schema": "api",
+      "returns": "TABLE(id uuid, tenant_name text, legal_entity_name text, branch_name text, expires_at timestamp with time zone)",
+      "arguments": "",
+      "securityDefiner": true,
+      "definitionSha256": "e23f5510b740b773f4b94b926c1ac1ab0fc185b82902f80ed0ec59a2087d6076"
+    },
+    {
+      "name": "list_my_tenants",
+      "schema": "api",
+      "returns": "TABLE(tenant_id uuid, tenant_name text, tenant_slug text, tenant_status text, timezone text, default_currency_code text, membership_status text, joined_at timestamp with time zone)",
+      "arguments": "",
+      "securityDefiner": false,
+      "definitionSha256": "ebe17d291fd7bfd6ddd98bf8a3d2302d5dbfd05fce9a8aaa84cc13964dfdabcd"
+    },
+    {
+      "name": "mark_notification_read",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_notification_id uuid, p_expected_version bigint, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "36a699be498ab06b1038d8a2a5e159064a54a99f7ac2f5fccd873d88d6a5649d"
+    },
+    {
+      "name": "people_calendar_command",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "0a6271518f831062f6ed9a80e9ef6d37ca7f0b11ee2f23a81c07582858bcdc0d"
+    },
+    {
+      "name": "people_calendar_detail",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_calendar_id uuid, p_version_id uuid",
+      "securityDefiner": true,
+      "definitionSha256": "4d6588c249a30f01a593243e80eaec416310aa3f5c0684fb8b7086514c1bd060"
+    },
+    {
+      "name": "people_calendar_directory",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of date, p_search text, p_after uuid",
+      "securityDefiner": true,
+      "definitionSha256": "813d9bf6d0bc897b41caa2ea22694006e88cc20e64fb0b2b84631938994ae960"
+    },
+    {
+      "name": "people_calendar_history",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_calendar_id uuid, p_after uuid",
+      "securityDefiner": true,
+      "definitionSha256": "0efc217e8add328e6b1eb18cafb9dd2ca69653c62435c1e6e4419fe7f7808764"
+    },
+    {
+      "name": "people_calendar_versions",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_calendar_id uuid, p_after uuid",
+      "securityDefiner": true,
+      "definitionSha256": "04cc59962294030663de91b5832cfede9f99b45c448cfb681f335d1920c8dbd1"
+    },
+    {
+      "name": "people_employee_branches",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_search text",
+      "securityDefiner": true,
+      "definitionSha256": "62e22c8e1a79815e5a89be35ea4665e89238bf4023226d83aba486e74ff4d8b1"
+    },
+    {
+      "name": "people_employee_command",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "d8b256409088b352005e051e1187b165256813588d193fa60ca4bea964786213"
+    },
+    {
+      "name": "people_employee_detail",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_as_of date, p_status text",
+      "securityDefiner": true,
+      "definitionSha256": "8058886e4a732b85f31e44cbb98406e0dd77b0eaf49a028c08074f077629f0c8"
+    },
+    {
+      "name": "people_employee_directory",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of date, p_status text, p_search text, p_after uuid",
+      "securityDefiner": true,
+      "definitionSha256": "bfe2a6da75e0d3f7aacda611907afbb8877f78882c97b589fc2487f7ce4b8416"
+    },
+    {
+      "name": "people_employee_history",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+      "securityDefiner": true,
+      "definitionSha256": "a9568c4690185654fc0bcf171fc56e77e2c64ba85f03d45c9dd3cb6930f61825"
+    },
+    {
+      "name": "people_hr_access",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_capability text",
+      "securityDefiner": true,
+      "definitionSha256": "6d7cd52674fbed6b3b56289adeec761e52b17847c9c65485e632a41b5304026a"
+    },
+    {
+      "name": "people_hr_command",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "9e5bf9f2a625b25759fb652e64a3f4531d435115b610b27d546b4c2813edf24a"
+    },
+    {
+      "name": "people_hr_document_ticket",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_document_id uuid, p_operation text",
+      "securityDefiner": true,
+      "definitionSha256": "6f9ec927fbb8e8d6f7d7fabec4953e89036b5a83568794aa9c7a140158f392cc"
+    },
+    {
+      "name": "people_hr_documents",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+      "securityDefiner": true,
+      "definitionSha256": "184f22cabc5c70d41ae6bb6d34ed3ef84f99c3387b90e341a76b9f355fd2f022"
+    },
+    {
+      "name": "people_hr_erasure_status",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+      "securityDefiner": true,
+      "definitionSha256": "de96430bfebcb8be52ee84d1a8e091978a3b7533b9df8023071c44b2bbfcdc70"
+    },
+    {
+      "name": "people_hr_export_content",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_export_id uuid",
+      "securityDefiner": true,
+      "definitionSha256": "c69b5eaf648c48f68b6f622d3543a03b33adc1ef7eeb779b41b53c6c7b92ecaa"
+    },
+    {
+      "name": "people_hr_link_inbox",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+      "securityDefiner": true,
+      "definitionSha256": "28064b2b1344a434c283a65705cbcf117c33d0b9337958190f9f7960b793ba74"
+    },
+    {
+      "name": "people_hr_links",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+      "securityDefiner": true,
+      "definitionSha256": "814e0fe233f3001871b2b8393cfc53145177e654e042a010526c6672770e0441"
+    },
+    {
+      "name": "people_hr_memberships",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+      "securityDefiner": true,
+      "definitionSha256": "0c6515b9967cf594d85373720fc3af4e407b34c670512ae197357e96abc17f33"
+    },
+    {
+      "name": "people_hr_own_receipt",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid",
+      "securityDefiner": true,
+      "definitionSha256": "5782ec29e6b73c631234616d59ca1338f0171b8b46a062dfe5e88650d49a7fda"
+    },
+    {
+      "name": "people_hr_policy",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+      "securityDefiner": true,
+      "definitionSha256": "073e797b1f4000c4aae529ac7e571b7575f668e0f3567732512f11c63cb0fda7"
+    },
+    {
+      "name": "people_hr_profile",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+      "securityDefiner": true,
+      "definitionSha256": "de02b3112b36788213033bb277cce8742cab832d7cfbe0bbfaab5e275b4abf66"
+    },
+    {
+      "name": "people_hr_review_history",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_review_id uuid, p_after uuid",
+      "securityDefiner": true,
+      "definitionSha256": "43a8e8b0866470b773a81c8f4d12f2f573e2d96aae54d3e6bd0e7b9d0260e3d7"
+    },
+    {
+      "name": "people_hr_reviews",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+      "securityDefiner": true,
+      "definitionSha256": "ceb7d880ae5ad1f5cc5cdb2cb9ab03420286df2d8a086b3dc2f11fe54c561768"
+    },
+    {
+      "name": "people_hr_self",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+      "securityDefiner": true,
+      "definitionSha256": "d2dba201f33582d451ab29fdde0c13c67bd2b21328543bcd43db19bde9107db5"
+    },
+    {
+      "name": "people_hr_service_document",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_ticket_id uuid, p_user_id uuid",
+      "securityDefiner": true,
+      "definitionSha256": "625709bff05ce7cffee8f4e627f035d8c91d7a6855bfa849337f9ba91c760e72"
+    },
+    {
+      "name": "people_hr_service_verify_upload",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_ticket_id uuid, p_user_id uuid, p_checksum text, p_byte_size integer",
+      "securityDefiner": true,
+      "definitionSha256": "3fa26cacaa255c637ab4dd89818b85266401c92e7fc87524eca68cd68dbdf229"
+    },
+    {
+      "name": "people_hr_subjects",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_capability text, p_search text, p_after uuid",
+      "securityDefiner": true,
+      "definitionSha256": "482ad023618c1800050c5497151fad2f5179bdb2cfb987f065ed7fedb19f3c7c"
+    },
+    {
+      "name": "people_hr_worker_claim",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_limit integer",
+      "securityDefiner": true,
+      "definitionSha256": "7acbd785d0a70fe06e3bedec4256d50975e67bd53589f33ecbc64018f5378418"
+    },
+    {
+      "name": "people_hr_worker_complete",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_job_id uuid, p_lease_id uuid",
+      "securityDefiner": true,
+      "definitionSha256": "51e947a2aba4e796803cdd11018b70bf72360455edad027bd77613da14826f28"
+    },
+    {
+      "name": "people_hr_worker_register",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_artifact_digest text, p_storage_probe_digest text",
+      "securityDefiner": true,
+      "definitionSha256": "0948c98c9d642f3b47598a5f19852cb002d87dadfcbbaead454c61bee7f53fa1"
+    },
+    {
+      "name": "post_customer_receipt",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "36520336e62ef7d666f8e6b0bde2f4d355670b6acedeb5062dfd231acdabadd3"
+    },
+    {
+      "name": "post_delivery",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "87e4fc2ebb161ad8927f8a7abb4cf0bec2d52461119b1790bd58c294f0f0e8fc"
+    },
+    {
+      "name": "post_sales_invoice",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "72e0b6943ab9a61bf805ca4e686bf04be2f354c13b1a7218053b46e2f1f91270"
+    },
+    {
+      "name": "post_sales_return",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "5eac68021957506d609212d6ad379df141c7957598049d65d64070b410d34152"
+    },
+    {
+      "name": "post_stock_opening",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "f42f8c0ecbb2ceea7150c8a16eaf3e75496847fa5406eef778cc12a0827bf9b9"
+    },
+    {
+      "name": "record_crm_activity",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "0bb056bbbed42d80da3485c7fff276149d54100b746739f5c7939dbc7c290c7e"
+    },
+    {
+      "name": "register_attachment",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_payload jsonb, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "5b08bb4c8f1d6ff406e06648450ee64f79be22680f00953affb336ab143d038a"
+    },
+    {
+      "name": "reserve_document_number",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_sequence_id uuid, p_document_date date, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "f952e3ad12a2846e68c510fba1002d80842b7fb853ba11b2baa2a403259fce39"
+    },
+    {
+      "name": "reserve_sales_order_stock",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "98b956846f93a00bc06f6988784262913973d07d93b6cb769232082a8ec510b3"
+    },
+    {
+      "name": "transition_operational_document",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "db0b630a813adc5c3dafff05bbff3a5754ddb4c6769469264b32e6f48439714e"
+    },
+    {
+      "name": "transition_stock_opening",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "b6c3c9141f07f87b65911a8686635ff870c93aefbbec2985c4d38fd2b460d400"
+    },
+    {
+      "name": "update_sales_order_fulfillment",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "b769fad12b87e1f9583538ecc99ddc0955e58038ad90722d8f585cae05d051c8"
+    },
+    {
+      "name": "upsert_account",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "a1172265040a3b1ec8923494f03979c588f77b144169bc3ee197c5456e619ac5"
+    },
+    {
+      "name": "upsert_approval_matrix_step",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "e2e8ff1447600ad8d850ee3c7730bd8c6b7d92f22dc44132d71de79ecdcc0ad3"
+    },
+    {
+      "name": "upsert_contact",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "a23c44eba33c2496cc56a44143bf44e485d7d31f97d11c6b22afc0dbf4cf95aa"
+    },
+    {
+      "name": "upsert_customer_receipt",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "3151cf7f13de6657c17e59790890c2d398929f29eee30530a7f527ae646e0c52"
+    },
+    {
+      "name": "upsert_delivery",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "d47298d7952ffab9797a5823c04457a0ca3225d5cedc2b940b3c1d41f2a70caf"
+    },
+    {
+      "name": "upsert_document_sequence",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "b6dea9ceedbcbbb6ad838f7487038fd95d39fed4ffaf5e8eb877d4bde096bb1c"
+    },
+    {
+      "name": "upsert_exchange_rate",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "6a1be85d2a57073fa24b9b480a5c0a4546f9b92618a06d1924187643cbcadec3"
+    },
+    {
+      "name": "upsert_fiscal_period",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "68153eaaec719252a79aebcbfde7b82544fda242e53561b40b7caa8b8dd74dc4"
+    },
+    {
+      "name": "upsert_lead",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "939710987c4018ab8f10a7dcf34adfd472fc6e3aeac14a9cb06f226232fab8a2"
+    },
+    {
+      "name": "upsert_opportunity",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "0f9702203f3b843c52db17f0e5cabd4ed1e26d89b58adf6e010e50fa92707c16"
+    },
+    {
+      "name": "upsert_party",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "d8d64271e6321120e861ed75cd2ab96bbfcdfe16e3c0c3920e832838bd0fb99f"
+    },
+    {
+      "name": "upsert_product",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "f485f30d1b33c8634c328b7caf06c6954bc034b816843985f41edc62fd25850f"
+    },
+    {
+      "name": "upsert_receivables_setup",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "2a641caca192d044f53dd482a13f4249c2f8ec9174a3fdad876b88ef89df753c"
+    },
+    {
+      "name": "upsert_report_definition",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "eeda82c79a8de947b1a5c2a7172ec31a9c58b5f9dcf920aa9a5fc935bf6995c7"
+    },
+    {
+      "name": "upsert_sales_invoice",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "0d08ec558dc703ea693983d6049b5b7cab6d970a402aa0f69158ba315b60811d"
+    },
+    {
+      "name": "upsert_sales_order",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "221296b1e9557254bf732fc144f39b34f66138fe8ca772890ec8d0dafc85aca9"
+    },
+    {
+      "name": "upsert_sales_quotation",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "928fa6b00c99cf1bf0e1ba9a8edba11bfad3e9df52da78f8fe428e32e30c51c7"
+    },
+    {
+      "name": "upsert_sales_return",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "4a6973462ee7126355afeafcc4e73115e249e570e42896e29cbd78b393197970"
+    },
+    {
+      "name": "upsert_stock_opening",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+      "securityDefiner": true,
+      "definitionSha256": "720bd7611accfcbbd995663ab29bf4bff75ef0de1f9a4f299dd783f1f7bf98ec"
+    },
+    {
+      "name": "upsert_tax_definition",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "db29434cecc6dcc7beb8699b8a19857221effc4b2fc4105a429c682756ad1f8a"
+    },
+    {
+      "name": "upsert_unit",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "296dec9b6b31b42b54ff5722ff6cfdb063145e44fbd6f8b8a4f3e23c836b6b1d"
+    },
+    {
+      "name": "upsert_warehouse",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "aa253c57102af508cb23b5444c7aed6ddbbf5311df8675c6556c41ee310b5613"
+    },
+    {
+      "name": "upsert_workflow_definition",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+      "securityDefiner": true,
+      "definitionSha256": "cea0cb602b9e0952b05c001539d875a7090ef3cf152af6d618ed59448022e89a"
+    },
+    {
+      "name": "has_permission",
+      "schema": "core",
+      "returns": "boolean",
+      "arguments": "p_tenant_id uuid, p_permission_code text, p_legal_entity_id uuid, p_branch_id uuid",
+      "securityDefiner": true,
+      "definitionSha256": "df550dbe759cae15e1ab9b9d9cd34ce1b2c32927ad95784eb2a88fd02bf5dc09"
+    },
+    {
+      "name": "require_permission",
+      "schema": "core",
+      "returns": "void",
+      "arguments": "p_tenant_id uuid, p_permission_code text, p_legal_entity_id uuid, p_branch_id uuid",
+      "securityDefiner": false,
+      "definitionSha256": "f42f67cf2e94ee8b74c83b542f35bb6bda663f9bf62e794dc6f521a13074077c"
+    },
+    {
+      "name": "wave2_replay",
+      "schema": "core",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_command_name text, p_idempotency_key uuid, p_request_hash text",
+      "securityDefiner": true,
+      "definitionSha256": "39a6111fcd32863de490dfe3ff2d3bf7c25fa08e609ee4e0f01b7a35b4aa1e28"
+    },
+    {
+      "name": "wave2_request_hash",
+      "schema": "core",
+      "returns": "text",
+      "arguments": "p_command_name text, p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint",
+      "securityDefiner": false,
+      "definitionSha256": "767a203f5690d49ccf8a737dcd8e68245cba628262dc7367f5b9d1d6260abdcd"
+    },
+    {
+      "name": "wave3_finish_command",
+      "schema": "core",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_command_name text, p_command_id uuid, p_aggregate_type text, p_aggregate_id uuid, p_idempotency_key uuid, p_request_hash text, p_before jsonb, p_entity jsonb, p_legal_entity_id uuid, p_branch_id uuid, p_source_context jsonb, p_process_event jsonb, p_outbox_events jsonb, p_warnings jsonb, p_request_id uuid, p_correlation_id uuid",
+      "securityDefiner": true,
+      "definitionSha256": "a39d0846be9c1647dde9778f3c245499da7768b06dc7434e35c20cd0b877fdb1"
+    },
+    {
+      "name": "wave3_replay",
+      "schema": "core",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_command_name text, p_command_id uuid, p_idempotency_key uuid, p_request_hash text",
+      "securityDefiner": true,
+      "definitionSha256": "6340ce8a5e18cd200f8937e1985e02a362f0aac18eb8a276a7df11c1b7fc1c91"
+    },
+    {
+      "name": "wave3_request_hash",
+      "schema": "core",
+      "returns": "text",
+      "arguments": "p_command_name text, p_command_id uuid, p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_payload jsonb, p_expected_version bigint",
+      "securityDefiner": false,
+      "definitionSha256": "024ba0bb89bb2c3c267e2f1d0d63103e01d3b685bb0a9c64eb29a3c8876d0442"
+    }
+  ],
+  "intelligenceControlSchema": null,
+  "trialStartedAtColumnCount": 0
+}

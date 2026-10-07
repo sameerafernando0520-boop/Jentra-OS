@@ -1,0 +1,20 @@
+{
+  "observed_at": "2026-10-06T05:49:27.772Z",
+  "project_id": "xpdoufauvrbdmxgngetv",
+  "transport": "connected_supabase_mcp",
+  "mcp_is_error": true,
+  "input": "docs/verification/remaining-wave3/database-strict-procurement-negative-stock-resume-20261006.sql",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"name\":\"HttpException\",\"message\":\"Failed to run sql query: ERROR:  42702: column reference \\\"provisional_value\\\" is ambiguous\\nLINE 17211: insert into procurement_test_results select is((select sum(provisional_value) from inventory.negative_stock_covers c join inventory.negative_stock_deficits d on d.id=c.deficit_id where d.product_id=pg_temp.fid('negative.rounded')),7::numeric,'partial covers sum to exact original provisional7');\\n                                                                       ^\\n\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error_code": "INVALID_ARGUMENT"
+    },
+    "isError": true
+  },
+  "boundary": "Strict synthetic rollback; failed execution, no completed assertion claim."
+}

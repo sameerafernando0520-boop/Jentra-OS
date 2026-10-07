@@ -1,0 +1,53 @@
+{
+  "generated_at": "2026-10-06T07:37:37.451Z",
+  "report": {
+    "file": "docs/verification/remaining-wave3/requirements-coverage-policy-declaration-reviewed-20261006-final.json",
+    "sha256": "913957e1602e8de28ca79afc032063efda24e2f90274010c141faf8a101dd67b"
+  },
+  "selection": {
+    "file": "docs/verification/remaining-wave3/requirements-additional-pure-domain-paths-negative-stock-policy-20261003.txt",
+    "sha256": "3359fe82366d4c2b6f65fd967aee3623e0a547cf62c2c5ab4575fd8bc78c624f"
+  },
+  "locked_pure_domain": {
+    "files": 25,
+    "lines": 2073,
+    "lines_hit": 1956,
+    "branches": 679,
+    "branches_hit": 638,
+    "line_percent": 94.35600578871201,
+    "branch_percent": 93.96170839469808,
+    "unmeasured_executable": [],
+    "source_mismatches": []
+  },
+  "additional_pure_domain": [
+    {
+      "file": "packages/jentra_domain/lib/src/negative_stock_policy.dart",
+      "source_sha256": "f40265503880a3873f724130f5b394d0d685eafd65e6d75bfe94dd6ed76659f1",
+      "execution_source_matches": true,
+      "changed": true,
+      "pure_domain": false,
+      "declarations_only": false,
+      "constant_data_only": false,
+      "measured": true,
+      "lines": 84,
+      "lines_hit": 84,
+      "branches": 41,
+      "branches_hit": 41
+    }
+  ],
+  "combined_pure_domain": {
+    "files": 26,
+    "lines": 2157,
+    "lines_hit": 2040,
+    "branches": 720,
+    "branches_hit": 679,
+    "line_percent": 94.57579972183588,
+    "branch_percent": 94.30555555555556,
+    "unmeasured_executable": [],
+    "source_mismatches": []
+  },
+  "gates": {
+    "combined_pure_domain_branch_90": true
+  },
+  "boundary": "Explicit added pure-domain files extend the locked 25-file gate using source-matched actual measured branches. Original raw report, source scope, per-file hits/denominators and 90% threshold are preserved; no synthetic coverage or discarded executable paths."
+}

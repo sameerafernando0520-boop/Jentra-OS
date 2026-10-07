@@ -1,0 +1,12 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"error\":{\"name\":\"HttpException\",\"message\":\"Failed to run sql query: ERROR:  22P02: invalid input syntax for type json\\nLINE 3511: insert into expense_evidence_samples select 'proof',jsonb_build_array(body->'entity'-array['tenant_id','legal_entity_id','branch_id','record_version','status','project_id','expense_id','action']) from expense_evidence_samples where label='active';\\n                                                                                       ^\\nDETAIL:  Token \\\"entity\\\" is invalid.\\nCONTEXT:  JSON data, line 1: entity\\n\"}}"
+    }
+  ],
+  "structuredContent": {
+    "error_code": "INVALID_ARGUMENT"
+  },
+  "isError": true
+}
