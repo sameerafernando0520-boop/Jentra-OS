@@ -90,6 +90,7 @@ final class CashScenario {
       'payables',
       'payroll',
       'project_expenses',
+      'project_reimbursements',
     };
     if (!allowed.containsAll(requiredProviders) ||
         !allowed.containsAll(completeProviders) ||
@@ -143,11 +144,12 @@ final class CashScenario {
       if (!same(o.scope) ||
           !requiredProviders.contains(o.provider) ||
           o.provider == 'bank_cash' ||
-          o.inflow != (o.provider == 'receivables') ||
+          (o.provider != 'payroll' &&
+              o.inflow != (o.provider == 'receivables')) ||
           o.remainingUnits.isNegative ||
           o.dueDate.isBefore(start) ||
           !o.dueDate.isBefore(end) ||
-          !identities.add('${o.provider}:${o.id}')) {
+          !identities.add('obligation:${o.id}')) {
         throw const FormatException(
           'Invalid, duplicate or foreign remaining obligation.',
         );

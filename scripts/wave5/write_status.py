@@ -18,6 +18,8 @@ def write(path, text):
 
 
 def main():
+    if (E / 'installation-result-20261008.json').exists():
+        raise ValueError('Preserve the approved pre-installation review and current installed status; do not regenerate historical files')
     review = read_json('installation-review-' + DATE + '.json')
     attribution = read_json('windows-build-attribution-' + DATE + '.json')
     baseline = read_json('live-baseline-' + DATE + '.json')

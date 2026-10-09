@@ -1,0 +1,61 @@
+{
+  "recordedAt": "2026-10-07T19:51:41.442430+00:00",
+  "humanInstruction": "Approved: install those six migrations in xpdoufauvrbdmxgngetv.",
+  "targetProjectId": "xpdoufauvrbdmxgngetv",
+  "approvedReview": "docs/verification/wave5/installation-review-20261008.json",
+  "approvedReviewSha256": "111fd54ea90e2bad7088d781344148cf5220f49837603a69333fba3a708ecf21",
+  "preflight": "docs/verification/wave5/installation-preflight-20261008.json",
+  "preflightSha256": "32c2c32692fb9627e2dd8847784015f5e8a2baf207ff80707c31ab38b89d3d44",
+  "sourceHeadAtInstallation": "74232de355962b85b110a6abe0a5dd4dcadf238f",
+  "sourceAndProviderMatch": true,
+  "candidatesInOrder": [
+    {
+      "path": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+      "name": "wave5_process_metrics",
+      "bytesSha256": "be586326b7d8ec380a5524a5d8232e67639d677eb192b9fe29da135ee9ffe997",
+      "normalizedSqlSha256": "81428371f02b3fe199ae811ba164f6c8c5f4dde3292ab8d1918c5ac938350e48"
+    },
+    {
+      "path": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+      "name": "wave5_pipeline_forecasts",
+      "bytesSha256": "1ea4ab076cb3deaa9d0f7f92b56c47effc1a0ad45e14839156a2fd6a2d1bd8ed",
+      "normalizedSqlSha256": "f5a116125b921cd067e35c311a7bc5d6f1e7c8505cc7737fbf833cab87e13148"
+    },
+    {
+      "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "name": "wave5_trusted_metering",
+      "bytesSha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e",
+      "normalizedSqlSha256": "7ee92f5e8fdf3f6efdead52531341ad4fad6965e4d5a1a2ae05a5171151b905b"
+    },
+    {
+      "path": "supabase/migrations/20261006153000_wave5_operator_isolation.sql",
+      "name": "wave5_operator_isolation",
+      "bytesSha256": "29ce2ed18e40fb3fbf916e11b9ae82742eb75a52f252085eed48da9af9d88e8b",
+      "normalizedSqlSha256": "29ce2ed18e40fb3fbf916e11b9ae82742eb75a52f252085eed48da9af9d88e8b"
+    },
+    {
+      "path": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+      "name": "wave5_human_proposals",
+      "bytesSha256": "b75e9cf94107fd9a959ced43f9e643b163ed579f95fb68c8de7b9e739b10d02e",
+      "normalizedSqlSha256": "e11dec927537dfc6eaf8fca58eb821768e2208dba1ff97ea47b5bab2a51e7b78"
+    },
+    {
+      "path": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "name": "wave5_synthetic_subscriptions",
+      "bytesSha256": "339e9e86074887d164dd339eb17ac54943c39fca0caf50db575c48529456a9f5",
+      "normalizedSqlSha256": "08c3f24653cfc9118c6b74db317e7ed97b4a76a06a80f43a92db3c0d7265f6cb"
+    }
+  ],
+  "excludedScopes": [
+    "all other unapplied Wave 3/4 candidates",
+    "SQL test fixtures",
+    "tenant/account/operator/grant bootstrap",
+    "role assignments",
+    "enabling existing shared plan entitlements",
+    "real billing",
+    "credentials/vault keys/model provisioning",
+    "external sends",
+    "worker deployment"
+  ],
+  "bootstrapAuthorized": false
+}

@@ -1,0 +1,103 @@
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/pipeline_forecast_gateway_test.dart
+00:00 +0 -1: loading C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/pipeline_forecast_gateway_test.dart [E]
+  Failed to load "C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/pipeline_forecast_gateway_test.dart": Cannot open file, path = 'test/analytics/pipeline_sql_snapshot.json' (OS Error: The system cannot find the path specified, errno = 3)
+  dart:io                                                                            _File.readAsStringSync
+  packages\jentra_platform\test\analytics\pipeline_forecast_gateway_test.dart 12:19  main
+  
+00:00 +0 -1: loading C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_filter_store_test.dart
+00:00 +0 -1: C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_filter_store_test.dart: recreated encrypted store restores filters, binds actor and retains no evidence rows
+00:00 +0 -2: C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_filter_store_test.dart: recreated encrypted store restores filters, binds actor and retains no evidence rows [E]
+  DomainError(LOCAL_STORAGE_FULL, LOCAL_STORAGE_FULL · Secure local storage is unavailable. Keep this editor open, restore secure storage and retry saving. No local save was confirmed.)
+  package:jentra_platform/src/draft_repository.dart 86:7  EncryptedDraftRepository.save
+  
+00:00 +0 -2: C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_filter_store_test.dart: revocation prevents decryption of a persisted filter
+00:00 +0 -3: C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_filter_store_test.dart: revocation prevents decryption of a persisted filter [E]
+  DomainError(LOCAL_STORAGE_FULL, LOCAL_STORAGE_FULL · Secure local storage is unavailable. Keep this editor open, restore secure storage and retry saving. No local save was confirmed.)
+  package:jentra_platform/src/draft_repository.dart 86:7  EncryptedDraftRepository.save
+  
+00:00 +0 -3: loading C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_metric_gateway_test.dart
+00:01 +0 -4: loading C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_metric_gateway_test.dart [E]
+  Failed to load "C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_metric_gateway_test.dart": Cannot open file, path = 'test/analytics/process_sql_snapshot.json' (OS Error: The system cannot find the path specified, errno = 3)
+  dart:io                                                                         _File.readAsStringSync
+  packages\jentra_platform\test\analytics\process_metric_gateway_test.dart 12:60  main
+  
+00:01 +0 -4: loading C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_metric_hasher_test.dart
+00:03 +0 -4: C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_metric_hasher_test.dart: AC-558 nonempty canonical projection matches independent Python vector
+00:03 +1 -4: C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_metric_hasher_test.dart: AC-558 SHA-256 matches independent empty and ASCII vectors
+00:03 +2 -4: C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_metric_hasher_test.dart: AC-558 SHA-256 preserves binary bytes without text conversion
+00:03 +3 -4: C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_metric_hasher_test.dart: AC-558 canonical empty snapshot matches independent Python vector
+00:03 +4 -4: C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_metric_hasher_test.dart: AC-551 captured source digest changes when cutoff changes
+00:03 +5 -4: C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_metric_hasher_test.dart: AC-558 snapshot identity does not replace the captured value digest
+00:03 +6 -4: C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_metric_hasher_test.dart: AC-555 oversized digest payload fails before hashing
+00:03 +7 -4: C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_metric_hasher_test.dart: AC-558 invalid byte values cannot be normalized into evidence
+00:03 +8 -4: loading C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/wave5_command_store_test.dart
+00:06 +8 -4: C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/wave5_command_store_test.dart: closed database reopens encrypted original command and isolates namespaces
+00:06 +8 -5: C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/wave5_command_store_test.dart: closed database reopens encrypted original command and isolates namespaces [E]
+  DomainError(LOCAL_STORAGE_FULL, LOCAL_STORAGE_FULL · Secure local storage is unavailable. Keep this editor open, restore secure storage and retry saving. No local save was confirmed.)
+  package:jentra_platform/src/draft_repository.dart 86:7  EncryptedDraftRepository.save
+  
+00:06 +8 -5: C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/wave5_command_store_test.dart: revocation before and after decryption rejects recovered commands
+WARNING (drift): It looks like you've created the database class JentraLocalDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$JentraLocalDatabase (package:jentra_platform/src/local_database.g.dart:1094:44)
+#4      new JentraLocalDatabase (package:jentra_platform/src/local_database.dart)
+#5      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/packages/jentra_platform/test/analytics/wave5_command_store_test.dart:81:18)
+#6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:253:25)
+<asynchronous suspension>
+#7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:250:11)
+<asynchronous suspension>
+#8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:318:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:06 +8 -6: C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/wave5_command_store_test.dart: revocation before and after decryption rejects recovered commands [E]
+  DomainError(LOCAL_STORAGE_FULL, LOCAL_STORAGE_FULL · Secure local storage is unavailable. Keep this editor open, restore secure storage and retry saving. No local save was confirmed.)
+  package:jentra_platform/src/draft_repository.dart 86:7  EncryptedDraftRepository.save
+  
+00:06 +8 -6: C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/wave5_command_store_test.dart: unsupported, executable and malformed recovery parameters never persist
+WARNING (drift): It looks like you've created the database class JentraLocalDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$JentraLocalDatabase (package:jentra_platform/src/local_database.g.dart:1094:44)
+#4      new JentraLocalDatabase (package:jentra_platform/src/local_database.dart)
+#5      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/packages/jentra_platform/test/analytics/wave5_command_store_test.dart:104:18)
+#6      Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:253:25)
+<asynchronous suspension>
+#7      Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:250:11)
+<asynchronous suspension>
+#8      Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:318:9)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:06 +8 -7: C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/wave5_command_store_test.dart: unsupported, executable and malformed recovery parameters never persist [E]
+  Invalid argument(s): Couldn't resolve native function 'sqlite3_initialize' in 'package:sqlite3/src/ffi/libsqlite3.g.dart' : No asset with id 'package:sqlite3/src/ffi/libsqlite3.g.dart' found. No available native assets. Attempted to fallback to process lookup. None of the loaded modules contained the requested symbol 'sqlite3_initialize'..
+  
+  dart:ffi                                                Native._ffi_resolver_function
+  package:sqlite3/src/ffi/libsqlite3.g.dart               sqlite3_initialize
+  package:sqlite3/src/ffi/bindings.dart 202:23            FfiBindings.sqlite3_initialize
+  package:sqlite3/src/implementation/sqlite3.dart 32:25   Sqlite3Implementation.initialize
+  package:sqlite3/src/implementation/sqlite3.dart 49:5    Sqlite3Implementation.open
+  package:sqlite3/src/ffi/implementation.dart 29:18       FfiSqlite3.open
+  package:sqlite3/src/implementation/sqlite3.dart 100:12  Sqlite3Implementation.openInMemory
+  package:sqlite3/src/ffi/implementation.dart 35:18       FfiSqlite3.openInMemory
+  package:drift/native.dart 421:20                        _NativeDelegate.openDatabase
+  
+00:06 +8 -7: loading C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/wave5_control_gateway_test.dart
+00:07 +8 -8: loading C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/wave5_control_gateway_test.dart [E]
+  Failed to load "C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/wave5_control_gateway_test.dart": Cannot open file, path = 'test/analytics/proposal_sql_snapshot.json' (OS Error: The system cannot find the path specified, errno = 3)
+  dart:io                                                                        _File.readAsStringSync
+  packages\jentra_platform\test\analytics\wave5_control_gateway_test.dart 13:19  main
+  
+00:07 +8 -8: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/pipeline_forecast_gateway_test.dart: loading C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/pipeline_forecast_gateway_test.dart
+  C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_filter_store_test.dart: recreated encrypted store restores filters, binds actor and retains no evidence rows
+  C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_filter_store_test.dart: revocation prevents decryption of a persisted filter
+  C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_metric_gateway_test.dart: loading C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/process_metric_gateway_test.dart
+  ... and 4 more

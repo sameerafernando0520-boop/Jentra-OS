@@ -1,0 +1,144 @@
+{
+  "verifiedAt": "2026-10-09T06:10:11.096Z",
+  "scope": "Portable ordinary-entrypoint Windows UI trial, separate from authenticated Wave 5 runtime acceptance",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "sdk": {
+    "flutter": "3.47.5",
+    "dart": "3.13.4",
+    "frameworkRevision": "6a19cca56475dbfba1478ee68d7bd0c2ef891da1"
+  },
+  "analyzer": {
+    "passed": true,
+    "evidence": "docs/verification/wave5/windows-test-preview-analyzer-20261009.json",
+    "scope": "C:\\src\\flutter\\bin\\dart.bat analyze apps/jentra_desktop/lib/main.dart apps/jentra_desktop/lib/src/app.dart apps/jentra_desktop/lib/src/app_providers.dart apps/jentra_desktop/lib/src/router.dart packages/jentra_platform/lib/src/runtime_config.dart packages/jentra_platform/lib/src/supabase_platform.dart"
+  },
+  "startupTests": {
+    "passed": 2,
+    "evidence": "docs/verification/wave5/windows-test-preview-startupTests-20261009.json",
+    "scope": "C:\\src\\flutter\\bin\\flutter.bat test --no-pub --concurrency=1 --reporter=expanded --name=unconfigured startup|foundation shell exposes routes and command palette test/main_preview_startup_test.dart test/jentra_app_test.dart"
+  },
+  "apps": [
+    {
+      "mode": "preview",
+      "entrypoint": "lib/main.dart",
+      "buildEvidence": "docs/verification/wave5/windows-test-preview-build-20261009.json",
+      "buildExitCode": 0,
+      "sourceFiles": 1051,
+      "sourceMatch": true,
+      "declaredRunnerIdentityOverlays": [
+        {
+          "path": "apps/jentra_desktop/windows/CMakeLists.txt",
+          "baseSha256": "442109673c1704f2475e8ed9a7798fa638b1fcc7f770ec93c717c07dbdee7485",
+          "buildSha256": "90d36b7a9554489487d21e486d68195d1c0ab13ca984332ae67ac4f25c67b73e"
+        },
+        {
+          "path": "apps/jentra_desktop/windows/runner/Runner.rc",
+          "baseSha256": "7897aa6b404b5d79aac6125b386d5f0b974c2d4bb4d89852bded2e4fe4d9ac5f",
+          "buildSha256": "a095bdb718baee4fd76eceeeeb8eda1bdb898bb05b720e738243af87079b8f65"
+        },
+        {
+          "path": "apps/jentra_desktop/windows/runner/main.cpp",
+          "baseSha256": "6a1a66dd32f87feeff487c4d6cee76f265f70e3269c9e702fdf9b66cee20664b",
+          "buildSha256": "f915bc656907137d4a13c8b66101450bd86386dfe69c2eb94ca0d196d3ab55dc"
+        }
+      ],
+      "packagedReleaseFiles": 34,
+      "releaseHashesMatch": true,
+      "executable": "C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261009\\Preview\\Jentra_OS.exe",
+      "storageIdentity": {
+        "company": "com.jentra.test",
+        "product": "JentraOS_WindowsTest_20261009_Preview",
+        "applicationSupport": "%APPDATA%\\com.jentra.test\\JentraOS_WindowsTest_20261009_Preview",
+        "applicationCache": "%LOCALAPPDATA%\\com.jentra.test\\JentraOS_WindowsTest_20261009_Preview",
+        "secureStorage": "DPAPI file in the same unique applicationSupport directory; WindowsOptions defaults to no legacy migration",
+        "defaultAcceptanceIdentity": "com.jentra/jentra_desktop",
+        "defaultStoresRead": false,
+        "newOsUserCreated": false
+      },
+      "launchEvidence": "docs/verification/wave5/windows-test-preview-launch-20261009.json",
+      "nativeLaunched": true,
+      "render": {
+        "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\docs\\verification\\wave5\\windows-test-preview-native-20261009.png",
+        "sha256": "11e49d26ffcf24a5b316298216114e0b8bf0f10219710cc79db26f0ec00c52a3",
+        "width": 1920,
+        "height": 991,
+        "captureMethod": "Own foreground client pixels",
+        "visuallyInspected": true,
+        "observed": "Complete maximized sample dashboard, navigation, metrics and chart rendered"
+      },
+      "authenticatedAcceptance": false
+    },
+    {
+      "mode": "connected",
+      "entrypoint": "lib/main.dart",
+      "buildEvidence": "docs/verification/wave5/windows-test-connected-build-20261009.json",
+      "buildExitCode": 0,
+      "sourceFiles": 1051,
+      "sourceMatch": true,
+      "declaredRunnerIdentityOverlays": [
+        {
+          "path": "apps/jentra_desktop/windows/CMakeLists.txt",
+          "baseSha256": "442109673c1704f2475e8ed9a7798fa638b1fcc7f770ec93c717c07dbdee7485",
+          "buildSha256": "90d36b7a9554489487d21e486d68195d1c0ab13ca984332ae67ac4f25c67b73e"
+        },
+        {
+          "path": "apps/jentra_desktop/windows/runner/Runner.rc",
+          "baseSha256": "7897aa6b404b5d79aac6125b386d5f0b974c2d4bb4d89852bded2e4fe4d9ac5f",
+          "buildSha256": "b0e5be72cf80b04be4ac4be8fe4d08c835f7e6e06d156e69c666c0cdbd4651f9"
+        },
+        {
+          "path": "apps/jentra_desktop/windows/runner/main.cpp",
+          "baseSha256": "6a1a66dd32f87feeff487c4d6cee76f265f70e3269c9e702fdf9b66cee20664b",
+          "buildSha256": "f365e3f056db4455cf2615eadc89dc6249f5612e2526bb52e2385db1a5e2a544"
+        }
+      ],
+      "packagedReleaseFiles": 34,
+      "releaseHashesMatch": true,
+      "executable": "C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261009\\Connected\\Jentra_OS.exe",
+      "storageIdentity": {
+        "company": "com.jentra.test",
+        "product": "JentraOS_WindowsTest_20261009_Connected",
+        "applicationSupport": "%APPDATA%\\com.jentra.test\\JentraOS_WindowsTest_20261009_Connected",
+        "applicationCache": "%LOCALAPPDATA%\\com.jentra.test\\JentraOS_WindowsTest_20261009_Connected",
+        "secureStorage": "DPAPI file in the same unique applicationSupport directory; WindowsOptions defaults to no legacy migration",
+        "defaultAcceptanceIdentity": "com.jentra/jentra_desktop",
+        "defaultStoresRead": false,
+        "newOsUserCreated": false
+      },
+      "launchEvidence": "docs/verification/wave5/windows-test-connected-launch-20261009.json",
+      "nativeLaunched": true,
+      "render": {
+        "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\docs\\verification\\wave5\\windows-test-connected-native-20261009.png",
+        "sha256": "a31948f484203942a21467b5387bfedccbe78ef59961b1720882df080a3aa7b6",
+        "width": 1920,
+        "height": 991,
+        "captureMethod": "PrintWindow of own client; no screen pixels read",
+        "visuallyInspected": true,
+        "observed": "Complete maximized sign-in page, empty email/password fields and MFA access notice rendered"
+      },
+      "authenticatedAcceptance": false
+    }
+  ],
+  "delivery": {
+    "createdAt": "2026-10-09T06:04:21.1469584Z",
+    "packageDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261009",
+    "zip": "C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261009.zip",
+    "zipSha256": "3a6fa58adf6641a05bb0585ecd587a3ac6fe47399f2e46906bf79d53b12c55e7",
+    "zipBytes": 47092104,
+    "verifiedReleaseEntries": 68,
+    "bothAppsIncluded": true,
+    "installerCreated": false,
+    "acceptanceStoresCopied": false,
+    "backendChanged": false
+  },
+  "liveRead": "docs/verification/wave5/windows-test-live-20261009.json",
+  "realMfa": false,
+  "authenticatedNativeAcceptance": false,
+  "actualWorkerDelivery": false,
+  "independentSessionContention": false,
+  "targetScaleLoad": false,
+  "ownerAccepted": false,
+  "newMigrationsInstalled": false,
+  "formalRuntimeProfileProvisioned": false,
+  "sharedGoldenFailuresRemainOpen": 13
+}

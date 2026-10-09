@@ -1,0 +1,1257 @@
+# Scoped employee review fix wave
+Baseline is the additive source snapshot reviewed in review-package.txt. No commits or Git index changes were made. Only new-app source/config fixes are included; ignored connection configuration and generated artifacts are excluded.
+diff --git "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\android\\app\\build.gradle.kts" "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\android\\app\\build.gradle.kts"
+index 4d23147..cb71ade 100644
+--- "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\android\\app\\build.gradle.kts"	
++++ "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\android\\app\\build.gradle.kts"	
+@@ -6,7 +6,8 @@ plugins {
+ 
+ android {
+     namespace = "com.jentra.employee"
+-    compileSdk = flutter.compileSdkVersion
++    // Native protected storage requires API 37; installed platform is available.
++    compileSdk = 37
+     ndkVersion = flutter.ndkVersion
+ 
+     compileOptions {
+diff --git "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\android\\local.properties" "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\android\\local.properties"
+index b8ad076..895df92 100644
+--- "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\android\\local.properties"	
++++ "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\android\\local.properties"	
+@@ -1,2 +1,5 @@
+ sdk.dir=C:\\Users\\sheha\\AppData\\Local\\Android\\sdk
+ flutter.sdk=C:\\src\\flutter
++flutter.buildMode=debug
++flutter.versionName=0.1.0
++flutter.versionCode=1
+\ No newline at end of file
+diff --git "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\ios\\Runner\\Assets.xcassets\\LaunchImage.imageset\\README.md" "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\ios\\Runner\\Assets.xcassets\\LaunchImage.imageset\\README.md"
+index b5b843a..89c2725 100644
+--- "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\ios\\Runner\\Assets.xcassets\\LaunchImage.imageset\\README.md"	
++++ "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\ios\\Runner\\Assets.xcassets\\LaunchImage.imageset\\README.md"	
+@@ -2,4 +2,4 @@
+ 
+ You can customize the launch screen with your own desired assets by replacing the image files in this directory.
+ 
+-You can also do it by opening your Flutter project's Xcode project with `open ios/Runner.xcworkspace`, selecting `Runner/Assets.xcassets` in the Project Navigator and dropping in the desired images.
++You can also do it by opening your Flutter project's Xcode project with `open ios/Runner.xcworkspace`, selecting `Runner/Assets.xcassets` in the Project Navigator and dropping in the desired images.
+\ No newline at end of file
+diff --git "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\main.dart" "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\main.dart"
+index 841db2e..c40edf9 100644
+--- "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\main.dart"	
++++ "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\main.dart"	
+@@ -15,6 +15,7 @@ Future<void> main() async {
+   WidgetsFlutterBinding.ensureInitialized();
+   const config = EmployeeConfiguration.fromEnvironment();
+   final secureStore = NativeEmployeeKeyValueStore();
++  final authStorage = EmployeeAuthStorage(secureStore);
+   EmployeeGateway? gateway;
+   EmployeeFailure? setupError;
+   if (config.isValid && !kIsWeb) {
+@@ -24,12 +25,15 @@ Future<void> main() async {
+         publishableKey: config.publishableKey,
+         authOptions: FlutterAuthClientOptions(
+           authFlowType: AuthFlowType.pkce,
+-          localStorage: EmployeeAuthStorage(secureStore),
++          localStorage: authStorage,
+           pkceAsyncStorage: EmployeePkceStorage(secureStore),
+           detectSessionInUri: false,
+         ),
+       );
+-      gateway = SupabaseEmployeeGateway(Supabase.instance.client);
++      gateway = SupabaseEmployeeGateway(
++        Supabase.instance.client,
++        authStorage: authStorage,
++      );
+     } on Object {
+       setupError = const EmployeeFailure(
+         'APP_SETUP_UNAVAILABLE',
+diff --git "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\data\\employee_gateway.dart" "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\data\\employee_gateway.dart"
+index 9036e9a..78ec9e9 100644
+--- "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\data\\employee_gateway.dart"	
++++ "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\data\\employee_gateway.dart"	
+@@ -7,6 +7,8 @@ import 'package:jentra_platform/jentra_people_platform.dart';
+ import 'package:supabase_flutter/supabase_flutter.dart';
+ import 'package:uuid/uuid.dart';
+ 
++import 'employee_storage.dart';
++
+ enum EmployeePhase {
+   unconfigured,
+   signedOut,
+@@ -265,10 +267,11 @@ abstract interface class EmployeeGateway {
+ }
+ 
+ final class SupabaseEmployeeGateway implements EmployeeGateway {
+-  SupabaseEmployeeGateway(this.client)
++  SupabaseEmployeeGateway(this.client, {this.authStorage})
+     : _foundation = SupabaseFoundationGateway(client),
+       _hr = SupabasePrivateHrGateway(client);
+   final SupabaseClient client;
++  final EmployeeAuthStorage? authStorage;
+   final SupabaseFoundationGateway _foundation;
+   final SupabasePrivateHrGateway _hr;
+   @override
+@@ -315,13 +318,26 @@ final class SupabaseEmployeeGateway implements EmployeeGateway {
+ 
+   @override
+   Future<void> signIn(String email, String password) => _safe(() async {
++    authStorage?.beginSignIn();
+     await _foundation.signInWithPassword(
+       email: email.trim(),
+       password: password,
+     );
+   });
+   @override
+-  Future<void> signOut() => _safe(_foundation.signOut);
++  Future<void> signOut() => _safe(() async {
++    authStorage?.blockPersistenceForLogout();
++    Object? remoteFailure;
++    try {
++      await _foundation.signOut();
++    } on Object catch (error) {
++      remoteFailure = error;
++    }
++    // SupabaseFlutter's listener catches its own persistence errors. This
++    // explicit serialized barrier is the app's durable logout confirmation.
++    await authStorage?.clearForLogout();
++    if (remoteFailure != null) throw employeeFailure(remoteFailure);
++  });
+   @override
+   Future<List<EmployeeWorkspace>> listWorkspaces() => _safe(() async {
+     final actor = await _onlineActor();
+diff --git "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\data\\employee_storage.dart" "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\data\\employee_storage.dart"
+index f9de0f2..05c0e13 100644
+--- "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\data\\employee_storage.dart"	
++++ "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\data\\employee_storage.dart"	
+@@ -282,17 +282,63 @@ final class EmployeeAuthStorage extends LocalStorage {
+   EmployeeAuthStorage(this.store);
+   final EmployeeKeyValueStore store;
+   static const _key = 'jentra.employee.auth.session.v1';
++  Future<void> _tail = Future.value();
++  bool _allowPersistence = true;
++  int _epoch = 0;
++  Future<T> _serialized<T>(Future<T> Function() work) {
++    final result = _tail.then((_) async {
++      try {
++        return await work();
++      } on Object {
++        throw const EmployeeFailure(
++          'DURABLE_LOGOUT_INCOMPLETE',
++          'Protected account storage could not be verified. Keep the app locked and retry sign-out.',
++        );
++      }
++    });
++    _tail = result.then<void>((_) {}, onError: (Object _, StackTrace _) {});
++    return result;
++  }
++
++  void beginSignIn() {
++    _epoch++;
++    _allowPersistence = true;
++  }
++
++  void blockPersistenceForLogout() {
++    _epoch++;
++    _allowPersistence = false;
++  }
++
++  Future<void> clearForLogout() => removePersistedSession();
+   @override
+   Future<void> initialize() async {}
+   @override
+   Future<bool> hasAccessToken() async => (await accessToken()) != null;
+   @override
+-  Future<String?> accessToken() => store.read(_key);
++  Future<String?> accessToken() => _serialized(() => store.read(_key));
+   @override
+-  Future<void> persistSession(String persistSessionString) =>
+-      store.write(_key, persistSessionString);
++  Future<void> persistSession(String persistSessionString) {
++    final epoch = _epoch;
++    return _serialized(() async {
++      if (!_allowPersistence || epoch != _epoch) return;
++      await store.write(_key, persistSessionString);
++    });
++  }
++
+   @override
+-  Future<void> removePersistedSession() => store.delete(_key);
++  Future<void> removePersistedSession() {
++    blockPersistenceForLogout();
++    return _serialized(() async {
++      await store.delete(_key);
++      if (await store.read(_key) != null) {
++        throw const EmployeeFailure(
++          'DURABLE_LOGOUT_INCOMPLETE',
++          'Protected session removal could not be verified.',
++        );
++      }
++    });
++  }
+ }
+ 
+ final class EmployeePkceStorage implements GotrueAsyncStorage {
+diff --git "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\employee_app.dart" "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\employee_app.dart"
+index 0b17769..7e8af39 100644
+--- "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\employee_app.dart"	
++++ "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\employee_app.dart"	
+@@ -64,12 +64,13 @@ class _EmployeeAppState extends State<EmployeeApp> with WidgetsBindingObserver {
+       _locale = locale;
+     });
+     final save = widget.onPreferencesChanged;
+-    if (save != null)
++    if (save != null) {
+       unawaited(
+         save(theme, locale).catchError((Object _) {
+           // Preferences are nonsensitive. Current choices remain in effect this session.
+         }),
+       );
++    }
+   }
+ 
+   void _settings(BuildContext context) => Navigator.of(context).push(
+@@ -91,7 +92,7 @@ class _EmployeeAppState extends State<EmployeeApp> with WidgetsBindingObserver {
+       // account change or scope change destroys all prior private routes/forms.
+       final routeOwner =
+           controller.phase == EmployeePhase.ready && controller.identity != null
+-          ? 'employee:${controller.identity!.key}'
++          ? 'employee:${controller.identity!.key}:${controller.privateRouteVersion}'
+           : 'public:${controller.phase.name}';
+       return MaterialApp(
+         key: ValueKey(routeOwner),
+@@ -103,6 +104,29 @@ class _EmployeeAppState extends State<EmployeeApp> with WidgetsBindingObserver {
+         locale: _locale,
+         supportedLocales: const [Locale('en'), Locale('si'), Locale('ta')],
+         localizationsDelegates: GlobalMaterialLocalizations.delegates,
++        builder: (context, child) {
++          final s = EmployeeStrings.of(context);
++          return Column(
++            children: [
++              if (controller.notice != null)
++                Material(
++                  child: SafeArea(
++                    bottom: false,
++                    child: Padding(
++                      padding: const EdgeInsets.all(8),
++                      child: Semantics(
++                        liveRegion: true,
++                        child: EmployeeMessage(
++                          title: s.notice(controller.notice!),
++                        ),
++                      ),
++                    ),
++                  ),
++                ),
++              Expanded(child: child ?? const SizedBox.shrink()),
++            ],
++          );
++        },
+         home: Builder(
+           builder: (context) {
+             final s = EmployeeStrings.of(context);
+@@ -159,7 +183,7 @@ class _EmployeeAppState extends State<EmployeeApp> with WidgetsBindingObserver {
+                             if (controller.error != null) ...[
+                               const SizedBox(height: 20),
+                               EmployeeMessage(
+-                                title: controller.error!.message,
++                                title: s.failure(controller.error!),
+                                 error: true,
+                               ),
+                             ],
+@@ -189,7 +213,9 @@ class _EmployeeAppState extends State<EmployeeApp> with WidgetsBindingObserver {
+                   EmployeeSignInScreen(
+                     connected: controller.phase != EmployeePhase.unconfigured,
+                     busy: controller.busy,
+-                    error: controller.error?.message,
++                    error: controller.error == null
++                        ? null
++                        : s.failure(controller.error!),
+                     onSignIn: controller.signIn,
+                   ),
+                   SafeArea(
+diff --git "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\employee_configuration.dart" "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\employee_configuration.dart"
+index 8469d78..959a663 100644
+--- "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\employee_configuration.dart"	
++++ "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\employee_configuration.dart"	
+@@ -17,11 +17,14 @@ class EmployeeConfiguration {
+         parsed.userInfo.isNotEmpty ||
+         parsed.hasQuery ||
+         parsed.hasFragment ||
+-        (parsed.path.isNotEmpty && parsed.path != '/'))
++        (parsed.path.isNotEmpty && parsed.path != '/')) {
+       return false;
++    }
+     if (publishableKey.startsWith('sb_publishable_') &&
+-        RegExp(r'^sb_publishable_[A-Za-z0-9_-]{8,}$').hasMatch(publishableKey))
++        RegExp(r'^sb_publishable_[A-Za-z0-9_-]{8,}$')
++            .hasMatch(publishableKey)) {
+       return true;
++    }
+     try {
+       final parts = publishableKey.split('.');
+       if (parts.length != 3 || parts.any((part) => part.isEmpty)) return false;
+diff --git "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\employee_controller.dart" "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\employee_controller.dart"
+index 16e5760..1516550 100644
+--- "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\employee_controller.dart"	
++++ "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\employee_controller.dart"	
+@@ -43,6 +43,11 @@ final class EmployeeController extends ChangeNotifier {
+   StreamSubscription<String?>? _authSubscription;
+   int _generation = 0;
+   bool _disposed = false;
++  bool _foreground = true;
++  int _lifecycleGeneration = 0;
++  int privateRouteVersion = 0;
++  bool _logoutInProgress = false;
++  bool _durableLogoutIncomplete = false;
+   String? _actor;
+   String? _resumeWorkspaceKey;
+   EmployeePendingCommand? _pending;
+@@ -65,7 +70,10 @@ final class EmployeeController extends ChangeNotifier {
+   }
+ 
+   bool _valid(int generation) {
+-    if (_disposed || generation != _generation || _gateway?.actorId != _actor) {
++    if (_disposed ||
++        !_foreground ||
++        generation != _generation ||
++        _gateway?.actorId != _actor) {
+       return false;
+     }
+     if (_authorizedAt != null && !_checkAuthorization()) return false;
+@@ -157,8 +165,10 @@ final class EmployeeController extends ChangeNotifier {
+   }
+ 
+   void _expireDraft() {
++    if (_draftExpiresAt == null) return;
+     _cancelDraftRetention();
+     leaveDraft = null;
++    privateRouteVersion++;
+     notice = 'The local leave draft expired. Create a fresh draft if you still need it.';
+     _emit();
+   }
+@@ -207,7 +217,11 @@ final class EmployeeController extends ChangeNotifier {
+     _resumeWorkspaceKey = null;
+     _actor = actor;
+     busy = false;
+-    phase = actor == null ? EmployeePhase.signedOut : EmployeePhase.loading;
++    phase = !_foreground || _logoutInProgress || _durableLogoutIncomplete
++        ? EmployeePhase.locked
++        : actor == null
++        ? EmployeePhase.signedOut
++        : EmployeePhase.loading;
+     _emit();
+     final generation = _generation;
+     unawaited(_afterActorChange(previousActor, actor, generation));
+@@ -233,7 +247,7 @@ final class EmployeeController extends ChangeNotifier {
+   }
+ 
+   Future<void> start() async {
+-    if (_disposed || busy) return;
++    if (_disposed || busy || !_foreground || _durableLogoutIncomplete) return;
+     final gateway = _gateway;
+     if (gateway == null) {
+       phase = EmployeePhase.unconfigured;
+@@ -290,7 +304,8 @@ final class EmployeeController extends ChangeNotifier {
+   }
+ 
+   Future<void> signIn(String email, String password) async {
+-    if (_disposed || busy || _gateway == null) return;
++    if (_disposed || busy || !_foreground || _gateway == null) return;
++    final lifecycle = _lifecycleGeneration;
+     if (email.trim().isEmpty || password.isEmpty) {
+       error = const EmployeeFailure(
+         'VALIDATION_ERROR',
+@@ -313,11 +328,17 @@ final class EmployeeController extends ChangeNotifier {
+         _emit();
+       }
+     }
+-    if (!_disposed && _gateway.actorId != null) await start();
++    if (!_disposed &&
++        _foreground &&
++        lifecycle == _lifecycleGeneration &&
++        _gateway.actorId != null) {
++      await start();
++    }
+   }
+ 
+   Future<void> signOut() async {
+     if (_disposed || _gateway == null) return;
++    _logoutInProgress = true;
+     final previousActor = _actor ?? _gateway.actorId;
+     _generation++;
+     _mask();
+@@ -330,12 +351,17 @@ final class EmployeeController extends ChangeNotifier {
+     try {
+       await _gateway.signOut();
+       if (!_disposed) {
++        _durableLogoutIncomplete = false;
+         _actor = null;
+         phase = EmployeePhase.signedOut;
+       }
+     } on Object catch (e) {
+       if (!_disposed) {
+-        if (_gateway.actorId == null) {
++        if (e is EmployeeFailure && e.code == 'DURABLE_LOGOUT_INCOMPLETE') {
++          _durableLogoutIncomplete = true;
++          error = e;
++          phase = EmployeePhase.locked;
++        } else if (_gateway.actorId == null) {
+           _actor = null;
+           phase = EmployeePhase.signedOut;
+           notice = 'Signed out on this device. Server session revocation could not be confirmed.';
+@@ -345,6 +371,7 @@ final class EmployeeController extends ChangeNotifier {
+         }
+       }
+     } finally {
++      _logoutInProgress = false;
+       if (previousActor != null) {
+         try {
+           await _draftStore.clearActorDrafts(previousActor);
+@@ -594,7 +621,15 @@ final class EmployeeController extends ChangeNotifier {
+       }
+     }
+     if (_valid(generation) && !hasPendingCommand && error == null) {
++      final confirmedNotice = notice;
+       await start();
++      if (!_disposed &&
++          _foreground &&
++          (phase == EmployeePhase.ready ||
++              phase == EmployeePhase.linkRequired)) {
++        notice = confirmedNotice;
++        _emit();
++      }
+     }
+   }
+ 
+@@ -706,7 +741,15 @@ final class EmployeeController extends ChangeNotifier {
+       }
+     }
+     if (_valid(generation) && !hasPendingCommand && error == null) {
++      final confirmedNotice = notice;
+       await start();
++      if (!_disposed &&
++          _foreground &&
++          (phase == EmployeePhase.ready ||
++              phase == EmployeePhase.linkRequired)) {
++        notice = confirmedNotice;
++        _emit();
++      }
+     }
+   }
+ 
+@@ -765,6 +808,8 @@ final class EmployeeController extends ChangeNotifier {
+ 
+   void lock() {
+     if (_disposed || _gateway == null) return;
++    _foreground = false;
++    _lifecycleGeneration++;
+     _resumeWorkspaceKey = workspace?.key ?? _resumeWorkspaceKey;
+     _generation++;
+     _mask();
+@@ -776,6 +821,8 @@ final class EmployeeController extends ChangeNotifier {
+   }
+ 
+   Future<void> resume() async {
++    if (_disposed) return;
++    _foreground = true;
+     if (phase == EmployeePhase.locked) await start();
+   }
+ 
+diff --git "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\l10n\\employee_strings.dart" "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\l10n\\employee_strings.dart"
+index 237bdfb..07d75ce 100644
+--- "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\l10n\\employee_strings.dart"	
++++ "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\l10n\\employee_strings.dart"	
+@@ -1,5 +1,7 @@
+ import 'package:flutter/widgets.dart';
+ 
++import '../data/employee_gateway.dart';
++
+ /// Employee interface copy; employer-authored review content stays in its source language.
+ class EmployeeStrings {
+   const EmployeeStrings(this.language);
+@@ -14,7 +16,71 @@ class EmployeeStrings {
+     _ => _english[key] ?? key,
+   };
+ 
++  String failure(EmployeeFailure failure) => call(switch (failure.code) {
++    'PERMISSION_DENIED' || 'FEATURE_NOT_ENTITLED' => 'failureAccess',
++    'SELF_LINK_REQUIRED' => 'failureLink',
++    'AUTHENTICATION_REQUIRED' ||
++    'SESSION_CHANGED' ||
++    'SIGN_IN_FAILED' => 'failureSession',
++    'DURABLE_LOGOUT_INCOMPLETE' => 'failureLogout',
++    'STORAGE_UNAVAILABLE' || 'APP_SETUP_UNAVAILABLE' => 'failureStorage',
++    'AUTHORIZATION_EXPIRED' => 'failureLease',
++    'MFA_REQUIRED' => 'failureMfa',
++    'VERSION_CONFLICT' ||
++    'STALE_LINK' ||
++    'STALE_REVIEW' ||
++    'HR_LINK_ALREADY_EXISTS' => 'failureChanged',
++    'VALIDATION_ERROR' || 'INVALID_WORKSPACE' => 'failureValidation',
++    'FEATURE_NOT_INSTALLED' || 'SERVICE_UNAVAILABLE' => 'failureService',
++    'INVALID_RESPONSE' || 'IDEMPOTENCY_MISMATCH' => 'failureResponse',
++    _ => 'failureUncertain',
++  });
++  String notice(String value) => call(switch (value) {
++    'No receipt exists yet. You can explicitly retry the exact saved request.' =>
++      'noticeReceiptMissing',
++    'Signed out on this device. Server session revocation could not be confirmed.' =>
++      'noticeLogoutRemote',
++    'The server confirmed your request.' => 'noticeConfirmed',
++    'The original request was confirmed by its own receipt.' =>
++      'noticeReceiptConfirmed',
++    'Draft saved on this device for up to 24 hours. It has not been submitted.' =>
++      'noticeDraftSaved',
++    'The local leave draft expired. Create a fresh draft if you still need it.' =>
++      'noticeDraftExpired',
++    'An earlier request needs receipt reconciliation before another action.' =>
++      'noticePending',
++    'No active employee workspace is available. Ask HR to check your existing membership.' =>
++      'noticeNoWorkspace',
++    'No pending account link is available. Ask HR to propose the exact employee link.' =>
++      'noticeNoLink',
++    _ => 'notice',
++  });
++
+   static const _english = <String, String>{
++    'failureAccess': 'HR access has changed. Ask HR to check your existing account permissions.',
++    'failureLink': 'Accept an exact account link proposed by HR before using self service.',
++    'failureSession': 'Your session changed or sign-in failed. Sign in again and check your connection.',
++    'failureLogout': 'Protected session removal could not be verified. Keep the app locked and retry sign-out.',
++    'failureStorage': 'Protected account storage is unavailable. Unlock your device and retry.',
++    'failureLease': 'Private access expired or the device clock changed. Reconnect to verify your employee access.',
++    'failureMfa': 'Your organization requires verified MFA. Complete your supported Jentra sign-in flow.',
++    'failureChanged':
++        'This record changed or expired. Refresh before trying again.',
++    'failureValidation':
++        'Check the bounded fields, workspace and current record state.',
++    'failureService': 'This employee service is unavailable. Check your connection and refresh.',
++    'failureResponse': 'The service response does not match the saved request. Keep it for support and reconciliation.',
++    'failureUncertain': 'The result could not be confirmed. Check the saved request receipt before retrying.',
++    'noticeReceiptMissing': 'No receipt exists yet. You can explicitly retry the exact saved request.',
++    'noticeLogoutRemote': 'Signed out on this device. Server session revocation could not be confirmed.',
++    'noticeConfirmed': 'The server confirmed your request.',
++    'noticeReceiptConfirmed':
++        'The original request was confirmed by its own receipt.',
++    'noticeDraftSaved': 'Draft saved on this device for up to 24 hours. It has not been submitted.',
++    'noticeDraftExpired': 'The local leave draft expired. Create a fresh draft if you still need it.',
++    'noticePending': 'An earlier request needs receipt reconciliation before another action.',
++    'noticeNoWorkspace': 'No active employee workspace is available. Ask HR to check your existing membership.',
++    'noticeNoLink': 'No pending account link is available. Ask HR to propose the exact employee link.',
+     'employee': 'Employee',
+     'home': 'Home',
+     'work': 'My work',
+@@ -146,6 +212,36 @@ class EmployeeStrings {
+   };
+ 
+   static const _sinhala = <String, String>{
++    'failureAccess':
++        'HR ප්‍රවේශය වෙනස් වී ඇත. ඔබගේ ගිණුම් අවසර පරීක්ෂා කිරීමට HR අමතන්න.',
++    'failureLink':
++        'ස්වයං සේවාව භාවිතයට පෙර HR යෝජනා කළ නිවැරදි ගිණුම් සබැඳිය පිළිගන්න.',
++    'failureSession': 'ඔබගේ සැසිය වෙනස් වී ඇත හෝ පිවිසීම අසාර්ථකයි. සම්බන්ධතාවය පරීක්ෂා කර නැවත පිවිසෙන්න.',
++    'failureLogout': 'ආරක්ෂිත සැසිය ඉවත් වූ බව තහවුරු කළ නොහැක. යෙදුම අගුළු දමා තබා නැවත පිටවීම උත්සාහ කරන්න.',
++    'failureStorage':
++        'ආරක්ෂිත ගිණුම් ගබඩාව ලබාගත නොහැක. උපාංගය අගුළු හැර නැවත උත්සාහ කරන්න.',
++    'failureLease': 'පුද්ගලික ප්‍රවේශ කාලය අවසන් හෝ උපාංග වේලාව වෙනස් වී ඇත. සේවක ප්‍රවේශය තහවුරු කිරීමට නැවත සම්බන්ධ වන්න.',
++    'failureMfa': 'ඔබගේ ආයතනය MFA තහවුරු කිරීම ඉල්ලයි. සහාය දක්වන Jentra පිවිසුම් ක්‍රියාවලිය සම්පූර්ණ කරන්න.',
++    'failureChanged': 'මෙම වාර්තාව වෙනස් වී ඇත හෝ කල් ඉකුත් වී ඇත. නැවත උත්සාහ කිරීමට පෙර යාවත්කාලීන කරන්න.',
++    'failureValidation':
++        'ක්ෂේත්‍ර සීමා, සේවා ස්ථානය සහ වාර්තාවේ තත්ත්වය පරීක්ෂා කරන්න.',
++    'failureService':
++        'මෙම සේවක සේවාව ලබාගත නොහැක. සම්බන්ධතාවය පරීක්ෂා කර යාවත්කාලීන කරන්න.',
++    'failureResponse': 'සේවා ප්‍රතිචාරය සුරැකි ඉල්ලීමට නොගැළපේ. සහාය සහ ප්‍රතිසන්ධානය සඳහා එය තබාගන්න.',
++    'failureUncertain': 'ප්‍රතිඵලය තහවුරු කළ නොහැක. නැවත උත්සාහයට පෙර සුරැකි ඉල්ලීමේ ලදුපත පරීක්ෂා කරන්න.',
++    'noticeReceiptMissing':
++        'තවම ලදුපතක් නැත. ඔබට නිවැරදි සුරැකි ඉල්ලීම නැවත උත්සාහ කළ හැක.',
++    'noticeLogoutRemote':
++        'මෙම උපාංගයෙන් පිටවී ඇත. සේවාදායක සැසිය අවලංගු වූ බව තහවුරු කළ නොහැක.',
++    'noticeConfirmed': 'සේවාදායකය ඔබගේ ඉල්ලීම තහවුරු කළේය.',
++    'noticeReceiptConfirmed': 'මුල් ඉල්ලීම එහි ලදුපතෙන් තහවුරු විය.',
++    'noticeDraftSaved':
++        'කෙටුම්පත මෙම උපාංගයේ පැය 24 දක්වා සුරැකිණි. එය ඉදිරිපත් කර නැත.',
++    'noticeDraftExpired': 'දේශීය නිවාඩු කෙටුම්පත කල් ඉකුත් විය. තවම අවශ්‍ය නම් අලුත් කෙටුම්පතක් සාදන්න.',
++    'noticePending':
++        'වෙනත් ක්‍රියාවකට පෙර පෙර ඉල්ලීමේ ලදුපත ප්‍රතිසන්ධානය අවශ්‍යයි.',
++    'noticeNoWorkspace': 'සක්‍රිය සේවක සේවා ස්ථානයක් නැත. ඔබගේ සාමාජිකත්වය පරීක්ෂා කිරීමට HR අමතන්න.',
++    'noticeNoLink': 'බලාපොරොත්තු වන ගිණුම් සබැඳියක් නැත. නිවැරදි සේවක සබැඳිය යෝජනා කිරීමට HR අමතන්න.',
+     'employee': 'සේවක',
+     'home': 'මුල් පිටුව',
+     'work': 'මගේ වැඩ',
+@@ -273,6 +369,29 @@ class EmployeeStrings {
+   };
+ 
+   static const _tamil = <String, String>{
++    'failureAccess': 'HR அணுகல் மாறியுள்ளது. உங்கள் கணக்கு அனுமதிகளைச் சரிபார்க்க HR ஐத் தொடர்புகொள்ளவும்.',
++    'failureLink':
++        'சுய சேவைக்கு முன் HR முன்மொழிந்த சரியான கணக்கு இணைப்பை ஏற்கவும்.',
++    'failureSession': 'உங்கள் அமர்வு மாறியுள்ளது அல்லது உள்நுழைவு தோல்வியடைந்தது. இணைப்பைச் சரிபார்த்து மீண்டும் உள்நுழையவும்.',
++    'failureLogout': 'பாதுகாக்கப்பட்ட அமர்வு நீக்கத்தை உறுதிசெய்ய முடியவில்லை. செயலியைப் பூட்டி வைத்து வெளியேற மீண்டும் முயலவும்.',
++    'failureStorage': 'பாதுகாக்கப்பட்ட கணக்கு சேமிப்பு கிடைக்கவில்லை. சாதனத்தைத் திறந்து மீண்டும் முயலவும்.',
++    'failureLease': 'தனிப்பட்ட அணுகல் காலாவதியானது அல்லது சாதன நேரம் மாறியது. பணியாளர் அணுகலை உறுதிசெய்ய மீண்டும் இணைக்கவும்.',
++    'failureMfa': 'உங்கள் நிறுவனம் MFA சரிபார்ப்பைக் கோருகிறது. ஆதரிக்கப்படும் Jentra உள்நுழைவை முடிக்கவும்.',
++    'failureChanged': 'இந்தப் பதிவு மாறியது அல்லது காலாவதியானது. மீண்டும் முயல்வதற்கு முன் புதுப்பிக்கவும்.',
++    'failureValidation': 'புல வரம்புகள், பணியிடம் மற்றும் தற்போதைய பதிவின் நிலையைச் சரிபார்க்கவும்.',
++    'failureService': 'இந்தப் பணியாளர் சேவை கிடைக்கவில்லை. இணைப்பைச் சரிபார்த்து புதுப்பிக்கவும்.',
++    'failureResponse': 'சேவை பதில் சேமித்த கோரிக்கையுடன் பொருந்தவில்லை. ஆதரவு மற்றும் சரிசெய்தலுக்காக அதை வைத்திருக்கவும்.',
++    'failureUncertain': 'முடிவை உறுதிசெய்ய முடியவில்லை. மீண்டும் முயல்வதற்கு முன் சேமித்த கோரிக்கையின் ரசீதைச் சரிபார்க்கவும்.',
++    'noticeReceiptMissing': 'இன்னும் ரசீது இல்லை. அதே சேமித்த கோரிக்கையை நீங்கள் மீண்டும் முயலலாம்.',
++    'noticeLogoutRemote': 'இந்தச் சாதனத்தில் வெளியேறிவிட்டீர்கள். சேவையக அமர்வு ரத்தானதை உறுதிசெய்ய முடியவில்லை.',
++    'noticeConfirmed': 'சேவையகம் உங்கள் கோரிக்கையை உறுதிசெய்தது.',
++    'noticeReceiptConfirmed': 'முதல்கோரிக்கை அதன் ரசீதால் உறுதிசெய்யப்பட்டது.',
++    'noticeDraftSaved': 'இந்தச் சாதனத்தில் வரைவு 24 மணிநேரம் வரை சேமிக்கப்பட்டது. அது சமர்ப்பிக்கப்படவில்லை.',
++    'noticeDraftExpired': 'உள்ளூர் விடுப்பு வரைவு காலாவதியானது. தேவைப்பட்டால் புதிய வரைவை உருவாக்கவும்.',
++    'noticePending':
++        'வேறு செயலுக்கு முன் முந்தைய கோரிக்கையின் ரசீதைச் சரிசெய்ய வேண்டும்.',
++    'noticeNoWorkspace': 'செயலில் உள்ள பணியாளர் பணியிடம் இல்லை. உறுப்பினர் நிலையைச் சரிபார்க்க HR ஐத் தொடர்புகொள்ளவும்.',
++    'noticeNoLink': 'நிலுவையில் கணக்கு இணைப்பு இல்லை. சரியான பணியாளர் இணைப்பை முன்மொழிய HR ஐத் தொடர்புகொள்ளவும்.',
+     'employee': 'பணியாளர்',
+     'home': 'முகப்பு',
+     'work': 'எனது வேலை',
+diff --git "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\ui\\employee_reviews.dart" "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\ui\\employee_reviews.dart"
+index b2f70d1..9487d20 100644
+--- "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\ui\\employee_reviews.dart"	
++++ "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\ui\\employee_reviews.dart"	
+@@ -42,7 +42,7 @@ class EmployeeReviewsScreen extends StatelessWidget {
+             if (controller.reviewsLoading) const LinearProgressIndicator(),
+             if (controller.reviewsError != null)
+               EmployeeMessage(
+-                title: controller.reviewsError!.message,
++                title: s.failure(controller.reviewsError!),
+                 error: true,
+                 action: OutlinedButton(
+                   onPressed: controller.refresh,
+@@ -168,7 +168,7 @@ class _EmployeeReviewScreenState extends State<EmployeeReviewScreen> {
+                 ),
+               if (widget.controller.error != null)
+                 EmployeeMessage(
+-                  title: widget.controller.error!.message,
++                  title: s.failure(widget.controller.error!),
+                   error: true,
+                 ),
+               if (widget.controller.hasPendingCommand)
+diff --git "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\ui\\employee_shell.dart" "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\ui\\employee_shell.dart"
+index 120d129..61e60bd 100644
+--- "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\ui\\employee_shell.dart"	
++++ "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\ui\\employee_shell.dart"	
+@@ -43,10 +43,13 @@ class _EmployeeShellState extends State<EmployeeShell> {
+   }
+ 
+   Future<void> _draft() async {
++    final routeVersion = controller.privateRouteVersion;
+     _open(
+       EmployeeLeaveDraftScreen(
++        controller: controller,
+         initialDraft: controller.leaveDraft,
+         onSave: (draft) async {
++          if (routeVersion != controller.privateRouteVersion) return false;
+           await controller.saveLeaveDraft(draft);
+           return controller.phase == EmployeePhase.ready &&
+               controller.error == null &&
+@@ -129,7 +132,7 @@ class _EmployeeShellState extends State<EmployeeShell> {
+           ],
+         ),
+         if (controller.error != null)
+-          EmployeeMessage(title: controller.error!.message, error: true),
++          EmployeeMessage(title: s.failure(controller.error!), error: true),
+         if (controller.hasPendingCommand)
+           EmployeePendingAction(controller: controller),
+         JentraPanel(
+@@ -216,7 +219,7 @@ class _EmployeeShellState extends State<EmployeeShell> {
+           icon: Icons.event_note_outlined,
+         ),
+         if (controller.error != null)
+-          EmployeeMessage(title: controller.error!.message, error: true),
++          EmployeeMessage(title: s.failure(controller.error!), error: true),
+         if (draft != null)
+           JentraPanel(
+             child: Column(
+@@ -268,8 +271,9 @@ class _EmployeeShellState extends State<EmployeeShell> {
+                               ],
+                             ),
+                           );
+-                          if (remove == true)
++                          if (remove == true) {
+                             await controller.discardLeaveDraft();
++                          }
+                         },
+                   child: Text(s('deleteDraft')),
+                 ),
+diff --git "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\ui\\leave_draft_screen.dart" "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\ui\\leave_draft_screen.dart"
+index 6b77f66..426dfb1 100644
+--- "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\ui\\leave_draft_screen.dart"	
++++ "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\ui\\leave_draft_screen.dart"	
+@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
+ import 'package:intl/intl.dart';
+ 
+ import '../data/employee_gateway.dart';
++import '../employee_controller.dart';
+ import '../l10n/employee_strings.dart';
+ import 'employee_components.dart';
+ 
+@@ -10,10 +11,12 @@ class EmployeeLeaveDraftScreen extends StatefulWidget {
+     required this.onSave,
+     this.initialDraft,
+     this.initialDate,
++    this.controller,
+     super.key,
+   });
+   final EmployeeLeaveDraft? initialDraft;
+   final DateTime? initialDate;
++  final EmployeeController? controller;
+   final Future<bool> Function(EmployeeLeaveDraft draft) onSave;
+   @override
+   State<EmployeeLeaveDraftScreen> createState() =>
+@@ -36,11 +39,36 @@ class _EmployeeLeaveDraftScreenState extends State<EmployeeLeaveDraftScreen> {
+   );
+   bool _dirty = false, _saving = false, _allowExit = false, _saved = false;
+   String? _error;
++  bool _expired = false;
++  late final int? _routeVersion;
++  @override
++  void initState() {
++    super.initState();
++    _routeVersion = widget.controller?.privateRouteVersion;
++    widget.controller?.addListener(_leaseChanged);
++  }
++
++  void _leaseChanged() {
++    if (_expired || !mounted) return;
++    final c = widget.controller;
++    if (c != null &&
++        (c.privateRouteVersion != _routeVersion ||
++            c.phase != EmployeePhase.ready)) {
++      _expired = true;
++      _type.clear();
++      _reason.clear();
++      // The app's owner key destroys this route on the same rebuild. Until
++      // disposal, callbacks are fail-closed and the text is already blank.
++      setState(() {});
++    }
++  }
++
+   DateTime _calendar(DateTime value) =>
+       DateTime(value.year, value.month, value.day);
+ 
+   @override
+   void dispose() {
++    widget.controller?.removeListener(_leaseChanged);
+     _type.clear();
+     _type.dispose();
+     _reason.clear();
+@@ -55,20 +83,22 @@ class _EmployeeLeaveDraftScreenState extends State<EmployeeLeaveDraftScreen> {
+       firstDate: DateTime(2000),
+       lastDate: DateTime(2100),
+     );
+-    if (result != null && mounted)
++    if (result != null && mounted) {
+       setState(() {
+-        if (start)
++        if (start) {
+           _start = result;
+-        else
++        } else {
+           _end = result;
++        }
+         _dirty = true;
+         _error = null;
+         _saved = false;
+       });
++    }
+   }
+ 
+   Future<void> _save() async {
+-    if (_saving || !_form.currentState!.validate()) return;
++    if (_expired || _saving || !_form.currentState!.validate()) return;
+     final s = EmployeeStrings.of(context);
+     final draft = EmployeeLeaveDraft(
+       leaveType: _type.text.trim(),
+@@ -145,6 +175,7 @@ class _EmployeeLeaveDraftScreenState extends State<EmployeeLeaveDraftScreen> {
+   @override
+   Widget build(BuildContext context) {
+     final s = EmployeeStrings.of(context);
++    if (_expired) return const SizedBox.shrink();
+     return PopScope(
+       canPop: !_saving && (!_dirty || _allowExit),
+       onPopInvokedWithResult: (didPop, result) {
+diff --git "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\ui\\onboarding_screens.dart" "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\ui\\onboarding_screens.dart"
+index 8f317f9..6ef9a38 100644
+--- "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\ui\\onboarding_screens.dart"	
++++ "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\ui\\onboarding_screens.dart"	
+@@ -41,7 +41,7 @@ class EmployeeWorkspaceScreen extends StatelessWidget {
+           Text(s('workspaceCopy')),
+           if (controller.error != null)
+             EmployeeMessage(
+-              title: controller.error!.message,
++              title: s.failure(controller.error!),
+               error: true,
+               action: OutlinedButton(
+                 onPressed: controller.refresh,
+@@ -115,8 +115,9 @@ class EmployeeLinkScreen extends StatelessWidget {
+         ],
+       ),
+     );
+-    if (accepted == true && context.mounted)
++    if (accepted == true && context.mounted) {
+       await controller.respondToLink(link, accept: true);
++    }
+   }
+ 
+   @override
+@@ -144,7 +145,7 @@ class EmployeeLinkScreen extends StatelessWidget {
+           EmployeeHeading(s('linkTitle'), large: true),
+           Text(s('linkCopy')),
+           if (controller.error != null)
+-            EmployeeMessage(title: controller.error!.message, error: true),
++            EmployeeMessage(title: s.failure(controller.error!), error: true),
+           if (controller.hasPendingCommand)
+             EmployeePendingAction(controller: controller),
+           if (controller.links.isEmpty)
+diff --git "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\ui\\settings_screen.dart" "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\ui\\settings_screen.dart"
+index f50ce7e..ba6e4f3 100644
+--- "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\ui\\settings_screen.dart"	
++++ "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\ui\\settings_screen.dart"	
+@@ -61,8 +61,9 @@ class EmployeeSettingsScreen extends StatelessWidget {
+                   ),
+                 ],
+                 onChanged: (value) {
+-                  if (value != null)
++                  if (value != null) {
+                     onChanged(value, Localizations.localeOf(context));
++                  }
+                 },
+               ),
+             ),
+diff --git "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\ui\\sign_in_screen.dart" "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\ui\\sign_in_screen.dart"
+index 38ec625..d0151b8 100644
+--- "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\lib\\src\\ui\\sign_in_screen.dart"	
++++ "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\lib\\src\\ui\\sign_in_screen.dart"	
+@@ -37,8 +37,9 @@ class _EmployeeSignInScreenState extends State<EmployeeSignInScreen> {
+   }
+ 
+   Future<void> _submit() async {
+-    if (!widget.connected || widget.busy || !_form.currentState!.validate())
++    if (!widget.connected || widget.busy || !_form.currentState!.validate()) {
+       return;
++    }
+     final email = _email.text.trim();
+     final password = _password.text;
+     FocusScope.of(context).unfocus();
+diff --git a/apps\jentra_employee\test\employee_auth_lifecycle_test.dart b/apps\jentra_employee\test\employee_auth_lifecycle_test.dart
+new file mode 100644
+--- /dev/null
++++ b/apps\jentra_employee\test\employee_auth_lifecycle_test.dart
+@@ -0,0 +1,136 @@
++import 'dart:async';
++import 'dart:convert';
++
++import 'package:flutter_test/flutter_test.dart';
++import 'package:http/http.dart' as http;
++import 'package:http/testing.dart';
++import 'package:supabase_flutter/supabase_flutter.dart';
++import 'package:jentra_employee/src/data/employee_gateway.dart';
++import 'package:jentra_employee/src/data/employee_storage.dart';
++import 'package:jentra_employee/src/employee_controller.dart';
++
++import 'support/employee_fixture.dart';
++
++class AuthStore extends FixtureStore {
++  bool deletionFails = false;
++  Completer<void>? writeGate;
++  final writeStarted = Completer<void>();
++  @override
++  Future<void> write(String key, String value) async {
++    if (!writeStarted.isCompleted) writeStarted.complete();
++    await writeGate?.future;
++    await super.write(key, value);
++  }
++
++  @override
++  Future<void> delete(String key) async {
++    if (deletionFails && key.contains('auth.session')) {
++      throw StateError('synthetic native deletion failure');
++    }
++    await super.delete(key);
++  }
++}
++
++void main() {
++  TestWidgetsFlutterBinding.ensureInitialized();
++  late AuthStore store;
++  late EmployeeAuthStorage auth;
++  late Supabase supabase;
++  setUp(() async {
++    store = AuthStore();
++    auth = EmployeeAuthStorage(store);
++    final claims = base64Url.encode(
++      utf8.encode(
++        jsonEncode({
++          'sub': fixtureActor,
++          'role': 'authenticated',
++          'exp': 4102444800,
++        }),
++      ),
++    );
++    supabase = await Supabase.initialize(
++      url: 'https://auth-lifecycle.example.test',
++      publishableKey: 'synthetic',
++      debug: false,
++      authOptions: FlutterAuthClientOptions(
++        localStorage: auth,
++        pkceAsyncStorage: EmployeePkceStorage(store),
++        autoRefreshToken: false,
++        detectSessionInUri: false,
++      ),
++      httpClient: MockClient((request) async {
++        if (request.url.path.endsWith('/token')) {
++          return http.Response(
++            jsonEncode({
++              'access_token': 'e30.$claims.synthetic',
++              'refresh_token': 'synthetic',
++              'expires_in': 3600,
++              'token_type': 'bearer',
++              'user': {
++                'id': fixtureActor,
++                'aud': 'authenticated',
++                'app_metadata': {},
++                'user_metadata': {},
++                'created_at': '2026-09-01T00:00:00Z',
++              },
++            }),
++            200,
++            headers: {'content-type': 'application/json'},
++            request: request,
++          );
++        }
++        return http.Response(
++          '{}',
++          200,
++          headers: {'content-type': 'application/json'},
++          request: request,
++        );
++      }),
++    );
++  });
++  tearDown(() async {
++    await supabase.dispose();
++  });
++
++  test('initialized auth lifecycle cannot claim durable logout when deletion fails', () async {
++    final gateway = SupabaseEmployeeGateway(supabase.client, authStorage: auth);
++    await gateway.signIn('synthetic@example.test', 'synthetic');
++    await store.writeStarted.future;
++    await Future<void>.delayed(Duration.zero);
++    store.deletionFails = true;
++    final controller = EmployeeController(
++      gateway: gateway,
++      draftStore: EmployeeDraftStore(store),
++    );
++    await controller.signOut();
++    expect(gateway.actorId, isNull);
++    expect(controller.phase, EmployeePhase.locked);
++    expect(controller.error?.code, 'DURABLE_LOGOUT_INCOMPLETE');
++    expect(await auth.accessToken(), isNotNull);
++    await controller.resume();
++    expect(controller.phase, EmployeePhase.locked);
++    store.deletionFails = false;
++    await controller.signOut();
++    expect(controller.phase, EmployeePhase.signedOut);
++    expect(await auth.accessToken(), isNull);
++    controller.dispose();
++  });
++
++  test('initialized auth logout drains overlapping old session writes before confirming removal', () async {
++    final gateway = SupabaseEmployeeGateway(supabase.client, authStorage: auth);
++    store.writeGate = Completer();
++    await gateway.signIn('synthetic@example.test', 'synthetic');
++    await store.writeStarted.future;
++    var finished = false;
++    final logout = gateway.signOut().then((_) {
++      finished = true;
++    });
++    await Future<void>.delayed(Duration.zero);
++    expect(finished, isFalse);
++    store.writeGate!.complete();
++    await logout;
++    await Future<void>.delayed(Duration.zero);
++    expect(await auth.accessToken(), isNull);
++    expect(gateway.actorId, isNull);
++  });
++}
+diff --git a/apps\jentra_employee\test\employee_review_fixes_test.dart b/apps\jentra_employee\test\employee_review_fixes_test.dart
+new file mode 100644
+--- /dev/null
++++ b/apps\jentra_employee\test\employee_review_fixes_test.dart
+@@ -0,0 +1,241 @@
++import 'dart:async';
++
++import 'package:flutter/material.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:jentra_employee/src/data/employee_gateway.dart';
++import 'package:jentra_employee/src/data/employee_storage.dart';
++import 'package:jentra_employee/src/employee_app.dart';
++import 'package:jentra_employee/src/employee_controller.dart';
++
++import 'support/employee_fixture.dart';
++
++class DelayedAuthGateway extends FixtureGateway {
++  DelayedAuthGateway() {
++    super.signOut();
++  }
++  final signInGate = Completer<void>();
++  int selfReads = 0;
++  bool revoked = false;
++  @override
++  Future<void> signIn(String email, String password) async {
++    await signInGate.future;
++    await super.signIn(email, password);
++  }
++
++  @override
++  Future<EmployeeIdentity> resolveIdentity(EmployeeWorkspace workspace) async {
++    selfReads++;
++    if (revoked) throw const EmployeeFailure('PERMISSION_DENIED', 'Revoked');
++    return super.resolveIdentity(workspace);
++  }
++}
++
++class UncertainGateway extends FixtureGateway {
++  @override
++  Future<void> execute(EmployeePendingCommand command) async {
++    throw const EmployeeFailure('UNCERTAIN_RESULT', 'Unknown');
++  }
++}
++
++class LogoutGateway extends FixtureGateway {
++  @override
++  Future<void> signOut() async {
++    await super.signOut();
++    throw const EmployeeFailure(
++      'UNCERTAIN_RESULT',
++      'Remote logout unavailable.',
++    );
++  }
++}
++
++void main() {
++  testWidgets(
++    'delayed auth cannot reopen background data and resume checks revoked access',
++    (tester) async {
++      final gateway = DelayedAuthGateway();
++      final controller = EmployeeController(
++        gateway: gateway,
++        draftStore: EmployeeDraftStore(FixtureStore()),
++      );
++      addTearDown(controller.dispose);
++      addTearDown(gateway.close);
++      await tester.pumpWidget(EmployeeApp(controller: controller));
++      final signingIn = controller.signIn('employee@example.test', 'synthetic');
++      await tester.pump();
++      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
++      await tester.pump();
++      gateway.signInGate.complete();
++      await signingIn;
++      await tester.pumpAndSettle();
++      expect(controller.phase, EmployeePhase.locked);
++      expect(gateway.selfReads, 0);
++      expect(find.text('Preview employee'), findsNothing);
++      gateway.revoked = true;
++      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
++      await tester.pumpAndSettle();
++      expect(gateway.selfReads, 1);
++      expect(controller.identity, isNull);
++      expect(find.text('Preview employee'), findsNothing);
++      controller.lock();
++    },
++  );
++
++  testWidgets('aged draft expiry removes and disposes open editor body', (
++    tester,
++  ) async {
++    var now = DateTime.utc(2026, 10, 9);
++    final store = EmployeeDraftStore(FixtureStore(), now: () => now);
++    const identity = EmployeeIdentity(
++      workspace: fixtureWorkspace,
++      actorId: fixtureActor,
++      employeeId: fixtureEmployee,
++      displayName: 'Preview employee',
++    );
++    await store.saveDraft(
++      identity,
++      EmployeeLeaveDraft(
++        leaveType: 'Annual',
++        reason: 'Private old draft reason',
++        startDate: DateTime(2026, 10, 12),
++        endDate: DateTime(2026, 10, 13),
++      ),
++    );
++    now = now.add(const Duration(hours: 23));
++    final gateway = FixtureGateway();
++    final controller = EmployeeController(
++      gateway: gateway,
++      draftStore: store,
++      now: () => now,
++    );
++    addTearDown(controller.dispose);
++    addTearDown(gateway.close);
++    await controller.start();
++    await tester.pumpWidget(
++      EmployeeApp(controller: controller, observeLifecycle: false),
++    );
++    await tester.pumpAndSettle();
++    await tester.tap(find.byKey(const Key('employee-nav-leave')));
++    await tester.pumpAndSettle();
++    await Scrollable.ensureVisible(
++      tester.element(find.text('Edit draft')),
++      alignment: 0.5,
++    );
++    await tester.pumpAndSettle();
++    await tester.tap(find.text('Edit draft'));
++    await tester.pumpAndSettle();
++    final editor = tester
++        .widget<TextFormField>(find.byKey(const Key('employee-leave-reason')))
++        .controller!;
++    expect(editor.text, 'Private old draft reason');
++    now = now.add(const Duration(hours: 1));
++    await tester.pump(const Duration(hours: 1));
++    await tester.pumpAndSettle();
++    expect(find.byKey(const Key('employee-leave-reason')), findsNothing);
++    expect(find.text('Private old draft reason'), findsNothing);
++    expect(controller.leaveDraft, isNull);
++    expect(() => editor.addListener(() {}), throwsFlutterError);
++    expect(find.byKey(const Key('employee-save-draft')), findsNothing);
++    controller.lock();
++  });
++
++  testWidgets('not-found receipt outcome is visible and announced', (
++    tester,
++  ) async {
++    final gateway = UncertainGateway();
++    final controller = await fixtureController(gateway: gateway);
++    addTearDown(controller.dispose);
++    addTearDown(gateway.close);
++    await controller.acknowledgeReview(controller.reviews.single);
++    await tester.pumpWidget(
++      EmployeeApp(controller: controller, observeLifecycle: false),
++    );
++    await tester.pumpAndSettle();
++    await controller.reconcileCommand();
++    await tester.pumpAndSettle();
++    expect(
++      find.text(
++        'No receipt exists yet. You can explicitly retry the exact saved request.',
++      ),
++      findsOneWidget,
++    );
++    expect(
++      find.byWidgetPredicate(
++        (w) => w is Semantics && w.properties.liveRegion == true,
++      ),
++      findsWidgets,
++    );
++    controller.lock();
++  });
++
++  testWidgets('remote revocation warning is visible after local logout', (
++    tester,
++  ) async {
++    final gateway = LogoutGateway();
++    final controller = await fixtureController(gateway: gateway);
++    addTearDown(controller.dispose);
++    addTearDown(gateway.close);
++    await tester.pumpWidget(
++      EmployeeApp(controller: controller, observeLifecycle: false),
++    );
++    await tester.pumpAndSettle();
++    await controller.signOut();
++    await tester.pumpAndSettle();
++    expect(
++      find.text(
++        'Signed out on this device. Server session revocation could not be confirmed.',
++      ),
++      findsOneWidget,
++    );
++    controller.lock();
++  });
++
++  testWidgets('confirmed action outcome survives fresh identity refresh', (
++    tester,
++  ) async {
++    final gateway = FixtureGateway();
++    final controller = await fixtureController(gateway: gateway);
++    addTearDown(controller.dispose);
++    addTearDown(gateway.close);
++    await controller.acknowledgeReview(controller.reviews.single);
++    await tester.pumpWidget(
++      EmployeeApp(controller: controller, observeLifecycle: false),
++    );
++    await tester.pumpAndSettle();
++    expect(find.text('The server confirmed your request.'), findsOneWidget);
++    controller.lock();
++  });
++  for (final language in ['si', 'ta']) {
++    testWidgets(
++      'stable access failure renders localized interface copy in $language',
++      (tester) async {
++        final gateway = FixtureGateway();
++        final controller = await fixtureController(gateway: gateway);
++        addTearDown(controller.dispose);
++        addTearDown(gateway.close);
++        controller.lock();
++        controller.error = const EmployeeFailure(
++          'PERMISSION_DENIED',
++          'English safe provider text',
++        );
++        await tester.pumpWidget(
++          EmployeeApp(
++            controller: controller,
++            initialLocale: Locale(language),
++            observeLifecycle: false,
++          ),
++        );
++        await tester.pumpAndSettle();
++        expect(find.text('English safe provider text'), findsNothing);
++        expect(
++          find.text(
++            language == 'si'
++                ? 'HR ප්‍රවේශය වෙනස් වී ඇත. ඔබගේ ගිණුම් අවසර පරීක්ෂා කිරීමට HR අමතන්න.'
++                : 'HR அணுகல் மாறியுள்ளது. உங்கள் கணக்கு அனுமதிகளைச் சரிபார்க்க HR ஐத் தொடர்புகொள்ளவும்.',
++          ),
++          findsOneWidget,
++        );
++        controller.lock();
++      },
++    );
++  }
++}
+diff --git "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\test\\render_previews_test.dart" "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\test\\render_previews_test.dart"
+index b8c5778..997921e 100644
+--- "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\test\\render_previews_test.dart"	
++++ "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\test\\render_previews_test.dart"	
+@@ -184,8 +184,9 @@ void main() {
+         );
+         await tester.pumpAndSettle();
+         await _readyBrand(tester);
+-        if (large)
++        if (large) {
+           await tester.ensureVisible(find.byKey(const Key('employee-sign-in')));
++        }
+         await tester.pumpAndSettle();
+         expect(tester.takeException(), isNull);
+         await _capture(
+diff --git "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\test\\support\\employee_fixture.dart" "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\test\\support\\employee_fixture.dart"
+index 459f1e1..80baff0 100644
+--- "a/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\build\\review-baseline\\apps\\jentra_employee\\test\\support\\employee_fixture.dart"	
++++ "b/C:\\Users\\sheha\\Desktop\\Jentra OS\\apps\\jentra_employee\\test\\support\\employee_fixture.dart"	
+@@ -75,8 +75,9 @@ class FixtureGateway implements EmployeeGateway {
+   ];
+   @override
+   Future<EmployeeIdentity> resolveIdentity(EmployeeWorkspace workspace) async {
+-    if (!linked)
++    if (!linked) {
+       throw const EmployeeFailure('SELF_LINK_REQUIRED', 'A link is required.');
++    }
+     return EmployeeIdentity(
+       workspace: workspace,
+       actorId: _actor!,

@@ -304,6 +304,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                     'source_line_id',
                     'budget_line_id',
                     'component_key',
+                    'currency',
                   ])
                     if (state.uri.queryParameters[key] != null)
                       key: state.uri.queryParameters[key],

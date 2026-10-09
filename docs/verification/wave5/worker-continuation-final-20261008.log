@@ -1,0 +1,35 @@
+✔ unsafe IPv4, IPv6, mapped and noncanonical addresses fail (3.3924ms)
+✔ all DNS answers and each attempt must remain safe (1.1735ms)
+✔ event scope and private payload injection rejected before delivery (0.5572ms)
+✔ signature binds exact bytes, event identity, timestamp and rotating key version (2.1675ms)
+✔ bounded retries retain stable event identity and reach dead letter (0.8266ms)
+✔ injected transport sees pinned public address and revocation prevents send (1.1633ms)
+✔ unknown transport result requires reconciliation without an automatic retry or raw errors (0.5466ms)
+✔ integration credentials bind expiry, revocation, scope, hash, command and allowance (0.8366ms)
+✔ exhausted attempts fail before authority, DNS or transport (0.2576ms)
+✔ prompt injection and private fields cannot enter the numeric redaction manifest (4.4319ms)
+✔ trusted invocation records outcome before exact settlement, then rechecks current access (3.3423ms)
+✔ unknown outcomes persist without releasing quota or automatically resending (0.8873ms)
+✔ unreviewed providers and untrusted/model-generated usage cannot settle (0.4986ms)
+✔ HTTP model adapter counts full input, fixes schema, refuses tools and trusts only provider usage (29.4765ms)
+✔ unreviewed model and insufficient token budget cannot issue model generation (1.2544ms)
+✔ RPC/model response limit is enforced while streaming (1.2831ms)
+✔ delivery scheduling serializes batches and wakes on shutdown (12.834ms)
+✔ real RPC adapter binds service authorization and API schema without logging a key (2.4824ms)
+✔ control has no in-memory delivery or metering authority; original identity reaches persistent RPC (0.5187ms)
+✔ scheduler reconciles acknowledged persisted attempts before claiming new work (11.2756ms)
+✔ worker transport rejects unsafe URLs and bounds provider output/errors (0.617ms)
+✔ missing providers fail before claiming or executing (1.5075ms)
+✔ claimed committed job reserves before sending and records ACK before settlement (3.3008ms)
+✔ unknown transport persists review state and keeps its reservation without settlement (0.678ms)
+✔ revocation during DNS prevents send and settlement (0.5114ms)
+✔ subscription worker invokes existing server activation with exact identities (0.6346ms)
+✔ external command validates request, credentials and durable allowance before dispatch (2.8804ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 181.1695

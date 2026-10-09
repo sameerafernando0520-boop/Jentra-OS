@@ -1,0 +1,51 @@
+{
+  "project": "xpdoufauvrbdmxgngetv",
+  "readOnly": true,
+  "credentialsRead": false,
+  "sessionsRead": false,
+  "tenant": {
+    "id": "a1d9ee78-de36-4408-9948-0f6ab7749b95",
+    "name": "Jentra Acceptance Lab",
+    "slug": "jentra-acceptance-lab",
+    "status": "trial"
+  },
+  "members": [
+    {
+      "status": "active",
+      "userId": "8b1ace26-0574-411e-81a8-6b8481c231a9",
+      "accountLabel": "test@test.com",
+      "verifiedMfaFactors": 1
+    }
+  ],
+  "entities": [
+    {
+      "id": "79f8f792-7b4d-44c2-9f2a-7dc4f8729edc",
+      "code": "JAT",
+      "status": "active",
+      "branches": [
+        {
+          "id": "579aab50-3856-4ace-a214-0d73a224a6ba",
+          "code": "HQ",
+          "status": "active"
+        }
+      ]
+    }
+  ],
+  "checkedAt": "2026-10-08T08:32:59.820549+00:00",
+  "selection": "Repository-designated Jentra Acceptance Lab only; no role bootstrap authorized",
+  "formerRepositoryLabelExists": false,
+  "requiredActorLabelsConfirmed": false,
+  "roleLabelProposal": {
+    "status": "proposal only; no account, session, role or tenant was provisioned",
+    "labels": {
+      "proposer": "w5-proposer",
+      "mfaApprover": "w5-approver",
+      "executor": "w5-executor",
+      "billingAdministrator": "w5-billing-admin",
+      "operator": "w5-operator",
+      "foreignTenantMember": "w5-foreign-member"
+    },
+    "placement": "Use distinct accounts in the existing Jentra Acceptance Lab for the first five roles. Place the foreign member only in a separately reviewed synthetic tenant; no such second tenant is selected or created by this proposal.",
+    "existingLiveSmokeAccount": "test@test.com"
+  }
+}

@@ -1,0 +1,39 @@
+✔ unsafe IPv4, IPv6, mapped and noncanonical addresses fail (3.5117ms)
+✔ all DNS answers and each attempt must remain safe (1.3022ms)
+✔ event scope and private payload injection rejected before delivery (0.5646ms)
+✔ signature binds exact bytes, event identity, timestamp and rotating key version (1.8741ms)
+✔ bounded retries retain stable event identity and reach dead letter (0.4741ms)
+✔ injected transport sees pinned public address and revocation prevents send (1.1243ms)
+✔ unknown transport result requires reconciliation without an automatic retry or raw errors (0.521ms)
+✔ integration credentials bind expiry, revocation, scope, hash, command and allowance (1.1078ms)
+✔ exhausted attempts fail before authority, DNS or transport (0.3687ms)
+✔ prompt injection and private fields cannot enter the numeric redaction manifest (11.7437ms)
+✔ trusted invocation records outcome before exact settlement, then rechecks current access (4.8847ms)
+✔ unknown outcomes persist without releasing quota or automatically resending (1.0739ms)
+✔ unreviewed providers and untrusted/model-generated usage cannot settle (0.5009ms)
+✔ HTTP model adapter counts full input, fixes schema, refuses tools and trusts only provider usage (61.2257ms)
+✔ unreviewed model and insufficient token budget cannot issue model generation (1.2422ms)
+✔ RPC/model response limit is enforced while streaming (1.1399ms)
+✔ delivery scheduling serializes batches and wakes on shutdown (13.2828ms)
+✔ real RPC adapter binds service authorization and API schema without logging a key (2.9965ms)
+✔ control has no in-memory delivery or metering authority; original identity reaches persistent RPC (0.93ms)
+✔ scheduler reconciles acknowledged persisted attempts before claiming new work (21.8845ms)
+✔ worker transport rejects unsafe URLs and bounds provider output/errors (1.2711ms)
+✔ external endpoint rejects arbitrary dispatch and does not leak provider diagnostics (28.0056ms)
+✔ unreviewed model endpoint cannot retrieve a caller source or invoke a provider (0.7358ms)
+✔ model endpoint binds only the request caller and rejects extra private payload fields (2.0819ms)
+✔ synthetic subscription scan is bounded and resumes original revision after a stopped batch (1.5222ms)
+✔ missing providers fail before claiming or executing (3.5489ms)
+✔ claimed committed job reserves before sending and records ACK before settlement (4.6053ms)
+✔ unknown transport persists review state and keeps its reservation without settlement (0.7277ms)
+✔ revocation during DNS prevents send and settlement (0.6158ms)
+✔ subscription worker invokes existing server activation with exact identities (0.6287ms)
+✔ external command validates request, credentials and durable allowance before dispatch (5.0235ms)
+ℹ tests 31
+ℹ suites 0
+ℹ pass 31
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 262.1768

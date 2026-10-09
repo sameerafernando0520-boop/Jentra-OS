@@ -7,6 +7,7 @@ import 'package:jentra_platform/analytics_platform.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../app_providers.dart';
+import '../report_export/report_export_screen.dart';
 
 final pipelineForecastRepositoryProvider =
     Provider<PipelineForecastRepository?>((ref) => null);
@@ -355,6 +356,13 @@ class _PipelineForecastWorkspaceState extends State<PipelineForecastWorkspace> {
           if (c.error != null) Text(c.error!),
           if (f != null) ...[
             SelectableText('Frozen forecast ${f.id}'),
+            ReportExportLink(
+              sourceType: 'w5_pipeline',
+              sourceId: f.id,
+              section: 'currencies',
+              enabled: c.online && !c.busy,
+              label: 'Create governed forecast export',
+            ),
             Text(
               'Observed ${f.observedAt.toIso8601String()} · ${f.horizonStart} to ${f.horizonEnd} (excluded)',
             ),
@@ -394,7 +402,7 @@ class _PipelineForecastWorkspaceState extends State<PipelineForecastWorkspace> {
           ],
           const SizedBox(height: 16),
           const Text(
-            'Conversion, stage aging, velocity and accuracy remain unavailable until certified history and realized-result mappings are available.',
+            'Historical metrics and realized gross-invoice accuracy use their separate providers in Historical pipeline. This frozen publication retains its original current-observation basis.',
           ),
         ],
       );

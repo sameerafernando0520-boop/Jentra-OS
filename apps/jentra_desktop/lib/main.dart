@@ -6,6 +6,9 @@ import 'package:jentra_platform/analytics_platform.dart';
 
 import 'src/features/analytics/process_metric_screen.dart';
 import 'src/features/analytics/pipeline_forecast_screen.dart';
+import 'src/features/analytics/historical_pipeline_screen.dart';
+import 'src/features/analytics/integration_screen.dart';
+import 'src/features/analytics/cash_scenario_screen.dart';
 import 'src/features/analytics/wave5_control_screen.dart';
 
 import 'src/features/procurement/procurement_controller.dart';
@@ -188,6 +191,28 @@ Future<void> main() async {
         ),
         pipelineForecastRepositoryProvider.overrideWithValue(
           client == null ? null : SupabasePipelineForecastGateway(client),
+        ),
+        historicalPipelineGatewayProvider.overrideWithValue(
+          client == null
+              ? null
+              : HistoricalPipelineGateway(
+                  (name, params) =>
+                      client.schema('api').rpc(name, params: params),
+                ),
+        ),
+        integrationRpcProvider.overrideWithValue(
+          client == null
+              ? null
+              : (name, params) =>
+                    client.schema('api').rpc(name, params: params),
+        ),
+        datedCashGatewayProvider.overrideWithValue(
+          client == null
+              ? null
+              : DatedCashGateway(
+                  (name, params) =>
+                      client.schema('api').rpc(name, params: params),
+                ),
         ),
         wave5ControlRepositoryProvider.overrideWithValue(
           client == null ? null : SupabaseWave5ControlGateway(client),

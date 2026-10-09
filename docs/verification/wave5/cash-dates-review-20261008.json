@@ -1,0 +1,242 @@
+{
+  "capturedAt": "2026-10-08T12:12:20.155Z",
+  "project": "xpdoufauvrbdmxgngetv",
+  "state": "uninstalled review only",
+  "installationAuthorized": false,
+  "migration": {
+    "path": "supabase/migrations/20261008120000_wave5_cash_payment_dates.sql",
+    "sha256": "1463953b0fa76269740a732a59485ff3d160681fb2a6655eedbd8c0aeda42c8a",
+    "apiFunctions": [
+      {
+        "name": "api.wave5_cash_date_authorize",
+        "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_kind text",
+        "returns": "uuid"
+      },
+      {
+        "name": "api.wave5_cash_date_sources",
+        "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_kind text,p_after uuid default null",
+        "returns": "jsonb"
+      },
+      {
+        "name": "api.wave5_cash_date_get",
+        "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_id uuid",
+        "returns": "jsonb"
+      },
+      {
+        "name": "api.wave5_cash_date_command",
+        "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid, p_command_id uuid,p_idempotency_key uuid,p_issued_at timestamptz,p_action text,p_payload jsonb",
+        "returns": "jsonb"
+      },
+      {
+        "name": "api.wave5_cash_basis",
+        "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_start date,p_end date,p_recorded_through timestamptz",
+        "returns": "jsonb"
+      },
+      {
+        "name": "api.wave5_cash_save",
+        "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_id uuid,p_source_hash text,p_parameters jsonb",
+        "returns": "jsonb"
+      },
+      {
+        "name": "api.wave5_cash_get",
+        "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_id uuid",
+        "returns": "jsonb"
+      }
+    ],
+    "tables": [
+      "analytics.cash_date_proposals",
+      "analytics.cash_date_decisions"
+    ],
+    "newPermissions": [
+      "analytics.cash_dates.prepare",
+      "analytics.cash_dates.approve"
+    ],
+    "forcedRls": true,
+    "directClientTableGrants": false
+  },
+  "contract": "docs/blueprint/wave5/W5_CASH_PAYMENT_DATES_CONTRACT.md",
+  "calculationRevision": "dated_transaction_cash_all_obligations.v3",
+  "requiredProviders": [
+    "bank_cash",
+    "receivables",
+    "payables",
+    "payroll",
+    "project_reimbursements"
+  ],
+  "migrationPrerequisites": [
+    {
+      "path": "supabase/migrations/20260925002000_wave3_financial_statements.sql",
+      "sha256": "7596ec3e5b1ac2b348e4b23371ff6c54818a5336d276fa3a03f14f1ecd5f17b6",
+      "installed": false
+    },
+    {
+      "path": "supabase/migrations/20260926009000_wave3_governed_report_exports.sql",
+      "sha256": "85238e684c967e8377221e55f911fcb9dfa64e7696110ee28eacffe8b6586386",
+      "installed": false
+    },
+    {
+      "path": "supabase/migrations/20261008090000_wave5_historical_pipeline.sql",
+      "sha256": "183a8688dd2c78a9e13032a165d2e1787b3d8f9dd4a15aee9b201eddf4767768",
+      "installed": false
+    },
+    {
+      "path": "supabase/migrations/20261008103000_wave5_dated_cash.sql",
+      "sha256": "24b5ab44250ec5239ab2b942277cb104867d8e67288666c6297d4fa694e4b391",
+      "installed": false
+    },
+    {
+      "path": "supabase/migrations/20261008110000_wave5_governed_export_adapter.sql",
+      "sha256": "fbe68cc451f5044c03be7b68803ff2afbb858004109a5ee2319960d495e193ed",
+      "installed": false
+    }
+  ],
+  "optionalWave4SourceDependencies": [
+    {
+      "path": "supabase/migrations/20260926160000_wave4_calendar_resolution.sql",
+      "sha256": "6abd4dceddbb3124b4bfa01efd97ecafabd59f03ee1f85f48b5bc2a2f5685053",
+      "installed": false,
+      "unchanged": true
+    },
+    {
+      "path": "supabase/migrations/20260926161000_wave4_organization.sql",
+      "sha256": "6f682652564a030e8a3a6960999aa9c51aa96486ab0f7219d4347f5445e31c45",
+      "installed": false,
+      "unchanged": true
+    },
+    {
+      "path": "supabase/migrations/20260928082234_wave4_attendance_intervals.sql",
+      "sha256": "21cb1745977492f343f2992ccc915400f9320a82957f342d943e36a50db60ad6",
+      "installed": false,
+      "unchanged": true
+    },
+    {
+      "path": "supabase/migrations/20260928083449_wave4_leave_ledger.sql",
+      "sha256": "1fbdd603a68f1962291c85a90739f599ee629fef27e5714ee6c00e8a0e37d4b3",
+      "installed": false,
+      "unchanged": true
+    },
+    {
+      "path": "supabase/migrations/20260930070000_wave4_synthetic_payroll.sql",
+      "sha256": "5517cc4559c3f91901525b38ec8fbf03633da49c587a0d034a885405a43465b2",
+      "installed": false,
+      "unchanged": true
+    },
+    {
+      "path": "supabase/migrations/20261001080000_wave4_projects_time.sql",
+      "sha256": "52ca0ba293d0a621304e01135db1424e69ebff579f14712b6b6c29d8c031e740",
+      "installed": false,
+      "unchanged": true
+    },
+    {
+      "path": "supabase/migrations/20261001100000_wave4_project_expenses_billing.sql",
+      "sha256": "0430f55698a28ee7c26a609bc982a96cbc20319d204c3d5546f9a6ae4272efef",
+      "installed": false,
+      "unchanged": true
+    },
+    {
+      "path": "supabase/migrations/20261001110000_wave4_payroll_corrections.sql",
+      "sha256": "709170a703a5fd6808ba15de27a4b6cfcb33470da977203b960e2d04e67437cf",
+      "installed": false,
+      "unchanged": true
+    }
+  ],
+  "verificationComposition": {
+    "sourceCount": 14,
+    "querySha256": "a511e68bacf3db62646713c1780555a16ea1cb720a44a2596ec2943112fe3c6a",
+    "sourceHashes": "docs/verification/wave5/cash-dates-candidate-20261008.hashes.json",
+    "result": "docs/verification/wave5/cash-dates-candidate-result-20261008.json",
+    "assertions": 35,
+    "strictFinish": true,
+    "rolledBack": true,
+    "actualWave4Schemas": true,
+    "wave4ShapeShims": false,
+    "scope": "New dates, actual payroll/correction/reimbursement sources, frozen cash and governed projection; AR/AP empty in this composition."
+  },
+  "previousEightFileComposition": {
+    "review": "docs/verification/wave5/continuation-review-20261008.md",
+    "assertions": 116,
+    "installed": false,
+    "scope": "Separate unchanged composition including nonempty AR/AP and a rolled-back allocation-reversal shape shim."
+  },
+  "live": {
+    "before": {
+      "checked_at": "2026-10-08 11:39:05.508923+00",
+      "migration_count": 43,
+      "api_functions": 107,
+      "ledger_hash": "24fa8a4addc84a84b53f73d178512b4d",
+      "provider_hash": "a0483305a863a01dd3d0ac7dce3cdffb",
+      "role_permission_count": 87,
+      "role_assignment_count": 1,
+      "entitlement_count": 28,
+      "membership_count": 1,
+      "cash_dates": null,
+      "cash_scenarios": null,
+      "payroll": null,
+      "reimbursements": null,
+      "fixture_tenants": 0,
+      "fixture_accounts": 0
+    },
+    "after": {
+      "checked_at": "2026-10-08 11:52:29.613852+00",
+      "migration_count": 43,
+      "api_functions": 107,
+      "ledger_hash": "24fa8a4addc84a84b53f73d178512b4d",
+      "provider_hash": "a0483305a863a01dd3d0ac7dce3cdffb",
+      "role_permission_count": 87,
+      "role_assignment_count": 1,
+      "entitlement_count": 28,
+      "membership_count": 1,
+      "cash_dates": null,
+      "cash_scenarios": null,
+      "payroll": null,
+      "reimbursements": null,
+      "fixture_tenants": 0,
+      "fixture_accounts": 0
+    },
+    "finalRead": {
+      "checked_at": "2026-10-08 12:10:36.484966+00",
+      "migration_count": 43,
+      "api_functions": 107,
+      "role_permission_count": 87,
+      "role_assignment_count": 1,
+      "entitlement_count": 28,
+      "membership_count": 1,
+      "cash_dates": null,
+      "cash_date_decisions": null,
+      "cash_scenarios": null,
+      "payroll": null,
+      "reimbursements": null
+    },
+    "finalReadEvidence": "docs/verification/wave5/cash-dates-live-final-20261008.json",
+    "unchanged": true,
+    "installedChecksRerun": false
+  },
+  "sdk": {
+    "evidence": "docs/verification/wave5/cash-dates-verification-20261008.json",
+    "domain": 72,
+    "platform": 48,
+    "native": 96,
+    "sourceMatch": true,
+    "build": true,
+    "frames": 60,
+    "inspectedFrames": 16
+  },
+  "authorizationEffects": {
+    "rolesAssigned": false,
+    "entitlementsActivated": false,
+    "tenantsBootstrapped": false,
+    "testAccountsCreated": false,
+    "secretsProvisioned": false,
+    "workersDeployed": false,
+    "externalDelivery": false
+  },
+  "remainingGates": [
+    "Exact new/prerequisite installation review and installed verification",
+    "Separate synthetic identity/role/entitlement review",
+    "Real distinct MFA sessions and independent contention",
+    "Authenticated native restart/revocation/export/keyboard",
+    "Actual workers/model/delivery, target-scale load and owner acceptance"
+  ],
+  "wholeWaveComplete": false,
+  "ownerAccepted": false
+}

@@ -16,6 +16,8 @@ DOCS = ['docs/development/wave5-status.md',
         'docs/blueprint/wave5/W5_02_03_FORECAST_AND_RATIO_CONTRACT.md',
         'docs/blueprint/wave5/W5_04_07_CONTROL_CONTRACT.md',
         'docs/blueprint/wave5/WAVE5_INTELLIGENCE_AND_CONTROL_SPEC.md']
+if (E / 'installation-result-20261008.json').exists():
+    DOCS.append('docs/verification/wave5/installation-result-20261008.md')
 
 
 def digest(path):
@@ -80,7 +82,8 @@ def main():
               'documentsChecked': DOCS, 'localLinksChecked': links, 'identifierCounts': counts,
               'migrationCount': 6, 'apiFunctionCount': 22, 'criticalDomainBranches': branches,
               'wholeWaveComplete': False, 'failureCount': len(failures), 'failures': failures}
-    (E / 'checkpoint-validation-20261008.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
+    filename = 'installation-document-validation-20261008.json' if (E / 'installation-result-20261008.json').exists() else 'checkpoint-validation-20261008.json'
+    (E / filename).write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
     print(json.dumps(report))
     return 1 if failures else 0
 

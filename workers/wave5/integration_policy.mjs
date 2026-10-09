@@ -87,7 +87,7 @@ export function attemptOutcome(eventId, subscriptionId, attempt, status) {
   const success = status !== null && status >= 200 && status < 300;
   // A timeout cannot establish whether the consumer accepted the bytes. Keep
   // that state separate so a scheduler cannot silently retry an unknown send.
-  return Object.freeze({ eventId, subscriptionId, attempt, state: status === null ? 'unknown' : success ? 'acknowledged' : attempt === 8 ? 'dead_letter' : 'retry',
+  return Object.freeze({ eventId, subscriptionId, attempt, httpStatus:status, state: status === null ? 'unknown' : success ? 'acknowledged' : attempt === 8 ? 'dead_letter' : 'retry',
     retryAfterSeconds: status === null || success || attempt === 8 ? null : Math.min(3600, 15 * 2 ** (attempt - 1)) });
 }
 

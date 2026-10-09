@@ -1,5 +1,9 @@
 # Wave 5 development checkpoint - October 8, 2026
 
+**Later implementation continuation:** Historical/realized, statement/classification, limited cash/scenario/export and persistent integration/model adapters plus five additional native workspaces are implemented as new candidates. See the [exact eight-file continuation review](continuation-review-20261008.md), [fresh live catalog](continuation-live-final-20261008.json) and [current evidence summary](continuation-evidence-summary-20261008.json). Development checks now pass 100 strict candidate SQL assertions, 71 domain, 41 platform, 90 desktop/controller/render and 31 controlled worker tests; scoped analysis is clean and the final Windows build matches 1,047 selected sources. These later source/build claims supersede the October 6 source attribution below. New candidates remain uninstalled; full cash providers, real runtime/delivery/contention/load, thirteen shared goldens and owner acceptance remain open.
+
+**Installation update:** All six owner-approved migrations are installed: 43 migrations, 107 API functions, 15 forced-RLS tables and 126 passing strict installed checks with synthetic data rollback. See the [installation result](installation-result-20261008.md) and [current status](../../development/wave5-status.md). The development checkpoint below predates that approval and is retained as historical evidence; its pending-installation statements are superseded by this update. Wave 5 remains incomplete.
+
 Wave 5 remains incomplete. The October 6 continuation implemented process, current pipeline forecast, human proposal, trusted metering, synthetic subscription and separate operator development paths. October 8 recovered the completed build result after the interruption, proved current source attribution, repaired unknown webhook outcomes, refreshed live fingerprints and completed this review packet. Earlier W3/W4 work and acceptance stores are preserved.
 
 ## Evidence and limits

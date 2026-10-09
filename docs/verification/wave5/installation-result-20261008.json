@@ -1,0 +1,149 @@
+{
+  "verifiedAt": "2026-10-07T20:34:19.593975+00:00",
+  "targetProjectId": "xpdoufauvrbdmxgngetv",
+  "installationComplete": true,
+  "ownerApproval": "Approved: install those six migrations in xpdoufauvrbdmxgngetv.",
+  "migrationCountBefore": 37,
+  "migrationCountAfter": 43,
+  "apiFunctionsBefore": 85,
+  "apiFunctionsAfter": 107,
+  "approvedMigrationsInstalled": 6,
+  "newApiFunctions": 22,
+  "newPrivateHelpers": 10,
+  "newTablesForcedRls": 15,
+  "authenticatedApiFunctions": 17,
+  "workerOnlyApiFunctions": 5,
+  "publicOrAnonymousNewFunctionAccess": false,
+  "directClientTableAccess": false,
+  "existingProviderFingerprintsUnchanged": 98,
+  "installedStrictSqlAssertions": 126,
+  "installedStrictSqlPassed": 126,
+  "syntheticFixturesRolledBack": true,
+  "persistentStateCountsAfterChecks": {
+    "operators": 0,
+    "proposals": 0,
+    "usageEvents": 0,
+    "healthProbes": 0,
+    "quotaPeriods": 0,
+    "operatorGrants": 0,
+    "syntheticTenants": 0,
+    "usageCorrections": 0,
+    "pipelineForecasts": 0,
+    "proposalDecisions": 0,
+    "usageReservations": 0,
+    "proposalExecutions": 0,
+    "operatorAccessEvents": 0,
+    "subscriptionRevisions": 0,
+    "subscriptionActivations": 0,
+    "trialStartPopulatedRows": 0
+  },
+  "fixtureAccountsAfterChecks": 0,
+  "fixtureTenantsAfterChecks": 0,
+  "fixtureResidueEvidence": "docs/verification/wave5/installation-fixture-residue-check-20261008.json",
+  "newEntitlementsEnabled": false,
+  "newRolePermissionsAssigned": false,
+  "schemaReloadRequested": true,
+  "schemaCacheAuthenticatedRequestVerified": false,
+  "currentClientSourceMatch": true,
+  "migrationsInOrder": [
+    {
+      "order": 1,
+      "path": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+      "name": "wave5_process_metrics",
+      "bytesSha256": "be586326b7d8ec380a5524a5d8232e67639d677eb192b9fe29da135ee9ffe997",
+      "normalizedSqlSha256": "81428371f02b3fe199ae811ba164f6c8c5f4dde3292ab8d1918c5ac938350e48",
+      "applySuccess": true,
+      "ledgerEntry": {
+        "name": "wave5_process_metrics",
+        "version": "20261007195453"
+      },
+      "verifiedAt": "2026-10-07 19:55:57.831648+00",
+      "migrationCount": 38,
+      "apiFunctionCount": 88
+    },
+    {
+      "order": 2,
+      "path": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+      "name": "wave5_pipeline_forecasts",
+      "bytesSha256": "1ea4ab076cb3deaa9d0f7f92b56c47effc1a0ad45e14839156a2fd6a2d1bd8ed",
+      "normalizedSqlSha256": "f5a116125b921cd067e35c311a7bc5d6f1e7c8505cc7737fbf833cab87e13148",
+      "applySuccess": true,
+      "ledgerEntry": {
+        "name": "wave5_pipeline_forecasts",
+        "version": "20261007200707"
+      },
+      "verifiedAt": "2026-10-07 20:07:09.251994+00",
+      "migrationCount": 39,
+      "apiFunctionCount": 91
+    },
+    {
+      "order": 3,
+      "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "name": "wave5_trusted_metering",
+      "bytesSha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e",
+      "normalizedSqlSha256": "7ee92f5e8fdf3f6efdead52531341ad4fad6965e4d5a1a2ae05a5171151b905b",
+      "applySuccess": true,
+      "ledgerEntry": {
+        "name": "wave5_trusted_metering",
+        "version": "20261007201325"
+      },
+      "verifiedAt": "2026-10-07 20:13:27.165374+00",
+      "migrationCount": 40,
+      "apiFunctionCount": 95
+    },
+    {
+      "order": 4,
+      "path": "supabase/migrations/20261006153000_wave5_operator_isolation.sql",
+      "name": "wave5_operator_isolation",
+      "bytesSha256": "29ce2ed18e40fb3fbf916e11b9ae82742eb75a52f252085eed48da9af9d88e8b",
+      "normalizedSqlSha256": "29ce2ed18e40fb3fbf916e11b9ae82742eb75a52f252085eed48da9af9d88e8b",
+      "applySuccess": true,
+      "ledgerEntry": {
+        "name": "wave5_operator_isolation",
+        "version": "20261007201500"
+      },
+      "verifiedAt": "2026-10-07 20:15:01.918457+00",
+      "migrationCount": 41,
+      "apiFunctionCount": 99
+    },
+    {
+      "order": 5,
+      "path": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+      "name": "wave5_human_proposals",
+      "bytesSha256": "b75e9cf94107fd9a959ced43f9e643b163ed579f95fb68c8de7b9e739b10d02e",
+      "normalizedSqlSha256": "e11dec927537dfc6eaf8fca58eb821768e2208dba1ff97ea47b5bab2a51e7b78",
+      "applySuccess": true,
+      "ledgerEntry": {
+        "name": "wave5_human_proposals",
+        "version": "20261007201517"
+      },
+      "verifiedAt": "2026-10-07 20:15:18.986528+00",
+      "migrationCount": 42,
+      "apiFunctionCount": 103
+    },
+    {
+      "order": 6,
+      "path": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "name": "wave5_synthetic_subscriptions",
+      "bytesSha256": "339e9e86074887d164dd339eb17ac54943c39fca0caf50db575c48529456a9f5",
+      "normalizedSqlSha256": "08c3f24653cfc9118c6b74db317e7ed97b4a76a06a80f43a92db3c0d7265f6cb",
+      "applySuccess": true,
+      "ledgerEntry": {
+        "name": "wave5_synthetic_subscriptions",
+        "version": "20261007201524"
+      },
+      "verifiedAt": "2026-10-07 20:15:25.759536+00",
+      "migrationCount": 43,
+      "apiFunctionCount": 107
+    }
+  ],
+  "remaining": [
+    "named synthetic tenant/entity/two branches and test-account labels",
+    "separately reviewed private synthetic plan/role/operator/grant setup",
+    "historical CRM and realized-result providers",
+    "authoritative financial/cash adapters, immutable scenarios and governed export integration",
+    "persistent integration/model providers and separately approved external provisioning/delivery",
+    "authenticated native/MFA/restart/keyboard, actual contention/load and owner acceptance"
+  ],
+  "wholeWaveComplete": false
+}

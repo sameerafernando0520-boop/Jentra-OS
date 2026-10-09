@@ -1,0 +1,484 @@
+{
+  "preparedAt": "2026-10-08T09:35:18.847Z",
+  "targetProjectId": "xpdoufauvrbdmxgngetv",
+  "installationAuthorized": false,
+  "additionalMigrationsInstalled": false,
+  "originalInstalledSixExcluded": true,
+  "installedBaseline": {
+    "migrations": 43,
+    "apiFunctions": 107,
+    "forcedRlsWave5Tables": 15,
+    "checkedAt": "2026-10-08T08:35:05.182087+00:00",
+    "unchangedApiCoreFingerprints": 120
+  },
+  "candidatesInOrder": [
+    {
+      "order": 1,
+      "path": "supabase/migrations/20260925002000_wave3_financial_statements.sql",
+      "bytesSha256": "7596ec3e5b1ac2b348e4b23371ff6c54818a5336d276fa3a03f14f1ecd5f17b6",
+      "normalizedSqlSha256": "7596ec3e5b1ac2b348e4b23371ff6c54818a5336d276fa3a03f14f1ecd5f17b6",
+      "purpose": "W3 prerequisite: immutable trial balance, P&L and balance-sheet publications",
+      "ownerWave": 3,
+      "apiFunctions": [
+        {
+          "name": "api.generate_financial_statement",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid, p_command_id uuid,p_idempotency_key uuid,p_client_timestamp timestamptz,p_payload jsonb, p_expected_entity_version bigint default null",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20260925002000_wave3_financial_statements.sql"
+        },
+        {
+          "name": "api.financial_statement_reports",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid, p_branch_id uuid,p_after uuid default null",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20260925002000_wave3_financial_statements.sql"
+        },
+        {
+          "name": "api.financial_statement_page",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid, p_branch_id uuid,p_report_id uuid,p_section text,p_offset integer default 0, p_account_id uuid default null",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20260925002000_wave3_financial_statements.sql"
+        }
+      ],
+      "newTables": [
+        "finance.financial_reports"
+      ]
+    },
+    {
+      "order": 2,
+      "path": "supabase/migrations/20260926009000_wave3_governed_report_exports.sql",
+      "bytesSha256": "85238e684c967e8377221e55f911fcb9dfa64e7696110ee28eacffe8b6586386",
+      "normalizedSqlSha256": "85238e684c967e8377221e55f911fcb9dfa64e7696110ee28eacffe8b6586386",
+      "purpose": "W3 prerequisite: governed report export preview/registration using existing core.export_jobs",
+      "ownerWave": 3,
+      "apiFunctions": [
+        {
+          "name": "api.report_export_preview",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid, p_source_type text,p_source_id uuid,p_section text,p_filters jsonb",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20260926009000_wave3_governed_report_exports.sql"
+        },
+        {
+          "name": "api.record_report_export",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid, p_command_id uuid,p_idempotency_key uuid,p_client_timestamp timestamptz,p_payload jsonb,p_expected_entity_version bigint default null",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20260926009000_wave3_governed_report_exports.sql"
+        }
+      ],
+      "newTables": []
+    },
+    {
+      "order": 3,
+      "path": "supabase/migrations/20261008090000_wave5_historical_pipeline.sql",
+      "bytesSha256": "183a8688dd2c78a9e13032a165d2e1787b3d8f9dd4a15aee9b201eddf4767768",
+      "normalizedSqlSha256": "183a8688dd2c78a9e13032a165d2e1787b3d8f9dd4a15aee9b201eddf4767768",
+      "purpose": "Immutable CRM history and closed frozen-cohort invoice/credit gross realization",
+      "ownerWave": 5,
+      "apiFunctions": [
+        {
+          "name": "api.wave5_pipeline_history",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid, p_as_of timestamptz,p_recorded_through timestamptz",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20261008090000_wave5_historical_pipeline.sql"
+        },
+        {
+          "name": "api.wave5_pipeline_realized",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid, p_forecast_id uuid,p_as_of timestamptz",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20261008090000_wave5_historical_pipeline.sql"
+        }
+      ],
+      "newTables": []
+    },
+    {
+      "order": 4,
+      "path": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql",
+      "bytesSha256": "1a636229a0749cf9d6334ae49efe8ff38627b6a2d1bb642789a28e86efd1c663",
+      "normalizedSqlSha256": "1a636229a0749cf9d6334ae49efe8ff38627b6a2d1bb642789a28e86efd1c663",
+      "purpose": "Scoped integration revisions, key rotation, leases, attempts, outcomes, reviewed replay and probes",
+      "ownerWave": 5,
+      "apiFunctions": [
+        {
+          "name": "api.wave5_integration_manage",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid, p_action text,p_id uuid,p_expected_version bigint,p_payload jsonb",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql"
+        },
+        {
+          "name": "api.wave5_delivery_worker",
+          "arguments": "p_action text,p_payload jsonb",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql"
+        },
+        {
+          "name": "api.wave5_delivery_review",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid, p_delivery_id uuid,p_review_id uuid,p_action text,p_reason text",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql"
+        },
+        {
+          "name": "api.wave5_integration_list",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid, p_subscription_after uuid default null,p_delivery_after uuid default null",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql"
+        },
+        {
+          "name": "api.wave5_integration_authorize",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid",
+          "returns": "uuid",
+          "source": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql"
+        },
+        {
+          "name": "api.wave5_health_collect",
+          "arguments": "p_collection_id uuid,p_tenant_id uuid default null",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql"
+        }
+      ],
+      "newTables": [
+        "intelligence_control.integration_hosts",
+        "intelligence_control.integration_subscriptions",
+        "intelligence_control.integration_changes",
+        "intelligence_control.delivery_heads",
+        "intelligence_control.delivery_attempts",
+        "intelligence_control.delivery_outcomes",
+        "intelligence_control.delivery_reviews"
+      ]
+    },
+    {
+      "order": 5,
+      "path": "supabase/migrations/20261008100000_wave5_invocation_storage.sql",
+      "bytesSha256": "a9bdd3bf5b1593bd3253930c5a0cd6286f576b7f81161a5832919efbc585d6e8",
+      "normalizedSqlSha256": "a9bdd3bf5b1593bd3253930c5a0cd6286f576b7f81161a5832919efbc585d6e8",
+      "purpose": "Hashed scoped credentials, atomic throttle/quota, named dispatch, durable model results and due scheduler",
+      "ownerWave": 5,
+      "apiFunctions": [
+        {
+          "name": "api.wave5_credential_manage",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid, p_action text,p_id uuid,p_payload jsonb",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20261008100000_wave5_invocation_storage.sql"
+        },
+        {
+          "name": "api.wave5_external_worker",
+          "arguments": "p_action text,p_payload jsonb",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20261008100000_wave5_invocation_storage.sql"
+        },
+        {
+          "name": "api.wave5_model_worker",
+          "arguments": "p_action text,p_payload jsonb",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20261008100000_wave5_invocation_storage.sql"
+        },
+        {
+          "name": "api.wave5_worker_entitlement",
+          "arguments": "p_scope jsonb",
+          "returns": "boolean",
+          "source": "supabase/migrations/20261008100000_wave5_invocation_storage.sql"
+        },
+        {
+          "name": "api.wave5_subscription_due",
+          "arguments": "p_after uuid default null",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20261008100000_wave5_invocation_storage.sql"
+        }
+      ],
+      "newTables": [
+        "intelligence_control.integration_credentials",
+        "intelligence_control.external_periods",
+        "intelligence_control.external_requests",
+        "intelligence_control.external_throttles",
+        "intelligence_control.model_invocations",
+        "intelligence_control.model_outcomes"
+      ]
+    },
+    {
+      "order": 6,
+      "path": "supabase/migrations/20261008103000_wave5_dated_cash.sql",
+      "bytesSha256": "24b5ab44250ec5239ab2b942277cb104867d8e67288666c6297d4fa694e4b391",
+      "normalizedSqlSha256": "24b5ab44250ec5239ab2b942277cb104867d8e67288666c6297d4fa694e4b391",
+      "purpose": "Immutable dated bank cash and permission-gated residual AR/AP after allocations and reversals; scenario sources; payroll and project reimbursement dates remain incomplete.",
+      "ownerWave": 5,
+      "apiFunctions": [
+        {
+          "name": "api.wave5_cash_authorize",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid",
+          "returns": "uuid",
+          "source": "supabase/migrations/20261008103000_wave5_dated_cash.sql"
+        },
+        {
+          "name": "api.wave5_cash_basis",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid, p_start date,p_end date,p_recorded_through timestamptz",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20261008103000_wave5_dated_cash.sql"
+        },
+        {
+          "name": "api.wave5_cash_save",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_id uuid,p_source_hash text,p_parameters jsonb",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20261008103000_wave5_dated_cash.sql"
+        },
+        {
+          "name": "api.wave5_cash_get",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_id uuid",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20261008103000_wave5_dated_cash.sql"
+        }
+      ],
+      "newTables": [
+        "analytics.cash_scenario_revisions"
+      ]
+    },
+    {
+      "order": 7,
+      "path": "supabase/migrations/20261008110000_wave5_governed_export_adapter.sql",
+      "bytesSha256": "fbe68cc451f5044c03be7b68803ff2afbb858004109a5ee2319960d495e193ed",
+      "normalizedSqlSha256": "fbe68cc451f5044c03be7b68803ff2afbb858004109a5ee2319960d495e193ed",
+      "purpose": "Extends the W3 export contract for frozen pipeline and scenario sources, including AP outflows and source-hash checks on reopen.",
+      "ownerWave": 5,
+      "apiFunctions": [
+        {
+          "name": "api.wave5_export_reopen",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_export_id uuid",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20261008110000_wave5_governed_export_adapter.sql"
+        }
+      ],
+      "newTables": []
+    },
+    {
+      "order": 8,
+      "path": "supabase/migrations/20261008113000_wave5_statement_classifications.sql",
+      "bytesSha256": "aad2c6cb360490ad653470858a389354c7016f2346b41e26bff8ac8294dc97c3",
+      "normalizedSqlSha256": "aad2c6cb360490ad653470858a389354c7016f2346b41e26bff8ac8294dc97c3",
+      "purpose": "Immutable statement classification review and six exact named financial ratios",
+      "ownerWave": 5,
+      "apiFunctions": [
+        {
+          "name": "api.wave5_classification_authorize",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid",
+          "returns": "uuid",
+          "source": "supabase/migrations/20261008113000_wave5_statement_classifications.sql"
+        },
+        {
+          "name": "api.wave5_classification_publish",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid, p_id uuid,p_profit_loss_id uuid,p_balance_sheet_id uuid,p_labels jsonb,p_reason text",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20261008113000_wave5_statement_classifications.sql"
+        },
+        {
+          "name": "api.wave5_financial_ratios",
+          "arguments": "p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid, p_profit_loss_id uuid,p_balance_sheet_id uuid,p_classification_id uuid default null",
+          "returns": "jsonb",
+          "source": "supabase/migrations/20261008113000_wave5_statement_classifications.sql"
+        }
+      ],
+      "newTables": [
+        "analytics.statement_classifications"
+      ]
+    }
+  ],
+  "newWave5ApiFunctions": 21,
+  "prerequisiteWave3ApiFunctions": 5,
+  "newWave5Tables": 15,
+  "prerequisiteWave3Tables": 1,
+  "projectedAfterApprovedInstallation": {
+    "migrations": 51,
+    "apiFunctions": 133,
+    "wave5Tables": 30
+  },
+  "permissionDefinitions": [
+    "integrations.manage",
+    "finance.classifications.approve",
+    "finance.reports.export if absent"
+  ],
+  "roleAssignmentsAdded": false,
+  "entitlementsActivated": false,
+  "newDirectClientTableAccess": false,
+  "privateHelperPublicAccess": false,
+  "developmentChecks": {
+    "candidateSql": 116,
+    "domain": 71,
+    "platform": 42,
+    "native": 94,
+    "controlledWorker": 31,
+    "analyzerClean": true,
+    "buildSourceMatches": false,
+    "sharedGoldenFailures": 13,
+    "platformAndNativeCurrentSource": false
+  },
+  "candidateQuerySha256": "a5529c0ed24311305754eed7089b5be693a6633ee403b4fd03fc8187011de2bb",
+  "fullCashProvidersImplemented": false,
+  "nonemptyRealizedSqlEvidence": true,
+  "authenticatedNativeAcceptance": false,
+  "realMfaAcceptance": false,
+  "actualWorkerDelivery": false,
+  "actualModelRequest": false,
+  "independentSessionContention": false,
+  "targetScaleLoad": false,
+  "ownerAcceptedCriteria": 0,
+  "bootstrapAuthorized": false,
+  "secretProvisioningAuthorized": false,
+  "workerDeploymentAuthorized": false,
+  "externalDeliveryAuthorized": false,
+  "realBillingAuthorized": false,
+  "excluded": [
+    "original six installed migrations",
+    "other Wave 3/4 migrations",
+    "acceptance stores",
+    "synthetic bootstrap, roles, operator grants and entitlements",
+    "server/model/vault/receiver secrets",
+    "worker deployment, model calls and external delivery",
+    "real billing and production",
+    "Git staging/commit/push"
+  ],
+  "evidenceHashes": {
+    "remaining-candidate-20261008.hashes.json": "237bc54556c5e6bd62355aa20ed3e85ff2318b68a42723ba5423342b5ea9ffb2",
+    "remaining-candidate-final-result-20261008.json": "016cb1513ec38c178f72c11bafecbae67a099dca2ceaa829a3d82a3428548356",
+    "continuation-live-final-20261008.json": "45da9207d08a484d4225c2964f498f8fed4272566827b944abfb32571e5ed50e",
+    "designated-runtime-labels-20261008.json": "d4651e30d3effb609160215baa2a197fe965d0833536d86f11fd3a0dd100cf52",
+    "continuation-build-final-20261008.json": "f9a69eba26da1dbb726d5f13c6ee3d6343fbb0b0e56750ae9fc1a2c5703aa270",
+    "continuation-build-final-snapshot-20261008.json": "15b7ecc897153f711436643800425b242d4972d711d34c5abf858a1c65a435c7",
+    "continuation-windows-build-final-20261008.log": "c9c4418bdc1ee85b8144e23ff8b4d3c1d10f5e9c4a45fd6fa40d5419515a7c11",
+    "continuation-source-analyzer-verified-20261008.log": "a881b4940a2b363ecd19b3dd57962d3aeaf39df91d49ed9532df7a66006ad469",
+    "domain-continuation-verified-20261008.log": "31506d72534be2ae913a93c656a4c96248d98456abba81e4c6e5d0ffffd9603a",
+    "platform-continuation-verified-20261008.log": "b925acd3814311c9de94690ac8e1b8f90cb93c5bc05e0afdda52f94f1af70f01",
+    "native-continuation-verified-20261008.log": "87512fc4bf07ae0eba9de9a93df02e230f663decd38431143ca7a0b66ceb94b1",
+    "worker-continuation-verified-20261008.log": "a2f374c9aecd65462732113497fd27264b7017c221e39edbd8a3289e9d844775",
+    "shared-golden-investigation-20261008.json": "a3e76e1a7fe939b8b4e1afad8001ae135fd2a640f6c1bcd2144789ae2bd0845a",
+    "shared-golden-investigation-20261008.md": "732e767412fd8054eac1958bc5b7242e3ee9896f9bec3ea62dbed03ee5125e83",
+    "cash-ui-verification-20261008.json": "4526e05beafabcfee4248cbecc1de094dc7fcc94b27de6d64e910278695c7ed4",
+    "cash-ui-verification-20261008.md": "021f8fcfc9afff9b00f891400ae10e981cc5602f8336a5f4fd55a6de172ab05d",
+    "cash-ui-snapshot-final-20261008.json": "31235a5f036ac0f2357eefc88d6d3e3d70cc9496a29aec4afd5a7226c42b70c6",
+    "cash-ui-pubget-final-20261008.log": "6cf1e37cc17bc56362b873d0f230d8d317675bcf9fb346253fada212a7c22b37",
+    "cash-ui-analyzer-final-20261008.log": "817ca564ddc97bc7b642c8f722c7a2e4a6c46032a8847326acde874c89560fc2",
+    "cash-ui-domain-tests-20261008.log": "c58fe52504c827acf82118c4259f61d980e26f24c081bc9cb4d4c95c73be3c58",
+    "cash-ui-platform-tests-20261008.log": "490da80c697e6fe65a8af2ab0a4989f5e9d6bbb9ee9f218231adf2ea578167ab",
+    "cash-ui-native-tests-20261008.log": "ae5c9e4c24949d720a908ed661e6f7e4802847653abc2d49715964206bc43710",
+    "cash-ui-windows-build-20261008.log": "2300d12de9559790592741d6f5b928fa55b8a5fba937f3ad89b6bd20e188f58e"
+  },
+  "workerSourceHashes": {
+    "workers/wave5/bounded_json.mjs": "5f4f35310ba4cd8e30e714344be296eba8db1638fa65e4620095718f3f26c680",
+    "workers/wave5/delivery_schedule.mjs": "29a412b79b5b7e41e37a77d82659a79ee6f90a1960d8573b3aeb7990acee60fa",
+    "workers/wave5/integration_policy.mjs": "479af9b44cd5c00b3f8aeebbe26725c18f8b62e9014d6e656a57ad331b3b6c5d",
+    "workers/wave5/integration_policy.test.mjs": "b8ca6381cb7425e08d4ea97c95a5f0b5b91304ff91617e3562e8f17c0cf20d82",
+    "workers/wave5/model_reader.mjs": "9be9ac552738041fb14a1cea2f9fd5e8dda415399512692f11b7430cf634a0a9",
+    "workers/wave5/model_runtime.mjs": "fce748e511a81bdae957ff76275641142a738d8391132953d4d3c7eec03cfb99",
+    "workers/wave5/model_runtime.test.mjs": "665784626937177cc6c183dbe44cd2d2c496e3acf39954d3fb1383e0888dfe74",
+    "workers/wave5/openai_model_adapter.mjs": "bcb897084a3bd9d838fd61f5a11fcea4e670e5bbe8462975483c149610374844",
+    "workers/wave5/openai_model_adapter.test.mjs": "fbfe0bad596cace689d7e3d063e3d84eb6e256f76f3e4a5df3f2daa8b9e33942",
+    "workers/wave5/persistent_control.mjs": "aeef87956d52020d503412d43c12026f11e8a5c78bbf177c09b1ac3ec07aa887",
+    "workers/wave5/persistent_control.test.mjs": "c84f06d36deea5d2a574118feede7a04e22f7b3570149651fbfdd6f61f199cb4",
+    "workers/wave5/subscription_schedule.mjs": "bc545dacb3e6352badc6e0f53e0491077ef38096c914abdd86fcaba857a93517",
+    "workers/wave5/worker_endpoints.mjs": "855c3b859da40c2649dfd755e698b58e89e3df0ae0cdb840ef7385e8d0e9f399",
+    "workers/wave5/worker_endpoints.test.mjs": "73e8222fc9bb038a30005ee16a7dcdc194800a104566d4680ef03e4ca1e0fecd",
+    "workers/wave5/worker_runtime.mjs": "52676532dd91b70b7117087df4299f9bd8f44c7e927d778406a0da59873c1278",
+    "workers/wave5/worker_runtime.test.mjs": "7fd6bb8bb8ac2f6bfbe45f3874662da21c391346d6a78ef5e7bfc901f1d46c2d"
+  },
+  "renderedFrames": {
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1024-720-dark-comfortable-lower.png": "b09faa519ea3fb0fa36d879edb28bc1ad488f7587d0c3e4f1d0d375736d42856",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1024-720-dark-comfortable-providers.png": "1098aae5bc874decdfdb7baf616cdf97a5c47f55e07cfa65697ced3b445d42ae",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1024-720-dark-comfortable-top.png": "b49c3c55a09c919f25a8b704152582f62b1dccdf1e8005f94229d9657d886d0d",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1024-720-dark-compact-lower.png": "b0b2f34b4656bb10ba2ee0127879a045a441898f465f38a21274a61180722863",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1024-720-dark-compact-providers.png": "d66c74af6510bb65f7e2834b30e713b43734076c3b816b3c922f3072df0f618a",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1024-720-dark-compact-top.png": "f30f9b35679eb2e785a1a84b6818114e4f5ea27ca1ef6bd5208de88390047fbd",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1024-720-light-comfortable-lower.png": "937a4f8196c348dafb2f5924dca07c06d47a611e3079313a9a4befc1e68eb237",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1024-720-light-comfortable-providers.png": "118f2791d4a665b2658854a2e17150cc0c77ffb267b246ca87d54a835ee558e4",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1024-720-light-comfortable-top.png": "fdf92202dfd7c76c2553dc9411a50eaa2d263b8875ab2fc96ac1ff13e3ee2ea9",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1024-720-light-compact-lower.png": "f847fb9be9086030c8721454b1bcefb64c8047b3fb54005111339b0d8a1198c4",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1024-720-light-compact-providers.png": "39f35bc83dc4a69829808f30127db00bd6cd1150f54926d300a317401573ab69",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1024-720-light-compact-top.png": "bea675a6e099d3ac316a847e291c69b916d7eaee34d67895247dba59617f4f7f",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1440-900-dark-comfortable-lower.png": "40f75dc544110e178915e21cd6f99996f3f8c227cb2038cd0b69dd7b75b95755",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1440-900-dark-comfortable-providers.png": "29df6921fbcd986bacbf3ddd46f0b13a7a3cb06dcfc38d89c614fb35950f18db",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1440-900-dark-comfortable-top.png": "95b37f5ed536b505b006e20f97008d2ee833dc921ea2c06c06cab984c928e822",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1440-900-dark-compact-lower.png": "d4cddf81fe261293118cabf3d93a7a9305498befdea0202023d88f9c8624917f",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1440-900-dark-compact-providers.png": "d9c4e0f16cbb3ef738d7ca250d1dcffa3aa6bfe1486edb155b68bbb700855c12",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1440-900-dark-compact-top.png": "b3dd7678eea8d1bfe2c6cae3b595a443b7ca6ef201b18bdda7244e0a758f4486",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1440-900-light-comfortable-lower.png": "5f62a74b4c1ca9773421d82ea0f0be2d2f78f0030da42247618117e216ae8182",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1440-900-light-comfortable-providers.png": "9fd8d5a4257a60e0c5b26df3bc77e983638b2a6216603de194318e989779e655",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1440-900-light-comfortable-top.png": "12f28eabeff39e0266582bf105169a441b8fbb55705485f856e02cf6dbce77cf",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1440-900-light-compact-lower.png": "d1fe1dea9cedf36ad4a168564f013c3070f24d866f9eb49713e07bb14b28848d",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1440-900-light-compact-providers.png": "c5ef7fe594d639f6c068fef14149fc792e7de55f85da3613477a58a746a785ca",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1440-900-light-compact-top.png": "e36d98133105f1b5aeb2378b539041e5d0328ecb3d03059c8eb70ffd71f68928",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1920-1080-dark-comfortable-lower.png": "369b7bda35e7ebaabdbb0e99016b80b521744d5d44c101a7395bde31662a6ada",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1920-1080-dark-comfortable-providers.png": "97b42c54e5d6158b87d4847bd1ce3c606851a5a5725e38775e8cd91c717754fd",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1920-1080-dark-comfortable-top.png": "e37c16fa9a31dfeb62611bea5cb3522296a585f9d63dd96aeb87b13e3558e129",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1920-1080-dark-compact-lower.png": "5a528d0c5a0a460015be660dc8ce03b595c2f7de50b0bfd5e143e241c96124ac",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1920-1080-dark-compact-providers.png": "b5d94040d2f4038e56baa32abf81a2b339e767bb2a9d7fb4f15643a60db659ce",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1920-1080-dark-compact-top.png": "0a699883b2e4f4eb16fb973dd90f3f24ccbb5b7eb76d62c471d445e70b88cd1f",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1920-1080-light-comfortable-lower.png": "2dc5d0d7d545814553e8beb0561f73916385df913825b1947f06524528087520",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1920-1080-light-comfortable-providers.png": "78225e16598330e454bc418127144836a508609e5ed8aa9bbec6d7462d0bc530",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1920-1080-light-comfortable-top.png": "56fa1a1dfdc654e8c354729132a9b7f19f85262ae2609378492a17b12d6ab607",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1920-1080-light-compact-lower.png": "76a866d9a3eb54c5d9420b56db77974f2401ab8cb7978904460971375021cfe5",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1920-1080-light-compact-providers.png": "1e9233115b877cc194525bfea48f2bd2d9f61b4f71d3d35835860bd4146160e3",
+    "docs/verification/wave5/cash-ui-frames-20261008/cash-1920-1080-light-compact-top.png": "8ba7b3443fc096154906f798d9261c4b274a9ae89874b81c3c47dfefbfaf5a27"
+  },
+  "renderedFixturesAreAuthenticatedAcceptance": false,
+  "ownerDecision": "keep the eight new candidates uninstalled for review",
+  "candidateVerification": {
+    "querySha256": "a5529c0ed24311305754eed7089b5be693a6633ee403b4fd03fc8187011de2bb",
+    "assertions": 116,
+    "passed": 116,
+    "strictFinish": true,
+    "rolledBack": true,
+    "installedMigrationsReplayed": false,
+    "installedBehaviorClaimed": false
+  },
+  "liveRefresh": {
+    "project": "xpdoufauvrbdmxgngetv",
+    "checkedAt": "2026-10-08 09:32:17 UTC",
+    "migrationCount": 43,
+    "apiFunctions": 107,
+    "candidateCashTableInstalled": false,
+    "reviewCandidateMigrationsInstalled": [],
+    "originalSixRemainInLedger": [
+      "wave5_process_metrics",
+      "wave5_pipeline_forecasts",
+      "wave5_trusted_metering",
+      "wave5_operator_isolation",
+      "wave5_human_proposals",
+      "wave5_synthetic_subscriptions"
+    ]
+  },
+  "cashUiVerification": "docs/verification/wave5/cash-ui-verification-20261008.json",
+  "currentSourceSdkEvidence": {
+    "currentSource": false,
+    "developmentOnly": true,
+    "domain": 71,
+    "platform": 42,
+    "native": 94,
+    "analyzer": true,
+    "windowsBuild": true,
+    "cashFrames": 36,
+    "authenticatedNative": false,
+    "historical": true
+  },
+  "historicalRenderedFrames": {
+    "docs/verification/wave5/continuation-frames-20261008/cash-dark-lower.png": "456d825a86002f19ee68a0ea9baff0b6f05885151f25ab20e5248ecd64998df5",
+    "docs/verification/wave5/continuation-frames-20261008/cash-dark-top.png": "e7c5a66cbd576f7e8bb779ee1bff5ea572249dcd98d2df0354d4bd8c97b05602",
+    "docs/verification/wave5/continuation-frames-20261008/cash-light-lower.png": "ad43a191f2a6ffde09b51107f8548668c14da04a4bdc298e5ff0440070e5ce76",
+    "docs/verification/wave5/continuation-frames-20261008/cash-light-top.png": "8930212f8fe75a30513ec01b81aa3b49eec43d00dc4dec7134743febb39eebcb",
+    "docs/verification/wave5/continuation-frames-20261008/exports-dark-lower.png": "86c5976346932e592f4a1be110baf470bc8d329b9097fe5d379f6500afa6199a",
+    "docs/verification/wave5/continuation-frames-20261008/exports-dark-top.png": "22b7661faad4d7b1152ff569c2bf77426e090f4bb36fb37d634f69531d5b009e",
+    "docs/verification/wave5/continuation-frames-20261008/exports-light-lower.png": "65a46e671411fe0742d3e39bac506421103ffec3e65ced400d0732eff36dc89b",
+    "docs/verification/wave5/continuation-frames-20261008/exports-light-top.png": "cccd70f8a4882333e4db358fa07e80a79e6d2d9787f561d8177f0a71cff5f432",
+    "docs/verification/wave5/continuation-frames-20261008/financial-dark-lower.png": "abdd91bf488114245c24004c1df9541a8ca320903e0095cfd8e4b9dd42f40fee",
+    "docs/verification/wave5/continuation-frames-20261008/financial-dark-top.png": "38f770d06528eb069c7f4e2a04a710caba622f2890116b370575ae6ed2972ec2",
+    "docs/verification/wave5/continuation-frames-20261008/financial-light-lower.png": "a4ef3d8a48893494f4df6ed71891385d4df6a99ead1503ca2d7636290729ae12",
+    "docs/verification/wave5/continuation-frames-20261008/financial-light-top.png": "82526aff0ba12ac69614b745551add93f5fdf136c6e0c51fc3a9deba4b04b21f",
+    "docs/verification/wave5/continuation-frames-20261008/historical-dark-lower.png": "d2b8112fa9c6658fb7dfb22ba9e45d562f07fb8a8c23646b254ea1cad89287a9",
+    "docs/verification/wave5/continuation-frames-20261008/historical-dark-top.png": "3159fb2c53448fb98c370fa806f3511f9e92fc6ef422770aabd43df85ded0c24",
+    "docs/verification/wave5/continuation-frames-20261008/historical-light-lower.png": "558a22c58a511355f9ecd42f190c01e17ad00bc81928ccef1f0e8029fcde3db3",
+    "docs/verification/wave5/continuation-frames-20261008/historical-light-top.png": "b569f2f49d3ee8ea601a4e781fd475164a09c68c79ab4d2bf59298528b9dbf3b",
+    "docs/verification/wave5/continuation-frames-20261008/integrations-dark-lower.png": "e3bcf0ec7011cdd8f6a46d69ed40532621dad22583eee0efe1d7897273bdad2c",
+    "docs/verification/wave5/continuation-frames-20261008/integrations-dark-top.png": "b32f9cf957c0cbc691744309689da30aa0a09515b28acb1be393e23d6c81f976",
+    "docs/verification/wave5/continuation-frames-20261008/integrations-light-lower.png": "a725e16bf0eb05032e1f763b560d03d02de22d24a8fc127758a0d0203cddde07",
+    "docs/verification/wave5/continuation-frames-20261008/integrations-light-top.png": "7059c82112763065c160e0b804c9d4148061bab224f4571b91a287ca5e261010"
+  },
+  "renderedFrameScope": "Current cash fixture renders; historical frames are retained separately",
+  "sdkEvidenceCurrentSource": false,
+  "sdkEvidenceStatus": "Historical earlier source; superseded by current cash-date verification",
+  "cashDatesReview": "docs/verification/wave5/cash-dates-review-20261008.md",
+  "currentCashDatesSdkEvidence": "docs/verification/wave5/cash-dates-verification-20261008.json",
+  "evidenceHashesMeaning": "Historical hash inventory from the earlier eight-file review; current SDK evidence is separately hash-bound in the cash-date report"
+}

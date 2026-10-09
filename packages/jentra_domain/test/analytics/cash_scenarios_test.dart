@@ -134,20 +134,27 @@ void main() {
   );
   test('duplicate residual or cash controls denied', () {
     expect(
-      () => calculate([obligation(1, 'payroll', true, 1)]),
-      throwsFormatException,
-    );
-    expect(
       () => calculate([obligation(1, 'receivables', false, 1)]),
       throwsFormatException,
     );
     final o = obligation(1, 'receivables', true, 1);
     expect(() => calculate([o, o]), throwsFormatException);
     expect(
+      () => calculate([o, obligation(1, 'payables', false, 1)]),
+      throwsFormatException,
+    );
+    expect(
       () => calculate([], controls: [control(), control()]),
       throwsFormatException,
     );
   });
+  test(
+    'signed payroll recovery is an inflow with a positive remaining magnitude',
+    () {
+      final r = calculate([obligation(1, 'payroll', true, 2)]);
+      expect(r.buckets.last.exactBalance, '1.000002');
+    },
+  );
   test(
     'negative residual, missing currency control and excluded horizon end rejected',
     () {

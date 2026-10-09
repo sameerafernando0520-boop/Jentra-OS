@@ -6,7 +6,15 @@ import '../draft_repository.dart';
 /// Original identities and bounded parameters only; no results or credentials.
 final class Wave5CommandStore {
   Wave5CommandStore(this.drafts, this.authorize, {required this.namespace}) {
-    if (!{'pipeline', 'proposal', 'subscription'}.contains(namespace)) {
+    if (!{
+      'pipeline',
+      'proposal',
+      'subscription',
+      'integration',
+      'cash_dates_payroll_obligation',
+      'cash_dates_payroll_correction',
+      'cash_dates_project_reimbursement',
+    }.contains(namespace)) {
       throw const FormatException('Unknown command recovery namespace.');
     }
   }
@@ -50,9 +58,32 @@ final class Wave5CommandStore {
     );
     parseProcessMetricUtc(envelope['clientTimestamp'] as String);
     final payload = envelope['payload'] as Map<String, Object?>;
-    final allowed = namespace == 'pipeline'
+    final allowed = namespace.startsWith('cash_dates_')
+        ? {
+            'prepare': {
+              'id',
+              'sourceKind',
+              'sourceId',
+              'sourceHash',
+              'dueDate',
+              'reasonCode',
+              'expectedVersion',
+            },
+            'approve': {'id', 'proposalHash'},
+            'reject': {'id', 'proposalHash'},
+          }
+        : namespace == 'pipeline'
         ? {
             'freeze': {'horizonStart', 'horizonEnd'},
+          }
+        : namespace == 'integration'
+        ? {
+            'register': {'id', 'url', 'keyRef', 'expectedVersion'},
+            'rotate': {'id', 'keyRef', 'expectedVersion'},
+            'revoke': {'id', 'expectedVersion'},
+            'review': {'deliveryId', 'decision', 'reason'},
+            'credential_register': {'id', 'tokenHash', 'startsAt', 'expiresAt'},
+            'credential_revoke': {'id'},
           }
         : namespace == 'subscription'
         ? {
@@ -76,7 +107,7 @@ final class Wave5CommandStore {
         payload.values.any((v) => v is! String)) {
       throw const FormatException('Unsupported recovered command parameters.');
     }
-    for (final key in ['sourceId', 'proposalId']) {
+    for (final key in ['sourceId', 'proposalId', 'id', 'deliveryId']) {
       if (payload.containsKey(key)) {
         final id = payload[key] as String;
         ProcessMetricScope(tenantId: id, legalEntityId: id);
@@ -91,9 +122,81 @@ final class Wave5CommandStore {
         ).hasMatch(payload['parametersHash'] as String)) {
       throw const FormatException('Invalid recovered approval hash.');
     }
+    if (namespace.startsWith('cash_dates_')) {
+      for (final key in ['sourceHash', 'proposalHash']) {
+        if (payload.containsKey(key) &&
+            !RegExp(r'^[a-f0-9]{64}$').hasMatch(payload[key] as String)) {
+          throw const FormatException(
+            'Invalid payment-date recovery fingerprint.',
+          );
+        }
+      }
+      if (envelope['action'] == 'prepare') {
+        if (payload['sourceKind'] !=
+                namespace.substring('cash_dates_'.length) ||
+            !{
+              'payroll_calendar',
+              'payment_terms',
+              'reviewed_reschedule',
+              'correction_recovery',
+            }.contains(payload['reasonCode']) ||
+            !RegExp(
+              r'^(0|[1-9][0-9]{0,15})$',
+            ).hasMatch(payload['expectedVersion'] as String) ||
+            BigInt.parse(payload['expectedVersion'] as String) >
+                BigInt.parse('9007199254740990') ||
+            !RegExp(
+              r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$',
+            ).hasMatch(payload['dueDate'] as String)) {
+          throw const FormatException(
+            'Invalid payment-date recovery parameters.',
+          );
+        }
+        parseProcessMetricUtc('${payload['dueDate']}T00:00:00Z');
+      }
+    }
     if (payload.containsKey('decision') &&
-        !{'approved', 'rejected'}.contains(payload['decision'])) {
+        !(namespace == 'integration'
+                ? {'replay', 'acknowledged', 'not_sent'}
+                : {'approved', 'rejected'})
+            .contains(payload['decision'])) {
       throw const FormatException('Invalid recovered decision.');
+    }
+    if (namespace == 'integration') {
+      if (payload.containsKey('tokenHash') &&
+          !RegExp(r'^[a-f0-9]{64}$').hasMatch(payload['tokenHash'] as String)) {
+        throw const FormatException(
+          'Only a reviewed server credential digest is accepted.',
+        );
+      }
+      if (payload.containsKey('startsAt')) {
+        final start = parseProcessMetricUtc(payload['startsAt'] as String),
+            end = parseProcessMetricUtc(payload['expiresAt'] as String);
+        if (!end.isAfter(start) ||
+            end.difference(start) > const Duration(days: 366)) {
+          throw const FormatException('Invalid credential effective dates.');
+        }
+      }
+      if ((payload.containsKey('keyRef') &&
+              !RegExp(
+                r'^[a-zA-Z0-9_/-]{1,180}$',
+              ).hasMatch(payload['keyRef'] as String)) ||
+          (payload.containsKey('url') &&
+              (!RegExp(
+                    r'^https://[^/@:#?]+(:443)?(/[^#]*)?$',
+                  ).hasMatch(payload['url'] as String) ||
+                  (payload['url'] as String).length > 2048)) ||
+          (payload.containsKey('expectedVersion') &&
+              !RegExp(
+                r'^(0|[1-9][0-9]{0,18})$',
+              ).hasMatch(payload['expectedVersion'] as String)) ||
+          (payload.containsKey('reason') &&
+              ((payload['reason'] as String).trim().length < 8 ||
+                  (payload['reason'] as String).length > 500))) {
+        throw const FormatException(
+          'Invalid recovered integration parameters.',
+        );
+      }
     }
     if (namespace == 'subscription') {
       if (!RegExp(

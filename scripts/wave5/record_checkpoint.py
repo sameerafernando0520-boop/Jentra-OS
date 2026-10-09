@@ -78,6 +78,8 @@ def prohibited_projection_keys(value, prefix=''):
 
 
 def main():
+    if (EVIDENCE / 'installation-result-20261008.json').exists():
+        raise ValueError('Pre-installation review is now immutable; use complete_installation.py for installed evidence')
     checked = datetime.datetime.now(datetime.timezone.utc).isoformat()
     manifest = load('client-snapshot-build-final-20261006.json')
     spec = importlib.util.spec_from_file_location('source_snapshot', ROOT / 'scripts/wave4/create_isolated_snapshot.py')

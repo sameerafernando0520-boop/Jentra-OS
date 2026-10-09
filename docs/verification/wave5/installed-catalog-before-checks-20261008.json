@@ -1,0 +1,945 @@
+{
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "ledger": [
+    {
+      "name": "create_greenfield_foundation",
+      "version": "20260831193714"
+    },
+    {
+      "name": "harden_foundation_rls_and_indexes",
+      "version": "20260831193857"
+    },
+    {
+      "name": "simplify_invitation_read_policy",
+      "version": "20260831194005"
+    },
+    {
+      "name": "optimize_invitation_auth_initplan",
+      "version": "20260901005825"
+    },
+    {
+      "name": "create_wave2_shared_foundation_schema",
+      "version": "20260901090317"
+    },
+    {
+      "name": "create_wave2_command_helpers",
+      "version": "20260901090331"
+    },
+    {
+      "name": "create_wave2_setup_upsert_command",
+      "version": "20260901090354"
+    },
+    {
+      "name": "create_wave2_special_commands",
+      "version": "20260901090406"
+    },
+    {
+      "name": "expose_wave2_versioned_api",
+      "version": "20260901090420"
+    },
+    {
+      "name": "cover_wave2_foreign_keys",
+      "version": "20260901090642"
+    },
+    {
+      "name": "validate_wave2_attachment_aggregates",
+      "version": "20260901091132"
+    },
+    {
+      "name": "enforce_wave2_fiscal_period_lifecycle",
+      "version": "20260903045702"
+    },
+    {
+      "name": "enforce_wave2_workflow_lifecycle",
+      "version": "20260903051423"
+    },
+    {
+      "name": "align_wave2_setup_contracts",
+      "version": "20260903110103"
+    },
+    {
+      "name": "bound_wave2_report_rows",
+      "version": "20260903110716"
+    },
+    {
+      "name": "wave3_operational_foundation",
+      "version": "20260904121647"
+    },
+    {
+      "name": "cover_wave3_foreign_keys",
+      "version": "20260904122313"
+    },
+    {
+      "name": "create_wave3_crm_pipeline_schema",
+      "version": "20260904125910"
+    },
+    {
+      "name": "create_wave3_crm_pipeline_commands",
+      "version": "20260904130000"
+    },
+    {
+      "name": "add_crm_pipeline_aging_summary",
+      "version": "20260904135959"
+    },
+    {
+      "name": "create_wave3_quotation_schema",
+      "version": "20260905050419"
+    },
+    {
+      "name": "create_wave3_quotation_commands",
+      "version": "20260905050428"
+    },
+    {
+      "name": "create_wave3_order_credit_reservation_schema",
+      "version": "20260905050436"
+    },
+    {
+      "name": "create_wave3_order_credit_reservation_commands",
+      "version": "20260905050444"
+    },
+    {
+      "name": "cover_wave3_lead_to_cash_foreign_keys",
+      "version": "20260905050839"
+    },
+    {
+      "name": "stabilize_wave3_discount_allocation",
+      "version": "20260905054457"
+    },
+    {
+      "name": "harden_crm_pipeline_ac302",
+      "version": "20260905123934"
+    },
+    {
+      "name": "complete_quotation_workspace_contracts",
+      "version": "20260906153036"
+    },
+    {
+      "name": "complete_sales_order_workspace",
+      "version": "20260907044241"
+    },
+    {
+      "name": "complete_delivery_receivables",
+      "version": "20260910135010"
+    },
+    {
+      "name": "harden_receivables_reference_indexes",
+      "version": "20260910135507"
+    },
+    {
+      "name": "governed_stock_openings",
+      "version": "20260910201410"
+    },
+    {
+      "name": "governed_warehouse_setup",
+      "version": "20260911065744"
+    },
+    {
+      "name": "stock_opening_approver_setup",
+      "version": "20260911130900"
+    },
+    {
+      "name": "wave4_employee_foundation",
+      "version": "20260925181927"
+    },
+    {
+      "name": "wave4_calendar_versions",
+      "version": "20260926082441"
+    },
+    {
+      "name": "wave4_private_hr",
+      "version": "20260929224939"
+    },
+    {
+      "name": "wave5_process_metrics",
+      "version": "20261007195453"
+    },
+    {
+      "name": "wave5_pipeline_forecasts",
+      "version": "20261007200707"
+    },
+    {
+      "name": "wave5_trusted_metering",
+      "version": "20261007201325"
+    },
+    {
+      "name": "wave5_operator_isolation",
+      "version": "20261007201500"
+    },
+    {
+      "name": "wave5_human_proposals",
+      "version": "20261007201517"
+    },
+    {
+      "name": "wave5_synthetic_subscriptions",
+      "version": "20261007201524"
+    }
+  ],
+  "tables": [
+    {
+      "rls": true,
+      "name": "pipeline_forecasts",
+      "forced": true,
+      "schema": "analytics",
+      "anonRead": false,
+      "anonWrite": false,
+      "immutableTrigger": true,
+      "authenticatedRead": false,
+      "authenticatedWrite": false
+    },
+    {
+      "rls": true,
+      "name": "health_probes",
+      "forced": true,
+      "schema": "intelligence_control",
+      "anonRead": false,
+      "anonWrite": false,
+      "immutableTrigger": true,
+      "authenticatedRead": false,
+      "authenticatedWrite": false
+    },
+    {
+      "rls": true,
+      "name": "operator_access_events",
+      "forced": true,
+      "schema": "intelligence_control",
+      "anonRead": false,
+      "anonWrite": false,
+      "immutableTrigger": true,
+      "authenticatedRead": false,
+      "authenticatedWrite": false
+    },
+    {
+      "rls": true,
+      "name": "operator_tenant_grants",
+      "forced": true,
+      "schema": "intelligence_control",
+      "anonRead": false,
+      "anonWrite": false,
+      "immutableTrigger": true,
+      "authenticatedRead": false,
+      "authenticatedWrite": false
+    },
+    {
+      "rls": true,
+      "name": "operators",
+      "forced": true,
+      "schema": "intelligence_control",
+      "anonRead": false,
+      "anonWrite": false,
+      "immutableTrigger": false,
+      "authenticatedRead": false,
+      "authenticatedWrite": false
+    },
+    {
+      "rls": true,
+      "name": "proposal_decisions",
+      "forced": true,
+      "schema": "intelligence_control",
+      "anonRead": false,
+      "anonWrite": false,
+      "immutableTrigger": true,
+      "authenticatedRead": false,
+      "authenticatedWrite": false
+    },
+    {
+      "rls": true,
+      "name": "proposal_executions",
+      "forced": true,
+      "schema": "intelligence_control",
+      "anonRead": false,
+      "anonWrite": false,
+      "immutableTrigger": true,
+      "authenticatedRead": false,
+      "authenticatedWrite": false
+    },
+    {
+      "rls": true,
+      "name": "proposals",
+      "forced": true,
+      "schema": "intelligence_control",
+      "anonRead": false,
+      "anonWrite": false,
+      "immutableTrigger": true,
+      "authenticatedRead": false,
+      "authenticatedWrite": false
+    },
+    {
+      "rls": true,
+      "name": "quota_periods",
+      "forced": true,
+      "schema": "intelligence_control",
+      "anonRead": false,
+      "anonWrite": false,
+      "immutableTrigger": false,
+      "authenticatedRead": false,
+      "authenticatedWrite": false
+    },
+    {
+      "rls": true,
+      "name": "subscription_activations",
+      "forced": true,
+      "schema": "intelligence_control",
+      "anonRead": false,
+      "anonWrite": false,
+      "immutableTrigger": true,
+      "authenticatedRead": false,
+      "authenticatedWrite": false
+    },
+    {
+      "rls": true,
+      "name": "subscription_revisions",
+      "forced": true,
+      "schema": "intelligence_control",
+      "anonRead": false,
+      "anonWrite": false,
+      "immutableTrigger": true,
+      "authenticatedRead": false,
+      "authenticatedWrite": false
+    },
+    {
+      "rls": true,
+      "name": "synthetic_tenants",
+      "forced": true,
+      "schema": "intelligence_control",
+      "anonRead": false,
+      "anonWrite": false,
+      "immutableTrigger": false,
+      "authenticatedRead": false,
+      "authenticatedWrite": false
+    },
+    {
+      "rls": true,
+      "name": "usage_corrections",
+      "forced": true,
+      "schema": "intelligence_control",
+      "anonRead": false,
+      "anonWrite": false,
+      "immutableTrigger": true,
+      "authenticatedRead": false,
+      "authenticatedWrite": false
+    },
+    {
+      "rls": true,
+      "name": "usage_events",
+      "forced": true,
+      "schema": "intelligence_control",
+      "anonRead": false,
+      "anonWrite": false,
+      "immutableTrigger": true,
+      "authenticatedRead": false,
+      "authenticatedWrite": false
+    },
+    {
+      "rls": true,
+      "name": "usage_reservations",
+      "forced": true,
+      "schema": "intelligence_control",
+      "anonRead": false,
+      "anonWrite": false,
+      "immutableTrigger": true,
+      "authenticatedRead": false,
+      "authenticatedWrite": false
+    }
+  ],
+  "schemas": [
+    {
+      "name": "analytics",
+      "anonUsage": false,
+      "authenticatedUsage": false
+    },
+    {
+      "name": "intelligence_control",
+      "anonUsage": false,
+      "authenticatedUsage": false
+    }
+  ],
+  "checkedAt": "2026-10-07T20:17:45.049853+00:00",
+  "functions": [
+    {
+      "name": "immutable_evidence",
+      "schema": "analytics",
+      "returns": "trigger",
+      "arguments": "",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": false,
+      "definitionSha256": "b65c980b51f7a79d62ffaa3525152c1118ad594aac0b60b27bc7e3cb2302b75d",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "pipeline_access",
+      "schema": "analytics",
+      "returns": "void",
+      "arguments": "t uuid, e uuid, b uuid",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "bfcfa8770609dcd5fac47c7cb09479fe2c3f38e332795f3053367279efbbeb7b",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "process_access",
+      "schema": "analytics",
+      "returns": "void",
+      "arguments": "t uuid, e uuid, b uuid",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "d4a49f0672ea66641ff7a7161bbc36f27267cf85a66b32d2c8a6f5d01e842000",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "process_utc",
+      "schema": "analytics",
+      "returns": "text",
+      "arguments": "v timestamp with time zone",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": false,
+      "definitionSha256": "328b747c0bd759d668c81c7ca367c2e4529019145e20eebeb02cef63696ed891",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "analytics_pipeline_authorize",
+      "schema": "api",
+      "returns": "uuid",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "d2dc983cde48ad03889b904e5e944d04c645821d76d74d8f54b338f781eb8c82",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "analytics_process_authorize",
+      "schema": "api",
+      "returns": "uuid",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "c3d9ebd7d239c548039ff99c681fc3747c2bdaca596c6230549198aeab649ee7",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "analytics_process_event",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_event_id uuid",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "e86dfd98092106b771dd3311ce43fda7d8e362958d3ad7c559142e6529ee6180",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "analytics_process_snapshot",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_window_start timestamp with time zone, p_window_end timestamp with time zone, p_as_of timestamp with time zone, p_recorded_through timestamp with time zone",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "f24764c92e8fe02cdbf0a96c3471a1aabd69aa1fdfef96a075d29a45a46cca59",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "apply_synthetic_subscription",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_revision_id uuid",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "b781c95e45609fcbc8374c053d739ebd9d269c4053db670750f008d2394ff5be",
+      "serviceRoleExecute": true,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "freeze_pipeline_forecast",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_horizon_start date, p_horizon_end date",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "dd12816fe165fee92292eb63b6b87d5f035194abd852d852d9037afc6a0f776f",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "get_ai_forecast_evidence",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_forecast_id uuid",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "9269879ab55bd823f4678a38a3e1aebeb7473edaaa4feafbf8ab55138e33f766",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "get_operator_health",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "b69ff21ff755afbdf87f5b47f9cbf0255b1be92737e33dca8a9e145bd65c8e49",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "get_operator_tenant_health",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_grant_id uuid",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "b19e0aae570c1f859132a5826030c3f1d5cf73937f17f5b6c3665e54ba1c4280",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "get_pipeline_forecast",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_forecast_id uuid",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "c89424d74eeb98bd0597e5c3e676e8c3f9a51c58a8db29ed6db51df1138d659d",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "get_wave5_proposal",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_proposal_id uuid",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "d24010e944a7d72c6f85ff5c5a551ba2d811346940c38a44dcec19e922fe61ca",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "get_wave5_subscription",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "87d0561a700b59cdad77791d057c6e813f52d2f821b59d829fb2f5a165c726bb",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "get_wave5_usage_allowance",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_metric_code text, p_period_start timestamp with time zone",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "5abac8bab4b3e00117b7bcd2d80488979bf49a1057f4b26dac4be04a99a228db",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "issue_operator_tenant_grant",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_operator_id uuid, p_reason text, p_expires_at timestamp with time zone, p_idempotency_key uuid",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "623168290e27148f0f4544838d1fdbf1e5f3a0a2d85a756228b0db09ca29f3e3",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "record_wave5_health_probe",
+      "schema": "api",
+      "returns": "void",
+      "arguments": "p_id uuid, p_tenant_id uuid, p_code text, p_value text, p_observed_at timestamp with time zone",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "8aa2acc1ffe4989ae16564fec6d799856009cc1d52fe878e72c3e17b0e4431c8",
+      "serviceRoleExecute": true,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "schedule_synthetic_subscription",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_expected_version bigint, p_plan_code text, p_seats integer, p_trial_starts_at timestamp with time zone, p_trial_ends_at timestamp with time zone",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "f25fbac808d992d43cc0f7a896a1f113acbb278f81fc6273bc095bfb6f0e68a7",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "wave5_correct_usage",
+      "schema": "api",
+      "returns": "void",
+      "arguments": "p_tenant_id uuid, p_event_id uuid, p_original_event_id uuid, p_quantity text, p_reason_code text",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "da1e6bffe70e412075cca0b5fdd1bf79930bb300e1ca36a97eb574df8abc1916",
+      "serviceRoleExecute": true,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "wave5_proposal_authorize",
+      "schema": "api",
+      "returns": "uuid",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "cdd038de4ad9f3f61f01b42f28eb9c1e409c2ce56c2251d71677d0cfd91ca255",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "wave5_proposal_command",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_action text, p_payload jsonb",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "38e879ca2a563758dfe2f27656dd95294309ed2b5b71aee0d2935732db1555d6",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "wave5_reserve_usage",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_invocation_id uuid, p_metric_code text, p_period_start timestamp with time zone, p_period_end timestamp with time zone, p_quantity text",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "2208193f607c55d83289fb93ea3e1ff81fa628d991d5616d8858f2d049e0eba7",
+      "serviceRoleExecute": true,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "wave5_settle_usage",
+      "schema": "api",
+      "returns": "jsonb",
+      "arguments": "p_tenant_id uuid, p_invocation_id uuid, p_event_id uuid, p_quantity text",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "b892c24ec7bc553664e767ea189eca98e2df54ad32234baf98d3f3fb077d3c0c",
+      "serviceRoleExecute": true,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "wave5_subscription_authorize",
+      "schema": "api",
+      "returns": "uuid",
+      "arguments": "p_tenant_id uuid",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "e804028eb3586ea3c574356cc2e70e679b9778034d819a1d3c4dedf5c2ab7ffa",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": true
+    },
+    {
+      "name": "health_projection",
+      "schema": "intelligence_control",
+      "returns": "jsonb",
+      "arguments": "t uuid",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "0b9f40231e98fda13a12d593c1c2d10782257fd7d642c11a655c00f280b7d92c",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "operator_required",
+      "schema": "intelligence_control",
+      "returns": "void",
+      "arguments": "cap text",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "3b8e804d1d817cc9fb8160dfd73e7e3161738a6ddeb30da1fdfc4de5dd5d2959",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "proposal_access",
+      "schema": "intelligence_control",
+      "returns": "void",
+      "arguments": "t uuid, e uuid, b uuid, cap text",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "1957a68208a3a62846620cef82a9123a2107c657a754e8c7bc96b9a557a66446",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "quota_limit",
+      "schema": "intelligence_control",
+      "returns": "numeric",
+      "arguments": "t uuid, metric text",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "fb9314c04f514e9014b92b61011b8bc0d42642adda55294c8ba07d25d062490e",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "synthetic_seat_guard",
+      "schema": "intelligence_control",
+      "returns": "trigger",
+      "arguments": "",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": true,
+      "definitionSha256": "7e8e8ee7ff496684f97a4d394a0c530972f21616f0abb5ce07b87abbb09a4062",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": false
+    },
+    {
+      "name": "worker_required",
+      "schema": "intelligence_control",
+      "returns": "void",
+      "arguments": "",
+      "anonExecute": false,
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "publicExecute": false,
+      "securityDefiner": false,
+      "definitionSha256": "5dce22af2028e49f8cf13ed6525658058924adce0c06d0cfe922ab445477a616",
+      "serviceRoleExecute": false,
+      "authenticatedExecute": false
+    }
+  ],
+  "seatGuard": {
+    "enabled": "O",
+    "definition": "CREATE TRIGGER wave5_synthetic_seat_guard BEFORE INSERT OR UPDATE ON core.memberships FOR EACH ROW EXECUTE FUNCTION intelligence_control.synthetic_seat_guard()"
+  },
+  "stateCounts": {
+    "operators": 0,
+    "proposals": 0,
+    "usageEvents": 0,
+    "healthProbes": 0,
+    "quotaPeriods": 0,
+    "operatorGrants": 0,
+    "syntheticTenants": 0,
+    "usageCorrections": 0,
+    "pipelineForecasts": 0,
+    "proposalDecisions": 0,
+    "usageReservations": 0,
+    "proposalExecutions": 0,
+    "operatorAccessEvents": 0,
+    "subscriptionRevisions": 0,
+    "subscriptionActivations": 0,
+    "trialStartPopulatedRows": 0
+  },
+  "latestVersion": "20261007201524",
+  "migrationCount": 43,
+  "trialStartedAt": {
+    "type": "timestamptz",
+    "default": null,
+    "nullable": "YES"
+  },
+  "apiFunctionCount": 107,
+  "processCohortIndex": true,
+  "disabledEntitlements": [
+    {
+      "code": "module.ai",
+      "plan": "growth",
+      "enabled": false,
+      "numericLimit": null
+    },
+    {
+      "code": "quota.ai.tokens",
+      "plan": "growth",
+      "enabled": false,
+      "numericLimit": null
+    },
+    {
+      "code": "quota.webhook.deliveries",
+      "plan": "growth",
+      "enabled": false,
+      "numericLimit": null
+    },
+    {
+      "code": "module.ai",
+      "plan": "scale",
+      "enabled": false,
+      "numericLimit": null
+    },
+    {
+      "code": "quota.ai.tokens",
+      "plan": "scale",
+      "enabled": false,
+      "numericLimit": null
+    },
+    {
+      "code": "quota.webhook.deliveries",
+      "plan": "scale",
+      "enabled": false,
+      "numericLimit": null
+    },
+    {
+      "code": "module.ai",
+      "plan": "starter",
+      "enabled": false,
+      "numericLimit": null
+    },
+    {
+      "code": "quota.ai.tokens",
+      "plan": "starter",
+      "enabled": false,
+      "numericLimit": null
+    },
+    {
+      "code": "quota.webhook.deliveries",
+      "plan": "starter",
+      "enabled": false,
+      "numericLimit": null
+    },
+    {
+      "code": "module.ai",
+      "plan": "w4_employee_synthetic",
+      "enabled": false,
+      "numericLimit": null
+    },
+    {
+      "code": "quota.ai.tokens",
+      "plan": "w4_employee_synthetic",
+      "enabled": false,
+      "numericLimit": null
+    },
+    {
+      "code": "quota.webhook.deliveries",
+      "plan": "w4_employee_synthetic",
+      "enabled": false,
+      "numericLimit": null
+    }
+  ],
+  "newRolePermissionAssignments": 0
+}

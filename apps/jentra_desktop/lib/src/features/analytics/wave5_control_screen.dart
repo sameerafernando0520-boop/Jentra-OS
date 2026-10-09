@@ -660,7 +660,7 @@ class _Wave5ControlWorkspaceState extends State<Wave5ControlWorkspace> {
           const Divider(height: 40),
           Text('Integrations', style: Theme.of(context).textTheme.titleLarge),
           const Text(
-            'External delivery is unavailable until scoped subscriptions, server-held keys, committed-event adapters and an authorized test destination are configured. No delivery has been sent.',
+            'Use the Integrations workspace to register scoped subscriptions, rotate vault references and review delivery outcomes. Worker deployment and a reviewed test destination are required before delivery.',
           ),
         ],
       );

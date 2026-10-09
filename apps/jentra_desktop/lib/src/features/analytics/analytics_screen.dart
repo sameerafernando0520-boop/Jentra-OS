@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../app_providers.dart';
 
 import 'process_metric_screen.dart';
 import 'pipeline_forecast_screen.dart';
+import 'historical_pipeline_screen.dart';
+import 'financial_analytics_screen.dart';
+import 'integration_screen.dart';
+import 'cash_scenario_screen.dart';
+import 'governed_export_screen.dart';
 
-class AnalyticsScreen extends StatelessWidget {
+class AnalyticsScreen extends ConsumerWidget {
   const AnalyticsScreen({super.key});
   @override
-  Widget build(BuildContext context) => DefaultTabController(
-    length: 3,
+  Widget build(BuildContext context, WidgetRef ref) => DefaultTabController(
+    key: ValueKey((
+      ref.watch(activeTenantContextProvider),
+      ref.watch(authSessionRevisionProvider),
+      ref.watch(businessCapabilitiesProvider),
+    )),
+    length: 7,
     child: Column(
       children: [
         const TabBar(
@@ -15,7 +28,11 @@ class AnalyticsScreen extends StatelessWidget {
           tabs: [
             Tab(text: 'Process'),
             Tab(text: 'Pipeline'),
-            Tab(text: 'Finance readiness'),
+            Tab(text: 'Historical pipeline'),
+            Tab(text: 'Financial ratios'),
+            Tab(text: 'Cash scenarios'),
+            Tab(text: 'Integrations'),
+            Tab(text: 'Governed exports'),
           ],
         ),
         const Expanded(
@@ -23,41 +40,15 @@ class AnalyticsScreen extends StatelessWidget {
             children: [
               ProcessMetricScreen(),
               PipelineForecastScreen(),
-              _FinanceReadiness(),
+              HistoricalPipelineScreen(),
+              FinancialAnalyticsScreen(),
+              CashScenarioScreen(),
+              IntegrationScreen(),
+              GovernedExportScreen(),
             ],
           ),
         ),
       ],
     ),
-  );
-}
-
-class _FinanceReadiness extends StatelessWidget {
-  const _FinanceReadiness();
-  @override
-  Widget build(BuildContext context) => ListView(
-    padding: const EdgeInsets.all(24),
-    children: [
-      Text(
-        'Financial analytics',
-        style: Theme.of(context).textTheme.headlineMedium,
-      ),
-      const Text(
-        'Financial ratios require a complete authoritative statement publication with matching scope, period, currency and formula version.',
-      ),
-      const ListTile(
-        title: Text('Ratios unavailable'),
-        subtitle: Text('A verified statement adapter has not been connected.'),
-      ),
-      const ListTile(
-        title: Text('Cash scenarios unavailable'),
-        subtitle: Text(
-          'Verified dated bank controls and remaining receivable, payable, payroll and expense obligations are required.',
-        ),
-      ),
-      const Text(
-        'No financial balance or forecast has been calculated. Frozen exports require the governed report provider and current source access.',
-      ),
-    ],
   );
 }

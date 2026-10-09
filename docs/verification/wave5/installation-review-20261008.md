@@ -1,5 +1,7 @@
 # Wave 5 candidate installation review - October 8, 2026
 
+**Installation update:** The owner approved this exact list and all six files are now installed. See the [installation result](installation-result-20261008.md) for ledger mappings, catalog checks and 126 passing installed assertions. The original pre-installation review below is retained for audit; its JSON and reviewed hashes are unchanged.
+
 **Status: unapplied; owner authorization pending.**
 
 Proposed target: synthetic development project `xpdoufauvrbdmxgngetv`. The read-only [baseline](live-baseline-20261008.json) remains at 37 migrations through `20260929224939` and 85 API functions. The `analytics` and `intelligence_control` schemas are absent. The six files below introduce 22 API functions plus private helpers; the predicted API count after only this list is 107, subject to a fresh installed check.
