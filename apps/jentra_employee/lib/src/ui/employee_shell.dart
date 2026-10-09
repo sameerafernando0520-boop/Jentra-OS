@@ -6,7 +6,11 @@ import '../data/employee_gateway.dart';
 import '../employee_controller.dart';
 import '../l10n/employee_strings.dart';
 import 'employee_components.dart';
+import 'employee_help_screen.dart';
+import 'employee_identity.dart';
+import 'employee_profile_screen.dart';
 import 'employee_reviews.dart';
+import 'employee_surfaces.dart';
 import 'leave_draft_screen.dart';
 import 'onboarding_screens.dart';
 
@@ -26,21 +30,22 @@ class _EmployeeShellState extends State<EmployeeShell> {
   String _destination = 'home';
   EmployeeController get controller => widget.controller;
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && controller.consumePhotoProfileReturn()) {
+        _open(EmployeeProfileScreen(controller: controller));
+      }
+    });
+  }
+
   void _open(Widget page) =>
       Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => page));
   void _reviews({bool actionsOnly = false}) => _open(
     EmployeeReviewsScreen(controller: controller, actionsOnly: actionsOnly),
   );
-  void _help() {
-    final s = EmployeeStrings.of(context);
-    _open(
-      EmployeeInfoScreen(
-        title: s('hrHelp'),
-        message: s('hrHelpCopy'),
-        icon: Icons.support_agent_outlined,
-      ),
-    );
-  }
+  void _help() => _open(EmployeeHelpScreen(onPrepareLeaveDraft: _draft));
 
   Future<void> _draft() async {
     final routeVersion = controller.privateRouteVersion;
@@ -87,13 +92,17 @@ class _EmployeeShellState extends State<EmployeeShell> {
           ),
         ],
       ),
-      body: switch (_destination) {
-        'work' => _work(s),
-        'leave' => _leave(s),
-        'pay' => _pay(s),
-        'more' => _more(s, person),
-        _ => _home(s, person),
-      },
+      body: KeyedSubtree(
+        key: ValueKey('employee-page-$_destination'),
+        child: switch (_destination) {
+          'work' => _work(s),
+          'leave' => _leave(s),
+          'pay' => _pay(s),
+          'activity' => _activity(s),
+          'more' => _more(s, person),
+          _ => _home(s, person),
+        },
+      ),
       bottomNavigationBar: _EmployeeNavigation(
         selected: _destination,
         compact: compact,
@@ -109,48 +118,30 @@ class _EmployeeShellState extends State<EmployeeShell> {
     return EmployeePageBody(
       onRefresh: controller.refresh,
       children: [
-        Text(
-          person.workspace.tenantName,
-          style: Theme.of(context).textTheme.bodySmall
-              ?.copyWith(color: context.jentraColors.textSecondary),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            EmployeeHeading(s('yourWorkday'), large: true),
-            const SizedBox(height: 8),
-            Text(
-              person.displayName,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '${person.workspace.entityName} · ${person.workspace.branchName}',
-              style: Theme.of(context).textTheme.bodySmall
-                  ?.copyWith(color: context.jentraColors.textSecondary),
-            ),
-          ],
+        EmployeeIdentityHero(
+          identity: person,
+          photo: controller.profilePhoto,
+          onOpen: () => _open(EmployeeProfileScreen(controller: controller)),
         ),
         if (controller.error != null)
           EmployeeMessage(title: s.failure(controller.error!), error: true),
         if (controller.hasPendingCommand)
           EmployeePendingAction(controller: controller),
-        JentraPanel(
+        EmployeeSurface(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Icon(Icons.fact_check_outlined, size: 28),
+              Row(
+                children: [
+                  const Icon(Icons.mark_email_unread_outlined, size: 24),
+                  const SizedBox(width: 12),
+                  Expanded(child: EmployeeHeading(s('upNext'))),
+                ],
               ),
-              const SizedBox(height: 16),
-              EmployeeHeading(s('reviews')),
-              const SizedBox(height: 8),
-              Text(s('reviewsCopy')),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               if (controller.reviewsLoading) const LinearProgressIndicator(),
               if (controller.reviewsError != null)
-                Text(controller.reviewsError!.message),
+                Text(s.failure(controller.reviewsError!)),
               if (!controller.reviewsLoading && controller.reviewsError == null)
                 EmployeeStatus(
                   toAcknowledge > 0
@@ -160,34 +151,136 @@ class _EmployeeShellState extends State<EmployeeShell> {
                       ? Icons.mark_email_unread_outlined
                       : Icons.check_circle_outline,
                 ),
-              const SizedBox(height: 18),
-              FilledButton(
+              const SizedBox(height: 14),
+              FilledButton.icon(
                 key: const Key('employee-open-reviews'),
                 onPressed: _reviews,
-                child: Text(s('reviews')),
+                icon: const Icon(Icons.arrow_forward_rounded, size: 20),
+                iconAlignment: IconAlignment.end,
+                label: Text(s('reviews')),
               ),
             ],
           ),
         ),
-        EmployeeHeading(s('quickActions')),
-        EmployeeActionTile(
-          title: s('leave'),
-          icon: Icons.event_available_outlined,
-          subtitle: s(
-            controller.leaveDraft == null ? 'createDraft' : 'localDraft',
+        if (controller.leaveDraft != null)
+          EmployeeActionTile(
+            title: s('draftSummary'),
+            subtitle: s('notSubmitted'),
+            icon: Icons.edit_note_rounded,
+            onTap: _draft,
           ),
-          onTap: () => setState(() => _destination = 'leave'),
+        EmployeeSectionHeader(title: s('teamServices')),
+        EmployeeServiceGroup(
+          children: [
+            EmployeeServiceRow(
+              key: const Key('employee-home-leave'),
+              title: s('leave'),
+              subtitle: s('leaveShortcut'),
+              icon: Icons.event_available_outlined,
+              onTap: () => setState(() => _destination = 'leave'),
+            ),
+            EmployeeServiceRow(
+              title: s('pay'),
+              subtitle: s('payShortcut'),
+              icon: Icons.receipt_long_outlined,
+              onTap: () => setState(() => _destination = 'pay'),
+            ),
+            EmployeeServiceRow(
+              title: s('hrHelp'),
+              subtitle: s('helpShortcut'),
+              icon: Icons.contact_support_outlined,
+              onTap: _help,
+            ),
+          ],
         ),
-        EmployeeActionTile(
-          title: s('profile'),
-          icon: Icons.person_outline,
-          onTap: () => _open(EmployeeProfileScreen(identity: person)),
+      ],
+    );
+  }
+
+  Widget _activity(EmployeeStrings s) {
+    final draft = controller.leaveDraft;
+    return EmployeePageBody(
+      onRefresh: controller.refresh,
+      children: [
+        EmployeeHeading(s('activity'), large: true),
+        Text(
+          s('activityCopy'),
+          style: Theme.of(context).textTheme.bodyMedium
+              ?.copyWith(color: context.jentraColors.textSecondary),
         ),
-        EmployeeActionTile(
-          title: s('hrHelp'),
-          icon: Icons.support_agent_outlined,
-          onTap: _help,
+        if (controller.hasPendingCommand)
+          EmployeePendingAction(controller: controller),
+        EmployeeSectionHeader(title: s('draftSummary')),
+        EmployeeSurface(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (draft == null) ...[
+                Text(
+                  s('noDraftActivity'),
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                Text(s('noDraftCopy')),
+              ] else ...[
+                EmployeeStatus(
+                  s('notSubmitted'),
+                  warning: true,
+                  icon: Icons.edit_note_rounded,
+                ),
+                const SizedBox(height: 14),
+                EmployeeHeading(draft.leaveType),
+                const SizedBox(height: 6),
+                Text(
+                  '${DateFormat.yMMMd(s.language).format(draft.startDate)} – ${DateFormat.yMMMd(s.language).format(draft.endDate)}',
+                ),
+                const SizedBox(height: 8),
+                Text(draft.reason),
+              ],
+              const SizedBox(height: 16),
+              OutlinedButton(
+                onPressed: controller.busy ? null : _draft,
+                child: Text(s(draft == null ? 'createDraft' : 'editDraft')),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                s('draftExpires'),
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ),
         ),
+        EmployeeSectionHeader(
+          title: s('activityReviews'),
+          actionLabel: s('viewAll'),
+          onAction: _reviews,
+        ),
+        if (controller.reviewsLoading) const LinearProgressIndicator(),
+        if (controller.reviewsError != null)
+          EmployeeMessage(
+            title: s.failure(controller.reviewsError!),
+            error: true,
+            action: OutlinedButton(
+              onPressed: controller.refresh,
+              child: Text(s('retry')),
+            ),
+          ),
+        if (!controller.reviewsLoading &&
+            controller.reviewsError == null &&
+            controller.reviews.isEmpty)
+          EmployeeMessage(title: s('noReviews'), message: s('noReviewsCopy')),
+        for (final review in controller.reviews)
+          EmployeeActionTile(
+            key: Key('employee-activity-review-${review.id}'),
+            title: employeeReviewPeriod(review, s.language),
+            subtitle: s(review.status),
+            icon: review.canAcknowledge
+                ? Icons.mark_email_unread_outlined
+                : Icons.fact_check_outlined,
+            onTap: () => _open(
+              EmployeeReviewScreen(controller: controller, reviewId: review.id),
+            ),
+          ),
       ],
     );
   }
@@ -202,7 +295,7 @@ class _EmployeeShellState extends State<EmployeeShell> {
       ),
       EmployeeActionTile(
         title: s('hrHelp'),
-        icon: Icons.support_agent_outlined,
+        icon: Icons.contact_support_outlined,
         onTap: _help,
       ),
     ],
@@ -317,7 +410,7 @@ class _EmployeeShellState extends State<EmployeeShell> {
       ),
       EmployeeActionTile(
         title: s('hrHelp'),
-        icon: Icons.support_agent_outlined,
+        icon: Icons.contact_support_outlined,
         onTap: _help,
       ),
     ],
@@ -326,15 +419,22 @@ class _EmployeeShellState extends State<EmployeeShell> {
   Widget _more(EmployeeStrings s, EmployeeIdentity person) => EmployeePageBody(
     children: [
       EmployeeHeading(s('more'), large: true),
+      EmployeeSectionHeader(title: s('teamServices')),
       EmployeeActionTile(
         title: s('profile'),
         icon: Icons.person_outline,
-        onTap: () => _open(EmployeeProfileScreen(identity: person)),
+        onTap: () => _open(EmployeeProfileScreen(controller: controller)),
       ),
       EmployeeActionTile(
         title: s('reviews'),
         icon: Icons.fact_check_outlined,
         onTap: _reviews,
+      ),
+      EmployeeActionTile(
+        key: const Key('employee-more-leave'),
+        title: s('leave'),
+        icon: Icons.event_available_outlined,
+        onTap: () => setState(() => _destination = 'leave'),
       ),
       EmployeeActionTile(
         key: const Key('employee-more-work'),
@@ -361,7 +461,7 @@ class _EmployeeShellState extends State<EmployeeShell> {
       ),
       EmployeeActionTile(
         title: s('hrHelp'),
-        icon: Icons.support_agent_outlined,
+        icon: Icons.contact_support_outlined,
         onTap: _help,
       ),
       EmployeeHeading(s('account')),
@@ -404,87 +504,124 @@ class _EmployeeNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = EmployeeStrings.of(context);
     final destinations = compact
-        ? ['home', 'leave', 'more']
-        : ['home', 'work', 'leave', 'pay', 'more'];
-    final effective = compact && {'work', 'pay'}.contains(selected)
-        ? 'more'
-        : selected;
+        ? ['home', 'activity', 'more']
+        : ['home', 'leave', 'activity', 'more'];
+    final effective = !destinations.contains(selected) ? 'more' : selected;
     const icons = {
       'home': Icons.home_outlined,
-      'work': Icons.calendar_month_outlined,
       'leave': Icons.event_available_outlined,
-      'pay': Icons.receipt_long_outlined,
+      'activity': Icons.history_rounded,
       'more': Icons.grid_view_outlined,
     };
-    return Material(
-      color: context.jentraColors.panel,
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-          child: IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                for (final value in destinations)
-                  Expanded(
-                    child: Semantics(
-                      selected: value == effective,
-                      button: true,
-                      child: InkWell(
-                        key: Key('employee-nav-$value'),
-                        onTap: () => onSelected(value),
-                        borderRadius: BorderRadius.circular(8),
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(minHeight: 64),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 4,
-                              vertical: 8,
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: context.jentraColors.panel,
+            borderRadius: BorderRadius.circular(26),
+            border: Border.all(
+              color: context.jentraColors.border.withValues(alpha: .6),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: context.jentraColors.textPrimary.withValues(alpha: .08),
+                blurRadius: 24,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(6),
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (final value in destinations)
+                    Expanded(
+                      child: Semantics(
+                        selected: value == effective,
+                        button: true,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            key: Key('employee-nav-$value'),
+                            onTap: () => onSelected(value),
+                            borderRadius: BorderRadius.circular(20),
+                            child: AnimatedContainer(
+                              duration: MediaQuery.disableAnimationsOf(context)
+                                  ? Duration.zero
+                                  : const Duration(milliseconds: 180),
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  minHeight: 64,
+                                ),
+                                child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 14,
-                                    vertical: 6,
+                                    horizontal: 4,
+                                    vertical: 10,
                                   ),
-                                  decoration: BoxDecoration(
-                                    color: value == effective
-                                        ? context.jentraColors.infoSurface
-                                        : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(
-                                    icons[value],
-                                    size: 24,
-                                    color: value == effective
-                                        ? context.jentraColors.action
-                                        : context.jentraColors.textSecondary,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  s(value),
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.labelMedium
-                                      ?.copyWith(
-                                        color: value == effective
-                                            ? context.jentraColors.action
-                                            : context
-                                                  .jentraColors
-                                                  .textSecondary,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 5,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: value == effective
+                                              ? context.jentraColors.infoSurface
+                                              : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(
+                                            14,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          icons[value],
+                                          size: 22,
+                                          color: value == effective
+                                              ? context.jentraColors.action
+                                              : context
+                                                    .jentraColors
+                                                    .textSecondary,
+                                        ),
                                       ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        s(value),
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelMedium
+                                            ?.copyWith(
+                                              fontSize: 12,
+                                              fontWeight: value == effective
+                                                  ? FontWeight.w700
+                                                  : FontWeight.w500,
+                                              color: value == effective
+                                                  ? context.jentraColors.action
+                                                  : context
+                                                        .jentraColors
+                                                        .textSecondary,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -509,58 +646,6 @@ class EmployeeInfoScreen extends StatelessWidget {
       children: [EmployeeMessage(title: title, message: message, icon: icon)],
     ),
   );
-}
-
-class EmployeeProfileScreen extends StatelessWidget {
-  const EmployeeProfileScreen({required this.identity, super.key});
-  final EmployeeIdentity identity;
-  @override
-  Widget build(BuildContext context) {
-    final s = EmployeeStrings.of(context);
-    return Scaffold(
-      appBar: AppBar(title: Text(s('profile'))),
-      body: EmployeePageBody(
-        children: [
-          JentraPanel(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(Icons.person_outline, size: 32),
-                const SizedBox(height: 16),
-                EmployeeHeading(identity.displayName, large: true),
-                const SizedBox(height: 16),
-                EmployeeStatus(
-                  s('connectedProfile'),
-                  icon: Icons.verified_user_outlined,
-                ),
-              ],
-            ),
-          ),
-          Text(s('profileCopy')),
-          for (final value in [
-            (s('company'), identity.workspace.tenantName),
-            (s('entity'), identity.workspace.entityName),
-            (s('branch'), identity.workspace.branchName),
-            (s('timeZone'), identity.workspace.timeZone),
-          ])
-            JentraPanel(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    value.$1,
-                    style: Theme.of(context).textTheme.bodySmall
-                        ?.copyWith(color: context.jentraColors.textSecondary),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(value.$2),
-                ],
-              ),
-            ),
-        ],
-      ),
-    );
-  }
 }
 
 class EmployeeWorkspacePicker extends StatelessWidget {

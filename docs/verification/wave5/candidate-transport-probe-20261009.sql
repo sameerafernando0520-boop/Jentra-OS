@@ -1,0 +1,1 @@
+select encode(extensions.digest(extensions.pgp_sym_decrypt_bytea(decode('wwQECQAI0l8BVmFTpfWfFNxBNBz9htSEAObubM6y42QJMgIJdrqhk/fhy9OthVjy4FXjvzONzAgzvc0S/5KjO0ZXT+UT7kxGWsZy59dn1uM3FDq9mrJ+/Vm9n/Zo/aODyeGSppOgYQ==','base64'),'jentra-public-candidate-transport-v1'),'sha256'),'hex') as decoded_sha256;

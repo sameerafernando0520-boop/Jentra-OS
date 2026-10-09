@@ -21,6 +21,8 @@ void main() {
           ),
         ),
       );
+      await tester.ensureVisible(find.byKey(const Key('employee-save-draft')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('employee-save-draft')));
       await tester.pump();
       expect(saved, isNull);
@@ -36,6 +38,9 @@ void main() {
         find.byKey(const Key('employee-leave-reason')),
         'Family appointment',
       );
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byKey(const Key('employee-save-draft')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('employee-save-draft')));
       await tester.pumpAndSettle();
       expect(saved?.leaveType, 'Annual leave');
@@ -63,6 +68,8 @@ void main() {
         ),
       ),
     );
+    await tester.ensureVisible(find.byKey(const Key('employee-save-draft')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('employee-save-draft')));
     await tester.pump();
     expect(saved, isFalse);

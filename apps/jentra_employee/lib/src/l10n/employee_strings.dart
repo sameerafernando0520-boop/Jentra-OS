@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../data/employee_gateway.dart';
+import 'employee_feature_strings.dart';
 
 /// Employee interface copy; employer-authored review content stays in its source language.
 class EmployeeStrings {
@@ -10,13 +11,19 @@ class EmployeeStrings {
   static EmployeeStrings of(BuildContext context) =>
       EmployeeStrings(Localizations.localeOf(context).languageCode);
 
-  String call(String key) => switch (language) {
-    'si' => _sinhala[key] ?? _english[key] ?? key,
-    'ta' => _tamil[key] ?? _english[key] ?? key,
-    _ => _english[key] ?? key,
-  };
+  String call(String key) =>
+      employeeFeatureStrings[language]?[key] ??
+      employeeFeatureStrings['en']?[key] ??
+      switch (language) {
+        'si' => _sinhala[key] ?? _english[key] ?? key,
+        'ta' => _tamil[key] ?? _english[key] ?? key,
+        _ => _english[key] ?? key,
+      };
 
   String failure(EmployeeFailure failure) => call(switch (failure.code) {
+    'PHOTO_INVALID' => 'photoInvalid',
+    'PHOTO_TOO_LARGE' => 'photoTooLarge',
+    'PHOTO_PICKER_FAILED' => 'photoPickerFailed',
     'PERMISSION_DENIED' || 'FEATURE_NOT_ENTITLED' => 'failureAccess',
     'SELF_LINK_REQUIRED' => 'failureLink',
     'AUTHENTICATION_REQUIRED' ||
@@ -36,6 +43,8 @@ class EmployeeStrings {
     _ => 'failureUncertain',
   });
   String notice(String value) => call(switch (value) {
+    'Profile photo saved on this device.' => 'photoSaved',
+    'Profile photo removed from this device.' => 'photoRemoved',
     'No receipt exists yet. You can explicitly retry the exact saved request.' =>
       'noticeReceiptMissing',
     'Signed out on this device. Server session revocation could not be confirmed.' =>
@@ -87,8 +96,8 @@ class EmployeeStrings {
     'leave': 'Leave',
     'pay': 'Pay',
     'more': 'More',
-    'welcome': 'Welcome to\nJentra Employee',
-    'welcomeCopy': 'Your work, requests and pay, in one place.',
+    'welcome': 'Your work.\nYour space.',
+    'welcomeCopy': 'Sign in to your company workspace.',
     'accountCopy': 'Use your company’s Jentra account to continue.',
     'email': 'Work email',
     'password': 'Password',
@@ -248,8 +257,8 @@ class EmployeeStrings {
     'leave': 'නිවාඩු',
     'pay': 'වැටුප්',
     'more': 'තවත්',
-    'welcome': 'Jentra Employee වෙත\nසාදරයෙන් පිළිගනිමු',
-    'welcomeCopy': 'ඔබේ වැඩ, ඉල්ලීම් සහ වැටුප් එකම තැනක.',
+    'welcome': 'ඔබේ වැඩ.\nඔබේ අවකාශය.',
+    'welcomeCopy': 'ඔබේ ආයතනයේ වැඩ අවකාශයට පිවිසෙන්න.',
     'accountCopy': 'ඉදිරියට යාමට ඔබේ ආයතනයේ Jentra ගිණුම භාවිතා කරන්න.',
     'email': 'රාජකාරි ඊමේල්',
     'password': 'මුරපදය',
@@ -398,8 +407,8 @@ class EmployeeStrings {
     'leave': 'விடுப்பு',
     'pay': 'சம்பளம்',
     'more': 'மேலும்',
-    'welcome': 'Jentra Employee-க்கு\nவரவேற்கிறோம்',
-    'welcomeCopy': 'உங்கள் வேலை, கோரிக்கைகள் மற்றும் சம்பளம் ஒரே இடத்தில்.',
+    'welcome': 'உங்கள் வேலை.\nஉங்கள் இடம்.',
+    'welcomeCopy': 'உங்கள் நிறுவனப் பணியிடத்தில் உள்நுழையவும்.',
     'accountCopy': 'தொடர உங்கள் நிறுவனத்தின் Jentra கணக்கைப் பயன்படுத்துங்கள்.',
     'email': 'பணி மின்னஞ்சல்',
     'password': 'கடவுச்சொல்',

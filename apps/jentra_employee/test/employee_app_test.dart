@@ -17,7 +17,13 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('Preview employee'), findsOneWidget);
-    await tester.tap(find.byKey(const Key('employee-nav-work')));
+    await tester.tap(find.byKey(const Key('employee-nav-more')));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('employee-more-work')),
+      180,
+    );
+    await tester.tap(find.byKey(const Key('employee-more-work')));
     await tester.pumpAndSettle();
     expect(
       find.text('Work records are not available here yet'),
@@ -27,7 +33,13 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Leave balances are not available yet'), findsOneWidget);
     expect(find.text('Prepare a leave draft'), findsOneWidget);
-    await tester.tap(find.byKey(const Key('employee-nav-pay')));
+    await tester.tap(find.byKey(const Key('employee-nav-more')));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('employee-more-pay')),
+      180,
+    );
+    await tester.tap(find.byKey(const Key('employee-more-pay')));
     await tester.pumpAndSettle();
     expect(
       find.text('Your payslips are not available here yet'),
@@ -167,7 +179,7 @@ void main() {
       await tester.tap(find.byKey(const Key('employee-nav-more')));
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
-        find.byKey(const Key('employee-more-pay')),
+        find.byKey(const Key('employee-more-pay')).hitTestable(),
         250,
         scrollable: find.byType(Scrollable).last,
       );

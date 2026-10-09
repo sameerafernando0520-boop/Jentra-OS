@@ -1,0 +1,639 @@
+{
+  "observedAt": "2026-10-09T11:17:01.165Z",
+  "revision": "r5",
+  "currentSourceMatch": true,
+  "sourceFilesPerApp": 1056,
+  "sourceScope": "Desktop transitive workspace source plus all workspace dependency manifests; three explicit runner identity overlays in each build copy",
+  "ordinaryEntrypoint": "lib/main.dart",
+  "previewBuilt": true,
+  "connectedBuilt": true,
+  "nativeLaunched": true,
+  "releaseEntriesVerified": 68,
+  "stages": [
+    {
+      "mode": "Preview",
+      "stage": "analyzer",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r5\\preview",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe --suppress-analytics analyze apps/jentra_desktop/lib/main.dart apps/jentra_desktop/lib/src/app.dart apps/jentra_desktop/lib/src/app_providers.dart apps/jentra_desktop/lib/src/router.dart apps/jentra_desktop/lib/src/shell/jentra_shell.dart apps/jentra_desktop/test/command_palette_keyboard_test.dart apps/jentra_desktop/test/reviewed_model_workspace_test.dart apps/jentra_desktop/lib/src/features/analytics packages/jentra_platform/lib/src/analytics/reviewed_model_gateway.dart packages/jentra_platform/lib/src/analytics/wave5_command_store.dart packages/jentra_platform/test/analytics/reviewed_model_gateway_test.dart packages/jentra_platform/lib/src/runtime_config.dart packages/jentra_platform/lib/src/supabase_platform.dart",
+      "log": "docs/verification/wave5/windows-test-preview-analyzer-20261009-r5.log",
+      "startedAt": "2026-10-09T10:58:17.1906360Z",
+      "finishedAt": "2026-10-09T10:59:01.5215263Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-analyzer-20261009-r5.json",
+      "logSha256": "c60d6b272647aedf8f0a7b6c76aba7a5ba494875b5c63671cf327294074a37e0",
+      "passedTests": null
+    },
+    {
+      "mode": "Preview",
+      "stage": "modelGatewayTests",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r5\\preview\\packages\\jentra_platform",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded test/analytics/reviewed_model_gateway_test.dart test/analytics/wave5_control_gateway_test.dart",
+      "log": "docs/verification/wave5/windows-test-preview-modelGatewayTests-20261009-r5.log",
+      "startedAt": "2026-10-09T10:59:01.6218531Z",
+      "finishedAt": "2026-10-09T10:59:26.5438167Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-modelGatewayTests-20261009-r5.json",
+      "logSha256": "d42e53c8db920e9b4a6100a30e00bb4940f0795d7f23129bb6d3ab9e695158c9",
+      "passedTests": 15
+    },
+    {
+      "mode": "Preview",
+      "stage": "modelTests",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r5\\preview\\apps\\jentra_desktop",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded test/reviewed_model_workspace_test.dart",
+      "log": "docs/verification/wave5/windows-test-preview-modelTests-20261009-r5.log",
+      "startedAt": "2026-10-09T10:59:26.5680563Z",
+      "finishedAt": "2026-10-09T10:59:53.1038884Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-modelTests-20261009-r5.json",
+      "logSha256": "7cc1bb269f3e8e0604833b61cc07cef8b75aec6810bbbe2bc5f430633bff4222",
+      "passedTests": 20
+    },
+    {
+      "mode": "Preview",
+      "stage": "keyboardTests",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r5\\preview\\apps\\jentra_desktop",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded test/command_palette_keyboard_test.dart",
+      "log": "docs/verification/wave5/windows-test-preview-keyboardTests-20261009-r5.log",
+      "startedAt": "2026-10-09T10:59:53.1391606Z",
+      "finishedAt": "2026-10-09T11:00:19.0767734Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-keyboardTests-20261009-r5.json",
+      "logSha256": "31c90525582444672612a6bde8bb409068c1f8943d6f31cfcf33b6f8fa81b022",
+      "passedTests": 6
+    },
+    {
+      "mode": "Preview",
+      "stage": "cashTests",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r5\\preview\\apps\\jentra_desktop",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded test/wave5_workspaces_test.dart test/wave5_continuation_test.dart test/process_metric_workspace_test.dart",
+      "log": "docs/verification/wave5/windows-test-preview-cashTests-20261009-r5.log",
+      "startedAt": "2026-10-09T11:00:19.1025689Z",
+      "finishedAt": "2026-10-09T11:00:52.1433911Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-cashTests-20261009-r5.json",
+      "logSha256": "281e2f1d66b277e9d9e58af37ef77521650cb7d86d60610ac0f104755b479f79",
+      "passedTests": 96
+    },
+    {
+      "mode": "Preview",
+      "stage": "cashFrames",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r5\\preview\\apps\\jentra_desktop",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded --name=cash fresh render test/wave5_continuation_test.dart",
+      "log": "docs/verification/wave5/windows-test-preview-cashFrames-20261009-r5.log",
+      "startedAt": "2026-10-09T11:00:52.1977036Z",
+      "finishedAt": "2026-10-09T11:01:10.7954378Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-cashFrames-20261009-r5.json",
+      "logSha256": "749bd34321c9554a16fe5e2ec39c8635a21195ac6518e4c867765cbb8ffb7d5d",
+      "passedTests": 12
+    },
+    {
+      "mode": "Preview",
+      "stage": "modelFrames",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r5\\preview\\apps\\jentra_desktop",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded --name=model fresh render test/reviewed_model_workspace_test.dart",
+      "log": "docs/verification/wave5/windows-test-preview-modelFrames-20261009-r5.log",
+      "startedAt": "2026-10-09T11:01:10.8331538Z",
+      "finishedAt": "2026-10-09T11:01:23.0212329Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-modelFrames-20261009-r5.json",
+      "logSha256": "b4789ff3b65d8d7e60efbfbf85dc5790b54f99ae05698bdcdd82ee5a8d5ad8e4",
+      "passedTests": 12
+    },
+    {
+      "mode": "Preview",
+      "stage": "startupTests",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r5\\preview\\apps\\jentra_desktop",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded --name=unconfigured startup|foundation shell exposes routes and command palette test/main_preview_startup_test.dart test/jentra_app_test.dart",
+      "log": "docs/verification/wave5/windows-test-preview-startupTests-20261009-r5.log",
+      "startedAt": "2026-10-09T11:01:23.0491262Z",
+      "finishedAt": "2026-10-09T11:01:52.6673213Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-startupTests-20261009-r5.json",
+      "logSha256": "2b66207e609c8872f9d7f65d11b95955c0bd3d7489fea431f87a5e9d6bf25799",
+      "passedTests": 2
+    }
+  ],
+  "builds": [
+    {
+      "mode": "preview",
+      "packageManifest": "docs/verification/wave5/windows-test-preview-package-20261009-r5.json",
+      "sourceFileCount": 1056,
+      "releaseFiles": 34,
+      "launchManifest": "docs/verification/wave5/windows-test-preview-launch-20261009-r5.json",
+      "pid": 16848,
+      "capture": "C:\\Users\\sheha\\Desktop\\Jentra OS\\docs\\verification\\wave5\\windows-test-preview-native-20261009-r5.png",
+      "captureSha256": "99df5340606c86cac3a1529ef4a9ca398cf5b208e9376c992dc5d2842174c765",
+      "nativeInspected": true,
+      "entrypoint": "lib/main.dart",
+      "storageIdentity": {
+        "company": "com.jentra.test",
+        "product": "JentraOS_WindowsTest_20261009-r5_Preview",
+        "applicationSupport": "%APPDATA%\\com.jentra.test\\JentraOS_WindowsTest_20261009-r5_Preview",
+        "applicationCache": "%LOCALAPPDATA%\\com.jentra.test\\JentraOS_WindowsTest_20261009-r5_Preview",
+        "secureStorage": "DPAPI file in the same unique applicationSupport directory; WindowsOptions defaults to no legacy migration",
+        "defaultAcceptanceIdentity": "com.jentra/jentra_desktop",
+        "defaultStoresRead": false,
+        "newOsUserCreated": false
+      },
+      "build": {
+        "mode": "Preview",
+        "stage": "build",
+        "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r5\\preview\\apps\\jentra_desktop",
+        "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics build windows --release --no-pub --target=lib/main.dart --dart-define=JENTRA_ENVIRONMENT=preview",
+        "log": "docs/verification/wave5/windows-test-preview-build-20261009-r5.log",
+        "startedAt": "2026-10-09T11:01:52.7074478Z",
+        "finishedAt": "2026-10-09T11:05:02.0328186Z",
+        "exitCode": 0
+      }
+    },
+    {
+      "mode": "connected",
+      "packageManifest": "docs/verification/wave5/windows-test-connected-package-20261009-r5.json",
+      "sourceFileCount": 1056,
+      "releaseFiles": 34,
+      "launchManifest": "docs/verification/wave5/windows-test-connected-launch-20261009-r5.json",
+      "pid": 21212,
+      "capture": "C:\\Users\\sheha\\Desktop\\Jentra OS\\docs\\verification\\wave5\\windows-test-connected-native-20261009-r5.png",
+      "captureSha256": "a31948f484203942a21467b5387bfedccbe78ef59961b1720882df080a3aa7b6",
+      "nativeInspected": true,
+      "entrypoint": "lib/main.dart",
+      "storageIdentity": {
+        "company": "com.jentra.test",
+        "product": "JentraOS_WindowsTest_20261009-r5_Connected",
+        "applicationSupport": "%APPDATA%\\com.jentra.test\\JentraOS_WindowsTest_20261009-r5_Connected",
+        "applicationCache": "%LOCALAPPDATA%\\com.jentra.test\\JentraOS_WindowsTest_20261009-r5_Connected",
+        "secureStorage": "DPAPI file in the same unique applicationSupport directory; WindowsOptions defaults to no legacy migration",
+        "defaultAcceptanceIdentity": "com.jentra/jentra_desktop",
+        "defaultStoresRead": false,
+        "newOsUserCreated": false
+      },
+      "build": {
+        "mode": "Connected",
+        "stage": "build",
+        "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r5\\connected\\apps\\jentra_desktop",
+        "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics build windows --release --no-pub --target=lib/main.dart --dart-define-from-file=C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r5\\connected\\public-build-config.json",
+        "log": "docs/verification/wave5/windows-test-connected-build-20261009-r5.log",
+        "startedAt": "2026-10-09T11:08:58.7709927Z",
+        "finishedAt": "2026-10-09T11:12:58.3012851Z",
+        "exitCode": 0
+      }
+    }
+  ],
+  "delivery": "docs/verification/wave5/windows-test-delivery-20261009-r5.json",
+  "zip": "C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261009 r5.zip",
+  "zipSha256": "182ac84de9b8656918cf9a991baca6fb8977b1299addb2c9eae0486fc09c62dc",
+  "zipBytes": 47121931,
+  "cashRenderCases": 12,
+  "cashFrames": [
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-dark-comfortable-approval.png",
+      "sha256": "d0fc70dafdbfc58318a4a73381850dccfdda61459c1cfafbfd80fdc0edc52109",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-dark-comfortable-dates.png",
+      "sha256": "d0fc70dafdbfc58318a4a73381850dccfdda61459c1cfafbfd80fdc0edc52109",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-dark-comfortable-lower.png",
+      "sha256": "8187ebc4e42cb748fc4dc9f6db8b262fc76d3e2d255619bc93493a417ec96a27",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-dark-comfortable-providers.png",
+      "sha256": "4134c3159a842fe88a531f72f9bf97f9a66821590d5ad9639e997f0876c09946",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-dark-comfortable-top.png",
+      "sha256": "8b38f5fcfd0a09e6bc89a40836fd4aad3e2bba7d9733308a9be5ef630b3d3dfa",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-dark-compact-approval.png",
+      "sha256": "dbb857326cec357d243fc4b16a0b06fe7336b42b0c056057843b05900399c48b",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-dark-compact-dates.png",
+      "sha256": "dbb857326cec357d243fc4b16a0b06fe7336b42b0c056057843b05900399c48b",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-dark-compact-lower.png",
+      "sha256": "e3ce7358bc2ed190b7516f01fda4004b24aea0e0b7b5fb623f29263bdac1bb55",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-dark-compact-providers.png",
+      "sha256": "e3ce7358bc2ed190b7516f01fda4004b24aea0e0b7b5fb623f29263bdac1bb55",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-dark-compact-top.png",
+      "sha256": "41aaf8854d4ae1bbd722d64f046c7bdf72fd8659f27298dc6e3038583964500c",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-light-comfortable-approval.png",
+      "sha256": "832f37056c964fafb6571aac4a0ae4e712c94d25d15302531ef400521512cbc3",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-light-comfortable-dates.png",
+      "sha256": "832f37056c964fafb6571aac4a0ae4e712c94d25d15302531ef400521512cbc3",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-light-comfortable-lower.png",
+      "sha256": "214679293ee3e51aac5e74f571723df5eb5a675a3ed0a4bdcbfca157cf633f90",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-light-comfortable-providers.png",
+      "sha256": "28bcf75fea4e49e3d469967b1c5f2eb9dfd9b25e643d4daf3581e785386ac298",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-light-comfortable-top.png",
+      "sha256": "d39a8906875cdbfd9f9be7a098f7391ad332a4118c5ee60175172d0db84b1317",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-light-compact-approval.png",
+      "sha256": "360e16486f822d4bb614a52e7cb013870a17f8811c9178c1b03165e267910f4e",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-light-compact-dates.png",
+      "sha256": "360e16486f822d4bb614a52e7cb013870a17f8811c9178c1b03165e267910f4e",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-light-compact-lower.png",
+      "sha256": "553dabd913502e2b7200979faa1de617e3c15834b13b4e9f48a060b40f8ed93b",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-light-compact-providers.png",
+      "sha256": "553dabd913502e2b7200979faa1de617e3c15834b13b4e9f48a060b40f8ed93b",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1024-720-light-compact-top.png",
+      "sha256": "cca85ff033cef6de5b33cbb94df34b015b254fb059d0f639b1807fca82cdc875",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-dark-comfortable-approval.png",
+      "sha256": "96f634dde3df9eddf83696508b1b42bc69b0d033f770fc8e032e3427107035d4",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-dark-comfortable-dates.png",
+      "sha256": "96f634dde3df9eddf83696508b1b42bc69b0d033f770fc8e032e3427107035d4",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-dark-comfortable-lower.png",
+      "sha256": "ca809aba1cd6fd5157e8289bce8b24359e58cacb35a401f4ea06a108c0791129",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-dark-comfortable-providers.png",
+      "sha256": "a46df63d0d45409751164b91f91ff108cbc085472219a57a6570562ad0736386",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-dark-comfortable-top.png",
+      "sha256": "977cbb67af19f3b2b7dd5874f05d8750232d19aa993aed108a7919aa1f5cfd24",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-dark-compact-approval.png",
+      "sha256": "5bf30d67974a8793d514ef8c8acb4d65ac9b7ef781fd82d6102fdbd3f4eda84e",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-dark-compact-dates.png",
+      "sha256": "5bf30d67974a8793d514ef8c8acb4d65ac9b7ef781fd82d6102fdbd3f4eda84e",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-dark-compact-lower.png",
+      "sha256": "6b61b16b56d2b5e2e2401fce01e5c54205212d8674da19cc88dee37b8fdd2ef1",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-dark-compact-providers.png",
+      "sha256": "2938f6f428f8c191f8eeaabc4bdb665a57bc57388ce34bfc3cbe98e34faf6416",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-dark-compact-top.png",
+      "sha256": "a855c808766036349e3555caf8747e760224e9d0a1b92a109c9d47adbc106768",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-light-comfortable-approval.png",
+      "sha256": "717ed6a18d44656b344ed9fa1042dd6d6736a39168d88b93fbeb1449d0fea599",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-light-comfortable-dates.png",
+      "sha256": "717ed6a18d44656b344ed9fa1042dd6d6736a39168d88b93fbeb1449d0fea599",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-light-comfortable-lower.png",
+      "sha256": "c7825ecdbb484c509cd0c0ba570fe0b10f6aa959fc6f3abf6ce774f3923af569",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-light-comfortable-providers.png",
+      "sha256": "708a5a7acf6b6f153c091be67e4d041d08e4408faab27ee4ea0f10298a7f6f9f",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-light-comfortable-top.png",
+      "sha256": "65c89fbf0ae38ee2ad190de0f36a78a8c57cd973dec121f7906532235b0f0f14",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-light-compact-approval.png",
+      "sha256": "21a9c9f87d04aa4bc4ce5d573329534db456b04c2d1449db6d2a806337657dd4",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-light-compact-dates.png",
+      "sha256": "21a9c9f87d04aa4bc4ce5d573329534db456b04c2d1449db6d2a806337657dd4",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-light-compact-lower.png",
+      "sha256": "90fd24885ad9ca8b98ea4eac457d0becd4b6dc9b81c92efe35b1c99262a058bc",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-light-compact-providers.png",
+      "sha256": "4d6196c2770c17ecb08cfbdb50e45d95e3573f9ecacae496a859a4c81e08bd66",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1440-900-light-compact-top.png",
+      "sha256": "c49f476f130c158ebcc5a91dfff0f71cda5478e2a25c85cc203b2d48284a4ea8",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-dark-comfortable-approval.png",
+      "sha256": "98729dcf953b2d44296faf7cd0854f690a62697c1fca30251e830a82a6c3184c",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-dark-comfortable-dates.png",
+      "sha256": "98729dcf953b2d44296faf7cd0854f690a62697c1fca30251e830a82a6c3184c",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-dark-comfortable-lower.png",
+      "sha256": "7ec5f5af8588c3bab472d78281c5c9890f4be59462d3519651a9463b264c13ef",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-dark-comfortable-providers.png",
+      "sha256": "5119ad866dbc6dd01fff8914914b39c4aed188ac9b6d2da2b3ad6e40dabc7fba",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-dark-comfortable-top.png",
+      "sha256": "e1f762fc98ecb1dec7aa67e7f6f175747dd9d948a01ceeb356c1670e888fe6cc",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-dark-compact-approval.png",
+      "sha256": "8eff95a97c2e5a02c0cd1d455170583e6bcc28b972ad1ef93f97e9e80b059350",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-dark-compact-dates.png",
+      "sha256": "8eff95a97c2e5a02c0cd1d455170583e6bcc28b972ad1ef93f97e9e80b059350",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-dark-compact-lower.png",
+      "sha256": "988df44c49ae8d056c490d62e1944e8ea34cf0a83d31075c804015ea95f696f4",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-dark-compact-providers.png",
+      "sha256": "43bc0cf7b787aef2c2d4ff20f6e4bddb42ec72c651e63f060ed5b1173d75f441",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-dark-compact-top.png",
+      "sha256": "fa99fe4d8f43beb30c91427e4c81501b5e581ee77e5184eca3fbfcb0e40d5149",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-light-comfortable-approval.png",
+      "sha256": "32c61ee23cd032e653d2e2a9948c49661e4c37030b53ad6149cea5f4807a88e5",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-light-comfortable-dates.png",
+      "sha256": "32c61ee23cd032e653d2e2a9948c49661e4c37030b53ad6149cea5f4807a88e5",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-light-comfortable-lower.png",
+      "sha256": "34198131043af33218ff28e64f486d48163661c2b6fbe29d229f7b81db5ab3c2",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-light-comfortable-providers.png",
+      "sha256": "ad7ef4b70e3bb689574c116a7de8f0a0695e3541f6300d045d0732c3f4ee471b",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-light-comfortable-top.png",
+      "sha256": "f307ab147b25d7cd531273d7f882051d7479f53fda7eb90c95495b17a27f1bcc",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-light-compact-approval.png",
+      "sha256": "d76052e753ac21d1df3bb5f23b27c87bbf482380063fdb52ddd73c839aff23bb",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-light-compact-dates.png",
+      "sha256": "d76052e753ac21d1df3bb5f23b27c87bbf482380063fdb52ddd73c839aff23bb",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-light-compact-lower.png",
+      "sha256": "30ead48975bde48570573b50ac089cdfa9073642b61f19ba7d91920ce9324503",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-light-compact-providers.png",
+      "sha256": "2271601d979cf5647219dc0dff51c6c30b158f78e79649b7719470bad1f1638e",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r5/cash-1920-1080-light-compact-top.png",
+      "sha256": "5977579d1a0d434d899ab058f7699b56852004ae59358be5995c4186e9dff1f8",
+      "visuallyInspected": false
+    }
+  ],
+  "modelRenderCases": 12,
+  "modelFrames": [
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1024-720-dark-comfortable-review.png",
+      "sha256": "cfa07ff96207c236cab3d7e2408a27d2622dfc9906f0796915701145b1fa8f3a",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1024-720-dark-comfortable-top.png",
+      "sha256": "8d5ad59eb19fe4dc007fa69ae2c5c8af3781ddf1fc443a9018226234dea1d920",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1024-720-dark-compact-review.png",
+      "sha256": "28ba9d863b3371d29647e86eb94ce1fd24dc2c3b8ebe983835633ce5fc324a99",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1024-720-dark-compact-top.png",
+      "sha256": "15acc66d4e658ed750991616cbfd9f513c57b9c740ca8b418eb0cdf7f6d99be7",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1024-720-light-comfortable-review.png",
+      "sha256": "8ab0ed47bc7c186adaad5c34f7ffc0f3754d264c13b5a99f80312ee21d1c4e05",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1024-720-light-comfortable-top.png",
+      "sha256": "5aa52f84f066533f63a0df066553b6210547325ccf7cf453b61ebc6b3fa13b51",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1024-720-light-compact-review.png",
+      "sha256": "98e80e6bb40b0385b93fbe93793d4b4fe03888f68eb162ad841e19831df94429",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1024-720-light-compact-top.png",
+      "sha256": "8c16ef45e363566590650612383fb3129a5f270d3c972aadbf5784a3b467daaa",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1440-900-dark-comfortable-review.png",
+      "sha256": "d2c8eca9bfcfe19294b0f396944f66296f6b2667a155a3273c90be2f3d6d15a1",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1440-900-dark-comfortable-top.png",
+      "sha256": "89fd5b77e97f2fc50f0d21cac218cdb09d4ff59cd42d25909d6ff8dbde7a60f6",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1440-900-dark-compact-review.png",
+      "sha256": "0c1f6423f13680dc3a5786eba7e7128c20861bb3ac89e98fa9361450cc9c13f1",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1440-900-dark-compact-top.png",
+      "sha256": "b17e4cb530f906c61ea3be96107f2a394f0181d06fd44642f5ff5ff4f62da00c",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1440-900-light-comfortable-review.png",
+      "sha256": "eaecb918ba2fbb8ea89cd7c6f3b37a7870eb7f7b783bf46df203afdc745f3314",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1440-900-light-comfortable-top.png",
+      "sha256": "e07d71adef00f41f9f903cd60016e4584bf808cb4a6c54977688d17c78bf00bd",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1440-900-light-compact-review.png",
+      "sha256": "caeda7f7c8a351fa62b1aed9e50c011a5ca3589ef0711b5f9a7dcec2faf26f90",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1440-900-light-compact-top.png",
+      "sha256": "4a5a63eb068218d142d439d7a6b0b2ff4213c09b18ac44917b080e26de9dcaf0",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1920-1080-dark-comfortable-review.png",
+      "sha256": "9fcb07b3bfcb0e3437c84250b7cddbde27fe07fbf6c4d6c70e2ccf0f59e02cd5",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1920-1080-dark-comfortable-top.png",
+      "sha256": "9fcb07b3bfcb0e3437c84250b7cddbde27fe07fbf6c4d6c70e2ccf0f59e02cd5",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1920-1080-dark-compact-review.png",
+      "sha256": "67cb05ab5930afde174264ea37ea54ffa0c95288c9f916a07e20d8f4ca82fd10",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1920-1080-dark-compact-top.png",
+      "sha256": "67cb05ab5930afde174264ea37ea54ffa0c95288c9f916a07e20d8f4ca82fd10",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1920-1080-light-comfortable-review.png",
+      "sha256": "bc8c56a617e6082443d88c302ab26a95abbf04f91fc5c9d1c0546b3e6671dd89",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1920-1080-light-comfortable-top.png",
+      "sha256": "bc8c56a617e6082443d88c302ab26a95abbf04f91fc5c9d1c0546b3e6671dd89",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1920-1080-light-compact-review.png",
+      "sha256": "4a08483bcbe1cb2ba627c3c34f73f10974c7ab32d90bd5e143e2ecc51f4a9794",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r5/model-1920-1080-light-compact-top.png",
+      "sha256": "4a08483bcbe1cb2ba627c3c34f73f10974c7ab32d90bd5e143e2ecc51f4a9794",
+      "visuallyInspected": false
+    }
+  ],
+  "cashFramesInspected": 8,
+  "modelFramesInspected": 4,
+  "nativeFramesInspected": 2,
+  "textScale": 2,
+  "visualFindings": [
+    "Model recovery shows the immutable saved source and UTC horizon fields; explicit selection fills the human form without dispatch.",
+    "Cash controls, provider completeness, date review and recovery actions remain legible across inspected viewport/theme/density combinations.",
+    "Adjacent cash floating labels touch shared field borders at 200 percent text; visual polish and owner review remain open. Scrolled frames intentionally crop viewport edges."
+  ],
+  "nativeKeyboardVerified": false,
+  "nativeKeyboardReason": "Earlier r2 own-window probe could not acquire foreground; it aborted before sending any keys. Six widget keyboard tests pass; native keyboard evidence remains open.",
+  "sharedGoldenFailures": 13,
+  "sharedGoldensRerun": false,
+  "approvedGoldensRegenerated": false,
+  "authenticatedNativeAcceptance": false,
+  "realMfa": false,
+  "actualModelUsage": false,
+  "actualWorkerDelivery": false,
+  "independentSessionContention": false,
+  "targetScaleLoad": false,
+  "ownerAccepted": false,
+  "newMigrationsInstalled": false,
+  "newAccountsCreated": false,
+  "formalRuntimeProfileProvisioned": false,
+  "acceptanceStoresReadOrCopied": false
+}

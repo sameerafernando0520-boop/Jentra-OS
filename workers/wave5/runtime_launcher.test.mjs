@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {startRuntime,validateBoundReview} from './runtime_launcher.mjs';
 import {workerConfig} from '../../scripts/wave5/runtime_plan.mjs';
+import {edgeConfiguration} from './edge_configuration.mjs';
 const bind=body=>({...body,bundleSha256:createHash('sha256').update(JSON.stringify(body)).digest('hex')});
 test('unbound review refuses launch before credentials or network',async()=>{
  const review=bind({approvalReady:false,workerConfiguration:workerConfig});
@@ -22,4 +23,22 @@ test('bound receiver rejects alternate host and URL credentials',()=>{
  assert.throws(()=>validateBoundReview(review,approval),/RUNTIME_CONFIGURATION_INVALID/);
  c.receiver.url='https://user:password@receiver.example.test/signed';review=bind({approvalReady:true,workerConfiguration:c});approval={...approval,approvedBundleSha256:review.bundleSha256};
  assert.throws(()=>validateBoundReview(review,approval),/RUNTIME_BINDINGS_INVALID/);
+});
+function hostedReview(){
+ const c=structuredClone(workerConfig);c.hostBinding={kind:'supabase-edge',publicBaseUrl:edgeConfiguration.workerUrl};
+ c.receiver.url=edgeConfiguration.receiverUrl;c.receiver.allowedHosts=[new URL(c.receiver.url).hostname];
+ c.schedulers={deliveryIntervalMs:60000,subscriptionIntervalMs:60000,healthIntervalMs:60000,deliveryBatchLimit:3};
+ const review=bind({approvalReady:true,workerConfiguration:c,migrations:[],artifacts:[]});
+ return {review,approval:{ownerApproved:true,approvedBundleSha256:review.bundleSha256,ownerMessageReference:'injected-policy-test-only'}};
+}
+test('hosted review refuses a local Node listener before private configuration',async()=>{
+ const {review,approval}=hostedReview();let reads=0;
+ assert.equal(validateBoundReview(review,approval).hostBinding.kind,'supabase-edge');
+ await assert.rejects(startRuntime({review,approval,root:process.cwd(),env:new Proxy({},{get(){reads++;}})}),/HOSTED_RUNTIME_DEPLOYMENT_REQUIRED/);
+ assert.equal(reads,0);
+});
+test('hosted review refuses altered destination and unbounded batch configuration',()=>{
+ const {review,approval}=hostedReview();
+ const {bundleSha256,...body}=review;body.workerConfiguration.schedulers.deliveryBatchLimit=20;
+ const changed=bind(body);assert.throws(()=>validateBoundReview(changed,{...approval,approvedBundleSha256:changed.bundleSha256}),/RUNTIME_CONFIGURATION_INVALID/);
 });

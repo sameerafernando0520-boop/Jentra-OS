@@ -3,6 +3,10 @@ import 'dart:convert';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
+import 'auth/google_oauth_stub.dart'
+    if (dart.library.io) 'auth/google_oauth_io.dart'
+    as google;
+
 enum MfaAssurance { unauthenticated, aal1, aal2 }
 
 final class TotpEnrollment {
@@ -116,12 +120,13 @@ final class SupabaseFoundationGateway {
     required String password,
   }) => _client.auth.signInWithPassword(email: email, password: password);
 
+  Future<AuthResponse> createAccount({
+    required String email,
+    required String password,
+  }) => _client.auth.signUp(email: email, password: password);
+
   Future<bool> signInWithGoogle({String? redirectTo}) =>
-      _client.auth.signInWithOAuth(
-        OAuthProvider.google,
-        redirectTo: redirectTo,
-        authScreenLaunchMode: LaunchMode.externalApplication,
-      );
+      google.signInWithGoogle(_client, redirectTo: redirectTo);
 
   Future<void> signOut() => _client.auth.signOut();
 

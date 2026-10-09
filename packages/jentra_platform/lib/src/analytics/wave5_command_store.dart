@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:jentra_domain/analytics.dart';
 import 'package:jentra_domain/jentra_domain.dart' show DomainError;
 import '../draft_repository.dart';
+import 'reviewed_model_gateway.dart';
 
 /// Original identities and bounded parameters only; no results or credentials.
 final class Wave5CommandStore {
@@ -9,6 +10,7 @@ final class Wave5CommandStore {
     if (!{
       'pipeline',
       'proposal',
+      'model',
       'subscription',
       'integration',
       'cash_dates_payroll_obligation',
@@ -37,6 +39,10 @@ final class Wave5CommandStore {
   }
 
   void _validateWire(Map<String, Object?> envelope) {
+    if (namespace == 'model') {
+      ReviewedModelRequest.validateEnvelope(envelope);
+      return;
+    }
     if (envelope.length != 5 ||
         !envelope.keys.toSet().containsAll({
           'commandId',

@@ -6,7 +6,10 @@ import {sources} from './cash_ui_evidence.mjs';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const base='docs/verification/wave5/';
-const buildRoot=path.join(root,'build/w5win9b1');
+const revision=process.argv[2]??'b1';
+if(!/^[a-z][a-z0-9]{1,10}$/.test(revision))throw Error('BUILD_REVISION_INVALID');
+const suffix=revision==='b1'?'':'-'+revision;
+const buildRoot=path.join(root,'build/w5win9'+revision);
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const desktopMembers=['apps/jentra_desktop','packages/jentra_domain','packages/jentra_platform','packages/jentra_design_system'];
 const selected=p=>['pubspec.yaml','pubspec.lock','analysis_options.yaml'].includes(p)||
@@ -27,7 +30,7 @@ for(const mode of ['Preview','Connected']){
   await copyFile(path.join(root,p),target);
   if(sha(await readFile(target))!==h)throw Error('SOURCE_CHANGED_DURING_COPY');
  }
- const company='com.jentra.test',product=`JentraOS_WindowsTest_20261009_${mode}`;
+ const company='com.jentra.test',product=`JentraOS_WindowsTest_20261009${suffix}_${mode}`;
  const overlays=[];
  async function overlay(p,replace){
   const location=path.join(snapshot,p),before=await readFile(location,'utf8');
@@ -42,8 +45,8 @@ for(const mode of ['Preview','Connected']){
   .replace('VALUE "OriginalFilename", "jentra_desktop.exe"','VALUE "OriginalFilename", "Jentra_OS.exe"'));
  await overlay('apps/jentra_desktop/windows/runner/main.cpp',s=>s.replace('window.Create(L"jentra_desktop"','window.Create(L"Jentra OS - '+mode+' test"'));
  const buildHashes=Object.fromEntries(await Promise.all(Object.keys(selectedOriginal).map(async p=>[p,sha(await readFile(path.join(snapshot,p)))])));
- await jsonWrite(path.join(root,base+`windows-test-${mode.toLowerCase()}-source-20261009.json`),{
-  capturedAt:new Date().toISOString(),workspace:root,snapshot,mode,entrypoint:'lib/main.dart',controlledEvidence:false,
+ await jsonWrite(path.join(root,base+`windows-test-${mode.toLowerCase()}-source-20261009${suffix}.json`),{
+  capturedAt:new Date().toISOString(),workspace:root,snapshot,mode,revision,entrypoint:'lib/main.dart',controlledEvidence:false,
   baseSourceHashes:selectedOriginal,buildSourceHashes:buildHashes,overlays,
   desktopDependencyScope:desktopMembers,allWorkspaceManifestsIncluded:true,
   stores:{company,product,applicationSupport:`%APPDATA%\\${company}\\${product}`,

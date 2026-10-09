@@ -1,16 +1,18 @@
 param(
  [Parameter(Mandatory=$true)][ValidateSet('Preview','Connected')][string]$Mode,
  [switch]$Capture,
- [switch]$UseRunning
+ [switch]$UseRunning,
+ [ValidatePattern('^[a-z][a-z0-9]{1,10}$')][string]$Revision = 'b1'
 )
 $ErrorActionPreference='Stop'
 $testRoot=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
-$testEvidence=Join-Path $testRoot ('docs/verification/wave5/windows-test-' + $Mode.ToLowerInvariant() + '-package-20261009.json')
+$testSuffix=if($Revision -eq 'b1') {''} else {'-' + $Revision}
+$testEvidence=Join-Path $testRoot ('docs/verification/wave5/windows-test-' + $Mode.ToLowerInvariant() + '-package-20261009' + $testSuffix + '.json')
 $testBuild=Get-Content -LiteralPath $testEvidence -Raw | ConvertFrom-Json
 $testExe=$testBuild.executable
 $testVersion=[Diagnostics.FileVersionInfo]::GetVersionInfo($testExe)
 if ($testVersion.CompanyName -ne 'com.jentra.test' -or
-    $testVersion.ProductName -ne ('JentraOS_WindowsTest_20261009_' + $Mode)) { throw 'ISOLATED_APP_IDENTITY_REQUIRED' }
+    $testVersion.ProductName -ne ('JentraOS_WindowsTest_20261009' + $testSuffix + '_' + $Mode)) { throw 'ISOLATED_APP_IDENTITY_REQUIRED' }
 foreach($testFile in $testBuild.releaseFiles) {
  $testLocation=[IO.Path]::GetFullPath((Join-Path $testBuild.packageDirectory $testFile.path))
  if(-not $testLocation.StartsWith($testBuild.packageDirectory + '\',[StringComparison]::OrdinalIgnoreCase) -or
@@ -77,10 +79,10 @@ public static class JentraTestWindow {
    } finally {$testGraphics.ReleaseHdc($testDeviceContext)}
    $testCaptureMethod='PrintWindow of own client; no screen pixels read'
   }
-  $testCapturePath=Join-Path $testRoot ('docs/verification/wave5/windows-test-' + $Mode.ToLowerInvariant() + '-native-20261009.png')
+  $testCapturePath=Join-Path $testRoot ('docs/verification/wave5/windows-test-' + $Mode.ToLowerInvariant() + '-native-20261009' + $testSuffix + '.png')
   $testBitmap.Save($testCapturePath,[Drawing.Imaging.ImageFormat]::Png)
  } finally {$testGraphics.Dispose();$testBitmap.Dispose();[JentraTestWindow]::SetThreadDpiAwarenessContext($testPreviousDpi) | Out-Null}
 }
 $testLaunch=[pscustomobject]@{launchedAt=[DateTime]::UtcNow.ToString('o');mode=$Mode;pid=$testProcess.Id;executable=$testExe;company=$testVersion.CompanyName;product=$testVersion.ProductName;windowTitle=$testProcess.MainWindowTitle;capture=$testCapturePath;captureScope='Own maximized app client area';captureMethod=$testCaptureMethod;reusedProcess=[bool]$UseRunning;nativeLaunched=$true;authenticatedAcceptance=$false;formalRuntimeProfileProvisioned=$false}
-$testLaunch | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $testRoot ('docs/verification/wave5/windows-test-' + $Mode.ToLowerInvariant() + '-launch-20261009.json'))
+$testLaunch | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $testRoot ('docs/verification/wave5/windows-test-' + $Mode.ToLowerInvariant() + '-launch-20261009' + $testSuffix + '.json'))
 $testLaunch | ConvertTo-Json

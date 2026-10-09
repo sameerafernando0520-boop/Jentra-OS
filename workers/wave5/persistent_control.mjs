@@ -1,4 +1,5 @@
 import {createHash} from 'node:crypto';
+import {Buffer} from 'node:buffer';
 import {readBoundedJson} from './bounded_json.mjs';
 
 /** Supabase RPC transport. Secrets are supplied by a reviewed server launcher,

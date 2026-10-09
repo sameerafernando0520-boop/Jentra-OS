@@ -2,7 +2,21 @@
 
 Android/iPhone companion for Jentra OS. This first build implements employee account access, exact account-link onboarding, shared reviews and protected local leave drafts. The complete product blueprint remains in [EMPLOYEE_APP_BLUEPRINT.md](../../docs/blueprint/mobile-apps/EMPLOYEE_APP_BLUEPRINT.md).
 
-The app reuses Jentra's supplied artwork, bundled fonts and semantic colors. Phone navigation is Home, My work, Leave, Pay and More. At enlarged text or in Sinhala/Tamil, secondary destinations remain available through More.
+The app reuses Jentra's supplied artwork, bundled fonts and semantic colors. Version 0.3.0 adds a personal navy identity header, grouped service rows, refined selected navigation capsules and a redesigned Profile page. At enlarged text or in Sinhala/Tamil, the dock becomes Home/Activity/More; Leave, Work and Pay remain reachable through the service screens.
+
+## UI and feature upgrade
+
+Version 0.3.0 adds real native profile photo selection while retaining the outlined HR help question-bubble icon introduced in 0.2.1.
+
+- Sign-in uses “Your work. Your space.” with filled email/password controls and account-access help.
+- Tap the identity header or More → My profile to choose, replace or remove your photo. Android uses the system photo selector (document selector on older supported devices); iPhone uses PHPicker on iOS 14+. No camera or library-wide access is requested. JPG/PNG photos are bounded to 8 MB and 20 megapixels; iPhone also converts system-supported still-image formats before returning a thumbnail.
+- Photos are center-cropped to 256×256 JPEGs, stripped of source metadata and stored in the existing protected native store under the exact tenant/entity/branch/account/employee identity. They appear on Home and Profile, stay on this device, and are removed on sign-out. No cloud upload endpoint is installed.
+- Gallery selection preserves only a bounded owner intent while the private navigator and displayed image are masked. On return the app verifies accepted employee access online before saving, then reopens Profile. Manual lock, sign-out, account/scope change or revoked access cancels the candidate. Photo bytes are evicted from the owned Flutter image provider on replacement or route disposal.
+- Activity groups protected local leave drafts, uncertain command receipts and the employee's loaded shared reviews. It is not official HR request history.
+- Search shared reviews by objective, comment or displayed period; filter All/To read/Received/Closed. Search is local to loaded published reviews and never sends an acknowledgement.
+- Select a leave date range and see its inclusive calendar-day duration. The summary does not calculate policy-charged days, available balance or payroll impact.
+- Guided HR help provides next steps for account access, leave, pay, reviews and documents. It does not create a support case or send a message.
+- Light/dark appearance, English/Sinhala/Tamil and 200% text remain supported. New language copy requires the same owner language review as the first build.
 
 ## Supported first slice
 
@@ -43,4 +57,4 @@ HR must link an existing active account to the correct employee and provide the 
 
 ## Verification boundaries
 
-Automated tests and rendered previews verify this source. They do not prove an authenticated employee walkthrough on Android/iPhone, installed payroll behavior, background protection on every OS, push delivery or payroll-owner acceptance. See [employee build evidence](../../docs/verification/employee-app/progress-20261009.md) for executed commands, current results and remaining gates.
+Automated tests and rendered previews verify this source. They do not prove an authenticated employee walkthrough or gallery operation on a physical Android/iPhone, installed payroll behavior, background protection on every OS, push delivery or payroll-owner acceptance. See the [profile and design update evidence](../../docs/verification/employee-app/profile-ui-20261009/result.md), [current standalone UI preview](../../docs/verification/employee-app/profile-ui-20261009/employee-app-preview.html), and [design rules](../../docs/verification/employee-app/profile-ui-20261009/design-system.md). The [icon update evidence](../../docs/verification/employee-app/hr-help-icon-20261009/result.md) remains a version 0.2.1 record, the [UI upgrade evidence](../../docs/verification/employee-app/ui-ux-20261009/result.md) remains a version 0.2.0 record, and the [first-build evidence](../../docs/verification/employee-app/progress-20261009.md) remains a version 0.1.0 record.

@@ -1,0 +1,678 @@
+{
+  "observedAt": "2026-10-09T07:16:24.644Z",
+  "liveLedgerEntries": 43,
+  "localMigrationFiles": 112,
+  "pendingCount": 69,
+  "byWave": {
+    "3": 48,
+    "4": 13,
+    "5": 8
+  },
+  "existingWave5ReviewCount": 28,
+  "unreviewedForFullApp": [
+    {
+      "path": "supabase/migrations/20260912152000_product_unit_conversions.sql",
+      "name": "product_unit_conversions",
+      "sha256": "1245dd3f3bfca3c00afa4477da67e6a02655ef9f3e25a1c848e5ca3f769f526c",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260915002000_procurement_purchase_returns.sql",
+      "name": "procurement_purchase_returns",
+      "sha256": "44292af187109e00c267a9be60b50a2de8243e97e421c0dee2f0bd7220e2acc6",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260916001000_inventory_transfers.sql",
+      "name": "inventory_transfers",
+      "sha256": "de1d6141109130d2c29a8d253966f3d934fa412821baa2ef893ac4691c263dc5",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260916002000_inventory_stock_counts.sql",
+      "name": "inventory_stock_counts",
+      "sha256": "90072604b03523e391fb12bd315032a4a4b968d28789ad0fbbe77a15d204b40b",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260918001000_inventory_reservation_release.sql",
+      "name": "inventory_reservation_release",
+      "sha256": "fb7782b9389615e6a02bcc335d958bba84caa2662c8a85fb295f76120cf9c3e6",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260919181407_inventory_receipt_provenance.sql",
+      "name": "inventory_receipt_provenance",
+      "sha256": "29becfdc43fef3bbc07a303eb8d79232f6ad3e77cd203d70dd2b82737b7b28e4",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260919185538_inventory_landed_value.sql",
+      "name": "inventory_landed_value",
+      "sha256": "b13ac607ae1418bd860a5b5012a6adbfcb381217b76f256bd6ca313463eb6d1b",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260920202547_inventory_valuation_reports.sql",
+      "name": "inventory_valuation_reports",
+      "sha256": "8d58f47813dbfac15882bc4c80dd64f650fdeb233f14a61b772468adbbceb0db",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260921041348_manual_journals.sql",
+      "name": "manual_journals",
+      "sha256": "8bea1e05398339b03979bf34569bcb76303c449923b346ece57da3d3d9e79bfd",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260922001000_ar_ap_control_reconciliation.sql",
+      "name": "ar_ap_control_reconciliation",
+      "sha256": "9de77b0e06887469a682292311d9cd161d598dcb6f871a34a712dbc38aaa5e26",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260923225202_bank_reconciliation.sql",
+      "name": "bank_reconciliation",
+      "sha256": "6d914ceb736d69d2becf7130701509e1f617d8493798b5a8922fd9f268b7f6bd",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260924185321_wave3_period_governance.sql",
+      "name": "wave3_period_governance",
+      "sha256": "c6fae72402c4f47e638d7fd9d74b0f05907937e2ac93568ef3c48edb51e67517",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260925003000_wave3_cash_flow.sql",
+      "name": "wave3_cash_flow",
+      "sha256": "5c9a3b6db7e562ef8dfdc3ae590c26215e01e23d4cc838b88edd74a48b6e354e",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260925004000_wave3_budgets.sql",
+      "name": "wave3_budgets",
+      "sha256": "56e5ba5993f32297772a994fcdb39c595ee928de9081e6643a4478c4adf021af",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260926001000_wave3_tax_summary.sql",
+      "name": "wave3_tax_summary",
+      "sha256": "dcef36d0dcbf6b5277e6a79f625314d7595434cd88ced42271baa1cfa86b4969",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260926002000_wave3_tax_summary_hardening.sql",
+      "name": "wave3_tax_summary_hardening",
+      "sha256": "7976c8c944fd776729e4c67949706c1265bb0b5df04b076e83db301e8164ddee",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260926003000_wave3_tax_control_reconciliation.sql",
+      "name": "wave3_tax_control_reconciliation",
+      "sha256": "51fb81ab482fdd6e2091ed46add2e2efa0c377528950393469ef721f081fe17b",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260926005000_wave3_governed_journal_tax.sql",
+      "name": "wave3_governed_journal_tax",
+      "sha256": "78ae3cf5ee32b220f164431bdc0891dc5f87e04c7eeb079ae5665a9462ee2910",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260926006000_wave3_tax_control_movements.sql",
+      "name": "wave3_tax_control_movements",
+      "sha256": "41c09e5c0f8b6e40c1fca225e4f04196101b1012ebb88ef954234eee4c1e682d",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260926007000_wave3_grni_control_reconciliation.sql",
+      "name": "wave3_grni_control_reconciliation",
+      "sha256": "b1864d4ac1612ebfc54439873ef5c8afab790051cf399869f55bc8ba4ff67f02",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260926008000_wave3_close_control_review.sql",
+      "name": "wave3_close_control_review",
+      "sha256": "654fadae87a9b0b027d20aec58ce32ff0fe52a19f024e5182e4b24e5dc2da0ba",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260926010000_wave3_financial_dimensions.sql",
+      "name": "wave3_financial_dimensions",
+      "sha256": "34f530f465bc21eff2fd0d137c4fa4b7a8a54d9b82401d91f20110e9f055c900",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260927001000_wave3_control_read_plan.sql",
+      "name": "wave3_control_read_plan",
+      "sha256": "bea514edc6178a914c8c7ed3881c1a007bc01760ad60772a4549cb4c41499e49",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260927200629_wave3_operational_evidence.sql",
+      "name": "wave3_operational_evidence",
+      "sha256": "50a0ab28a3573a0bacc0415450e40ddb9deed5fd98196ee49df17e4357dba8f6",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260927200703_wave3_historical_controls.sql",
+      "name": "wave3_historical_controls",
+      "sha256": "4d135f473782c8f6fa776fe2cb3190efc0bc34bf6e88f629968c3a0b86743990",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260927200706_wave3_inventory_extensions.sql",
+      "name": "wave3_inventory_extensions",
+      "sha256": "a89834cd135096cf380e5f0446867c5a3b8b6c5c62f63e0f59011943e9e85eea",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260928001000_wave3_posted_journal_evidence.sql",
+      "name": "wave3_posted_journal_evidence",
+      "sha256": "1c0808dcdb36ebba8d320b1bf344c514e0c1ed7d23cf3e01581364adc219c4f5",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260929001000_wave3_notifications.sql",
+      "name": "wave3_notifications",
+      "sha256": "ec673056482b7219c4e983bc602bc05cf35ba3f0d6315bead6f5b0f27ea8d2e0",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260930001000_wave3_landed_extensions.sql",
+      "name": "wave3_landed_extensions",
+      "sha256": "b472394fcfff0cd7d0d8e2f123e503c6a95ea6521169af62807cafb6bed9718d",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260930002000_wave3_count_partitions.sql",
+      "name": "wave3_count_partitions",
+      "sha256": "18e77c3bb7a9904e96650daa08eec5136758fc5e2d52cab03f6394d97c235613",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260930003000_wave3_stock_disposition.sql",
+      "name": "wave3_stock_disposition",
+      "sha256": "6dc6b2a9bddafa05b263aeb44f0c1ac0e2c68bcd1424869edd8a141e999dad83",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260930004000_wave3_dashboard_metrics.sql",
+      "name": "wave3_dashboard_metrics",
+      "sha256": "c915ac0a5bb6367f22ac83008a1a8fc00db9829978fa0cab8d621865b19dad4d",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260930005000_wave3_observability.sql",
+      "name": "wave3_observability",
+      "sha256": "9afecc2a25596b7af50aa099fb0b9ee6fc5c916be06dd10eb52c023c5920031d",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260930070500_wave4_clock_batches.sql",
+      "name": "wave4_clock_batches",
+      "sha256": "6775123b8ef94c61572ebe2c321557a5b0ab3eb976189115da14a374145baffd",
+      "wave": 4
+    },
+    {
+      "path": "supabase/migrations/20260930071000_wave4_fixed_assets.sql",
+      "name": "wave4_fixed_assets",
+      "sha256": "d76ab9fef3720aea51de71288defb6fdae8fa93d82fffb83ecc49566fbbb5bf8",
+      "wave": 4
+    },
+    {
+      "path": "supabase/migrations/20261001090000_wave4_service.sql",
+      "name": "wave4_service",
+      "sha256": "28de902e665845c5eb4d26e0a8b3db621a76ccd908d11987126a9932a5679b84",
+      "wave": 4
+    },
+    {
+      "path": "supabase/migrations/20261002080000_wave4_project_payroll_impacts.sql",
+      "name": "wave4_project_payroll_impacts",
+      "sha256": "19a784b4405288cbb4c9fa1403ab4eda52ae75b76712a85e739431bf1dd7ef54",
+      "wave": 4
+    },
+    {
+      "path": "supabase/migrations/20261003090000_wave3_negative_stock_policy.sql",
+      "name": "wave3_negative_stock_policy",
+      "sha256": "b11c16acddee4cf02a7f706f7e0ff991cbebdd4b5c6d0e02412e657c77334959",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20261004090000_project_milestones.sql",
+      "name": "project_milestones",
+      "sha256": "683fa20c6d5e118f0496bf21f1a117e33686340da2b407adaf1e1e5e06e93fd1",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20261005090000_service_asset_equipment.sql",
+      "name": "service_asset_equipment",
+      "sha256": "d4723bd8025e44ccdc651e6feab21e8ae939f4e2c850a14357453be3e24ca77e",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20261005120000_wave4_project_expense_evidence.sql",
+      "name": "wave4_project_expense_evidence",
+      "sha256": "990077dbed0e07e74eb593e77a51cc7ba0b62b5ab50c29700a39d4f235d67aba",
+      "wave": 4
+    }
+  ],
+  "pending": [
+    {
+      "path": "supabase/migrations/20260912152000_product_unit_conversions.sql",
+      "name": "product_unit_conversions",
+      "sha256": "1245dd3f3bfca3c00afa4477da67e6a02655ef9f3e25a1c848e5ca3f769f526c",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260912153000_procurement_requisition_drafts.sql",
+      "name": "procurement_requisition_drafts",
+      "sha256": "9b751a04245677ca999b6e11a4b7935a2e577d5080961553df3af30161b49a2c",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260913001000_procurement_requisition_workflow.sql",
+      "name": "procurement_requisition_workflow",
+      "sha256": "05533f3c9b038cc1e023c35869a62b987810d776fbba805621678eaa787579d5",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260913002000_procurement_reference_options.sql",
+      "name": "procurement_reference_options",
+      "sha256": "c56605aa3ab7fafe38dbab4777ca23f731e7a53fd9076ef30a1953fa49adc74c",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260913003000_procurement_sourcing.sql",
+      "name": "procurement_sourcing",
+      "sha256": "d4f92c0fb5c6d24c48d4c21c7184ef042a635abb654c7a53c92129fbc3503d44",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260913004000_procurement_purchase_orders.sql",
+      "name": "procurement_purchase_orders",
+      "sha256": "8a71252b8bf62a0a8a7325a4683ae770039cecd5c72dc30be131c428636e6795",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260913005000_procurement_order_workflow.sql",
+      "name": "procurement_order_workflow",
+      "sha256": "dedb4da3b59ca593a349ecaf4c77fc1adf5dd9e3e56d903726291f6e5e98c077",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260913006000_procurement_goods_receipts.sql",
+      "name": "procurement_goods_receipts",
+      "sha256": "f38bc858ea03067f56f44208196312842484bd1263b4b9466dc58cb8a7220b76",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260913007000_procurement_supplier_bills.sql",
+      "name": "procurement_supplier_bills",
+      "sha256": "9212e1dea7c9abcb0e3224ff37bc5a3e1495ea73128bb450f99ef79c4c93c722",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260914001000_procurement_supplier_settlement.sql",
+      "name": "procurement_supplier_settlement",
+      "sha256": "5b776e2dc0eb53a72fa51375f248ab24848768d3141c757233c7b97a4a654bf1",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260915001000_payable_allocation_corrections.sql",
+      "name": "payable_allocation_corrections",
+      "sha256": "d175cf49fe16783e2d413d46167e99777904b804873e96dbc185992fc2625666",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260915002000_procurement_purchase_returns.sql",
+      "name": "procurement_purchase_returns",
+      "sha256": "44292af187109e00c267a9be60b50a2de8243e97e421c0dee2f0bd7220e2acc6",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260916001000_inventory_transfers.sql",
+      "name": "inventory_transfers",
+      "sha256": "de1d6141109130d2c29a8d253966f3d934fa412821baa2ef893ac4691c263dc5",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260916002000_inventory_stock_counts.sql",
+      "name": "inventory_stock_counts",
+      "sha256": "90072604b03523e391fb12bd315032a4a4b968d28789ad0fbbe77a15d204b40b",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260918001000_inventory_reservation_release.sql",
+      "name": "inventory_reservation_release",
+      "sha256": "fb7782b9389615e6a02bcc335d958bba84caa2662c8a85fb295f76120cf9c3e6",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260919181407_inventory_receipt_provenance.sql",
+      "name": "inventory_receipt_provenance",
+      "sha256": "29becfdc43fef3bbc07a303eb8d79232f6ad3e77cd203d70dd2b82737b7b28e4",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260919185538_inventory_landed_value.sql",
+      "name": "inventory_landed_value",
+      "sha256": "b13ac607ae1418bd860a5b5012a6adbfcb381217b76f256bd6ca313463eb6d1b",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260920202547_inventory_valuation_reports.sql",
+      "name": "inventory_valuation_reports",
+      "sha256": "8d58f47813dbfac15882bc4c80dd64f650fdeb233f14a61b772468adbbceb0db",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260921041348_manual_journals.sql",
+      "name": "manual_journals",
+      "sha256": "8bea1e05398339b03979bf34569bcb76303c449923b346ece57da3d3d9e79bfd",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260922001000_ar_ap_control_reconciliation.sql",
+      "name": "ar_ap_control_reconciliation",
+      "sha256": "9de77b0e06887469a682292311d9cd161d598dcb6f871a34a712dbc38aaa5e26",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260923225202_bank_reconciliation.sql",
+      "name": "bank_reconciliation",
+      "sha256": "6d914ceb736d69d2becf7130701509e1f617d8493798b5a8922fd9f268b7f6bd",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260924185321_wave3_period_governance.sql",
+      "name": "wave3_period_governance",
+      "sha256": "c6fae72402c4f47e638d7fd9d74b0f05907937e2ac93568ef3c48edb51e67517",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260925002000_wave3_financial_statements.sql",
+      "name": "wave3_financial_statements",
+      "sha256": "7596ec3e5b1ac2b348e4b23371ff6c54818a5336d276fa3a03f14f1ecd5f17b6",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260925003000_wave3_cash_flow.sql",
+      "name": "wave3_cash_flow",
+      "sha256": "5c9a3b6db7e562ef8dfdc3ae590c26215e01e23d4cc838b88edd74a48b6e354e",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260925004000_wave3_budgets.sql",
+      "name": "wave3_budgets",
+      "sha256": "56e5ba5993f32297772a994fcdb39c595ee928de9081e6643a4478c4adf021af",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260926001000_wave3_tax_summary.sql",
+      "name": "wave3_tax_summary",
+      "sha256": "dcef36d0dcbf6b5277e6a79f625314d7595434cd88ced42271baa1cfa86b4969",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260926002000_wave3_tax_summary_hardening.sql",
+      "name": "wave3_tax_summary_hardening",
+      "sha256": "7976c8c944fd776729e4c67949706c1265bb0b5df04b076e83db301e8164ddee",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260926003000_wave3_tax_control_reconciliation.sql",
+      "name": "wave3_tax_control_reconciliation",
+      "sha256": "51fb81ab482fdd6e2091ed46add2e2efa0c377528950393469ef721f081fe17b",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260926005000_wave3_governed_journal_tax.sql",
+      "name": "wave3_governed_journal_tax",
+      "sha256": "78ae3cf5ee32b220f164431bdc0891dc5f87e04c7eeb079ae5665a9462ee2910",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260926006000_wave3_tax_control_movements.sql",
+      "name": "wave3_tax_control_movements",
+      "sha256": "41c09e5c0f8b6e40c1fca225e4f04196101b1012ebb88ef954234eee4c1e682d",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260926007000_wave3_grni_control_reconciliation.sql",
+      "name": "wave3_grni_control_reconciliation",
+      "sha256": "b1864d4ac1612ebfc54439873ef5c8afab790051cf399869f55bc8ba4ff67f02",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260926008000_wave3_close_control_review.sql",
+      "name": "wave3_close_control_review",
+      "sha256": "654fadae87a9b0b027d20aec58ce32ff0fe52a19f024e5182e4b24e5dc2da0ba",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260926009000_wave3_governed_report_exports.sql",
+      "name": "wave3_governed_report_exports",
+      "sha256": "85238e684c967e8377221e55f911fcb9dfa64e7696110ee28eacffe8b6586386",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260926010000_wave3_financial_dimensions.sql",
+      "name": "wave3_financial_dimensions",
+      "sha256": "34f530f465bc21eff2fd0d137c4fa4b7a8a54d9b82401d91f20110e9f055c900",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260926160000_wave4_calendar_resolution.sql",
+      "name": "wave4_calendar_resolution",
+      "sha256": "6abd4dceddbb3124b4bfa01efd97ecafabd59f03ee1f85f48b5bc2a2f5685053",
+      "wave": 4
+    },
+    {
+      "path": "supabase/migrations/20260926161000_wave4_organization.sql",
+      "name": "wave4_organization",
+      "sha256": "6f682652564a030e8a3a6960999aa9c51aa96486ab0f7219d4347f5445e31c45",
+      "wave": 4
+    },
+    {
+      "path": "supabase/migrations/20260927001000_wave3_control_read_plan.sql",
+      "name": "wave3_control_read_plan",
+      "sha256": "bea514edc6178a914c8c7ed3881c1a007bc01760ad60772a4549cb4c41499e49",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260927200629_wave3_operational_evidence.sql",
+      "name": "wave3_operational_evidence",
+      "sha256": "50a0ab28a3573a0bacc0415450e40ddb9deed5fd98196ee49df17e4357dba8f6",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260927200703_wave3_historical_controls.sql",
+      "name": "wave3_historical_controls",
+      "sha256": "4d135f473782c8f6fa776fe2cb3190efc0bc34bf6e88f629968c3a0b86743990",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260927200706_wave3_inventory_extensions.sql",
+      "name": "wave3_inventory_extensions",
+      "sha256": "a89834cd135096cf380e5f0446867c5a3b8b6c5c62f63e0f59011943e9e85eea",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260928001000_wave3_posted_journal_evidence.sql",
+      "name": "wave3_posted_journal_evidence",
+      "sha256": "1c0808dcdb36ebba8d320b1bf344c514e0c1ed7d23cf3e01581364adc219c4f5",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260928082234_wave4_attendance_intervals.sql",
+      "name": "wave4_attendance_intervals",
+      "sha256": "21cb1745977492f343f2992ccc915400f9320a82957f342d943e36a50db60ad6",
+      "wave": 4
+    },
+    {
+      "path": "supabase/migrations/20260928083449_wave4_leave_ledger.sql",
+      "name": "wave4_leave_ledger",
+      "sha256": "1fbdd603a68f1962291c85a90739f599ee629fef27e5714ee6c00e8a0e37d4b3",
+      "wave": 4
+    },
+    {
+      "path": "supabase/migrations/20260929001000_wave3_notifications.sql",
+      "name": "wave3_notifications",
+      "sha256": "ec673056482b7219c4e983bc602bc05cf35ba3f0d6315bead6f5b0f27ea8d2e0",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260930001000_wave3_landed_extensions.sql",
+      "name": "wave3_landed_extensions",
+      "sha256": "b472394fcfff0cd7d0d8e2f123e503c6a95ea6521169af62807cafb6bed9718d",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260930002000_wave3_count_partitions.sql",
+      "name": "wave3_count_partitions",
+      "sha256": "18e77c3bb7a9904e96650daa08eec5136758fc5e2d52cab03f6394d97c235613",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260930003000_wave3_stock_disposition.sql",
+      "name": "wave3_stock_disposition",
+      "sha256": "6dc6b2a9bddafa05b263aeb44f0c1ac0e2c68bcd1424869edd8a141e999dad83",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260930004000_wave3_dashboard_metrics.sql",
+      "name": "wave3_dashboard_metrics",
+      "sha256": "c915ac0a5bb6367f22ac83008a1a8fc00db9829978fa0cab8d621865b19dad4d",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260930005000_wave3_observability.sql",
+      "name": "wave3_observability",
+      "sha256": "9afecc2a25596b7af50aa099fb0b9ee6fc5c916be06dd10eb52c023c5920031d",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20260930070000_wave4_synthetic_payroll.sql",
+      "name": "wave4_synthetic_payroll",
+      "sha256": "5517cc4559c3f91901525b38ec8fbf03633da49c587a0d034a885405a43465b2",
+      "wave": 4
+    },
+    {
+      "path": "supabase/migrations/20260930070500_wave4_clock_batches.sql",
+      "name": "wave4_clock_batches",
+      "sha256": "6775123b8ef94c61572ebe2c321557a5b0ab3eb976189115da14a374145baffd",
+      "wave": 4
+    },
+    {
+      "path": "supabase/migrations/20260930071000_wave4_fixed_assets.sql",
+      "name": "wave4_fixed_assets",
+      "sha256": "d76ab9fef3720aea51de71288defb6fdae8fa93d82fffb83ecc49566fbbb5bf8",
+      "wave": 4
+    },
+    {
+      "path": "supabase/migrations/20261001080000_wave4_projects_time.sql",
+      "name": "wave4_projects_time",
+      "sha256": "52ca0ba293d0a621304e01135db1424e69ebff579f14712b6b6c29d8c031e740",
+      "wave": 4
+    },
+    {
+      "path": "supabase/migrations/20261001090000_wave4_service.sql",
+      "name": "wave4_service",
+      "sha256": "28de902e665845c5eb4d26e0a8b3db621a76ccd908d11987126a9932a5679b84",
+      "wave": 4
+    },
+    {
+      "path": "supabase/migrations/20261001100000_wave4_project_expenses_billing.sql",
+      "name": "wave4_project_expenses_billing",
+      "sha256": "0430f55698a28ee7c26a609bc982a96cbc20319d204c3d5546f9a6ae4272efef",
+      "wave": 4
+    },
+    {
+      "path": "supabase/migrations/20261001110000_wave4_payroll_corrections.sql",
+      "name": "wave4_payroll_corrections",
+      "sha256": "709170a703a5fd6808ba15de27a4b6cfcb33470da977203b960e2d04e67437cf",
+      "wave": 4
+    },
+    {
+      "path": "supabase/migrations/20261002080000_wave4_project_payroll_impacts.sql",
+      "name": "wave4_project_payroll_impacts",
+      "sha256": "19a784b4405288cbb4c9fa1403ab4eda52ae75b76712a85e739431bf1dd7ef54",
+      "wave": 4
+    },
+    {
+      "path": "supabase/migrations/20261003090000_wave3_negative_stock_policy.sql",
+      "name": "wave3_negative_stock_policy",
+      "sha256": "b11c16acddee4cf02a7f706f7e0ff991cbebdd4b5c6d0e02412e657c77334959",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20261004090000_project_milestones.sql",
+      "name": "project_milestones",
+      "sha256": "683fa20c6d5e118f0496bf21f1a117e33686340da2b407adaf1e1e5e06e93fd1",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20261005090000_service_asset_equipment.sql",
+      "name": "service_asset_equipment",
+      "sha256": "d4723bd8025e44ccdc651e6feab21e8ae939f4e2c850a14357453be3e24ca77e",
+      "wave": 3
+    },
+    {
+      "path": "supabase/migrations/20261005120000_wave4_project_expense_evidence.sql",
+      "name": "wave4_project_expense_evidence",
+      "sha256": "990077dbed0e07e74eb593e77a51cc7ba0b62b5ab50c29700a39d4f235d67aba",
+      "wave": 4
+    },
+    {
+      "path": "supabase/migrations/20261008090000_wave5_historical_pipeline.sql",
+      "name": "wave5_historical_pipeline",
+      "sha256": "183a8688dd2c78a9e13032a165d2e1787b3d8f9dd4a15aee9b201eddf4767768",
+      "wave": 5
+    },
+    {
+      "path": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql",
+      "name": "wave5_persistent_delivery",
+      "sha256": "1a636229a0749cf9d6334ae49efe8ff38627b6a2d1bb642789a28e86efd1c663",
+      "wave": 5
+    },
+    {
+      "path": "supabase/migrations/20261008100000_wave5_invocation_storage.sql",
+      "name": "wave5_invocation_storage",
+      "sha256": "a9bdd3bf5b1593bd3253930c5a0cd6286f576b7f81161a5832919efbc585d6e8",
+      "wave": 5
+    },
+    {
+      "path": "supabase/migrations/20261008103000_wave5_dated_cash.sql",
+      "name": "wave5_dated_cash",
+      "sha256": "24b5ab44250ec5239ab2b942277cb104867d8e67288666c6297d4fa694e4b391",
+      "wave": 5
+    },
+    {
+      "path": "supabase/migrations/20261008110000_wave5_governed_export_adapter.sql",
+      "name": "wave5_governed_export_adapter",
+      "sha256": "fbe68cc451f5044c03be7b68803ff2afbb858004109a5ee2319960d495e193ed",
+      "wave": 5
+    },
+    {
+      "path": "supabase/migrations/20261008113000_wave5_statement_classifications.sql",
+      "name": "wave5_statement_classifications",
+      "sha256": "aad2c6cb360490ad653470858a389354c7016f2346b41e26bff8ac8294dc97c3",
+      "wave": 5
+    },
+    {
+      "path": "supabase/migrations/20261008120000_wave5_cash_payment_dates.sql",
+      "name": "wave5_cash_payment_dates",
+      "sha256": "1463953b0fa76269740a732a59485ff3d160681fb2a6655eedbd8c0aeda42c8a",
+      "wave": 5
+    },
+    {
+      "path": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "name": "wave5_runtime_scope",
+      "sha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc",
+      "wave": 5
+    }
+  ],
+  "installedSourceNameMatching": true,
+  "notAnInstallationApproval": true
+}

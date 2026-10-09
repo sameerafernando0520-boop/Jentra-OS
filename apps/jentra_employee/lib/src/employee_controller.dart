@@ -4,6 +4,17 @@ import 'package:flutter/foundation.dart';
 
 import 'data/employee_gateway.dart';
 import 'data/employee_storage.dart';
+import 'data/employee_photo.dart';
+
+final class _EmployeePhotoSelection {
+  _EmployeePhotoSelection(this.owner);
+  final EmployeeIdentity owner;
+  final completion = Completer<void>();
+  Uint8List? candidate;
+  EmployeeFailure? failure;
+  Timer? expiry;
+  bool saving = false;
+}
 
 final class EmployeeController extends ChangeNotifier {
   EmployeeController({
@@ -11,10 +22,15 @@ final class EmployeeController extends ChangeNotifier {
     required EmployeeDraftStore draftStore,
     DateTime Function()? now,
     Duration authorizationLease = const Duration(hours: 24),
+    EmployeePhotoPicker? photoPicker,
+    Future<Uint8List> Function(Uint8List)? photoNormalizer,
   }) : _gateway = gateway,
        // Keep the injected store private while retaining the public argument.
        // ignore: prefer_initializing_formals
        _draftStore = draftStore,
+       _photoStore = EmployeePhotoStore(draftStore.store),
+       _photoPicker = photoPicker ?? NativeEmployeePhotoPicker(),
+       _photoNormalizer = photoNormalizer ?? prepareEmployeePhoto,
        _now = now ?? DateTime.now,
        _authorizationLease = authorizationLease {
     if (authorizationLease <= Duration.zero ||
@@ -32,6 +48,25 @@ final class EmployeeController extends ChangeNotifier {
   }
   final EmployeeGateway? _gateway;
   final EmployeeDraftStore _draftStore;
+  final EmployeePhotoStore _photoStore;
+  final EmployeePhotoPicker _photoPicker;
+  final Future<Uint8List> Function(Uint8List) _photoNormalizer;
+  _EmployeePhotoSelection? _photoSelection;
+  bool _photoWriting = false;
+  Completer<void>? _photoWriteCompletion;
+  String? _photoReturnOwner;
+  Uint8List? profilePhoto;
+  EmployeeFailure? photoError;
+  bool get photoBusy => _photoSelection != null || _photoWriting;
+  bool consumePhotoProfileReturn() {
+    final shouldReturn =
+        _photoReturnOwner != null &&
+        _photoReturnOwner == identity?.key &&
+        phase == EmployeePhase.ready;
+    _photoReturnOwner = null;
+    return shouldReturn;
+  }
+
   final DateTime Function() _now;
   final Duration _authorizationLease;
   Timer? _authorizationTimer;
@@ -196,6 +231,8 @@ final class EmployeeController extends ChangeNotifier {
     _cancelAuthorization();
     _cancelDraftRetention();
     identity = null;
+    profilePhoto = null;
+    photoError = null;
     links = const [];
     reviews = const [];
     reviewsCursor = null;
@@ -211,6 +248,7 @@ final class EmployeeController extends ChangeNotifier {
     if (_disposed || actor == _actor) return;
     final wasLocked = phase == EmployeePhase.locked;
     final previousActor = _actor;
+    _cancelPhotoSelection();
     _generation++;
     _mask();
     workspaces = const [];
@@ -239,7 +277,11 @@ final class EmployeeController extends ChangeNotifier {
   ) async {
     try {
       if (previousActor != null) {
-        await _draftStore.clearActorDrafts(previousActor);
+        try {
+          await _draftStore.clearActorDrafts(previousActor);
+        } finally {
+          await _photoStore.clearActor(previousActor);
+        }
       }
       if (_valid(generation) &&
           actor != null &&
@@ -265,6 +307,7 @@ final class EmployeeController extends ChangeNotifier {
     }
     _actor = gateway.actorId;
     if (_actor == null) {
+      _cancelPhotoSelection();
       _mask();
       workspaces = const [];
       workspace = null;
@@ -308,6 +351,7 @@ final class EmployeeController extends ChangeNotifier {
       if (_valid(generation)) {
         busy = false;
         _emit();
+        unawaited(_applySelectedPhoto());
       }
     }
   }
@@ -348,6 +392,7 @@ final class EmployeeController extends ChangeNotifier {
   Future<void> signOut() async {
     if (_disposed || _gateway == null) return;
     _logoutInProgress = true;
+    _cancelPhotoSelection();
     final previousActor = _actor ?? _gateway.actorId;
     _generation++;
     _mask();
@@ -385,7 +430,11 @@ final class EmployeeController extends ChangeNotifier {
       _logoutInProgress = false;
       if (previousActor != null) {
         try {
-          await _draftStore.clearActorDrafts(previousActor);
+          try {
+            await _draftStore.clearActorDrafts(previousActor);
+          } finally {
+            await _photoStore.clearActor(previousActor);
+          }
         } on Object catch (e) {
           if (!_disposed) error = employeeFailure(e);
         }
@@ -410,6 +459,7 @@ final class EmployeeController extends ChangeNotifier {
       _emit();
       return;
     }
+    _cancelPhotoSelection();
     final generation = ++_generation;
     busy = true;
     _mask();
@@ -450,6 +500,17 @@ final class EmployeeController extends ChangeNotifier {
       final restoredDraft = await _draftStore.loadDraftLease(person);
       if (!_valid(generation)) return;
       _presentDraft(restoredDraft, generation);
+      try {
+        // Do not restore a candidate an in-flight revoked save will remove.
+        await _photoWriteCompletion?.future;
+        if (!_valid(generation)) return;
+        final photo = await _photoStore.load(person);
+        if (!_valid(generation)) return;
+        profilePhoto = photo;
+      } on Object catch (e) {
+        if (!_valid(generation)) return;
+        photoError = employeeFailure(e);
+      }
       await _reviews(person, generation);
     } on EmployeeFailure catch (e) {
       if (e.code != 'SELF_LINK_REQUIRED') rethrow;
@@ -820,11 +881,17 @@ final class EmployeeController extends ChangeNotifier {
   void background() {
     if (_disposed || _gateway == null) return;
     _foreground = false;
-    lock();
+    if (_photoSelection != null) _photoReturnOwner = _photoSelection!.owner.key;
+    _lock(preservePhotoSelection: true);
   }
 
   void lock() {
+    _lock(preservePhotoSelection: false);
+  }
+
+  void _lock({required bool preservePhotoSelection}) {
     if (_disposed || _gateway == null) return;
+    if (!preservePhotoSelection) _cancelPhotoSelection();
     _lifecycleGeneration++;
     _resumeWorkspaceKey = workspace?.key ?? _resumeWorkspaceKey;
     _generation++;
@@ -840,10 +907,163 @@ final class EmployeeController extends ChangeNotifier {
     if (_disposed) return;
     _foreground = true;
     if (phase == EmployeePhase.locked) await start();
+    await _applySelectedPhoto();
+  }
+
+  void _cancelPhotoSelection({bool preserveReturn = false}) {
+    if (!preserveReturn) _photoReturnOwner = null;
+    final request = _photoSelection;
+    _photoSelection = null;
+    request?.expiry?.cancel();
+    request?.candidate = null;
+    if (request != null && !request.completion.isCompleted) {
+      request.completion.complete();
+    }
+  }
+
+  /// Gallery may background the app. Keep only a bounded intent and candidate,
+  /// while the private navigator, identity and displayed photo are masked.
+  /// A fresh online accepted-self check is required before any save on return.
+  Future<void> chooseProfilePhoto() async {
+    if (busy ||
+        photoBusy ||
+        !_canUsePrivateState() ||
+        phase != EmployeePhase.ready ||
+        identity == null) {
+      return;
+    }
+    final request = _EmployeePhotoSelection(identity!);
+    _photoSelection = request;
+    request.expiry = Timer(const Duration(minutes: 2), () {
+      if (identical(_photoSelection, request)) {
+        _cancelPhotoSelection();
+        _emit();
+      }
+    });
+    photoError = null;
+    notice = null;
+    _emit();
+    unawaited(_readSelectedPhoto(request));
+    await request.completion.future;
+  }
+
+  Future<void> _readSelectedPhoto(_EmployeePhotoSelection request) async {
+    try {
+      final source = await _photoPicker.choose();
+      if (!identical(_photoSelection, request) || _disposed) return;
+      if (source == null) {
+        _cancelPhotoSelection(preserveReturn: true);
+        _emit();
+        return;
+      }
+      final candidate = await _photoNormalizer(source);
+      if (!identical(_photoSelection, request) || _disposed) return;
+      request.candidate = candidate;
+      await _applySelectedPhoto();
+    } on Object catch (e) {
+      if (!identical(_photoSelection, request) || _disposed) return;
+      request.failure = employeeFailure(e);
+      await _applySelectedPhoto();
+    }
+  }
+
+  Future<void> _applySelectedPhoto() async {
+    final request = _photoSelection;
+    if (request == null ||
+        request.saving ||
+        !_foreground ||
+        busy ||
+        _disposed) {
+      return;
+    }
+    if (phase != EmployeePhase.ready ||
+        identity?.key != request.owner.key ||
+        _gateway?.actorId != request.owner.actorId ||
+        !_canUsePrivateState()) {
+      _cancelPhotoSelection();
+      _emit();
+      return;
+    }
+    if (request.failure != null) {
+      photoError = request.failure;
+      _cancelPhotoSelection(preserveReturn: true);
+      _emit();
+      return;
+    }
+    final candidate = request.candidate;
+    if (candidate == null) return;
+    final generation = _generation;
+    request.saving = true;
+    _photoWriting = true;
+    final settlement = Completer<void>();
+    _photoWriteCompletion = settlement;
+    _emit();
+    try {
+      await _photoStore.save(request.owner, candidate);
+      final mayDisplay =
+          _valid(generation) && identity?.key == request.owner.key;
+      if (!identical(_photoSelection, request) ||
+          _gateway?.actorId != request.owner.actorId ||
+          (_foreground &&
+              identity != null &&
+              identity?.key != request.owner.key)) {
+        // Explicit cancellation revokes the write. Background masking alone
+        // does not undo a save that already began under verified own access.
+        await _photoStore.remove(request.owner);
+      } else if (mayDisplay) {
+        profilePhoto = candidate;
+        photoError = null;
+        notice = 'Profile photo saved on this device.';
+      }
+    } on Object catch (e) {
+      if (identical(_photoSelection, request) && _valid(generation)) {
+        photoError = employeeFailure(e);
+      }
+    } finally {
+      if (identical(_photoSelection, request)) {
+        _cancelPhotoSelection(preserveReturn: true);
+      }
+      _photoWriting = false;
+      _photoWriteCompletion = null;
+      settlement.complete();
+      _emit();
+    }
+  }
+
+  Future<void> removeProfilePhoto() async {
+    if (busy ||
+        photoBusy ||
+        !_canUsePrivateState() ||
+        phase != EmployeePhase.ready ||
+        identity == null) {
+      return;
+    }
+    final person = identity!;
+    final generation = _generation;
+    _photoWriting = true;
+    final settlement = Completer<void>();
+    _photoWriteCompletion = settlement;
+    photoError = null;
+    _emit();
+    try {
+      await _photoStore.remove(person);
+      if (_valid(generation) && identity?.key == person.key) {
+        profilePhoto = null;
+        notice = 'Profile photo removed from this device.';
+      }
+    } on Object catch (e) {
+      if (_valid(generation)) photoError = employeeFailure(e);
+    } finally {
+      _photoWriting = false;
+      _photoWriteCompletion = null;
+      settlement.complete();
+      _emit();
+    }
   }
 
   @override
   void dispose() {
+    _cancelPhotoSelection();
     _disposed = true;
     _generation++;
     _mask();

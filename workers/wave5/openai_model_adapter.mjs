@@ -1,4 +1,5 @@
 import {readBoundedJson} from './bounded_json.mjs';
+import {Buffer} from 'node:buffer';
 import {validateModelSuggestion} from './model_runtime.mjs';
 
 // Optional adapter; no default model, secret, provisioning or external invocation.

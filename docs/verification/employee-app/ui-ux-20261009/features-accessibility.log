@@ -1,0 +1,116 @@
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_ux_features_test.dart
+00:00 +0: new employee flows remain usable at 200 percent in si
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 49 pixels on the right.
+
+The relevant error-causing widget was:
+  Row
+  Row:file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_employee/lib/src/ui/employee_surfaces.dart:39:41
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#c7ef6 relayoutBoundary=up5 OVERFLOWING:
+  creator: Row ← EmployeeSectionHeader ← RepaintBoundary ← IndexedSemantics ← _SelectionKeepAlive ←
+    NotificationListener<KeepAliveNotification> ← KeepAlive ← AutomaticKeepAlive ← KeyedSubtree ←
+    SliverList ← SliverPadding ← Viewport ← ⋯
+  parentData: <none> (can use size)
+  constraints: BoxConstraints(w=320.0, 0.0<=h<=Infinity)
+  size: Size(320.0, 648.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: max
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TypeWidgetFinder:<Found 0 widgets with type "CupertinoNavigationBarBackButton": []>
+   Which: means none were found but one was expected
+One back button expected on screen
+
+When the exception was thrown, this was the stack:
+#0      fail (package:matcher/src/expect/expect.dart:187:31)
+#1      _expect (package:matcher/src/expect/expect.dart:182:3)
+#2      expect (package:matcher/src/expect/expect.dart:65:3)
+#3      expectSync (package:flutter_test/src/widget_tester.dart:486:18)
+#4      WidgetTester.pageBack.<anonymous closure> (package:flutter_test/src/widget_tester.dart:1177:7)
+#7      TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#8      WidgetTester.pageBack (package:flutter_test/src/widget_tester.dart:1171:27)
+#9      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_employee/test/employee_ux_features_test.dart:82:24)
+<asynchronous suspension>
+#10     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#11     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The test description was:
+  new employee flows remain usable at 200 percent in si
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (2) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +0 -1: new employee flows remain usable at 200 percent in si [E]
+  Test failed. See exception logs above.
+  The test description was: new employee flows remain usable at 200 percent in si
+  
+00:01 +0 -1: new employee flows remain usable at 200 percent in ta
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TypeWidgetFinder:<Found 0 widgets with type "CupertinoNavigationBarBackButton": []>
+   Which: means none were found but one was expected
+One back button expected on screen
+
+When the exception was thrown, this was the stack:
+#0      fail (package:matcher/src/expect/expect.dart:187:31)
+#1      _expect (package:matcher/src/expect/expect.dart:182:3)
+#2      expect (package:matcher/src/expect/expect.dart:65:3)
+#3      expectSync (package:flutter_test/src/widget_tester.dart:486:18)
+#4      WidgetTester.pageBack.<anonymous closure> (package:flutter_test/src/widget_tester.dart:1177:7)
+#7      TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#8      WidgetTester.pageBack (package:flutter_test/src/widget_tester.dart:1171:27)
+#9      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_employee/test/employee_ux_features_test.dart:82:24)
+<asynchronous suspension>
+#10     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#11     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The test description was:
+  new employee flows remain usable at 200 percent in ta
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -2: new employee flows remain usable at 200 percent in ta [E]
+  Test failed. See exception logs above.
+  The test description was: new employee flows remain usable at 200 percent in ta
+  
+00:02 +0 -2: calendar summary uses date parts across leap days and time offsets
+00:02 +1 -2: range picker changes the summary without submitting a draft
+00:02 +2 -2: activity and review search are cleared when the app backgrounds
+00:03 +3 -2: activity keeps local drafts distinct from review receipts
+00:03 +4 -2: review search matches own published content and can be cleared
+00:03 +5 -2: receipt filter does not include reviews awaiting acknowledgement
+00:03 +6 -2: leave summary counts inclusive calendar days without submitting
+00:03 +7 -2: account access help stays available before company connection
+00:03 +8 -2: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_ux_features_test.dart: new employee flows remain usable at 200 percent in si
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_ux_features_test.dart: new employee flows remain usable at 200 percent in ta

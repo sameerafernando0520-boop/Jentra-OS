@@ -5,6 +5,15 @@ import '../data/employee_gateway.dart';
 import '../employee_controller.dart';
 import '../l10n/employee_strings.dart';
 import 'employee_components.dart';
+import 'employee_surfaces.dart';
+
+int employeeCalendarDays(DateTime start, DateTime end) =>
+    DateTime.utc(
+      end.year,
+      end.month,
+      end.day,
+    ).difference(DateTime.utc(start.year, start.month, start.day)).inDays +
+    1;
 
 class EmployeeLeaveDraftScreen extends StatefulWidget {
   const EmployeeLeaveDraftScreen({
@@ -77,13 +86,14 @@ class _EmployeeLeaveDraftScreenState extends State<EmployeeLeaveDraftScreen> {
   }
 
   Future<void> _date({required bool start}) async {
+    if (_expired || _saving) return;
     final result = await showDatePicker(
       context: context,
       initialDate: start ? _start : _end,
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
-    if (result != null && mounted) {
+    if (result != null && mounted && !_expired) {
       setState(() {
         if (start) {
           _start = result;
@@ -95,6 +105,27 @@ class _EmployeeLeaveDraftScreenState extends State<EmployeeLeaveDraftScreen> {
         _saved = false;
       });
     }
+  }
+
+  Future<void> _range() async {
+    if (_expired || _saving) return;
+    final range = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      initialDateRange: _end.isBefore(_start)
+          ? null
+          : DateTimeRange(start: _start, end: _end),
+      helpText: EmployeeStrings.of(context)('chooseDates'),
+    );
+    if (range == null || !mounted || _expired) return;
+    setState(() {
+      _start = _calendar(range.start);
+      _end = _calendar(range.end);
+      _dirty = true;
+      _error = null;
+      _saved = false;
+    });
   }
 
   Future<void> _save() async {
@@ -112,7 +143,7 @@ class _EmployeeLeaveDraftScreenState extends State<EmployeeLeaveDraftScreen> {
       setState(() => _error = s('draftDatesError'));
       return;
     }
-    if (b.difference(a).inDays + 1 > 366) {
+    if (employeeCalendarDays(_start, _end) > 366) {
       setState(() => _error = s('draftLengthError'));
       return;
     }
@@ -176,6 +207,7 @@ class _EmployeeLeaveDraftScreenState extends State<EmployeeLeaveDraftScreen> {
   Widget build(BuildContext context) {
     final s = EmployeeStrings.of(context);
     if (_expired) return const SizedBox.shrink();
+    final days = employeeCalendarDays(_start, _end);
     return PopScope(
       canPop: !_saving && (!_dirty || _allowExit),
       onPopInvokedWithResult: (didPop, result) {
@@ -228,6 +260,34 @@ class _EmployeeLeaveDraftScreenState extends State<EmployeeLeaveDraftScreen> {
                             value.trim().length > 80
                         ? s('draftTypeError')
                         : null,
+                  ),
+                  const SizedBox(height: 16),
+                  EmployeeSurface(
+                    tint: true,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          days < 1
+                              ? s('chooseDates')
+                              : s(days == 1 ? 'calendarDay' : 'calendarDays')
+                                    .replaceAll('{count}', '$days'),
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          s('calendarCountCopy'),
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        const SizedBox(height: 12),
+                        OutlinedButton.icon(
+                          key: const Key('employee-leave-range'),
+                          onPressed: _saving ? null : _range,
+                          icon: const Icon(Icons.date_range_rounded, size: 20),
+                          label: Text(s('chooseDates')),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 16),
                   OutlinedButton(

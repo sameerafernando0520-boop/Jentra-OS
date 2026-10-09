@@ -69,3 +69,25 @@
 - Live read-only catalog check on 2026-10-09 confirmed foundation/private HR functions; attendance/leave/payroll functions are absent. Build safely around installed contracts; no migration installation is part of this task.
 - Work is additive in the new employee directory, with a minimal workspace entry; concurrent desktop/Wave 5 edits and the Git index remain untouched.
 - The user requested starting implementation after receiving the blueprint. Reuse that design and proceed; ShapeUI's discovery-only workflow does not replace the explicit build instruction.
+
+## Task 4: Requested UI and feature upgrade (0.2.0)
+
+The user's subsequent request replaces the original five-tab navigation with a floating Home/Leave/Activity/More dock, compacted to Home/Activity/More for enlarged text and Sinhala/Tamil. Retain all account, identity, receipt, draft-expiry and unavailable-service boundaries above.
+
+- [x] Observe failing feature tests before implementing account help, Activity, review search/filter and leave-duration controls.
+- [x] Replace the welcome slogan and improve sign-in, home, service cards and navigation using the supplied design assets.
+- [x] Add a local Activity hub, review search/status filters, a leave range picker/calendar summary and guided HR help.
+- [x] Complete full regression tests, analysis and current-source visual inspection.
+- [x] Package the updated Android APK and development web host, record source evidence and prepare the preview panel.
+
+## Task 5: Personal UI and employee profile photos (0.3.0)
+
+The user requested a proper, creative design and the ability for employees to add their own profile picture. Continue the supplied Jentra identity with a personal navy header, grouped service rows, refined navigation and a redesigned Profile page.
+
+- [x] Check the installed employee photo contract without changing backend permissions or data; document protected device-only storage because no supported upload endpoint exists.
+- [x] Implement native single-image selection, bounded square JPEG preparation, metadata removal, exact employee ownership, persistence, replacement and removal.
+- [x] Preserve private-route masking and online access checks through gallery background/return, account and scope changes, revocation, and sign-out during a write.
+- [x] Complete 124 regression checks, clean analysis, current-source visual inspection and 17 self-contained preview renders; package and verify the 0.3.0 Android APK and web review host.
+- [x] Record unchanged source hashes across final tests/builds and open the updated preview. Physical gallery acceptance, iOS compilation/signing, cloud photo synchronization and HR/payroll release gates remain open.
+
+Evidence: `docs/verification/employee-app/profile-ui-20261009/result.md`.

@@ -587,24 +587,96 @@ class _CommandPalette extends ConsumerStatefulWidget {
 
 class _CommandPaletteState extends ConsumerState<_CommandPalette> {
   String query = '';
+  String? selectedPath;
+  final selectedTileKey = GlobalKey();
+  late final searchFocus = FocusNode(onKeyEvent: _onKeyEvent);
+
+  List<JentraDestination> get choices {
+    final documentLocation = parseOperationalDocumentLocation(query);
+    return [
+      if (documentLocation != null)
+        JentraDestination(
+          label: 'Open permitted document',
+          path: documentLocation,
+          icon: Icons.description_outlined,
+          section: 'Access is checked after opening',
+        ),
+      ...[
+        ...visibleJentraDestinations(
+          ref.read(businessCapabilitiesProvider).value,
+        ),
+        const JentraDestination(
+          label: 'Design system',
+          path: '/catalogue',
+          icon: Icons.design_services_outlined,
+          section: 'SYSTEM',
+        ),
+      ].where((item) => item.label.toLowerCase().contains(query.toLowerCase())),
+    ];
+  }
+
+  KeyEventResult _onKeyEvent(FocusNode node, KeyEvent event) {
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
+    }
+    if (event.logicalKey == LogicalKeyboardKey.arrowDown ||
+        event.logicalKey == LogicalKeyboardKey.arrowUp) {
+      final current = choices;
+      if (current.isNotEmpty) {
+        final index = selectedPath == null
+            ? 0
+            : current.indexWhere((item) => item.path == selectedPath);
+        final next = index < 0
+            ? 0
+            : (index +
+                      (event.logicalKey == LogicalKeyboardKey.arrowDown
+                          ? 1
+                          : -1)) %
+                  current.length;
+        setState(() => selectedPath = current[next].path);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final tileContext = selectedTileKey.currentContext;
+          if (mounted && tileContext != null) {
+            Scrollable.ensureVisible(tileContext, alignment: 0.5);
+          }
+        });
+      }
+      return KeyEventResult.handled;
+    }
+    if (event.logicalKey == LogicalKeyboardKey.enter ||
+        event.logicalKey == LogicalKeyboardKey.numpadEnter) {
+      _openSelected();
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
+  }
+
+  void _openSelected() {
+    final current = choices;
+    final path = selectedPath ?? current.firstOrNull?.path;
+    if (path != null) _open(path);
+  }
+
+  void _open(String path) {
+    // Re-read permission-filtered choices at activation, including when a
+    // capability was revoked while the palette remained open.
+    if (!choices.any((item) => item.path == path)) return;
+    final router = GoRouter.of(context);
+    Navigator.pop(context);
+    router.go(path);
+  }
+
+  @override
+  void dispose() {
+    searchFocus.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final documentLocation = parseOperationalDocumentLocation(query);
-    final destinations = [
-      ...visibleJentraDestinations(
-        ref.watch(businessCapabilitiesProvider).value,
-      ),
-      const JentraDestination(
-        label: 'Design system',
-        path: '/catalogue',
-        icon: Icons.design_services_outlined,
-        section: 'SYSTEM',
-      ),
-    ];
-    final matches = destinations
-        .where((item) => item.label.toLowerCase().contains(query.toLowerCase()))
-        .toList();
+    ref.watch(businessCapabilitiesProvider);
+    final matches = choices;
+    final highlightedPath = selectedPath ?? matches.firstOrNull?.path;
     return Dialog(
       alignment: const Alignment(0, -0.65),
       child: SizedBox(
@@ -614,7 +686,12 @@ class _CommandPaletteState extends ConsumerState<_CommandPalette> {
           children: [
             TextField(
               autofocus: true,
-              onChanged: (value) => setState(() => query = value),
+              focusNode: searchFocus,
+              onChanged: (value) => setState(() {
+                query = value;
+                selectedPath = null;
+              }),
+              onSubmitted: (_) => _openSelected(),
               decoration: const InputDecoration(
                 hintText: 'Search modules, records, or commands…',
                 prefixIcon: Icon(Icons.search),
@@ -626,43 +703,33 @@ class _CommandPaletteState extends ConsumerState<_CommandPalette> {
             const Divider(height: 1),
             ConstrainedBox(
               constraints: const BoxConstraints(maxHeight: 420),
-              child: ListView(
-                shrinkWrap: true,
+              child: SingleChildScrollView(
                 padding: const EdgeInsets.all(JentraSpacing.x2),
-                children: [
-                  if (documentLocation != null)
-                    ListTile(
-                      dense: true,
-                      leading: const Icon(Icons.description_outlined, size: 19),
-                      title: const Text('Open permitted document'),
-                      subtitle: const Text('Access is checked after opening'),
-                      trailing: const Icon(Icons.keyboard_return, size: 16),
-                      onTap: () {
-                        final router = GoRouter.of(context);
-                        Navigator.pop(context);
-                        router.go(documentLocation);
-                      },
-                    ),
-                  for (final item in matches)
-                    ListTile(
-                      dense: true,
-                      leading: Icon(item.icon, size: 19),
-                      title: Text(item.label),
-                      subtitle: Text(item.section ?? 'Workspace'),
-                      trailing: const Icon(Icons.keyboard_return, size: 16),
-                      onTap: () {
-                        Navigator.pop(context);
-                        context.go(item.path);
-                      },
-                    ),
-                  if (matches.isEmpty && documentLocation == null)
-                    const Padding(
-                      padding: EdgeInsets.all(JentraSpacing.x8),
-                      child: Center(
-                        child: Text('No commands match your search.'),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final item in matches)
+                      ListTile(
+                        key: item.path == highlightedPath
+                            ? selectedTileKey
+                            : null,
+                        selected: item.path == highlightedPath,
+                        dense: true,
+                        leading: Icon(item.icon, size: 19),
+                        title: Text(item.label),
+                        subtitle: Text(item.section ?? 'Workspace'),
+                        trailing: const Icon(Icons.keyboard_return, size: 16),
+                        onTap: () => _open(item.path),
                       ),
-                    ),
-                ],
+                    if (matches.isEmpty)
+                      const Padding(
+                        padding: EdgeInsets.all(JentraSpacing.x8),
+                        child: Center(
+                          child: Text('No commands match your search.'),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
             const Divider(height: 1),

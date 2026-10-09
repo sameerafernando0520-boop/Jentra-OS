@@ -1,0 +1,122 @@
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_ux_features_test.dart
+00:00 +0: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_ux_features_test.dart: calendar summary uses date parts across leap days and time offsets
+00:00 +1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_ux_features_test.dart: range picker changes the summary without submitting a draft
+00:01 +2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_ux_features_test.dart: activity and review search are cleared when the app backgrounds
+00:01 +3: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_ux_features_test.dart: activity keeps local drafts distinct from review receipts
+00:02 +4: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_ux_features_test.dart: review search matches own published content and can be cleared
+00:02 +5: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_ux_features_test.dart: receipt filter does not include reviews awaiting acknowledgement
+00:02 +6: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_ux_features_test.dart: leave summary counts inclusive calendar days without submitting
+00:02 +7: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_ux_features_test.dart: account access help stays available before company connection
+00:02 +8: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_sign_in_test.dart
+00:03 +8: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_sign_in_test.dart: invalid credentials never reach sign-in
+00:04 +9: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_sign_in_test.dart: valid credentials are sent without modifying the password
+00:04 +10: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_sign_in_test.dart: unconfigured app cannot accept credentials
+00:04 +11: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_sign_in_test.dart: sign-in stays reachable on a narrow phone with large text and keyboard
+00:04 +12: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_leave_draft_test.dart
+00:05 +12: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_leave_draft_test.dart: leave draft validates fields and saves only the chosen local content
+
+Warning: A call to tap() with finder "Found 1 widget with key [<'employee-save-draft'>]: [
+  FilledButton-[<'employee-save-draft'>](dependencies: [IconTheme, InheritedCupertinoTheme, MediaQuery, _InheritedTheme, _LocalizationsScope-[GlobalKey#98852], _ScrollableScope], state: _ButtonStyleState#c94a7),
+]" derived an Offset (Offset(400.0, 616.0)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+Indeed, Offset(400.0, 616.0) is outside the bounds of the root of the render tree, Size(800.0, 600.0).
+The finder corresponds to this RenderBox: RenderSemanticsAnnotations#1c86c relayoutBoundary=up14
+The hit test result at that offset is: HitTestResult(HitTestEntry<HitTestTarget>#3088c(_ReusableRenderView#b9a6f), HitTestEntry<HitTestTarget>#de795(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2165:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_employee/test/employee_leave_draft_test.dart:43:20)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+#6      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: 'Annual leave'
+  Actual: <null>
+   Which: not an <Instance of 'String'>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_employee/test/employee_leave_draft_test.dart:45:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_employee/test/employee_leave_draft_test.dart line 45
+The test description was:
+  leave draft validates fields and saves only the chosen local content
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:06 +12 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_leave_draft_test.dart: leave draft validates fields and saves only the chosen local content [E]
+  Test failed. See exception logs above.
+  The test description was: leave draft validates fields and saves only the chosen local content
+  
+00:06 +12 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_leave_draft_test.dart: reversed leave dates never reach local storage
+00:06 +13 -1: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_app_test.dart
+00:07 +13 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_app_test.dart: employee navigation reaches honest work leave and pay states
+00:08 +14 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_app_test.dart: review acknowledgement requires explicit receipt selection
+00:09 +15 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_app_test.dart: account linking requires reviewing the employee and workplace
+00:09 +16 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_app_test.dart: backgrounding removes private routes and requires revalidation
+00:09 +17 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_app_test.dart: large text keeps secondary destinations accessible through More
+
+Warning: A call to tap() with finder "Found 1 widget with key [<'employee-more-pay'>]: [
+  EmployeeActionTile-[<'employee-more-pay'>](dependencies: [InheritedCupertinoTheme, _InheritedTheme, _LocalizationsScope-[GlobalKey#d24a8], _ScrollableScope]),
+]" derived an Offset (Offset(180.0, 677.0)) that would not hit test on the specified widget.
+Maybe the widget is actually off-screen, or another widget is obscuring it, or the widget cannot receive pointer events.
+The finder corresponds to this RenderBox: RenderPhysicalShape#3d425 relayoutBoundary=up5
+The hit test result at that offset is: HitTestResult(HitTestEntry<HitTestTarget>#24a50(TextSpan(inherit: false, color: Color(alpha: 1.0000, red: 0.3569, green: 0.4275, blue: 0.4941, colorSpace: ColorSpace.sRGB), family: MaterialIcons, size: 22.0, height: 1.0x, leadingDistribution: even, "󰀧")), RenderParagraph#fe0dd@Offset(11.0, 1.0), RenderPositionedBox#0d988@Offset(11.0, 1.0), RenderConstrainedBox#13ed6@Offset(11.0, 1.0), RenderExcludeSemantics#2ce86@Offset(11.0, 1.0), RenderSemanticsAnnotations#8f01a@Offset(11.0, 1.0), RenderFlex#3d0cb@Offset(48.7, 1.0), RenderPadding#38146@Offset(52.7, 11.0), RenderConstrainedBox#18bbf@Offset(52.7, 11.0), RenderPadding#bf65e@Offset(52.7, 11.0), RenderDecoratedBox#b3794@Offset(52.7, 11.0), RenderPointerListener#be64e@Offset(52.7, 11.0), RenderSemanticsAnnotations#2ef81@Offset(52.7, 11.0), RenderMouseRegion#79b75@Offset(52.7, 11.0), RenderSemanticsAnnotations#03410@Offset(52.7, 11.0), _RenderInkFeatures#5fbc7@Offset(52.7, 11.0), RenderPhysicalModel#61746@Offset(52.7, 11.0), RenderSemanticsAnnotations#bc300@Offset(52.7, 11.0), RenderFlex#c6ca8@Offset(158.0, 11.0), RenderIntrinsicHeight#eb076@Offset(158.0, 11.0), RenderPadding#d2f18@Offset(164.0, 17.0), RenderDecoratedBox#d8522@Offset(164.0, 17.0), RenderPadding#0e308@Offset(180.0, 25.0), RenderPadding#44aa4@Offset(180.0, 25.0), RenderCustomMultiChildLayoutBox#5133b@Offset(180.0, 677.0), _RenderInkFeatures#649b9@Offset(180.0, 677.0), RenderPhysicalModel#82c77@Offset(180.0, 677.0), RenderSemanticsAnnotations#082b6@Offset(180.0, 677.0), RenderRepaintBoundary#58796@Offset(180.0, 677.0), RenderIgnorePointer#08cc4@Offset(180.0, 677.0), RenderAnimatedOpacity#fc642@Offset(180.0, 677.0), RenderAnimatedOpacity#f28ce@Offset(180.0, 677.0), _RenderColoredBox#893a1@Offset(180.0, 677.0), RenderAnimatedOpacity#db7dd@Offset(180.0, 677.0), RenderIgnorePointer#5464c@Offset(180.0, 677.0), RenderAnimatedOpacity#fa955@Offset(180.0, 677.0), RenderRepaintBoundary#ddb51@Offset(180.0, 677.0), RenderSemanticsAnnotations#35d96@Offset(180.0, 677.0), RenderOffstage#1c8f8@Offset(180.0, 677.0), RenderSemanticsAnnotations#0f754@Offset(180.0, 677.0), _RenderTheater#65d54@Offset(180.0, 677.0), RenderAbsorbPointer#b53dd@Offset(180.0, 677.0), RenderPointerListener#869c4@Offset(180.0, 677.0), RenderSemanticsAnnotations#2c1be@Offset(180.0, 677.0), RenderFlex#ab3d7@Offset(180.0, 677.0), RenderSemanticsAnnotations#32228@Offset(180.0, 677.0), RenderSemanticsAnnotations#1032f@Offset(180.0, 677.0), RenderSemanticsAnnotations#e707b@Offset(180.0, 677.0), RenderTapRegionSurface#6def9@Offset(180.0, 677.0), RenderSemanticsAnnotations#79147@Offset(180.0, 677.0), RenderSemanticsAnnotations#7234f@Offset(180.0, 677.0), HitTestEntry<HitTestTarget>#88d9c(_ReusableRenderView#22ceb), HitTestEntry<HitTestTarget>#ab987(<AutomatedTestWidgetsFlutterBinding>))
+#0      WidgetController._getElementPoint (package:flutter_test/src/controller.dart:2165:25)
+#1      WidgetController.getCenter (package:flutter_test/src/controller.dart:1947:12)
+#2      WidgetController.tap (package:flutter_test/src/controller.dart:1080:7)
+#3      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_employee/test/employee_app_test.dart:186:20)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+#6      StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+To silence this warning, pass "warnIfMissed: false" to "tap()".
+To make this warning fatal, set WidgetController.hitTestWarningShouldBeFatal to true.
+
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Your payslips are not available here yet":
+[]>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_employee/test/employee_app_test.dart:188:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_employee/test/employee_app_test.dart line 188
+The test description was:
+  large text keeps secondary destinations accessible through More
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:09 +17 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_app_test.dart: large text keeps secondary destinations accessible through More [E]
+  Test failed. See exception logs above.
+  The test description was: large text keeps secondary destinations accessible through More
+  
+00:09 +17 -2: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_app_test.dart: large text keeps secondary destinations accessible through More
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_employee/test/employee_leave_draft_test.dart: leave draft validates fields and saves only the chosen local content

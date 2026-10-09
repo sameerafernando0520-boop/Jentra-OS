@@ -1,3 +1,4 @@
+import {Buffer} from 'node:buffer';
 export async function readBoundedJson(response,maxBytes=8388608) {
  const chunks=[];let bytes=0;
  if(response.body){

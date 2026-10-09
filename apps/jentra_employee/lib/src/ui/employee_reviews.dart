@@ -17,7 +17,7 @@ String employeeReviewPeriod(EmployeeReview review, String language) {
   return '${DateFormat.yMMMd(language).format(review.startDate)} – ${DateFormat.yMMMd(language).format(last)}';
 }
 
-class EmployeeReviewsScreen extends StatelessWidget {
+class EmployeeReviewsScreen extends StatefulWidget {
   const EmployeeReviewsScreen({
     required this.controller,
     this.actionsOnly = false,
@@ -26,19 +26,103 @@ class EmployeeReviewsScreen extends StatelessWidget {
   final EmployeeController controller;
   final bool actionsOnly;
   @override
+  State<EmployeeReviewsScreen> createState() => _EmployeeReviewsScreenState();
+}
+
+class _EmployeeReviewsScreenState extends State<EmployeeReviewsScreen> {
+  final _search = TextEditingController();
+  String _filter = 'all';
+  EmployeeController get controller => widget.controller;
+
+  @override
+  void dispose() {
+    _search.clear();
+    _search.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => AnimatedBuilder(
     animation: controller,
     builder: (context, _) {
       final s = EmployeeStrings.of(context);
-      final items = controller.reviews
-          .where((r) => !actionsOnly || r.canAcknowledge)
-          .toList();
+      final query = _search.text.trim().toLowerCase();
+      final items =
+          controller.reviews
+              .where((r) => !widget.actionsOnly || r.canAcknowledge)
+              .where((r) => _filter == 'all' || r.status == _filter)
+              .where(
+                (r) =>
+                    query.isEmpty ||
+                    '${r.objectives.join(' ')} ${r.comments ?? ''} ${employeeReviewPeriod(r, s.language)}'
+                        .toLowerCase()
+                        .contains(query),
+              )
+              .toList()
+            ..sort((a, b) => b.startDate.compareTo(a.startDate));
+      final filtered = query.isNotEmpty || _filter != 'all';
       return Scaffold(
-        appBar: AppBar(title: Text(s(actionsOnly ? 'inbox' : 'reviews'))),
+        appBar: AppBar(
+          title: Text(s(widget.actionsOnly ? 'inbox' : 'reviews')),
+        ),
         body: EmployeePageBody(
           onRefresh: controller.refresh,
           children: [
-            Text(s(actionsOnly ? 'inboxCopy' : 'reviewsCopy')),
+            Text(s(widget.actionsOnly ? 'inboxCopy' : 'reviewsCopy')),
+            TextField(
+              key: const Key('employee-review-search'),
+              controller: _search,
+              textInputAction: TextInputAction.search,
+              onChanged: (_) => setState(() {}),
+              decoration: InputDecoration(
+                hintText: s('searchReviews'),
+                prefixIcon: const Icon(Icons.search_rounded),
+                filled: true,
+                fillColor: context.jentraColors.panel,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                suffixIcon: _search.text.isEmpty
+                    ? null
+                    : IconButton(
+                        key: const Key('employee-review-search-clear'),
+                        tooltip: s('clearSearch'),
+                        onPressed: () => setState(_search.clear),
+                        icon: const Icon(Icons.close_rounded),
+                      ),
+              ),
+            ),
+            if (!widget.actionsOnly)
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final filter in const [
+                    'all',
+                    'reviewed',
+                    'acknowledged',
+                    'closed',
+                  ])
+                    ChoiceChip(
+                      key: Key('employee-review-filter-$filter'),
+                      label: Text(
+                        s(switch (filter) {
+                          'all' => 'allReviews',
+                          'reviewed' => 'needsReceipt',
+                          'acknowledged' => 'receipts',
+                          _ => 'closed',
+                        }),
+                      ),
+                      selected: _filter == filter,
+                      onSelected: (_) => setState(() => _filter = filter),
+                    ),
+                ],
+              ),
+            if (controller.reviewsCursor != null)
+              Text(
+                s('loadedReviewsHint'),
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
             if (controller.reviewsLoading) const LinearProgressIndicator(),
             if (controller.reviewsError != null)
               EmployeeMessage(
@@ -53,8 +137,14 @@ class EmployeeReviewsScreen extends StatelessWidget {
                 controller.reviewsError == null &&
                 items.isEmpty)
               EmployeeMessage(
-                title: s(actionsOnly ? 'noActions' : 'noReviews'),
-                message: s('noReviewsCopy'),
+                title: s(
+                  filtered
+                      ? 'noMatchingReviews'
+                      : widget.actionsOnly
+                      ? 'noActions'
+                      : 'noReviews',
+                ),
+                message: s(filtered ? 'noMatchingCopy' : 'noReviewsCopy'),
                 icon: Icons.fact_check_outlined,
               ),
             if (controller.hasPendingCommand)

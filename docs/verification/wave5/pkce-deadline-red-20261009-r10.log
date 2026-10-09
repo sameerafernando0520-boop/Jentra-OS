@@ -1,0 +1,26 @@
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/packages/jentra_platform/test/auth/pkce_exchange_http_client_test.dart
+00:00 +0: SDK headers deadline aborts without a late session
+00:03 +0 -1: SDK headers deadline aborts without a late session [E]
+  Expected: throws <Instance of 'AuthException'> with `safe error`: contains 'PKCE_EXCHANGE_DEADLINE_EXCEEDED'
+    Actual: <Instance of 'Future<AuthSessionUrlResponse>'>
+     Which: threw TimeoutException:<TimeoutException after 0:00:03.000000: Future not completed>
+            stack package:matcher                                       expectLater
+                  package:flutter_test/src/widget_tester.dart 507:8     expectLater
+                  test\auth\pkce_exchange_http_client_test.dart 120:28  main.<fn>
+                  ===== asynchronous gap ===========================
+                  dart:async                                            _CustomZone.registerUnaryCallback
+                  test\auth\pkce_exchange_http_client_test.dart 87:24   main.<fn>
+                  
+            which is not an instance of 'AuthException'
+  
+  package:matcher                                       expectLater
+  package:flutter_test/src/widget_tester.dart 507:8     expectLater
+  test\auth\pkce_exchange_http_client_test.dart 120:28  main.<fn>
+  ===== asynchronous gap ===========================
+  dart:async                                            _CustomZone.registerUnaryCallback
+  test\auth\pkce_exchange_http_client_test.dart 87:24   main.<fn>
+  
+00:03 +0 -1: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/packages/jentra_platform/test/auth/pkce_exchange_http_client_test.dart: SDK headers deadline aborts without a late session

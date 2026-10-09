@@ -1,4 +1,5 @@
 import { createHmac, createHash, timingSafeEqual } from 'node:crypto';
+import {Buffer} from 'node:buffer';
 import { isIP } from 'node:net';
 import https from 'node:https';
 

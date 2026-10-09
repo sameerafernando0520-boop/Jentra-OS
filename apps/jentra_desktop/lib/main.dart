@@ -10,6 +10,7 @@ import 'src/features/analytics/historical_pipeline_screen.dart';
 import 'src/features/analytics/integration_screen.dart';
 import 'src/features/analytics/cash_scenario_screen.dart';
 import 'src/features/analytics/wave5_control_screen.dart';
+import 'src/features/analytics/reviewed_model_section.dart';
 
 import 'src/features/procurement/procurement_controller.dart';
 
@@ -216,6 +217,9 @@ Future<void> main() async {
         ),
         wave5ControlRepositoryProvider.overrideWithValue(
           client == null ? null : SupabaseWave5ControlGateway(client),
+        ),
+        reviewedModelRepositoryProvider.overrideWithValue(
+          client == null ? null : SupabaseReviewedModelGateway(client),
         ),
         calendarRepositoryProvider.overrideWithValue(
           client == null ? null : SupabaseCalendarGateway(client),

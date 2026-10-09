@@ -6,10 +6,14 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jentra_employee/src/employee_app.dart';
+import 'package:jentra_employee/src/data/employee_gateway.dart';
+import 'package:jentra_employee/src/data/employee_photo.dart';
 import 'package:jentra_employee/src/ui/employee_theme.dart';
 import 'package:jentra_employee/src/ui/sign_in_screen.dart';
 
 import 'support/employee_fixture.dart';
+import 'employee_ux_features_test.dart' show ReviewSearchGateway;
+import 'employee_photo_test.dart' show fixturePhoto;
 
 // These are current-source layout renders with labeled test fixtures. They are
 // review artifacts, not golden comparisons or authenticated device acceptance.
@@ -35,6 +39,38 @@ void main() {
   });
 
   for (final sample in [
+    (
+      name: 'profile-light',
+      width: 390.0,
+      locale: 'en',
+      dark: false,
+      scale: 1.0,
+      page: 'profile',
+    ),
+    (
+      name: 'profile-photo-dark',
+      width: 390.0,
+      locale: 'en',
+      dark: true,
+      scale: 1.0,
+      page: 'photo',
+    ),
+    (
+      name: 'profile-large-si',
+      width: 360.0,
+      locale: 'si',
+      dark: false,
+      scale: 2.0,
+      page: 'profile',
+    ),
+    (
+      name: 'profile-large-ta',
+      width: 360.0,
+      locale: 'ta',
+      dark: true,
+      scale: 2.0,
+      page: 'photo',
+    ),
     (
       name: 'home-light-en',
       width: 390.0,
@@ -84,6 +120,38 @@ void main() {
       page: 'pay',
     ),
     (
+      name: 'activity',
+      width: 390.0,
+      locale: 'en',
+      dark: false,
+      scale: 1.0,
+      page: 'activity',
+    ),
+    (
+      name: 'more-dark',
+      width: 390.0,
+      locale: 'en',
+      dark: true,
+      scale: 1.0,
+      page: 'more',
+    ),
+    (
+      name: 'review-search',
+      width: 390.0,
+      locale: 'en',
+      dark: false,
+      scale: 1.0,
+      page: 'search',
+    ),
+    (
+      name: 'hr-help',
+      width: 390.0,
+      locale: 'en',
+      dark: false,
+      scale: 1.0,
+      page: 'help',
+    ),
+    (
       name: 'shared-review',
       width: 390.0,
       locale: 'en',
@@ -101,10 +169,29 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
       addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-      final gateway = FixtureGateway();
-      final controller = await fixtureController(gateway: gateway);
+      final gateway = ReviewSearchGateway();
+      final store = FixtureStore();
+      final controller = await fixtureController(
+        gateway: gateway,
+        store: store,
+      );
+      if (sample.page == 'photo') {
+        await EmployeePhotoStore(store)
+            .save(controller.identity!, normalizeEmployeePhoto(fixturePhoto()));
+        await controller.refresh();
+      }
       addTearDown(controller.dispose);
       addTearDown(gateway.close);
+      if (sample.page == 'activity') {
+        await controller.saveLeaveDraft(
+          EmployeeLeaveDraft(
+            leaveType: 'Annual leave',
+            reason: 'Family appointment',
+            startDate: DateTime(2026, 10, 12),
+            endDate: DateTime(2026, 10, 14),
+          ),
+        );
+      }
       const renderKey = Key('employee-render');
       await tester.pumpWidget(
         RepaintBoundary(
@@ -119,7 +206,10 @@ void main() {
       );
       await tester.pumpAndSettle();
       await _readyBrand(tester);
-      if (sample.page == 'draft') {
+      if (sample.page == 'profile' || sample.page == 'photo') {
+        await tester.tap(find.byKey(const Key('employee-open-profile')));
+        await tester.pumpAndSettle();
+      } else if (sample.page == 'draft') {
         await tester.tap(find.byKey(const Key('employee-nav-leave')));
         await tester.pumpAndSettle();
         await tester.scrollUntilVisible(
@@ -130,22 +220,64 @@ void main() {
         await tester.tap(find.text('Prepare a leave draft'));
         await tester.pumpAndSettle();
       } else if (sample.page == 'pay') {
-        await tester.tap(find.byKey(const Key('employee-nav-pay')));
+        await tester.tap(find.byKey(const Key('employee-nav-more')));
+        await tester.pumpAndSettle();
+        await tester.scrollUntilVisible(
+          find.byKey(const Key('employee-more-pay')),
+          180,
+        );
+        await tester.tap(find.byKey(const Key('employee-more-pay')));
         await tester.pumpAndSettle();
         expect(
           find.text('Your payslips are not available here yet'),
           findsOneWidget,
         );
         expect(find.text('0.00'), findsNothing);
-      } else if (sample.page == 'review') {
+      } else if (sample.page == 'activity' || sample.page == 'more') {
+        await tester.tap(find.byKey(Key('employee-nav-${sample.page}')));
+        await tester.pumpAndSettle();
+      } else if (sample.page == 'help') {
+        await tester.tap(find.byKey(const Key('employee-nav-more')));
+        await tester.pumpAndSettle();
+        await tester.scrollUntilVisible(
+          find.text('HR help').hitTestable(),
+          200,
+          scrollable: find.byType(Scrollable).last,
+        );
+        await tester.tap(find.text('HR help'));
+        await tester.pumpAndSettle();
+        expect(find.text('How can we help?'), findsOneWidget);
+      } else if (sample.page == 'review' || sample.page == 'search') {
         await tester.tap(find.byKey(const Key('employee-open-reviews')));
         await tester.pumpAndSettle();
-        await tester.tap(
-          find.byKey(
-            const Key('employee-review-10000000-0000-4000-8000-000000000006'),
-          ),
-        );
-        await tester.pumpAndSettle();
+        if (sample.page == 'search') {
+          await tester.enterText(
+            find.byKey(const Key('employee-review-search')),
+            'planning',
+          );
+          FocusManager.instance.primaryFocus?.unfocus();
+          await tester.pumpAndSettle();
+        } else {
+          await tester.scrollUntilVisible(
+            find.byKey(
+              const Key('employee-review-10000000-0000-4000-8000-000000000006'),
+            ),
+            120,
+            scrollable: find
+                .byWidgetPredicate(
+                  (widget) =>
+                      widget is Scrollable &&
+                      widget.axisDirection == AxisDirection.down,
+                )
+                .last,
+          );
+          await tester.tap(
+            find.byKey(
+              const Key('employee-review-10000000-0000-4000-8000-000000000006'),
+            ),
+          );
+          await tester.pumpAndSettle();
+        }
       }
       expect(tester.takeException(), isNull);
       final context = tester.element(find.byType(Scaffold).first);
@@ -214,6 +346,25 @@ Future<void> _readyBrand(WidgetTester tester) async {
 }
 
 Future<void> _capture(WidgetTester tester, Key key, String name) async {
+  // Image.memory decoding uses engine work outside the fake test clock. Wait
+  // for the visible photo provider, so an empty loading circle cannot pass as
+  // a rendered photo merely because an Image widget exists.
+  for (final avatar in tester.widgetList<Image>(
+    find.byKey(const Key('employee-avatar-image')),
+  )) {
+    final context = tester.element(
+      find.byKey(const Key('employee-avatar-image')),
+    );
+    await tester.runAsync(
+      () => precacheImage(
+        avatar.image,
+        context,
+        onError: (error, stack) =>
+            fail('Profile avatar did not decode: $error'),
+      ),
+    );
+  }
+  await tester.pumpAndSettle();
   final boundary = tester.renderObject<RenderRepaintBoundary>(find.byKey(key));
   await tester.runAsync(() async {
     final pixels = await boundary.toImage(pixelRatio: 2);
@@ -221,7 +372,7 @@ Future<void> _capture(WidgetTester tester, Key key, String name) async {
       final bytes = await pixels.toByteData(format: ui.ImageByteFormat.png);
       expect(bytes, isNotNull);
       final file = File(
-        '../../docs/verification/employee-app/previews/$name.png',
+        '../../docs/verification/employee-app/profile-ui-20261009/previews/$name.png',
       );
       await file.parent.create(recursive: true);
       await file.writeAsBytes(bytes!.buffer.asUint8List());

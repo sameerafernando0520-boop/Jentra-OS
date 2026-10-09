@@ -106,10 +106,7 @@ class EmployeeActionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Material(
     color: context.jentraColors.panel,
-    shape: RoundedRectangleBorder(
-      side: BorderSide(color: context.jentraColors.border),
-      borderRadius: BorderRadius.circular(14),
-    ),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     clipBehavior: Clip.antiAlias,
     child: InkWell(
       onTap: onTap,
@@ -119,7 +116,14 @@ class EmployeeActionTile extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              Icon(icon, color: context.jentraColors.action, size: 24),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: context.jentraColors.infoSurface,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(icon, color: context.jentraColors.action, size: 22),
+              ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
@@ -196,7 +200,7 @@ class EmployeePageBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final scroll = ListView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       children: [
         for (var i = 0; i < children.length; i++) ...[
           if (i > 0) const SizedBox(height: 16),

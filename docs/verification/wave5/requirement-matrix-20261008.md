@@ -1,131 +1,129 @@
-# Wave 5 requirement matrix - updated October 9, 2026
+# Wave 5 requirement matrix — current October 9 evidence
 
-The [portable Windows user-test package](windows-test-verification-20261009.md) now includes separately isolated preview and connected builds. Both ordinary native apps launched and fresh dashboard/sign-in renders were inspected; two startup/navigation tests and all 68 packaged release hashes pass. This is a UI trial delivery gate. It does not change any requirement's owner acceptance or the open authenticated MFA/export/worker/contention/load gates.
+All **109 identifiers** retain their original specification and bundle mappings; **zero criteria are owner-accepted and Wave 5 remains incomplete**. The fresh [r5 Windows test package](windows-test-verification-20261009-r5.md) includes source-attributed Preview and Connected apps, current cash and model recovery screens, inspected startup windows and verified release bytes. It is available for UI trial.
 
-All 109 identifiers remain mapped with **zero owner-accepted criteria**. Fresh live reads retain 43 migrations and 107 API functions. The [concrete runtime review](runtime-review-20261009.md) enumerates 28 uninstalled migration hashes, six confirmed labels, exact new synthetic roles/plans, operator limits and worker/provider configuration. Host/receiver binding and final approval remain pending. The new standard Windows profile `jentra-w5-runtime` is selected but uncreated.
+Live state remains **43 migrations / 107 API functions**, unchanged access counts and no proposed persistent setup. The [bound runtime review](complete-app-runtime-review-20261009.md) lists 71 exact additional migrations, six confirmed labels, 500 synthetic scopes, roles/plans/operator limits and the owner-selected Supabase worker/receiver. Hosting and labels are bound; operation approval and private Auth/model configuration remain pending.
 
-The full candidate composition passes 63 strict rollback checks, the separate bootstrap mapping probe passes 10, and 38 controlled worker tests pass. Test-only claims/Auth shapes/transports do not establish real MFA or delivery. The original 126 installed checks and historical 116/35 rollback checks retain their distinct scopes. [Post-rollback live read](runtime-review-live-after-20261009.json).
-
-October 9 scoped Dart analysis is clean; 72 domain, 48 platform and 96 desktop/controller/render tests pass. The Windows release matches all 1,051 selected desktop dependency source files and 34 release files, including current workspace dependency manifests. Sixty fresh cash frames were captured at twelve viewport/theme/density variants with 200% text; 16 were visually inspected. Initial Tab focus was checked. These are controlled renders; authenticated native acceptance and full keyboard navigation remain open. [Fresh cash verification](cash-dates-verification-20261009.md). Installed new SQL, authenticated native/MFA/export, actual worker/model delivery, independent-session contention, target-scale load and owner signoff remain open.
+Evidence gates: original six-migration installation with historical 126 installed checks; 105 complete-schema/setup rollback assertions; 25 separate full-schema bootstrap/permission assertions without a permission shim; 63 controlled worker tests; fresh scoped analysis/tests/build/renders. Original 116/35 and earlier 63/10 results retain historical scopes. Real Auth/MFA/native/export, actual hosted delivery/model usage, independent contention, 500-tenant/2000-session load and owner acceptance remain open. Thirteen previously observed shared golden failures remain unresolved; r5 did not rerun or replace them.
 
 | ID | Evidence bundle | Current status |
 |---|---|---|
-| FR-501 | [Scope, permission and complete bounded evidence](#evidence-shared) | Installed Wave 5 foundation remains intact. The exact new 28-file dependency closure passes 63 strict rollback assertions; all new candidates remain uninstalled. |
-| FR-502 | [Scope, permission and complete bounded evidence](#evidence-shared) | Installed Wave 5 foundation remains intact. The exact new 28-file dependency closure passes 63 strict rollback assertions; all new candidates remain uninstalled. |
-| FR-503 | [Scope, permission and complete bounded evidence](#evidence-shared) | Installed Wave 5 foundation remains intact. The exact new 28-file dependency closure passes 63 strict rollback assertions; all new candidates remain uninstalled. |
-| FR-504 | [Scope, permission and complete bounded evidence](#evidence-shared) | Installed Wave 5 foundation remains intact. The exact new 28-file dependency closure passes 63 strict rollback assertions; all new candidates remain uninstalled. |
-| FR-505 | [Scope, permission and complete bounded evidence](#evidence-shared) | Installed Wave 5 foundation remains intact. The exact new 28-file dependency closure passes 63 strict rollback assertions; all new candidates remain uninstalled. |
-| FR-506 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| FR-507 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| FR-508 | [Scope, permission and complete bounded evidence](#evidence-shared) | Installed Wave 5 foundation remains intact. The exact new 28-file dependency closure passes 63 strict rollback assertions; all new candidates remain uninstalled. |
-| FR-509 | [W5-02 current pipeline forecasts](#evidence-pipeline) | Historical conversion, open-stage aging/velocity and frozen-cohort realized-result adapters plus the native workspace are implemented as uninstalled candidates. Nonempty invoice/order/credit SQL mapping passes the strict rollback composition. |
-| FR-510 | [W5-02 current pipeline forecasts](#evidence-pipeline) | Historical conversion, open-stage aging/velocity and frozen-cohort realized-result adapters plus the native workspace are implemented as uninstalled candidates. Nonempty invoice/order/credit SQL mapping passes the strict rollback composition. |
-| FR-511 | [W5-02 current pipeline forecasts](#evidence-pipeline) | Historical conversion, open-stage aging/velocity and frozen-cohort realized-result adapters plus the native workspace are implemented as uninstalled candidates. Nonempty invoice/order/credit SQL mapping passes the strict rollback composition. |
-| FR-512 | [W5-03 exact ratio basis](#evidence-finance) | Six named exact ratios consume matching immutable Wave 3 statements and an MFA-reviewed account classification; candidate SQL and adapter forms are present. |
-| FR-513 | [W5-03 cash scenarios and governed export](#evidence-cash) | Uninstalled candidates now cover all five cash families, authoritative independently reviewed payroll/correction/reimbursement payment dates, exact residuals, immutable scenarios, encrypted recovery and governed export. New actual-Wave-4 SQL checks and current SDK/build/render verification pass. |
-| FR-514 | [W5-03 cash scenarios and governed export](#evidence-cash) | Uninstalled candidates now cover all five cash families, authoritative independently reviewed payroll/correction/reimbursement payment dates, exact residuals, immutable scenarios, encrypted recovery and governed export. New actual-Wave-4 SQL checks and current SDK/build/render verification pass. |
-| FR-515 | [W5-03 cash scenarios and governed export](#evidence-cash) | Uninstalled candidates now cover all five cash families, authoritative independently reviewed payroll/correction/reimbursement payment dates, exact residuals, immutable scenarios, encrypted recovery and governed export. New actual-Wave-4 SQL checks and current SDK/build/render verification pass. |
-| FR-516 | [W5-04 human proposal controls](#evidence-ai) | Numeric-only redaction, strict model output/counting and trusted usage adapters are candidates. The scoped runtime persists a four-invocation limit; model/provider configuration is specified for approval. No real model call occurred. |
-| FR-517 | [W5-04 human proposal controls](#evidence-ai) | Numeric-only redaction, strict model output/counting and trusted usage adapters are candidates. The scoped runtime persists a four-invocation limit; model/provider configuration is specified for approval. No real model call occurred. |
-| FR-518 | [W5-04 human proposal controls](#evidence-ai) | Numeric-only redaction, strict model output/counting and trusted usage adapters are candidates. The scoped runtime persists a four-invocation limit; model/provider configuration is specified for approval. No real model call occurred. |
-| FR-519 | [W5-04 human proposal controls](#evidence-ai) | Numeric-only redaction, strict model output/counting and trusted usage adapters are candidates. The scoped runtime persists a four-invocation limit; model/provider configuration is specified for approval. No real model call occurred. |
-| FR-520 | [W5-04 human proposal controls](#evidence-ai) | Numeric-only redaction, strict model output/counting and trusted usage adapters are candidates. The scoped runtime persists a four-invocation limit; model/provider configuration is specified for approval. No real model call occurred. |
-| FR-521 | [W5-05 webhook/API policies and worker orchestration](#evidence-integration) | Candidate storage, key/credential revocation, outbox leases/attempts/replay, atomic throttle/quota and dispatch are implemented. The runtime guard scopes expiry/discovery/claim/settlement before mutation; 38 controlled worker tests pass. |
-| FR-522 | [W5-05 webhook/API policies and worker orchestration](#evidence-integration) | Candidate storage, key/credential revocation, outbox leases/attempts/replay, atomic throttle/quota and dispatch are implemented. The runtime guard scopes expiry/discovery/claim/settlement before mutation; 38 controlled worker tests pass. |
-| FR-523 | [W5-05 webhook/API policies and worker orchestration](#evidence-integration) | Candidate storage, key/credential revocation, outbox leases/attempts/replay, atomic throttle/quota and dispatch are implemented. The runtime guard scopes expiry/discovery/claim/settlement before mutation; 38 controlled worker tests pass. |
-| FR-524 | [W5-06 synthetic subscriptions and trusted usage](#evidence-billing) | Installed synthetic authority remains intact. Confirmed billing-admin label, exact new plans/seats/quotas and a tenant-scoped scheduler are prepared in the runtime review; no activation occurred. |
-| FR-525 | [W5-06 synthetic subscriptions and trusted usage](#evidence-billing) | Installed synthetic authority remains intact. Confirmed billing-admin label, exact new plans/seats/quotas and a tenant-scoped scheduler are prepared in the runtime review; no activation occurred. |
-| FR-526 | [W5-06 synthetic subscriptions and trusted usage](#evidence-billing) | Installed synthetic authority remains intact. Confirmed billing-admin label, exact new plans/seats/quotas and a tenant-scoped scheduler are prepared in the runtime review; no activation occurred. |
-| FR-527 | [W5-07 separate operator authority and health](#evidence-operator) | Installed operator isolation remains intact. The confirmed separate operator has proposed exact-tenant/reason authority limited to 45 minutes and a grant guard; no operator or grant was provisioned. |
-| FR-528 | [W5-07 separate operator authority and health](#evidence-operator) | Installed operator isolation remains intact. The confirmed separate operator has proposed exact-tenant/reason authority limited to 45 minutes and a grant guard; no operator or grant was provisioned. |
-| FR-529 | [W5-07 separate operator authority and health](#evidence-operator) | Installed operator isolation remains intact. The confirmed separate operator has proposed exact-tenant/reason authority limited to 45 minutes and a grant guard; no operator or grant was provisioned. |
-| FR-530 | [Native workspaces and recovery](#evidence-native) | Seven analytics workspaces and cash payment dates are implemented. October 9 scoped Dart analysis is clean; 72 domain, 48 platform and 96 desktop/controller/render tests pass. The Windows release matches all 1,051 selected desktop dependency source files and 34 release files, including current workspace dependency manifests. Sixty fresh cash frames were captured at twelve viewport/theme/density variants with 200% text; 16 were visually inspected. Initial Tab focus was checked. These are controlled renders; authenticated native acceptance and full keyboard navigation remain open. |
-| FR-531 | [Native workspaces and recovery](#evidence-native) | Seven analytics workspaces and cash payment dates are implemented. October 9 scoped Dart analysis is clean; 72 domain, 48 platform and 96 desktop/controller/render tests pass. The Windows release matches all 1,051 selected desktop dependency source files and 34 release files, including current workspace dependency manifests. Sixty fresh cash frames were captured at twelve viewport/theme/density variants with 200% text; 16 were visually inspected. Initial Tab focus was checked. These are controlled renders; authenticated native acceptance and full keyboard navigation remain open. |
-| FR-532 | [Provider readiness](#evidence-provider) | Historical CRM, realized results, statement classifications, all-five-family cash/date sources, scenario/export, persistent integration and trusted-usage adapters are implemented as uninstalled candidates. |
-| FR-533 | [Shared checkout and installation boundary](#evidence-ownership) | Fresh October 9 live reads retain 43 migrations, 107 API functions and unchanged access counts. All 28 new migration hashes are reviewed; eight Wave 4 owned sources remain byte-preserved. No new file is installed. |
-| FR-534 | [Shared checkout and installation boundary](#evidence-ownership) | Fresh October 9 live reads retain 43 migrations, 107 API functions and unchanged access counts. All 28 new migration hashes are reviewed; eight Wave 4 owned sources remain byte-preserved. No new file is installed. |
-| FR-535 | [W5-05 webhook/API policies and worker orchestration](#evidence-integration) | Candidate storage, key/credential revocation, outbox leases/attempts/replay, atomic throttle/quota and dispatch are implemented. The runtime guard scopes expiry/discovery/claim/settlement before mutation; 38 controlled worker tests pass. |
-| FR-536 | [Evidence and quality gates](#evidence-quality) | The 28-file composition passes 63 strict rollback assertions and the separate synthetic mapping probe passes 10; 38 controlled worker tests pass. October 9 scoped Dart analysis is clean; 72 domain, 48 platform and 96 desktop/controller/render tests pass. The Windows release matches all 1,051 selected desktop dependency source files and 34 release files, including current workspace dependency manifests. Sixty fresh cash frames were captured at twelve viewport/theme/density variants with 200% text; 16 were visually inspected. Initial Tab focus was checked. These are controlled renders; authenticated native acceptance and full keyboard navigation remain open. |
-| NFR-501 | [Scope, permission and complete bounded evidence](#evidence-shared) | Installed Wave 5 foundation remains intact. The exact new 28-file dependency closure passes 63 strict rollback assertions; all new candidates remain uninstalled. |
-| NFR-502 | [Scope, permission and complete bounded evidence](#evidence-shared) | Installed Wave 5 foundation remains intact. The exact new 28-file dependency closure passes 63 strict rollback assertions; all new candidates remain uninstalled. |
-| NFR-503 | [Scope, permission and complete bounded evidence](#evidence-shared) | Installed Wave 5 foundation remains intact. The exact new 28-file dependency closure passes 63 strict rollback assertions; all new candidates remain uninstalled. |
-| NFR-504 | [Real contention and target-scale performance](#evidence-load) | Candidate SQL verifies bounded inputs and atomic policy behavior in rollback. The review specifies 500 synthetic tenants and 2,000 real independent sessions; no contention or target-scale run has occurred. |
-| NFR-505 | [Real contention and target-scale performance](#evidence-load) | Candidate SQL verifies bounded inputs and atomic policy behavior in rollback. The review specifies 500 synthetic tenants and 2,000 real independent sessions; no contention or target-scale run has occurred. |
-| NFR-506 | [Real contention and target-scale performance](#evidence-load) | Candidate SQL verifies bounded inputs and atomic policy behavior in rollback. The review specifies 500 synthetic tenants and 2,000 real independent sessions; no contention or target-scale run has occurred. |
-| NFR-507 | [Evidence and quality gates](#evidence-quality) | The 28-file composition passes 63 strict rollback assertions and the separate synthetic mapping probe passes 10; 38 controlled worker tests pass. October 9 scoped Dart analysis is clean; 72 domain, 48 platform and 96 desktop/controller/render tests pass. The Windows release matches all 1,051 selected desktop dependency source files and 34 release files, including current workspace dependency manifests. Sixty fresh cash frames were captured at twelve viewport/theme/density variants with 200% text; 16 were visually inspected. Initial Tab focus was checked. These are controlled renders; authenticated native acceptance and full keyboard navigation remain open. |
-| NFR-508 | [Native workspaces and recovery](#evidence-native) | Seven analytics workspaces and cash payment dates are implemented. October 9 scoped Dart analysis is clean; 72 domain, 48 platform and 96 desktop/controller/render tests pass. The Windows release matches all 1,051 selected desktop dependency source files and 34 release files, including current workspace dependency manifests. Sixty fresh cash frames were captured at twelve viewport/theme/density variants with 200% text; 16 were visually inspected. Initial Tab focus was checked. These are controlled renders; authenticated native acceptance and full keyboard navigation remain open. |
-| NFR-509 | [Evidence and quality gates](#evidence-quality) | The 28-file composition passes 63 strict rollback assertions and the separate synthetic mapping probe passes 10; 38 controlled worker tests pass. October 9 scoped Dart analysis is clean; 72 domain, 48 platform and 96 desktop/controller/render tests pass. The Windows release matches all 1,051 selected desktop dependency source files and 34 release files, including current workspace dependency manifests. Sixty fresh cash frames were captured at twelve viewport/theme/density variants with 200% text; 16 were visually inspected. Initial Tab focus was checked. These are controlled renders; authenticated native acceptance and full keyboard navigation remain open. |
-| NFR-510 | [Scope, permission and complete bounded evidence](#evidence-shared) | Installed Wave 5 foundation remains intact. The exact new 28-file dependency closure passes 63 strict rollback assertions; all new candidates remain uninstalled. |
-| AC-501 | [Scope, permission and complete bounded evidence](#evidence-shared) | Installed Wave 5 foundation remains intact. The exact new 28-file dependency closure passes 63 strict rollback assertions; all new candidates remain uninstalled. |
-| AC-502 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| AC-503 | [Scope, permission and complete bounded evidence](#evidence-shared) | Installed Wave 5 foundation remains intact. The exact new 28-file dependency closure passes 63 strict rollback assertions; all new candidates remain uninstalled. |
-| AC-504 | [W5-02 current pipeline forecasts](#evidence-pipeline) | Historical conversion, open-stage aging/velocity and frozen-cohort realized-result adapters plus the native workspace are implemented as uninstalled candidates. Nonempty invoice/order/credit SQL mapping passes the strict rollback composition. |
-| AC-505 | [W5-03 exact ratio basis](#evidence-finance) | Six named exact ratios consume matching immutable Wave 3 statements and an MFA-reviewed account classification; candidate SQL and adapter forms are present. |
-| AC-506 | [W5-03 cash scenarios and governed export](#evidence-cash) | Uninstalled candidates now cover all five cash families, authoritative independently reviewed payroll/correction/reimbursement payment dates, exact residuals, immutable scenarios, encrypted recovery and governed export. New actual-Wave-4 SQL checks and current SDK/build/render verification pass. |
-| AC-507 | [W5-04 human proposal controls](#evidence-ai) | Numeric-only redaction, strict model output/counting and trusted usage adapters are candidates. The scoped runtime persists a four-invocation limit; model/provider configuration is specified for approval. No real model call occurred. |
-| AC-508 | [W5-04 human proposal controls](#evidence-ai) | Numeric-only redaction, strict model output/counting and trusted usage adapters are candidates. The scoped runtime persists a four-invocation limit; model/provider configuration is specified for approval. No real model call occurred. |
-| AC-509 | [W5-04 human proposal controls](#evidence-ai) | Numeric-only redaction, strict model output/counting and trusted usage adapters are candidates. The scoped runtime persists a four-invocation limit; model/provider configuration is specified for approval. No real model call occurred. |
-| AC-510 | [W5-05 webhook/API policies and worker orchestration](#evidence-integration) | Candidate storage, key/credential revocation, outbox leases/attempts/replay, atomic throttle/quota and dispatch are implemented. The runtime guard scopes expiry/discovery/claim/settlement before mutation; 38 controlled worker tests pass. |
-| AC-511 | [W5-05 webhook/API policies and worker orchestration](#evidence-integration) | Candidate storage, key/credential revocation, outbox leases/attempts/replay, atomic throttle/quota and dispatch are implemented. The runtime guard scopes expiry/discovery/claim/settlement before mutation; 38 controlled worker tests pass. |
-| AC-512 | [W5-06 synthetic subscriptions and trusted usage](#evidence-billing) | Installed synthetic authority remains intact. Confirmed billing-admin label, exact new plans/seats/quotas and a tenant-scoped scheduler are prepared in the runtime review; no activation occurred. |
-| AC-513 | [W5-06 synthetic subscriptions and trusted usage](#evidence-billing) | Installed synthetic authority remains intact. Confirmed billing-admin label, exact new plans/seats/quotas and a tenant-scoped scheduler are prepared in the runtime review; no activation occurred. |
-| AC-514 | [W5-07 separate operator authority and health](#evidence-operator) | Installed operator isolation remains intact. The confirmed separate operator has proposed exact-tenant/reason authority limited to 45 minutes and a grant guard; no operator or grant was provisioned. |
-| AC-515 | [Native workspaces and recovery](#evidence-native) | Seven analytics workspaces and cash payment dates are implemented. October 9 scoped Dart analysis is clean; 72 domain, 48 platform and 96 desktop/controller/render tests pass. The Windows release matches all 1,051 selected desktop dependency source files and 34 release files, including current workspace dependency manifests. Sixty fresh cash frames were captured at twelve viewport/theme/density variants with 200% text; 16 were visually inspected. Initial Tab focus was checked. These are controlled renders; authenticated native acceptance and full keyboard navigation remain open. |
-| AC-516 | [Shared checkout and installation boundary](#evidence-ownership) | Fresh October 9 live reads retain 43 migrations, 107 API functions and unchanged access counts. All 28 new migration hashes are reviewed; eight Wave 4 owned sources remain byte-preserved. No new file is installed. |
-| AC-517 | [Evidence and quality gates](#evidence-quality) | The 28-file composition passes 63 strict rollback assertions and the separate synthetic mapping probe passes 10; 38 controlled worker tests pass. October 9 scoped Dart analysis is clean; 72 domain, 48 platform and 96 desktop/controller/render tests pass. The Windows release matches all 1,051 selected desktop dependency source files and 34 release files, including current workspace dependency manifests. Sixty fresh cash frames were captured at twelve viewport/theme/density variants with 200% text; 16 were visually inspected. Initial Tab focus was checked. These are controlled renders; authenticated native acceptance and full keyboard navigation remain open. |
-| EC-501 | [Scope, permission and complete bounded evidence](#evidence-shared) | Installed Wave 5 foundation remains intact. The exact new 28-file dependency closure passes 63 strict rollback assertions; all new candidates remain uninstalled. |
-| EC-502 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| EC-503 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| EC-504 | [W5-02 current pipeline forecasts](#evidence-pipeline) | Historical conversion, open-stage aging/velocity and frozen-cohort realized-result adapters plus the native workspace are implemented as uninstalled candidates. Nonempty invoice/order/credit SQL mapping passes the strict rollback composition. |
-| EC-505 | [W5-03 cash scenarios and governed export](#evidence-cash) | Uninstalled candidates now cover all five cash families, authoritative independently reviewed payroll/correction/reimbursement payment dates, exact residuals, immutable scenarios, encrypted recovery and governed export. New actual-Wave-4 SQL checks and current SDK/build/render verification pass. |
-| EC-506 | [W5-03 cash scenarios and governed export](#evidence-cash) | Uninstalled candidates now cover all five cash families, authoritative independently reviewed payroll/correction/reimbursement payment dates, exact residuals, immutable scenarios, encrypted recovery and governed export. New actual-Wave-4 SQL checks and current SDK/build/render verification pass. |
-| EC-507 | [W5-04 human proposal controls](#evidence-ai) | Numeric-only redaction, strict model output/counting and trusted usage adapters are candidates. The scoped runtime persists a four-invocation limit; model/provider configuration is specified for approval. No real model call occurred. |
-| EC-508 | [W5-04 human proposal controls](#evidence-ai) | Numeric-only redaction, strict model output/counting and trusted usage adapters are candidates. The scoped runtime persists a four-invocation limit; model/provider configuration is specified for approval. No real model call occurred. |
-| EC-509 | [W5-05 webhook/API policies and worker orchestration](#evidence-integration) | Candidate storage, key/credential revocation, outbox leases/attempts/replay, atomic throttle/quota and dispatch are implemented. The runtime guard scopes expiry/discovery/claim/settlement before mutation; 38 controlled worker tests pass. |
-| EC-510 | [W5-05 webhook/API policies and worker orchestration](#evidence-integration) | Candidate storage, key/credential revocation, outbox leases/attempts/replay, atomic throttle/quota and dispatch are implemented. The runtime guard scopes expiry/discovery/claim/settlement before mutation; 38 controlled worker tests pass. |
-| EC-511 | [W5-06 synthetic subscriptions and trusted usage](#evidence-billing) | Installed synthetic authority remains intact. Confirmed billing-admin label, exact new plans/seats/quotas and a tenant-scoped scheduler are prepared in the runtime review; no activation occurred. |
-| EC-512 | [W5-07 separate operator authority and health](#evidence-operator) | Installed operator isolation remains intact. The confirmed separate operator has proposed exact-tenant/reason authority limited to 45 minutes and a grant guard; no operator or grant was provisioned. |
-| EC-513 | [Native workspaces and recovery](#evidence-native) | Seven analytics workspaces and cash payment dates are implemented. October 9 scoped Dart analysis is clean; 72 domain, 48 platform and 96 desktop/controller/render tests pass. The Windows release matches all 1,051 selected desktop dependency source files and 34 release files, including current workspace dependency manifests. Sixty fresh cash frames were captured at twelve viewport/theme/density variants with 200% text; 16 were visually inspected. Initial Tab focus was checked. These are controlled renders; authenticated native acceptance and full keyboard navigation remain open. |
-| EC-514 | [Scope, permission and complete bounded evidence](#evidence-shared) | Installed Wave 5 foundation remains intact. The exact new 28-file dependency closure passes 63 strict rollback assertions; all new candidates remain uninstalled. |
-| EC-515 | [Shared checkout and installation boundary](#evidence-ownership) | Fresh October 9 live reads retain 43 migrations, 107 API functions and unchanged access counts. All 28 new migration hashes are reviewed; eight Wave 4 owned sources remain byte-preserved. No new file is installed. |
-| EC-516 | [Evidence and quality gates](#evidence-quality) | The 28-file composition passes 63 strict rollback assertions and the separate synthetic mapping probe passes 10; 38 controlled worker tests pass. October 9 scoped Dart analysis is clean; 72 domain, 48 platform and 96 desktop/controller/render tests pass. The Windows release matches all 1,051 selected desktop dependency source files and 34 release files, including current workspace dependency manifests. Sixty fresh cash frames were captured at twelve viewport/theme/density variants with 200% text; 16 were visually inspected. Initial Tab focus was checked. These are controlled renders; authenticated native acceptance and full keyboard navigation remain open. |
-| FR-551 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| FR-552 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| FR-553 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| FR-554 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| FR-555 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| FR-556 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| FR-557 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| FR-558 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| FR-559 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| FR-560 | [Shared checkout and installation boundary](#evidence-ownership) | Fresh October 9 live reads retain 43 migrations, 107 API functions and unchanged access counts. All 28 new migration hashes are reviewed; eight Wave 4 owned sources remain byte-preserved. No new file is installed. |
-| NFR-551 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| NFR-552 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| NFR-553 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| NFR-554 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| AC-551 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| AC-552 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| AC-553 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| AC-554 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| AC-555 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| AC-556 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| AC-557 | [Shared checkout and installation boundary](#evidence-ownership) | Fresh October 9 live reads retain 43 migrations, 107 API functions and unchanged access counts. All 28 new migration hashes are reviewed; eight Wave 4 owned sources remain byte-preserved. No new file is installed. |
-| AC-558 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| EC-551 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| EC-552 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| EC-553 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| EC-554 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| EC-555 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| EC-556 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| EC-557 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
-| EC-558 | [W5-01 process metrics](#evidence-process) | Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced. |
+| FR-501 | [Scope, permission and complete bounded evidence](#evidence-shared) | The original six installed Wave 5 migrations remain intact. The complete 71-file candidate schema and setup/stop pass 105 strict rollback checks; the separate full-schema bootstrap/permission probe passes 25 without a permission shim. Additional installation remains pending. |
+| FR-502 | [Scope, permission and complete bounded evidence](#evidence-shared) | The original six installed Wave 5 migrations remain intact. The complete 71-file candidate schema and setup/stop pass 105 strict rollback checks; the separate full-schema bootstrap/permission probe passes 25 without a permission shim. Additional installation remains pending. |
+| FR-503 | [Scope, permission and complete bounded evidence](#evidence-shared) | The original six installed Wave 5 migrations remain intact. The complete 71-file candidate schema and setup/stop pass 105 strict rollback checks; the separate full-schema bootstrap/permission probe passes 25 without a permission shim. Additional installation remains pending. |
+| FR-504 | [Scope, permission and complete bounded evidence](#evidence-shared) | The original six installed Wave 5 migrations remain intact. The complete 71-file candidate schema and setup/stop pass 105 strict rollback checks; the separate full-schema bootstrap/permission probe passes 25 without a permission shim. Additional installation remains pending. |
+| FR-505 | [Scope, permission and complete bounded evidence](#evidence-shared) | The original six installed Wave 5 migrations remain intact. The complete 71-file candidate schema and setup/stop pass 105 strict rollback checks; the separate full-schema bootstrap/permission probe passes 25 without a permission shim. Additional installation remains pending. |
+| FR-506 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| FR-507 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| FR-508 | [Scope, permission and complete bounded evidence](#evidence-shared) | The original six installed Wave 5 migrations remain intact. The complete 71-file candidate schema and setup/stop pass 105 strict rollback checks; the separate full-schema bootstrap/permission probe passes 25 without a permission shim. Additional installation remains pending. |
+| FR-509 | [W5-02 historical and current pipeline](#evidence-pipeline) | Historical CRM conversion, aging, velocity and frozen-cohort realized results are implemented with immutable history and exact invoice/order/credit mapping; strict candidate SQL checks pass. The new providers remain uninstalled. |
+| FR-510 | [W5-02 historical and current pipeline](#evidence-pipeline) | Historical CRM conversion, aging, velocity and frozen-cohort realized results are implemented with immutable history and exact invoice/order/credit mapping; strict candidate SQL checks pass. The new providers remain uninstalled. |
+| FR-511 | [W5-02 historical and current pipeline](#evidence-pipeline) | Historical CRM conversion, aging, velocity and frozen-cohort realized results are implemented with immutable history and exact invoice/order/credit mapping; strict candidate SQL checks pass. The new providers remain uninstalled. |
+| FR-512 | [W5-03 authoritative statements and ratios](#evidence-finance) | Matching immutable Wave 3 publications and MFA-reviewed complete account classifications feed six named exact ratios; adapters and native forms are implemented. Candidate checks pass; authoritative runtime publication and review remain open. |
+| FR-513 | [W5-03 cash dates, scenarios and governed export](#evidence-cash) | All five cash families, independently reviewed payroll/correction/reimbursement dates, immutable residuals/assumptions/overrides, encrypted recovery and governed export adapters are implemented. Full-schema strict rollback checks and fresh r5 controlled cash tests/renders pass; Wave 4 owned source bytes are preserved. |
+| FR-514 | [W5-03 cash dates, scenarios and governed export](#evidence-cash) | All five cash families, independently reviewed payroll/correction/reimbursement dates, immutable residuals/assumptions/overrides, encrypted recovery and governed export adapters are implemented. Full-schema strict rollback checks and fresh r5 controlled cash tests/renders pass; Wave 4 owned source bytes are preserved. |
+| FR-515 | [W5-03 cash dates, scenarios and governed export](#evidence-cash) | All five cash families, independently reviewed payroll/correction/reimbursement dates, immutable residuals/assumptions/overrides, encrypted recovery and governed export adapters are implemented. Full-schema strict rollback checks and fresh r5 controlled cash tests/renders pass; Wave 4 owned source bytes are preserved. |
+| FR-516 | [W5-04 reviewed model and human proposal controls](#evidence-ai) | Numeric redaction, strict provider output and trusted usage adapters plus native reviewed request/recovery are implemented. Original invocation/usage IDs and saved fields survive encrypted recovery; explicit selection fills the human proposal form without dispatch. Fifteen gateway/control and 20 model workspace tests pass; real model calls are unproved. |
+| FR-517 | [W5-04 reviewed model and human proposal controls](#evidence-ai) | Numeric redaction, strict provider output and trusted usage adapters plus native reviewed request/recovery are implemented. Original invocation/usage IDs and saved fields survive encrypted recovery; explicit selection fills the human proposal form without dispatch. Fifteen gateway/control and 20 model workspace tests pass; real model calls are unproved. |
+| FR-518 | [W5-04 reviewed model and human proposal controls](#evidence-ai) | Numeric redaction, strict provider output and trusted usage adapters plus native reviewed request/recovery are implemented. Original invocation/usage IDs and saved fields survive encrypted recovery; explicit selection fills the human proposal form without dispatch. Fifteen gateway/control and 20 model workspace tests pass; real model calls are unproved. |
+| FR-519 | [W5-04 reviewed model and human proposal controls](#evidence-ai) | Numeric redaction, strict provider output and trusted usage adapters plus native reviewed request/recovery are implemented. Original invocation/usage IDs and saved fields survive encrypted recovery; explicit selection fills the human proposal form without dispatch. Fifteen gateway/control and 20 model workspace tests pass; real model calls are unproved. |
+| FR-520 | [W5-04 reviewed model and human proposal controls](#evidence-ai) | Numeric redaction, strict provider output and trusted usage adapters plus native reviewed request/recovery are implemented. Original invocation/usage IDs and saved fields survive encrypted recovery; explicit selection fills the human proposal form without dispatch. Fifteen gateway/control and 20 model workspace tests pass; real model calls are unproved. |
+| FR-521 | [W5-05 persistent integrations and hosted workers](#evidence-integration) | Persistent scoped registration, credentials/key rotation/revocation, committed-outbox leases/attempts/dead letters/reviewed replay, atomic throttle/quota, named dispatch and scheduling are implemented. The owner-selected Supabase runtime/receiver payloads and expiring setup/stop pass candidate checks and 63 controlled worker tests; nothing is deployed. |
+| FR-522 | [W5-05 persistent integrations and hosted workers](#evidence-integration) | Persistent scoped registration, credentials/key rotation/revocation, committed-outbox leases/attempts/dead letters/reviewed replay, atomic throttle/quota, named dispatch and scheduling are implemented. The owner-selected Supabase runtime/receiver payloads and expiring setup/stop pass candidate checks and 63 controlled worker tests; nothing is deployed. |
+| FR-523 | [W5-05 persistent integrations and hosted workers](#evidence-integration) | Persistent scoped registration, credentials/key rotation/revocation, committed-outbox leases/attempts/dead letters/reviewed replay, atomic throttle/quota, named dispatch and scheduling are implemented. The owner-selected Supabase runtime/receiver payloads and expiring setup/stop pass candidate checks and 63 controlled worker tests; nothing is deployed. |
+| FR-524 | [W5-06 synthetic subscriptions and trusted usage](#evidence-billing) | The installed synthetic billing authority is retained. Exact new plans/seats/quotas and scoped scheduling are prepared; runtime includes People and the cash source permissions. The 25-check rollback bootstrap probe verifies role and entitlement mappings; no synthetic activation persisted. |
+| FR-525 | [W5-06 synthetic subscriptions and trusted usage](#evidence-billing) | The installed synthetic billing authority is retained. Exact new plans/seats/quotas and scoped scheduling are prepared; runtime includes People and the cash source permissions. The 25-check rollback bootstrap probe verifies role and entitlement mappings; no synthetic activation persisted. |
+| FR-526 | [W5-06 synthetic subscriptions and trusted usage](#evidence-billing) | The installed synthetic billing authority is retained. Exact new plans/seats/quotas and scoped scheduling are prepared; runtime includes People and the cash source permissions. The 25-check rollback bootstrap probe verifies role and entitlement mappings; no synthetic activation persisted. |
+| FR-527 | [W5-07 separate operator authority and health](#evidence-operator) | Installed operator isolation is retained. A separate account with zero tenant membership, returned Auth-ID binding, exact tenant/reason and 45-minute authority/30-minute grant bounds is prepared. No operator or grant was provisioned. |
+| FR-528 | [W5-07 separate operator authority and health](#evidence-operator) | Installed operator isolation is retained. A separate account with zero tenant membership, returned Auth-ID binding, exact tenant/reason and 45-minute authority/30-minute grant bounds is prepared. No operator or grant was provisioned. |
+| FR-529 | [W5-07 separate operator authority and health](#evidence-operator) | Installed operator isolation is retained. A separate account with zero tenant membership, returned Auth-ID binding, exact tenant/reason and 45-minute authority/30-minute grant bounds is prepared. No operator or grant was provisioned. |
+| FR-530 | [Native workspaces and encrypted recovery](#evidence-native) | Fresh r5 Preview and Connected ordinary Windows builds match 1056 selected desktop dependency inputs and 34 release files per app. Scoped analysis and focused tests pass; 60 cash and 24 model frames were captured at 200% text. Eight cash, four model and two native startup windows were inspected. The portable package is available for trial. |
+| FR-531 | [Native workspaces and encrypted recovery](#evidence-native) | Fresh r5 Preview and Connected ordinary Windows builds match 1056 selected desktop dependency inputs and 34 release files per app. Scoped analysis and focused tests pass; 60 cash and 24 model frames were captured at 200% text. Eight cash, four model and two native startup windows were inspected. The portable package is available for trial. |
+| FR-532 | [Authoritative provider completion](#evidence-provider) | Historical/realized, statement/classification, five-family cash/date, scenario/export, persistent integration and trusted model/usage adapters are implemented as candidates. Source permissions and People entitlement are included in the reviewed setup; missing or denied sources remain visibly incomplete. |
+| FR-533 | [Concurrent source and acceptance-store preservation](#evidence-ownership) | Fresh post-final-probe live state remains 43 migrations/107 API functions with unchanged access counts and no proposed accounts/tenants/plans/keys. The 71 pending hashes preserve Wave 3/4 owned sources; the installed six are excluded. Source-attributed r5 apps use isolated stores. |
+| FR-534 | [Concurrent source and acceptance-store preservation](#evidence-ownership) | Fresh post-final-probe live state remains 43 migrations/107 API functions with unchanged access counts and no proposed accounts/tenants/plans/keys. The 71 pending hashes preserve Wave 3/4 owned sources; the installed six are excluded. Source-attributed r5 apps use isolated stores. |
+| FR-535 | [W5-05 persistent integrations and hosted workers](#evidence-integration) | Persistent scoped registration, credentials/key rotation/revocation, committed-outbox leases/attempts/dead letters/reviewed replay, atomic throttle/quota, named dispatch and scheduling are implemented. The owner-selected Supabase runtime/receiver payloads and expiring setup/stop pass candidate checks and 63 controlled worker tests; nothing is deployed. |
+| FR-536 | [Evidence and quality gates](#evidence-quality) | Candidate schema/setup: 105 strict rollback assertions. Full-schema exact bootstrap: 25 separate rollback assertions, no permission shim. Workers: 63 controlled tests. Fresh scoped analysis, 15 gateway/control, 20 model native, six keyboard, 96 workspace/cash and two startup tests pass. Captures overlap the focused suites. Original 126 installed checks are historical; no new installed/authenticated gate is claimed. |
+| NFR-501 | [Scope, permission and complete bounded evidence](#evidence-shared) | The original six installed Wave 5 migrations remain intact. The complete 71-file candidate schema and setup/stop pass 105 strict rollback checks; the separate full-schema bootstrap/permission probe passes 25 without a permission shim. Additional installation remains pending. |
+| NFR-502 | [Scope, permission and complete bounded evidence](#evidence-shared) | The original six installed Wave 5 migrations remain intact. The complete 71-file candidate schema and setup/stop pass 105 strict rollback checks; the separate full-schema bootstrap/permission probe passes 25 without a permission shim. Additional installation remains pending. |
+| NFR-503 | [Scope, permission and complete bounded evidence](#evidence-shared) | The original six installed Wave 5 migrations remain intact. The complete 71-file candidate schema and setup/stop pass 105 strict rollback checks; the separate full-schema bootstrap/permission probe passes 25 without a permission shim. Additional installation remains pending. |
+| NFR-504 | [Real contention and target-scale performance](#evidence-load) | The review bounds 500 synthetic tenants and 2000 distinct real sessions, actual overlap/barriers, committed counts and measured latency targets. Candidate policy checks are rollback-only; no independent contention or target-scale runtime run occurred. |
+| NFR-505 | [Real contention and target-scale performance](#evidence-load) | The review bounds 500 synthetic tenants and 2000 distinct real sessions, actual overlap/barriers, committed counts and measured latency targets. Candidate policy checks are rollback-only; no independent contention or target-scale runtime run occurred. |
+| NFR-506 | [Real contention and target-scale performance](#evidence-load) | The review bounds 500 synthetic tenants and 2000 distinct real sessions, actual overlap/barriers, committed counts and measured latency targets. Candidate policy checks are rollback-only; no independent contention or target-scale runtime run occurred. |
+| NFR-507 | [Evidence and quality gates](#evidence-quality) | Candidate schema/setup: 105 strict rollback assertions. Full-schema exact bootstrap: 25 separate rollback assertions, no permission shim. Workers: 63 controlled tests. Fresh scoped analysis, 15 gateway/control, 20 model native, six keyboard, 96 workspace/cash and two startup tests pass. Captures overlap the focused suites. Original 126 installed checks are historical; no new installed/authenticated gate is claimed. |
+| NFR-508 | [Native workspaces and encrypted recovery](#evidence-native) | Fresh r5 Preview and Connected ordinary Windows builds match 1056 selected desktop dependency inputs and 34 release files per app. Scoped analysis and focused tests pass; 60 cash and 24 model frames were captured at 200% text. Eight cash, four model and two native startup windows were inspected. The portable package is available for trial. |
+| NFR-509 | [Evidence and quality gates](#evidence-quality) | Candidate schema/setup: 105 strict rollback assertions. Full-schema exact bootstrap: 25 separate rollback assertions, no permission shim. Workers: 63 controlled tests. Fresh scoped analysis, 15 gateway/control, 20 model native, six keyboard, 96 workspace/cash and two startup tests pass. Captures overlap the focused suites. Original 126 installed checks are historical; no new installed/authenticated gate is claimed. |
+| NFR-510 | [Scope, permission and complete bounded evidence](#evidence-shared) | The original six installed Wave 5 migrations remain intact. The complete 71-file candidate schema and setup/stop pass 105 strict rollback checks; the separate full-schema bootstrap/permission probe passes 25 without a permission shim. Additional installation remains pending. |
+| AC-501 | [Scope, permission and complete bounded evidence](#evidence-shared) | The original six installed Wave 5 migrations remain intact. The complete 71-file candidate schema and setup/stop pass 105 strict rollback checks; the separate full-schema bootstrap/permission probe passes 25 without a permission shim. Additional installation remains pending. |
+| AC-502 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| AC-503 | [Scope, permission and complete bounded evidence](#evidence-shared) | The original six installed Wave 5 migrations remain intact. The complete 71-file candidate schema and setup/stop pass 105 strict rollback checks; the separate full-schema bootstrap/permission probe passes 25 without a permission shim. Additional installation remains pending. |
+| AC-504 | [W5-02 historical and current pipeline](#evidence-pipeline) | Historical CRM conversion, aging, velocity and frozen-cohort realized results are implemented with immutable history and exact invoice/order/credit mapping; strict candidate SQL checks pass. The new providers remain uninstalled. |
+| AC-505 | [W5-03 authoritative statements and ratios](#evidence-finance) | Matching immutable Wave 3 publications and MFA-reviewed complete account classifications feed six named exact ratios; adapters and native forms are implemented. Candidate checks pass; authoritative runtime publication and review remain open. |
+| AC-506 | [W5-03 cash dates, scenarios and governed export](#evidence-cash) | All five cash families, independently reviewed payroll/correction/reimbursement dates, immutable residuals/assumptions/overrides, encrypted recovery and governed export adapters are implemented. Full-schema strict rollback checks and fresh r5 controlled cash tests/renders pass; Wave 4 owned source bytes are preserved. |
+| AC-507 | [W5-04 reviewed model and human proposal controls](#evidence-ai) | Numeric redaction, strict provider output and trusted usage adapters plus native reviewed request/recovery are implemented. Original invocation/usage IDs and saved fields survive encrypted recovery; explicit selection fills the human proposal form without dispatch. Fifteen gateway/control and 20 model workspace tests pass; real model calls are unproved. |
+| AC-508 | [W5-04 reviewed model and human proposal controls](#evidence-ai) | Numeric redaction, strict provider output and trusted usage adapters plus native reviewed request/recovery are implemented. Original invocation/usage IDs and saved fields survive encrypted recovery; explicit selection fills the human proposal form without dispatch. Fifteen gateway/control and 20 model workspace tests pass; real model calls are unproved. |
+| AC-509 | [W5-04 reviewed model and human proposal controls](#evidence-ai) | Numeric redaction, strict provider output and trusted usage adapters plus native reviewed request/recovery are implemented. Original invocation/usage IDs and saved fields survive encrypted recovery; explicit selection fills the human proposal form without dispatch. Fifteen gateway/control and 20 model workspace tests pass; real model calls are unproved. |
+| AC-510 | [W5-05 persistent integrations and hosted workers](#evidence-integration) | Persistent scoped registration, credentials/key rotation/revocation, committed-outbox leases/attempts/dead letters/reviewed replay, atomic throttle/quota, named dispatch and scheduling are implemented. The owner-selected Supabase runtime/receiver payloads and expiring setup/stop pass candidate checks and 63 controlled worker tests; nothing is deployed. |
+| AC-511 | [W5-05 persistent integrations and hosted workers](#evidence-integration) | Persistent scoped registration, credentials/key rotation/revocation, committed-outbox leases/attempts/dead letters/reviewed replay, atomic throttle/quota, named dispatch and scheduling are implemented. The owner-selected Supabase runtime/receiver payloads and expiring setup/stop pass candidate checks and 63 controlled worker tests; nothing is deployed. |
+| AC-512 | [W5-06 synthetic subscriptions and trusted usage](#evidence-billing) | The installed synthetic billing authority is retained. Exact new plans/seats/quotas and scoped scheduling are prepared; runtime includes People and the cash source permissions. The 25-check rollback bootstrap probe verifies role and entitlement mappings; no synthetic activation persisted. |
+| AC-513 | [W5-06 synthetic subscriptions and trusted usage](#evidence-billing) | The installed synthetic billing authority is retained. Exact new plans/seats/quotas and scoped scheduling are prepared; runtime includes People and the cash source permissions. The 25-check rollback bootstrap probe verifies role and entitlement mappings; no synthetic activation persisted. |
+| AC-514 | [W5-07 separate operator authority and health](#evidence-operator) | Installed operator isolation is retained. A separate account with zero tenant membership, returned Auth-ID binding, exact tenant/reason and 45-minute authority/30-minute grant bounds is prepared. No operator or grant was provisioned. |
+| AC-515 | [Native workspaces and encrypted recovery](#evidence-native) | Fresh r5 Preview and Connected ordinary Windows builds match 1056 selected desktop dependency inputs and 34 release files per app. Scoped analysis and focused tests pass; 60 cash and 24 model frames were captured at 200% text. Eight cash, four model and two native startup windows were inspected. The portable package is available for trial. |
+| AC-516 | [Concurrent source and acceptance-store preservation](#evidence-ownership) | Fresh post-final-probe live state remains 43 migrations/107 API functions with unchanged access counts and no proposed accounts/tenants/plans/keys. The 71 pending hashes preserve Wave 3/4 owned sources; the installed six are excluded. Source-attributed r5 apps use isolated stores. |
+| AC-517 | [Evidence and quality gates](#evidence-quality) | Candidate schema/setup: 105 strict rollback assertions. Full-schema exact bootstrap: 25 separate rollback assertions, no permission shim. Workers: 63 controlled tests. Fresh scoped analysis, 15 gateway/control, 20 model native, six keyboard, 96 workspace/cash and two startup tests pass. Captures overlap the focused suites. Original 126 installed checks are historical; no new installed/authenticated gate is claimed. |
+| EC-501 | [Scope, permission and complete bounded evidence](#evidence-shared) | The original six installed Wave 5 migrations remain intact. The complete 71-file candidate schema and setup/stop pass 105 strict rollback checks; the separate full-schema bootstrap/permission probe passes 25 without a permission shim. Additional installation remains pending. |
+| EC-502 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| EC-503 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| EC-504 | [W5-02 historical and current pipeline](#evidence-pipeline) | Historical CRM conversion, aging, velocity and frozen-cohort realized results are implemented with immutable history and exact invoice/order/credit mapping; strict candidate SQL checks pass. The new providers remain uninstalled. |
+| EC-505 | [W5-03 cash dates, scenarios and governed export](#evidence-cash) | All five cash families, independently reviewed payroll/correction/reimbursement dates, immutable residuals/assumptions/overrides, encrypted recovery and governed export adapters are implemented. Full-schema strict rollback checks and fresh r5 controlled cash tests/renders pass; Wave 4 owned source bytes are preserved. |
+| EC-506 | [W5-03 cash dates, scenarios and governed export](#evidence-cash) | All five cash families, independently reviewed payroll/correction/reimbursement dates, immutable residuals/assumptions/overrides, encrypted recovery and governed export adapters are implemented. Full-schema strict rollback checks and fresh r5 controlled cash tests/renders pass; Wave 4 owned source bytes are preserved. |
+| EC-507 | [W5-04 reviewed model and human proposal controls](#evidence-ai) | Numeric redaction, strict provider output and trusted usage adapters plus native reviewed request/recovery are implemented. Original invocation/usage IDs and saved fields survive encrypted recovery; explicit selection fills the human proposal form without dispatch. Fifteen gateway/control and 20 model workspace tests pass; real model calls are unproved. |
+| EC-508 | [W5-04 reviewed model and human proposal controls](#evidence-ai) | Numeric redaction, strict provider output and trusted usage adapters plus native reviewed request/recovery are implemented. Original invocation/usage IDs and saved fields survive encrypted recovery; explicit selection fills the human proposal form without dispatch. Fifteen gateway/control and 20 model workspace tests pass; real model calls are unproved. |
+| EC-509 | [W5-05 persistent integrations and hosted workers](#evidence-integration) | Persistent scoped registration, credentials/key rotation/revocation, committed-outbox leases/attempts/dead letters/reviewed replay, atomic throttle/quota, named dispatch and scheduling are implemented. The owner-selected Supabase runtime/receiver payloads and expiring setup/stop pass candidate checks and 63 controlled worker tests; nothing is deployed. |
+| EC-510 | [W5-05 persistent integrations and hosted workers](#evidence-integration) | Persistent scoped registration, credentials/key rotation/revocation, committed-outbox leases/attempts/dead letters/reviewed replay, atomic throttle/quota, named dispatch and scheduling are implemented. The owner-selected Supabase runtime/receiver payloads and expiring setup/stop pass candidate checks and 63 controlled worker tests; nothing is deployed. |
+| EC-511 | [W5-06 synthetic subscriptions and trusted usage](#evidence-billing) | The installed synthetic billing authority is retained. Exact new plans/seats/quotas and scoped scheduling are prepared; runtime includes People and the cash source permissions. The 25-check rollback bootstrap probe verifies role and entitlement mappings; no synthetic activation persisted. |
+| EC-512 | [W5-07 separate operator authority and health](#evidence-operator) | Installed operator isolation is retained. A separate account with zero tenant membership, returned Auth-ID binding, exact tenant/reason and 45-minute authority/30-minute grant bounds is prepared. No operator or grant was provisioned. |
+| EC-513 | [Native workspaces and encrypted recovery](#evidence-native) | Fresh r5 Preview and Connected ordinary Windows builds match 1056 selected desktop dependency inputs and 34 release files per app. Scoped analysis and focused tests pass; 60 cash and 24 model frames were captured at 200% text. Eight cash, four model and two native startup windows were inspected. The portable package is available for trial. |
+| EC-514 | [Scope, permission and complete bounded evidence](#evidence-shared) | The original six installed Wave 5 migrations remain intact. The complete 71-file candidate schema and setup/stop pass 105 strict rollback checks; the separate full-schema bootstrap/permission probe passes 25 without a permission shim. Additional installation remains pending. |
+| EC-515 | [Concurrent source and acceptance-store preservation](#evidence-ownership) | Fresh post-final-probe live state remains 43 migrations/107 API functions with unchanged access counts and no proposed accounts/tenants/plans/keys. The 71 pending hashes preserve Wave 3/4 owned sources; the installed six are excluded. Source-attributed r5 apps use isolated stores. |
+| EC-516 | [Evidence and quality gates](#evidence-quality) | Candidate schema/setup: 105 strict rollback assertions. Full-schema exact bootstrap: 25 separate rollback assertions, no permission shim. Workers: 63 controlled tests. Fresh scoped analysis, 15 gateway/control, 20 model native, six keyboard, 96 workspace/cash and two startup tests pass. Captures overlap the focused suites. Original 126 installed checks are historical; no new installed/authenticated gate is claimed. |
+| FR-551 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| FR-552 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| FR-553 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| FR-554 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| FR-555 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| FR-556 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| FR-557 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| FR-558 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| FR-559 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| FR-560 | [Concurrent source and acceptance-store preservation](#evidence-ownership) | Fresh post-final-probe live state remains 43 migrations/107 API functions with unchanged access counts and no proposed accounts/tenants/plans/keys. The 71 pending hashes preserve Wave 3/4 owned sources; the installed six are excluded. Source-attributed r5 apps use isolated stores. |
+| NFR-551 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| NFR-552 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| NFR-553 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| NFR-554 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| AC-551 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| AC-552 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| AC-553 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| AC-554 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| AC-555 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| AC-556 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| AC-557 | [Concurrent source and acceptance-store preservation](#evidence-ownership) | Fresh post-final-probe live state remains 43 migrations/107 API functions with unchanged access counts and no proposed accounts/tenants/plans/keys. The 71 pending hashes preserve Wave 3/4 owned sources; the installed six are excluded. Source-attributed r5 apps use isolated stores. |
+| AC-558 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| EC-551 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| EC-552 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| EC-553 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| EC-554 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| EC-555 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| EC-556 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| EC-557 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
+| EC-558 | [W5-01 process metrics](#evidence-process) | Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work. |
 
 <a id="evidence-shared"></a>
 ## Scope, permission and complete bounded evidence
 
-Installed Wave 5 foundation remains intact. The exact new 28-file dependency closure passes 63 strict rollback assertions; all new candidates remain uninstalled.
+The original six installed Wave 5 migrations remain intact. The complete 71-file candidate schema and setup/stop pass 105 strict rollback checks; the separate full-schema bootstrap/permission probe passes 25 without a permission shim. Additional installation remains pending.
 
-Remaining: Bind owner-controlled host/receiver and approve the exact runtime package before new installation/bootstrap. Real source access, scope/revocation and distinct MFA evidence remain open.
+Remaining: Approve the exact bound runtime review before the 71-file additional installation/bootstrap; then verify installed grants/RLS/providers, real source access, revocation and distinct MFA.
 
 Evidence:
 
@@ -137,13 +135,20 @@ Evidence:
 - [docs/verification/wave5/continuation-review-20261008.md](continuation-review-20261008.md)
 - [docs/verification/wave5/remaining-candidate-final-result-20261008.json](remaining-candidate-final-result-20261008.json)
 - [docs/verification/wave5/continuation-live-final-20261008.json](continuation-live-final-20261008.json)
+- [docs/verification/wave5/runtime-review-20261009.md](runtime-review-20261009.md)
+- [docs/verification/wave5/runtime-review-live-after-20261009.json](runtime-review-live-after-20261009.json)
+- [docs/verification/wave5/complete-app-runtime-review-20261009.md](complete-app-runtime-review-20261009.md)
+- [docs/verification/wave5/complete-app-live-after-final-20261009.json](complete-app-live-after-final-20261009.json)
+- [docs/verification/wave5/complete-app-candidate-result-20261009.json](complete-app-candidate-result-20261009.json)
+- [docs/verification/wave5/complete-app-bootstrap-probe-result-20261009.json](complete-app-bootstrap-probe-result-20261009.json)
+- [docs/verification/wave5/windows-test-verification-20261009-r5.json](windows-test-verification-20261009-r5.json)
 
 <a id="evidence-process"></a>
 ## W5-01 process metrics
 
-Installed process provider remains intact; exact domain, gateway, encrypted filters and workspace checks remain evidenced.
+Installed exact process provider, scoped gateway, encrypted filters and native workspace are retained; controlled workspace checks pass. Runtime source and duration certification remain separate acceptance work.
 
-Remaining: Real authenticated process access, native restart, required keyboard/viewports, target-scale latency and owner acceptance remain open. Stage dwell/work/rework remain uncertified.
+Remaining: Real authenticated process reads, source-duration certification, native keyboard/restart/revocation, target-scale latency and owner acceptance remain open.
 
 Evidence:
 
@@ -156,13 +161,20 @@ Evidence:
 - [docs/verification/wave5/continuation-review-20261008.md](continuation-review-20261008.md)
 - [docs/verification/wave5/remaining-candidate-final-result-20261008.json](remaining-candidate-final-result-20261008.json)
 - [docs/verification/wave5/continuation-live-final-20261008.json](continuation-live-final-20261008.json)
+- [docs/verification/wave5/runtime-review-20261009.md](runtime-review-20261009.md)
+- [docs/verification/wave5/runtime-review-live-after-20261009.json](runtime-review-live-after-20261009.json)
+- [docs/verification/wave5/complete-app-runtime-review-20261009.md](complete-app-runtime-review-20261009.md)
+- [docs/verification/wave5/complete-app-live-after-final-20261009.json](complete-app-live-after-final-20261009.json)
+- [docs/verification/wave5/complete-app-candidate-result-20261009.json](complete-app-candidate-result-20261009.json)
+- [docs/verification/wave5/complete-app-bootstrap-probe-result-20261009.json](complete-app-bootstrap-probe-result-20261009.json)
+- [docs/verification/wave5/windows-test-verification-20261009-r5.json](windows-test-verification-20261009-r5.json)
 
 <a id="evidence-pipeline"></a>
-## W5-02 current pipeline forecasts
+## W5-02 historical and current pipeline
 
-Historical conversion, open-stage aging/velocity and frozen-cohort realized-result adapters plus the native workspace are implemented as uninstalled candidates. Nonempty invoice/order/credit SQL mapping passes the strict rollback composition.
+Historical CRM conversion, aging, velocity and frozen-cohort realized results are implemented with immutable history and exact invoice/order/credit mapping; strict candidate SQL checks pass. The new providers remain uninstalled.
 
-Remaining: The candidates remain uninstalled. Real authenticated historical/forecast acceptance is open; revision gaps fail closed, and rollback fixtures do not establish installed behavior.
+Remaining: Install the reviewed dependencies, then verify nonempty historical conversion/aging/velocity and realized/forecast accuracy under real authorized and denied sessions. Candidate or unavailable-provider views are not completed features.
 
 Evidence:
 
@@ -177,13 +189,20 @@ Evidence:
 - [supabase/migrations/20261008090000_wave5_historical_pipeline.sql](../../../supabase/migrations/20261008090000_wave5_historical_pipeline.sql)
 - [packages/jentra_platform/lib/src/analytics/historical_pipeline_gateway.dart](../../../packages/jentra_platform/lib/src/analytics/historical_pipeline_gateway.dart)
 - [supabase/tests/wave5_realized_mapping_test.sql](../../../supabase/tests/wave5_realized_mapping_test.sql)
+- [docs/verification/wave5/runtime-review-20261009.md](runtime-review-20261009.md)
+- [docs/verification/wave5/runtime-review-live-after-20261009.json](runtime-review-live-after-20261009.json)
+- [docs/verification/wave5/complete-app-runtime-review-20261009.md](complete-app-runtime-review-20261009.md)
+- [docs/verification/wave5/complete-app-live-after-final-20261009.json](complete-app-live-after-final-20261009.json)
+- [docs/verification/wave5/complete-app-candidate-result-20261009.json](complete-app-candidate-result-20261009.json)
+- [docs/verification/wave5/complete-app-bootstrap-probe-result-20261009.json](complete-app-bootstrap-probe-result-20261009.json)
+- [docs/verification/wave5/windows-test-verification-20261009-r5.json](windows-test-verification-20261009-r5.json)
 
 <a id="evidence-finance"></a>
-## W5-03 exact ratio basis
+## W5-03 authoritative statements and ratios
 
-Six named exact ratios consume matching immutable Wave 3 statements and an MFA-reviewed account classification; candidate SQL and adapter forms are present.
+Matching immutable Wave 3 publications and MFA-reviewed complete account classifications feed six named exact ratios; adapters and native forms are implemented. Candidate checks pass; authoritative runtime publication and review remain open.
 
-Remaining: The Wave 3 statement sources and Wave 5 classifier remain uninstalled candidates. Publish reviewed classifications and verify real nonzero ratio cases against statement drill-through under authenticated native access.
+Remaining: Install the statement/classification dependencies, publish reviewed nonzero source statements, and verify exact classification/ratio/drill-through through distinct real MFA and authenticated native access.
 
 Evidence:
 
@@ -195,13 +214,20 @@ Evidence:
 - [docs/verification/wave5/continuation-live-final-20261008.json](continuation-live-final-20261008.json)
 - [supabase/migrations/20261008113000_wave5_statement_classifications.sql](../../../supabase/migrations/20261008113000_wave5_statement_classifications.sql)
 - [packages/jentra_platform/lib/src/analytics/statement_ratio_adapter.dart](../../../packages/jentra_platform/lib/src/analytics/statement_ratio_adapter.dart)
+- [docs/verification/wave5/runtime-review-20261009.md](runtime-review-20261009.md)
+- [docs/verification/wave5/runtime-review-live-after-20261009.json](runtime-review-live-after-20261009.json)
+- [docs/verification/wave5/complete-app-runtime-review-20261009.md](complete-app-runtime-review-20261009.md)
+- [docs/verification/wave5/complete-app-live-after-final-20261009.json](complete-app-live-after-final-20261009.json)
+- [docs/verification/wave5/complete-app-candidate-result-20261009.json](complete-app-candidate-result-20261009.json)
+- [docs/verification/wave5/complete-app-bootstrap-probe-result-20261009.json](complete-app-bootstrap-probe-result-20261009.json)
+- [docs/verification/wave5/windows-test-verification-20261009-r5.json](windows-test-verification-20261009-r5.json)
 
 <a id="evidence-cash"></a>
-## W5-03 cash scenarios and governed export
+## W5-03 cash dates, scenarios and governed export
 
-Uninstalled candidates now cover all five cash families, authoritative independently reviewed payroll/correction/reimbursement payment dates, exact residuals, immutable scenarios, encrypted recovery and governed export. New actual-Wave-4 SQL checks and current SDK/build/render verification pass.
+All five cash families, independently reviewed payroll/correction/reimbursement dates, immutable residuals/assumptions/overrides, encrypted recovery and governed export adapters are implemented. Full-schema strict rollback checks and fresh r5 controlled cash tests/renders pass; Wave 4 owned source bytes are preserved.
 
-Remaining: Exact new/prerequisite installation and installed provider checks remain open. Real authenticated date proposal/independent MFA approval, scenarios/export bytes/download/reopen, native process restart, revocation and owner acceptance remain unproved.
+Remaining: Install and verify the exact providers. Real distinct-MFA date proposal/approval/revision, authoritative settlements, immutable scenario recovery, export creation/bytes/download/reopen, native restart/revocation and owner acceptance remain unproved.
 
 Evidence:
 
@@ -230,13 +256,20 @@ Evidence:
 - [docs/verification/wave5/cash-dates-verification-20261008.json](cash-dates-verification-20261008.json)
 - [docs/verification/wave5/cash-dates-verification-20261008.md](cash-dates-verification-20261008.md)
 - [docs/verification/wave5/cash-dates-catalog-after-20261008.json](cash-dates-catalog-after-20261008.json)
+- [docs/verification/wave5/runtime-review-20261009.md](runtime-review-20261009.md)
+- [docs/verification/wave5/runtime-review-live-after-20261009.json](runtime-review-live-after-20261009.json)
+- [docs/verification/wave5/complete-app-runtime-review-20261009.md](complete-app-runtime-review-20261009.md)
+- [docs/verification/wave5/complete-app-live-after-final-20261009.json](complete-app-live-after-final-20261009.json)
+- [docs/verification/wave5/complete-app-candidate-result-20261009.json](complete-app-candidate-result-20261009.json)
+- [docs/verification/wave5/complete-app-bootstrap-probe-result-20261009.json](complete-app-bootstrap-probe-result-20261009.json)
+- [docs/verification/wave5/windows-test-verification-20261009-r5.json](windows-test-verification-20261009-r5.json)
 
 <a id="evidence-ai"></a>
-## W5-04 human proposal controls
+## W5-04 reviewed model and human proposal controls
 
-Numeric-only redaction, strict model output/counting and trusted usage adapters are candidates. The scoped runtime persists a four-invocation limit; model/provider configuration is specified for approval. No real model call occurred.
+Numeric redaction, strict provider output and trusted usage adapters plus native reviewed request/recovery are implemented. Original invocation/usage IDs and saved fields survive encrypted recovery; explicit selection fills the human proposal form without dispatch. Fifteen gateway/control and 20 model workspace tests pass; real model calls are unproved.
 
-Remaining: Final bound approval and private host/provider injection remain required. Prove actual usage, distinct real MFA approval, stale-cohort rejection, revocation, overlapping execution and unknown-outcome reconciliation.
+Remaining: Owner approval and private Auth/model configuration precede deployment and provider calls. Prove trusted actual token settlement, unknown reconciliation, distinct MFA approval/execution, stale-source rejection and live revocation. Controlled model tests are not real usage.
 
 Evidence:
 
@@ -251,13 +284,27 @@ Evidence:
 - [workers/wave5/model_runtime.mjs](../../../workers/wave5/model_runtime.mjs)
 - [workers/wave5/openai_model_adapter.mjs](../../../workers/wave5/openai_model_adapter.mjs)
 - [supabase/migrations/20261008100000_wave5_invocation_storage.sql](../../../supabase/migrations/20261008100000_wave5_invocation_storage.sql)
+- [docs/verification/wave5/runtime-review-20261009.md](runtime-review-20261009.md)
+- [docs/verification/wave5/runtime-review-live-after-20261009.json](runtime-review-live-after-20261009.json)
+- [docs/verification/wave5/complete-app-runtime-review-20261009.md](complete-app-runtime-review-20261009.md)
+- [docs/verification/wave5/complete-app-live-after-final-20261009.json](complete-app-live-after-final-20261009.json)
+- [docs/verification/wave5/complete-app-candidate-result-20261009.json](complete-app-candidate-result-20261009.json)
+- [docs/verification/wave5/complete-app-bootstrap-probe-result-20261009.json](complete-app-bootstrap-probe-result-20261009.json)
+- [docs/verification/wave5/windows-test-verification-20261009-r5.json](windows-test-verification-20261009-r5.json)
+- [docs/blueprint/wave5/W5_REVIEWED_MODEL_NATIVE_CONTRACT.md](../../blueprint/wave5/W5_REVIEWED_MODEL_NATIVE_CONTRACT.md)
+- [packages/jentra_platform/lib/src/analytics/reviewed_model_gateway.dart](../../../packages/jentra_platform/lib/src/analytics/reviewed_model_gateway.dart)
+- [packages/jentra_platform/test/analytics/reviewed_model_gateway_test.dart](../../../packages/jentra_platform/test/analytics/reviewed_model_gateway_test.dart)
+- [apps/jentra_desktop/lib/src/features/analytics/reviewed_model_section.dart](../../../apps/jentra_desktop/lib/src/features/analytics/reviewed_model_section.dart)
+- [apps/jentra_desktop/test/reviewed_model_workspace_test.dart](../../../apps/jentra_desktop/test/reviewed_model_workspace_test.dart)
+- [docs/verification/wave5/complete-app-worker-tests-20261009.json](complete-app-worker-tests-20261009.json)
+- [docs/verification/wave5/supabase-entrypoint-checks-20261009.json](supabase-entrypoint-checks-20261009.json)
 
 <a id="evidence-integration"></a>
-## W5-05 webhook/API policies and worker orchestration
+## W5-05 persistent integrations and hosted workers
 
-Candidate storage, key/credential revocation, outbox leases/attempts/replay, atomic throttle/quota and dispatch are implemented. The runtime guard scopes expiry/discovery/claim/settlement before mutation; 38 controlled worker tests pass.
+Persistent scoped registration, credentials/key rotation/revocation, committed-outbox leases/attempts/dead letters/reviewed replay, atomic throttle/quota, named dispatch and scheduling are implemented. The owner-selected Supabase runtime/receiver payloads and expiring setup/stop pass candidate checks and 63 controlled worker tests; nothing is deployed.
 
-Remaining: Final host/receiver binding and approval precede installation/provisioning/deployment. Signed delivery, receiver idempotency, key rotation/revocation, restart, dead letters/reviewed replay and real independent-session races remain open.
+Remaining: Approve the bound Supabase setup, configure private values and deploy the exact payloads. Verify real signed delivery/receipt idempotency, rotation/revocation, redirects/timeouts, dead letters/reviewed replay, worker restart and independent lease/quota/dispatch races.
 
 Evidence:
 
@@ -272,13 +319,22 @@ Evidence:
 - [supabase/migrations/20261008100000_wave5_invocation_storage.sql](../../../supabase/migrations/20261008100000_wave5_invocation_storage.sql)
 - [workers/wave5/persistent_control.mjs](../../../workers/wave5/persistent_control.mjs)
 - [workers/wave5/worker_endpoints.mjs](../../../workers/wave5/worker_endpoints.mjs)
+- [docs/verification/wave5/runtime-review-20261009.md](runtime-review-20261009.md)
+- [docs/verification/wave5/runtime-review-live-after-20261009.json](runtime-review-live-after-20261009.json)
+- [docs/verification/wave5/complete-app-runtime-review-20261009.md](complete-app-runtime-review-20261009.md)
+- [docs/verification/wave5/complete-app-live-after-final-20261009.json](complete-app-live-after-final-20261009.json)
+- [docs/verification/wave5/complete-app-candidate-result-20261009.json](complete-app-candidate-result-20261009.json)
+- [docs/verification/wave5/complete-app-bootstrap-probe-result-20261009.json](complete-app-bootstrap-probe-result-20261009.json)
+- [docs/verification/wave5/windows-test-verification-20261009-r5.json](windows-test-verification-20261009-r5.json)
+- [docs/verification/wave5/complete-app-worker-tests-20261009.json](complete-app-worker-tests-20261009.json)
+- [docs/verification/wave5/supabase-entrypoint-checks-20261009.json](supabase-entrypoint-checks-20261009.json)
 
 <a id="evidence-billing"></a>
 ## W5-06 synthetic subscriptions and trusted usage
 
-Installed synthetic authority remains intact. Confirmed billing-admin label, exact new plans/seats/quotas and a tenant-scoped scheduler are prepared in the runtime review; no activation occurred.
+The installed synthetic billing authority is retained. Exact new plans/seats/quotas and scoped scheduling are prepared; runtime includes People and the cash source permissions. The 25-check rollback bootstrap probe verifies role and entitlement mappings; no synthetic activation persisted.
 
-Remaining: Final bound approval precedes the exact synthetic bootstrap/activation. Real quota/seat/admission/activation races and trusted usage settlement remain open; real billing is excluded.
+Remaining: Approve and provision only the reviewed synthetic plans/scopes. Verify trusted activation, actual worker scheduling and independent quota/seat/admission/activation races. Real billing remains excluded.
 
 Evidence:
 
@@ -291,13 +347,22 @@ Evidence:
 - [docs/verification/wave5/remaining-candidate-final-result-20261008.json](remaining-candidate-final-result-20261008.json)
 - [docs/verification/wave5/continuation-live-final-20261008.json](continuation-live-final-20261008.json)
 - [workers/wave5/subscription_schedule.mjs](../../../workers/wave5/subscription_schedule.mjs)
+- [docs/verification/wave5/runtime-review-20261009.md](runtime-review-20261009.md)
+- [docs/verification/wave5/runtime-review-live-after-20261009.json](runtime-review-live-after-20261009.json)
+- [docs/verification/wave5/complete-app-runtime-review-20261009.md](complete-app-runtime-review-20261009.md)
+- [docs/verification/wave5/complete-app-live-after-final-20261009.json](complete-app-live-after-final-20261009.json)
+- [docs/verification/wave5/complete-app-candidate-result-20261009.json](complete-app-candidate-result-20261009.json)
+- [docs/verification/wave5/complete-app-bootstrap-probe-result-20261009.json](complete-app-bootstrap-probe-result-20261009.json)
+- [docs/verification/wave5/windows-test-verification-20261009-r5.json](windows-test-verification-20261009-r5.json)
+- [docs/verification/wave5/complete-app-worker-tests-20261009.json](complete-app-worker-tests-20261009.json)
+- [docs/verification/wave5/supabase-entrypoint-checks-20261009.json](supabase-entrypoint-checks-20261009.json)
 
 <a id="evidence-operator"></a>
 ## W5-07 separate operator authority and health
 
-Installed operator isolation remains intact. The confirmed separate operator has proposed exact-tenant/reason authority limited to 45 minutes and a grant guard; no operator or grant was provisioned.
+Installed operator isolation is retained. A separate account with zero tenant membership, returned Auth-ID binding, exact tenant/reason and 45-minute authority/30-minute grant bounds is prepared. No operator or grant was provisioned.
 
-Remaining: Final bound approval precedes creation of the separate operator and real MFA grant. Exact scope, owner denial, expiry, health probes and immutable access audit remain unverified.
+Remaining: After approval create the separate real Auth operator, bind its returned ID and issue a genuine MFA grant. Verify scope/reason, tenant-owner denial, expiry, health probes and immutable access audit.
 
 Evidence:
 
@@ -309,13 +374,20 @@ Evidence:
 - [docs/verification/wave5/remaining-candidate-final-result-20261008.json](remaining-candidate-final-result-20261008.json)
 - [docs/verification/wave5/continuation-live-final-20261008.json](continuation-live-final-20261008.json)
 - [supabase/migrations/20261008093000_wave5_persistent_delivery.sql](../../../supabase/migrations/20261008093000_wave5_persistent_delivery.sql)
+- [docs/verification/wave5/runtime-review-20261009.md](runtime-review-20261009.md)
+- [docs/verification/wave5/runtime-review-live-after-20261009.json](runtime-review-live-after-20261009.json)
+- [docs/verification/wave5/complete-app-runtime-review-20261009.md](complete-app-runtime-review-20261009.md)
+- [docs/verification/wave5/complete-app-live-after-final-20261009.json](complete-app-live-after-final-20261009.json)
+- [docs/verification/wave5/complete-app-candidate-result-20261009.json](complete-app-candidate-result-20261009.json)
+- [docs/verification/wave5/complete-app-bootstrap-probe-result-20261009.json](complete-app-bootstrap-probe-result-20261009.json)
+- [docs/verification/wave5/windows-test-verification-20261009-r5.json](windows-test-verification-20261009-r5.json)
 
 <a id="evidence-native"></a>
-## Native workspaces and recovery
+## Native workspaces and encrypted recovery
 
-Seven analytics workspaces and cash payment dates are implemented. October 9 scoped Dart analysis is clean; 72 domain, 48 platform and 96 desktop/controller/render tests pass. The Windows release matches all 1,051 selected desktop dependency source files and 34 release files, including current workspace dependency manifests. Sixty fresh cash frames were captured at twelve viewport/theme/density variants with 200% text; 16 were visually inspected. Initial Tab focus was checked. These are controlled renders; authenticated native acceptance and full keyboard navigation remain open.
+Fresh r5 Preview and Connected ordinary Windows builds match 1056 selected desktop dependency inputs and 34 release files per app. Scoped analysis and focused tests pass; 60 cash and 24 model frames were captured at 200% text. Eight cash, four model and two native startup windows were inspected. The portable package is available for trial.
 
-Remaining: Provision the chosen new standard Windows profile only after final approval; use a freshly attributed ordinary runtime build. Real login/MFA, exports/reopen/restart/revocation, full keyboard navigation, 13 shared golden failures and owner review remain open.
+Remaining: The selected standard Windows profile is uncreated. Actual login/MFA, native keyboard/export/reopen/restart/revocation, owner visual review and 13 previously observed shared dashboard/setup golden failures remain open; goldens were not rerun or replaced in r5.
 
 Evidence:
 
@@ -343,13 +415,25 @@ Evidence:
 - [docs/verification/wave5/cash-dates-verification-20261008.json](cash-dates-verification-20261008.json)
 - [docs/verification/wave5/cash-dates-verification-20261008.md](cash-dates-verification-20261008.md)
 - [docs/verification/wave5/cash-dates-catalog-after-20261008.json](cash-dates-catalog-after-20261008.json)
+- [docs/verification/wave5/runtime-review-20261009.md](runtime-review-20261009.md)
+- [docs/verification/wave5/runtime-review-live-after-20261009.json](runtime-review-live-after-20261009.json)
+- [docs/verification/wave5/complete-app-runtime-review-20261009.md](complete-app-runtime-review-20261009.md)
+- [docs/verification/wave5/complete-app-live-after-final-20261009.json](complete-app-live-after-final-20261009.json)
+- [docs/verification/wave5/complete-app-candidate-result-20261009.json](complete-app-candidate-result-20261009.json)
+- [docs/verification/wave5/complete-app-bootstrap-probe-result-20261009.json](complete-app-bootstrap-probe-result-20261009.json)
+- [docs/verification/wave5/windows-test-verification-20261009-r5.json](windows-test-verification-20261009-r5.json)
+- [docs/blueprint/wave5/W5_REVIEWED_MODEL_NATIVE_CONTRACT.md](../../blueprint/wave5/W5_REVIEWED_MODEL_NATIVE_CONTRACT.md)
+- [packages/jentra_platform/lib/src/analytics/reviewed_model_gateway.dart](../../../packages/jentra_platform/lib/src/analytics/reviewed_model_gateway.dart)
+- [packages/jentra_platform/test/analytics/reviewed_model_gateway_test.dart](../../../packages/jentra_platform/test/analytics/reviewed_model_gateway_test.dart)
+- [apps/jentra_desktop/lib/src/features/analytics/reviewed_model_section.dart](../../../apps/jentra_desktop/lib/src/features/analytics/reviewed_model_section.dart)
+- [apps/jentra_desktop/test/reviewed_model_workspace_test.dart](../../../apps/jentra_desktop/test/reviewed_model_workspace_test.dart)
 
 <a id="evidence-provider"></a>
-## Provider readiness
+## Authoritative provider completion
 
-Historical CRM, realized results, statement classifications, all-five-family cash/date sources, scenario/export, persistent integration and trusted-usage adapters are implemented as uninstalled candidates.
+Historical/realized, statement/classification, five-family cash/date, scenario/export, persistent integration and trusted model/usage adapters are implemented as candidates. Source permissions and People entitlement are included in the reviewed setup; missing or denied sources remain visibly incomplete.
 
-Remaining: Source/dependency installation and authenticated provider/cache behavior remain open. Unavailable-provider cards and injected policy tests do not establish completed runtime features.
+Remaining: Reviewed installation, private provisioning and real authenticated provider/cache behavior remain open. Unavailable cards and injected policy claims are not provider completion.
 
 Evidence:
 
@@ -371,13 +455,25 @@ Evidence:
 - [docs/verification/wave5/cash-dates-verification-20261008.json](cash-dates-verification-20261008.json)
 - [docs/verification/wave5/cash-dates-verification-20261008.md](cash-dates-verification-20261008.md)
 - [docs/verification/wave5/cash-dates-catalog-after-20261008.json](cash-dates-catalog-after-20261008.json)
+- [docs/verification/wave5/runtime-review-20261009.md](runtime-review-20261009.md)
+- [docs/verification/wave5/runtime-review-live-after-20261009.json](runtime-review-live-after-20261009.json)
+- [docs/verification/wave5/complete-app-runtime-review-20261009.md](complete-app-runtime-review-20261009.md)
+- [docs/verification/wave5/complete-app-live-after-final-20261009.json](complete-app-live-after-final-20261009.json)
+- [docs/verification/wave5/complete-app-candidate-result-20261009.json](complete-app-candidate-result-20261009.json)
+- [docs/verification/wave5/complete-app-bootstrap-probe-result-20261009.json](complete-app-bootstrap-probe-result-20261009.json)
+- [docs/verification/wave5/windows-test-verification-20261009-r5.json](windows-test-verification-20261009-r5.json)
+- [docs/blueprint/wave5/W5_REVIEWED_MODEL_NATIVE_CONTRACT.md](../../blueprint/wave5/W5_REVIEWED_MODEL_NATIVE_CONTRACT.md)
+- [packages/jentra_platform/lib/src/analytics/reviewed_model_gateway.dart](../../../packages/jentra_platform/lib/src/analytics/reviewed_model_gateway.dart)
+- [packages/jentra_platform/test/analytics/reviewed_model_gateway_test.dart](../../../packages/jentra_platform/test/analytics/reviewed_model_gateway_test.dart)
+- [apps/jentra_desktop/lib/src/features/analytics/reviewed_model_section.dart](../../../apps/jentra_desktop/lib/src/features/analytics/reviewed_model_section.dart)
+- [apps/jentra_desktop/test/reviewed_model_workspace_test.dart](../../../apps/jentra_desktop/test/reviewed_model_workspace_test.dart)
 
 <a id="evidence-ownership"></a>
-## Shared checkout and installation boundary
+## Concurrent source and acceptance-store preservation
 
-Fresh October 9 live reads retain 43 migrations, 107 API functions and unchanged access counts. All 28 new migration hashes are reviewed; eight Wave 4 owned sources remain byte-preserved. No new file is installed.
+Fresh post-final-probe live state remains 43 migrations/107 API functions with unchanged access counts and no proposed accounts/tenants/plans/keys. The 71 pending hashes preserve Wave 3/4 owned sources; the installed six are excluded. Source-attributed r5 apps use isolated stores.
 
-Remaining: Keep all 28 candidates uninstalled until final bound approval. Preserve acceptance stores and concurrent sources; never replay the six connector-mapped installed migrations.
+Remaining: Prior approval covers only the installed six. Obtain approval for the exact 71-file closure/setup; refresh live and source hashes immediately before execution. Preserve concurrent sources and acceptance-owned stores; do not replay connector-mapped files.
 
 Evidence:
 
@@ -399,13 +495,20 @@ Evidence:
 - [docs/verification/wave5/cash-dates-verification-20261008.json](cash-dates-verification-20261008.json)
 - [docs/verification/wave5/cash-dates-verification-20261008.md](cash-dates-verification-20261008.md)
 - [docs/verification/wave5/cash-dates-catalog-after-20261008.json](cash-dates-catalog-after-20261008.json)
+- [docs/verification/wave5/runtime-review-20261009.md](runtime-review-20261009.md)
+- [docs/verification/wave5/runtime-review-live-after-20261009.json](runtime-review-live-after-20261009.json)
+- [docs/verification/wave5/complete-app-runtime-review-20261009.md](complete-app-runtime-review-20261009.md)
+- [docs/verification/wave5/complete-app-live-after-final-20261009.json](complete-app-live-after-final-20261009.json)
+- [docs/verification/wave5/complete-app-candidate-result-20261009.json](complete-app-candidate-result-20261009.json)
+- [docs/verification/wave5/complete-app-bootstrap-probe-result-20261009.json](complete-app-bootstrap-probe-result-20261009.json)
+- [docs/verification/wave5/windows-test-verification-20261009-r5.json](windows-test-verification-20261009-r5.json)
 
 <a id="evidence-quality"></a>
 ## Evidence and quality gates
 
-The 28-file composition passes 63 strict rollback assertions and the separate synthetic mapping probe passes 10; 38 controlled worker tests pass. October 9 scoped Dart analysis is clean; 72 domain, 48 platform and 96 desktop/controller/render tests pass. The Windows release matches all 1,051 selected desktop dependency source files and 34 release files, including current workspace dependency manifests. Sixty fresh cash frames were captured at twelve viewport/theme/density variants with 200% text; 16 were visually inspected. Initial Tab focus was checked. These are controlled renders; authenticated native acceptance and full keyboard navigation remain open.
+Candidate schema/setup: 105 strict rollback assertions. Full-schema exact bootstrap: 25 separate rollback assertions, no permission shim. Workers: 63 controlled tests. Fresh scoped analysis, 15 gateway/control, 20 model native, six keyboard, 96 workspace/cash and two startup tests pass. Captures overlap the focused suites. Original 126 installed checks are historical; no new installed/authenticated gate is claimed.
 
-Remaining: The original 126 installed SQL checks were not rerun. Candidate, mapping and controlled UI/worker evidence remain separate from installed/authenticated/native/delivery/contention/load gates. Keep all 13 shared golden failures and zero owner acceptance visible.
+Remaining: Keep implementation, installed SQL, authenticated native/MFA, hosted delivery/model usage, independent contention/load and owner signoff separate. Resolve the 13 historical shared golden failures through fixture/policy review and fresh inspection; zero owner criteria are accepted.
 
 Evidence:
 
@@ -431,13 +534,27 @@ Evidence:
 - [docs/verification/wave5/cash-dates-verification-20261008.json](cash-dates-verification-20261008.json)
 - [docs/verification/wave5/cash-dates-verification-20261008.md](cash-dates-verification-20261008.md)
 - [docs/verification/wave5/cash-dates-catalog-after-20261008.json](cash-dates-catalog-after-20261008.json)
+- [docs/verification/wave5/runtime-review-20261009.md](runtime-review-20261009.md)
+- [docs/verification/wave5/runtime-review-live-after-20261009.json](runtime-review-live-after-20261009.json)
+- [docs/verification/wave5/complete-app-runtime-review-20261009.md](complete-app-runtime-review-20261009.md)
+- [docs/verification/wave5/complete-app-live-after-final-20261009.json](complete-app-live-after-final-20261009.json)
+- [docs/verification/wave5/complete-app-candidate-result-20261009.json](complete-app-candidate-result-20261009.json)
+- [docs/verification/wave5/complete-app-bootstrap-probe-result-20261009.json](complete-app-bootstrap-probe-result-20261009.json)
+- [docs/verification/wave5/windows-test-verification-20261009-r5.json](windows-test-verification-20261009-r5.json)
+- [docs/blueprint/wave5/W5_REVIEWED_MODEL_NATIVE_CONTRACT.md](../../blueprint/wave5/W5_REVIEWED_MODEL_NATIVE_CONTRACT.md)
+- [packages/jentra_platform/lib/src/analytics/reviewed_model_gateway.dart](../../../packages/jentra_platform/lib/src/analytics/reviewed_model_gateway.dart)
+- [packages/jentra_platform/test/analytics/reviewed_model_gateway_test.dart](../../../packages/jentra_platform/test/analytics/reviewed_model_gateway_test.dart)
+- [apps/jentra_desktop/lib/src/features/analytics/reviewed_model_section.dart](../../../apps/jentra_desktop/lib/src/features/analytics/reviewed_model_section.dart)
+- [apps/jentra_desktop/test/reviewed_model_workspace_test.dart](../../../apps/jentra_desktop/test/reviewed_model_workspace_test.dart)
+- [docs/verification/wave5/complete-app-worker-tests-20261009.json](complete-app-worker-tests-20261009.json)
+- [docs/verification/wave5/supabase-entrypoint-checks-20261009.json](supabase-entrypoint-checks-20261009.json)
 
 <a id="evidence-load"></a>
 ## Real contention and target-scale performance
 
-Candidate SQL verifies bounded inputs and atomic policy behavior in rollback. The review specifies 500 synthetic tenants and 2,000 real independent sessions; no contention or target-scale run has occurred.
+The review bounds 500 synthetic tenants and 2000 distinct real sessions, actual overlap/barriers, committed counts and measured latency targets. Candidate policy checks are rollback-only; no independent contention or target-scale runtime run occurred.
 
-Remaining: After final bound approval and exact synthetic setup, record real session identities, barrier overlap, committed effects, hardware/distributions and target-scale p95. Sequential rollback replay and injected claims cannot close this gate.
+Remaining: After approval use genuine independently authenticated sessions and barriers; record session IDs, overlap, committed effects, actual hardware/tier/distributions and p95. Unsupported Auth/connection or host limits remain failures; injected/serial tests cannot close the gate.
 
 Evidence:
 
@@ -448,3 +565,10 @@ Evidence:
 - [docs/verification/wave5/continuation-review-20261008.md](continuation-review-20261008.md)
 - [docs/verification/wave5/remaining-candidate-final-result-20261008.json](remaining-candidate-final-result-20261008.json)
 - [docs/verification/wave5/continuation-live-final-20261008.json](continuation-live-final-20261008.json)
+- [docs/verification/wave5/runtime-review-20261009.md](runtime-review-20261009.md)
+- [docs/verification/wave5/runtime-review-live-after-20261009.json](runtime-review-live-after-20261009.json)
+- [docs/verification/wave5/complete-app-runtime-review-20261009.md](complete-app-runtime-review-20261009.md)
+- [docs/verification/wave5/complete-app-live-after-final-20261009.json](complete-app-live-after-final-20261009.json)
+- [docs/verification/wave5/complete-app-candidate-result-20261009.json](complete-app-candidate-result-20261009.json)
+- [docs/verification/wave5/complete-app-bootstrap-probe-result-20261009.json](complete-app-bootstrap-probe-result-20261009.json)
+- [docs/verification/wave5/windows-test-verification-20261009-r5.json](windows-test-verification-20261009-r5.json)

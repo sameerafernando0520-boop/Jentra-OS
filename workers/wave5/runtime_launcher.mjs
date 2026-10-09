@@ -18,7 +18,11 @@ export function validateBoundReview(review,approval){
  const c=review.workerConfiguration;
  if(review.approvalReady!==true||!c.hostBinding.publicBaseUrl||!c.receiver.url)throw Error('RUNTIME_BINDINGS_REQUIRED');
  for(const v of [c.hostBinding.publicBaseUrl,c.receiver.url]){const u=new URL(v);if(u.protocol!=='https:'||u.username||u.password||u.hash||u.search||u.port&&u.port!=='443')throw Error('RUNTIME_BINDINGS_INVALID');}
- if(c.url!=='https://xpdoufauvrbdmxgngetv.supabase.co'||c.projectId!=='xpdoufauvrbdmxgngetv'||c.hostBinding.listenAddress!=='127.0.0.1'||c.hostBinding.port!==8785||
+ const hosted=c.hostBinding.kind==='supabase-edge';
+ if(hosted&&(c.hostBinding.publicBaseUrl!=='https://xpdoufauvrbdmxgngetv.supabase.co/functions/v1/wave5-runtime'||
+  c.receiver.url!=='https://xpdoufauvrbdmxgngetv.supabase.co/functions/v1/wave5-receiver/accept'||c.schedulers.deliveryBatchLimit!==3||
+  ['deliveryIntervalMs','subscriptionIntervalMs','healthIntervalMs'].some(k=>c.schedulers[k]!==60000)))throw Error('RUNTIME_CONFIGURATION_INVALID');
+ if(c.url!=='https://xpdoufauvrbdmxgngetv.supabase.co'||c.projectId!=='xpdoufauvrbdmxgngetv'||(!hosted&&(c.hostBinding.listenAddress!=='127.0.0.1'||c.hostBinding.port!==8785))||
   c.receiver.allowedHosts.length!==1||c.receiver.allowedHosts[0]!==new URL(c.receiver.url).hostname||c.model.model!=='gpt-4.1-mini-2025-04-14')throw Error('RUNTIME_CONFIGURATION_INVALID');
  return c;
 }
@@ -31,6 +35,7 @@ export async function verifyArtifactHashes(review,root){
 function secret(env,key){const v=env[key];if(typeof v!=='string'||v.length<32)throw Error('RUNTIME_SECRET_REQUIRED');return v;}
 export async function startRuntime({review,approval,env=process.env,root,fetchImpl=fetch}){
  const c=validateBoundReview(review,approval);await verifyArtifactHashes(review,root);
+ if(c.hostBinding.kind==='supabase-edge')throw Error('HOSTED_RUNTIME_DEPLOYMENT_REQUIRED');
  const serviceKey=secret(env,c.secrets.serviceKey);
  // Legacy service_role JWT is required by this transport. New sb_secret keys
  // cannot be used as Authorization bearer tokens. No key is discovered locally.
@@ -57,7 +62,7 @@ export async function startRuntime({review,approval,env=process.env,root,fetchIm
  await control.readiness();
  await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(c.hostBinding.port,c.hostBinding.listenAddress,resolve);});
  const report=()=>{}; // No headers, bodies, secrets or JWTs enter logs.
- const tasks=[runDeliverySchedule({control,vault,resolve:host=>lookup(host,{all:true}),post:pinnedHttpsPost,intervalMs:c.schedulers.deliveryIntervalMs,
+ const tasks=[runDeliverySchedule({control,vault,resolve:async host=>(await lookup(host,{all:true})).map(item=>item.address),post:pinnedHttpsPost,intervalMs:c.schedulers.deliveryIntervalMs,
   limit:c.schedulers.deliveryBatchLimit,signal:abort.signal,onResult:report})];
  const tick=async(fn,interval)=>{while(!abort.signal.aborted){try{await fn();}catch{}await new Promise(resolve=>{
   const timer=setTimeout(done,interval);function done(){clearTimeout(timer);abort.signal.removeEventListener('abort',done);resolve();}

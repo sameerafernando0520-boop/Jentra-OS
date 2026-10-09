@@ -1,5 +1,7 @@
 import {writeFile} from 'node:fs/promises';
-import {accounts,assignments,id,plans,roles,scopes,workerConfig} from './runtime_plan.mjs';
+const completeApp=process.argv.includes('--complete-app');
+const {accounts,assignments,id,plans,roles,scopes,workerConfig}=await import(completeApp?'./complete_app_runtime_plan.mjs':'./runtime_plan.mjs');
+const outputSuffix=completeApp?'complete-app-20261009':'20261008';
 const quoted=s=>`'${s.replaceAll("'","''")}'`;
 const uuid=s=>`${quoted(s)}::uuid`;
 const main=scopes[0],sql=[`-- PREPARED ONLY. No synthetic account or business bootstrap is authorized yet.
@@ -9,11 +11,19 @@ const main=scopes[0],sql=[`-- PREPARED ONLY. No synthetic account or business bo
 -- Resolve only the six reviewed labels; any collision/preexisting user aborts
 -- in the Auth provisioning preflight and requires a refreshed owner review.
 begin;
+${completeApp?`-- Inject only the six real IDs returned by the reviewed Auth Admin creates.
+-- This non-secret label-to-ID binding is required again on each SQL connection.
+create temporary table w5_runtime_created_auth(label text primary key,user_id uuid not null unique);
+insert into w5_runtime_created_auth select key,value::uuid from jsonb_each_text(current_setting('jentra.w5.created_auth_ids',true)::jsonb);
+do $$begin if (select count(*) from w5_runtime_created_auth)<>6
+ or exists(select 1 from w5_runtime_created_auth where label not in('proposer','approver','executor','billing-admin','operator','foreign-member')) then
+ raise exception 'EXACT_RETURNED_AUTH_IDS_REQUIRED';end if;end$$;`:''}
 create temporary table w5_runtime_accounts(label text primary key,user_id uuid not null unique,email text not null unique);
 insert into w5_runtime_accounts
  select labels.label,u.id,u.email from(values
  ${accounts.map(a=>`(${quoted(a.label)},${quoted(a.email)})`).join(',\n ')}) labels(label,email)
- join auth.users u on lower(u.email)=labels.email and u.deleted_at is null;
+ join auth.users u on lower(u.email)=labels.email and u.deleted_at is null
+ ${completeApp?'join w5_runtime_created_auth created on created.label=labels.label and created.user_id=u.id':''};
 do $$begin if (select count(*) from w5_runtime_accounts)<>6 then raise exception 'EXACT_SIX_AUTH_ACCOUNTS_REQUIRED';end if;end$$;
 create temporary table w5_runtime_scopes(key text primary key,tenant_id uuid not null,entity_id uuid not null,branch_id uuid not null,second_branch_id uuid,slug text not null,plan_code text not null);
 insert into w5_runtime_scopes values
@@ -42,7 +52,14 @@ insert into core.memberships(id,tenant_id,user_id,status,joined_at)
  from w5_runtime_scopes s cross join w5_runtime_accounts a
  where (s.key='foreign' and a.label='foreign-member') or (s.key<>'foreign' and a.label in('proposer','approver','executor','billing-admin'));
 create temporary table w5_runtime_roles(tenant_id uuid,role_key text,role_id uuid,permissions jsonb,requires_mfa boolean,primary key(tenant_id,role_key));`);
-for(const s of scopes){const keys=s.key==='runtime'?['reader','financeAnchor','proposer','approver','executor','billing']:s.key==='foreign'?['foreignReader']:['loadReader',s.key==='load-001'?'billing':'loadBilling'];
+if(completeApp){sql.push(`insert into w5_runtime_roles
+ select s.tenant_id,r.key,format('%s-%s-4%s-8%s-%s',substr(h.value,1,8),substr(h.value,9,4),substr(h.value,14,3),substr(h.value,18,3),substr(h.value,21,12))::uuid,
+ r.value->'permissions',(r.value->>'requiresMfa')::boolean
+ from w5_runtime_scopes s cross join jsonb_each(${quoted(JSON.stringify(roles))}::jsonb) r
+ cross join lateral(select encode(extensions.digest('jentra-w5-runtime-review-20261008:'||s.key||'.role.'||r.key,'sha256'),'hex') value) h
+ where r.key=any(case s.key when 'runtime' then array['reader','financeAnchor','proposer','approver','executor','billing']
+ when 'foreign' then array['foreignReader'] else array['loadReader',case s.key when 'load-001' then 'billing' else 'loadBilling' end] end);`);
+}else for(const s of scopes){const keys=s.key==='runtime'?['reader','financeAnchor','proposer','approver','executor','billing']:s.key==='foreign'?['foreignReader']:['loadReader',s.key==='load-001'?'billing':'loadBilling'];
  for(const key of keys){const r=roles[key];sql.push(`insert into w5_runtime_roles values(${uuid(s.tenantId)},${quoted(key)},${uuid(id(s.key+'.role.'+key))},${quoted(JSON.stringify(r.permissions))}::jsonb,${r.requiresMfa});`);}}
 sql.push(`do $$begin if exists(select 1 from w5_runtime_roles r cross join lateral jsonb_array_elements_text(r.permissions) p where not exists(select 1 from core.permissions c where c.code=p.value)) then
  raise exception 'REVIEWED_PERMISSION_MISSING';end if;end$$;
@@ -78,12 +95,13 @@ select jsonb_build_object('tenants',(select count(*) from w5_runtime_scopes),'ac
  'roles',(select count(*) from w5_runtime_roles),'assignments',(select count(*) from w5_runtime_assignment_keys)) reviewed_counts;
 commit;
 `);
-await writeFile(new URL('../../docs/verification/wave5/runtime-bootstrap-20261008.sql',import.meta.url),sql.join('\n'));
-await writeFile(new URL('../../docs/verification/wave5/runtime-operator-authority-20261008.sql',import.meta.url),`-- PREPARED ONLY; after approval, immediately before the real operator MFA phase.
+await writeFile(new URL('../../docs/verification/wave5/runtime-bootstrap-'+outputSuffix+'.sql',import.meta.url),sql.join('\n'));
+await writeFile(new URL('../../docs/verification/wave5/runtime-operator-authority-'+outputSuffix+'.sql',import.meta.url),`-- PREPARED ONLY; after approval, immediately before the real operator MFA phase.
 begin;
 insert into intelligence_control.runtime_operator_authorities(operator_id,tenant_id,reason,expires_at)
  select id,${uuid(main.tenantId)},${quoted(workerConfig.operator.reason)},statement_timestamp()+interval '45 minutes'
- from auth.users where lower(email)='w5-operator@jentra.invalid' and deleted_at is null;
+ from auth.users where lower(email)='w5-operator@jentra.invalid' and deleted_at is null
+ ${completeApp?"and id=(current_setting('jentra.w5.created_auth_ids',true)::jsonb->>'operator')::uuid":''};
 do $$begin if not exists(select 1 from intelligence_control.runtime_operator_authorities a join auth.users u on u.id=a.operator_id
  where lower(u.email)='w5-operator@jentra.invalid' and a.tenant_id=${uuid(main.tenantId)}) then raise exception 'EXACT_OPERATOR_REQUIRED';end if;end$$;
 commit;

@@ -7,6 +7,7 @@ import 'package:jentra_platform/analytics_platform.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../app_providers.dart';
+import 'reviewed_model_section.dart';
 
 final wave5ControlRepositoryProvider = Provider<Wave5ControlRepository?>(
   (ref) => null,
@@ -268,6 +269,7 @@ class Wave5ControlScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final c = ref.watch(wave5ControlControllerProvider),
+        model = ref.watch(reviewedModelControllerProvider),
         caps = ref.watch(businessCapabilitiesProvider).value ?? {};
     if (c == null) {
       return const Center(
@@ -277,6 +279,7 @@ class Wave5ControlScreen extends ConsumerWidget {
     return Wave5ControlWorkspace(
       key: ValueKey(c),
       controller: c,
+      modelController: model,
       capabilities: caps,
     );
   }
@@ -287,9 +290,11 @@ class Wave5ControlWorkspace extends StatefulWidget {
     super.key,
     required this.controller,
     required this.capabilities,
+    this.modelController,
   });
   final Wave5ControlController controller;
   final Set<String> capabilities;
+  final ReviewedModelController? modelController;
   @override
   State<Wave5ControlWorkspace> createState() => _Wave5ControlWorkspaceState();
 }
@@ -360,12 +365,29 @@ class _Wave5ControlWorkspaceState extends State<Wave5ControlWorkspace> {
           if (c.busy) const LinearProgressIndicator(),
           if (c.error != null) Text(c.error!),
           const SizedBox(height: 20),
+          if (widget.modelController != null)
+            ReviewedModelWorkspace(
+              key: ValueKey(widget.modelController),
+              controller: widget.modelController!,
+              capabilities: widget.capabilities,
+              onHumanSource: (id) {
+                source.text = id;
+                c.clear();
+              },
+            )
+          else
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 12),
+              child: Text(
+                'Reviewed model requests require current sign-in, source access and a configured worker.',
+              ),
+            ),
           Text(
             'Human proposals',
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const Text(
-            'The model provider is unavailable. Human proposals can freeze a reviewed current pipeline forecast; a distinct MFA approver must approve its exact revision.',
+            'Human proposals freeze a reviewed current pipeline forecast. Model suggestions require explicit human submission; a distinct MFA approver must approve the exact proposal revision.',
           ),
           TextField(
             controller: source,
@@ -584,7 +606,7 @@ class _Wave5ControlWorkspaceState extends State<Wave5ControlWorkspace> {
             style: Theme.of(context).textTheme.titleLarge,
           ),
           const Text(
-            'Plan and trial changes need a separately authorized synthetic tenant. Model and delivery workers have not been configured.',
+            'Plan and trial changes require separately authorized synthetic scope. Only the trusted worker can reserve and settle model or delivery usage.',
           ),
           DropdownButton<String>(
             value: metric,

@@ -7,6 +7,7 @@ export 'src/analytics/process_filter_store.dart';
 export 'src/analytics/pipeline_forecast_gateway.dart';
 export 'src/analytics/wave5_command_store.dart';
 export 'src/analytics/wave5_control_gateway.dart';
+export 'src/analytics/reviewed_model_gateway.dart';
 export 'src/analytics/historical_pipeline_gateway.dart';
 export 'src/analytics/statement_ratio_adapter.dart';
 export 'src/analytics/cash_scenario_store.dart';
