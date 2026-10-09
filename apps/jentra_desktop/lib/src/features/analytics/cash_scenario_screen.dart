@@ -92,11 +92,13 @@ final class CashScenarioController extends ChangeNotifier {
     notifyListeners();
     try {
       await gateway.authorize(scope, actor);
+      if (!current(ticket)) return;
       await work(ticket);
     } catch (_) {
       if (current(ticket)) {
         basis = null;
         revision = null;
+        savedId = null;
         error = 'Scenario access, source basis or command outcome could not be confirmed. Restore the saved request before retrying.';
       }
     } finally {
@@ -126,7 +128,9 @@ final class CashScenarioController extends ChangeNotifier {
       end,
       DateTime.now().toUtc().toIso8601String(),
     );
+    if (!current(ticket)) return;
     await gateway.authorize(scope, actor);
+    if (!current(ticket)) return;
     final parameters = _revision(next, {});
     next.project(parameters, requiredProviders: next.requiredProviders);
     if (current(ticket)) {
@@ -156,6 +160,7 @@ final class CashScenarioController extends ChangeNotifier {
     });
     b.project(next, requiredProviders: b.requiredProviders);
     await store.save(actor, next);
+    if (!current(ticket)) return;
     await gateway.authorize(scope, actor);
     if (current(ticket)) {
       revision = next;
@@ -168,16 +173,17 @@ final class CashScenarioController extends ChangeNotifier {
     await store.save(actor, r);
   });
   Future<void> restore() => _run((ticket) async {
-    final r =
-        await store.restore(scope, actor, pending: true) ??
-        await store.restore(scope, actor);
-    if (r == null) return;
+    var r = await store.restore(scope, actor, pending: true);
+    if (!current(ticket)) return;
+    r ??= await store.restore(scope, actor);
+    if (!current(ticket) || r == null) return;
     final b = await gateway.read(
       scope,
       r.horizonStart,
       r.horizonEnd,
       r.recordedThrough,
     );
+    if (!current(ticket)) return;
     final projection = b.project(r, requiredProviders: b.requiredProviders);
     if (!projection.available) {
       throw StateError('Every required cash provider must be complete.');
@@ -193,6 +199,7 @@ final class CashScenarioController extends ChangeNotifier {
     final r = revision, b = basis;
     if (r == null || b == null) throw StateError('Source required');
     final original = await store.restore(scope, actor, pending: true);
+    if (!current(ticket)) return;
     if (original != null && original.id != r.id) {
       final captured = await gateway.read(
         scope,
@@ -200,6 +207,7 @@ final class CashScenarioController extends ChangeNotifier {
         original.horizonEnd,
         original.recordedThrough,
       );
+      if (!current(ticket)) return;
       captured.project(original, requiredProviders: captured.requiredProviders);
       await gateway.authorize(scope, actor);
       if (current(ticket)) {
@@ -215,13 +223,17 @@ final class CashScenarioController extends ChangeNotifier {
       throw StateError('Every required cash provider must be complete.');
     }
     await store.save(actor, r, pending: true);
+    if (!current(ticket)) return;
     final id = await gateway.save(r);
+    if (!current(ticket)) return;
     await gateway.authorize(scope, actor);
-    await store.removePending(scope, actor);
+    if (!current(ticket)) return;
+    await store.removePending(scope, actor, isCurrent: () => current(ticket));
     if (current(ticket)) savedId = id;
   });
   Future<void> reopen(String id) => _run((ticket) async {
     final next = await gateway.reopen(scope, id);
+    if (!current(ticket)) return;
     next.$1.project(next.$2, requiredProviders: next.$1.requiredProviders);
     await gateway.authorize(scope, actor);
     if (current(ticket)) {
@@ -236,6 +248,7 @@ final class CashScenarioController extends ChangeNotifier {
     epoch++;
     basis = null;
     revision = null;
+    savedId = null;
     super.dispose();
   }
 }
@@ -254,8 +267,24 @@ class _CashScenarioScreenState extends ConsumerState<CashScenarioScreen> {
       amount = TextEditingController();
   String? obligation;
   String reason = 'collection_delay';
+  CashScenarioController? listening;
+  void clearUnavailableFields() {
+    if (listening?.online != true || listening?.error != null) {
+      _clearFields();
+    }
+  }
+
+  void _clearFields() {
+    for (final c in [start, end, reopen, date, amount]) {
+      c.clear();
+    }
+    obligation = null;
+    reason = 'collection_delay';
+  }
+
   @override
   void dispose() {
+    listening?.removeListener(clearUnavailableFields);
     for (final c in [start, end, reopen, date, amount]) {
       c.dispose();
     }
@@ -265,6 +294,12 @@ class _CashScenarioScreenState extends ConsumerState<CashScenarioScreen> {
   @override
   Widget build(BuildContext context) {
     final c = ref.watch(cashScenarioControllerProvider);
+    if (listening != c) {
+      listening?.removeListener(clearUnavailableFields);
+      _clearFields();
+      listening = c;
+      listening?.addListener(clearUnavailableFields);
+    }
     if (c == null) {
       return const Center(
         child: Text(
@@ -292,12 +327,14 @@ class _CashScenarioScreenState extends ConsumerState<CashScenarioScreen> {
             const Text(
               'Cash includes posted bank cash and dated remaining obligations. Payroll, recoveries and project reimbursements require independently approved payment dates. A complete projection requires every provider. Overdue items and unallocated credits are excluded.',
             ),
+            const SizedBox(height: 16),
             TextField(
               controller: start,
               decoration: const InputDecoration(
                 labelText: 'Horizon start (YYYY-MM-DD)',
               ),
             ),
+            const SizedBox(height: 16),
             TextField(
               controller: end,
               decoration: const InputDecoration(
@@ -305,6 +342,7 @@ class _CashScenarioScreenState extends ConsumerState<CashScenarioScreen> {
               ),
               onSubmitted: (_) => c.read(start.text, end.text),
             ),
+            const SizedBox(height: 16),
             Wrap(
               spacing: 12,
               children: [
@@ -333,6 +371,7 @@ class _CashScenarioScreenState extends ConsumerState<CashScenarioScreen> {
               Text(
                 '${c.basis!.controls.length} cash controls · ${c.basis!.obligations.length} dated remaining obligations · ${c.basis!.contractRevision == 3 ? 'full provider contract' : 'legacy partial bank/AR/AP basis'}',
               ),
+              const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 isExpanded: true,
                 initialValue:
@@ -364,18 +403,21 @@ class _CashScenarioScreenState extends ConsumerState<CashScenarioScreen> {
                   }
                 }),
               ),
+              const SizedBox(height: 16),
               TextField(
                 controller: date,
                 decoration: const InputDecoration(
                   labelText: 'Scenario due date (YYYY-MM-DD)',
                 ),
               ),
+              const SizedBox(height: 16),
               TextField(
                 controller: amount,
                 decoration: const InputDecoration(
                   labelText: 'Scenario remaining amount, exact decimal',
                 ),
               ),
+              const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 isExpanded: true,
                 initialValue: reason,
@@ -395,6 +437,7 @@ class _CashScenarioScreenState extends ConsumerState<CashScenarioScreen> {
                 ],
                 onChanged: (v) => setState(() => reason = v!),
               ),
+              const SizedBox(height: 16),
               Wrap(
                 spacing: 12,
                 children: [
@@ -432,6 +475,7 @@ class _CashScenarioScreenState extends ConsumerState<CashScenarioScreen> {
                 enabled: c.online && !c.busy,
                 label: 'Create governed scenario export',
               ),
+            const SizedBox(height: 16),
             TextField(
               controller: reopen,
               decoration: const InputDecoration(
@@ -439,6 +483,7 @@ class _CashScenarioScreenState extends ConsumerState<CashScenarioScreen> {
               ),
               onSubmitted: (v) => c.reopen(v),
             ),
+            const SizedBox(height: 16),
             TextButton(
               onPressed: c.online && !c.busy
                   ? () => c.reopen(reopen.text)

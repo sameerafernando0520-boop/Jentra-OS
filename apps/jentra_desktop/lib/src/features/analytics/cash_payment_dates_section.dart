@@ -103,6 +103,7 @@ final class CashPaymentDatesController extends ChangeNotifier {
     notifyListeners();
     try {
       await gateway.authorize(scope, actor, kind);
+      if (!current(ticket)) return;
       await work(ticket);
     } catch (_) {
       if (current(ticket)) {
@@ -119,6 +120,7 @@ final class CashPaymentDatesController extends ChangeNotifier {
 
   Future<void> read({bool more = false}) => _run((ticket) async {
     final page = await gateway.sources(scope, kind, after: more ? next : null);
+    if (!current(ticket)) return;
     await gateway.authorize(scope, actor, kind);
     if (current(ticket)) {
       sources = page.$1;
@@ -129,6 +131,7 @@ final class CashPaymentDatesController extends ChangeNotifier {
   });
   Future<void> inspect(String id) => _run((ticket) async {
     final p = await gateway.proposal(scope, kind, id);
+    if (!current(ticket)) return;
     await gateway.authorize(scope, actor, kind);
     if (current(ticket)) {
       proposal = p;
@@ -140,13 +143,15 @@ final class CashPaymentDatesController extends ChangeNotifier {
     if (current(ticket)) pending = saved;
   });
   Future<void> _send(int ticket, Map<String, Object?> envelope) async {
+    if (!current(ticket)) return;
     await store.save(scope, actor, envelope);
     if (!current(ticket)) return;
     pending = envelope;
     final result = await gateway.command(scope, envelope);
+    if (!current(ticket)) return;
     await gateway.authorize(scope, actor, kind);
     if (!current(ticket)) return;
-    await store.remove(scope, actor);
+    await store.remove(scope, actor, isCurrent: () => current(ticket));
     if (current(ticket)) {
       pending = null;
       receipt = result;
@@ -284,6 +289,7 @@ class _CashPaymentDatesSectionState
         const Text(
           'Propose a payment date for an issued payroll, recovery or reimbursement obligation. A distinct MFA approver reviews its exact revision. Scenario overrides remain hypothetical.',
         ),
+        const SizedBox(height: 16),
         DropdownButtonFormField<String>(
           initialValue: kind,
           isExpanded: true,
@@ -313,6 +319,7 @@ class _CashPaymentDatesSectionState
             }
           },
         ),
+        const SizedBox(height: 16),
         if (c == null)
           const Text(
             'Select a branch with current payment-date and source access. MFA is required.',
@@ -352,6 +359,7 @@ class _CashPaymentDatesSectionState
                       ),
                     ],
                   ),
+                  const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
                     key: ValueKey(c.sources.map((s) => s.id).join()),
                     initialValue: selected?.id,
@@ -373,6 +381,7 @@ class _CashPaymentDatesSectionState
                         ? (value) => setState(() => sourceId = value)
                         : null,
                   ),
+                  const SizedBox(height: 16),
                   TextField(
                     controller: date,
                     enabled: ready,
@@ -380,6 +389,7 @@ class _CashPaymentDatesSectionState
                       labelText: 'Authoritative payment date (YYYY-MM-DD)',
                     ),
                   ),
+                  const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
                     initialValue: reason,
                     isExpanded: true,
@@ -404,6 +414,7 @@ class _CashPaymentDatesSectionState
                           }
                         : null,
                   ),
+                  const SizedBox(height: 16),
                   FilledButton(
                     onPressed:
                         ready &&
@@ -414,6 +425,7 @@ class _CashPaymentDatesSectionState
                         : null,
                     child: const Text('Propose authoritative date'),
                   ),
+                  const SizedBox(height: 16),
                   TextField(
                     controller: proposalId,
                     enabled: ready,
@@ -422,6 +434,7 @@ class _CashPaymentDatesSectionState
                     ),
                     onSubmitted: ready ? c.inspect : null,
                   ),
+                  const SizedBox(height: 16),
                   TextButton(
                     onPressed: ready ? () => c.inspect(proposalId.text) : null,
                     child: const Text('Read exact proposal'),

@@ -9,6 +9,7 @@ function bearer(req){const h=req.headers.get('authorization')??'';if(!/^Bearer [
 async function body(req){if(req.method!=='POST'||!req.headers.get('content-type')?.startsWith('application/json'))throw Error('VALIDATION_ERROR');
  const value=await readBoundedJson(req,65536);if(!value||typeof value!=='object'||Array.isArray(value))throw Error('VALIDATION_ERROR');return value;}
 function failure(error){
+ if(error.message==='WORKER_REQUEST_TIMEOUT')return response(408,{code:'REQUEST_TIMEOUT'});
  const allowed=new Set(['THROTTLED','QUOTA_EXCEEDED','INTEGRATION_ACCESS_DENIED','WORKER_ACCESS_DENIED','AUTH_REQUIRED','SOURCE_AUTHORITY_CHANGED',
   'VALIDATION_ERROR','WORKER_CONTRACT_MISMATCH','MODEL_CONTRACT_MISMATCH','MODEL_PROVIDER_UNAVAILABLE','MODEL_OUTCOME_UNKNOWN',
   'MODEL_OUTCOME_REQUIRES_REVIEW','TRUSTED_USAGE_MISMATCH','WORKER_PROVIDER_UNAVAILABLE']);

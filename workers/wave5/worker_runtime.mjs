@@ -12,7 +12,8 @@ async function ready(control,code) {
  * Lease expiry requires outcome review; it must not blindly resend an unknown
  * attempt. No adapter or scheduler is configured by this source module.
  */
-export async function runDelivery({control,secrets,resolve,post,now}) {
+export async function runDelivery({control,secrets,resolve,post,now,signal}) {
+ signal?.throwIfAborted();
  requireValue(Number.isSafeInteger(now) && now>0);
  await ready(control,'committed_webhook.v1');
  const job=await control.claimCommittedDelivery(now);
@@ -22,12 +23,14 @@ export async function runDelivery({control,secrets,resolve,post,now}) {
  forecastEvent(job.event,job.subscription.scope);
  attemptOutcome(job.event.eventId,job.subscription.id,job.attempt,null);
  await control.authorizeDelivery(job);
+ signal?.throwIfAborted();
  // Reservations are durable and bind the same invocation across worker restart.
  await control.reserveUsage({tenantId:job.event.tenantId,invocationId:job.invocationId,
   metric:'webhook.deliveries',periodStart:job.periodStart,periodEnd:job.periodEnd,quantity:'1'});
+ signal?.throwIfAborted();
  const key=await secrets.deliveryKey(job.event.tenantId,job.subscription.keyVersion);
  const outcome=await deliverForecast({event:job.event,subscription:job.subscription,attempt:job.attempt,timestamp:now,key,
-  authorizeCommittedEvent:()=>control.authorizeDelivery(job),resolve,...(post?{post}:{})});
+  authorizeCommittedEvent:()=>control.authorizeDelivery(job),resolve,signal,...(post?{post}:{})});
  // Persist outcome before settlement. Reconciliation can settle a known ACK
  // after a crash without sending the request again. Unknown outcomes keep quota.
  await control.recordDeliveryOutcome(job,outcome);
@@ -65,9 +68,11 @@ export async function runExternalForecast({control,token,request,now}) {
  return control.dispatchForecast(credential,request,reservation);
 }
 
-export async function activateScheduledTrial({control,tenantId,revisionId}) {
+export async function activateScheduledTrial({control,tenantId,revisionId,signal}) {
  requireValue(uuid.test(tenantId) && uuid.test(revisionId),'VALIDATION_ERROR');
+ signal?.throwIfAborted();
  await ready(control,'synthetic_subscription.v1');
+ signal?.throwIfAborted();
  // Server-side apply RPC owns effective dates, current actor/MFA, version,
  // seat admission, receipt, audit and outbox. This worker cannot bypass them.
  return control.applySyntheticSubscription(tenantId,revisionId);

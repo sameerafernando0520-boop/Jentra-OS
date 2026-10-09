@@ -24,10 +24,11 @@ export async function resolvePublicAddresses(host,resolver=lookup){
  * @param {{env: {get(name: string): string | undefined} | Record<string, string | undefined>,
  * config?: typeof edgeConfiguration, fetchImpl?: typeof fetch, resolve?: Function,
  * post?: Function, controlFactory?: Function, edgeRpcFactory?: Function,
- * providerFactory?: Function}} options
+ * providerFactory?: Function, requestTimeoutMs?: number}} options
  */
-export function createEdgeRuntime({env,config=edgeConfiguration,fetchImpl=fetch,resolve=resolvePublicAddresses,post=pinnedHttpsPost,
+export function createEdgeRuntime({env,config=edgeConfiguration,fetchImpl=fetch,resolve=resolvePublicAddresses,post=pinnedHttpsPost,requestTimeoutMs=65000,
  controlFactory,edgeRpcFactory,providerFactory}){
+ if(!Number.isSafeInteger(requestTimeoutMs)||requestTimeoutMs<1||requestTimeoutMs>65000)throw Error('WORKER_CONFIGURATION_INVALID');
  let active=0;
  return async req=>{
   if(active>=config.maxConcurrentRequests)return reply(429,{code:'THROTTLED'});
@@ -44,7 +45,10 @@ export function createEdgeRuntime({env,config=edgeConfiguration,fetchImpl=fetch,
    if(envValue(env,'SUPABASE_URL')!==config.url)throw Error('WORKER_PROVIDER_UNAVAILABLE');
    const serviceKey=required(envValue(env,'SUPABASE_SERVICE_ROLE_KEY'));
    if(!/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(serviceKey))throw Error('WORKER_PROVIDER_UNAVAILABLE');
-   const budget=AbortSignal.timeout(65000);
+   const budget=AbortSignal.any([req.signal,AbortSignal.timeout(requestTimeoutMs)]);
+   // Endpoint readers consume this request signal, including an unfinished
+   // caller body. The same deadline reaches every downstream fetch.
+   const boundedRequest=new Request(req,{signal:budget});
    const boundedFetch=(url,options={})=>fetchImpl(url,{...options,signal:options.signal?AbortSignal.any([options.signal,budget]):budget});
    const transport={runtimeId:config.runtimeId,url:config.url,serviceKey,fetchImpl:boundedFetch};
    const control=controlFactory?controlFactory(transport):new PersistentInvocationControl(createScopedWorkerRpc(transport));
@@ -53,7 +57,7 @@ export function createEdgeRuntime({env,config=edgeConfiguration,fetchImpl=fetch,
    if(route==='/schedule'){
     const token=req.headers.get('x-jentra-schedule-key');
     if(!hex.test(token??''))return reply(403,{code:'WORKER_ACCESS_DENIED'});
-    const request=await readBoundedJson(req,1024);
+    const request=await readBoundedJson(boundedRequest,1024);
     if(!request||Object.keys(request).length!==2||!uuid.test(request.tickId)||!['delivery','subscription','health'].includes(request.kind))return reply(400,{code:'VALIDATION_ERROR'});
     const permit=await edge('begin_tick',{...request,secretHash:createHash('sha256').update(token).digest('hex')});
     if(permit?.permitted!==true)return reply(200,{state:'already_running'});
@@ -66,10 +70,10 @@ export function createEdgeRuntime({env,config=edgeConfiguration,fetchImpl=fetch,
        if(!hex.test(answer?.value??''))throw Error('DELIVERY_KEY_UNAVAILABLE');
        const bytes=Buffer.from(answer.value,'hex');keys.push(bytes);return bytes;
       }};
-      const outcomes=await runDeliveryBatch({control,vault,resolve,post,now:()=>Math.floor(Date.now()/1000),limit:config.maxDeliveryBatch,signal:AbortSignal.timeout(55000)});
+      const outcomes=await runDeliveryBatch({control,vault,resolve,post,now:()=>Math.floor(Date.now()/1000),limit:config.maxDeliveryBatch,signal:AbortSignal.any([budget,AbortSignal.timeout(55000)])});
       summary={count:outcomes.length,states:outcomes.map(o=>o.state)};
      }else if(request.kind==='subscription'){
-      const batch=await runSyntheticSubscriptionBatch({control,limit:config.maxSubscriptionBatch,signal:AbortSignal.timeout(55000)});
+      const batch=await runSyntheticSubscriptionBatch({control,limit:config.maxSubscriptionBatch,signal:AbortSignal.any([budget,AbortSignal.timeout(55000)])});
       summary={count:batch.results.length,states:batch.results.map(o=>o.state)};
      }else {await control.collectHealth(randomUUID(),permit.tenantId);summary={count:1,states:['collected']};}
      await edge('finish_tick',{tickId:request.tickId,success:true,summary});
@@ -79,13 +83,14 @@ export function createEdgeRuntime({env,config=edgeConfiguration,fetchImpl=fetch,
      return reply(503,{code:'WORKER_PROVIDER_UNAVAILABLE'});
     }
    }
-   if(route==='/external/forecast')return await createExternalCommandHandler({control})(req);
+   if(route==='/external/forecast')return await createExternalCommandHandler({control})(boundedRequest);
    const apiKey=envValue(env,'W5_OPENAI_API_KEY');
    if(typeof apiKey!=='string'||apiKey.length<32)return reply(503,{code:'MODEL_PROVIDER_UNAVAILABLE'});
    const publishableKey=required(envValue(env,'SUPABASE_ANON_KEY'));
    const provider=providerFactory?providerFactory({apiKey,review:config.model,fetchImpl:boundedFetch}):new OpenAIResponsesProvider({apiKey,review:config.model,fetchImpl:boundedFetch});
-   return await createReviewedModelHandler({control,provider,policy:config.model,url:config.url,publishableKey,fetchImpl:boundedFetch})(req);
+   return await createReviewedModelHandler({control,provider,policy:config.model,url:config.url,publishableKey,fetchImpl:boundedFetch})(boundedRequest);
   }catch(error){
+   if(error.message==='WORKER_REQUEST_TIMEOUT')return reply(408,{code:'REQUEST_TIMEOUT'});
    if(error instanceof SyntaxError||/VALIDATION_ERROR|WORKER_OUTPUT_LIMIT/.test(error.message))return reply(400,{code:'VALIDATION_ERROR'});
    return reply(/ACCESS_DENIED|SCOPE_DENIED/.test(error.message)?403:503,{code:/ACCESS_DENIED|SCOPE_DENIED/.test(error.message)?'WORKER_ACCESS_DENIED':'WORKER_PROVIDER_UNAVAILABLE'});
   }

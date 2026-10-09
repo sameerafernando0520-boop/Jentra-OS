@@ -1,0 +1,39 @@
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/build/w5win9r12/preview/apps/jentra_desktop/test/wave5_cash_epoch_test.dart
+00:00 +0: cash read stops after delayed authorization and offline invalidation
+00:00 +1: payment-date read stops after delayed MFA authorization and offline invalidation
+00:00 +2: cash read stops after delayed authorization and disposal
+00:00 +3: payment-date read stops after delayed MFA authorization and disposal
+00:00 +4: offline invalidation during encrypted freeze save preserves original identity and prevents dispatch
+00:00 +5: late freeze receipt retains encrypted recovery after offline invalidation
+00:00 +6: authorization loss clears the previously frozen export identity
+00:00 +7: scenario field values clear when the actor controller changes and on offline invalidation
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: Too many elements
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:696:24)
+#1      WidgetController.widget (package:flutter_test/src/controller.dart:828:30)
+#2      WidgetController.scrollUntilVisible.<anonymous closure> (package:flutter_test/src/controller.dart:2429:15)
+#5      TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#6      WidgetController.scrollUntilVisible (package:flutter_test/src/controller.dart:2427:27)
+#7      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/build/w5win9r12/preview/apps/jentra_desktop/test/wave5_cash_epoch_test.dart:290:20)
+<asynchronous suspension>
+#8      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#9      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 3 frames from dart:async and package:stack_trace)
+
+The test description was:
+  scenario field values clear when the actor controller changes and on offline invalidation
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +7 -1: scenario field values clear when the actor controller changes and on offline invalidation [E]
+  Test failed. See exception logs above.
+  The test description was: scenario field values clear when the actor controller changes and on offline invalidation
+  
+00:03 +7 -1: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/build/w5win9r12/preview/apps/jentra_desktop/test/wave5_cash_epoch_test.dart: scenario field values clear when the actor controller changes and on offline invalidation

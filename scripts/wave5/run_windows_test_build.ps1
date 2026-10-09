@@ -1,6 +1,6 @@
 param(
  [Parameter(Mandatory=$true)][ValidateSet('Preview','Connected')][string]$Mode,
- [Parameter(Mandatory=$true)][ValidateSet('pubget','analyzer','startupTests','keyboardTests','cashTests','cashFrames','modelGatewayTests','modelTests','modelFrames','authGatewayTests','authTests','authFrames','platformAll','desktopAll','build')][string]$Stage,
+ [Parameter(Mandatory=$true)][ValidateSet('pubget','analyzer','startupTests','keyboardTests','cashTests','cashEpochTests','cashEpochRed','cashFrames','modelGatewayTests','modelTests','modelFrames','authGatewayTests','authTests','authFrames','platformAll','desktopAll','build')][string]$Stage,
  [ValidatePattern('^[a-z][a-z0-9]{1,10}$')][string]$Revision = 'b1',
  [switch]$Offline
 )
@@ -37,6 +37,14 @@ switch ($Stage) {
   $testWorking = Join-Path $testSnapshot 'apps/jentra_desktop'
   $env:W5_CASH_FRAME_DIR = Join-Path $testRoot ('docs/verification/wave5/windows-test-cash-frames-20261009' + $testSuffix)
   $testArguments = @('test','--no-pub','--concurrency=1','--reporter=expanded','--name=cash fresh render','test/wave5_continuation_test.dart')
+ }
+ 'cashEpochTests' {
+  $testWorking = Join-Path $testSnapshot 'apps/jentra_desktop'
+  $testArguments = @('test','--no-pub','--concurrency=1','--reporter=expanded','test/wave5_cash_epoch_test.dart')
+ }
+ 'cashEpochRed' {
+  $testWorking = Join-Path $testSnapshot 'apps/jentra_desktop'
+  $testArguments = @('test','--no-pub','--concurrency=1','--reporter=expanded','test/wave5_cash_epoch_test.dart')
  }
  'modelGatewayTests' {
   $testWorking = Join-Path $testSnapshot 'packages/jentra_platform'
@@ -81,6 +89,9 @@ switch ($Stage) {
    $testArguments += '--dart-define-from-file=' + $testConfig
   } else { $testArguments += '--dart-define=JENTRA_ENVIRONMENT=preview' }
  }
+}
+if ($Stage -eq 'analyzer') {
+ $testArguments += 'apps/jentra_desktop/test/wave5_cash_epoch_test.dart'
 }
 if ($Stage -ne 'analyzer') { $testArguments = @($testFlutterTool,'--suppress-analytics') + $testArguments }
 $testBase = 'docs/verification/wave5/windows-test-' + $Mode.ToLowerInvariant() + '-' + $Stage + '-20261009' + $testSuffix

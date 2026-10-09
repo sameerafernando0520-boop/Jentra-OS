@@ -654,6 +654,28 @@ void main() {
               );
               await tester.pumpAndSettle();
               expect(tester.takeException(), isNull);
+              Finder cashInput(String label) => find.byWidgetPredicate(
+                (widget) =>
+                    widget is InputDecorator &&
+                    widget.decoration.labelText == label,
+              );
+              void expectCashInputGap(String before, String after) {
+                final upper = tester.getRect(cashInput(before));
+                final lower = tester.getRect(cashInput(after));
+                expect(
+                  lower.top - upper.bottom,
+                  greaterThanOrEqualTo(16),
+                  reason:
+                      'At 200% text, $after must not share the $before border.',
+                );
+              }
+
+              if (workspace == 'cash') {
+                expectCashInputGap(
+                  'Horizon start (YYYY-MM-DD)',
+                  'Horizon end, exclusive (YYYY-MM-DD)',
+                );
+              }
               await tester.sendKeyEvent(LogicalKeyboardKey.tab);
               await tester.pump();
               expect(
@@ -736,6 +758,14 @@ void main() {
                 );
                 await tester.tap(find.text('Authoritative payment dates'));
                 await tester.pumpAndSettle();
+                expectCashInputGap(
+                  'Issued obligation',
+                  'Authoritative payment date (YYYY-MM-DD)',
+                );
+                expectCashInputGap(
+                  'Authoritative payment date (YYYY-MM-DD)',
+                  'Date authority reason',
+                );
                 await tester.ensureVisible(
                   find.text('Read issued obligations'),
                 );

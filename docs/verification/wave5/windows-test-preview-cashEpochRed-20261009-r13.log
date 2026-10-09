@@ -1,0 +1,161 @@
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/wave5_cash_epoch_test.dart
+00:00 +0: cash read stops after delayed authorization and offline invalidation
+00:00 +0 -1: cash read stops after delayed authorization and offline invalidation [E]
+  Expected: ['wave5_cash_authorize']
+    Actual: ['wave5_cash_authorize', 'wave5_cash_basis']
+     Which: at location [1] is ['wave5_cash_authorize', 'wave5_cash_basis'] which longer than expected
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\wave5_cash_epoch_test.dart 111:9               main.<fn>
+  
+00:00 +0 -1: payment-date read stops after delayed MFA authorization and offline invalidation
+00:00 +0 -2: payment-date read stops after delayed MFA authorization and offline invalidation [E]
+  Expected: ['wave5_cash_date_authorize']
+    Actual: ['wave5_cash_date_authorize', 'wave5_cash_date_sources']
+     Which: at location [1] is ['wave5_cash_date_authorize', 'wave5_cash_date_sources'] which longer than expected
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\wave5_cash_epoch_test.dart 152:9               main.<fn>
+  
+00:00 +0 -2: freeze recovery survives offline invalidation during final removal authorization
+00:00 +0 -3: freeze recovery survives offline invalidation during final removal authorization [E]
+  Null check operator used on a null value
+  test\wave5_cash_epoch_test.dart 200:61  main.<fn>
+  
+00:00 +0 -3: payment-date recovery survives offline invalidation during final removal authorization
+00:00 +0 -4: payment-date recovery survives offline invalidation during final removal authorization [E]
+  Expected: {
+              'commandId': '40000000-0000-0000-0000-000000000020',
+              'idempotencyKey': '40000000-0000-0000-0000-000000000021',
+              'clientTimestamp': '2026-10-09T00:00:00Z',
+              'action': 'prepare',
+              'payload': {
+                'id': '40000000-0000-0000-0000-000000000022',
+                'sourceKind': 'payroll_obligation',
+                'sourceId': '40000000-0000-0000-0000-000000000023',
+                'sourceHash': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+                'dueDate': '2026-10-10',
+                'reasonCode': 'payroll_calendar',
+                'expectedVersion': '0'
+              }
+            }
+    Actual: <null>
+     Which: expected a map
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\wave5_cash_epoch_test.dart 271:9               main.<fn>
+  
+00:00 +0 -4: cash read stops after delayed authorization and disposal
+00:00 +0 -5: cash read stops after delayed authorization and disposal [E]
+  Expected: ['wave5_cash_authorize']
+    Actual: ['wave5_cash_authorize', 'wave5_cash_basis']
+     Which: at location [1] is ['wave5_cash_authorize', 'wave5_cash_basis'] which longer than expected
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\wave5_cash_epoch_test.dart 111:9               main.<fn>
+  
+00:00 +0 -5: payment-date read stops after delayed MFA authorization and disposal
+00:00 +0 -6: payment-date read stops after delayed MFA authorization and disposal [E]
+  Expected: ['wave5_cash_date_authorize']
+    Actual: ['wave5_cash_date_authorize', 'wave5_cash_date_sources']
+     Which: at location [1] is ['wave5_cash_date_authorize', 'wave5_cash_date_sources'] which longer than expected
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\wave5_cash_epoch_test.dart 152:9               main.<fn>
+  
+00:00 +0 -6: freeze recovery survives disposal during final removal authorization
+00:00 +0 -7: freeze recovery survives disposal during final removal authorization [E]
+  Null check operator used on a null value
+  test\wave5_cash_epoch_test.dart 200:61  main.<fn>
+  
+00:00 +0 -7: payment-date recovery survives disposal during final removal authorization
+00:00 +0 -8: payment-date recovery survives disposal during final removal authorization [E]
+  Expected: {
+              'commandId': '40000000-0000-0000-0000-000000000020',
+              'idempotencyKey': '40000000-0000-0000-0000-000000000021',
+              'clientTimestamp': '2026-10-09T00:00:00Z',
+              'action': 'prepare',
+              'payload': {
+                'id': '40000000-0000-0000-0000-000000000022',
+                'sourceKind': 'payroll_obligation',
+                'sourceId': '40000000-0000-0000-0000-000000000023',
+                'sourceHash': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+                'dueDate': '2026-10-10',
+                'reasonCode': 'payroll_calendar',
+                'expectedVersion': '0'
+              }
+            }
+    Actual: <null>
+     Which: expected a map
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\wave5_cash_epoch_test.dart 271:9               main.<fn>
+  
+00:00 +0 -8: offline invalidation during encrypted freeze save preserves original identity and prevents dispatch
+00:00 +0 -9: offline invalidation during encrypted freeze save preserves original identity and prevents dispatch [E]
+  Expected: ['wave5_cash_authorize']
+    Actual: ['wave5_cash_authorize', 'wave5_cash_save']
+     Which: at location [1] is ['wave5_cash_authorize', 'wave5_cash_save'] which longer than expected
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\wave5_cash_epoch_test.dart 302:5               main.<fn>
+  
+00:00 +0 -9: late freeze receipt retains encrypted recovery after offline invalidation
+00:00 +0 -10: late freeze receipt retains encrypted recovery after offline invalidation [E]
+  Expected: ['wave5_cash_authorize', 'wave5_cash_save']
+    Actual: ['wave5_cash_authorize', 'wave5_cash_save', 'wave5_cash_authorize']
+     Which: at location [2] is ['wave5_cash_authorize', 'wave5_cash_save', 'wave5_cash_authorize'] which longer than expected
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\wave5_cash_epoch_test.dart 340:7               main.<fn>
+  
+00:00 +0 -10: authorization loss clears the previously frozen export identity
+00:00 +0 -11: authorization loss clears the previously frozen export identity [E]
+  Expected: <null>
+    Actual: '40000000-0000-0000-0000-000000000009'
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\wave5_cash_epoch_test.dart 369:7               main.<fn>
+  
+00:00 +0 -11: scenario field values clear when the actor controller changes and on offline invalidation
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: empty
+  Actual: '2026-10-09'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/build/w5win9r13/preview/apps/jentra_desktop/test/wave5_cash_epoch_test.dart:436:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/sheha/Desktop/Jentra%20OS/build/w5win9r13/preview/apps/jentra_desktop/test/wave5_cash_epoch_test.dart line 436
+The test description was:
+  scenario field values clear when the actor controller changes and on offline invalidation
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +0 -12: scenario field values clear when the actor controller changes and on offline invalidation [E]
+  Test failed. See exception logs above.
+  The test description was: scenario field values clear when the actor controller changes and on offline invalidation
+  
+00:03 +0 -12: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/wave5_cash_epoch_test.dart: authorization loss clears the previously frozen export identity
+  C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/wave5_cash_epoch_test.dart: cash read stops after delayed authorization and disposal
+  C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/wave5_cash_epoch_test.dart: cash read stops after delayed authorization and offline invalidation
+  C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/wave5_cash_epoch_test.dart: freeze recovery survives disposal during final removal authorization
+  ... and 8 more

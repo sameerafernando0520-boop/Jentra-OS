@@ -1,0 +1,28 @@
+{
+  "observedAt": "2026-10-09T18:45:28.504Z",
+  "checksRerun": true,
+  "entrypoints": [
+    {
+      "entrypoint": "supabase/functions/wave5-runtime/index.ts",
+      "config": "supabase/functions/wave5-runtime/deno.json",
+      "exitCode": 0,
+      "entrypointSha256": "e76dbfa9f25c09b29646c1f3470fb4e5a3ce5fb237ff212fee40d095f07c3cf8",
+      "configSha256": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf",
+      "log": "docs/verification/wave5/supabase-runtime-deno-20261009-r14.log",
+      "logSha256": "0cedd8e4c43689f457f3fcd67810bdc10dc98918a054656c884c0ccff0c12f92"
+    },
+    {
+      "entrypoint": "supabase/functions/wave5-receiver/index.ts",
+      "config": "supabase/functions/wave5-receiver/deno.json",
+      "exitCode": 0,
+      "entrypointSha256": "1016066ee9bc98436ebc2b0afe5d4bb6b290d8786a10d038ddac0b5fad3e57f5",
+      "configSha256": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf",
+      "log": "docs/verification/wave5/supabase-receiver-deno-20261009-r14.log",
+      "logSha256": "b7c6d278609c7c983d2b24671ad73d18141c00f411aa6e8a8b2cbda3cd51e7d5"
+    }
+  ],
+  "command": "deno check --reload --config <per-entrypoint deno.json> <index.ts>",
+  "importedJavaScriptTypeChecked": false,
+  "javaScriptVerification": "71 controlled Node tests",
+  "deployed": false
+}

@@ -2,6 +2,7 @@ import { createHmac, createHash, timingSafeEqual } from 'node:crypto';
 import {Buffer} from 'node:buffer';
 import { isIP } from 'node:net';
 import https from 'node:https';
+import {waitForSignal} from './bounded_json.mjs';
 
 const uuid = /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/;
 const hash = /^[0-9a-f]{64}$/;
@@ -93,7 +94,7 @@ export function attemptOutcome(eventId, subscriptionId, attempt, status) {
 }
 
 /** No redirects or proxy; TLS validates the original hostname while DNS is pinned. */
-export async function pinnedHttpsPost(destination, payload, headers) {
+export async function pinnedHttpsPost(destination, payload, headers, signal) {
   requireValue(permittedAddress(destination.address) && isIP(destination.address) === destination.family &&
     Buffer.isBuffer(payload) && payload.length <= 8192, 'UNSAFE_DESTINATION');
   const url = new URL(destination.url);
@@ -104,6 +105,7 @@ export async function pinnedHttpsPost(destination, payload, headers) {
       protocol: 'https:', hostname: destination.hostname, port: 443,
       path: url.pathname + url.search, method: 'POST', agent: false,
       servername: destination.hostname, rejectUnauthorized: true,
+      signal,
       headers: { ...headers, host: destination.hostname, 'content-type': 'application/json', 'content-length': payload.length },
       lookup: (_hostname, options, callback) => options?.all
         ? callback(null, [{ address: destination.address, family: destination.family }])
@@ -123,18 +125,19 @@ export async function pinnedHttpsPost(destination, payload, headers) {
 }
 
 /** Injected authority reads committed events and server-held subscription/key versions. */
-export async function deliverForecast({ event, subscription, attempt, timestamp, key, authorizeCommittedEvent, resolve, post = pinnedHttpsPost }) {
+export async function deliverForecast({ event, subscription, attempt, timestamp, key, authorizeCommittedEvent, resolve, post = pinnedHttpsPost, signal }) {
+  if(signal?.aborted)throw Error('WORKER_REQUEST_TIMEOUT');
   requireValue(subscription && validScope(subscription.scope) && uuid.test(subscription.id) && subscription.enabled === true);
   const payload = forecastEvent(event, subscription.scope);
   // An exhausted or invalid attempt must fail before any DNS or network work.
   attemptOutcome(event.eventId, subscription.id, attempt, null);
   const signature = signDelivery({ payload, eventId: event.eventId, timestamp, key, keyVersion: subscription.keyVersion });
-  await authorizeCommittedEvent(event, subscription); // trusted live source/outbox/entitlement check
-  const destination = await resolveDestination(subscription.url, new Set(subscription.allowedHosts), resolve);
+  await waitForSignal(authorizeCommittedEvent(event, subscription),signal); // trusted live source/outbox/entitlement check
+  const destination = await waitForSignal(resolveDestination(subscription.url, new Set(subscription.allowedHosts), resolve),signal);
   // Revalidate authority after asynchronous DNS; revoked subscriptions cannot send.
-  await authorizeCommittedEvent(event, subscription);
+  await waitForSignal(authorizeCommittedEvent(event, subscription),signal);
   let status = null;
-  try { status = await post(destination, payload, { 'x-jentra-signature': signature, 'x-jentra-event-id': event.eventId, 'x-jentra-timestamp': `${timestamp}` }); }
+  try { status = await waitForSignal(post(destination, payload, { 'x-jentra-signature': signature, 'x-jentra-event-id': event.eventId, 'x-jentra-timestamp': `${timestamp}` },signal),signal); }
   catch { /* Retain an uncertain attempt; no secret or remote diagnostic reaches logs. */ }
   return attemptOutcome(event.eventId, subscription.id, attempt, status);
 }

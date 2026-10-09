@@ -1,0 +1,192 @@
+{
+  "preparedAt": "2026-10-09T18:28:33.956Z",
+  "revision": "r12",
+  "originalReview": {
+    "path": "docs/verification/wave5/complete-app-runtime-review-20261009.json",
+    "bundleSha256": "13ffe2fdfd412fae36d3ff08c1f33bb59d9de85f20b2707e77ba6b9629eae83e",
+    "sha256": "3af2dc69e77c37b939cdd02e27860261e36899b95aa68016b0f0703970de565f",
+    "ownerApproved": false
+  },
+  "originalArtifactDrift": [
+    {
+      "path": "scripts/wave5/run_windows_test_build.ps1",
+      "originalSha256": "06ef3776455513c9f1ef92ac2f265478fa03d0f871b087cc94200fe5121997ad",
+      "currentSha256": "87a7a983377fa56bdc3b13b5c61ef52deba75c7be59d7c43f0911c517af8a433"
+    },
+    {
+      "path": "workers/wave5/bounded_json.mjs",
+      "originalSha256": "3445f102ac4a680c88f0573d1b7b076e0e59c03ddfc397d4ed5b3109bb8d14d2",
+      "currentSha256": "3ff0f116d3d8691863f1e8c59f605f64f16d8b92dff35b01a77baf0b203cb7b8"
+    },
+    {
+      "path": "workers/wave5/edge_receiver.mjs",
+      "originalSha256": "fc6badc1108a9ffd3b9b54f062520cbfcacdddaf3550f6360071ecbd68822006",
+      "currentSha256": "eb210bc32963244946b2dd7eb425a7f4208ca91e3cfa25d5951f6c2d2907471e"
+    },
+    {
+      "path": "workers/wave5/edge_runtime.mjs",
+      "originalSha256": "635d36f39d5666e12d5e81ed514ada2642bfcfb7f79836688fefb29fc5497c62",
+      "currentSha256": "4d97549bdc94f200d21f91287d99ab1f3187455ae9754858c4d63fc6eb8c35c8"
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.mjs",
+      "originalSha256": "855c3b859da40c2649dfd755e698b58e89e3df0ae0cdb840ef7385e8d0e9f399",
+      "currentSha256": "a57cceb2ca5dc2bccc29861cdccb34bac7468a82a7fd402ecc5bd1810b6b0f5f"
+    }
+  ],
+  "migrations": 71,
+  "migrationHashesUnchanged": true,
+  "sourceRecord": "docs/verification/wave5/complete-app-worker-source-20261009-r12.json",
+  "testRecord": "docs/verification/wave5/complete-app-worker-tests-20261009-r12.json",
+  "denoRecord": "docs/verification/wave5/supabase-entrypoint-checks-20261009-r12.json",
+  "deployments": [
+    {
+      "name": "wave5-runtime",
+      "payloadPath": "docs/verification/wave5/supabase-deploy-wave5-runtime-20261009-r12.json",
+      "entrypoint": "supabase/functions/wave5-runtime/index.ts",
+      "verifyJwt": false,
+      "customAuthentication": "Private schedule key hashed against a live scoped database authority; external credentials; authenticated forecast reader with caller JWT",
+      "files": [
+        {
+          "path": "supabase/functions/wave5-runtime/deno.json",
+          "sha256": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf"
+        },
+        {
+          "path": "supabase/functions/wave5-runtime/index.ts",
+          "sha256": "e76dbfa9f25c09b29646c1f3470fb4e5a3ce5fb237ff212fee40d095f07c3cf8"
+        },
+        {
+          "path": "workers/wave5/bounded_json.mjs",
+          "sha256": "3ff0f116d3d8691863f1e8c59f605f64f16d8b92dff35b01a77baf0b203cb7b8"
+        },
+        {
+          "path": "workers/wave5/edge_configuration.mjs",
+          "sha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13"
+        },
+        {
+          "path": "workers/wave5/edge_runtime.mjs",
+          "sha256": "4d97549bdc94f200d21f91287d99ab1f3187455ae9754858c4d63fc6eb8c35c8"
+        },
+        {
+          "path": "workers/wave5/integration_policy.mjs",
+          "sha256": "e7875f32fba70283fb7ebdea5a6742d20caa4b67b0c82c767766f02f4886f3aa"
+        },
+        {
+          "path": "workers/wave5/model_reader.mjs",
+          "sha256": "9be9ac552738041fb14a1cea2f9fd5e8dda415399512692f11b7430cf634a0a9"
+        },
+        {
+          "path": "workers/wave5/model_runtime.mjs",
+          "sha256": "fce748e511a81bdae957ff76275641142a738d8391132953d4d3c7eec03cfb99"
+        },
+        {
+          "path": "workers/wave5/openai_model_adapter.mjs",
+          "sha256": "557fc6af5dba58910ac46c2d1ac661a0389355ccef7efddb9a3cad94a03201d3"
+        },
+        {
+          "path": "workers/wave5/persistent_control.mjs",
+          "sha256": "900a9f9c4ebdb1fad58cd50f077bf423de829631111edfec554b10a584bbf491"
+        },
+        {
+          "path": "workers/wave5/scoped_runtime.mjs",
+          "sha256": "70a8edbb7e8a0bac3fa1856ebb1134ff14413ad5b81f63bc568ae7750d3b2489"
+        },
+        {
+          "path": "workers/wave5/subscription_schedule.mjs",
+          "sha256": "bc545dacb3e6352badc6e0f53e0491077ef38096c914abdd86fcaba857a93517"
+        },
+        {
+          "path": "workers/wave5/worker_endpoints.mjs",
+          "sha256": "a57cceb2ca5dc2bccc29861cdccb34bac7468a82a7fd402ecc5bd1810b6b0f5f"
+        },
+        {
+          "path": "workers/wave5/worker_runtime.mjs",
+          "sha256": "52676532dd91b70b7117087df4299f9bd8f44c7e927d778406a0da59873c1278"
+        }
+      ]
+    },
+    {
+      "name": "wave5-receiver",
+      "payloadPath": "docs/verification/wave5/supabase-deploy-wave5-receiver-20261009-r12.json",
+      "entrypoint": "supabase/functions/wave5-receiver/index.ts",
+      "verifyJwt": false,
+      "customAuthentication": "HMAC v1/v2 over exact bytes, signed timestamp and event ID; committed outbox, scope, subscription, lease/attempt and revocation rechecks",
+      "files": [
+        {
+          "path": "supabase/functions/wave5-receiver/deno.json",
+          "sha256": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf"
+        },
+        {
+          "path": "supabase/functions/wave5-receiver/index.ts",
+          "sha256": "1016066ee9bc98436ebc2b0afe5d4bb6b290d8786a10d038ddac0b5fad3e57f5"
+        },
+        {
+          "path": "workers/wave5/bounded_json.mjs",
+          "sha256": "3ff0f116d3d8691863f1e8c59f605f64f16d8b92dff35b01a77baf0b203cb7b8"
+        },
+        {
+          "path": "workers/wave5/edge_configuration.mjs",
+          "sha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13"
+        },
+        {
+          "path": "workers/wave5/edge_receiver.mjs",
+          "sha256": "eb210bc32963244946b2dd7eb425a7f4208ca91e3cfa25d5951f6c2d2907471e"
+        },
+        {
+          "path": "workers/wave5/integration_policy.mjs",
+          "sha256": "e7875f32fba70283fb7ebdea5a6742d20caa4b67b0c82c767766f02f4886f3aa"
+        },
+        {
+          "path": "workers/wave5/persistent_control.mjs",
+          "sha256": "900a9f9c4ebdb1fad58cd50f077bf423de829631111edfec554b10a584bbf491"
+        },
+        {
+          "path": "workers/wave5/worker_runtime.mjs",
+          "sha256": "52676532dd91b70b7117087df4299f9bd8f44c7e927d778406a0da59873c1278"
+        }
+      ]
+    }
+  ],
+  "modifiedSource": [
+    {
+      "path": "workers/wave5/bounded_json.mjs",
+      "originalSha256": "3445f102ac4a680c88f0573d1b7b076e0e59c03ddfc397d4ed5b3109bb8d14d2",
+      "currentSha256": "3ff0f116d3d8691863f1e8c59f605f64f16d8b92dff35b01a77baf0b203cb7b8"
+    },
+    {
+      "path": "workers/wave5/edge_receiver.mjs",
+      "originalSha256": "fc6badc1108a9ffd3b9b54f062520cbfcacdddaf3550f6360071ecbd68822006",
+      "currentSha256": "eb210bc32963244946b2dd7eb425a7f4208ca91e3cfa25d5951f6c2d2907471e"
+    },
+    {
+      "path": "workers/wave5/edge_runtime.mjs",
+      "originalSha256": "635d36f39d5666e12d5e81ed514ada2642bfcfb7f79836688fefb29fc5497c62",
+      "currentSha256": "4d97549bdc94f200d21f91287d99ab1f3187455ae9754858c4d63fc6eb8c35c8"
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.mjs",
+      "originalSha256": "855c3b859da40c2649dfd755e698b58e89e3df0ae0cdb840ef7385e8d0e9f399",
+      "currentSha256": "a57cceb2ca5dc2bccc29861cdccb34bac7468a82a7fd402ecc5bd1810b6b0f5f"
+    }
+  ],
+  "addedSource": [
+    "workers/wave5/request_deadline.test.mjs"
+  ],
+  "requestDeadline": {
+    "maximumMs": 65000,
+    "bodyReadsCancellable": true,
+    "callerCancellationPropagated": true,
+    "receiverFetchesBounded": true,
+    "timeoutHttpStatus": 408,
+    "timeoutCode": "REQUEST_TIMEOUT"
+  },
+  "actualModelUsage": false,
+  "actualWorkerDelivery": false,
+  "installedSql": false,
+  "realMfa": false,
+  "independentContention": false,
+  "targetScaleLoad": false,
+  "ownerAccepted": false,
+  "requiresRefreshedFullReview": true,
+  "oldReviewCannotApproveChangedSource": true
+}

@@ -18,11 +18,15 @@ start "" "%~dp0Preview\Jentra_OS.exe"
 start "" "%~dp0Connected\Jentra_OS.exe"
 '@ | Set-Content -LiteralPath (Join-Path $testPackage 'Start Connected.cmd') -Encoding ascii
 @'
-JENTRA OS - WINDOWS TEST BUILD - 9 OCTOBER 2026
+JENTRA OS - WINDOWS TEST BUILD
 
 START HERE
 Double-click Start Preview.cmd to explore the interface without logging in.
-Double-click Start Connected.cmd to sign in to your existing development account.
+Double-click Start Connected.cmd to sign in to your development account.
+The owner-created test login desktop-test-20261009@jentra.invalid is confirmed
+and has a recorded real sign-in. Use only the password entered privately by you.
+This account has no business membership. Set up a business or use an invitation
+before expecting access to business workspaces. See Desktop test login.md.
 Use Create account for a new email/password login and follow email confirmation.
 Continue with Google opens your browser. Google must first be enabled privately
 in Supabase and this Windows return allowed:
@@ -61,7 +65,8 @@ The formal runtime-review Windows account was not created.
 PORTABLE PACKAGE
 Extract the entire ZIP before running. Keep each EXE, its DLLs and data directory
 together. This is a portable x64 test package built for this Windows PC.
-No installer, backend migration, new account, entitlement or worker was deployed.
+This package does not deploy an installer, backend migration, account,
+entitlement or worker. It does not prove native keyboard or runtime acceptance.
 release-manifest.json in each app directory records every shipped release hash.
 
 FEEDBACK
@@ -69,8 +74,12 @@ Record which mode/page/action you tried, expected and actual behavior, window
 size, theme and density. Keep passwords, MFA codes and private data out of feedback.
 '@ | ForEach-Object { $_.Replace('20261009_Preview',('20261009' + $testSuffix + '_Preview')).Replace('20261009_Connected',('20261009' + $testSuffix + '_Connected')) } | Set-Content -LiteralPath (Join-Path $testPackage 'Start Here.txt') -Encoding utf8
 $testGuide = [IO.File]::ReadAllText((Join-Path $testRoot 'docs/verification/wave5/windows-account-google-setup-20261009.md'))
-$testGuide = $testGuide.Replace('[development status](../../development/wave5-status.md)', 'development status in the source workspace').Replace('[public Auth settings](public-auth-settings-20261009.json)', 'public Auth settings').Replace('[remaining-work record](complete-app-remaining-work-20261009.md)', 'remaining-work record in the source workspace')
+$testGuide = $testGuide.Replace('[development status](../../development/wave5-status.md)', 'development status in the source workspace').Replace('[public Auth settings](public-auth-settings-20261009.json)', 'public Auth settings').Replace('[public Auth settings](public-auth-settings-20261010.json)', 'public Auth settings').Replace('[remaining-work record](complete-app-remaining-work-20261009.md)', 'remaining-work record in the source workspace')
+$testGuide = $testGuide.Replace('[desktop test login](desktop-test-login-20261009.md)', '[desktop test login](Desktop%20test%20login.md)')
 $testGuide | Set-Content -LiteralPath (Join-Path $testPackage 'Account and Google setup.md') -Encoding utf8
+$testLoginGuide = [IO.File]::ReadAllText((Join-Path $testRoot 'docs/verification/wave5/desktop-test-login-20261009.md'))
+$testLoginGuide = $testLoginGuide.Replace('[creation verification](desktop-test-login-result-20261009.json)', 'creation verification in the source workspace').Replace('[sign-in verification](desktop-test-login-signin-20261009.json)', 'sign-in verification in the source workspace').Replace('[private configuration steps](windows-account-google-setup-20261009.md)', '[private configuration steps](Account%20and%20Google%20setup.md)')
+$testLoginGuide | Set-Content -LiteralPath (Join-Path $testPackage 'Desktop test login.md') -Encoding utf8
 Compress-Archive -LiteralPath $testPackage -DestinationPath $testZip -CompressionLevel Optimal
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $testArchive=[IO.Compression.ZipFile]::OpenRead($testZip)

@@ -271,8 +271,13 @@ final class Wave5CommandStore {
     return Map.unmodifiable(found.payload);
   }
 
-  Future<void> remove(ProcessMetricScope scope, String actor) async {
+  Future<void> remove(
+    ProcessMetricScope scope,
+    String actor, {
+    bool Function()? isCurrent,
+  }) async {
     await authorize(scope, actor);
+    if (isCurrent != null && !isCurrent()) return;
     await drafts.delete(_key(scope, actor));
   }
 }

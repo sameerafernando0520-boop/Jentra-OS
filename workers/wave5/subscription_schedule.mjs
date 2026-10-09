@@ -12,7 +12,7 @@ export async function runSyntheticSubscriptionBatch({control,after=null,limit=50
  for(const item of page.items.slice(0,limit)){
   if(signal?.aborted)break;
   if(!item||Object.keys(item).length!==2||!uuid.test(item.tenantId)||!uuid.test(item.revisionId))throw Error('WORKER_CONTRACT_MISMATCH');
-  try{await activateScheduledTrial({control,...item});results.push({revisionId:item.revisionId,state:'applied'});}
+  try{await activateScheduledTrial({control,...item,signal});results.push({revisionId:item.revisionId,state:'applied'});}
   catch{results.push({revisionId:item.revisionId,state:'unconfirmed'});}
  }
  const next=results.length<page.items.length?(results.at(-1)?.revisionId??after):page.nextCursor;

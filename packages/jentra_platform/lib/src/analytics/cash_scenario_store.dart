@@ -51,8 +51,13 @@ final class CashScenarioStore {
     return CashScenarioRevision.fromJson(scope, value.payload);
   }
 
-  Future<void> removePending(ProcessMetricScope scope, String actor) async {
+  Future<void> removePending(
+    ProcessMetricScope scope,
+    String actor, {
+    bool Function()? isCurrent,
+  }) async {
     await authorize(scope, actor);
+    if (isCurrent != null && !isCurrent()) return;
     await drafts.delete(_key(scope, actor, pending: true));
   }
 }

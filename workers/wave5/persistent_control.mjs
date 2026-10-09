@@ -51,7 +51,7 @@ export async function runDeliveryBatch({control,vault,resolve,post,now,limit=20,
   let selected;
   const ports=Object.create(control);
   ports.claimCommittedDelivery=async()=>{selected=await control.claimCommittedDelivery();return selected;};
-  const result=await runDelivery({control:ports,secrets:{deliveryKey:()=>control.deliverySecret(selected,vault)},resolve,post,now:now()});
+  const result=await runDelivery({control:ports,secrets:{deliveryKey:()=>control.deliverySecret(selected,vault)},resolve,post,now:now(),signal});
   if(result.state==='idle') break;
   outcomes.push({state:result.state,eventId:result.eventId,attempt:result.attempt});
  }

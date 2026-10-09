@@ -30,13 +30,25 @@ if ($wave5Review.workerConfiguration.nativeIsolation.windowsAccount -ne $wave5Na
     $wave5Review.workerConfiguration.nativeIsolation.packageDirectory -ne $wave5PackageDirectory) {
     throw 'NATIVE_TARGET_NOT_REVIEWED'
 }
+$wave5ReviewedBuild = $wave5Review.workerConfiguration.nativeIsolation.connectedBuildManifest
+if (-not $wave5ReviewedBuild) { throw 'NATIVE_BUILD_NOT_BOUND_TO_REVIEW' }
+$wave5ReviewedBuildPath = [IO.Path]::GetFullPath((Join-Path $wave5Workspace $wave5ReviewedBuild))
+$wave5ProvidedBuildPath = [IO.Path]::GetFullPath($VerifiedBuildManifestPath)
+$wave5ReviewedBuildArtifact = $wave5Review.artifacts | Where-Object { $_.path -eq $wave5ReviewedBuild }
+if (-not $wave5ReviewedBuildArtifact -or
+    -not $wave5ProvidedBuildPath.Equals($wave5ReviewedBuildPath, [StringComparison]::OrdinalIgnoreCase) -or
+    (Get-FileHash -LiteralPath $wave5ProvidedBuildPath -Algorithm SHA256).Hash.ToLowerInvariant() -ne $wave5ReviewedBuildArtifact.sha256) {
+    throw 'NATIVE_BUILD_NOT_BOUND_TO_REVIEW'
+}
 $wave5Principal = [Security.Principal.WindowsPrincipal]::new([Security.Principal.WindowsIdentity]::GetCurrent())
 if (-not $wave5Principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) { throw 'NATIVE_PROFILE_SETUP_REQUIRES_ADMINISTRATOR' }
 if (Get-LocalUser -Name $wave5NativeName -ErrorAction SilentlyContinue) { throw 'NATIVE_ACCOUNT_COLLISION_REFRESH_REVIEW' }
 if (Test-Path -LiteralPath $wave5PackageDirectory) { throw 'NATIVE_PACKAGE_COLLISION_REFRESH_REVIEW' }
 $wave5Build = Get-Content -LiteralPath $VerifiedBuildManifestPath -Raw | ConvertFrom-Json
 if ($wave5Build.entrypoint -ne 'lib/main.dart' -or $wave5Build.controlledEvidence -ne $false -or
-    $wave5Build.current_source_match -ne $true -or -not $wave5Build.releaseFiles -or -not $wave5Build.sourceHashes) {
+    $wave5Build.current_source_match -ne $true -or $wave5Build.base_source_match -ne $true -or
+    $wave5Build.mode -ne 'connected' -or $wave5Build.projectId -ne $wave5Review.projectId -or
+    -not $wave5Build.releaseFiles -or -not $wave5Build.sourceHashes) {
     throw 'FRESH_ORDINARY_RUNTIME_BUILD_REQUIRED'
 }
 $wave5ReleaseRoot = [IO.Path]::GetFullPath($wave5Build.releaseDirectory).TrimEnd('\') + '\'
