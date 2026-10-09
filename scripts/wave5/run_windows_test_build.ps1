@@ -1,7 +1,8 @@
 param(
  [Parameter(Mandatory=$true)][ValidateSet('Preview','Connected')][string]$Mode,
  [Parameter(Mandatory=$true)][ValidateSet('pubget','analyzer','startupTests','keyboardTests','cashTests','cashFrames','modelGatewayTests','modelTests','modelFrames','authGatewayTests','authTests','authFrames','platformAll','desktopAll','build')][string]$Stage,
- [ValidatePattern('^[a-z][a-z0-9]{1,10}$')][string]$Revision = 'b1'
+ [ValidatePattern('^[a-z][a-z0-9]{1,10}$')][string]$Revision = 'b1',
+ [switch]$Offline
 )
 $ErrorActionPreference = 'Stop'
 $testRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
@@ -16,7 +17,7 @@ foreach ($testCaptureName in @('W5_CASH_FRAME_DIR','W5_MODEL_FRAME_DIR','W5_AUTH
  [Environment]::SetEnvironmentVariable($testCaptureName, $null, 'Process')
 }
 switch ($Stage) {
- 'pubget' { $testArguments = @('pub','get') }
+ 'pubget' { $testArguments = @('pub','get'); if($Offline){$testArguments += '--offline'} }
  'analyzer' {
   $testArguments = @('--suppress-analytics','analyze','apps/jentra_desktop/lib/main.dart','apps/jentra_desktop/lib/src/app.dart','apps/jentra_desktop/lib/src/app_providers.dart','apps/jentra_desktop/lib/src/router.dart','apps/jentra_desktop/lib/src/shell/jentra_shell.dart','apps/jentra_desktop/test/command_palette_keyboard_test.dart','apps/jentra_desktop/test/reviewed_model_workspace_test.dart','apps/jentra_desktop/lib/src/features/analytics','apps/jentra_desktop/lib/src/features/auth','apps/jentra_desktop/test/login_account_screen_test.dart','packages/jentra_platform/lib/src/auth','packages/jentra_platform/test/auth','packages/jentra_platform/lib/src/supabase_foundation_gateway.dart','packages/jentra_platform/lib/src/analytics/reviewed_model_gateway.dart','packages/jentra_platform/lib/src/analytics/wave5_command_store.dart','packages/jentra_platform/test/analytics/reviewed_model_gateway_test.dart','packages/jentra_platform/lib/src/runtime_config.dart','packages/jentra_platform/lib/src/supabase_platform.dart')
  }
@@ -88,11 +89,11 @@ $testStarted = [DateTime]::UtcNow
 $testExit = 1
 Push-Location -LiteralPath $testWorking
 try {
- & $testSdk @testArguments 2>&1 | Tee-Object -FilePath $testLog
+ & node (Join-Path $testRoot 'scripts/wave5/run_flutter_with_capture_env.mjs') $testSdk @testArguments 2>&1 | Tee-Object -FilePath $testLog
  $testExit = $LASTEXITCODE
 } finally {
  Pop-Location
- [pscustomobject]@{mode=$Mode;stage=$Stage;workingDirectory=$testWorking;command=($testSdk + ' ' + ($testArguments -join ' '));log=($testBase + '.log');startedAt=$testStarted.ToString('o');finishedAt=[DateTime]::UtcNow.ToString('o');exitCode=$testExit} |
+ [pscustomobject]@{mode=$Mode;stage=$Stage;workingDirectory=$testWorking;command=($testSdk + ' ' + ($testArguments -join ' '));captureEnvironmentWrapper='scripts/wave5/run_flutter_with_capture_env.mjs';log=($testBase + '.log');startedAt=$testStarted.ToString('o');finishedAt=[DateTime]::UtcNow.ToString('o');exitCode=$testExit} |
   ConvertTo-Json | Set-Content -LiteralPath (Join-Path $testRoot ($testBase + '.json'))
 }
 exit $testExit

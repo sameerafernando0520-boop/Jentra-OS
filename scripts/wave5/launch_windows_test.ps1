@@ -69,16 +69,11 @@ public static class JentraTestWindow {
  $testBitmap=[Drawing.Bitmap]::new(($testBounds.Right-$testBounds.Left),($testBounds.Bottom-$testBounds.Top))
  $testGraphics=[Drawing.Graphics]::FromImage($testBitmap)
  try {
-  if($testOwnForeground) {
-   $testGraphics.CopyFromScreen($testOrigin.X,$testOrigin.Y,0,0,$testBitmap.Size)
-   $testCaptureMethod='Own foreground client pixels'
-  } else {
-   $testDeviceContext=$testGraphics.GetHdc()
-   try {
-    if(-not [JentraTestWindow]::PrintWindow($testProcess.MainWindowHandle,$testDeviceContext,3)) {throw 'OWN_APP_PRINT_CAPTURE_FAILED'}
-   } finally {$testGraphics.ReleaseHdc($testDeviceContext)}
-   $testCaptureMethod='PrintWindow of own client; no screen pixels read'
-  }
+  $testDeviceContext=$testGraphics.GetHdc()
+  try {
+   if(-not [JentraTestWindow]::PrintWindow($testProcess.MainWindowHandle,$testDeviceContext,3)) {throw 'OWN_APP_PRINT_CAPTURE_FAILED'}
+  } finally {$testGraphics.ReleaseHdc($testDeviceContext)}
+  $testCaptureMethod='PrintWindow of own client; no screen pixels read'
   $testCapturePath=Join-Path $testRoot ('docs/verification/wave5/windows-test-' + $Mode.ToLowerInvariant() + '-native-20261009' + $testSuffix + '.png')
   $testBitmap.Save($testCapturePath,[Drawing.Imaging.ImageFormat]::Png)
  } finally {$testGraphics.Dispose();$testBitmap.Dispose();[JentraTestWindow]::SetThreadDpiAwarenessContext($testPreviousDpi) | Out-Null}

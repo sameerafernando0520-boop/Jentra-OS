@@ -46,10 +46,12 @@ function Capture-OwnClient([string]$name) {
  } finally {$graphics.Dispose();$bitmap.Dispose();[W5KeyboardWindow]::SetThreadDpiAwarenessContext($previousDpi)|Out-Null}
  return $target
 }
+Send-OwnKeys '{ESC}'
+Send-OwnKeys '{ESC}'
 Send-OwnKeys '^k'
 Send-OwnKeys '{UP}'
 $palette=Capture-OwnClient 'palette'
 Send-OwnKeys '{ENTER}'
 $destination=Capture-OwnClient 'keyboard-destination'
-[pscustomobject]@{recordedAt=[DateTime]::UtcNow.ToString('o');pid=$probeProcess.Id;executable=$probeProcess.Path;keys=@('Ctrl+K','Up','Enter');palette=$palette;destination=$destination;captureScope='Only the verified Preview client';authenticated=$false;formalAcceptance=$false} |
+ [pscustomobject]@{recordedAt=[DateTime]::UtcNow.ToString('o');pid=$probeProcess.Id;executable=$probeProcess.Path;keys=@('Escape','Escape','Ctrl+K','Up','Enter');palette=$palette;destination=$destination;captureScope='Only the verified Preview client';authenticated=$false;formalAcceptance=$false} |
  ConvertTo-Json | Set-Content -LiteralPath (Join-Path $probeRoot "docs/verification/wave5/windows-test-preview-keyboard-20261009-$Revision.json")

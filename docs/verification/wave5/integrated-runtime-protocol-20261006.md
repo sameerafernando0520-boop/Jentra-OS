@@ -4,7 +4,7 @@ Updated October 9. This is an execution protocol, not acceptance. The [bound Sup
 
 ## Evidence gates and preflight
 
-Original six-migration installation: 43 ledger entries/107 API functions and historical 126 installed checks, with forced RLS. [Latest post-final-probe read](complete-app-live-after-final-20261009.json) confirms unchanged access counts and zero proposed resources. The 105 complete-schema/setup assertions and 25 full-schema exact-bootstrap/permission assertions are separate strict rollback probes with injected Auth/policy shapes and no HTTP; no permission shim was added to the bootstrap probe. Sixty-three worker tests use controlled transports. Fresh [r5 source-attributed Windows evidence](windows-test-verification-20261009-r5.md) establishes analysis/tests/build/captures; it does not establish authenticated native behavior. Historical 116/35/63/10 results retain their earlier scopes.
+Original six-migration installation: 43 ledger entries/107 API functions and historical 126 installed checks, with forced RLS. [Latest post-final-probe read](complete-app-live-after-final-20261009.json) confirms unchanged access counts and zero proposed resources. The 105 complete-schema/setup assertions and 25 full-schema exact-bootstrap/permission assertions are separate strict rollback probes with injected Auth/policy shapes and no HTTP; no permission shim was added to the bootstrap probe. Sixty-three worker tests use controlled transports. Fresh [r10 source-attributed Windows evidence](windows-test-verification-20261009-r10.md) establishes analysis/tests/build/captures; it does not establish authenticated native behavior. Historical 116/35/63/10 results retain their earlier scopes.
 
 Obtain explicit owner approval of the exact bound bundle hash. Immediately refresh live ledger/identities/URLs/resource collisions and every source/release hash; stop on drift. Install only the 71 pending files in listed order and record connector-assigned versions; never replay the original six. Verify installed signatures/grants/forced RLS/provider revisions and protected source fingerprints with rollback-only fixtures. A schema reload notification alone does not prove authenticated PostgREST cache behavior.
 
@@ -30,7 +30,7 @@ Use nonempty authorized CRM/process/statement data and exact cutoffs/digests/sou
 
 Create immutable scenarios/assumptions/overrides; recover original identities after uncertain commands. Produce actual governed CSV/XLSX exports, verify byte hashes and current-access download/reopen. SQL metadata and codec tests alone do not prove a downloaded artifact.
 
-Provision the selected new standard `jentra-w5-runtime` Windows profile/package only after approval; verify ordinary build/source/release hashes before creation/copy. Preserve old acceptance stores and other chats' sessions. Run real login/MFA, Process/Pipeline/Finance/Cash/Control/Integration/Billing/Operator, keyboard, signout/actor switch, revocation and native process restart/recovery. R5 dashboard/sign-in screenshots and controlled SQLite reopen remain separate gates. The earlier native keyboard focus probe aborted before sending keys; full native keyboard remains open.
+Provision the selected new standard `jentra-w5-runtime` Windows profile/package only after approval; verify ordinary build/source/release hashes before creation/copy. Preserve old acceptance stores and other chats' sessions. Run real login/MFA, Process/Pipeline/Finance/Cash/Control/Integration/Billing/Operator, keyboard, signout/actor switch, revocation and native process restart/recovery. r10 dashboard/sign-in screenshots and controlled SQLite reopen remain separate gates. The earlier native keyboard focus probe aborted before sending keys; full native keyboard remains open.
 
 ## Independent-session contention and load
 
@@ -40,6 +40,12 @@ Measure the reviewed 500 synthetic tenants and 2000 distinct real sessions, 60s 
 
 ## Owner acceptance and preservation
 
-The 13 historically observed dashboard/setup golden failures remain unresolved; r5 did not rerun or regenerate approved goldens. Reconcile the intended capability fixture/navigation policy, inspect fresh rendered differences, then obtain an explicit owner visual decision where approved images would change. Broader W3/W4 module/provider/native acceptance remains separately owned.
+The 13 historically observed dashboard/setup golden failures remain unresolved; r10 reran the full desktop suite and preserved approved goldens. Reconcile the intended capability fixture/navigation policy, inspect fresh rendered differences, then obtain an explicit owner visual decision where approved images would change. Broader W3/W4 module/provider/native acceptance remains separately owned.
 
 Present evidence for every [109 requirement IDs](requirement-matrix-20261008.md); zero are accepted today. Runtime-operation approval and owner app signoff are distinct. Disable only the reviewed worker authority/jobs after run/expiry. No production, real billing, unrelated cleanup, broad grants, acceptance-store copying or Git staging/commit/push is authorized.
+
+
+Account creation with password confirmation/private email-confirmation guidance and Windows Google PKCE browser return are implemented. 17 callback/settings tests and 15 authentication UI/capability tests pass; 2 auth frames were inspected. Real Google sign-in and email-confirmation delivery remain unproved; the last public settings read has Google disabled and private provider/callback configuration remains required. Follow the [account and Google setup guide](windows-account-google-setup-20261009.md). Privately configure Google and the Windows callback, then prove a real Google session and delivered email confirmation. Account creation does not add a business membership or replace the six distinct runtime actors.
+
+
+Fresh full-suite results on the same snapshot: platformAll: 1127 passed / 0 failed (exit 0). desktopAll: 1909 passed / 83 failed (exit 1). Named failures and logs are retained in [the Windows verification report](windows-test-verification-20261009-r10.md). The [full desktop golden investigation](full-desktop-golden-investigation-20261009-r10.md) binds current/master hashes and earlier controlled evidence. These visual failures remain open; approved goldens were preserved.

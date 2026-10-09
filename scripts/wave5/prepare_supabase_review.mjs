@@ -73,6 +73,9 @@ const configuration={...structuredClone(earlier.workerConfiguration),
   externalCredential:'New random 32-byte credential in private OS store; only SHA-256 registered through real MFA; 24-hour expiry'}
 };
 const workerFiles=(await readdir('workers/wave5')).filter(f=>f.endsWith('.mjs')).map(f=>'workers/wave5/'+f);
+const workerSource=await json(base+'complete-app-worker-source-20261009.json');
+if(workerSource.exitCode!==0||!workerSource.controlled||workerSource.deployed||workerSource.files.length!==workerFiles.length)throw Error('WORKER_SOURCE_EVIDENCE_REQUIRED');
+for(const source of workerSource.files)if(!workerFiles.includes(source.path)||sha(await readFile(source.path))!==source.sha256)throw Error('WORKER_SOURCE_DRIFT');
 const goldenDiagnostic=native.sharedGoldensRerun?base+`full-desktop-golden-investigation-20261009-${revision}.md`:null;
 const broaderSummary=(native.broaderSuites??[]).map(s=>`${s.stage}: ${s.passedTests} passed / ${s.failedTests} failed (exit ${s.exitCode})`).join('; ');
 const artifactPaths=[...workerFiles,...deployment.flatMap(d=>d.files.map(f=>f.path)),...deployment.map(d=>d.payloadPath),
@@ -83,14 +86,15 @@ const artifactPaths=[...workerFiles,...deployment.flatMap(d=>d.files.map(f=>f.pa
  base+'complete-app-bootstrap-probe-20261009.sql',base+'complete-app-bootstrap-probe-20261009.hashes.json',
  base+'supabase-runtime-setup-20261009.sql',base+'supabase-runtime-stop-20261009.sql',base+'complete-app-candidate-result-20261009.json',
  base+'complete-app-candidate-20261009.sql',base+'complete-app-candidate-20261009.hashes.json',base+'complete-app-migration-inventory-20261009.json',
- base+'complete-app-live-after-final-20261009.json',base+'complete-app-worker-tests-20261009.json',
+ base+'complete-app-live-after-final-20261009.json',base+'complete-app-worker-tests-20261009.json',base+'complete-app-worker-source-20261009.json',base+'complete-app-edge-functions-20261009.json',
  base+'supabase-entrypoint-checks-20261009.json',base+`windows-test-verification-20261009-${revision}.json`,base+`windows-test-delivery-20261009-${revision}.json`,
  ...(authEvidence?[authGuide,base+'public-auth-settings-20261009.json']:[]),
  ...(native.broaderSuites??[]).flatMap(s=>[s.record,s.log]),
  ...(goldenDiagnostic?[goldenDiagnostic,goldenDiagnostic.replace(/\.md$/,'.json')]:[]),
  ...(native.pkceDeadlineRegression?[native.pkceDeadlineRegression.record,native.pkceDeadlineRegression.log]:[]),
- 'docs/blueprint/wave5/W5_REVIEWED_MODEL_NATIVE_CONTRACT.md','scripts/wave5/run_windows_test_build.ps1','scripts/wave5/launch_windows_test.ps1',
- 'scripts/wave5/package_windows_test_build.mjs','scripts/wave5/finalize_windows_test_package.ps1','scripts/wave5/prepare_final_windows_evidence.mjs',
+ ...(native.nativeKeyboardFocusEvidence?[native.nativeKeyboardFocusEvidence,base+`windows-test-preview-keyboard-attempt1-20261009-${revision}.json`,'scripts/wave5/probe_windows_keyboard.ps1']:[]),
+ 'docs/blueprint/wave5/W5_REVIEWED_MODEL_NATIVE_CONTRACT.md','scripts/wave5/run_windows_test_build.ps1','scripts/wave5/run_flutter_with_capture_env.mjs','scripts/wave5/launch_windows_test.ps1',
+ 'scripts/wave5/package_windows_test_build.mjs','scripts/wave5/finalize_windows_test_package.ps1','scripts/wave5/prepare_final_windows_evidence.mjs','scripts/wave5/prepare_full_desktop_diagnostic.mjs',
  'supabase/tests/wave5_supabase_runtime_test.sql','supabase/tests/wave5_supabase_setup_test.sql',
  ...['preview','connected'].flatMap(m=>[base+`windows-test-${m}-source-20261009-${revision}.json`,base+`windows-test-${m}-package-20261009-${revision}.json`])];
 const artifacts=await Promise.all([...new Set(artifactPaths)].sort().map(async p=>({path:p,sha256:sha(await readFile(p))})));
@@ -197,7 +201,7 @@ Model: \`openai.responses.v1\`, \`gpt-4.1-mini-2025-04-14\`, policy revision 1, 
 
 The separate operator has zero tenant membership. [Authority SQL](runtime-operator-authority-complete-app-20261009.sql) binds its returned Auth ID and limits it to the exact runtime tenant/reason for 45 minutes; a genuine MFA call issues a <=30-minute grant within that deadline. Foreign tenant, changed reason, longer deadline, different recipient and AAL1 are denied. No grant is inserted as a substitute for authenticated issuance.
 
-The owner delegated native-target selection. The reviewed new standard Windows profile is \`jentra-w5-runtime\`, package path \`C:\\Users\\Public\\Documents\\JentraWave5Runtime\\20261009\`, password ref \`Jentra/W5/20261009/native-profile/password\`. [Preparation script](../../../scripts/wave5/prepare_native_runtime_profile.ps1) requires exact review approval and verifies all source/release hashes before creating that one OS account and copying the ordinary release with private ACLs. Existing account/package collisions abort. The fresh [portable ${revision} preview/connected apps](windows-test-verification-20261009-${revision}.md) use separate runner identities and are available now. Both releases match ${sourceCount} selected desktop dependency inputs and 34 release files per app. Scoped analysis, 96 workspace/cash tests, six keyboard tests and two startup tests pass. Twelve cash and twelve model render variants at 200% text produce 60 and 24 images; eight cash and four model images plus the two native startup windows were inspected. Controlled images/dashboard/sign-in are separate from authenticated acceptance. Native keyboard focus was not acquired in the earlier own-window probe; no keys were sent and that gate remains open.
+The owner delegated native-target selection. The reviewed new standard Windows profile is \`jentra-w5-runtime\`, package path \`C:\\Users\\Public\\Documents\\JentraWave5Runtime\\20261009\`, password ref \`Jentra/W5/20261009/native-profile/password\`. [Preparation script](../../../scripts/wave5/prepare_native_runtime_profile.ps1) requires exact review approval and verifies all source/release hashes before creating that one OS account and copying the ordinary release with private ACLs. Existing account/package collisions abort. The fresh [portable ${revision} preview/connected apps](windows-test-verification-20261009-${revision}.md) use separate runner identities and are available now. Both releases match ${sourceCount} selected desktop dependency inputs and 34 release files per app. Scoped analysis, 96 workspace/cash tests, six keyboard tests and two startup tests pass. Twelve cash and twelve model render variants at 200% text produce 60 and 24 images; eight cash and four model images plus the two native startup windows were inspected. Controlled images/dashboard/sign-in are separate from authenticated acceptance. ${native.nativeKeyboardReason}
 
 ${authEvidence?`The Connected app implements **Create account** and the Windows Google PKCE browser return. Fresh evidence records **${authGatewayTests} gateway/settings/loopback tests**, **${authTests} authentication UI/capability tests** and **${authRenderTests} auth render tests**, with both auth images inspected. The [account/Google setup guide](windows-account-google-setup-20261009.md) records the current disabled Google provider and exact private provider/redirect configuration. Real Google sign-in and email confirmation delivery remain unverified. Google configuration is a separate prepared owner decision; this runtime bundle does not enable that project-wide provider, provision its client secret or change global Auth URLs.`:''}
 

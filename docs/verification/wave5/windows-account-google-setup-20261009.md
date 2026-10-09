@@ -10,7 +10,7 @@ For a development account created administratively, use [Supabase Authentication
 
 ## Configure Google privately
 
-The project's [public Auth settings](public-auth-settings-20261009.json) were refreshed on October 9 at 12:42 UTC: **Google disabled**, email enabled, new signup enabled and email confirmation required. This read does not disclose client secrets, existing users or sessions. Google provider configuration cannot be performed through the currently exposed connected SQL tools.
+The project's [public Auth settings](public-auth-settings-20261009.json) were refreshed on October 9 at 17:31 UTC: **Google disabled**, email enabled, new signup enabled and email confirmation required. This read does not disclose client secrets, existing users or sessions. Google provider configuration cannot be performed through the currently exposed connected SQL tools.
 
 1. In [Google Auth Platform](https://console.cloud.google.com/auth/overview), configure the application and add your testing Google account to its audience while the consent screen is in testing.
 2. Create a **Web application** OAuth client. Its authorized redirect URI must be exactly `https://xpdoufauvrbdmxgngetv.supabase.co/auth/v1/callback`. This is the Google-to-Supabase callback.

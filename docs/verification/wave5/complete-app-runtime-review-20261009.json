@@ -1,12 +1,12 @@
 {
   "reviewId": "jentra-complete-app-supabase-runtime-20261009",
-  "preparedAt": "2026-10-09T11:24:17.971Z",
+  "preparedAt": "2026-10-09T17:54:30.579Z",
   "projectId": "xpdoufauvrbdmxgngetv",
   "approvalReady": true,
   "ownerApproved": false,
   "pendingBindings": [],
   "liveBaseline": {
-    "observedAt": "2026-10-09 11:10:43.511207+00",
+    "observedAt": "2026-10-09 17:53:38.569742+00",
     "migrations": 43,
     "apiFunctions": 107,
     "rolePermissions": 87,
@@ -16,7 +16,7 @@
     "installedSixNeverReplayed": true,
     "expectedLedgerAfterOnlyThisInstall": 114,
     "existingProviderFingerprintsRecheckRequired": true,
-    "postRollbackObservedAt": "2026-10-09 11:10:43.511207+00",
+    "postRollbackObservedAt": "2026-10-09 17:53:38.569742+00",
     "postRollbackCountsUnchanged": true,
     "proposedAccountsTenantsPlansAbsent": true
   },
@@ -6014,14 +6014,156 @@
     "windowsPreviewBuilt": true,
     "windowsConnectedBuilt": true,
     "ordinaryEntrypoint": "lib/main.dart",
-    "sourceFiles": 1056,
+    "sourceFiles": 1067,
     "releaseFilesPerApp": 34,
-    "packageRevision": "r5",
+    "packageRevision": "r10",
+    "newAccountUiImplemented": true,
+    "googleWindowsReturnImplemented": true,
+    "authGatewayTests": 17,
+    "authUiAndCapabilityTests": 15,
+    "authRenderTests": 2,
+    "freshAuthFrames": 2,
+    "inspectedAuthFrames": 2,
+    "realGoogleSignIn": false,
+    "emailConfirmationDeliveryVerified": false,
+    "googlePrivateConfigurationPending": true,
     "nativeKeyboard": {
       "verified": false,
-      "reason": "Own Preview foreground could not be acquired; no keys sent"
+      "reason": "The r10 keyboard images did not show a command palette. The repeat own-window probe could not acquire foreground and aborted before keys. Six widget keyboard tests pass; native keyboard remains open."
     },
-    "sharedGoldenFailures": 13
+    "sharedGoldenFailures": 13,
+    "sharedGoldensRerun": true,
+    "broaderSuites": [
+      {
+        "mode": "Preview",
+        "stage": "platformAll",
+        "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r10\\preview\\packages\\jentra_platform",
+        "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded",
+        "log": "docs/verification/wave5/windows-test-preview-platformAll-20261009-r10.log",
+        "startedAt": "2026-10-09T16:36:39.5369377Z",
+        "finishedAt": "2026-10-09T16:40:17.3110112Z",
+        "exitCode": 0,
+        "record": "docs/verification/wave5/windows-test-preview-platformAll-20261009-r10.json",
+        "logSha256": "e2c84712b701fc0c48b720ac1d2782cc846592d3ae32ffb78025436f7c9a9322",
+        "passedTests": 1127,
+        "failedTests": 0,
+        "failureList": []
+      },
+      {
+        "mode": "Preview",
+        "stage": "desktopAll",
+        "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r10\\preview\\apps\\jentra_desktop",
+        "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded",
+        "captureEnvironmentWrapper": "scripts/wave5/run_flutter_with_capture_env.mjs",
+        "log": "docs/verification/wave5/windows-test-preview-desktopAll-20261009-r10.log",
+        "startedAt": "2026-10-09T17:36:43.9348171Z",
+        "finishedAt": "2026-10-09T17:53:01.4231537Z",
+        "exitCode": 1,
+        "record": "docs/verification/wave5/windows-test-preview-desktopAll-20261009-r10.json",
+        "logSha256": "0727aa8dde0487db2f8a39db484c8101402dcab0a13a92ae1c7c330c91b8e1eb",
+        "passedTests": 1909,
+        "failedTests": 83,
+        "failureList": [
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/crm_workspace_test.dart: CRM desktop composition matches its approved visual contract — AC-321",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/design_system_catalogue_test.dart: logo-led catalogue 1024_light_compact",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/design_system_catalogue_test.dart: logo-led catalogue 1440_light_comfortable",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/design_system_catalogue_test.dart: logo-led catalogue 1440_dark_compact",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/design_system_catalogue_test.dart: logo-led catalogue 1920_dark_comfortable",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/goods_receipt_workspace_test.dart: goods receipt light at 200% preserves posting controls",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/goods_receipt_workspace_test.dart: goods receipt dark at 200% preserves posting controls",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/inventory_transfer_workspace_test.dart: transfer editor light at 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/inventory_transfer_workspace_test.dart: transfer editor dark at 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/inventory_valuation_workspace_test.dart: valuation light 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/inventory_valuation_workspace_test.dart: valuation dark 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: Wave 2 setup remains reachable at 200% text scale — EC-224",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: dashboard golden 1024_light_compact — AC-1 / AC-7",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: dashboard golden 1024_dark_comfortable — AC-1 / AC-7",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: dashboard golden 1440_light_comfortable — AC-1 / AC-7",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: dashboard golden 1440_dark_compact — AC-1 / AC-7",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: dashboard golden 1920_light_comfortable — AC-1 / AC-7",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: dashboard golden 1920_dark_comfortable — AC-1 / AC-7",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: setup golden 1024_light_compact — AC-216",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: setup golden 1024_dark_comfortable — AC-216",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: setup golden 1440_light_comfortable — AC-216",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: setup golden 1440_dark_compact — AC-216",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: setup golden 1920_light_comfortable — AC-216",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: setup golden 1920_dark_comfortable — AC-216",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/landed_value_workspace_test.dart: landed preview light 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/landed_value_workspace_test.dart: landed preview dark 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/payroll_workspace_test.dart: payroll workspace light at 200 percent text scale",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/payroll_workspace_test.dart: payroll workspace dark at 200 percent text scale",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/procurement_workspace_test.dart: AC-321 procurement editor light at 200% text",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/procurement_workspace_test.dart: AC-321 procurement editor dark at 200% text",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/product_unit_workspace_test.dart: product unit light at 200%",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/product_unit_workspace_test.dart: product unit dark at 200%",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/purchase_order_workspace_test.dart: purchase order light at 200% retains actions",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/purchase_order_workspace_test.dart: purchase order dark at 200% retains actions",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/purchase_return_workspace_test.dart: return editor light at 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/purchase_return_workspace_test.dart: return editor dark at 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/quick_create_test.dart: customer quick create opens the party workspace and its create control",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/quotation_workspace_test.dart: AC-303 renders exact saved offer and readable revision decisions",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/quotation_workspace_test.dart: AC-303 explicit conflict comparison retains reviewed local fields",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/quotation_workspace_test.dart: AC-303 editor visual and accessible state 1440_light",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/quotation_workspace_test.dart: AC-303 editor visual and accessible state 1440_dark",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/quotation_workspace_test.dart: AC-303 line editing preserves exact conversion and discount choice",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/receipt_trace_workspace_test.dart: receipt trace light at 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/receipt_trace_workspace_test.dart: receipt trace dark at 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/receivables_workspace_test.dart: invoice source detail renders exact totals and guarded actions",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/receivables_workspace_test.dart: invoice editor dark theme",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/receivables_workspace_test.dart: narrow editor at 200 percent text remains scrollable",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/receivables_workspace_test.dart: storage failure keeps the offline editor and offers retry",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/receivables_workspace_test.dart: uncertain result displays saved-command retry",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/receivables_workspace_test.dart: receipt editor offers governed tender and bank fields",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/receivables_workspace_test.dart: return editor requires original source and disposition",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/reservation_workspace_test.dart: dated reservation queue light 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/reservation_workspace_test.dart: reservation light 200 percent review",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/reservation_workspace_test.dart: dated reservation queue dark 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/reservation_workspace_test.dart: reservation dark 200 percent review",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/sales_order_workspace_test.dart: AC-304 rendered order_editor_1440_light",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/sales_order_workspace_test.dart: AC-304 rendered order_editor_1440_dark",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/sales_order_workspace_test.dart: AC-304 rendered order_editor_1024_text200",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/sales_order_workspace_test.dart: AC-304 credit dialog explains exact exposure and reasoned override",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/sales_order_workspace_test.dart: AC-304 reservation UI bounds demand and available stock",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/sales_order_workspace_test.dart: AC-304 conflict UI requires inspection before keeping local edits",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/sales_order_workspace_test.dart: AC-304 accepted quotation opens explicit conversion fields",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/sourcing_recovery_test.dart: supplier quote editor light retains controls at 200%",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/sourcing_recovery_test.dart: supplier quote editor dark retains controls at 200%",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_count_workspace_test.dart: serial identity count light at 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_count_workspace_test.dart: serial identity count dark at 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_count_workspace_test.dart: count editor light at 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_count_workspace_test.dart: count editor dark at 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_opening_workspace_test.dart: opening register shows exact value and status",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_opening_workspace_test.dart: opening editor renders count lot details and exact preview",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_opening_workspace_test.dart: opening editor supports dark theme",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_opening_workspace_test.dart: 200 percent text remains scrollable without overflow",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_opening_workspace_test.dart: posted opening presents immutable stock and journal references",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_opening_workspace_test.dart: uncertain post shows durable retry and blocks replacement",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/supplier_bill_workspace_test.dart: supplier bill light at 200% retains match controls",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/supplier_bill_workspace_test.dart: supplier bill dark at 200% retains match controls",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/supplier_payment_workspace_test.dart: allocation correction light remains usable at 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/supplier_payment_workspace_test.dart: dated AP statement light retains exact aging",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/supplier_payment_workspace_test.dart: payment proposal light at 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/supplier_payment_workspace_test.dart: allocation correction dark remains usable at 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/supplier_payment_workspace_test.dart: dated AP statement dark retains exact aging",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/supplier_payment_workspace_test.dart: payment proposal dark at 200 percent",
+          "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/warehouse_setup_test.dart: warehouse form uses selected branch and preserves scope on save"
+        ]
+      }
+    ],
+    "goldenDiagnostic": "docs/verification/wave5/full-desktop-golden-investigation-20261009-r10.md",
+    "pkceDeadlineRegression": {
+      "observedAt": "2026-10-09T16:25:38.4075672Z",
+      "regression": "SDK headers deadline aborts without a late session",
+      "baseline": "pass-through transport in isolated snapshot only",
+      "exitCode": 1,
+      "redObserved": true,
+      "sourceRestored": true,
+      "productionChangedForProbe": false,
+      "log": "docs/verification/wave5/pkce-deadline-red-20261009-r10.log",
+      "record": "docs/verification/wave5/pkce-deadline-red-20261009-r10.json",
+      "logSha256": "8fcc640f5e91e19e6b623ce847b0a7c814243c3cce6dba37dc6e142bc674c5fd",
+      "greenSuite": "docs/verification/wave5/windows-test-preview-authGatewayTests-20261009-r10.json"
+    }
   },
   "migrations": [
     {
@@ -6552,16 +6694,44 @@
       "sha256": "16e6bdbf423cae965f79d2377c1fa31b5df01579adb878d9b9b9ba0ba37e47db"
     },
     {
+      "path": "docs/verification/wave5/complete-app-edge-functions-20261009.json",
+      "sha256": "e8aef0aa5713f4395a0c8ba526727b4756e984cc9cbcc7706df8b331c576a7c5"
+    },
+    {
       "path": "docs/verification/wave5/complete-app-live-after-final-20261009.json",
-      "sha256": "a426f180088d24f930f1b42cbac807e79ad2964587f0792a26b424295f158d57"
+      "sha256": "69d397179ace231756c62ccb1e95f94d6c0c73fea4fe0e763c8f19df7f4529e3"
     },
     {
       "path": "docs/verification/wave5/complete-app-migration-inventory-20261009.json",
       "sha256": "9c3d861c68f07a0f607ccf393ad8e0b75946d4b22ae5db50fb6b3e0e5046f735"
     },
     {
+      "path": "docs/verification/wave5/complete-app-worker-source-20261009.json",
+      "sha256": "4fe959ac971c1e4cc2caeec2c8ac2a49ae4b5e343934c449902992d805f6b6eb"
+    },
+    {
       "path": "docs/verification/wave5/complete-app-worker-tests-20261009.json",
-      "sha256": "d271210786f838775b60a3edd19cd09592ac1e46d6afbb07fc6bf1af49a2ee26"
+      "sha256": "3a13245cc29e02e9ce775cd5a4622e29efa256e7bebc1450e2a9b8c2e3f4db23"
+    },
+    {
+      "path": "docs/verification/wave5/full-desktop-golden-investigation-20261009-r10.json",
+      "sha256": "e298ee4c3e087857676a04ee96b44d32561f4006d11439e7237c537de1f8e040"
+    },
+    {
+      "path": "docs/verification/wave5/full-desktop-golden-investigation-20261009-r10.md",
+      "sha256": "0ff9bb57c57ff5d329676a015d9aa49638ff44152f5f3795f2b5aba501a97e34"
+    },
+    {
+      "path": "docs/verification/wave5/pkce-deadline-red-20261009-r10.json",
+      "sha256": "5ebc9703b0f6c7555391f6fc7796bc293f9f72cb5a4dfe6e8805e1cebf765ed3"
+    },
+    {
+      "path": "docs/verification/wave5/pkce-deadline-red-20261009-r10.log",
+      "sha256": "8fcc640f5e91e19e6b623ce847b0a7c814243c3cce6dba37dc6e142bc674c5fd"
+    },
+    {
+      "path": "docs/verification/wave5/public-auth-settings-20261009.json",
+      "sha256": "23916eb3a64a70dd93c7e01d63418e34d65b000023e9b99b97f96f79d9758e2e"
     },
     {
       "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
@@ -6581,7 +6751,7 @@
     },
     {
       "path": "docs/verification/wave5/supabase-entrypoint-checks-20261009.json",
-      "sha256": "bbc02553b4ac51dde918e6df6ed04cb25574e3078abfa81745e91bf75ba6111c"
+      "sha256": "f47ffbd9f69bd227509932bc6ffb62c70a04a5348302b94e543ffa75ea93bc8e"
     },
     {
       "path": "docs/verification/wave5/supabase-runtime-setup-20261009.sql",
@@ -6592,28 +6762,56 @@
       "sha256": "a5831a9d0847081572276b9fb6dda78bea7a8a4ce3072822096faeaccfab1209"
     },
     {
-      "path": "docs/verification/wave5/windows-test-connected-package-20261009-r5.json",
-      "sha256": "3cff627bc01b70b996d9dfdd491536457e55c18bccd3a93717da143c50d2d67c"
+      "path": "docs/verification/wave5/windows-account-google-setup-20261009.md",
+      "sha256": "8766e4800c1230d25e9ed8350ee2a4f314d5ab96a36c2842b99a624d9784bebf"
     },
     {
-      "path": "docs/verification/wave5/windows-test-connected-source-20261009-r5.json",
-      "sha256": "543007657b75c8ab5dc6d111fa0437731e3411d833de0d5079da226c8c3a2d78"
+      "path": "docs/verification/wave5/windows-test-connected-package-20261009-r10.json",
+      "sha256": "4f75e183ccc2820b5189c04f273df447d9bbceb601ba3fe63808f744d089bc95"
     },
     {
-      "path": "docs/verification/wave5/windows-test-delivery-20261009-r5.json",
-      "sha256": "5a990a0dc60218e1d012ef7f12f37318c0fcca4f7236058eec086c0682ec9326"
+      "path": "docs/verification/wave5/windows-test-connected-source-20261009-r10.json",
+      "sha256": "df082e6d600f2c8147a82ecce7be84ef8e43d1b8316608d7d8fd83a593f450ef"
     },
     {
-      "path": "docs/verification/wave5/windows-test-preview-package-20261009-r5.json",
-      "sha256": "4e9870b0ac95305c3f8949f3fc69ee20a726dc9cff296e342e0a869a3e367e6c"
+      "path": "docs/verification/wave5/windows-test-delivery-20261009-r10.json",
+      "sha256": "7a79843a88d28436e2652b9fff9467d4e082e1b667b9a6786935a7a2b26083da"
     },
     {
-      "path": "docs/verification/wave5/windows-test-preview-source-20261009-r5.json",
-      "sha256": "79daac7b7dfb19dec1cd69a41eedb281c7f8feb55f4b7d766446768e56ff6eca"
+      "path": "docs/verification/wave5/windows-test-preview-desktopAll-20261009-r10.json",
+      "sha256": "bf150573c5415b5de1f1de85885a99ca2c2f6d9979c0b4c3661d8c749bc61e7a"
     },
     {
-      "path": "docs/verification/wave5/windows-test-verification-20261009-r5.json",
-      "sha256": "e548a101e7ef6f2afcd742b984f5b3967f26686200c3465291b64f4ac3b9b2fa"
+      "path": "docs/verification/wave5/windows-test-preview-desktopAll-20261009-r10.log",
+      "sha256": "0727aa8dde0487db2f8a39db484c8101402dcab0a13a92ae1c7c330c91b8e1eb"
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-preview-keyboard-attempt1-20261009-r10.json",
+      "sha256": "cc4dd580f067f2a02475421eda68068f3289c6190f36c5187133c77fc217e60f"
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-preview-keyboard-focus-failure-20261009-r10.json",
+      "sha256": "5d5835f5a1265b4c5b6536995ebc8e1adfeb1257eb0ac14c98de3b6a6681ccb9"
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-preview-package-20261009-r10.json",
+      "sha256": "7a164184f0788111d20fb9ccd8708746e265e20b7c9118c5069836d73175ff64"
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-preview-platformAll-20261009-r10.json",
+      "sha256": "d229c05405d1f7f77aa3a8b6a361e315a709299ba835d411a213edb4a49befc6"
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-preview-platformAll-20261009-r10.log",
+      "sha256": "e2c84712b701fc0c48b720ac1d2782cc846592d3ae32ffb78025436f7c9a9322"
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-preview-source-20261009-r10.json",
+      "sha256": "b3d2fad6cc9bc632779afb893be493e3be0108d2ef0276fc392c8df3f5f257bf"
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-verification-20261009-r10.json",
+      "sha256": "82805cb44239bacb1278b26d73f9a4eaee87bf70244d72e7efa571a94b6e8247"
     },
     {
       "path": "scripts/wave5/complete_app_runtime_plan.mjs",
@@ -6621,11 +6819,11 @@
     },
     {
       "path": "scripts/wave5/finalize_windows_test_package.ps1",
-      "sha256": "01fa5ac2736d96fa998df68a5887a9e248e69690f55d1d5b2890a49e16bee091"
+      "sha256": "4a8977afe145f6951831ff9e852fd679900933e8a491f6ffac7358aef1fbedc1"
     },
     {
       "path": "scripts/wave5/launch_windows_test.ps1",
-      "sha256": "2fc8a33fed104872e83ca057348f89273bc2fc71125ec6716fe2881d0ef29891"
+      "sha256": "fff448fa70e3d66cbafd2e05c9b493270bf1a888c5e06943c61cb9a7ac37a6eb"
     },
     {
       "path": "scripts/wave5/package_windows_test_build.mjs",
@@ -6641,7 +6839,11 @@
     },
     {
       "path": "scripts/wave5/prepare_final_windows_evidence.mjs",
-      "sha256": "f5b4c300b8244f8b307c231d0d8f2e75e9005ac826170542398b7a45fad3333d"
+      "sha256": "43a4dd0e6aa8774b422ae9c3d34d200f6d934eca087a80df4164c133aa05842d"
+    },
+    {
+      "path": "scripts/wave5/prepare_full_desktop_diagnostic.mjs",
+      "sha256": "8426c616122ce441781ed775981bfee611c44bdedd68ea72974604bc19fdb908"
     },
     {
       "path": "scripts/wave5/prepare_native_runtime_profile.ps1",
@@ -6653,7 +6855,7 @@
     },
     {
       "path": "scripts/wave5/prepare_supabase_review.mjs",
-      "sha256": "10ae7280ab784bbc271ca3c6acab94f1b22d369f0a370316c1b60776d188e7bb"
+      "sha256": "86906c73471cc349aa38eb8867a6ea4c2fb35637b72bf5e951d20dad5a5bde33"
     },
     {
       "path": "scripts/wave5/prepare_supabase_setup.mjs",
@@ -6664,8 +6866,16 @@
       "sha256": "0ee05df118f6d39b7c9a22b03a75ae7d21c9c3337f56a9484ddaedccbe7582d4"
     },
     {
+      "path": "scripts/wave5/probe_windows_keyboard.ps1",
+      "sha256": "59537cc9b3e4eaf1359c24b85b4a22a26911eaa856f75df6ecd069625f93ed3b"
+    },
+    {
+      "path": "scripts/wave5/run_flutter_with_capture_env.mjs",
+      "sha256": "164fea4353f489f40a0e8e8b74ccd173c2538c04d230acdd9ac188f37778ca37"
+    },
+    {
       "path": "scripts/wave5/run_windows_test_build.ps1",
-      "sha256": "aa99ecfd8b8ae48b32371ff2abdba979b6d386ee2ce6867054ecd8f91070c308"
+      "sha256": "06ef3776455513c9f1ef92ac2f265478fa03d0f871b087cc94200fe5121997ad"
     },
     {
       "path": "scripts/wave5/runtime_plan.mjs",
@@ -6814,6 +7024,7 @@
   "privateProvisioning": {
     "authAdminContextAvailable": false,
     "modelSecretConfigured": false,
+    "googlePrivateConfigurationPending": true,
     "connectedToolsProvideAuthAdminOrSecrets": false,
     "requiresOwnerAuthorizedPrivateContext": true,
     "secretValuesMayBeSentInChat": false,
@@ -6931,5 +7142,5 @@
     "Thirteen shared dashboard/setup golden failures remain unresolved; native keyboard/restart/revocation and owner visual review remain unverified",
     "Wave 3/4 generic provider and acceptance items remain subject to their separately owned contracts; installing the closure does not prove every module workflow"
   ],
-  "bundleSha256": "93db987d8a6f2db65171f76b2897af4131ec9304c57b5b49d512495572b302f7"
+  "bundleSha256": "13ffe2fdfd412fae36d3ff08c1f33bb59d9de85f20b2707e77ba6b9629eae83e"
 }

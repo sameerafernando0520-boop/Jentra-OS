@@ -1,0 +1,839 @@
+{
+  "observedAt": "2026-10-09T17:54:00.390Z",
+  "revision": "r10",
+  "currentSourceMatch": true,
+  "sourceFilesPerApp": 1067,
+  "sourceScope": "Desktop transitive workspace source plus all workspace dependency manifests; three explicit runner identity overlays in each build copy",
+  "ordinaryEntrypoint": "lib/main.dart",
+  "previewBuilt": true,
+  "connectedBuilt": true,
+  "nativeLaunched": true,
+  "releaseEntriesVerified": 68,
+  "stages": [
+    {
+      "mode": "Preview",
+      "stage": "analyzer",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r10\\preview",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe --suppress-analytics analyze apps/jentra_desktop/lib/main.dart apps/jentra_desktop/lib/src/app.dart apps/jentra_desktop/lib/src/app_providers.dart apps/jentra_desktop/lib/src/router.dart apps/jentra_desktop/lib/src/shell/jentra_shell.dart apps/jentra_desktop/test/command_palette_keyboard_test.dart apps/jentra_desktop/test/reviewed_model_workspace_test.dart apps/jentra_desktop/lib/src/features/analytics apps/jentra_desktop/lib/src/features/auth apps/jentra_desktop/test/login_account_screen_test.dart packages/jentra_platform/lib/src/auth packages/jentra_platform/test/auth packages/jentra_platform/lib/src/supabase_foundation_gateway.dart packages/jentra_platform/lib/src/analytics/reviewed_model_gateway.dart packages/jentra_platform/lib/src/analytics/wave5_command_store.dart packages/jentra_platform/test/analytics/reviewed_model_gateway_test.dart packages/jentra_platform/lib/src/runtime_config.dart packages/jentra_platform/lib/src/supabase_platform.dart",
+      "log": "docs/verification/wave5/windows-test-preview-analyzer-20261009-r10.log",
+      "startedAt": "2026-10-09T16:25:38.4578793Z",
+      "finishedAt": "2026-10-09T16:30:17.3062690Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-analyzer-20261009-r10.json",
+      "logSha256": "899cf5db938d9f585daa8705d99bc818c210ef550d940b2b67ccdc903889075d",
+      "passedTests": null
+    },
+    {
+      "mode": "Preview",
+      "stage": "modelGatewayTests",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r10\\preview\\packages\\jentra_platform",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded test/analytics/reviewed_model_gateway_test.dart test/analytics/wave5_control_gateway_test.dart",
+      "log": "docs/verification/wave5/windows-test-preview-modelGatewayTests-20261009-r10.log",
+      "startedAt": "2026-10-09T16:32:19.1015208Z",
+      "finishedAt": "2026-10-09T16:32:30.9701514Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-modelGatewayTests-20261009-r10.json",
+      "logSha256": "3e45bcb5eadec5e65647fd196ab96873cc4ea3f3463b5b55cfc1fd146c50f3bf",
+      "passedTests": 15
+    },
+    {
+      "mode": "Preview",
+      "stage": "modelTests",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r10\\preview\\apps\\jentra_desktop",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded test/reviewed_model_workspace_test.dart",
+      "log": "docs/verification/wave5/windows-test-preview-modelTests-20261009-r10.log",
+      "startedAt": "2026-10-09T16:32:31.1190251Z",
+      "finishedAt": "2026-10-09T16:32:44.2014653Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-modelTests-20261009-r10.json",
+      "logSha256": "84f6ab9ae14c5e9d9c9692bc34331ee315d09ee8eafc64c42783615d218ad41f",
+      "passedTests": 20
+    },
+    {
+      "mode": "Preview",
+      "stage": "keyboardTests",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r10\\preview\\apps\\jentra_desktop",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded test/command_palette_keyboard_test.dart",
+      "log": "docs/verification/wave5/windows-test-preview-keyboardTests-20261009-r10.log",
+      "startedAt": "2026-10-09T16:32:44.2395043Z",
+      "finishedAt": "2026-10-09T16:33:34.6773147Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-keyboardTests-20261009-r10.json",
+      "logSha256": "eba34b8c85bf7188e9e12af63dee0236c9868383080d9ec1fc810751b2c46ea8",
+      "passedTests": 6
+    },
+    {
+      "mode": "Preview",
+      "stage": "cashTests",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r10\\preview\\apps\\jentra_desktop",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded test/wave5_workspaces_test.dart test/wave5_continuation_test.dart test/process_metric_workspace_test.dart",
+      "log": "docs/verification/wave5/windows-test-preview-cashTests-20261009-r10.log",
+      "startedAt": "2026-10-09T16:33:34.7382666Z",
+      "finishedAt": "2026-10-09T16:34:37.6387923Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-cashTests-20261009-r10.json",
+      "logSha256": "437d6679cd6e534c36cbe5be67f89604a28ee4ac2d5c0fb6874c9659dc654683",
+      "passedTests": 96
+    },
+    {
+      "mode": "Preview",
+      "stage": "cashFrames",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r10\\preview\\apps\\jentra_desktop",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded --name=cash fresh render test/wave5_continuation_test.dart",
+      "log": "docs/verification/wave5/windows-test-preview-cashFrames-20261009-r10.log",
+      "startedAt": "2026-10-09T16:34:37.6731410Z",
+      "finishedAt": "2026-10-09T16:35:24.4422138Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-cashFrames-20261009-r10.json",
+      "logSha256": "e851fdecd18da15f677682dbcf5a87870878c9f48562f2dff4b5cf62dc813451",
+      "passedTests": 12
+    },
+    {
+      "mode": "Preview",
+      "stage": "modelFrames",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r10\\preview\\apps\\jentra_desktop",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded --name=model fresh render test/reviewed_model_workspace_test.dart",
+      "log": "docs/verification/wave5/windows-test-preview-modelFrames-20261009-r10.log",
+      "startedAt": "2026-10-09T16:35:24.4901437Z",
+      "finishedAt": "2026-10-09T16:35:50.2153802Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-modelFrames-20261009-r10.json",
+      "logSha256": "14dde0ccb1d165a67cd3dfd2762e9746f0ae16f8baa434d3798975984a69ba45",
+      "passedTests": 12
+    },
+    {
+      "mode": "Preview",
+      "stage": "startupTests",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r10\\preview\\apps\\jentra_desktop",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded --name=unconfigured startup|foundation shell exposes routes and command palette test/main_preview_startup_test.dart test/jentra_app_test.dart",
+      "log": "docs/verification/wave5/windows-test-preview-startupTests-20261009-r10.log",
+      "startedAt": "2026-10-09T16:35:50.2488698Z",
+      "finishedAt": "2026-10-09T16:36:39.4814587Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-startupTests-20261009-r10.json",
+      "logSha256": "501cfd13918e4c13e6b1c2249d98654145219ccd05b44cdda8168669fecba181",
+      "passedTests": 2
+    },
+    {
+      "mode": "Preview",
+      "stage": "authGatewayTests",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r10\\preview\\packages\\jentra_platform",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded test/auth/google_loopback_test.dart test/auth/google_provider_settings_test.dart test/auth/pkce_exchange_http_client_test.dart",
+      "log": "docs/verification/wave5/windows-test-preview-authGatewayTests-20261009-r10.log",
+      "startedAt": "2026-10-09T16:30:17.3496220Z",
+      "finishedAt": "2026-10-09T16:30:32.3475064Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-authGatewayTests-20261009-r10.json",
+      "logSha256": "b477eefb93ccbc91327751b27201e0f656d11b72fbe1a8d3b930b8c62bc5bcbe",
+      "passedTests": 17
+    },
+    {
+      "mode": "Preview",
+      "stage": "authTests",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r10\\preview\\apps\\jentra_desktop",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded test/login_account_screen_test.dart test/auth_capabilities_test.dart",
+      "log": "docs/verification/wave5/windows-test-preview-authTests-20261009-r10.log",
+      "startedAt": "2026-10-09T16:30:32.3841857Z",
+      "finishedAt": "2026-10-09T16:31:30.6768136Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-authTests-20261009-r10.json",
+      "logSha256": "be411fc052e6a952d24649be60d8df7e6c6001567e1bf994ea4e31a2b96ff709",
+      "passedTests": 15
+    },
+    {
+      "mode": "Preview",
+      "stage": "authFrames",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r10\\preview\\apps\\jentra_desktop",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded --name=auth fresh render test/login_account_screen_test.dart",
+      "log": "docs/verification/wave5/windows-test-preview-authFrames-20261009-r10.log",
+      "startedAt": "2026-10-09T16:31:30.7169568Z",
+      "finishedAt": "2026-10-09T16:31:48.9414165Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-authFrames-20261009-r10.json",
+      "logSha256": "4517930b20b34f8cf2cf0b23b2122aa385b52e696b49542bfececcbdb5d533f0",
+      "passedTests": 2
+    }
+  ],
+  "builds": [
+    {
+      "mode": "preview",
+      "packageManifest": "docs/verification/wave5/windows-test-preview-package-20261009-r10.json",
+      "sourceFileCount": 1067,
+      "releaseFiles": 34,
+      "launchManifest": "docs/verification/wave5/windows-test-preview-launch-20261009-r10.json",
+      "pid": 19036,
+      "capture": "C:\\Users\\sheha\\Desktop\\Jentra OS\\docs\\verification\\wave5\\windows-test-preview-native-20261009-r10.png",
+      "captureSha256": "b2fe01e3a9c890f09b5f6e828d852b7734e67d3349da41374ade74dc416211f3",
+      "nativeInspected": true,
+      "entrypoint": "lib/main.dart",
+      "storageIdentity": {
+        "company": "com.jentra.test",
+        "product": "JentraOS_WindowsTest_20261009-r10_Preview",
+        "applicationSupport": "%APPDATA%\\com.jentra.test\\JentraOS_WindowsTest_20261009-r10_Preview",
+        "applicationCache": "%LOCALAPPDATA%\\com.jentra.test\\JentraOS_WindowsTest_20261009-r10_Preview",
+        "secureStorage": "DPAPI file in the same unique applicationSupport directory; WindowsOptions defaults to no legacy migration",
+        "defaultAcceptanceIdentity": "com.jentra/jentra_desktop",
+        "defaultStoresRead": false,
+        "newOsUserCreated": false
+      },
+      "build": {
+        "mode": "Preview",
+        "stage": "build",
+        "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r10\\preview\\apps\\jentra_desktop",
+        "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics build windows --release --no-pub --target=lib/main.dart --dart-define=JENTRA_ENVIRONMENT=preview",
+        "log": "docs/verification/wave5/windows-test-preview-build-20261009-r10.log",
+        "startedAt": "2026-10-09T16:54:16.5578794Z",
+        "finishedAt": "2026-10-09T16:57:01.6555867Z",
+        "exitCode": 0
+      }
+    },
+    {
+      "mode": "connected",
+      "packageManifest": "docs/verification/wave5/windows-test-connected-package-20261009-r10.json",
+      "sourceFileCount": 1067,
+      "releaseFiles": 34,
+      "launchManifest": "docs/verification/wave5/windows-test-connected-launch-20261009-r10.json",
+      "pid": 1712,
+      "capture": "C:\\Users\\sheha\\Desktop\\Jentra OS\\docs\\verification\\wave5\\windows-test-connected-native-20261009-r10.png",
+      "captureSha256": "7c44ea8b5c5568836ae30a445f770a9574e0e981afe9e0e00b8efa03bcac02e4",
+      "nativeInspected": true,
+      "entrypoint": "lib/main.dart",
+      "storageIdentity": {
+        "company": "com.jentra.test",
+        "product": "JentraOS_WindowsTest_20261009-r10_Connected",
+        "applicationSupport": "%APPDATA%\\com.jentra.test\\JentraOS_WindowsTest_20261009-r10_Connected",
+        "applicationCache": "%LOCALAPPDATA%\\com.jentra.test\\JentraOS_WindowsTest_20261009-r10_Connected",
+        "secureStorage": "DPAPI file in the same unique applicationSupport directory; WindowsOptions defaults to no legacy migration",
+        "defaultAcceptanceIdentity": "com.jentra/jentra_desktop",
+        "defaultStoresRead": false,
+        "newOsUserCreated": false
+      },
+      "build": {
+        "mode": "Connected",
+        "stage": "build",
+        "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r10\\connected\\apps\\jentra_desktop",
+        "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics build windows --release --no-pub --target=lib/main.dart --dart-define-from-file=C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r10\\connected\\public-build-config.json",
+        "log": "docs/verification/wave5/windows-test-connected-build-20261009-r10.log",
+        "startedAt": "2026-10-09T17:33:02.4844695Z",
+        "finishedAt": "2026-10-09T17:35:26.7595366Z",
+        "exitCode": 0
+      }
+    }
+  ],
+  "delivery": "docs/verification/wave5/windows-test-delivery-20261009-r10.json",
+  "zip": "C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261009 r10.zip",
+  "zipSha256": "3a42db82758049e0797a4f1a374933ae48a17538554704754bce78e091456a28",
+  "zipBytes": 47209403,
+  "cashRenderCases": 12,
+  "cashFrames": [
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-dark-comfortable-approval.png",
+      "sha256": "d0fc70dafdbfc58318a4a73381850dccfdda61459c1cfafbfd80fdc0edc52109",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-dark-comfortable-dates.png",
+      "sha256": "d0fc70dafdbfc58318a4a73381850dccfdda61459c1cfafbfd80fdc0edc52109",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-dark-comfortable-lower.png",
+      "sha256": "8187ebc4e42cb748fc4dc9f6db8b262fc76d3e2d255619bc93493a417ec96a27",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-dark-comfortable-providers.png",
+      "sha256": "4134c3159a842fe88a531f72f9bf97f9a66821590d5ad9639e997f0876c09946",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-dark-comfortable-top.png",
+      "sha256": "8b38f5fcfd0a09e6bc89a40836fd4aad3e2bba7d9733308a9be5ef630b3d3dfa",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-dark-compact-approval.png",
+      "sha256": "dbb857326cec357d243fc4b16a0b06fe7336b42b0c056057843b05900399c48b",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-dark-compact-dates.png",
+      "sha256": "dbb857326cec357d243fc4b16a0b06fe7336b42b0c056057843b05900399c48b",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-dark-compact-lower.png",
+      "sha256": "e3ce7358bc2ed190b7516f01fda4004b24aea0e0b7b5fb623f29263bdac1bb55",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-dark-compact-providers.png",
+      "sha256": "e3ce7358bc2ed190b7516f01fda4004b24aea0e0b7b5fb623f29263bdac1bb55",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-dark-compact-top.png",
+      "sha256": "41aaf8854d4ae1bbd722d64f046c7bdf72fd8659f27298dc6e3038583964500c",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-light-comfortable-approval.png",
+      "sha256": "832f37056c964fafb6571aac4a0ae4e712c94d25d15302531ef400521512cbc3",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-light-comfortable-dates.png",
+      "sha256": "832f37056c964fafb6571aac4a0ae4e712c94d25d15302531ef400521512cbc3",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-light-comfortable-lower.png",
+      "sha256": "214679293ee3e51aac5e74f571723df5eb5a675a3ed0a4bdcbfca157cf633f90",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-light-comfortable-providers.png",
+      "sha256": "28bcf75fea4e49e3d469967b1c5f2eb9dfd9b25e643d4daf3581e785386ac298",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-light-comfortable-top.png",
+      "sha256": "d39a8906875cdbfd9f9be7a098f7391ad332a4118c5ee60175172d0db84b1317",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-light-compact-approval.png",
+      "sha256": "360e16486f822d4bb614a52e7cb013870a17f8811c9178c1b03165e267910f4e",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-light-compact-dates.png",
+      "sha256": "360e16486f822d4bb614a52e7cb013870a17f8811c9178c1b03165e267910f4e",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-light-compact-lower.png",
+      "sha256": "553dabd913502e2b7200979faa1de617e3c15834b13b4e9f48a060b40f8ed93b",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-light-compact-providers.png",
+      "sha256": "553dabd913502e2b7200979faa1de617e3c15834b13b4e9f48a060b40f8ed93b",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1024-720-light-compact-top.png",
+      "sha256": "cca85ff033cef6de5b33cbb94df34b015b254fb059d0f639b1807fca82cdc875",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-dark-comfortable-approval.png",
+      "sha256": "96f634dde3df9eddf83696508b1b42bc69b0d033f770fc8e032e3427107035d4",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-dark-comfortable-dates.png",
+      "sha256": "96f634dde3df9eddf83696508b1b42bc69b0d033f770fc8e032e3427107035d4",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-dark-comfortable-lower.png",
+      "sha256": "ca809aba1cd6fd5157e8289bce8b24359e58cacb35a401f4ea06a108c0791129",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-dark-comfortable-providers.png",
+      "sha256": "a46df63d0d45409751164b91f91ff108cbc085472219a57a6570562ad0736386",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-dark-comfortable-top.png",
+      "sha256": "977cbb67af19f3b2b7dd5874f05d8750232d19aa993aed108a7919aa1f5cfd24",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-dark-compact-approval.png",
+      "sha256": "5bf30d67974a8793d514ef8c8acb4d65ac9b7ef781fd82d6102fdbd3f4eda84e",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-dark-compact-dates.png",
+      "sha256": "5bf30d67974a8793d514ef8c8acb4d65ac9b7ef781fd82d6102fdbd3f4eda84e",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-dark-compact-lower.png",
+      "sha256": "6b61b16b56d2b5e2e2401fce01e5c54205212d8674da19cc88dee37b8fdd2ef1",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-dark-compact-providers.png",
+      "sha256": "2938f6f428f8c191f8eeaabc4bdb665a57bc57388ce34bfc3cbe98e34faf6416",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-dark-compact-top.png",
+      "sha256": "a855c808766036349e3555caf8747e760224e9d0a1b92a109c9d47adbc106768",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-light-comfortable-approval.png",
+      "sha256": "717ed6a18d44656b344ed9fa1042dd6d6736a39168d88b93fbeb1449d0fea599",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-light-comfortable-dates.png",
+      "sha256": "717ed6a18d44656b344ed9fa1042dd6d6736a39168d88b93fbeb1449d0fea599",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-light-comfortable-lower.png",
+      "sha256": "c7825ecdbb484c509cd0c0ba570fe0b10f6aa959fc6f3abf6ce774f3923af569",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-light-comfortable-providers.png",
+      "sha256": "708a5a7acf6b6f153c091be67e4d041d08e4408faab27ee4ea0f10298a7f6f9f",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-light-comfortable-top.png",
+      "sha256": "65c89fbf0ae38ee2ad190de0f36a78a8c57cd973dec121f7906532235b0f0f14",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-light-compact-approval.png",
+      "sha256": "21a9c9f87d04aa4bc4ce5d573329534db456b04c2d1449db6d2a806337657dd4",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-light-compact-dates.png",
+      "sha256": "21a9c9f87d04aa4bc4ce5d573329534db456b04c2d1449db6d2a806337657dd4",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-light-compact-lower.png",
+      "sha256": "90fd24885ad9ca8b98ea4eac457d0becd4b6dc9b81c92efe35b1c99262a058bc",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-light-compact-providers.png",
+      "sha256": "4d6196c2770c17ecb08cfbdb50e45d95e3573f9ecacae496a859a4c81e08bd66",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1440-900-light-compact-top.png",
+      "sha256": "c49f476f130c158ebcc5a91dfff0f71cda5478e2a25c85cc203b2d48284a4ea8",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-dark-comfortable-approval.png",
+      "sha256": "98729dcf953b2d44296faf7cd0854f690a62697c1fca30251e830a82a6c3184c",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-dark-comfortable-dates.png",
+      "sha256": "98729dcf953b2d44296faf7cd0854f690a62697c1fca30251e830a82a6c3184c",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-dark-comfortable-lower.png",
+      "sha256": "7ec5f5af8588c3bab472d78281c5c9890f4be59462d3519651a9463b264c13ef",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-dark-comfortable-providers.png",
+      "sha256": "5119ad866dbc6dd01fff8914914b39c4aed188ac9b6d2da2b3ad6e40dabc7fba",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-dark-comfortable-top.png",
+      "sha256": "e1f762fc98ecb1dec7aa67e7f6f175747dd9d948a01ceeb356c1670e888fe6cc",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-dark-compact-approval.png",
+      "sha256": "8eff95a97c2e5a02c0cd1d455170583e6bcc28b972ad1ef93f97e9e80b059350",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-dark-compact-dates.png",
+      "sha256": "8eff95a97c2e5a02c0cd1d455170583e6bcc28b972ad1ef93f97e9e80b059350",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-dark-compact-lower.png",
+      "sha256": "988df44c49ae8d056c490d62e1944e8ea34cf0a83d31075c804015ea95f696f4",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-dark-compact-providers.png",
+      "sha256": "43bc0cf7b787aef2c2d4ff20f6e4bddb42ec72c651e63f060ed5b1173d75f441",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-dark-compact-top.png",
+      "sha256": "fa99fe4d8f43beb30c91427e4c81501b5e581ee77e5184eca3fbfcb0e40d5149",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-light-comfortable-approval.png",
+      "sha256": "32c61ee23cd032e653d2e2a9948c49661e4c37030b53ad6149cea5f4807a88e5",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-light-comfortable-dates.png",
+      "sha256": "32c61ee23cd032e653d2e2a9948c49661e4c37030b53ad6149cea5f4807a88e5",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-light-comfortable-lower.png",
+      "sha256": "34198131043af33218ff28e64f486d48163661c2b6fbe29d229f7b81db5ab3c2",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-light-comfortable-providers.png",
+      "sha256": "ad7ef4b70e3bb689574c116a7de8f0a0695e3541f6300d045d0732c3f4ee471b",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-light-comfortable-top.png",
+      "sha256": "f307ab147b25d7cd531273d7f882051d7479f53fda7eb90c95495b17a27f1bcc",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-light-compact-approval.png",
+      "sha256": "d76052e753ac21d1df3bb5f23b27c87bbf482380063fdb52ddd73c839aff23bb",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-light-compact-dates.png",
+      "sha256": "d76052e753ac21d1df3bb5f23b27c87bbf482380063fdb52ddd73c839aff23bb",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-light-compact-lower.png",
+      "sha256": "30ead48975bde48570573b50ac089cdfa9073642b61f19ba7d91920ce9324503",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-light-compact-providers.png",
+      "sha256": "2271601d979cf5647219dc0dff51c6c30b158f78e79649b7719470bad1f1638e",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-cash-frames-20261009-r10/cash-1920-1080-light-compact-top.png",
+      "sha256": "5977579d1a0d434d899ab058f7699b56852004ae59358be5995c4186e9dff1f8",
+      "visuallyInspected": false
+    }
+  ],
+  "modelRenderCases": 12,
+  "modelFrames": [
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1024-720-dark-comfortable-review.png",
+      "sha256": "d8fa73ba565d4680be7d831ae4fbafc4979740b86921510a91172f1a369f5269",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1024-720-dark-comfortable-top.png",
+      "sha256": "fc8b9eb668154ac538840cd8e104fa6a70d9f2d00dec0f14abc77aa7e3bec6ee",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1024-720-dark-compact-review.png",
+      "sha256": "8460e60930da12c2d9bae693d8dc243ba32e2680f4d2f707cae99a3a6f70a676",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1024-720-dark-compact-top.png",
+      "sha256": "1f14f66ee35a3cd97ba46b2f7cf315ba8f4387a5a905c92c0b9345911fb4ab18",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1024-720-light-comfortable-review.png",
+      "sha256": "2fa5f0b628e662d4ebeb8c04d13bf7ce7204846c99b979af2d3eb796c835c243",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1024-720-light-comfortable-top.png",
+      "sha256": "b7241c0a0bb90ffa4ca7944c42fd4c9f0f55c3c66893a3a7f0a325c04854ee9d",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1024-720-light-compact-review.png",
+      "sha256": "4a6389a0db9cc75169e73fcda300a477e94c30509968eaaebcb6cf9e6ba86b5f",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1024-720-light-compact-top.png",
+      "sha256": "3985209f84fac28c77d189ca99c6e737c1b72413bc15e337e4bacd222bb2b88d",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1440-900-dark-comfortable-review.png",
+      "sha256": "84ba05fe46ca7eaa487a41fc94ac4c040e04b2c295a82e76d480002432eb40f1",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1440-900-dark-comfortable-top.png",
+      "sha256": "7d44fb84198a1a3971df6985e820a818a28ba28bfd774be6c75498400f35fe62",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1440-900-dark-compact-review.png",
+      "sha256": "a54b16803981e10af0e1037281057f623762888ea798cf26ad1cc158aeb24ce7",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1440-900-dark-compact-top.png",
+      "sha256": "11614ad208a63f982b2814c54d49b72d0c6500d70294857583152e1828f0c692",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1440-900-light-comfortable-review.png",
+      "sha256": "b19e52c928aa66748cf7be7d34fc034f7013671c63b4bbffeb8990a1e730d78b",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1440-900-light-comfortable-top.png",
+      "sha256": "736395248dd715d2c35adf6e6113b016c9c1cd1bacabbb6d0bba21a4f87dfca4",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1440-900-light-compact-review.png",
+      "sha256": "58ca25b545ece5e0adde4accfc1bb839eaa3f62326da2b440525b8173ae90579",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1440-900-light-compact-top.png",
+      "sha256": "f8488a24bcdb26b6fe827b9cfddef8475339cf952f07f0a4461073ac8152d68f",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1920-1080-dark-comfortable-review.png",
+      "sha256": "bb64b3b033f0738713c0c4ea39fc464be423e5c4ee1b754373bb277445b3912d",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1920-1080-dark-comfortable-top.png",
+      "sha256": "bb64b3b033f0738713c0c4ea39fc464be423e5c4ee1b754373bb277445b3912d",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1920-1080-dark-compact-review.png",
+      "sha256": "5cc88848b1d7a1d5eb06d6d55b918c73a03c99c46f1bf8ed74c39672b886ff01",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1920-1080-dark-compact-top.png",
+      "sha256": "5cc88848b1d7a1d5eb06d6d55b918c73a03c99c46f1bf8ed74c39672b886ff01",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1920-1080-light-comfortable-review.png",
+      "sha256": "a6378b01be68c2dfc9cf088fcb22e456dc9e24e1d66360be9945d27f7eee6c37",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1920-1080-light-comfortable-top.png",
+      "sha256": "a6378b01be68c2dfc9cf088fcb22e456dc9e24e1d66360be9945d27f7eee6c37",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1920-1080-light-compact-review.png",
+      "sha256": "ee333ec048f258f06ffa9b6cebeeba41351fe1a4549a055b384d0df4a75a1d60",
+      "visuallyInspected": false
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-model-frames-20261009-r10/model-1920-1080-light-compact-top.png",
+      "sha256": "ee333ec048f258f06ffa9b6cebeeba41351fe1a4549a055b384d0df4a75a1d60",
+      "visuallyInspected": false
+    }
+  ],
+  "cashFramesInspected": 8,
+  "modelFramesInspected": 4,
+  "nativeFramesInspected": 2,
+  "textScale": 2,
+  "authFrames": [
+    {
+      "path": "docs/verification/wave5/windows-test-auth-frames-20261009-r10/auth-create-1024-720-dark-200.png",
+      "sha256": "0efff842e22108d6e68ab8923ceb95e6cbe2eb07dcde0383c4471026a7864f4a",
+      "visuallyInspected": true
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-auth-frames-20261009-r10/auth-signin-1024-720-light-200.png",
+      "sha256": "aa07edd72c953a9dd9e8a1f330352733bf540ee691048ab07f8e9d04a559a64f",
+      "visuallyInspected": true
+    }
+  ],
+  "authFramesInspected": 2,
+  "authGatewayTests": 17,
+  "authTests": 15,
+  "newAccountUiImplemented": true,
+  "googleWindowsReturnImplemented": true,
+  "realGoogleSignIn": false,
+  "emailConfirmationDeliveryVerified": false,
+  "publicAuthSettings": {
+    "projectId": "xpdoufauvrbdmxgngetv",
+    "observedAt": "2026-10-09T17:31:57.4542194Z",
+    "googleEnabled": false,
+    "emailEnabled": true,
+    "signupDisabled": false,
+    "emailAutoconfirm": false,
+    "privateConfigurationRead": false,
+    "accountCreated": false
+  },
+  "publicAuthSettingsEvidence": "docs/verification/wave5/public-auth-settings-20261009.json",
+  "broaderSuites": [
+    {
+      "mode": "Preview",
+      "stage": "platformAll",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r10\\preview\\packages\\jentra_platform",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded",
+      "log": "docs/verification/wave5/windows-test-preview-platformAll-20261009-r10.log",
+      "startedAt": "2026-10-09T16:36:39.5369377Z",
+      "finishedAt": "2026-10-09T16:40:17.3110112Z",
+      "exitCode": 0,
+      "record": "docs/verification/wave5/windows-test-preview-platformAll-20261009-r10.json",
+      "logSha256": "e2c84712b701fc0c48b720ac1d2782cc846592d3ae32ffb78025436f7c9a9322",
+      "passedTests": 1127,
+      "failedTests": 0,
+      "failureList": []
+    },
+    {
+      "mode": "Preview",
+      "stage": "desktopAll",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9r10\\preview\\apps\\jentra_desktop",
+      "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded",
+      "captureEnvironmentWrapper": "scripts/wave5/run_flutter_with_capture_env.mjs",
+      "log": "docs/verification/wave5/windows-test-preview-desktopAll-20261009-r10.log",
+      "startedAt": "2026-10-09T17:36:43.9348171Z",
+      "finishedAt": "2026-10-09T17:53:01.4231537Z",
+      "exitCode": 1,
+      "record": "docs/verification/wave5/windows-test-preview-desktopAll-20261009-r10.json",
+      "logSha256": "0727aa8dde0487db2f8a39db484c8101402dcab0a13a92ae1c7c330c91b8e1eb",
+      "passedTests": 1909,
+      "failedTests": 83,
+      "failureList": [
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/crm_workspace_test.dart: CRM desktop composition matches its approved visual contract — AC-321",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/design_system_catalogue_test.dart: logo-led catalogue 1024_light_compact",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/design_system_catalogue_test.dart: logo-led catalogue 1440_light_comfortable",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/design_system_catalogue_test.dart: logo-led catalogue 1440_dark_compact",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/design_system_catalogue_test.dart: logo-led catalogue 1920_dark_comfortable",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/goods_receipt_workspace_test.dart: goods receipt light at 200% preserves posting controls",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/goods_receipt_workspace_test.dart: goods receipt dark at 200% preserves posting controls",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/inventory_transfer_workspace_test.dart: transfer editor light at 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/inventory_transfer_workspace_test.dart: transfer editor dark at 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/inventory_valuation_workspace_test.dart: valuation light 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/inventory_valuation_workspace_test.dart: valuation dark 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: Wave 2 setup remains reachable at 200% text scale — EC-224",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: dashboard golden 1024_light_compact — AC-1 / AC-7",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: dashboard golden 1024_dark_comfortable — AC-1 / AC-7",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: dashboard golden 1440_light_comfortable — AC-1 / AC-7",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: dashboard golden 1440_dark_compact — AC-1 / AC-7",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: dashboard golden 1920_light_comfortable — AC-1 / AC-7",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: dashboard golden 1920_dark_comfortable — AC-1 / AC-7",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: setup golden 1024_light_compact — AC-216",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: setup golden 1024_dark_comfortable — AC-216",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: setup golden 1440_light_comfortable — AC-216",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: setup golden 1440_dark_compact — AC-216",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: setup golden 1920_light_comfortable — AC-216",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/jentra_app_test.dart: setup golden 1920_dark_comfortable — AC-216",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/landed_value_workspace_test.dart: landed preview light 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/landed_value_workspace_test.dart: landed preview dark 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/payroll_workspace_test.dart: payroll workspace light at 200 percent text scale",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/payroll_workspace_test.dart: payroll workspace dark at 200 percent text scale",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/procurement_workspace_test.dart: AC-321 procurement editor light at 200% text",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/procurement_workspace_test.dart: AC-321 procurement editor dark at 200% text",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/product_unit_workspace_test.dart: product unit light at 200%",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/product_unit_workspace_test.dart: product unit dark at 200%",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/purchase_order_workspace_test.dart: purchase order light at 200% retains actions",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/purchase_order_workspace_test.dart: purchase order dark at 200% retains actions",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/purchase_return_workspace_test.dart: return editor light at 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/purchase_return_workspace_test.dart: return editor dark at 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/quick_create_test.dart: customer quick create opens the party workspace and its create control",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/quotation_workspace_test.dart: AC-303 renders exact saved offer and readable revision decisions",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/quotation_workspace_test.dart: AC-303 explicit conflict comparison retains reviewed local fields",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/quotation_workspace_test.dart: AC-303 editor visual and accessible state 1440_light",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/quotation_workspace_test.dart: AC-303 editor visual and accessible state 1440_dark",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/quotation_workspace_test.dart: AC-303 line editing preserves exact conversion and discount choice",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/receipt_trace_workspace_test.dart: receipt trace light at 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/receipt_trace_workspace_test.dart: receipt trace dark at 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/receivables_workspace_test.dart: invoice source detail renders exact totals and guarded actions",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/receivables_workspace_test.dart: invoice editor dark theme",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/receivables_workspace_test.dart: narrow editor at 200 percent text remains scrollable",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/receivables_workspace_test.dart: storage failure keeps the offline editor and offers retry",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/receivables_workspace_test.dart: uncertain result displays saved-command retry",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/receivables_workspace_test.dart: receipt editor offers governed tender and bank fields",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/receivables_workspace_test.dart: return editor requires original source and disposition",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/reservation_workspace_test.dart: dated reservation queue light 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/reservation_workspace_test.dart: reservation light 200 percent review",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/reservation_workspace_test.dart: dated reservation queue dark 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/reservation_workspace_test.dart: reservation dark 200 percent review",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/sales_order_workspace_test.dart: AC-304 rendered order_editor_1440_light",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/sales_order_workspace_test.dart: AC-304 rendered order_editor_1440_dark",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/sales_order_workspace_test.dart: AC-304 rendered order_editor_1024_text200",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/sales_order_workspace_test.dart: AC-304 credit dialog explains exact exposure and reasoned override",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/sales_order_workspace_test.dart: AC-304 reservation UI bounds demand and available stock",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/sales_order_workspace_test.dart: AC-304 conflict UI requires inspection before keeping local edits",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/sales_order_workspace_test.dart: AC-304 accepted quotation opens explicit conversion fields",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/sourcing_recovery_test.dart: supplier quote editor light retains controls at 200%",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/sourcing_recovery_test.dart: supplier quote editor dark retains controls at 200%",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_count_workspace_test.dart: serial identity count light at 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_count_workspace_test.dart: serial identity count dark at 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_count_workspace_test.dart: count editor light at 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_count_workspace_test.dart: count editor dark at 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_opening_workspace_test.dart: opening register shows exact value and status",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_opening_workspace_test.dart: opening editor renders count lot details and exact preview",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_opening_workspace_test.dart: opening editor supports dark theme",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_opening_workspace_test.dart: 200 percent text remains scrollable without overflow",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_opening_workspace_test.dart: posted opening presents immutable stock and journal references",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/stock_opening_workspace_test.dart: uncertain post shows durable retry and blocks replacement",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/supplier_bill_workspace_test.dart: supplier bill light at 200% retains match controls",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/supplier_bill_workspace_test.dart: supplier bill dark at 200% retains match controls",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/supplier_payment_workspace_test.dart: allocation correction light remains usable at 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/supplier_payment_workspace_test.dart: dated AP statement light retains exact aging",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/supplier_payment_workspace_test.dart: payment proposal light at 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/supplier_payment_workspace_test.dart: allocation correction dark remains usable at 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/supplier_payment_workspace_test.dart: dated AP statement dark retains exact aging",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/supplier_payment_workspace_test.dart: payment proposal dark at 200 percent",
+        "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r10/preview/apps/jentra_desktop/test/warehouse_setup_test.dart: warehouse form uses selected branch and preserves scope on save"
+      ]
+    }
+  ],
+  "pkceDeadlineRegression": {
+    "observedAt": "2026-10-09T16:25:38.4075672Z",
+    "regression": "SDK headers deadline aborts without a late session",
+    "baseline": "pass-through transport in isolated snapshot only",
+    "exitCode": 1,
+    "redObserved": true,
+    "sourceRestored": true,
+    "productionChangedForProbe": false,
+    "log": "docs/verification/wave5/pkce-deadline-red-20261009-r10.log",
+    "record": "docs/verification/wave5/pkce-deadline-red-20261009-r10.json",
+    "logSha256": "8fcc640f5e91e19e6b623ce847b0a7c814243c3cce6dba37dc6e142bc674c5fd",
+    "greenSuite": "docs/verification/wave5/windows-test-preview-authGatewayTests-20261009-r10.json"
+  },
+  "visualFindings": [
+    "Model recovery shows the immutable saved source and UTC horizon fields; explicit selection fills the human form without dispatch.",
+    "Cash controls, provider completeness, date review and recovery actions remain legible across inspected viewport/theme/density combinations.",
+    "Adjacent cash floating labels touch shared field borders at 200 percent text; visual polish and owner review remain open. Scrolled frames intentionally crop viewport edges."
+  ],
+  "nativeKeyboardVerified": false,
+  "nativeKeyboardReason": "The r10 keyboard images did not show a command palette. The repeat own-window probe could not acquire foreground and aborted before keys. Six widget keyboard tests pass; native keyboard remains open.",
+  "nativeKeyboardFocusEvidence": "docs/verification/wave5/windows-test-preview-keyboard-focus-failure-20261009-r10.json",
+  "sharedGoldenFailures": 13,
+  "sharedGoldensRerun": true,
+  "approvedGoldensRegenerated": false,
+  "authenticatedNativeAcceptance": false,
+  "realMfa": false,
+  "actualModelUsage": false,
+  "actualWorkerDelivery": false,
+  "independentSessionContention": false,
+  "targetScaleLoad": false,
+  "ownerAccepted": false,
+  "newMigrationsInstalled": false,
+  "newAccountsCreated": false,
+  "formalRuntimeProfileProvisioned": false,
+  "acceptanceStoresReadOrCopied": false
+}
