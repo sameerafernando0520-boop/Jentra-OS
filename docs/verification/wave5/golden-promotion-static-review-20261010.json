@@ -1,0 +1,47 @@
+{
+  "checkedAt": "2026-10-10T02:36:11.950Z",
+  "script": {
+    "path": "scripts/wave5/promote_golden_review_20261010.mjs",
+    "sha256": "baac55c07673c72be58973a38145d9f5ffde266700d3ddb56dcb125319129eef"
+  },
+  "fixture": "build/w5goldens20261010/promotion-static-fixture-9FMw7v",
+  "passed": 7,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "publish retains claimed original and observes actual candidate",
+      "passed": true
+    },
+    {
+      "name": "preclaim mutation retained without automatic restoration",
+      "passed": true
+    },
+    {
+      "name": "exclusive publication preserves concurrent destination",
+      "passed": true
+    },
+    {
+      "name": "postwrite destination drift observed as actual bytes",
+      "passed": true
+    },
+    {
+      "name": "postwrite retained recovery drift observed as actual bytes",
+      "passed": true
+    },
+    {
+      "name": "validated input hashes never silently rebound after drift",
+      "passed": true
+    },
+    {
+      "name": "exclusive temp collision leaves unowned file intact and unclaimed",
+      "passed": true
+    }
+  ],
+  "earlierFailure": {
+    "fixture": "build/w5goldens20261010/promotion-static-fixture-0DDGpB",
+    "operation": "hard-link publication",
+    "code": "EPERM",
+    "retained": true
+  },
+  "boundary": "Extracted helpers only; tiny isolated fixture files. Main promotion was not imported or executed. No approved workspace image changed; no owner authorization was manufactured."
+}

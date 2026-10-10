@@ -15,6 +15,11 @@ import 'business_setup_controller.dart';
 import '../tenant/stock_opening_access.dart';
 import '../operations/operational_link.dart';
 
+final _setupDevelopmentPreviewProvider = Provider<bool>((ref) {
+  return !ref.watch(runtimeConfigProvider).isSupabaseConfigured &&
+      ref.watch(businessSetupGatewayProvider) == null;
+});
+
 class BusinessSetupScreen extends ConsumerStatefulWidget {
   const BusinessSetupScreen({this.initialResource, super.key});
   final BusinessSetupResource? initialResource;
@@ -158,20 +163,31 @@ class _PageHeader extends ConsumerWidget {
                   tone: JentraStatusTone.info,
                 ),
                 JentraStatusBadge(
-                  label: state.isOnline
-                      ? 'Online confirmation ready'
-                      : state.fromCache
+                  label: !state.isOnline
+                      ? state.fromCache
                       ? 'Offline · cached view'
-                      : 'Offline',
-                  tone: state.isOnline
+                      : 'Offline'
+                      : ref.watch(_setupDevelopmentPreviewProvider)
+                      ? 'Development preview'
+                      : ref.watch(businessSetupGatewayProvider) == null
+                      ? 'Connection unavailable'
+                      : 'Online confirmation ready',
+                  tone: state.isOnline &&
+                          ref.watch(businessSetupGatewayProvider) != null
                       ? JentraStatusTone.success
+                      : state.isOnline &&
+                            ref.watch(_setupDevelopmentPreviewProvider)
+                      ? JentraStatusTone.info
                       : JentraStatusTone.warning,
                 ),
               ],
             ),
             const SizedBox(height: JentraSpacing.x1),
             Text(
-              'Govern the records every Jentra workflow depends on.',
+              ref.watch(_setupDevelopmentPreviewProvider)
+                  ? 'Preview examples stay in memory and reset when refreshed. '
+                        'They are not saved to a server.'
+                  : 'Govern the records every Jentra workflow depends on.',
               style: Theme.of(context).textTheme.bodyLarge
                   ?.copyWith(color: context.jentraColors.textSecondary),
             ),
@@ -1536,6 +1552,8 @@ class _SetupRecordDialogState extends ConsumerState<SetupRecordDialog> {
   @override
   Widget build(BuildContext context) {
     final noun = widget.resource.singularLabel;
+    final developmentPreview = ref.watch(_setupDevelopmentPreviewProvider);
+    final backendAvailable = ref.watch(businessSetupGatewayProvider) != null;
     return PopScope(
       canPop: !_dirty && !_saving,
       onPopInvokedWithResult: (didPop, _) {
@@ -1577,9 +1595,14 @@ class _SetupRecordDialogState extends ConsumerState<SetupRecordDialog> {
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           Text(
-                            widget.online
+                            !widget.online
+                                ? 'Offline: only an encrypted local draft can be saved.'
+                                : developmentPreview
+                                ? 'Preview examples stay in memory and reset when refreshed. '
+                                      'Nothing is sent to a server.'
+                                : backendAvailable
                                 ? 'Draft locally or confirm this version with the server.'
-                                : 'Offline: only an encrypted local draft can be saved.',
+                                : 'Connect to your workspace before saving to the server.',
                             style: Theme.of(context).textTheme.bodySmall
                                 ?.copyWith(
                                   color: context.jentraColors.textSecondary,
@@ -1691,9 +1714,14 @@ class _SetupRecordDialogState extends ConsumerState<SetupRecordDialog> {
                     ),
                     const SizedBox(width: JentraSpacing.x2),
                     JentraPrimaryButton(
-                      label: 'Save to server',
+                      label: developmentPreview
+                          ? 'Save preview example'
+                          : 'Save to server',
                       loading: _saving,
-                      onPressed: !_saving && widget.online && widget.canManage
+                      onPressed: !_saving &&
+                              widget.online &&
+                              widget.canManage &&
+                              (developmentPreview || backendAvailable)
                           ? () => _submit(online: true)
                           : null,
                     ),

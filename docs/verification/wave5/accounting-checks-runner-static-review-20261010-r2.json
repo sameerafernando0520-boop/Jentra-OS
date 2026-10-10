@@ -1,0 +1,335 @@
+{
+  "preparedAt": "2026-10-10T06:41:00.762Z",
+  "kind": "prepared_accounting_calculation_gateway_runner_static_review",
+  "status": "prepared_not_executed",
+  "runner": {
+    "path": "scripts/wave5/run_accounting_checks_20261010_r2.mjs",
+    "sha256": "f80f73fde4a56717a28fce7cb2624a2b23590bbaa74f906a8fe07acc2427eaf0"
+  },
+  "sourceManifest": {
+    "path": "docs/verification/wave5/accounting-checks-source-20261010-r2.json",
+    "sha256": "0590786a5d996879a2430007ff0779a26ac65ee1488e68e1e7ecf8454dfbc8f3"
+  },
+  "selectedSources": 1068,
+  "sourceInputsSha256": "04885214bf309928fd04acf4dcfd9a8c6ae2b97ba81484b3c371c2d309fd4405",
+  "stages": [
+    {
+      "stage": "domain",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5goldens20261010\\r1\\packages\\jentra_domain",
+      "executable": "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+      "args": [
+        "test",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/jentra_domain_test.dart",
+        "test/procurement_test.dart",
+        "test/procurement_comparison_test.dart",
+        "test/goods_receipt_test.dart",
+        "test/purchase_return_amount_test.dart",
+        "test/landed_extension_test.dart",
+        "test/receivables_test.dart",
+        "test/inventory_transfer_test.dart",
+        "test/stock_count_quantity_test.dart",
+        "test/stock_opening_test.dart",
+        "test/negative_stock_policy_20261003_test.dart",
+        "test/wave3_exact_rules_edges_test.dart",
+        "test/wave3_protocol_edges_test.dart",
+        "test/wave3_lead_to_cash_domain_test.dart",
+        "test/analytics/cash_scenarios_test.dart",
+        "test/analytics/cash_scenario_revision_test.dart"
+      ],
+      "testFiles": [
+        {
+          "path": "packages/jentra_domain/test/jentra_domain_test.dart",
+          "sha256": "62e634ad9251f3b4c71c0314060fcf4999e002667fa3d6292a14596376d83d3e"
+        },
+        {
+          "path": "packages/jentra_domain/test/procurement_test.dart",
+          "sha256": "38b81effc7c4ca33d345856bd960aede2d9b3ce51728dcef14aa9e440e0104b7"
+        },
+        {
+          "path": "packages/jentra_domain/test/procurement_comparison_test.dart",
+          "sha256": "cbfc1f8e73dcf6d9db88e5de2544d0cd0d1aa4177e6b3445d9a74f40fd8cd9f9"
+        },
+        {
+          "path": "packages/jentra_domain/test/goods_receipt_test.dart",
+          "sha256": "f33fc851ab019423ecd0ac794836753c326238a43b2c16cfcfa9eb1acb6a194f"
+        },
+        {
+          "path": "packages/jentra_domain/test/purchase_return_amount_test.dart",
+          "sha256": "376b462d9e7f6de7977c5e3ad7c6cb4b7d8cd65aa61ec2bc64e4affb3081ad7e"
+        },
+        {
+          "path": "packages/jentra_domain/test/landed_extension_test.dart",
+          "sha256": "99df600c15ad50ca983be4cba6efa552b5b9dda2fb445d94e04f8ddb7cff37a6"
+        },
+        {
+          "path": "packages/jentra_domain/test/receivables_test.dart",
+          "sha256": "2b77a940acf2cd2a44eae45e226f992c0ca742a7aa9ea5a2b7a1840b727f31d2"
+        },
+        {
+          "path": "packages/jentra_domain/test/inventory_transfer_test.dart",
+          "sha256": "39e7cf37e3b489316f9b7f15296b9d07182d1ff30fdf24f20d06702987c02eaf"
+        },
+        {
+          "path": "packages/jentra_domain/test/stock_count_quantity_test.dart",
+          "sha256": "6ea630cd2954141bdd7730a2b139e9a5a70a99b29328bcadabba789983c8efdb"
+        },
+        {
+          "path": "packages/jentra_domain/test/stock_opening_test.dart",
+          "sha256": "4ca701638510c3882727a3f82a02d815ccdf87e8c7157638c4901de3574f3a45"
+        },
+        {
+          "path": "packages/jentra_domain/test/negative_stock_policy_20261003_test.dart",
+          "sha256": "f8b281ea875e180604a4e097e1ea27329fcd4dd291aaa78dd89af9e3ef65b675"
+        },
+        {
+          "path": "packages/jentra_domain/test/wave3_exact_rules_edges_test.dart",
+          "sha256": "902a230e0a7ee2dd47c94577fe2ca1dff479e1fd7fb2bbeecc088cd12f284473"
+        },
+        {
+          "path": "packages/jentra_domain/test/wave3_protocol_edges_test.dart",
+          "sha256": "599f7fd26bc4367249733d59613d946f257e4cadbb4cfd87c7377f1fd9d3cce2"
+        },
+        {
+          "path": "packages/jentra_domain/test/wave3_lead_to_cash_domain_test.dart",
+          "sha256": "2185e0f918a93a53395e032b80c6650f57950a77f32c1544883cf223e890e82e"
+        },
+        {
+          "path": "packages/jentra_domain/test/analytics/cash_scenarios_test.dart",
+          "sha256": "dbd7e7a81f657958e26e06032877ffc6acdf2bfba256ef8183303c87d109ae4e"
+        },
+        {
+          "path": "packages/jentra_domain/test/analytics/cash_scenario_revision_test.dart",
+          "sha256": "d0f5d44b98584c357612fc1f42cae0583bff373882ec9d6e9fa7443dc01e783a"
+        }
+      ],
+      "purpose": "Exact six-place arithmetic, rational quantities and tax/discount rounding; frozen source identity; partial returns and landed-cost conservation; invalid input and currency rejection; stock-deficit correction; immutable dated cash and hypothetical overrides.",
+      "executed": false,
+      "currentCounts": null
+    },
+    {
+      "stage": "platform",
+      "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5goldens20261010\\r1\\packages\\jentra_platform",
+      "executable": "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+      "args": [
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/manual_journal_gateway_test.dart",
+        "test/posted_journal_gateway_test.dart",
+        "test/period_fx_gateway_test.dart",
+        "test/control_reconciliation_gateway_test.dart",
+        "test/financial_statement_gateway_test.dart",
+        "test/tax_summary_gateway_test.dart",
+        "test/bank_reconciliation_gateway_test.dart",
+        "test/receivables_gateway_test.dart",
+        "test/procurement_gateway_test.dart",
+        "test/inventory_valuation_gateway_test.dart",
+        "test/landed_value_gateway_test.dart",
+        "test/landed_extension_gateway_test.dart",
+        "test/inventory_transfer_gateway_test.dart",
+        "test/stock_count_gateway_test.dart",
+        "test/negative_stock_policy_gateway_20261003_test.dart",
+        "test/stock_opening_gateway_test.dart",
+        "test/security_review_finance_read_denial_test.dart",
+        "test/procurement_recovery_test.dart",
+        "test/receivable_draft_store_test.dart",
+        "test/analytics/dated_cash_gateway_test.dart",
+        "test/analytics/cash_payment_dates_gateway_test.dart",
+        "test/analytics/cash_scenario_store_test.dart"
+      ],
+      "testFiles": [
+        {
+          "path": "packages/jentra_platform/test/manual_journal_gateway_test.dart",
+          "sha256": "a7408860e796676097d4e5a049d1c87a9234719497a4d1e369c6d21632ba2075"
+        },
+        {
+          "path": "packages/jentra_platform/test/posted_journal_gateway_test.dart",
+          "sha256": "17529711fc8320e45d6c3e7046f193947bbb97ec87e6127c0c906c18a0c04ad9"
+        },
+        {
+          "path": "packages/jentra_platform/test/period_fx_gateway_test.dart",
+          "sha256": "bbdb48b2cd0c7c0b2be7cb714219f3db7c05bf9fd0c1837f319ce818d3ab0629"
+        },
+        {
+          "path": "packages/jentra_platform/test/control_reconciliation_gateway_test.dart",
+          "sha256": "d4e6e65aca22f0646a9fe7825673c737236a7040e900256f1342e9fff46290d0"
+        },
+        {
+          "path": "packages/jentra_platform/test/financial_statement_gateway_test.dart",
+          "sha256": "3ada802c50d96b764deb4bb707990eba13fafc5350f2ad1f433c4ae343749c77"
+        },
+        {
+          "path": "packages/jentra_platform/test/tax_summary_gateway_test.dart",
+          "sha256": "089e1623da7c00cfcf64172a4a64f7b157d8bf72c20041b452510d314f69b8b4"
+        },
+        {
+          "path": "packages/jentra_platform/test/bank_reconciliation_gateway_test.dart",
+          "sha256": "80b4721c07b4edc91bb1c3ec2636291b5535fd7ff3f88eec1c83d0f2d6ca94ea"
+        },
+        {
+          "path": "packages/jentra_platform/test/receivables_gateway_test.dart",
+          "sha256": "37590ffc4f79bd5349b769ac92342000b358fb917bc5d4fa89ab909f24a41c61"
+        },
+        {
+          "path": "packages/jentra_platform/test/procurement_gateway_test.dart",
+          "sha256": "a14f1232f3c4cc8f97b281082a987bb01238fdfaba90a5123d67c1a456e56ca6"
+        },
+        {
+          "path": "packages/jentra_platform/test/inventory_valuation_gateway_test.dart",
+          "sha256": "8d47d5254a087a6306f3fb2811d3e216faad9d0d973f001e8c1646b6b4264169"
+        },
+        {
+          "path": "packages/jentra_platform/test/landed_value_gateway_test.dart",
+          "sha256": "79df9ef5bd5d5786a69aaf2783bb17235413e212e60bc254489c209d8d202824"
+        },
+        {
+          "path": "packages/jentra_platform/test/landed_extension_gateway_test.dart",
+          "sha256": "1c74dd7e9b3a038af60bb382112b883f41a06f330a36e76ce3679fa00eccbc7d"
+        },
+        {
+          "path": "packages/jentra_platform/test/inventory_transfer_gateway_test.dart",
+          "sha256": "ee8c195b9c36973e7a14acb223d48791097f0972c434294c0a60e832f45c660c"
+        },
+        {
+          "path": "packages/jentra_platform/test/stock_count_gateway_test.dart",
+          "sha256": "0724d3cbbbc61937598cc7111671717a124fbfa1f8528ed7af5740117e777c66"
+        },
+        {
+          "path": "packages/jentra_platform/test/negative_stock_policy_gateway_20261003_test.dart",
+          "sha256": "16bd1217c8e6e39c900388179f9ceb51444699af094617ca3c7dd374c816ddcd"
+        },
+        {
+          "path": "packages/jentra_platform/test/stock_opening_gateway_test.dart",
+          "sha256": "4548c733e340d2ea073f7871ff6a92bc4e7ee95ac41e463fa761f47ebe3f2563"
+        },
+        {
+          "path": "packages/jentra_platform/test/security_review_finance_read_denial_test.dart",
+          "sha256": "0a1c3d8c4198be223f004808c76771a067e80124aa1cfaf751c93143f899769d"
+        },
+        {
+          "path": "packages/jentra_platform/test/procurement_recovery_test.dart",
+          "sha256": "dad2b8170e6c1251ae0571c0515ae827f9a1cf5f716275c320e0725740e6a386"
+        },
+        {
+          "path": "packages/jentra_platform/test/receivable_draft_store_test.dart",
+          "sha256": "acbab9592e94614a7109204e68c81f4f1242d902b744b0c788b57f0985ae2eb0"
+        },
+        {
+          "path": "packages/jentra_platform/test/analytics/dated_cash_gateway_test.dart",
+          "sha256": "515c994f94d7ad2075d58bc9c5efa0e5190c094a3c289f51c304d23affe6b24a"
+        },
+        {
+          "path": "packages/jentra_platform/test/analytics/cash_payment_dates_gateway_test.dart",
+          "sha256": "7b0ed88f68edacaef5a119e6fe52ecf5c9daf1a9a0dbeefe37c9c195ce786cf6"
+        },
+        {
+          "path": "packages/jentra_platform/test/analytics/cash_scenario_store_test.dart",
+          "sha256": "f94aa89559aa09d48a61471624093e106353b5650a3b1699699be275cfb620dc"
+        }
+      ],
+      "purpose": "Injected gateway ledger balances, FX/control/statement/tax equations, exact transport and source lineage, AR/AP allocation/reversal evidence, stock valuation and landed costs; scoped denial and malformed-receipt rejection; encrypted input-only command recovery and dated cash provider completeness.",
+      "executed": false,
+      "currentCounts": null
+    }
+  ],
+  "preflight": {
+    "syntaxPassed": true,
+    "defaultCheckExitCode": 0,
+    "outputsWrittenByCheck": false,
+    "sdkExecuted": false,
+    "currentAndWarm1068Match": true,
+    "actualApproved2004LogReparsed": true,
+    "allImmutableProvenanceAndCachedSdkToolsVerified": true,
+    "packageResolutionFilesVerified": true
+  },
+  "parserControls": {
+    "realApprovedLogTests": 2004,
+    "realApprovedLogFiles": 138,
+    "passedControls": 10,
+    "cases": [
+      {
+        "case": "duplicated executed identity",
+        "outcome": "rejected"
+      },
+      {
+        "case": "unselected executed file",
+        "outcome": "rejected"
+      },
+      {
+        "case": "nonzero SDK exit",
+        "outcome": "rejected"
+      },
+      {
+        "case": "omitted selected test file",
+        "outcome": "rejected"
+      },
+      {
+        "case": "exact relative test path",
+        "outcome": "accepted"
+      },
+      {
+        "case": "literal setUpAll/tearDownAll hooks",
+        "outcome": "excluded"
+      },
+      {
+        "case": "similar-looking real test is still counted",
+        "outcome": "rejected inaccurate count"
+      },
+      {
+        "case": "foreign absolute file prefix",
+        "outcome": "rejected"
+      },
+      {
+        "case": "skipped summary",
+        "outcome": "rejected"
+      },
+      {
+        "case": "failed summary",
+        "outcome": "rejected"
+      }
+    ]
+  },
+  "independentStaticReview": {
+    "reviewer": "independent_review",
+    "reviewedRunnerSha256": "f80f73fde4a56717a28fce7cb2624a2b23590bbaa74f906a8fe07acc2427eaf0",
+    "materialBlockers": 0,
+    "SDKJobsExecuted": false
+  },
+  "retainedHistoricalEvidence": [
+    {
+      "path": "docs/verification/wave5/windows-test-preview-platformAll-20261009-r13.json",
+      "sha256": "4ea6f4c1f1ef03f47f115bc9173a6949f679ddb03e829503c1c012dce80a1549",
+      "scope": "Retained earlier relevant suite evidence only; no current accounting-stage result inferred."
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-preview-platformAll-20261009-r13.log",
+      "sha256": "e2ed5c3e474798d2cf203f15bddc8bd43263e6d79f81a0edef12f4c17f845469",
+      "scope": "Retained earlier relevant suite evidence only; no current accounting-stage result inferred."
+    },
+    {
+      "path": "docs/verification/wave5/domain-continuation-final-20261008.log",
+      "sha256": "1d2f30143e11f500aa66d934ec1e30d73bb49eceff2cd041c29126caa95aeb13",
+      "scope": "Retained earlier relevant suite evidence only; no current accounting-stage result inferred."
+    }
+  ],
+  "initialPreflightDiagnostic": {
+    "error": "DESKTOP_DEPENDENCY_SCOPE_CHANGED",
+    "cause": "Prior manifest preserved the same four unique dependency members in a different order.",
+    "resolution": "Exact length4 and uniqueness4, then equality of sorted member sets; full1068 byte coverage retained.",
+    "outputWritten": false,
+    "sdkExecuted": false
+  },
+  "fixturePolicy": "Existing frozen inline and relative-support fixtures; all application/test/support files are among the1068 inputs. HTTP is injected; stores use test-owned memory or unique temporary databases. No external fixture/template is added.",
+  "boundary": "Calculation and injected client-contract tests only. Locked resolution files and four SDK tools are bound; hosted dependencies are not independently audited file-by-file. No installed SQL/auth/MFA/native keyboard/delivery/contention/load/owner acceptance/production/billing claim.",
+  "newDartTests": 0,
+  "DartSourceEdits": 0,
+  "approvedPngEdits": 0,
+  "livingDocumentWrites": 0,
+  "acceptanceStoreOrOwnerDecisionWrites": 0,
+  "SDKJobsExecuted": false
+}

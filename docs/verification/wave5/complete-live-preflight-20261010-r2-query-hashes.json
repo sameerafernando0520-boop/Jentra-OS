@@ -1,0 +1,76 @@
+{
+  "preparedAt": "2026-10-10T03:11:44.895Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "linkId": "link_6aa8c9ca60408191b9e7e8344c5a6693",
+  "mainSql": {
+    "path": "docs/verification/wave5/complete-live-preflight-20261010-r2.sql",
+    "sha256": "cf886dbb2fac359b530626b50d99312c14b5398a7d620b22100852154594e250"
+  },
+  "mainSqlBytes": 219060,
+  "metadataSql": {
+    "inlineLocation": "docs/verification/wave5/complete-live-preflight-20261010-r2-raw.json#metadataQuery",
+    "sha256": "6775a94104d6eb736eb9c418cbb7477af856c197eab302ee4b560891a52a78e5"
+  },
+  "sourceProposal": {
+    "path": "docs/verification/wave5/complete-app-runtime-review-20261009-r13.json",
+    "sha256": "97c0d0d29b706b1d1283e2408e4ed9b9622b1ef0a4ab2ddae8dec099fe5cf208",
+    "bundleSha256": "92a68a58d70a1f9061776be1b6416b8124112577b0a0859ed6f389becc2533d4",
+    "ownerApproved": false
+  },
+  "collisionIdentifierScope": {
+    "accounts": [
+      {
+        "label": "proposer",
+        "email": "w5-proposer@jentra.invalid"
+      },
+      {
+        "label": "approver",
+        "email": "w5-approver@jentra.invalid"
+      },
+      {
+        "label": "executor",
+        "email": "w5-executor@jentra.invalid"
+      },
+      {
+        "label": "billing-admin",
+        "email": "w5-billing-admin@jentra.invalid"
+      },
+      {
+        "label": "operator",
+        "email": "w5-operator@jentra.invalid"
+      },
+      {
+        "label": "foreign-member",
+        "email": "w5-foreign-member@jentra.invalid"
+      }
+    ],
+    "syntheticScopes": 500,
+    "entities": 500,
+    "branches": 501,
+    "plans": [
+      "w5_runtime_20261008",
+      "w5_load_20261008",
+      "w5_quota10_20261008",
+      "w5_foreign_20261008"
+    ],
+    "roleIdentities": 1003,
+    "identifiersPreservedFromSavedReview": true
+  },
+  "inspectedStatementKind": "WITH and SELECT only; catalog/function-definition hashes, metadata counts and exact proposed identifier collisions.",
+  "explicitlyNotRead": [
+    "Auth passwords",
+    "JWT/session/refresh tokens",
+    "MFA seeds",
+    "Vault/decrypted secret values",
+    "server-side files",
+    "HTTP queue bodies",
+    "business API effects"
+  ],
+  "mutationStatementsExecuted": false,
+  "businessFunctionsCalled": false,
+  "migrationInstallation": false,
+  "authBootstrap": false,
+  "secretConfiguration": false,
+  "delivery": false,
+  "boundary": "This hash manifest records the exact read queries. The saved proposal supplies public identifiers, never operation authority."
+}

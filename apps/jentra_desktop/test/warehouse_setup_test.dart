@@ -93,7 +93,7 @@ void main() {
         matchesGoldenFile('goldens/warehouse_setup_form.png'),
       );
       await tester.runAsync(() async {
-        await tester.tap(find.text('Save to server'));
+        await tester.tap(find.text('Save preview example'));
         await Future<void>.delayed(const Duration(milliseconds: 100));
       });
       await tester.pumpAndSettle();
@@ -103,6 +103,14 @@ void main() {
       expect(
         saved.legalEntityId,
         c.read(activeTenantContextProvider)!.legalEntityId,
+      );
+      expect(c.read(businessSetupGatewayProvider), isNull);
+      await c.read(businessSetupControllerProvider.notifier).refresh();
+      await tester.pumpAndSettle();
+      expect(
+        c.read(businessSetupControllerProvider).requireValue.items
+            .any((record) => record.code == 'ACPT-WH'),
+        isFalse,
       );
       expect(tester.takeException(), isNull);
     },

@@ -1,0 +1,42 @@
+{
+  "kind": "direct-human-owner-decision",
+  "authorizationKind": "direct-human-message",
+  "submittedByOwner": true,
+  "reviewSha256": "fc9756a1847a12c94f18143607600e82825a2ddc69b31411b43a3d24e11d11aa",
+  "candidateBundleSha256": "0e0426bf2e302afcc00adb9602bfb3a6448b6ac558fb85cceaf18d62027832bd",
+  "packet": {
+    "path": "docs/verification/wave5/golden-owner-review-20261010-r2.json",
+    "sha256": "5c630912f51a9a71d3f045839a61d1bc60910315c71d2757323b667f58645315"
+  },
+  "provenanceNote": "The human replied to the exact packet questions in this chat. messageId below is the verbatim questionItemId supplied by the reply UI; an opaque platform message ID was not exposed. receivedAt is the root observation timestamp, not an inferred earlier send time.",
+  "messageVerbatim": "Accept AC-551, AC-552 and AC-553",
+  "messageSha256": "162b69503a2c5fa659abd0544e374de4027650ce39f8719ea2d061008d80f0cb",
+  "sourceMessage": {
+    "role": "user",
+    "messageId": "[\"request_user_input_async\",\"call_3b49ddc5f8a64371a9dc5e16f4d0c097\",1]",
+    "threadId": "01a121e1-81f0-76c1-8060-699f36ec225e",
+    "receivedAt": "2026-10-10T03:19:16Z"
+  },
+  "question": "Do you accept the complete AC-551, AC-552 and AC-553 statements and their 27 passing serial tests? The other 106 requirements remain open.",
+  "criteria": [
+    {
+      "id": "AC-551",
+      "decision": "accept-complete-criterion",
+      "decisionQuote": "Accept AC-551, AC-552 and AC-553",
+      "fullCriterionStatement": "AC-551: Explicit cohort and recorded cutoff (FR-551, FR-552, FR-553) Given events at window start/end and events recorded before/after cutoff When the validated snapshot is calculated Then only the half-open entered cohort recorded by cutoff is included."
+    },
+    {
+      "id": "AC-552",
+      "decision": "accept-complete-criterion",
+      "decisionQuote": "Accept AC-551, AC-552 and AC-553",
+      "fullCriterionStatement": "AC-552: Exact nearest-rank duration (FR-554, NFR-551) Given completed durations of 0, 1, 2, 3 and 10 microseconds When P50 and P90 are calculated with every input permutation Then the exact values are 2 and 10 microseconds with no rounding drift."
+    },
+    {
+      "id": "AC-553",
+      "decision": "accept-complete-criterion",
+      "decisionQuote": "Accept AC-551, AC-552 and AC-553",
+      "fullCriterionStatement": "AC-553: Open, invalid and empty are distinct (FR-555, FR-556) Given missing/future completions, malformed durations, and default-zero work fields When summaries are calculated for nonempty and empty completed samples Then counts conserve population and unsupported/empty measures are unavailable, while a real zero remains available."
+    }
+  ],
+  "boundary": "Exactly three complete pure-calculation criteria. Other 106 requirements and whole-system signoff remain unaccepted."
+}

@@ -1,0 +1,68 @@
+{
+  "checkedAt": "2026-10-10T03:00:57.531Z",
+  "script": {
+    "path": "scripts/wave5/update_golden_owner_status_20261010_r2_guarded.mjs",
+    "sha256": "c57e7bbaaa4afee29139b83a31b649b7edaa94baa4466be51aca2c4fe674152d",
+    "syntaxExitCode": 0
+  },
+  "frozenOriginal": {
+    "path": "scripts/wave5/update_golden_owner_status_20261010_r2.mjs",
+    "sha256": "414b8b110fef08bde5a10e30094122281e0294255fe47b729abcfab47142407c",
+    "unchanged": true
+  },
+  "fixture": "build/w5goldens20261010/status-static-fixture-oeB5X6",
+  "passed": 7,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "owned claim retains original and exclusive publish records actual plan",
+      "passed": true
+    },
+    {
+      "name": "preclaim concurrent document retained and never automatically restored",
+      "passed": true
+    },
+    {
+      "name": "concurrent destination preserved by COPYFILE_EXCL",
+      "passed": true
+    },
+    {
+      "name": "final document observations use actual bytes and detect drift",
+      "passed": true
+    },
+    {
+      "name": "final retained recovery observations detect concurrent open-handle drift",
+      "passed": true
+    },
+    {
+      "name": "unowned temp collision is never cleaned or claimed",
+      "passed": true
+    },
+    {
+      "name": "attempt journal reserved before claims and partial final audits remain explicit failures",
+      "passed": true
+    }
+  ],
+  "ownedOutcomeNames": [
+    "docs/verification/wave5/golden-owner-status-before-20261010-r2-guarded.json",
+    "docs/verification/wave5/golden-owner-status-after-20261010-r2-guarded.json"
+  ],
+  "livingDocumentsUnchanged": [
+    {
+      "path": "docs/verification/wave5/requirement-matrix-20261008.json",
+      "sha256": "e53324ebcd1f829bbc529a50074ec682b4368c8fdb3dd6bd3e297cf6bcc96acd"
+    },
+    {
+      "path": "docs/verification/wave5/requirement-matrix-20261008.md",
+      "sha256": "7bf4d6ee99ff1ff7756357f29c4dc8c96050af34fb8dd5ca895b57ca55311623"
+    },
+    {
+      "path": "docs/development/wave5-status.md",
+      "sha256": "70c220e78a3d433ffe7f7a4575ef0e8829abd9057dc59821f7f888af22f3ab24"
+    }
+  ],
+  "mainStatusWriterExecuted": false,
+  "livingDocumentsWritten": false,
+  "rootApprovedImagesChanged": false,
+  "boundary": "Extracted helper functions on tiny owned fixture files only, plus static control-flow and syntax checks. No status writer execution, candidate acceptance, living-document update, baseline promotion, SDK execution or live operation occurred."
+}

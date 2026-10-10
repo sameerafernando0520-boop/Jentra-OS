@@ -295,10 +295,45 @@ Future<void> _pumpCrm(
   container.read(routerProvider).go('/crm');
   if (settle) {
     await tester.pumpAndSettle();
+    await _precacheBrandAssets(tester);
+    await tester.pumpAndSettle();
   } else {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
   }
+}
+
+Future<void> _precacheBrandAssets(WidgetTester tester) async {
+  final context = tester.element(find.byType(JentraBrandMark).first);
+  // Real asset decoding can finish after the fake clock has stopped scheduling
+  // frames. Await both PNGs so this fixture does not rely on a previous test.
+  await tester.runAsync(() async {
+    for (final asset in const [
+      AssetImage(
+        JentraBrandMark.asset,
+        package: JentraBrandMark.assetPackage,
+      ),
+      AssetImage(
+        JentraBrandWordmark.asset,
+        package: JentraBrandMark.assetPackage,
+      ),
+    ]) {
+      Object? loadError;
+      StackTrace? loadStack;
+      await precacheImage(
+        asset,
+        context,
+        onError: (error, stack) {
+          loadError = error;
+          loadStack = stack;
+        },
+      );
+      final failure = loadError;
+      if (failure != null) {
+        Error.throwWithStackTrace(failure, loadStack ?? StackTrace.current);
+      }
+    }
+  });
 }
 
 final class _FakeCrmRepository implements CrmRepository {

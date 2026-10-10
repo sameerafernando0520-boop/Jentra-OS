@@ -21,7 +21,7 @@ class ModulePlaceholderScreen extends StatelessWidget {
           title: title,
           description: description,
           trailing: const JentraStatusBadge(
-            label: 'Foundation route',
+            label: 'Overview',
             tone: JentraStatusTone.info,
           ),
         ),
@@ -30,12 +30,14 @@ class ModulePlaceholderScreen extends StatelessWidget {
           child: JentraPanel(
             child: JentraEmptyState(
               icon: Icons.architecture_outlined,
-              title: '$title is mapped and ready',
+              title: '$title overview',
               description:
-                  'Its public facade, permissions, workflows, RPC contracts and acceptance criteria are defined in the approved blueprint. Delivery follows the phased roadmap.',
+                  'Posting and financial reports are not available from this page. '
+                  'They require a connected workspace with the appropriate '
+                  'business scope and permissions.',
               action: const JentraStatusBadge(
-                label: 'No legacy module restored',
-                tone: JentraStatusTone.success,
+                label: 'Posting unavailable here',
+                tone: JentraStatusTone.warning,
               ),
             ),
           ),

@@ -1,0 +1,520 @@
+{
+  "recordedAt": "2026-10-10T06:43:30.711Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "observedAt": "2026-10-10 06:36:27.034589+00",
+  "rawEvidence": {
+    "path": "docs/verification/wave5/complete-live-preflight-20261010-r3-raw.json",
+    "sha256": "928a3650e416c53e4e105b5bc949cae36f46bc7d8d7249ce0cadb4a1729d09fd",
+    "bytes": 47149
+  },
+  "query": {
+    "path": "docs/verification/wave5/complete-live-preflight-20261010-r2.sql",
+    "sha256": "cf886dbb2fac359b530626b50d99312c14b5398a7d620b22100852154594e250",
+    "bytes": 219060
+  },
+  "connectorResultDecodedFromExactUntrustedDataBoundary": true,
+  "queryBytes": 219060,
+  "readOnly": true,
+  "migrationCount": 43,
+  "apiFunctions": 107,
+  "checkedProviders": 120,
+  "unchangedProvidersSinceR2": 120,
+  "unchangedProvidersSinceOriginalOctober9Read": 120,
+  "previousObservedAt": "2026-10-10 03:06:52.392446+00",
+  "originalFunctionComparisonObservedAt": "2026-10-09 18:59:33.305239+00",
+  "changedProviderIdentities": [],
+  "missingProviderIdentities": [],
+  "addedProviderIdentities": [],
+  "wave5Tables": [
+    {
+      "name": "pipeline_forecasts",
+      "schema": "analytics",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "health_probes",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "operator_access_events",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "operator_tenant_grants",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "operators",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "proposal_decisions",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "proposal_executions",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "proposals",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "quota_periods",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "subscription_activations",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "subscription_revisions",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "synthetic_tenants",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "usage_corrections",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "usage_events",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "usage_reservations",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    }
+  ],
+  "wave5RlsFlagsUnchangedSinceR2": true,
+  "rolePermissions": 87,
+  "roleAssignments": 1,
+  "entitlements": 28,
+  "memberships": 1,
+  "accessCountsUnchanged": true,
+  "accessRowFingerprints": {
+    "core.memberships": "651880e4846b39340a554f6d76ddc40859cc4dca2314f56042fe844779ee145e",
+    "core.role_assignments": "4c2536334494f6286ad457ee982e5d9c84ff495c9a95ce0204254dcb9d7ec83f",
+    "core.role_permissions": "eb1b1c3f149aeb4444c756b629193d6766aba0c50da7aafb502eb2ca04ff1662",
+    "billing.plan_entitlements": "a7f0148a62a3aa3563cff17099aa652156163a9dc524e690b4a17c4de272939f"
+  },
+  "accessRowFingerprintsUnchangedSinceFirstR2Baseline": true,
+  "policyAndGrantFingerprints": [
+    {
+      "name": "pipeline_forecasts",
+      "schema": "analytics",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "health_probes",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "operator_access_events",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "operator_tenant_grants",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "operators",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "proposal_decisions",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "proposal_executions",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "proposals",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "quota_periods",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "subscription_activations",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "subscription_revisions",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "synthetic_tenants",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "usage_corrections",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "usage_events",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "usage_reservations",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  ],
+  "policyAndGrantFingerprintsUnchangedSinceFirstR2Baseline": true,
+  "fingerprintBoundary": "The r2 access-row/policy/grant hashes were first baselines; r3 directly equals those saved r2 hashes. No earlier historical row/policy equality is inferred from counts.",
+  "exactProposedCollisionScope": {
+    "accounts": 6,
+    "tenants": 500,
+    "entities": 500,
+    "branches": 501,
+    "plans": 4,
+    "roles": 1003,
+    "reviewBundleSha256": "92a68a58d70a1f9061776be1b6416b8124112577b0a0859ed6f389becc2533d4",
+    "unchangedIdentifierQuery": {
+      "path": "docs/verification/wave5/complete-live-preflight-20261010-r2.sql",
+      "sha256": "cf886dbb2fac359b530626b50d99312c14b5398a7d620b22100852154594e250",
+      "bytes": 219060
+    },
+    "savedProposal": {
+      "path": "docs/verification/wave5/complete-app-runtime-review-20261009-r13.json",
+      "sha256": "97c0d0d29b706b1d1283e2408e4ed9b9622b1ef0a4ab2ddae8dec099fe5cf208",
+      "bytes": 284900
+    }
+  },
+  "collisions": {
+    "exact_account_label_collisions": 0,
+    "tenant_id_or_slug_collisions": 0,
+    "entity_id_or_parent_collisions": 0,
+    "branch_id_or_parent_collisions": 0,
+    "plan_code_collisions": 0,
+    "proposed_plan_entitlement_rows": 0,
+    "subscription_id_scope_or_plan_collisions": 0,
+    "exact_role_id_or_code_collisions": 0,
+    "membership_scope_or_id_collisions": 0,
+    "assignment_scope_collisions": 0,
+    "synthetic_allowlist_scope_collisions": 0,
+    "total_operator_rows": 0,
+    "operator_actor_collisions": 0,
+    "operator_grant_scope_collisions": 0
+  },
+  "proposedRuntimeAccounts": 0,
+  "accountLabelCollisionCounts": [
+    {
+      "label": "approver",
+      "collisionCount": 0
+    },
+    {
+      "label": "billing-admin",
+      "collisionCount": 0
+    },
+    {
+      "label": "executor",
+      "collisionCount": 0
+    },
+    {
+      "label": "foreign-member",
+      "collisionCount": 0
+    },
+    {
+      "label": "operator",
+      "collisionCount": 0
+    },
+    {
+      "label": "proposer",
+      "collisionCount": 0
+    }
+  ],
+  "currentTrialAccount": {
+    "authId": "c0ab44a9-7385-4d9c-94f2-4df3efaa453f",
+    "confirmed": true,
+    "lastSignInAt": "2026-10-09T18:30:22.512847+00:00",
+    "membershipCount": 0
+  },
+  "runtimeRelations": {
+    "edgeAuthorities": null,
+    "workerScopes": null,
+    "externalCredentials": null,
+    "deliveryOutbox": null,
+    "cronJobs": null,
+    "netQueue": null
+  },
+  "edgeInventory": {
+    "record": {
+      "path": "docs/verification/wave5/complete-live-preflight-20261010-r3-edge-list.json",
+      "sha256": "cf8624bcb87111b4ee18be490e295537f419f5e1c873673c30ac0812ea2b4d94",
+      "bytes": 1229
+    },
+    "observedAt": "2026-10-10 06:37:16 UTC",
+    "deployments": [
+      {
+        "slug": "people-private-documents",
+        "id": "47657765-1d65-4447-8b11-3d779fed8e17",
+        "version": 1,
+        "status": "ACTIVE",
+        "verifyJwt": false,
+        "sourceBundleHashMetadata": "013bc0f0544765f1f55534b300eb9ff9db1287baa8fd3aaa51a56de44d6f90a8"
+      },
+      {
+        "slug": "people-private-purge",
+        "id": "d79e87c6-cc7e-4647-abb7-73160864750c",
+        "version": 1,
+        "status": "ACTIVE",
+        "verifyJwt": false,
+        "sourceBundleHashMetadata": "11090fac763e7a81a1fc0a7e607edc6389b2888230e82c2c307d533e89119010"
+      }
+    ],
+    "unchangedMetadataSinceR2": true,
+    "actualFunctionSourceBodyReread": false,
+    "boundary": "Fresh list-functions deployment metadata only. Bundle hashes come from that metadata; no fresh get-source operation occurred in this r3 read."
+  },
+  "originalSixLedger": {
+    "lastObservedEvidence": {
+      "path": "docs/verification/wave5/complete-live-preflight-20261010-r2-raw.json",
+      "sha256": "dffa463f4157b3d45d6b4bcfb03952e51423816233d25d090765471f9bf12436",
+      "bytes": 118208
+    },
+    "lastObservedAt": "2026-10-10 03:06:52.392446+00",
+    "entries": [
+      {
+        "sourcePath": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+        "name": "wave5_process_metrics",
+        "ledgerVersion": "20261007195453",
+        "present": true
+      },
+      {
+        "sourcePath": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+        "name": "wave5_pipeline_forecasts",
+        "ledgerVersion": "20261007200707",
+        "present": true
+      },
+      {
+        "sourcePath": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+        "name": "wave5_trusted_metering",
+        "ledgerVersion": "20261007201325",
+        "present": true
+      },
+      {
+        "sourcePath": "supabase/migrations/20261006153000_wave5_operator_isolation.sql",
+        "name": "wave5_operator_isolation",
+        "ledgerVersion": "20261007201500",
+        "present": true
+      },
+      {
+        "sourcePath": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+        "name": "wave5_human_proposals",
+        "ledgerVersion": "20261007201517",
+        "present": true
+      },
+      {
+        "sourcePath": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+        "name": "wave5_synthetic_subscriptions",
+        "ledgerVersion": "20261007201524",
+        "present": true
+      }
+    ],
+    "migrationLedgerListRereadInR3": false,
+    "originalSixReinstalled": false,
+    "boundary": "The new SELECT refreshes ledger count only. Exact original-six connector versions retain their prior observed evidence; no migration was installed or replayed."
+  },
+  "nativeAccountMetadata": {
+    "record": {
+      "path": "docs/verification/wave5/complete-live-preflight-20261010-r2-native-net.json",
+      "sha256": "872c673e6b42c95db88b43166003d878994eee625f7bf4190a9dd521f58b3b54",
+      "bytes": 945
+    },
+    "observedAt": "2026-10-10T06:33:43.528Z",
+    "accountName": "jentra-w5-runtime",
+    "accountExistenceVerified": true,
+    "accountExists": false,
+    "exitCode": 2,
+    "namedError": "NERR_UserNotFound / NET HELPMSG 2221",
+    "packageDirectoryExists": false,
+    "profileDirectoryExists": false,
+    "earlierLookupErrors": {
+      "path": "docs/verification/wave5/complete-live-preflight-20261010-r2-native.json",
+      "sha256": "18cb5430396c554bb77e8d3d1e97cb3d6c57a78466773425867030e9c6ba10a1",
+      "bytes": 693
+    },
+    "provisioned": false,
+    "storesOrSessionsRead": false,
+    "boundary": "Exact account/path metadata only. No isolated account provisioning, native launch, credential entry or authenticated acceptance is implied."
+  },
+  "databaseMetadataAndExactCollisionPreflightClean": true,
+  "nativeTargetMetadataCollisionCheckClear": true,
+  "fullRuntimePreflightComplete": false,
+  "remainingRuntimePreflight": [
+    "Fresh paired final-source Preview/Connected builds, release/package bindings and truthful native observations are still separate required gates.",
+    "No final r3 runtime operation bundle has been composed or owner-approved; original and r13 reviews remain unapproved historical records.",
+    "Private owner Auth Admin/model/secret context and operation authority are required for actual runtime setup; do not fabricate Auth rows.",
+    "Recheck all exact source/release/credential-reference/live collision bindings immediately before any separately approved operation."
+  ],
+  "savedRuntimeReviews": [
+    {
+      "record": {
+        "path": "docs/verification/wave5/complete-app-runtime-review-20261009.json",
+        "sha256": "3af2dc69e77c37b939cdd02e27860261e36899b95aa68016b0f0703970de565f",
+        "bytes": 268714
+      },
+      "bundleSha256": "13ffe2fdfd412fae36d3ff08c1f33bb59d9de85f20b2707e77ba6b9629eae83e",
+      "ownerApproved": false
+    },
+    {
+      "record": {
+        "path": "docs/verification/wave5/complete-app-runtime-review-20261009-r13.json",
+        "sha256": "97c0d0d29b706b1d1283e2408e4ed9b9622b1ef0a4ab2ddae8dec099fe5cf208",
+        "bytes": 284900
+      },
+      "bundleSha256": "92a68a58d70a1f9061776be1b6416b8124112577b0a0859ed6f389becc2533d4",
+      "ownerApproved": false
+    }
+  ],
+  "currentSource": {
+    "record": {
+      "path": "docs/verification/wave5/golden-review-postapproval-source-20261010-r2.json",
+      "sha256": "2d055695358df8a3d4b69b551747539800caa8ea70b6d89def6227446da87289",
+      "bytes": 455288
+    },
+    "selectedSources": 1068,
+    "preparation": {
+      "path": "docs/verification/wave5/windows-userflow-preparation-20261010-r3.json",
+      "sha256": "568a886d5010a2226e71abe7fab875fd6002231acce9fc4dabb68d906f66078e",
+      "bytes": 2120
+    },
+    "preparationOnly": true,
+    "nativeBuildsOrPackagesInferred": false
+  },
+  "ownerAcceptanceSnapshot": {
+    "record": {
+      "path": "docs/verification/wave5/owner-criterion-acceptance-after-20261010-r2-serial.json",
+      "sha256": "5766cd3df84843b14792972ae6770efdfceaf979ec84dd7b6d002a33fea39d78",
+      "bytes": 29915
+    },
+    "ownerDecision": {
+      "path": "docs/verification/wave5/owner-criterion-decision-20261010-r2.json",
+      "sha256": "78f1685da3a65be3ef8813f9efbc3d34846fe40135148b5baf49525261313ada",
+      "bytes": 2815
+    },
+    "ownerAcceptedCriteria": 3,
+    "criterionIds": [
+      "AC-551",
+      "AC-552",
+      "AC-553"
+    ],
+    "remainingUnaccepted": 106,
+    "wholeSystemOwnerSignoff": false
+  },
+  "goldenSnapshot": {
+    "promotion": {
+      "path": "docs/verification/wave5/golden-promotion-result-20261010-r2.json",
+      "sha256": "4c6091e20bf5fe3684ea05c56ed17e025917c8db286811cdc8db19d0877172b8",
+      "bytes": 175754
+    },
+    "promotedImages": 83,
+    "fullDesktopSuite": {
+      "path": "docs/verification/wave5/golden-review-approvedAll-20261010-r2.json",
+      "sha256": "bfb55910e1c35d8b33f9a327bac3ecf34696d55e4d12afed27260e0561fa93cb",
+      "bytes": 1371603
+    },
+    "passed": 2004,
+    "failed": 0,
+    "skipped": 0,
+    "boundary": "Actual image decisions and calculation acceptance provide no runtime authority."
+  },
+  "currentRuntimeApprovalReady": false,
+  "runtimeOwnerApproved": false,
+  "newRuntimeInstallationComplete": false,
+  "authenticatedNative": false,
+  "nativeKeyboardVerified": false,
+  "realMfa": false,
+  "actualDelivery": false,
+  "actualModelUsage": false,
+  "independentSessionContention": false,
+  "targetScaleLoad": false,
+  "wholeSystemOwnerSignoff": false,
+  "mutationsExecuted": false,
+  "businessFunctionsCalled": false,
+  "AuthAccountsCreatedOrDeleted": false,
+  "privateSecretsRead": false,
+  "SDKJobsExecutedByThisReport": false,
+  "livingDocumentsChanged": false,
+  "productionExcluded": true,
+  "realBillingExcluded": true,
+  "boundary": "A saved read-only live database/query and Edge-list refresh plus separately saved exact native account metadata. No install, bootstrap, private configuration, operation authority or native/runtime/delivery/load acceptance is established."
+}

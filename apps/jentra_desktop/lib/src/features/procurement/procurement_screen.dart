@@ -30,6 +30,10 @@ class ProcurementScreen extends ConsumerWidget {
     if (scope == null || !scope.hasOperationalScope) {
       return const Center(child: Text('Choose a legal entity and branch.'));
     }
+    final gateway = ref.watch(procurementGatewayProvider);
+    final developmentPreview =
+        !ref.watch(runtimeConfigProvider).isSupabaseConfigured &&
+        gateway == null;
     if (!(caps.value?.contains('procurement.requisitions.manage') ?? false)) {
       final destinations = <(String, String)>[
         if (caps.value?.contains('procurement.returns.post') ?? false)
@@ -59,19 +63,35 @@ class ProcurementScreen extends ConsumerWidget {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: Wrap(
-            spacing: 16,
-            runSpacing: 16,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              if (destinations.isEmpty)
-                const Text(
-                  'Your role has no procurement workspace permission.',
-                ),
-              for (final destination in destinations)
-                FilledButton(
-                  onPressed: () => context.go('/procurement/${destination.$1}'),
-                  child: Text(destination.$2),
-                ),
+              Text(
+                developmentPreview
+                    ? 'Development preview: supplier bills and payments need a '
+                          'connected workspace with the required permissions.'
+                    : gateway == null
+                    ? 'Connect to your workspace to use procurement accounting.'
+                    : 'Only workspaces permitted for your current role are shown.',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 16,
+                runSpacing: 16,
+                children: [
+                  if (destinations.isEmpty)
+                    const Text(
+                      'Your role has no procurement workspace permission.',
+                    ),
+                  for (final destination in destinations)
+                    FilledButton(
+                      onPressed: () =>
+                          context.go('/procurement/${destination.$1}'),
+                      child: Text(destination.$2),
+                    ),
+                ],
+              ),
             ],
           ),
         ),

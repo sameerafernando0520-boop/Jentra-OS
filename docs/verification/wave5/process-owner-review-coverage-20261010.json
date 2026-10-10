@@ -1,0 +1,301 @@
+{
+  "observedAt": "2026-10-10T01:48:12.778Z",
+  "boundary": "Read-only source-to-complete-statement mapping. No SDK, test, analyzer, live API or native execution is claimed. Root collects serialized fresh verification separately.",
+  "sourceMatrix": {
+    "path": "docs/verification/wave5/requirement-matrix-20261008.json",
+    "sha256": "e53324ebcd1f829bbc529a50074ec682b4368c8fdb3dd6bd3e297cf6bcc96acd"
+  },
+  "focusedFixtureTestCount": 25,
+  "conditionalFullStatementMappedIds": [
+    "AC-551",
+    "AC-552",
+    "AC-553"
+  ],
+  "pendingWholeStatementIds": [
+    "AC-555",
+    "AC-558"
+  ],
+  "ownerAcceptedCriteria": 0,
+  "rows": [
+    {
+      "id": "AC-551",
+      "fullStatement": "AC-551: Explicit cohort and recorded cutoff (FR-551, FR-552, FR-553) Given events at window start/end and events recorded before/after cutoff When the validated snapshot is calculated Then only the half-open entered cohort recorded by cutoff is included.",
+      "wholeCriterionReadyForOwnerReview": false,
+      "ownerAccepted": false,
+      "completeStatementMapping": true,
+      "conditionalReadiness": "After a fresh exact-source passing focused domain run, the complete calculation statement is directly evidenced.",
+      "mappedBehavior": "Half-open entered_at selection; recorded cutoff inclusion/exclusion; completion at/asOf vs future/open; frozen canonical projected bytes.",
+      "remaining": "Fresh run result bound to exact domain source/test hashes, then explicit owner decision.",
+      "tests": [
+        {
+          "name": "AC-551 EC-551 half-open entry and inclusive recorded/completion cutoffs",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 178
+        },
+        {
+          "name": "AC-551 EC-552 canonical captured bytes freeze source values and selection",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 550
+        }
+      ],
+      "sourceBindings": [
+        {
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "sha256": "23fbe9474429deec1088c27ec5b2431879b3d49760230fdb73aa2f522ecdb0f5"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/analytics/process_metrics.dart",
+          "sha256": "31d1b3bdbb230d7239f304130652db9562f282b25497ab2b55a5baa732201f50"
+        },
+        {
+          "path": "packages/jentra_domain/lib/analytics.dart",
+          "sha256": "02ebc4b0992e6855d37564db767c7dcc51a2ef1a01a01f511b8c899d6cb434f8"
+        },
+        {
+          "path": "packages/jentra_platform/test/analytics/process_metric_hasher_test.dart",
+          "sha256": "2aaef7f39cc16329768bb1040a4b61003a7b54cb5d6df22f30cd2db64d8b3cb6"
+        }
+      ]
+    },
+    {
+      "id": "AC-552",
+      "fullStatement": "AC-552: Exact nearest-rank duration (FR-554, NFR-551) Given completed durations of 0, 1, 2, 3 and 10 microseconds When P50 and P90 are calculated with every input permutation Then the exact values are 2 and 10 microseconds with no rounding drift.",
+      "wholeCriterionReadyForOwnerReview": false,
+      "ownerAccepted": false,
+      "completeStatementMapping": true,
+      "conditionalReadiness": "After a fresh exact-source passing focused domain run, the complete calculation statement is directly evidenced.",
+      "mappedBehavior": "All 120 permutations of 0/1/2/3/10 microseconds require P50=2, P90=10 and unchanged canonical bytes; even/single/tied samples and values beyond safe JSON integers preserve discrete exactness.",
+      "remaining": "Fresh run result bound to exact domain source/test hashes, then explicit owner decision.",
+      "tests": [
+        {
+          "name": "AC-552 EC-554 exact P50/P90 over every permutation including zero",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 199
+        },
+        {
+          "name": "AC-552 nearest rank is discrete for even, single and tied populations",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 224
+        },
+        {
+          "name": "AC-552 durations larger than safe JSON integers serialize exactly as strings",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 507
+        }
+      ],
+      "sourceBindings": [
+        {
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "sha256": "23fbe9474429deec1088c27ec5b2431879b3d49760230fdb73aa2f522ecdb0f5"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/analytics/process_metrics.dart",
+          "sha256": "31d1b3bdbb230d7239f304130652db9562f282b25497ab2b55a5baa732201f50"
+        },
+        {
+          "path": "packages/jentra_domain/lib/analytics.dart",
+          "sha256": "02ebc4b0992e6855d37564db767c7dcc51a2ef1a01a01f511b8c899d6cb434f8"
+        },
+        {
+          "path": "packages/jentra_platform/test/analytics/process_metric_hasher_test.dart",
+          "sha256": "2aaef7f39cc16329768bb1040a4b61003a7b54cb5d6df22f30cd2db64d8b3cb6"
+        }
+      ]
+    },
+    {
+      "id": "AC-553",
+      "fullStatement": "AC-553: Open, invalid and empty are distinct (FR-555, FR-556) Given missing/future completions, malformed durations, and default-zero work fields When summaries are calculated for nonempty and empty completed samples Then counts conserve population and unsupported/empty measures are unavailable, while a real zero remains available.",
+      "wholeCriterionReadyForOwnerReview": false,
+      "ownerAccepted": false,
+      "completeStatementMapping": true,
+      "conditionalReadiness": "After a fresh exact-source passing focused domain run, the complete calculation statement is directly evidenced.",
+      "mappedBehavior": "Empty/null percentiles, valid zero, missing/future completions, negative/invalid timing, count conservation and uncertified measures are directly asserted. Future-open completion is in the shared AC-551 fixture.",
+      "remaining": "Fresh run result bound to exact domain source/test hashes, then explicit owner decision.",
+      "tests": [
+        {
+          "name": "AC-551 EC-551 half-open entry and inclusive recorded/completion cutoffs",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 178
+        },
+        {
+          "name": "AC-553 EC-554 empty, valid zero and open-only samples remain distinct",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 255
+        },
+        {
+          "name": "AC-553 EC-555 invalid duration/minutes conserve counts and mark partial",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 271
+        },
+        {
+          "name": "AC-553 default-zero and positive minutes cannot certify other measures",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 294
+        }
+      ],
+      "sourceBindings": [
+        {
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "sha256": "23fbe9474429deec1088c27ec5b2431879b3d49760230fdb73aa2f522ecdb0f5"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/analytics/process_metrics.dart",
+          "sha256": "31d1b3bdbb230d7239f304130652db9562f282b25497ab2b55a5baa732201f50"
+        },
+        {
+          "path": "packages/jentra_domain/lib/analytics.dart",
+          "sha256": "02ebc4b0992e6855d37564db767c7dcc51a2ef1a01a01f511b8c899d6cb434f8"
+        },
+        {
+          "path": "packages/jentra_platform/test/analytics/process_metric_hasher_test.dart",
+          "sha256": "2aaef7f39cc16329768bb1040a4b61003a7b54cb5d6df22f30cd2db64d8b3cb6"
+        }
+      ]
+    },
+    {
+      "id": "AC-555",
+      "fullStatement": "AC-555: Bounded complete snapshot (FR-552, NFR-552) Given page truncation, duplicate identities and source/group/time/output boundaries When a snapshot is submitted Then incomplete or over-limit input fails without a partial result and allowed boundary input succeeds.",
+      "wholeCriterionReadyForOwnerReview": false,
+      "ownerAccepted": false,
+      "completeStatementMapping": false,
+      "conditionalReadiness": "Keep full criterion open until group/output wording is explicitly discharged; a passing current focused run covers the recorded row/time/completeness cases.",
+      "mappedBehavior": "Forged/over-limit counts, duplicate identities, incomplete/mismatched/unsorted manifests, 10,000-row success/10,001 rejection, and 366-day success/+1 microsecond rejection.",
+      "remaining": "The criterion names group and output boundaries. This domain definition has a single fixed group and bounded output; this focused domain fixture does not drive 100/101 group or exact 8 MiB/8 MiB+1 output cases. The separate platform hasher tests reject oversized bytes, but that is not a domain output-boundary test. Provide a reviewed applicability proof or meaningful additional evidence before full acceptance.",
+      "tests": [
+        {
+          "name": "AC-555 forged row/identity counts do not evade input limits",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 133
+        },
+        {
+          "name": "AC-555 EC-553 duplicate event IDs fail; shared document IDs remain distinct",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 398
+        },
+        {
+          "name": "AC-555 incomplete, mismatched and unsorted manifests fail closed",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 410
+        },
+        {
+          "name": "AC-555 EC-557 10000 rows succeed and 10001 fail without partial totals",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 476
+        },
+        {
+          "name": "AC-555 EC-557 366-day cohort succeeds; one microsecond excess fails",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 494
+        }
+      ],
+      "sourceBindings": [
+        {
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "sha256": "23fbe9474429deec1088c27ec5b2431879b3d49760230fdb73aa2f522ecdb0f5"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/analytics/process_metrics.dart",
+          "sha256": "31d1b3bdbb230d7239f304130652db9562f282b25497ab2b55a5baa732201f50"
+        },
+        {
+          "path": "packages/jentra_domain/lib/analytics.dart",
+          "sha256": "02ebc4b0992e6855d37564db767c7dcc51a2ef1a01a01f511b8c899d6cb434f8"
+        },
+        {
+          "path": "packages/jentra_platform/test/analytics/process_metric_hasher_test.dart",
+          "sha256": "2aaef7f39cc16329768bb1040a4b61003a7b54cb5d6df22f30cd2db64d8b3cb6"
+        }
+      ]
+    },
+    {
+      "id": "AC-558",
+      "fullStatement": "AC-558: Source and quality contract (FR-551, FR-552, NFR-554) Given malformed scope/UTC/manifest data and a verified immutable definition When domain verification and analysis run Then invalid input is rejected deterministically and all required cases pass without analysis findings.",
+      "wholeCriterionReadyForOwnerReview": false,
+      "ownerAccepted": false,
+      "completeStatementMapping": false,
+      "conditionalReadiness": "The malformed source/definition portion is directly mapped; whole-criterion readiness requires fresh clean analysis and resolution of the all-required-cases wording.",
+      "mappedBehavior": "Malformed container/scope/UUIDs/UTC/calendar and cutoff order, strict minute parser, unsupported source revisions, private/unknown fields, canonical definition code/version, wrong/malformed digests, verifier error redaction and immutable results.",
+      "remaining": "Fresh exact-source domain verification and clean scoped analysis; independently verify the immutable definition; resolve AC-555 group/output applicability before claiming all required cases. Injected ExpectedBytesHasher checks exact canonical bytes rather than computing real SHA-256; real digest transport is separately tested in the platform fixture.",
+      "tests": [
+        {
+          "name": "AC-558 EC-558 verifier failures preserve domain errors and redact unknown errors",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 102
+        },
+        {
+          "name": "AC-558 malformed container shapes and foreign selection fail safely",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 147
+        },
+        {
+          "name": "AC-558 EC-557 strict UTC rejects normalized invalid calendar values",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 318
+        },
+        {
+          "name": "AC-558 manifest instants and generation time require ordered UTC",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 341
+        },
+        {
+          "name": "AC-558 exact minute parser rejects numeric coercion and silent rounding",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 363
+        },
+        {
+          "name": "AC-558 EC-556 foreign tenant/entity/branch and null entity are denied",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 426
+        },
+        {
+          "name": "AC-558 null branch permits authorized mixed-branch observations only within entity",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 444
+        },
+        {
+          "name": "AC-558 unsupported source revision or document kind fails before calculation",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 463
+        },
+        {
+          "name": "AC-558 source projection rejects private/unknown fields and missing required fields",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 535
+        },
+        {
+          "name": "AC-558 manifest/hash verification rejects wrong or malformed digest",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 587
+        },
+        {
+          "name": "AC-558 verified observations/manifests/results are immutable",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 609
+        },
+        {
+          "name": "AC-558 identifiers canonicalize case and reject malformed UUIDs safely",
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "line": 629
+        }
+      ],
+      "sourceBindings": [
+        {
+          "path": "packages/jentra_domain/test/analytics/process_metrics_test.dart",
+          "sha256": "23fbe9474429deec1088c27ec5b2431879b3d49760230fdb73aa2f522ecdb0f5"
+        },
+        {
+          "path": "packages/jentra_domain/lib/src/analytics/process_metrics.dart",
+          "sha256": "31d1b3bdbb230d7239f304130652db9562f282b25497ab2b55a5baa732201f50"
+        },
+        {
+          "path": "packages/jentra_domain/lib/analytics.dart",
+          "sha256": "02ebc4b0992e6855d37564db767c7dcc51a2ef1a01a01f511b8c899d6cb434f8"
+        },
+        {
+          "path": "packages/jentra_platform/test/analytics/process_metric_hasher_test.dart",
+          "sha256": "2aaef7f39cc16329768bb1040a4b61003a7b54cb5d6df22f30cd2db64d8b3cb6"
+        }
+      ]
+    }
+  ]
+}

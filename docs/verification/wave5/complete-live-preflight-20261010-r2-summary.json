@@ -1,0 +1,416 @@
+{
+  "observedAt": "2026-10-10 03:06:52.392446+00",
+  "capturedAt": "2026-10-10T03:08:04.397Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "migrationCount": 43,
+  "apiFunctions": 107,
+  "checkedProviders": 120,
+  "unchangedProviders": 120,
+  "changedProviders": [],
+  "missingProviders": [],
+  "addedProviders": [],
+  "rolePermissions": 87,
+  "roleAssignments": 1,
+  "entitlements": 28,
+  "memberships": 1,
+  "currentTrialAccount": {
+    "authId": "c0ab44a9-7385-4d9c-94f2-4df3efaa453f",
+    "confirmed": true,
+    "lastSignInAt": "2026-10-09T18:30:22.512847+00:00",
+    "membershipCount": 0
+  },
+  "proposedRuntimeAccounts": 0,
+  "accountLabelCollisionCounts": [
+    {
+      "label": "approver",
+      "collisionCount": 0
+    },
+    {
+      "label": "billing-admin",
+      "collisionCount": 0
+    },
+    {
+      "label": "executor",
+      "collisionCount": 0
+    },
+    {
+      "label": "foreign-member",
+      "collisionCount": 0
+    },
+    {
+      "label": "operator",
+      "collisionCount": 0
+    },
+    {
+      "label": "proposer",
+      "collisionCount": 0
+    }
+  ],
+  "collisionScope": {
+    "accounts": 6,
+    "tenants": 500,
+    "entities": 500,
+    "branches": 501,
+    "plans": 4,
+    "roles": 1003,
+    "derivedSubscriptionIdsChecked": true,
+    "derivedMembershipIdsChecked": true,
+    "exactIdsAndSlugsFromSavedReview": true
+  },
+  "collisions": {
+    "exact_account_label_collisions": 0,
+    "tenant_id_or_slug_collisions": 0,
+    "entity_id_or_parent_collisions": 0,
+    "branch_id_or_parent_collisions": 0,
+    "plan_code_collisions": 0,
+    "proposed_plan_entitlement_rows": 0,
+    "subscription_id_scope_or_plan_collisions": 0,
+    "exact_role_id_or_code_collisions": 0,
+    "membership_scope_or_id_collisions": 0,
+    "assignment_scope_collisions": 0,
+    "synthetic_allowlist_scope_collisions": 0,
+    "total_operator_rows": 0,
+    "operator_actor_collisions": 0,
+    "operator_grant_scope_collisions": 0
+  },
+  "wave5Tables": [
+    {
+      "name": "pipeline_forecasts",
+      "schema": "analytics",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "health_probes",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "operator_access_events",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "operator_tenant_grants",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "operators",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "proposal_decisions",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "proposal_executions",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "proposals",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "quota_periods",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "subscription_activations",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "subscription_revisions",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "synthetic_tenants",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "usage_corrections",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "usage_events",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    },
+    {
+      "name": "usage_reservations",
+      "schema": "intelligence_control",
+      "rlsForced": true,
+      "rlsEnabled": true
+    }
+  ],
+  "wave5RlsFlagsUnchanged": true,
+  "newAccessRowFingerprints": {
+    "core.memberships": "651880e4846b39340a554f6d76ddc40859cc4dca2314f56042fe844779ee145e",
+    "core.role_assignments": "4c2536334494f6286ad457ee982e5d9c84ff495c9a95ce0204254dcb9d7ec83f",
+    "core.role_permissions": "eb1b1c3f149aeb4444c756b629193d6766aba0c50da7aafb502eb2ca04ff1662",
+    "billing.plan_entitlements": "a7f0148a62a3aa3563cff17099aa652156163a9dc524e690b4a17c4de272939f"
+  },
+  "newPolicyAndGrantFingerprints": [
+    {
+      "name": "pipeline_forecasts",
+      "schema": "analytics",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "health_probes",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "operator_access_events",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "operator_tenant_grants",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "operators",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "proposal_decisions",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "proposal_executions",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "proposals",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "quota_periods",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "subscription_activations",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "subscription_revisions",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "synthetic_tenants",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "usage_corrections",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "usage_events",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "name": "usage_reservations",
+      "schema": "intelligence_control",
+      "policyCount": 0,
+      "grantFingerprint": "d51696be62bea2471822f7114b081fc4989012a076cf2721dc1bf1139b89773d",
+      "policyFingerprint": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  ],
+  "historicalAccessRowHashComparisonAvailable": false,
+  "historicalPolicyGrantHashComparisonAvailable": false,
+  "edgeAuthorities": null,
+  "cronJobs": null,
+  "netQueue": null,
+  "runtimeWorkerScopes": null,
+  "edgeFunctions": [
+    {
+      "slug": "people-private-documents",
+      "id": "47657765-1d65-4447-8b11-3d779fed8e17",
+      "status": "ACTIVE",
+      "version": 1,
+      "verifyJwt": false,
+      "sourceSha256": "013bc0f0544765f1f55534b300eb9ff9db1287baa8fd3aaa51a56de44d6f90a8"
+    },
+    {
+      "slug": "people-private-purge",
+      "id": "d79e87c6-cc7e-4647-abb7-73160864750c",
+      "status": "ACTIVE",
+      "version": 1,
+      "verifyJwt": false,
+      "sourceSha256": "11090fac763e7a81a1fc0a7e607edc6389b2888230e82c2c307d533e89119010"
+    }
+  ],
+  "ledgerOriginalSix": [
+    {
+      "sourcePath": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+      "name": "wave5_process_metrics",
+      "ledgerVersion": "20261007195453",
+      "present": true
+    },
+    {
+      "sourcePath": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+      "name": "wave5_pipeline_forecasts",
+      "ledgerVersion": "20261007200707",
+      "present": true
+    },
+    {
+      "sourcePath": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "name": "wave5_trusted_metering",
+      "ledgerVersion": "20261007201325",
+      "present": true
+    },
+    {
+      "sourcePath": "supabase/migrations/20261006153000_wave5_operator_isolation.sql",
+      "name": "wave5_operator_isolation",
+      "ledgerVersion": "20261007201500",
+      "present": true
+    },
+    {
+      "sourcePath": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+      "name": "wave5_human_proposals",
+      "ledgerVersion": "20261007201517",
+      "present": true
+    },
+    {
+      "sourcePath": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "name": "wave5_synthetic_subscriptions",
+      "ledgerVersion": "20261007201524",
+      "present": true
+    }
+  ],
+  "originalSixReinstalled": false,
+  "migrationInstallationPerformed": false,
+  "databaseMetadataAndExactCollisionPreflightClean": true,
+  "nativeTarget": {
+    "observation": {
+      "path": "docs/verification/wave5/complete-live-preflight-20261010-r2-native.json",
+      "sha256": "18cb5430396c554bb77e8d3d1e97cb3d6c57a78466773425867030e9c6ba10a1"
+    },
+    "observedAt": "2026-10-10T03:08:30.8341864Z",
+    "method": "Get-CimInstance Win32_UserAccount exact local name",
+    "accountName": "jentra-w5-runtime",
+    "accountExistenceVerified": false,
+    "accountExists": null,
+    "observationError": "Access to a CIM resource was not available to the client.",
+    "packageDirectory": "C:\\Users\\Public\\Documents\\JentraWave5Runtime\\20261009",
+    "packageDirectoryExists": false,
+    "profileDirectoryExists": false,
+    "priorLocalUserAttempt": "Get-LocalUser failed with Object reference not set to an instance of an object; no account absence was inferred",
+    "readOnly": true,
+    "accountOrSessionContentsRead": false,
+    "provisionedByThisCheck": false,
+    "accountCollisionVerified": false,
+    "accountCollisionClear": null
+  },
+  "fullRuntimePreflightComplete": false,
+  "fullRuntimePreflightRemaining": [
+    "Native target account existence remains unverified; available readonly account methods failed.",
+    "Fresh paired final-source native packages/report and all current review/release/hash bindings remain required.",
+    "Direct owner approval for an exact new runtime bundle remains absent.",
+    "Recheck current live collisions immediately before any separately approved operation."
+  ],
+  "savedUnapprovedRuntimeBundle": "92a68a58d70a1f9061776be1b6416b8124112577b0a0859ed6f389becc2533d4",
+  "newRuntimeBundleComposed": false,
+  "currentRuntimeApprovalReady": false,
+  "runtimeOwnerApproved": false,
+  "ownerAcceptedCriteria": 0,
+  "authenticatedNative": false,
+  "nativeKeyboardVerified": false,
+  "realMfa": false,
+  "actualDelivery": false,
+  "independentSessionContention": false,
+  "targetScaleLoad": false,
+  "rawEvidence": {
+    "path": "docs/verification/wave5/complete-live-preflight-20261010-r2-raw.json",
+    "sha256": "dffa463f4157b3d45d6b4bcfb03952e51423816233d25d090765471f9bf12436"
+  },
+  "query": {
+    "path": "docs/verification/wave5/complete-live-preflight-20261010-r2.sql",
+    "sha256": "cf886dbb2fac359b530626b50d99312c14b5398a7d620b22100852154594e250"
+  },
+  "fingerprintComparison": {
+    "path": "docs/verification/wave5/complete-live-preflight-20261010-r2-fingerprint-comparison.json"
+  },
+  "queryHashManifest": {
+    "path": "docs/verification/wave5/complete-live-preflight-20261010-r2-query-hashes.json"
+  },
+  "sourceManifest": {
+    "path": "docs/verification/wave5/golden-review-source-20261010-r2.json",
+    "sha256": "38c8645e73e51be4f05a9f3b70c9cdeaa405b07ff36591694232c00dd6b1cddf"
+  },
+  "previousFullSummary": {
+    "path": "docs/verification/wave5/continuation-live-summary-20261010.json",
+    "sha256": "cd6c91891c0f4c6fecdc21880457bfa63e62af0afb953209b99e3ad20d225db7"
+  },
+  "readOnly": true,
+  "SQLStatementsMutatedState": false,
+  "businessFunctionsCalled": false,
+  "privateSecretsRead": false,
+  "AuthUsersCreatedOrDeleted": false,
+  "SDKJobsExecuted": false,
+  "livingDocumentsChanged": false,
+  "boundary": "Fresh complete database catalog/access-count/RLS and exact proposed SQL-resource collision read. Native account existence is unverified and runtime approval/readiness remains incomplete. No rollback SQL probe, mutation, session adoption or installed/native/owner acceptance is inferred."
+}

@@ -1,0 +1,1066 @@
+{
+  "observedAt": "2026-10-09T19:40:14.580Z",
+  "head": "1b03ad09af331262534f535762148b1beeaf8fa4",
+  "scope": "Exactly 16 capability-navigation cases: 13 foundation/dashboard/setup, one CRM, one quick-create and one warehouse.",
+  "diagnosis": "Approved images retain older global placeholder navigation; current limited fixtures omit destinations under subsequently implemented capability policy. No source defect was confirmed in these omissions.",
+  "focusedFix": {
+    "scopeComplete": true,
+    "traceComplete": true,
+    "diagnosisComplete": true,
+    "fixDecision": "Preserve source and fixtures; propose exact-image baseline updates for owner visual review.",
+    "sourceEdits": 0,
+    "fixtureEdits": 0,
+    "approvedPngEdits": 0,
+    "heavyFlutterJobsRunByThisSlice": 0,
+    "primaryFiles": [
+      "apps/jentra_desktop/lib/src/shell/navigation.dart",
+      "apps/jentra_desktop/lib/src/shell/jentra_shell.dart",
+      "apps/jentra_desktop/lib/src/shell/quick_create_dialog.dart"
+    ],
+    "primaryLines": 1330,
+    "trace": "Controlled fixture permission sets -> businessCapabilitiesProvider -> visibleJentraDestinations -> sidebar and command palette. QuickCreateDialog uses the same capabilities; PrivateHrController separates dedicated private fields from My account. BusinessSetupResource supplies setup permission names; canReadStockOpenings preserves its cost/posting gate.",
+    "runtimeScope": "Read-only source/image diagnosis; no live Auth, role grants, API calls, migrations, environments or acceptance sessions required or inspected."
+  },
+  "originalBaselineHistory": {
+    "representativeGoldensLastChangedCommit": "e307d15",
+    "commitDate": "2026-09-11T13:07:19+05:30",
+    "basis": "git log for dashboard_1440_light_comfortable, CRM, quick-create and warehouse approved PNGs; git diff e307d15 HEAD navigation confirms later guards.",
+    "claimAppliesTo": "Representative approved PNG histories were checked; all sixteen original files were freshly hash-verified."
+  },
+  "policy": {
+    "requirements": [
+      "FR-244",
+      "FR-383",
+      "FR-388",
+      "AC-321",
+      "AC-322",
+      "AC-216",
+      "EC-224"
+    ],
+    "designSystem": "Keep group headings when capability filtering removes destinations; route, capability and MFA checks remain authoritative.",
+    "people": "/people requires people.view and people.employees.view.",
+    "projects": "/projects requires projects.view.",
+    "service": "/service requires service.view.",
+    "analytics": "/analytics requires analytics.view plus crm.opportunities.view or crm.opportunities.manage.",
+    "account": "/people/private remains visible under people.view for My account; private contact/document/review fields require separate dedicated permissions. Existing test confirms plain people.view reveals no private contacts/subjects.",
+    "grouping": "The pending INTELLIGENCE heading carries to /control when /analytics is denied."
+  },
+  "fixtures": {
+    "foundation": {
+      "test": "apps/jentra_desktop/test/jentra_app_test.dart",
+      "count": 13,
+      "intent": "Controlled development preview of the foundation dashboard/setup administrator, with quotation-read navigation; no People, Projects, Service or Analytics workspace authority.",
+      "capabilities": [
+        "analytics.reports.manage",
+        "analytics.reports.view",
+        "core.files.manage",
+        "core.files.view",
+        "core.setup.manage",
+        "core.setup.view",
+        "crm.parties.manage",
+        "crm.parties.view",
+        "finance.setup.manage",
+        "finance.setup.view",
+        "inventory.catalog.manage",
+        "inventory.catalog.view",
+        "sales.quotations.view",
+        "workflow.configure"
+      ],
+      "capabilitySource": "businessCapabilitiesProvider fallback: quotation view plus every BusinessSetupResource view/manage permission; duplicates removed.",
+      "visibleDestinations": [
+        [
+          "/dashboard",
+          "WORKSPACE"
+        ],
+        [
+          "/setup",
+          "FOUNDATION"
+        ],
+        [
+          "/sales",
+          "OPERATIONS"
+        ],
+        [
+          "/procurement",
+          null
+        ],
+        [
+          "/finance",
+          "MANAGEMENT"
+        ],
+        [
+          "/control",
+          "INTELLIGENCE"
+        ]
+      ],
+      "reason": "AC-1/AC-7/AC-216/EC-224 exercise foundation geometry, dashboard sample evidence and setup forms, not an all-modules privileged role. analytics.reports.view is a setup-report permission and is not analytics.view.",
+      "preserveCurrentCapabilities": true,
+      "capabilitiesAreLiveRoleGrant": false,
+      "expectedAbsentDestinations": [
+        "/people",
+        "/projects",
+        "/service",
+        "/analytics"
+      ],
+      "privateAccountDestinationAbsent": true,
+      "sourceChangeRequired": false,
+      "fixtureChangeRequired": false,
+      "ownerVisualDecisionRequired": true
+    },
+    "crm": {
+      "test": "apps/jentra_desktop/test/crm_workspace_test.dart",
+      "count": 1,
+      "intent": "Controlled populated CRM manager and quotation viewer.",
+      "capabilities": [
+        "crm.activities.manage",
+        "crm.leads.convert",
+        "crm.leads.manage",
+        "crm.leads.view",
+        "crm.opportunities.manage",
+        "crm.opportunities.view",
+        "sales.quotations.view"
+      ],
+      "capabilitySource": "_manageCapabilities passed to the AC-321 golden.",
+      "visibleDestinations": [
+        [
+          "/dashboard",
+          "WORKSPACE"
+        ],
+        [
+          "/crm",
+          "OPERATIONS"
+        ],
+        [
+          "/sales",
+          null
+        ],
+        [
+          "/procurement",
+          null
+        ],
+        [
+          "/finance",
+          "MANAGEMENT"
+        ],
+        [
+          "/control",
+          "INTELLIGENCE"
+        ]
+      ],
+      "reason": "CRM opportunity permission permits CRM; the Analytics workspace additionally requires analytics.view, which this role does not have. HR/project/service authority is unrelated to the tested CRM actions.",
+      "preserveCurrentCapabilities": true,
+      "capabilitiesAreLiveRoleGrant": false,
+      "expectedAbsentDestinations": [
+        "/people",
+        "/projects",
+        "/service",
+        "/analytics"
+      ],
+      "privateAccountDestinationAbsent": true,
+      "sourceChangeRequired": false,
+      "fixtureChangeRequired": false,
+      "ownerVisualDecisionRequired": true
+    },
+    "quickCreate": {
+      "test": "apps/jentra_desktop/test/quick_create_test.dart",
+      "count": 1,
+      "intent": "Controlled party, quotation and invoice creator; only three implemented quick-create links.",
+      "capabilities": [
+        "crm.parties.manage",
+        "crm.parties.view",
+        "sales.invoices.manage",
+        "sales.invoices.view",
+        "sales.quotations.manage",
+        "sales.quotations.view"
+      ],
+      "capabilitySource": "createPermissions passed by pumpCreate.",
+      "visibleDestinations": [
+        [
+          "/dashboard",
+          "WORKSPACE"
+        ],
+        [
+          "/setup",
+          "FOUNDATION"
+        ],
+        [
+          "/sales",
+          "OPERATIONS"
+        ],
+        [
+          "/procurement",
+          null
+        ],
+        [
+          "/receivables",
+          null
+        ],
+        [
+          "/finance",
+          "MANAGEMENT"
+        ],
+        [
+          "/control",
+          "INTELLIGENCE"
+        ]
+      ],
+      "reason": "The fixture deliberately omits Purchase request, Task and Service ticket actions. Adding unrelated People/project/service/analytics grants would weaken the declared scope of this quick-create test.",
+      "preserveCurrentCapabilities": true,
+      "capabilitiesAreLiveRoleGrant": false,
+      "expectedAbsentDestinations": [
+        "/people",
+        "/projects",
+        "/service",
+        "/analytics"
+      ],
+      "privateAccountDestinationAbsent": true,
+      "sourceChangeRequired": false,
+      "fixtureChangeRequired": false,
+      "ownerVisualDecisionRequired": true
+    },
+    "warehouse": {
+      "test": "apps/jentra_desktop/test/warehouse_setup_test.dart",
+      "count": 1,
+      "intent": "Controlled warehouse setup manager in a selected branch, with memory-only drafts.",
+      "capabilities": [
+        "core.setup.manage",
+        "core.setup.view"
+      ],
+      "capabilitySource": "pumpWarehouse(manage:true) override.",
+      "visibleDestinations": [
+        [
+          "/dashboard",
+          "WORKSPACE"
+        ],
+        [
+          "/setup",
+          "FOUNDATION"
+        ],
+        [
+          "/procurement",
+          "OPERATIONS"
+        ],
+        [
+          "/finance",
+          "MANAGEMENT"
+        ],
+        [
+          "/control",
+          "INTELLIGENCE"
+        ]
+      ],
+      "reason": "Contract 19 requires core.setup.manage for the scoped warehouse command and retains existing read policy. It does not grant HR, projects, service, analytics or stock-cost/posting authority.",
+      "preserveCurrentCapabilities": true,
+      "capabilitiesAreLiveRoleGrant": false,
+      "expectedAbsentDestinations": [
+        "/people",
+        "/projects",
+        "/service",
+        "/analytics"
+      ],
+      "privateAccountDestinationAbsent": true,
+      "sourceChangeRequired": false,
+      "fixtureChangeRequired": false,
+      "ownerVisualDecisionRequired": true
+    }
+  },
+  "cases": [
+    {
+      "stem": "crm_1440_light_comfortable",
+      "golden": "goldens/crm_1440_light_comfortable.png",
+      "testName": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/crm_workspace_test.dart: CRM desktop composition matches its approved visual contract — AC-321",
+      "fixtureId": "crm",
+      "approved": {
+        "path": "apps/jentra_desktop/test/goldens/crm_1440_light_comfortable.png",
+        "sha256": "46e54c9dfb8e8aa6f9ea99f11f6c9ac925e3348095b54208916f5e8344666730"
+      },
+      "proposedCandidate": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/crm_1440_light_comfortable_testImage.png",
+        "sha256": "11bcfce08e0e9ef7441e870dd0130b1fb96ad32cc861468e491c2a901988fb6d",
+        "dimensions": [
+          4320,
+          2700
+        ],
+        "unchangedR13OriginalFixtureBytes": true
+      },
+      "isolatedDiff": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/crm_1440_light_comfortable_isolatedDiff.png",
+        "sha256": "fd23e4f137a5854ea24428cab27072b7ba73f02fc070ae1b7ac08446a722411c"
+      },
+      "pixelMeasurements": {
+        "differentPixels": 22426,
+        "differentPercent": 0.1922668038408779,
+        "sidebarBoundX": 744,
+        "sidebarDifferentPixels": 19711,
+        "bodyDifferentPixels": 2715
+      },
+      "independentlyViewedApprovedAndCandidateInThisSlice": true,
+      "earlierAllCaseVisualInspection": [
+        "isolatedDiff",
+        "representative-master/current",
+        "fixture/source"
+      ],
+      "classification": "capability-navigation-and-border-raster",
+      "reasonForProposedBaseline": "Reflect current limited capabilities: omit People/Projects/Service/Analytics, retain Intelligence heading on Jentra Control; review sparse body border/corner pixels as part of the exact full image.",
+      "strictApprovedComparisonPassed": false,
+      "ownerVisualApproved": false,
+      "approvedImageChanged": false
+    },
+    {
+      "stem": "setup_1024_light_compact_text_200",
+      "golden": "goldens/setup_1024_light_compact_text_200.png",
+      "testName": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/jentra_app_test.dart: Wave 2 setup remains reachable at 200% text scale — EC-224",
+      "fixtureId": "foundation",
+      "approved": {
+        "path": "apps/jentra_desktop/test/goldens/setup_1024_light_compact_text_200.png",
+        "sha256": "106bce3c27c9c310d876159d9fb920e08d665f9a6fd6c3d4cce71685e88fba7f"
+      },
+      "proposedCandidate": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/setup_1024_light_compact_text_200_testImage.png",
+        "sha256": "f85bc1d6279a866fe43d363cece318ddffc5c7a082734ef7e38d85dcfcfe7ee8",
+        "dimensions": [
+          3072,
+          2160
+        ],
+        "unchangedR13OriginalFixtureBytes": true
+      },
+      "isolatedDiff": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/setup_1024_light_compact_text_200_isolatedDiff.png",
+        "sha256": "5e16d19a34ab8242576d08695194571b787b14c4b9a422d6b88819265691d732"
+      },
+      "pixelMeasurements": {
+        "differentPixels": 7256,
+        "differentPercent": 0.10935088734567901,
+        "sidebarBoundX": 216,
+        "sidebarDifferentPixels": 5288,
+        "bodyDifferentPixels": 1968
+      },
+      "independentlyViewedApprovedAndCandidateInThisSlice": true,
+      "earlierAllCaseVisualInspection": [
+        "isolatedDiff",
+        "representative-master/current",
+        "fixture/source"
+      ],
+      "classification": "capability-navigation-and-border-raster",
+      "reasonForProposedBaseline": "Reflect current limited capabilities: omit People/Projects/Service/Analytics, retain Intelligence heading on Jentra Control; review sparse body border/corner pixels as part of the exact full image.",
+      "strictApprovedComparisonPassed": false,
+      "ownerVisualApproved": false,
+      "approvedImageChanged": false
+    },
+    {
+      "stem": "dashboard_1024_light_compact",
+      "golden": "goldens/dashboard_1024_light_compact.png",
+      "testName": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/jentra_app_test.dart: dashboard golden 1024_light_compact — AC-1 / AC-7",
+      "fixtureId": "foundation",
+      "approved": {
+        "path": "apps/jentra_desktop/test/goldens/dashboard_1024_light_compact.png",
+        "sha256": "030eae969fa1028f284ee12fbc6f42c3089f252a02d18dc4fd258d72e076f9ab"
+      },
+      "proposedCandidate": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/dashboard_1024_light_compact_testImage.png",
+        "sha256": "d1a1f9955277736ec7889bb464249ee7ab765eb58e9190f228dde6da6d8828f2",
+        "dimensions": [
+          3072,
+          2160
+        ],
+        "unchangedR13OriginalFixtureBytes": true
+      },
+      "isolatedDiff": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/dashboard_1024_light_compact_isolatedDiff.png",
+        "sha256": "8771106dae6020f5634161f922853e01bb0fd2d5e53923321335ea7661b98cbd"
+      },
+      "pixelMeasurements": {
+        "differentPixels": 7568,
+        "differentPercent": 0.11405285493827161,
+        "sidebarBoundX": 216,
+        "sidebarDifferentPixels": 5288,
+        "bodyDifferentPixels": 2280
+      },
+      "independentlyViewedApprovedAndCandidateInThisSlice": false,
+      "earlierAllCaseVisualInspection": [
+        "isolatedDiff",
+        "representative-master/current",
+        "fixture/source"
+      ],
+      "classification": "capability-navigation-and-border-raster",
+      "reasonForProposedBaseline": "Reflect current limited capabilities: omit People/Projects/Service/Analytics, retain Intelligence heading on Jentra Control; review sparse body border/corner pixels as part of the exact full image.",
+      "strictApprovedComparisonPassed": false,
+      "ownerVisualApproved": false,
+      "approvedImageChanged": false
+    },
+    {
+      "stem": "dashboard_1024_dark_comfortable",
+      "golden": "goldens/dashboard_1024_dark_comfortable.png",
+      "testName": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/jentra_app_test.dart: dashboard golden 1024_dark_comfortable — AC-1 / AC-7",
+      "fixtureId": "foundation",
+      "approved": {
+        "path": "apps/jentra_desktop/test/goldens/dashboard_1024_dark_comfortable.png",
+        "sha256": "297c7c5db837fd965bd86a4b17f90ee0b26755b9bf5fecf6a3e212f2c77b7381"
+      },
+      "proposedCandidate": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/dashboard_1024_dark_comfortable_testImage.png",
+        "sha256": "c0fb631d4935303a1ce83b48f8759a874f0e17360e1d177cd31c7ac7e5eedba4",
+        "dimensions": [
+          3072,
+          2160
+        ],
+        "unchangedR13OriginalFixtureBytes": true
+      },
+      "isolatedDiff": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/dashboard_1024_dark_comfortable_isolatedDiff.png",
+        "sha256": "ea8cb2b88c00c110b8103e4db35a81d8e1a2dc2cbda9a4afbd99d7fb1cd774a4"
+      },
+      "pixelMeasurements": {
+        "differentPixels": 7675,
+        "differentPercent": 0.11566538869598765,
+        "sidebarBoundX": 216,
+        "sidebarDifferentPixels": 5288,
+        "bodyDifferentPixels": 2387
+      },
+      "independentlyViewedApprovedAndCandidateInThisSlice": false,
+      "earlierAllCaseVisualInspection": [
+        "isolatedDiff",
+        "representative-master/current",
+        "fixture/source"
+      ],
+      "classification": "capability-navigation-and-border-raster",
+      "reasonForProposedBaseline": "Reflect current limited capabilities: omit People/Projects/Service/Analytics, retain Intelligence heading on Jentra Control; review sparse body border/corner pixels as part of the exact full image.",
+      "strictApprovedComparisonPassed": false,
+      "ownerVisualApproved": false,
+      "approvedImageChanged": false
+    },
+    {
+      "stem": "dashboard_1440_light_comfortable",
+      "golden": "goldens/dashboard_1440_light_comfortable.png",
+      "testName": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/jentra_app_test.dart: dashboard golden 1440_light_comfortable — AC-1 / AC-7",
+      "fixtureId": "foundation",
+      "approved": {
+        "path": "apps/jentra_desktop/test/goldens/dashboard_1440_light_comfortable.png",
+        "sha256": "cb039df3b96286f52739248a7a9fee8ffee36b7b6c0d7442e4e4ee91a85d4036"
+      },
+      "proposedCandidate": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/dashboard_1440_light_comfortable_testImage.png",
+        "sha256": "0e5ca95d7ecb43adf7b6195650aa28411ca796cc0f39ad2f71a0f47198c26e3f",
+        "dimensions": [
+          4320,
+          2700
+        ],
+        "unchangedR13OriginalFixtureBytes": true
+      },
+      "isolatedDiff": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/dashboard_1440_light_comfortable_isolatedDiff.png",
+        "sha256": "2a1ef9a4d70360b318b6406df58fe110cdb64b9f482c283f138c22e362ab8fe2"
+      },
+      "pixelMeasurements": {
+        "differentPixels": 22706,
+        "differentPercent": 0.1946673525377229,
+        "sidebarBoundX": 744,
+        "sidebarDifferentPixels": 19711,
+        "bodyDifferentPixels": 2995
+      },
+      "independentlyViewedApprovedAndCandidateInThisSlice": true,
+      "earlierAllCaseVisualInspection": [
+        "isolatedDiff",
+        "representative-master/current",
+        "fixture/source"
+      ],
+      "classification": "capability-navigation-and-border-raster",
+      "reasonForProposedBaseline": "Reflect current limited capabilities: omit People/Projects/Service/Analytics, retain Intelligence heading on Jentra Control; review sparse body border/corner pixels as part of the exact full image.",
+      "strictApprovedComparisonPassed": false,
+      "ownerVisualApproved": false,
+      "approvedImageChanged": false
+    },
+    {
+      "stem": "dashboard_1440_dark_compact",
+      "golden": "goldens/dashboard_1440_dark_compact.png",
+      "testName": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/jentra_app_test.dart: dashboard golden 1440_dark_compact — AC-1 / AC-7",
+      "fixtureId": "foundation",
+      "approved": {
+        "path": "apps/jentra_desktop/test/goldens/dashboard_1440_dark_compact.png",
+        "sha256": "136addf303a324ce46dc1ae440cc337c3df950fa2a44c25c7255d190000e84cc"
+      },
+      "proposedCandidate": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/dashboard_1440_dark_compact_testImage.png",
+        "sha256": "4361f51fbe18292444ec9eb2436bdaca17f46a6fdb31be50c658cf72e586cd36",
+        "dimensions": [
+          4320,
+          2700
+        ],
+        "unchangedR13OriginalFixtureBytes": true
+      },
+      "isolatedDiff": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/dashboard_1440_dark_compact_isolatedDiff.png",
+        "sha256": "009aafc64c4a7ecfb07871649468c13d17ae6d9baff32f8f1fe4af06d8dbd58b"
+      },
+      "pixelMeasurements": {
+        "differentPixels": 22866,
+        "differentPercent": 0.19603909465020578,
+        "sidebarBoundX": 744,
+        "sidebarDifferentPixels": 19711,
+        "bodyDifferentPixels": 3155
+      },
+      "independentlyViewedApprovedAndCandidateInThisSlice": false,
+      "earlierAllCaseVisualInspection": [
+        "isolatedDiff",
+        "representative-master/current",
+        "fixture/source"
+      ],
+      "classification": "capability-navigation-and-border-raster",
+      "reasonForProposedBaseline": "Reflect current limited capabilities: omit People/Projects/Service/Analytics, retain Intelligence heading on Jentra Control; review sparse body border/corner pixels as part of the exact full image.",
+      "strictApprovedComparisonPassed": false,
+      "ownerVisualApproved": false,
+      "approvedImageChanged": false
+    },
+    {
+      "stem": "dashboard_1920_light_comfortable",
+      "golden": "goldens/dashboard_1920_light_comfortable.png",
+      "testName": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/jentra_app_test.dart: dashboard golden 1920_light_comfortable — AC-1 / AC-7",
+      "fixtureId": "foundation",
+      "approved": {
+        "path": "apps/jentra_desktop/test/goldens/dashboard_1920_light_comfortable.png",
+        "sha256": "4cbd7075171ff694c4a887365194cdfb3e1dfd6fa9c15eb3808f7cffd6325c84"
+      },
+      "proposedCandidate": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/dashboard_1920_light_comfortable_testImage.png",
+        "sha256": "92f13dc7fc81d4bc4f509585312f62a0eb97684b6ea539f205943c1054b0cc31",
+        "dimensions": [
+          5760,
+          3240
+        ],
+        "unchangedR13OriginalFixtureBytes": true
+      },
+      "isolatedDiff": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/dashboard_1920_light_comfortable_isolatedDiff.png",
+        "sha256": "bed7745be92c494614ef768553543cfb7bc4a1b7269d3a8adcd07c6a03f25827"
+      },
+      "pixelMeasurements": {
+        "differentPixels": 23616,
+        "differentPercent": 0.12654320987654322,
+        "sidebarBoundX": 744,
+        "sidebarDifferentPixels": 19711,
+        "bodyDifferentPixels": 3905
+      },
+      "independentlyViewedApprovedAndCandidateInThisSlice": false,
+      "earlierAllCaseVisualInspection": [
+        "isolatedDiff",
+        "representative-master/current",
+        "fixture/source"
+      ],
+      "classification": "capability-navigation-and-border-raster",
+      "reasonForProposedBaseline": "Reflect current limited capabilities: omit People/Projects/Service/Analytics, retain Intelligence heading on Jentra Control; review sparse body border/corner pixels as part of the exact full image.",
+      "strictApprovedComparisonPassed": false,
+      "ownerVisualApproved": false,
+      "approvedImageChanged": false
+    },
+    {
+      "stem": "dashboard_1920_dark_comfortable",
+      "golden": "goldens/dashboard_1920_dark_comfortable.png",
+      "testName": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/jentra_app_test.dart: dashboard golden 1920_dark_comfortable — AC-1 / AC-7",
+      "fixtureId": "foundation",
+      "approved": {
+        "path": "apps/jentra_desktop/test/goldens/dashboard_1920_dark_comfortable.png",
+        "sha256": "ac40614fef95c89a2f9b168fe0a77e45ca9c95f273bc5e87d468f2d66cc531da"
+      },
+      "proposedCandidate": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/dashboard_1920_dark_comfortable_testImage.png",
+        "sha256": "90dff5a7df25423b6ea92a3412674769ffb586bc0ef3408705f2cb3a117292f0",
+        "dimensions": [
+          5760,
+          3240
+        ],
+        "unchangedR13OriginalFixtureBytes": true
+      },
+      "isolatedDiff": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/dashboard_1920_dark_comfortable_isolatedDiff.png",
+        "sha256": "d45e2f78186490efa199e78b38515466ea343891c17a7e9293c3910097206524"
+      },
+      "pixelMeasurements": {
+        "differentPixels": 23837,
+        "differentPercent": 0.12772740912208505,
+        "sidebarBoundX": 744,
+        "sidebarDifferentPixels": 19711,
+        "bodyDifferentPixels": 4126
+      },
+      "independentlyViewedApprovedAndCandidateInThisSlice": false,
+      "earlierAllCaseVisualInspection": [
+        "isolatedDiff",
+        "representative-master/current",
+        "fixture/source"
+      ],
+      "classification": "capability-navigation-and-border-raster",
+      "reasonForProposedBaseline": "Reflect current limited capabilities: omit People/Projects/Service/Analytics, retain Intelligence heading on Jentra Control; review sparse body border/corner pixels as part of the exact full image.",
+      "strictApprovedComparisonPassed": false,
+      "ownerVisualApproved": false,
+      "approvedImageChanged": false
+    },
+    {
+      "stem": "setup_1024_light_compact",
+      "golden": "goldens/setup_1024_light_compact.png",
+      "testName": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/jentra_app_test.dart: setup golden 1024_light_compact — AC-216",
+      "fixtureId": "foundation",
+      "approved": {
+        "path": "apps/jentra_desktop/test/goldens/setup_1024_light_compact.png",
+        "sha256": "f9e88d4b8888a03f9e40416e2a4f6625e8ab29de4169e3991aaabb9c0a034e20"
+      },
+      "proposedCandidate": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/setup_1024_light_compact_testImage.png",
+        "sha256": "d1035619f0b9a4d333a2415e2baa5c226a647991deb1b7f87d2baf2d93ca664a",
+        "dimensions": [
+          3072,
+          2160
+        ],
+        "unchangedR13OriginalFixtureBytes": true
+      },
+      "isolatedDiff": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/setup_1024_light_compact_isolatedDiff.png",
+        "sha256": "bc1e013b9f243dc2861bfe544ebebb3042bfeb7c7dea098528fd5bfec6a34faa"
+      },
+      "pixelMeasurements": {
+        "differentPixels": 7522,
+        "differentPercent": 0.11335961612654322,
+        "sidebarBoundX": 216,
+        "sidebarDifferentPixels": 5288,
+        "bodyDifferentPixels": 2234
+      },
+      "independentlyViewedApprovedAndCandidateInThisSlice": false,
+      "earlierAllCaseVisualInspection": [
+        "isolatedDiff",
+        "representative-master/current",
+        "fixture/source"
+      ],
+      "classification": "capability-navigation-and-border-raster",
+      "reasonForProposedBaseline": "Reflect current limited capabilities: omit People/Projects/Service/Analytics, retain Intelligence heading on Jentra Control; review sparse body border/corner pixels as part of the exact full image.",
+      "strictApprovedComparisonPassed": false,
+      "ownerVisualApproved": false,
+      "approvedImageChanged": false
+    },
+    {
+      "stem": "setup_1024_dark_comfortable",
+      "golden": "goldens/setup_1024_dark_comfortable.png",
+      "testName": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/jentra_app_test.dart: setup golden 1024_dark_comfortable — AC-216",
+      "fixtureId": "foundation",
+      "approved": {
+        "path": "apps/jentra_desktop/test/goldens/setup_1024_dark_comfortable.png",
+        "sha256": "3237c97c1c5b379ee67ea1201f5c88bccaf89ec4519b5926f5ec4e6cfd7f5afa"
+      },
+      "proposedCandidate": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/setup_1024_dark_comfortable_testImage.png",
+        "sha256": "283484cbe6f61d2b80c2ee49a15826ab64c14791ccc32ed1f7cb3faf48316e9f",
+        "dimensions": [
+          3072,
+          2160
+        ],
+        "unchangedR13OriginalFixtureBytes": true
+      },
+      "isolatedDiff": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/setup_1024_dark_comfortable_isolatedDiff.png",
+        "sha256": "8691cb803c167790ca64e8ffbcd7f7a19041896f46645962d67cd926658624cf"
+      },
+      "pixelMeasurements": {
+        "differentPixels": 7584,
+        "differentPercent": 0.11429398148148148,
+        "sidebarBoundX": 216,
+        "sidebarDifferentPixels": 5288,
+        "bodyDifferentPixels": 2296
+      },
+      "independentlyViewedApprovedAndCandidateInThisSlice": false,
+      "earlierAllCaseVisualInspection": [
+        "isolatedDiff",
+        "representative-master/current",
+        "fixture/source"
+      ],
+      "classification": "capability-navigation-and-border-raster",
+      "reasonForProposedBaseline": "Reflect current limited capabilities: omit People/Projects/Service/Analytics, retain Intelligence heading on Jentra Control; review sparse body border/corner pixels as part of the exact full image.",
+      "strictApprovedComparisonPassed": false,
+      "ownerVisualApproved": false,
+      "approvedImageChanged": false
+    },
+    {
+      "stem": "setup_1440_light_comfortable",
+      "golden": "goldens/setup_1440_light_comfortable.png",
+      "testName": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/jentra_app_test.dart: setup golden 1440_light_comfortable — AC-216",
+      "fixtureId": "foundation",
+      "approved": {
+        "path": "apps/jentra_desktop/test/goldens/setup_1440_light_comfortable.png",
+        "sha256": "fc161cb388a49d0049898de0ddba423388f05643a1edba528d334d6c6a326416"
+      },
+      "proposedCandidate": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/setup_1440_light_comfortable_testImage.png",
+        "sha256": "2287b8ea1529656302da07695d9655e84f00e46a8ce6d9352a4c9731a0c532df",
+        "dimensions": [
+          4320,
+          2700
+        ],
+        "unchangedR13OriginalFixtureBytes": true
+      },
+      "isolatedDiff": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/setup_1440_light_comfortable_isolatedDiff.png",
+        "sha256": "bb8329d27f4f51320b004b9c4b76cd96d596fe25c70efa80848ee7ead0f898ba"
+      },
+      "pixelMeasurements": {
+        "differentPixels": 22659,
+        "differentPercent": 0.19426440329218106,
+        "sidebarBoundX": 744,
+        "sidebarDifferentPixels": 19711,
+        "bodyDifferentPixels": 2948
+      },
+      "independentlyViewedApprovedAndCandidateInThisSlice": false,
+      "earlierAllCaseVisualInspection": [
+        "isolatedDiff",
+        "representative-master/current",
+        "fixture/source"
+      ],
+      "classification": "capability-navigation-and-border-raster",
+      "reasonForProposedBaseline": "Reflect current limited capabilities: omit People/Projects/Service/Analytics, retain Intelligence heading on Jentra Control; review sparse body border/corner pixels as part of the exact full image.",
+      "strictApprovedComparisonPassed": false,
+      "ownerVisualApproved": false,
+      "approvedImageChanged": false
+    },
+    {
+      "stem": "setup_1440_dark_compact",
+      "golden": "goldens/setup_1440_dark_compact.png",
+      "testName": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/jentra_app_test.dart: setup golden 1440_dark_compact — AC-216",
+      "fixtureId": "foundation",
+      "approved": {
+        "path": "apps/jentra_desktop/test/goldens/setup_1440_dark_compact.png",
+        "sha256": "6820e28c4a1f8b2d593783b2261ee552b20c815452029e97181d7d20d625fe05"
+      },
+      "proposedCandidate": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/setup_1440_dark_compact_testImage.png",
+        "sha256": "610c272e2fd0bdbb8871ec3e9a31517afc2c15dfbdd1063610a3d667f9d22775",
+        "dimensions": [
+          4320,
+          2700
+        ],
+        "unchangedR13OriginalFixtureBytes": true
+      },
+      "isolatedDiff": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/setup_1440_dark_compact_isolatedDiff.png",
+        "sha256": "70d4a7eac0cf330d310bd7474d9671ebe0a45e5b4fb8904d776253a592244dd1"
+      },
+      "pixelMeasurements": {
+        "differentPixels": 22780,
+        "differentPercent": 0.19530178326474623,
+        "sidebarBoundX": 744,
+        "sidebarDifferentPixels": 19711,
+        "bodyDifferentPixels": 3069
+      },
+      "independentlyViewedApprovedAndCandidateInThisSlice": false,
+      "earlierAllCaseVisualInspection": [
+        "isolatedDiff",
+        "representative-master/current",
+        "fixture/source"
+      ],
+      "classification": "capability-navigation-and-border-raster",
+      "reasonForProposedBaseline": "Reflect current limited capabilities: omit People/Projects/Service/Analytics, retain Intelligence heading on Jentra Control; review sparse body border/corner pixels as part of the exact full image.",
+      "strictApprovedComparisonPassed": false,
+      "ownerVisualApproved": false,
+      "approvedImageChanged": false
+    },
+    {
+      "stem": "setup_1920_light_comfortable",
+      "golden": "goldens/setup_1920_light_comfortable.png",
+      "testName": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/jentra_app_test.dart: setup golden 1920_light_comfortable — AC-216",
+      "fixtureId": "foundation",
+      "approved": {
+        "path": "apps/jentra_desktop/test/goldens/setup_1920_light_comfortable.png",
+        "sha256": "0ea97c860c89d5ea8fed2d22d05043debb67458b08af38ca1626a00641e2cbc5"
+      },
+      "proposedCandidate": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/setup_1920_light_comfortable_testImage.png",
+        "sha256": "5c2925500c0418335a0d5d625b45e71b74dbcc2264b213423be5cc8c76e7c14f",
+        "dimensions": [
+          5760,
+          3240
+        ],
+        "unchangedR13OriginalFixtureBytes": true
+      },
+      "isolatedDiff": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/setup_1920_light_comfortable_isolatedDiff.png",
+        "sha256": "bf0818867ba0d2c30822c297417df2896d937a4c8df74c05700d56b9d728c94c"
+      },
+      "pixelMeasurements": {
+        "differentPixels": 22672,
+        "differentPercent": 0.12148491083676269,
+        "sidebarBoundX": 744,
+        "sidebarDifferentPixels": 19711,
+        "bodyDifferentPixels": 2961
+      },
+      "independentlyViewedApprovedAndCandidateInThisSlice": false,
+      "earlierAllCaseVisualInspection": [
+        "isolatedDiff",
+        "representative-master/current",
+        "fixture/source"
+      ],
+      "classification": "capability-navigation-and-border-raster",
+      "reasonForProposedBaseline": "Reflect current limited capabilities: omit People/Projects/Service/Analytics, retain Intelligence heading on Jentra Control; review sparse body border/corner pixels as part of the exact full image.",
+      "strictApprovedComparisonPassed": false,
+      "ownerVisualApproved": false,
+      "approvedImageChanged": false
+    },
+    {
+      "stem": "setup_1920_dark_comfortable",
+      "golden": "goldens/setup_1920_dark_comfortable.png",
+      "testName": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/jentra_app_test.dart: setup golden 1920_dark_comfortable — AC-216",
+      "fixtureId": "foundation",
+      "approved": {
+        "path": "apps/jentra_desktop/test/goldens/setup_1920_dark_comfortable.png",
+        "sha256": "3aee3e9768980122704f921a2b3d6a0aa6b733ad32d987270a59714213defbee"
+      },
+      "proposedCandidate": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/setup_1920_dark_comfortable_testImage.png",
+        "sha256": "373479f6584af00d4754b7e413c28cfe2ff541f8331a3bad2bdb8cfc5f855cbe",
+        "dimensions": [
+          5760,
+          3240
+        ],
+        "unchangedR13OriginalFixtureBytes": true
+      },
+      "isolatedDiff": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/setup_1920_dark_comfortable_isolatedDiff.png",
+        "sha256": "a28a08e30455899b83751f430d767c5ec8639d442458095845d7cbf66149026d"
+      },
+      "pixelMeasurements": {
+        "differentPixels": 22784,
+        "differentPercent": 0.12208504801097393,
+        "sidebarBoundX": 744,
+        "sidebarDifferentPixels": 19711,
+        "bodyDifferentPixels": 3073
+      },
+      "independentlyViewedApprovedAndCandidateInThisSlice": false,
+      "earlierAllCaseVisualInspection": [
+        "isolatedDiff",
+        "representative-master/current",
+        "fixture/source"
+      ],
+      "classification": "capability-navigation-and-border-raster",
+      "reasonForProposedBaseline": "Reflect current limited capabilities: omit People/Projects/Service/Analytics, retain Intelligence heading on Jentra Control; review sparse body border/corner pixels as part of the exact full image.",
+      "strictApprovedComparisonPassed": false,
+      "ownerVisualApproved": false,
+      "approvedImageChanged": false
+    },
+    {
+      "stem": "quick_create_workspace_links",
+      "golden": "goldens/quick_create_workspace_links.png",
+      "testName": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/quick_create_test.dart: customer quick create opens the party workspace and its create control",
+      "fixtureId": "quickCreate",
+      "approved": {
+        "path": "apps/jentra_desktop/test/goldens/quick_create_workspace_links.png",
+        "sha256": "cf49321dd0a1af037a2609279fc5da2fcd56c0e8dadc53c87e65833158fdc51d"
+      },
+      "proposedCandidate": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/quick_create_workspace_links_testImage.png",
+        "sha256": "9335e3a458222a7de66bd572d95b8b90a7374ecd700cf2b5c6361b6def97ba92",
+        "dimensions": [
+          4320,
+          3000
+        ],
+        "unchangedR13OriginalFixtureBytes": true
+      },
+      "isolatedDiff": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/quick_create_workspace_links_isolatedDiff.png",
+        "sha256": "37c6e5fcdc87e98bcfc4b79789f0742d39524fc20193ad8531c910fa0ee0d232"
+      },
+      "pixelMeasurements": {
+        "differentPixels": 22158,
+        "differentPercent": 0.17097222222222222,
+        "sidebarBoundX": 744,
+        "sidebarDifferentPixels": 19711,
+        "bodyDifferentPixels": 2447
+      },
+      "independentlyViewedApprovedAndCandidateInThisSlice": true,
+      "earlierAllCaseVisualInspection": [
+        "isolatedDiff",
+        "representative-master/current",
+        "fixture/source"
+      ],
+      "classification": "capability-navigation-and-border-raster",
+      "reasonForProposedBaseline": "Reflect current limited capabilities: omit People/Projects/Service/Analytics, retain Intelligence heading on Jentra Control; review sparse body border/corner pixels as part of the exact full image.",
+      "strictApprovedComparisonPassed": false,
+      "ownerVisualApproved": false,
+      "approvedImageChanged": false
+    },
+    {
+      "stem": "warehouse_setup_form",
+      "golden": "goldens/warehouse_setup_form.png",
+      "testName": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9r13/preview/apps/jentra_desktop/test/warehouse_setup_test.dart: warehouse form uses selected branch and preserves scope on save",
+      "fixtureId": "warehouse",
+      "approved": {
+        "path": "apps/jentra_desktop/test/goldens/warehouse_setup_form.png",
+        "sha256": "b220ba00d9926c1ffe95b5097d348a56adfaa8511dc4106cb490a254c02a16d6"
+      },
+      "proposedCandidate": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/warehouse_setup_form_testImage.png",
+        "sha256": "3211c581a1b1224c3a2a4ec45f7a13a198a804999a5519c4b05e832b41d70308",
+        "dimensions": [
+          4320,
+          3000
+        ],
+        "unchangedR13OriginalFixtureBytes": true
+      },
+      "isolatedDiff": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/warehouse_setup_form_isolatedDiff.png",
+        "sha256": "4eb65ba69eb56caf018dc38fdda13914487ab9181b77e5c51ab6d47037625dd8"
+      },
+      "pixelMeasurements": {
+        "differentPixels": 22184,
+        "differentPercent": 0.17117283950617285,
+        "sidebarBoundX": 744,
+        "sidebarDifferentPixels": 19711,
+        "bodyDifferentPixels": 2473
+      },
+      "independentlyViewedApprovedAndCandidateInThisSlice": true,
+      "earlierAllCaseVisualInspection": [
+        "isolatedDiff",
+        "representative-master/current",
+        "fixture/source"
+      ],
+      "classification": "capability-navigation-and-border-raster",
+      "reasonForProposedBaseline": "Reflect current limited capabilities: omit People/Projects/Service/Analytics, retain Intelligence heading on Jentra Control; review sparse body border/corner pixels as part of the exact full image.",
+      "strictApprovedComparisonPassed": false,
+      "ownerVisualApproved": false,
+      "approvedImageChanged": false
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "apps/jentra_desktop/lib/src/shell/navigation.dart",
+      "sha256": "9902f403b2a2149ad0082f80ae11ea51af6998e266c3cdb8d191826aea16af67",
+      "lines": 406,
+      "matchedR13BaseSource": true
+    },
+    {
+      "path": "apps/jentra_desktop/lib/src/shell/jentra_shell.dart",
+      "sha256": "6b740df8a2764ccd991ed77f0e9965544420520d0f4cb8492f20caf850ec3177",
+      "lines": 829,
+      "matchedR13BaseSource": true
+    },
+    {
+      "path": "apps/jentra_desktop/lib/src/shell/quick_create_dialog.dart",
+      "sha256": "30364e821d089f740c9d466184f14b3168c2576746667f6296d802d7ffd4a84f",
+      "lines": 95,
+      "matchedR13BaseSource": true
+    },
+    {
+      "path": "apps/jentra_desktop/lib/src/app_providers.dart",
+      "sha256": "aa75e24065096a4a6bc0cad30ca8bc6b16c6f7ccd37cafdefa8a424e7d6ad5a6",
+      "lines": 490,
+      "matchedR13BaseSource": true
+    },
+    {
+      "path": "apps/jentra_desktop/test/jentra_app_test.dart",
+      "sha256": "02e5f75574367bba70ee0e24800b0e5cfa1fa3d5e5438811a075a8935a560e91",
+      "lines": 675,
+      "matchedR13BaseSource": true
+    },
+    {
+      "path": "apps/jentra_desktop/test/crm_workspace_test.dart",
+      "sha256": "34bf4e259c7b3c879d8731a0dca166598e3514f9aa93f915b245b54dde6979d4",
+      "lines": 588,
+      "matchedR13BaseSource": true
+    },
+    {
+      "path": "apps/jentra_desktop/test/quick_create_test.dart",
+      "sha256": "91577e602466683abebcb308ce0918aa6bca1737671babfa882193c8402bc28e",
+      "lines": 158,
+      "matchedR13BaseSource": true
+    },
+    {
+      "path": "apps/jentra_desktop/test/warehouse_setup_test.dart",
+      "sha256": "6f171fc6b90b51e03bbf946140c4dc8d1354ac3a2def345b66ae57157f14e5c7",
+      "lines": 120,
+      "matchedR13BaseSource": true
+    },
+    {
+      "path": "packages/jentra_domain/lib/src/business_setup.dart",
+      "sha256": "c0a157b25c2c744abb57c3a73d9c10cbba4db978ef04327f2a5d5658b1380e87",
+      "lines": 823,
+      "matchedR13BaseSource": true
+    },
+    {
+      "path": "packages/jentra_domain/lib/src/stock_opening.dart",
+      "sha256": "df0993ed64ff1c6a3b13e8a50c969ee08a39293eec005d3d7a632fb882d14e61",
+      "lines": 218,
+      "matchedR13BaseSource": true
+    },
+    {
+      "path": "apps/jentra_desktop/lib/src/features/people/private_hr_controller.dart",
+      "sha256": "edb8c53b6982d030acac41af55b72d547a00f66d7bcfa9f0f9a7e6c4f7de59e1",
+      "lines": 1051,
+      "matchedR13BaseSource": true
+    },
+    {
+      "path": "apps/jentra_desktop/test/private_hr_workspace_test.dart",
+      "sha256": "6f9c1430b72b7bb2951a704cb87d087130e5c169caaca888487d801a34174752",
+      "lines": 620,
+      "matchedR13BaseSource": true
+    },
+    {
+      "path": "apps/jentra_desktop/test/quotation_navigation_test.dart",
+      "sha256": "08b537d8b86c9b23d013f86465a6a3c9b8a78b8cb0bc204b9ecb2dbf7cd9e6e1",
+      "lines": 42,
+      "matchedR13BaseSource": true
+    }
+  ],
+  "reviewedContracts": [
+    {
+      "path": "docs/blueprint/04_DESIGN_SYSTEM.md",
+      "sha256": "e747eec69d86fd755699519b0814e7613ce39b506b9d378d58cac4d12c136ee3"
+    },
+    {
+      "path": "docs/blueprint/05_TEST_AND_DELIVERY.md",
+      "sha256": "81b71888987d2755d3811060f741f5c504df630093f2df9c9c135f78f7dd3556"
+    },
+    {
+      "path": "docs/blueprint/06_WAVE2_SHARED_FOUNDATION_SPEC.md",
+      "sha256": "2d680a5017586e077e7d5c49ab2de65efad322f94cee291e0e8b463c96931202"
+    },
+    {
+      "path": "docs/blueprint/08_WAVE3_INTEGRATED_COMMERCE_FINANCE_SPEC.md",
+      "sha256": "a5b6b788a21f51d1267f9148c1196d06e3dd37cc8fddff2b0a9e55c097e92454"
+    },
+    {
+      "path": "docs/blueprint/19_WAREHOUSE_SETUP_CONTRACT.md",
+      "sha256": "38f335863b110393224f2c47435affae3fd5b283e8df7a48989513bf3eaf450b"
+    },
+    {
+      "path": "docs/blueprint/42_WAVE4_PRIVATE_HR_ORGANIZATION_CALENDAR_CONTRACT.md",
+      "sha256": "7ac20087be1de48a268322bd46db60bfbf10947a507e46f7679d509e72daeb66"
+    },
+    {
+      "path": "docs/blueprint/47_WAVE4_PRIVATE_HR_DELIVERY_CONTRACT.md",
+      "sha256": "6e9c1973cfd6a4e212a4cbda1e6cbc2563159f5fdb5c92019e86a8c1626b8559"
+    }
+  ],
+  "retainedEvidence": {
+    "path": "docs/verification/wave5/continuation-goldens-native-20261009.json",
+    "sha256": "782bd6ab567ee8864fd68001d00e0d8748f9c66937d3f60aba932df2e83cfe0d"
+  },
+  "currentEvidence": {
+    "path": "docs/verification/wave5/continuation-goldens-comparison-20261009-r13.json",
+    "sha256": "794ab0bdf78491eb2239a81e2adf4402d7f13f69ff916ebdd33d125f69565952"
+  },
+  "sourceManifest": {
+    "path": "docs/verification/wave5/windows-test-preview-source-20261009-r13.json",
+    "sha256": "e4757bca828206d665daa0008e96ba1edc8d7bbcdbc5c4bf8c46e3791db87d31"
+  },
+  "observedStrictSuite": {
+    "passed": 1921,
+    "failed": 83,
+    "skipped": 0,
+    "source": "r13 retained desktopAll"
+  },
+  "proposedCandidateStrictSuite": {
+    "run": false,
+    "passed": false,
+    "ownerAccepted": false,
+    "runner": "Root-owned isolated exact-image candidate suite; result must be independently bound before visual decision."
+  },
+  "approval": {
+    "ownerVisualApproved": false,
+    "requirementsOwnerAccepted": 0,
+    "approvedPngReplacementAuthorized": false,
+    "runtimeBundleStillUnapproved": "92a68a58d70a1f9061776be1b6416b8124112577b0a0859ed6f389becc2533d4",
+    "runtimeArtifactsChangedByThisSlice": false
+  }
+}

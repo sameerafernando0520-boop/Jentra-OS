@@ -1,0 +1,198 @@
+{
+  "observedAt": "2026-10-10T01:45:29.815Z",
+  "gitHead": "1b03ad09af331262534f535762148b1beeaf8fa4",
+  "concurrentStatusAtRead": "M pubspec.lock\n?? docs/verification/wave5/golden-review-controlAll-20261010-r1.log\n?? docs/verification/wave5/golden-review-live-20261010-r1.json\n?? docs/verification/wave5/golden-review-pubget-20261010-r1-sdkaccess.json\n?? docs/verification/wave5/golden-review-pubget-20261010-r1-sdkaccess.log\n?? docs/verification/wave5/golden-review-pubget-20261010-r1.json\n?? docs/verification/wave5/golden-review-pubget-20261010-r1.log\n?? docs/verification/wave5/golden-review-source-20261010-r1.json\n?? docs/verification/wave5/navigation-golden-policy-20261010.json\n?? docs/verification/wave5/navigation-golden-policy-20261010.md\n?? scripts/wave5/build_golden_owner_review_20261010.mjs\n?? scripts/wave5/diagnose_raster_goldens_20261010.py\n?? scripts/wave5/golden_review_inputs_20261010.mjs\n?? scripts/wave5/prepare_golden_review_20261010.mjs\n?? scripts/wave5/prepare_owner_review_packets_20261010.mjs\n?? scripts/wave5/promote_golden_review_20261010.mjs\n?? scripts/wave5/run_golden_candidate_20261010.mjs\n?? scripts/wave5/run_golden_review_20261010.mjs",
+  "state": "review proposal; owner visual decision absent",
+  "inputBindings": [
+    {
+      "path": "docs/verification/wave5/requirement-matrix-20261008.json",
+      "sha256": "e53324ebcd1f829bbc529a50074ec682b4368c8fdb3dd6bd3e297cf6bcc96acd"
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-verification-20261009-r13.json",
+      "sha256": "004a1094b4b8b795a5c9acedd18ad78a1e14f42be069dfeb8aa76888c00d246f"
+    },
+    {
+      "path": "docs/verification/wave5/continuation-live-summary-20261010.json",
+      "sha256": "cd6c91891c0f4c6fecdc21880457bfa63e62af0afb953209b99e3ad20d225db7"
+    },
+    {
+      "path": "docs/verification/wave5/complete-app-runtime-review-20261009-r13.json",
+      "sha256": "97c0d0d29b706b1d1283e2408e4ed9b9622b1ef0a4ab2ddae8dec099fe5cf208"
+    },
+    {
+      "path": "docs/verification/wave5/continuation-goldens-native-20261009.json",
+      "sha256": "782bd6ab567ee8864fd68001d00e0d8748f9c66937d3f60aba932df2e83cfe0d"
+    },
+    {
+      "path": "docs/verification/wave5/process-foundation-20260930.json",
+      "sha256": "29e43394f82431204adc6b146a71184ab5f3f303ddc6d821443693fa997f8538"
+    },
+    {
+      "path": "docs/verification/wave5/process-foundation-20260930.md",
+      "sha256": "9c94e7f9d4190da31d0571bdf23e4eeb6e0d67f60d6282fcfdfcd17983943fa3"
+    },
+    {
+      "path": "docs/verification/wave5/preflight-20260930.json",
+      "sha256": "ec321ba39188744542793dd833f2760f18d5bbc155a2be8f706415c24bdcc4a1"
+    },
+    {
+      "path": "docs/verification/wave5/continuation-status-20261010-r13.json",
+      "sha256": "35cc3f21fbd7d5be2ba050116360a1d7171b7845a817d911d14264cc305d8efb"
+    },
+    {
+      "path": "docs/verification/wave5/complete-app-candidate-result-20261009.json",
+      "sha256": "16e6bdbf423cae965f79d2377c1fa31b5df01579adb878d9b9b9ba0ba37e47db"
+    },
+    {
+      "path": "docs/verification/wave5/complete-app-bootstrap-probe-result-20261009.json",
+      "sha256": "7d3429f7d603455a90c51992c4cecc2b0b48692fb729d7e83628a35596b937c0"
+    },
+    {
+      "path": "docs/verification/wave5/installation-result-20261008.json",
+      "sha256": "2b7d976846918c5b052667b6e062ca31e6b7e504436b3066d3434bd53b364da3"
+    }
+  ],
+  "sourceTraces": [
+    {
+      "path": "apps/jentra_desktop/lib/src/features/people/payroll_screen.dart",
+      "line": 428,
+      "purpose": "people.payroll.view gates the navigation action; it opens PayrollCorrectionScreen in a dialog without issuing a correction command.",
+      "sha256": "7ce2fa792f6ce1b3eef728fbb3d55f20425d392dae9497c28be0d15830d10237"
+    },
+    {
+      "path": "apps/jentra_desktop/lib/src/features/people/payroll_correction_controller.dart",
+      "line": 21,
+      "purpose": "Current operational scope, loaded capabilities, source repositories and people.payroll.view are independently required; encrypted drafts reauthorize through the correction repository.",
+      "sha256": "303e0c426d330f26b3ec383f4bce218ac5ea217220e6b44ba2737b3184d5f176"
+    },
+    {
+      "path": "apps/jentra_desktop/lib/src/features/people/payroll_correction_screen.dart",
+      "line": 74,
+      "purpose": "Preparation is a separate capability/action; busy or offline disables it. Missing controller shows an unavailable state.",
+      "sha256": "81d0ec65e04438be0f16dbdb8a3f9b63102716fe301b35384993d10b696b276c"
+    },
+    {
+      "path": "supabase/migrations/20261001110000_wave4_payroll_corrections.sql",
+      "line": 165,
+      "purpose": "Candidate server correction_access validates named capability/current People access and genuine aal2 for protected write/read flows; this SQL is not installed runtime proof.",
+      "sha256": "709170a703a5fd6808ba15de27a4b6cfcb33470da977203b960e2d04e67437cf"
+    },
+    {
+      "path": "docs/blueprint/63_WAVE4_PAYROLL_CORRECTIONS_CONTRACT.md",
+      "line": 20,
+      "purpose": "Prepare/approve/source-view permissions and current entitlement/scope/MFA checks remain distinct.",
+      "sha256": "5b7065136942f59bd85163d34ccbfd0fd1f89eae4b79a8b5e780f1f8c14ec453"
+    },
+    {
+      "path": "docs/blueprint/53_WAVE4_SYNTHETIC_PAYROLL_CONTRACT.md",
+      "line": 96,
+      "purpose": "Separate payroll command capabilities; live entitlement/scope/capability/MFA revalidation.",
+      "sha256": "04040f25a553236cda1169ba3d6536b000317aa649b68e306c7dd355d76c57cc"
+    },
+    {
+      "path": "docs/development/wave4-status.md",
+      "line": 10,
+      "purpose": "October 6 checkpoint already records these same two intentional toolbar comparisons with approved images preserved.",
+      "sha256": "d617348ba9cc6368cecaeb4a2f88bcbdae2bcdb9bba51ce11b8ec2a7ed578651"
+    },
+    {
+      "path": "apps/jentra_desktop/test/payroll_workspace_test.dart",
+      "line": 506,
+      "purpose": "Layout-only fixture uses all payroll capabilities, 1440x1100 and 200% text; it does not tap the dialog, authenticate, or prove native keyboard access.",
+      "sha256": "8484198f949cb60285d3880290ab279eb5d64ff6044393a24fc2be8d4733c6ee"
+    }
+  ],
+  "cases": [
+    {
+      "stem": "payroll_light_200",
+      "theme": "light",
+      "textScale": 2,
+      "approved": {
+        "path": "apps/jentra_desktop/test/goldens/payroll_light_200.png",
+        "sha256": "54f696b9643d007185adb28b2edb68dceac4c72e88ebf3311cc0f2862296a126"
+      },
+      "currentCandidate": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/payroll_light_200_testImage.png",
+        "sha256": "2e94307892e5514cb7860277551ed0d42d3bd78cc81df99703c3e91b69e97925"
+      },
+      "master": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/payroll_light_200_masterImage.png",
+        "sha256": "54f696b9643d007185adb28b2edb68dceac4c72e88ebf3311cc0f2862296a126"
+      },
+      "isolatedDiff": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/payroll_light_200_isolatedDiff.png",
+        "sha256": "82950abe71a958b72a538cc5d5f4a9e2b74b257a1a0cc7c3e3bd4bafe003fb10"
+      },
+      "dimensions": [
+        1440,
+        1100
+      ],
+      "differentPixels": 4025,
+      "differentPercent": 0.25410353535353536,
+      "bbox": [
+        537,
+        31,
+        905,
+        77
+      ],
+      "bboxCoordinates": "left/top inclusive; right/bottom exclusive",
+      "maximumChannelDelta": 228,
+      "changedAlphaPixels": 0,
+      "changedArea": "Top toolbar only: Linked corrections is present and Reload moves right. No changed pixels outside the measured bounding box.",
+      "cause": "Intentional authorized Wave 4 feature already present in historical commit d7a2022; the approved image predates this toolbar content.",
+      "decisionProposal": "Keep the permission-gated navigation action. After an explicit exact-image owner visual decision, replace only this approved PNG with these candidate bytes and rerun the unchanged strict comparison.",
+      "ownerVisualDecision": null,
+      "approvedBaselineUpdated": false,
+      "navigationOrMfaVerified": false
+    },
+    {
+      "stem": "payroll_dark_200",
+      "theme": "dark",
+      "textScale": 2,
+      "approved": {
+        "path": "apps/jentra_desktop/test/goldens/payroll_dark_200.png",
+        "sha256": "45079c92e03a4c6618601d8b612c1ea6ae605089246c219319853e95a73026cb"
+      },
+      "currentCandidate": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/payroll_dark_200_testImage.png",
+        "sha256": "a79d578157545249abf5586ede31a58e9e9f213dd2b5ed1b00a1ed21a34e644b"
+      },
+      "master": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/payroll_dark_200_masterImage.png",
+        "sha256": "45079c92e03a4c6618601d8b612c1ea6ae605089246c219319853e95a73026cb"
+      },
+      "isolatedDiff": {
+        "path": "build/w5win9r13/preview/apps/jentra_desktop/test/failures/payroll_dark_200_isolatedDiff.png",
+        "sha256": "0cccfbc79f126c8e17b9f25c41d50bf0b5b09cb13e6e63d2eb9ef2792070c8bc"
+      },
+      "dimensions": [
+        1440,
+        1100
+      ],
+      "differentPixels": 4025,
+      "differentPercent": 0.25410353535353536,
+      "bbox": [
+        537,
+        31,
+        905,
+        77
+      ],
+      "bboxCoordinates": "left/top inclusive; right/bottom exclusive",
+      "maximumChannelDelta": 240,
+      "changedAlphaPixels": 0,
+      "changedArea": "Top toolbar only: Linked corrections is present and Reload moves right. No changed pixels outside the measured bounding box.",
+      "cause": "Intentional authorized Wave 4 feature already present in historical commit d7a2022; the approved image predates this toolbar content.",
+      "decisionProposal": "Keep the permission-gated navigation action. After an explicit exact-image owner visual decision, replace only this approved PNG with these candidate bytes and rerun the unchanged strict comparison.",
+      "ownerVisualDecision": null,
+      "approvedBaselineUpdated": false,
+      "navigationOrMfaVerified": false
+    }
+  ],
+  "boundary": "Fresh read-only SHA-256 and decoded-pixel measurements of retained r13 images, previously viewed as approved/current/diff. No newly run Flutter/native test. No approved image or source is changed.",
+  "permissionsConclusion": "Viewing the corrections workspace requires payroll view; preparation, decisions, posting and recovery remain independently gated. The fixture proves toolbar composition only. The missing installed correction provider and genuine MFA/native action checks remain open.",
+  "recommendation": "Approve the two exact candidate images if the toolbar is desired. Preserve Wave 4 source and strict comparator. Image approval is independent from runtime bundle approval and 109 requirement decisions.",
+  "nativeKeyboardVerified": false,
+  "runtimeApproved": false,
+  "ownerAcceptedCriteria": 0
+}

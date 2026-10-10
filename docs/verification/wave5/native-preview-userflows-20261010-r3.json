@@ -1,0 +1,447 @@
+{
+  "kind": "actual-native-preview-userflow-observations",
+  "startedAt": "2026-10-10T07:01:37.982Z",
+  "revision": "r3",
+  "mode": "Preview",
+  "executable": "C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r3\\Preview\\Jentra_OS.exe",
+  "executableSha256": "2dde1076175a4209d57a7480617a838778722da9f8fb528c418ab4f1250a22a9",
+  "package": {
+    "path": "docs/verification/wave5/windows-test-preview-package-20261010-r3.json",
+    "sha256": "e67dce3b740d09cc5e0a8d82da3cd555c912d7fcee4da0f39152ed6e56241dff"
+  },
+  "sourceManifest": {
+    "path": "docs/verification/wave5/windows-test-preview-source-20261010-r3.json",
+    "sha256": "ee364f648d4b1789731c7b6c9e410c350b60094e5725c1e2da4a4f5d7c2b4765"
+  },
+  "prelaunchPathObservation": {
+    "path": "docs/verification/wave5/windows-userflow-storage-before-20261010-r3.json",
+    "sha256": "2b2a12730967aac135527ba92c599f3f18c4f2c498f3c7b0dd2b4f4a4cdea2c5"
+  },
+  "recorder": {
+    "path": "scripts/wave5/record_native_preview_observations_20261010_r3.mjs",
+    "sha256": "0b111194571c225cb1962c6cf2f2d56c63d2579e013788621f1ba86b1cb4a8fa"
+  },
+  "actorLabel": "unconfigured development preview",
+  "observations": [
+    {
+      "id": "P01_STARTUP",
+      "observedAt": "2026-10-10T07:04:10.024Z",
+      "action": "Launch freshly verified isolated Preview",
+      "expected": "Ordinary Preview dashboard with sample data and no authenticated account",
+      "observed": "Command centre loaded, Preview metrics and sample period labels visible; no authentication performed.",
+      "result": "pass",
+      "window": {
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r3\\Preview\\Jentra_OS.exe",
+        "id": 985376,
+        "title": "Jentra OS - 20261010 r3 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "7 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r3 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r3 Preview test Secondary Actions: Raise\n\t\t7 pane\n\t\t\t2773 group\n\t\t\t\t2774 group\n\t\t\t\t\t2775 group\n\t\t\t\t\t\t2776 group\n\t\t\t\t\t\t\t2777 group\n\t\t\t\t\t\t\t\t2778 group\n\t\t\t\t\t\t\t\t\t2779 text YOUR BUSINESS, IN PERSPECTIVE\n\t\t\t\t\t\t\t\t\t2780 text Good morning, Shehan\n\t\t\t\t\t\t\t\t\t2781 text One connected view of cash, decisions, and daily operations.\n\t\t\t\t\t\t\t\t\t2782 text Status: Preview metrics\n\t\t\t\t\t\t\t\t\t2783 text Sample data · 01 Aug – 31 Aug 2026\n\t\t\t\t\t\t\t\t\t2784 text Net revenue: LKR 12.84M, +8.4% vs last month\n\t\t\t\t\t\t\t\t\t2785 text Cash available: LKR 6.28M, 14.2 weeks runway\n\t\t\t\t\t\t\t\t\t2786 text Receivables due: LKR 3.41M, LKR 620K overdue\n\t\t\t\t\t\t\t\t\t2787 text Gross margin: 31.8%, +1.9 pts this month\n\t\t\t\t\t\t\t\t\t2788 group Cash position 13-week actual and forecast · sample series Illustrative cash position in LKR millions. Solid blue shows actual values through week 8. Dashed teal shows the forecast from week 8 to week 13. This is sample data, not a live business forecast. Actual Forecast Illustrative forecast\n\t\t\t\t\t\t\t\t\t\t2789 text Status: LKR\n\t\t\t\t\t\t\t\t\t2790 group Needs your attention Example approvals and exceptions Purchase order PO-2026-00842 LKR 486,250 Supplier payment PAY-2026-00318 LKR 218,900 Expense claim EXP-2026-00194 LKR 42,700 Stock adjustment ADJ-2026-00027 14 items Preview queue · 4 of 7 example items\n\t\t\t\t\t\t\t\t\t\t2791 text Status: 7 open\n\t\t\t\t\t\t\t\t\t2792 group Operating flows Median cycle time and handoff health across the business Lead to cash 4.8 days Successful handoffs Procure to pay 6.2 days Successful handoffs Inventory to ledger 18 min Successful handoffs Service to resolution 7.4 hrs Successful handoffs\n\t\t\t\t\t\t\t\t\t\t2793 text Status: Sample model\n\t\t\t\t\t\t\t\t\t\t2794 text Status: 92%\n\t\t\t\t\t\t\t\t\t\t2795 text Status: 84%\n\t\t\t\t\t\t\t\t\t\t2796 group (settable, string) Lead to cash successful handoffs Value: 92%\n\t\t\t\t\t\t\t\t\t\t\t2797 text (settable, string) Value: 92\n\t\t\t\t\t\t\t\t\t\t2798 group (settable, string) Procure to pay successful handoffs Value: 84%\n\t\t\t\t\t\t\t\t\t\t\t2799 text (settable, string) Value: 84\n\t\t\t\t\t\t\t\t\t\t2800 text Status: 98%\n\t\t\t\t\t\t\t\t\t\t2801 text Status: 89%\n\t\t\t\t\t\t\t\t\t\t2802 group (settable, string) Inventory to ledger successful handoffs Value: 98%\n\t\t\t\t\t\t\t\t\t\t\t2803 text (settable, string) Value: 98\n\t\t\t\t\t\t\t\t\t\t2804 group (settable, string) Service to resolution successful handoffs Value: 89%\n\t\t\t\t\t\t\t\t\t\t\t2805 text (settable, string) Value: 89\n\t\t\t\t\t\t\t\t\t2806 group Recent business activity A preview of how activity connects across your workspace INV-2026-01084 Sales invoice posted Lanka Office Mart LKR 328,400 S. Perera · 09:42 GRN-2026-00471 Goods receipt completed Ceylon Parts Co. 42 units N. Fernando · 09:18 PAY-2026-00318 Payment submitted Metro Logistics LKR 218,900 A. Silva · 08:56 SRV-2026-00149 Work order fulfilled Serendib Foods 3.2 hours R. Iqbal · 08:31\n\t\t\t\t\t\t\t\t\t\t2807 text Status: Sample events\n\t\t1 title bar (settable, string) Value: Jentra OS - 20261010 r3 Preview test\n\t\t\t2 menu bar System ID: MenuBar\n\t\t\t\t3 menu item System\n\t\t\t4 button Minimize\n\t\t\t5 button Maximize\n\t\t\t6 button Close\n\nThe focused UI element is 7 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r3/P01_STARTUP-0.jpg",
+          "sha256": "45a94b95d2d1d38559d30789c306d651f57f2d504133ad5abf1b0f76bd1c5a12",
+          "bytes": 92220,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "K01_INITIAL_CTRL_K",
+      "observedAt": "2026-10-10T07:04:46.885Z",
+      "action": "Press Ctrl+K immediately after launch and inspect settled screen",
+      "expected": "Command palette opens",
+      "observed": "Dashboard remained visible; command palette did not appear. Native focus/input behavior requires investigation.",
+      "result": "fail",
+      "window": {
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r3\\Preview\\Jentra_OS.exe",
+        "id": 985376,
+        "title": "Jentra OS - 20261010 r3 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "7 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r3 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r3 Preview test Secondary Actions: Raise\n\t\t7 pane\n\t\t\t4698 group\n\t\t\t\t4699 group\n\t\t\t\t\t4700 group\n\t\t\t\t\t\t4701 group\n\t\t\t\t\t\t\t4702 group\n\t\t\t\t\t\t\t\t4703 group\n\t\t\t\t\t\t\t\t\t4704 text YOUR BUSINESS, IN PERSPECTIVE\n\t\t\t\t\t\t\t\t\t4705 text Good morning, Shehan\n\t\t\t\t\t\t\t\t\t4706 text One connected view of cash, decisions, and daily operations.\n\t\t\t\t\t\t\t\t\t4707 text Status: Preview metrics\n\t\t\t\t\t\t\t\t\t4708 text Sample data · 01 Aug – 31 Aug 2026\n\t\t\t\t\t\t\t\t\t4709 text Net revenue: LKR 12.84M, +8.4% vs last month\n\t\t\t\t\t\t\t\t\t4710 text Cash available: LKR 6.28M, 14.2 weeks runway\n\t\t\t\t\t\t\t\t\t4711 text Receivables due: LKR 3.41M, LKR 620K overdue\n\t\t\t\t\t\t\t\t\t4712 text Gross margin: 31.8%, +1.9 pts this month\n\t\t\t\t\t\t\t\t\t4713 group Cash position 13-week actual and forecast · sample series Illustrative cash position in LKR millions. Solid blue shows actual values through week 8. Dashed teal shows the forecast from week 8 to week 13. This is sample data, not a live business forecast. Actual Forecast Illustrative forecast\n\t\t\t\t\t\t\t\t\t\t4714 text Status: LKR\n\t\t\t\t\t\t\t\t\t4715 group Needs your attention Example approvals and exceptions Purchase order PO-2026-00842 LKR 486,250 Supplier payment PAY-2026-00318 LKR 218,900 Expense claim EXP-2026-00194 LKR 42,700 Stock adjustment ADJ-2026-00027 14 items Preview queue · 4 of 7 example items\n\t\t\t\t\t\t\t\t\t\t4716 text Status: 7 open\n\t\t\t\t\t\t\t\t\t4717 group Operating flows Median cycle time and handoff health across the business Lead to cash 4.8 days Successful handoffs Procure to pay 6.2 days Successful handoffs Inventory to ledger 18 min Successful handoffs Service to resolution 7.4 hrs Successful handoffs\n\t\t\t\t\t\t\t\t\t\t4718 text Status: Sample model\n\t\t\t\t\t\t\t\t\t\t4719 text Status: 92%\n\t\t\t\t\t\t\t\t\t\t4720 text Status: 84%\n\t\t\t\t\t\t\t\t\t\t4721 group (settable, string) Lead to cash successful handoffs Value: 92%\n\t\t\t\t\t\t\t\t\t\t\t4722 text (settable, string) Value: 92\n\t\t\t\t\t\t\t\t\t\t4723 group (settable, string) Procure to pay successful handoffs Value: 84%\n\t\t\t\t\t\t\t\t\t\t\t4724 text (settable, string) Value: 84\n\t\t\t\t\t\t\t\t\t\t4725 text Status: 98%\n\t\t\t\t\t\t\t\t\t\t4726 text Status: 89%\n\t\t\t\t\t\t\t\t\t\t4727 group (settable, string) Inventory to ledger successful handoffs Value: 98%\n\t\t\t\t\t\t\t\t\t\t\t4728 text (settable, string) Value: 98\n\t\t\t\t\t\t\t\t\t\t4729 group (settable, string) Service to resolution successful handoffs Value: 89%\n\t\t\t\t\t\t\t\t\t\t\t4730 text (settable, string) Value: 89\n\t\t\t\t\t\t\t\t\t4731 group Recent business activity A preview of how activity connects across your workspace INV-2026-01084 Sales invoice posted Lanka Office Mart LKR 328,400 S. Perera · 09:42 GRN-2026-00471 Goods receipt completed Ceylon Parts Co. 42 units N. Fernando · 09:18 PAY-2026-00318 Payment submitted Metro Logistics LKR 218,900 A. Silva · 08:56 SRV-2026-00149 Work order fulfilled Serendib Foods 3.2 hours R. Iqbal · 08:31\n\t\t\t\t\t\t\t\t\t\t4732 text Status: Sample events\n\t\t1 title bar (settable, string) Value: Jentra OS - 20261010 r3 Preview test\n\t\t\t2 menu bar System ID: MenuBar\n\t\t\t\t3 menu item System\n\t\t\t4 button Minimize\n\t\t\t5 button Maximize\n\t\t\t6 button Close\n\nThe focused UI element is 7 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r3/K01_INITIAL_CTRL_K-0.jpg",
+          "sha256": "897df42646fef32d83e6516370a2b6a1f963663ad4924fd1100012a4be786a1e",
+          "bytes": 92220,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "K02_ESCAPE",
+      "observedAt": "2026-10-10T08:16:48.919Z",
+      "action": "Press Escape in the native command palette and inspect settled screen",
+      "expected": "Palette dismisses without changing the page",
+      "observed": "Palette closed and Command centre remained visible.",
+      "result": "pass",
+      "window": {
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r3\\Preview\\Jentra_OS.exe",
+        "id": 1507522,
+        "title": "Jentra OS - 20261010 r3 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "7 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r3 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r3 Preview test Secondary Actions: Raise\n\t\t7 pane\n\t\t\t2078 group\n\t\t\t\t2079 group\n\t\t\t\t\t2080 group\n\t\t\t\t\t\t2081 group\n\t\t\t\t\t\t\t2082 group\n\t\t\t\t\t\t\t\t2083 group\n\t\t\t\t\t\t\t\t\t2084 text YOUR BUSINESS, IN PERSPECTIVE\n\t\t\t\t\t\t\t\t\t2085 text Good morning, Shehan\n\t\t\t\t\t\t\t\t\t2086 text One connected view of cash, decisions, and daily operations.\n\t\t\t\t\t\t\t\t\t2087 text Status: Preview metrics\n\t\t\t\t\t\t\t\t\t2088 text Sample data · 01 Aug – 31 Aug 2026\n\t\t\t\t\t\t\t\t\t2089 text Net revenue: LKR 12.84M, +8.4% vs last month\n\t\t\t\t\t\t\t\t\t2090 text Cash available: LKR 6.28M, 14.2 weeks runway\n\t\t\t\t\t\t\t\t\t2091 text Receivables due: LKR 3.41M, LKR 620K overdue\n\t\t\t\t\t\t\t\t\t2092 text Gross margin: 31.8%, +1.9 pts this month\n\t\t\t\t\t\t\t\t\t2093 group Cash position 13-week actual and forecast · sample series Illustrative cash position in LKR millions. Solid blue shows actual values through week 8. Dashed teal shows the forecast from week 8 to week 13. This is sample data, not a live business forecast. Actual Forecast Illustrative forecast\n\t\t\t\t\t\t\t\t\t\t2094 text Status: LKR\n\t\t\t\t\t\t\t\t\t2095 group Needs your attention Example approvals and exceptions Purchase order PO-2026-00842 LKR 486,250 Supplier payment PAY-2026-00318 LKR 218,900 Expense claim EXP-2026-00194 LKR 42,700 Stock adjustment ADJ-2026-00027 14 items Preview queue · 4 of 7 example items\n\t\t\t\t\t\t\t\t\t\t2096 text Status: 7 open\n\t\t\t\t\t\t\t\t\t2097 group Operating flows Median cycle time and handoff health across the business Lead to cash 4.8 days Successful handoffs Procure to pay 6.2 days Successful handoffs Inventory to ledger 18 min Successful handoffs Service to resolution 7.4 hrs Successful handoffs\n\t\t\t\t\t\t\t\t\t\t2098 text Status: Sample model\n\t\t\t\t\t\t\t\t\t\t2099 text Status: 92%\n\t\t\t\t\t\t\t\t\t\t2100 text Status: 84%\n\t\t\t\t\t\t\t\t\t\t2101 group (settable, string) Lead to cash successful handoffs Value: 92%\n\t\t\t\t\t\t\t\t\t\t\t2102 text (settable, string) Value: 92\n\t\t\t\t\t\t\t\t\t\t2103 group (settable, string) Procure to pay successful handoffs Value: 84%\n\t\t\t\t\t\t\t\t\t\t\t2104 text (settable, string) Value: 84\n\t\t\t\t\t\t\t\t\t\t2105 text Status: 98%\n\t\t\t\t\t\t\t\t\t\t2106 text Status: 89%\n\t\t\t\t\t\t\t\t\t\t2107 group (settable, string) Inventory to ledger successful handoffs Value: 98%\n\t\t\t\t\t\t\t\t\t\t\t2108 text (settable, string) Value: 98\n\t\t\t\t\t\t\t\t\t\t2109 group (settable, string) Service to resolution successful handoffs Value: 89%\n\t\t\t\t\t\t\t\t\t\t\t2110 text (settable, string) Value: 89\n\t\t\t\t\t\t\t\t\t2111 group Recent business activity A preview of how activity connects across your workspace INV-2026-01084 Sales invoice posted Lanka Office Mart LKR 328,400 S. Perera · 09:42 GRN-2026-00471 Goods receipt completed Ceylon Parts Co. 42 units N. Fernando · 09:18 PAY-2026-00318 Payment submitted Metro Logistics LKR 218,900 A. Silva · 08:56 SRV-2026-00149 Work order fulfilled Serendib Foods 3.2 hours R. Iqbal · 08:31\n\t\t\t\t\t\t\t\t\t\t2112 text Status: Sample events\n\t\t1 title bar (settable, string) Value: Jentra OS - 20261010 r3 Preview test\n\t\t\t2 menu bar System ID: MenuBar\n\t\t\t\t3 menu item System\n\t\t\t4 button Minimize\n\t\t\t5 button Maximize\n\t\t\t6 button Close\n\nThe focused UI element is 7 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r3/K02_ESCAPE-0.jpg",
+          "sha256": "f7b5dcbf5cc34d027e2c81e0003fc3a4429f732e0c579f81d2abfd23ae7bee1b",
+          "bytes": 91666,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "K03_DIRECT_LETTER",
+      "observedAt": "2026-10-10T08:17:33.946Z",
+      "action": "Press physical f key in focused native search",
+      "expected": "Text f appears and Finance is filtered",
+      "observed": "Search contains f and exactly the Finance result is visible. Earlier type_text calls produced no visible text.",
+      "result": "pass",
+      "window": {
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r3\\Preview\\Jentra_OS.exe",
+        "id": 1507522,
+        "title": "Jentra OS - 20261010 r3 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "3893 edit (settable, string) Value: f",
+        "tree": "Window: \"Jentra OS - 20261010 r3 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r3 Preview test Secondary Actions: Raise\n\t\t7 pane\n\t\t\t3888 group\n\t\t\t\t3889 group\n\t\t\t\t\t3890 group\n\t\t\t\t\t\t3891 group\n\t\t\t\t\t\t\t3892 group ↑↓ Navigate Enter Open\n\t\t\t\t\t\t\t\t3893 edit (settable, string) Value: f\n\t\t\t\t\t\t\t\t3894 group\n\t\t\t\t\t\t\t\t\t3895 button Finance MANAGEMENT\n\t\t\t\t\t\t\t\t3896 text Status: Permission-aware\n\t\t1 title bar (settable, string) Value: Jentra OS - 20261010 r3 Preview test\n\t\t\t2 menu bar System ID: MenuBar\n\t\t\t\t3 menu item System\n\t\t\t4 button Minimize\n\t\t\t5 button Maximize\n\t\t\t6 button Close\n\nThe focused UI element is 3893 edit (settable, string) Value: f."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r3/K03_DIRECT_LETTER-0.jpg",
+          "sha256": "aee615722f9cacf7d6198c327675fb9d99efe00bfd89d0beaeff3f02747d4e0a",
+          "bytes": 67999,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "P02_FINANCE_BLOCKED",
+      "observedAt": "2026-10-10T08:17:57.986Z",
+      "action": "Filter Finance with physical f then press Enter",
+      "expected": "Finance page opens; ordinary Preview cannot post or generate authoritative accounting",
+      "observed": "Finance landing opened. It is a mapped foundation placeholder with no ledger/posting/report controls. Real accounting scenario cannot start in this mode.",
+      "result": "blocked",
+      "window": {
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r3\\Preview\\Jentra_OS.exe",
+        "id": 1507522,
+        "title": "Jentra OS - 20261010 r3 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "7 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r3 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r3 Preview test Secondary Actions: Raise\n\t\t7 pane\n\t\t\t4049 group\n\t\t\t\t4050 group\n\t\t1 title bar (settable, string) Value: Jentra OS - 20261010 r3 Preview test\n\t\t\t2 menu bar System ID: MenuBar\n\t\t\t\t3 menu item System\n\t\t\t4 button Minimize\n\t\t\t5 button Maximize\n\t\t\t6 button Close\n\nThe focused UI element is 7 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r3/P02_FINANCE_BLOCKED-0.jpg",
+          "sha256": "c773a02e9c172e525bf3869c4d9388727602a71acd835946790364d724f3faeb",
+          "bytes": 66293,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "P03_SETUP_LIST",
+      "observedAt": "2026-10-10T08:18:15.690Z",
+      "action": "Open Business setup from the sidebar",
+      "expected": "Scoped fixed setup examples load",
+      "observed": "Finance Chart of accounts shows four sample accounts; selected Jentra Trading/Head Office; Online confirmation ready label is displayed in offline Preview.",
+      "result": "pass",
+      "window": {
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r3\\Preview\\Jentra_OS.exe",
+        "id": 1507522,
+        "title": "Jentra OS - 20261010 r3 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "7 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r3 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r3 Preview test Secondary Actions: Raise\n\t\t7 pane\n\t\t\t5086 group\n\t\t\t\t5087 group\n\t\t\t\t\t5088 group\n\t\t\t\t\t\t5089 group\n\t\t\t\t\t\t\t5090 group\n\t\t\t\t\t\t\t\t5091 text Business setup\n\t\t\t\t\t\t\t\t5092 text Status: Shared foundation\n\t\t\t\t\t\t\t\t5093 text Govern the records every Jentra workflow depends on.\n\t\t\t\t\t\t\t\t5094 text Status: Online confirmation ready\n\t\t\t\t\t\t\t\t5095 button Refresh setup data\n\t\t\t\t\t\t\t\t5096 group Current business scope LKR\n\t\t\t\t\t\t\t\t\t5097 text BUSINESS GROUP Jentra Holdings. Switch Business group\n\t\t\t\t\t\t\t\t\t5098 text LEGAL ENTITY Jentra Trading (Pvt) Ltd. Switch Legal entity\n\t\t\t\t\t\t\t\t\t5099 text BRANCH Head Office. Switch Branch\n\t\t\t\t\t\t\t\t5100 group\n\t\t\t\t\t\t\t\t\t5101 button Domain Finance\n\t\t\t\t\t\t\t\t\t5102 button Resource Chart of accounts\n\t\t\t\t\t\t\t\t5103 group Chart of accounts setup list Chart of accounts Posting structure for the immutable ledger. CODE NAME DETAIL STATUS UPDATED\n\t\t\t\t\t\t\t\t\t5104 text Status: 4 visible\n\t\t\t\t\t\t\t\t\t5105 edit (settable, string) Search this list\n\t\t\t\t\t\t\t\t\t5106 text All statuses. Filter by status\n\t\t\t\t\t\t\t\t\t5107 button Refresh list\n\t\t\t\t\t\t\t\t\t5108 button Import\n\t\t\t\t\t\t\t\t\t5109 text Export. Show menu\n\t\t\t\t\t\t\t\t\t5110 button Create account\n\t\t\t\t\t\t\t\t\t5111 group\n\t\t\t\t\t\t\t\t\t\t5112 group\n\t\t\t\t\t\t\t\t\t\t\t5113 group\n\t\t\t\t\t\t\t\t\t\t\t\t5114 group 1000, Cash and cash equivalents, status active 1000 Cash and cash equivalents Asset 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t5115 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t5116 button Actions for Cash and cash equivalents\n\t\t\t\t\t\t\t\t\t\t\t5117 group\n\t\t\t\t\t\t\t\t\t\t\t\t5118 group 1100, Trade receivables, status active 1100 Trade receivables Asset 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t5119 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t5120 button Actions for Trade receivables\n\t\t\t\t\t\t\t\t\t\t\t5121 group\n\t\t\t\t\t\t\t\t\t\t\t\t5122 group 4000, Sales revenue, status active 4000 Sales revenue Revenue 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t5123 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t5124 button Actions for Sales revenue\n\t\t\t\t\t\t\t\t\t\t\t5125 group\n\t\t\t\t\t\t\t\t\t\t\t\t5126 group 5100, Cost of goods sold, status active 5100 Cost of goods sold Expense 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t5127 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t5128 button Actions for Cost of goods sold\n\t\t1 title bar (settable, string) Value: Jentra OS - 20261010 r3 Preview test\n\t\t\t2 menu bar System ID: MenuBar\n\t\t\t\t3 menu item System\n\t\t\t4 button Minimize\n\t\t\t5 button Maximize\n\t\t\t6 button Close\n\nThe focused UI element is 7 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r3/P03_SETUP_LIST-0.jpg",
+          "sha256": "11c9a1259e9070c8175907b4b12b5c7a736163c2e24533600e4a336fdd9d2efd",
+          "bytes": 104077,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "P04_REQUIRED_VALIDATION",
+      "observedAt": "2026-10-10T08:18:37.486Z",
+      "action": "Click Save to server with account code and account name empty",
+      "expected": "Named required-field validation rejects save and keeps the dialog open",
+      "observed": "Account code and Account name both show This field is required; dialog remains open; no business save performed.",
+      "result": "pass",
+      "window": {
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r3\\Preview\\Jentra_OS.exe",
+        "id": 1507522,
+        "title": "Jentra OS - 20261010 r3 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "7 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r3 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r3 Preview test Secondary Actions: Raise\n\t\t7 pane\n\t\t\t5906 group\n\t\t\t\t5907 group\n\t\t\t\t\t5908 group\n\t\t\t\t\t\t5909 group\n\t\t\t\t\t\t\t5910 group New account Draft locally or confirm this version with the server.\n\t\t\t\t\t\t\t\t5911 button Close\n\t\t\t\t\t\t\t\t5912 group\n\t\t\t\t\t\t\t\t\t5913 group\n\t\t\t\t\t\t\t\t\t\t5914 edit (settable, string) Account code\n\t\t\t\t\t\t\t\t\t\t\t5915 text This field is required.\n\t\t\t\t\t\t\t\t\t\t5916 edit (settable, string) Account name\n\t\t\t\t\t\t\t\t\t\t\t5917 text This field is required.\n\t\t\t\t\t\t\t\t\t\t5918 button Account type Asset\n\t\t\t\t\t\t\t\t\t\t5919 button Normal balance Debit\n\t\t\t\t\t\t\t\t\t\t5920 edit (settable, string) Parent account ID\n\t\t\t\t\t\t\t\t\t\t5921 edit (settable, string) Currency\n\t\t\t\t\t\t\t\t\t\t5922 button Allow posting True\n\t\t\t\t\t\t\t\t\t\t5923 button Status Active\n\t\t\t\t\t\t\t\t5924 button Cancel\n\t\t\t\t\t\t\t\t5925 button Save draft\n\t\t\t\t\t\t\t\t5926 button Save to server\n\t\t1 title bar (settable, string) Value: Jentra OS - 20261010 r3 Preview test\n\t\t\t2 menu bar System ID: MenuBar\n\t\t\t\t3 menu item System\n\t\t\t4 button Minimize\n\t\t\t5 button Maximize\n\t\t\t6 button Close\n\nThe focused UI element is 7 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r3/P04_REQUIRED_VALIDATION-0.jpg",
+          "sha256": "d15c2bd623546572db66f9fedc263127deca1cd66f4d32456a573692c606d7a4",
+          "bytes": 84027,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "K04_FORM_TAB",
+      "observedAt": "2026-10-10T08:19:05.855Z",
+      "action": "Focus Account code then press Tab",
+      "expected": "Focus advances to Account name",
+      "observed": "Visible focus border and caret move to Account name; accessibility focused_element stays generic pane.",
+      "result": "pass",
+      "window": {
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r3\\Preview\\Jentra_OS.exe",
+        "id": 1507522,
+        "title": "Jentra OS - 20261010 r3 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "7 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r3 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r3 Preview test Secondary Actions: Raise\n\t\t7 pane\n\t\t\t6641 group\n\t\t\t\t6642 group\n\t\t\t\t\t6643 group\n\t\t\t\t\t\t6644 group\n\t\t\t\t\t\t\t6645 group New account Draft locally or confirm this version with the server.\n\t\t\t\t\t\t\t\t6646 button Close\n\t\t\t\t\t\t\t\t6647 group\n\t\t\t\t\t\t\t\t\t6648 group\n\t\t\t\t\t\t\t\t\t\t6649 edit (settable, string) Account code\n\t\t\t\t\t\t\t\t\t\t\t6650 text This field is required.\n\t\t\t\t\t\t\t\t\t\t6651 edit (settable, string) Account name\n\t\t\t\t\t\t\t\t\t\t\t6652 text This field is required.\n\t\t\t\t\t\t\t\t\t\t6653 button Account type Asset\n\t\t\t\t\t\t\t\t\t\t6654 button Normal balance Debit\n\t\t\t\t\t\t\t\t\t\t6655 edit (settable, string) Parent account ID\n\t\t\t\t\t\t\t\t\t\t6656 edit (settable, string) Currency\n\t\t\t\t\t\t\t\t\t\t6657 button Allow posting True\n\t\t\t\t\t\t\t\t\t\t6658 button Status Active\n\t\t\t\t\t\t\t\t6659 button Cancel\n\t\t\t\t\t\t\t\t6660 button Save draft\n\t\t\t\t\t\t\t\t6661 button Save to server\n\t\t1 title bar (settable, string) Value: Jentra OS - 20261010 r3 Preview test\n\t\t\t2 menu bar System ID: MenuBar\n\t\t\t\t3 menu item System\n\t\t\t4 button Minimize\n\t\t\t5 button Maximize\n\t\t\t6 button Close\n\nThe focused UI element is 7 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r3/K04_FORM_TAB-0.jpg",
+          "sha256": "7978138eb36bb0f64f931ea54834bc5796a40737cc962a1049ecbcdb76e77d4d",
+          "bytes": 84718,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "P05_DARK_THEME",
+      "observedAt": "2026-10-10T08:19:35.780Z",
+      "action": "Cancel unused form and toggle dark theme",
+      "expected": "Form closes without save; dark theme renders the same setup scope and list",
+      "observed": "Form closed; dark Business setup retains four visible sample accounts and scope, with readable controls.",
+      "result": "pass",
+      "window": {
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r3\\Preview\\Jentra_OS.exe",
+        "id": 1507522,
+        "title": "Jentra OS - 20261010 r3 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "7 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r3 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r3 Preview test Secondary Actions: Raise\n\t\t7 pane\n\t\t\t7817 group\n\t\t\t\t7818 group\n\t\t\t\t\t7819 group\n\t\t\t\t\t\t7820 group\n\t\t\t\t\t\t\t7821 group\n\t\t\t\t\t\t\t\t7822 text Business setup\n\t\t\t\t\t\t\t\t7823 text Status: Shared foundation\n\t\t\t\t\t\t\t\t7824 text Govern the records every Jentra workflow depends on.\n\t\t\t\t\t\t\t\t7825 text Status: Online confirmation ready\n\t\t\t\t\t\t\t\t7826 button Refresh setup data\n\t\t\t\t\t\t\t\t7827 group Current business scope LKR\n\t\t\t\t\t\t\t\t\t7828 text BUSINESS GROUP Jentra Holdings. Switch Business group\n\t\t\t\t\t\t\t\t\t7829 text LEGAL ENTITY Jentra Trading (Pvt) Ltd. Switch Legal entity\n\t\t\t\t\t\t\t\t\t7830 text BRANCH Head Office. Switch Branch\n\t\t\t\t\t\t\t\t7831 group\n\t\t\t\t\t\t\t\t\t7832 button Domain Finance\n\t\t\t\t\t\t\t\t\t7833 button Resource Chart of accounts\n\t\t\t\t\t\t\t\t7834 group Chart of accounts setup list Chart of accounts Posting structure for the immutable ledger. CODE NAME DETAIL STATUS UPDATED\n\t\t\t\t\t\t\t\t\t7835 text Status: 4 visible\n\t\t\t\t\t\t\t\t\t7836 edit (settable, string) Search this list\n\t\t\t\t\t\t\t\t\t7837 text All statuses. Filter by status\n\t\t\t\t\t\t\t\t\t7838 button Refresh list\n\t\t\t\t\t\t\t\t\t7839 button Import\n\t\t\t\t\t\t\t\t\t7840 text Export. Show menu\n\t\t\t\t\t\t\t\t\t7841 button Create account\n\t\t\t\t\t\t\t\t\t7842 group\n\t\t\t\t\t\t\t\t\t\t7843 group\n\t\t\t\t\t\t\t\t\t\t\t7844 group\n\t\t\t\t\t\t\t\t\t\t\t\t7845 group 1000, Cash and cash equivalents, status active 1000 Cash and cash equivalents Asset 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t7846 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t7847 button Actions for Cash and cash equivalents\n\t\t\t\t\t\t\t\t\t\t\t7848 group\n\t\t\t\t\t\t\t\t\t\t\t\t7849 group 1100, Trade receivables, status active 1100 Trade receivables Asset 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t7850 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t7851 button Actions for Trade receivables\n\t\t\t\t\t\t\t\t\t\t\t7852 group\n\t\t\t\t\t\t\t\t\t\t\t\t7853 group 4000, Sales revenue, status active 4000 Sales revenue Revenue 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t7854 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t7855 button Actions for Sales revenue\n\t\t\t\t\t\t\t\t\t\t\t7856 group\n\t\t\t\t\t\t\t\t\t\t\t\t7857 group 5100, Cost of goods sold, status active 5100 Cost of goods sold Expense 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t7858 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t7859 button Actions for Cost of goods sold\n\t\t1 title bar (settable, string) Value: Jentra OS - 20261010 r3 Preview test\n\t\t\t2 menu bar System ID: MenuBar\n\t\t\t\t3 menu item System\n\t\t\t4 button Minimize\n\t\t\t5 button Maximize\n\t\t\t6 button Close\n\nThe focused UI element is 7 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r3/P05_DARK_THEME-0.jpg",
+          "sha256": "b5f98e7b9e2b0a972c7cf95500a32f8067e9668f4a040cd505a9a2d6b0eec152",
+          "bytes": 103683,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "P06_DENSITY",
+      "observedAt": "2026-10-10T08:19:58.486Z",
+      "action": "Toggle display density in dark Business setup",
+      "expected": "Control and row spacing change without losing scope or sample records",
+      "observed": "Setup control/row spacing increased; all four example accounts and scope remained visible.",
+      "result": "pass",
+      "window": {
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r3\\Preview\\Jentra_OS.exe",
+        "id": 1507522,
+        "title": "Jentra OS - 20261010 r3 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "7 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r3 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r3 Preview test Secondary Actions: Raise\n\t\t7 pane\n\t\t\t9021 group\n\t\t\t\t9022 group\n\t\t\t\t\t9023 group\n\t\t\t\t\t\t9024 group\n\t\t\t\t\t\t\t9025 group\n\t\t\t\t\t\t\t\t9026 text Business setup\n\t\t\t\t\t\t\t\t9027 text Status: Shared foundation\n\t\t\t\t\t\t\t\t9028 text Govern the records every Jentra workflow depends on.\n\t\t\t\t\t\t\t\t9029 text Status: Online confirmation ready\n\t\t\t\t\t\t\t\t9030 button Refresh setup data\n\t\t\t\t\t\t\t\t9031 group Current business scope LKR\n\t\t\t\t\t\t\t\t\t9032 text BUSINESS GROUP Jentra Holdings. Switch Business group\n\t\t\t\t\t\t\t\t\t9033 text LEGAL ENTITY Jentra Trading (Pvt) Ltd. Switch Legal entity\n\t\t\t\t\t\t\t\t\t9034 text BRANCH Head Office. Switch Branch\n\t\t\t\t\t\t\t\t9035 group\n\t\t\t\t\t\t\t\t\t9036 button Domain Finance\n\t\t\t\t\t\t\t\t\t9037 button Resource Chart of accounts\n\t\t\t\t\t\t\t\t9038 group Chart of accounts setup list Chart of accounts Posting structure for the immutable ledger. CODE NAME DETAIL STATUS UPDATED\n\t\t\t\t\t\t\t\t\t9039 text Status: 4 visible\n\t\t\t\t\t\t\t\t\t9040 edit (settable, string) Search this list\n\t\t\t\t\t\t\t\t\t9041 text All statuses. Filter by status\n\t\t\t\t\t\t\t\t\t9042 button Refresh list\n\t\t\t\t\t\t\t\t\t9043 button Import\n\t\t\t\t\t\t\t\t\t9044 text Export. Show menu\n\t\t\t\t\t\t\t\t\t9045 button Create account\n\t\t\t\t\t\t\t\t\t9046 group\n\t\t\t\t\t\t\t\t\t\t9047 group\n\t\t\t\t\t\t\t\t\t\t\t9048 group\n\t\t\t\t\t\t\t\t\t\t\t\t9049 group 1000, Cash and cash equivalents, status active 1000 Cash and cash equivalents Asset 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t9050 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t9051 button Actions for Cash and cash equivalents\n\t\t\t\t\t\t\t\t\t\t\t9052 group\n\t\t\t\t\t\t\t\t\t\t\t\t9053 group 1100, Trade receivables, status active 1100 Trade receivables Asset 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t9054 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t9055 button Actions for Trade receivables\n\t\t\t\t\t\t\t\t\t\t\t9056 group\n\t\t\t\t\t\t\t\t\t\t\t\t9057 group 4000, Sales revenue, status active 4000 Sales revenue Revenue 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t9058 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t9059 button Actions for Sales revenue\n\t\t\t\t\t\t\t\t\t\t\t9060 group\n\t\t\t\t\t\t\t\t\t\t\t\t9061 group 5100, Cost of goods sold, status active 5100 Cost of goods sold Expense 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t9062 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t9063 button Actions for Cost of goods sold\n\t\t1 title bar (settable, string) Value: Jentra OS - 20261010 r3 Preview test\n\t\t\t2 menu bar System ID: MenuBar\n\t\t\t\t3 menu item System\n\t\t\t4 button Minimize\n\t\t\t5 button Maximize\n\t\t\t6 button Close\n\nThe focused UI element is 7 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r3/P06_DENSITY-0.jpg",
+          "sha256": "6a9802cd693c16b2e8b4add04f27181b1854f05b91f669cb992c8655dcbecb53",
+          "bytes": 103652,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "P07_THEME_RESTART",
+      "observedAt": "2026-10-10T08:20:56.790Z",
+      "action": "Close the isolated Preview window, confirm its absence, then relaunch the same executable",
+      "expected": "New window opens with the chosen dark theme",
+      "observed": "A new exact Preview window opened in dark theme after controlled close/relaunch. This checks preferences only; no encrypted accounting draft was created.",
+      "result": "pass",
+      "window": {
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r3\\Preview\\Jentra_OS.exe",
+        "id": 329628,
+        "title": "Jentra OS - 20261010 r3 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "7 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r3 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r3 Preview test Secondary Actions: Raise\n\t\t7 pane\n\t\t\t1163 group\n\t\t\t\t1164 group\n\t\t\t\t\t1165 group\n\t\t\t\t\t\t1166 group\n\t\t\t\t\t\t\t1167 group\n\t\t\t\t\t\t\t\t1168 group\n\t\t\t\t\t\t\t\t\t1169 text YOUR BUSINESS, IN PERSPECTIVE\n\t\t\t\t\t\t\t\t\t1170 text Good morning, Shehan\n\t\t\t\t\t\t\t\t\t1171 text One connected view of cash, decisions, and daily operations.\n\t\t\t\t\t\t\t\t\t1172 text Status: Preview metrics\n\t\t\t\t\t\t\t\t\t1173 text Sample data · 01 Aug – 31 Aug 2026\n\t\t\t\t\t\t\t\t\t1174 text Net revenue: LKR 12.84M, +8.4% vs last month\n\t\t\t\t\t\t\t\t\t1175 text Cash available: LKR 6.28M, 14.2 weeks runway\n\t\t\t\t\t\t\t\t\t1176 text Receivables due: LKR 3.41M, LKR 620K overdue\n\t\t\t\t\t\t\t\t\t1177 text Gross margin: 31.8%, +1.9 pts this month\n\t\t\t\t\t\t\t\t\t1178 group Cash position 13-week actual and forecast · sample series Illustrative cash position in LKR millions. Solid blue shows actual values through week 8. Dashed teal shows the forecast from week 8 to week 13. This is sample data, not a live business forecast. Actual Forecast Illustrative forecast\n\t\t\t\t\t\t\t\t\t\t1179 text Status: LKR\n\t\t\t\t\t\t\t\t\t1180 group Needs your attention Example approvals and exceptions Purchase order PO-2026-00842 LKR 486,250 Supplier payment PAY-2026-00318 LKR 218,900 Expense claim EXP-2026-00194 LKR 42,700 Stock adjustment ADJ-2026-00027 14 items Preview queue · 4 of 7 example items\n\t\t\t\t\t\t\t\t\t\t1181 text Status: 7 open\n\t\t\t\t\t\t\t\t\t1182 group Operating flows Median cycle time and handoff health across the business Lead to cash 4.8 days Successful handoffs Procure to pay 6.2 days Successful handoffs Inventory to ledger 18 min Successful handoffs Service to resolution 7.4 hrs Successful handoffs\n\t\t\t\t\t\t\t\t\t\t1183 text Status: Sample model\n\t\t\t\t\t\t\t\t\t\t1184 text Status: 92%\n\t\t\t\t\t\t\t\t\t\t1185 text Status: 84%\n\t\t\t\t\t\t\t\t\t\t1186 group (settable, string) Lead to cash successful handoffs Value: 92%\n\t\t\t\t\t\t\t\t\t\t\t1187 text (settable, string) Value: 92\n\t\t\t\t\t\t\t\t\t\t1188 group (settable, string) Procure to pay successful handoffs Value: 84%\n\t\t\t\t\t\t\t\t\t\t\t1189 text (settable, string) Value: 84\n\t\t\t\t\t\t\t\t\t\t1190 text Status: 98%\n\t\t\t\t\t\t\t\t\t\t1191 text Status: 89%\n\t\t\t\t\t\t\t\t\t\t1192 group (settable, string) Inventory to ledger successful handoffs Value: 98%\n\t\t\t\t\t\t\t\t\t\t\t1193 text (settable, string) Value: 98\n\t\t\t\t\t\t\t\t\t\t1194 group (settable, string) Service to resolution successful handoffs Value: 89%\n\t\t\t\t\t\t\t\t\t\t\t1195 text (settable, string) Value: 89\n\t\t\t\t\t\t\t\t\t1196 group Recent business activity A preview of how activity connects across your workspace INV-2026-01084 Sales invoice posted Lanka Office Mart LKR 328,400 S. Perera · 09:42 GRN-2026-00471 Goods receipt completed Ceylon Parts Co. 42 units N. Fernando · 09:18 PAY-2026-00318 Payment submitted Metro Logistics LKR 218,900 A. Silva · 08:56 SRV-2026-00149 Work order fulfilled Serendib Foods 3.2 hours R. Iqbal · 08:31\n\t\t\t\t\t\t\t\t\t\t1197 text Status: Sample events\n\t\t1 title bar (settable, string) Value: Jentra OS - 20261010 r3 Preview test\n\t\t\t2 menu bar System ID: MenuBar\n\t\t\t\t3 menu item System\n\t\t\t4 button Minimize\n\t\t\t5 button Maximize\n\t\t\t6 button Close\n\nThe focused UI element is 7 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r3/P07_THEME_RESTART-0.jpg",
+          "sha256": "ec67d7aeaecd5d14c1f6574c69a3f7d96f973c2bb8a6843626f8951537109708",
+          "bytes": 89026,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "P08_PROCUREMENT_BLOCKED",
+      "observedAt": "2026-10-10T08:21:33.396Z",
+      "action": "Open Procurement from the sidebar in ordinary Preview",
+      "expected": "No unauthorized supplier bill or payment can be entered",
+      "observed": "Page offers only Product units, with no supplier bill or payment controls and no explanatory connection/permission message. Accounting scenario remains blocked.",
+      "result": "blocked",
+      "window": {
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r3\\Preview\\Jentra_OS.exe",
+        "id": 329628,
+        "title": "Jentra OS - 20261010 r3 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "7 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r3 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r3 Preview test Secondary Actions: Raise\n\t\t7 pane\n\t\t\t2500 group\n\t\t\t\t2501 group\n\t\t\t\t\t2502 group\n\t\t\t\t\t\t2503 group\n\t\t\t\t\t\t\t2504 group\n\t\t\t\t\t\t\t\t2505 button Product units\n\t\t1 title bar (settable, string) Value: Jentra OS - 20261010 r3 Preview test\n\t\t\t2 menu bar System ID: MenuBar\n\t\t\t\t3 menu item System\n\t\t\t4 button Minimize\n\t\t\t5 button Maximize\n\t\t\t6 button Close\n\nThe focused UI element is 7 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r3/P08_PROCUREMENT_BLOCKED-0.jpg",
+          "sha256": "0fc0c06a91d67a46266bf56c2c068c4d478e98b892f0b4569be4355c6fb14d5f",
+          "bytes": 45891,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "P09_MAXIMIZED",
+      "observedAt": "2026-10-10T08:21:48.996Z",
+      "action": "Use the native window Maximize button",
+      "expected": "Shell adapts to the wider window",
+      "observed": "Wider maximized window shows the full Search or run a command field and Create label with visible navigation; Procurement remains unavailable for business posting.",
+      "result": "pass",
+      "window": {
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r3\\Preview\\Jentra_OS.exe",
+        "id": 329628,
+        "title": "Jentra OS - 20261010 r3 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "7 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r3 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r3 Preview test Secondary Actions: Raise\n\t\t7 pane\n\t\t\t2704 group\n\t\t\t\t2705 group\n\t\t\t\t\t2706 group\n\t\t\t\t\t\t2707 group\n\t\t\t\t\t\t\t2708 group\n\t\t\t\t\t\t\t\t2709 button Product units\n\t\t1 title bar (settable, string) Value: Jentra OS - 20261010 r3 Preview test\n\t\t\t2 menu bar System ID: MenuBar\n\t\t\t\t3 menu item System\n\t\t\t4 button Minimize\n\t\t\t5 button Restore\n\t\t\t6 button Close\n\nThe focused UI element is 7 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r3/P09_MAXIMIZED-0.jpg",
+          "sha256": "6671547c29b3d3ded82de4a5d45373b681fb846ec23e27cf3f81558427337e6f",
+          "bytes": 47797,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "K05_CTRL_K_RECHECK",
+      "observedAt": "2026-10-10T08:22:23.642Z",
+      "action": "Retest Control_L+k and documented Ctrl+k after app focus and again at maximized size",
+      "expected": "Command palette opens",
+      "observed": "Palette did not open with either tested chord. Mouse search, physical f, Enter, Escape and Tab worked in separate checks; source/tool cause remains under investigation.",
+      "result": "fail",
+      "window": {
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r3\\Preview\\Jentra_OS.exe",
+        "id": 329628,
+        "title": "Jentra OS - 20261010 r3 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "7 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r3 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r3 Preview test Secondary Actions: Raise\n\t\t7 pane\n\t\t\t2710 group\n\t\t\t\t2711 group\n\t\t\t\t\t2712 group\n\t\t\t\t\t\t2713 group\n\t\t\t\t\t\t\t2714 group\n\t\t\t\t\t\t\t\t2715 button Product units\n\t\t1 title bar (settable, string) Value: Jentra OS - 20261010 r3 Preview test\n\t\t\t2 menu bar System ID: MenuBar\n\t\t\t\t3 menu item System\n\t\t\t4 button Minimize\n\t\t\t5 button Restore\n\t\t\t6 button Close\n\nThe focused UI element is 7 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r3/K05_CTRL_K_RECHECK-0.jpg",
+          "sha256": "6671547c29b3d3ded82de4a5d45373b681fb846ec23e27cf3f81558427337e6f",
+          "bytes": 47797,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    }
+  ],
+  "observedWindows": [
+    {
+      "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r3\\Preview\\Jentra_OS.exe",
+      "id": 985376,
+      "title": "Jentra OS - 20261010 r3 Preview test",
+      "boundAt": "2026-10-10T07:03:56.342Z"
+    },
+    {
+      "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r3\\Preview\\Jentra_OS.exe",
+      "id": 1507522,
+      "title": "Jentra OS - 20261010 r3 Preview test",
+      "boundAt": "2026-10-10T08:15:32.214Z"
+    },
+    {
+      "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r3\\Preview\\Jentra_OS.exe",
+      "id": 329628,
+      "title": "Jentra OS - 20261010 r3 Preview test",
+      "boundAt": "2026-10-10T08:20:28.782Z"
+    }
+  ],
+  "status": "complete",
+  "nativeLaunched": true,
+  "authenticatedNative": false,
+  "fullNativeKeyboardGate": false,
+  "accountingTransactionsPosted": false,
+  "authoritativeReportsGenerated": false,
+  "actualDelivery": false,
+  "realMfa": false,
+  "actualModelUsage": false,
+  "independentSessionContention": false,
+  "targetScaleLoad": false,
+  "ownerAcceptanceChanged": false,
+  "productionExcluded": true,
+  "realBillingExcluded": true,
+  "boundary": "Actual ordinary offline Preview observations only. Operational accounting gateways are unavailable. Keyboard checks here do not establish authenticated native or whole-system acceptance.",
+  "finishedAt": "2026-10-10T08:22:23.733Z",
+  "counts": {
+    "pass": 10,
+    "fail": 2,
+    "blocked": 2,
+    "observed": 0
+  }
+}

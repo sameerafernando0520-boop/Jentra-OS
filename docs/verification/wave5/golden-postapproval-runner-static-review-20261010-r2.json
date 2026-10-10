@@ -1,0 +1,51 @@
+{
+  "checkedAt": "2026-10-10T03:58:41.578Z",
+  "script": {
+    "path": "scripts/wave5/run_golden_postapproval_20261010_r2.mjs",
+    "sha256": "1e150e62d9ab103017c02041079e8707dbf0ac7dce9cc4562b46037d287f421e",
+    "syntaxExitCode": 0
+  },
+  "parserActualControl": {
+    "path": "docs/verification/wave5/golden-review-controlAll-20261010-r2.json",
+    "sha256": "83fbc0169965f4c6eefa5264456a83d90817e4bdddb6aec387ee752ab272f46c",
+    "log": "docs/verification/wave5/golden-review-controlAll-20261010-r2.log",
+    "logSha256": "65412e73f7fd2e31a9657c0dd06b9b3b06194b7788242f16b89cef28f7933b6c",
+    "expectedIdentities": 2004,
+    "uniqueIdentities": 2004,
+    "selectedTestFiles": 138
+  },
+  "parserChecks": {
+    "preservedRealEntries": true,
+    "exactLifecycleHookExclusion": true,
+    "duplicateRejected": true,
+    "missingRejected": true,
+    "extraRejected": true,
+    "unknownHookRejected": true,
+    "failureEntriesRejectedInNewRun": true,
+    "outsideDesktopRejected": true
+  },
+  "actualPromotion": {
+    "path": "docs/verification/wave5/golden-promotion-result-20261010-r2.json",
+    "sha256": "4c6091e20bf5fe3684ea05c56ed17e025917c8db286811cdc8db19d0877172b8",
+    "fullPromotion": true,
+    "publishedImageCount": 83
+  },
+  "actualReadOnlyCheck": {
+    "exitCode": 0,
+    "selectedSources": 1068,
+    "approvedImageChanges": 83,
+    "expectedTests": 2004,
+    "sourceInputsSha256": "04885214bf309928fd04acf4dcfd9a8c6ae2b97ba81484b3c371c2d309fd4405",
+    "outputsWritten": false,
+    "sdkExecuted": false
+  },
+  "modeContract": {
+    "check": "Read-only current promotion/source/tool preflight; default.",
+    "freeze": "Writes one new immutable1068 postapproval-source manifest, no SDK job.",
+    "run": "Requires that manifest and reserves distinct immutable result/log before serialized full desktop job; requires2004/0/0 and exact actual identities."
+  },
+  "manifestFrozenByThisAgent": false,
+  "sdkLaunchedByThisAgent": false,
+  "sourceOrImageEdits": false,
+  "boundary": "Syntax, actual read-only approval preflight and controlled in-memory parser fixtures only. The stripped historical-control fixture is not a successful full-suite execution. Root owns freeze/run and all heavy SDK execution."
+}

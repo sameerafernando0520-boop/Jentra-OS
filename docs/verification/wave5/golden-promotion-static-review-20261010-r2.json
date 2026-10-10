@@ -1,0 +1,40 @@
+{
+  "checkedAt": "2026-10-10T02:37:23.794Z",
+  "script": {
+    "path": "scripts/wave5/promote_golden_review_20261010_r2.mjs",
+    "sha256": "b73a3ff6880035435f87430c8501c25c787ecd948a8e0e0a0f7cd6a76e9ef2e6"
+  },
+  "derivedFrom": {
+    "path": "scripts/wave5/promote_golden_review_20261010.mjs",
+    "sha256": "baac55c07673c72be58973a38145d9f5ffde266700d3ddb56dcb125319129eef"
+  },
+  "syntax": {
+    "exitCode": 0
+  },
+  "exactDelta": {
+    "kind": "dated artifact binding substitution only",
+    "from": "20261010-r1",
+    "to": "20261010-r2",
+    "occurrences": 6,
+    "reverseSubstitutionReconstructsR1": true
+  },
+  "r2Bindings": [
+    "golden-review-candidate-20261010-r2.json",
+    "golden-review-candidateGoldens-20261010-r2.json",
+    "golden-owner-review-20261010-r2.json",
+    "golden-promotion-recovery-20261010-r2-<uuid>",
+    "golden-promotion-result-20261010-r2.json"
+  ],
+  "unchangedHelperFixtureEvidence": {
+    "path": "docs/verification/wave5/golden-promotion-static-review-20261010.json",
+    "sha256": "173e3898f67e3b1f048c0654683eed391242f59cb422551a4b8db303af825f5a",
+    "passed": 7,
+    "failed": 0,
+    "claimPublishObserveAndBoundInputHelpersByteIdentical": true
+  },
+  "fixedSnapshotPathInPromoter": false,
+  "r1Unchanged": true,
+  "promotionExecuted": false,
+  "approvedImagesChanged": false,
+  "boundary": "Syntax and exact source delta checks only; seven helper fixtures remain bound to identical r1 helper bytes. No r2 candidate, owner decision, native acceptance, or apply execution is inferred."
+}

@@ -1,0 +1,26 @@
+{
+  "kind": "actual-status-publication-attempt-failure",
+  "observedAfterAt": "2026-10-10T08:37:44Z",
+  "script": {
+    "path": "scripts/wave5/update_current_verification_status_20261010_r3_guarded.mjs",
+    "sha256": "96f588f854cc295d9d5ff592ba2619a7d819ec8d2c9780f74327598e42682525"
+  },
+  "command": "node scripts/wave5/update_current_verification_status_20261010_r3_guarded.mjs --write",
+  "toolChunkId": "a92a4a",
+  "actualExitCode": 1,
+  "previewExitCode": 0,
+  "previewToolChunkId": "8d42ea",
+  "error": "Error: MODE_INVALID at scripts/wave5/run_accounting_checks_20261010_r2.mjs:13:88",
+  "cause": "The imported frozen accounting CLI parses the publisher's --write argument before the publisher starts.",
+  "checkedOutputPathsAfterFailure": [
+    {"path":"docs/verification/wave5/current-verification-status-before-20261010-r3-guarded.json","exists":false},
+    {"path":"docs/verification/wave5/current-verification-status-after-20261010-r3-guarded.json","exists":false}
+  ],
+  "outputAbsenceToolChunkId": "b6fa97",
+  "publicationStarted": false,
+  "livingDocumentsChangedByThisAttempt": false,
+  "sdkJobsExecuted": false,
+  "liveOperations": false,
+  "acceptanceChanged": false,
+  "boundary": "Preserved failed publisher attempt only. A passing preview is not completed publication evidence. Corrected publication requires a new script and an actual successful write result."
+}

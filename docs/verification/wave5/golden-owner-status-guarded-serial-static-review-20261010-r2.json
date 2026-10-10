@@ -1,0 +1,55 @@
+{
+  "checkedAt": "2026-10-10T03:07:04.032Z",
+  "script": {
+    "path": "scripts/wave5/update_golden_owner_status_20261010_r2_guarded_serial.mjs",
+    "sha256": "fbe41a09744acf84ea7b53150935bda01a210a4b27bcb8d579feecb554359f27",
+    "syntaxExitCode": 0
+  },
+  "derivedFrom": {
+    "path": "scripts/wave5/update_golden_owner_status_20261010_r2_guarded.mjs",
+    "sha256": "c57e7bbaaa4afee29139b83a31b649b7edaa94baa4466be51aca2c4fe674152d",
+    "unchanged": true
+  },
+  "exactSubstitutions": [
+    {
+      "from": "golden-review-processDomain-20261010-r2.json",
+      "to": "golden-review-processDomain-20261010-r2-serial.json",
+      "occurrences": 1
+    },
+    {
+      "from": "scripts/wave5/update_golden_owner_status_20261010_r2_guarded.mjs",
+      "to": "scripts/wave5/update_golden_owner_status_20261010_r2_guarded_serial.mjs",
+      "occurrences": 1
+    },
+    {
+      "from": "golden-owner-status-before-20261010-r2-guarded.json",
+      "to": "golden-owner-status-before-20261010-r2-guarded-serial.json",
+      "occurrences": 1
+    },
+    {
+      "from": "golden-owner-status-after-20261010-r2-guarded.json",
+      "to": "golden-owner-status-after-20261010-r2-guarded-serial.json",
+      "occurrences": 1
+    },
+    {
+      "from": "golden-owner-status-recovery-20261010-r2-guarded-",
+      "to": "golden-owner-status-recovery-20261010-r2-guarded-serial-",
+      "occurrences": 1
+    }
+  ],
+  "reverseSubstitutionsReconstructOriginal": true,
+  "unchangedHelperChecks": {
+    "path": "docs/verification/wave5/golden-owner-status-guarded-static-review-20261010-r2.json",
+    "sha256": "835e2d0cdec61ccba7756124614cf671d98d11cc90401e6d849c50aaf749d077",
+    "passed": 7,
+    "failed": 0,
+    "claimPublishObserveBodiesByteIdentical": true
+  },
+  "domainStageNameRequired": "processDomain",
+  "serialDomainRecord": "docs/verification/wave5/golden-review-processDomain-20261010-r2-serial.json",
+  "serialDomainArtifactAuditPending": true,
+  "mainStatusWriterExecuted": false,
+  "livingDocumentsWritten": false,
+  "approvedImagesChanged": false,
+  "boundary": "Syntax and five exact path binding substitutions only. Serial process evidence is a future separately executed record; no test green/criterion acceptance/status update is inferred."
+}
