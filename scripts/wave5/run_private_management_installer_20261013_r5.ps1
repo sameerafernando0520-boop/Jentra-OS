@@ -1,27 +1,30 @@
-param([ValidateSet('ValidateOnly','Preflight','Execute','VerifyInstalled','ValidateAuth','ProvisionAuth','ValidateMfa','EnrollMfa','ValidateBootstrap','ExecuteBootstrap','ValidateAccess','InspectAccess','ValidateSourceWorkflow','ExecuteSourceWorkflow','RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5','InspectSourceFailure','ResumeSourceWorkflows','ContinueSourceWorkflowsA3','ValidateActivation','ExecuteActivation','ValidatePersistentSetup','ExecutePersistentSetup','ExecutePersistentSetupA2','ExecutePersistentSetupA3','ExecutePersistentSetupA4','ExecuteDeliveryLease','ExecuteDeliveryFixtures','StartScheduledDelivery','InspectScheduledError','PauseFailedSchedules','ValidateFinanceWorkflow','ExecuteFinanceWorkflow','ResumeFinanceWorkflow','ValidateRemainingFinance','ExecuteRemainingFinance')][string]$Mode = 'ValidateOnly')
+param([ValidateSet('ValidateOnly','Preflight','Execute','VerifyInstalled','ValidateAuth','ProvisionAuth','ValidateMfa','EnrollMfa','ValidateBootstrap','ExecuteBootstrap','ValidateAccess','InspectAccess','ValidateSourceWorkflow','ExecuteSourceWorkflow','RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5','RefreshOwnerScopeA6','InspectSourceFailure','ResumeSourceWorkflows','ContinueSourceWorkflowsA3','ValidateActivation','ExecuteActivation','ValidatePersistentSetup','ExecutePersistentSetup','ExecutePersistentSetupA2','ExecutePersistentSetupA3','ExecutePersistentSetupA4','ExecuteDeliveryLease','ExecuteDeliveryFixtures','StartScheduledDelivery','InspectScheduledError','PauseFailedSchedules','ValidateFinanceWorkflow','ExecuteFinanceWorkflow','ResumeFinanceWorkflow','ValidateRemainingFinance','ExecuteRemainingFinance')][string]$Mode = 'ValidateOnly')
 
 $ErrorActionPreference = 'Stop'
 $taskRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $taskInstaller = Join-Path $taskRoot 'tools/wave5/approved_management_installer.mjs'
 $taskReadyFile = Join-Path $taskRoot 'docs/verification/wave5/private-owner-input-ready-20261013-r5.json'
-if ($Mode -notin @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5') -and (Test-Path -LiteralPath (Join-Path $taskRoot 'docs/verification/wave5/private-owner-input-ready-20261013-r5-a2.json'))) {
+if ($Mode -notin @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5','RefreshOwnerScopeA6') -and (Test-Path -LiteralPath (Join-Path $taskRoot 'docs/verification/wave5/private-owner-input-ready-20261013-r5-a2.json'))) {
     $taskReadyFile = Join-Path $taskRoot 'docs/verification/wave5/private-owner-input-ready-20261013-r5-a2.json'
 }
-if ($Mode -notin @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5') -and (Test-Path -LiteralPath (Join-Path $taskRoot 'docs/verification/wave5/private-owner-input-ready-20261013-r5-a3.json'))) {
+if ($Mode -notin @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5','RefreshOwnerScopeA6') -and (Test-Path -LiteralPath (Join-Path $taskRoot 'docs/verification/wave5/private-owner-input-ready-20261013-r5-a3.json'))) {
     $taskReadyFile = Join-Path $taskRoot 'docs/verification/wave5/private-owner-input-ready-20261013-r5-a3.json'
 }
-if ($Mode -notin @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5') -and (Test-Path -LiteralPath (Join-Path $taskRoot 'docs/verification/wave5/private-owner-input-ready-20261013-r5-a4.json'))) {
+if ($Mode -notin @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5','RefreshOwnerScopeA6') -and (Test-Path -LiteralPath (Join-Path $taskRoot 'docs/verification/wave5/private-owner-input-ready-20261013-r5-a4.json'))) {
     $taskReadyFile = Join-Path $taskRoot 'docs/verification/wave5/private-owner-input-ready-20261013-r5-a4.json'
 }
-if ($Mode -notin @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5') -and (Test-Path -LiteralPath (Join-Path $taskRoot 'docs/verification/wave5/private-owner-input-ready-20261013-r5-a5.json'))) {
+if ($Mode -notin @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5','RefreshOwnerScopeA6') -and (Test-Path -LiteralPath (Join-Path $taskRoot 'docs/verification/wave5/private-owner-input-ready-20261013-r5-a5.json'))) {
     $taskReadyFile = Join-Path $taskRoot 'docs/verification/wave5/private-owner-input-ready-20261013-r5-a5.json'
+}
+if ($Mode -notin @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5','RefreshOwnerScopeA6') -and (Test-Path -LiteralPath (Join-Path $taskRoot 'docs/verification/wave5/private-owner-input-ready-20261014-r5-a6.json'))) {
+    $taskReadyFile = Join-Path $taskRoot 'docs/verification/wave5/private-owner-input-ready-20261014-r5-a6.json'
 }
 $taskSecret = $null
 $taskBstr = [IntPtr]::Zero
 $taskPlain = $null
 $taskChild = $null
 $taskPhase = 'source-validation'
-$taskNeedsPrivate = $Mode -in @('Preflight','Execute','VerifyInstalled','ProvisionAuth','EnrollMfa','ExecuteBootstrap','InspectAccess','ExecuteSourceWorkflow','RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5','InspectSourceFailure','ResumeSourceWorkflows','ContinueSourceWorkflowsA3','ExecuteActivation','ExecutePersistentSetup','ExecutePersistentSetupA2','ExecutePersistentSetupA3','ExecutePersistentSetupA4','ExecuteDeliveryLease','ExecuteDeliveryFixtures','StartScheduledDelivery','InspectScheduledError','PauseFailedSchedules','ExecuteFinanceWorkflow','ResumeFinanceWorkflow','ExecuteRemainingFinance')
+$taskNeedsPrivate = $Mode -in @('Preflight','Execute','VerifyInstalled','ProvisionAuth','EnrollMfa','ExecuteBootstrap','InspectAccess','ExecuteSourceWorkflow','RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5','RefreshOwnerScopeA6','InspectSourceFailure','ResumeSourceWorkflows','ContinueSourceWorkflowsA3','ExecuteActivation','ExecutePersistentSetup','ExecutePersistentSetupA2','ExecutePersistentSetupA3','ExecutePersistentSetupA4','ExecuteDeliveryLease','ExecuteDeliveryFixtures','StartScheduledDelivery','InspectScheduledError','PauseFailedSchedules','ExecuteFinanceWorkflow','ResumeFinanceWorkflow','ExecuteRemainingFinance')
 
 function Assert-TaskPrivateAcl([string]$TaskPath, [Security.Principal.SecurityIdentifier]$TaskSid, [bool]$TaskFolder) {
     $taskItem = Get-Item -LiteralPath $TaskPath
@@ -84,7 +87,7 @@ try {
         if ((Get-FileHash -LiteralPath $taskInstaller -Algorithm SHA256).Hash.ToLowerInvariant() -ne
             'aabbeae5af299178bd35784fb8ffefd378ae324a25749c42f9e3d7cd22e107ea') { throw 'SOURCE_WORKFLOW_EXECUTOR_CHANGED' }
     }
-    if ($Mode -in @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5')) {
+    if ($Mode -in @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5','RefreshOwnerScopeA6')) {
         $taskInstaller = Join-Path $taskRoot 'tools/wave5/refresh_private_owner_scope_20261013_r5.mjs'
         if ((Get-FileHash -LiteralPath $taskInstaller -Algorithm SHA256).Hash.ToLowerInvariant() -ne
             '1049309eccbec8247cfffc426fa2592547886467cda09f156ddd9636afba5a59') { throw 'OWNER_SCOPE_REFRESH_SOURCE_CHANGED' }
@@ -128,6 +131,11 @@ try {
         $taskInstaller = Join-Path $taskRoot 'tools/wave5/refresh_private_owner_scope_20261013_r5_a5.mjs'
         if ((Get-FileHash -LiteralPath $taskInstaller -Algorithm SHA256).Hash.ToLowerInvariant() -ne
             '98e4a71b61af17f121349cd23d8349c3329860a772c124005024704a91e04b71') { throw 'OWNER_SCOPE_A5_SOURCE_CHANGED' }
+    }
+    if ($Mode -eq 'RefreshOwnerScopeA6') {
+        $taskInstaller = Join-Path $taskRoot 'tools/wave5/refresh_private_owner_scope_20261014_r5_a6.mjs'
+        if ((Get-FileHash -LiteralPath $taskInstaller -Algorithm SHA256).Hash.ToLowerInvariant() -ne
+            '3910f1311d69ac9b2bc8a682174e5546f24b6edcf176ab7bc56a8f0087480022') { throw 'OWNER_SCOPE_A6_SOURCE_CHANGED' }
     }
     if ($Mode -eq 'InspectScheduledError') {
         $taskInstaller = Join-Path $taskRoot 'tools/wave5/inspect_scheduled_read_error_20261013_r5.mjs'
@@ -216,7 +224,7 @@ try {
     $taskFlag = switch ($Mode) { 'Preflight' { '--preflight' } 'Execute' { '--execute' } 'VerifyInstalled' { '--verify' }
         'ProvisionAuth' { '--provision' } 'EnrollMfa' { '--enroll' } 'ExecuteBootstrap' { '--execute' } 'ExecuteFinanceWorkflow' { '--execute-finance' } 'ResumeFinanceWorkflow' { '--resume-finance' } 'ExecuteRemainingFinance' { '--execute' }
         'InspectAccess' { '--inspect' } 'InspectSourceFailure' { '--inspect' } 'ExecuteSourceWorkflow' { '--execute' }
-        'RefreshOwnerScope' { '--refresh' } 'RefreshOwnerScopeA3' { '--refresh' } 'RefreshOwnerScopeA4' { '--refresh' } 'RefreshOwnerScopeA5' { '--refresh' } 'ResumeSourceWorkflows' { '--resume' } 'ContinueSourceWorkflowsA3' { '--resume' } 'ExecuteActivation' { '--execute' } 'ExecutePersistentSetup' { '--execute' } 'ExecutePersistentSetupA2' { '--execute' } 'ExecutePersistentSetupA3' { '--execute' } 'ExecutePersistentSetupA4' { '--execute' } 'ExecuteDeliveryLease' { '--execute' } 'ExecuteDeliveryFixtures' { '--execute' } 'StartScheduledDelivery' { '--execute' } 'InspectScheduledError' { '--inspect' } 'PauseFailedSchedules' { '--execute' } default { '--validate' } }
+        'RefreshOwnerScope' { '--refresh' } 'RefreshOwnerScopeA3' { '--refresh' } 'RefreshOwnerScopeA4' { '--refresh' } 'RefreshOwnerScopeA5' { '--refresh' } 'RefreshOwnerScopeA6' { '--refresh' } 'ResumeSourceWorkflows' { '--resume' } 'ContinueSourceWorkflowsA3' { '--resume' } 'ExecuteActivation' { '--execute' } 'ExecutePersistentSetup' { '--execute' } 'ExecutePersistentSetupA2' { '--execute' } 'ExecutePersistentSetupA3' { '--execute' } 'ExecutePersistentSetupA4' { '--execute' } 'ExecuteDeliveryLease' { '--execute' } 'ExecuteDeliveryFixtures' { '--execute' } 'StartScheduledDelivery' { '--execute' } 'InspectScheduledError' { '--inspect' } 'PauseFailedSchedules' { '--execute' } default { '--validate' } }
     if ($taskNeedsPrivate) {
         $taskPhase = 'private-metadata-validation'
         $taskMetadataText = Get-Content -Raw -LiteralPath $taskReadyFile
@@ -232,10 +240,10 @@ try {
             $taskMetadata.helperSha256 -notin @('3e760848688dbd82b0eb0ed83cef2c6cbf1c65c721241801870ed23555ccb199',
                 'e96cd439df228ba41f211d70338f59bd74fa21fd10791e5a3d850c31d2678e49',
                 '1049309eccbec8247cfffc426fa2592547886467cda09f156ddd9636afba5a59','55e8038bd5054e0a4e6fa01297efdf1ad3eeecc09e24b65346ae858822672ac2','474923aaef21c8330b6dfe699d291b3e3469f046f7b32c5a2ef1bb1d83b36d84',
-                '98e4a71b61af17f121349cd23d8349c3329860a772c124005024704a91e04b71') -or
+                '98e4a71b61af17f121349cd23d8349c3329860a772c124005024704a91e04b71','3910f1311d69ac9b2bc8a682174e5546f24b6edcf176ab7bc56a8f0087480022') -or
             $taskMetadata.containsPlaintextCredential -ne $false -or
-            ($taskExpiry -le $taskNow -and $Mode -notin @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5')) -or
-            ($Mode -in @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5') -and $taskCreated -lt $taskNow.AddDays(-7)) -or
+            ($taskExpiry -le $taskNow -and $Mode -notin @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5','RefreshOwnerScopeA6')) -or
+            ($Mode -in @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5','RefreshOwnerScopeA6') -and $taskCreated -lt $taskNow.AddDays(-7)) -or
             $taskCreated -gt $taskNow.AddSeconds(10) -or
             ($taskExpiry - $taskCreated).TotalHours -gt 2.01) { throw 'EXACT_FRESH_PRIVATE_INPUT_REQUIRED' }
         $taskFolder = [IO.Path]::GetFullPath($taskMetadata.privateFolder)
@@ -246,14 +254,14 @@ try {
         if ([IO.Path]::GetFullPath($taskMetadata.sealedTokenPath) -ne $taskSealedPath) { throw 'EXACT_SEALED_INPUT_PATH_REQUIRED' }
         Assert-TaskPrivateAcl $taskFolder $taskSid $true
         Assert-TaskPrivateAcl $taskSealedPath $taskSid $false
-        $taskMetadataName = if ($taskReadyFile.EndsWith('-a5.json')) { 'metadata-renewed-a5.json' } elseif ($taskReadyFile.EndsWith('-a4.json')) { 'metadata-renewed-a4.json' } elseif ($taskReadyFile.EndsWith('-a3.json')) { 'metadata-renewed-a3.json' } elseif ($taskReadyFile.EndsWith('-a2.json')) { 'metadata-renewed-a2.json' } else { 'metadata.json' }
+        $taskMetadataName = if ($taskReadyFile.EndsWith('-a6.json')) { 'metadata-renewed-a6.json' } elseif ($taskReadyFile.EndsWith('-a5.json')) { 'metadata-renewed-a5.json' } elseif ($taskReadyFile.EndsWith('-a4.json')) { 'metadata-renewed-a4.json' } elseif ($taskReadyFile.EndsWith('-a3.json')) { 'metadata-renewed-a3.json' } elseif ($taskReadyFile.EndsWith('-a2.json')) { 'metadata-renewed-a2.json' } else { 'metadata.json' }
         Assert-TaskPrivateAcl (Join-Path $taskFolder $taskMetadataName) $taskSid $false
         if ((Get-Content -Raw -LiteralPath (Join-Path $taskFolder $taskMetadataName)) -ne $taskMetadataText) { throw 'PRIVATE_METADATA_CHANGED' }
         $taskSecret = ConvertTo-SecureString -String (Get-Content -Raw -LiteralPath $taskSealedPath)
         $taskBstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($taskSecret)
         $taskPlain = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($taskBstr)
         if ($taskPlain.Length -lt 9 -or $taskPlain.Length -gt 2048 -or $taskPlain -match '\s') { throw 'PRIVATE_INPUT_INVALID' }
-        if ($Mode -in @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5')) {
+        if ($Mode -in @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5','RefreshOwnerScopeA6')) {
             $taskPlain = @{ projectId=$taskMetadata.projectId;bundleSha256=$taskMetadata.runtimeBundleSha256;
                 ownerToken=$taskPlain;originalMetadata=$taskMetadata } | ConvertTo-Json -Compress -Depth 12
         }

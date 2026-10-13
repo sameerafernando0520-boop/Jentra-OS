@@ -557,3 +557,42 @@ test('a latency equal to the limit fails, and warmup, incomplete coverage or a c
   commands[1].commandId = commands[0].commandId; commands[1].originalCommandId = commands[0].originalCommandId;
   assert.throws(() => checkLoadResult(cached, matchingPlan), /FRESH_FORECAST_COMMANDS_REQUIRED/);
 });
+
+test('failed durable live-start journaling clears the run timer and closes the provider before a failed finish write', async () => {
+  const nativeSetTimeout = globalThis.setTimeout, nativeClearTimeout = globalThis.clearTimeout;
+  const runTimers = new Set(); let clearCalls = 0, closed = 0, operations = 0; const attemptedWrites = [];
+  globalThis.setTimeout = (callback, ms, ...args) => {
+    const handle = nativeSetTimeout(callback, ms, ...args);
+    if (ms === LOAD_LIMITS.maxRunMs) runTimers.add(handle);
+    return handle;
+  };
+  globalThis.clearTimeout = handle => {
+    if (runTimers.has(handle)) clearCalls++;
+    return nativeClearTimeout(handle);
+  };
+  const provider = Object.fromEntries(['verifyPreflight', 'openSessions', 'reverifySessions', 'openTrustedConnections',
+    'prepareRace', 'arm', 'call', 'readCommitted', 'readLoadCommitted', 'readExternalTransportObservation',
+    'restoreRace', 'runInvalidBoundary'].map(name => [name, async () => { operations++; throw new GuardError('RUN_ABORTED'); }]));
+  provider.close = async options => {
+    closed++;
+    assert.equal(options.preserveUnknownEffects, true);
+    assert.equal(options.noCleanupOfAccountsOrStores, true);
+    assert.equal(options.signal.aborted, false);
+  };
+  try {
+    await assert.rejects(runLiveVerification({ review, plan, approval, preparation, independentReview, binding, provider,
+      journal: async entry => { attemptedWrites.push(entry); throw new GuardError('EVIDENCE_WRITE_FAILED'); } }),
+    { code: 'EVIDENCE_WRITE_FAILED' });
+    assert.equal(operations, 0); assert.equal(closed, 1);
+    assert.equal(runTimers.size, 1); assert.equal(clearCalls, 1);
+    assert.deepEqual(attemptedWrites.map(entry => entry.type), ['live-start', 'live-finish']);
+    const finish = attemptedWrites.at(-1);
+    assert.equal(finish.passed, false); assert.equal(finish.failureCode, 'EVIDENCE_WRITE_FAILED');
+    assert.ok(Object.values(finish.gates).every(value => value === false));
+    assert.equal(finish.load, null); assert.equal(finish.races.length, 0);
+  } finally {
+    globalThis.setTimeout = nativeSetTimeout; globalThis.clearTimeout = nativeClearTimeout;
+    // Keep a failed regression bounded when tested against the uncorrected implementation.
+    for (const handle of runTimers) nativeClearTimeout(handle);
+  }
+});

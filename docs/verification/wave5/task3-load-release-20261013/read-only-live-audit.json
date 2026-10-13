@@ -1,0 +1,211 @@
+{
+  "kind": "wave5-read-only-live-release-audit",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "capacity": {
+    "observedAt": "2026-10-13T18:18:26.697837+00:00",
+    "lockWaiters": 0,
+    "activeQueries": 2,
+    "databaseBytes": 132680851,
+    "productTables": 261,
+    "sharedBuffers": "224MB",
+    "maxConnections": 60,
+    "postgresVersion": "17.6",
+    "authSessionsTotal": 21,
+    "readOnlyStatement": true,
+    "serverConnections": 13,
+    "reviewedActorSessions": [
+      {
+        "label": "approver",
+        "serverSessionRows": 3
+      },
+      {
+        "label": "billing-admin",
+        "serverSessionRows": 2
+      },
+      {
+        "label": "executor",
+        "serverSessionRows": 1
+      },
+      {
+        "label": "foreign-member",
+        "serverSessionRows": 4
+      },
+      {
+        "label": "operator",
+        "serverSessionRows": 1
+      },
+      {
+        "label": "proposer",
+        "serverSessionRows": 5
+      }
+    ],
+    "productTablesRlsDisabled": 0,
+    "apiFunctionsAnonCanExecute": 0,
+    "eligibleReviewedLoadSessionRows": 15,
+    "connectorCommittedRepeatableReadProof": false,
+    "productTablesAnonOrAuthenticatedDirectAccess": 98
+  },
+  "advisors": {
+    "security": {
+      "observedAt": "2026-10-13T17:58:35.825Z",
+      "findings": [
+        {
+          "name": "rls_enabled_no_policy",
+          "level": "INFO",
+          "count": 215,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy",
+          "examples": [
+            {
+              "metadata": {
+                "name": "cash_date_decisions",
+                "type": "table",
+                "schema": "analytics"
+              },
+              "detail": "Table \\`analytics.cash_date_decisions\\` has RLS enabled, but no policies exist",
+              "observedAt": "2026-10-13T17:58:35.825Z"
+            },
+            {
+              "metadata": {
+                "name": "cash_date_proposals",
+                "type": "table",
+                "schema": "analytics"
+              },
+              "detail": "Table \\`analytics.cash_date_proposals\\` has RLS enabled, but no policies exist",
+              "observedAt": "2026-10-13T17:58:35.825Z"
+            }
+          ]
+        },
+        {
+          "name": "auth_leaked_password_protection",
+          "level": "WARN",
+          "count": 1,
+          "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection",
+          "examples": [
+            {
+              "metadata": {
+                "type": "auth",
+                "entity": "Auth"
+              },
+              "detail": "Supabase Auth prevents the use of compromised passwords by checking against HaveIBeenPwned.org. Enable this feature to enhance security."
+            }
+          ]
+        }
+      ]
+    },
+    "performance": {
+      "observedAt": "2026-10-13T17:58:35.734Z",
+      "findings": [
+        {
+          "name": "unindexed_foreign_keys",
+          "level": "INFO",
+          "count": 289,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+          "examples": [
+            {
+              "metadata": {
+                "name": "cash_date_decisions",
+                "type": "table",
+                "schema": "analytics",
+                "fkey_name": "cash_date_decisions_tenant_id_legal_entity_id_branch_id_pr_fkey",
+                "fkey_columns": [
+                  2,
+                  3,
+                  4,
+                  5
+                ]
+              },
+              "detail": "Table \\`analytics.cash_date_decisions\\` has a foreign key \\`cash_date_decisions_tenant_id_legal_entity_id_branch_id_pr_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+              "observedAt": "2026-10-13T17:58:35.734Z"
+            },
+            {
+              "metadata": {
+                "name": "cash_scenario_revisions",
+                "type": "table",
+                "schema": "analytics",
+                "fkey_name": "cash_scenario_revisions_actor_id_fkey",
+                "fkey_columns": [
+                  5
+                ]
+              },
+              "detail": "Table \\`analytics.cash_scenario_revisions\\` has a foreign key \\`cash_scenario_revisions_actor_id_fkey\\` without a covering index. This can lead to suboptimal query performance.",
+              "observedAt": "2026-10-13T17:58:35.734Z"
+            }
+          ]
+        },
+        {
+          "name": "no_primary_key",
+          "level": "INFO",
+          "count": 1,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0004_no_primary_key",
+          "examples": [
+            {
+              "metadata": {
+                "name": "receipt_provenance_pools",
+                "type": "table",
+                "schema": "inventory"
+              },
+              "detail": "Table \\`inventory.receipt_provenance_pools\\` does not have a primary key",
+              "observedAt": "2026-10-13T17:58:35.734Z"
+            }
+          ]
+        },
+        {
+          "name": "unused_index",
+          "level": "INFO",
+          "count": 784,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index",
+          "examples": [
+            {
+              "metadata": {
+                "name": "tenants",
+                "type": "table",
+                "schema": "core"
+              },
+              "detail": "Index \\`tenants_created_by_idx\\` on table \\`core.tenants\\` has not been used",
+              "observedAt": "2026-10-13T17:58:35.734Z"
+            },
+            {
+              "metadata": {
+                "name": "legal_entities",
+                "type": "table",
+                "schema": "core"
+              },
+              "detail": "Index \\`legal_entities_created_by_idx\\` on table \\`core.legal_entities\\` has not been used",
+              "observedAt": "2026-10-13T17:58:35.734Z"
+            }
+          ]
+        },
+        {
+          "name": "duplicate_index",
+          "level": "WARN",
+          "count": 1,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0009_duplicate_index",
+          "examples": [
+            {
+              "metadata": {
+                "name": "bank_match_claims",
+                "type": "table",
+                "schema": "finance",
+                "indexes": [
+                  "bank_claim_match",
+                  "bank_match_claims_tenant_id_match_id_fkey_idx"
+                ]
+              },
+              "detail": "Table \\`finance.bank_match_claims\\` has identical indexes {bank_claim_match,bank_match_claims_tenant_id_match_id_fkey_idx}. Drop all except one of them",
+              "observedAt": "2026-10-13T17:58:35.734Z"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "branches": {
+    "returned": [],
+    "boundary": "No branches returned for this development project does not inventory other staging or production projects."
+  },
+  "actualLocalPostgresConnection": false,
+  "liveSqlWrites": 0,
+  "liveAuthCreated": 0,
+  "productionReleased": false,
+  "boundary": "Actual purpose-built connector reads. This single SELECT and advisors do not establish committed local PostgreSQL snapshot evidence, online session eligibility, concurrency, P95, complete external capture or production readiness."
+}

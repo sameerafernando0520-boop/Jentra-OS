@@ -1,0 +1,85 @@
+{
+  "kind": "wave5-resumed-private-readiness-readback",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "userReportedDatabaseInputReady": true,
+  "userReportedPrivateWindowsSetupCompleted": true,
+  "readbacks": [
+    {
+      "observedAt": "2026-10-13T18:22:30.9341990+00:00",
+      "publicRuntimeInputMetadataExists": false,
+      "sealedDatabaseFileExists": false,
+      "sealedModelFileExists": false,
+      "credentialValuesRead": false
+    },
+    {
+      "observedAt": "2026-10-13T18:23:39.0920531+00:00",
+      "targetMetadataMatches": true,
+      "ownerSidMatches": true,
+      "privateFolderExists": true,
+      "folderReparsePoint": false,
+      "protectedAcl": true,
+      "ruleCount": 1,
+      "singleCurrentOwnerFullControl": true,
+      "pwshAvailable": true
+    },
+    {
+      "observedAt": "2026-10-13T18:26:19.6421235+00:00",
+      "publicRuntimeInputMetadataExists": false,
+      "nativeProvisionJournalCount": 0,
+      "helperHasZoneIdentifier": false
+    }
+  ],
+  "privateInputValidation": {
+    "inCurrentShell": {
+      "exitCode": 0,
+      "passed": true
+    },
+    "inFreshPwshRemoteSigned": {
+      "exitCode": 0,
+      "passed": true,
+      "networkCalls": 0,
+      "databaseWrites": 0,
+      "hiddenPrompts": 2,
+      "secretsPrinted": false,
+      "ownerTokenRequested": false
+    }
+  },
+  "nativePrerequisites": {
+    "passed": true,
+    "sourceInputsVerified": 1068,
+    "connectedReleaseFilesVerified": 34,
+    "targetAccountExists": false,
+    "targetPackageExists": false,
+    "currentTokenAdministrator": false,
+    "authenticatedNative": "unverified",
+    "nativeActionsExecuted": 0
+  },
+  "launcherImprovement": "The additive a2 CMD invokes the same pinned helper and retains the public exit code with a pause after the child exits. It was not run for private input.",
+  "diagnosis": "Read-only helper prerequisites pass. No successful local input-save or isolated-profile provision is evidenced. The human chosen launcher, entered private values and displayed failure are not observed.",
+  "networkCalls": 0,
+  "databaseWrites": 0,
+  "credentialsRead": false,
+  "securityPromptsAutomated": false,
+  "sourceBindings": [
+    {
+      "path": "scripts\\wave5\\prepare_private_runtime_inputs_20261013_r5.ps1",
+      "bytes": 5050,
+      "sha256": "1453ff6221728ec221f4688c342f9115f9433550bf8a358432b3ec4f69488056"
+    },
+    {
+      "path": "dist\\Jentra OS Private Database Inputs 20261013.cmd",
+      "bytes": 677,
+      "sha256": "feb59ddbec97fcdbdcc2cbe898777b5f276bb76edd6aaa4f7392407e12ed0b0f"
+    },
+    {
+      "path": "dist\\Jentra OS Private Database Inputs 20261013 a2.cmd",
+      "bytes": 1000,
+      "sha256": "9731156b77e1efa542a92fa1e568e006c24af84788b94cb743d671a13ea875c5"
+    },
+    {
+      "path": "docs\\verification\\wave5\\task3-windows-20261013\\native-prerequisites-20261013T182346876Z.json",
+      "bytes": 2870,
+      "sha256": "df2d896049010cfec8e308b437082ef1455135f3dbbb110d67b48bf4507295de"
+    }
+  ]
+}

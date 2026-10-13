@@ -1,0 +1,174 @@
+{
+  "kind": "primary-independent-runtime-startup-cleanup-review",
+  "reviewedAt": "2026-10-13T18:38:29.076Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "reviewer": "Primary Codex agent; implementation authored by completion_peer",
+  "technicalVerdict": "approved within the unchanged reviewed runtime operation scope",
+  "personalHumanSignatureClaimed": false,
+  "exactPreservedBeforeDeltaVerified": true,
+  "exactFrozenR6DeltaClaimed": false,
+  "change": "Move the first durable live-start journal write into the existing cleanup try/finally.",
+  "reasoning": "Any first-write failure now follows the existing catch/finally: the run controller aborts, the 900-second timer is cleared and the provider closes while preserving unknown effects. Failure of the final write remains a rejected run. No provider preflight, session setup or dispatch starts after a failed initial write.",
+  "regressionReviewed": {
+    "failedStartAndFinishWrites": true,
+    "timerClearedExactlyOnce": true,
+    "providerClosedExactlyOnce": true,
+    "noProviderOperations": true,
+    "allLiveGatesRemainFalse": true,
+    "restorationOfTimerGlobalsInFinally": true,
+    "failedRegressionAgainstOldSourceRemainsBounded": true
+  },
+  "localVerification": {
+    "path": "docs/verification/wave5/task3-peer-review-20261013/runtime-harness-local-verification-20261013-peer-a2.json",
+    "bytes": 12538,
+    "sha256": "d67e72bedab9771c5cbb28dcfe2dc1bdedbde2603d4c307f9946feb2fc8051a8",
+    "childExitCode": 0,
+    "summary": {
+      "tests": 41,
+      "passed": 41,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0
+    },
+    "log": {
+      "path": "docs/verification/wave5/task3-peer-review-20261013/runtime-harness-local-verification-20261013-peer-a2.tap",
+      "bytes": 11093,
+      "sha256": "8bba9aacbd2f487cc5df4a7bf9688198bcc9aeb50faca598c083603fd982f6e5"
+    }
+  },
+  "offlineValidation": {
+    "path": "docs/verification/wave5/task3-peer-review-20261013/runtime-harness-offline-validation-20261013-peer-a2.json",
+    "bytes": 1750,
+    "sha256": "c8cef4f2db9efffda7ac4d01faa220f04be3b11a5ccd338fa4fa6d02a469f9bd",
+    "childExitCode": 0,
+    "executedLive": false
+  },
+  "harness": {
+    "path": "docs/verification/wave5/task3-peer-review-20261013/runtime-harness-review-20261013-peer-a2.json",
+    "bytes": 15713,
+    "sha256": "3dda27da6179a21a9e4a6dd25fad3154086708bdab3471ad758e7346ba0b2d1e"
+  },
+  "before": [
+    {
+      "path": "docs/verification/wave5/task3-peer-review-20261013/harness-startup-cleanup-before-a2/tools/wave5/runtime_coordinator.mjs",
+      "bytes": 35742,
+      "sha256": "1df1396865610b73614f5ba9b83a8d9b91d40bb642e26d7443934ef11bcd0f3c"
+    },
+    {
+      "path": "docs/verification/wave5/task3-peer-review-20261013/harness-startup-cleanup-before-a2/tools/wave5/runtime_coordinator.test.mjs",
+      "bytes": 45494,
+      "sha256": "d0582f1c33e3b869411bda08e50a495ecd4a287ae299b570186c271d614036db"
+    }
+  ],
+  "after": [
+    {
+      "path": "tools/wave5/runtime_coordinator.mjs",
+      "bytes": 35744,
+      "sha256": "c1542ad519fdb557f53046636810ffcbcbc61ecef7ecb2656ccc4a915b6b368e"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.test.mjs",
+      "bytes": 47807,
+      "sha256": "b32d651f0d8edd87f369dc47227644f5ffd31b0f53680afab8065fb53dc90557"
+    }
+  ],
+  "currentSourceBindingsChecked": [
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "bytes": 31294,
+      "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.mjs",
+      "bytes": 35744,
+      "sha256": "c1542ad519fdb557f53046636810ffcbcbc61ecef7ecb2656ccc4a915b6b368e"
+    },
+    {
+      "path": "tools/wave5/run_runtime_verification.mjs",
+      "bytes": 9119,
+      "sha256": "143f460b88c1e1dba4a06b7ed869fb5de46e6eff77421ebf8d0aee15efb74b20"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.test.mjs",
+      "bytes": 47807,
+      "sha256": "b32d651f0d8edd87f369dc47227644f5ffd31b0f53680afab8065fb53dc90557"
+    },
+    {
+      "path": "tools/wave5/PRIVATE_PROVIDER_CONTRACT.md",
+      "bytes": 21178,
+      "sha256": "53b691012312db8d0c6b634c8b8cc21690cac73e80a66b286dd4ab97b1c0ec30"
+    },
+    {
+      "path": "tools/wave5/verify_local_harness.mjs",
+      "bytes": 6278,
+      "sha256": "db5b4c163c549b32e6e831483fdb4f6c07c8158c50e7ef3565000d04f48e9834"
+    },
+    {
+      "path": "tools/wave5/compose_harness_review.mjs",
+      "bytes": 13820,
+      "sha256": "e6bbc912d5c8fff83666b035aa9d4697def0ae0ddb32382586547595cfe3fd53"
+    },
+    {
+      "path": "docs/verification/wave5/integrated-runtime-protocol-20261006.md",
+      "bytes": 9262,
+      "sha256": "a3f6e654699a418b2ac41f31fa9c8a8e2a4a97582ad6d10dc710bccf58caa64a"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
+      "bytes": 115108,
+      "sha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5"
+    },
+    {
+      "path": "supabase/migrations/20260831193714_create_greenfield_foundation.sql",
+      "bytes": 41494,
+      "sha256": "d104871a777c31b9562fac2e5200d9801b24c0ebd28a9b0e75a43bdc13171f8a"
+    },
+    {
+      "path": "supabase/migrations/20260904121647_wave3_operational_foundation.sql",
+      "bytes": 40230,
+      "sha256": "b7a840b31a2d8a89d0a1539151769130c352fe7ace0ea2d76f4057aab5b2d737"
+    },
+    {
+      "path": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+      "bytes": 9213,
+      "sha256": "be586326b7d8ec380a5524a5d8232e67639d677eb192b9fe29da135ee9ffe997"
+    },
+    {
+      "path": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+      "bytes": 10964,
+      "sha256": "1ea4ab076cb3deaa9d0f7f92b56c47effc1a0ad45e14839156a2fd6a2d1bd8ed"
+    },
+    {
+      "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "bytes": 14205,
+      "sha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e"
+    },
+    {
+      "path": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+      "bytes": 16904,
+      "sha256": "b75e9cf94107fd9a959ced43f9e643b163ed579f95fb68c8de7b9e739b10d02e"
+    },
+    {
+      "path": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "bytes": 12761,
+      "sha256": "339e9e86074887d164dd339eb17ac54943c39fca0caf50db575c48529456a9f5"
+    },
+    {
+      "path": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql",
+      "bytes": 28824,
+      "sha256": "1a636229a0749cf9d6334ae49efe8ff38627b6a2d1bb642789a28e86efd1c663"
+    },
+    {
+      "path": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "bytes": 18114,
+      "sha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc"
+    }
+  ],
+  "networkCalls": 0,
+  "liveWrites": 0,
+  "sdkJobs": 0,
+  "nativeActions": 0,
+  "acceptanceDecisionsAdded": 0,
+  "boundary": "Current source, saved actual Node results and offline validation only; genuine load, authenticated native acceptance and production release remain separate."
+}

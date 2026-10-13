@@ -1,0 +1,206 @@
+{
+  "kind": "independent-cash-conflict-source-candidate-review",
+  "reviewedAt": "2026-10-13T18:43:04.639Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "reviewer": "Codex completion_peer independent reviewer",
+  "skills": [
+    "C:/Users/sheha/.codex/plugins/cache/claude-code-skills/engineering-skills/2.9.0/skills/code-reviewer/SKILL.md",
+    "C:/Users/sheha/.codex/plugins/cache/claude-plugins-official/supabase/0.1.15/skills/supabase-postgres-best-practices/SKILL.md"
+  ],
+  "candidate": {
+    "path": "supabase/candidates/wave5_cash_conflict_http409_20261013_r5.sql",
+    "bytes": 3327,
+    "sha256": "99cd801ba156872fb8f6346cc74e667ef9398e3628f466ae0ff44f37b7fdf520"
+  },
+  "verdict": "source candidate supported within exact five-site/two-routine scope; separate human installation decision remains outside this review",
+  "blockingSourceFindings": [],
+  "derivations": [
+    {
+      "signature": "api.wave5_cash_date_command(uuid,uuid,uuid,uuid,uuid,timestamp with time zone,text,jsonb)",
+      "sourceMigration": {
+        "path": "supabase/migrations/20261008120000_wave5_cash_payment_dates.sql",
+        "bytes": 35937,
+        "sha256": "1463953b0fa76269740a732a59485ff3d160681fb2a6655eedbd8c0aeda42c8a"
+      },
+      "beforeNormalizedBodySha256": "509d9f2ef975ca30a355b6874603e1469564107eed911267454de54607e4a149",
+      "afterNormalizedBodySha256": "9c87b6aaf874e0a5061b7710b9341240ba982fc26731fe1e99f00646039bf482",
+      "changedApplicationErrorSites": 4,
+      "clauses": [
+        [
+          "CASH_DATE_VERSION_CONFLICT",
+          1
+        ],
+        [
+          "CASH_DATE_SOURCE_CHANGED",
+          2
+        ],
+        [
+          "CASH_DATE_PROPOSAL_CHANGED",
+          1
+        ]
+      ],
+      "allOtherNormalizedBodyBytesUnchanged": true
+    },
+    {
+      "signature": "api.wave5_cash_save_v2(uuid,uuid,uuid,uuid,text,jsonb)",
+      "sourceMigration": {
+        "path": "supabase/migrations/20261008103000_wave5_dated_cash.sql",
+        "bytes": 19954,
+        "sha256": "24b5ab44250ec5239ab2b942277cb104867d8e67288666c6297d4fa694e4b391"
+      },
+      "beforeNormalizedBodySha256": "a9e13fb88a940206bb7fc9d804f5dafd591fea5dce138a688f251fb5be684c91",
+      "afterNormalizedBodySha256": "98c96ad97956117996c8874d2ff8e1e7e69d827e72f71757c68034d1e5780564",
+      "changedApplicationErrorSites": 1,
+      "clauses": [
+        [
+          "SOURCE_BASIS_CHANGED",
+          1
+        ]
+      ],
+      "allOtherNormalizedBodyBytesUnchanged": true
+    }
+  ],
+  "checks": {
+    "exactRootSourceBindingsVerified": 7,
+    "allEvidenceBindingsVerified": 14,
+    "normalizedOriginalBodiesVerified": 2,
+    "applicationErrorSitesChanged": 5,
+    "reverseTransformationRestoresOriginalBodies": true,
+    "savedReadOnlyConnectorFingerprintObservationsVerified": 2,
+    "savedActualPostgresRecipeRowsVerified": 2,
+    "sourceGuardSecurityDefinerAndEmptySearchPath": true,
+    "postcheckAllPgProcFieldsExceptProsrc": true,
+    "transactionAtomicityAndBoundedWaitsPreserved": true,
+    "businessStatementsAdded": 0,
+    "grantsOrGlobalSettingsChanged": 0
+  },
+  "recordedLocalResults": {
+    "nodeTestsPassed": 7,
+    "flutterInjectedTransportCasesPassed": 10,
+    "flutterTestAnalyzerIssues": 0,
+    "nodeTestsRerunByThisReviewer": false,
+    "SDKJobsRunByThisReviewer": 0,
+    "flutterBoundary": "These fixture cases preserve the same PostgrestException, exact original inputs and one injected gateway callback. Their denied labels do not prove actual HTTP409, server retry exclusion, MFA or committed zero-effect behavior."
+  },
+  "primarySources": [
+    {
+      "title": "Supabase SQLSTATE 40001 troubleshooting",
+      "url": "https://supabase.com/docs/guides/troubleshooting/high-cpu-and-infinite-transaction-retries-when-using-custom-error-codes-in-rpc-functions-77326b",
+      "checkedAt": "2026-10-13T18:43:04.641Z",
+      "supports": "Custom application 40001 can trigger transaction retries in affected PostgREST14; PT409 is recommended for HTTP409; function correction does not stop existing in-flight loops."
+    },
+    {
+      "title": "PostgREST13 custom HTTP SQLSTATE errors",
+      "url": "https://docs.postgrest.org/en/v13/references/errors.html#raise-errors-with-http-status-codes",
+      "checkedAt": "2026-10-13T18:43:04.641Z",
+      "supports": "PTxyz maps its numeric suffix to HTTP status; this is expected transport behavior, not a live response observation.",
+      "v14DocumentationFetch": "429; v13 official mapping plus current Supabase primary guidance used"
+    },
+    {
+      "title": "PostgreSQL CREATE OR REPLACE FUNCTION",
+      "url": "https://www.postgresql.org/docs/current/sql-createfunction.html",
+      "checkedAt": "2026-10-13T18:43:04.641Z",
+      "supports": "Replacement preserves function owner and permissions; other properties follow emitted definition, so the candidate compares all pg_proc metadata except the intended prosrc change."
+    }
+  ],
+  "inference": "Custom40001 source and the saved PostgREST version context justify this repair candidate; these artifacts do not establish the cause or backend identity of the original timed-out request.",
+  "requiredExecutionBoundaries": [
+    "A separate direct-human decision must name these exact candidate bytes before installation; existing runtime approval is not represented here as authorizing new SQL.",
+    "Refresh exact current target bodies and full metadata immediately before installation; fail guards and do not overwrite intervening source changes.",
+    "Do not resend the original unknown cash command; retain its original identities and read committed evidence separately.",
+    "A source patch does not prove an earlier invocation has ended; fresh quiescence proof remains required.",
+    "No backend cancellation, termination, project restart or activity-row correlation is authorized by this review.",
+    "After any authorized installation, bind exact changed function definitions and the installation result in a new finance successor plan/error mapper review before further calls.",
+    "Accept only exact reviewed PT409 application messages at HTTP409 in a later concrete helper; unrelated failures remain unknown stops."
+  ],
+  "bindings": [
+    {
+      "path": "supabase/candidates/wave5_cash_conflict_http409_20261013_r5.sql",
+      "bytes": 3327,
+      "sha256": "99cd801ba156872fb8f6346cc74e667ef9398e3628f466ae0ff44f37b7fdf520"
+    },
+    {
+      "path": "tools/wave5/cash_conflict_http409_20261013_r5.test.mjs",
+      "bytes": 5155,
+      "sha256": "db7089414fd3961e225928858c9f77a57e37ba6e788348f38a370366bffc5286"
+    },
+    {
+      "path": "packages/jentra_platform/test/analytics/cash_conflict_http409_20261013_r5_test.dart",
+      "bytes": 3878,
+      "sha256": "386527eeeb03d33b771b8df58140e075eb7824130af98b08729fb3b7a37ba0d1"
+    },
+    {
+      "path": "docs/verification/wave5/cash-conflict-flutter-tests-20261013-r5-a1.log",
+      "bytes": 900,
+      "sha256": "bb61dac26ba1d91ba1183072578c5e48961abe58ae139e270cf1cb42f44e2476"
+    },
+    {
+      "path": "docs/verification/wave5/cash-conflict-flutter-analysis-20261013-r5-a1.log",
+      "bytes": 98,
+      "sha256": "ffd0e7309d950488a1a189c4ecc73b0ff74602f3cef6454e3eb07401d86bc02c"
+    },
+    {
+      "path": "docs/verification/wave5/cash-conflict-live-source-fingerprints-20261013-r5-a2.json",
+      "bytes": 3066,
+      "sha256": "3974085d63bf1e9486bbececd07653080c2417c3d0014addba6f489c8dc5350d"
+    },
+    {
+      "path": "docs/verification/wave5/cash-conflict-readonly-postgres-recipe-20261013-r5-a1.json",
+      "bytes": 2407,
+      "sha256": "4540f9f0af555b4d1f92597ec772b401b66e7c60631fac4fcbee33b1f186001f"
+    },
+    {
+      "path": "docs/verification/wave5/cash-conflict-root-local-verification-20261013-r5-a1.json",
+      "bytes": 2360,
+      "sha256": "c6c83846e4b6a00da166ccd32424b3c844b655bfbba4d0a36aa105fc175db3ee"
+    },
+    {
+      "path": "docs/verification/wave5/cash-conflict-live-source-metadata-20261013-r5-a1.json",
+      "bytes": 2236,
+      "sha256": "7c7c25929c29f45730dfcc2a953db91c388e939c3d9bd11fa00ceee18b613a48"
+    },
+    {
+      "path": "supabase/migrations/20261008120000_wave5_cash_payment_dates.sql",
+      "bytes": 35937,
+      "sha256": "1463953b0fa76269740a732a59485ff3d160681fb2a6655eedbd8c0aeda42c8a"
+    },
+    {
+      "path": "supabase/migrations/20261008103000_wave5_dated_cash.sql",
+      "bytes": 19954,
+      "sha256": "24b5ab44250ec5239ab2b942277cb104867d8e67288666c6297d4fa694e4b391"
+    },
+    {
+      "path": "packages/jentra_platform/lib/src/analytics/cash_payment_dates_gateway.dart",
+      "bytes": 7303,
+      "sha256": "457f19f82388b3b28b075e8ec626535dd3ad4e19b0ca5028e2273a96e4702bc9"
+    },
+    {
+      "path": "packages/jentra_platform/lib/src/analytics/dated_cash_gateway.dart",
+      "bytes": 9910,
+      "sha256": "dcad60c7c5c55ab1b7f6dd1e0c6be3658897a59c4522b4d8854a7d41dfb53fd3"
+    },
+    {
+      "path": "tools/wave5/approved_management_installer.mjs",
+      "bytes": 18163,
+      "sha256": "f6266b37e9c5eb254a794aedd512984d35865e2ff4ddfd19f6a67cf5f9750bd5"
+    }
+  ],
+  "execution": {
+    "sqlCandidateExecuted": false,
+    "installationPerformed": false,
+    "liveQueries": 0,
+    "privateInputRead": false,
+    "networkRequestsToJentraOrSupabaseProject": 0,
+    "publicPrimaryDocumentationBrowse": true,
+    "SDKJobs": 0,
+    "nativeActions": 0,
+    "sharedSourceEdited": false
+  },
+  "ownerInstallationApproval": false,
+  "ownerAcceptance": false,
+  "authenticatedNative": false,
+  "actualHttp409Observed": false,
+  "originalTimedOutDenialHttpObserved": false,
+  "production": false,
+  "realBilling": false
+}

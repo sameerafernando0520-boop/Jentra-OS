@@ -384,8 +384,8 @@ export async function runLiveVerification(input) {
     startedAt: new Date().toISOString(), races: [], invalidBoundaries: [], load: null,
     gates: { independentSessionContention: false, targetScaleLoad: false, invalidBoundaryRejections: false, ownerAcceptance: false,
       authenticatedNative: false, actualDelivery: false, actualModel: false }, failureCode: null };
-  await journal({ type: 'live-start', ...report });
   try {
+    await journal({ type: 'live-start', ...report });
     const proof = await boundedCall(signal => provider.verifyPreflight({ review, plan, approval, binding, signal }), 30000, controller.signal);
     validatePreflight(proof, review, plan, binding);
     report.preflight = { observedAt: proof.observedAt, ledgerSha256: proof.ledgerSha256, contractFingerprintSha256: proof.contractFingerprintSha256,

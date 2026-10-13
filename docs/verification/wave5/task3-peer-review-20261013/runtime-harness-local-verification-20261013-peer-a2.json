@@ -1,0 +1,271 @@
+{
+  "kind": "independent-local-runtime-harness-verification",
+  "actualStartedAt": "2026-10-13T18:36:01.921Z",
+  "actualFinishedAt": "2026-10-13T18:36:04.264Z",
+  "nodeVersion": "v24.11.0",
+  "command": [
+    "node",
+    "--test",
+    "--test-isolation=none",
+    "--test-reporter=tap",
+    "tools/wave5/runtime_coordinator.test.mjs"
+  ],
+  "childExitCode": 0,
+  "signal": null,
+  "errorCode": null,
+  "summary": {
+    "tests": 41,
+    "passed": 41,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "todo": 0
+  },
+  "testIdentities": [
+    "current runtime bundle is verified byte-for-byte and produces the exact 2,000-session distribution",
+    "the endpoint inventory excludes model, webhook sending and unscoped worker dispatch",
+    "plan validation rejects a shortened, over-rate, wrong-target or incomplete workload",
+    "owner decision binds the exact runtime scope; preparation binds the coordinator without inventing another owner approval",
+    "live entry point refuses missing approval before invoking any private provider operation",
+    "live entry revalidates canonical review and source-bound plan before touching private provider",
+    "private factory context cannot mutate approved review, plan or bindings, and caller changes cannot affect its copy",
+    "a hashed independent review cannot be relabeled approved when its actual verdict or source bindings disagree",
+    "load-001 billing permission and duplicate execution require genuine MFA in the relevant real sessions",
+    "fresh installed contracts, capacity, quiesced schedules and exact reviewed populations are mandatory",
+    "real session validation requires 2,000 distinct online-verified server rows and exact actor slots",
+    "public records do not copy provider handles, raw tokens, response bodies or error details",
+    "provider GuardError text and uppercase private values are normalized instead of copied into public evidence",
+    "slow evidence and provider queueing classify the actual send and prevent sends beyond the workload window",
+    "a serial provider queue cannot send a timed request after the end or claim undispatched session coverage",
+    "holding an entire warmup in the evidence queue fails actual dispatch lag instead of releasing a passing catch-up burst",
+    "response command mismatch, omitted transport hooks and unknown outcomes stay uncertain",
+    "failed intent persistence prevents the request; pre-aborted runs do not dispatch",
+    "public case-preparation intent retains exact reviewed identities and is acknowledged before any provider setup",
+    "failed public case-preparation persistence prevents the provider setup and every later case operation",
+    "all readiness proofs precede the common release; real transport intervals overlap",
+    "serial private transport is detected despite concurrently scheduled promises and slow journaling",
+    "duplicate Auth sessions and failed readiness cannot release a race",
+    "a stalled transport times out once and is retained as uncertain without an automatic retry",
+    "overlap uses half-open actual transport intervals and never infers missing server spans",
+    "committed snapshots reject rollback reads, wrong tenants, stale observations and losing effects",
+    "100 duplicate response successes still require exactly one committed business effect",
+    "20 quota reservations require ten units, ten denials and per-denial zero-effect evidence",
+    "seat races enforce the final seat and do not forgive audit or receipt effects on a losing request",
+    "admission versus activation allows either lock winner while enforcing the shared seat cap",
+    "activation, execution and lease response races require their own committed record counts",
+    "the duplicate coordinator binds one original command, reads committed effects before and after overlap, and restores only reviewed state",
+    "unknown duplicate mutation preserves all original identities and skips restoration even when the committed read shows one effect",
+    "nearest-rank p95 uses measured samples and strict limits rather than averaging them",
+    "unsupported limit fixtures remain blocked and never masquerade as actual rejection evidence",
+    "database row counters never substitute for an actual no-send observation covering all reviewed workers and the full load window",
+    "paced dispatch uses every measured session, gives billing actors read permission only and mints fresh command identities",
+    "a rejected timed request aborts subsequent dispatch and cannot be renamed a successful workload",
+    "unsupported generator inflight capacity is retained as incomplete without silently dropping samples",
+    "a latency equal to the limit fails, and warmup, incomplete coverage or a cached command cannot pass the load gate",
+    "failed durable live-start journaling clears the run timer and closes the provider before a failed finish write"
+  ],
+  "exactSourceTestIdentityMatch": true,
+  "filesBefore": [
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "bytes": 31294,
+      "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.mjs",
+      "bytes": 35744,
+      "sha256": "c1542ad519fdb557f53046636810ffcbcbc61ecef7ecb2656ccc4a915b6b368e"
+    },
+    {
+      "path": "tools/wave5/run_runtime_verification.mjs",
+      "bytes": 9119,
+      "sha256": "143f460b88c1e1dba4a06b7ed869fb5de46e6eff77421ebf8d0aee15efb74b20"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.test.mjs",
+      "bytes": 47807,
+      "sha256": "b32d651f0d8edd87f369dc47227644f5ffd31b0f53680afab8065fb53dc90557"
+    },
+    {
+      "path": "tools/wave5/PRIVATE_PROVIDER_CONTRACT.md",
+      "bytes": 21178,
+      "sha256": "53b691012312db8d0c6b634c8b8cc21690cac73e80a66b286dd4ab97b1c0ec30"
+    },
+    {
+      "path": "tools/wave5/verify_local_harness.mjs",
+      "bytes": 6278,
+      "sha256": "db5b4c163c549b32e6e831483fdb4f6c07c8158c50e7ef3565000d04f48e9834"
+    },
+    {
+      "path": "tools/wave5/compose_harness_review.mjs",
+      "bytes": 13820,
+      "sha256": "e6bbc912d5c8fff83666b035aa9d4697def0ae0ddb32382586547595cfe3fd53"
+    },
+    {
+      "path": "docs/verification/wave5/integrated-runtime-protocol-20261006.md",
+      "bytes": 9262,
+      "sha256": "a3f6e654699a418b2ac41f31fa9c8a8e2a4a97582ad6d10dc710bccf58caa64a"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
+      "bytes": 115108,
+      "sha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5"
+    },
+    {
+      "path": "supabase/migrations/20260831193714_create_greenfield_foundation.sql",
+      "bytes": 41494,
+      "sha256": "d104871a777c31b9562fac2e5200d9801b24c0ebd28a9b0e75a43bdc13171f8a"
+    },
+    {
+      "path": "supabase/migrations/20260904121647_wave3_operational_foundation.sql",
+      "bytes": 40230,
+      "sha256": "b7a840b31a2d8a89d0a1539151769130c352fe7ace0ea2d76f4057aab5b2d737"
+    },
+    {
+      "path": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+      "bytes": 9213,
+      "sha256": "be586326b7d8ec380a5524a5d8232e67639d677eb192b9fe29da135ee9ffe997"
+    },
+    {
+      "path": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+      "bytes": 10964,
+      "sha256": "1ea4ab076cb3deaa9d0f7f92b56c47effc1a0ad45e14839156a2fd6a2d1bd8ed"
+    },
+    {
+      "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "bytes": 14205,
+      "sha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e"
+    },
+    {
+      "path": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+      "bytes": 16904,
+      "sha256": "b75e9cf94107fd9a959ced43f9e643b163ed579f95fb68c8de7b9e739b10d02e"
+    },
+    {
+      "path": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "bytes": 12761,
+      "sha256": "339e9e86074887d164dd339eb17ac54943c39fca0caf50db575c48529456a9f5"
+    },
+    {
+      "path": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql",
+      "bytes": 28824,
+      "sha256": "1a636229a0749cf9d6334ae49efe8ff38627b6a2d1bb642789a28e86efd1c663"
+    },
+    {
+      "path": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "bytes": 18114,
+      "sha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc"
+    }
+  ],
+  "filesAfter": [
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "bytes": 31294,
+      "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.mjs",
+      "bytes": 35744,
+      "sha256": "c1542ad519fdb557f53046636810ffcbcbc61ecef7ecb2656ccc4a915b6b368e"
+    },
+    {
+      "path": "tools/wave5/run_runtime_verification.mjs",
+      "bytes": 9119,
+      "sha256": "143f460b88c1e1dba4a06b7ed869fb5de46e6eff77421ebf8d0aee15efb74b20"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.test.mjs",
+      "bytes": 47807,
+      "sha256": "b32d651f0d8edd87f369dc47227644f5ffd31b0f53680afab8065fb53dc90557"
+    },
+    {
+      "path": "tools/wave5/PRIVATE_PROVIDER_CONTRACT.md",
+      "bytes": 21178,
+      "sha256": "53b691012312db8d0c6b634c8b8cc21690cac73e80a66b286dd4ab97b1c0ec30"
+    },
+    {
+      "path": "tools/wave5/verify_local_harness.mjs",
+      "bytes": 6278,
+      "sha256": "db5b4c163c549b32e6e831483fdb4f6c07c8158c50e7ef3565000d04f48e9834"
+    },
+    {
+      "path": "tools/wave5/compose_harness_review.mjs",
+      "bytes": 13820,
+      "sha256": "e6bbc912d5c8fff83666b035aa9d4697def0ae0ddb32382586547595cfe3fd53"
+    },
+    {
+      "path": "docs/verification/wave5/integrated-runtime-protocol-20261006.md",
+      "bytes": 9262,
+      "sha256": "a3f6e654699a418b2ac41f31fa9c8a8e2a4a97582ad6d10dc710bccf58caa64a"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
+      "bytes": 115108,
+      "sha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5"
+    },
+    {
+      "path": "supabase/migrations/20260831193714_create_greenfield_foundation.sql",
+      "bytes": 41494,
+      "sha256": "d104871a777c31b9562fac2e5200d9801b24c0ebd28a9b0e75a43bdc13171f8a"
+    },
+    {
+      "path": "supabase/migrations/20260904121647_wave3_operational_foundation.sql",
+      "bytes": 40230,
+      "sha256": "b7a840b31a2d8a89d0a1539151769130c352fe7ace0ea2d76f4057aab5b2d737"
+    },
+    {
+      "path": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+      "bytes": 9213,
+      "sha256": "be586326b7d8ec380a5524a5d8232e67639d677eb192b9fe29da135ee9ffe997"
+    },
+    {
+      "path": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+      "bytes": 10964,
+      "sha256": "1ea4ab076cb3deaa9d0f7f92b56c47effc1a0ad45e14839156a2fd6a2d1bd8ed"
+    },
+    {
+      "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "bytes": 14205,
+      "sha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e"
+    },
+    {
+      "path": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+      "bytes": 16904,
+      "sha256": "b75e9cf94107fd9a959ced43f9e643b163ed579f95fb68c8de7b9e739b10d02e"
+    },
+    {
+      "path": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "bytes": 12761,
+      "sha256": "339e9e86074887d164dd339eb17ac54943c39fca0caf50db575c48529456a9f5"
+    },
+    {
+      "path": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql",
+      "bytes": 28824,
+      "sha256": "1a636229a0749cf9d6334ae49efe8ff38627b6a2d1bb642789a28e86efd1c663"
+    },
+    {
+      "path": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "bytes": 18114,
+      "sha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc"
+    }
+  ],
+  "sourceFilesUnchanged": true,
+  "log": {
+    "path": "docs/verification/wave5/task3-peer-review-20261013/runtime-harness-local-verification-20261013-peer-a2.tap",
+    "bytes": 11093,
+    "sha256": "8bba9aacbd2f487cc5df4a7bf9688198bcc9aeb50faca598c083603fd982f6e5"
+  },
+  "sourceApplication": {
+    "path": "docs/verification/wave5/task3-peer-review-20261013/harness-startup-cleanup-applied-a2.json",
+    "bytes": 2174,
+    "sha256": "43ef122b7095cb273c70cdf59398fa903fe216bee42c8c2ba58df1afdad83658"
+  },
+  "executedLive": false,
+  "networkCalls": 0,
+  "SDKJobs": 0,
+  "nativeActions": 0,
+  "privateInputRead": false,
+  "independentSessionContention": false,
+  "targetScaleLoad": false,
+  "ownerAcceptance": false
+}

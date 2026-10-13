@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: HTTP platform is classified exactly and remains denied by the diagnostic-only revision
+ok 1 - HTTP platform is classified exactly and remains denied by the diagnostic-only revision
+  ---
+  duration_ms: 2.5115
+  type: 'test'
+  ...
+# Subtest: finite classes separate lookalikes, ports, credentials and malformed requests without logging values
+ok 2 - finite classes separate lookalikes, ports, credentials and malformed requests without logging values
+  ---
+  duration_ms: 1.3173
+  type: 'test'
+  ...
+# Subtest: v4 keeps every v3 allowed or rejected route outcome unchanged
+ok 3 - v4 keeps every v3 allowed or rejected route outcome unchanged
+  ---
+  duration_ms: 2.5206
+  type: 'test'
+  ...
+# Subtest: one finite diagnostic is emitted across concurrent handlers without accessing private request fields
+ok 4 - one finite diagnostic is emitted across concurrent handlers without accessing private request fields
+  ---
+  duration_ms: 0.7459
+  type: 'test'
+  ...
+# Subtest: sink failure leaves the authenticated handler and its return unchanged
+ok 5 - sink failure leaves the authenticated handler and its return unchanged
+  ---
+  duration_ms: 0.5173
+  type: 'test'
+  ...
+# Subtest: both v4 factories preserve the full v3 handler source except for the route import
+ok 6 - both v4 factories preserve the full v3 handler source except for the route import
+  ---
+  duration_ms: 9.5831
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 48.6823

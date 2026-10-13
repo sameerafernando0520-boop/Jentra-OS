@@ -1,0 +1,20 @@
+{
+  "kind": "peer-successor-publication-invariant-attempt-failure",
+  "recordedAt": "2026-10-13T18:51:39.669Z",
+  "actualExecChunkId": "178a6c",
+  "exitCode": 1,
+  "error": "AssertionError in exact source delta comparison",
+  "reason": "The validation expression assumed CRLF while the preserved/current coordinator uses LF. It did not perform the intended substring replacement, so the expected comparison remained the old source. No product/source/test failure was asserted and no successor output had yet been written.",
+  "coordinator": {
+    "path": "tools/wave5/runtime_coordinator.mjs",
+    "bytes": 35744,
+    "sha256": "c1542ad519fdb557f53046636810ffcbcbc61ecef7ecb2656ccc4a915b6b368e"
+  },
+  "coordinatorTests": {
+    "path": "tools/wave5/runtime_coordinator.test.mjs",
+    "bytes": 47807,
+    "sha256": "b32d651f0d8edd87f369dc47227644f5ffd31b0f53680afab8065fb53dc90557"
+  },
+  "sourceMutatedByFailedValidation": false,
+  "correctedValidation": "Detect the preserved newline bytes before reconstructing the exact minimal source delta."
+}

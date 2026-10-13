@@ -1,0 +1,122 @@
+{
+  "kind": "independent-primary-worker-v4-diagnostic-source-review",
+  "reviewedAt": "2026-10-13T18:42:55.685Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "technicalVerdict": "approved for the bounded diagnostic-only development successor",
+  "scope": "Two existing Wave 5 workers, five changed source files and one finite observation per isolate.",
+  "directDelegation": "docs/verification/wave5/task3-completion-20261013/resumed-autonomy-delegation.json",
+  "personalHumanSignatureClaimed": false,
+  "noRouteAllowlistExpansion": true,
+  "httpRoutesRemainDenied": true,
+  "exactRoutingFunctionUnchanged": true,
+  "factoryImportsOnly": true,
+  "entrypointImportsOnly": true,
+  "downstreamCustomAuthenticationUnchanged": true,
+  "finiteFieldsReviewed": [
+    "originClass",
+    "pathClass",
+    "hostnameClass",
+    "portClass",
+    "https",
+    "query",
+    "hash",
+    "userinfo",
+    "routeRecognized"
+  ],
+  "rawRequestValuesLogged": false,
+  "maximumDiagnosticsPerIsolate": 1,
+  "noDiagnosticReadOfHeadersBodyOrMethod": true,
+  "reasoning": "Only finite classifications and the diagnostic marker change. Canonical routing and every schedule, caller, HMAC, scoped RPC and authority check retain their exact v3 source. A sink failure cannot alter the handler response. The diagnostic identifies the actual internal origin without logging a URL, host value or private request field.",
+  "sourcePreparation": {
+    "path": "docs/verification/wave5/worker-v4-diagnostic-source-preparation-20261014-r5.json",
+    "bytes": 2597,
+    "sha256": "b8e6c4eb0fd174e92d7fd9a188492517053bea2760b439a4733f7987d27558be"
+  },
+  "sourceBindings": [
+    {
+      "path": "workers/wave5/edge_route_20261014_r5_v4.mjs",
+      "bytes": 4177,
+      "sha256": "ea01c16c75905e431131f0128d9ec9972a77e1b1e58b0a90f2e9b75dd0cfc3b0"
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261014_r5_v4.mjs",
+      "bytes": 6921,
+      "sha256": "4ce1af5886dd0fe9f20a0ae33ef89b53ac492dc1fea4c42e099c0c4ebb23cb0c"
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261014_r5_v4.mjs",
+      "bytes": 5658,
+      "sha256": "2b138496f7879cdef9231e8c315ba62103bdd29e9383be321ef157b708fd60b9"
+    },
+    {
+      "path": "supabase/functions/wave5-runtime/index_20261014_r5_v4.ts",
+      "bytes": 733,
+      "sha256": "ef89264e2adac5aa329c73aee987d802e22b50a2084053134154b104054c82e2"
+    },
+    {
+      "path": "supabase/functions/wave5-receiver/index_20261014_r5_v4.ts",
+      "bytes": 757,
+      "sha256": "95d79654c59910e85cc7e0b462a10df223d6bce8d91ae2796b0ed1a6ca33c4c9"
+    },
+    {
+      "path": "workers/wave5/edge_route_20261013_r5_v3.mjs",
+      "bytes": 3750,
+      "sha256": "e9f173d3e1330ac08854c2803aea95c8cffa0f20f343173bde0c3696d7996531"
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261013_r5_v3.mjs",
+      "bytes": 6921,
+      "sha256": "363fea0ed54c3edb2896882e153f3ef7eeeba5e7b56ef3847ff68ed5e7af24cb"
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261013_r5_v3.mjs",
+      "bytes": 5658,
+      "sha256": "e954d4b74faef8182abd49fc6a43c8e7fb212b6eec34c4b5944dcb255d50c07b"
+    },
+    {
+      "path": "supabase/functions/wave5-runtime/index_20261013_r5_v3.ts",
+      "bytes": 733,
+      "sha256": "970969a1ccff5d1b7d6c604a7d54e94ea3b17572d3bb0c0df692d10de178d580"
+    },
+    {
+      "path": "supabase/functions/wave5-receiver/index_20261013_r5_v3.ts",
+      "bytes": 757,
+      "sha256": "0cc873ae5d43a87f2f15e6457ad4c5ac368db031a45ce24d064ff090c96eaa3b"
+    }
+  ],
+  "actualIndependentLocalRun": {
+    "startedAt": "2026-10-13T18:42:55.505Z",
+    "finishedAt": "2026-10-13T18:42:55.677Z",
+    "nodeVersion": "v24.11.0",
+    "command": [
+      "node",
+      "--test",
+      "--test-isolation=none",
+      "--test-reporter=tap",
+      "workers/wave5/edge_route_finite_http_diagnostic_20261014_r5_v4.test.mjs"
+    ],
+    "exitCode": 0,
+    "tests": 6,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "log": {
+      "path": "docs/verification/wave5/task3-completion-20261013/worker-v4-independent-focused-tests.tap",
+      "sha256": "f2357ba54326f92f2becc2121e9d3004e10e550211fda1c7b3800467f7c96fdd",
+      "bytes": 1526
+    },
+    "testSource": {
+      "path": "workers/wave5/edge_route_finite_http_diagnostic_20261014_r5_v4.test.mjs",
+      "bytes": 4124,
+      "sha256": "d21ccf689f60000b5bad55271a6357d1295919c6498e79c983c4fe05031fab67"
+    }
+  },
+  "deployedByThisReview": false,
+  "probesSentByThisReview": 0,
+  "schedulesResumedByThisReview": false,
+  "authenticatedWorkerSuccessEstablished": false,
+  "actualDeliveryEstablished": false,
+  "production": false,
+  "realBilling": false,
+  "boundary": "This approves the reviewed diagnostic source, not a routing fix, successful delivery or a new personal human signoff. The live owner must bind the complete deployment payload and verify returned sources before its single scoped probe."
+}
