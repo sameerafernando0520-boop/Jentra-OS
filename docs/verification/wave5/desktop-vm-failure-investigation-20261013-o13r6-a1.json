@@ -1,0 +1,102 @@
+{
+  "kind": "saved-desktop-suite-vm-failure-investigation",
+  "investigatedAt": "2026-10-13T17:43:00Z",
+  "revision": "o13r6",
+  "sdkJobsLaunchedByInvestigator": 0,
+  "networkCalls": 0,
+  "sourceFilesChanged": false,
+  "goldenImagesChanged": false,
+  "inputs": [
+    {"path":"docs/verification/wave5/windows-test-preview-desktopAll-20261009-o13r6.json","sha256":"bf6a9a4b355b47a7217885d5d8edb80124e1800f663b8baeef8a55a014259280"},
+    {"path":"docs/verification/wave5/windows-test-preview-desktopAll-20261009-o13r6.log","sha256":"fc3ab3245e4ec58cee242d67f08052ceca4056521f8da1bbe588048d3bc3bf9a"},
+    {"path":"docs/verification/wave5/windows-test-preview-source-20261009-o13r6.json","sha256":"aeff85145d17bbf94438d1de0107dade4a43d5c70c3ec2509f6a63814b6854dd"},
+    {"path":"docs/verification/wave5/windows-test-connected-source-20261009-o13r6.json","sha256":"c59a827fbd899ff563ac581aeb907a3873068b0430f6c0fbae7966266429f997"},
+    {"path":"scripts/wave5/run_windows_test_build.ps1","sha256":"1466813f7136cfc8877480aec244204ca0707a7845324cb46532c41ee9e62cea"},
+    {"path":"scripts/wave5/run_flutter_with_capture_env.mjs","sha256":"164fea4353f489f40a0e8e8b74ccd173c2538c04d230acdd9ac188f37778ca37"}
+  ],
+  "runner": {
+    "startedAt": "2026-10-13T16:23:25.3264768Z",
+    "finishedAt": "2026-10-13T17:01:16.5583473Z",
+    "exitCode": -1073740791,
+    "workingDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9o13r6\\preview\\apps\\jentra_desktop",
+    "command": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded",
+    "captureEnvironmentWrapper": "scripts/wave5/run_flutter_with_capture_env.mjs",
+    "stageWasBuild": false,
+    "terminalTestSummaryPresent": false
+  },
+  "observedCounts": {
+    "finalProgressLine": 1825,
+    "finalProgressElapsed": "35:29",
+    "passesAtLastProgress": 1384,
+    "failuresAtLastProgress": 1,
+    "skippedAtLastProgress": 0,
+    "recordedFailureMarkers": 1,
+    "progressMarkers": 1475,
+    "logLines": 2089,
+    "completedSuiteTotal": null,
+    "remainingUnexecutedTests": null,
+    "explicitGoldenMismatchFailuresObserved": 0,
+    "fullGoldenSuitePassed": false
+  },
+  "recordedFailure": {
+    "line": 1810,
+    "suite": "apps/jentra_desktop/test/requisition_interaction_test.dart",
+    "stage": "loading",
+    "messageLine": 1811,
+    "message": "Connection closed before test suite loaded.",
+    "assertionFailureObserved": false,
+    "goldenMismatchObserved": false,
+    "requisitionBehaviorPassed": false
+  },
+  "vmDiagnostics": {
+    "reportedVersion": "3.13.4 stable windows_x64",
+    "outOfMemoryLines": [683,1128,1244,1774,1826],
+    "outOfMemoryCount": 5,
+    "jitCrashDiagnosticLines": [691,1423,1808],
+    "workerThreadCreationFailureLine": 2080,
+    "workerThreadCreationFailure": "Could not start thread DartWorker: 22",
+    "classification": "incomplete suite with explicit VM memory and worker-start failures",
+    "underlyingHostOrApplicationResourceCauseEstablished": false
+  },
+  "snapshotReadOnlyHashAudit": {
+    "modes": ["Preview","Connected"],
+    "baseFilesPerMode": 1069,
+    "snapshotFilesHashedPerMode": 1069,
+    "snapshotManifestMismatchesPerMode": {"Preview":0,"Connected":0},
+    "declaredAndObservedOverlayPaths": ["apps/jentra_desktop/windows/CMakeLists.txt","apps/jentra_desktop/windows/runner/Runner.rc","apps/jentra_desktop/windows/runner/main.cpp"],
+    "desktopDependencyScope": ["apps/jentra_desktop","packages/jentra_domain","packages/jentra_platform","packages/jentra_design_system"],
+    "entrypoint": "lib/main.dart",
+    "controlledEvidence": false,
+    "allWorkspaceManifestsIncluded": true,
+    "defaultAcceptanceStoresRead": false,
+    "currentWorkspaceDifferencesPerMode": [{"path":"apps/jentra_employee/pubspec.yaml","capturedSha256":"b88f5e1be8f591efb047866ca96cd68dcfe6afcca7a395a54628364efdae5118","currentSha256":"1496f839069c2c40bd986f872e900cbe9d8c905b9fb6e9b26965aafe9b59aa7f"}],
+    "employeeManifestChangePreserved": true,
+    "currentWorkspaceWholeSnapshotMatches": false,
+    "frozenSnapshotBytesMatchRecordedManifest": true
+  },
+  "executionClosureObservedAfterRun": [
+    {"path":"C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe","sha256":"0a2a47d8ce3a64e276e5049617247592ff29c58d85a2f4c5a6d71f145816d6ee"},
+    {"path":"C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot","sha256":"e6e1643e4fc799f9ed8a8acadaa5f110ff2b5ae057600d1354b791d6ef8e0217"},
+    {"path":"build/w5win9o13r6/preview/.dart_tool/package_config.json","sha256":"b2135ebe673bff5a3fe1f9d8d4a4be97bbfac4c25f26b41643471eb719ba94a4"},
+    {"path":"build/w5win9o13r6/preview/.dart_tool/package_graph.json","sha256":"0d373182790c65cd308467e69feb28a29d3ace66b9e1d3bf27994b5ba13bf15e"}
+  ],
+  "dependencyResolutionInspection": {
+    "jentraWorkspacePackageRootsAreRelativeToSnapshot": true,
+    "desktopDirectPackageRoots": ["../apps/jentra_desktop","../packages/jentra_domain","../packages/jentra_platform","../packages/jentra_design_system"],
+    "employeeManifestIsWorkspaceDependencyMetadata": true,
+    "externalPubCacheTransitiveBytesFullyHashedByThisInvestigation": false,
+    "sdkByteIdentityDuringOriginalRunEstablished": false
+  },
+  "recommendedSerialFollowUp": {
+    "requiresFreshRootConfirmedSdkQuiescence": true,
+    "doNotStopOtherWorkspaceSdkProcess": true,
+    "firstStep": "One isolated requisition_interaction_test.dart rerun in the preserved Preview snapshot, using --no-pub --concurrency=1 --reporter=expanded and the capture-environment wrapper. Record a NEW log and metadata; preserve the failed run.",
+    "firstStepPurpose": "Determine whether this nine-case suite can load and complete without the surrounding full-suite memory pressure. An isolated pass alone cannot establish the complete desktop suite.",
+    "secondStep": "After the isolated result, collect the remaining complete desktop evidence serially under source bindings, with jentra_app_test.dart in its own process if the full-directory process again exhausts resources. Keep strict approved-image comparisons and record per-batch terminal counts, failures, skips and exits.",
+    "currentWorkspaceEvidence": "A new additive snapshot must preserve the current Employee manifest change; do not overwrite or resynchronize the saved o13r6 snapshot to claim current workspace equality.",
+    "goldenBaselinesMustNotBeReplaced": true,
+    "freshBuildAndRenderEvidenceStillRequiredSeparately": true,
+    "followUpExecutedByInvestigator": false
+  },
+  "gates": {"completeDesktopSuite":false,"newWindowsBuild":false,"newRenderEvidence":false,"authenticatedNative":false,"nativeKeyboard":false,"ownerAcceptance":false,"production":false,"realBilling":false}
+}
