@@ -2,7 +2,7 @@
 
 Android/iPhone companion for Jentra OS. This first build implements employee account access, exact account-link onboarding, shared reviews and protected local leave drafts. The complete product blueprint remains in [EMPLOYEE_APP_BLUEPRINT.md](../../docs/blueprint/mobile-apps/EMPLOYEE_APP_BLUEPRINT.md).
 
-The app reuses Jentra's supplied artwork, bundled fonts and semantic colors. Version 0.3.0 adds a personal navy identity header, grouped service rows, refined selected navigation capsules and a redesigned Profile page. At enlarged text or in Sinhala/Tamil, the dock becomes Home/Activity/More; Leave, Work and Pay remain reachable through the service screens.
+The app reuses Jentra's supplied artwork, bundled fonts and semantic colors. Version 0.3.1 adds optimized Android packaging and removes unused photo codecs from the reachable app code. The personal navy identity header, grouped service rows, selected navigation capsules and Profile page introduced in 0.3.0 remain. At enlarged text or in Sinhala/Tamil, the dock becomes Home/Activity/More; Leave, Work and Pay remain reachable through the service screens.
 
 ## UI and feature upgrade
 
@@ -46,8 +46,19 @@ Only the API URL and **public publishable key** belong in the client configurati
 ```powershell
 flutter test --no-pub --concurrency=1
 flutter analyze --no-pub
-flutter build apk --debug --no-pub --dart-define-from-file=.env.employee-development.json
+# From the repository root, create small installable development APKs:
+./scripts/employee/build_small_apks.ps1
 ```
+
+## Small Android APKs
+
+Use the optimized ARM64 APK for an ARM64 phone, or the ARMv7 APK for a 32-bit ARM phone. Each APK is a standalone installation containing one processor architecture. The build script uses release compilation, R8 code/resource shrinking, icon-font tree shaking and a separate directory for compiler debug symbols. English, Sinhala, Tamil, the supplied artwork and profile-photo support are retained. `-IncludeEmulator` also builds an x86_64 APK.
+
+Outputs are under `build/deliverables/0.3.1-optimized-development/`, with exact sizes and SHA-256 values in `apk-manifest.json`. The script rejects debug runtime content, multiple architectures in one APK and files above a 40 MiB budget. See the [size reduction verification](../../docs/verification/employee-app/apk-size-20261013/result.md).
+
+These optimized development builds use `com.jentra.employee.dev` and the existing local Android debug signer, preserving the development app's identity while disabling the debug runtime. Store releases still require a separate distribution signer. The script passes `--android-project-arg=jentraDevelopmentRelease=true` explicitly to this build and verifies the actual package identity and signature before copying an APK to deliverables. If the previous 0.3.0 APK exists, its signing certificate must also match.
+
+The old universal debug APK is intended for developer debugging and remains a historical artifact. Its three engine architectures, unoptimized Dart kernel and validation libraries made it 169.53 MiB. [Flutter's Android build guidance](https://docs.flutter.dev/deployment/android#build-an-apk) describes per-architecture release APKs; [Flutter's app size guide](https://docs.flutter.dev/perf/app-size) explains debug overhead.
 
 Native secure storage is required for authenticated operation. The development web host is an unconfigured visual review surface; it never substitutes plaintext browser storage for native employee storage. Representative phone renders use fixtures under `test/`, which the production entrypoint never imports.
 

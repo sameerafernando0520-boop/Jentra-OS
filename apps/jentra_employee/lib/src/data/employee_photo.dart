@@ -44,9 +44,14 @@ Uint8List normalizeEmployeePhoto(Uint8List source) {
     );
   }
   try {
-    final decoder = img.findDecoderForData(source);
-    if (decoder == null ||
-        (decoder is! img.JpegDecoder && decoder is! img.PngDecoder)) {
+    // Select only the two supported formats. The generic decoder registry keeps
+    // unrelated TIFF, WebP, GIF and other codecs reachable in the mobile binary.
+    final img.Decoder decoder;
+    if (source.length >= 2 && source[0] == 0xff && source[1] == 0xd8) {
+      decoder = img.JpegDecoder();
+    } else if (source.length >= 8 && img.PngDecoder().isValidFile(source)) {
+      decoder = img.PngDecoder();
+    } else {
       throw const FormatException('Only JPG and PNG are supported.');
     }
     final info = decoder.startDecode(source);

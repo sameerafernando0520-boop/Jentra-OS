@@ -1,7 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { PROJECT, BUNDLE, loadApprovedInputs, decodePublicResult } from './approved_management_installer.mjs';
+import { PROJECT, BUNDLE, decodePublicResult } from './approved_management_installer.mjs';
+import { loadApprovedInputs } from '../../build/wave5-approved-execution-20261013-r5-a2/tools/wave5/approved_management_installer.mjs';
 import { hashBytes } from './runtime_contract.mjs';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
@@ -14,7 +15,18 @@ async function read(file, sha256) {
   evidence[file] = { path: file, sha256: hashBytes(bytes), bytes: bytes.length };
   return JSON.parse(bytes);
 }
+const sourceSnapshot = await read(base + 'approved-isolated-execution-snapshot-20261013-r5-a2.json',
+  '9c9e856c2cfdb852a3a9b9e66474f14c86a32dc72cc5b613e806699b2fb78c01');
+must(sourceSnapshot.approvedBindingCount === 5539 && sourceSnapshot.uniqueApprovedFileCount === 5468
+  && sourceSnapshot.recoveredBindings.length === 10 && sourceSnapshot.originalApprovalValidatorModified === false
+  && sourceSnapshot.concurrentChangesPreserved === true, 'EXACT_APPROVED_SOURCE_SNAPSHOT_REQUIRED');
 await loadApprovedInputs();
+const currentSourceChanges = [];
+for (const binding of sourceSnapshot.approvedBindings) {
+  const sha256 = hashBytes(await fs.readFile(path.join(root, binding.path)));
+  if (sha256 !== binding.sha256) currentSourceChanges.push({ path: binding.path,
+    approvedSha256: binding.sha256, currentSha256AtRead: sha256, currentSourceReplaced: false });
+}
 const prior = await read(base + 'approved-runtime-progress-checkpoint-20261013-r5-a2.json', 'ec4e54dd5a65297fa187f9573f7b4da30dece39a1694749b8d07e5eb6e55d793');
 for (const [kind, binding] of Object.entries(prior.evidence)) {
   const bytes = await fs.readFile(path.join(root, binding.path));
@@ -55,15 +67,35 @@ await read(base + 'genuine-finance-finance-20261013-r5-1791894738890/ratios-and-
 await read(base + 'genuine-finance-finance-20261013-r5-1791894738890/date-payroll_obligation.json');
 await read(base + 'finance-stale-command-read-only-resolution-20261013-r5-a1.json');
 const sourceReconciliation = await read(base + 'finance-remaining-readonly-reconciliation-20261013-r5-a2.json', '57e51d82616158e1eb3b97ab1f574a2091c9bd0f022c0079d287842724d60f67');
-const prerequisites = await read(base + 'private-prerequisites-readonly-refresh-20261013-r5-a3.json');
-const ready = await read(base + 'private-owner-input-ready-20261013-r5-a4.json', '67c156db4b4e7050afb324f65808cd15687c55719ae04a7932d2aff4a2b1c946');
+const prerequisites = await read(base + 'private-prerequisites-readonly-refresh-20261013-r5-a4.json');
+const financeAudit = await read(base + 'finance-runtime-independent-evidence-review-20261013-r5-a1.json',
+  '735ea950c19d36ae696400ced02d857845fdf8f501dd9e00cb7ad2f8e5a67415');
+must(financeAudit.checks.passed === 111 && financeAudit.checks.failed === 0,
+  'INDEPENDENT_FINANCE_SAVED_EVIDENCE_REVIEW_REQUIRED');
+const cashCandidateVerification = await read(base + 'cash-conflict-root-local-verification-20261013-r5-a1.json',
+  'c6c83846e4b6a00da166ccd32424b3c844b655bfbba4d0a36aa105fc175db3ee');
+must(cashCandidateVerification.node.passed === 7 && cashCandidateVerification.flutter.passed === 10
+  && cashCandidateVerification.sqlCandidateInstalled === false, 'SEPARATE_CASH_CANDIDATE_LOCAL_EVIDENCE_REQUIRED');
+const workerV3 = await read(base + 'worker-platform-origin-v3-runtime-review-20261013-r5-a1.json',
+  '704aab41f9a20045549fa1e0331a5aeab360cce8525638520dd3868a14665f61');
+const workerV3Verification = await read(base + 'worker-platform-origin-v3-root-local-verification-20261013-r5.json',
+  'c8a3aa143c06dba7ed52e4ddba614efcedf232618d8266a1cc941b3da3610b42');
+must(workerV3.ownerApproved === false && workerV3.deployed === false && workerV3Verification.tests === 240
+  && workerV3Verification.deno.runtimeExitCode === 0 && workerV3Verification.deno.receiverExitCode === 0,
+  'SEPARATE_UNAPPROVED_WORKER_V3_EVIDENCE_REQUIRED');
+const nativeValidation = await read(base + 'native-profile-approved-source-validation-20261013-r5-a3.json');
+must(nativeValidation.passed && nativeValidation.sourceInputsVerified === 1068
+  && nativeValidation.connectedReleaseFilesVerified === 34 && nativeValidation.accountCreated === false
+  && nativeValidation.authenticatedNative === false, 'APPROVED_NATIVE_SOURCE_VIEW_VALIDATION_REQUIRED');
+const ready = await read(base + 'private-owner-input-ready-20261013-r5-a5.json', 'd7c85dea5f544a0e8454d955e12fec6b8ac1fd2c9d6796e8596dd18b49041d41');
 const args = process.argv.slice(2);
 must(args.length === 0 || (args.length === 2 && args[0] === '--remaining-result'
-  && /^docs\/verification\/wave5\/genuine-finance-remaining-20261013-r5-[0-9]+\/99-result[.]json$/.test(args[1])), 'EXACT_REMAINING_RESULT_PATH_REQUIRED');
+  && /^(?:build\/wave5-approved-execution-20261013-r5-a2\/)?docs\/verification\/wave5\/genuine-finance-finance-20261013-r5-[0-9]+\/99-result[.]json$/.test(args[1])), 'EXACT_REMAINING_RESULT_PATH_REQUIRED');
 let remaining = null;
 if (args.length) {
   remaining = await read(args[1]);
-  must(remaining.passed === true && remaining.projectId === PROJECT && remaining.fullFinanceAndCashGatesComplete === false,
+  must(remaining.kind === 'actual-genuine-finance-remaining-workflows-on-administrative-fixtures'
+    && remaining.passed === true && remaining.projectId === PROJECT && remaining.fullFinanceAndCashGatesComplete === false,
     'BOUNDED_GENUINE_REMAINING_FINANCE_RESULT_REQUIRED');
 }
 const financeDatesCompleted = live.finance.dateProposals === 3 && live.finance.dateDecisions === 3;
@@ -116,7 +148,16 @@ const checkpoint = { ...prior, kind: 'current-actual-runtime-successor', publish
   supersedes: evidence[base + 'approved-runtime-progress-checkpoint-20261013-r5-a2.json'],
   historicalCheckpointProseWarning: 'The predecessor remains unchanged; this successor carries later owner approval, deployment, failures and finance evidence.',
   genuineSourceWorkflowEvidence: { ...prior.genuineSourceWorkflowEvidence, independentPriorCommandPreservationAudit: 'Passed with preserved label/schema findings; see the independent saved-evidence report.' },
-  localVerification: { ...prior.localVerification, independentProviderTests: 164, independentSourceEvidenceAuditPassed: true },
+  localVerification: { ...prior.localVerification, independentProviderTests: 164, independentSourceEvidenceAuditPassed: true,
+    independentSavedFinanceChecks: 111, workerV3NodeTests: 240, workerV3DenoChecks: 2,
+    cashCandidateNodeTests: 7, cashCandidateFlutterTests: 10, cashCandidateTargetedAnalysisIssues: 0 },
+  sourceIsolation: { snapshot: evidence[base + 'approved-isolated-execution-snapshot-20261013-r5-a2.json'],
+    approvedBindingCount: 5539, uniqueApprovedFileCount: 5468, originalApprovalValidatorModified: false,
+    currentWorkspaceIsExactOriginalBundle: currentSourceChanges.length === 0,
+    currentSourceChanges, concurrentChangesPreserved: true, additionalSourceApprovalImplied: false },
+  reviewCandidates: { workerV3: { bundleSha256: workerV3.bundleSha256, ownerApproved: false,
+    independentlyReviewed: false, deployed: false }, cashConflictHttp409: { independentlyReviewed: false,
+    ownerApproved: false, installed: false, sourceVerification: cashCandidateVerification } },
   persistentRuntime: { ...prior.persistentRuntime, version: 2, returnedModulesMatched: 22, scheduledHttpResponses: 24,
     jobs: live.ownJobs, candidateApproved: true, candidateDeployed: true, independentReviewPending: false,
     nextPlatformOriginCandidateApproved: false, nextPlatformOriginCandidateDeployed: false },
@@ -127,7 +168,8 @@ const checkpoint = { ...prior, kind: 'current-actual-runtime-successor', publish
     expectedStatementProcessAppends: 3, baselineSourceHashReconstructed: sourceReconciliation.originalSourceSha256,
     rawSourceHashAtHistoricalReconciliation: sourceReconciliation.currentWholeSourceSha256,
     wholeFinanceAndCashAccepted: false },
-  native: { ...prior.native, currentPrerequisites: prerequisites, provisioningConfirmed: false },
+  native: { ...prior.native, currentPrerequisites: prerequisites, approvedSourceViewValidation: nativeValidation,
+    originalReviewedReleaseUnchanged: true, provisioningConfirmed: false },
   privateOwnerReady: { expiresAt: ready.expiresAt, secretValuesPublished: false },
   remainingFinanceResult: remaining, ownerAcceptedCriteria: 3, remainingUnacceptedCriteria: 106,
   privateDatabaseAndModelInputReady: prerequisites.privateDatabaseAndModelInputReadyFileExists,
@@ -157,15 +199,17 @@ outputs.push(await save('docs/development/wave5-status-20261013-r5-a3.md',
   'The cash horizon starts October 14 UTC while the live clock remains October 13; the installed guard rejects a future horizon with the current cutoff. Preserve actual mapping/audit times and clock. All five cash families, scenario recovery and complete export coverage remain open.\n\n' +
   'Owner-approved routing v2 was deployed; all 22 returned source modules match and the People functions are preserved. All 24 scheduled HTTP responses returned NOT_FOUND, with zero worker ticks, outcomes, receiver receipts and quota periods. Exact jobs 4, 5 and 6 remain paused. The separate candidate for the fixed Supabase platform origin requires concrete review and a new source decision. The actual internal Request URL diagnosis remains an inference.\n\n' +
   'Fresh read-only checks show the isolated Windows account/package and private database/model input readiness remain pending. The user must handle UAC and hidden password entry. Authenticated native workflows, keyboard, actual delivery/model usage, all contention/load cases and 106 owner criteria remain open.\n\n' +
-  'Owner acceptance remains **3/109**. The original 83 and eight later golden decisions remain resolved in preserved evidence: 2010 passed, 0 failed, 0 skipped. No application source edit or Flutter job occurred during these helper/candidate changes. All 5539 original approval inputs and 109 historical rows are preserved. No reset, clean, broad staging, commit or push occurred. Production and real billing remain excluded.\n\n' +
+  `Owner acceptance remains **3/109**. The original 83 and eight later golden decisions remain resolved in historical evidence: 2010 passed, 0 failed, 0 skipped. Concurrent People changes are preserved in the current workspace (${currentSourceChanges.length} changed original source paths at this read). A separate snapshot reproduces all 5539 approved binding rows across 5468 unique files and passes the original unmodified approval guard. The new cash conflict test passed ten Flutter checks with no analysis issues; seven source checks and read-only PostgreSQL replacement fingerprints passed. The SQL candidate remains uninstalled. Fresh current-source desktop analysis, tests, builds and renders are tracked separately. No reset, clean, broad staging, commit or push occurred. Production and real billing remain excluded.\n\n` +
   'See the [current checkpoint](../verification/wave5/approved-runtime-progress-checkpoint-20261013-r5-a3.json), [requirement matrix](../verification/wave5/requirement-readiness-matrix-20261013-r5-a3.md) and [next session](wave5-next-session-20261013-r5-a3.md).\n'));
 outputs.push(await save('docs/development/wave5-next-session-20261013-r5-a3.md',
-  `Continue JentraOS at C:\\Users\\sheha\\Desktop\\Jentra OS,project${PROJECT}. Readwave5-status-20261013-r5-a3.md,currentcheckpoint/matrix and their exactbindings. Live114migrations/API363; do not replay71additional ororiginal6, Authusers/factors/bootstrap/consumed onceintents.\n\n` +
-  'Exactsetup approvaldb525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b remainsvalid. Existing encryptedownertoken reuse wasexplicitlyauthorized; no secretoutput/replacementrequest. ReadyA4expires16:56:06.346UTC October13; fresh sameproject/org renewal needed afterexpiry. PrivatePg/modelinput andhumanUAC/privateWindowspassword remainpending.\n\n' +
-  'Routingv2 exactbce677a0c8e53fea2ba44c30b81e0fa2d897d8f43af5dc6d109e2a1e6feaa552 wasapprovedanddeployed,22modulesmatch. Actual24scheduledHTTP404NOT_FOUND,0effects,jobs4/5/6paused. Preserveoriginalexpiry/caps andPeoplefunctions. Review separatev3candidate andobtain exactnewsourceapproval beforedeployment.\n\n' +
-  `Finance fixturecommitted,3statements/6ratios/1initialpayroll-dateapproval passed. Current${live.finance.dateDecisions}datepairs/${live.finance.exports}exports. Originalstale command92e523de-6d82-d54a-0bfe-e81a78593a96 timedout; nevercallits denialverified orreplayblindly. Remaininghelper must verify fresh stale0/activity0, allowed process appends andunchangedoriginalbaselineff90ee8cb1e1a33982eedfc1d05a8b8118a463d8e2bd9a36ac9f1469eb40be38. CashhorizonOct14 requiresrealclock/cutoff; nofakebackdating.\n\n` +
-  'Allthree agents resumed:runtime_provider preparesremainingdates/CSV,exports;provider_review checks actualfinance/correctsource/routing;native_matrix preparesfixed-platform-origin candidate plusseparate40001error investigation. Rootserializes privatewrites/heavyFlutter andpublishesdatedsuccessors.\n\n' +
-  'Continueallunblocked approvedwork. Nojournalgrantinvention. Distinguish installedSQL,genuineMFA/native, actualdelivery/model, fullcontention/load andowneracceptance. OwneracceptanceONLYAC551/552/553=3/109;106open. Preservegoldens83plus8/2010historicalpasses, sharedW3/W4/Employee/acceptance/sessionstores andall5539approvedinputs. Noreset/clean/stash/broadstage/commit/push. Production/realbillingexcluded.\n'));
+  `Continue Jentra OS at C:\\Users\\sheha\\Desktop\\Jentra OS, project ${PROJECT}. Read wave5-status-20261013-r5-a3.md, the current checkpoint and requirement matrix, then all exact evidence bindings. Live state is 114 migrations and 363 API functions. Never replay the 71 additional migrations, original six migrations, Auth provisioning, MFA enrollment, bootstrap or consumed once-only intents.\n\n` +
+  'The exact setup approval db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b remains valid. Reuse of the encrypted owner token was explicitly authorized; keep credentials out of output. Ready A5 expires October 13 at 18:46:40.816 UTC following one fresh read-only owner/project verification. Preserve all earlier metadata and refresh the same project and organization before another two-hour renewal. Private PostgreSQL/model inputs and human UAC/private Windows password entry remain pending.\n\n' +
+  'Preserve concurrent People source changes. The separate build/wave5-approved-execution-20261013-r5-a2 snapshot reproduces all 5539 approved bindings; its manifest SHA-256 is 9c9e856c2cfdb852a3a9b9e66474f14c86a32dc72cc5b613e806699b2fb78c01. The original validator is unchanged. The remaining finance plan in that snapshot has SHA-256 7b8bc312ebcb7e3389e3dbd358d988e3d417ca1149c221e0eb81800215540d2e and 58 source/evidence bindings. Its independent source review is pending; the private adapter stays closed to execution until that review is pinned.\n\n' +
+  'Routing v2 bundle bce677a0c8e53fea2ba44c30b81e0fa2d897d8f43af5dc6d109e2a1e6feaa552 was approved and deployed; all 22 returned modules matched. All 24 scheduled responses were HTTP 404 NOT_FOUND with zero effects. Jobs 4, 5 and 6 remain paused. Preserve original expiry, caps and People functions. Worker v3 bundle 9e557ebd5c45c3b87cfdba529d2b4d0bc79853c909a2b4529444153338868258 passed 240 Node tests and two Deno checks, but independent review and exact owner approval are pending. Its platform-origin diagnosis remains an inference until the finite deployed diagnostic confirms it.\n\n' +
+  `Three genuine statements, six exact ratios and the initial payroll-date approval passed. The current snapshot has ${live.finance.dateDecisions} approved date pairs and ${live.finance.exports} exports. Original stale command 92e523de-6d82-d54a-0bfe-e81a78593a96 timed out; its conflict HTTP response is unobserved and it must not be replayed. Continue only after fresh zero stale receipts/proposals and zero active API invocations, with exact allowed process appends and the original baseline ff90ee8cb1e1a33982eedfc1d05a8b8118a463d8e2bd9a36ac9f1469eb40be38 preserved. The cash horizon begins October 14 UTC and requires the real cutoff; do not backdate mappings, audits or clocks.\n\n` +
+  'The separate cash conflict SQL candidate changes five application conflict clauses to PT409 across exactly two guarded functions. Seven Node checks, ten Flutter fixtures, targeted analysis and live read-only before/after-recipe fingerprints passed. It has not been installed or independently reviewed, and requires an exact source decision before DDL. No original migration was edited.\n\n' +
+  'The three active agents hit the account usage limit; their reported reset is October 13 at 22:49 Asia/Colombo (17:19 UTC). Resume existing runtime_provider_20261013, provider_review_20261013 and native_matrix_20261013 tasks at reset without duplicating successful effects. Root has continued their unblocked local work, prepared current-source snapshot o13r6, and serialized Flutter jobs. Check actual job completion and source hashes before publishing fresh build/render claims.\n\n' +
+  'Continue every unblocked authorized task. Keep implementation, installed SQL, genuine MFA/authenticated native, actual delivery/model use, independent contention/load and owner acceptance separate. Only AC-551, AC-552 and AC-553 are accepted: 3/109, with 106 open. Preserve original golden approvals (83 plus eight), Wave 3/4/Employee changes, acceptance stores and sessions. Do not reset, clean, stash, broadly stage, commit or push. Production and real billing remain excluded.\n'));
 await loadApprovedInputs();
 must(hashBytes(JSON.stringify(matrix.preservedRows)) === canonicalSha256, 'HISTORICAL_ROWS_CHANGED');
 process.stdout.write(JSON.stringify({ published: true, liveObservedAt: live.observedAt, ownerAcceptedCriteria: 3,

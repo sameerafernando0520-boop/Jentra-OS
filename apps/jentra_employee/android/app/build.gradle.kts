@@ -4,6 +4,10 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Explicit opt-in for a small, locally signed development APK. Ordinary release
+// builds retain their separate application identity and signing requirement.
+val developmentRelease = providers.gradleProperty("jentraDevelopmentRelease").orNull == "true"
+
 android {
     namespace = "com.jentra.employee"
     // Native protected storage requires API 37; installed platform is available.
@@ -34,8 +38,15 @@ android {
             applicationIdSuffix = ".dev"
         }
         release {
-            // Distribution requires a separately configured release keystore.
-            signingConfig = null
+            isMinifyEnabled = true
+            isShrinkResources = true
+            if (developmentRelease) {
+                applicationIdSuffix = ".dev"
+                signingConfig = signingConfigs.getByName("debug")
+            } else {
+                // Store distribution requires a separately configured release keystore.
+                signingConfig = null
+            }
         }
     }
 }

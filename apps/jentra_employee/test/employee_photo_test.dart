@@ -162,6 +162,25 @@ void main() {
     expect(img.decodeJpg(normalizeEmployeePhoto(jpeg))!.exif.isEmpty, isTrue);
   });
 
+  test(
+    'unsupported still image formats cannot bypass the photo format limit',
+    () {
+      final source = img.Image(width: 12, height: 12);
+      for (final bytes in [img.encodeGif(source), img.encodeBmp(source)]) {
+        expect(
+          () => normalizeEmployeePhoto(bytes),
+          throwsA(
+            isA<EmployeeFailure>().having(
+              (failure) => failure.code,
+              'code',
+              'PHOTO_INVALID',
+            ),
+          ),
+        );
+      }
+    },
+  );
+
   test('an unverified photo write reports storage failure without claiming success', () async {
     final kv = SilentPhotoStore();
     final gateway = PhotoGateway();
