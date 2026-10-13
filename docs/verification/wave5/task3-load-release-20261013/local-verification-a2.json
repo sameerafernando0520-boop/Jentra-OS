@@ -1,0 +1,1312 @@
+{
+  "kind": "controlled-local-load-release-helper-verification",
+  "observedAt": "2026-10-13T18:16:01.459Z",
+  "nodeVersion": "v24.11.0",
+  "helper": {
+    "command": [
+      "node",
+      "--test",
+      "--test-isolation=none",
+      "--test-reporter=tap",
+      "docs/verification/wave5/task3-load-release-20261013/transport_helpers.test.mjs"
+    ],
+    "startedAt": "2026-10-13T18:15:57.582Z",
+    "finishedAt": "2026-10-13T18:15:58.081Z",
+    "exitCode": 0,
+    "counts": {
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "outputSha256": "58f091edb1f438296be634ffa9a0d4ca6435eb6825f9da376826b99477627f3d"
+  },
+  "provider": {
+    "command": [
+      "node",
+      "--test",
+      "--test-isolation=none",
+      "--test-reporter=tap",
+      "tools/wave5/runtime_coordinator.test.mjs",
+      "tools/wave5/supabase_provider.test.mjs",
+      "tools/wave5/supabase_provider_plan.test.mjs",
+      "tools/wave5/supabase_management_read.test.mjs",
+      "tools/wave5/preparation_journal.test.mjs",
+      "tools/wave5/preparation_file_sink.test.mjs",
+      "tools/wave5/supabase_provider_peer_20261013.test.mjs",
+      "tools/wave5/provider_live_response_regression_20261013_r5.test.mjs",
+      "tools/wave5/membership_preparation_peer_20261013.test.mjs",
+      "tools/wave5/preparation_journal_peer_20261013.test.mjs",
+      "tools/wave5/preparation_file_sink_peer_20261013.test.mjs"
+    ],
+    "startedAt": "2026-10-13T18:15:58.081Z",
+    "finishedAt": "2026-10-13T18:16:01.337Z",
+    "exitCode": 0,
+    "counts": {
+      "tests": 121,
+      "pass": 121,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "outputSha256": "2f64fd1902ddf652a2bc7057920c1a51bc3cc42fdefd5d68aedfd62be3b3ce8f"
+  },
+  "offlineHarness": {
+    "command": [
+      "node",
+      "tools/wave5/run_runtime_verification.mjs",
+      "--review",
+      "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+      "--harness-review",
+      "docs/verification/wave5/runtime-harness-review-20261012-r6.json"
+    ],
+    "startedAt": "2026-10-13T18:16:01.337Z",
+    "finishedAt": "2026-10-13T18:16:01.436Z",
+    "exitCode": 1,
+    "counts": null,
+    "outputSha256": "4672d1bd67e3f33c29c907a55d24e0fa5c84f80626019bab4b75feef23e9b9fe"
+  },
+  "helperPassed": true,
+  "providerPassed": true,
+  "offlineHarnessPassed": false,
+  "sourcesUnchangedDuringRun": true,
+  "filesBefore": [
+    {
+      "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+      "bytes": 1370575,
+      "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-harness-review-20261012-r6.json",
+      "bytes": 10906,
+      "sha256": "5bab5d7789c84ef2accb9eba4e2097478121160b7c330bae26b9ef10cf81acbf"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-owner-decision-20261012-r5.json",
+      "bytes": 2756,
+      "sha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/external_observer.mjs",
+      "bytes": 6586,
+      "sha256": "a40786ae7fdb954e212555a6279b3bdcea8ea56fd576d71d56ef8380e63e3011"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/package-lock.json",
+      "bytes": 5706,
+      "sha256": "f35522511d05c71a76a7796bb51711ae69322165433a14706626a2b454bbb0a5"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/package.json",
+      "bytes": 160,
+      "sha256": "60d5f8cc5f0d813092ab2401a5c13e25f81b6818716871d4d375ac147a5d5c84"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/postgres_transport.mjs",
+      "bytes": 11229,
+      "sha256": "4a435629e163b65c8f032729c2eeafc190ee0fb0eb6ded43f492613eee90c4ec"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/transport_helpers.test.mjs",
+      "bytes": 13446,
+      "sha256": "0295c05ae60db061c272f248b3c70bc2e3842f2d8608dd8d36edf7b4d9cde998"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/verify_local_helpers.mjs",
+      "bytes": 6042,
+      "sha256": "85633775e5a1af88517925734ebca5fa6ac12a66fb4e6946abb1a4d99d688e3d"
+    },
+    {
+      "path": "tools/wave5/approved_management_installer.mjs",
+      "bytes": 18163,
+      "sha256": "f6266b37e9c5eb254a794aedd512984d35865e2ff4ddfd19f6a67cf5f9750bd5"
+    },
+    {
+      "path": "tools/wave5/approved_management_installer.test.mjs",
+      "bytes": 5109,
+      "sha256": "042384417e28bce2313c8fe0ab385d06fe78e8ed5530d053c5af36c8e5b8a612"
+    },
+    {
+      "path": "tools/wave5/audit_installed_plan_peer_20261013_r5.mjs",
+      "bytes": 4158,
+      "sha256": "e559bb4b8daa820e2a82ff10bd8acdcd08b607d3cd9ba5f82ac1579f8e713bcc"
+    },
+    {
+      "path": "tools/wave5/audit_runtime_evidence_peer_20261013_r5.mjs",
+      "bytes": 24901,
+      "sha256": "c32bfc43454e2ca4ea6e7c09a631a9fe01bcbbd61bce89b29a8b86c0b9378785"
+    },
+    {
+      "path": "tools/wave5/bootstrap_management_20261013_r5.mjs",
+      "bytes": 17658,
+      "sha256": "8ac8cdeab26341c0a53500c4cce3231440d5d171edbd8f340b4fbcbeab1c1d07"
+    },
+    {
+      "path": "tools/wave5/bootstrap_management_20261013_r5.test.mjs",
+      "bytes": 3173,
+      "sha256": "4aeda9c080f9f42ab4b9fdb6dcae0faab8a58f99aa6759bfdb19ba37a8ed0856"
+    },
+    {
+      "path": "tools/wave5/cash_conflict_http409_20261013_r5.test.mjs",
+      "bytes": 5155,
+      "sha256": "db7089414fd3961e225928858c9f77a57e37ba6e788348f38a370366bffc5286"
+    },
+    {
+      "path": "tools/wave5/compose_harness_review.mjs",
+      "bytes": 13820,
+      "sha256": "e6bbc912d5c8fff83666b035aa9d4697def0ae0ddb32382586547595cfe3fd53"
+    },
+    {
+      "path": "tools/wave5/compose_supabase_provider_preparation.mjs",
+      "bytes": 7442,
+      "sha256": "0c209b4a185759082231ddf83318a4fee1011ecb0b6815a8d1f980dd895af0d0"
+    },
+    {
+      "path": "tools/wave5/continue_source_workflows_20261013_r5_a3.mjs",
+      "bytes": 13958,
+      "sha256": "55c06f4732ec1b15ad235b5c9f461072369e1b94ec1c6ac18ebd3892841adf1b"
+    },
+    {
+      "path": "tools/wave5/delivery_transport_20261013_r5.mjs",
+      "bytes": 15312,
+      "sha256": "ce733b5093e7c53ded4742111af33f5d254d8f488513f800f39e05b882899dfe"
+    },
+    {
+      "path": "tools/wave5/enroll_mfa_management_20261013_r5.mjs",
+      "bytes": 13561,
+      "sha256": "ede49ffd20a111a063b00b375b32fdef40c69b09364a4ae72e5f2a5e7a608240"
+    },
+    {
+      "path": "tools/wave5/finance_cash_fixture_20261013_r5.mjs",
+      "bytes": 20620,
+      "sha256": "8d5e670368fd89a9e9a98f10aa4befc1f2bc4ed0b28de913aa89ee64766291f9"
+    },
+    {
+      "path": "tools/wave5/finance_cash_workflows_20261013_r5.mjs",
+      "bytes": 29581,
+      "sha256": "15758ebee2def57d0b3796cd9911090207ba7c9d49bbcbaa8b4201b9a420b64c"
+    },
+    {
+      "path": "tools/wave5/finance_cash_workflows_20261013_r5.test.mjs",
+      "bytes": 12168,
+      "sha256": "c19fae79b3bd522888b0dc7076acd229934f843f9801fed6076506ff7f77aa9f"
+    },
+    {
+      "path": "tools/wave5/finance_https_transport_20261013_r5.mjs",
+      "bytes": 8347,
+      "sha256": "5eb2b839a9249fd457073d4b63523d311f06ecc2d392710db2f823259395ba0f"
+    },
+    {
+      "path": "tools/wave5/finance_https_transport_20261013_r5_a2.mjs",
+      "bytes": 8610,
+      "sha256": "1ecbb7beaf53b5a32dd48e860dc78159b225e428bf36687972443dea2a1a3a58"
+    },
+    {
+      "path": "tools/wave5/finance_remaining_20261013_r5.mjs",
+      "bytes": 36810,
+      "sha256": "673f434d2d87dd098f42aef3278b726ecd31668bb66d0c4de096bb9f45229d18"
+    },
+    {
+      "path": "tools/wave5/finance_remaining_20261013_r5.test.mjs",
+      "bytes": 21958,
+      "sha256": "e921c306c0e254c174184e9bd0059ee19a46185b472a4446b265148b70e871b4"
+    },
+    {
+      "path": "tools/wave5/finance_remaining_20261013_r5_a2.mjs",
+      "bytes": 37427,
+      "sha256": "73dd2d45688f0dbe47185f685501aa1397a8145976eafe6bb5719e4e9b80d666"
+    },
+    {
+      "path": "tools/wave5/finance_remaining_20261013_r5_a2.test.mjs",
+      "bytes": 25077,
+      "sha256": "f8ed81114fab3a2c73c32e71182d9232ca071070602331eaa67acb326d17ca76"
+    },
+    {
+      "path": "tools/wave5/genuine_delivery_lease_20261013_r5.mjs",
+      "bytes": 12642,
+      "sha256": "a5ccccab1163c0563361a1d56d9bb71030868d005fb24d077a91db05a902ccf9"
+    },
+    {
+      "path": "tools/wave5/genuine_mfa_20261013_r5.test.mjs",
+      "bytes": 2154,
+      "sha256": "5a554ed8037c2a4d50680959e7b7ebccbe3eca3abeb24c2e3a267449c4b0ae2f"
+    },
+    {
+      "path": "tools/wave5/inspect_external_observation.mjs",
+      "bytes": 7073,
+      "sha256": "178090cb53ff801ab59f7e438cb4aa495d74a8c380f6c7d711f303faaf7c2cbd"
+    },
+    {
+      "path": "tools/wave5/inspect_runtime_access_20261013_r5.mjs",
+      "bytes": 5858,
+      "sha256": "2b8896abe8d91988655826bddf34a3f1f3569c52362a02f2af8870149e473993"
+    },
+    {
+      "path": "tools/wave5/inspect_scheduled_read_error_20261013_r5.mjs",
+      "bytes": 1965,
+      "sha256": "51850afbd880528cfadddab92741ac3e7d96feb79613f8dbd524d8bd7952dac5"
+    },
+    {
+      "path": "tools/wave5/inspect_source_failure_20261013_r5.mjs",
+      "bytes": 6830,
+      "sha256": "480e1fa64775553fc19b1eb75f96888780991db410f51914374cab6f9c05f260"
+    },
+    {
+      "path": "tools/wave5/load_approved_routing_payload_20261013_r5.mjs",
+      "bytes": 2898,
+      "sha256": "cb49d3c7e40444714c48111afdb9ebfa7aacb49df065e616596784766cd96933"
+    },
+    {
+      "path": "tools/wave5/load_finance_fixture_commit_20261013_r5.mjs",
+      "bytes": 1931,
+      "sha256": "1103f4bddfe436131ae83aaed70747dff0315fa65dd3c59244d93e8635d7b47c"
+    },
+    {
+      "path": "tools/wave5/membership_preparation_peer_20261013.test.mjs",
+      "bytes": 7910,
+      "sha256": "99f9e6a625f61eb56ee256b1100f8a712d75200ee6b501f5f89f2747d1b29468"
+    },
+    {
+      "path": "tools/wave5/pause_failed_scheduled_delivery_20261013_r5.mjs",
+      "bytes": 7234,
+      "sha256": "0fca4ff46f810a636f9e31f5316caa46cb816c614b9a3634ededaf7a78706fe6"
+    },
+    {
+      "path": "tools/wave5/persistent_setup_20261013_r5.mjs",
+      "bytes": 9487,
+      "sha256": "3318912e74ae08f17647dd506cc360c735b0d9db15df17984fefde79b40ed724"
+    },
+    {
+      "path": "tools/wave5/persistent_setup_20261013_r5_a2.mjs",
+      "bytes": 10141,
+      "sha256": "8d60a4a779904c7274838200b8ef18626b9e8b1ebd72fec4c978bf2c4fed81f8"
+    },
+    {
+      "path": "tools/wave5/persistent_setup_20261013_r5_a3.mjs",
+      "bytes": 10458,
+      "sha256": "53f2e198f8f99b43c3c191a75064588f837e3faa4fa424e23b3e13f2cad36586"
+    },
+    {
+      "path": "tools/wave5/persistent_setup_20261013_r5_a4.mjs",
+      "bytes": 12010,
+      "sha256": "54d4e13973fcf27f9c334176315c5e6dcb37a515ed6d0c4a62471de1030d6795"
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink.mjs",
+      "bytes": 11697,
+      "sha256": "c2a3435601bc32fb1c2623fbac070cfd381fb4c2dd7ecf7963a293049344ecad"
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink.test.mjs",
+      "bytes": 11842,
+      "sha256": "b05624090af8cf847b45cafc314f3254b6ecd3f664af462a1945da16153541fb"
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink_peer_20261013.test.mjs",
+      "bytes": 4417,
+      "sha256": "1b8f8c741beb7b625ba7d1d562ebdc8ac2dc3e6cc3aeafcce36ad5490e91e412"
+    },
+    {
+      "path": "tools/wave5/preparation_journal.mjs",
+      "bytes": 4778,
+      "sha256": "95a93eb07bf7bfaadd2121c854683453512203ecc7380225602f2f8330267840"
+    },
+    {
+      "path": "tools/wave5/preparation_journal.test.mjs",
+      "bytes": 7217,
+      "sha256": "05e383e82ac6d593bdc066541a4fe48c61904cd7283cfc5decb316ed93fcea86"
+    },
+    {
+      "path": "tools/wave5/preparation_journal_peer_20261013.test.mjs",
+      "bytes": 3315,
+      "sha256": "1b393f9a7629332233e7aee054755bccd61056875f38f99fefbf0da0bcf2f3b6"
+    },
+    {
+      "path": "tools/wave5/prepare_actual_delivery_fixtures_20261013_r5.mjs",
+      "bytes": 9168,
+      "sha256": "3a37978cf79456aa6e7624cf6cd3428ffe36b70617c73442cf458d24238cfd74"
+    },
+    {
+      "path": "tools/wave5/prepare_approved_execution_snapshot_20261013_r5.mjs",
+      "bytes": 7593,
+      "sha256": "49d88d33825b1fb8de96cf5bc60c8ca4ed1297a25fc5c22a6976c1823e4842ab"
+    },
+    {
+      "path": "tools/wave5/prepare_delivery_transport_20261013_r5.mjs",
+      "bytes": 1155,
+      "sha256": "0ee6d4b221a028fe2a1638898bb586f4957c8a3678a41eb55999cb56cf8cbbe6"
+    },
+    {
+      "path": "tools/wave5/prepare_finance_fixture_20261013_r5.mjs",
+      "bytes": 2567,
+      "sha256": "9bfa5d554cc78f17386b8c8d34d8f9ea0768b38d9663ec8fa4cf123e4f8144a9"
+    },
+    {
+      "path": "tools/wave5/prepare_finance_remaining_20261013_r5.mjs",
+      "bytes": 6921,
+      "sha256": "a238573543add7f0d9595f0b926a888c0ca201c663c448e806e72c26fe635b1e"
+    },
+    {
+      "path": "tools/wave5/prepare_finance_remaining_20261013_r5_a2.mjs",
+      "bytes": 7948,
+      "sha256": "8eabe39a70739b5a3782a866b306bfc7e65db7eb2174fd50da8a461d1effdf0d"
+    },
+    {
+      "path": "tools/wave5/prepare_finance_workflows_20261013_r5.mjs",
+      "bytes": 3264,
+      "sha256": "1de779c1439cfa0d03ac3439e1599d4257a87dcdd2c5f69be7a01b2405032fbd"
+    },
+    {
+      "path": "tools/wave5/prepare_installed_verification_20261012_r5.mjs",
+      "bytes": 46103,
+      "sha256": "6641087a2331e156ee99ad05ddf4adffb06aa5596b9867ce7d6cb9885ba8e719"
+    },
+    {
+      "path": "tools/wave5/prepare_installed_verification_successor_20261012_r5_a2.mjs",
+      "bytes": 6012,
+      "sha256": "06f809313f145f2f02aa8d54e04c96762838b0acc145563cb072e55fdaae1626"
+    },
+    {
+      "path": "tools/wave5/prepare_persistent_setup_diagnostic_successor_20261013_r5_a4.mjs",
+      "bytes": 4023,
+      "sha256": "296bc321cc54b4a0c3fc6265a5948971fcd7d13b6bb9771975054ba7ddf876d8"
+    },
+    {
+      "path": "tools/wave5/prepare_persistent_setup_successor_20261013_r5_a2.mjs",
+      "bytes": 2471,
+      "sha256": "a144d1fb9fb876bbf69dc2196d4d342dd2230f2715e50cb34769a510991ac977"
+    },
+    {
+      "path": "tools/wave5/prepare_persistent_setup_successor_20261013_r5_a3.mjs",
+      "bytes": 2415,
+      "sha256": "886137a167bc7ba8f4025b5aaf904d60aa8508bfe1eb6017416857c20b0d4302"
+    },
+    {
+      "path": "tools/wave5/prepare_scheduled_delivery_start_20261013_r5.mjs",
+      "bytes": 5919,
+      "sha256": "19301bfb4142e3bb5acc24fb880523d38942ee7b5d2e6b19b62af89ff97639df"
+    },
+    {
+      "path": "tools/wave5/prepare_source_population_20261013_r5.mjs",
+      "bytes": 7265,
+      "sha256": "d848447baa214cc970f498d6885f25bc030c927bf840ed502bd9cecd4f1233c4"
+    },
+    {
+      "path": "tools/wave5/prepare_source_workflow_successor_20261013_r5_a3.mjs",
+      "bytes": 4439,
+      "sha256": "72ff12ff767fc5c06f8fccc85943ee2d6fcb9370b1e5019fda3a0c48c3cf2244"
+    },
+    {
+      "path": "tools/wave5/prepare_worker_platform_origin_review_20261013_r5.mjs",
+      "bytes": 9242,
+      "sha256": "9f4b4c62b8f4785fd32716897e61ee0d68dbf17d782851e93061209305713e53"
+    },
+    {
+      "path": "tools/wave5/prepare_worker_routing_approval_ready_20261013_r5.mjs",
+      "bytes": 3439,
+      "sha256": "aa16e06f6d027143b5d4d404531af53f1d6a1d63ff560d741c41d2207d7da5cd"
+    },
+    {
+      "path": "tools/wave5/prepare_worker_routing_review_20261013_r5.mjs",
+      "bytes": 11069,
+      "sha256": "6a7994a67f1e3c6f1dad1cafa284e6ef562edf515f9685ea83e929b0579f6c11"
+    },
+    {
+      "path": "tools/wave5/prepare_worker_routing_review_20261013_r5_a2.mjs",
+      "bytes": 11025,
+      "sha256": "2c6bcc758f584b4787c6d19f8b306ec24e0ccdff1d88654e1198ea8fdc0d6ded"
+    },
+    {
+      "path": "tools/wave5/private_auth_provisioning_20261013_r5.test.mjs",
+      "bytes": 5345,
+      "sha256": "555d7644407fa1d1ef697d6e80d9332ff7346c11326751948d5855db160020bb"
+    },
+    {
+      "path": "tools/wave5/private_existing_actor_session_20261013_r5.mjs",
+      "bytes": 4562,
+      "sha256": "0d9dc4bfbd703fb7637f0acc89eaa195c2b6a17bdf4f4e566b0ba925f76c4540"
+    },
+    {
+      "path": "tools/wave5/private_runtime_http.mjs",
+      "bytes": 5080,
+      "sha256": "d52ae919e4c13bd1745ef806658744dfc2c52df7b61d24d9f87afac06de7be2c"
+    },
+    {
+      "path": "tools/wave5/private_runtime_seal.mjs",
+      "bytes": 2916,
+      "sha256": "1395a91ee666d40c5504c8977b5d4f64aa4d54b383dfe147fe78eb07a5d7a206"
+    },
+    {
+      "path": "tools/wave5/probe_preparation_journal_20261013_r5.mjs",
+      "bytes": 3800,
+      "sha256": "a36dce300966d85ff931d9330ece5100fa2c1881912b48f6747ab6e1d3b051c7"
+    },
+    {
+      "path": "tools/wave5/probe_worker_ingress_20261013_r5.mjs",
+      "bytes": 2495,
+      "sha256": "24a30fff0ecd45de2a9b6250f4e1cd545cd1fc5bd0dbc916843e08abb87a003b"
+    },
+    {
+      "path": "tools/wave5/provider_live_response_regression_20261013_r5.test.mjs",
+      "bytes": 1785,
+      "sha256": "7d29dc771f10b4b9e5581f7d0f4aef5d7cb62d5c06d6c4d7a4744198d39c3ef0"
+    },
+    {
+      "path": "tools/wave5/provision_auth_management_20261013_r5.mjs",
+      "bytes": 11610,
+      "sha256": "e2c4905e60b8e0a66ef494c296dd0a1e2d26577e60ef48effd530c6de912a5a7"
+    },
+    {
+      "path": "tools/wave5/publish_runtime_progress_20261013_r5.mjs",
+      "bytes": 15935,
+      "sha256": "e4ba3e103530e1a976762937d9df27acefa40e494cb7fa758e12b3ce1447c5b1"
+    },
+    {
+      "path": "tools/wave5/publish_runtime_progress_20261013_r5_a2.mjs",
+      "bytes": 22135,
+      "sha256": "638ac2a046f0aa7a1208384b9fe353809da1e33acd5bda84dc11fcc7f5a8f28e"
+    },
+    {
+      "path": "tools/wave5/publish_runtime_progress_20261013_r5_a3.mjs",
+      "bytes": 25623,
+      "sha256": "dd38681e44793745ffe2b0a9e4b591dbdd8ccbc942f7981fddc9e1680bb9c148"
+    },
+    {
+      "path": "tools/wave5/refresh_private_owner_scope_20261013_r5.mjs",
+      "bytes": 4227,
+      "sha256": "1049309eccbec8247cfffc426fa2592547886467cda09f156ddd9636afba5a59"
+    },
+    {
+      "path": "tools/wave5/refresh_private_owner_scope_20261013_r5_a3.mjs",
+      "bytes": 4227,
+      "sha256": "55e8038bd5054e0a4e6fa01297efdf1ad3eeecc09e24b65346ae858822672ac2"
+    },
+    {
+      "path": "tools/wave5/refresh_private_owner_scope_20261013_r5_a4.mjs",
+      "bytes": 4227,
+      "sha256": "474923aaef21c8330b6dfe699d291b3e3469f046f7b32c5a2ef1bb1d83b36d84"
+    },
+    {
+      "path": "tools/wave5/refresh_private_owner_scope_20261013_r5_a5.mjs",
+      "bytes": 4576,
+      "sha256": "98e4a71b61af17f121349cd23d8349c3329860a772c124005024704a91e04b71"
+    },
+    {
+      "path": "tools/wave5/resume_source_workflows_20261013_r5.mjs",
+      "bytes": 11722,
+      "sha256": "9058710e0468e3b44dee99ae1a6c3c8a414146a50e5b3060df3094030d912200"
+    },
+    {
+      "path": "tools/wave5/review_finance_fixture_peer_20261013_r5.mjs",
+      "bytes": 15476,
+      "sha256": "22ef8ce1e718f2ede95a8b643b5e74b880c1eed0144f937f6873dbb983ecc306"
+    },
+    {
+      "path": "tools/wave5/review_worker_routing_peer_20261013_r5.mjs",
+      "bytes": 14209,
+      "sha256": "cdbb8db2733de34b77e246dd49c8ce8bc65a40355bdad26389cb7b4909d03058"
+    },
+    {
+      "path": "tools/wave5/run_runtime_verification.mjs",
+      "bytes": 9119,
+      "sha256": "143f460b88c1e1dba4a06b7ed869fb5de46e6eff77421ebf8d0aee15efb74b20"
+    },
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "bytes": 31294,
+      "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.mjs",
+      "bytes": 35742,
+      "sha256": "1df1396865610b73614f5ba9b83a8d9b91d40bb642e26d7443934ef11bcd0f3c"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.test.mjs",
+      "bytes": 45494,
+      "sha256": "d0582f1c33e3b869411bda08e50a495ecd4a287ae299b570186c271d614036db"
+    },
+    {
+      "path": "tools/wave5/runtime_fixture_spec.mjs",
+      "bytes": 36370,
+      "sha256": "71dd763620cab0ca896dd96c50193350f1926e67f481acfed9b7aaa4b519f2d2"
+    },
+    {
+      "path": "tools/wave5/source_population_20261013_r5.test.mjs",
+      "bytes": 1813,
+      "sha256": "3ae86c032385e41b5d2f757c3d281175b0697bc156c21517b38df48e9291ed26"
+    },
+    {
+      "path": "tools/wave5/source_workflow_20261013_r5.test.mjs",
+      "bytes": 1177,
+      "sha256": "06a470e5f82ffc45220a70b84215c6667960383b8a29f00b6b8299d86a7548ec"
+    },
+    {
+      "path": "tools/wave5/source_workflow_management_20261013_r5.mjs",
+      "bytes": 14227,
+      "sha256": "aabbeae5af299178bd35784fb8ffefd378ae324a25749c42f9e3d7cd22e107ea"
+    },
+    {
+      "path": "tools/wave5/start_scheduled_delivery_20261013_r5.mjs",
+      "bytes": 6119,
+      "sha256": "d5e2eb84756cd626e71e7ae26432a23664bb211efebb28271147b703972ee048"
+    },
+    {
+      "path": "tools/wave5/start_scheduled_delivery_20261013_r5_a2.mjs",
+      "bytes": 7197,
+      "sha256": "5db7fb27be96f2716a55ba2b38a2cbd4ca33036f4af2557a11b4e94c0b2089d0"
+    },
+    {
+      "path": "tools/wave5/start_scheduled_delivery_20261013_r5_a3.mjs",
+      "bytes": 7200,
+      "sha256": "4f9d6200dc1a9a8d883b84318219e6fc25ac2f1dd05bc19eb7b8281dca6eb514"
+    },
+    {
+      "path": "tools/wave5/start_scheduled_delivery_20261013_r5_a4.mjs",
+      "bytes": 7230,
+      "sha256": "930e6c3ca3bc26c0a91448df834746c234e6e211280d900747f2f4ddf17ff096"
+    },
+    {
+      "path": "tools/wave5/supabase_http_transport.mjs",
+      "bytes": 15253,
+      "sha256": "7815b9c8c18bd5d2375480706579c7dd9583b1e95e0424a2178f7b9b5db265c9"
+    },
+    {
+      "path": "tools/wave5/supabase_management_read.mjs",
+      "bytes": 8221,
+      "sha256": "ddbb103c7dbf82327d77829b21bcaaf44c7f447187644af08c026c03841b5ea4"
+    },
+    {
+      "path": "tools/wave5/supabase_management_read.test.mjs",
+      "bytes": 10075,
+      "sha256": "356b76b8a6930f7c485ddbe92f0937cf616d5552335f2b9bef940cc3a525041a"
+    },
+    {
+      "path": "tools/wave5/supabase_membership_fixture.mjs",
+      "bytes": 10162,
+      "sha256": "b39b636fe45cfc21e58f53cf6315d7cfaae606042f64d6869969ebbb380e0993"
+    },
+    {
+      "path": "tools/wave5/supabase_provider.test.mjs",
+      "bytes": 46828,
+      "sha256": "72f29ca192982a288b396f2e1d2649421096c80d82c3b788878170fd269d443e"
+    },
+    {
+      "path": "tools/wave5/supabase_provider_peer_20261013.test.mjs",
+      "bytes": 18957,
+      "sha256": "2951fb7a0c605d8873fb2c3e012c6af33a91b607293ddd53f84d2b8eea828535"
+    },
+    {
+      "path": "tools/wave5/supabase_provider_plan.mjs",
+      "bytes": 4016,
+      "sha256": "ac7bb6bd32add9f76a5a9fb94a48025bd12e25d7684e5b4eafa9cb82afe63c2e"
+    },
+    {
+      "path": "tools/wave5/supabase_provider_plan.test.mjs",
+      "bytes": 3175,
+      "sha256": "090dd23865dbb0a1ded1af9a1484d423d916549d472789e9ffc895dd6da5d7eb"
+    },
+    {
+      "path": "tools/wave5/supabase_read_store.mjs",
+      "bytes": 14778,
+      "sha256": "48a758dd6c8f29286889a7bddd6f4f7fd24e1a27f153d3d35208a2f2e71c73e6"
+    },
+    {
+      "path": "tools/wave5/supabase_runtime_provider.mjs",
+      "bytes": 44367,
+      "sha256": "dfc40e82d0a754f35b4d713b83257ba3781f60520c11259cee1a791c580be8b0"
+    },
+    {
+      "path": "tools/wave5/synthetic_activation_contention_20261013_r5.mjs",
+      "bytes": 10258,
+      "sha256": "23cf50d1f0956ee2eaed298163ac7a0c1ea8fa267facebf488a5c13f90800a08"
+    },
+    {
+      "path": "tools/wave5/synthetic_activation_contention_20261013_r5.test.mjs",
+      "bytes": 1362,
+      "sha256": "d1d7eb66e70dbbf8861e612c379fe80ef5a4a1058fc8108ba793d6e17ec50c01"
+    },
+    {
+      "path": "tools/wave5/verify_installed_management_20261013_r5.mjs",
+      "bytes": 13377,
+      "sha256": "7a0b1b872c4338be4849365313f47bb3729742c39c500c2ce5acd11f7972c70d"
+    },
+    {
+      "path": "tools/wave5/verify_installed_management_20261013_r5.test.mjs",
+      "bytes": 6054,
+      "sha256": "3668f38767b49d56567b73fbc3b8b9a2228320877fdc01f891685697cae822eb"
+    },
+    {
+      "path": "tools/wave5/verify_local_harness.mjs",
+      "bytes": 6278,
+      "sha256": "db5b4c163c549b32e6e831483fdb4f6c07c8158c50e7ef3565000d04f48e9834"
+    },
+    {
+      "path": "tools/wave5/verify_persistent_setup_committed_20261013_r5.mjs",
+      "bytes": 3387,
+      "sha256": "078f3f0bae5ee45d77e9178928678833cd00cad084b0dd810ec0dd30fca367a1"
+    },
+    {
+      "path": "tools/wave5/verify_preparation_peer_20261013.mjs",
+      "bytes": 4385,
+      "sha256": "5607cd66da87577138e715411d0cec90a8ada74ef1f7e8f087c6b30d86325b9b"
+    },
+    {
+      "path": "tools/wave5/verify_provider_peer_20261013.mjs",
+      "bytes": 10864,
+      "sha256": "00efa09422545bc0cc114cfbb1cd16d78f7e181746400ac57debf199c276cbe1"
+    },
+    {
+      "path": "tools/wave5/verify_routing_deployment_20261013_r5.mjs",
+      "bytes": 4115,
+      "sha256": "757748ac735b3fa887bf356ce7f5a1aeba2ed9af93430bd05c54e0c2deb46809"
+    },
+    {
+      "path": "tools/wave5/verify_supabase_provider.mjs",
+      "bytes": 6622,
+      "sha256": "5bf29171ce4d1c7015e4fd3b165a901fe854bf726c0a1903c8918b68694a6381"
+    },
+    {
+      "path": "tools/wave5/worker_routing_peer_20261013_r5.test.mjs",
+      "bytes": 6729,
+      "sha256": "024888e82a82fb359550c103eba3a03ddc748c4be10bd24799cfefbc5b220521"
+    },
+    {
+      "path": "tools/wave5/write_provider_peer_review_20261013.mjs",
+      "bytes": 27366,
+      "sha256": "0f3d32ba8b3ba4c3477c0b884e821903eeb059c5ef53e2197c19606a6fb97841"
+    }
+  ],
+  "filesAfter": [
+    {
+      "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+      "bytes": 1370575,
+      "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-harness-review-20261012-r6.json",
+      "bytes": 10906,
+      "sha256": "5bab5d7789c84ef2accb9eba4e2097478121160b7c330bae26b9ef10cf81acbf"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-owner-decision-20261012-r5.json",
+      "bytes": 2756,
+      "sha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/external_observer.mjs",
+      "bytes": 6586,
+      "sha256": "a40786ae7fdb954e212555a6279b3bdcea8ea56fd576d71d56ef8380e63e3011"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/package-lock.json",
+      "bytes": 5706,
+      "sha256": "f35522511d05c71a76a7796bb51711ae69322165433a14706626a2b454bbb0a5"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/package.json",
+      "bytes": 160,
+      "sha256": "60d5f8cc5f0d813092ab2401a5c13e25f81b6818716871d4d375ac147a5d5c84"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/postgres_transport.mjs",
+      "bytes": 11229,
+      "sha256": "4a435629e163b65c8f032729c2eeafc190ee0fb0eb6ded43f492613eee90c4ec"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/transport_helpers.test.mjs",
+      "bytes": 13446,
+      "sha256": "0295c05ae60db061c272f248b3c70bc2e3842f2d8608dd8d36edf7b4d9cde998"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/verify_local_helpers.mjs",
+      "bytes": 6042,
+      "sha256": "85633775e5a1af88517925734ebca5fa6ac12a66fb4e6946abb1a4d99d688e3d"
+    },
+    {
+      "path": "tools/wave5/approved_management_installer.mjs",
+      "bytes": 18163,
+      "sha256": "f6266b37e9c5eb254a794aedd512984d35865e2ff4ddfd19f6a67cf5f9750bd5"
+    },
+    {
+      "path": "tools/wave5/approved_management_installer.test.mjs",
+      "bytes": 5109,
+      "sha256": "042384417e28bce2313c8fe0ab385d06fe78e8ed5530d053c5af36c8e5b8a612"
+    },
+    {
+      "path": "tools/wave5/audit_installed_plan_peer_20261013_r5.mjs",
+      "bytes": 4158,
+      "sha256": "e559bb4b8daa820e2a82ff10bd8acdcd08b607d3cd9ba5f82ac1579f8e713bcc"
+    },
+    {
+      "path": "tools/wave5/audit_runtime_evidence_peer_20261013_r5.mjs",
+      "bytes": 24901,
+      "sha256": "c32bfc43454e2ca4ea6e7c09a631a9fe01bcbbd61bce89b29a8b86c0b9378785"
+    },
+    {
+      "path": "tools/wave5/bootstrap_management_20261013_r5.mjs",
+      "bytes": 17658,
+      "sha256": "8ac8cdeab26341c0a53500c4cce3231440d5d171edbd8f340b4fbcbeab1c1d07"
+    },
+    {
+      "path": "tools/wave5/bootstrap_management_20261013_r5.test.mjs",
+      "bytes": 3173,
+      "sha256": "4aeda9c080f9f42ab4b9fdb6dcae0faab8a58f99aa6759bfdb19ba37a8ed0856"
+    },
+    {
+      "path": "tools/wave5/cash_conflict_http409_20261013_r5.test.mjs",
+      "bytes": 5155,
+      "sha256": "db7089414fd3961e225928858c9f77a57e37ba6e788348f38a370366bffc5286"
+    },
+    {
+      "path": "tools/wave5/compose_harness_review.mjs",
+      "bytes": 13820,
+      "sha256": "e6bbc912d5c8fff83666b035aa9d4697def0ae0ddb32382586547595cfe3fd53"
+    },
+    {
+      "path": "tools/wave5/compose_supabase_provider_preparation.mjs",
+      "bytes": 7442,
+      "sha256": "0c209b4a185759082231ddf83318a4fee1011ecb0b6815a8d1f980dd895af0d0"
+    },
+    {
+      "path": "tools/wave5/continue_source_workflows_20261013_r5_a3.mjs",
+      "bytes": 13958,
+      "sha256": "55c06f4732ec1b15ad235b5c9f461072369e1b94ec1c6ac18ebd3892841adf1b"
+    },
+    {
+      "path": "tools/wave5/delivery_transport_20261013_r5.mjs",
+      "bytes": 15312,
+      "sha256": "ce733b5093e7c53ded4742111af33f5d254d8f488513f800f39e05b882899dfe"
+    },
+    {
+      "path": "tools/wave5/enroll_mfa_management_20261013_r5.mjs",
+      "bytes": 13561,
+      "sha256": "ede49ffd20a111a063b00b375b32fdef40c69b09364a4ae72e5f2a5e7a608240"
+    },
+    {
+      "path": "tools/wave5/finance_cash_fixture_20261013_r5.mjs",
+      "bytes": 20620,
+      "sha256": "8d5e670368fd89a9e9a98f10aa4befc1f2bc4ed0b28de913aa89ee64766291f9"
+    },
+    {
+      "path": "tools/wave5/finance_cash_workflows_20261013_r5.mjs",
+      "bytes": 29581,
+      "sha256": "15758ebee2def57d0b3796cd9911090207ba7c9d49bbcbaa8b4201b9a420b64c"
+    },
+    {
+      "path": "tools/wave5/finance_cash_workflows_20261013_r5.test.mjs",
+      "bytes": 12168,
+      "sha256": "c19fae79b3bd522888b0dc7076acd229934f843f9801fed6076506ff7f77aa9f"
+    },
+    {
+      "path": "tools/wave5/finance_https_transport_20261013_r5.mjs",
+      "bytes": 8347,
+      "sha256": "5eb2b839a9249fd457073d4b63523d311f06ecc2d392710db2f823259395ba0f"
+    },
+    {
+      "path": "tools/wave5/finance_https_transport_20261013_r5_a2.mjs",
+      "bytes": 8610,
+      "sha256": "1ecbb7beaf53b5a32dd48e860dc78159b225e428bf36687972443dea2a1a3a58"
+    },
+    {
+      "path": "tools/wave5/finance_remaining_20261013_r5.mjs",
+      "bytes": 36810,
+      "sha256": "673f434d2d87dd098f42aef3278b726ecd31668bb66d0c4de096bb9f45229d18"
+    },
+    {
+      "path": "tools/wave5/finance_remaining_20261013_r5.test.mjs",
+      "bytes": 21958,
+      "sha256": "e921c306c0e254c174184e9bd0059ee19a46185b472a4446b265148b70e871b4"
+    },
+    {
+      "path": "tools/wave5/finance_remaining_20261013_r5_a2.mjs",
+      "bytes": 37427,
+      "sha256": "73dd2d45688f0dbe47185f685501aa1397a8145976eafe6bb5719e4e9b80d666"
+    },
+    {
+      "path": "tools/wave5/finance_remaining_20261013_r5_a2.test.mjs",
+      "bytes": 25077,
+      "sha256": "f8ed81114fab3a2c73c32e71182d9232ca071070602331eaa67acb326d17ca76"
+    },
+    {
+      "path": "tools/wave5/genuine_delivery_lease_20261013_r5.mjs",
+      "bytes": 12642,
+      "sha256": "a5ccccab1163c0563361a1d56d9bb71030868d005fb24d077a91db05a902ccf9"
+    },
+    {
+      "path": "tools/wave5/genuine_mfa_20261013_r5.test.mjs",
+      "bytes": 2154,
+      "sha256": "5a554ed8037c2a4d50680959e7b7ebccbe3eca3abeb24c2e3a267449c4b0ae2f"
+    },
+    {
+      "path": "tools/wave5/inspect_external_observation.mjs",
+      "bytes": 7073,
+      "sha256": "178090cb53ff801ab59f7e438cb4aa495d74a8c380f6c7d711f303faaf7c2cbd"
+    },
+    {
+      "path": "tools/wave5/inspect_runtime_access_20261013_r5.mjs",
+      "bytes": 5858,
+      "sha256": "2b8896abe8d91988655826bddf34a3f1f3569c52362a02f2af8870149e473993"
+    },
+    {
+      "path": "tools/wave5/inspect_scheduled_read_error_20261013_r5.mjs",
+      "bytes": 1965,
+      "sha256": "51850afbd880528cfadddab92741ac3e7d96feb79613f8dbd524d8bd7952dac5"
+    },
+    {
+      "path": "tools/wave5/inspect_source_failure_20261013_r5.mjs",
+      "bytes": 6830,
+      "sha256": "480e1fa64775553fc19b1eb75f96888780991db410f51914374cab6f9c05f260"
+    },
+    {
+      "path": "tools/wave5/load_approved_routing_payload_20261013_r5.mjs",
+      "bytes": 2898,
+      "sha256": "cb49d3c7e40444714c48111afdb9ebfa7aacb49df065e616596784766cd96933"
+    },
+    {
+      "path": "tools/wave5/load_finance_fixture_commit_20261013_r5.mjs",
+      "bytes": 1931,
+      "sha256": "1103f4bddfe436131ae83aaed70747dff0315fa65dd3c59244d93e8635d7b47c"
+    },
+    {
+      "path": "tools/wave5/membership_preparation_peer_20261013.test.mjs",
+      "bytes": 7910,
+      "sha256": "99f9e6a625f61eb56ee256b1100f8a712d75200ee6b501f5f89f2747d1b29468"
+    },
+    {
+      "path": "tools/wave5/pause_failed_scheduled_delivery_20261013_r5.mjs",
+      "bytes": 7234,
+      "sha256": "0fca4ff46f810a636f9e31f5316caa46cb816c614b9a3634ededaf7a78706fe6"
+    },
+    {
+      "path": "tools/wave5/persistent_setup_20261013_r5.mjs",
+      "bytes": 9487,
+      "sha256": "3318912e74ae08f17647dd506cc360c735b0d9db15df17984fefde79b40ed724"
+    },
+    {
+      "path": "tools/wave5/persistent_setup_20261013_r5_a2.mjs",
+      "bytes": 10141,
+      "sha256": "8d60a4a779904c7274838200b8ef18626b9e8b1ebd72fec4c978bf2c4fed81f8"
+    },
+    {
+      "path": "tools/wave5/persistent_setup_20261013_r5_a3.mjs",
+      "bytes": 10458,
+      "sha256": "53f2e198f8f99b43c3c191a75064588f837e3faa4fa424e23b3e13f2cad36586"
+    },
+    {
+      "path": "tools/wave5/persistent_setup_20261013_r5_a4.mjs",
+      "bytes": 12010,
+      "sha256": "54d4e13973fcf27f9c334176315c5e6dcb37a515ed6d0c4a62471de1030d6795"
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink.mjs",
+      "bytes": 11697,
+      "sha256": "c2a3435601bc32fb1c2623fbac070cfd381fb4c2dd7ecf7963a293049344ecad"
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink.test.mjs",
+      "bytes": 11842,
+      "sha256": "b05624090af8cf847b45cafc314f3254b6ecd3f664af462a1945da16153541fb"
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink_peer_20261013.test.mjs",
+      "bytes": 4417,
+      "sha256": "1b8f8c741beb7b625ba7d1d562ebdc8ac2dc3e6cc3aeafcce36ad5490e91e412"
+    },
+    {
+      "path": "tools/wave5/preparation_journal.mjs",
+      "bytes": 4778,
+      "sha256": "95a93eb07bf7bfaadd2121c854683453512203ecc7380225602f2f8330267840"
+    },
+    {
+      "path": "tools/wave5/preparation_journal.test.mjs",
+      "bytes": 7217,
+      "sha256": "05e383e82ac6d593bdc066541a4fe48c61904cd7283cfc5decb316ed93fcea86"
+    },
+    {
+      "path": "tools/wave5/preparation_journal_peer_20261013.test.mjs",
+      "bytes": 3315,
+      "sha256": "1b393f9a7629332233e7aee054755bccd61056875f38f99fefbf0da0bcf2f3b6"
+    },
+    {
+      "path": "tools/wave5/prepare_actual_delivery_fixtures_20261013_r5.mjs",
+      "bytes": 9168,
+      "sha256": "3a37978cf79456aa6e7624cf6cd3428ffe36b70617c73442cf458d24238cfd74"
+    },
+    {
+      "path": "tools/wave5/prepare_approved_execution_snapshot_20261013_r5.mjs",
+      "bytes": 7593,
+      "sha256": "49d88d33825b1fb8de96cf5bc60c8ca4ed1297a25fc5c22a6976c1823e4842ab"
+    },
+    {
+      "path": "tools/wave5/prepare_delivery_transport_20261013_r5.mjs",
+      "bytes": 1155,
+      "sha256": "0ee6d4b221a028fe2a1638898bb586f4957c8a3678a41eb55999cb56cf8cbbe6"
+    },
+    {
+      "path": "tools/wave5/prepare_finance_fixture_20261013_r5.mjs",
+      "bytes": 2567,
+      "sha256": "9bfa5d554cc78f17386b8c8d34d8f9ea0768b38d9663ec8fa4cf123e4f8144a9"
+    },
+    {
+      "path": "tools/wave5/prepare_finance_remaining_20261013_r5.mjs",
+      "bytes": 6921,
+      "sha256": "a238573543add7f0d9595f0b926a888c0ca201c663c448e806e72c26fe635b1e"
+    },
+    {
+      "path": "tools/wave5/prepare_finance_remaining_20261013_r5_a2.mjs",
+      "bytes": 7948,
+      "sha256": "8eabe39a70739b5a3782a866b306bfc7e65db7eb2174fd50da8a461d1effdf0d"
+    },
+    {
+      "path": "tools/wave5/prepare_finance_workflows_20261013_r5.mjs",
+      "bytes": 3264,
+      "sha256": "1de779c1439cfa0d03ac3439e1599d4257a87dcdd2c5f69be7a01b2405032fbd"
+    },
+    {
+      "path": "tools/wave5/prepare_installed_verification_20261012_r5.mjs",
+      "bytes": 46103,
+      "sha256": "6641087a2331e156ee99ad05ddf4adffb06aa5596b9867ce7d6cb9885ba8e719"
+    },
+    {
+      "path": "tools/wave5/prepare_installed_verification_successor_20261012_r5_a2.mjs",
+      "bytes": 6012,
+      "sha256": "06f809313f145f2f02aa8d54e04c96762838b0acc145563cb072e55fdaae1626"
+    },
+    {
+      "path": "tools/wave5/prepare_persistent_setup_diagnostic_successor_20261013_r5_a4.mjs",
+      "bytes": 4023,
+      "sha256": "296bc321cc54b4a0c3fc6265a5948971fcd7d13b6bb9771975054ba7ddf876d8"
+    },
+    {
+      "path": "tools/wave5/prepare_persistent_setup_successor_20261013_r5_a2.mjs",
+      "bytes": 2471,
+      "sha256": "a144d1fb9fb876bbf69dc2196d4d342dd2230f2715e50cb34769a510991ac977"
+    },
+    {
+      "path": "tools/wave5/prepare_persistent_setup_successor_20261013_r5_a3.mjs",
+      "bytes": 2415,
+      "sha256": "886137a167bc7ba8f4025b5aaf904d60aa8508bfe1eb6017416857c20b0d4302"
+    },
+    {
+      "path": "tools/wave5/prepare_scheduled_delivery_start_20261013_r5.mjs",
+      "bytes": 5919,
+      "sha256": "19301bfb4142e3bb5acc24fb880523d38942ee7b5d2e6b19b62af89ff97639df"
+    },
+    {
+      "path": "tools/wave5/prepare_source_population_20261013_r5.mjs",
+      "bytes": 7265,
+      "sha256": "d848447baa214cc970f498d6885f25bc030c927bf840ed502bd9cecd4f1233c4"
+    },
+    {
+      "path": "tools/wave5/prepare_source_workflow_successor_20261013_r5_a3.mjs",
+      "bytes": 4439,
+      "sha256": "72ff12ff767fc5c06f8fccc85943ee2d6fcb9370b1e5019fda3a0c48c3cf2244"
+    },
+    {
+      "path": "tools/wave5/prepare_worker_platform_origin_review_20261013_r5.mjs",
+      "bytes": 9242,
+      "sha256": "9f4b4c62b8f4785fd32716897e61ee0d68dbf17d782851e93061209305713e53"
+    },
+    {
+      "path": "tools/wave5/prepare_worker_routing_approval_ready_20261013_r5.mjs",
+      "bytes": 3439,
+      "sha256": "aa16e06f6d027143b5d4d404531af53f1d6a1d63ff560d741c41d2207d7da5cd"
+    },
+    {
+      "path": "tools/wave5/prepare_worker_routing_review_20261013_r5.mjs",
+      "bytes": 11069,
+      "sha256": "6a7994a67f1e3c6f1dad1cafa284e6ef562edf515f9685ea83e929b0579f6c11"
+    },
+    {
+      "path": "tools/wave5/prepare_worker_routing_review_20261013_r5_a2.mjs",
+      "bytes": 11025,
+      "sha256": "2c6bcc758f584b4787c6d19f8b306ec24e0ccdff1d88654e1198ea8fdc0d6ded"
+    },
+    {
+      "path": "tools/wave5/private_auth_provisioning_20261013_r5.test.mjs",
+      "bytes": 5345,
+      "sha256": "555d7644407fa1d1ef697d6e80d9332ff7346c11326751948d5855db160020bb"
+    },
+    {
+      "path": "tools/wave5/private_existing_actor_session_20261013_r5.mjs",
+      "bytes": 4562,
+      "sha256": "0d9dc4bfbd703fb7637f0acc89eaa195c2b6a17bdf4f4e566b0ba925f76c4540"
+    },
+    {
+      "path": "tools/wave5/private_runtime_http.mjs",
+      "bytes": 5080,
+      "sha256": "d52ae919e4c13bd1745ef806658744dfc2c52df7b61d24d9f87afac06de7be2c"
+    },
+    {
+      "path": "tools/wave5/private_runtime_seal.mjs",
+      "bytes": 2916,
+      "sha256": "1395a91ee666d40c5504c8977b5d4f64aa4d54b383dfe147fe78eb07a5d7a206"
+    },
+    {
+      "path": "tools/wave5/probe_preparation_journal_20261013_r5.mjs",
+      "bytes": 3800,
+      "sha256": "a36dce300966d85ff931d9330ece5100fa2c1881912b48f6747ab6e1d3b051c7"
+    },
+    {
+      "path": "tools/wave5/probe_worker_ingress_20261013_r5.mjs",
+      "bytes": 2495,
+      "sha256": "24a30fff0ecd45de2a9b6250f4e1cd545cd1fc5bd0dbc916843e08abb87a003b"
+    },
+    {
+      "path": "tools/wave5/provider_live_response_regression_20261013_r5.test.mjs",
+      "bytes": 1785,
+      "sha256": "7d29dc771f10b4b9e5581f7d0f4aef5d7cb62d5c06d6c4d7a4744198d39c3ef0"
+    },
+    {
+      "path": "tools/wave5/provision_auth_management_20261013_r5.mjs",
+      "bytes": 11610,
+      "sha256": "e2c4905e60b8e0a66ef494c296dd0a1e2d26577e60ef48effd530c6de912a5a7"
+    },
+    {
+      "path": "tools/wave5/publish_runtime_progress_20261013_r5.mjs",
+      "bytes": 15935,
+      "sha256": "e4ba3e103530e1a976762937d9df27acefa40e494cb7fa758e12b3ce1447c5b1"
+    },
+    {
+      "path": "tools/wave5/publish_runtime_progress_20261013_r5_a2.mjs",
+      "bytes": 22135,
+      "sha256": "638ac2a046f0aa7a1208384b9fe353809da1e33acd5bda84dc11fcc7f5a8f28e"
+    },
+    {
+      "path": "tools/wave5/publish_runtime_progress_20261013_r5_a3.mjs",
+      "bytes": 25623,
+      "sha256": "dd38681e44793745ffe2b0a9e4b591dbdd8ccbc942f7981fddc9e1680bb9c148"
+    },
+    {
+      "path": "tools/wave5/refresh_private_owner_scope_20261013_r5.mjs",
+      "bytes": 4227,
+      "sha256": "1049309eccbec8247cfffc426fa2592547886467cda09f156ddd9636afba5a59"
+    },
+    {
+      "path": "tools/wave5/refresh_private_owner_scope_20261013_r5_a3.mjs",
+      "bytes": 4227,
+      "sha256": "55e8038bd5054e0a4e6fa01297efdf1ad3eeecc09e24b65346ae858822672ac2"
+    },
+    {
+      "path": "tools/wave5/refresh_private_owner_scope_20261013_r5_a4.mjs",
+      "bytes": 4227,
+      "sha256": "474923aaef21c8330b6dfe699d291b3e3469f046f7b32c5a2ef1bb1d83b36d84"
+    },
+    {
+      "path": "tools/wave5/refresh_private_owner_scope_20261013_r5_a5.mjs",
+      "bytes": 4576,
+      "sha256": "98e4a71b61af17f121349cd23d8349c3329860a772c124005024704a91e04b71"
+    },
+    {
+      "path": "tools/wave5/resume_source_workflows_20261013_r5.mjs",
+      "bytes": 11722,
+      "sha256": "9058710e0468e3b44dee99ae1a6c3c8a414146a50e5b3060df3094030d912200"
+    },
+    {
+      "path": "tools/wave5/review_finance_fixture_peer_20261013_r5.mjs",
+      "bytes": 15476,
+      "sha256": "22ef8ce1e718f2ede95a8b643b5e74b880c1eed0144f937f6873dbb983ecc306"
+    },
+    {
+      "path": "tools/wave5/review_worker_routing_peer_20261013_r5.mjs",
+      "bytes": 14209,
+      "sha256": "cdbb8db2733de34b77e246dd49c8ce8bc65a40355bdad26389cb7b4909d03058"
+    },
+    {
+      "path": "tools/wave5/run_runtime_verification.mjs",
+      "bytes": 9119,
+      "sha256": "143f460b88c1e1dba4a06b7ed869fb5de46e6eff77421ebf8d0aee15efb74b20"
+    },
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "bytes": 31294,
+      "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.mjs",
+      "bytes": 35742,
+      "sha256": "1df1396865610b73614f5ba9b83a8d9b91d40bb642e26d7443934ef11bcd0f3c"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.test.mjs",
+      "bytes": 45494,
+      "sha256": "d0582f1c33e3b869411bda08e50a495ecd4a287ae299b570186c271d614036db"
+    },
+    {
+      "path": "tools/wave5/runtime_fixture_spec.mjs",
+      "bytes": 36370,
+      "sha256": "71dd763620cab0ca896dd96c50193350f1926e67f481acfed9b7aaa4b519f2d2"
+    },
+    {
+      "path": "tools/wave5/source_population_20261013_r5.test.mjs",
+      "bytes": 1813,
+      "sha256": "3ae86c032385e41b5d2f757c3d281175b0697bc156c21517b38df48e9291ed26"
+    },
+    {
+      "path": "tools/wave5/source_workflow_20261013_r5.test.mjs",
+      "bytes": 1177,
+      "sha256": "06a470e5f82ffc45220a70b84215c6667960383b8a29f00b6b8299d86a7548ec"
+    },
+    {
+      "path": "tools/wave5/source_workflow_management_20261013_r5.mjs",
+      "bytes": 14227,
+      "sha256": "aabbeae5af299178bd35784fb8ffefd378ae324a25749c42f9e3d7cd22e107ea"
+    },
+    {
+      "path": "tools/wave5/start_scheduled_delivery_20261013_r5.mjs",
+      "bytes": 6119,
+      "sha256": "d5e2eb84756cd626e71e7ae26432a23664bb211efebb28271147b703972ee048"
+    },
+    {
+      "path": "tools/wave5/start_scheduled_delivery_20261013_r5_a2.mjs",
+      "bytes": 7197,
+      "sha256": "5db7fb27be96f2716a55ba2b38a2cbd4ca33036f4af2557a11b4e94c0b2089d0"
+    },
+    {
+      "path": "tools/wave5/start_scheduled_delivery_20261013_r5_a3.mjs",
+      "bytes": 7200,
+      "sha256": "4f9d6200dc1a9a8d883b84318219e6fc25ac2f1dd05bc19eb7b8281dca6eb514"
+    },
+    {
+      "path": "tools/wave5/start_scheduled_delivery_20261013_r5_a4.mjs",
+      "bytes": 7230,
+      "sha256": "930e6c3ca3bc26c0a91448df834746c234e6e211280d900747f2f4ddf17ff096"
+    },
+    {
+      "path": "tools/wave5/supabase_http_transport.mjs",
+      "bytes": 15253,
+      "sha256": "7815b9c8c18bd5d2375480706579c7dd9583b1e95e0424a2178f7b9b5db265c9"
+    },
+    {
+      "path": "tools/wave5/supabase_management_read.mjs",
+      "bytes": 8221,
+      "sha256": "ddbb103c7dbf82327d77829b21bcaaf44c7f447187644af08c026c03841b5ea4"
+    },
+    {
+      "path": "tools/wave5/supabase_management_read.test.mjs",
+      "bytes": 10075,
+      "sha256": "356b76b8a6930f7c485ddbe92f0937cf616d5552335f2b9bef940cc3a525041a"
+    },
+    {
+      "path": "tools/wave5/supabase_membership_fixture.mjs",
+      "bytes": 10162,
+      "sha256": "b39b636fe45cfc21e58f53cf6315d7cfaae606042f64d6869969ebbb380e0993"
+    },
+    {
+      "path": "tools/wave5/supabase_provider.test.mjs",
+      "bytes": 46828,
+      "sha256": "72f29ca192982a288b396f2e1d2649421096c80d82c3b788878170fd269d443e"
+    },
+    {
+      "path": "tools/wave5/supabase_provider_peer_20261013.test.mjs",
+      "bytes": 18957,
+      "sha256": "2951fb7a0c605d8873fb2c3e012c6af33a91b607293ddd53f84d2b8eea828535"
+    },
+    {
+      "path": "tools/wave5/supabase_provider_plan.mjs",
+      "bytes": 4016,
+      "sha256": "ac7bb6bd32add9f76a5a9fb94a48025bd12e25d7684e5b4eafa9cb82afe63c2e"
+    },
+    {
+      "path": "tools/wave5/supabase_provider_plan.test.mjs",
+      "bytes": 3175,
+      "sha256": "090dd23865dbb0a1ded1af9a1484d423d916549d472789e9ffc895dd6da5d7eb"
+    },
+    {
+      "path": "tools/wave5/supabase_read_store.mjs",
+      "bytes": 14778,
+      "sha256": "48a758dd6c8f29286889a7bddd6f4f7fd24e1a27f153d3d35208a2f2e71c73e6"
+    },
+    {
+      "path": "tools/wave5/supabase_runtime_provider.mjs",
+      "bytes": 44367,
+      "sha256": "dfc40e82d0a754f35b4d713b83257ba3781f60520c11259cee1a791c580be8b0"
+    },
+    {
+      "path": "tools/wave5/synthetic_activation_contention_20261013_r5.mjs",
+      "bytes": 10258,
+      "sha256": "23cf50d1f0956ee2eaed298163ac7a0c1ea8fa267facebf488a5c13f90800a08"
+    },
+    {
+      "path": "tools/wave5/synthetic_activation_contention_20261013_r5.test.mjs",
+      "bytes": 1362,
+      "sha256": "d1d7eb66e70dbbf8861e612c379fe80ef5a4a1058fc8108ba793d6e17ec50c01"
+    },
+    {
+      "path": "tools/wave5/verify_installed_management_20261013_r5.mjs",
+      "bytes": 13377,
+      "sha256": "7a0b1b872c4338be4849365313f47bb3729742c39c500c2ce5acd11f7972c70d"
+    },
+    {
+      "path": "tools/wave5/verify_installed_management_20261013_r5.test.mjs",
+      "bytes": 6054,
+      "sha256": "3668f38767b49d56567b73fbc3b8b9a2228320877fdc01f891685697cae822eb"
+    },
+    {
+      "path": "tools/wave5/verify_local_harness.mjs",
+      "bytes": 6278,
+      "sha256": "db5b4c163c549b32e6e831483fdb4f6c07c8158c50e7ef3565000d04f48e9834"
+    },
+    {
+      "path": "tools/wave5/verify_persistent_setup_committed_20261013_r5.mjs",
+      "bytes": 3387,
+      "sha256": "078f3f0bae5ee45d77e9178928678833cd00cad084b0dd810ec0dd30fca367a1"
+    },
+    {
+      "path": "tools/wave5/verify_preparation_peer_20261013.mjs",
+      "bytes": 4385,
+      "sha256": "5607cd66da87577138e715411d0cec90a8ada74ef1f7e8f087c6b30d86325b9b"
+    },
+    {
+      "path": "tools/wave5/verify_provider_peer_20261013.mjs",
+      "bytes": 10864,
+      "sha256": "00efa09422545bc0cc114cfbb1cd16d78f7e181746400ac57debf199c276cbe1"
+    },
+    {
+      "path": "tools/wave5/verify_routing_deployment_20261013_r5.mjs",
+      "bytes": 4115,
+      "sha256": "757748ac735b3fa887bf356ce7f5a1aeba2ed9af93430bd05c54e0c2deb46809"
+    },
+    {
+      "path": "tools/wave5/verify_supabase_provider.mjs",
+      "bytes": 6622,
+      "sha256": "5bf29171ce4d1c7015e4fd3b165a901fe854bf726c0a1903c8918b68694a6381"
+    },
+    {
+      "path": "tools/wave5/worker_routing_peer_20261013_r5.test.mjs",
+      "bytes": 6729,
+      "sha256": "024888e82a82fb359550c103eba3a03ddc748c4be10bd24799cfefbc5b220521"
+    },
+    {
+      "path": "tools/wave5/write_provider_peer_review_20261013.mjs",
+      "bytes": 27366,
+      "sha256": "0f3d32ba8b3ba4c3477c0b884e821903eeb059c5ef53e2197c19606a6fb97841"
+    }
+  ],
+  "log": {
+    "path": "docs/verification/wave5/task3-load-release-20261013/local-verification-a2.tap",
+    "sha256": "7dcf37db04ee7264c4e7384dce1a45c22a17cd5b01f533212a8e2b6c8e57c061"
+  },
+  "hardware": {
+    "platform": "win32",
+    "release": "10.0.26200",
+    "cpuModel": "11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz",
+    "logicalCpuCount": 8,
+    "totalMemoryBytes": 8299257856,
+    "availableMemoryBytes": 1451368448
+  },
+  "hardwareSha256": "1f45f409190a244468294a8b2f6655510257cff1cb231e7682afbed8f96d350c",
+  "actualPostgresConnection": false,
+  "liveAuthCreated": 0,
+  "genuineLoadSessionsCreated": 0,
+  "liveSqlWrites": 0,
+  "SDKJobs": 0,
+  "actualLoadPerformed": false,
+  "completeExternalTransportCaptureConfigured": false,
+  "productionReleased": false,
+  "boundary": "Controlled Node tests and offline source bindings only. No private database credential, real Auth session, actual egress capture, P95 or load result is manufactured."
+}

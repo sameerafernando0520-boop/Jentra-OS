@@ -1,0 +1,249 @@
+{
+  "kind": "independent-local-investigation-of-finance-quiescence-stop",
+  "reviewer": "/root/native_matrix_20261013",
+  "reviewedAt": "2026-10-13T18:16:28Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "bundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+  "verdict": "ACTIVE_CASH_API_ROW_SAVED_IDENTITY_UNPROVED_NEW_BOUND_RESUME_REQUIRED",
+  "investigationComplete": true,
+  "runtimeBlockerCleared": false,
+  "sourceReviewA2Preserved": true,
+  "inputs": [
+    {
+      "path": "tools/wave5/finance_remaining_20261013_r5_a2.mjs",
+      "sha256": "73dd2d45688f0dbe47185f685501aa1397a8145976eafe6bb5719e4e9b80d666",
+      "bytes": 37427
+    },
+    {
+      "path": "docs/verification/wave5/finance-remaining-successor-independent-review-20261013-r5-a2.json",
+      "sha256": "1435a64ea6c4a720a4ba952757eae12b791646508cc1af09dad99b3aeecafa5f",
+      "bytes": 35405
+    },
+    {
+      "path": "docs/verification/wave5/finance-remaining-active-cash-invocation-blocker-20261013-r5-a1.json",
+      "sha256": "d3d073373538305f4d981b355368937b433a80f72596eaf8906bffd1550c71ca",
+      "bytes": 1932
+    },
+    {
+      "path": "docs/verification/wave5/finance-stale-backend-metadata-20261013-r5-a1.json",
+      "sha256": "fd1f2ac38acbc2297c446ecf892fc4655adbe111cb54641be2aaf48919a3e95c",
+      "bytes": 2698
+    },
+    {
+      "path": "docs/verification/wave5/finance-remaining-readonly-reconciliation-20261013-r5-a2.json",
+      "sha256": "57e51d82616158e1eb3b97ab1f574a2091c9bd0f022c0079d287842724d60f67",
+      "bytes": 8864
+    },
+    {
+      "path": "supabase/migrations/20261008120000_wave5_cash_payment_dates.sql",
+      "sha256": "1463953b0fa76269740a732a59485ff3d160681fb2a6655eedbd8c0aeda42c8a",
+      "bytes": 35937
+    },
+    {
+      "path": "supabase/candidates/wave5_cash_conflict_http409_20261013_r5.sql",
+      "sha256": "99cd801ba156872fb8f6346cc74e667ef9398e3628f466ae0ff44f37b7fdf520",
+      "bytes": 3327
+    },
+    {
+      "path": "build/wave5-approved-execution-20261013-r5-a2/docs/verification/wave5/genuine-finance-finance-20261013-r5-1791914813606/99-stop.json",
+      "sha256": "67e58a93c90471dbd7c32b7be6ee194e8b0dc50fb98c5701a38599cd6dd5246e",
+      "bytes": 710
+    },
+    {
+      "path": "build/wave5-approved-execution-20261013-r5-a2/docs/verification/wave5/finance-remaining-once-20261013-r5.json",
+      "sha256": "ec27f49a0cd76e792b70a256e79edad5f858373c7d4c71cd9ec027c5a5ef8919",
+      "bytes": 706
+    }
+  ],
+  "reviewExecution": {
+    "networkRequests": 0,
+    "privateFilesRead": 0,
+    "liveQueries": 0,
+    "liveWrites": 0,
+    "authOperations": 0,
+    "sourceOrHelperEdits": 0,
+    "sdkJobs": 0,
+    "uiOperations": 0,
+    "backendCancellationOrTermination": 0,
+    "queryReplays": 0,
+    "existingArtifactsModified": 0,
+    "onlyNewInvestigationArtifactsWritten": true
+  },
+  "actualStoppedAttempt": {
+    "directory": "build/wave5-approved-execution-20261013-r5-a2/docs/verification/wave5/genuine-finance-finance-20261013-r5-1791914813606/",
+    "phase": "fresh-quiescent-original-preflight",
+    "actualStartedAt": "2026-10-13T18:06:53.606Z",
+    "actualStoppedAt": "2026-10-13T18:06:57.358Z",
+    "failureCode": "ORIGINAL_CASH_UNCERTAINTY_MUST_BE_QUIESCENT",
+    "actualRemainingAttempts": 3,
+    "priorRequestBound": 75,
+    "totalRequestBound": 78,
+    "completedCommands": 0,
+    "lastOriginalCommand": null,
+    "resolution": null,
+    "staleOriginalCommandReplayed": false,
+    "automaticRetryPerformed": false,
+    "directorySavedFiles": [
+      "99-stop.json"
+    ],
+    "onceIntentConsumed": true,
+    "onceIntentMustRemainUnchanged": true,
+    "sourceDerivedRpcOrAuthDispatchesBeforeThisPhaseStop": 0,
+    "originalThreePreflightResponseBodiesPersisted": false,
+    "businessRowsIndependentlyRequeriedByReviewer": false
+  },
+  "savedActiveCashMetadata": {
+    "source": "docs/verification/wave5/finance-remaining-active-cash-invocation-blocker-20261013-r5-a1.json",
+    "rowCount": 1,
+    "observedAtFieldPresent": false,
+    "pid": 66780,
+    "usename": "authenticator",
+    "applicationName": "PostgREST 14.5",
+    "state": "active",
+    "waitEventType": null,
+    "waitEvent": null,
+    "queryAgeText": "-00:00:00.00822",
+    "transactionAgeText": "-00:00:00.007893",
+    "queryMd5": "22ccadf5f07f9d91bf80f0d4d0e3841f",
+    "originalCommandLiteralVisible": false,
+    "queryBodyOrParametersPublished": false,
+    "reportedQueryPredicate": "Exact active authenticator api.wave5_cash_date_command invocation; observer backend and pg_stat_activity SQL excluded."
+  },
+  "parentReportedEarlierQuiescence": {
+    "reportedObservedAt": "2026-10-13 18:07:35 UTC",
+    "staleReceipts": 0,
+    "staleProposals": 0,
+    "activeCashApiInvocations": 1,
+    "authority": "Direct parent message describing its actual tool result; complete query/result was not available as a saved artifact at this review cutoff.",
+    "independentlyExecutedByReviewer": false,
+    "notDerivedFromSanitizedActivityRecord": true
+  },
+  "priorFingerprintComparison": {
+    "priorReconciliationActiveRow": {
+      "pid": 66780,
+      "queryStart": "2026-10-13 15:09:17.879044+00",
+      "queryFingerprintSaved": false
+    },
+    "subsequentExactPidMetadataResultRows": 0,
+    "earlierActiveQueryMd5Available": false,
+    "earlierActiveQuerySha256Available": false,
+    "currentQueryMd5MatchToEarlier": null,
+    "samePidWasObserved": true,
+    "originalRequestIdentityEstablished": false,
+    "continuousOriginalRequestEstablished": false,
+    "retryLoopOrRetryCountEstablished": false,
+    "reason": "The earlier reconciliation has PID/queryStart/wait fields only. The exact-PID metadata selected query_sha256 but returned an empty row array, so no historical fingerprint exists to compare. The current MD5 has only one occurrence in the searched saved public JSON/Markdown inputs before this new artifact."
+  },
+  "sourceRisk": {
+    "originalCashDateCustom40001RaiseSites": 4,
+    "messages": [
+      "CASH_DATE_VERSION_CONFLICT",
+      "CASH_DATE_SOURCE_CHANGED",
+      "CASH_DATE_PROPOSAL_CHANGED"
+    ],
+    "sqlCandidateInstalledByReviewer": false,
+    "separateSqlCandidateSha256": "99cd801ba156872fb8f6346cc74e667ef9398e3628f466ae0ff44f37b7fdf520",
+    "possibleExplanation": "The existing custom40001 cash conflicts and saved PostgREST14.5 application label are consistent with the retry risk documented in the prior primary-source review. They do not correlate this active row to the original timed-out command or establish the live cause.",
+    "primaryDocumentationAlreadyBoundByPriorReview": "https://supabase.com/docs/guides/troubleshooting/high-cpu-and-infinite-transaction-retries-when-using-custom-error-codes-in-rpc-functions-77326b",
+    "freshPrimaryDocumentationNetworkRead": false,
+    "separatePatchDoesNotProveExistingBackendWillBecomeIdle": true,
+    "candidateLockTimeoutSeconds": 5,
+    "candidateStatementTimeoutSeconds": 30,
+    "candidateFailureCannotAuthorizeBackendCancellation": true
+  },
+  "safeResumeDesign": {
+    "status": "ADVICE_ONLY_NO_HELPER_IMPLEMENTED",
+    "oldA2ExecuteMustNotBeRepeated": true,
+    "oldOnceIntentMustNotBeDeletedRenamedOverwrittenOrReset": true,
+    "newExactSuccessorPlanAndSourceReviewRequired": true,
+    "actualQuiescenceAndApplicableSourceApprovalRequired": true,
+    "previousStopAndIntentHashBindingsRequired": true,
+    "exactPreviousStopRequired": {
+      "phase": "fresh-quiescent-original-preflight",
+      "failureCode": "ORIGINAL_CASH_UNCERTAINTY_MUST_BE_QUIESCENT",
+      "priorRequestBound": 75,
+      "actualRemainingAttempts": 3,
+      "totalRequestBound": 78,
+      "completedCommands": 0,
+      "lastOriginalCommand": null,
+      "resolution": null,
+      "automaticRetryPerformed": false,
+      "staleOriginalCommandReplayed": false
+    },
+    "budget": {
+      "conservativeFirstAttemptReserve": 40,
+      "observedEarlierResumedAttempts": 35,
+      "observedStoppedA2ReadOnlyAttempts": 3,
+      "requiredPriorBound": 78,
+      "priorObservedCumulativeTotal": null,
+      "maximumOrdinaryNewAttempts": 71,
+      "maximumOriginalCommandReadOnlyResolutionAttempts": 1,
+      "maximumCumulativeBound": 150,
+      "maximumExecutionMs": 900000,
+      "maximumTransportTimeoutMs": 45000,
+      "allFutureHelperManagementKeyAuthRpcAttemptsMustBeCounted": true,
+      "noAutomaticQuiescencePollingOrRetryLoop": true
+    },
+    "newArtifacts": {
+      "newOnceOnlyIntentMustUseDistinctSourceBoundName": true,
+      "newEvidenceDirectoryRequired": true,
+      "exclusiveCreateAndSyncRequired": true,
+      "previousAttemptReferencesRequired": true,
+      "existingPipelineAndStatementCsvPathsMustBeAbsent": true,
+      "persistBoundedPreflightFactsObservationAndResponseHashesBeforeValidation": true
+    },
+    "mandatoryFreshChecks": [
+      "Fresh original source counts/hash, prior whole-source hash and exactly three prior statement process events.",
+      "Zero original stale command receipts and stale proposal rows.",
+      "Zero all matching active authenticator cash API invocations, excluding observer SQL; repeat before each allowed write.",
+      "Exact seven installed function definition hashes for the selected reviewed source version, never a permissive old-or-new fallback.",
+      "Genuine fresh existing actor/factor/online Auth/server session proof and distinct proposer/approver sessions.",
+      "Same original deterministic two unperformed date proposals, two approvals, two prepare replays and two governed CSV registrations; no old completed or stale command is resent.",
+      "Preserved single-flight, private/public intent acknowledgements, immutable body, full canonical and raw-SHA replay validation, and acknowledged result.",
+      "Exact original and prior-complete source reconciliation with only the two intended new export process events."
+    ],
+    "afterSeparatePt409Installation": [
+      "Bind the actual approved installed function definition hashes and patch result in a new exact plan; the old a2 date-command MD5 is then intentionally invalid.",
+      "Any changed error mapper must accept only the exact approved custom PT409 messages at HTTP409 after source validation; unrelated failures remain unknown stops.",
+      "Do not bypass the active-invocation check or claim the DDL ended the existing request. Confirm actual quiescence separately before finance dispatch."
+    ],
+    "failureBehavior": [
+      "On nonzero activity, source/count drift, missing proof, intent collision or uncertain outcome, stop and preserve the new evidence.",
+      "Never replay the old stale command, repair the ledger, reset the once intent, terminate a backend, change shared sessions or restart a service as a workaround.",
+      "If a future attempt also stops, carry its actual attempt count into any later independently reviewed successor rather than resetting the cumulative budget."
+    ]
+  },
+  "evidenceLimits": {
+    "stoppedGuardCodeAlsoCoversOriginalProcessRowOrAppendShapeChecks": true,
+    "laterSavedActiveRowNotSameAsUnpersistedStoppedPreflightResponse": true,
+    "applicationNameIsSavedClientLabelNotIndependentBinaryVersionProof": true,
+    "negativeOrNearZeroSnapshotAgeDoesNotEstablishRequestIdentityOrRetryLoop": true,
+    "fingerprintEqualityWouldNotByItselfProveBoundRequestParameters": true,
+    "originalHttpConflictResponseUnobserved": true,
+    "originalTimeoutCauseUnproved": true
+  },
+  "gates": {
+    "a2SourceReviewPassedAndPreserved": true,
+    "freshRuntimePreflightPassed": false,
+    "remainingFinanceCommandsExecuted": false,
+    "cashBasisAndScenariosExecuted": false,
+    "authenticatedNative": false,
+    "nativeKeyboardVerified": false,
+    "actualDelivery": false,
+    "targetScaleLoad": false,
+    "ownerAcceptanceChanged": false,
+    "ownerAcceptedRequirements": 3,
+    "totalOwnerRequirements": 109,
+    "production": false,
+    "realBilling": false
+  },
+  "localReadFailures": [
+    {
+      "chunkId": "df01eb",
+      "operation": "Initial cash payment migration filename lookup",
+      "exitCode": 1,
+      "resolution": "Read-only rg located the actual frozen source supabase/migrations/20261008120000_wave5_cash_payment_dates.sql; its conflict sites and current SHA were then inspected. No helper or source was changed."
+    }
+  ]
+}
+

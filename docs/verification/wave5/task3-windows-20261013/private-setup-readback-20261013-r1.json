@@ -1,0 +1,72 @@
+{
+  "kind": "wave5-native-private-setup-readback",
+  "userReport": {
+    "text": "I completed the private setup",
+    "source": "Direct user report relayed by parent agent",
+    "treatedAsAcceptanceEvidence": false
+  },
+  "exactAccountAndProfileObservation": {
+    "toolChunk": "8736ad",
+    "observedAt": "2026-10-13T18:04:34.6869910+00:00",
+    "targetAccountSid": null,
+    "targetPackagePresent": false,
+    "targetRegisteredProfile": null,
+    "profileDirectoryPresent": false,
+    "provisionJournalsReturned": 0,
+    "method": "Exact local LSA account lookup, exact package existence, exact SID ProfileList metadata, matching public provision-journal filenames"
+  },
+  "correctedHelperValidation": {
+    "path": "docs/verification/wave5/task3-windows-20261013/native-prerequisites-20261013T180450160Z.json",
+    "sha256": "33487f45024d3b9c6c9c0abf99e490bc75ada30f1a09aa6ecbca68329f849cb9",
+    "passed": true,
+    "sourceInputsVerified": 1068,
+    "connectedReleaseFilesVerified": 34,
+    "targetAccountExists": false,
+    "targetPackageExists": false,
+    "currentTokenAdministrator": false
+  },
+  "nativeWindowInventory": {
+    "method": "Computer Use sky.list_windows; public returned window metadata only",
+    "returnedJentraWindows": [
+      {
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win10r5\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\Jentra_OS.exe",
+        "id": 1771810,
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      }
+    ],
+    "connectedWindowsReturned": 0,
+    "previewOwnedByOtherActiveChat": true,
+    "noWindowSelectedActivatedCapturedOrChanged": true,
+    "exactActionTimestampsAvailable": false
+  },
+  "oldBaseHelperReadOnlyDiagnostic": {
+    "toolChunk": "269c9c",
+    "helper": "scripts/wave5/prepare_native_runtime_profile_20261013_r5.ps1",
+    "kind": "wave5-native-profile-setup-failure",
+    "startedAt": "2026-10-13T18:05:43.9333943+00:00",
+    "recordedAt": "2026-10-13T18:05:45.1911182+00:00",
+    "passed": false,
+    "failureCode": "CURRENT_SOURCE_CHANGED",
+    "exceptionType": "System.Management.Automation.RuntimeException",
+    "mode": "Validate",
+    "exitCode": 1,
+    "accountCreated": false,
+    "packageCreated": false,
+    "copiedReleaseFiles": 0,
+    "automaticRollbackOrDeletion": false,
+    "passwordPrintedOrSaved": false,
+    "nativeLaunched": false,
+    "nativeKeyboardVerified": false,
+    "existingAccountsAndStoresPreserved": true
+  },
+  "diagnosis": {
+    "verified": "The old base r5 helper rejects concurrent current-source drift before provisioning; the corrected a2 helper validates the fixed approved source snapshot and package.",
+    "inference": "Using the old base launcher may explain the private setup report without created account/package. The human's actual chosen launcher and displayed failure code have not been observed.",
+    "nextExactPrivateStep": "Use dist/Jentra OS Isolated Windows Setup 20261013 r5 a2.cmd as administrator; handle UAC/new hidden Windows password privately. Inspect any resulting provision journals before initializing only the new profile and completing private Connected sign-in/MFA. Do not re-run after partial state without inspection.",
+    "newProvisionAttempted": false,
+    "authenticationOrSecurityPromptsAutomated": false,
+    "ownerAcceptanceAdded": 0,
+    "nativeCasesExecuted": 0,
+    "nativeAcceptance": "unverified"
+  }
+}

@@ -192,20 +192,24 @@ try {
         $taskSnapshotManifest = Join-Path $taskRoot 'docs/verification/wave5/approved-isolated-execution-snapshot-20261013-r5-a2.json'
         if ((Get-FileHash -LiteralPath $taskSnapshotManifest -Algorithm SHA256).Hash.ToLowerInvariant() -ne
             '9c9e856c2cfdb852a3a9b9e66474f14c86a32dc72cc5b613e806699b2fb78c01') { throw 'EXACT_APPROVED_EXECUTION_SNAPSHOT_REQUIRED' }
-        $taskInstaller = Join-Path $taskExecutionRoot 'tools/wave5/finance_remaining_20261013_r5.mjs'
+        $taskInstaller = Join-Path $taskExecutionRoot 'tools/wave5/finance_remaining_20261013_r5_a2.mjs'
         if ((Get-FileHash -LiteralPath $taskInstaller -Algorithm SHA256).Hash.ToLowerInvariant() -ne
-            '673f434d2d87dd098f42aef3278b726ecd31668bb66d0c4de096bb9f45229d18') { throw 'EXACT_REMAINING_FINANCE_SOURCE_REQUIRED' }
-        $taskRemainingPlan = Join-Path $taskExecutionRoot 'docs/verification/wave5/finance-remaining-preparation-20261013-r5-a1.json'
+            '73dd2d45688f0dbe47185f685501aa1397a8145976eafe6bb5719e4e9b80d666') { throw 'EXACT_REMAINING_FINANCE_SOURCE_REQUIRED' }
+        $taskRemainingPlan = Join-Path $taskExecutionRoot 'docs/verification/wave5/finance-remaining-preparation-20261013-r5-a2.json'
         if ((Get-FileHash -LiteralPath $taskRemainingPlan -Algorithm SHA256).Hash.ToLowerInvariant() -ne
-            '7b8bc312ebcb7e3389e3dbd358d988e3d417ca1149c221e0eb81800215540d2e') { throw 'EXACT_REMAINING_FINANCE_PLAN_REQUIRED' }
+            'a7153af4d8585bee09ff9d9e17274f6aa847345e294a503475b9b6393414a456') { throw 'EXACT_REMAINING_FINANCE_PLAN_REQUIRED' }
         if ($Mode -eq 'ExecuteRemainingFinance') {
             # This remains fail-closed until the independent source review is
             # completed and its exact bytes are pinned. Validate never unseals input.
-            $taskRemainingPeerExpectedSha256 = ''
+            $taskRemainingPeerExpectedSha256 = '1435a64ea6c4a720a4ba952757eae12b791646508cc1af09dad99b3aeecafa5f'
             if ($taskRemainingPeerExpectedSha256 -notmatch '^[a-f0-9]{64}$') { throw 'INDEPENDENT_REMAINING_FINANCE_REVIEW_PENDING' }
-            $taskRemainingPeer = Join-Path $taskRoot 'docs/verification/wave5/finance-remaining-independent-source-review-20261013-r5-a1.json'
+            $taskRemainingPeer = Join-Path $taskRoot 'docs/verification/wave5/finance-remaining-successor-independent-review-20261013-r5-a2.json'
             if ((Get-FileHash -LiteralPath $taskRemainingPeer -Algorithm SHA256).Hash.ToLowerInvariant() -ne
                 $taskRemainingPeerExpectedSha256) { throw 'EXACT_REMAINING_FINANCE_PEER_REQUIRED' }
+            $taskRemainingPeerReview = Get-Content -Raw -LiteralPath $taskRemainingPeer | ConvertFrom-Json
+            if ($taskRemainingPeerReview.passed -ne $true -or $taskRemainingPeerReview.runtimePlan.sha256 -ne
+                'a7153af4d8585bee09ff9d9e17274f6aa847345e294a503475b9b6393414a456' -or
+                $taskRemainingPeerReview.checks.failed -ne 0) { throw 'PASSED_EXACT_REMAINING_FINANCE_PEER_REQUIRED' }
         }
     }
     $taskNode = (Get-Command node -CommandType Application -ErrorAction Stop | Select-Object -First 1).Source
@@ -227,7 +231,8 @@ try {
             $taskMetadata.ownerSid -ne $taskSid.Value -or
             $taskMetadata.helperSha256 -notin @('3e760848688dbd82b0eb0ed83cef2c6cbf1c65c721241801870ed23555ccb199',
                 'e96cd439df228ba41f211d70338f59bd74fa21fd10791e5a3d850c31d2678e49',
-                '1049309eccbec8247cfffc426fa2592547886467cda09f156ddd9636afba5a59','55e8038bd5054e0a4e6fa01297efdf1ad3eeecc09e24b65346ae858822672ac2','474923aaef21c8330b6dfe699d291b3e3469f046f7b32c5a2ef1bb1d83b36d84') -or
+                '1049309eccbec8247cfffc426fa2592547886467cda09f156ddd9636afba5a59','55e8038bd5054e0a4e6fa01297efdf1ad3eeecc09e24b65346ae858822672ac2','474923aaef21c8330b6dfe699d291b3e3469f046f7b32c5a2ef1bb1d83b36d84',
+                '98e4a71b61af17f121349cd23d8349c3329860a772c124005024704a91e04b71') -or
             $taskMetadata.containsPlaintextCredential -ne $false -or
             ($taskExpiry -le $taskNow -and $Mode -notin @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5')) -or
             ($Mode -in @('RefreshOwnerScope','RefreshOwnerScopeA3','RefreshOwnerScopeA4','RefreshOwnerScopeA5') -and $taskCreated -lt $taskNow.AddDays(-7)) -or

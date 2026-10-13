@@ -1,0 +1,37 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import {spawnSync} from 'node:child_process';
+import assert from 'node:assert/strict';
+
+const output='docs/verification/wave5/task3-acceptance-20261013';
+const sha=value=>crypto.createHash('sha256').update(value).digest('hex');
+const read=name=>fs.readFileSync(name);
+const bind=name=>({path:name,bytes:read(name).length,sha256:sha(read(name))});
+const predecessorPath=`${output}/process-domain-verification-run2.json`;
+const predecessor=JSON.parse(read(predecessorPath));
+const testStage=predecessor.stages.find(s=>s.stage==='test');
+assert.equal(testStage.exitCode,0);
+const testLog=read(testStage.log.path).toString();
+assert.match(testLog,/\+27: All tests passed!/);
+assert.doesNotMatch(testLog,/\[E\]|Some tests failed| -\d+:/);
+const parsedIdentities=testLog.split(/\r?\n/).flatMap(line=>{
+ const match=/^\d\d:\d\d \+\d+: (test\/analytics\/.+\.dart: .+)$/.exec(line);
+ return match?[match[1]]:[];
+});
+assert.equal(parsedIdentities.length,27);
+assert.deepEqual([...parsedIdentities].sort(),[...predecessor.expectedTestIdentities].sort());
+for(const source of predecessor.sourceBindings)assert.equal(bind(source.path).sha256,source.sha256,source.path);
+const dart=predecessor.sdk.path;
+const args=['--suppress-analytics','analyze','lib/src/analytics/process_metrics.dart','lib/src/analytics/process_metric_repository.dart','lib/src/exact_decimal.dart','lib/src/errors.dart','test/analytics/process_metrics_test.dart','test/analytics/process_filter_contract_test.dart'];
+const taskTemp=predecessor.temporaryDirectory;
+const startedAt=new Date().toISOString();
+const result=spawnSync(dart,args,{cwd:testStage.cwd,env:{...process.env,TEMP:taskTemp,TMP:taskTemp},encoding:'utf8',timeout:60000,maxBuffer:4*1024*1024});
+const logPath=`${output}/process-domain-analysis-final.log`;
+fs.writeFileSync(logPath,(result.stdout??'')+(result.stderr??''));
+const stages=[testStage,{stage:'analysis',startedAt,finishedAt:new Date().toISOString(),command:[dart,...args],cwd:testStage.cwd,exitCode:result.status,error:result.error?.message??null,log:bind(logPath)}];
+for(const source of predecessor.sourceBindings)assert.equal(bind(source.path).sha256,source.sha256,source.path);
+const report={...predecessor,kind:'fresh-isolated-process-domain-final-verification',recordedAt:new Date().toISOString(),runName:'analysis-final',stages,testCounts:{passed:27,failed:0,skipped:0},actualTestIdentities:parsedIdentities,predecessor:bind(predecessorPath),failedOriginalTempAttempt:bind(`${output}/process-domain-verification.json`),previousAnalysisFailure:{stage:predecessor.stages.find(s=>s.stage==='analysis'),cause:'Analysis reported No issues found, then Dart telemetry attempted an inaccessible user AppData update. The successor adds only --suppress-analytics; no source or test change.'},sourceBindingsVerifiedBeforeAndAfter:true,passed:result.status===0&&/No issues found!/.test(result.stdout)};
+fs.writeFileSync(`${output}/process-domain-verification-final.json`,JSON.stringify(report,null,2)+'\n');
+console.log(JSON.stringify({tests:report.testCounts,analysisExitCode:result.status,passed:report.passed,sourceBindings:report.sourceBindings.length}));
+assert.equal(report.passed,true);

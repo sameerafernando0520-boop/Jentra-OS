@@ -1,0 +1,262 @@
+{
+  "kind": "independent-three-task-completion-peer-review",
+  "reviewedAt": "2026-10-13T18:19:14.777Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "reviewer": "Codex completion_peer independent reviewer",
+  "skill": "C:/Users/sheha/.codex/plugins/cache/claude-code-skills/engineering-skills/2.9.0/skills/code-reviewer/SKILL.md",
+  "verdict": "Accept corrected evidence-scoped decisions; all three full task outcomes remain incomplete",
+  "wholeWaveComplete": false,
+  "wholeSystemComplete": false,
+  "personalHumanSignoff": false,
+  "productionReleaseReady": false,
+  "checks": {
+    "completeSpecificationStatementsVerified": 109,
+    "uniqueMatrixEvidenceBindingsVerified": 50,
+    "originalHistoricalRowsPreserved": 109,
+    "originalHumanDecisionsRetained": 3,
+    "delegatedTechnicalDecisionsAccepted": 20,
+    "totalAccepted": 23,
+    "remainingOpen": 86,
+    "currentAndSnapshotProcessSourcesVerified": 87,
+    "exactSavedTestIdentitiesVerified": 27,
+    "processTestExitCode": 0,
+    "scopedAnalyzerExitCode": 0,
+    "workerSourceEvidenceBindingsVerified": 48,
+    "workerSavedTestsPassed": 240,
+    "controlledTransportObserverTestsPassed": 14,
+    "controlledRuntimeProviderTestsPassed": 121,
+    "loadHelperSourcesUnchangedDuringRecordedRun": true,
+    "loadHelperSourceBindingsObservedNow": 121,
+    "loadHelperCurrentSourceMismatches": []
+  },
+  "semanticReview": {
+    "calculationStatements": {
+      "acceptedIds": [
+        "FR-507",
+        "AC-502",
+        "EC-502",
+        "EC-503",
+        "FR-551",
+        "FR-553",
+        "FR-554",
+        "FR-555",
+        "FR-556",
+        "NFR-551",
+        "EC-551",
+        "EC-552",
+        "EC-553",
+        "EC-554",
+        "EC-555"
+      ],
+      "rationale": "The explicit clauses concern exact calculation values, validation, immutable captured in-memory basis and unavailable semantics for the supported definition. They do not certify server access, source producer trust, native controls or load. AC-502 is a fixed-input Given/When/Then calculation criterion. EC-552 proves immutable captured manifest consistency; a fresh authoritative snapshot may produce a different manifest and is separately reviewed."
+    },
+    "FR506": {
+      "decision": "open",
+      "reason": "Immutable DTO and cutoff cases plus genuine process reads do not establish authoritative source-history retention after later commit/backfill or exclude present-status substitution. The initial proposed acceptance was reopened following independent review."
+    },
+    "FR534": {
+      "decision": "accepted governance boundary only",
+      "reason": "Reviewed strict candidate compositions begin in a transaction and end in rollback with strict result records. Recorded baseline remains 43 migrations/107 API functions and 120 unchanged provider fingerprints. Separate exact owner approval binds the later development target, 71 migrations and named workers; installation/readback is distinct from runtime behavior."
+    },
+    "AC557": {
+      "decision": "accepted historical first-domain ownership only",
+      "reason": "The September 30 preflight/foundation records explicitly attribute new slice-owned files and owned evidence to the first domain step. FR-560 remains open because later shared integration ownership is a separate clause."
+    },
+    "reportingRows": {
+      "ids": [
+        "FR-536",
+        "AC-517",
+        "EC-516"
+      ],
+      "decision": "accepted exact dated reporting scope",
+      "reason": "The corrected matrix distinguishes original human decisions, delegated technical decisions, source/local proof, installed metadata, dated desktop results and unproved native/delivery/model/load/release gates. These decisions accept accurate reporting rather than completion of the reported gates."
+    }
+  },
+  "taskOutcomes": [
+    {
+      "task": "Authenticated Windows, keyboard, restart and recovery",
+      "status": "incomplete",
+      "evidence": "Corrected helper validates the exact approved 1068 source inputs and 34 release files. After the human setup report, the recorded readback found no target SID/profile/package/provision journal and no Connected window. No native cases executed.",
+      "boundary": "The old launcher uses the base helper, whose read-only Validate observation fails CURRENT_SOURCE_CHANGED before provisioning. That may explain the report, but the human actual chosen launcher/failure is not observed. The corrected a2 helper changed only source verification workspace and exact snapshot binding; account, package, privileges, prompts and release files are unchanged."
+    },
+    {
+      "task": "Full concurrency/load and production release checks",
+      "status": "incomplete; release audit finds not ready",
+      "evidence": "14 controlled transport/observer tests and 121 controlled runtime/provider tests pass; the offline harness returns HARNESS_SOURCE_DRIFT at exit 1. No actual local PostgreSQL connection, genuine target-scale load, P95 result or complete external capture is recorded.",
+      "boundary": "60 database connection slots and 21 stored Auth sessions are preliminary capacity metadata. They do not prove or disprove the 2000 distinct verified session workload; the model key is unnecessary for this no-model/no-webhook workload."
+    },
+    {
+      "task": "Delegated acceptance of all Wave 5 rows",
+      "status": "109 rows reviewed; 23 accepted and 86 remain open",
+      "evidence": "Original 3 direct human decisions retained; 20 technical decisions under the direct user delegation; complete normalized specification text and SHA256 per row.",
+      "boundary": "Delegation grants decision authority but does not replace missing behavior evidence. No personal human signature or whole-system acceptance is claimed."
+    }
+  ],
+  "findings": [
+    {
+      "id": "PG-BEGIN-END-RACE",
+      "status": "repaired in candidate and controlled regression",
+      "description": "Ending/aborting an in-flight BEGIN could return the lease to the pool before transaction state was marked. The candidate now counts pending work before queue execution, destroys any lease with outstanding work and rejects late responses.",
+      "source": {
+        "path": "docs/verification/wave5/task3-load-release-20261013/postgres_transport.mjs",
+        "bytes": 11229,
+        "sha256": "4a435629e163b65c8f032729c2eeafc190ee0fb0eb6ded43f492613eee90c4ec"
+      },
+      "regression": "transport_helpers.test.mjs: end during delayed BEGIN destroys the lease before it can be recycled",
+      "actualNetworkValidationPerformed": false
+    }
+  ],
+  "blockers": [
+    {
+      "category": "missing private prerequisite",
+      "items": [
+        "Exact isolated Windows provisioning/profile initialization and private Connected sign-in/MFA remain unobserved; already authorized runtime setup requires no new operation approval.",
+        "Private PostgreSQL credential/configuration has not been supplied; local launcher preparation is validated but has not collected credentials."
+      ]
+    },
+    {
+      "category": "absent implementation or configured evidence source",
+      "items": [
+        "Actual trusted full egress capture and continuous job/worker quiescence callbacks are not configured. The observer adapter is implemented, but its controlled fixtures do not create authentic capture.",
+        "A reviewed reversible actual secure-store/disk-full native failure harness confined to disposable test storage is absent."
+      ]
+    },
+    {
+      "category": "failed or incomplete run",
+      "items": [
+        "Later full desktop o13r6 VM run is incomplete: exit -1073740791 after partial 1384 passes; no terminal summary. The isolated requisition rerun cannot repair the full-suite claim.",
+        "Offline runtime harness fails HARNESS_SOURCE_DRIFT with exit 1; refresh exact review/source bindings before another run."
+      ]
+    },
+    {
+      "category": "unavailable required acceptance evidence",
+      "items": [
+        "Actual Connected keyboard/actor/context/revocation/restart/recovery across native variants.",
+        "All seven committed overlap races, at least 100 duplicates, 500 scopes and 2000 verified genuine sessions with measured latency and complete no-egress observation.",
+        "Restoration drill, monitoring/alert receipt, signed MSIX clean install/upgrade/rollback, pilot and full release checks."
+      ]
+    },
+    {
+      "category": "separate authorization boundary",
+      "items": [
+        "Production/staging project provisioning and release deployment are outside this requested technical verification; exact targets and release operations need concrete authorization.",
+        "Other active chat retains all live/private mutations and Preview HWND 1771810. Source acceptance of worker v3 is not itself a recorded deployment of that exact bundle."
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/delegated-technical-acceptance-matrix.json",
+      "bytes": 681930,
+      "sha256": "89be56fcf38aa33732d363a7be71b969a2d04160b82b4fedc4c148d72fa35b46"
+    },
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/delegated-technical-acceptance-matrix.md",
+      "bytes": 48394,
+      "sha256": "54da064f51e7be437997b74b282fd3e1a8f73dfa0fdd4cc5a3a37366280c2706"
+    },
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/acceptance-matrix-validation.json",
+      "bytes": 1764,
+      "sha256": "3bd89bb1c692e12390dcd7608dc7f659229191b3b16dcca59940f1f5d307526f"
+    },
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/process-domain-verification-final.json",
+      "bytes": 29224,
+      "sha256": "0df0adec7c35de8bf330ddb849b7ea1dc1a89918d21ba1e53c8cb0ef56d41d47"
+    },
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/worker-v3-independent-review.json",
+      "bytes": 13082,
+      "sha256": "5db40f269ff3e2079c5333ee2a0b7e350b009d09348478eaa3b38214cf37ffc0"
+    },
+    {
+      "path": "docs/verification/wave5/task3-windows-20261013/private-setup-readback-20261013-r1.json",
+      "bytes": 3407,
+      "sha256": "db82ccbf6b39a663d4141d3ada8c64d71b760e209bf48189b11f6e6603cc59c0"
+    },
+    {
+      "path": "docs/verification/wave5/task3-windows-20261013/native-prerequisites-20261013T180450160Z.json",
+      "bytes": 2870,
+      "sha256": "33487f45024d3b9c6c9c0abf99e490bc75ada30f1a09aa6ecbca68329f849cb9"
+    },
+    {
+      "path": "docs/verification/wave5/task3-windows-20261013/native-acceptance-protocol.md",
+      "bytes": 11086,
+      "sha256": "eb8971b18ebbc3d93f2c6a5a798136429ce62e7eb18eeeaab07d8888d30dcc53"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/postgres_transport.mjs",
+      "bytes": 11229,
+      "sha256": "4a435629e163b65c8f032729c2eeafc190ee0fb0eb6ded43f492613eee90c4ec"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/external_observer.mjs",
+      "bytes": 6586,
+      "sha256": "a40786ae7fdb954e212555a6279b3bdcea8ea56fd576d71d56ef8380e63e3011"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/transport_helpers.test.mjs",
+      "bytes": 13446,
+      "sha256": "0295c05ae60db061c272f248b3c70bc2e3842f2d8608dd8d36edf7b4d9cde998"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/local-verification-a2.json",
+      "bytes": 48922,
+      "sha256": "174d5002f68ce3280a4dc903081be80defa5ba2374170d3665c10393aa0c1fb2"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/local-verification-a2.tap",
+      "bytes": 36858,
+      "sha256": "7dcf37db04ee7264c4e7384dce1a45c22a17cd5b01f533212a8e2b6c8e57c061"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/release-audit.md",
+      "bytes": 5311,
+      "sha256": "5352b40e60d4c1cdb8dcff87f2a3529fb5a35e901733538c0c73803c6d561324"
+    },
+    {
+      "path": "docs/verification/wave5/task3-completion-20261013/owner-delegation.json",
+      "bytes": 1250,
+      "sha256": "290ddb53d0a4ae354179eb9d12846ad6bcf9b654ec44199e31f3b68e5e0bd99b"
+    },
+    {
+      "path": "docs/verification/wave5/task3-completion-20261013/private-database-launcher.json",
+      "bytes": 733,
+      "sha256": "1f82bb8f6a695dd491c273bc084b98415e19a47d0277abbc9b1149615aefdaf8"
+    },
+    {
+      "path": "docs/verification/wave5/task3-completion-20261013/live-preflight.json",
+      "bytes": 3235,
+      "sha256": "6867ec1afbd1470cbee259339298ac82308179062d06e37224ecbfc095a117af"
+    },
+    {
+      "path": "docs/verification/wave5/desktop-vm-failure-investigation-20261013-o13r6-a1.md",
+      "bytes": 3107,
+      "sha256": "1b962b1e6b417bd8fc8306dd81171998df5c1c208b211474fad7cd1290229eca"
+    },
+    {
+      "path": "docs/blueprint/05_TEST_AND_DELIVERY.md",
+      "bytes": 4314,
+      "sha256": "81b71888987d2755d3811060f741f5c504df630093f2df9c9c135f78f7dd3556"
+    }
+  ],
+  "execution": {
+    "filesWrittenOnlyUnder": "docs/verification/wave5/task3-peer-review-20261013",
+    "SDKJobs": 0,
+    "nativeActions": 0,
+    "liveQueries": 0,
+    "networkCalls": 0,
+    "privateInputRead": false,
+    "sharedSourceEdited": false,
+    "accountOrPackageMutation": false,
+    "otherChatWindowChanged": false,
+    "testsRepeated": false,
+    "nodeOnlyArtifactValidation": true
+  },
+  "limitations": [
+    "This review verifies saved results, complete text, source snapshots and local hashes; it does not re-execute their original SDK or live/native operations.",
+    "Observations are dated and local source/report changes require a refreshed binding. The separate owning chat may advance live operations after this snapshot.",
+    "Historical memory was used only to preserve evidence categories and ownership discipline; current conclusions are based on the bound files."
+  ]
+}

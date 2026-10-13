@@ -1,0 +1,23 @@
+The saved a2 attempt stopped in its fresh preflight before any command or Auth session flow was dispatched. It consumed three read-only workflow requests, so the preserved prior bound is now **78**: 40 conservative earlier requests, 35 observed earlier resumed requests and these three reads. The observed cumulative total remains unknown. The existing once-only intent is consumed and must remain intact; **do not rerun a2**.
+
+The saved activity record contains one matching active `api.wave5_cash_date_command` row: PID `66780`, application label `PostgREST 14.5`, query MD5 `22ccadf5f07f9d91bf80f0d4d0e3841f`. The original command literal is not visible. Root separately reported stale receipts 0, stale proposals 0 and active invocations 1 at 18:07:35 UTC; that full observation was available only through the parent report at this review cutoff.
+
+An earlier MD5 comparison is **unavailable**. The 15:09 reconciliation saved the same PID with query-start/wait fields but no fingerprint. The later exact-PID metadata query returned an empty row array, so its selected SHA field provides no historical value. The repeated PID and near-zero or negative snapshot ages cannot identify the old command, establish continuous execution or prove a retry loop. Even equal SQL fingerprints would not prove equal bound request parameters.
+
+The original cash-date source has four custom `40001` conflict raises. Together with the saved application label, that supports investigating the [previously reviewed Supabase retry-risk documentation](https://supabase.com/docs/guides/troubleshooting/high-cpu-and-infinite-transaction-retries-when-using-custom-error-codes-in-rpc-functions-77326b); it does not prove this row is the original request or establish the cause. The separately reviewed PT409 candidate remains a separate source/installation decision. Its bounded DDL may fail on a lock; neither a successful patch nor a lock failure authorizes cancelling a backend or bypassing the active-invocation gate.
+
+A safe future continuation needs a new exact source-bound plan and independent source approval after actual quiescence. It must bind the preserved stop SHA `67e58a93c90471dbd7c32b7be6ee194e8b0dc50fb98c5701a38599cd6dd5246e` and consumed intent SHA `ec27f49a0cd76e792b70a256e79edad5f858373c7d4c71cd9ec027c5a5ef8919`, require zero completed/pending commands in that stop, and use a distinct exclusive new intent and evidence directory.
+
+| Resume prerequisite | Required behavior |
+| --- | --- |
+| Request budget | Start from 78. At most 71 ordinary new attempts and one read-only original-command resolution fit the unchanged total limit of 150. Count every future helper Management, key, Auth and RPC attempt. |
+| Fresh preflight | Preserve exact source counts and hashes, three prior statement events, zero stale receipts/proposals and zero all active matching cash API invocations. Persist bounded facts, observation and raw response hashes before validating so a failed preflight remains inspectable. |
+| Installed source | Require the seven exact definitions for the reviewed version. If PT409 is installed, bind its actual approved definition/result in the successor and reject the obsolete a2 hash. |
+| Authentication and writes | Obtain genuine fresh existing-user MFA/session proof, retain distinct proposer/approver identities, and allow only the same two unfinished dates and two governed CSV exports. |
+| Journaling and replay | Preserve single-flight, frozen command bodies, acknowledged private/public intents, full canonical and raw-SHA replay equality, and an acknowledged validated result. Never resend the old stale command. |
+| Failure | Stop on activity, drift, missing proof, a collision or uncertain outcome. No automatic polling/retry loop, intent reset, ledger repair, backend cancellation or session/service reset. Any later attempt must retain this attempt's request count. |
+
+The a2 stop directory contains only `99-stop.json`; its three preflight response bodies were not saved before the guard failed. That error code also covers process-row/append-shape checks, so the later saved active-row evidence must remain separate from the unpersisted stopped preflight response.
+
+This investigation changed no helper, source, private file, live state, session or backend. It performed no network request, SDK job or UI action and does not clear the runtime blocker. The pinned a2 review `1435a64ea6c4a720a4ba952757eae12b791646508cc1af09dad99b3aeecafa5f` remains preserved. Cash/scenarios, native keyboard, delivery, load and owner acceptance remain separate gates; owner acceptance stays **3/109**. Production and real billing remain excluded.
+

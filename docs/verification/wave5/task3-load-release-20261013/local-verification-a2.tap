@@ -1,0 +1,836 @@
+Helper controlled tests
+TAP version 13
+# Subtest: factory and client construction do not read credentials or connect
+ok 1 - factory and client construction do not read credentials or connect
+  ---
+  duration_ms: 5.7947
+  type: 'test'
+  ...
+# Subtest: unverified TLS and mismatching certificate each destroy the acquired lease
+ok 2 - unverified TLS and mismatching certificate each destroy the acquired lease
+  ---
+  duration_ms: 2.4178
+  type: 'test'
+  ...
+# Subtest: endpoint and connection URI overrides fail before credential callback
+ok 3 - endpoint and connection URI overrides fail before credential callback
+  ---
+  duration_ms: 0.4173
+  type: 'test'
+  ...
+# Subtest: SQL outside exact source allowlist and reads outside transaction are rejected
+ok 4 - SQL outside exact source allowlist and reads outside transaction are rejected
+  ---
+  duration_ms: 0.6387
+  type: 'test'
+  ...
+# Subtest: queued clients preserve pool bound and actual lease identities remain distinct
+ok 5 - queued clients preserve pool bound and actual lease identities remain distinct
+  ---
+  duration_ms: 314.8663
+  type: 'test'
+  ...
+# Subtest: server errors are redacted and failed or unfinished transactions destroy their lease
+ok 6 - server errors are redacted and failed or unfinished transactions destroy their lease
+  ---
+  duration_ms: 0.9809
+  type: 'test'
+  ...
+# Subtest: end during delayed BEGIN destroys the lease before it can be recycled
+ok 7 - end during delayed BEGIN destroys the lease before it can be recycled
+  ---
+  duration_ms: 1.0753
+  type: 'test'
+  ...
+# Subtest: preflight hashes actual controlled transaction and treats session counts as preliminary
+ok 8 - preflight hashes actual controlled transaction and treats session counts as preliminary
+  ---
+  duration_ms: 1.7657
+  type: 'test'
+  ...
+# Subtest: credential callback errors and late private target drift expose fixed failure codes
+ok 9 - credential callback errors and late private target drift expose fixed failure codes
+  ---
+  duration_ms: 0.4847
+  type: 'test'
+  ...
+# Subtest: pooler startup identity stays separate from real transaction backend identity
+ok 10 - pooler startup identity stays separate from real transaction backend identity
+  ---
+  duration_ms: 0.5985
+  type: 'test'
+  ...
+# Subtest: complete observer accepts only source-bound authenticated continuous controlled captures
+ok 11 - complete observer accepts only source-bound authenticated continuous controlled captures
+  ---
+  duration_ms: 0.9249
+  type: 'test'
+  ...
+# Subtest: empty logs, missing coverage, sequence gaps and forged completeness are rejected
+ok 12 - empty logs, missing coverage, sequence gaps and forged completeness are rejected
+  ---
+  duration_ms: 0.6108
+  type: 'test'
+  ...
+# Subtest: actual dispatch attempts fail zero-effect observation even without remote outcome rows
+ok 13 - actual dispatch attempts fail zero-effect observation even without remote outcome rows
+  ---
+  duration_ms: 0.5602
+  type: 'test'
+  ...
+# Subtest: active job, inflight work, truncated interval and mismatched observer source fail closed
+ok 14 - active job, inflight work, truncated interval and mismatched observer source fail closed
+  ---
+  duration_ms: 0.6062
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 415.2127
+
+Public provider controlled tests
+TAP version 13
+# Subtest: independent membership fixture never begins COMMIT after cancellation while its intent receipt waits
+ok 1 - independent membership fixture never begins COMMIT after cancellation while its intent receipt waits
+  ---
+  duration_ms: 19.8558
+  type: 'test'
+  ...
+# Subtest: private preparation file acknowledgement follows actual encrypted file flush and supports read-only recovery of original identities
+ok 2 - private preparation file acknowledgement follows actual encrypted file flush and supports read-only recovery of original identities
+  ---
+  duration_ms: 42.1826
+  type: 'test'
+  ...
+# Subtest: exclusive encrypted files preserve concurrent record order and chain storage receipt hashes without reusing an existing directory
+ok 3 - exclusive encrypted files preserve concurrent record order and chain storage receipt hashes without reusing an existing directory
+  ---
+  duration_ms: 27.499
+  type: 'test'
+  ...
+# Subtest: private encryption key and source binding are copied before caller mutation and closed sink cannot create another record
+ok 4 - private encryption key and source binding are copied before caller mutation and closed sink cannot create another record
+  ---
+  duration_ms: 11.6545
+  type: 'test'
+  ...
+# Subtest: wrong project, source binding, sequence or original identifier stops encrypted persistence before any directory or file appears
+ok 5 - wrong project, source binding, sequence or original identifier stops encrypted persistence before any directory or file appears
+  ---
+  duration_ms: 5.1967
+  type: 'test'
+  ...
+# Subtest: read-only recovery rejects wrong key, source drift, changed encrypted bytes, missing original records and partial files without modifying storage
+ok 6 - read-only recovery rejects wrong key, source drift, changed encrypted bytes, missing original records and partial files without modifying storage
+  ---
+  duration_ms: 25.4617
+  type: 'test'
+  ...
+# Subtest: encrypted preparation storage refuses a repository destination or absent private key without filesystem access
+ok 7 - encrypted preparation storage refuses a repository destination or absent private key without filesystem access
+  ---
+  duration_ms: 0.4429
+  type: 'test'
+  ...
+# Subtest: recovery completeness requires an independent exact expected head and refuses a truncated tail without claiming replay authority
+ok 8 - recovery completeness requires an independent exact expected head and refuses a truncated tail without claiming replay authority
+  ---
+  duration_ms: 16.3403
+  type: 'test'
+  ...
+# Subtest: encrypted storage and recovery reject a directory junction or symbolic link before creating or reading any record
+ok 9 - encrypted storage and recovery reject a directory junction or symbolic link before creating or reading any record
+  ---
+  duration_ms: 2.9436
+  type: 'test'
+  ...
+# Subtest: independent encrypted recovery distinguishes an available prefix from a complete journal and never modifies the prefix
+ok 10 - independent encrypted recovery distinguishes an available prefix from a complete journal and never modifies the prefix
+  ---
+  duration_ms: 34.825
+  type: 'test'
+  ...
+# Subtest: preparation persistence acknowledges original identities before a mutation starts and saves returned identities before resolving
+ok 11 - preparation persistence acknowledges original identities before a mutation starts and saves returned identities before resolving
+  ---
+  duration_ms: 0.5527
+  type: 'test'
+  ...
+# Subtest: failed intent persistence, invalid durable receipt or changed case scope prevents every mutation and further attempt
+ok 12 - failed intent persistence, invalid durable receipt or changed case scope prevents every mutation and further attempt
+  ---
+  duration_ms: 0.5707
+  type: 'test'
+  ...
+# Subtest: uncertain commit retains its original intent and blocks retry or restoration without exposing arbitrary error text
+ok 13 - uncertain commit retains its original intent and blocks retry or restoration without exposing arbitrary error text
+  ---
+  duration_ms: 0.3306
+  type: 'test'
+  ...
+# Subtest: failed confirmed-result persistence stops after exactly one send and attempts to preserve returned recovery identifiers
+ok 14 - failed confirmed-result persistence stops after exactly one send and attempts to preserve returned recovery identifiers
+  ---
+  duration_ms: 0.3702
+  type: 'test'
+  ...
+# Subtest: preparation checkpoint copies the original mutable baseline before acknowledged persistence
+ok 15 - preparation checkpoint copies the original mutable baseline before acknowledged persistence
+  ---
+  duration_ms: 0.1999
+  type: 'test'
+  ...
+# Subtest: caller fields cannot overwrite the source-bound preparation envelope or sequence
+ok 16 - caller fields cannot overwrite the source-bound preparation envelope or sequence
+  ---
+  duration_ms: 0.1894
+  type: 'test'
+  ...
+# Subtest: a waiting acknowledged intent cannot dispatch after another preparation has become uncertain
+ok 17 - a waiting acknowledged intent cannot dispatch after another preparation has become uncertain
+  ---
+  duration_ms: 0.3065
+  type: 'test'
+  ...
+# Subtest: independent preparation record preserves its reserved source-bound envelope against caller entry overrides
+ok 18 - independent preparation record preserves its reserved source-bound envelope against caller entry overrides
+  ---
+  duration_ms: 0.3187
+  type: 'test'
+  ...
+# Subtest: independent waiting preparation never dispatches after another acknowledged operation becomes uncertain
+ok 19 - independent waiting preparation never dispatches after another acknowledged operation becomes uncertain
+  ---
+  duration_ms: 0.3488
+  type: 'test'
+  ...
+# Subtest: actual replay preserves the original command separately from genuine request and correlation IDs
+ok 20 - actual replay preserves the original command separately from genuine request and correlation IDs
+  ---
+  duration_ms: 0.2574
+  type: 'test'
+  ...
+# Subtest: actual compound permission denial requires its exact message, SQLSTATE and HTTP status
+ok 21 - actual compound permission denial requires its exact message, SQLSTATE and HTTP status
+  ---
+  duration_ms: 0.1038
+  type: 'test'
+  ...
+# Subtest: current runtime bundle is verified byte-for-byte and produces the exact 2,000-session distribution
+ok 22 - current runtime bundle is verified byte-for-byte and produces the exact 2,000-session distribution
+  ---
+  duration_ms: 15.0357
+  type: 'test'
+  ...
+# Subtest: the endpoint inventory excludes model, webhook sending and unscoped worker dispatch
+ok 23 - the endpoint inventory excludes model, webhook sending and unscoped worker dispatch
+  ---
+  duration_ms: 0.2125
+  type: 'test'
+  ...
+# Subtest: plan validation rejects a shortened, over-rate, wrong-target or incomplete workload
+ok 24 - plan validation rejects a shortened, over-rate, wrong-target or incomplete workload
+  ---
+  duration_ms: 0.3969
+  type: 'test'
+  ...
+# Subtest: owner decision binds the exact runtime scope; preparation binds the coordinator without inventing another owner approval
+ok 25 - owner decision binds the exact runtime scope; preparation binds the coordinator without inventing another owner approval
+  ---
+  duration_ms: 0.3424
+  type: 'test'
+  ...
+# Subtest: live entry point refuses missing approval before invoking any private provider operation
+ok 26 - live entry point refuses missing approval before invoking any private provider operation
+  ---
+  duration_ms: 5.5376
+  type: 'test'
+  ...
+# Subtest: live entry revalidates canonical review and source-bound plan before touching private provider
+ok 27 - live entry revalidates canonical review and source-bound plan before touching private provider
+  ---
+  duration_ms: 14.8093
+  type: 'test'
+  ...
+# Subtest: private factory context cannot mutate approved review, plan or bindings, and caller changes cannot affect its copy
+ok 28 - private factory context cannot mutate approved review, plan or bindings, and caller changes cannot affect its copy
+  ---
+  duration_ms: 10.9778
+  type: 'test'
+  ...
+# Subtest: a hashed independent review cannot be relabeled approved when its actual verdict or source bindings disagree
+ok 29 - a hashed independent review cannot be relabeled approved when its actual verdict or source bindings disagree
+  ---
+  duration_ms: 0.3569
+  type: 'test'
+  ...
+# Subtest: load-001 billing permission and duplicate execution require genuine MFA in the relevant real sessions
+ok 30 - load-001 billing permission and duplicate execution require genuine MFA in the relevant real sessions
+  ---
+  duration_ms: 21.8805
+  type: 'test'
+  ...
+# Subtest: fresh installed contracts, capacity, quiesced schedules and exact reviewed populations are mandatory
+ok 31 - fresh installed contracts, capacity, quiesced schedules and exact reviewed populations are mandatory
+  ---
+  duration_ms: 4.8665
+  type: 'test'
+  ...
+# Subtest: real session validation requires 2,000 distinct online-verified server rows and exact actor slots
+ok 32 - real session validation requires 2,000 distinct online-verified server rows and exact actor slots
+  ---
+  duration_ms: 14.9672
+  type: 'test'
+  ...
+# Subtest: public records do not copy provider handles, raw tokens, response bodies or error details
+ok 33 - public records do not copy provider handles, raw tokens, response bodies or error details
+  ---
+  duration_ms: 1.7329
+  type: 'test'
+  ...
+# Subtest: provider GuardError text and uppercase private values are normalized instead of copied into public evidence
+ok 34 - provider GuardError text and uppercase private values are normalized instead of copied into public evidence
+  ---
+  duration_ms: 0.5035
+  type: 'test'
+  ...
+# Subtest: slow evidence and provider queueing classify the actual send and prevent sends beyond the workload window
+ok 35 - slow evidence and provider queueing classify the actual send and prevent sends beyond the workload window
+  ---
+  duration_ms: 0.4631
+  type: 'test'
+  ...
+# Subtest: a serial provider queue cannot send a timed request after the end or claim undispatched session coverage
+ok 36 - a serial provider queue cannot send a timed request after the end or claim undispatched session coverage
+  ---
+  duration_ms: 78.5576
+  type: 'test'
+  ...
+# Subtest: holding an entire warmup in the evidence queue fails actual dispatch lag instead of releasing a passing catch-up burst
+ok 37 - holding an entire warmup in the evidence queue fails actual dispatch lag instead of releasing a passing catch-up burst
+  ---
+  duration_ms: 163.2612
+  type: 'test'
+  ...
+# Subtest: response command mismatch, omitted transport hooks and unknown outcomes stay uncertain
+ok 38 - response command mismatch, omitted transport hooks and unknown outcomes stay uncertain
+  ---
+  duration_ms: 0.5154
+  type: 'test'
+  ...
+# Subtest: failed intent persistence prevents the request; pre-aborted runs do not dispatch
+ok 39 - failed intent persistence prevents the request; pre-aborted runs do not dispatch
+  ---
+  duration_ms: 0.3011
+  type: 'test'
+  ...
+# Subtest: public case-preparation intent retains exact reviewed identities and is acknowledged before any provider setup
+ok 40 - public case-preparation intent retains exact reviewed identities and is acknowledged before any provider setup
+  ---
+  duration_ms: 0.6032
+  type: 'test'
+  ...
+# Subtest: failed public case-preparation persistence prevents the provider setup and every later case operation
+ok 41 - failed public case-preparation persistence prevents the provider setup and every later case operation
+  ---
+  duration_ms: 0.1497
+  type: 'test'
+  ...
+# Subtest: all readiness proofs precede the common release; real transport intervals overlap
+ok 42 - all readiness proofs precede the common release; real transport intervals overlap
+  ---
+  duration_ms: 35.3065
+  type: 'test'
+  ...
+# Subtest: serial private transport is detected despite concurrently scheduled promises and slow journaling
+ok 43 - serial private transport is detected despite concurrently scheduled promises and slow journaling
+  ---
+  duration_ms: 79.6111
+  type: 'test'
+  ...
+# Subtest: duplicate Auth sessions and failed readiness cannot release a race
+ok 44 - duplicate Auth sessions and failed readiness cannot release a race
+  ---
+  duration_ms: 0.4002
+  type: 'test'
+  ...
+# Subtest: a stalled transport times out once and is retained as uncertain without an automatic retry
+ok 45 - a stalled transport times out once and is retained as uncertain without an automatic retry
+  ---
+  duration_ms: 15.6218
+  type: 'test'
+  ...
+# Subtest: overlap uses half-open actual transport intervals and never infers missing server spans
+ok 46 - overlap uses half-open actual transport intervals and never infers missing server spans
+  ---
+  duration_ms: 0.2501
+  type: 'test'
+  ...
+# Subtest: committed snapshots reject rollback reads, wrong tenants, stale observations and losing effects
+ok 47 - committed snapshots reject rollback reads, wrong tenants, stale observations and losing effects
+  ---
+  duration_ms: 0.4983
+  type: 'test'
+  ...
+# Subtest: 100 duplicate response successes still require exactly one committed business effect
+ok 48 - 100 duplicate response successes still require exactly one committed business effect
+  ---
+  duration_ms: 0.3988
+  type: 'test'
+  ...
+# Subtest: 20 quota reservations require ten units, ten denials and per-denial zero-effect evidence
+ok 49 - 20 quota reservations require ten units, ten denials and per-denial zero-effect evidence
+  ---
+  duration_ms: 0.348
+  type: 'test'
+  ...
+# Subtest: seat races enforce the final seat and do not forgive audit or receipt effects on a losing request
+ok 50 - seat races enforce the final seat and do not forgive audit or receipt effects on a losing request
+  ---
+  duration_ms: 0.2872
+  type: 'test'
+  ...
+# Subtest: admission versus activation allows either lock winner while enforcing the shared seat cap
+ok 51 - admission versus activation allows either lock winner while enforcing the shared seat cap
+  ---
+  duration_ms: 0.2146
+  type: 'test'
+  ...
+# Subtest: activation, execution and lease response races require their own committed record counts
+ok 52 - activation, execution and lease response races require their own committed record counts
+  ---
+  duration_ms: 0.3438
+  type: 'test'
+  ...
+# Subtest: the duplicate coordinator binds one original command, reads committed effects before and after overlap, and restores only reviewed state
+ok 53 - the duplicate coordinator binds one original command, reads committed effects before and after overlap, and restores only reviewed state
+  ---
+  duration_ms: 20.1494
+  type: 'test'
+  ...
+# Subtest: unknown duplicate mutation preserves all original identities and skips restoration even when the committed read shows one effect
+ok 54 - unknown duplicate mutation preserves all original identities and skips restoration even when the committed read shows one effect
+  ---
+  duration_ms: 28.0704
+  type: 'test'
+  ...
+# Subtest: nearest-rank p95 uses measured samples and strict limits rather than averaging them
+ok 55 - nearest-rank p95 uses measured samples and strict limits rather than averaging them
+  ---
+  duration_ms: 0.2379
+  type: 'test'
+  ...
+# Subtest: unsupported limit fixtures remain blocked and never masquerade as actual rejection evidence
+ok 56 - unsupported limit fixtures remain blocked and never masquerade as actual rejection evidence
+  ---
+  duration_ms: 0.3609
+  type: 'test'
+  ...
+# Subtest: database row counters never substitute for an actual no-send observation covering all reviewed workers and the full load window
+ok 57 - database row counters never substitute for an actual no-send observation covering all reviewed workers and the full load window
+  ---
+  duration_ms: 5.9926
+  type: 'test'
+  ...
+# Subtest: paced dispatch uses every measured session, gives billing actors read permission only and mints fresh command identities
+ok 58 - paced dispatch uses every measured session, gives billing actors read permission only and mints fresh command identities
+  ---
+  duration_ms: 1263.4881
+  type: 'test'
+  ...
+# Subtest: a rejected timed request aborts subsequent dispatch and cannot be renamed a successful workload
+ok 59 - a rejected timed request aborts subsequent dispatch and cannot be renamed a successful workload
+  ---
+  duration_ms: 1.221
+  type: 'test'
+  ...
+# Subtest: unsupported generator inflight capacity is retained as incomplete without silently dropping samples
+ok 60 - unsupported generator inflight capacity is retained as incomplete without silently dropping samples
+  ---
+  duration_ms: 0.6341
+  type: 'test'
+  ...
+# Subtest: a latency equal to the limit fails, and warmup, incomplete coverage or a cached command cannot pass the load gate
+ok 61 - a latency equal to the limit fails, and warmup, incomplete coverage or a cached command cannot pass the load gate
+  ---
+  duration_ms: 457.3453
+  type: 'test'
+  ...
+# Subtest: Management bridge performs a fixed typed SELECT over verified TLS and reports actual isolation without a repeatable-read claim
+ok 62 - Management bridge performs a fixed typed SELECT over verified TLS and reports actual isolation without a repeatable-read claim
+  ---
+  duration_ms: 7.8867
+  type: 'test'
+  ...
+# Subtest: arbitrary SQL, unknown scopes and unsupported provenance reads are rejected before a Management request exists
+ok 63 - arbitrary SQL, unknown scopes and unsupported provenance reads are rejected before a Management request exists
+  ---
+  duration_ms: 5.9008
+  type: 'test'
+  ...
+# Subtest: Management transport does not send its private bearer before TLS verifies and rejects late or invalid handshakes
+ok 64 - Management transport does not send its private bearer before TLS verifies and rejects late or invalid handshakes
+  ---
+  duration_ms: 10.6173
+  type: 'test'
+  ...
+# Subtest: query error, redirect, malformed body, oversized body and unproved read-only mode fail closed without exposing private response text
+ok 65 - query error, redirect, malformed body, oversized body and unproved read-only mode fail closed without exposing private response text
+  ---
+  duration_ms: 55.8464
+  type: 'test'
+  ...
+# Subtest: Management reads bind all 500 exact scopes and only a supplied genuine actor/session pair
+ok 66 - Management reads bind all 500 exact scopes and only a supplied genuine actor/session pair
+  ---
+  duration_ms: 5.696
+  type: 'test'
+  ...
+# Subtest: mutating caller review or Auth IDs after construction cannot retarget a later Management SELECT
+ok 67 - mutating caller review or Auth IDs after construction cannot retarget a later Management SELECT
+  ---
+  duration_ms: 16.2178
+  type: 'test'
+  ...
+# Subtest: Management abort and total queue timeout stop this bridge only and never retry the original request
+ok 68 - Management abort and total queue timeout stop this bridge only and never retry the original request
+  ---
+  duration_ms: 108.7932
+  type: 'test'
+  ...
+# Subtest: Management read metadata and result hashes change with actual server results and incomplete packet identity is rejected
+ok 69 - Management read metadata and result hashes change with actual server results and incomplete packet identity is rejected
+  ---
+  duration_ms: 28.6456
+  type: 'test'
+  ...
+# Subtest: HTTPS resolves actual socket queue before send hook, uses fixed target/schema, and exposes hashes without credentials
+ok 70 - HTTPS resolves actual socket queue before send hook, uses fixed target/schema, and exposes hashes without credentials
+  ---
+  duration_ms: 1.0955
+  type: 'test'
+  ...
+# Subtest: deadline hook failure leaves queued request unsent and arbitrary private GuardError detail is normalized
+ok 71 - deadline hook failure leaves queued request unsent and arbitrary private GuardError detail is normalized
+  ---
+  duration_ms: 0.29
+  type: 'test'
+  ...
+# Subtest: late socket assignment after a request error cannot invoke transport hooks or write bytes
+ok 72 - late socket assignment after a request error cannot invoke transport hooks or write bytes
+  ---
+  duration_ms: 0.194
+  type: 'test'
+  ...
+# Subtest: new TLS handshake queues remain unsent and run the current deadline hook only after certificate verification
+ok 73 - new TLS handshake queues remain unsent and run the current deadline hook only after certificate verification
+  ---
+  duration_ms: 0.1656
+  type: 'test'
+  ...
+# Subtest: TLS verification failures and late handshake events after request failure cannot write credential-bearing bytes
+ok 74 - TLS verification failures and late handshake events after request failure cannot write credential-bearing bytes
+  ---
+  duration_ms: 0.3172
+  type: 'test'
+  ...
+# Subtest: transport denies arbitrary routes, wrong verbs/profiles, foreign connections and malformed factor IDs before request creation
+ok 75 - transport denies arbitrary routes, wrong verbs/profiles, foreign connections and malformed factor IDs before request creation
+  ---
+  duration_ms: 0.253
+  type: 'test'
+  ...
+# Subtest: each HTTP participant uses a separate agent and private transport errors never reveal raw text
+ok 76 - each HTTP participant uses a separate agent and private transport errors never reveal raw text
+  ---
+  duration_ms: 0.2501
+  type: 'test'
+  ...
+# Subtest: malformed response and bounded response overflow fail closed
+ok 77 - malformed response and bounded response overflow fail closed
+  ---
+  duration_ms: 11.088
+  type: 'test'
+  ...
+# Subtest: TOTP uses published RFC 6238 secret and counters; it neither synthesizes Auth claims nor accepts malformed secrets
+ok 78 - TOTP uses published RFC 6238 secret and counters; it neither synthesizes Auth claims nor accepts malformed secrets
+  ---
+  duration_ms: 0.8181
+  type: 'test'
+  ...
+# Subtest: real sign-in path keeps password private and rejects substituted returned Auth ID before row verification
+ok 79 - real sign-in path keeps password private and rejects substituted returned Auth ID before row verification
+  ---
+  duration_ms: 0.4544
+  type: 'test'
+  ...
+# Subtest: operator cannot enter Auth load acquisition or read another private session
+ok 80 - operator cannot enter Auth load acquisition or read another private session
+  ---
+  duration_ms: 0.1595
+  type: 'test'
+  ...
+# Subtest: read store constructor performs no I/O; exact catalog query runs in committed read-only repeatable-read transaction
+ok 81 - read store constructor performs no I/O; exact catalog query runs in committed read-only repeatable-read transaction
+  ---
+  duration_ms: 1.6314
+  type: 'test'
+  ...
+# Subtest: batch proofs bind actual SQL recipe and share one fresh backend/snapshot
+ok 82 - batch proofs bind actual SQL recipe and share one fresh backend/snapshot
+  ---
+  duration_ms: 1.1309
+  type: 'test'
+  ...
+# Subtest: quota request preserves the exact PostgreSQL microsecond trial period through committed reads and RPC mapping
+ok 83 - quota request preserves the exact PostgreSQL microsecond trial period through committed reads and RPC mapping
+  ---
+  duration_ms: 1.6007
+  type: 'test'
+  ...
+# Subtest: invalid query, unknown tenant, extra Auth actor and non-reviewed invitation cohort cannot open DB connections
+ok 84 - invalid query, unknown tenant, extra Auth actor and non-reviewed invitation cohort cannot open DB connections
+  ---
+  duration_ms: 0.9108
+  type: 'test'
+  ...
+# Subtest: private DB targets require exact project or official project-suffixed pooler with verified TLS
+ok 85 - private DB targets require exact project or official project-suffixed pooler with verified TLS
+  ---
+  duration_ms: 0.2148
+  type: 'test'
+  ...
+# Subtest: post-construction target/TLS changes cannot redirect later read or membership connections
+ok 86 - post-construction target/TLS changes cannot redirect later read or membership connections
+  ---
+  duration_ms: 10.7122
+  type: 'test'
+  ...
+# Subtest: failed read rolls back, never commits, and redacts PostgreSQL private error
+ok 87 - failed read rolls back, never commits, and redacts PostgreSQL private error
+  ---
+  duration_ms: 0.9438
+  type: 'test'
+  ...
+# Subtest: only exact integer strings convert; fractional/overflow/rounded quotas and versions are rejected
+ok 88 - only exact integer strings convert; fractional/overflow/rounded quotas and versions are rejected
+  ---
+  duration_ms: 0.2413
+  type: 'test'
+  ...
+# Subtest: server session proof requires a committed row for the exact six actual actor IDs and selects no credential columns
+ok 89 - server session proof requires a committed row for the exact six actual actor IDs and selects no credential columns
+  ---
+  duration_ms: 1.0983
+  type: 'test'
+  ...
+# Subtest: every mapped load/race operation uses exact reviewed signature parameters and private tokens have no invented command
+ok 90 - every mapped load/race operation uses exact reviewed signature parameters and private tokens have no invented command
+  ---
+  duration_ms: 0.5874
+  type: 'test'
+  ...
+# Subtest: mapper rejects changed command, wrong runtime, changed scope and arbitrary operations
+ok 91 - mapper rejects changed command, wrong runtime, changed scope and arbitrary operations
+  ---
+  duration_ms: 0.3939
+  type: 'test'
+  ...
+# Subtest: outcomes verify returned original command; only exact actual Postgres denials are accepted and server spans stay absent
+ok 92 - outcomes verify returned original command; only exact actual Postgres denials are accepted and server spans stay absent
+  ---
+  duration_ms: 0.4968
+  type: 'test'
+  ...
+# Subtest: indexed billing reads bind the exact tenant and the existing runtime/load-001 activation allowlist
+ok 93 - indexed billing reads bind the exact tenant and the existing runtime/load-001 activation allowlist
+  ---
+  duration_ms: 0.6239
+  type: 'test'
+  ...
+# Subtest: calendar rejects impossible dates, inverted windows, future recorded evidence and 367-day supported workload
+ok 94 - calendar rejects impossible dates, inverted windows, future recorded evidence and 367-day supported workload
+  ---
+  duration_ms: 0.5363
+  type: 'test'
+  ...
+# Subtest: scheduled activation binds exact approved synthetic plan, seven-day server window and allowed race seats
+ok 95 - scheduled activation binds exact approved synthetic plan, seven-day server window and allowed race seats
+  ---
+  duration_ms: 0.3625
+  type: 'test'
+  ...
+# Subtest: provider revalidates approval and bundle before touching any private getter or client
+ok 96 - provider revalidates approval and bundle before touching any private getter or client
+  ---
+  duration_ms: 5.0811
+  type: 'test'
+  ...
+# Subtest: provider denies wrong query/calendar/dependency bindings before constructing any DB/HTTPS clients
+ok 97 - provider denies wrong query/calendar/dependency bindings before constructing any DB/HTTPS clients
+  ---
+  duration_ms: 30.599
+  type: 'test'
+  ...
+# Subtest: uninstalled/capacity-incomplete preflight fails before Auth acquisition or user RPC/fixture mutation
+ok 98 - uninstalled/capacity-incomplete preflight fails before Auth acquisition or user RPC/fixture mutation
+  ---
+  duration_ms: 20.8456
+  type: 'test'
+  ...
+# Subtest: caller callback replacement after construction cannot replace the reviewed preflight path
+ok 99 - caller callback replacement after construction cannot replace the reviewed preflight path
+  ---
+  duration_ms: 20.5622
+  type: 'test'
+  ...
+# Subtest: Auth ID labels are order-independent, but a substituted creation ID stops before any installed read
+ok 100 - Auth ID labels are order-independent, but a substituted creation ID stops before any installed read
+  ---
+  duration_ms: 43.3826
+  type: 'test'
+  ...
+# Subtest: membership fixture requires reviewed context before constructing a mutation client
+ok 101 - membership fixture requires reviewed context before constructing a mutation client
+  ---
+  duration_ms: 5.5479
+  type: 'test'
+  ...
+# Subtest: membership fixture SQL never deletes history, rewinds versions, touches Auth or changes targets through interpolation
+ok 102 - membership fixture SQL never deletes history, rewinds versions, touches Auth or changes targets through interpolation
+  ---
+  duration_ms: 0.3029
+  type: 'test'
+  ...
+# Subtest: membership preparation/restoration commit exact rows and raise original cap before reactivation
+ok 103 - membership preparation/restoration commit exact rows and raise original cap before reactivation
+  ---
+  duration_ms: 12.564
+  type: 'test'
+  ...
+# Subtest: unknown membership COMMIT outcome retains original state evidence and forbids subsequent retries/restoration
+ok 104 - unknown membership COMMIT outcome retains original state evidence and forbids subsequent retries/restoration
+  ---
+  duration_ms: 11.149
+  type: 'test'
+  ...
+# Subtest: membership baseline, original assignments and SQL intent persist before any suspend/cap change or COMMIT
+ok 105 - membership baseline, original assignments and SQL intent persist before any suspend/cap change or COMMIT
+  ---
+  duration_ms: 11.4721
+  type: 'test'
+  ...
+# Subtest: failed membership baseline persistence prevents administrative writes and never falls back to an in-memory-only fixture
+ok 106 - failed membership baseline persistence prevents administrative writes and never falls back to an in-memory-only fixture
+  ---
+  duration_ms: 17.3785
+  type: 'test'
+  ...
+# Subtest: independent DB/TLS probe preserves target, password and CA bytes after caller and earlier driver mutation
+ok 107 - independent DB/TLS probe preserves target, password and CA bytes after caller and earlier driver mutation
+  ---
+  duration_ms: 2.3135
+  type: 'test'
+  ...
+# Subtest: independent regression probe detects reintroduced mutable DB configuration without changing current files
+ok 108 - independent regression probe detects reintroduced mutable DB configuration without changing current files
+  ---
+  duration_ms: 24.7356
+  type: 'test'
+  ...
+# Subtest: independent quota mapper preserves server microseconds; both query fields are lossless PostgreSQL text
+ok 109 - independent quota mapper preserves server microseconds; both query fields are lossless PostgreSQL text
+  ---
+  duration_ms: 0.1859
+  type: 'test'
+  ...
+# Subtest: independent regression probe detects reintroduced JavaScript Date quota truncation
+ok 110 - independent regression probe detects reintroduced JavaScript Date quota truncation
+  ---
+  duration_ms: 4.2311
+  type: 'test'
+  ...
+# Subtest: independent billing response probe checks all500 reviewed scopes and rejects the wrong target flag or tenant
+ok 111 - independent billing response probe checks all500 reviewed scopes and rejects the wrong target flag or tenant
+  ---
+  duration_ms: 23.8882
+  type: 'test'
+  ...
+# Subtest: independent callback probe retains the reviewed preflight reference across caller replacements
+ok 112 - independent callback probe retains the reviewed preflight reference across caller replacements
+  ---
+  duration_ms: 19.854
+  type: 'test'
+  ...
+# Subtest: independent mutation probe detects removal of private callback snapshot without changing source bytes
+ok 113 - independent mutation probe detects removal of private callback snapshot without changing source bytes
+  ---
+  duration_ms: 24.2404
+  type: 'test'
+  ...
+# Subtest: independent regression probe detects an always-true synthetic target assumption
+ok 114 - independent regression probe detects an always-true synthetic target assumption
+  ---
+  duration_ms: 4.5598
+  type: 'test'
+  ...
+# Subtest: independent private DB validator rejects URI, TLS bypass and foreign-project overrides
+ok 115 - independent private DB validator rejects URI, TLS bypass and foreign-project overrides
+  ---
+  duration_ms: 0.2513
+  type: 'test'
+  ...
+# Subtest: independent transport probe requires verified TLS and the current deadline before any body write
+ok 116 - independent transport probe requires verified TLS and the current deadline before any body write
+  ---
+  duration_ms: 0.3188
+  type: 'test'
+  ...
+# Subtest: independent transport probe allocates separate agents and rejects route redirects before creation
+ok 117 - independent transport probe allocates separate agents and rejects route redirects before creation
+  ---
+  duration_ms: 0.3376
+  type: 'test'
+  ...
+# Subtest: independent public evidence probe drops raw private fields and normalizes arbitrary error codes
+ok 118 - independent public evidence probe drops raw private fields and normalizes arbitrary error codes
+  ---
+  duration_ms: 0.1102
+  type: 'test'
+  ...
+# Subtest: independent fixture review retains caps, lease-only usage0, bounded activation scope and unsupported boundaries
+ok 119 - independent fixture review retains caps, lease-only usage0, bounded activation scope and unsupported boundaries
+  ---
+  duration_ms: 0.0699
+  type: 'test'
+  ...
+# Subtest: pure source-bound plan retains exact seven races/four truthful boundaries/full load bounds and freezes nested sources
+ok 120 - pure source-bound plan retains exact seven races/four truthful boundaries/full load bounds and freezes nested sources
+  ---
+  duration_ms: 5.2977
+  type: 'test'
+  ...
+# Subtest: pure plan rejects absent actual private source hashes, source omission and out-of-scope load rate without any provider import/run
+ok 121 - pure plan rejects absent actual private source hashes, source omission and out-of-scope load rate without any provider import/run
+  ---
+  duration_ms: 24.4648
+  type: 'test'
+  ...
+1..121
+# tests 121
+# suites 0
+# pass 121
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3153.3066
+
+Offline harness validation
+{"failureCode":"HARNESS_SOURCE_DRIFT","executedGatePassed":false}

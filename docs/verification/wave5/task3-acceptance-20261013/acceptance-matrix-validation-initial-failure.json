@@ -1,0 +1,61 @@
+{
+  "kind": "independent-delegated-matrix-invariant-validation",
+  "verifiedAt": "2026-10-13T18:15:44.108Z",
+  "matrix": {
+    "path": "docs/verification/wave5/task3-acceptance-20261013/delegated-technical-acceptance-matrix.json",
+    "bytes": 683080,
+    "sha256": "160efe1be9f3badf620502debec950aa97250c83486a6dcfd7a3141023bbacf1"
+  },
+  "markdown": {
+    "path": "docs/verification/wave5/task3-acceptance-20261013/delegated-technical-acceptance-matrix.md",
+    "bytes": 48337,
+    "sha256": "e98b7034c343cf99b3d2eed877628d5c2958d2224fa8b753e9126dfe57eb5bdc"
+  },
+  "checks": [
+    {
+      "label": "Complete unique 109-row review and original106review coverage",
+      "passed": true
+    },
+    {
+      "label": "Original109historical rows unchanged and accepted IDs preserved",
+      "passed": true
+    },
+    {
+      "label": "Counts distinguish directhuman and delegated decisions",
+      "passed": true
+    },
+    {
+      "label": "Exact full statements extracted independently from approvedspecs",
+      "passed": false,
+      "error": "FR-501\n+ actual - expected\n\n+ 'FR-501: Every query, job, proposal, integration, and command MUST carry a tenant and its applicable entity/branch scope, resolved against live membership rather than client-supplied actor or role claims.'\n- 'FR-501: Every query, job, proposal, integration, and command MUST carry a tenant and its applicable entity/branch scope, resolved against live membership rather than client-supplied actor or role claims. - FR-502: Every authoritative command MUST reuse the existing authenticated command, optimistic-version, receipt, audit, and outbox infrastructure; identical retries MUST not duplicate its effects. - FR-503: Each metric MUST require its analytics capability, entitlement, and every underlying source permission; lost access MUST invalidate displayed evidence and prevent saved-result reopen or drill-through. - FR-504: Analytics projections MUST exclude private HR, credentials, payment details, unrestricted audit payloads, and raw free-text reasons by default; authorized private data MUST require a separately reviewed projection. - FR-505: Every metric result MUST identify definition version, unit, scope, filters, business cutoff, recorded cutoff, source versions, generation time, population counts, completeness, and drill-through basis. - FR-506: Process analytics MUST use immutable recorded transitions and an explicit cohort; events recorded after the captured cutoff MUST not alter that result, and current document status MUST not substitute for history. - FR-507: Duration percentiles MUST use the published percentile definition; open, invalid, missing, and unsupported observations MUST remain visible in completeness counts, and default-zero activity fields MUST not imply measured productive work, rework, or waiting. - FR-508: Analytics reads MUST bound time range, source rows, groups, output, and pages; a limit breach MUST fail explicitly without a partial total.'\n"
+    },
+    {
+      "label": "Bound input documents and checkpoint results unchanged",
+      "passed": true
+    },
+    {
+      "label": "Every open row has a concrete gap and noacceptedBy",
+      "passed": true
+    },
+    {
+      "label": "Delegated acceptances bind exactauthority and actualcalculationcases",
+      "passed": true
+    },
+    {
+      "label": "Missing native/load/provider behaviors cannot beaccepted",
+      "passed": true
+    },
+    {
+      "label": "Fresh results and failures are bounded,preserved andnot promoted",
+      "passed": true
+    }
+  ],
+  "passed": false,
+  "counts": {
+    "reviewed": 109,
+    "originalHumanAccepted": 3,
+    "delegatedTechnicalAccepted": 21,
+    "totalAccepted": 24,
+    "open": 85
+  }
+}
