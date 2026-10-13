@@ -1,0 +1,227 @@
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/employee_workspace_test.dart
+00:00 +0: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/employee_workspace_test.dart: (setUpAll)
+00:00 +0: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/employee_workspace_test.dart: HR audit: late employee detail stays erased after scope disposal
+00:00 +0 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/employee_workspace_test.dart: HR audit: late employee detail stays erased after scope disposal [E]
+  Expected: null
+    Actual: {
+              'id': 'employee',
+              'tenant_id': 'tenant',
+              'legal_entity_id': 'entity',
+              'branch_id': 'branch',
+              'code': 'EMP-01',
+              'display_name': 'Synthetic Employee',
+              'work_email': 'synthetic@jentra.test',
+              'version': 1,
+              'assignments': [
+                {
+                  'id': 'assignment',
+                  'spell_id': 'spell',
+                  'branch_id': 'branch',
+                  'start_date': '2026-09-20',
+                  'end_date_exclusive': null,
+                  'job_title': 'Technician',
+                  'employment_type': 'permanent'
+                }
+              ]
+            }
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\employee_workspace_test.dart 254:5             main.<fn>
+  
+  A EmployeeController was used after being disposed.
+  Once you have called dispose() on a EmployeeController, it can no longer be used.
+  package:flutter/src/foundation/change_notifier.dart 184:9                  ChangeNotifier.debugAssertNotDisposed.<fn>
+  package:flutter/src/foundation/change_notifier.dart 191:6                  ChangeNotifier.debugAssertNotDisposed
+  package:flutter/src/foundation/change_notifier.dart 377:27                 ChangeNotifier.dispose
+  package:jentra_desktop/src/features/people/employee_controller.dart 86:11  EmployeeController.dispose
+  test\employee_workspace_test.dart 185:16                                   main.<fn>
+  
+00:00 +0 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/employee_workspace_test.dart: HR audit: late employee confirmation retains the original recovery receipt
+WARNING (drift): It looks like you've created the database class JentraLocalDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$JentraLocalDatabase (package:jentra_platform/src/local_database.g.dart:1094:44)
+#4      new JentraLocalDatabase (package:jentra_platform/src/local_database.dart)
+#5      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/employee_workspace_test.dart:177:10)
+#6      Declarer._runSetUps.<anonymous closure> (package:test_api/src/backend/declarer.dart:434:61)
+#7      Future.forEach.<anonymous closure> (dart:async/future.dart:695:26)
+#8      Future.doWhile.<anonymous closure> (dart:async/future.dart:753:26)
+#9      StackZoneSpecification._registerUnaryCallback.<anonymous closure>.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:36)
+#10     StackZoneSpecification._run (package:stack_trace/src/stack_zone_specification.dart:207:15)
+#11     StackZoneSpecification._registerUnaryCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:127:24)
+#12     _rootRunUnary (dart:async/zone_root.dart:48:47)
+#13     _CustomZone.runUnary (dart:async/zone.dart:816:35)
+#14     _CustomZone.runUnaryGuarded (dart:async/zone.dart:710:7)
+#15     _CustomZone.bindUnaryCallbackGuarded.<anonymous closure> (dart:async/zone.dart:748:26)
+#16     Future.doWhile (dart:async/future.dart:770:18)
+#17     Future.forEach (dart:async/future.dart:693:12)
+#18     Declarer._runSetUps (package:test_api/src/backend/declarer.dart:434:18)
+#19     Declarer.test.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/declarer.dart:252:21)
+#20     _rootRun (dart:async/zone_root.dart:35:13)
+#21     _CustomZone.run (dart:async/zone.dart:810:35)
+#22     _runZoned (dart:async/zone_api.dart:165:6)
+#23     runZoned (dart:async/zone_api.dart:91:10)
+#24     Declarer.test.<anonymous closure> (package:test_api/src/backend/declarer.dart:250:17)
+#25     Invoker._waitForOutstandingCallbacks.<anonymous closure> (package:test_api/src/backend/invoker.dart:318:17)
+#26     _rootRun (dart:async/zone_root.dart:35:13)
+#27     _CustomZone.run (dart:async/zone.dart:810:35)
+#28     _runZoned (dart:async/zone_api.dart:165:6)
+#29     runZoned (dart:async/zone_api.dart:91:10)
+#30     Invoker._waitForOutstandingCallbacks (package:test_api/src/backend/invoker.dart:314:5)
+#31     Invoker._onRun.<anonymous closure>.<anonymous closure>.<anonymous closure> (package:test_api/src/backend/invoker.dart:457:21)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+00:00 +0 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/employee_workspace_test.dart: HR audit: late employee confirmation retains the original recovery receipt [E]
+  Expected: null
+    Actual: {
+              'action': 'create',
+              'version': 0,
+              'id': 'c97403df-e9f0-4bd2-ac0d-1f5d27328c07',
+              'code': 'EMP-01',
+              'display_name': 'Synthetic Employee',
+              'work_email': '',
+              'start_date': '2026-09-25',
+              'job_title': 'Technician',
+              'employment_type': 'permanent'
+            }
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\employee_workspace_test.dart 276:5             main.<fn>
+  
+  A EmployeeController was used after being disposed.
+  Once you have called dispose() on a EmployeeController, it can no longer be used.
+  package:flutter/src/foundation/change_notifier.dart 184:9                  ChangeNotifier.debugAssertNotDisposed.<fn>
+  package:flutter/src/foundation/change_notifier.dart 191:6                  ChangeNotifier.debugAssertNotDisposed
+  package:flutter/src/foundation/change_notifier.dart 377:27                 ChangeNotifier.dispose
+  package:jentra_desktop/src/features/people/employee_controller.dart 86:11  EmployeeController.dispose
+  test\employee_workspace_test.dart 185:16                                   main.<fn>
+  
+00:00 +0 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/employee_workspace_test.dart: (tearDownAll)
+00:00 +0 -2: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/workforce_workspace_test.dart
+test/workforce_workspace_test.dart:210:24: Error: The method '_Repository.leaveBalance' has fewer named arguments than those of overridden method 'WorkforceRepository.leaveBalance'.
+  Future<LeaveBalance> leaveBalance(
+                       ^
+../../packages/jentra_domain/lib/src/workforce.dart:990:24: Context: This is the overridden method ('leaveBalance').
+  Future<LeaveBalance> leaveBalance(
+                       ^
+00:00 +0 -3: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/workforce_workspace_test.dart [E]
+  Failed to load "C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/workforce_workspace_test.dart":
+  Compilation failed for testPath=C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/workforce_workspace_test.dart: test/workforce_workspace_test.dart:210:24: Error: The method '_Repository.leaveBalance' has fewer named arguments than those of overridden method 'WorkforceRepository.leaveBalance'.
+    Future<LeaveBalance> leaveBalance(
+                         ^
+  ../../packages/jentra_domain/lib/src/workforce.dart:990:24: Context: This is the overridden method ('leaveBalance').
+    Future<LeaveBalance> leaveBalance(
+                         ^
+  .
+00:00 +0 -3: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/private_hr_workspace_test.dart
+00:10 +0 -3: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/private_hr_workspace_test.dart: (setUpAll)
+00:10 +0 -3: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/private_hr_workspace_test.dart: HR audit: private response stays erased after disconnect
+00:10 +0 -4: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/private_hr_workspace_test.dart: HR audit: private response stays erased after disconnect [E]
+  Expected: null
+    Actual: <Instance of 'HrProfileState'>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\private_hr_workspace_test.dart 440:7           main.<fn>
+  
+00:10 +0 -4: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/private_hr_workspace_test.dart: HR audit: private response stays erased after disconnect and reconnect
+00:10 +0 -5: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/private_hr_workspace_test.dart: HR audit: private response stays erased after disconnect and reconnect [E]
+  Expected: null
+    Actual: <Instance of 'HrProfileState'>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\private_hr_workspace_test.dart 440:7           main.<fn>
+  
+00:10 +0 -5: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/private_hr_workspace_test.dart: HR audit: reconnect during an export dialog cannot write stale private content
+00:10 +0 -6: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/private_hr_workspace_test.dart: HR audit: reconnect during an export dialog cannot write stale private content [E]
+  Expected: null
+    Actual: [
+              123,
+              10,
+              32,
+              32,
+              34,
+              102,
+              111,
+              114,
+              109,
+              97,
+              116,
+              34,
+              58,
+              32,
+              34,
+              119,
+              52,
+              45,
+              104,
+              114,
+              45,
+              101,
+              120,
+              112,
+              ...
+            ]
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\private_hr_workspace_test.dart 461:5           main.<fn>
+  
+00:10 +0 -6: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/private_hr_workspace_test.dart: (tearDownAll)
+00:10 +0 -6: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_workspace_test.dart
+00:14 +0 -6: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_workspace_test.dart: (setUpAll)
+00:14 +0 -6: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_workspace_test.dart: HR audit: failed employee switch cannot relabel another employee payslips
+00:14 +0 -7: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_workspace_test.dart: HR audit: failed employee switch cannot relabel another employee payslips [E]
+  Expected: empty
+    Actual: [
+              {
+                'id': '30000000-0000-0000-0000-000000000001',
+                'employee_id': '20000000-0000-0000-0000-000000000001'
+              }
+            ]
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\payroll_workspace_test.dart 480:5              main.<fn>
+  
+00:14 +0 -7: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_workspace_test.dart: HR audit: failed employee switch clears prior payroll assignments
+00:14 +0 -8: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_workspace_test.dart: HR audit: failed employee switch clears prior payroll assignments [E]
+  Expected: empty
+    Actual: [
+              {
+                'id': '30000000-0000-0000-0000-000000000001',
+                'employee_id': '20000000-0000-0000-0000-000000000001'
+              }
+            ]
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\payroll_workspace_test.dart 493:5              main.<fn>
+  
+00:14 +0 -8: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_workspace_test.dart: (tearDownAll)
+00:14 +0 -8: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_correction_workspace_test.dart
+00:16 +0 -8: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_correction_workspace_test.dart: (setUpAll)
+00:16 +0 -8: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_correction_workspace_test.dart: HR audit: transient access-check failure does not permanently deny payroll corrections
+00:16 +0 -9: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_correction_workspace_test.dart: HR audit: transient access-check failure does not permanently deny payroll corrections [E]
+  Expected: false
+    Actual: <true>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\payroll_correction_workspace_test.dart 464:5   main.<fn>
+  
+00:16 +0 -9: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_correction_workspace_test.dart: (tearDownAll)
+00:16 +0 -9: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/employee_workspace_test.dart: HR audit: late employee confirmation retains the original recovery receipt
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/employee_workspace_test.dart: HR audit: late employee detail stays erased after scope disposal
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_correction_workspace_test.dart: HR audit: transient access-check failure does not permanently deny payroll corrections
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_workspace_test.dart: HR audit: failed employee switch cannot relabel another employee payslips
+  ... and 5 more

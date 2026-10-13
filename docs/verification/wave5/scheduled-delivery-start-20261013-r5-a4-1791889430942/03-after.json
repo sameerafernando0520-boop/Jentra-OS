@@ -1,0 +1,41 @@
+{
+  "ticks": 0,
+  "ownJobs": [
+    {
+      "name": "jentra-w5-20261009-delivery",
+      "jobId": 4,
+      "active": true,
+      "command": "select intelligence_control.edge_schedule_tick('delivery');",
+      "schedule": "* * * * *"
+    },
+    {
+      "name": "jentra-w5-20261009-subscription",
+      "jobId": 5,
+      "active": true,
+      "command": "select intelligence_control.edge_schedule_tick('subscription');",
+      "schedule": "* * * * *"
+    },
+    {
+      "name": "jentra-w5-20261009-health",
+      "jobId": 6,
+      "active": true,
+      "command": "select intelligence_control.edge_schedule_tick('health');",
+      "schedule": "* * * * *"
+    }
+  ],
+  "authority": {
+    "jobIds": [
+      4,
+      5,
+      6
+    ],
+    "enabled": true,
+    "issuedAt": "2026-10-13T09:57:07.481942+00:00",
+    "expiresAt": "2026-10-14T09:57:07.481942+00:00",
+    "runtimeId": "778237e3-3d4e-4871-8cc9-e08b07b989c7"
+  },
+  "observedAt": "2026-10-13T11:03:56.648524+00:00",
+  "quotaPeriods": 0,
+  "scopeAllowed": true,
+  "outsideJobHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+}

@@ -1,0 +1,52 @@
+{
+  "kind": "actual-three-failed-route-schedules-paused",
+  "passed": true,
+  "actualFinishedAt": "2026-10-13T11:09:16.879Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "bundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+  "ownJobs": [
+    {
+      "name": "jentra-w5-20261009-delivery",
+      "jobId": 4,
+      "active": false,
+      "command": "select intelligence_control.edge_schedule_tick('delivery');",
+      "schedule": "* * * * *"
+    },
+    {
+      "name": "jentra-w5-20261009-subscription",
+      "jobId": 5,
+      "active": false,
+      "command": "select intelligence_control.edge_schedule_tick('subscription');",
+      "schedule": "* * * * *"
+    },
+    {
+      "name": "jentra-w5-20261009-health",
+      "jobId": 6,
+      "active": false,
+      "command": "select intelligence_control.edge_schedule_tick('health');",
+      "schedule": "* * * * *"
+    }
+  ],
+  "authority": {
+    "jobIds": [
+      4,
+      5,
+      6
+    ],
+    "enabled": true,
+    "issuedAt": "2026-10-13T09:57:07.481942+00:00",
+    "expiresAt": "2026-10-14T09:57:07.481942+00:00",
+    "runtimeId": "778237e3-3d4e-4871-8cc9-e08b07b989c7"
+  },
+  "databaseObservedAt": "2026-10-13T11:09:19.826879+00:00",
+  "managementHttpStatus": 201,
+  "privateErrorRecord": null,
+  "existingJobsPreserved": true,
+  "scheduledTransportRejectedBeforeAuthentication": true,
+  "actualDelivery": false,
+  "actualModelCalls": null,
+  "fullProviderCoordinatorPassed": false,
+  "nativeAccepted": false,
+  "ownerAccepted": false,
+  "secretsPrinted": false
+}

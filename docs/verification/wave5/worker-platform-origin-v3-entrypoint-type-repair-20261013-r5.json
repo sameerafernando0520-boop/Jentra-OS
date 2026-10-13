@@ -1,0 +1,45 @@
+{
+  "kind": "wave5-platform-origin-v3-first-entrypoint-type-repair",
+  "recordedAt": "2026-10-13T15:27:03.811Z",
+  "reason": "Root fresh Deno 2.9.7 checks failed TS7006 for implicit-any diagnostic callback in both new entrypoints; failed logs remain owned/preserved by Root.",
+  "failedRootToolChunk": "fd7494",
+  "rootWholeWorkerResultBeforeTypeAnnotation": {
+    "tests": 240,
+    "pass": 240,
+    "fail": 0,
+    "chunk": "ba9a2b",
+    "logSha256": "081565d294eb7fe0fa0d806637fb586d25ed02be7b7bacfb399899d7ef6f13ca"
+  },
+  "files": [
+    {
+      "path": "supabase/functions/wave5-runtime/index_20261013_r5_v3.ts",
+      "before": {
+        "path": "supabase/functions/wave5-runtime/index_20261013_r5_v3.ts",
+        "bytes": 723,
+        "sha256": "8abeea2f7d9e5c729641c2c63eac8facc77532358fc8896a9bccb8cc8fa86416"
+      },
+      "after": {
+        "path": "supabase/functions/wave5-runtime/index_20261013_r5_v3.ts",
+        "bytes": 733,
+        "sha256": "970969a1ccff5d1b7d6c604a7d54e94ea3b17572d3bb0c0df692d10de178d580"
+      },
+      "change": "Only observe:classification=> becomes observe:(classification:unknown)=>."
+    },
+    {
+      "path": "supabase/functions/wave5-receiver/index_20261013_r5_v3.ts",
+      "before": {
+        "path": "supabase/functions/wave5-receiver/index_20261013_r5_v3.ts",
+        "bytes": 747,
+        "sha256": "82bff42e78392b8ddb4a957d0e6f84132c345beeca8ab0cbbfdd4e4d772d71dc"
+      },
+      "after": {
+        "path": "supabase/functions/wave5-receiver/index_20261013_r5_v3.ts",
+        "bytes": 757,
+        "sha256": "0cc873ae5d43a87f2f15e6457ad4c5ac368db031a45ce24d064ff090c96eaa3b"
+      },
+      "change": "Only observe:classification=> becomes observe:(classification:unknown)=>."
+    }
+  ],
+  "sourceOnly": true,
+  "repeatCompilerAndFocusedTestsPending": true
+}

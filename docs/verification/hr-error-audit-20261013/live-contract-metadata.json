@@ -1,0 +1,1064 @@
+{
+  "project_id": "xpdoufauvrbdmxgngetv",
+  "read_only": true,
+  "metadata": {
+    "checked_at": "2026-10-13T15:53:28.0578+00:00",
+    "hr_functions": [
+      {
+        "name": "people_attendance_clock_batch",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id",
+          "p_idempotency_key",
+          "p_client_timestamp",
+          "p_payload",
+          "p_expected_version"
+        ],
+        "volatility": "v",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_attendance_clock_batch_detail",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_batch_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_attendance_clock_batches",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_attendance_command",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id",
+          "p_idempotency_key",
+          "p_client_timestamp",
+          "p_payload",
+          "p_expected_version"
+        ],
+        "volatility": "v",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_attendance_detail",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_entry_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_attendance_entries",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_attendance_raw_events",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_calendar_command",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id",
+          "p_idempotency_key",
+          "p_client_timestamp",
+          "p_payload",
+          "p_expected_version"
+        ],
+        "volatility": "v",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_calendar_detail",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_calendar_id",
+          "p_version_id"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_calendar_directory",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_as_of",
+          "p_search",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_calendar_history",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_calendar_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_calendar_local_candidates",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_version_id",
+          "p_date",
+          "p_minute"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_calendar_versions",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_calendar_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_employee_branches",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_search"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_employee_command",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id",
+          "p_idempotency_key",
+          "p_client_timestamp",
+          "p_payload",
+          "p_expected_version"
+        ],
+        "volatility": "v",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_employee_detail",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_as_of",
+          "p_status"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_employee_directory",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_as_of",
+          "p_status",
+          "p_search",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_employee_history",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_hr_access",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_capability"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_hr_command",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id",
+          "p_idempotency_key",
+          "p_client_timestamp",
+          "p_payload",
+          "p_expected_version"
+        ],
+        "volatility": "v",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_hr_document_ticket",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_document_id",
+          "p_operation"
+        ],
+        "volatility": "v",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_hr_documents",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_hr_erasure_status",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_hr_export_content",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_export_id"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_hr_link_inbox",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_hr_links",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_hr_memberships",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_hr_own_receipt",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_hr_policy",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_hr_profile",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_hr_review_history",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_review_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_hr_reviews",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_hr_self",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_hr_service_document",
+        "arguments": [
+          "p_ticket_id",
+          "p_user_id"
+        ],
+        "volatility": "v",
+        "authenticated_execute": false
+      },
+      {
+        "name": "people_hr_service_verify_upload",
+        "arguments": [
+          "p_ticket_id",
+          "p_user_id",
+          "p_checksum",
+          "p_byte_size"
+        ],
+        "volatility": "v",
+        "authenticated_execute": false
+      },
+      {
+        "name": "people_hr_subjects",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_capability",
+          "p_search",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_hr_worker_claim",
+        "arguments": [
+          "p_limit"
+        ],
+        "volatility": "v",
+        "authenticated_execute": false
+      },
+      {
+        "name": "people_hr_worker_complete",
+        "arguments": [
+          "p_job_id",
+          "p_lease_id"
+        ],
+        "volatility": "v",
+        "authenticated_execute": false
+      },
+      {
+        "name": "people_hr_worker_register",
+        "arguments": [
+          "p_artifact_digest",
+          "p_storage_probe_digest"
+        ],
+        "volatility": "v",
+        "authenticated_execute": false
+      },
+      {
+        "name": "people_leave_balance",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_policy_id",
+          "p_as_of",
+          "p_recorded_before",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_leave_detail",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_request_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_leave_grant_command",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id",
+          "p_idempotency_key",
+          "p_client_timestamp",
+          "p_payload",
+          "p_expected_version"
+        ],
+        "volatility": "v",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_leave_own_receipt",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_leave_policies",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_leave_policy_command",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id",
+          "p_idempotency_key",
+          "p_client_timestamp",
+          "p_payload",
+          "p_expected_version"
+        ],
+        "volatility": "v",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_leave_policy_for_version",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_version_id"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_leave_policy_versions",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_policy_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_leave_request_command",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id",
+          "p_idempotency_key",
+          "p_client_timestamp",
+          "p_payload",
+          "p_expected_version"
+        ],
+        "volatility": "v",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_leave_requests",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_organization_command",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id",
+          "p_idempotency_key",
+          "p_client_timestamp",
+          "p_payload",
+          "p_expected_version"
+        ],
+        "volatility": "v",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_organization_department",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_department_id",
+          "p_as_of"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_organization_department_history",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_department_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_organization_departments",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_as_of",
+          "p_search",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_organization_employee",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_as_of",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_accounts",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_kind",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_assignments",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_authorize",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_capability"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_calculation",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_calculation_id",
+          "p_after_code",
+          "p_source_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_command",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id",
+          "p_idempotency_key",
+          "p_client_timestamp",
+          "p_payload",
+          "p_expected_version"
+        ],
+        "volatility": "v",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_configure",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id",
+          "p_idempotency_key",
+          "p_client_timestamp",
+          "p_payload",
+          "p_expected_version"
+        ],
+        "volatility": "v",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_correction_authorize",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_capability"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_correction_command",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id",
+          "p_idempotency_key",
+          "p_client_timestamp",
+          "p_payload",
+          "p_expected_version"
+        ],
+        "volatility": "v",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_correction_detail",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_correction_id",
+          "p_section",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_correction_originals",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_correction_own_receipt",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id",
+          "p_action"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_correction_settlement",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id",
+          "p_idempotency_key",
+          "p_client_timestamp",
+          "p_payload",
+          "p_expected_version"
+        ],
+        "volatility": "v",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_correction_sources",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_calculation_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_corrections",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_export",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id",
+          "p_idempotency_key",
+          "p_client_timestamp",
+          "p_payload",
+          "p_expected_version"
+        ],
+        "volatility": "v",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_export_content",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_export_id"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_history",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_run_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_obligations",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_run_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_own_receipt",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id",
+          "p_capability"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_payslip",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_payslip_id",
+          "p_after_code"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_payslips",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_rules",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_run_detail",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_run_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_runs",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_self_payslips",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_settlement",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_command_id",
+          "p_idempotency_key",
+          "p_client_timestamp",
+          "p_payload",
+          "p_expected_version"
+        ],
+        "volatility": "v",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_settlements",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_run_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_payroll_snapshot",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_calculation_id",
+          "p_section",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_work_claims",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_after"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      },
+      {
+        "name": "people_workforce_authorize",
+        "arguments": [
+          "p_tenant_id",
+          "p_legal_entity_id",
+          "p_branch_id",
+          "p_employee_id",
+          "p_capability"
+        ],
+        "volatility": "s",
+        "authenticated_execute": true
+      }
+    ],
+    "installed_migrations": 114
+  },
+  "inspected_definitions": [
+    {
+      "name": "people_hr_reviews",
+      "definition": "CREATE OR REPLACE FUNCTION api.people_hr_reviews(p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid DEFAULT NULL::uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare v_self boolean;v_items jsonb;begin\n v_self:=people_private.active_link(p_tenant_id,p_legal_entity_id,p_branch_id,p_employee_id)\n and core.has_permission(p_tenant_id,'people.self.view',p_legal_entity_id,p_branch_id)\n and not core.has_permission(p_tenant_id,'people.reviews.view',p_legal_entity_id,p_branch_id);\n perform people_private.require_access(p_tenant_id,p_legal_entity_id,p_branch_id,p_employee_id,\n case when v_self then 'people.self.view' else 'people.reviews.view' end);\n perform people_private.content_available(p_tenant_id,p_legal_entity_id,p_employee_id);\n select coalesce(jsonb_agg(jsonb_build_object('id',q.id,'version',q.version,'revision_id',q.revision_id,\n 'reviewer_id',q.reviewer_id,'status',q.status,'start_date',q.start_date,'end_date_exclusive',q.end_date_exclusive,\n 'body',q.body,'recorded_by',q.recorded_by,'recorded_at',q.recorded_at) order by q.id),'[]') into v_items\n from(select r.*,v.body,v.recorded_by,v.recorded_at from people_private.reviews r\n join people_private.review_revisions v on v.id=r.revision_id\n where r.tenant_id=p_tenant_id and r.legal_entity_id=p_legal_entity_id and r.branch_id=p_branch_id\n and r.employee_id=p_employee_id and r.status<>'erased' and (not v_self or r.status<>'draft')\n and (r.status<>'draft' or r.created_by=auth.uid() or core.has_permission(p_tenant_id,'people.reviews.manage',p_legal_entity_id,p_branch_id))\n and (p_after is null or r.id>p_after) order by r.id limit 51) q;\n return jsonb_build_object('tenant_id',p_tenant_id,'legal_entity_id',p_legal_entity_id,'branch_id',p_branch_id,\n 'employee_id',p_employee_id,'items',v_items-50,'next_cursor',case when jsonb_array_length(v_items)>50 then v_items->49->>'id' end);\nend $function$\n"
+    },
+    {
+      "name": "people_payroll_correction_authorize",
+      "definition": "CREATE OR REPLACE FUNCTION api.people_payroll_correction_authorize(p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_capability text)\n RETURNS jsonb\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$begin\n perform people_payroll.correction_access(p_tenant_id,p_legal_entity_id,p_branch_id,p_capability,true);\n return jsonb_build_object('tenant_id',p_tenant_id,'legal_entity_id',p_legal_entity_id,'branch_id',p_branch_id,\n  'actor_id',auth.uid(),'capability',p_capability,'authorized',true);end $function$\n"
+    },
+    {
+      "name": "people_payroll_payslip",
+      "definition": "CREATE OR REPLACE FUNCTION api.people_payroll_payslip(p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_payslip_id uuid, p_after_code text DEFAULT NULL::text)\n RETURNS jsonb\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare payload jsonb;lines jsonb;begin\n perform people_payroll.require_access(p_tenant_id,p_legal_entity_id,p_branch_id,'people.payroll.payslip.view',true);\n select people_payroll.payslip_payload(id) into payload from people_payroll.payslips where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and branch_id=p_branch_id and id=p_payslip_id;\n if payload is null then raise exception using errcode='P0002',message='PAYROLL_PAYSLIP_NOT_FOUND';end if;\n select coalesce(jsonb_agg(value order by value->>'code'),'[]'::jsonb) into lines from\n  (select value from jsonb_array_elements(payload->'lines') where p_after_code is null or value->>'code'>p_after_code order by value->>'code' limit 51) q;\n return jsonb_build_object('tenant_id',p_tenant_id,'legal_entity_id',p_legal_entity_id,'branch_id',p_branch_id,'payslip',payload-'lines',\n  'lines',lines-50,'next_code',case when jsonb_array_length(lines)>50 then lines->49->>'code' end);\nend $function$\n"
+    },
+    {
+      "name": "people_payroll_self_payslips",
+      "definition": "CREATE OR REPLACE FUNCTION api.people_payroll_self_payslips(p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid DEFAULT NULL::uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n STABLE SECURITY DEFINER\n SET search_path TO ''\nAS $function$\ndeclare employee uuid;items jsonb;begin\n perform people_payroll.require_access(p_tenant_id,p_legal_entity_id,p_branch_id,'people.payroll.payslip.self',true);\n select l.employee_id into employee from people_private.account_links l join core.memberships m\n  on m.tenant_id=l.tenant_id and m.id=l.membership_id and m.user_id=l.user_id and m.status='active'\n  where l.tenant_id=p_tenant_id and l.legal_entity_id=p_legal_entity_id and l.branch_id=p_branch_id and l.user_id=auth.uid() and l.status='accepted';\n if employee is null then raise exception using errcode='42501',message='HR_ACTIVE_LINK_REQUIRED';end if;\n select coalesce(jsonb_agg((people_payroll.payslip_payload(q.id)-'lines') order by q.id),'[]'::jsonb) into items\n  from(select id from people_payroll.payslips where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and branch_id=p_branch_id\n   and employee_id=employee and (p_after is null or id>p_after) order by id limit 51) q;\n return jsonb_build_object('tenant_id',p_tenant_id,'legal_entity_id',p_legal_entity_id,'branch_id',p_branch_id,'employee_id',employee,\n  'items',items-50,'next_cursor',case when jsonb_array_length(items)>50 then items->49->>'id' end);\nend $function$\n"
+    }
+  ]
+}

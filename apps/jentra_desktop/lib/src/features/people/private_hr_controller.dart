@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_domain/jentra_people.dart';
 import 'package:jentra_platform/jentra_people_platform.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../app_providers.dart';
 
 enum PrivateHrView {
@@ -85,6 +87,8 @@ final class PrivateHrController extends ChangeNotifier {
   final DateTime Function() clock;
   static const _uuid = Uuid();
   Timer? _timer;
+  int _accessEpoch = 0;
+  int? _operationEpoch;
   late PrivateHrView view;
   bool online, busy = false, accessDenied = false, _disposed = false;
   String? error,
@@ -108,7 +112,10 @@ final class PrivateHrController extends ChangeNotifier {
   HrConfirmation? confirmed;
   Uint8List? previewBytes, uploadBytes;
   DateTime? _formExpiry;
-  bool get current => !_disposed && !accessDenied;
+  bool get current =>
+      !_disposed &&
+      !accessDenied &&
+      (_operationEpoch == null || _operationEpoch == _accessEpoch);
   bool has(String p) => permissions.contains(p);
   List<PrivateHrView> get views => [
     if (has('people.hr.private.view') || has('people.hr.private.manage'))
@@ -182,10 +189,12 @@ final class PrivateHrController extends ChangeNotifier {
     contactState = null;
     policyState = null;
     preparedExportId = null;
+    confirmed = null;
   }
 
   @override
   void dispose() {
+    if (_disposed) return;
     _disposed = true;
     _timer?.cancel();
     _clearVisible();
@@ -193,6 +202,10 @@ final class PrivateHrController extends ChangeNotifier {
   }
 
   void setOnline(bool value) {
+    if (online != value) {
+      // Reconnecting does not restore the authority of an earlier request.
+      _accessEpoch++;
+    }
     online = value;
     if (!value) {
       _clearVisible();
@@ -213,18 +226,20 @@ final class PrivateHrController extends ChangeNotifier {
     if (expired) {
       _clearForm();
       closePreview();
-      message =
-          'Private draft text expired after 24 hours. Resolve its minimal receipt in recovery.';
+      message = 'Private draft text expired after 24 hours. Resolve its minimal receipt in recovery.';
     }
     if (!current || busy) return;
+    _operationEpoch = _accessEpoch;
     busy = true;
     error = null;
     _notify();
     try {
       _connected();
       if (expired) await _recover();
+      if (!current) return;
       await work();
     } catch (e) {
+      if (!current) return;
       if (_denied(e)) {
         accessDenied = true;
         _clearVisible();
@@ -246,6 +261,7 @@ final class PrivateHrController extends ChangeNotifier {
           ? e.message
           : 'Private HR is unavailable. Sealed recovery is retained.';
     } finally {
+      _operationEpoch = null;
       busy = false;
       _notify();
     }
@@ -282,8 +298,7 @@ final class PrivateHrController extends ChangeNotifier {
     if (_formExpiry != null && !_formExpiry!.isAfter(clock())) {
       _clearForm();
       closePreview();
-      message =
-          'Private draft text expired after 24 hours. Resolve any minimal receipt in recovery.';
+      message = 'Private draft text expired after 24 hours. Resolve any minimal receipt in recovery.';
       await _recover();
     }
     await repository.authorize(
@@ -709,13 +724,14 @@ final class PrivateHrController extends ChangeNotifier {
       expectedVersion,
     );
     if (!current) return;
-    local = await drafts.load(
+    final saved = await drafts.load(
       scope,
       form!['employee_id'] as String?,
       form!['id'] as String,
       action!,
     );
     if (!current) return;
+    local = saved;
     _formExpiry = local?.expiresAt;
     message = 'Private draft encrypted for up to 24 hours.';
     await _recover();
@@ -762,8 +778,7 @@ final class PrivateHrController extends ChangeNotifier {
     );
     if (!current) return;
     if (result == null) {
-      message =
-          'No confirmation is recorded. Original private text is expired; this request stays blocked for a controlled owner review.';
+      message = 'No confirmation is recorded. Original private text is expired; this request stays blocked for a controlled owner review.';
       return;
     }
     if (result.entity['id'] != item.aggregateId ||
@@ -836,8 +851,7 @@ final class PrivateHrController extends ChangeNotifier {
             .firstOrNull;
       }
     } else {
-      message =
-          'Reload and compare the current workflow. Discard this unconfirmed draft before choosing a fresh action.';
+      message = 'Reload and compare the current workflow. Discard this unconfirmed draft before choosing a fresh action.';
       await _reload();
       return;
     }
@@ -867,14 +881,15 @@ final class PrivateHrController extends ChangeNotifier {
     );
     if (!current) return;
     expectedVersion = version;
-    local = await drafts.load(
+    final saved = await drafts.load(
       scope,
       employeeId,
       form!['id'] as String,
       action!,
     );
-    message =
-        'Edits retained against the compared version. Review before confirming.';
+    if (!current) return;
+    local = saved;
+    message = 'Edits retained against the compared version. Review before confirming.';
   });
   Future<void> prepareExport({HrRecord? review}) => _run(() async {
     if (form != null || !has('people.hr.export') || subject == null) return;
@@ -1014,7 +1029,10 @@ final class PrivateHrController extends ChangeNotifier {
     } on DomainError catch (e) {
       try {
         await drafts.failure(scope, emp, id, a, pending.envelope.commandId, e);
-        if (current) local = await drafts.load(scope, emp, id, a);
+        if (current) {
+          final saved = await drafts.load(scope, emp, id, a);
+          if (current) local = saved;
+        }
       } catch (_) {}
       rethrow;
     }
@@ -1029,8 +1047,7 @@ final class PrivateHrController extends ChangeNotifier {
     try {
       await drafts.complete(scope, emp, id, a, pending.envelope.commandId);
     } catch (_) {
-      error =
-          'Change confirmed. Local cleanup needs a retry of the original request.';
+      error = 'Change confirmed. Local cleanup needs a retry of the original request.';
       return;
     }
     if (!current) return;

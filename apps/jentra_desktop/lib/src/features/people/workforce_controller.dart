@@ -246,12 +246,9 @@ final class WorkforceController extends ChangeNotifier {
     _privateExpiry = null;
   }
 
-  void _clearVisible() {
-    _clearForm();
+  void _clearEmployeeRecords() {
     attendance = [];
     leave = [];
-    policies = [];
-    policyHistory = [];
     rawEvents = [];
     clockBatches = [];
     clockLineage = [];
@@ -261,18 +258,27 @@ final class WorkforceController extends ChangeNotifier {
     workClaims = [];
     attendanceHistory = [];
     leaveHistory = [];
-    recovery = [];
-    leaveRecovery = [];
     selectedAttendance = null;
     selectedLeave = null;
+    cursor = null;
+    historyCursor = null;
+    balance = null;
+    balanceGrants = [];
+  }
+
+  void _clearVisible() {
+    _clearForm();
+    _clearEmployeeRecords();
+    policies = [];
+    policyHistory = [];
+    recovery = [];
+    leaveRecovery = [];
     selectedPolicy = null;
     selectedPolicyVersion = null;
     employeeId = null;
     employeeName = null;
     assignment = null;
     assignedCalendar = null;
-    balance = null;
-    balanceGrants = [];
   }
 
   @override
@@ -496,30 +502,31 @@ final class WorkforceController extends ChangeNotifier {
 
   Future<void> selectEmployee(String id) => _run(() async {
     if (!await canLeave()) return;
+    if (!current) return;
     _clearForm();
+    _clearEmployeeRecords();
+    employeeId = null;
+    employeeName = null;
+    assignment = null;
+    assignedCalendar = null;
     await _employee(id);
-    selectedAttendance = null;
-    selectedLeave = null;
-    attendanceHistory = [];
-    leaveHistory = [];
-    balance = null;
-    balanceGrants = [];
+    if (!current) return;
     await _refresh();
   });
   Future<void> filterDate(String date) => _run(() async {
     CivilDate.parse(date);
     if (!await canLeave()) return;
+    if (!current) return;
     asOfDate = date;
     _clearForm();
-    if (employeeId != null) await _employee(employeeId!);
-    selectedAttendance = null;
-    selectedLeave = null;
-    attendanceHistory = [];
-    leaveHistory = [];
+    _clearEmployeeRecords();
+    assignment = null;
+    assignedCalendar = null;
     selectedPolicy = null;
     selectedPolicyVersion = null;
-    balance = null;
-    balanceGrants = [];
+    policyHistory = [];
+    if (employeeId != null) await _employee(employeeId!);
+    if (!current) return;
     await _refresh();
   });
   Future<void> changeView(WorkforceView next) => _run(() async {
@@ -690,6 +697,14 @@ final class WorkforceController extends ChangeNotifier {
   });
   Future<void> openLeave(String id, {bool more = false}) => _run(() async {
     _connected();
+    if (!more) {
+      selectedLeave = null;
+      leaveHistory = [];
+      historyCursor = null;
+    }
+    // Balance and grants must belong to the request whose policy is being read.
+    balance = null;
+    balanceGrants = [];
     final detail = await repository.leaveDetail(
       scope,
       id,

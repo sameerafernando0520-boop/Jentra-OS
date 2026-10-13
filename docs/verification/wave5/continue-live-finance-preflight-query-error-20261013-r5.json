@@ -1,0 +1,18 @@
+{
+  "kind": "read-only-query-name-error",
+  "recordedAt": "2026-10-13T12:20:00Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "liveMutation": false,
+  "rawConnectorResult": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"error\":{\"name\":\"HttpException\",\"message\":\"Failed to run sql query: ERROR:  42P01: relation \\\"finance.chart_of_accounts\\\" does not exist\\nLINE 1: SELECT jsonb_build_object('observedAt',statement_timestamp()::text,'migrations',(SELECT count(*) FROM supabase_migrations.schema_migrations),'apiFunctions',(SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='api'),'runtimeFinanceAccounts',(SELECT count(*) FROM finance.chart_of_accounts WHERE tenant_id='babe6c86-a764-4d3a-80a3-952a7c096c2c'),'runtimeJournals',(SELECT count(*) FROM finance.journal_entries WHERE tenant_id='babe6c86-a764-4d3a-80a3-952a7c096c2c'),'cashV2Md5',(SELECT md5(pg_get_functiondef(p.oid)) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='api' AND p.proname='wave5_cash_basis_v2'),'jobs',(SELECT jsonb_agg(jsonb_build_object('id',jobid,'name',jobname,'active',active) ORDER BY jobid) FROM cron.job WHERE jobid IN(4,5,6))) AS facts\\n                                                                                                                                                                                                                                                                                                                      ^\\n\"}}"
+      }
+    ],
+    "structuredContent": {
+      "error_code": "INVALID_ARGUMENT"
+    },
+    "isError": true
+  }
+}

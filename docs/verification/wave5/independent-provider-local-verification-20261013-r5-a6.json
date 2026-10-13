@@ -1,0 +1,1278 @@
+{
+  "kind": "independent-controlled-wave5-provider-local-verification",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "actualStartedAt": "2026-10-13T11:50:39.217Z",
+  "actualFinishedAt": "2026-10-13T11:50:41.701Z",
+  "nodeVersion": "v24.11.0",
+  "command": [
+    "node",
+    "--test",
+    "--test-isolation=none",
+    "--test-reporter=tap",
+    "tools/wave5/approved_management_installer.test.mjs",
+    "tools/wave5/bootstrap_management_20261013_r5.test.mjs",
+    "tools/wave5/finance_cash_workflows_20261013_r5.test.mjs",
+    "tools/wave5/genuine_mfa_20261013_r5.test.mjs",
+    "tools/wave5/membership_preparation_peer_20261013.test.mjs",
+    "tools/wave5/preparation_file_sink.test.mjs",
+    "tools/wave5/preparation_file_sink_peer_20261013.test.mjs",
+    "tools/wave5/preparation_journal.test.mjs",
+    "tools/wave5/preparation_journal_peer_20261013.test.mjs",
+    "tools/wave5/private_auth_provisioning_20261013_r5.test.mjs",
+    "tools/wave5/provider_live_response_regression_20261013_r5.test.mjs",
+    "tools/wave5/runtime_coordinator.test.mjs",
+    "tools/wave5/source_population_20261013_r5.test.mjs",
+    "tools/wave5/source_workflow_20261013_r5.test.mjs",
+    "tools/wave5/supabase_management_read.test.mjs",
+    "tools/wave5/supabase_provider.test.mjs",
+    "tools/wave5/supabase_provider_peer_20261013.test.mjs",
+    "tools/wave5/supabase_provider_plan.test.mjs",
+    "tools/wave5/synthetic_activation_contention_20261013_r5.test.mjs",
+    "tools/wave5/verify_installed_management_20261013_r5.test.mjs",
+    "tools/wave5/worker_routing_peer_20261013_r5.test.mjs"
+  ],
+  "childExitCode": 0,
+  "childSignal": null,
+  "spawnFailure": null,
+  "passed": true,
+  "summary": {
+    "tests": 164,
+    "pass": 164,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "selectedSourcesUnchanged": true,
+  "filesBefore": [
+    {
+      "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+      "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+      "bytes": 1370575
+    },
+    {
+      "path": "docs/verification/wave5/independent-provider-local-verification-20261013-r5-a3.json",
+      "sha256": "8910061b2fc2e7b02080d4cd0459c82b9010d92d660bf710a54273b16b54bf3d",
+      "bytes": 24111
+    },
+    {
+      "path": "docs/verification/wave5/independent-provider-local-verification-20261013-r5-a3.tap",
+      "sha256": "79d71235718fe5be1ae82798c4aa63f3b052805a820857f1d341a1625cf79b82",
+      "bytes": 32216
+    },
+    {
+      "path": "docs/verification/wave5/independent-provider-local-verification-20261013-r5-a5.json",
+      "sha256": "c6d3c6a126def70393f1a664bef23acd2e3121d013499c98ea10e875605edb44",
+      "bytes": 46495
+    },
+    {
+      "path": "docs/verification/wave5/independent-provider-local-verification-20261013-r5-a5.tap",
+      "sha256": "eefeeadf8b05f2ab01d3822323abc440e613442e364cc07d2ed36e97b230601a",
+      "bytes": 162256
+    },
+    {
+      "path": "docs/verification/wave5/installed-baseline-rename-fingerprints-20261012-r5.sql",
+      "sha256": "f4beb12842047ebf0ab8892155c092b1bf357ec27b044be62796bd4f81579b0a",
+      "bytes": 1811
+    },
+    {
+      "path": "docs/verification/wave5/installed-catalog-verification-20261012-r5-a2.sql",
+      "sha256": "1e388eef0a161d3fe90da7f2b2490b7e7c773985e69fa9c3a743fac3c4dd9745",
+      "bytes": 94620
+    },
+    {
+      "path": "docs/verification/wave5/installed-preservation-fingerprints-20261012-r5.sql",
+      "sha256": "8f200dd3a857733c45e4d8b3fc7e4ee7f51c844911ccccbf739630894993a165",
+      "bytes": 2810
+    },
+    {
+      "path": "docs/verification/wave5/installed-strict-metadata-20261012-r5.sql",
+      "sha256": "906dd7f51f80962b627a62e059637ef57eb896b715acfc27820e4ffea9aec41b",
+      "bytes": 6968
+    },
+    {
+      "path": "docs/verification/wave5/installed-verification-plan-20261012-r5-a2.json",
+      "sha256": "0caf72e72b920efa03246860c4d443e3ad0d2c129218d8cca3d85d79ba3c2077",
+      "bytes": 11046
+    },
+    {
+      "path": "docs/verification/wave5/installed-verification-plan-peer-audit-20261013-r5.json",
+      "sha256": "a3f257533be1ce9b5fb31eb384111aea315dd084fb57ec60cd388b48ba6a4313",
+      "bytes": 16949
+    },
+    {
+      "path": "docs/verification/wave5/membership-preparation-independent-verification-20261013-r5-a1.json",
+      "sha256": "eb27b9df5de314d68c397531277cd2043f676dfeab07e1d1d0acf77ed1597cbf",
+      "bytes": 4940
+    },
+    {
+      "path": "docs/verification/wave5/membership-preparation-independent-verification-20261013-r5-a1.tap",
+      "sha256": "9f2b7d316d51ed02e6c150006452f593f2da9a88c9364a693b65c792764c0778",
+      "bytes": 942
+    },
+    {
+      "path": "docs/verification/wave5/preparation-journal-independent-verification-20261013-r5-a1.json",
+      "sha256": "144ce3a9d974380d56b414a1e610125f943efd8235eb614595676e1ecb21e971",
+      "bytes": 2686
+    },
+    {
+      "path": "docs/verification/wave5/preparation-journal-independent-verification-20261013-r5-a1.tap",
+      "sha256": "4066fa6f1500b20cce0201ac59e31790dad6cda09edd38938c5d4d39d7924c8f",
+      "bytes": 2095
+    },
+    {
+      "path": "docs/verification/wave5/preparation-journal-peer-probe-20261013-r5-a1.json",
+      "sha256": "e9a612e0ea1143212f27429666de528eff6008972d2bc974f0134078d84c5636",
+      "bytes": 2465
+    },
+    {
+      "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
+      "sha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5",
+      "bytes": 115108
+    },
+    {
+      "path": "docs/verification/wave5/runtime-evidence-independent-review-20261013-r5-a4.json",
+      "sha256": "8163c3a31a63083e8b11008c421ffe03d0f84f82da5f5defb24d3e8d786aaa8a",
+      "bytes": 389695
+    },
+    {
+      "path": "docs/verification/wave5/runtime-fixture-contract-20261012-r5.json",
+      "sha256": "721ae4ada80ebeda08486158154d30f49733ee1ea961fefac23901a3819f22db",
+      "bytes": 19825
+    },
+    {
+      "path": "docs/verification/wave5/runtime-harness-peer-review-20261012-r5.json",
+      "sha256": "a6bed603e57a40c1b920aa15174bc5c407e000aebedcf97f9b4e7d3673a73ef4",
+      "bytes": 30085
+    },
+    {
+      "path": "docs/verification/wave5/runtime-node-tests-20261013-r5-a4.log",
+      "sha256": "00a3d9b6bdbe68002e73cb2a9466df0444632136ebeea3ea7530dccaa5954a21",
+      "bytes": 40386
+    },
+    {
+      "path": "docs/verification/wave5/runtime-owner-decision-20261012-r5.json",
+      "sha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab",
+      "bytes": 2756
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-late-socket-probe-20261012-r5-a1.json",
+      "sha256": "21be452dae0ca47c2d267ecb8fc8c51097ed8f0ad53ef4c5aea40a27e915f483",
+      "bytes": 782
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261012-r5-a8.json",
+      "sha256": "629cd3e5db541cf2a7d2d53ac869af5bfb4b73f27b20cb73bbf4e72b9b5234db",
+      "bytes": 12718
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261012-r5-a8.tap",
+      "sha256": "09567bf7d0e0580025ab5cd05f6a1fafaa3e64c1c61dee96f7271bbe3aac4ed6",
+      "bytes": 21436
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a14.json",
+      "sha256": "51d7b902e763f67862599574a6ee9f04d11b3719df410137ce2613146f7cc616",
+      "bytes": 15037
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a14.tap",
+      "sha256": "14aee4a523ccabc3024fb05e81bc20191134915313b7247e4be8778d48cb4b11",
+      "bytes": 28375
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a16.json",
+      "sha256": "c92f969fd9a25104ac09d2980311e26c139b776c6d19e276f4aa53314e72cb3d",
+      "bytes": 15036
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a16.tap",
+      "sha256": "4e32aa7a9a700c8c3f32a9ab02545c0461622b50bcd2511a9e72813728252f99",
+      "bytes": 27512
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a17.json",
+      "sha256": "cb068d1701e135e94a1f8cde1dd3656579824c666e175adb0553236c50040f25",
+      "bytes": 15038
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a17.tap",
+      "sha256": "b8428b754948a9a4fa234688c8b098a6a56c7f2193ea6cd6b8fb87aa34546719",
+      "bytes": 30454
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a19.json",
+      "sha256": "f962488dfa58ff08e347ae314619b8a7825202dd425dae4e8fc54699955a208e",
+      "bytes": 15039
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a19.tap",
+      "sha256": "f2d760c21d40927b67b84707d59a38d012c3f0b38493cee02413482446ed4b2f",
+      "bytes": 28740
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a3.json",
+      "sha256": "8f819fa5cddf592f64d30dc55343d29b37cab0a1e0e554168a51ffba86a0a26d",
+      "bytes": 13483
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a3.tap",
+      "sha256": "c920ef0a4838810295d44e1d989578d91cfefb21f09a0ab4ab78430172a94f73",
+      "bytes": 24574
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a4.json",
+      "sha256": "b99b50f32767794141eb9f9cc04c5487b2d0492d31d308d6844175eb927b703f",
+      "bytes": 13482
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a4.tap",
+      "sha256": "c4e6e05bd024619cc0d8943af9ef74519c3f169b684e05e01c0b9bafacad8fc1",
+      "bytes": 22372
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-preparation-plan-20261012-r5-a7.json",
+      "sha256": "f716866dcf05d248cbd6fd0458896783f1d9e9194b9f06a2ecbe93f8a4901c3d",
+      "bytes": 21190
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-preparation-plan-20261013-r5-a1.json",
+      "sha256": "3dda1fee257f2bb38ef88a5293ed3d70885472c3304dd56652ec7e4ae7226e63",
+      "bytes": 21546
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-preparation-plan-20261013-r5-a4.json",
+      "sha256": "9f2f1cf2d700da529330b2e15b44ccd50e50d39e88865fce5f084bcd99ee3feb",
+      "bytes": 22813
+    },
+    {
+      "path": "scripts/wave5/run_private_management_installer_20261013_r5.ps1",
+      "sha256": "4a38395739a19a02995bb87427ae8ef164ce66029853881d664b0fc2cccc0633",
+      "bytes": 23286
+    },
+    {
+      "path": "tools/wave5/PRIVATE_PROVIDER_CONTRACT.md",
+      "sha256": "53b691012312db8d0c6b634c8b8cc21690cac73e80a66b286dd4ab97b1c0ec30",
+      "bytes": 21178
+    },
+    {
+      "path": "tools/wave5/SUPABASE_PROVIDER_IMPLEMENTATION.md",
+      "sha256": "b5cfdb87af7c6cce895585302fcba7cfe02217bd5e2635044e3a57d38222e57e",
+      "bytes": 16629
+    },
+    {
+      "path": "tools/wave5/approved_management_installer.mjs",
+      "sha256": "f6266b37e9c5eb254a794aedd512984d35865e2ff4ddfd19f6a67cf5f9750bd5",
+      "bytes": 18163
+    },
+    {
+      "path": "tools/wave5/approved_management_installer.test.mjs",
+      "sha256": "042384417e28bce2313c8fe0ab385d06fe78e8ed5530d053c5af36c8e5b8a612",
+      "bytes": 5109
+    },
+    {
+      "path": "tools/wave5/audit_installed_plan_peer_20261013_r5.mjs",
+      "sha256": "e559bb4b8daa820e2a82ff10bd8acdcd08b607d3cd9ba5f82ac1579f8e713bcc",
+      "bytes": 4158
+    },
+    {
+      "path": "tools/wave5/audit_runtime_evidence_peer_20261013_r5.mjs",
+      "sha256": "c32bfc43454e2ca4ea6e7c09a631a9fe01bcbbd61bce89b29a8b86c0b9378785",
+      "bytes": 24901
+    },
+    {
+      "path": "tools/wave5/bootstrap_management_20261013_r5.mjs",
+      "sha256": "8ac8cdeab26341c0a53500c4cce3231440d5d171edbd8f340b4fbcbeab1c1d07",
+      "bytes": 17658
+    },
+    {
+      "path": "tools/wave5/bootstrap_management_20261013_r5.test.mjs",
+      "sha256": "4aeda9c080f9f42ab4b9fdb6dcae0faab8a58f99aa6759bfdb19ba37a8ed0856",
+      "bytes": 3173
+    },
+    {
+      "path": "tools/wave5/compose_supabase_provider_preparation.mjs",
+      "sha256": "0c209b4a185759082231ddf83318a4fee1011ecb0b6815a8d1f980dd895af0d0",
+      "bytes": 7442
+    },
+    {
+      "path": "tools/wave5/continue_source_workflows_20261013_r5_a3.mjs",
+      "sha256": "55c06f4732ec1b15ad235b5c9f461072369e1b94ec1c6ac18ebd3892841adf1b",
+      "bytes": 13958
+    },
+    {
+      "path": "tools/wave5/delivery_transport_20261013_r5.mjs",
+      "sha256": "ce733b5093e7c53ded4742111af33f5d254d8f488513f800f39e05b882899dfe",
+      "bytes": 15312
+    },
+    {
+      "path": "tools/wave5/enroll_mfa_management_20261013_r5.mjs",
+      "sha256": "ede49ffd20a111a063b00b375b32fdef40c69b09364a4ae72e5f2a5e7a608240",
+      "bytes": 13561
+    },
+    {
+      "path": "tools/wave5/finance_cash_fixture_20261013_r5.mjs",
+      "sha256": "8d5e670368fd89a9e9a98f10aa4befc1f2bc4ed0b28de913aa89ee64766291f9",
+      "bytes": 20620
+    },
+    {
+      "path": "tools/wave5/finance_cash_workflows_20261013_r5.mjs",
+      "sha256": "cc6a812e7f04bfa7bae96e1d87c3fde4df8fb7c8850431864ca563ace62c8153",
+      "bytes": 24990
+    },
+    {
+      "path": "tools/wave5/finance_cash_workflows_20261013_r5.test.mjs",
+      "sha256": "c379f754b91605e13c90167d481fbda8eea4ad1bd9a09d4b0df3fefc96ee708a",
+      "bytes": 10011
+    },
+    {
+      "path": "tools/wave5/finance_https_transport_20261013_r5.mjs",
+      "sha256": "f5c8a0994a37515f5e167c801448fc6e3a9bb373916ee45ad8e0413b49d5ea4f",
+      "bytes": 8284
+    },
+    {
+      "path": "tools/wave5/genuine_delivery_lease_20261013_r5.mjs",
+      "sha256": "a5ccccab1163c0563361a1d56d9bb71030868d005fb24d077a91db05a902ccf9",
+      "bytes": 12642
+    },
+    {
+      "path": "tools/wave5/genuine_mfa_20261013_r5.test.mjs",
+      "sha256": "5a554ed8037c2a4d50680959e7b7ebccbe3eca3abeb24c2e3a267449c4b0ae2f",
+      "bytes": 2154
+    },
+    {
+      "path": "tools/wave5/membership_preparation_peer_20261013.test.mjs",
+      "sha256": "99f9e6a625f61eb56ee256b1100f8a712d75200ee6b501f5f89f2747d1b29468",
+      "bytes": 7910
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink.mjs",
+      "sha256": "c2a3435601bc32fb1c2623fbac070cfd381fb4c2dd7ecf7963a293049344ecad",
+      "bytes": 11697
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink.test.mjs",
+      "sha256": "b05624090af8cf847b45cafc314f3254b6ecd3f664af462a1945da16153541fb",
+      "bytes": 11842
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink_peer_20261013.test.mjs",
+      "sha256": "1b8f8c741beb7b625ba7d1d562ebdc8ac2dc3e6cc3aeafcce36ad5490e91e412",
+      "bytes": 4417
+    },
+    {
+      "path": "tools/wave5/preparation_journal.mjs",
+      "sha256": "95a93eb07bf7bfaadd2121c854683453512203ecc7380225602f2f8330267840",
+      "bytes": 4778
+    },
+    {
+      "path": "tools/wave5/preparation_journal.test.mjs",
+      "sha256": "05e383e82ac6d593bdc066541a4fe48c61904cd7283cfc5decb316ed93fcea86",
+      "bytes": 7217
+    },
+    {
+      "path": "tools/wave5/preparation_journal_peer_20261013.test.mjs",
+      "sha256": "1b393f9a7629332233e7aee054755bccd61056875f38f99fefbf0da0bcf2f3b6",
+      "bytes": 3315
+    },
+    {
+      "path": "tools/wave5/prepare_actual_delivery_fixtures_20261013_r5.mjs",
+      "sha256": "3a37978cf79456aa6e7624cf6cd3428ffe36b70617c73442cf458d24238cfd74",
+      "bytes": 9168
+    },
+    {
+      "path": "tools/wave5/prepare_source_population_20261013_r5.mjs",
+      "sha256": "d848447baa214cc970f498d6885f25bc030c927bf840ed502bd9cecd4f1233c4",
+      "bytes": 7265
+    },
+    {
+      "path": "tools/wave5/private_auth_provisioning_20261013_r5.test.mjs",
+      "sha256": "555d7644407fa1d1ef697d6e80d9332ff7346c11326751948d5855db160020bb",
+      "bytes": 5345
+    },
+    {
+      "path": "tools/wave5/private_existing_actor_session_20261013_r5.mjs",
+      "sha256": "0d9dc4bfbd703fb7637f0acc89eaa195c2b6a17bdf4f4e566b0ba925f76c4540",
+      "bytes": 4562
+    },
+    {
+      "path": "tools/wave5/private_runtime_http.mjs",
+      "sha256": "d52ae919e4c13bd1745ef806658744dfc2c52df7b61d24d9f87afac06de7be2c",
+      "bytes": 5080
+    },
+    {
+      "path": "tools/wave5/private_runtime_seal.mjs",
+      "sha256": "1395a91ee666d40c5504c8977b5d4f64aa4d54b383dfe147fe78eb07a5d7a206",
+      "bytes": 2916
+    },
+    {
+      "path": "tools/wave5/probe_preparation_journal_20261013_r5.mjs",
+      "sha256": "a36dce300966d85ff931d9330ece5100fa2c1881912b48f6747ab6e1d3b051c7",
+      "bytes": 3800
+    },
+    {
+      "path": "tools/wave5/provider_live_response_regression_20261013_r5.test.mjs",
+      "sha256": "7d29dc771f10b4b9e5581f7d0f4aef5d7cb62d5c06d6c4d7a4744198d39c3ef0",
+      "bytes": 1785
+    },
+    {
+      "path": "tools/wave5/provision_auth_management_20261013_r5.mjs",
+      "sha256": "e2c4905e60b8e0a66ef494c296dd0a1e2d26577e60ef48effd530c6de912a5a7",
+      "bytes": 11610
+    },
+    {
+      "path": "tools/wave5/run_runtime_verification.mjs",
+      "sha256": "143f460b88c1e1dba4a06b7ed869fb5de46e6eff77421ebf8d0aee15efb74b20",
+      "bytes": 9119
+    },
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f",
+      "bytes": 31294
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.mjs",
+      "sha256": "1df1396865610b73614f5ba9b83a8d9b91d40bb642e26d7443934ef11bcd0f3c",
+      "bytes": 35742
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.test.mjs",
+      "sha256": "d0582f1c33e3b869411bda08e50a495ecd4a287ae299b570186c271d614036db",
+      "bytes": 45494
+    },
+    {
+      "path": "tools/wave5/runtime_fixture_spec.mjs",
+      "sha256": "71dd763620cab0ca896dd96c50193350f1926e67f481acfed9b7aaa4b519f2d2",
+      "bytes": 36370
+    },
+    {
+      "path": "tools/wave5/source_population_20261013_r5.test.mjs",
+      "sha256": "3ae86c032385e41b5d2f757c3d281175b0697bc156c21517b38df48e9291ed26",
+      "bytes": 1813
+    },
+    {
+      "path": "tools/wave5/source_workflow_20261013_r5.test.mjs",
+      "sha256": "06a470e5f82ffc45220a70b84215c6667960383b8a29f00b6b8299d86a7548ec",
+      "bytes": 1177
+    },
+    {
+      "path": "tools/wave5/source_workflow_management_20261013_r5.mjs",
+      "sha256": "aabbeae5af299178bd35784fb8ffefd378ae324a25749c42f9e3d7cd22e107ea",
+      "bytes": 14227
+    },
+    {
+      "path": "tools/wave5/supabase_http_transport.mjs",
+      "sha256": "7815b9c8c18bd5d2375480706579c7dd9583b1e95e0424a2178f7b9b5db265c9",
+      "bytes": 15253
+    },
+    {
+      "path": "tools/wave5/supabase_management_read.mjs",
+      "sha256": "ddbb103c7dbf82327d77829b21bcaaf44c7f447187644af08c026c03841b5ea4",
+      "bytes": 8221
+    },
+    {
+      "path": "tools/wave5/supabase_management_read.test.mjs",
+      "sha256": "356b76b8a6930f7c485ddbe92f0937cf616d5552335f2b9bef940cc3a525041a",
+      "bytes": 10075
+    },
+    {
+      "path": "tools/wave5/supabase_membership_fixture.mjs",
+      "sha256": "b39b636fe45cfc21e58f53cf6315d7cfaae606042f64d6869969ebbb380e0993",
+      "bytes": 10162
+    },
+    {
+      "path": "tools/wave5/supabase_provider.test.mjs",
+      "sha256": "72f29ca192982a288b396f2e1d2649421096c80d82c3b788878170fd269d443e",
+      "bytes": 46828
+    },
+    {
+      "path": "tools/wave5/supabase_provider_peer_20261013.test.mjs",
+      "sha256": "2951fb7a0c605d8873fb2c3e012c6af33a91b607293ddd53f84d2b8eea828535",
+      "bytes": 18957
+    },
+    {
+      "path": "tools/wave5/supabase_provider_plan.mjs",
+      "sha256": "ac7bb6bd32add9f76a5a9fb94a48025bd12e25d7684e5b4eafa9cb82afe63c2e",
+      "bytes": 4016
+    },
+    {
+      "path": "tools/wave5/supabase_provider_plan.test.mjs",
+      "sha256": "090dd23865dbb0a1ded1af9a1484d423d916549d472789e9ffc895dd6da5d7eb",
+      "bytes": 3175
+    },
+    {
+      "path": "tools/wave5/supabase_read_store.mjs",
+      "sha256": "48a758dd6c8f29286889a7bddd6f4f7fd24e1a27f153d3d35208a2f2e71c73e6",
+      "bytes": 14778
+    },
+    {
+      "path": "tools/wave5/supabase_runtime_provider.mjs",
+      "sha256": "dfc40e82d0a754f35b4d713b83257ba3781f60520c11259cee1a791c580be8b0",
+      "bytes": 44367
+    },
+    {
+      "path": "tools/wave5/synthetic_activation_contention_20261013_r5.mjs",
+      "sha256": "23cf50d1f0956ee2eaed298163ac7a0c1ea8fa267facebf488a5c13f90800a08",
+      "bytes": 10258
+    },
+    {
+      "path": "tools/wave5/synthetic_activation_contention_20261013_r5.test.mjs",
+      "sha256": "d1d7eb66e70dbbf8861e612c379fe80ef5a4a1058fc8108ba793d6e17ec50c01",
+      "bytes": 1362
+    },
+    {
+      "path": "tools/wave5/verify_installed_management_20261013_r5.mjs",
+      "sha256": "7a0b1b872c4338be4849365313f47bb3729742c39c500c2ce5acd11f7972c70d",
+      "bytes": 13377
+    },
+    {
+      "path": "tools/wave5/verify_installed_management_20261013_r5.test.mjs",
+      "sha256": "3668f38767b49d56567b73fbc3b8b9a2228320877fdc01f891685697cae822eb",
+      "bytes": 6054
+    },
+    {
+      "path": "tools/wave5/verify_persistent_setup_committed_20261013_r5.mjs",
+      "sha256": "078f3f0bae5ee45d77e9178928678833cd00cad084b0dd810ec0dd30fca367a1",
+      "bytes": 3387
+    },
+    {
+      "path": "tools/wave5/verify_preparation_peer_20261013.mjs",
+      "sha256": "5607cd66da87577138e715411d0cec90a8ada74ef1f7e8f087c6b30d86325b9b",
+      "bytes": 4385
+    },
+    {
+      "path": "tools/wave5/verify_provider_peer_20261013.mjs",
+      "sha256": "00efa09422545bc0cc114cfbb1cd16d78f7e181746400ac57debf199c276cbe1",
+      "bytes": 10864
+    },
+    {
+      "path": "tools/wave5/verify_supabase_provider.mjs",
+      "sha256": "5bf29171ce4d1c7015e4fd3b165a901fe854bf726c0a1903c8918b68694a6381",
+      "bytes": 6622
+    },
+    {
+      "path": "tools/wave5/worker_routing_peer_20261013_r5.test.mjs",
+      "sha256": "024888e82a82fb359550c103eba3a03ddc748c4be10bd24799cfefbc5b220521",
+      "bytes": 6729
+    },
+    {
+      "path": "tools/wave5/write_provider_peer_review_20261013.mjs",
+      "sha256": "0f3d32ba8b3ba4c3477c0b884e821903eeb059c5ef53e2197c19606a6fb97841",
+      "bytes": 27366
+    },
+    {
+      "path": "workers/wave5/bounded_json.mjs",
+      "sha256": "2c9ba6bc68101501970a41abaf02443d4f977bb1ba6bb7457f45bdc226096c05",
+      "bytes": 2310
+    },
+    {
+      "path": "workers/wave5/edge_configuration.mjs",
+      "sha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13",
+      "bytes": 1072
+    },
+    {
+      "path": "workers/wave5/edge_receiver.mjs",
+      "sha256": "937c0f37f69c45a30a9dc0483d991cc46ecd4f40c54409a734cda40ca778c39e",
+      "bytes": 5731
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261013_r5.mjs",
+      "sha256": "e3a10721ac1298977b0e2a38459aa91644c125852c484b546e41a68b56c1ca7b",
+      "bytes": 5655
+    },
+    {
+      "path": "workers/wave5/edge_route_20261013_r5.mjs",
+      "sha256": "224619e51cbd5ac50799eb7e8dd7e4b7ad8410c78156641017aaacaf2edc8a7f",
+      "bytes": 855
+    },
+    {
+      "path": "workers/wave5/edge_runtime.mjs",
+      "sha256": "29c50f277e90c3a84bcefa9b5e9b1bea8da8a82ef380ec27ab3a4e47063c4ccd",
+      "bytes": 7059
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261013_r5.mjs",
+      "sha256": "7f99655115780e81e9b57f7724fbb0e3a93e34d3d86854a892a6abf94e2c8fd5",
+      "bytes": 6918
+    },
+    {
+      "path": "workers/wave5/integration_policy.mjs",
+      "sha256": "f83e76cd5bdaf7997bf001edf6101537db9c34995019e9f7b5c196546a875cea",
+      "bytes": 10120
+    },
+    {
+      "path": "workers/wave5/model_reader.mjs",
+      "sha256": "9be9ac552738041fb14a1cea2f9fd5e8dda415399512692f11b7430cf634a0a9",
+      "bytes": 1247
+    },
+    {
+      "path": "workers/wave5/model_runtime.mjs",
+      "sha256": "fce748e511a81bdae957ff76275641142a738d8391132953d4d3c7eec03cfb99",
+      "bytes": 5465
+    },
+    {
+      "path": "workers/wave5/openai_model_adapter.mjs",
+      "sha256": "557fc6af5dba58910ac46c2d1ac661a0389355ccef7efddb9a3cad94a03201d3",
+      "bytes": 3194
+    },
+    {
+      "path": "workers/wave5/persistent_control.mjs",
+      "sha256": "81b5aa332971235cca8830c3d5894977d04baa5d0f3b6f1391db346ca9abc4fd",
+      "bytes": 5107
+    },
+    {
+      "path": "workers/wave5/scoped_runtime.mjs",
+      "sha256": "70a8edbb7e8a0bac3fa1856ebb1134ff14413ad5b81f63bc568ae7750d3b2489",
+      "bytes": 1788
+    },
+    {
+      "path": "workers/wave5/subscription_schedule.mjs",
+      "sha256": "7699ebd9798620a9514584472b4e147e9b3d148754c72190498fe5406df7d047",
+      "bytes": 1292
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.mjs",
+      "sha256": "a57cceb2ca5dc2bccc29861cdccb34bac7468a82a7fd402ecc5bd1810b6b0f5f",
+      "bytes": 3210
+    },
+    {
+      "path": "workers/wave5/worker_runtime.mjs",
+      "sha256": "4935409210e61efc168d8604acff9b13f5a3b757cb27f4aee2ed1f2504dc8dc6",
+      "bytes": 5230
+    }
+  ],
+  "filesAfter": [
+    {
+      "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+      "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+      "bytes": 1370575
+    },
+    {
+      "path": "docs/verification/wave5/independent-provider-local-verification-20261013-r5-a3.json",
+      "sha256": "8910061b2fc2e7b02080d4cd0459c82b9010d92d660bf710a54273b16b54bf3d",
+      "bytes": 24111
+    },
+    {
+      "path": "docs/verification/wave5/independent-provider-local-verification-20261013-r5-a3.tap",
+      "sha256": "79d71235718fe5be1ae82798c4aa63f3b052805a820857f1d341a1625cf79b82",
+      "bytes": 32216
+    },
+    {
+      "path": "docs/verification/wave5/independent-provider-local-verification-20261013-r5-a5.json",
+      "sha256": "c6d3c6a126def70393f1a664bef23acd2e3121d013499c98ea10e875605edb44",
+      "bytes": 46495
+    },
+    {
+      "path": "docs/verification/wave5/independent-provider-local-verification-20261013-r5-a5.tap",
+      "sha256": "eefeeadf8b05f2ab01d3822323abc440e613442e364cc07d2ed36e97b230601a",
+      "bytes": 162256
+    },
+    {
+      "path": "docs/verification/wave5/installed-baseline-rename-fingerprints-20261012-r5.sql",
+      "sha256": "f4beb12842047ebf0ab8892155c092b1bf357ec27b044be62796bd4f81579b0a",
+      "bytes": 1811
+    },
+    {
+      "path": "docs/verification/wave5/installed-catalog-verification-20261012-r5-a2.sql",
+      "sha256": "1e388eef0a161d3fe90da7f2b2490b7e7c773985e69fa9c3a743fac3c4dd9745",
+      "bytes": 94620
+    },
+    {
+      "path": "docs/verification/wave5/installed-preservation-fingerprints-20261012-r5.sql",
+      "sha256": "8f200dd3a857733c45e4d8b3fc7e4ee7f51c844911ccccbf739630894993a165",
+      "bytes": 2810
+    },
+    {
+      "path": "docs/verification/wave5/installed-strict-metadata-20261012-r5.sql",
+      "sha256": "906dd7f51f80962b627a62e059637ef57eb896b715acfc27820e4ffea9aec41b",
+      "bytes": 6968
+    },
+    {
+      "path": "docs/verification/wave5/installed-verification-plan-20261012-r5-a2.json",
+      "sha256": "0caf72e72b920efa03246860c4d443e3ad0d2c129218d8cca3d85d79ba3c2077",
+      "bytes": 11046
+    },
+    {
+      "path": "docs/verification/wave5/installed-verification-plan-peer-audit-20261013-r5.json",
+      "sha256": "a3f257533be1ce9b5fb31eb384111aea315dd084fb57ec60cd388b48ba6a4313",
+      "bytes": 16949
+    },
+    {
+      "path": "docs/verification/wave5/membership-preparation-independent-verification-20261013-r5-a1.json",
+      "sha256": "eb27b9df5de314d68c397531277cd2043f676dfeab07e1d1d0acf77ed1597cbf",
+      "bytes": 4940
+    },
+    {
+      "path": "docs/verification/wave5/membership-preparation-independent-verification-20261013-r5-a1.tap",
+      "sha256": "9f2b7d316d51ed02e6c150006452f593f2da9a88c9364a693b65c792764c0778",
+      "bytes": 942
+    },
+    {
+      "path": "docs/verification/wave5/preparation-journal-independent-verification-20261013-r5-a1.json",
+      "sha256": "144ce3a9d974380d56b414a1e610125f943efd8235eb614595676e1ecb21e971",
+      "bytes": 2686
+    },
+    {
+      "path": "docs/verification/wave5/preparation-journal-independent-verification-20261013-r5-a1.tap",
+      "sha256": "4066fa6f1500b20cce0201ac59e31790dad6cda09edd38938c5d4d39d7924c8f",
+      "bytes": 2095
+    },
+    {
+      "path": "docs/verification/wave5/preparation-journal-peer-probe-20261013-r5-a1.json",
+      "sha256": "e9a612e0ea1143212f27429666de528eff6008972d2bc974f0134078d84c5636",
+      "bytes": 2465
+    },
+    {
+      "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
+      "sha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5",
+      "bytes": 115108
+    },
+    {
+      "path": "docs/verification/wave5/runtime-evidence-independent-review-20261013-r5-a4.json",
+      "sha256": "8163c3a31a63083e8b11008c421ffe03d0f84f82da5f5defb24d3e8d786aaa8a",
+      "bytes": 389695
+    },
+    {
+      "path": "docs/verification/wave5/runtime-fixture-contract-20261012-r5.json",
+      "sha256": "721ae4ada80ebeda08486158154d30f49733ee1ea961fefac23901a3819f22db",
+      "bytes": 19825
+    },
+    {
+      "path": "docs/verification/wave5/runtime-harness-peer-review-20261012-r5.json",
+      "sha256": "a6bed603e57a40c1b920aa15174bc5c407e000aebedcf97f9b4e7d3673a73ef4",
+      "bytes": 30085
+    },
+    {
+      "path": "docs/verification/wave5/runtime-node-tests-20261013-r5-a4.log",
+      "sha256": "00a3d9b6bdbe68002e73cb2a9466df0444632136ebeea3ea7530dccaa5954a21",
+      "bytes": 40386
+    },
+    {
+      "path": "docs/verification/wave5/runtime-owner-decision-20261012-r5.json",
+      "sha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab",
+      "bytes": 2756
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-late-socket-probe-20261012-r5-a1.json",
+      "sha256": "21be452dae0ca47c2d267ecb8fc8c51097ed8f0ad53ef4c5aea40a27e915f483",
+      "bytes": 782
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261012-r5-a8.json",
+      "sha256": "629cd3e5db541cf2a7d2d53ac869af5bfb4b73f27b20cb73bbf4e72b9b5234db",
+      "bytes": 12718
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261012-r5-a8.tap",
+      "sha256": "09567bf7d0e0580025ab5cd05f6a1fafaa3e64c1c61dee96f7271bbe3aac4ed6",
+      "bytes": 21436
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a14.json",
+      "sha256": "51d7b902e763f67862599574a6ee9f04d11b3719df410137ce2613146f7cc616",
+      "bytes": 15037
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a14.tap",
+      "sha256": "14aee4a523ccabc3024fb05e81bc20191134915313b7247e4be8778d48cb4b11",
+      "bytes": 28375
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a16.json",
+      "sha256": "c92f969fd9a25104ac09d2980311e26c139b776c6d19e276f4aa53314e72cb3d",
+      "bytes": 15036
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a16.tap",
+      "sha256": "4e32aa7a9a700c8c3f32a9ab02545c0461622b50bcd2511a9e72813728252f99",
+      "bytes": 27512
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a17.json",
+      "sha256": "cb068d1701e135e94a1f8cde1dd3656579824c666e175adb0553236c50040f25",
+      "bytes": 15038
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a17.tap",
+      "sha256": "b8428b754948a9a4fa234688c8b098a6a56c7f2193ea6cd6b8fb87aa34546719",
+      "bytes": 30454
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a19.json",
+      "sha256": "f962488dfa58ff08e347ae314619b8a7825202dd425dae4e8fc54699955a208e",
+      "bytes": 15039
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a19.tap",
+      "sha256": "f2d760c21d40927b67b84707d59a38d012c3f0b38493cee02413482446ed4b2f",
+      "bytes": 28740
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a3.json",
+      "sha256": "8f819fa5cddf592f64d30dc55343d29b37cab0a1e0e554168a51ffba86a0a26d",
+      "bytes": 13483
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a3.tap",
+      "sha256": "c920ef0a4838810295d44e1d989578d91cfefb21f09a0ab4ab78430172a94f73",
+      "bytes": 24574
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a4.json",
+      "sha256": "b99b50f32767794141eb9f9cc04c5487b2d0492d31d308d6844175eb927b703f",
+      "bytes": 13482
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a4.tap",
+      "sha256": "c4e6e05bd024619cc0d8943af9ef74519c3f169b684e05e01c0b9bafacad8fc1",
+      "bytes": 22372
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-preparation-plan-20261012-r5-a7.json",
+      "sha256": "f716866dcf05d248cbd6fd0458896783f1d9e9194b9f06a2ecbe93f8a4901c3d",
+      "bytes": 21190
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-preparation-plan-20261013-r5-a1.json",
+      "sha256": "3dda1fee257f2bb38ef88a5293ed3d70885472c3304dd56652ec7e4ae7226e63",
+      "bytes": 21546
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-preparation-plan-20261013-r5-a4.json",
+      "sha256": "9f2f1cf2d700da529330b2e15b44ccd50e50d39e88865fce5f084bcd99ee3feb",
+      "bytes": 22813
+    },
+    {
+      "path": "scripts/wave5/run_private_management_installer_20261013_r5.ps1",
+      "sha256": "4a38395739a19a02995bb87427ae8ef164ce66029853881d664b0fc2cccc0633",
+      "bytes": 23286
+    },
+    {
+      "path": "tools/wave5/PRIVATE_PROVIDER_CONTRACT.md",
+      "sha256": "53b691012312db8d0c6b634c8b8cc21690cac73e80a66b286dd4ab97b1c0ec30",
+      "bytes": 21178
+    },
+    {
+      "path": "tools/wave5/SUPABASE_PROVIDER_IMPLEMENTATION.md",
+      "sha256": "b5cfdb87af7c6cce895585302fcba7cfe02217bd5e2635044e3a57d38222e57e",
+      "bytes": 16629
+    },
+    {
+      "path": "tools/wave5/approved_management_installer.mjs",
+      "sha256": "f6266b37e9c5eb254a794aedd512984d35865e2ff4ddfd19f6a67cf5f9750bd5",
+      "bytes": 18163
+    },
+    {
+      "path": "tools/wave5/approved_management_installer.test.mjs",
+      "sha256": "042384417e28bce2313c8fe0ab385d06fe78e8ed5530d053c5af36c8e5b8a612",
+      "bytes": 5109
+    },
+    {
+      "path": "tools/wave5/audit_installed_plan_peer_20261013_r5.mjs",
+      "sha256": "e559bb4b8daa820e2a82ff10bd8acdcd08b607d3cd9ba5f82ac1579f8e713bcc",
+      "bytes": 4158
+    },
+    {
+      "path": "tools/wave5/audit_runtime_evidence_peer_20261013_r5.mjs",
+      "sha256": "c32bfc43454e2ca4ea6e7c09a631a9fe01bcbbd61bce89b29a8b86c0b9378785",
+      "bytes": 24901
+    },
+    {
+      "path": "tools/wave5/bootstrap_management_20261013_r5.mjs",
+      "sha256": "8ac8cdeab26341c0a53500c4cce3231440d5d171edbd8f340b4fbcbeab1c1d07",
+      "bytes": 17658
+    },
+    {
+      "path": "tools/wave5/bootstrap_management_20261013_r5.test.mjs",
+      "sha256": "4aeda9c080f9f42ab4b9fdb6dcae0faab8a58f99aa6759bfdb19ba37a8ed0856",
+      "bytes": 3173
+    },
+    {
+      "path": "tools/wave5/compose_supabase_provider_preparation.mjs",
+      "sha256": "0c209b4a185759082231ddf83318a4fee1011ecb0b6815a8d1f980dd895af0d0",
+      "bytes": 7442
+    },
+    {
+      "path": "tools/wave5/continue_source_workflows_20261013_r5_a3.mjs",
+      "sha256": "55c06f4732ec1b15ad235b5c9f461072369e1b94ec1c6ac18ebd3892841adf1b",
+      "bytes": 13958
+    },
+    {
+      "path": "tools/wave5/delivery_transport_20261013_r5.mjs",
+      "sha256": "ce733b5093e7c53ded4742111af33f5d254d8f488513f800f39e05b882899dfe",
+      "bytes": 15312
+    },
+    {
+      "path": "tools/wave5/enroll_mfa_management_20261013_r5.mjs",
+      "sha256": "ede49ffd20a111a063b00b375b32fdef40c69b09364a4ae72e5f2a5e7a608240",
+      "bytes": 13561
+    },
+    {
+      "path": "tools/wave5/finance_cash_fixture_20261013_r5.mjs",
+      "sha256": "8d5e670368fd89a9e9a98f10aa4befc1f2bc4ed0b28de913aa89ee64766291f9",
+      "bytes": 20620
+    },
+    {
+      "path": "tools/wave5/finance_cash_workflows_20261013_r5.mjs",
+      "sha256": "cc6a812e7f04bfa7bae96e1d87c3fde4df8fb7c8850431864ca563ace62c8153",
+      "bytes": 24990
+    },
+    {
+      "path": "tools/wave5/finance_cash_workflows_20261013_r5.test.mjs",
+      "sha256": "c379f754b91605e13c90167d481fbda8eea4ad1bd9a09d4b0df3fefc96ee708a",
+      "bytes": 10011
+    },
+    {
+      "path": "tools/wave5/finance_https_transport_20261013_r5.mjs",
+      "sha256": "f5c8a0994a37515f5e167c801448fc6e3a9bb373916ee45ad8e0413b49d5ea4f",
+      "bytes": 8284
+    },
+    {
+      "path": "tools/wave5/genuine_delivery_lease_20261013_r5.mjs",
+      "sha256": "a5ccccab1163c0563361a1d56d9bb71030868d005fb24d077a91db05a902ccf9",
+      "bytes": 12642
+    },
+    {
+      "path": "tools/wave5/genuine_mfa_20261013_r5.test.mjs",
+      "sha256": "5a554ed8037c2a4d50680959e7b7ebccbe3eca3abeb24c2e3a267449c4b0ae2f",
+      "bytes": 2154
+    },
+    {
+      "path": "tools/wave5/membership_preparation_peer_20261013.test.mjs",
+      "sha256": "99f9e6a625f61eb56ee256b1100f8a712d75200ee6b501f5f89f2747d1b29468",
+      "bytes": 7910
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink.mjs",
+      "sha256": "c2a3435601bc32fb1c2623fbac070cfd381fb4c2dd7ecf7963a293049344ecad",
+      "bytes": 11697
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink.test.mjs",
+      "sha256": "b05624090af8cf847b45cafc314f3254b6ecd3f664af462a1945da16153541fb",
+      "bytes": 11842
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink_peer_20261013.test.mjs",
+      "sha256": "1b8f8c741beb7b625ba7d1d562ebdc8ac2dc3e6cc3aeafcce36ad5490e91e412",
+      "bytes": 4417
+    },
+    {
+      "path": "tools/wave5/preparation_journal.mjs",
+      "sha256": "95a93eb07bf7bfaadd2121c854683453512203ecc7380225602f2f8330267840",
+      "bytes": 4778
+    },
+    {
+      "path": "tools/wave5/preparation_journal.test.mjs",
+      "sha256": "05e383e82ac6d593bdc066541a4fe48c61904cd7283cfc5decb316ed93fcea86",
+      "bytes": 7217
+    },
+    {
+      "path": "tools/wave5/preparation_journal_peer_20261013.test.mjs",
+      "sha256": "1b393f9a7629332233e7aee054755bccd61056875f38f99fefbf0da0bcf2f3b6",
+      "bytes": 3315
+    },
+    {
+      "path": "tools/wave5/prepare_actual_delivery_fixtures_20261013_r5.mjs",
+      "sha256": "3a37978cf79456aa6e7624cf6cd3428ffe36b70617c73442cf458d24238cfd74",
+      "bytes": 9168
+    },
+    {
+      "path": "tools/wave5/prepare_source_population_20261013_r5.mjs",
+      "sha256": "d848447baa214cc970f498d6885f25bc030c927bf840ed502bd9cecd4f1233c4",
+      "bytes": 7265
+    },
+    {
+      "path": "tools/wave5/private_auth_provisioning_20261013_r5.test.mjs",
+      "sha256": "555d7644407fa1d1ef697d6e80d9332ff7346c11326751948d5855db160020bb",
+      "bytes": 5345
+    },
+    {
+      "path": "tools/wave5/private_existing_actor_session_20261013_r5.mjs",
+      "sha256": "0d9dc4bfbd703fb7637f0acc89eaa195c2b6a17bdf4f4e566b0ba925f76c4540",
+      "bytes": 4562
+    },
+    {
+      "path": "tools/wave5/private_runtime_http.mjs",
+      "sha256": "d52ae919e4c13bd1745ef806658744dfc2c52df7b61d24d9f87afac06de7be2c",
+      "bytes": 5080
+    },
+    {
+      "path": "tools/wave5/private_runtime_seal.mjs",
+      "sha256": "1395a91ee666d40c5504c8977b5d4f64aa4d54b383dfe147fe78eb07a5d7a206",
+      "bytes": 2916
+    },
+    {
+      "path": "tools/wave5/probe_preparation_journal_20261013_r5.mjs",
+      "sha256": "a36dce300966d85ff931d9330ece5100fa2c1881912b48f6747ab6e1d3b051c7",
+      "bytes": 3800
+    },
+    {
+      "path": "tools/wave5/provider_live_response_regression_20261013_r5.test.mjs",
+      "sha256": "7d29dc771f10b4b9e5581f7d0f4aef5d7cb62d5c06d6c4d7a4744198d39c3ef0",
+      "bytes": 1785
+    },
+    {
+      "path": "tools/wave5/provision_auth_management_20261013_r5.mjs",
+      "sha256": "e2c4905e60b8e0a66ef494c296dd0a1e2d26577e60ef48effd530c6de912a5a7",
+      "bytes": 11610
+    },
+    {
+      "path": "tools/wave5/run_runtime_verification.mjs",
+      "sha256": "143f460b88c1e1dba4a06b7ed869fb5de46e6eff77421ebf8d0aee15efb74b20",
+      "bytes": 9119
+    },
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f",
+      "bytes": 31294
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.mjs",
+      "sha256": "1df1396865610b73614f5ba9b83a8d9b91d40bb642e26d7443934ef11bcd0f3c",
+      "bytes": 35742
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.test.mjs",
+      "sha256": "d0582f1c33e3b869411bda08e50a495ecd4a287ae299b570186c271d614036db",
+      "bytes": 45494
+    },
+    {
+      "path": "tools/wave5/runtime_fixture_spec.mjs",
+      "sha256": "71dd763620cab0ca896dd96c50193350f1926e67f481acfed9b7aaa4b519f2d2",
+      "bytes": 36370
+    },
+    {
+      "path": "tools/wave5/source_population_20261013_r5.test.mjs",
+      "sha256": "3ae86c032385e41b5d2f757c3d281175b0697bc156c21517b38df48e9291ed26",
+      "bytes": 1813
+    },
+    {
+      "path": "tools/wave5/source_workflow_20261013_r5.test.mjs",
+      "sha256": "06a470e5f82ffc45220a70b84215c6667960383b8a29f00b6b8299d86a7548ec",
+      "bytes": 1177
+    },
+    {
+      "path": "tools/wave5/source_workflow_management_20261013_r5.mjs",
+      "sha256": "aabbeae5af299178bd35784fb8ffefd378ae324a25749c42f9e3d7cd22e107ea",
+      "bytes": 14227
+    },
+    {
+      "path": "tools/wave5/supabase_http_transport.mjs",
+      "sha256": "7815b9c8c18bd5d2375480706579c7dd9583b1e95e0424a2178f7b9b5db265c9",
+      "bytes": 15253
+    },
+    {
+      "path": "tools/wave5/supabase_management_read.mjs",
+      "sha256": "ddbb103c7dbf82327d77829b21bcaaf44c7f447187644af08c026c03841b5ea4",
+      "bytes": 8221
+    },
+    {
+      "path": "tools/wave5/supabase_management_read.test.mjs",
+      "sha256": "356b76b8a6930f7c485ddbe92f0937cf616d5552335f2b9bef940cc3a525041a",
+      "bytes": 10075
+    },
+    {
+      "path": "tools/wave5/supabase_membership_fixture.mjs",
+      "sha256": "b39b636fe45cfc21e58f53cf6315d7cfaae606042f64d6869969ebbb380e0993",
+      "bytes": 10162
+    },
+    {
+      "path": "tools/wave5/supabase_provider.test.mjs",
+      "sha256": "72f29ca192982a288b396f2e1d2649421096c80d82c3b788878170fd269d443e",
+      "bytes": 46828
+    },
+    {
+      "path": "tools/wave5/supabase_provider_peer_20261013.test.mjs",
+      "sha256": "2951fb7a0c605d8873fb2c3e012c6af33a91b607293ddd53f84d2b8eea828535",
+      "bytes": 18957
+    },
+    {
+      "path": "tools/wave5/supabase_provider_plan.mjs",
+      "sha256": "ac7bb6bd32add9f76a5a9fb94a48025bd12e25d7684e5b4eafa9cb82afe63c2e",
+      "bytes": 4016
+    },
+    {
+      "path": "tools/wave5/supabase_provider_plan.test.mjs",
+      "sha256": "090dd23865dbb0a1ded1af9a1484d423d916549d472789e9ffc895dd6da5d7eb",
+      "bytes": 3175
+    },
+    {
+      "path": "tools/wave5/supabase_read_store.mjs",
+      "sha256": "48a758dd6c8f29286889a7bddd6f4f7fd24e1a27f153d3d35208a2f2e71c73e6",
+      "bytes": 14778
+    },
+    {
+      "path": "tools/wave5/supabase_runtime_provider.mjs",
+      "sha256": "dfc40e82d0a754f35b4d713b83257ba3781f60520c11259cee1a791c580be8b0",
+      "bytes": 44367
+    },
+    {
+      "path": "tools/wave5/synthetic_activation_contention_20261013_r5.mjs",
+      "sha256": "23cf50d1f0956ee2eaed298163ac7a0c1ea8fa267facebf488a5c13f90800a08",
+      "bytes": 10258
+    },
+    {
+      "path": "tools/wave5/synthetic_activation_contention_20261013_r5.test.mjs",
+      "sha256": "d1d7eb66e70dbbf8861e612c379fe80ef5a4a1058fc8108ba793d6e17ec50c01",
+      "bytes": 1362
+    },
+    {
+      "path": "tools/wave5/verify_installed_management_20261013_r5.mjs",
+      "sha256": "7a0b1b872c4338be4849365313f47bb3729742c39c500c2ce5acd11f7972c70d",
+      "bytes": 13377
+    },
+    {
+      "path": "tools/wave5/verify_installed_management_20261013_r5.test.mjs",
+      "sha256": "3668f38767b49d56567b73fbc3b8b9a2228320877fdc01f891685697cae822eb",
+      "bytes": 6054
+    },
+    {
+      "path": "tools/wave5/verify_persistent_setup_committed_20261013_r5.mjs",
+      "sha256": "078f3f0bae5ee45d77e9178928678833cd00cad084b0dd810ec0dd30fca367a1",
+      "bytes": 3387
+    },
+    {
+      "path": "tools/wave5/verify_preparation_peer_20261013.mjs",
+      "sha256": "5607cd66da87577138e715411d0cec90a8ada74ef1f7e8f087c6b30d86325b9b",
+      "bytes": 4385
+    },
+    {
+      "path": "tools/wave5/verify_provider_peer_20261013.mjs",
+      "sha256": "00efa09422545bc0cc114cfbb1cd16d78f7e181746400ac57debf199c276cbe1",
+      "bytes": 10864
+    },
+    {
+      "path": "tools/wave5/verify_supabase_provider.mjs",
+      "sha256": "5bf29171ce4d1c7015e4fd3b165a901fe854bf726c0a1903c8918b68694a6381",
+      "bytes": 6622
+    },
+    {
+      "path": "tools/wave5/worker_routing_peer_20261013_r5.test.mjs",
+      "sha256": "024888e82a82fb359550c103eba3a03ddc748c4be10bd24799cfefbc5b220521",
+      "bytes": 6729
+    },
+    {
+      "path": "tools/wave5/write_provider_peer_review_20261013.mjs",
+      "sha256": "0f3d32ba8b3ba4c3477c0b884e821903eeb059c5ef53e2197c19606a6fb97841",
+      "bytes": 27366
+    },
+    {
+      "path": "workers/wave5/bounded_json.mjs",
+      "sha256": "2c9ba6bc68101501970a41abaf02443d4f977bb1ba6bb7457f45bdc226096c05",
+      "bytes": 2310
+    },
+    {
+      "path": "workers/wave5/edge_configuration.mjs",
+      "sha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13",
+      "bytes": 1072
+    },
+    {
+      "path": "workers/wave5/edge_receiver.mjs",
+      "sha256": "937c0f37f69c45a30a9dc0483d991cc46ecd4f40c54409a734cda40ca778c39e",
+      "bytes": 5731
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261013_r5.mjs",
+      "sha256": "e3a10721ac1298977b0e2a38459aa91644c125852c484b546e41a68b56c1ca7b",
+      "bytes": 5655
+    },
+    {
+      "path": "workers/wave5/edge_route_20261013_r5.mjs",
+      "sha256": "224619e51cbd5ac50799eb7e8dd7e4b7ad8410c78156641017aaacaf2edc8a7f",
+      "bytes": 855
+    },
+    {
+      "path": "workers/wave5/edge_runtime.mjs",
+      "sha256": "29c50f277e90c3a84bcefa9b5e9b1bea8da8a82ef380ec27ab3a4e47063c4ccd",
+      "bytes": 7059
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261013_r5.mjs",
+      "sha256": "7f99655115780e81e9b57f7724fbb0e3a93e34d3d86854a892a6abf94e2c8fd5",
+      "bytes": 6918
+    },
+    {
+      "path": "workers/wave5/integration_policy.mjs",
+      "sha256": "f83e76cd5bdaf7997bf001edf6101537db9c34995019e9f7b5c196546a875cea",
+      "bytes": 10120
+    },
+    {
+      "path": "workers/wave5/model_reader.mjs",
+      "sha256": "9be9ac552738041fb14a1cea2f9fd5e8dda415399512692f11b7430cf634a0a9",
+      "bytes": 1247
+    },
+    {
+      "path": "workers/wave5/model_runtime.mjs",
+      "sha256": "fce748e511a81bdae957ff76275641142a738d8391132953d4d3c7eec03cfb99",
+      "bytes": 5465
+    },
+    {
+      "path": "workers/wave5/openai_model_adapter.mjs",
+      "sha256": "557fc6af5dba58910ac46c2d1ac661a0389355ccef7efddb9a3cad94a03201d3",
+      "bytes": 3194
+    },
+    {
+      "path": "workers/wave5/persistent_control.mjs",
+      "sha256": "81b5aa332971235cca8830c3d5894977d04baa5d0f3b6f1391db346ca9abc4fd",
+      "bytes": 5107
+    },
+    {
+      "path": "workers/wave5/scoped_runtime.mjs",
+      "sha256": "70a8edbb7e8a0bac3fa1856ebb1134ff14413ad5b81f63bc568ae7750d3b2489",
+      "bytes": 1788
+    },
+    {
+      "path": "workers/wave5/subscription_schedule.mjs",
+      "sha256": "7699ebd9798620a9514584472b4e147e9b3d148754c72190498fe5406df7d047",
+      "bytes": 1292
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.mjs",
+      "sha256": "a57cceb2ca5dc2bccc29861cdccb34bac7468a82a7fd402ecc5bd1810b6b0f5f",
+      "bytes": 3210
+    },
+    {
+      "path": "workers/wave5/worker_runtime.mjs",
+      "sha256": "4935409210e61efc168d8604acff9b13f5a3b757cb27f4aee2ed1f2504dc8dc6",
+      "bytes": 5230
+    }
+  ],
+  "log": {
+    "path": "docs/verification/wave5/independent-provider-local-verification-20261013-r5-a6.tap",
+    "sha256": "1e5602c9c178de6fe1af89cde6be6a2b944e1153cf60dcf54cb03461234c26e4",
+    "bytes": 43744
+  },
+  "controlledInMemoryMutationProbes": [
+    "mutable-db-tls",
+    "quota-date-truncation",
+    "always-true-synthetic-target",
+    "mutable-private-callback-reference"
+  ],
+  "earlierFailurePreserved": "docs/verification/wave5/supabase-provider-local-verification-20261012-r5-a8.json",
+  "executedLive": false,
+  "realPasswordsOrTokensRead": false,
+  "fabricatedJwtOrAuthRows": false,
+  "networkCalls": 0,
+  "authWrites": 0,
+  "databaseCalls": 0,
+  "sdkJobs": 0,
+  "nativeActions": 0,
+  "concretePrivateFactoryReviewed": false,
+  "completePrivateFacilitiesReady": false,
+  "publicEncryptedSinkSourceReviewed": true,
+  "controlledTemporaryFilesystemPersistenceTested": true,
+  "ownerAcceptedCriteria": 3,
+  "ownerCriteria": 109,
+  "gates": {
+    "installedSql": false,
+    "genuineMfa": false,
+    "authenticatedNative": false,
+    "actualDelivery": false,
+    "actualModelUsage": false,
+    "independentSessionContention": false,
+    "targetScaleLoad": false,
+    "ownerAcceptance": false
+  },
+  "limitation": "Fresh independent local controlled tests and in-memory regression mutations only. No source is replaced, no live/private facility is invoked and no runtime gate is promoted."
+}

@@ -74,15 +74,36 @@ final class EmployeeController extends ChangeNotifier {
       permissions.contains('people.employment.manage');
   bool get canReadHistory =>
       permissions.contains('people.employees.history.view');
-  bool get locked => busy || accessDenied || local?.pending != null;
+  bool get locked =>
+      _disposed || busy || accessDenied || local?.pending != null;
 
   void _notify() {
     if (!_disposed) notifyListeners();
   }
 
+  bool _denied(Object error) =>
+      error is DomainError &&
+      {
+        'PERMISSION_DENIED',
+        'FEATURE_NOT_ENTITLED',
+        'AUTHENTICATION_REQUIRED',
+      }.contains(error.code);
+
+  void _clearVisible() {
+    items = [];
+    selected = null;
+    events = [];
+    branches = [];
+    form = null;
+    cursor = null;
+  }
+
   @override
   void dispose() {
+    if (_disposed) return;
     _disposed = true;
+    _clearVisible();
+    local = null;
     super.dispose();
   }
 
@@ -99,18 +120,10 @@ final class EmployeeController extends ChangeNotifier {
     try {
       await action();
     } catch (cause) {
-      if (cause is DomainError &&
-          {
-            'PERMISSION_DENIED',
-            'FEATURE_NOT_ENTITLED',
-            'AUTHENTICATION_REQUIRED',
-          }.contains(cause.code)) {
+      if (_disposed) return;
+      if (_denied(cause)) {
         accessDenied = true;
-        items = [];
-        selected = null;
-        events = [];
-        branches = [];
-        form = null;
+        _clearVisible();
       }
       error = cause is DomainError
           ? cause.message
@@ -124,7 +137,9 @@ final class EmployeeController extends ChangeNotifier {
   }
 
   Future<void> initialize() => _run(() async {
-    local = await drafts.load(scope, slot);
+    final saved = await drafts.load(scope, slot);
+    if (_disposed) return;
+    local = saved;
     form = local?.form;
     if (online) await _refresh();
   });
@@ -168,10 +183,13 @@ final class EmployeeController extends ChangeNotifier {
   Future<void> open(String id) => _run(() async {
     selected = null;
     events = [];
-    selected = await repository.detail(scope, id, asOfDate, status);
+    final detail = await repository.detail(scope, id, asOfDate, status);
+    if (_disposed) return;
+    selected = detail;
     events = [];
     if (canReadHistory) {
       final result = await repository.history(scope, id);
+      if (_disposed) return;
       events = [
         for (final raw in result['items'] as List)
           Map<String, Object?>.from(raw as Map),
@@ -182,6 +200,7 @@ final class EmployeeController extends ChangeNotifier {
   Future<void> loadBranches() => _run(() async {
     if (!canManageEmployment || !online) return;
     final result = await repository.branches(scope);
+    if (_disposed) return;
     branches = [
       for (final raw in result['items'] as List)
         Map<String, Object?>.from(raw as Map),
@@ -273,12 +292,16 @@ final class EmployeeController extends ChangeNotifier {
   Future<void> saveLocal() => _run(() async {
     if (form == null || local?.pending != null) return;
     await drafts.save(scope, slot, form!, version: form!['version'] as int);
-    local = await drafts.load(scope, slot);
+    if (_disposed) return;
+    final saved = await drafts.load(scope, slot);
+    if (_disposed) return;
+    local = saved;
     message = 'Encrypted employee draft saved.';
   });
 
   Future<void> discard() => _run(() async {
     await drafts.discard(scope, slot);
+    if (_disposed) return;
     form = null;
     local = null;
   });
@@ -317,6 +340,7 @@ final class EmployeeController extends ChangeNotifier {
       };
       validateEmployeePayload(action, payload);
       await drafts.save(scope, slot, form!, version: version);
+      if (_disposed) return;
       command = await drafts.prepare(
         scope,
         slot,
@@ -324,11 +348,16 @@ final class EmployeeController extends ChangeNotifier {
         payload: payload,
         version: version,
       );
-      local = await drafts.load(scope, slot);
+      if (_disposed) return;
+      final saved = await drafts.load(scope, slot);
+      if (_disposed) return;
+      local = saved;
     }
     Map<String, Object?> confirmed;
     try {
       confirmed = await repository.execute(command.action, command.envelope);
+      // A later scope must reconcile this exact receipt before local cleanup.
+      if (_disposed) return;
       await drafts.complete(scope, slot, command.envelope.commandId);
     } on DomainError catch (cause) {
       await drafts.recordFailure(
@@ -337,7 +366,10 @@ final class EmployeeController extends ChangeNotifier {
         cause,
         commandId: command.envelope.commandId,
       );
-      local = await drafts.load(scope, slot);
+      if (_disposed) return;
+      final saved = await drafts.load(scope, slot);
+      if (_disposed) return;
+      local = saved;
       rethrow;
     }
     if (_disposed) return;
@@ -347,18 +379,27 @@ final class EmployeeController extends ChangeNotifier {
     message = 'Employee action confirmed.';
     try {
       await _refresh();
+      if (_disposed) return;
       if (canReadHistory) {
         final result = await repository.history(
           scope,
           confirmed['id'] as String,
         );
+        if (_disposed) return;
         events = [
           for (final raw in result['items'] as List)
             Map<String, Object?>.from(raw as Map),
         ];
       }
-    } catch (_) {
-      error = 'Action confirmed. Refresh the employee directory when ready.';
+    } catch (cause) {
+      if (_disposed) return;
+      if (_denied(cause)) {
+        accessDenied = true;
+        _clearVisible();
+        error = (cause as DomainError).message;
+      } else {
+        error = 'Action confirmed. Refresh the employee directory when ready.';
+      }
     }
   });
 }

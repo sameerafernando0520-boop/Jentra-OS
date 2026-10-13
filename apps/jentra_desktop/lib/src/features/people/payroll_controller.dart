@@ -386,8 +386,17 @@ final class PayrollController extends ChangeNotifier {
   }
 
   Future<void> selectEmployee(String id, String name) => _run(() async {
+    _connected();
     if (!await canLeave()) return;
+    if (!current) return;
     calendarUuid(id);
+    _clearForm();
+    payslips = [];
+    assignments = [];
+    cursor = null;
+    assignmentCursor = null;
+    preparedExportId = null;
+    preparedExportDigest = null;
     employeeId = id;
     employeeName = name;
     selectedPayslip = null;
@@ -683,6 +692,7 @@ final class PayrollController extends ChangeNotifier {
           };
         } else {
           final old = selectedRule;
+          final start = old?.rule.endExclusive ?? CivilDate.parse(today);
           expectedVersion = old?.version ?? 0;
           form = {
             'action': command,
@@ -695,8 +705,8 @@ final class PayrollController extends ChangeNotifier {
               PayrollClassification.employerCost => 'employer_cost',
               _ => 'earning',
             },
-            'start_date': today,
-            'end_date_exclusive': clock()
+            'start_date': start.value,
+            'end_date_exclusive': start.utc
                 .add(const Duration(days: 365))
                 .toIso8601String()
                 .substring(0, 10),
@@ -705,13 +715,22 @@ final class PayrollController extends ChangeNotifier {
               PayrollBasis.earningsRatio => 'earnings_ratio',
               _ => 'fixed',
             },
-            'proration': 'none',
-            'rounding': 'half_away',
-            'precision': 2,
+            'proration': switch (old?.rule.proration) {
+              PayrollProration.eligibleDays => 'eligible_days',
+              PayrollProration.paidSeconds => 'paid_seconds',
+              _ => 'none',
+            },
+            'rounding': switch (old?.rule.rounding) {
+              PayrollRounding.halfEven => 'half_even',
+              PayrollRounding.truncate => 'truncate',
+              PayrollRounding.floor => 'floor',
+              _ => 'half_away',
+            },
+            'precision': old?.rule.precision ?? 2,
             'amount': old?.rule.amount.toDecimalString() ?? '0.000000',
-            'ratio_numerator': 1,
-            'ratio_denominator': 1,
-            'cap': null,
+            'ratio_numerator': old?.rule.ratioNumerator ?? 1,
+            'ratio_denominator': old?.rule.ratioDenominator ?? 1,
+            'cap': old?.rule.cap?.toDecimalString(),
             'expense_account_id': old?.expenseAccountId,
             'liability_account_id': old?.liabilityAccountId,
             'reason': '',

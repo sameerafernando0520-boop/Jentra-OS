@@ -69,23 +69,41 @@ const explicit = [
   `${folder}/supabase-provider-preparation-plan-20261013-r5-${preparationPlanAttempt}.json`,
   `${folder}/independent-provider-local-verification-20261013-r5-a3.json`,
   `${folder}/independent-provider-local-verification-20261013-r5-a3.tap`,
+  `${folder}/independent-provider-local-verification-20261013-r5-a5.json`,
+  `${folder}/independent-provider-local-verification-20261013-r5-a5.tap`,
   `${folder}/preparation-journal-peer-probe-20261013-r5-a1.json`,
   `${folder}/preparation-journal-independent-verification-20261013-r5-a1.json`,
   `${folder}/preparation-journal-independent-verification-20261013-r5-a1.tap`,
   `${folder}/membership-preparation-independent-verification-20261013-r5-a1.json`,
   `${folder}/membership-preparation-independent-verification-20261013-r5-a1.tap`,
   `${folder}/installed-verification-plan-peer-audit-20261013-r5.json`,
+  `${folder}/runtime-node-tests-20261013-r5-a4.log`,
+  `${folder}/runtime-evidence-independent-review-20261013-r5-a4.json`,
+  'tools/wave5/audit_runtime_evidence_peer_20261013_r5.mjs',
 ];
 const names = (await fs.readdir(path.join(root, 'tools/wave5'))).filter(name =>
-  /\.mjs$/.test(name) && !explicit.includes(`tools/wave5/${name}`));
-const sources = [...new Set([...explicit, ...names.map(name => `tools/wave5/${name}`)])];
+  /^supabase_.*\.mjs$/.test(name) && !explicit.includes(`tools/wave5/${name}`));
+const testFiles = (await fs.readdir(path.join(root, 'tools/wave5')))
+  .filter(name => /\.test\.mjs$/.test(name)).sort().map(name => `tools/wave5/${name}`);
+const selected = new Set([...explicit, ...names.map(name => `tools/wave5/${name}`), ...testFiles]);
+// Bind the complete relative import closure of every executed test instead of
+// unrelated new helpers that another agent may still be authoring.
+const pending = [...selected].filter(name => /\.mjs$/.test(name));
+for (let index = 0; index < pending.length; index++) {
+  const file = pending[index], source = await fs.readFile(path.join(root, file), 'utf8');
+  for (const match of source.matchAll(/\bfrom\s*['"](\.[^'"]+)['"]|\bimport\s*['"](\.[^'"]+)['"]/g)) {
+    const imported = path.resolve(root, path.dirname(file), match[1] ?? match[2]);
+    const relative = path.relative(root, imported).replaceAll('\\', '/');
+    if (relative.startsWith('../') || path.isAbsolute(relative)) throw Error('LOCAL_TEST_CLOSURE_OUTSIDE_WORKSPACE');
+    if (!selected.has(relative)) { selected.add(relative); if (/\.mjs$/.test(relative)) pending.push(relative); }
+  }
+}
+const sources = [...selected].sort();
 const bind = async relative => { const bytes = await fs.readFile(path.join(root, relative));
   return { path: relative, sha256: hashBytes(bytes), bytes: bytes.length }; };
 const before = await Promise.all(sources.map(bind));
 const handle = await fs.open(path.join(root, `${prefix}.json`), 'wx', 0o600);
 const logHandle = await fs.open(path.join(root, `${prefix}.tap`), 'wx', 0o600);
-const testFiles = (await fs.readdir(path.join(root, 'tools/wave5')))
-  .filter(name => /\.test\.mjs$/.test(name)).sort().map(name => `tools/wave5/${name}`);
 const command = ['--test', '--test-isolation=none', '--test-reporter=tap', ...testFiles];
 let output = '', childExitCode = null, childSignal = null, spawnFailure = null;
 const actualStartedAt = new Date().toISOString();
@@ -113,7 +131,7 @@ try {
     childExitCode, childSignal, spawnFailure, passed, summary, selectedSourcesUnchanged,
     filesBefore: before, filesAfter: after,
     log: { path: `${prefix}.tap`, sha256: hashBytes(output), bytes: Buffer.byteLength(output) },
-    controlledInMemoryMutationProbes: ['mutable-db-tls', 'quota-date-truncation', 'always-true-synthetic-target'],
+    controlledInMemoryMutationProbes: ['mutable-db-tls', 'quota-date-truncation', 'always-true-synthetic-target', 'mutable-private-callback-reference'],
     earlierFailurePreserved: `${folder}/supabase-provider-local-verification-20261012-r5-a8.json`,
     executedLive: false, realPasswordsOrTokensRead: false, fabricatedJwtOrAuthRows: false,
     networkCalls: 0, authWrites: 0, databaseCalls: 0, sdkJobs: 0, nativeActions: 0,

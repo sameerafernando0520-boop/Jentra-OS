@@ -88,6 +88,7 @@ class _Repository implements PayrollRepository {
   Map<String, Object?> row = runRow();
   String? failure;
   bool denied = false, failReads = false;
+  bool failEmployeeReads = false;
   Completer<void>? gate;
   Completer<void>? settingsGate;
   final settlementPages = <String?, WorkforcePage<Map<String, Object?>>>{};
@@ -169,6 +170,40 @@ class _Repository implements PayrollRepository {
   }) async {
     selfReads++;
     return const WorkforcePage([], null);
+  }
+
+  @override
+  Future<WorkforcePage<Map<String, Object?>>> payslips(
+    TenantContext s,
+    String employeeId, {
+    String? after,
+  }) async {
+    if (failEmployeeReads) {
+      throw const DomainError(
+        code: 'NETWORK_ERROR',
+        message: 'Payslips unavailable',
+      );
+    }
+    return WorkforcePage([
+      {'id': revision, 'employee_id': employeeId},
+    ], null);
+  }
+
+  @override
+  Future<WorkforcePage<Map<String, Object?>>> assignments(
+    TenantContext s,
+    String employeeId, {
+    String? after,
+  }) async {
+    if (failEmployeeReads) {
+      throw const DomainError(
+        code: 'NETWORK_ERROR',
+        message: 'Assignments unavailable',
+      );
+    }
+    return WorkforcePage([
+      {'id': revision, 'employee_id': employeeId},
+    ], null);
   }
 
   @override
@@ -443,6 +478,94 @@ void main() {
     expect(c.form?['proration'], 'none');
     expect(c.form?['ratio_denominator'], 1);
   });
+  for (final basis in ['earnings_ratio', 'fixed']) {
+    test(
+      'HR audit: next $basis rule version preserves pay terms and uses nonoverlapping dates',
+      () async {
+        final rule = PayrollRuleVersion.fromJson({
+          'id': revision,
+          'component_id': id,
+          'version': 3,
+          'code': basis == 'fixed' ? 'BASE' : 'PERCENT',
+          'name': 'Synthetic existing component',
+          'classification': basis == 'fixed' ? 'earning' : 'deduction',
+          'start_date': '2026-09-01',
+          'end_date_exclusive': '2026-10-01',
+          'currency_code': 'LKR',
+          'basis': basis,
+          'proration': basis == 'fixed' ? 'eligible_days' : 'none',
+          'rounding': 'half_even',
+          'precision': 3,
+          'amount': basis == 'fixed' ? '1000.000000' : '0.000000',
+          'ratio_numerator': basis == 'fixed' ? 1 : 8,
+          'ratio_denominator': basis == 'fixed' ? 1 : 100,
+          'cap': '50.000000',
+          'expense_account_id': basis == 'fixed' ? other : null,
+          'liability_account_id': basis == 'fixed' ? null : other,
+          'reason': 'Synthetic published terms',
+          'published_by': other,
+          'published_at': '2026-08-31T00:00:00Z',
+        });
+        c.selectRule(rule);
+        await c.begin(PayrollCommandKind.configuration, 'publish');
+        expect(c.expectedVersion, 3);
+        expect(c.form?['component_id'], id);
+        expect(c.form?['id'], isNot(revision));
+        expect(c.form?['ratio_numerator'], basis == 'fixed' ? 1 : 8);
+        expect(c.form?['ratio_denominator'], basis == 'fixed' ? 1 : 100);
+        expect(
+          c.form?['proration'],
+          basis == 'fixed' ? 'eligible_days' : 'none',
+        );
+        expect(c.form?['rounding'], 'half_even');
+        expect(c.form?['precision'], 3);
+        expect(c.form?['cap'], '50.000000');
+        expect(c.form?['start_date'], '2026-10-01');
+        expect(
+          CivilDate.parse(c.form!['end_date_exclusive'] as String)
+              .compareTo(rule.rule.endExclusive),
+          greaterThan(0),
+        );
+        c.update('reason', 'Synthetic renewal');
+        PayrollCommands.validate(
+          PayrollCommandKind.configuration,
+          c.form!,
+          c.expectedVersion,
+        );
+      },
+    );
+  }
+  test(
+    'HR audit: failed employee switch cannot relabel another employee payslips',
+    () async {
+      await c.changeView(PayrollView.payslips);
+      await c.selectEmployee(id, 'First colleague');
+      expect(c.payslips.single['employee_id'], id);
+      c.cursor = revision;
+      repo.failEmployeeReads = true;
+      await c.selectEmployee(other, 'Second colleague');
+      expect(c.employeeId, other);
+      expect(c.error, 'Payslips unavailable');
+      expect(c.payslips, isEmpty);
+      expect(c.selectedPayslip, isNull);
+      expect(c.cursor, isNull);
+    },
+  );
+  test(
+    'HR audit: failed employee switch clears prior payroll assignments',
+    () async {
+      await c.changeView(PayrollView.rules);
+      await c.selectEmployee(id, 'First colleague');
+      expect(c.assignments.single['employee_id'], id);
+      c.assignmentCursor = revision;
+      repo.failEmployeeReads = true;
+      await c.selectEmployee(other, 'Second colleague');
+      expect(c.employeeId, other);
+      expect(c.error, 'Assignments unavailable');
+      expect(c.assignments, isEmpty);
+      expect(c.assignmentCursor, isNull);
+    },
+  );
   test(
     'self-only workspace uses accepted-link self API without payroll run reads',
     () async {

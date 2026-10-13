@@ -1,0 +1,1550 @@
+{
+  "kind": "wave5-independent-native-prerequisites-audit",
+  "preparedAt": "2026-10-13T11:37:43.354Z",
+  "clientReviewDate": "2026-10-13",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "auditPassed": true,
+  "auditPassDoesNotMeanNativeAcceptance": true,
+  "scope": "Local public files, source/release byte bindings, read-only exact account presence and host command metadata. No provisioning, authentication, native actions, SDK execution or live API.",
+  "ownerRuntimeOperationApproval": {
+    "bundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+    "decisionPath": "docs/verification/wave5/runtime-owner-decision-20261012-r5.json",
+    "decisionSha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab",
+    "decision": "approve",
+    "newApprovalRequired": false,
+    "approvalIsSeparateFromOwnerCriterionAcceptance": true
+  },
+  "pinnedInputs": [
+    {
+      "path": "scripts/wave5/prepare_native_runtime_profile_20261013_r5.ps1",
+      "bytes": 23181,
+      "sha256": "545c3bb51aae9630cfdb52ca6225e30b9be263a488fde371f25b908561b7b1a5"
+    },
+    {
+      "path": "dist/Jentra OS Isolated Windows Setup 20261013 r5.cmd",
+      "bytes": 548,
+      "sha256": "c7559f6fdc42fb20d0243e81268fc450d75a643218ad1f49d9c58aa81d31f3b9"
+    },
+    {
+      "path": "scripts/wave5/prepare_native_runtime_profile.ps1",
+      "bytes": 6882,
+      "sha256": "ccb387d5fe4d358f68619212f5e500542febbc24dbfe5e704d5bfe22a6c4db06"
+    },
+    {
+      "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+      "bytes": 1370575,
+      "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-owner-decision-20261012-r5.json",
+      "bytes": 2756,
+      "sha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab"
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-connected-package-20261010-r5.json",
+      "bytes": 553409,
+      "sha256": "976055e2095ff23db46fb9540727628dd6dd6de4dd817128c3e32a7d43880d6b"
+    },
+    {
+      "path": "docs/verification/wave5/native-profile-helper-validation-20261013-r5-a2.json",
+      "bytes": 1721,
+      "sha256": "393afebd8461022df58d62137136ae3515594f282452da41daad7ab188cea290"
+    },
+    {
+      "path": "docs/verification/wave5/native-profile-private-handoff-20261013-r5.md",
+      "bytes": 2034,
+      "sha256": "af2510e02bb44c7941ae3d5667a80c6438e4434ed770def03b24c5879729aa38"
+    },
+    {
+      "path": "docs/verification/wave5/native-profile-helper-failed-attempt-20261013-r5-a1.json",
+      "bytes": 1425,
+      "sha256": "3522935d8701ddbcb475143f1fa91101e3d75c8dbd13bac707f3702bc513bc3a"
+    },
+    {
+      "path": "docs/verification/wave5/native-keyboard-artifact-review-20261013-r5.json",
+      "bytes": 31774,
+      "sha256": "3771c62f9ea13a4505d0d6222369173a3f8175b251e3e1abbd92b8270efa8274"
+    },
+    {
+      "path": "docs/verification/wave5/native-keyboard-artifact-review-20261013-r5.md",
+      "bytes": 4191,
+      "sha256": "324d9f81a8052bcd501646e953b23881ae58ef329838bd623f7353d7afaf14a7"
+    }
+  ],
+  "actualLocalChecks": {
+    "parser": {
+      "toolChunkId": "d69bb0",
+      "exitCode": 0,
+      "kind": "native-profile-helper-parser-check",
+      "parsedAt": "2026-10-13T11:31:00.1095323+00:00",
+      "errorCount": 0,
+      "tokenCount": 3052,
+      "provisionExecuted": false,
+      "errors": []
+    },
+    "bindingGuards": [
+      {
+        "kind": "wrong-approval-path",
+        "expectedGuardRejection": true,
+        "toolChunkId": "aa2d4f",
+        "exitCode": 1,
+        "result": {
+          "kind": "wave5-native-profile-setup-failure",
+          "startedAt": "2026-10-13T11:31:00.7362717+00:00",
+          "recordedAt": "2026-10-13T11:31:00.8176455+00:00",
+          "passed": false,
+          "failureCode": "EXACT_BOUND_INPUT_PATH_REQUIRED",
+          "exceptionType": "System.Management.Automation.RuntimeException",
+          "mode": "Validate",
+          "accountCreated": false,
+          "packageCreated": false,
+          "copiedReleaseFiles": 0,
+          "automaticRollbackOrDeletion": false,
+          "passwordPrintedOrSaved": false,
+          "nativeLaunched": false,
+          "nativeKeyboardVerified": false,
+          "existingAccountsAndStoresPreserved": true
+        }
+      },
+      {
+        "kind": "wrong-connected-manifest-path",
+        "expectedGuardRejection": true,
+        "toolChunkId": "910db7",
+        "exitCode": 1,
+        "result": {
+          "kind": "wave5-native-profile-setup-failure",
+          "startedAt": "2026-10-13T11:31:00.7362717+00:00",
+          "recordedAt": "2026-10-13T11:31:00.8176455+00:00",
+          "passed": false,
+          "failureCode": "EXACT_BOUND_INPUT_PATH_REQUIRED",
+          "exceptionType": "System.Management.Automation.RuntimeException",
+          "mode": "Validate",
+          "accountCreated": false,
+          "packageCreated": false,
+          "copiedReleaseFiles": 0,
+          "automaticRollbackOrDeletion": false,
+          "passwordPrintedOrSaved": false,
+          "nativeLaunched": false,
+          "nativeKeyboardVerified": false,
+          "existingAccountsAndStoresPreserved": true
+        }
+      }
+    ],
+    "freshValidation": {
+      "toolChunkId": "80f656",
+      "exitCode": 0,
+      "result": {
+        "kind": "wave5-native-profile-read-only-validation",
+        "startedAt": "2026-10-13T11:31:38.8276269+00:00",
+        "finishedAt": "2026-10-13T11:31:42.8776891+00:00",
+        "passed": true,
+        "projectId": "xpdoufauvrbdmxgngetv",
+        "ownerApprovedBundle": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+        "windowsAccount": "jentra-w5-runtime",
+        "packageDirectory": "C:\\Users\\Public\\Documents\\JentraWave5Runtime\\20261009",
+        "sourceInputsVerified": 1068,
+        "connectedReleaseFilesVerified": 34,
+        "exactReleaseFileSetVerified": true,
+        "currentTokenAdministrator": false,
+        "targetAccountExists": false,
+        "targetPackageExists": false,
+        "currentTokenCanProvision": false,
+        "accountCreated": false,
+        "packageCreated": false,
+        "privateInputRead": false,
+        "networkCalls": 0,
+        "SDKExecuted": false,
+        "nativeLaunched": false,
+        "nativeKeyboardVerified": false,
+        "authenticatedNative": false,
+        "ownerAcceptedCriteria": 3,
+        "existingStoresReadOrCopied": false
+      }
+    },
+    "windowsPowerShellHost": {
+      "toolChunkId": "cffda6",
+      "exitCode": 0,
+      "result": {
+        "kind": "native-profile-host-prerequisite-command-metadata",
+        "recordedAt": "2026-10-13T11:35:27.8144088+00:00",
+        "powershellVersion": "5.1.26100.9549",
+        "readOnly": true,
+        "commands": [
+          {
+            "Name": "New-LocalUser",
+            "CommandType": 8,
+            "Source": "Microsoft.PowerShell.LocalAccounts",
+            "Version": "1.0.0.0"
+          },
+          {
+            "Name": "Get-LocalGroupMember",
+            "CommandType": 8,
+            "Source": "Microsoft.PowerShell.LocalAccounts",
+            "Version": "1.0.0.0"
+          },
+          {
+            "Name": "Add-LocalGroupMember",
+            "CommandType": 8,
+            "Source": "Microsoft.PowerShell.LocalAccounts",
+            "Version": "1.0.0.0"
+          },
+          {
+            "Name": "Set-Acl",
+            "CommandType": 8,
+            "Source": "Microsoft.PowerShell.Security",
+            "Version": "3.0.0.0"
+          },
+          {
+            "Name": "Get-Acl",
+            "CommandType": 8,
+            "Source": "Microsoft.PowerShell.Security",
+            "Version": "3.0.0.0"
+          }
+        ],
+        "accountCreated": false,
+        "packageCreated": false,
+        "privateInputRead": false
+      }
+    }
+  },
+  "parentValidationBound": {
+    "path": "docs/verification/wave5/native-profile-helper-validation-20261013-r5-a2.json",
+    "sha256": "393afebd8461022df58d62137136ae3515594f282452da41daad7ab188cea290",
+    "originalFailedAttemptPreserved": "docs/verification/wave5/native-profile-helper-failed-attempt-20261013-r5-a1.json",
+    "failedAttemptSha256": "3522935d8701ddbcb475143f1fa91101e3d75c8dbd13bac707f3702bc513bc3a"
+  },
+  "staticHelperReview": {
+    "defaultMode": "Validate",
+    "provisionModeNeverExecutedByThisAuditor": true,
+    "nativeTarget": "jentra-w5-runtime",
+    "isolatedPackageDirectory": "C:\\Users\\Public\\Documents\\JentraWave5Runtime\\20261009",
+    "isolatedExecutable": "C:\\Users\\Public\\Documents\\JentraWave5Runtime\\20261009\\Jentra_OS.exe",
+    "ordinaryConnectedEntrypoint": "lib/main.dart",
+    "executableSha256": "f625e4e09ff5a8f6a796547fbfdcecbd66d0129b28acb455e8d35e31d68e6906",
+    "companyIdentity": "com.jentra.test",
+    "productIdentity": "JentraOS_WindowsTest_20261010-r5_Connected",
+    "connectedOnlyReleaseEntries": 34,
+    "reviewedPairedPreviewAndConnectedReleaseEntries": 68,
+    "pairedCountDoesNotAuthorizeExtraConnectedFiles": true,
+    "compatibilityChanges": "Successor normalizes the reviewed paths and reads the separate exact direct owner decision. Frozen review and original helper remain unchanged.",
+    "humanPasswordInput": "Read-Host -AsSecureString twice; exact comparison; BSTR buffers zeroed and secure strings disposed; password is not stored or printed.",
+    "accountAndPackageCollision": "Stop and preserve existing exact target; no adoption/reset/deletion or blind retry.",
+    "intendedStandardAccountVerification": "Users SID S-1-5-32-545 present once; Administrators SID S-1-5-32-544 absent; actual operations pending.",
+    "intendedPackageAccess": "Protected directory ACL; SYSTEM/admin/setup identity FullControl; new standard user ReadAndExecute only; actual operations pending.",
+    "intendedCopyVerification": "34 non-overwriting copies, source/destination SHA-256 and length match; actual copying pending.",
+    "intendedJournal": "CreateNew before/result records; safe failure code/type; partial new account/package is preserved.",
+    "targetProfileIsNotInitializedUntilHumanWindowsSignIn": true,
+    "actualElevatedProvisioningVerified": false,
+    "actualGroupMembershipVerified": false,
+    "actualDestinationAclVerified": false,
+    "actualCopiedDestinationHashesVerified": false
+  },
+  "remainingPrerequisites": [
+    {
+      "order": 1,
+      "owner": "human",
+      "action": "Right-click the exact launcher and choose Run as administrator. Handle UAC privately and enter the NEW isolated Windows password only in the two hidden prompts.",
+      "actualStatus": "Unconfirmed; fresh account/package presence check says both absent. Current token is not administrator.",
+      "file": "dist/Jentra OS Isolated Windows Setup 20261013 r5.cmd"
+    },
+    {
+      "order": 2,
+      "owner": "root after human setup",
+      "action": "Inspect actual before/result journals and refresh exact account standard membership, destination ACL and all 34 copied file hashes. Stop on partial/failure and preserve it.",
+      "actualStatus": "Pending; code availability and Validate pass are not proof of mutation."
+    },
+    {
+      "order": 3,
+      "owner": "human",
+      "action": "Keep old Windows sessions signed in. Privately sign in to jentra-w5-runtime so Windows creates its profile, then open only the isolated Jentra_OS.exe.",
+      "actualStatus": "Pending; no autonomous UAC or sign-in."
+    },
+    {
+      "order": 4,
+      "owner": "human, followed by root native testing",
+      "action": "Use the already-approved test account credentials and MFA privately in the Connected app. Preserve original accounts; do not copy earlier acceptance stores or credentials into this profile.",
+      "actualStatus": "Authenticated native sign-in/MFA is unverified by this audit. SDK Auth/MFA evidence is a separate gate."
+    },
+    {
+      "order": 5,
+      "owner": "root native testing after prerequisites",
+      "action": "Save actual source/executable prechecks, original accessibility snapshots, action/capture timestamps and postchecks during a new supported native run. Use only an owned, confirmed empty scratch control; trace requested versus delivered shortcuts.",
+      "actualStatus": "Full native keyboard remains false; earlier lost metadata is not reconstructed."
+    },
+    {
+      "order": 6,
+      "owner": "root native testing after prerequisites",
+      "action": "Cover full FR-530/FR-531/NFR-508/AC-515/EC-513 native workflows, recovery/context/access-loss and text/theme/density variants. Keep installation, accounting, delivery, load and owner acceptance separate.",
+      "actualStatus": "All five native rows remain unaccepted."
+    }
+  ],
+  "computerUseMandatoryHandoff": {
+    "skillPath": "C:/Users/sheha/.codex/plugins/cache/openai-bundled/computer-use/26.1007.21434/skills/computer-use/SKILL.md",
+    "guidancePath": "C:/Users/sheha/.codex/plugins/cache/openai-bundled/computer-use/26.1007.21434/docs/guidance.md",
+    "instructions": [
+      {
+        "line": 238,
+        "quote": "Do not automate user authentication dialogs."
+      },
+      {
+        "line": 242,
+        "quote": "Do not act on security or privacy permission requests."
+      }
+    ],
+    "application": "UAC, private Windows sign-in and native authentication require the human; this does not request another approval of the runtime operation."
+  },
+  "preservedNativeEvidence": {
+    "freshHashAuditStartedAt": "2026-10-13T11:33:51.842Z",
+    "diagnosticImageCount": 24,
+    "diagnosticDistinctHashes": 21,
+    "diagnosticImages": [
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D00-verified-preview-0.jpg",
+        "expectedSha256": "c786261da104bfe1edd82212274b7306216d2ce4dd3070ce73e96267659e554b",
+        "actualSha256": "c786261da104bfe1edd82212274b7306216d2ce4dd3070ce73e96267659e554b",
+        "bytes": 88566,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D01-shell-focused-0.jpg",
+        "expectedSha256": "ace7a797783a5f97541749776dd57761540100ccbc502853bdfea9bf2b0c2cc0",
+        "actualSha256": "ace7a797783a5f97541749776dd57761540100ccbc502853bdfea9bf2b0c2cc0",
+        "bytes": 89158,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D02-Control_L-k-no-palette-0.jpg",
+        "expectedSha256": "868677c3c2cfdff288e9a5bd2827771b4ff5aac715a49840eb17fca821c1cb3b",
+        "actualSha256": "868677c3c2cfdff288e9a5bd2827771b4ff5aac715a49840eb17fca821c1cb3b",
+        "bytes": 89053,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D03-Ctrl-k-no-palette-0.jpg",
+        "expectedSha256": "868677c3c2cfdff288e9a5bd2827771b4ff5aac715a49840eb17fca821c1cb3b",
+        "actualSha256": "868677c3c2cfdff288e9a5bd2827771b4ff5aac715a49840eb17fca821c1cb3b",
+        "bytes": 89053,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D04-business-setup-0.jpg",
+        "expectedSha256": "c9a099f188c9bef56b4176a5fea18de749936892de1e34a611c4d04cf420075f",
+        "actualSha256": "c9a099f188c9bef56b4176a5fea18de749936892de1e34a611c4d04cf420075f",
+        "bytes": 105171,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D05-setup-index-recovered-0.jpg",
+        "expectedSha256": "966acda77f2a3f6de755b5f7b40f84294ac840af3b03d00d8d72b40bec086cf9",
+        "actualSha256": "966acda77f2a3f6de755b5f7b40f84294ac840af3b03d00d8d72b40bec086cf9",
+        "bytes": 104960,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D06-settled-domain-menu-0.jpg",
+        "expectedSha256": "4ab1eb8f7d5a32a35c5d0b581e8ca0e2377b1183740916ac90d87da683396578",
+        "actualSha256": "4ab1eb8f7d5a32a35c5d0b581e8ca0e2377b1183740916ac90d87da683396578",
+        "bytes": 91492,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D07-catalogue-selected-0.jpg",
+        "expectedSha256": "b2470a89c43e5889ee638f58ae69ebd3a9ca21780ebe306fd77fbeef2f5a132a",
+        "actualSha256": "b2470a89c43e5889ee638f58ae69ebd3a9ca21780ebe306fd77fbeef2f5a132a",
+        "bytes": 98369,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D08-settled-resource-menu-0.jpg",
+        "expectedSha256": "a647570060cd2356c4a97ce12e153aaeee5f192e3405c2387586d4eebe21ae5c",
+        "actualSha256": "a647570060cd2356c4a97ce12e153aaeee5f192e3405c2387586d4eebe21ae5c",
+        "bytes": 94304,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D09-warehouses-selected-0.jpg",
+        "expectedSha256": "46d6ed5878a45e9009386d6cdf7dfe60f4bbb6dae436d2785ecf717ffa494a94",
+        "actualSha256": "46d6ed5878a45e9009386d6cdf7dfe60f4bbb6dae436d2785ecf717ffa494a94",
+        "bytes": 94429,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D10-fresh-warehouse-edit-0.jpg",
+        "expectedSha256": "aa127c5aceb16138e25fa426340f70cda32d670443d3e0d76d82efbed0faa183",
+        "actualSha256": "aa127c5aceb16138e25fa426340f70cda32d670443d3e0d76d82efbed0faa183",
+        "bytes": 78040,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D11-literal-text-empty-0.jpg",
+        "expectedSha256": "0c7bc8eced4810ee83969ba08f06cf5bf4e2a0521e8a88fe33c685fa1fe29850",
+        "actualSha256": "0c7bc8eced4810ee83969ba08f06cf5bf4e2a0521e8a88fe33c685fa1fe29850",
+        "bytes": 78192,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D12-physical-a-0.jpg",
+        "expectedSha256": "422109af4402f2fdf1a73c23c369f36414025dab998249d48bf5d3ca7132dffe",
+        "actualSha256": "422109af4402f2fdf1a73c23c369f36414025dab998249d48bf5d3ca7132dffe",
+        "bytes": 78219,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D14-physical-abc-0.jpg",
+        "expectedSha256": "8085de115db1c6f928b3af59e09c301a019a359b179ca67afb992bcd9959d35f",
+        "actualSha256": "8085de115db1c6f928b3af59e09c301a019a359b179ca67afb992bcd9959d35f",
+        "bytes": 78471,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D15-Control_L-a-no-selection-0.jpg",
+        "expectedSha256": "8085de115db1c6f928b3af59e09c301a019a359b179ca67afb992bcd9959d35f",
+        "actualSha256": "8085de115db1c6f928b3af59e09c301a019a359b179ca67afb992bcd9959d35f",
+        "bytes": 78471,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D16-Control-a-abcf-0.jpg",
+        "expectedSha256": "f8a1ef472a6773a15be025b0227cfa6669ee3984a0f3254a58eaeb369400fcdf",
+        "actualSha256": "f8a1ef472a6773a15be025b0227cfa6669ee3984a0f3254a58eaeb369400fcdf",
+        "bytes": 78538,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D17-set-value-unavailable-confirmed-0.jpg",
+        "expectedSha256": "da3ac1b7970da906ba66ff882f11e6da584e9f1d64465b7eba4be3bd59bab694",
+        "actualSha256": "da3ac1b7970da906ba66ff882f11e6da584e9f1d64465b7eba4be3bd59bab694",
+        "bytes": 78337,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D18-Escape-form-still-visible-0.jpg",
+        "expectedSha256": "5f6241282cbbbaf91f2c71b139cf68535c87a9fb66b731b7a3067fa0e6d7a5ca",
+        "actualSha256": "5f6241282cbbbaf91f2c71b139cf68535c87a9fb66b731b7a3067fa0e6d7a5ca",
+        "bytes": 78504,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D19-unsaved-cancel-guard-0.jpg",
+        "expectedSha256": "35e4857d7e5dcc111b7c0f558046a2ea8abadde1fca2f6a6db6af29307f4f738",
+        "actualSha256": "35e4857d7e5dcc111b7c0f558046a2ea8abadde1fca2f6a6db6af29307f4f738",
+        "bytes": 67350,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D20-unsaved-form-canceled-0.jpg",
+        "expectedSha256": "fe7df65a49c604b1855839833a7ac6e9c7ba8c458931278d4f11c271aeb1a4aa",
+        "actualSha256": "fe7df65a49c604b1855839833a7ac6e9c7ba8c458931278d4f11c271aeb1a4aa",
+        "bytes": 94154,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D21-palette-search-focused-0.jpg",
+        "expectedSha256": "3ac1412700c0135a24e75f9081ab667f7f79dec4d7ff793e3501b67e92e88e3a",
+        "actualSha256": "3ac1412700c0135a24e75f9081ab667f7f79dec4d7ff793e3501b67e92e88e3a",
+        "bytes": 68279,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D22-palette-f-once-0.jpg",
+        "expectedSha256": "f03c6377854ec8967a634ae420b5e7c93c885f8bed10c73cc85b70390996b5e5",
+        "actualSha256": "f03c6377854ec8967a634ae420b5e7c93c885f8bed10c73cc85b70390996b5e5",
+        "bytes": 69025,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D23-palette-Down-query-unchanged-0.jpg",
+        "expectedSha256": "f03c6377854ec8967a634ae420b5e7c93c885f8bed10c73cc85b70390996b5e5",
+        "actualSha256": "f03c6377854ec8967a634ae420b5e7c93c885f8bed10c73cc85b70390996b5e5",
+        "bytes": 69025,
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-diagnostics-20261012-r5/D24-Return-settled-Finance-0.jpg",
+        "expectedSha256": "4d0bd96fb5d64e7558e7749702fe2ce07b9c1eb5a5e62090569ac99eec819d2f",
+        "actualSha256": "4d0bd96fb5d64e7558e7749702fe2ce07b9c1eb5a5e62090569ac99eec819d2f",
+        "bytes": 63742,
+        "matched": true
+      }
+    ],
+    "historicalImageCount": 33,
+    "historicalDistinctHashes": 29,
+    "historicalImages": [
+      {
+        "id": "N01_LAUNCH",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N01_LAUNCH-0.jpg",
+        "expectedSha256": "359f990efef71cfde8d77c6919afc8ac7deb2a6601f947769255d2b2aec80828",
+        "actualSha256": "359f990efef71cfde8d77c6919afc8ac7deb2a6601f947769255d2b2aec80828",
+        "matched": true
+      },
+      {
+        "id": "N02_MOUSE_PALETTE",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N02_MOUSE_PALETTE-0.jpg",
+        "expectedSha256": "fcb43e48a3178a6c426e7dc78a0ccd2755ab3d98dece87698729f118ead409ea",
+        "actualSha256": "fcb43e48a3178a6c426e7dc78a0ccd2755ab3d98dece87698729f118ead409ea",
+        "matched": true
+      },
+      {
+        "id": "K01_PHYSICAL_A",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/K01_PHYSICAL_A-0.jpg",
+        "expectedSha256": "ccbc298df881a7d8c8ad77fe9e5cc2e8db09a1d1a414351956aad329b21d6052",
+        "actualSha256": "ccbc298df881a7d8c8ad77fe9e5cc2e8db09a1d1a414351956aad329b21d6052",
+        "matched": true
+      },
+      {
+        "id": "K02_PHYSICAL_B",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/K02_PHYSICAL_B-0.jpg",
+        "expectedSha256": "47af06157efe40e09d456606cbe33a26ffc6412b0896e69adcb4ad80b640a75e",
+        "actualSha256": "47af06157efe40e09d456606cbe33a26ffc6412b0896e69adcb4ad80b640a75e",
+        "matched": true
+      },
+      {
+        "id": "K03_PHYSICAL_C",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/K03_PHYSICAL_C-0.jpg",
+        "expectedSha256": "443974435ebdcc6f2d3b1551fb5438abc32dd1ac5680fe6315dcb151c2baf550",
+        "actualSha256": "443974435ebdcc6f2d3b1551fb5438abc32dd1ac5680fe6315dcb151c2baf550",
+        "matched": true
+      },
+      {
+        "id": "K04_CTRL_A_CONTROL",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/K04_CTRL_A_CONTROL-0.jpg",
+        "expectedSha256": "2cf21c3a26cf1f064383d884445ac11f5094061d921d4d091083bfd113cad349",
+        "actualSha256": "2cf21c3a26cf1f064383d884445ac11f5094061d921d4d091083bfd113cad349",
+        "matched": true
+      },
+      {
+        "id": "K05_ESCAPE",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/K05_ESCAPE-0.jpg",
+        "expectedSha256": "0f016e5624479a6b0ce112398bc8b5b5d8513a2e2c95ceccd51414e7da4a3451",
+        "actualSha256": "0f016e5624479a6b0ce112398bc8b5b5d8513a2e2c95ceccd51414e7da4a3451",
+        "matched": true
+      },
+      {
+        "id": "N03_SETUP_GUIDANCE",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N03_SETUP_GUIDANCE-0.jpg",
+        "expectedSha256": "c67bb045df32fdaa4804565942e5a420cd46c80716867a69f8925af3c41d913a",
+        "actualSha256": "c67bb045df32fdaa4804565942e5a420cd46c80716867a69f8925af3c41d913a",
+        "matched": true
+      },
+      {
+        "id": "K06_TAB_FOCUS",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/K06_TAB_FOCUS-0.jpg",
+        "expectedSha256": "1369bf5ef66c2c244eae2d11121d8850fd9e47d44199badf3acae4c8a229339d",
+        "actualSha256": "1369bf5ef66c2c244eae2d11121d8850fd9e47d44199badf3acae4c8a229339d",
+        "matched": true
+      },
+      {
+        "id": "K07_CTRL_K",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/K07_CTRL_K-0.jpg",
+        "expectedSha256": "1369bf5ef66c2c244eae2d11121d8850fd9e47d44199badf3acae4c8a229339d",
+        "actualSha256": "1369bf5ef66c2c244eae2d11121d8850fd9e47d44199badf3acae4c8a229339d",
+        "matched": true
+      },
+      {
+        "id": "N04_ACCOUNT_FORM",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N04_ACCOUNT_FORM-0.jpg",
+        "expectedSha256": "e2f4dd59780c9cf05af8ba355c2142038257cd3628371f10c233aaa6e7a2677f",
+        "actualSha256": "e2f4dd59780c9cf05af8ba355c2142038257cd3628371f10c233aaa6e7a2677f",
+        "matched": true
+      },
+      {
+        "id": "N05_ACCOUNT_VALIDATION",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N05_ACCOUNT_VALIDATION-0.jpg",
+        "expectedSha256": "58a90eac8dc8e6b8510f42b290b9352c6f8eb82422284ce8c4e7cfa0cd9f33bf",
+        "actualSha256": "58a90eac8dc8e6b8510f42b290b9352c6f8eb82422284ce8c4e7cfa0cd9f33bf",
+        "matched": true
+      },
+      {
+        "id": "N06_ACCOUNT_CANCEL",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N06_ACCOUNT_CANCEL-0.jpg",
+        "expectedSha256": "9323d13209ca5ae945ae78c12083ab18bc4a6243eb77fd793337d9c27872b0eb",
+        "actualSha256": "9323d13209ca5ae945ae78c12083ab18bc4a6243eb77fd793337d9c27872b0eb",
+        "matched": true
+      },
+      {
+        "id": "N07_WAREHOUSE_SCOPE",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N07_WAREHOUSE_SCOPE-0.jpg",
+        "expectedSha256": "4f3a97d9271ae60360909d00415c3164495bf7e83b301f975429049826a7073b",
+        "actualSha256": "4f3a97d9271ae60360909d00415c3164495bf7e83b301f975429049826a7073b",
+        "matched": true
+      },
+      {
+        "id": "N08_WAREHOUSE_FORM",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N08_WAREHOUSE_FORM-0.jpg",
+        "expectedSha256": "bb00799bfdef981347e14350691b4592f497dddaa491d1df3148c3a313aae0c4",
+        "actualSha256": "bb00799bfdef981347e14350691b4592f497dddaa491d1df3148c3a313aae0c4",
+        "matched": true
+      },
+      {
+        "id": "N09_WAREHOUSE_VALIDATION",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N09_WAREHOUSE_VALIDATION-0.jpg",
+        "expectedSha256": "4ddc19f0a523aae533d4e4d67ff099598231ea751c9324cc9ea9db62f70b35af",
+        "actualSha256": "4ddc19f0a523aae533d4e4d67ff099598231ea751c9324cc9ea9db62f70b35af",
+        "matched": true
+      },
+      {
+        "id": "K08_LITERAL_TEXT",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/K08_LITERAL_TEXT-0.jpg",
+        "expectedSha256": "d20baf8f2cb32113a0ebaa5f9d1d5f10585f10f0d04b5fb847622fbf737aca61",
+        "actualSha256": "d20baf8f2cb32113a0ebaa5f9d1d5f10585f10f0d04b5fb847622fbf737aca61",
+        "matched": true
+      },
+      {
+        "id": "K09_FORM_PHYSICAL_INPUT",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/K09_FORM_PHYSICAL_INPUT-0.jpg",
+        "expectedSha256": "91899495a725e4dc99f4f0450282ea4fb789449522761246a5a18a5a501b4f4a",
+        "actualSha256": "91899495a725e4dc99f4f0450282ea4fb789449522761246a5a18a5a501b4f4a",
+        "matched": true
+      },
+      {
+        "id": "N10_PREVIEW_WAREHOUSE_SAVE",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N10_PREVIEW_WAREHOUSE_SAVE-0.jpg",
+        "expectedSha256": "90349923d77ba93f03a1f0cf8999bf76625cd93c16c4552cfb1464e3012dd7af",
+        "actualSha256": "90349923d77ba93f03a1f0cf8999bf76625cd93c16c4552cfb1464e3012dd7af",
+        "matched": true
+      },
+      {
+        "id": "N11_PREVIEW_RESET",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N11_PREVIEW_RESET-0.jpg",
+        "expectedSha256": "c733603c0320f4b54946b0b1950b87aa76c8087cc4a0d6467dd126e07f687f62",
+        "actualSha256": "c733603c0320f4b54946b0b1950b87aa76c8087cc4a0d6467dd126e07f687f62",
+        "matched": true
+      },
+      {
+        "id": "N12_FINANCE_GUIDANCE",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N12_FINANCE_GUIDANCE-0.jpg",
+        "expectedSha256": "ee9e3f44914418eb1fb7d13a86b45816a5ce3908c436481b20f5058855cdaff2",
+        "actualSha256": "ee9e3f44914418eb1fb7d13a86b45816a5ce3908c436481b20f5058855cdaff2",
+        "matched": true
+      },
+      {
+        "id": "B01_FINANCE_POSTING",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/B01_FINANCE_POSTING-0.jpg",
+        "expectedSha256": "ee9e3f44914418eb1fb7d13a86b45816a5ce3908c436481b20f5058855cdaff2",
+        "actualSha256": "ee9e3f44914418eb1fb7d13a86b45816a5ce3908c436481b20f5058855cdaff2",
+        "matched": true
+      },
+      {
+        "id": "N13_PROCUREMENT_GUIDANCE",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N13_PROCUREMENT_GUIDANCE-0.jpg",
+        "expectedSha256": "730d54df1443dafc9fd8426ec4a3c29f780222b24eb8a86c9993808ee8b6e617",
+        "actualSha256": "730d54df1443dafc9fd8426ec4a3c29f780222b24eb8a86c9993808ee8b6e617",
+        "matched": true
+      },
+      {
+        "id": "B02_SUPPLIER_ACCOUNTING",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/B02_SUPPLIER_ACCOUNTING-0.jpg",
+        "expectedSha256": "730d54df1443dafc9fd8426ec4a3c29f780222b24eb8a86c9993808ee8b6e617",
+        "actualSha256": "730d54df1443dafc9fd8426ec4a3c29f780222b24eb8a86c9993808ee8b6e617",
+        "matched": true
+      },
+      {
+        "id": "N14_THEME",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N14_THEME-0.jpg",
+        "expectedSha256": "87a08627f21c5cf7523b38d74701bb28a81979b0cfd1e2b7e9c8d88dac36a096",
+        "actualSha256": "87a08627f21c5cf7523b38d74701bb28a81979b0cfd1e2b7e9c8d88dac36a096",
+        "matched": true
+      },
+      {
+        "id": "N15_DENSITY",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N15_DENSITY-0.jpg",
+        "expectedSha256": "99eebc1b72f95c457251c57dc2d354b12c07b342fb63edb540f3ca3ba08df5ee",
+        "actualSha256": "99eebc1b72f95c457251c57dc2d354b12c07b342fb63edb540f3ca3ba08df5ee",
+        "matched": true
+      },
+      {
+        "id": "N16_RESTART_THEME",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N16_RESTART_THEME-0.jpg",
+        "expectedSha256": "4cdebfc030f5b081e0d7187bf4a3d7ed4de882d40306ea7288e32942e0587af2",
+        "actualSha256": "4cdebfc030f5b081e0d7187bf4a3d7ed4de882d40306ea7288e32942e0587af2",
+        "matched": true
+      },
+      {
+        "id": "N17_RESTART_DENSITY",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N17_RESTART_DENSITY-0.jpg",
+        "expectedSha256": "bff25f26aa870ae31799d6300052dc0f0087a4d394dba2db85ec999db8081777",
+        "actualSha256": "bff25f26aa870ae31799d6300052dc0f0087a4d394dba2db85ec999db8081777",
+        "matched": true
+      },
+      {
+        "id": "N18_MAXIMIZE",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N18_MAXIMIZE-0.jpg",
+        "expectedSha256": "8f8bb64e532cec107efcd83d8a2658bd87a622bdc0ecea319bc21e5143163e8d",
+        "actualSha256": "8f8bb64e532cec107efcd83d8a2658bd87a622bdc0ecea319bc21e5143163e8d",
+        "matched": true
+      },
+      {
+        "id": "N19_RESTORE",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/N19_RESTORE-0.jpg",
+        "expectedSha256": "737c09c980adc493b3b4276e3a416e93d584f4a79b3ba0dd5fc630f3c30f7249",
+        "actualSha256": "737c09c980adc493b3b4276e3a416e93d584f4a79b3ba0dd5fc630f3c30f7249",
+        "matched": true
+      },
+      {
+        "id": "K10_PALETTE_DOWN",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/K10_PALETTE_DOWN-0.jpg",
+        "expectedSha256": "9e68fbe1d15b0912e5a682704d2b61d0289b4f752c4f734973d9e51953900f82",
+        "actualSha256": "9e68fbe1d15b0912e5a682704d2b61d0289b4f752c4f734973d9e51953900f82",
+        "matched": true
+      },
+      {
+        "id": "K11_PALETTE_ENTER_UNFOCUSED",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/K11_PALETTE_ENTER_UNFOCUSED-0.jpg",
+        "expectedSha256": "9e68fbe1d15b0912e5a682704d2b61d0289b4f752c4f734973d9e51953900f82",
+        "actualSha256": "9e68fbe1d15b0912e5a682704d2b61d0289b4f752c4f734973d9e51953900f82",
+        "matched": true
+      },
+      {
+        "id": "K12_FOCUSED_ENTER",
+        "path": "docs/verification/wave5/native-preview-20261010-r5/K12_FOCUSED_ENTER-0.jpg",
+        "expectedSha256": "889eed3675b5a838a66f33ffe6226d456d27006b090a261084763a4afede6a62",
+        "actualSha256": "889eed3675b5a838a66f33ffe6226d456d27006b090a261084763a4afede6a62",
+        "matched": true
+      }
+    ],
+    "historicalNativeCounts": {
+      "pass": 27,
+      "fail": 4,
+      "blocked": 2,
+      "observed": 0
+    },
+    "historicalCountsRelabeled": false,
+    "unchangedFailures": [
+      "K04_CTRL_A_CONTROL",
+      "K07_CTRL_K",
+      "K08_LITERAL_TEXT",
+      "K11_PALETTE_ENTER_UNFOCUSED"
+    ],
+    "focusedReturnDoesNotEraseHistoricalUnfocusedFailure": true,
+    "preservedRecords": [
+      {
+        "path": "docs/verification/wave5/requirement-matrix-20261008.json",
+        "expectedSha256": "889ee4b38f49d8f58735b83d4d84c612bd2a2d369d0aabcbb1b45c3d294bb047",
+        "actualSha256": "889ee4b38f49d8f58735b83d4d84c612bd2a2d369d0aabcbb1b45c3d294bb047",
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/requirement-matrix-20261008.md",
+        "expectedSha256": "454e1b1d602e04bb3442ecf03db859f2716fd934b0a0bc2a820ca4f52939b4ba",
+        "actualSha256": "454e1b1d602e04bb3442ecf03db859f2716fd934b0a0bc2a820ca4f52939b4ba",
+        "matched": true
+      },
+      {
+        "path": "docs/development/wave5-status.md",
+        "expectedSha256": "10006d8f60f49a1c1b7d45d4be8de6941c1dd8616e64698f1951df3bf7ebedd0",
+        "actualSha256": "10006d8f60f49a1c1b7d45d4be8de6941c1dd8616e64698f1951df3bf7ebedd0",
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-preview-userflows-20261010-r5.json",
+        "expectedSha256": "4a8783db056143e7cf6d8031bc30dba7ff7707e315324892acf05fa2fac42840",
+        "actualSha256": "4a8783db056143e7cf6d8031bc30dba7ff7707e315324892acf05fa2fac42840",
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/native-keyboard-failure-investigation-20261012-r5.json",
+        "expectedSha256": "c3785b68693e9665a0b25d06020a7b494547a2f9607efdf0de70e19379c00ddc",
+        "actualSha256": "c3785b68693e9665a0b25d06020a7b494547a2f9607efdf0de70e19379c00ddc",
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/desktop-verification-source-20261010-r5-approved.json",
+        "expectedSha256": "d4d234e3603fd5e67f2082108e1eb6ad206739189aeb33c634ccaf5d07d010cf",
+        "actualSha256": "d4d234e3603fd5e67f2082108e1eb6ad206739189aeb33c634ccaf5d07d010cf",
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/windows-test-preview-source-20261010-r5.json",
+        "expectedSha256": "9e33df196df8e58772f675d33677f532cb9f8460370cf440f60ed3f3bccacd12",
+        "actualSha256": "9e33df196df8e58772f675d33677f532cb9f8460370cf440f60ed3f3bccacd12",
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/runtime-owner-decision-20261012-r5.json",
+        "expectedSha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab",
+        "actualSha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab",
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/owner-criterion-decision-20261010-r2.json",
+        "expectedSha256": "78f1685da3a65be3ef8813f9efbc3d34846fe40135148b5baf49525261313ada",
+        "actualSha256": "78f1685da3a65be3ef8813f9efbc3d34846fe40135148b5baf49525261313ada",
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/desktop-verification-approvedAll-20261010-r5.json",
+        "expectedSha256": "0e9d51dcded80e5d3a47598a1b8451683cd53e66779c44b91a2221ad34274096",
+        "actualSha256": "0e9d51dcded80e5d3a47598a1b8451683cd53e66779c44b91a2221ad34274096",
+        "matched": true
+      },
+      {
+        "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+        "expectedSha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+        "actualSha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+        "matched": true
+      }
+    ],
+    "lostOriginalAccessibilityTreesAndExactCaptureTimes": true,
+    "missingD13ImageOrAccessibilityTreeReconstructed": false,
+    "independentScratchControlPassed": false,
+    "fullNativeKeyboard": false,
+    "authenticatedNativeAcceptance": false,
+    "goldenBaselineReplacement": false,
+    "historicalFullDesktop": {
+      "startedAt": "2026-10-10T15:12:25.196Z",
+      "finishedAt": "2026-10-10T15:26:33.587Z",
+      "counts": {
+        "passed": 2010,
+        "failed": 0,
+        "skipped": 0
+      },
+      "rerunByThisAudit": false
+    }
+  },
+  "requirementPreservation": {
+    "historicalMatrixPath": "docs/verification/wave5/requirement-matrix-20261008.json",
+    "parentReadinessPath": "docs/verification/wave5/requirement-readiness-matrix-20261013-r5.json",
+    "parentReadinessIsBoundHistoricalCheckpointNotLatestGlobalRuntimeStatus": true,
+    "historicalCanonicalRowsSha256": "298f767d74ff1e1913e19fce5fc9b79f76dc57da05666b5418355af0ab48b887",
+    "identicalPreservedRows": true,
+    "count": 109,
+    "uniqueIds": 109,
+    "acceptedIds": [
+      "AC-551",
+      "AC-552",
+      "AC-553"
+    ],
+    "acceptedCount": 3,
+    "remainingUnaccepted": 106,
+    "allAcceptedFlagsBoolean": true,
+    "directOwnerDecisionPath": "docs/verification/wave5/owner-criterion-decision-20261010-r2.json",
+    "directOwnerDecisionSha256": "78f1685da3a65be3ef8813f9efbc3d34846fe40135148b5baf49525261313ada",
+    "acceptedCompleteCriteriaMatchDirectDecision": true,
+    "nativeSpecification": {
+      "path": "docs/blueprint/wave5/WAVE5_INTELLIGENCE_AND_CONTROL_SPEC.md",
+      "sha256": "f9df22284963bdd63b2d6cf52cf6b19e355453f48284e113615731c15aa19378"
+    },
+    "nativeRequirementRows": [
+      {
+        "id": "FR-530",
+        "statement": "FR-530: Native Analytics, AI, integration, subscription, and authorized",
+        "specification": "docs/blueprint/wave5/WAVE5_INTELLIGENCE_AND_CONTROL_SPEC.md",
+        "specificationLine": 153,
+        "ownerAccepted": false,
+        "fullSpecificationBlock": "- FR-530: Native Analytics, AI, integration, subscription, and authorized\n  operator workspaces MUST offer scoped filters, source explanations, keyboard\n  access, and distinct empty, denied, conflict, stale, and unavailable states."
+      },
+      {
+        "id": "FR-531",
+        "statement": "FR-531: Saved filters, scenario drafts, and uncertain command envelopes",
+        "specification": "docs/blueprint/wave5/WAVE5_INTELLIGENCE_AND_CONTROL_SPEC.md",
+        "specificationLine": 156,
+        "ownerAccepted": false,
+        "fullSpecificationBlock": "- FR-531: Saved filters, scenario drafts, and uncertain command envelopes\n  MUST use the existing encrypted actor/context-bound recovery store; sign-out\n  or access loss MUST lock them, and offline recovery MUST not authorize execution."
+      },
+      {
+        "id": "NFR-508",
+        "statement": "NFR-508: Native views MUST support light/dark, both densities, keyboard focus,",
+        "specification": "docs/blueprint/wave5/WAVE5_INTELLIGENCE_AND_CONTROL_SPEC.md",
+        "specificationLine": 198,
+        "ownerAccepted": false,
+        "fullSpecificationBlock": "- NFR-508: Native views MUST support light/dark, both densities, keyboard focus,\n  and 200% text at 1024x720, 1440x900, and 1920x1080 without inaccessible actions."
+      },
+      {
+        "id": "AC-515",
+        "statement": "AC-515: Native recovery and usability (FR-530, FR-531, NFR-508)",
+        "specification": "docs/blueprint/wave5/WAVE5_INTELLIGENCE_AND_CONTROL_SPEC.md",
+        "specificationLine": 279,
+        "ownerAccepted": false,
+        "fullSpecificationBlock": "### AC-515: Native recovery and usability (FR-530, FR-531, NFR-508)\nGiven pending filters/scenario/command drafts and native theme/density/text variants\nWhen the app restarts, changes context, loses access, or disconnects\nThen encrypted recovery and reachable actions preserve scope without executing an offline mutation."
+      },
+      {
+        "id": "EC-513",
+        "statement": "EC-513: Secure store failure, sign-out, context switch, stale response or",
+        "specification": "docs/blueprint/wave5/WAVE5_INTELLIGENCE_AND_CONTROL_SPEC.md",
+        "specificationLine": 324,
+        "ownerAccepted": false,
+        "fullSpecificationBlock": "- EC-513: Secure store failure, sign-out, context switch, stale response or\n  disk-full preserves recoverable ciphertext without stale protected display;\n  verify with AC-515."
+      }
+    ],
+    "all109Mappings": [
+      {
+        "id": "FR-501",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-502",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-503",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-504",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-505",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-506",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-507",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-508",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-509",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-510",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-511",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-512",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-513",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-514",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-515",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-516",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-517",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-518",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-519",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-520",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-521",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-522",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-523",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-524",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-525",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-526",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-527",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-528",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-529",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-530",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-531",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-532",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-533",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-534",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-535",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-536",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "NFR-501",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "NFR-502",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "NFR-503",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "NFR-504",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "NFR-505",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "NFR-506",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "NFR-507",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "NFR-508",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "NFR-509",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "NFR-510",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-501",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-502",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-503",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-504",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-505",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-506",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-507",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-508",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-509",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-510",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-511",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-512",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-513",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-514",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-515",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-516",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-517",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-501",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-502",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-503",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-504",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-505",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-506",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-507",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-508",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-509",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-510",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-511",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-512",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-513",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-514",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-515",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-516",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-551",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-552",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-553",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-554",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-555",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-556",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-557",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-558",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-559",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "FR-560",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "NFR-551",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "NFR-552",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "NFR-553",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "NFR-554",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-551",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": true,
+        "currentOwnerAccepted": true
+      },
+      {
+        "id": "AC-552",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": true,
+        "currentOwnerAccepted": true
+      },
+      {
+        "id": "AC-553",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": true,
+        "currentOwnerAccepted": true
+      },
+      {
+        "id": "AC-554",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-555",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-556",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-557",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "AC-558",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-551",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-552",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-553",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-554",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-555",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-556",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-557",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      },
+      {
+        "id": "EC-558",
+        "currentMappingCount": 1,
+        "historicalOwnerAccepted": false,
+        "currentOwnerAccepted": false
+      }
+    ],
+    "newOwnerAcceptanceRecorded": false,
+    "ownerSignoff": false
+  },
+  "preservation": {
+    "appSourcesEdited": false,
+    "originalHelperEdited": false,
+    "frozenReviewEdited": false,
+    "rootStatusOrMatrixEdited": false,
+    "approvedGoldensEdited": false,
+    "sharedSessionsOperated": false,
+    "existingStoresReadOrCopied": false,
+    "accountsCreatedOrDeleted": false,
+    "privatePasswordTokenOrMfaSeedRead": false,
+    "networkCalls": 0,
+    "SDKExecuted": false,
+    "nativeActions": 0,
+    "gitResetCleanStashStageCommitPush": false,
+    "production": false,
+    "realBilling": false
+  },
+  "limitations": [
+    "This audit does not verify current live database, workers, schedules, actual external delivery, trusted model usage, contention or load. Root owns those separate evidence gates.",
+    "The actual elevated account/group/ACL/copy path has not run. Command metadata only proves prerequisites are available.",
+    "Authenticated native accounting and keyboard cannot be accepted from helper validation or historical Preview screenshots."
+  ]
+}

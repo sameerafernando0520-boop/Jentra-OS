@@ -95,6 +95,55 @@ Map<String, Object?> attendanceRow([int version = 1]) => {
   },
 };
 
+Map<String, Object?> leaveRow() => {
+  'id': revision,
+  'tenant_id': scope.tenantId,
+  'legal_entity_id': scope.legalEntityId,
+  'branch_id': scope.branchId,
+  'employee_id': id,
+  'policy_id': revision,
+  'policy_version_id': revision,
+  'calendar_version_id': revision,
+  'version': 1,
+  'status': 'draft',
+  'start_local': '2026-09-30T09:00:00',
+  'end_local': '2026-09-30T17:00:00',
+  'start_offset_seconds': 19800,
+  'end_offset_seconds': 19800,
+  'start_utc': '2026-09-30T03:30:00Z',
+  'end_utc': '2026-09-30T11:30:00Z',
+  'charge_seconds': 28800,
+  'unpaid_seconds': 0,
+  'active_claim_id': null,
+  'submitted_by': null,
+  'decided_by': null,
+  'created_by': scope.actorId,
+  'created_at': '2026-09-30T00:00:00Z',
+  'reason': 'Synthetic leave request',
+};
+
+class _Employees implements EmployeeRepository {
+  @override
+  Future<Map<String, Object?>> detail(
+    TenantContext s,
+    String employeeId,
+    String asOfDate,
+    String status,
+  ) async => {
+    'id': employeeId,
+    'tenant_id': s.tenantId,
+    'legal_entity_id': s.legalEntityId,
+    'branch_id': s.branchId,
+    'code': 'SYN-02',
+    'display_name': 'Second colleague',
+    'work_email': null,
+    'version': 1,
+    'assignments': [],
+  };
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 class _Repository implements WorkforceRepository {
   String? failure, readFailure;
   bool denied = false;
@@ -145,6 +194,41 @@ class _Repository implements WorkforceRepository {
     return WorkforcePage([
       if (after == null) AttendanceEntry.fromJson(attendanceRow(recordVersion)),
     ], null);
+  }
+
+  @override
+  Future<WorkforceDetail<LeaveRequest, LeaveHistoryEntry>> leaveDetail(
+    TenantContext s,
+    String requestId, {
+    String? after,
+  }) async => WorkforceDetail(
+    LeaveRequest.fromJson(leaveRow()),
+    const WorkforcePage([], null),
+  );
+
+  @override
+  Future<LeaveBalance> leaveBalance(
+    TenantContext s,
+    String employeeId,
+    String policyId,
+    CivilDate asOf, {
+    DateTime? recordedBefore,
+    String? after,
+  }) async {
+    check();
+    return LeaveBalance.fromJson({
+      'tenant_id': s.tenantId,
+      'legal_entity_id': s.legalEntityId,
+      'branch_id': s.branchId,
+      'employee_id': employeeId,
+      'policy_id': policyId,
+      'as_of': asOf.value,
+      'recorded_before': '2026-09-30T00:00:00Z',
+      'available_seconds': 28800,
+      'account_version': 1,
+      'grants': [],
+      'next_cursor': null,
+    });
   }
 
   @override
@@ -219,7 +303,7 @@ void main() {
     c = WorkforceController(
       scope: scope,
       repository: repository,
-      employees: null,
+      employees: _Employees(),
       organizations: null,
       calendars: null,
       drafts: {
@@ -401,6 +485,57 @@ void main() {
       await c.checkAccess();
       expect(repository.authorizations, 0);
       expect(c.current, isTrue);
+    },
+  );
+  test(
+    'HR audit: failed employee switch clears all prior workforce records',
+    () async {
+      c.employeeId = id;
+      c.employeeName = 'First colleague';
+      c.attendance = [AttendanceEntry.fromJson(attendanceRow())];
+      c.leave = [LeaveRequest.fromJson(leaveRow())];
+      c.selectedLeave = c.leave.single;
+      c.cursor = id;
+      repository.readFailure = 'NETWORK_ERROR';
+      await c.selectEmployee(revision);
+      expect(c.employeeId, revision);
+      expect(c.employeeName, contains('Second colleague'));
+      expect(c.error, isNotNull);
+      expect(c.attendance, isEmpty);
+      expect(c.leave, isEmpty);
+      expect(c.selectedLeave, isNull);
+      expect(c.cursor, isNull);
+    },
+  );
+  test(
+    'HR audit: employee switch clears records in inactive workforce views',
+    () async {
+      c.employeeId = id;
+      c.leave = [LeaveRequest.fromJson(leaveRow())];
+      await c.selectEmployee(revision);
+      expect(c.error, isNull);
+      expect(c.leave, isEmpty);
+      repository.readFailure = 'NETWORK_ERROR';
+      await c.changeView(WorkforceView.leave);
+      expect(c.leave, isEmpty);
+    },
+  );
+  test(
+    'HR audit: failed leave balance load cannot reuse another policy balance',
+    () async {
+      c.employeeId = id;
+      c.balance = await repository.leaveBalance(
+        scope,
+        id,
+        id,
+        CivilDate.parse(c.asOfDate),
+      );
+      repository.readFailure = 'NETWORK_ERROR';
+      await c.openLeave(revision);
+      expect(c.selectedLeave?.policyId, revision);
+      expect(c.error, isNotNull);
+      expect(c.balance, isNull);
+      expect(c.balanceGrants, isEmpty);
     },
   );
   test(

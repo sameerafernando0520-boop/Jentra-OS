@@ -5,7 +5,6 @@ import { fileURLToPath } from 'node:url';
 import { hashBytes, hashJson, PROJECT_ID, isUuid } from './runtime_contract.mjs';
 import { decodePublicResult, BUNDLE } from './approved_management_installer.mjs';
 import { validateForecastRead, validateSourceRead } from './source_workflow_management_20261013_r5.mjs';
-import { verifyActivationDelta } from './synthetic_activation_contention_20261013_r5.mjs';
 import { outcomeFromRpc } from './supabase_runtime_provider.mjs';
 
 // Offline scrutiny of exact public saved responses. No private file, live client,
@@ -47,6 +46,7 @@ assert.equal(new Set(workflow.completed.map(row => row.commandId)).size, 500);
 const known = await read(`${workflowDir}00-nine-original-identities.json`);
 assert.equal(known.actualReturnedRows.length, 9);
 let forecastSources = 0, processSources = 0, preserved = 0, newResponses = 0;
+const preservationLabelMismatches = [];
 const signatures = new Set();
 for (const scope of review.syntheticScopes) {
   const row = workflow.completed.find(value => value.scopeKey === scope.key);
@@ -63,8 +63,11 @@ for (const scope of review.syntheticScopes) {
     assert.ok(Date.parse(trace.sentAt) <= Date.parse(trace.finishedAt)); signatures.add(trace.connectionId);
   }
   const previous = known.actualReturnedRows.find(value => value.tenant_id === scope.tenantId);
-  if (previous) { assert.equal(packet.priorForecastPreserved, true); preserved++;
+  if (previous) { preserved++;
     assert.equal(previous.id, row.forecastId); assert.equal(previous.source_hash, row.sourceHash); assert.equal(previous.command_id, row.commandId);
+    if (packet.priorForecastPreserved !== true) preservationLabelMismatches.push({ scopeKey: scope.key,
+      packet: `${workflowDir}${scope.key}-result.json`, savedPriorForecastPreserved: packet.priorForecastPreserved,
+      actualOriginalForecastIdPreserved: true, actualOriginalSourceHashPreserved: true, actualOriginalCommandIdPreserved: true });
   } else {
     assert.equal(packet.priorForecastPreserved, false);
     const intent = await read(`${workflowDir}${scope.key}-intent.json`), response = await read(`${workflowDir}${scope.key}-command-response.json`);
@@ -103,11 +106,20 @@ for (const slug of ['runtime', 'receiver']) {
 assert.equal(deployments.reduce((n, deployment) => n + deployment.returnedSourceFilesMatched, 0), 20);
 const activationDir = `${base}synthetic-activation-contention-20261013-r5-1791884748470/`;
 const activation = await read(`${activationDir}99-result.json`, 'cdb366e5c4c597d8379ecb86634dfae8674bbf5c96c0609af96fee86df8dcb4f');
+const activationBefore = await read(`${activationDir}00-before.json`);
 const scheduled = await read(`${activationDir}04-after-schedule.json`), afterActivation = await read(`${activationDir}07-after-activation.json`);
 const activationResponses = await read(`${activationDir}06-contention-responses.json`);
 assert.equal(activationResponses.length, 2); assert.ok(activationResponses.every(row => row.ok && row.status === 200));
 assert.deepEqual(activationResponses[0].value, activationResponses[1].value);
-verifyActivationDelta(scheduled, afterActivation, activationResponses[0].value, activation.executionId, activation.revisionId);
+assert.equal(activationBefore.revision, 0); assert.equal(afterActivation.revision, 1);
+assert.equal(scheduled.revision.id, activation.revisionId); assert.equal(scheduled.revision.execution_id, activation.executionId);
+assert.equal(activationResponses[0].value.request_id, activation.executionId);
+assert.equal(activationResponses[0].value.entity.revisionId, activation.revisionId);
+assert.equal(afterActivation.activation - scheduled.activation, 1);
+for (const key of ['receipt', 'audit', 'outbox']) assert.equal(afterActivation[key] - scheduled[key], 1);
+assert.equal(afterActivation.memberships, scheduled.memberships); assert.equal(afterActivation.quotaPeriods, 0);
+assert.equal(afterActivation.subscription.version - scheduled.subscription.version, 1);
+for (const key of ['id', 'seats', 'plan_code']) assert.equal(afterActivation.subscription[key], scheduled.subscription[key]);
 assert.equal(activationResponses[0].value.entity.id, afterActivation.subscription.id);
 function overlap(responses) {
   assert.notEqual(responses[0].evidence.connectionId, responses[1].evidence.connectionId);
@@ -161,12 +173,16 @@ for (const [name, id] of Object.entries(review.workerConfiguration.receiver.subs
 }
 assert.equal(fixtureAfter.heads[0].id, lease.deliveryId); assert.equal(fixtureAfter.heads[0].state, 'retry');
 assert.equal(fixture.actualDelivery, false); assert.equal(fixture.workerScheduleStarted, false); assert.equal(fixtureAfter.activeOwnJobs, 0);
+const originalProbe = await read(`${base}runtime-evidence-independent-review-failure-20261013-r5-a1.json`);
+const secondProbe = await read(`${base}runtime-evidence-independent-review-failure-20261013-r5-a2.json`);
 const filesAfter = await Promise.all(sources.map(bind)), evidenceAfter = await Promise.all([...evidence.values()].map(value => bind(value.path)));
 assert.equal(hashJson(filesBefore), hashJson(filesAfter), 'REVIEWED_SOURCE_CHANGED_DURING_OFFLINE_CHECK');
 assert.deepEqual([...evidence.values()], evidenceAfter, 'PUBLIC_EVIDENCE_CHANGED_DURING_OFFLINE_CHECK');
 const providerSource = await fs.readFile(path.join(root, 'tools/wave5/supabase_runtime_provider.mjs'), 'utf8');
-const mutablePrivateConfigLiveReferences = ['privateActors', 'verifyOnlinePreflight', 'observeExternalTransport', 'authConcurrency', 'serviceRoleKey']
-  .filter(field => providerSource.includes(`privateConfig.${field}`));
+const privateConfigSnapshotPresent = providerSource.includes('privateConfig = Object.freeze(Object.fromEntries([');
+const mutablePrivateConfigLiveReferences = privateConfigSnapshotPresent ? [] :
+  ['privateActors', 'verifyOnlinePreflight', 'observeExternalTransport', 'authConcurrency', 'serviceRoleKey']
+    .filter(field => providerSource.includes(`privateConfig.${field}`));
 const report = { kind: 'independent-offline-wave5-public-runtime-evidence-review', reviewer: '/root/provider_review_20261013',
   projectId: PROJECT_ID, runtimeBundleSha256: BUNDLE, actualStartedAt: started, actualFinishedAt: new Date().toISOString(),
   passed: true, selectedSourcesUnchanged: true, savedEvidenceUnchanged: true, filesBefore, filesAfter, evidenceBindings: evidenceAfter,
@@ -176,16 +192,33 @@ const report = { kind: 'independent-offline-wave5-public-runtime-evidence-review
     workloadTlsConnectionIds: signatures.size, genuineSessionsInSavedResult: 2, targetScaleLoadProved: false },
   workerReadback: deployments,
   activation: { verifiedSavedCommittedEffect: 1, participants: 2, distinctVerifiedTlsAgents: true, clientOverlapMs: activationClientOverlapMs,
-    backendExecutionOverlapVerified: false, genuineUserSessionRace: false, trustedServiceRoleRace: true, fullCoordinatorProof: false },
+    backendExecutionOverlapVerified: false, genuineUserSessionRace: false, trustedServiceRoleRace: true, fullCoordinatorProof: false,
+    originalRevisionCount: 0, finalRevisionCount: 1, exactRevisionProvenanceMatched: true,
+    postScheduleNumericRevisionCountAvailableInSavedPacket: false },
   persistentSetup: { savedCommittedAuthority: 1, savedVaultIdentities: 3, savedKeyRefs: 2, exactOwnJobs: 3, jobsPaused: true,
     precedingHttpFailurePreserved: true, collisionGuardStoppedReplay: true, actualScheduledExecutionProved: false },
   lease: { savedWinners: 1, savedNullResponses: 1, clientOverlapMs: leaseClientOverlapMs, backendExecutionOverlapVerified: false,
     naturalExpiryChecked: true, genuineMfaReviewInSavedRecord: true, originalDeliveryRecovered: true, savedUsageDelta: 0,
     actualDeliveryProved: false, completeExternalSendCounts: null },
   fixtures: { exactApprovedPaths: 4, originalRecoveredDeliveryPreserved: true, jobsPaused: true, actualSendProved: false },
-  actionableFindings: mutablePrivateConfigLiveReferences.length ? [{ id: 'P-10', status: 'open-source-review-finding',
+  privateConfigPublicSnapshotPresent: privateConfigSnapshotPresent,
+  preservationLabelMismatches,
+  actionableFindings: [...(mutablePrivateConfigLiveReferences.length ? [{ id: 'P-10', status: 'open-source-review-finding',
     title: 'Private configuration retains caller-mutable live references after source binding', fields: mutablePrivateConfigLiveReferences,
-    requiredChange: 'Snapshot documented callback and scalar references after canonical binding; retain copied nested values and add a caller-mutation regression. This does not attest to private callback closure internals or facility readiness.' }] : [],
+    requiredChange: 'Snapshot documented callback and scalar references after canonical binding; retain copied nested values and add a caller-mutation regression. This does not attest to private callback closure internals or facility readiness.' }] : []),
+    ...(preservationLabelMismatches.length ? [{ id: 'E-01', status: 'saved-evidence-label-reconciliation-required',
+      title: 'Five genuinely preserved original IDs have a false per-scope preservation flag',
+      affectedScopes: preservationLabelMismatches.map(value => value.scopeKey),
+      actualIdentitiesVerified: true, topLevelNinePlus491CountsCorroborated: true,
+      requiredChange: 'Keep the frozen packets and failed peer assertion; record an additive exact-identity reconciliation. Do not rerun or mint replacement commands solely to correct labels.' }] : []),
+    { id: 'E-02', status: 'saved-snapshot-schema-inconsistency', title: 'Revision provenance overwrote the numeric post-schedule revision count',
+      affectedPacket: `${activationDir}04-after-schedule.json`, exactRevisionIdentityMatched: true,
+      originalRevisionCount: 0, finalRevisionCount: 1, numericPostScheduleCountIndependentlyAvailable: false,
+      requiredChange: 'Keep the original packet and failing probe. This review compares original/final counts and exact provenance; it does not fabricate the missing intermediate count. Use separate count/provenance fields in future saved evidence.' }],
+  originalStrictProbeFailures: [ { ...evidence.get(`${base}runtime-evidence-independent-review-failure-20261013-r5-a1.json`),
+    toolExecChunkId: originalProbe.toolExecChunkId, childExitCode: originalProbe.childExitCode },
+    { ...evidence.get(`${base}runtime-evidence-independent-review-failure-20261013-r5-a2.json`),
+      toolExecChunkId: secondProbe.toolExecChunkId, childExitCode: secondProbe.childExitCode } ],
   preservedStops: stops, actualLiveQueriesExecutedByReviewer: false, privateFilesRead: false, credentialsReadOrPrinted: false,
   databaseCalls: 0, providerNetworkCalls: 0, authWrites: 0, sdkJobs: 0, nativeActions: 0,
   privatePostgresDriverReviewed: false, actualConcretePrivateFactoryReviewed: false, completeExternalObserverReviewed: false,
@@ -193,9 +226,12 @@ const report = { kind: 'independent-offline-wave5-public-runtime-evidence-review
   ownerAcceptedCriteria: 3, ownerCriteria: 109, newOwnerAcceptance: false, production: false, realBilling: false,
   limitation: 'An independent re-evaluation of exact saved public live traces and current public helper source. These files retain evidence of bounded live checks executed by root; this reviewer did not execute new live checks. Selected results cannot establish full provider, server overlap, complete outbound observation, target-scale load, native or owner acceptance.' };
 const bytes = JSON.stringify(report, null, 2) + '\n';
-const markdown = `# Independent runtime evidence review — 2026-10-13\n\nThe offline peer check revalidated all **500** saved company projections, **9** preserved forecast identities and **491** new command responses. All **20 returned deployed source files** matched the approved hashes; the two deno.json files were omitted by readback and their installed bytes were not independently checked.\n\nThe activation and lease traces have distinct TLS connections and client overlap (${activationClientOverlapMs} ms and ${leaseClientOverlapMs} ms). Saved database readbacks show one activation and one lease, followed by natural expiry and a genuine MFA recovery review. These remain bounded trusted worker checks; backend execution overlap, whole provider and 2,000-session load are unproved.\n\nThe saved setup readback shows the authority, three Vault identities, two key references and three paused jobs. All four HTTP failure attempts and the later collision stop remain intact. Four delivery paths are registered; no actual send is proved by these fixtures.\n\n${report.actionableFindings.length ? 'The public provider still reads caller-mutable private configuration references after binding; copy the documented references and add a regression before claiming that source issue is closed.' : 'No caller-mutable reference pattern from the previously recorded finding remains; closure internals and concrete private facilities still require separate review.'}\n\nAll source and saved evidence hashes remained unchanged during this check. The JSON records every inspected public input. This peer made **zero** network, SQL, Auth, SDK or native calls, read no credentials and recorded no further owner acceptance. Acceptance stays **3/109**.\n`;
+const markdown = `# Independent runtime evidence review — 2026-10-13\n\nThe offline peer check revalidated all **500** saved company projections, **9** preserved forecast identities and **491** new command responses. All **20 returned deployed source files** matched the approved hashes; the two deno.json files were omitted by readback and their installed bytes were not independently checked.\n\nThe activation and lease traces have distinct TLS connections and client overlap (${activationClientOverlapMs} ms and ${leaseClientOverlapMs} ms). Saved database readbacks show one activation and one lease, followed by natural expiry and a genuine MFA recovery review. These remain bounded trusted worker checks; backend execution overlap, whole provider and 2,000-session load are unproved.\n\nThe saved setup readback shows the authority, three Vault identities, two key references and three paused jobs. All four HTTP failure attempts and the later collision stop remain intact. Four delivery paths are registered; no actual send is proved by these fixtures.\n\n${privateConfigSnapshotPresent ? 'The public provider now snapshots documented private configuration references. This source change does not attest to callback closure internals or concrete private facilities.' : 'The public provider still reads caller-mutable private configuration references after binding; copy those references and add a regression.'}\n\n**Evidence label finding:** ${preservationLabelMismatches.length} saved packets (${preservationLabelMismatches.map(value => value.scopeKey).join(', ')}) state priorForecastPreserved=false even though their original forecast ID, source hash and command ID match the nine-row readback. The top-level **9+491** counts are corroborated. Preserve those packets and add reconciliation; no new commands are needed. The first strict peer assertion failure remains saved.\n\nAll source and saved evidence hashes remained unchanged during this check. The JSON records every inspected public input. This peer made **zero** network, SQL, Auth, SDK or native calls, read no credentials and recorded no further owner acceptance. Acceptance stays **3/109**.\n`;
 await fs.writeFile(path.join(root, `${prefix}.json`), bytes, { flag: 'wx', mode: 0o600 });
-await fs.writeFile(path.join(root, `${prefix}.md`), markdown, { flag: 'wx', mode: 0o600 });
+const completeMarkdown = markdown + '\n**Activation packet schema finding:** the saved post-schedule packet uses revision for a provenance row and therefore omits its original numeric count. The independent check confirms starting count 0, final count 1, exact revision/execution identities and the receipt/audit/outbox/version deltas. It does not fabricate the missing intermediate count. The strict failed replay of the original numeric validator remains saved.\n';
+await fs.writeFile(path.join(root, `${prefix}.md`), completeMarkdown, { flag: 'wx', mode: 0o600 });
 process.stdout.write(JSON.stringify({ path: `${prefix}.json`, sha256: hashBytes(bytes), markdown: `${prefix}.md`,
-  markdownSha256: hashBytes(markdown), passed: true, scopes: 500, returnedWorkerSourceFiles: 20,
-  openSourceFindings: report.actionableFindings.length, fullProviderCoordinatorPassed: false, targetScaleLoadPassed: false }) + '\n');
+  markdownSha256: hashBytes(completeMarkdown), passed: true, scopes: 500, returnedWorkerSourceFiles: 20,
+  evidenceReconciliationFindings: preservationLabelMismatches.length ? 2 : 1,
+  openMutableConfigSourceFindings: mutablePrivateConfigLiveReferences.length,
+  fullProviderCoordinatorPassed: false, targetScaleLoadPassed: false }) + '\n');

@@ -428,6 +428,46 @@ void main() {
       monitor: false,
     );
   });
+  for (final reconnect in [false, true]) {
+    test(
+      'HR audit: private response stays erased after disconnect${reconnect ? ' and reconnect' : ''}',
+      () async {
+        repository.contactGate = Completer<void>();
+        final pending = c.refresh();
+        await Future<void>.delayed(Duration.zero);
+        c.setOnline(false);
+        if (reconnect) c.setOnline(true);
+        repository.contactGate!.complete();
+        await pending;
+        expect(c.contactState, isNull);
+        expect(c.subjects, isEmpty);
+        expect(c.subject, isNull);
+        expect(c.form, isNull);
+        if (reconnect) {
+          await c.refresh();
+          await c.openSubject(repository.subject);
+          expect(
+            c.contactState?.profile?.body?['personal_phone'],
+            'SYNTHETIC_PRIVATE_PHONE',
+          );
+        }
+      },
+    );
+  }
+  test('HR audit: reconnect during an export dialog cannot write stale private content', () async {
+    await c.prepareExport();
+    await c.submit();
+    files.gate = Completer<void>();
+    final pending = c.writePreparedExport();
+    await Future<void>.delayed(Duration.zero);
+    c.setOnline(false);
+    c.setOnline(true);
+    files.gate!.complete();
+    await pending;
+    expect(files.written, isNull);
+    expect(c.preparedExportId, isNull);
+    expect(c.form, isNull);
+  });
   test(
     '24-hour expiry drops text and exposes only unresolved receipt recovery',
     () async {

@@ -142,11 +142,7 @@ final class PayrollCorrectionController extends ChangeNotifier {
     try {
       await work(epoch);
     } on DomainError catch (e) {
-      if ({
-        'PERMISSION_DENIED',
-        'AUTHENTICATION_REQUIRED',
-        'FEATURE_NOT_ENTITLED',
-      }.contains(e.code)) {
+      if (_accessDenied(e)) {
         denied = true;
         _epoch++;
         _clear();
@@ -161,6 +157,13 @@ final class PayrollCorrectionController extends ChangeNotifier {
   }
 
   bool _current(int epoch) => !_disposed && !denied && epoch == _epoch;
+  bool _accessDenied(DomainError error) => {
+    'PERMISSION_DENIED',
+    'AUTHENTICATION_REQUIRED',
+    'FEATURE_NOT_ENTITLED',
+    'MFA_REQUIRED',
+    'PAYROLL_MFA_REQUIRED',
+  }.contains(error.code);
   Future<void> checkAccess() async {
     if (busy || _disposed || denied) {
       return;
@@ -186,13 +189,22 @@ final class PayrollCorrectionController extends ChangeNotifier {
       } catch (_) {}
       _notify();
     }
+    if (!online) return;
     try {
       await repository.authorize(scope, 'people.payroll.view');
+    } on DomainError catch (e) {
+      if (_current(epoch)) {
+        if (_accessDenied(e)) {
+          denied = true;
+          _epoch++;
+          _clear();
+        }
+        error = e.message;
+        _notify();
+      }
     } catch (_) {
       if (_current(epoch)) {
-        denied = true;
-        _epoch++;
-        _clear();
+        error = 'Payroll access could not be checked. Reconnect and retry.';
         _notify();
       }
     }

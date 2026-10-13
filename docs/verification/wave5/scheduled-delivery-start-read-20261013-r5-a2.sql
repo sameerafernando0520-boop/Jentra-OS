@@ -1,0 +1,8 @@
+SELECT jsonb_build_object('observedAt',statement_timestamp(),
+ 'scopeAllowed',exists(select 1 from intelligence_control.runtime_worker_scopes s join core.branches br on br.tenant_id=s.tenant_id and br.legal_entity_id=s.legal_entity_id and br.id=s.branch_id where s.runtime_id='778237e3-3d4e-4871-8cc9-e08b07b989c7' and s.tenant_id='babe6c86-a764-4d3a-80a3-952a7c096c2c' and s.legal_entity_id='caa2bb06-219a-47e9-8132-66d1271b0ffd' and s.branch_id='3813692c-f0de-4c69-8e34-d56cf54695b1' and s.enabled and s.issued_at<=statement_timestamp() and s.expires_at>statement_timestamp() and br.status='active'),
+ 'authority',(SELECT jsonb_build_object('runtimeId',runtime_id,'enabled',enabled,'issuedAt',issued_at,'expiresAt',expires_at,'jobIds',job_ids) FROM intelligence_control.edge_authorities WHERE runtime_id='778237e3-3d4e-4871-8cc9-e08b07b989c7'),
+ 'ownJobs',(SELECT jsonb_agg(jsonb_build_object('jobId',jobid,'name',jobname,'active',active,'schedule',schedule,'command',command) ORDER BY jobid) FROM cron.job WHERE jobid IN (4,5,6)),
+ 'outsideJobHash',(SELECT encode(extensions.digest(coalesce(jsonb_agg(to_jsonb(j) ORDER BY jobid)::text,'[]'),'sha256'),'hex') FROM cron.job j WHERE jobid NOT IN (4,5,6)),
+ 'ticks',(SELECT count(*) FROM intelligence_control.edge_ticks WHERE runtime_id='778237e3-3d4e-4871-8cc9-e08b07b989c7'),
+ 'quotaPeriods',(SELECT count(*) FROM intelligence_control.quota_periods WHERE tenant_id='babe6c86-a764-4d3a-80a3-952a7c096c2c')
+ ) AS snapshot;

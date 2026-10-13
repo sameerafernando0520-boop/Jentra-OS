@@ -64,6 +64,7 @@ class Server implements PayrollCorrectionRepository {
   List<Map<String, Object?>>? sourceRows;
   final sections = <String, List<Map<String, Object?>>>{};
   String? failure;
+  String? accessFailure;
   bool deny = false, uncertain = false;
   Completer<void>? gate;
   Map<String, Object?>? last;
@@ -75,6 +76,12 @@ class Server implements PayrollCorrectionRepository {
       throw const DomainError(
         code: 'PERMISSION_DENIED',
         message: 'Access changed',
+      );
+    }
+    if (accessFailure != null) {
+      throw DomainError(
+        code: accessFailure!,
+        message: 'Authorization temporarily unavailable',
       );
     }
   }
@@ -452,6 +459,18 @@ void main() {
     expect(c.detail, isNull);
     expect(c.rows, isEmpty);
     expect(c.form, isNull);
+  });
+  test('HR audit: transient access-check failure does not permanently deny payroll corrections', () async {
+    await c.initialize();
+    server.accessFailure = 'NETWORK_ERROR';
+    await c.checkAccess();
+    expect(c.denied, isFalse);
+    expect(c.rows, isNotEmpty);
+    server.accessFailure = null;
+    await c.checkAccess();
+    await c.refresh();
+    expect(c.denied, isFalse);
+    expect(c.rows, isNotEmpty);
   });
   test(
     'late old-scope response is discarded after controller disposal',

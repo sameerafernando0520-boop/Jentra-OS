@@ -1,0 +1,192 @@
+{
+  "kind": "focused-edge-routing-runtime-review",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "preparedAt": "2026-10-13T11:23:31.399Z",
+  "ownerApproved": false,
+  "approvalReady": true,
+  "originalApprovedBundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+  "approvedOperationScopeUnchanged": "Two existing Wave 5 functions and the same three bounded test schedules; no migration, account, grant, secret, destination, model allowance or expiry increase.",
+  "changes": "Separate candidate files recognize the documented /wave5-runtime and /wave5-receiver function-name paths as well as the original public /functions/v1 paths, retaining the exact configured HTTPS origin and all original authentication and body checks.",
+  "liveFailure": {
+    "evidence": {
+      "path": "docs/verification/wave5/scheduled-delivery-paused-live-20261013-r5.json",
+      "sha256": "8251e966a5829d675ea91128aa6bcfc027f0af35a469b329e5fc22428dc980e3"
+    },
+    "observedAt": "2026-10-13T11:14:58.568963+00:00",
+    "scheduledHttpResponses": 18,
+    "allKnownHandler404": true,
+    "workerTicks": 0,
+    "deliveryOutcomes": 0,
+    "receiverReceipts": 0,
+    "quotaPeriods": 0,
+    "ownJobsPaused": true
+  },
+  "diagnosis": {
+    "basis": "Official in-function routing contract plus confirmed handler NOT_FOUND responses.",
+    "officialDocumentation": "https://supabase.com/docs/guides/functions/routing",
+    "internalRequestUrlDirectlyObserved": false,
+    "inference": true
+  },
+  "preservedOriginalSources": [
+    {
+      "path": "workers/wave5/edge_runtime.mjs",
+      "sha256": "29c50f277e90c3a84bcefa9b5e9b1bea8da8a82ef380ec27ab3a4e47063c4ccd"
+    },
+    {
+      "path": "workers/wave5/edge_receiver.mjs",
+      "sha256": "937c0f37f69c45a30a9dc0483d991cc46ecd4f40c54409a734cda40ca778c39e"
+    }
+  ],
+  "localVerification": {
+    "path": "docs/verification/wave5/worker-routing-local-verification-20261013-r5.json",
+    "sha256": "48a2b9e073859fdbe512d9486c747a6e3d554abe4054404ba5677e4b805b7616"
+  },
+  "deployments": [
+    {
+      "name": "wave5-runtime",
+      "entrypoint": "supabase/functions/wave5-runtime/index_20261013_r5.ts",
+      "verifyJwt": false,
+      "files": [
+        {
+          "path": "supabase/functions/wave5-runtime/deno.json",
+          "sha256": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf"
+        },
+        {
+          "path": "supabase/functions/wave5-runtime/index_20261013_r5.ts",
+          "sha256": "c6e482c50874707662161eec537fc0e2faab24643f489fbde13e1a5846ffa25d"
+        },
+        {
+          "path": "workers/wave5/bounded_json.mjs",
+          "sha256": "2c9ba6bc68101501970a41abaf02443d4f977bb1ba6bb7457f45bdc226096c05"
+        },
+        {
+          "path": "workers/wave5/edge_configuration.mjs",
+          "sha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13"
+        },
+        {
+          "path": "workers/wave5/edge_route_20261013_r5.mjs",
+          "sha256": "224619e51cbd5ac50799eb7e8dd7e4b7ad8410c78156641017aaacaf2edc8a7f"
+        },
+        {
+          "path": "workers/wave5/edge_runtime_20261013_r5.mjs",
+          "sha256": "7f99655115780e81e9b57f7724fbb0e3a93e34d3d86854a892a6abf94e2c8fd5"
+        },
+        {
+          "path": "workers/wave5/integration_policy.mjs",
+          "sha256": "f83e76cd5bdaf7997bf001edf6101537db9c34995019e9f7b5c196546a875cea"
+        },
+        {
+          "path": "workers/wave5/model_reader.mjs",
+          "sha256": "9be9ac552738041fb14a1cea2f9fd5e8dda415399512692f11b7430cf634a0a9"
+        },
+        {
+          "path": "workers/wave5/model_runtime.mjs",
+          "sha256": "fce748e511a81bdae957ff76275641142a738d8391132953d4d3c7eec03cfb99"
+        },
+        {
+          "path": "workers/wave5/openai_model_adapter.mjs",
+          "sha256": "557fc6af5dba58910ac46c2d1ac661a0389355ccef7efddb9a3cad94a03201d3"
+        },
+        {
+          "path": "workers/wave5/persistent_control.mjs",
+          "sha256": "81b5aa332971235cca8830c3d5894977d04baa5d0f3b6f1391db346ca9abc4fd"
+        },
+        {
+          "path": "workers/wave5/scoped_runtime.mjs",
+          "sha256": "70a8edbb7e8a0bac3fa1856ebb1134ff14413ad5b81f63bc568ae7750d3b2489"
+        },
+        {
+          "path": "workers/wave5/subscription_schedule.mjs",
+          "sha256": "7699ebd9798620a9514584472b4e147e9b3d148754c72190498fe5406df7d047"
+        },
+        {
+          "path": "workers/wave5/worker_endpoints.mjs",
+          "sha256": "a57cceb2ca5dc2bccc29861cdccb34bac7468a82a7fd402ecc5bd1810b6b0f5f"
+        },
+        {
+          "path": "workers/wave5/worker_runtime.mjs",
+          "sha256": "4935409210e61efc168d8604acff9b13f5a3b757cb27f4aee2ed1f2504dc8dc6"
+        }
+      ],
+      "payload": {
+        "path": "docs/verification/wave5/supabase-deploy-wave5-runtime-routing-20261013-r5-a2.json",
+        "sha256": "eea48058116b0ee1d4caf0d796afbe4902e2d8235f0c123760db3d67e27026a5"
+      },
+      "customAuthenticationUnchanged": true
+    },
+    {
+      "name": "wave5-receiver",
+      "entrypoint": "supabase/functions/wave5-receiver/index_20261013_r5.ts",
+      "verifyJwt": false,
+      "files": [
+        {
+          "path": "supabase/functions/wave5-receiver/deno.json",
+          "sha256": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf"
+        },
+        {
+          "path": "supabase/functions/wave5-receiver/index_20261013_r5.ts",
+          "sha256": "b819096b32b6cb71bffd95737b8b2230131c9a1ccf07a4f093b7089c0d98761e"
+        },
+        {
+          "path": "workers/wave5/bounded_json.mjs",
+          "sha256": "2c9ba6bc68101501970a41abaf02443d4f977bb1ba6bb7457f45bdc226096c05"
+        },
+        {
+          "path": "workers/wave5/edge_configuration.mjs",
+          "sha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13"
+        },
+        {
+          "path": "workers/wave5/edge_receiver_20261013_r5.mjs",
+          "sha256": "e3a10721ac1298977b0e2a38459aa91644c125852c484b546e41a68b56c1ca7b"
+        },
+        {
+          "path": "workers/wave5/edge_route_20261013_r5.mjs",
+          "sha256": "224619e51cbd5ac50799eb7e8dd7e4b7ad8410c78156641017aaacaf2edc8a7f"
+        },
+        {
+          "path": "workers/wave5/integration_policy.mjs",
+          "sha256": "f83e76cd5bdaf7997bf001edf6101537db9c34995019e9f7b5c196546a875cea"
+        },
+        {
+          "path": "workers/wave5/persistent_control.mjs",
+          "sha256": "81b5aa332971235cca8830c3d5894977d04baa5d0f3b6f1391db346ca9abc4fd"
+        },
+        {
+          "path": "workers/wave5/worker_runtime.mjs",
+          "sha256": "4935409210e61efc168d8604acff9b13f5a3b757cb27f4aee2ed1f2504dc8dc6"
+        }
+      ],
+      "payload": {
+        "path": "docs/verification/wave5/supabase-deploy-wave5-receiver-routing-20261013-r5-a2.json",
+        "sha256": "4daabea6a7def5e7e5422e8b157c79668551687d9af0d49cd24f9e8bf6d2485c"
+      },
+      "customAuthenticationUnchanged": true
+    }
+  ],
+  "actionsAfterSpecificApproval": [
+    "Replace only the two named Wave 5 deployments with these exact payloads.",
+    "Independently read back all returned modules and unchanged authentication flags.",
+    "Resume only the existing exact jobs 4, 5 and 6 within their original expiry and collect real transport/receipt evidence.",
+    "Stop and preserve evidence if routing, authentication, readiness or delivery remains uncertain."
+  ],
+  "retainedLimits": {
+    "maximumModelCalls": 4,
+    "maximumScheduleRequestsOriginal": 4320,
+    "scheduleRequestsAlreadyObserved": 18,
+    "authorityExpiresAt": "2026-10-14T09:57:07.481942Z",
+    "scopeMayExpireEarlier": true,
+    "newUsers": 0,
+    "newMigrations": 0,
+    "production": false,
+    "realBilling": false
+  },
+  "livePostPatchVerified": false,
+  "fullProviderCoordinatorPassed": false,
+  "authenticatedNative": false,
+  "nativeKeyboard": false,
+  "targetScaleLoad": false,
+  "ownerAcceptedCriteria": 3,
+  "remainingUnacceptedCriteria": 106,
+  "independentReviewPending": true,
+  "bundleSha256": "bce677a0c8e53fea2ba44c30b81e0fa2d897d8f43af5dc6d109e2a1e6feaa552"
+}

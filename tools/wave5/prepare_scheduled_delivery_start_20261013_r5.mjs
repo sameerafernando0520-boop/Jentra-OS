@@ -45,7 +45,12 @@ END $start_exact_jobs$;
 COMMIT;
 ${query}`;
 await loadApprovedInputs();
-for(const [file,sha] of bindings){const b=await fs.readFile(path.join(root,base+file));if(hashBytes(b)!==sha||JSON.parse(b).passed!==true)throw Error('EXACT_PASSED_BINDING_REQUIRED');}
+for(const [file,sha] of bindings){const b=await fs.readFile(path.join(root,base+file)),v=JSON.parse(b);
+ const actualPassed=file==='worker-deployment-source-verification-20261013-r5.json'
+  ?v.deployedWorkerSource===true&&v.existingPeopleFunctionsUnchanged===true&&v.functions.length===2
+   &&v.functions.every(f=>f.status==='ACTIVE'&&f.allReturnedSourceHashesMatch===true)
+  :v.passed===true;
+ if(hashBytes(b)!==sha||!actualPassed)throw Error('EXACT_PASSED_BINDING_REQUIRED');}
 async function save(file,bytes){const h=await fs.open(path.join(root,base+file),'wx');try{await h.writeFile(bytes);await h.sync();}finally{await h.close();}return {path:base+file,sha256:hashBytes(bytes)};}
 const sqlBinding=await save('scheduled-delivery-start-20261013-r5.sql',sql);
 const readBinding=await save('scheduled-delivery-start-read-20261013-r5.sql',query);

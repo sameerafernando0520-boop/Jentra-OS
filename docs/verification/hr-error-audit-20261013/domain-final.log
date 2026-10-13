@@ -1,0 +1,74 @@
+00:00 +0: loading test/employee_test.dart
+00:00 +0: test/employee_test.dart: AC-402 civil dates reject rollover and preserve leap-day boundaries
+00:00 +1: test/employee_test.dart: AC-403 adjacent employment ranges do not overlap
+00:00 +2: test/employee_test.dart: AC-402 input rejects unknown, private and malformed employee fields
+00:00 +3: test/employee_test.dart: AC-401 response validation binds exact scope and versions
+00:00 +4: loading test/workforce_test.dart
+00:00 +4: test/workforce_test.dart: valid attendance resolves exact selected offsets and contained breaks
+00:00 +5: test/workforce_test.dart: invalid dates and clock overflow cannot normalize to another interval
+00:00 +6: test/workforce_test.dart: missing fields, unrelated fields and one-sided raw pairing fail
+00:00 +7: test/workforce_test.dart: leave approval requires exact balance version and a private reason
+00:00 +8: test/workforce_test.dart: leave adjustments retain signed exact seconds and bounded source key
+00:00 +9: loading test/private_hr_test.dart
+00:00 +9: test/private_hr_test.dart: private contact allowlist excludes compensation, identity and bank fields
+00:00 +10: test/private_hr_test.dart: private text is bounded and review decisions are explicit actions
+00:00 +11: test/private_hr_test.dart: review objective bounds, dated eligibility and no automatic score
+00:00 +12: test/private_hr_test.dart: operational subject cannot contain a private contact or a document path
+00:00 +13: test/private_hr_test.dart: document metadata has exact checksum/size and cannot accept content URLs
+00:00 +14: test/private_hr_test.dart: contact reads reject unexpected fields and freeze nested caller aliases
+00:00 +15: loading test/payroll_calculation_test.dart
+00:00 +15: test/payroll_calculation_test.dart: earning, deduction and employer cost reproduce from exact frozen ratios
+00:00 +16: test/payroll_calculation_test.dart: ties use the published rounding mode including signed differences
+00:00 +17: test/payroll_calculation_test.dart: paid-time fixed proration caps at a whole salary and preserves separate cap evidence
+00:00 +18: test/payroll_calculation_test.dart: zero paid seconds cannot invent hourly pay and missing planned basis fails
+00:00 +19: test/payroll_calculation_test.dart: duplicate versions, uncovered period, mixed currency and excess deductions fail
+00:00 +20: test/payroll_calculation_test.dart: six-place decimal contract rejects floating-point or silently rounded rates
+00:00 +21: test/payroll_calculation_test.dart: journal precision bounds apply to line and employee totals
+00:00 +22: loading test/payroll_repository_test.dart
+00:00 +22: test/payroll_repository_test.dart: each explanation reproduces exact rounding and configured cap
+00:00 +23: test/payroll_repository_test.dart: run evidence rejects self approval, invalid lifecycle and response mutation
+00:00 +24: test/payroll_repository_test.dart: private totals conserve gross less deductions with exact decimal strings
+00:00 +25: test/payroll_repository_test.dart: rule vocabulary and private account attribution are strict
+00:00 +26: test/payroll_repository_test.dart: commands bind revision, employee bounds and exact settlement money
+00:00 +27: test/payroll_repository_test.dart: client explanation serializes the SQL vocabulary
+00:00 +28: loading test/payroll_correction_test.dart
+00:00 +28: test/payroll_correction_test.dart: difference rounds complete corrected pay rather than the difference
+00:00 +29: test/payroll_correction_test.dart: signed ratios reconcile over chained corrections using original rules
+00:00 +30: test/payroll_correction_test.dart: cap changes are recomputed against original full earning basis
+00:00 +31: test/payroll_correction_test.dart: seal totals, duplicate replacements and stale prior revisions fail
+00:00 +32: test/payroll_correction_test.dart: zero replacement preserves immutable sources without implicit net clamping
+00:00 +33: loading test/payroll_correction_repository_test.dart
+00:00 +33: test/payroll_correction_repository_test.dart: legitimate geometry keeps whole seconds, version and original identity
+00:00 +34: test/payroll_correction_repository_test.dart: duplicate or foreign fields fail before source side effects
+00:00 +35: test/payroll_correction_repository_test.dart: fractional seconds and unselected offsets are rejected
+00:00 +36: test/payroll_correction_repository_test.dart: geometry breaks preserve exact whole-second ordered UTC evidence
+00:00 +37: test/payroll_correction_repository_test.dart: leave cancellation cannot retain pay and allocations retain unique identities
+00:00 +38: test/payroll_correction_repository_test.dart: settlement allocations have explicit signed direction and exact positive amounts
+00:00 +39: test/payroll_correction_repository_test.dart: reversal separates current billing identity from frozen original proof
+00:00 +40: loading test/organization_test.dart
+00:01 +40: test/organization_test.dart: AC-403 open department and finite assignment dates remain distinct
+00:01 +41: test/organization_test.dart: AC-403 impossible, empty and excessive coverage rejected
+00:01 +42: test/organization_test.dart: AC-401 unknown private and missing command fields rejected
+00:01 +43: test/organization_test.dart: AC-403 self department and manager links rejected locally
+00:01 +44: test/organization_test.dart: AC-401 command and response versions reject unsafe JSON integers
+00:01 +45: test/organization_test.dart: AC-403 end uses an explicit original revision and bounded prefix
+00:01 +46: test/organization_test.dart: AC-401 directory response excludes private fields and normalized dates
+00:01 +47: loading test/work_calendar_test.dart
+00:01 +47: test/work_calendar_test.dart: AC-405 overnight Sunday work is checked against Monday
+00:01 +48: test/work_calendar_test.dart: AC-405 zero, overlong and malformed local intervals are denied
+00:01 +49: test/work_calendar_test.dart: AC-405 dated exceptions cannot collide or use invalid civil dates
+00:01 +50: test/work_calendar_test.dart: validated schedule cannot be changed through caller-owned lists
+00:01 +51: test/work_calendar_test.dart: working override must use configured hours, including overnight spill
+00:01 +52: test/work_calendar_test.dart: calendar editor rejects unbounded weekly payloads before submission
+00:01 +53: loading test/calendar_resolution_test.dart
+00:01 +53: test/calendar_resolution_test.dart: AC-405 fold requires an explicit offset and freezes exact evidence
+00:01 +54: test/calendar_resolution_test.dart: AC-405 a gap is unavailable rather than normalized forward
+00:01 +55: test/calendar_resolution_test.dart: AC-405 UTC/offset must round trip to the precise local boundary
+00:01 +56: test/calendar_resolution_test.dart: AC-401 unexpected/private response fields are rejected
+00:01 +57: test/calendar_resolution_test.dart: AC-405 duplicate or reversed UTC candidates are rejected
+00:01 +58: test/calendar_resolution_test.dart: AC-405 historical second offsets are retained exactly
+00:01 +59: loading test/calendar_contract_test.dart
+00:01 +59: test/calendar_contract_test.dart: calendar commands reject unknown fields, invalid identities and unbounded dates
+00:01 +60: test/calendar_contract_test.dart: wire patterns round trip and retain immutable snapshots
+00:01 +61: test/calendar_contract_test.dart: coverage makes the exclusive end and missing dates explicit
+00:01 +62: All tests passed!

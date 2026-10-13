@@ -1,0 +1,15 @@
+Continue Jentra OS at C:\Users\sheha\Desktop\Jentra OS, project xpdoufauvrbdmxgngetv. Read wave5-status-20261013-r5-a2.md and checkpoint/matrix evidence first. Fresh published live state:114 migrations/API363, original6/43 preserved; all71 additional installed. Do not replay migrations/accounts/factors/bootstrap/nonce intents.
+
+Exact original setup approval db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b remains valid for its bound bytes. The owner explicitly authorized the existing Windows-encrypted owner token; never print or request another token merely because historical plugin errors occurred. Ready a3 expires 2026-10-13T12:59:06.909Z; preserve UTC/DateKind String guards and renew by fresh same-project/org reads when necessary. Private database/model inputs remain pending.
+
+Six genuine actors/AAL2, exact500-company bootstrap and nonempty CRM/process source reads across all500 are proved. Synthetic activation and one pending lease/MFA recovery are narrow cases only. Agent provider review is auditing prior-command preservation labels; preserve earlier failed attempts and actual response envelopes.
+
+Workers v1/Vault3/keyrefs2/schedules3 installed. Actual18 scheduled HTTP responses all NOT_FOUND, worker ticks/outcomes/receiver receipts/quota0. Exact jobs4/5/6 paused; do not resume old once-only intents blindly. New routing candidate bundle bce677a0c8e53fea2ba44c30b81e0fa2d897d8f43af5dc6d109e2a1e6feaa552 is unapproved and undeployed. Review payloads a2 contain15 runtime/9 receiver bound files, 105 Node checks and2 fresh Deno checks. Obtain independent review and concrete owner source decision before replacing only these2 functions; then independently read returned sources and resume only the original3 jobs within original expiry/caps. No spending/user/SQL/grant/destination expansion.
+
+The original three agents resumed after the stated16:54SL reset: provider_review_20261013 reviews routing/provider evidence; runtime_provider_20261013 prepares permitted finance/cash helpers; native_matrix_20261013 audits exact native prerequisites. Root serializes private writes and publishes successor status/matrix.
+
+Native helper validated; user replied do the best thing to human UAC/password request, not created. Computer Use forbids auth/UAC automation. Preserve existing sessions and await a private human setup result. Do not call native keyboard/authenticated native verified.
+
+Continue real finance/classification/cashdates/scenarios/recovery/governedexports, actualdelivery/model max4calls, allcontention cases, privatePg fullprovider/fullobserver and500companies/2000genuine distinct sessions. Runtimeroles lack journals.post; do not invent grants or promote admin sourcefixtures to user journal posting.
+
+Preserve concurrent W3/W4/Employee changes, acceptance stores, session stores and all5539 approved inputs. No reset/clean/stash/broadstage/commit/push. Serialize heavy Flutter checks; appsourceedits require fresh analysis/tests/build/render evidence. Golden83+8 accepted/resolved; owner acceptance ONLY AC551/552/553 =3/109. Production/realbilling excluded.

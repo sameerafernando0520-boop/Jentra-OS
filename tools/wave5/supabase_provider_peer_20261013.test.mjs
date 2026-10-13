@@ -2,9 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { EventEmitter } from 'node:events';
-import { PROJECT_ID, PROJECT_URL, freshId, hashJson, GuardError, publicOutcome, safeFailure } from './runtime_contract.mjs';
-import { createSupabaseReadStore, READ_QUERIES, snapshotPrivateDatabaseConfig } from './supabase_read_store.mjs';
-import { mappedRpcRequest, outcomeFromRpc } from './supabase_runtime_provider.mjs';
+import { PROJECT_ID, PROJECT_URL, freshId, hashJson, GuardError, publicOutcome, safeFailure, RACE_KINDS } from './runtime_contract.mjs';
+import { createSupabaseReadStore, READ_QUERIES, READ_QUERY_SHA256, committedRecipeHash, snapshotPrivateDatabaseConfig } from './supabase_read_store.mjs';
+import { createSupabaseRuntimeProvider, mappedRpcRequest, outcomeFromRpc, CASE_READ_RECIPES } from './supabase_runtime_provider.mjs';
 import { createSupabaseHttpsTransport } from './supabase_http_transport.mjs';
 import { FIXTURE_CAPS, RACE_FIXTURES, INVALID_BOUNDARIES } from './runtime_fixture_spec.mjs';
 
@@ -112,6 +112,75 @@ test('independent regression probe detects reintroduced JavaScript Date quota tr
 
 test('independent billing response probe checks all500 reviewed scopes and rejects the wrong target flag or tenant', () => {
   verifyBillingScopes();
+});
+
+const approval = JSON.parse(await fs.readFile(new URL('../../docs/verification/wave5/runtime-owner-decision-20261012-r5.json', import.meta.url)));
+function callbackProbeContext() {
+  const providerCalendar = { horizonStart: '2026-10-01', horizonEnd: '2026-11-01',
+    windowStart: '2026-10-01T00:00:00Z', windowEnd: '2026-10-08T00:00:00Z',
+    asOf: '2026-10-08T00:00:00Z', recordedThrough: '2026-10-08T00:00:00Z',
+    clientTimestamp: '2026-10-12T00:00:00Z' };
+  const providerSha = hashJson('independent-controlled-factory-reference');
+  const plan = { kind: 'wave5-runtime-harness-plan', projectId: PROJECT_ID, url: PROJECT_URL,
+    production: false, realBilling: false, runtimeBundleSha256: review.bundleSha256,
+    warmupMs: 60000, measuredMs: 300000, maxRunMs: 900000, maximumTimedRequests: 20000,
+    maxInflight: 2000, requestsPerSecond: 20, providerCalendarSha256: hashJson(providerCalendar),
+    postgresDriverSourceSha256: hashJson('independent-controlled-driver'), preparationJournalSourceSha256: hashJson('independent-controlled-sink'),
+    cases: RACE_KINDS.map(kind => ({ kind, caseId: freshId(), scopeKey: ['seats', 'admissions', 'quota'].includes(kind) ? 'load-001' : 'runtime',
+      participants: kind === 'duplicates' ? 100 : kind === 'quota' ? 20 : 2, noExternalSend: true,
+      fixturePlanSha256: hashJson([kind, 'fixture']), committedQuerySha256: committedRecipeHash(CASE_READ_RECIPES[kind]),
+      preparationSha256: hashJson([kind, 'preparation']), restorationSha256: hashJson([kind, 'restoration']) })),
+    boundaries: ['10001Rows', '101Groups', '367DayWindow', '8MiBPlus1Byte'].map(kind => ({ kind, scopeKey: 'runtime', caseId: freshId(),
+      fixturePlanSha256: hashJson([kind, 'fixture']), committedQuerySha256: READ_QUERY_SHA256.scopeSnapshot, expectedCode: 'LIMIT_EXCEEDED' })),
+    loadCommittedQuerySha256: READ_QUERY_SHA256.loadLedgers, loadFixturePlanSha256: hashJson('independent-load-fixture'),
+    externalObservationSourceSha256: hashJson('independent-controlled-observer') };
+  const binding = { runtimeFileSha256: approval.runtimeFileSha256, harnessReviewSha256: hashJson('independent-controlled-harness'),
+    planSha256: hashJson(plan), planBodySha256: hashJson(plan), privateProviderSha256: providerSha };
+  const independentReview = { kind: 'wave5-runtime-harness-independent-preparation-review', result: 'approved-for-existing-bounded-scope',
+    projectId: PROJECT_ID, runtimeBundleSha256: review.bundleSha256, runtimeFileSha256: binding.runtimeFileSha256,
+    harnessReviewSha256: binding.harnessReviewSha256, planSha256: binding.planSha256, privateProviderSha256: providerSha,
+    sourceBindingsVerified: true, operationScopeSha256: review.sourceContinuation.unchangedRuntimeOperationScopeSha256,
+    sameApprovedOperationScope: true, additionalOwnerAuthorizationRequired: false, production: false, realBilling: false, installOriginalSix: false };
+  binding.independentReviewBodySha256 = hashJson(independentReview);
+  const preparation = { kind: 'wave5-runtime-harness-preparation', sourceBindingsVerified: true,
+    runtimeBundleSha256: review.bundleSha256, runtimeFileSha256: binding.runtimeFileSha256, harnessReviewSha256: binding.harnessReviewSha256,
+    planSha256: binding.planSha256, privateProviderSha256: providerSha, independentReview: {
+      result: independentReview.result, path: 'independent-controlled-reference-only.json', sha256: hashJson(independentReview) },
+    sameApprovedOperationScope: true, additionalOwnerAuthorizationRequired: false, production: false, realBilling: false, installOriginalSix: false };
+  return { context: { review, plan, approval, preparation, independentReview, binding }, providerCalendar };
+}
+async function verifyCallbackSnapshot(factory = createSupabaseRuntimeProvider) {
+  const { context, providerCalendar } = callbackProbeContext(); let originalCalls = 0, replacementCalls = 0, databaseCalls = 0;
+  class NeverConnectedDriver {
+    async connect() { databaseCalls++; throw Error('LOCAL_NO_DATABASE_ALLOWED'); }
+    async end() {}
+  }
+  const config = { projectId: PROJECT_ID, calendar: providerCalendar, privateActors: async () => {},
+    verifyOnlinePreflight: async () => { originalCalls++; return { kind: 'uninstalled-controlled-only' }; },
+    observeExternalTransport: async () => {}, appendPreparationEvidence: async record => ({ durable: true, appendOnly: true,
+      recordSha256: hashJson(record), storageEvidenceSha256: hashJson(['controlled-sink', record]) }),
+    PgClient: NeverConnectedDriver, databaseConfig: privateDatabase(), authIds: actorIds, anonKey: 'LOCAL_CONTROLLED_ANON_KEY',
+    privateConfigSourceSha256: context.binding.privateProviderSha256, postgresDriverSourceSha256: context.plan.postgresDriverSourceSha256,
+    preparationJournalSourceSha256: context.plan.preparationJournalSourceSha256 };
+  const provider = factory({ executionContext: context, privateConfig: config });
+  config.verifyOnlinePreflight = async () => { replacementCalls++; return { kind: 'uninstalled-controlled-only' }; };
+  config.privateActors = async () => { replacementCalls++; throw Error('LOCAL_UNREVIEWED_ACTOR_REFERENCE'); };
+  config.observeExternalTransport = async () => { replacementCalls++; throw Error('LOCAL_UNREVIEWED_OBSERVER_REFERENCE'); };
+  config.authConcurrency = 2000; config.serviceRoleKey = 'LOCAL_UNREVIEWED_SERVICE_KEY';
+  try {
+    await assert.rejects(provider.verifyPreflight({}), { code: 'ONLINE_PREFLIGHT_BINDING_REQUIRED' });
+    assert.equal(originalCalls, 1); assert.equal(replacementCalls, 0); assert.equal(databaseCalls, 0);
+  } finally { await provider.close(); }
+}
+test('independent callback probe retains the reviewed preflight reference across caller replacements', async () => {
+  await verifyCallbackSnapshot();
+});
+test('independent mutation probe detects removal of private callback snapshot without changing source bytes', async () => {
+  const snapshot = "privateConfig = Object.freeze(Object.fromEntries([\n    'privateActors', 'verifyOnlinePreflight', 'observeExternalTransport', 'appendPreparationEvidence',\n    'PgClient', 'databaseConfig', 'fixtureDatabaseConfig', 'authIds', 'anonKey',\n    'privateSessions', 'persistPrivateSession', 'authConcurrency', 'serviceRoleKey'\n  ].map(key => [key, privateConfig[key]])));";
+  const source = await fs.readFile(new URL('supabase_runtime_provider.mjs', import.meta.url), 'utf8');
+  const exact = source.includes(snapshot) ? snapshot : snapshot.replaceAll('\n', '\r\n');
+  const mutant = await mutatedModule('supabase_runtime_provider.mjs', [[exact, '/* controlled in-memory old caller reference */']]);
+  await assert.rejects(verifyCallbackSnapshot(mutant.createSupabaseRuntimeProvider), assert.AssertionError);
 });
 
 test('independent regression probe detects an always-true synthetic target assumption', async () => {

@@ -1,0 +1,670 @@
+TAP version 13
+# Subtest: independent original-versus-candidate probe isolates the platform path failure
+ok 1 - independent original-versus-candidate probe isolates the platform path failure
+  ---
+  duration_ms: 15.6987
+  type: 'test'
+  ...
+# Subtest: both complete namespaces exclude other functions, nested prefixes and private URL credentials
+ok 2 - both complete namespaces exclude other functions, nested prefixes and private URL credentials
+  ---
+  duration_ms: 0.8074
+  type: 'test'
+  ...
+# Subtest: candidate runtime keeps method and signed-schedule authorization before trusted effects
+ok 3 - candidate runtime keeps method and signed-schedule authorization before trusted effects
+  ---
+  duration_ms: 3.6017
+  type: 'test'
+  ...
+# Subtest: candidate receiver unsigned and malformed route matrix never reads private keys
+ok 4 - candidate receiver unsigned and malformed route matrix never reads private keys
+  ---
+  duration_ms: 1.3611
+  type: 'test'
+  ...
+# Subtest: receiver byte authentication and server revocation are invariant across old public and new platform routing
+ok 5 - receiver byte authentication and server revocation are invariant across old public and new platform routing
+  ---
+  duration_ms: 9.5014
+  type: 'test'
+  ...
+# Subtest: gateway and documented in-function namespaces select the same exact route
+ok 6 - gateway and documented in-function namespaces select the same exact route
+  ---
+  duration_ms: 0.2199
+  type: 'test'
+  ...
+# Subtest: unreviewed hosts, namespaces, routes, queries and fragments remain rejected
+ok 7 - unreviewed hosts, namespaces, routes, queries and fragments remain rejected
+  ---
+  duration_ms: 0.2119
+  type: 'test'
+  ...
+# Subtest: documented platform paths reach auth denial before credentials or backend effects
+ok 8 - documented platform paths reach auth denial before credentials or backend effects
+  ---
+  duration_ms: 0.3129
+  type: 'test'
+  ...
+# Subtest: unsigned schedule is rejected before any trusted RPC/effect
+ok 9 - unsigned schedule is rejected before any trusted RPC/effect
+  ---
+  duration_ms: 0.9308
+  type: 'test'
+  ...
+# Subtest: schedule secret is hashed and server denial precedes health
+ok 10 - schedule secret is hashed and server denial precedes health
+  ---
+  duration_ms: 1.5245
+  type: 'test'
+  ...
+# Subtest: expired/revoked runtime denies before scheduled work
+ok 11 - expired/revoked runtime denies before scheduled work
+  ---
+  duration_ms: 0.5123
+  type: 'test'
+  ...
+# Subtest: duplicate/overlapping tick does not collect or finish again
+ok 12 - duplicate/overlapping tick does not collect or finish again
+  ---
+  duration_ms: 0.5746
+  type: 'test'
+  ...
+# Subtest: health is collected for server-selected scope and outcome persisted
+ok 13 - health is collected for server-selected scope and outcome persisted
+  ---
+  duration_ms: 1.3246
+  type: 'test'
+  ...
+# Subtest: subscription tick uses a bounded persistent page
+ok 14 - subscription tick uses a bounded persistent page
+  ---
+  duration_ms: 2.4575
+  type: 'test'
+  ...
+# Subtest: empty delivery tick reconciles and performs no network send
+ok 15 - empty delivery tick reconciles and performs no network send
+  ---
+  duration_ms: 1.3139
+  type: 'test'
+  ...
+# Subtest: failed provider readiness persists failure instead of completed
+ok 16 - failed provider readiness persists failure instead of completed
+  ---
+  duration_ms: 0.5635
+  type: 'test'
+  ...
+# Subtest: invalid routes/origins never access trusted backend
+ok 17 - invalid routes/origins never access trusted backend
+  ---
+  duration_ms: 0.207
+  type: 'test'
+  ...
+# Subtest: malformed schedule schema is rejected before authorization
+ok 18 - malformed schedule schema is rejected before authorization
+  ---
+  duration_ms: 0.5121
+  type: 'test'
+  ...
+# Subtest: missing model key yields explicit provider absence without invocation
+ok 19 - missing model key yields explicit provider absence without invocation
+  ---
+  duration_ms: 0.2689
+  type: 'test'
+  ...
+# Subtest: platform DNS records are normalized to the pinned transport address contract
+ok 20 - platform DNS records are normalized to the pinned transport address contract
+  ---
+  duration_ms: 0.1367
+  type: 'test'
+  ...
+# Subtest: nonempty scheduled delivery signs exact bytes, persists outcome and settles within batch cap
+ok 21 - nonempty scheduled delivery signs exact bytes, persists outcome and settles within batch cap
+  ---
+  duration_ms: 1.71
+  type: 'test'
+  ...
+# Subtest: receiver verifies bytes before durable ACK
+ok 22 - receiver verifies bytes before durable ACK
+  ---
+  duration_ms: 0.525
+  type: 'test'
+  ...
+# Subtest: receiver returns persisted deduplication result
+ok 23 - receiver returns persisted deduplication result
+  ---
+  duration_ms: 0.3904
+  type: 'test'
+  ...
+# Subtest: forged signature cannot create receipt
+ok 24 - forged signature cannot create receipt
+  ---
+  duration_ms: 0.3234
+  type: 'test'
+  ...
+# Subtest: stale timestamp is rejected before private key lookup
+ok 25 - stale timestamp is rejected before private key lookup
+  ---
+  duration_ms: 0.1625
+  type: 'test'
+  ...
+# Subtest: noncanonical signed event is rejected before private key lookup
+ok 26 - noncanonical signed event is rejected before private key lookup
+  ---
+  duration_ms: 0.2239
+  type: 'test'
+  ...
+# Subtest: oversized receiver body is rejected before key lookup
+ok 27 - oversized receiver body is rejected before key lookup
+  ---
+  duration_ms: 0.4049
+  type: 'test'
+  ...
+# Subtest: server revocation after signature prevents ACK
+ok 28 - server revocation after signature prevents ACK
+  ---
+  duration_ms: 0.3273
+  type: 'test'
+  ...
+# Subtest: redirect probe authenticates source but creates no ACK
+ok 29 - redirect probe authenticates source but creates no ACK
+  ---
+  duration_ms: 0.2995
+  type: 'test'
+  ...
+# Subtest: timeout probe persists ACK before delayed response
+ok 30 - timeout probe persists ACK before delayed response
+  ---
+  duration_ms: 0.3074
+  type: 'test'
+  ...
+# Subtest: reject probe authenticates before bounded failure
+ok 31 - reject probe authenticates before bounded failure
+  ---
+  duration_ms: 0.2416
+  type: 'test'
+  ...
+# Subtest: unsigned schedule is rejected before any trusted RPC/effect
+ok 32 - unsigned schedule is rejected before any trusted RPC/effect
+  ---
+  duration_ms: 0.3132
+  type: 'test'
+  ...
+# Subtest: schedule secret is hashed and server denial precedes health
+ok 33 - schedule secret is hashed and server denial precedes health
+  ---
+  duration_ms: 0.4093
+  type: 'test'
+  ...
+# Subtest: expired/revoked runtime denies before scheduled work
+ok 34 - expired/revoked runtime denies before scheduled work
+  ---
+  duration_ms: 0.3133
+  type: 'test'
+  ...
+# Subtest: duplicate/overlapping tick does not collect or finish again
+ok 35 - duplicate/overlapping tick does not collect or finish again
+  ---
+  duration_ms: 0.3267
+  type: 'test'
+  ...
+# Subtest: health is collected for server-selected scope and outcome persisted
+ok 36 - health is collected for server-selected scope and outcome persisted
+  ---
+  duration_ms: 0.4145
+  type: 'test'
+  ...
+# Subtest: subscription tick uses a bounded persistent page
+ok 37 - subscription tick uses a bounded persistent page
+  ---
+  duration_ms: 0.3775
+  type: 'test'
+  ...
+# Subtest: empty delivery tick reconciles and performs no network send
+ok 38 - empty delivery tick reconciles and performs no network send
+  ---
+  duration_ms: 0.5093
+  type: 'test'
+  ...
+# Subtest: failed provider readiness persists failure instead of completed
+ok 39 - failed provider readiness persists failure instead of completed
+  ---
+  duration_ms: 0.4527
+  type: 'test'
+  ...
+# Subtest: invalid routes/origins never access trusted backend
+ok 40 - invalid routes/origins never access trusted backend
+  ---
+  duration_ms: 0.1567
+  type: 'test'
+  ...
+# Subtest: malformed schedule schema is rejected before authorization
+ok 41 - malformed schedule schema is rejected before authorization
+  ---
+  duration_ms: 0.2777
+  type: 'test'
+  ...
+# Subtest: missing model key yields explicit provider absence without invocation
+ok 42 - missing model key yields explicit provider absence without invocation
+  ---
+  duration_ms: 0.2446
+  type: 'test'
+  ...
+# Subtest: platform DNS records are normalized to the pinned transport address contract
+ok 43 - platform DNS records are normalized to the pinned transport address contract
+  ---
+  duration_ms: 0.1073
+  type: 'test'
+  ...
+# Subtest: nonempty scheduled delivery signs exact bytes, persists outcome and settles within batch cap
+ok 44 - nonempty scheduled delivery signs exact bytes, persists outcome and settles within batch cap
+  ---
+  duration_ms: 1.1457
+  type: 'test'
+  ...
+# Subtest: receiver verifies bytes before durable ACK
+ok 45 - receiver verifies bytes before durable ACK
+  ---
+  duration_ms: 0.5023
+  type: 'test'
+  ...
+# Subtest: receiver returns persisted deduplication result
+ok 46 - receiver returns persisted deduplication result
+  ---
+  duration_ms: 0.3043
+  type: 'test'
+  ...
+# Subtest: forged signature cannot create receipt
+ok 47 - forged signature cannot create receipt
+  ---
+  duration_ms: 0.4163
+  type: 'test'
+  ...
+# Subtest: stale timestamp is rejected before private key lookup
+ok 48 - stale timestamp is rejected before private key lookup
+  ---
+  duration_ms: 0.1918
+  type: 'test'
+  ...
+# Subtest: noncanonical signed event is rejected before private key lookup
+ok 49 - noncanonical signed event is rejected before private key lookup
+  ---
+  duration_ms: 0.2554
+  type: 'test'
+  ...
+# Subtest: oversized receiver body is rejected before key lookup
+ok 50 - oversized receiver body is rejected before key lookup
+  ---
+  duration_ms: 0.2564
+  type: 'test'
+  ...
+# Subtest: server revocation after signature prevents ACK
+ok 51 - server revocation after signature prevents ACK
+  ---
+  duration_ms: 0.4033
+  type: 'test'
+  ...
+# Subtest: redirect probe authenticates source but creates no ACK
+ok 52 - redirect probe authenticates source but creates no ACK
+  ---
+  duration_ms: 0.6403
+  type: 'test'
+  ...
+# Subtest: timeout probe persists ACK before delayed response
+ok 53 - timeout probe persists ACK before delayed response
+  ---
+  duration_ms: 0.662
+  type: 'test'
+  ...
+# Subtest: reject probe authenticates before bounded failure
+ok 54 - reject probe authenticates before bounded failure
+  ---
+  duration_ms: 0.6187
+  type: 'test'
+  ...
+# Subtest: unsafe IPv4, IPv6, mapped and noncanonical addresses fail
+ok 55 - unsafe IPv4, IPv6, mapped and noncanonical addresses fail
+  ---
+  duration_ms: 0.9913
+  type: 'test'
+  ...
+# Subtest: all DNS answers and each attempt must remain safe
+ok 56 - all DNS answers and each attempt must remain safe
+  ---
+  duration_ms: 0.9207
+  type: 'test'
+  ...
+# Subtest: event scope and private payload injection rejected before delivery
+ok 57 - event scope and private payload injection rejected before delivery
+  ---
+  duration_ms: 0.2317
+  type: 'test'
+  ...
+# Subtest: signature binds exact bytes, event identity, timestamp and rotating key version
+ok 58 - signature binds exact bytes, event identity, timestamp and rotating key version
+  ---
+  duration_ms: 0.371
+  type: 'test'
+  ...
+# Subtest: bounded retries retain stable event identity and reach dead letter
+ok 59 - bounded retries retain stable event identity and reach dead letter
+  ---
+  duration_ms: 0.1126
+  type: 'test'
+  ...
+# Subtest: injected transport sees pinned public address and revocation prevents send
+ok 60 - injected transport sees pinned public address and revocation prevents send
+  ---
+  duration_ms: 0.7991
+  type: 'test'
+  ...
+# Subtest: unknown transport result requires reconciliation without an automatic retry or raw errors
+ok 61 - unknown transport result requires reconciliation without an automatic retry or raw errors
+  ---
+  duration_ms: 0.3763
+  type: 'test'
+  ...
+# Subtest: integration credentials bind expiry, revocation, scope, hash, command and allowance
+ok 62 - integration credentials bind expiry, revocation, scope, hash, command and allowance
+  ---
+  duration_ms: 0.4666
+  type: 'test'
+  ...
+# Subtest: exhausted attempts fail before authority, DNS or transport
+ok 63 - exhausted attempts fail before authority, DNS or transport
+  ---
+  duration_ms: 0.123
+  type: 'test'
+  ...
+# Subtest: prompt injection and private fields cannot enter the numeric redaction manifest
+ok 64 - prompt injection and private fields cannot enter the numeric redaction manifest
+  ---
+  duration_ms: 1.7064
+  type: 'test'
+  ...
+# Subtest: trusted invocation records outcome before exact settlement, then rechecks current access
+ok 65 - trusted invocation records outcome before exact settlement, then rechecks current access
+  ---
+  duration_ms: 1.7215
+  type: 'test'
+  ...
+# Subtest: unknown outcomes persist without releasing quota or automatically resending
+ok 66 - unknown outcomes persist without releasing quota or automatically resending
+  ---
+  duration_ms: 0.2529
+  type: 'test'
+  ...
+# Subtest: unreviewed providers and untrusted/model-generated usage cannot settle
+ok 67 - unreviewed providers and untrusted/model-generated usage cannot settle
+  ---
+  duration_ms: 0.2098
+  type: 'test'
+  ...
+# Subtest: HTTP model adapter counts full input, fixes schema, refuses tools and trusts only provider usage
+ok 68 - HTTP model adapter counts full input, fixes schema, refuses tools and trusts only provider usage
+  ---
+  duration_ms: 0.7818
+  type: 'test'
+  ...
+# Subtest: unreviewed model and insufficient token budget cannot issue model generation
+ok 69 - unreviewed model and insufficient token budget cannot issue model generation
+  ---
+  duration_ms: 0.2855
+  type: 'test'
+  ...
+# Subtest: RPC/model response limit is enforced while streaming
+ok 70 - RPC/model response limit is enforced while streaming
+  ---
+  duration_ms: 0.2722
+  type: 'test'
+  ...
+# Subtest: delivery scheduling serializes batches and wakes on shutdown
+ok 71 - delivery scheduling serializes batches and wakes on shutdown
+  ---
+  duration_ms: 0.3661
+  type: 'test'
+  ...
+# Subtest: real RPC adapter binds service authorization and API schema without logging a key
+ok 72 - real RPC adapter binds service authorization and API schema without logging a key
+  ---
+  duration_ms: 0.2256
+  type: 'test'
+  ...
+# Subtest: control has no in-memory delivery or metering authority; original identity reaches persistent RPC
+ok 73 - control has no in-memory delivery or metering authority; original identity reaches persistent RPC
+  ---
+  duration_ms: 0.1647
+  type: 'test'
+  ...
+# Subtest: scheduler reconciles acknowledged persisted attempts before claiming new work
+ok 74 - scheduler reconciles acknowledged persisted attempts before claiming new work
+  ---
+  duration_ms: 0.1836
+  type: 'test'
+  ...
+# Subtest: worker transport rejects unsafe URLs and bounds provider output/errors
+ok 75 - worker transport rejects unsafe URLs and bounds provider output/errors
+  ---
+  duration_ms: 0.1926
+  type: 'test'
+  ...
+# Subtest: scheduled request deadline cancels an unfinished body before trusted work and frees its slot
+ok 76 - scheduled request deadline cancels an unfinished body before trusted work and frees its slot
+  ---
+  duration_ms: 14.2065
+  type: 'test'
+  ...
+# Subtest: receiver deadline cancels an unfinished signed request without key lookup or receipt
+ok 77 - receiver deadline cancels an unfinished signed request without key lookup or receipt
+  ---
+  duration_ms: 10.1285
+  type: 'test'
+  ...
+# Subtest: receiver timeout-probe delay observes the deadline after its durable receipt
+ok 78 - receiver timeout-probe delay observes the deadline after its durable receipt
+  ---
+  duration_ms: 12.0716
+  type: 'test'
+  ...
+# Subtest: external endpoint observes caller cancellation before any persistent control call
+ok 79 - external endpoint observes caller cancellation before any persistent control call
+  ---
+  duration_ms: 0.6529
+  type: 'test'
+  ...
+# Subtest: bounded response reader applies an explicit abort signal and preserves byte limits
+ok 80 - bounded response reader applies an explicit abort signal and preserves byte limits
+  ---
+  duration_ms: 0.3847
+  type: 'test'
+  ...
+# Subtest: delivery cancellation during DNS discards a late answer and sends no request
+ok 81 - delivery cancellation during DNS discards a late answer and sends no request
+  ---
+  duration_ms: 0.3811
+  type: 'test'
+  ...
+# Subtest: delivery cancellation during transport remains unknown and passes the abort signal to transport
+ok 82 - delivery cancellation during transport remains unknown and passes the abort signal to transport
+  ---
+  duration_ms: 0.2135
+  type: 'test'
+  ...
+# Subtest: subscription cancellation during readiness prevents activation after the awaited provider
+ok 83 - subscription cancellation during readiness prevents activation after the awaited provider
+  ---
+  duration_ms: 0.2093
+  type: 'test'
+  ...
+# Subtest: scheduled request deadline cancels an unfinished body before trusted work and frees its slot
+ok 84 - scheduled request deadline cancels an unfinished body before trusted work and frees its slot
+  ---
+  duration_ms: 14.2753
+  type: 'test'
+  ...
+# Subtest: receiver deadline cancels an unfinished signed request without key lookup or receipt
+ok 85 - receiver deadline cancels an unfinished signed request without key lookup or receipt
+  ---
+  duration_ms: 19.2631
+  type: 'test'
+  ...
+# Subtest: receiver timeout-probe delay observes the deadline after its durable receipt
+ok 86 - receiver timeout-probe delay observes the deadline after its durable receipt
+  ---
+  duration_ms: 17.5438
+  type: 'test'
+  ...
+# Subtest: external endpoint observes caller cancellation before any persistent control call
+ok 87 - external endpoint observes caller cancellation before any persistent control call
+  ---
+  duration_ms: 1.7138
+  type: 'test'
+  ...
+# Subtest: bounded response reader applies an explicit abort signal and preserves byte limits
+ok 88 - bounded response reader applies an explicit abort signal and preserves byte limits
+  ---
+  duration_ms: 1.2019
+  type: 'test'
+  ...
+# Subtest: delivery cancellation during DNS discards a late answer and sends no request
+ok 89 - delivery cancellation during DNS discards a late answer and sends no request
+  ---
+  duration_ms: 0.8408
+  type: 'test'
+  ...
+# Subtest: delivery cancellation during transport remains unknown and passes the abort signal to transport
+ok 90 - delivery cancellation during transport remains unknown and passes the abort signal to transport
+  ---
+  duration_ms: 0.5804
+  type: 'test'
+  ...
+# Subtest: subscription cancellation during readiness prevents activation after the awaited provider
+ok 91 - subscription cancellation during readiness prevents activation after the awaited provider
+  ---
+  duration_ms: 0.3874
+  type: 'test'
+  ...
+# Subtest: unbound review refuses launch before credentials or network
+ok 92 - unbound review refuses launch before credentials or network
+  ---
+  duration_ms: 0.7648
+  type: 'test'
+  ...
+# Subtest: approval binds exact review bytes and an explicit human reference
+ok 93 - approval binds exact review bytes and an explicit human reference
+  ---
+  duration_ms: 0.2716
+  type: 'test'
+  ...
+# Subtest: bound receiver rejects alternate host and URL credentials
+ok 94 - bound receiver rejects alternate host and URL credentials
+  ---
+  duration_ms: 2.5168
+  type: 'test'
+  ...
+# Subtest: hosted review refuses a local Node listener before private configuration
+ok 95 - hosted review refuses a local Node listener before private configuration
+  ---
+  duration_ms: 0.4636
+  type: 'test'
+  ...
+# Subtest: hosted review refuses altered destination and unbounded batch configuration
+ok 96 - hosted review refuses altered destination and unbounded batch configuration
+  ---
+  duration_ms: 0.2416
+  type: 'test'
+  ...
+# Subtest: worker claims, reconciliation and scheduler use the scoped server port
+ok 97 - worker claims, reconciliation and scheduler use the scoped server port
+  ---
+  duration_ms: 0.7569
+  type: 'test'
+  ...
+# Subtest: quota, activation and health retain their exact tenant identity
+ok 98 - quota, activation and health retain their exact tenant identity
+  ---
+  duration_ms: 0.6818
+  type: 'test'
+  ...
+# Subtest: model and external requests keep scope data for SQL authorization
+ok 99 - model and external requests keep scope data for SQL authorization
+  ---
+  duration_ms: 0.6697
+  type: 'test'
+  ...
+# Subtest: unapproved RPC names fail before any transport
+ok 100 - unapproved RPC names fail before any transport
+  ---
+  duration_ms: 0.2103
+  type: 'test'
+  ...
+# Subtest: external endpoint rejects arbitrary dispatch and does not leak provider diagnostics
+ok 101 - external endpoint rejects arbitrary dispatch and does not leak provider diagnostics
+  ---
+  duration_ms: 1.1206
+  type: 'test'
+  ...
+# Subtest: unreviewed model endpoint cannot retrieve a caller source or invoke a provider
+ok 102 - unreviewed model endpoint cannot retrieve a caller source or invoke a provider
+  ---
+  duration_ms: 0.3335
+  type: 'test'
+  ...
+# Subtest: model endpoint binds only the request caller and rejects extra private payload fields
+ok 103 - model endpoint binds only the request caller and rejects extra private payload fields
+  ---
+  duration_ms: 0.5404
+  type: 'test'
+  ...
+# Subtest: synthetic subscription scan is bounded and resumes original revision after a stopped batch
+ok 104 - synthetic subscription scan is bounded and resumes original revision after a stopped batch
+  ---
+  duration_ms: 0.1824
+  type: 'test'
+  ...
+# Subtest: missing providers fail before claiming or executing
+ok 105 - missing providers fail before claiming or executing
+  ---
+  duration_ms: 0.1865
+  type: 'test'
+  ...
+# Subtest: claimed committed job reserves before sending and records ACK before settlement
+ok 106 - claimed committed job reserves before sending and records ACK before settlement
+  ---
+  duration_ms: 0.8489
+  type: 'test'
+  ...
+# Subtest: unknown transport persists review state and keeps its reservation without settlement
+ok 107 - unknown transport persists review state and keeps its reservation without settlement
+  ---
+  duration_ms: 0.1931
+  type: 'test'
+  ...
+# Subtest: revocation during DNS prevents send and settlement
+ok 108 - revocation during DNS prevents send and settlement
+  ---
+  duration_ms: 0.1877
+  type: 'test'
+  ...
+# Subtest: subscription worker invokes existing server activation with exact identities
+ok 109 - subscription worker invokes existing server activation with exact identities
+  ---
+  duration_ms: 0.1564
+  type: 'test'
+  ...
+# Subtest: external command validates request, credentials and durable allowance before dispatch
+ok 110 - external command validates request, credentials and durable allowance before dispatch
+  ---
+  duration_ms: 0.841
+  type: 'test'
+  ...
+1..110
+# tests 110
+# suites 0
+# pass 110
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 302.6235

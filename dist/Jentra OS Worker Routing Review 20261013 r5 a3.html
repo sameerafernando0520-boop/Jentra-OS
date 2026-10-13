@@ -1,0 +1,137 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Jentra OS routing correction review</title><style>body{font:17px/1.6 system-ui;background:#101a29;color:#e9eef7;max-width:960px;margin:36px auto;padding:0 24px}a{color:#8dd8ff}h1{font-size:30px}pre{background:#19263a;overflow:auto;padding:16px;font-size:13px}code{overflow-wrap:anywhere}table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid #37516b;padding:10px;text-align:left}.open{color:#ffd899}.pass{color:#92edbd}</style><h1>Jentra OS: reviewed routing correction</h1><p class="open">Development is incomplete. Owner acceptance remains 3/109. This page requests only the focused runtime correction below.</p><p>The three scheduled test jobs ran, but all 18 completed requests returned the worker’s <code>NOT_FOUND</code> response. No worker tick, receiver receipt, delivery outcome or quota period was created. The same three jobs are now paused.</p><p>The <a href="https://supabase.com/docs/guides/functions/routing">official Supabase routing contract</a> uses function-name prefixes inside a function. The preserved original handlers check only the full public <code>/functions/v1/...</code> path. The candidate recognizes both exact namespaces on the same configured HTTPS origin. The diagnosis about the internal path remains an inference until fresh live checks confirm it.</p><p class="pass">105 worker tests passed; both new TypeScript entrypoints passed fresh Deno checks. Tests cover signed delivery, HMAC failures, revoked scope, duplicate ticks, deadline cancellation, quota ordering and rejection of other origins, prefixes, queries and routes. JavaScript was tested with Node; the reviewed Deno configuration does not type-check imported JavaScript.</p><p>Requested action: replace only <code>wave5-runtime</code> and <code>wave5-receiver</code> with these exact candidate payloads, verify returned sources, and resume the existing three bounded schedules. No new SQL, account, permission, secret, destination or spending allowance is requested. Original files remain preserved. Production and real billing remain excluded.</p><table><tr><th>Function</th><th>Bound files</th><th>Authentication</th></tr><tr><td>wave5-runtime</td><td>15</td><td>Original custom authentication retained; gateway verify_jwt remains false as already approved.</td></tr><tr><td>wave5-receiver</td><td>9</td><td>Original custom authentication retained; gateway verify_jwt remains false as already approved.</td></tr></table><p>Bundle SHA-256: <code>bce677a0c8e53fea2ba44c30b81e0fa2d897d8f43af5dc6d109e2a1e6feaa552</code></p><p>Authority expiry remains 14 October, 15:27:07 Sri Lanka time; the scoped test permission may expire earlier. Maximum model calls remain four. The original schedule cap is 4320 requests; 18 have already been observed.</p><details><summary>Exact new path selector</summary><pre>// Supabase's published routing contract prefixes in-function paths with the
+// function name. Accept that namespace and the public URL namespace exactly.
+// Both forms retain the configured HTTPS origin and all downstream auth checks.
+export function edgeRoute(requestUrl,endpointUrl,allowedRoutes){
+ let url,base;try{url=new URL(requestUrl);base=new URL(endpointUrl);}catch{return null;}
+ if(base.protocol!=='https:'||url.origin!==base.origin||url.username||url.password||url.search||url.hash)return null;
+ if(!base.pathname.startsWith('/functions/v1/'))return null;
+ const platformBase=base.pathname.slice('/functions/v1'.length);
+ for(const prefix of [base.pathname,platformBase]){
+  if(!url.pathname.startsWith(prefix+'/'))continue;
+  const route=url.pathname.slice(prefix.length);
+  if(allowedRoutes.includes(route))return route;
+ }
+ return null;
+}
+</pre></details><details><summary>Complete source and payload bindings</summary><pre>[
+  {
+    &quot;name&quot;: &quot;wave5-runtime&quot;,
+    &quot;entrypoint&quot;: &quot;supabase/functions/wave5-runtime/index_20261013_r5.ts&quot;,
+    &quot;verifyJwt&quot;: false,
+    &quot;files&quot;: [
+      {
+        &quot;path&quot;: &quot;supabase/functions/wave5-runtime/deno.json&quot;,
+        &quot;sha256&quot;: &quot;8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf&quot;
+      },
+      {
+        &quot;path&quot;: &quot;supabase/functions/wave5-runtime/index_20261013_r5.ts&quot;,
+        &quot;sha256&quot;: &quot;c6e482c50874707662161eec537fc0e2faab24643f489fbde13e1a5846ffa25d&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/bounded_json.mjs&quot;,
+        &quot;sha256&quot;: &quot;2c9ba6bc68101501970a41abaf02443d4f977bb1ba6bb7457f45bdc226096c05&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/edge_configuration.mjs&quot;,
+        &quot;sha256&quot;: &quot;ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/edge_route_20261013_r5.mjs&quot;,
+        &quot;sha256&quot;: &quot;224619e51cbd5ac50799eb7e8dd7e4b7ad8410c78156641017aaacaf2edc8a7f&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/edge_runtime_20261013_r5.mjs&quot;,
+        &quot;sha256&quot;: &quot;7f99655115780e81e9b57f7724fbb0e3a93e34d3d86854a892a6abf94e2c8fd5&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/integration_policy.mjs&quot;,
+        &quot;sha256&quot;: &quot;f83e76cd5bdaf7997bf001edf6101537db9c34995019e9f7b5c196546a875cea&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/model_reader.mjs&quot;,
+        &quot;sha256&quot;: &quot;9be9ac552738041fb14a1cea2f9fd5e8dda415399512692f11b7430cf634a0a9&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/model_runtime.mjs&quot;,
+        &quot;sha256&quot;: &quot;fce748e511a81bdae957ff76275641142a738d8391132953d4d3c7eec03cfb99&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/openai_model_adapter.mjs&quot;,
+        &quot;sha256&quot;: &quot;557fc6af5dba58910ac46c2d1ac661a0389355ccef7efddb9a3cad94a03201d3&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/persistent_control.mjs&quot;,
+        &quot;sha256&quot;: &quot;81b5aa332971235cca8830c3d5894977d04baa5d0f3b6f1391db346ca9abc4fd&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/scoped_runtime.mjs&quot;,
+        &quot;sha256&quot;: &quot;70a8edbb7e8a0bac3fa1856ebb1134ff14413ad5b81f63bc568ae7750d3b2489&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/subscription_schedule.mjs&quot;,
+        &quot;sha256&quot;: &quot;7699ebd9798620a9514584472b4e147e9b3d148754c72190498fe5406df7d047&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/worker_endpoints.mjs&quot;,
+        &quot;sha256&quot;: &quot;a57cceb2ca5dc2bccc29861cdccb34bac7468a82a7fd402ecc5bd1810b6b0f5f&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/worker_runtime.mjs&quot;,
+        &quot;sha256&quot;: &quot;4935409210e61efc168d8604acff9b13f5a3b757cb27f4aee2ed1f2504dc8dc6&quot;
+      }
+    ],
+    &quot;payload&quot;: {
+      &quot;path&quot;: &quot;docs/verification/wave5/supabase-deploy-wave5-runtime-routing-20261013-r5-a2.json&quot;,
+      &quot;sha256&quot;: &quot;eea48058116b0ee1d4caf0d796afbe4902e2d8235f0c123760db3d67e27026a5&quot;
+    },
+    &quot;customAuthenticationUnchanged&quot;: true
+  },
+  {
+    &quot;name&quot;: &quot;wave5-receiver&quot;,
+    &quot;entrypoint&quot;: &quot;supabase/functions/wave5-receiver/index_20261013_r5.ts&quot;,
+    &quot;verifyJwt&quot;: false,
+    &quot;files&quot;: [
+      {
+        &quot;path&quot;: &quot;supabase/functions/wave5-receiver/deno.json&quot;,
+        &quot;sha256&quot;: &quot;8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf&quot;
+      },
+      {
+        &quot;path&quot;: &quot;supabase/functions/wave5-receiver/index_20261013_r5.ts&quot;,
+        &quot;sha256&quot;: &quot;b819096b32b6cb71bffd95737b8b2230131c9a1ccf07a4f093b7089c0d98761e&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/bounded_json.mjs&quot;,
+        &quot;sha256&quot;: &quot;2c9ba6bc68101501970a41abaf02443d4f977bb1ba6bb7457f45bdc226096c05&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/edge_configuration.mjs&quot;,
+        &quot;sha256&quot;: &quot;ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/edge_receiver_20261013_r5.mjs&quot;,
+        &quot;sha256&quot;: &quot;e3a10721ac1298977b0e2a38459aa91644c125852c484b546e41a68b56c1ca7b&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/edge_route_20261013_r5.mjs&quot;,
+        &quot;sha256&quot;: &quot;224619e51cbd5ac50799eb7e8dd7e4b7ad8410c78156641017aaacaf2edc8a7f&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/integration_policy.mjs&quot;,
+        &quot;sha256&quot;: &quot;f83e76cd5bdaf7997bf001edf6101537db9c34995019e9f7b5c196546a875cea&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/persistent_control.mjs&quot;,
+        &quot;sha256&quot;: &quot;81b5aa332971235cca8830c3d5894977d04baa5d0f3b6f1391db346ca9abc4fd&quot;
+      },
+      {
+        &quot;path&quot;: &quot;workers/wave5/worker_runtime.mjs&quot;,
+        &quot;sha256&quot;: &quot;4935409210e61efc168d8604acff9b13f5a3b757cb27f4aee2ed1f2504dc8dc6&quot;
+      }
+    ],
+    &quot;payload&quot;: {
+      &quot;path&quot;: &quot;docs/verification/wave5/supabase-deploy-wave5-receiver-routing-20261013-r5-a2.json&quot;,
+      &quot;sha256&quot;: &quot;4daabea6a7def5e7e5422e8b157c79668551687d9af0d49cd24f9e8bf6d2485c&quot;
+    },
+    &quot;customAuthenticationUnchanged&quot;: true
+  }
+]</pre></details><p class="open">Independent review is complete: 110 tests passed with zero failures or skips; all 5539 original inputs and the exact 15/9 file payload closures were verified. Root also reran the five independent probes successfully. No deployment or owner acceptance is implied. Live delivery, full provider, native keyboard, target-scale load and the other 106 owner decisions remain open. Approving this correction does not accept those requirements.</p></html>

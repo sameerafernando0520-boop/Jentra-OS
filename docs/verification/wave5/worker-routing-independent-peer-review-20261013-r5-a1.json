@@ -1,0 +1,636 @@
+{
+  "kind": "independent-source-local-focused-worker-routing-review",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "reviewer": "/root/provider_review_20261013",
+  "actualStartedAt": "2026-10-13T11:33:49.172Z",
+  "actualFinishedAt": "2026-10-13T11:33:49.582Z",
+  "verdict": "approve-for-owner-review",
+  "passed": true,
+  "candidate": {
+    "path": "docs/verification/wave5/worker-routing-runtime-review-20261013-r5-a2.json",
+    "bytes": 8047,
+    "sha256": "7b5f7f62dba4cfb5557285dd08af5f7239b192295b5dce44f4175da748492968"
+  },
+  "candidateBundleSha256": "bce677a0c8e53fea2ba44c30b81e0fa2d897d8f43af5dc6d109e2a1e6feaa552",
+  "originalApprovedBundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+  "originalReviewInputsVerifiedBeforeAndAfter": 5539,
+  "selectedSourcesUnchanged": true,
+  "filesBefore": [
+    {
+      "path": "docs/verification/wave5/worker-routing-runtime-review-20261013-r5-a2.json",
+      "bytes": 8047,
+      "sha256": "7b5f7f62dba4cfb5557285dd08af5f7239b192295b5dce44f4175da748492968"
+    },
+    {
+      "path": "docs/verification/wave5/supabase-deploy-wave5-runtime-routing-20261013-r5-a2.json",
+      "bytes": 50450,
+      "sha256": "eea48058116b0ee1d4caf0d796afbe4902e2d8235f0c123760db3d67e27026a5"
+    },
+    {
+      "path": "supabase/functions/wave5-runtime/deno.json",
+      "bytes": 62,
+      "sha256": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf"
+    },
+    {
+      "path": "supabase/functions/wave5-runtime/index_20261013_r5.ts",
+      "bytes": 295,
+      "sha256": "c6e482c50874707662161eec537fc0e2faab24643f489fbde13e1a5846ffa25d"
+    },
+    {
+      "path": "workers/wave5/bounded_json.mjs",
+      "bytes": 2310,
+      "sha256": "2c9ba6bc68101501970a41abaf02443d4f977bb1ba6bb7457f45bdc226096c05"
+    },
+    {
+      "path": "workers/wave5/edge_configuration.mjs",
+      "bytes": 1072,
+      "sha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13"
+    },
+    {
+      "path": "workers/wave5/edge_route_20261013_r5.mjs",
+      "bytes": 855,
+      "sha256": "224619e51cbd5ac50799eb7e8dd7e4b7ad8410c78156641017aaacaf2edc8a7f"
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261013_r5.mjs",
+      "bytes": 6918,
+      "sha256": "7f99655115780e81e9b57f7724fbb0e3a93e34d3d86854a892a6abf94e2c8fd5"
+    },
+    {
+      "path": "workers/wave5/integration_policy.mjs",
+      "bytes": 10120,
+      "sha256": "f83e76cd5bdaf7997bf001edf6101537db9c34995019e9f7b5c196546a875cea"
+    },
+    {
+      "path": "workers/wave5/model_reader.mjs",
+      "bytes": 1247,
+      "sha256": "9be9ac552738041fb14a1cea2f9fd5e8dda415399512692f11b7430cf634a0a9"
+    },
+    {
+      "path": "workers/wave5/model_runtime.mjs",
+      "bytes": 5465,
+      "sha256": "fce748e511a81bdae957ff76275641142a738d8391132953d4d3c7eec03cfb99"
+    },
+    {
+      "path": "workers/wave5/openai_model_adapter.mjs",
+      "bytes": 3194,
+      "sha256": "557fc6af5dba58910ac46c2d1ac661a0389355ccef7efddb9a3cad94a03201d3"
+    },
+    {
+      "path": "workers/wave5/persistent_control.mjs",
+      "bytes": 5107,
+      "sha256": "81b5aa332971235cca8830c3d5894977d04baa5d0f3b6f1391db346ca9abc4fd"
+    },
+    {
+      "path": "workers/wave5/scoped_runtime.mjs",
+      "bytes": 1788,
+      "sha256": "70a8edbb7e8a0bac3fa1856ebb1134ff14413ad5b81f63bc568ae7750d3b2489"
+    },
+    {
+      "path": "workers/wave5/subscription_schedule.mjs",
+      "bytes": 1292,
+      "sha256": "7699ebd9798620a9514584472b4e147e9b3d148754c72190498fe5406df7d047"
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.mjs",
+      "bytes": 3210,
+      "sha256": "a57cceb2ca5dc2bccc29861cdccb34bac7468a82a7fd402ecc5bd1810b6b0f5f"
+    },
+    {
+      "path": "workers/wave5/worker_runtime.mjs",
+      "bytes": 5230,
+      "sha256": "4935409210e61efc168d8604acff9b13f5a3b757cb27f4aee2ed1f2504dc8dc6"
+    },
+    {
+      "path": "docs/verification/wave5/supabase-deploy-wave5-runtime-20261009-r14.json",
+      "bytes": 49646,
+      "sha256": "a1daa7491889f6d9c62fab1a4aff18c84bf47cea32120a9d0a52c2480a5831eb"
+    },
+    {
+      "path": "docs/verification/wave5/supabase-deploy-wave5-receiver-routing-20261013-r5-a2.json",
+      "bytes": 32158,
+      "sha256": "4daabea6a7def5e7e5422e8b157c79668551687d9af0d49cd24f9e8bf6d2485c"
+    },
+    {
+      "path": "supabase/functions/wave5-receiver/deno.json",
+      "bytes": 62,
+      "sha256": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf"
+    },
+    {
+      "path": "supabase/functions/wave5-receiver/index_20261013_r5.ts",
+      "bytes": 206,
+      "sha256": "b819096b32b6cb71bffd95737b8b2230131c9a1ccf07a4f093b7089c0d98761e"
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261013_r5.mjs",
+      "bytes": 5655,
+      "sha256": "e3a10721ac1298977b0e2a38459aa91644c125852c484b546e41a68b56c1ca7b"
+    },
+    {
+      "path": "docs/verification/wave5/supabase-deploy-wave5-receiver-20261009-r14.json",
+      "bytes": 31236,
+      "sha256": "30567e2730dd93b64d6178e67608ba6372ce12546b5d927f9f6a3b754a5001e8"
+    },
+    {
+      "path": "workers/wave5/edge_runtime.mjs",
+      "bytes": 7059,
+      "sha256": "29c50f277e90c3a84bcefa9b5e9b1bea8da8a82ef380ec27ab3a4e47063c4ccd"
+    },
+    {
+      "path": "workers/wave5/edge_receiver.mjs",
+      "bytes": 5731,
+      "sha256": "937c0f37f69c45a30a9dc0483d991cc46ecd4f40c54409a734cda40ca778c39e"
+    },
+    {
+      "path": "docs/verification/wave5/worker-routing-local-verification-20261013-r5.json",
+      "bytes": 6507,
+      "sha256": "48a2b9e073859fdbe512d9486c747a6e3d554abe4054404ba5677e4b805b7616"
+    },
+    {
+      "path": "workers/wave5/delivery_schedule.mjs",
+      "bytes": 1120,
+      "sha256": "29a412b79b5b7e41e37a77d82659a79ee6f90a1960d8573b3aeb7990acee60fa"
+    },
+    {
+      "path": "workers/wave5/edge_route_20261013_r5.test.mjs",
+      "bytes": 2066,
+      "sha256": "f9611b6bcfa3a8d98fdb0a445f9ebaab1b26b992c01b2e6abf6c4ed6dcc4d104"
+    },
+    {
+      "path": "workers/wave5/edge_runtime.test.mjs",
+      "bytes": 10556,
+      "sha256": "3621bd9ca2fba6a4a27323673d9789096b9e71ef51ad2d80c4f0099a39eeb54b"
+    },
+    {
+      "path": "workers/wave5/edge_runtime_platform_20261013_r5.test.mjs",
+      "bytes": 10640,
+      "sha256": "5032f09babd8b958d26e29ff4c8ae8491d8143a5f7e6066626605cc7ca669b2b"
+    },
+    {
+      "path": "workers/wave5/integration_policy.test.mjs",
+      "bytes": 5902,
+      "sha256": "b8ca6381cb7425e08d4ea97c95a5f0b5b91304ff91617e3562e8f17c0cf20d82"
+    },
+    {
+      "path": "workers/wave5/model_runtime.test.mjs",
+      "bytes": 2884,
+      "sha256": "665784626937177cc6c183dbe44cd2d2c496e3acf39954d3fb1383e0888dfe74"
+    },
+    {
+      "path": "workers/wave5/openai_model_adapter.test.mjs",
+      "bytes": 2949,
+      "sha256": "fbfe0bad596cace689d7e3d063e3d84eb6e256f76f3e4a5df3f2daa8b9e33942"
+    },
+    {
+      "path": "workers/wave5/persistent_control.test.mjs",
+      "bytes": 2467,
+      "sha256": "c84f06d36deea5d2a574118feede7a04e22f7b3570149651fbfdd6f61f199cb4"
+    },
+    {
+      "path": "workers/wave5/request_deadline.test.mjs",
+      "bytes": 7937,
+      "sha256": "1943313a7a29b6440be1189fb70d8d5ab2b1fbe0d668bbaf9291a3251e0c8435"
+    },
+    {
+      "path": "workers/wave5/request_deadline_platform_20261013_r5.test.mjs",
+      "bytes": 8111,
+      "sha256": "e0eb03d6174b9873e6a1786f370ec1f98b97ea67d39f9a04a293ce87b04f4d08"
+    },
+    {
+      "path": "workers/wave5/runtime_launcher.mjs",
+      "bytes": 7360,
+      "sha256": "003dbd624ca5120f267f8434981c356c266bb2e68776ced6459799b707b58d90"
+    },
+    {
+      "path": "workers/wave5/runtime_launcher.test.mjs",
+      "bytes": 3522,
+      "sha256": "0980cb334232597802eac83282cfdb684ba7eea9700b3f3744ff2f20b0e3e64a"
+    },
+    {
+      "path": "workers/wave5/scoped_runtime.test.mjs",
+      "bytes": 2579,
+      "sha256": "e8371c89850dde378d090ad36f21ab65b354bbbdd3eb4b9f03d29b8be45bcbc6"
+    },
+    {
+      "path": "workers/wave5/validate_runtime_review.mjs",
+      "bytes": 540,
+      "sha256": "ced6e61655eec7586afd968f8d518c52be6539348c12e0f8228e30e3bf78e473"
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.test.mjs",
+      "bytes": 2803,
+      "sha256": "73e8222fc9bb038a30005ee16a7dcdc194800a104566d4680ef03e4ca1e0fecd"
+    },
+    {
+      "path": "workers/wave5/worker_runtime.test.mjs",
+      "bytes": 4960,
+      "sha256": "7fd6bb8bb8ac2f6bfbe45f3874662da21c391346d6a78ef5e7bfc901f1d46c2d"
+    },
+    {
+      "path": "docs/verification/wave5/worker-routing-node-tests-20261013-r5.log",
+      "bytes": 22241,
+      "sha256": "2b3d3843e98c4828b49b3abc3386a9f031dcf0bb01f2a4feb6fb3d0ada7c1ab2"
+    },
+    {
+      "path": "docs/verification/wave5/worker-routing-runtime-deno-20261013-r5.log",
+      "bytes": 61,
+      "sha256": "6b06f6adb9529e6afa126aacd10cdaa078ed30017c1bd0bca2f0a78254bc4f03"
+    },
+    {
+      "path": "docs/verification/wave5/worker-routing-receiver-deno-20261013-r5.log",
+      "bytes": 62,
+      "sha256": "4ae4ac7ca85b051f89ac8428d3684f16291fb840b55956902bb53303b458cbc6"
+    },
+    {
+      "path": "docs/verification/wave5/scheduled-delivery-paused-live-20261013-r5.json",
+      "bytes": 2765,
+      "sha256": "8251e966a5829d675ea91128aa6bcfc027f0af35a469b329e5fc22428dc980e3"
+    },
+    {
+      "path": "tools/wave5/worker_routing_peer_20261013_r5.test.mjs",
+      "bytes": 6729,
+      "sha256": "024888e82a82fb359550c103eba3a03ddc748c4be10bd24799cfefbc5b220521"
+    },
+    {
+      "path": "tools/wave5/review_worker_routing_peer_20261013_r5.mjs",
+      "bytes": 14209,
+      "sha256": "cdbb8db2733de34b77e246dd49c8ce8bc65a40355bdad26389cb7b4909d03058"
+    },
+    {
+      "path": "dist/Jentra OS Worker Routing Review 20261013 r5 a2.html",
+      "bytes": 9986,
+      "sha256": "85330b60ba23182614773179ab041788f9ad76949ba144adcb0e329387e0f375"
+    }
+  ],
+  "filesAfter": [
+    {
+      "path": "docs/verification/wave5/worker-routing-runtime-review-20261013-r5-a2.json",
+      "bytes": 8047,
+      "sha256": "7b5f7f62dba4cfb5557285dd08af5f7239b192295b5dce44f4175da748492968"
+    },
+    {
+      "path": "docs/verification/wave5/supabase-deploy-wave5-runtime-routing-20261013-r5-a2.json",
+      "bytes": 50450,
+      "sha256": "eea48058116b0ee1d4caf0d796afbe4902e2d8235f0c123760db3d67e27026a5"
+    },
+    {
+      "path": "supabase/functions/wave5-runtime/deno.json",
+      "bytes": 62,
+      "sha256": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf"
+    },
+    {
+      "path": "supabase/functions/wave5-runtime/index_20261013_r5.ts",
+      "bytes": 295,
+      "sha256": "c6e482c50874707662161eec537fc0e2faab24643f489fbde13e1a5846ffa25d"
+    },
+    {
+      "path": "workers/wave5/bounded_json.mjs",
+      "bytes": 2310,
+      "sha256": "2c9ba6bc68101501970a41abaf02443d4f977bb1ba6bb7457f45bdc226096c05"
+    },
+    {
+      "path": "workers/wave5/edge_configuration.mjs",
+      "bytes": 1072,
+      "sha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13"
+    },
+    {
+      "path": "workers/wave5/edge_route_20261013_r5.mjs",
+      "bytes": 855,
+      "sha256": "224619e51cbd5ac50799eb7e8dd7e4b7ad8410c78156641017aaacaf2edc8a7f"
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261013_r5.mjs",
+      "bytes": 6918,
+      "sha256": "7f99655115780e81e9b57f7724fbb0e3a93e34d3d86854a892a6abf94e2c8fd5"
+    },
+    {
+      "path": "workers/wave5/integration_policy.mjs",
+      "bytes": 10120,
+      "sha256": "f83e76cd5bdaf7997bf001edf6101537db9c34995019e9f7b5c196546a875cea"
+    },
+    {
+      "path": "workers/wave5/model_reader.mjs",
+      "bytes": 1247,
+      "sha256": "9be9ac552738041fb14a1cea2f9fd5e8dda415399512692f11b7430cf634a0a9"
+    },
+    {
+      "path": "workers/wave5/model_runtime.mjs",
+      "bytes": 5465,
+      "sha256": "fce748e511a81bdae957ff76275641142a738d8391132953d4d3c7eec03cfb99"
+    },
+    {
+      "path": "workers/wave5/openai_model_adapter.mjs",
+      "bytes": 3194,
+      "sha256": "557fc6af5dba58910ac46c2d1ac661a0389355ccef7efddb9a3cad94a03201d3"
+    },
+    {
+      "path": "workers/wave5/persistent_control.mjs",
+      "bytes": 5107,
+      "sha256": "81b5aa332971235cca8830c3d5894977d04baa5d0f3b6f1391db346ca9abc4fd"
+    },
+    {
+      "path": "workers/wave5/scoped_runtime.mjs",
+      "bytes": 1788,
+      "sha256": "70a8edbb7e8a0bac3fa1856ebb1134ff14413ad5b81f63bc568ae7750d3b2489"
+    },
+    {
+      "path": "workers/wave5/subscription_schedule.mjs",
+      "bytes": 1292,
+      "sha256": "7699ebd9798620a9514584472b4e147e9b3d148754c72190498fe5406df7d047"
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.mjs",
+      "bytes": 3210,
+      "sha256": "a57cceb2ca5dc2bccc29861cdccb34bac7468a82a7fd402ecc5bd1810b6b0f5f"
+    },
+    {
+      "path": "workers/wave5/worker_runtime.mjs",
+      "bytes": 5230,
+      "sha256": "4935409210e61efc168d8604acff9b13f5a3b757cb27f4aee2ed1f2504dc8dc6"
+    },
+    {
+      "path": "docs/verification/wave5/supabase-deploy-wave5-runtime-20261009-r14.json",
+      "bytes": 49646,
+      "sha256": "a1daa7491889f6d9c62fab1a4aff18c84bf47cea32120a9d0a52c2480a5831eb"
+    },
+    {
+      "path": "docs/verification/wave5/supabase-deploy-wave5-receiver-routing-20261013-r5-a2.json",
+      "bytes": 32158,
+      "sha256": "4daabea6a7def5e7e5422e8b157c79668551687d9af0d49cd24f9e8bf6d2485c"
+    },
+    {
+      "path": "supabase/functions/wave5-receiver/deno.json",
+      "bytes": 62,
+      "sha256": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf"
+    },
+    {
+      "path": "supabase/functions/wave5-receiver/index_20261013_r5.ts",
+      "bytes": 206,
+      "sha256": "b819096b32b6cb71bffd95737b8b2230131c9a1ccf07a4f093b7089c0d98761e"
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261013_r5.mjs",
+      "bytes": 5655,
+      "sha256": "e3a10721ac1298977b0e2a38459aa91644c125852c484b546e41a68b56c1ca7b"
+    },
+    {
+      "path": "docs/verification/wave5/supabase-deploy-wave5-receiver-20261009-r14.json",
+      "bytes": 31236,
+      "sha256": "30567e2730dd93b64d6178e67608ba6372ce12546b5d927f9f6a3b754a5001e8"
+    },
+    {
+      "path": "workers/wave5/edge_runtime.mjs",
+      "bytes": 7059,
+      "sha256": "29c50f277e90c3a84bcefa9b5e9b1bea8da8a82ef380ec27ab3a4e47063c4ccd"
+    },
+    {
+      "path": "workers/wave5/edge_receiver.mjs",
+      "bytes": 5731,
+      "sha256": "937c0f37f69c45a30a9dc0483d991cc46ecd4f40c54409a734cda40ca778c39e"
+    },
+    {
+      "path": "docs/verification/wave5/worker-routing-local-verification-20261013-r5.json",
+      "bytes": 6507,
+      "sha256": "48a2b9e073859fdbe512d9486c747a6e3d554abe4054404ba5677e4b805b7616"
+    },
+    {
+      "path": "workers/wave5/delivery_schedule.mjs",
+      "bytes": 1120,
+      "sha256": "29a412b79b5b7e41e37a77d82659a79ee6f90a1960d8573b3aeb7990acee60fa"
+    },
+    {
+      "path": "workers/wave5/edge_route_20261013_r5.test.mjs",
+      "bytes": 2066,
+      "sha256": "f9611b6bcfa3a8d98fdb0a445f9ebaab1b26b992c01b2e6abf6c4ed6dcc4d104"
+    },
+    {
+      "path": "workers/wave5/edge_runtime.test.mjs",
+      "bytes": 10556,
+      "sha256": "3621bd9ca2fba6a4a27323673d9789096b9e71ef51ad2d80c4f0099a39eeb54b"
+    },
+    {
+      "path": "workers/wave5/edge_runtime_platform_20261013_r5.test.mjs",
+      "bytes": 10640,
+      "sha256": "5032f09babd8b958d26e29ff4c8ae8491d8143a5f7e6066626605cc7ca669b2b"
+    },
+    {
+      "path": "workers/wave5/integration_policy.test.mjs",
+      "bytes": 5902,
+      "sha256": "b8ca6381cb7425e08d4ea97c95a5f0b5b91304ff91617e3562e8f17c0cf20d82"
+    },
+    {
+      "path": "workers/wave5/model_runtime.test.mjs",
+      "bytes": 2884,
+      "sha256": "665784626937177cc6c183dbe44cd2d2c496e3acf39954d3fb1383e0888dfe74"
+    },
+    {
+      "path": "workers/wave5/openai_model_adapter.test.mjs",
+      "bytes": 2949,
+      "sha256": "fbfe0bad596cace689d7e3d063e3d84eb6e256f76f3e4a5df3f2daa8b9e33942"
+    },
+    {
+      "path": "workers/wave5/persistent_control.test.mjs",
+      "bytes": 2467,
+      "sha256": "c84f06d36deea5d2a574118feede7a04e22f7b3570149651fbfdd6f61f199cb4"
+    },
+    {
+      "path": "workers/wave5/request_deadline.test.mjs",
+      "bytes": 7937,
+      "sha256": "1943313a7a29b6440be1189fb70d8d5ab2b1fbe0d668bbaf9291a3251e0c8435"
+    },
+    {
+      "path": "workers/wave5/request_deadline_platform_20261013_r5.test.mjs",
+      "bytes": 8111,
+      "sha256": "e0eb03d6174b9873e6a1786f370ec1f98b97ea67d39f9a04a293ce87b04f4d08"
+    },
+    {
+      "path": "workers/wave5/runtime_launcher.mjs",
+      "bytes": 7360,
+      "sha256": "003dbd624ca5120f267f8434981c356c266bb2e68776ced6459799b707b58d90"
+    },
+    {
+      "path": "workers/wave5/runtime_launcher.test.mjs",
+      "bytes": 3522,
+      "sha256": "0980cb334232597802eac83282cfdb684ba7eea9700b3f3744ff2f20b0e3e64a"
+    },
+    {
+      "path": "workers/wave5/scoped_runtime.test.mjs",
+      "bytes": 2579,
+      "sha256": "e8371c89850dde378d090ad36f21ab65b354bbbdd3eb4b9f03d29b8be45bcbc6"
+    },
+    {
+      "path": "workers/wave5/validate_runtime_review.mjs",
+      "bytes": 540,
+      "sha256": "ced6e61655eec7586afd968f8d518c52be6539348c12e0f8228e30e3bf78e473"
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.test.mjs",
+      "bytes": 2803,
+      "sha256": "73e8222fc9bb038a30005ee16a7dcdc194800a104566d4680ef03e4ca1e0fecd"
+    },
+    {
+      "path": "workers/wave5/worker_runtime.test.mjs",
+      "bytes": 4960,
+      "sha256": "7fd6bb8bb8ac2f6bfbe45f3874662da21c391346d6a78ef5e7bfc901f1d46c2d"
+    },
+    {
+      "path": "docs/verification/wave5/worker-routing-node-tests-20261013-r5.log",
+      "bytes": 22241,
+      "sha256": "2b3d3843e98c4828b49b3abc3386a9f031dcf0bb01f2a4feb6fb3d0ada7c1ab2"
+    },
+    {
+      "path": "docs/verification/wave5/worker-routing-runtime-deno-20261013-r5.log",
+      "bytes": 61,
+      "sha256": "6b06f6adb9529e6afa126aacd10cdaa078ed30017c1bd0bca2f0a78254bc4f03"
+    },
+    {
+      "path": "docs/verification/wave5/worker-routing-receiver-deno-20261013-r5.log",
+      "bytes": 62,
+      "sha256": "4ae4ac7ca85b051f89ac8428d3684f16291fb840b55956902bb53303b458cbc6"
+    },
+    {
+      "path": "docs/verification/wave5/scheduled-delivery-paused-live-20261013-r5.json",
+      "bytes": 2765,
+      "sha256": "8251e966a5829d675ea91128aa6bcfc027f0af35a469b329e5fc22428dc980e3"
+    },
+    {
+      "path": "tools/wave5/worker_routing_peer_20261013_r5.test.mjs",
+      "bytes": 6729,
+      "sha256": "024888e82a82fb359550c103eba3a03ddc748c4be10bd24799cfefbc5b220521"
+    },
+    {
+      "path": "tools/wave5/review_worker_routing_peer_20261013_r5.mjs",
+      "bytes": 14209,
+      "sha256": "cdbb8db2733de34b77e246dd49c8ce8bc65a40355bdad26389cb7b4909d03058"
+    },
+    {
+      "path": "dist/Jentra OS Worker Routing Review 20261013 r5 a2.html",
+      "bytes": 9986,
+      "sha256": "85330b60ba23182614773179ab041788f9ad76949ba144adcb0e329387e0f375"
+    }
+  ],
+  "exactRoutingOnlyTransformationVerified": true,
+  "allOriginalAuthenticationAndBodyChecksPreserved": true,
+  "exactConfiguredHttpsOriginRetained": true,
+  "payloadClosures": [
+    {
+      "name": "wave5-runtime",
+      "fileCount": 15,
+      "relativeImportsResolved": 22,
+      "originalUnchangedDependenciesRetained": 12,
+      "verifyJwt": false,
+      "payload": {
+        "path": "docs/verification/wave5/supabase-deploy-wave5-runtime-routing-20261013-r5-a2.json",
+        "bytes": 50450,
+        "sha256": "eea48058116b0ee1d4caf0d796afbe4902e2d8235f0c123760db3d67e27026a5"
+      }
+    },
+    {
+      "name": "wave5-receiver",
+      "fileCount": 9,
+      "relativeImportsResolved": 9,
+      "originalUnchangedDependenciesRetained": 6,
+      "verifyJwt": false,
+      "payload": {
+        "path": "docs/verification/wave5/supabase-deploy-wave5-receiver-routing-20261013-r5-a2.json",
+        "bytes": 32158,
+        "sha256": "4daabea6a7def5e7e5422e8b157c79668551687d9af0d49cd24f9e8bf6d2485c"
+      }
+    }
+  ],
+  "routeHelper": {
+    "path": "workers/wave5/edge_route_20261013_r5.mjs",
+    "bytes": 855,
+    "sha256": "224619e51cbd5ac50799eb7e8dd7e4b7ad8410c78156641017aaacaf2edc8a7f"
+  },
+  "localCommand": [
+    "node",
+    "--test",
+    "--test-isolation=none",
+    "--test-reporter=tap",
+    "workers/wave5/edge_route_20261013_r5.test.mjs",
+    "workers/wave5/edge_runtime.test.mjs",
+    "workers/wave5/edge_runtime_platform_20261013_r5.test.mjs",
+    "workers/wave5/integration_policy.test.mjs",
+    "workers/wave5/model_runtime.test.mjs",
+    "workers/wave5/openai_model_adapter.test.mjs",
+    "workers/wave5/persistent_control.test.mjs",
+    "workers/wave5/request_deadline.test.mjs",
+    "workers/wave5/request_deadline_platform_20261013_r5.test.mjs",
+    "workers/wave5/runtime_launcher.test.mjs",
+    "workers/wave5/scoped_runtime.test.mjs",
+    "workers/wave5/worker_endpoints.test.mjs",
+    "workers/wave5/worker_runtime.test.mjs",
+    "tools/wave5/worker_routing_peer_20261013_r5.test.mjs"
+  ],
+  "childExitCode": 0,
+  "childSignal": null,
+  "summary": {
+    "tests": 110,
+    "pass": 110,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "log": {
+    "path": "docs/verification/wave5/worker-routing-independent-peer-review-20261013-r5-a1.tap",
+    "sha256": "f5a7cb69dd6e39a633b8725dc5323a61e9764ae31922797d28b7a4d0d78f2b62",
+    "bytes": 22848
+  },
+  "originalLocalVerification": {
+    "path": "docs/verification/wave5/worker-routing-local-verification-20261013-r5.json",
+    "sha256": "48a2b9e073859fdbe512d9486c747a6e3d554abe4054404ba5677e4b805b7616"
+  },
+  "denoEvidenceReviewed": {
+    "bothSavedEntrypointChecksPassed": true,
+    "importedJavaScriptTypeChecked": false,
+    "freshDenoInvocationsByPeer": 0
+  },
+  "savedFailure": {
+    "evidence": {
+      "path": "docs/verification/wave5/scheduled-delivery-paused-live-20261013-r5.json",
+      "sha256": "8251e966a5829d675ea91128aa6bcfc027f0af35a469b329e5fc22428dc980e3"
+    },
+    "observedAt": "2026-10-13T11:14:58.568963+00:00",
+    "scheduledHttpResponses": 18,
+    "allKnownHandler404": true,
+    "workerTicks": 0,
+    "deliveryOutcomes": 0,
+    "receiverReceipts": 0,
+    "quotaPeriods": 0,
+    "ownJobsPaused": true,
+    "actualInternalRequestUrlObserved": false,
+    "routingCauseInference": true
+  },
+  "securityAssessment": [
+    "Both exact function-name and public namespaces stay on the configured HTTPS origin.",
+    "Other functions, lookalike prefixes, ports, origins, URL userinfo, queries, fragments, encoded routes and extra suffixes cannot reach a reviewed route.",
+    "The original schedule hash/server permit, caller Auth, revocable external credential, model scope and byte-HMAC/live subscription checks remain verbatim.",
+    "Keys, scopes, caps, destination, authority expiry, schedule allowance and gateway authentication flags are unchanged.",
+    "Malformed paths and unsigned receiver requests cannot reach private keys or durable receipt calls in the independent probes."
+  ],
+  "findings": [],
+  "ownerApprovedByThisPeer": false,
+  "deployedByThisPeer": false,
+  "livePostPatchVerified": false,
+  "requestScope": "Exactly two named deployment successors and the previously bounded same three test schedules after explicit owner approval.",
+  "providerNetworkCalls": 0,
+  "liveSqlCalls": 0,
+  "authWrites": 0,
+  "credentialsReadOrPrinted": false,
+  "sdkJobs": 0,
+  "nativeActions": 0,
+  "fullProviderCoordinatorPassed": false,
+  "privatePgDriverVerified": false,
+  "completeExternalObserverVerified": false,
+  "targetScaleLoad": false,
+  "nativeKeyboard": false,
+  "ownerAcceptedCriteria": 3,
+  "ownerCriteria": 109,
+  "newOwnerAcceptance": false,
+  "production": false,
+  "realBilling": false,
+  "officialPublicReference": "https://supabase.com/docs/guides/functions/routing",
+  "limitation": "Source/local approval readiness only. The saved 18 handler 404 responses and official function-name route contract support the proposed cause as an inference; live internal URLs and patched routing remain unverified. This peer cannot approve the deployment for the owner or claim delivery/load/native acceptance."
+}

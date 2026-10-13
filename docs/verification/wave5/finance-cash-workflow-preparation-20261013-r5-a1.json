@@ -1,0 +1,100 @@
+{
+  "kind": "source-bound-genuine-finance-workflow-preparation",
+  "preparedAt": "2026-10-13T12:23:25.290Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "bundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+  "operationScopeSha256": "fcdab89d242dc578793eba1d520ea0251699b70b7730c02aea94232805286e63",
+  "sourceBindings": [
+    {
+      "path": "tools/wave5/finance_cash_fixture_20261013_r5.mjs",
+      "sha256": "8d5e670368fd89a9e9a98f10aa4befc1f2bc4ed0b28de913aa89ee64766291f9"
+    },
+    {
+      "path": "tools/wave5/finance_cash_workflows_20261013_r5.mjs",
+      "sha256": "40ef7ece633be424305ecf05907da3db99d775f63c0215c394b13a97bf0ec336"
+    },
+    {
+      "path": "tools/wave5/finance_https_transport_20261013_r5.mjs",
+      "sha256": "5eb2b839a9249fd457073d4b63523d311f06ecc2d392710db2f823259395ba0f"
+    },
+    {
+      "path": "tools/wave5/prepare_finance_workflows_20261013_r5.mjs",
+      "sha256": "3d70b72a6472744161d172c1028d50cb56d9e30a209e556b5663c4b8db3626a6"
+    },
+    {
+      "path": "tools/wave5/private_existing_actor_session_20261013_r5.mjs",
+      "sha256": "0d9dc4bfbd703fb7637f0acc89eaa195c2b6a17bdf4f4e566b0ba925f76c4540"
+    },
+    {
+      "path": "tools/wave5/private_runtime_seal.mjs",
+      "sha256": "1395a91ee666d40c5504c8977b5d4f64aa4d54b383dfe147fe78eb07a5d7a206"
+    },
+    {
+      "path": "tools/wave5/private_runtime_http.mjs",
+      "sha256": "d52ae919e4c13bd1745ef806658744dfc2c52df7b61d24d9f87afac06de7be2c"
+    },
+    {
+      "path": "tools/wave5/supabase_http_transport.mjs",
+      "sha256": "7815b9c8c18bd5d2375480706579c7dd9583b1e95e0424a2178f7b9b5db265c9"
+    },
+    {
+      "path": "tools/wave5/enroll_mfa_management_20261013_r5.mjs",
+      "sha256": "ede49ffd20a111a063b00b375b32fdef40c69b09364a4ae72e5f2a5e7a608240"
+    },
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f"
+    },
+    {
+      "path": "docs/verification/wave5/auth-admin-provisioning-20261013-r5-1791877892653/99-result.json",
+      "sha256": "f8a67d9a2659bb4185d71c05c1a7644e5248e56c72fded4af297e3a2d3888abb"
+    },
+    {
+      "path": "docs/verification/wave5/genuine-mfa-20261013-r5-1791878507585/99-result.json",
+      "sha256": "af4e9dec3987f5d6ba8c49fc1162be1374f93a14c043e46065119297a73e0bba"
+    },
+    {
+      "path": "docs/verification/wave5/finance-cash-fixture-preparation-20261013-r5-a1.json",
+      "sha256": "c1d11c1aa58aef646289060e6091c9c21f63176c0febca86823a6cb851fedd16"
+    }
+  ],
+  "networkCallsDuringPreparation": 0,
+  "maximumTotalWorkflowRequestAttempts": 150,
+  "maximumExecutionMs": 900000,
+  "genuineExistingActors": [
+    "proposer",
+    "approver",
+    "foreign-member"
+  ],
+  "executionModes": [
+    "--execute-finance",
+    "--execute-cash"
+  ],
+  "financePhase": {
+    "financialPublications": 3,
+    "classifications": 1,
+    "paymentDateApprovals": 3,
+    "governedExports": 2
+  },
+  "cashPhase": {
+    "scenarioRevisions": 2,
+    "governedExports": 2,
+    "requiresActualDate": "2026-10-14",
+    "requiresCompletedFinanceBinding": true
+  },
+  "futureHorizonInstalledGuard": true,
+  "cashPhaseCurrentlyBlocked": true,
+  "actualMissingDateBasisNotProved": true,
+  "newActorOrMfaEnrollment": false,
+  "permissionMutation": false,
+  "originalIdentitiesRetainedBeforeEachWrite": true,
+  "uncertaintyStopsBeforeSuccessor": true,
+  "administrativeSourceFixture": true,
+  "actualUserPosting": false,
+  "actualRuntimeVerification": false,
+  "independentReviewRequired": true,
+  "authenticatedNative": false,
+  "ownerAcceptance": false,
+  "production": false,
+  "realBilling": false
+}

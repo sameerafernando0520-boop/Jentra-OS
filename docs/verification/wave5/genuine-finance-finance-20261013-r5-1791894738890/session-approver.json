@@ -1,0 +1,62 @@
+{
+  "actorId": "0635081d-08ea-4ad1-b7f2-ad2f8721f67d",
+  "factorId": "a9f65f8a-e10a-422b-b530-904dfdb64abf",
+  "sessionId": "896060d3-7442-4bcb-915c-5b2bde0b625c",
+  "aal": "aal2",
+  "factorStatus": "verified",
+  "serverObservedAt": "2026-10-13 12:32:30.078915+00",
+  "onlineAuthVerified": true,
+  "serverSessionRowVerified": true,
+  "constructedAalClaims": false,
+  "label": "approver",
+  "privateRecord": "runtime-phase-session-51bbe81c-0aa4-4bff-94d8-f9b5a4872c62.sealed.json",
+  "actualAuthTransport": [
+    {
+      "route": "/auth/v1/token?grant_type=password",
+      "method": "POST",
+      "startedAt": "2026-10-13T12:32:24.735Z",
+      "sentAt": "2026-10-13T12:32:24.878Z",
+      "finishedAt": "2026-10-13T12:32:25.220Z",
+      "connectionId": "w5-finance-96445fad-ccb6-4a49-a1f7-e5a077920e4f",
+      "status": 200,
+      "responseSha256": "2bf7868ee9f820c7eeb327cd8b13a9bdf34ed44440c550fc4af1e0ef8fe58502",
+      "responseBytes": 2227
+    },
+    {
+      "route": "/auth/v1/factors/a9f65f8a-e10a-422b-b530-904dfdb64abf/challenge",
+      "method": "POST",
+      "startedAt": "2026-10-13T12:32:25.221Z",
+      "sentAt": "2026-10-13T12:32:25.222Z",
+      "finishedAt": "2026-10-13T12:32:25.401Z",
+      "connectionId": "w5-finance-96445fad-ccb6-4a49-a1f7-e5a077920e4f",
+      "status": 200,
+      "responseSha256": "f6beac910a341e7ed8ddc3261eeb90785d6c8baae4369e5927543dabba6a5fc8",
+      "responseBytes": 83
+    },
+    {
+      "route": "/auth/v1/factors/a9f65f8a-e10a-422b-b530-904dfdb64abf/verify",
+      "method": "POST",
+      "startedAt": "2026-10-13T12:32:26.094Z",
+      "sentAt": "2026-10-13T12:32:26.095Z",
+      "finishedAt": "2026-10-13T12:32:26.345Z",
+      "connectionId": "w5-finance-96445fad-ccb6-4a49-a1f7-e5a077920e4f",
+      "status": 200,
+      "responseSha256": "1f4b5bfe264e497d1aab2be1d2e89f57da1ca3333b78442688d852adcb068c4a",
+      "responseBytes": 2257
+    },
+    {
+      "route": "/auth/v1/user",
+      "method": "GET",
+      "startedAt": "2026-10-13T12:32:26.345Z",
+      "sentAt": "2026-10-13T12:32:26.345Z",
+      "finishedAt": "2026-10-13T12:32:26.514Z",
+      "connectionId": "w5-finance-96445fad-ccb6-4a49-a1f7-e5a077920e4f",
+      "status": 200,
+      "responseSha256": "b06c17738606eca52b0f886a46df82c290b5fdc328a7755ba1ca0e6f69ecfa7e",
+      "responseBytes": 1273
+    }
+  ],
+  "existingUser": true,
+  "existingFactor": true,
+  "newUserOrFactorCreated": false
+}

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,7 +24,10 @@ final class _Employees implements EmployeeRepository {
   final commands = <CommandEnvelope<Map<String, Object?>>>[];
   String? failure, readFailure;
   bool failAfterConfirm = false;
+  String? afterConfirmReadFailure;
   Map<String, Object?>? employee;
+  Completer<void>? detailGate, commandGate;
+  int detailReads = 0;
 
   Map<String, Object?> record({int version = 1}) => {
     'id': 'employee',
@@ -88,6 +93,8 @@ final class _Employees implements EmployeeRepository {
     String asOfDate,
     String status,
   ) async {
+    detailReads++;
+    await detailGate?.future;
     _check();
     return employee ?? record();
   }
@@ -120,9 +127,12 @@ final class _Employees implements EmployeeRepository {
     CommandEnvelope<Map<String, Object?>> command,
   ) async {
     commands.add(command);
+    await commandGate?.future;
     if (failure != null) throw DomainError(code: failure!, message: failure!);
     employee = record(version: command.expectedEntityVersion! + 1);
-    if (failAfterConfirm) readFailure = 'READ_FAILED';
+    if (failAfterConfirm) {
+      readFailure = afterConfirmReadFailure ?? 'READ_FAILED';
+    }
     return employee!;
   }
 }
@@ -221,6 +231,33 @@ void main() {
     },
   );
 
+  for (final code in [
+    'PERMISSION_DENIED',
+    'FEATURE_NOT_ENTITLED',
+    'AUTHENTICATION_REQUIRED',
+  ]) {
+    test(
+      'HR audit: $code after employee confirmation still clears visible HR data',
+      () async {
+        await controller.initialize();
+        controller.beginCreate();
+        controller.edit('code', 'EMP-01');
+        controller.edit('display_name', 'Synthetic Employee');
+        controller.edit('job_title', 'Technician');
+        repository.failAfterConfirm = true;
+        repository.afterConfirmReadFailure = code;
+        await controller.submit();
+        expect(repository.commands, hasLength(1));
+        expect(controller.accessDenied, isTrue);
+        expect(controller.selected, isNull);
+        expect(controller.items, isEmpty);
+        expect(controller.events, isEmpty);
+        expect(controller.form, isNull);
+        expect(await drafts.load(scope, EmployeeController.slot), isNull);
+      },
+    );
+  }
+
   test('permission revocation clears loaded employee data', () async {
     repository.employee = repository.record();
     await controller.initialize();
@@ -232,6 +269,53 @@ void main() {
     expect(controller.items, isEmpty);
     expect(controller.selected, isNull);
     expect(controller.events, isEmpty);
+  });
+
+  test(
+    'HR audit: late employee detail stays erased after scope disposal',
+    () async {
+      repository.employee = repository.record();
+      await controller.initialize();
+      repository.detailGate = Completer<void>();
+      final request = controller.open('employee');
+      await Future<void>.delayed(Duration.zero);
+      expect(repository.detailReads, 1);
+      final oldController = controller;
+      oldController.dispose();
+      controller = make();
+      repository.detailGate!.complete();
+      await request;
+      expect(oldController.selected, isNull);
+      expect(oldController.items, isEmpty);
+      expect(oldController.events, isEmpty);
+    },
+  );
+
+  test('HR audit: late employee confirmation retains the original recovery receipt', () async {
+    await controller.initialize();
+    controller.beginCreate();
+    controller.edit('code', 'EMP-01');
+    controller.edit('display_name', 'Synthetic Employee');
+    controller.edit('job_title', 'Technician');
+    repository.commandGate = Completer<void>();
+    final request = controller.submit();
+    while (repository.commands.isEmpty) {
+      await Future<void>.delayed(Duration.zero);
+    }
+    final original = repository.commands.single.toJson((value) => value);
+    final oldController = controller;
+    oldController.dispose();
+    controller = make();
+    repository.commandGate!.complete();
+    await request;
+    final saved = await drafts.load(scope, EmployeeController.slot);
+    expect(saved?.pending?.envelope.toJson((value) => value), original);
+    expect(oldController.selected, isNull);
+    expect(oldController.form, isNull);
+    await controller.initialize();
+    await controller.submit();
+    expect(repository.commands.last.toJson((value) => value), original);
+    expect(await drafts.load(scope, EmployeeController.slot), isNull);
   });
 
   test(
@@ -364,9 +448,8 @@ void main() {
       MaterialApp(
         theme: JentraTheme.light(),
         builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(
-            context,
-          ).copyWith(textScaler: const TextScaler.linear(2)),
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: const TextScaler.linear(2)),
           child: child!,
         ),
         home: Scaffold(body: EmployeeWorkspace(controller: controller)),

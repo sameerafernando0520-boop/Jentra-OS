@@ -1,0 +1,268 @@
+{
+  "kind": "independent-source-only-runtime-finance-fixture-review",
+  "observedAt": "2026-10-13T12:20:39.583Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "bundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+  "operationScopeSha256": "fcdab89d242dc578793eba1d520ea0251699b70b7730c02aea94232805286e63",
+  "fixtureVerdict": "source-reviewed-for-exact-bounded-administration-fixture",
+  "wholeWorkflowVerdict": "changes-required-before-current-day-cash-execution",
+  "checkCount": 21,
+  "checks": [
+    {
+      "name": "Frozen owner decision, exact runtime company and original scope",
+      "passed": true
+    },
+    {
+      "name": "Exact generator binding: tools/wave5/finance_cash_fixture_20261013_r5.mjs",
+      "passed": true
+    },
+    {
+      "name": "Exact generator binding: tools/wave5/prepare_finance_fixture_20261013_r5.mjs",
+      "passed": true
+    },
+    {
+      "name": "Exact reviewed rollback bytes and source generation",
+      "passed": true
+    },
+    {
+      "name": "Exact reviewed commit bytes and source generation",
+      "passed": true
+    },
+    {
+      "name": "Rollback and commit differ only in final transaction decision",
+      "passed": true
+    },
+    {
+      "name": "Immutable bounded counts remain inside existing approved caps",
+      "passed": true
+    },
+    {
+      "name": "Nine distinct journals have exact two-sided positive six-place amounts",
+      "passed": true
+    },
+    {
+      "name": "Independent statement arithmetic: revenue",
+      "passed": true
+    },
+    {
+      "name": "Independent statement arithmetic: expenses",
+      "passed": true
+    },
+    {
+      "name": "Independent statement arithmetic: netProfit",
+      "passed": true
+    },
+    {
+      "name": "Independent statement arithmetic: assets",
+      "passed": true
+    },
+    {
+      "name": "Independent statement arithmetic: liabilities",
+      "passed": true
+    },
+    {
+      "name": "Independent statement arithmetic: equity",
+      "passed": true
+    },
+    {
+      "name": "Independent statement arithmetic: currentEarnings",
+      "passed": true
+    },
+    {
+      "name": "Independent accounting equation balances before the future reversal",
+      "passed": true
+    },
+    {
+      "name": "Opening and next-day payroll source amounts remain distinct",
+      "passed": true
+    },
+    {
+      "name": "Independent dated cash and hypothetical balances use opening obligations",
+      "passed": true
+    },
+    {
+      "name": "Collision stop and newly inserted-row-only updates precede mutations",
+      "passed": true
+    },
+    {
+      "name": "No account/role/approval/receipt fabrication or history bypass",
+      "passed": true
+    },
+    {
+      "name": "Source contract proves the same-day future-horizon blocker without a live call",
+      "passed": true
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "tools/wave5/review_finance_fixture_peer_20261013_r5.mjs",
+      "sha256": "22ef8ce1e718f2ede95a8b643b5e74b880c1eed0144f937f6873dbb983ecc306",
+      "bytes": 15476
+    },
+    {
+      "path": "tools/wave5/finance_cash_fixture_20261013_r5.mjs",
+      "sha256": "8d5e670368fd89a9e9a98f10aa4befc1f2bc4ed0b28de913aa89ee64766291f9",
+      "bytes": 20620
+    },
+    {
+      "path": "tools/wave5/prepare_finance_fixture_20261013_r5.mjs",
+      "sha256": "9bfa5d554cc78f17386b8c8d34d8f9ea0768b38d9663ec8fa4cf123e4f8144a9",
+      "bytes": 2567
+    },
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f",
+      "bytes": 31294
+    },
+    {
+      "path": "tools/wave5/runtime_fixture_spec.mjs",
+      "sha256": "71dd763620cab0ca896dd96c50193350f1926e67f481acfed9b7aaa4b519f2d2",
+      "bytes": 36370
+    },
+    {
+      "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+      "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+      "bytes": 1370575
+    },
+    {
+      "path": "docs/verification/wave5/runtime-owner-decision-20261012-r5.json",
+      "sha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab",
+      "bytes": 2756
+    },
+    {
+      "path": "docs/verification/wave5/finance-cash-fixture-preparation-20261013-r5-a1.json",
+      "sha256": "c1d11c1aa58aef646289060e6091c9c21f63176c0febca86823a6cb851fedd16",
+      "bytes": 3570
+    },
+    {
+      "path": "docs/verification/wave5/finance-cash-fixture-20261013-r5-a1-rollback.sql",
+      "sha256": "184a2f500264bd9fe40d29bde49f44592c17d398876060664af0a8a45c45a7bb",
+      "bytes": 20535
+    },
+    {
+      "path": "docs/verification/wave5/finance-cash-fixture-20261013-r5-a1-commit.sql",
+      "sha256": "233cb3065796d3cc5174506db010b81f5499df5aaa0dba37cb3140fb49e557ab",
+      "bytes": 20533
+    },
+    {
+      "path": "supabase/migrations/20260901090317_create_wave2_shared_foundation_schema.sql",
+      "sha256": "82886b14daf554e33dbe81d05827850b5fd7b3322a5f2bebe3e6958cbc608d86",
+      "bytes": 36682
+    },
+    {
+      "path": "supabase/migrations/20260910135010_complete_delivery_receivables.sql",
+      "sha256": "5e52d4ef7e7bd194c09484fd3c1f605a93a0d861cb6c078c69c26d269f1706eb",
+      "bytes": 122802
+    },
+    {
+      "path": "supabase/migrations/20260930070000_wave4_synthetic_payroll.sql",
+      "sha256": "5517cc4559c3f91901525b38ec8fbf03633da49c587a0d034a885405a43465b2",
+      "bytes": 106084
+    },
+    {
+      "path": "supabase/migrations/20261001110000_wave4_payroll_corrections.sql",
+      "sha256": "709170a703a5fd6808ba15de27a4b6cfcb33470da977203b960e2d04e67437cf",
+      "bytes": 113497
+    },
+    {
+      "path": "supabase/migrations/20261001100000_wave4_project_expenses_billing.sql",
+      "sha256": "0430f55698a28ee7c26a609bc982a96cbc20319d204c3d5546f9a6ae4272efef",
+      "bytes": 102406
+    },
+    {
+      "path": "supabase/migrations/20261008103000_wave5_dated_cash.sql",
+      "sha256": "24b5ab44250ec5239ab2b942277cb104867d8e67288666c6297d4fa694e4b391",
+      "bytes": 19954
+    },
+    {
+      "path": "supabase/migrations/20261008120000_wave5_cash_payment_dates.sql",
+      "sha256": "1463953b0fa76269740a732a59485ff3d160681fb2a6655eedbd8c0aeda42c8a",
+      "bytes": 35937
+    }
+  ],
+  "sourceBindingsUnchanged": true,
+  "plan": {
+    "path": "docs/verification/wave5/finance-cash-fixture-preparation-20261013-r5-a1.json",
+    "sha256": "c1d11c1aa58aef646289060e6091c9c21f63176c0febca86823a6cb851fedd16",
+    "bytes": 3570
+  },
+  "rollback": {
+    "path": "docs/verification/wave5/finance-cash-fixture-20261013-r5-a1-rollback.sql",
+    "sha256": "184a2f500264bd9fe40d29bde49f44592c17d398876060664af0a8a45c45a7bb"
+  },
+  "commit": {
+    "path": "docs/verification/wave5/finance-cash-fixture-20261013-r5-a1-commit.sql",
+    "sha256": "233cb3065796d3cc5174506db010b81f5499df5aaa0dba37cb3140fb49e557ab"
+  },
+  "scope": {
+    "key": "runtime",
+    "tenantId": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+    "entityId": "caa2bb06-219a-47e9-8132-66d1271b0ffd",
+    "branchId": "3813692c-f0de-4c69-8e34-d56cf54695b1"
+  },
+  "counts": {
+    "accounts": 10,
+    "journals": 9,
+    "journalLines": 18,
+    "openItems": 2,
+    "incidentalParties": 2,
+    "payrollObligations": 1,
+    "payrollCorrections": 1,
+    "projectReimbursements": 1,
+    "financialPublications": 3,
+    "classificationReviews": 1,
+    "cashScenarios": 2,
+    "governedExports": 4
+  },
+  "arithmetic": {
+    "revenue": "3000.000001",
+    "expenses": "1212.000005",
+    "netProfit": "1787.999996",
+    "assets": "103997.000003",
+    "liabilities": "1209.000005",
+    "equity": "101000.000002",
+    "currentEarnings": "1787.999996"
+  },
+  "openingCash": "99997.000001",
+  "openingPayroll": "7.000001",
+  "nextDayCurrentPayroll": "10.000001",
+  "cashFinalBalance": "101787.999997",
+  "hypotheticalFinalBalance": "101788.999998",
+  "findings": [
+    {
+      "id": "F-01",
+      "priority": "blocking-current-day-cash-workflow",
+      "title": "Future opening date is rejected by the actual source contract",
+      "source": "supabase/migrations/20261008103000_wave5_dated_cash.sql",
+      "lines": [
+        56,
+        59,
+        61
+      ],
+      "evidence": "Oct14 opening is after any actual Oct13 recordedThrough and is rejected. Moving to Oct13 midnight instead predates the newly created mapping. The v3 extension delegates unchanged to v2.",
+      "remediation": "Run independently valid financial statements, ratios and date approvals separately. Complete cash requires a real later observed clock and distinct current-source/opening-source payroll oracles, or an explicitly reviewed additive contract correction. Never backdate the mapping or fabricate future observedAt."
+    }
+  ],
+  "sourceFixtureIsAdministrative": true,
+  "operationalPayrollCalculationOrApprovalProved": false,
+  "genuineUserJournalPostingProved": false,
+  "actualRollbackObservedByPeer": false,
+  "actualCommitObservedByPeer": false,
+  "liveSqlCalls": 0,
+  "authWrites": 0,
+  "privateCredentialsRead": false,
+  "executedLive": false,
+  "providerNetworkCalls": 0,
+  "sdkJobs": 0,
+  "nativeActions": 0,
+  "ownerAcceptance": false,
+  "ownerAcceptedCriteria": 3,
+  "ownerCriteria": 109,
+  "production": false,
+  "realBilling": false,
+  "limitations": [
+    "This peer checked public source and exact arithmetic, not actual PostgreSQL constraints or a live fixture result.",
+    "The root must verify rollback/commit outcomes and protected-state hashes independently before claiming installed behavior.",
+    "Admin-issued payroll/project source rows are explicitly synthetic and do not establish Wave4 user preparation, approval or posting."
+  ]
+}

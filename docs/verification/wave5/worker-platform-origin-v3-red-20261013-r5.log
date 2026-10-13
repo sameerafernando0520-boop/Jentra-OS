@@ -1,0 +1,170 @@
+✖ exact platform HTTPS wave5-runtime/schedule selects the reviewed route (3.2301ms)
+✖ exact platform HTTPS wave5-runtime/external/forecast selects the reviewed route (0.2156ms)
+✖ exact platform HTTPS wave5-runtime/model/suggestion selects the reviewed route (0.1252ms)
+✖ exact platform HTTPS wave5-receiver/accept selects the reviewed route (0.1023ms)
+✖ exact platform HTTPS wave5-receiver/redirect selects the reviewed route (0.5403ms)
+✖ exact platform HTTPS wave5-receiver/timeout selects the reviewed route (0.108ms)
+✖ exact platform HTTPS wave5-receiver/reject selects the reviewed route (0.0906ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 0
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 118.1881
+
+✖ failing tests:
+
+test at workers\wave5\edge_route_platform_origin_20261013_r5_v3.test.mjs:15:3
+✖ exact platform HTTPS wave5-runtime/schedule selects the reviewed route (3.2301ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + null
+  - '/schedule'
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/edge_route_platform_origin_20261013_r5_v3.test.mjs:16:11)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.start (node:internal/test_runner/test:1003:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: '/schedule',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\edge_route_platform_origin_20261013_r5_v3.test.mjs:15:3
+✖ exact platform HTTPS wave5-runtime/external/forecast selects the reviewed route (0.2156ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + null
+  - '/external/forecast'
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/edge_route_platform_origin_20261013_r5_v3.test.mjs:16:11)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: '/external/forecast',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\edge_route_platform_origin_20261013_r5_v3.test.mjs:15:3
+✖ exact platform HTTPS wave5-runtime/model/suggestion selects the reviewed route (0.1252ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + null
+  - '/model/suggestion'
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/edge_route_platform_origin_20261013_r5_v3.test.mjs:16:11)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: '/model/suggestion',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\edge_route_platform_origin_20261013_r5_v3.test.mjs:15:3
+✖ exact platform HTTPS wave5-receiver/accept selects the reviewed route (0.1023ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  null !== '/accept'
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/edge_route_platform_origin_20261013_r5_v3.test.mjs:16:11)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: '/accept',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\edge_route_platform_origin_20261013_r5_v3.test.mjs:15:3
+✖ exact platform HTTPS wave5-receiver/redirect selects the reviewed route (0.5403ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + null
+  - '/redirect'
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/edge_route_platform_origin_20261013_r5_v3.test.mjs:16:11)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: '/redirect',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\edge_route_platform_origin_20261013_r5_v3.test.mjs:15:3
+✖ exact platform HTTPS wave5-receiver/timeout selects the reviewed route (0.108ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  null !== '/timeout'
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/edge_route_platform_origin_20261013_r5_v3.test.mjs:16:11)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: '/timeout',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\edge_route_platform_origin_20261013_r5_v3.test.mjs:15:3
+✖ exact platform HTTPS wave5-receiver/reject selects the reviewed route (0.0906ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  null !== '/reject'
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/edge_route_platform_origin_20261013_r5_v3.test.mjs:16:11)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: '/reject',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

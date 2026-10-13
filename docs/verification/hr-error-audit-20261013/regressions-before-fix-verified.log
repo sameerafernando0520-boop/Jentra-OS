@@ -1,0 +1,201 @@
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/employee_workspace_test.dart
+00:00 +0: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/employee_workspace_test.dart: (setUpAll)
+00:00 +0: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/employee_workspace_test.dart: HR audit: late employee detail stays erased after scope disposal
+00:00 +0 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/employee_workspace_test.dart: HR audit: late employee detail stays erased after scope disposal [E]
+  Expected: null
+    Actual: {
+              'id': 'employee',
+              'tenant_id': 'tenant',
+              'legal_entity_id': 'entity',
+              'branch_id': 'branch',
+              'code': 'EMP-01',
+              'display_name': 'Synthetic Employee',
+              'work_email': 'synthetic@jentra.test',
+              'version': 1,
+              'assignments': [
+                {
+                  'id': 'assignment',
+                  'spell_id': 'spell',
+                  'branch_id': 'branch',
+                  'start_date': '2026-09-20',
+                  'end_date_exclusive': null,
+                  'job_title': 'Technician',
+                  'employment_type': 'permanent'
+                }
+              ]
+            }
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\employee_workspace_test.dart 256:5             main.<fn>
+  
+00:00 +0 -1: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/employee_workspace_test.dart: HR audit: late employee confirmation retains the original recovery receipt
+00:00 +0 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/employee_workspace_test.dart: HR audit: late employee confirmation retains the original recovery receipt [E]
+  Expected: {
+              'command_id': 'ae93ba3c-4de5-44b8-8262-d8854321019c',
+              'idempotency_key': 'a42971de-0086-4a86-89d2-6cf4ffd24db2',
+              'context': {
+                'tenant_id': 'tenant',
+                'actor_id': 'actor',
+                'legal_entity_id': 'entity',
+                'branch_id': 'branch',
+                'warehouse_id': null,
+                'project_id': null
+              },
+              'expected_entity_version': 0,
+              'client_timestamp': '2026-10-13T15:40:49.761612Z',
+              'payload': {
+                'id': 'a97ea5c1-ff28-4cf8-beec-2d7ab4549816',
+                'code': 'EMP-01',
+                'display_name': 'Synthetic Employee',
+                'work_email': '',
+                'start_date': '2026-09-25',
+                'job_title': 'Technician',
+                'employment_type': 'permanent'
+              }
+            }
+    Actual: <null>
+     Which: expected a map
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\employee_workspace_test.dart 279:5             main.<fn>
+  
+00:00 +0 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/employee_workspace_test.dart: (tearDownAll)
+00:00 +0 -2: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/workforce_workspace_test.dart
+00:03 +0 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/workforce_workspace_test.dart: (setUpAll)
+00:03 +0 -2: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/workforce_workspace_test.dart: HR audit: failed employee switch clears all prior workforce records
+00:03 +0 -3: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/workforce_workspace_test.dart: HR audit: failed employee switch clears all prior workforce records [E]
+  Expected: empty
+    Actual: [Instance of 'AttendanceEntry']
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\workforce_workspace_test.dart 502:5            main.<fn>
+  
+00:03 +0 -3: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/workforce_workspace_test.dart: HR audit: employee switch clears records in inactive workforce views
+00:03 +0 -4: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/workforce_workspace_test.dart: HR audit: employee switch clears records in inactive workforce views [E]
+  Expected: empty
+    Actual: [Instance of 'LeaveRequest']
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\workforce_workspace_test.dart 512:5            main.<fn>
+  
+00:03 +0 -4: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/workforce_workspace_test.dart: HR audit: failed leave balance load cannot reuse another policy balance
+00:03 +0 -5: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/workforce_workspace_test.dart: HR audit: failed leave balance load cannot reuse another policy balance [E]
+  Expected: null
+    Actual: <Instance of 'LeaveBalance'>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\workforce_workspace_test.dart 524:5            main.<fn>
+  
+00:03 +0 -5: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/workforce_workspace_test.dart: (tearDownAll)
+00:03 +0 -5: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/private_hr_workspace_test.dart
+00:05 +0 -5: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/private_hr_workspace_test.dart: (setUpAll)
+00:05 +0 -5: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/private_hr_workspace_test.dart: HR audit: private response stays erased after disconnect
+00:05 +0 -6: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/private_hr_workspace_test.dart: HR audit: private response stays erased after disconnect [E]
+  Expected: null
+    Actual: <Instance of 'HrProfileState'>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\private_hr_workspace_test.dart 440:7           main.<fn>
+  
+00:05 +0 -6: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/private_hr_workspace_test.dart: HR audit: private response stays erased after disconnect and reconnect
+00:05 +0 -7: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/private_hr_workspace_test.dart: HR audit: private response stays erased after disconnect and reconnect [E]
+  Expected: null
+    Actual: <Instance of 'HrProfileState'>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\private_hr_workspace_test.dart 440:7           main.<fn>
+  
+00:05 +0 -7: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/private_hr_workspace_test.dart: HR audit: reconnect during an export dialog cannot write stale private content
+00:05 +0 -8: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/private_hr_workspace_test.dart: HR audit: reconnect during an export dialog cannot write stale private content [E]
+  Expected: null
+    Actual: [
+              123,
+              10,
+              32,
+              32,
+              34,
+              102,
+              111,
+              114,
+              109,
+              97,
+              116,
+              34,
+              58,
+              32,
+              34,
+              119,
+              52,
+              45,
+              104,
+              114,
+              45,
+              101,
+              120,
+              112,
+              ...
+            ]
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\private_hr_workspace_test.dart 461:5           main.<fn>
+  
+00:05 +0 -8: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/private_hr_workspace_test.dart: (tearDownAll)
+00:05 +0 -8: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_workspace_test.dart
+00:08 +0 -8: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_workspace_test.dart: (setUpAll)
+00:08 +0 -8: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_workspace_test.dart: HR audit: failed employee switch cannot relabel another employee payslips
+00:08 +0 -9: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_workspace_test.dart: HR audit: failed employee switch cannot relabel another employee payslips [E]
+  Expected: empty
+    Actual: [
+              {
+                'id': '30000000-0000-0000-0000-000000000001',
+                'employee_id': '20000000-0000-0000-0000-000000000001'
+              }
+            ]
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\payroll_workspace_test.dart 480:5              main.<fn>
+  
+00:08 +0 -9: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_workspace_test.dart: HR audit: failed employee switch clears prior payroll assignments
+00:08 +0 -10: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_workspace_test.dart: HR audit: failed employee switch clears prior payroll assignments [E]
+  Expected: empty
+    Actual: [
+              {
+                'id': '30000000-0000-0000-0000-000000000001',
+                'employee_id': '20000000-0000-0000-0000-000000000001'
+              }
+            ]
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\payroll_workspace_test.dart 493:5              main.<fn>
+  
+00:08 +0 -10: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_workspace_test.dart: (tearDownAll)
+00:08 +0 -10: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_correction_workspace_test.dart
+00:11 +0 -10: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_correction_workspace_test.dart: (setUpAll)
+00:11 +0 -10: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_correction_workspace_test.dart: HR audit: transient access-check failure does not permanently deny payroll corrections
+00:11 +0 -11: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_correction_workspace_test.dart: HR audit: transient access-check failure does not permanently deny payroll corrections [E]
+  Expected: false
+    Actual: <true>
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\payroll_correction_workspace_test.dart 464:5   main.<fn>
+  
+00:11 +0 -11: C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_correction_workspace_test.dart: (tearDownAll)
+00:11 +0 -11: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/employee_workspace_test.dart: HR audit: late employee confirmation retains the original recovery receipt
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/employee_workspace_test.dart: HR audit: late employee detail stays erased after scope disposal
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_correction_workspace_test.dart: HR audit: transient access-check failure does not permanently deny payroll corrections
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/payroll_workspace_test.dart: HR audit: failed employee switch cannot relabel another employee payslips
+  ... and 7 more

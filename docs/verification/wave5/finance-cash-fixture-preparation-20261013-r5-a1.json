@@ -1,0 +1,106 @@
+{
+  "kind": "source-bound-approved-runtime-finance-fixture-preparation",
+  "preparedAt": "2026-10-13T11:41:11.144Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "bundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+  "operationScopeSha256": "fcdab89d242dc578793eba1d520ea0251699b70b7730c02aea94232805286e63",
+  "fixture": {
+    "scope": {
+      "key": "runtime",
+      "tenantId": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "entityId": "caa2bb06-219a-47e9-8132-66d1271b0ffd",
+      "branchId": "3813692c-f0de-4c69-8e34-d56cf54695b1"
+    },
+    "calendar": {
+      "fixtureDay": "2026-10-13",
+      "issueDate": "2026-10-09",
+      "settlementDate": "2026-10-11",
+      "reversalDate": "2026-10-14",
+      "horizonStart": "2026-10-14",
+      "horizonEnd": "2026-10-21",
+      "dueDate": "2026-10-16",
+      "delayedDate": "2026-10-17"
+    },
+    "counts": {
+      "accounts": 10,
+      "journals": 9,
+      "journalLines": 18,
+      "openItems": 2,
+      "incidentalParties": 2,
+      "payrollObligations": 1,
+      "payrollCorrections": 1,
+      "projectReimbursements": 1,
+      "financialPublications": 3,
+      "classificationReviews": 1,
+      "cashScenarios": 2,
+      "governedExports": 4
+    },
+    "expected": {
+      "revenue": "3000.000001",
+      "expenses": "1212.000005",
+      "netProfit": "1787.999996",
+      "assets": "103997.000003",
+      "liabilities": "1209.000005",
+      "equity": "101000.000002",
+      "currentEarnings": "1787.999996",
+      "openingCash": "99997.000001",
+      "payrollOpening": "7.000001",
+      "payrollAfterReversal": "10.000001",
+      "recovery": "-2.000002",
+      "reimbursement": "4.000004",
+      "cashFinalBalance": "101787.999997",
+      "hypotheticalFinalBalance": "101788.999998",
+      "authoritativeNonemptyFamilies": [
+        "bank_cash",
+        "receivables",
+        "payables",
+        "payroll",
+        "project_reimbursements"
+      ]
+    },
+    "administrativeSourceFixture": true,
+    "userJournalPostingProved": false,
+    "operationalPayrollApprovalProved": false,
+    "incidentalNewCrmParties": 2,
+    "existingCrmRowsModified": false,
+    "permissionMutation": false,
+    "authMutation": false,
+    "existingRowsModified": false
+  },
+  "sourceBindings": [
+    {
+      "path": "tools/wave5/finance_cash_fixture_20261013_r5.mjs",
+      "sha256": "8d5e670368fd89a9e9a98f10aa4befc1f2bc4ed0b28de913aa89ee64766291f9"
+    },
+    {
+      "path": "tools/wave5/prepare_finance_fixture_20261013_r5.mjs",
+      "sha256": "9bfa5d554cc78f17386b8c8d34d8f9ea0768b38d9663ec8fa4cf123e4f8144a9"
+    }
+  ],
+  "rollback": {
+    "path": "docs/verification/wave5/finance-cash-fixture-20261013-r5-a1-rollback.sql",
+    "sha256": "184a2f500264bd9fe40d29bde49f44592c17d398876060664af0a8a45c45a7bb"
+  },
+  "commit": {
+    "path": "docs/verification/wave5/finance-cash-fixture-20261013-r5-a1-commit.sql",
+    "sha256": "233cb3065796d3cc5174506db010b81f5499df5aaa0dba37cb3140fb49e557ab"
+  },
+  "maximumCreatedJournals": 9,
+  "maximumCreatedLines": 18,
+  "maximumCreatedOpenItems": 2,
+  "existingScopesPreserved": true,
+  "exactRuntimeOnly": true,
+  "transactionCollisionGuard": true,
+  "allConstraintsEnabled": true,
+  "noAutomaticRetry": true,
+  "unknownOutcomeAction": "read exact intended IDs and hashes before any successor",
+  "actualRollbackExecuted": false,
+  "actualCommitExecuted": false,
+  "actualUserPosting": false,
+  "authOrRoleMutation": false,
+  "fabricatedAuthOrJwt": false,
+  "workerDeployment": false,
+  "ownerAcceptance": false,
+  "production": false,
+  "realBilling": false
+}
