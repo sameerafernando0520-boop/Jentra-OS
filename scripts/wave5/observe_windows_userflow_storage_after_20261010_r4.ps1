@@ -1,4 +1,4 @@
-// NEW r4 variant; preserved predecessor observe_windows_userflow_storage_after_20261010_r3.ps1 SHA-256 d5b45f089ad3f8bfa7a378034861a2911b18e2cb3f66448acce615c6762ab845.
+# NEW r4 variant; preserved predecessor observe_windows_userflow_storage_after_20261010_r3.ps1 SHA-256 d5b45f089ad3f8bfa7a378034861a2911b18e2cb3f66448acce615c6762ab845.
 $ErrorActionPreference='Stop'
 $testRoot=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $testBeforePath=Join-Path $testRoot 'docs/verification/wave5/windows-userflow-storage-before-20261010-r4.json'

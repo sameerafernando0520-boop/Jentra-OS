@@ -1,0 +1,39 @@
+{
+  "kind": "wave5-native-profile-helper-local-failed-attempt",
+  "recordedAt": "2026-10-13T10:17:42.360Z",
+  "helperPath": "scripts/wave5/prepare_native_runtime_profile_20261013_r5.ps1",
+  "helperSha256": "e7663697ac4f6e09a834ca999424f3ca04eca0338e6fb02621f8750d13941106",
+  "attempt": {
+    "command": "powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -File scripts/wave5/prepare_native_runtime_profile_20261013_r5.ps1 -Mode Validate",
+    "parser": {
+      "errors": [],
+      "tokenCount": 3028
+    },
+    "execChunkId": "e9f4e2",
+    "terminalSessionId": 55520,
+    "completionChunkId": "bdf212",
+    "exitCode": 1,
+    "result": {
+      "kind": "wave5-native-profile-setup-failure",
+      "startedAt": "2026-10-13T10:16:29.9004520+00:00",
+      "recordedAt": "2026-10-13T10:16:51.4297213+00:00",
+      "passed": false,
+      "failureCode": "LOCAL_ACCOUNT_LOOKUP_FAILED",
+      "exceptionType": "System.NullReferenceException",
+      "mode": "Validate",
+      "accountCreated": false,
+      "packageCreated": false,
+      "copiedReleaseFiles": 0,
+      "automaticRollbackOrDeletion": false,
+      "passwordPrintedOrSaved": false,
+      "nativeLaunched": false,
+      "nativeKeyboardVerified": false,
+      "existingAccountsAndStoresPreserved": true
+    }
+  },
+  "sourceDefectEstablished": false,
+  "nativeAccountOrPackageCreated": false,
+  "privateInputRead": false,
+  "SDKExecuted": false,
+  "networkCalls": 0
+}

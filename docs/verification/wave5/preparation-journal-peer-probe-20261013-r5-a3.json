@@ -1,0 +1,71 @@
+{
+  "kind": "controlled-wave5-preparation-journal-peer-probe",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "actualStartedAt": "2026-10-13T06:10:22.714Z",
+  "actualFinishedAt": "2026-10-13T06:10:22.717Z",
+  "filesBefore": [
+    {
+      "path": "tools/wave5/runtime_coordinator.mjs",
+      "sha256": "1df1396865610b73614f5ba9b83a8d9b91d40bb642e26d7443934ef11bcd0f3c",
+      "bytes": 35742
+    },
+    {
+      "path": "tools/wave5/supabase_runtime_provider.mjs",
+      "sha256": "44220571ab8980e69825ec96149fa855bd50d290e78f701ee0e17562be3074c0",
+      "bytes": 42943
+    },
+    {
+      "path": "tools/wave5/supabase_membership_fixture.mjs",
+      "sha256": "b39b636fe45cfc21e58f53cf6315d7cfaae606042f64d6869969ebbb380e0993",
+      "bytes": 10162
+    },
+    {
+      "path": "tools/wave5/probe_preparation_journal_20261013_r5.mjs",
+      "sha256": "a36dce300966d85ff931d9330ece5100fa2c1881912b48f6747ab6e1d3b051c7",
+      "bytes": 3800
+    }
+  ],
+  "filesAfter": [
+    {
+      "path": "tools/wave5/runtime_coordinator.mjs",
+      "sha256": "1df1396865610b73614f5ba9b83a8d9b91d40bb642e26d7443934ef11bcd0f3c",
+      "bytes": 35742
+    },
+    {
+      "path": "tools/wave5/supabase_runtime_provider.mjs",
+      "sha256": "44220571ab8980e69825ec96149fa855bd50d290e78f701ee0e17562be3074c0",
+      "bytes": 42943
+    },
+    {
+      "path": "tools/wave5/supabase_membership_fixture.mjs",
+      "sha256": "b39b636fe45cfc21e58f53cf6315d7cfaae606042f64d6869969ebbb380e0993",
+      "bytes": 10162
+    },
+    {
+      "path": "tools/wave5/probe_preparation_journal_20261013_r5.mjs",
+      "sha256": "a36dce300966d85ff931d9330ece5100fa2c1881912b48f6747ab6e1d3b051c7",
+      "bytes": 3800
+    }
+  ],
+  "selectedSourcesUnchanged": true,
+  "expectedCaseIntentBeforePreparation": true,
+  "entriesBeforePreparation": 1,
+  "entriesAfterUnknownPreparation": 1,
+  "entryTypes": [
+    "case-preparation-intent"
+  ],
+  "simulatedMutations": 1,
+  "failureCode": "UNCERTAIN_MUTATION_REQUIRES_REVIEW",
+  "passed": true,
+  "observedOriginalCaseIdInJournal": true,
+  "controlledOnly": true,
+  "executedLive": false,
+  "networkCalls": 0,
+  "databaseCalls": 0,
+  "authWrites": 0,
+  "realCredentialsRead": false,
+  "fabricatedJwtOrAuthRows": false,
+  "sdkJobs": 0,
+  "nativeActions": 0,
+  "limitation": "Tests coordinator ordering with a local preparer marker that throws. No actual fixture or server operation occurs. Membership baseline and individual setup RPC evidence need separate regression tests in the provider implementation."
+}

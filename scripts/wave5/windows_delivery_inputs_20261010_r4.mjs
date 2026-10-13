@@ -5,8 +5,8 @@ import {createHash} from 'node:crypto';
 import {lstat,readFile,readdir,realpath} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {parseTestLog,readZipEntries,zipEntryBytes} from './record_continuation_windows.mjs';
-import {executedTests} from './accounting_execution_verifier_20261010_r3.mjs';
+import {readZipEntries,zipEntryBytes} from './record_continuation_windows.mjs';
+import {auditInputs,auditStage,approvedSourcePath,execution} from './desktop_verification_inputs_20261010_r4.mjs';
 export {readZipEntries,zipEntryBytes};
 export const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 export const base='docs/verification/wave5/';
@@ -21,6 +21,7 @@ export async function bytes(p){const full=workspacePath(p);assert(!(await lstat(
 export const hash=async p=>sha(await bytes(p));
 export function logText(b){
  if(b.length>=2&&b[0]===0xff&&b[1]===0xfe)return b.subarray(2).toString('utf16le');
+ if(b.length>=2&&b[0]===0xfe&&b[1]===0xff){const swapped=Buffer.from(b.subarray(2));assert(swapped.length%2===0,'UTF16BE_LOG_LENGTH_INVALID');for(let i=0;i<swapped.length;i+=2)[swapped[i],swapped[i+1]]=[swapped[i+1],swapped[i]];return swapped.toString('utf16le');}
  return b.toString('utf8').replace(/^\uFEFF/,'');
 }
 export const json=async p=>JSON.parse((await bytes(p)).toString('utf8').replace(/^\uFEFF/,''));
@@ -44,43 +45,36 @@ export async function files(directory){
  await walk(directory);return result.sort((a,b)=>a.path.localeCompare(b.path));
 }
 export async function fullDesktop(source){
- const inputPath=base+'desktop-verification-source-20261010-r4.json',input=await json(inputPath);
- assert(input.revision==='r4'&&equal(input.sourceHashes,source.baseSourceHashes)&&input.selectedSources===Object.keys(source.baseSourceHashes).length,'R4_VERIFICATION_CURRENT_BASE_SOURCE_BINDING_REQUIRED');
- for(const pin of input.toolchain.tooling)assert(sha(await readFile(pin.path))===pin.sha256,'FROZEN_R4_TOOLCHAIN_CHANGED');
- // A preapproval package may be compiled while the separately recorded strict
- // comparison is pending owner image decisions. Never substitute old2004 here.
- const result={sourceManifest:inputPath,sourceManifestSha256:await hash(inputPath),fullSuitePassed:false,desktopAll:null,
-  focusedNonGolden:null,goldens83:null,rerunInIdentityOverlayTree:false,strictOwnerReviewPending:true,
-  boundary:'Fresh r4 controlled evidence only. Full desktop verification awaits an exact owner image decision and a new postapproval source/full-run record; earlier r3/r2 runs remain historical.'};
- for(const name of ['focusedNonGolden','goldens83']){
-  const recordPath=`${base}desktop-verification-${name}-20261010-r4.json`,record=await json(recordPath);
-  assert(record.stage===name&&record.status==='complete'&&record.spawnError===null&&record.integrityError===null&&record.sourceManifest.path===inputPath&&record.sourceManifest.sha256===result.sourceManifestSha256,'FRESH_R4_TEST_STAGE_REQUIRED:'+name);
-  const raw=await bytes(record.log),text=logText(raw),summary=parseTestLog(text);
-  assert(sha(raw)===record.logSha256&&summary&&summary.passedTests===record.counts.passed&&summary.failedTests===record.counts.failed&&summary.skippedTests===0&&record.counts.skipped===0,'R4_TEST_LOG_SUMMARY_BINDING_REQUIRED:'+name);
-  const stage=input.stages.find(s=>s.stage===name),expected=stage?.expectedTestIdentities;
-  assert(Array.isArray(expected)&&expected.length>0&&new Set(expected).size===expected.length,'FROZEN_R4_STAGE_IDENTITIES_REQUIRED:'+name);
-  const selectedFiles=[...new Set(expected.map(id=>id.slice(0,id.indexOf(': '))))].sort();
-  const identities=executedTests(text,record.workingDirectory,selectedFiles);
-  assert(identities.length===summary.passedTests+summary.failedTests&&new Set(identities).size===identities.length&&JSON.stringify(identities)===JSON.stringify([...expected].sort())&&JSON.stringify(record.actualTestIdentities)===JSON.stringify(identities),'EXACT_UNIQUE_R4_EXECUTED_IDENTITIES_REQUIRED:'+name);
-  for(const a of [record.inputAuditBefore,record.inputAuditAfter])assert(a?.currentSourceMatchesFrozenInputs===true&&a.warmSourceMatchesFrozenInputs===true&&a.selectedSources===input.selectedSources&&equal(a.sourceHashes,input.sourceHashes)&&JSON.stringify(a.toolchain)===JSON.stringify(input.toolchain),'R4_TEST_PRE_POST_SOURCE_SDK_GUARDS_REQUIRED:'+name);
-  if(name==='focusedNonGolden')assert(record.exitCode===0&&summary.allTestsPassed&&summary.failedTests===0,'R4_NON_GOLDEN_TESTS_MUST_PASS');
-  else{
-   assert(identities.length===83&&record.exitCode===(summary.failedTests?1:0),'STRICT83_EXIT_OR_COVERAGE_MISMATCH');
-   const allowed=input.declaredExpectedGoldenFailures??[];
-   const observed=summary.failures.map(f=>({testIdentity:f.name,goldenPath:f.golden})).sort((a,b)=>a.testIdentity.localeCompare(b.testIdentity));
-   assert(summary.failures.length===summary.failedTests&&summary.failures.every(f=>f.kind==='golden-comparison')&&
-    (!summary.failedTests||allowed.length===8&&JSON.stringify(observed)===JSON.stringify([...allowed].sort((a,b)=>a.testIdentity.localeCompare(b.testIdentity)))),'ONLY_EXACT_DECLARED_EIGHT_GOLDEN_FAILURES_ALLOWED');
-   result.strictOwnerReviewPending=summary.failedTests>0;
-  }
-  result[name]={record:recordPath,recordSha256:await hash(recordPath),log:record.log,logSha256:sha(raw),passedTests:summary.passedTests,failedTests:summary.failedTests,skippedTests:0,actualTestIdentities:identities,failures:summary.failures,finishedAt:record.finishedAt,workingDirectory:record.workingDirectory};
- }
- return result;
+ const inputPath=approvedSourcePath,input=await json(inputPath),inputSha256=await hash(inputPath);
+ assert(input.revision==='r4'&&input.postImageApproval===true&&equal(input.sourceHashes,source.baseSourceHashes)&&input.selectedSources===Object.keys(source.baseSourceHashes).length,'POSTAPPROVAL_R4_CURRENT_BASE_SOURCE_REQUIRED');
+ const auditBefore=await auditInputs(inputPath);
+ const recordPath=base+'desktop-verification-approvedAll-20261010-r4.json',completed=await auditStage('approvedAll'),record=completed.recordData;
+ assert(record.stage==='approvedAll'&&record.status==='complete'&&record.SDKExecuted===true&&record.exitCode===0&&record.spawnError===null&&record.integrityError===null&&record.fullSuitePassed===true&&record.sourceManifest.path===inputPath&&record.sourceManifest.sha256===inputSha256,'ACTUAL_POSTAPPROVAL_FULL_R4_SUITE_REQUIRED');
+ const stage=input.stages.find(s=>s.stage==='approvedAll'),expected=stage?.expectedTestIdentities??input.expectedTestIdentities;
+ assert(Array.isArray(expected)&&expected.length>0&&new Set(expected).size===expected.length,'FROZEN_POSTAPPROVAL_FULL_IDENTITIES_REQUIRED');
+ if(input.expectedTestIdentities)assert(JSON.stringify(input.expectedTestIdentities)===JSON.stringify(expected),'FULL_MANIFEST_IDENTITY_SCOPE_MISMATCH');
+ assert(record.workingDirectory===input.workingDirectory&&(!stage?.workingDirectory||record.workingDirectory===stage.workingDirectory)&&(!stage?.args||JSON.stringify(record.args)===JSON.stringify(stage.args)),'EXACT_POSTAPPROVAL_EXECUTION_SCOPE_REQUIRED');
+ const raw=await bytes(record.log),actual=execution(Buffer.from(logText(raw),'utf8'),record.workingDirectory,expected),summary=actual.parsed;
+ assert(sha(raw)===record.logSha256&&summary?.allTestsPassed&&summary.passedTests===expected.length&&summary.passedTests===record.counts.passed&&summary.failedTests===0&&summary.skippedTests===0&&record.counts.failed===0&&record.counts.skipped===0&&JSON.stringify(record.actualTestIdentities)===JSON.stringify(actual.identities),'EXACT_UNIQUE_POSTAPPROVAL_LOG_IDENTITIES_AND_COUNTS_REQUIRED');
+ for(const a of [record.inputAuditBefore,record.inputAuditAfter])assert(a?.currentSourceMatchesFrozenInputs===true&&a.warmSourceMatchesFrozenInputs===true&&a.selectedSources===input.selectedSources&&equal(a.sourceHashes,input.sourceHashes)&&JSON.stringify(a.toolchain)===JSON.stringify(input.toolchain)&&JSON.stringify(a.resolution)===JSON.stringify(input.resolution),'POSTAPPROVAL_TEST_PRE_POST_SOURCE_SDK_RESOLUTION_GUARDS_REQUIRED');
+ assert(input.exactApprovedImageDelta?.length===8,'EXACT_EIGHT_APPROVED_IMAGE_DELTA_REQUIRED');
+ for(const ref of [input.ownerImageDecision,input.promotion,input.original83Approval,input.original83Promotion])assert(ref?.path&&ref.sha256===await hash(ref.path),'EXACT_IMAGE_DECISION_AND_PROMOTION_BINDINGS_REQUIRED');
+ const auditAfter=await auditInputs(inputPath);
+ assert(auditBefore.sourceManifest.sha256===auditAfter.sourceManifest.sha256&&await hash(inputPath)===inputSha256,'POSTAPPROVAL_INPUT_CHANGED_DURING_FULL_RUN_AUDIT');
+ return {record:recordPath,recordSha256:await hash(recordPath),sourceManifest:inputPath,sourceManifestSha256:inputSha256,
+  log:record.log,logSha256:sha(raw),passedTests:summary.passedTests,failedTests:0,skippedTests:0,fullSuitePassed:true,
+  sdkExitRecord:{path:record.sdkExitRecord,sha256:record.sdkExitRecordSha256},runner:record.runner,inputAuditor:record.inputAuditor,
+  actualTestIdentities:actual.identities,testFiles:actual.actualFiles.length,finishedAt:record.finishedAt,workingDirectory:record.workingDirectory,toolchain:input.toolchain,
+  original83Approval:{path:input.original83Approval.path,sha256:input.original83Approval.sha256},original83Promotion:{path:input.original83Promotion.path,sha256:input.original83Promotion.sha256},
+  ownerImageDecision:{path:input.ownerImageDecision.path,sha256:input.ownerImageDecision.sha256},promotion:{path:input.promotion.path,sha256:input.promotion.sha256},
+  exactApprovedImageDelta:input.exactApprovedImageDelta,rerunInIdentityOverlayTree:false,strictOwnerReviewPending:false,
+  boundary:'Fresh actual approvedAll execution in the exact postapproval r4 verification tree. Ordinary Windows copies share every base input with exactly three identity overlays; the suite was not rerun in those identity copies. Native user actions and authenticated runtime acceptance remain separate.'};
 }
 export async function stageEvidence(mode,stage,attempt='a1'){
- assert(['Preview','Connected'].includes(mode)&&/^[a-z][a-z0-9]{0,8}$/.test(attempt),'STAGE_MODE_OR_ATTEMPT_INVALID');
+ assert(['Preview','Connected'].includes(mode)&&['pubget','analyzer','build'].includes(stage)&&/^[a-z][a-z0-9]{0,8}$/.test(attempt),'STAGE_MODE_OR_ATTEMPT_INVALID');
  const recordPath=`${base}windows-test-${mode.toLowerCase()}-${stage}-20261010-r4-${attempt}.json`,record=await json(recordPath);
  const snapshot=path.join(root,'build/w5win10r4',mode.toLowerCase());
- assert(record.mode===mode&&record.stage===stage&&record.revision==='r4'&&record.date==='20261010'&&record.attempt===attempt&&record.exitCode===0&&record.failure===null&&record.SDKExecuted===true,'PASSED_EXACT_SDK_STAGE_REQUIRED');
+ assert(record.mode===mode&&record.stage===stage&&record.revision==='r4'&&record.date==='20261010'&&record.attempt===attempt&&record.status==='complete'&&record.passed===true&&record.exitCode===0&&record.failure===null&&record.SDKExecuted===true,'PASSED_EXACT_SDK_STAGE_REQUIRED');
  assert(path.resolve(record.workingDirectory)===(stage==='build'?path.join(snapshot,'apps/jentra_desktop'):snapshot),'SDK_STAGE_WORKING_DIRECTORY_MISMATCH');
  const manifestPath=`${base}windows-test-${mode.toLowerCase()}-source-20261010-r4.json`;
  for(const guard of [record.sourceGuardBefore,record.sourceGuardAfter])assert(guard?.currentSourceMatches===true&&guard.snapshotSourceMatches===true&&guard.manifest.path===manifestPath&&guard.manifest.sha256===await hash(manifestPath),'BEFORE_AFTER_SOURCE_GUARDS_REQUIRED');
@@ -96,11 +90,14 @@ export async function stageEvidence(mode,stage,attempt='a1'){
     (stage==='pubget'||guard.resolutionChanged===false),'SDK_TOOLCHAIN_AND_RESOLUTION_GUARDS_REQUIRED');
   const preparation=await json(base+'windows-userflow-preparation-20261010-r4.json');
   const approved=await json(preparation.approvedInput.path);
+  assert(approved.postImageApproval===true&&preparation.approvedInput.path===approvedSourcePath&&preparation.approvedInput.sha256===await hash(approvedSourcePath)&&preparation.fullDesktopEvidence.fullSuitePassed===true,'POSTAPPROVAL_STAGE_INPUT_REQUIRED');
   assert(guard.before.preparationSha256===await hash(base+'windows-userflow-preparation-20261010-r4.json')&&guard.after.preparationSha256===guard.before.preparationSha256,'TOOLGUARD_PREPARATION_DRIFT');
   for(const observation of [guard.before,guard.after]){
    assert(observation.approvedInputSha256===await hash(preparation.approvedInput.path),'TOOLGUARD_BASE_INPUT_DRIFT');
    assert(JSON.stringify(observation.tooling)===JSON.stringify(approved.toolchain.tooling),'EXACT_FOUR_APPROVED_TOOLCHAIN_PINS_REQUIRED');
+   assert(equal(observation.scripts,preparation.scriptBindings),'TOOLGUARD_EXACT_SCRIPT_SET_REQUIRED');
    for(const [p,h] of Object.entries(observation.scripts))assert(await hash(p)===h,'TOOLGUARD_SCRIPT_DRIFT');
+   assert(JSON.stringify(observation.resolution.map(r=>r.path))===JSON.stringify(['.dart_tool/package_config.json','.dart_tool/package_graph.json'].map(p=>relative(path.join(snapshot,p)))),'EXACT_SNAPSHOT_RESOLUTION_PATHS_REQUIRED');
    for(const resolved of observation.resolution){
     if(stage==='pubget'&&observation===guard.before&&resolved.exists===false)assert(resolved.sha256===null,'MISSING_PRE_PUBGET_RESOLUTION_SHOULD_HAVE_NULL_HASH');
     else assert(resolved.exists===true&&(stage==='pubget'&&observation===guard.before||await hash(resolved.path)===resolved.sha256),'PACKAGE_RESOLUTION_DRIFT');
@@ -108,7 +105,7 @@ export async function stageEvidence(mode,stage,attempt='a1'){
   }
   assert(record.sdkExitRecord===recordPath.replace(/\.json$/,'.sdk-exit.json'),'EXACT_SDK_EXIT_SIDECAR_PATH_REQUIRED');
   const sdkExit=await json(record.sdkExitRecord);
-  assert(record.sdkExitCode===0&&sdkExit.sdkExitCode===0&&sdkExit.mode===mode&&sdkExit.stage===stage&&sdkExit.attempt===attempt&&record.sdkExitRecordSha256===await hash(record.sdkExitRecord),'DURABLE_ACTUAL_SDK_EXIT_REQUIRED');
+  assert(record.sdkExitCode===0&&sdkExit.sdkExitCode===0&&sdkExit.mode===mode&&sdkExit.stage===stage&&sdkExit.attempt===attempt&&sdkExit.revision==='r4'&&sdkExit.date==='20261010'&&sdkExit.workingDirectory===record.workingDirectory&&sdkExit.executable===record.executable&&JSON.stringify(sdkExit.args)===JSON.stringify(record.args)&&equal(sdkExit.sourceGuardBefore,record.sourceGuardBefore)&&record.sdkExitRecordSha256===await hash(record.sdkExitRecord),'DURABLE_ACTUAL_SDK_EXIT_REQUIRED');
   assert(record.runner==='scripts/wave5/run_windows_userflow_20261010_r4.ps1'&&record.runnerSha256===await hash(record.runner),'CORRECTED_RUNNER_BINDING_REQUIRED');
   assert(guard.before.scripts[record.runner]===record.runnerSha256&&guard.after.scripts[record.runner]===record.runnerSha256,'TOOLGUARD_CORRECTED_RUNNER_SHA_MISMATCH');
   record.toolchainGuard={path:guardPath,sha256:await hash(guardPath),before:guard.before,after:guard.after};

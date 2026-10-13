@@ -1,4 +1,4 @@
-// NEW r4 variant; preserved predecessor finalize_windows_userflow_20261010_r3_a2.ps1 SHA-256 05bc2fd2eb77a0abe95a34a7d8386547aa789f9b90eafeb6dd07f54a05b58b29.
+# NEW r4 variant; preserved predecessor finalize_windows_userflow_20261010_r3_a2.ps1 SHA-256 05bc2fd2eb77a0abe95a34a7d8386547aa789f9b90eafeb6dd07f54a05b58b29.
 $ErrorActionPreference='Stop'
 function Get-TestSha256([string]$Path){$testHashStream=[IO.File]::OpenRead($Path);$testHasher=[Security.Cryptography.SHA256]::Create();try{return ([BitConverter]::ToString($testHasher.ComputeHash($testHashStream))).Replace('-','').ToLowerInvariant()}finally{$testHashStream.Dispose();$testHasher.Dispose()}}
 $testRoot=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))

@@ -1,0 +1,1060 @@
+{
+  "kind": "actual-native-preview-userflow-observations",
+  "startedAt": "2026-10-11T11:53:49.256Z",
+  "revision": "r5",
+  "mode": "Preview",
+  "executable": "C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+  "executableSha256": "9c3a188cce375c5863d28c30e65b148f7f1c8114dab0499712b1dffcdbebfa51",
+  "package": {
+    "path": "docs/verification/wave5/windows-test-preview-package-20261010-r5.json",
+    "sha256": "09e1a0eccd61e791edef5579db991d92a7f319aa181051a0088c2c16d0e2ca74"
+  },
+  "sourceManifest": {
+    "path": "docs/verification/wave5/windows-test-preview-source-20261010-r5.json",
+    "sha256": "9e33df196df8e58772f675d33677f532cb9f8460370cf440f60ed3f3bccacd12"
+  },
+  "prelaunchPathObservation": {
+    "path": "docs/verification/wave5/windows-userflow-storage-before-20261010-r5.json",
+    "sha256": "fafee7f9083827674a7c4ce3a1626ba663871a78d98708568f6392d45d22ff24"
+  },
+  "recorder": {
+    "path": "scripts/wave5/record_native_preview_observations_20261010_r5.mjs",
+    "sha256": "aed44a14987fe3fc477eeb3ee593ee82e8faadb8bc3ec9f825771d3037ba49d6"
+  },
+  "predecessor": {
+    "path": "scripts/wave5/record_native_preview_observations_20261010_r4.mjs",
+    "sha256": "c7b8cbd5d0a22468851f21fdd070060902cc64200090e6f38b1f636f22ae17b0"
+  },
+  "historicalPredecessor": {
+    "path": "scripts/wave5/record_native_preview_observations_20261010_r3.mjs",
+    "sha256": "0b111194571c225cb1962c6cf2f2d56c63d2579e013788621f1ba86b1cb4a8fa"
+  },
+  "inputToolEvidence": {
+    "provider": "@oai/sky",
+    "bridge": "node_repl",
+    "documentationBundle": "computer-use/26.1007.21434",
+    "documentationObservedAt": "2026-10-11T10:58:04.422Z",
+    "currentReadDocs": [
+      {
+        "path": "C:/Users/sheha/.codex/plugins/cache/openai-bundled/computer-use/26.1007.21434/skills/computer-use/SKILL.md",
+        "sha256": "8211e4b11a19a0dc4f0ace91096c74c5b36037ca4cb2c8988f0f535bb209e951"
+      },
+      {
+        "path": "C:/Users/sheha/.codex/plugins/cache/openai-bundled/computer-use/26.1007.21434/docs/api.md",
+        "sha256": "c36d005fb98ed79837a1a5d4605ebad036cec95864e5646f451425163d5c16af"
+      },
+      {
+        "path": "C:/Users/sheha/.codex/plugins/cache/openai-bundled/computer-use/26.1007.21434/docs/guidance.md",
+        "sha256": "b171b26bc19f49226bb594bf3ed3f36666e5dd063a996c297986b2b461ac8efd"
+      },
+      {
+        "path": "C:/Users/sheha/.codex/plugins/cache/openai-bundled/computer-use/26.1007.21434/docs/confirmations.md",
+        "sha256": "9c45b3eb20e4a7fb14860e50f635e200b321a52fef6d26f39f7b936bd44be11a"
+      }
+    ],
+    "documentationReadToolChunks": [
+      "35729e",
+      "8f3df7",
+      "118c44"
+    ],
+    "packageVersion": null,
+    "packageVersionVerified": false,
+    "localStorageNamespaceAudit": {
+      "path": "docs/verification/wave5/native-local-storage-namespace-audit-20261011-r5.json",
+      "sha256": "c806fc271dc7ae33b873090df64ac2e75842e7b5ca7315d9f5f89fff384790bf"
+    }
+  },
+  "inputToolVersionIsSeparateFromProductSdk": true,
+  "productSdk": {
+    "frameworkVersion": "3.47.5",
+    "channel": "stable",
+    "repositoryUrl": "https://github.com/flutter/flutter.git",
+    "frameworkRevision": "6a19cca56475dbfba1478ee68d7bd0c2ef891da1",
+    "frameworkCommitDate": "2026-09-17 14:13:22 -0400",
+    "engineRevision": "af7e796e161ae0bb1ff0758c71a7105418bd9ded",
+    "engineCommitDate": "2026-09-16 18:35:09.000Z",
+    "engineContentHash": "ab598368592da0064197e2bc15c7f5b0a2c6bb1f",
+    "engineBuildDate": "2026-09-17 01:05:21.428",
+    "dartSdkVersion": "3.13.4",
+    "devToolsVersion": "2.60.0",
+    "flutterVersion": "3.47.5"
+  },
+  "productSuiteObservedAt": "2026-10-10T15:26:33.587Z",
+  "productBuildEvidence": {
+    "path": "docs/verification/wave5/windows-test-preview-build-20261010-r5-a1.json",
+    "sha256": "99ce8012e2e63a243b776e6d248996cb3419b1971b43e019e8855722b2866a9a"
+  },
+  "actorLabel": "unconfigured development Preview",
+  "observations": [
+    {
+      "id": "N01_LAUNCH",
+      "observedAt": "2026-10-11T11:54:48.713Z",
+      "action": "Launch the exact packaged ordinary Preview executable and inspect its initial window.",
+      "expected": "Preview loads with sample-data and Development labels, without authentication.",
+      "observed": "The returned r5 Preview window shows Command centre, Preview metrics, sample date range and Development / Preview data. No login dialog is present.",
+      "result": "pass",
+      "inputApi": "sky.launch_app",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t78 group\n\t\t\t\t79 group\n\t\t\t\t\t80 group\n\t\t\t\t\t\t81 group\n\t\t\t\t\t\t\t82 group\n\t\t\t\t\t\t\t\t83 group\n\t\t\t\t\t\t\t\t\t84 text YOUR BUSINESS, IN PERSPECTIVE\n\t\t\t\t\t\t\t\t\t85 text Good morning, Shehan\n\t\t\t\t\t\t\t\t\t86 text One connected view of cash, decisions, and daily operations.\n\t\t\t\t\t\t\t\t\t87 text Status: Preview metrics\n\t\t\t\t\t\t\t\t\t88 text Sample data · 01 Aug – 31 Aug 2026\n\t\t\t\t\t\t\t\t\t89 text Net revenue: LKR 12.84M, +8.4% vs last month\n\t\t\t\t\t\t\t\t\t90 text Cash available: LKR 6.28M, 14.2 weeks runway\n\t\t\t\t\t\t\t\t\t91 text Receivables due: LKR 3.41M, LKR 620K overdue\n\t\t\t\t\t\t\t\t\t92 text Gross margin: 31.8%, +1.9 pts this month\n\t\t\t\t\t\t\t\t\t93 group Cash position 13-week actual and forecast · sample series Illustrative cash position in LKR millions. Solid blue shows actual values through week 8. Dashed teal shows the forecast from week 8 to week 13. This is sample data, not a live business forecast. Actual Forecast Illustrative forecast\n\t\t\t\t\t\t\t\t\t\t94 text Status: LKR\n\t\t\t\t\t\t\t\t\t95 group Needs your attention Example approvals and exceptions Purchase order PO-2026-00842 LKR 486,250 Supplier payment PAY-2026-00318 LKR 218,900 Expense claim EXP-2026-00194 LKR 42,700 Stock adjustment ADJ-2026-00027 14 items Preview queue · 4 of 7 example items\n\t\t\t\t\t\t\t\t\t\t96 text Status: 7 open\n\t\t\t\t\t\t\t\t\t97 group Operating flows Median cycle time and handoff health across the business Lead to cash 4.8 days Successful handoffs Procure to pay 6.2 days Successful handoffs Inventory to ledger 18 min Successful handoffs Service to resolution 7.4 hrs Successful handoffs\n\t\t\t\t\t\t\t\t\t\t98 text Status: Sample model\n\t\t\t\t\t\t\t\t\t\t99 text Status: 92%\n\t\t\t\t\t\t\t\t\t\t100 text Status: 84%\n\t\t\t\t\t\t\t\t\t\t101 group (settable, string) Lead to cash successful handoffs Value: 92%\n\t\t\t\t\t\t\t\t\t\t\t102 text (settable, string) Value: 92\n\t\t\t\t\t\t\t\t\t\t103 group (settable, string) Procure to pay successful handoffs Value: 84%\n\t\t\t\t\t\t\t\t\t\t\t104 text (settable, string) Value: 84\n\t\t\t\t\t\t\t\t\t\t105 text Status: 98%\n\t\t\t\t\t\t\t\t\t\t106 text Status: 89%\n\t\t\t\t\t\t\t\t\t\t107 group (settable, string) Inventory to ledger successful handoffs Value: 98%\n\t\t\t\t\t\t\t\t\t\t\t108 text (settable, string) Value: 98\n\t\t\t\t\t\t\t\t\t\t109 group (settable, string) Service to resolution successful handoffs Value: 89%\n\t\t\t\t\t\t\t\t\t\t\t110 text (settable, string) Value: 89\n\t\t\t\t\t\t\t\t\t111 group Recent business activity A preview of how activity connects across your workspace INV-2026-01084 Sales invoice posted Lanka Office Mart LKR 328,400 S. Perera · 09:42 GRN-2026-00471 Goods receipt completed Ceylon Parts Co. 42 units N. Fernando · 09:18 PAY-2026-00318 Payment submitted Metro Logistics LKR 218,900 A. Silva · 08:56 SRV-2026-00149 Work order fulfilled Serendib Foods 3.2 hours R. Iqbal · 08:31\n\t\t\t\t\t\t\t\t\t\t112 text Status: Sample events\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t39 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Maximize\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N01_LAUNCH-0.jpg",
+          "sha256": "359f990efef71cfde8d77c6919afc8ac7deb2a6601f947769255d2b2aec80828",
+          "bytes": 91810,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "N02_MOUSE_PALETTE",
+      "observedAt": "2026-10-11T11:56:00.982Z",
+      "action": "Click the visible command-search icon and inspect the completed dialog.",
+      "expected": "Permission-aware command palette opens with a focused search field.",
+      "observed": "Palette lists seven destinations and Permission-aware; accessibility and visible caret identify the search edit as focused.",
+      "result": "pass",
+      "inputApi": "sky.click",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "463 edit (settable, string) Search modules, records, or commands…",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t458 group\n\t\t\t\t459 group\n\t\t\t\t\t460 group\n\t\t\t\t\t\t461 group\n\t\t\t\t\t\t\t462 group ↑↓ Navigate Enter Open\n\t\t\t\t\t\t\t\t463 edit (settable, string) Search modules, records, or commands…\n\t\t\t\t\t\t\t\t464 group\n\t\t\t\t\t\t\t\t\t465 button Command centre WORKSPACE\n\t\t\t\t\t\t\t\t\t466 button Business setup FOUNDATION\n\t\t\t\t\t\t\t\t\t467 button Sales OPERATIONS\n\t\t\t\t\t\t\t\t\t468 button Procurement Workspace\n\t\t\t\t\t\t\t\t\t469 button Finance MANAGEMENT\n\t\t\t\t\t\t\t\t\t470 button Jentra Control INTELLIGENCE\n\t\t\t\t\t\t\t\t\t471 button Design system SYSTEM\n\t\t\t\t\t\t\t\t472 text Status: Permission-aware\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t39 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Maximize\n\t\t\t42 button Close\n\nThe focused UI element is 463 edit (settable, string) Search modules, records, or commands…."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N02_MOUSE_PALETTE-0.jpg",
+          "sha256": "fcb43e48a3178a6c426e7dc78a0ccd2755ab3d98dece87698729f118ead409ea",
+          "bytes": 68508,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "K01_PHYSICAL_A",
+      "observedAt": "2026-10-11T11:56:14.719Z",
+      "action": "Press physical a in the focused search field.",
+      "expected": "Search value is a.",
+      "observed": "The focused edit and screenshot show a; filtered routes are visible.",
+      "result": "pass",
+      "inputApi": "sky.press_key",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "508 edit (settable, string) Value: a",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t503 group\n\t\t\t\t504 group\n\t\t\t\t\t505 group\n\t\t\t\t\t\t506 group\n\t\t\t\t\t\t\t507 group ↑↓ Navigate Enter Open\n\t\t\t\t\t\t\t\t508 edit (settable, string) Value: a\n\t\t\t\t\t\t\t\t509 group\n\t\t\t\t\t\t\t\t\t510 button Command centre WORKSPACE\n\t\t\t\t\t\t\t\t\t511 button Sales OPERATIONS\n\t\t\t\t\t\t\t\t\t512 button Finance MANAGEMENT\n\t\t\t\t\t\t\t\t\t513 button Jentra Control INTELLIGENCE\n\t\t\t\t\t\t\t\t514 text Status: Permission-aware\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t39 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Maximize\n\t\t\t42 button Close\n\nThe focused UI element is 508 edit (settable, string) Value: a."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/K01_PHYSICAL_A-0.jpg",
+          "sha256": "ccbc298df881a7d8c8ad77fe9e5cc2e8db09a1d1a414351956aad329b21d6052",
+          "bytes": 66625,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "K02_PHYSICAL_B",
+      "observedAt": "2026-10-11T11:56:26.637Z",
+      "action": "Press physical b after a.",
+      "expected": "Search value is ab.",
+      "observed": "Focused edit reads ab and no commands match.",
+      "result": "pass",
+      "inputApi": "sky.press_key",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "532 edit (settable, string) Value: ab",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t527 group\n\t\t\t\t528 group\n\t\t\t\t\t529 group\n\t\t\t\t\t\t530 group\n\t\t\t\t\t\t\t531 group ↑↓ Navigate Enter Open\n\t\t\t\t\t\t\t\t532 edit (settable, string) Value: ab\n\t\t\t\t\t\t\t\t533 group\n\t\t\t\t\t\t\t\t\t534 text No commands match your search.\n\t\t\t\t\t\t\t\t535 text Status: Permission-aware\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t39 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Maximize\n\t\t\t42 button Close\n\nThe focused UI element is 532 edit (settable, string) Value: ab."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/K02_PHYSICAL_B-0.jpg",
+          "sha256": "47af06157efe40e09d456606cbe33a26ffc6412b0896e69adcb4ad80b640a75e",
+          "bytes": 67790,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "K03_PHYSICAL_C",
+      "observedAt": "2026-10-11T11:56:40.193Z",
+      "action": "Press physical c after ab.",
+      "expected": "Search value is abc.",
+      "observed": "Focused edit and screenshot show abc.",
+      "result": "pass",
+      "inputApi": "sky.press_key",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "559 edit (settable, string) Value: abc",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t554 group\n\t\t\t\t555 group\n\t\t\t\t\t556 group\n\t\t\t\t\t\t557 group\n\t\t\t\t\t\t\t558 group ↑↓ Navigate Enter Open\n\t\t\t\t\t\t\t\t559 edit (settable, string) Value: abc\n\t\t\t\t\t\t\t\t560 group\n\t\t\t\t\t\t\t\t\t561 text No commands match your search.\n\t\t\t\t\t\t\t\t562 text Status: Permission-aware\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t39 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Maximize\n\t\t\t42 button Close\n\nThe focused UI element is 559 edit (settable, string) Value: abc."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/K03_PHYSICAL_C-0.jpg",
+          "sha256": "443974435ebdcc6f2d3b1551fb5438abc32dd1ac5680fe6315dcb151c2baf550",
+          "bytes": 67863,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "K04_CTRL_A_CONTROL",
+      "observedAt": "2026-10-11T11:57:08.083Z",
+      "action": "With visibly focused abc search, press Control_L+a, then physical f, refreshing after each action.",
+      "expected": "Select-all replaces abc with f.",
+      "observed": "The final focused edit reads abcf. Physical character delivery passes, while this chord did not produce select-all. Product-versus-input-tool cause remains unconfirmed.",
+      "result": "fail",
+      "inputApi": "sky.press_key",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "577 edit (settable, string) Value: abcf",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t572 group\n\t\t\t\t573 group\n\t\t\t\t\t574 group\n\t\t\t\t\t\t575 group\n\t\t\t\t\t\t\t576 group ↑↓ Navigate Enter Open\n\t\t\t\t\t\t\t\t577 edit (settable, string) Value: abcf\n\t\t\t\t\t\t\t\t578 group\n\t\t\t\t\t\t\t\t\t579 text No commands match your search.\n\t\t\t\t\t\t\t\t580 text Status: Permission-aware\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t39 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Maximize\n\t\t\t42 button Close\n\nThe focused UI element is 577 edit (settable, string) Value: abcf."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/K04_CTRL_A_CONTROL-0.jpg",
+          "sha256": "2cf21c3a26cf1f064383d884445ac11f5094061d921d4d091083bfd113cad349",
+          "bytes": 67766,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "K05_ESCAPE",
+      "observedAt": "2026-10-11T11:57:37.818Z",
+      "action": "Press Escape and inspect after the closing animation.",
+      "expected": "The command palette closes.",
+      "observed": "The settled screenshot shows the unobscured dashboard and search tooltip; the accessibility tree still retains stale dialog nodes and is not used as focus proof.",
+      "result": "pass",
+      "inputApi": "sky.press_key",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "595 edit (settable, string) Value: abcf",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t590 group\n\t\t\t\t591 group\n\t\t\t\t\t592 group\n\t\t\t\t\t\t593 group\n\t\t\t\t\t\t\t594 group ↑↓ Navigate Enter Open\n\t\t\t\t\t\t\t\t595 edit (settable, string) Value: abcf\n\t\t\t\t\t\t\t\t596 group\n\t\t\t\t\t\t\t\t\t597 text No commands match your search.\n\t\t\t\t\t\t\t\t598 text Status: Permission-aware\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t39 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Maximize\n\t\t\t42 button Close\n\nThe focused UI element is 595 edit (settable, string) Value: abcf."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/K05_ESCAPE-0.jpg",
+          "sha256": "0f016e5624479a6b0ce112398bc8b5b5d8513a2e2c95ceccd51414e7da4a3451",
+          "bytes": 93738,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "N03_SETUP_GUIDANCE",
+      "observedAt": "2026-10-11T11:59:05.188Z",
+      "action": "Open Business setup and inspect its settled page.",
+      "expected": "Development preview and explicit memory/reset/no-server guidance appear with scoped example accounts.",
+      "observed": "Business setup shows Development preview; examples stay in memory and reset when refreshed and are not saved to a server. Scope is Jentra Holdings / Jentra Trading / Head Office with four example accounts.",
+      "result": "pass",
+      "inputApi": "sky.click",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1258 group\n\t\t\t\t1259 group\n\t\t\t\t\t1260 group\n\t\t\t\t\t\t1261 group\n\t\t\t\t\t\t\t1262 group\n\t\t\t\t\t\t\t\t1263 text Business setup\n\t\t\t\t\t\t\t\t1264 text Status: Shared foundation\n\t\t\t\t\t\t\t\t1265 text Preview examples stay in memory and reset when refreshed. They are not saved to a server.\n\t\t\t\t\t\t\t\t1266 text Status: Development preview\n\t\t\t\t\t\t\t\t1267 button Refresh setup data\n\t\t\t\t\t\t\t\t1268 group Current business scope LKR\n\t\t\t\t\t\t\t\t\t1269 text BUSINESS GROUP Jentra Holdings. Switch Business group\n\t\t\t\t\t\t\t\t\t1270 text LEGAL ENTITY Jentra Trading (Pvt) Ltd. Switch Legal entity\n\t\t\t\t\t\t\t\t\t1271 text BRANCH Head Office. Switch Branch\n\t\t\t\t\t\t\t\t1272 group Business setup categories\n\t\t\t\t\t\t\t\t\t1273 group\n\t\t\t\t\t\t\t\t\t\t1274 group\n\t\t\t\t\t\t\t\t\t\t\t1275 text DOMAINS\n\t\t\t\t\t\t\t\t\t\t\t1276 button Finance Finance\n\t\t\t\t\t\t\t\t\t\t\t1277 button Parties Parties\n\t\t\t\t\t\t\t\t\t\t\t1278 button Catalogue Catalogue\n\t\t\t\t\t\t\t\t\t\t\t1279 button Governance Governance\n\t\t\t\t\t\t\t\t\t\t\t1280 button Files & data Files & data\n\t\t\t\t\t\t\t\t\t\t\t1281 button Reports Reports\n\t\t\t\t\t\t\t\t1282 group Finance resources\n\t\t\t\t\t\t\t\t\t1283 group\n\t\t\t\t\t\t\t\t\t\t1284 group\n\t\t\t\t\t\t\t\t\t\t\t1285 text FINANCE\n\t\t\t\t\t\t\t\t\t\t\t1286 text Books, periods, currency and tax.\n\t\t\t\t\t\t\t\t\t\t\t1287 button Currencies Currencies\n\t\t\t\t\t\t\t\t\t\t\t1288 button Exchange rates Exchange rates\n\t\t\t\t\t\t\t\t\t\t\t1289 button Tax definitions Tax definitions\n\t\t\t\t\t\t\t\t\t\t\t1290 button Chart of accounts Chart of accounts\n\t\t\t\t\t\t\t\t\t\t\t1291 button Fiscal periods Fiscal periods\n\t\t\t\t\t\t\t\t1292 group Chart of accounts setup list Chart of accounts Posting structure for the immutable ledger. CODE NAME DETAIL STATUS UPDATED\n\t\t\t\t\t\t\t\t\t1293 text Status: 4 visible\n\t\t\t\t\t\t\t\t\t1294 edit (settable, string) Search this list\n\t\t\t\t\t\t\t\t\t1295 text All statuses. Filter by status\n\t\t\t\t\t\t\t\t\t1296 button Refresh list\n\t\t\t\t\t\t\t\t\t1297 button Import\n\t\t\t\t\t\t\t\t\t1298 text Export. Show menu\n\t\t\t\t\t\t\t\t\t1299 button Create account\n\t\t\t\t\t\t\t\t\t1300 group\n\t\t\t\t\t\t\t\t\t\t1301 group\n\t\t\t\t\t\t\t\t\t\t\t1302 group\n\t\t\t\t\t\t\t\t\t\t\t\t1303 group 1000, Cash and cash equivalents, status active 1000 Cash and cash equivalents Asset 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t1304 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t1305 button Actions for Cash and cash equivalents\n\t\t\t\t\t\t\t\t\t\t\t1306 group\n\t\t\t\t\t\t\t\t\t\t\t\t1307 group 1100, Trade receivables, status active 1100 Trade receivables Asset 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t1308 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t1309 button Actions for Trade receivables\n\t\t\t\t\t\t\t\t\t\t\t1310 group\n\t\t\t\t\t\t\t\t\t\t\t\t1311 group 4000, Sales revenue, status active 4000 Sales revenue Revenue 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t1312 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t1313 button Actions for Sales revenue\n\t\t\t\t\t\t\t\t\t\t\t1314 group\n\t\t\t\t\t\t\t\t\t\t\t\t1315 group 5100, Cost of goods sold, status active 5100 Cost of goods sold Expense 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t1316 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t1317 button Actions for Cost of goods sold\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N03_SETUP_GUIDANCE-0.jpg",
+          "sha256": "c67bb045df32fdaa4804565942e5a420cd46c80716867a69f8925af3c41d913a",
+          "bytes": 108840,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "K06_TAB_FOCUS",
+      "observedAt": "2026-10-11T11:59:28.696Z",
+      "action": "Press Tab on the settled Business setup page.",
+      "expected": "Keyboard focus advances to a visible setup control.",
+      "observed": "The Refresh setup data button now has the visible grey focus highlight; the accessibility focused element remains generic pane.",
+      "result": "pass",
+      "inputApi": "sky.press_key",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1378 group\n\t\t\t\t1379 group\n\t\t\t\t\t1380 group\n\t\t\t\t\t\t1381 group\n\t\t\t\t\t\t\t1382 group\n\t\t\t\t\t\t\t\t1383 text Business setup\n\t\t\t\t\t\t\t\t1384 text Status: Shared foundation\n\t\t\t\t\t\t\t\t1385 text Preview examples stay in memory and reset when refreshed. They are not saved to a server.\n\t\t\t\t\t\t\t\t1386 text Status: Development preview\n\t\t\t\t\t\t\t\t1387 button Refresh setup data\n\t\t\t\t\t\t\t\t1388 group Current business scope LKR\n\t\t\t\t\t\t\t\t\t1389 text BUSINESS GROUP Jentra Holdings. Switch Business group\n\t\t\t\t\t\t\t\t\t1390 text LEGAL ENTITY Jentra Trading (Pvt) Ltd. Switch Legal entity\n\t\t\t\t\t\t\t\t\t1391 text BRANCH Head Office. Switch Branch\n\t\t\t\t\t\t\t\t1392 group Business setup categories\n\t\t\t\t\t\t\t\t\t1393 group\n\t\t\t\t\t\t\t\t\t\t1394 group\n\t\t\t\t\t\t\t\t\t\t\t1395 text DOMAINS\n\t\t\t\t\t\t\t\t\t\t\t1396 button Finance Finance\n\t\t\t\t\t\t\t\t\t\t\t1397 button Parties Parties\n\t\t\t\t\t\t\t\t\t\t\t1398 button Catalogue Catalogue\n\t\t\t\t\t\t\t\t\t\t\t1399 button Governance Governance\n\t\t\t\t\t\t\t\t\t\t\t1400 button Files & data Files & data\n\t\t\t\t\t\t\t\t\t\t\t1401 button Reports Reports\n\t\t\t\t\t\t\t\t1402 group Finance resources\n\t\t\t\t\t\t\t\t\t1403 group\n\t\t\t\t\t\t\t\t\t\t1404 group\n\t\t\t\t\t\t\t\t\t\t\t1405 text FINANCE\n\t\t\t\t\t\t\t\t\t\t\t1406 text Books, periods, currency and tax.\n\t\t\t\t\t\t\t\t\t\t\t1407 button Currencies Currencies\n\t\t\t\t\t\t\t\t\t\t\t1408 button Exchange rates Exchange rates\n\t\t\t\t\t\t\t\t\t\t\t1409 button Tax definitions Tax definitions\n\t\t\t\t\t\t\t\t\t\t\t1410 button Chart of accounts Chart of accounts\n\t\t\t\t\t\t\t\t\t\t\t1411 button Fiscal periods Fiscal periods\n\t\t\t\t\t\t\t\t1412 group Chart of accounts setup list Chart of accounts Posting structure for the immutable ledger. CODE NAME DETAIL STATUS UPDATED\n\t\t\t\t\t\t\t\t\t1413 text Status: 4 visible\n\t\t\t\t\t\t\t\t\t1414 edit (settable, string) Search this list\n\t\t\t\t\t\t\t\t\t1415 text All statuses. Filter by status\n\t\t\t\t\t\t\t\t\t1416 button Refresh list\n\t\t\t\t\t\t\t\t\t1417 button Import\n\t\t\t\t\t\t\t\t\t1418 text Export. Show menu\n\t\t\t\t\t\t\t\t\t1419 button Create account\n\t\t\t\t\t\t\t\t\t1420 group\n\t\t\t\t\t\t\t\t\t\t1421 group\n\t\t\t\t\t\t\t\t\t\t\t1422 group\n\t\t\t\t\t\t\t\t\t\t\t\t1423 group 1000, Cash and cash equivalents, status active 1000 Cash and cash equivalents Asset 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t1424 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t1425 button Actions for Cash and cash equivalents\n\t\t\t\t\t\t\t\t\t\t\t1426 group\n\t\t\t\t\t\t\t\t\t\t\t\t1427 group 1100, Trade receivables, status active 1100 Trade receivables Asset 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t1428 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t1429 button Actions for Trade receivables\n\t\t\t\t\t\t\t\t\t\t\t1430 group\n\t\t\t\t\t\t\t\t\t\t\t\t1431 group 4000, Sales revenue, status active 4000 Sales revenue Revenue 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t1432 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t1433 button Actions for Sales revenue\n\t\t\t\t\t\t\t\t\t\t\t1434 group\n\t\t\t\t\t\t\t\t\t\t\t\t1435 group 5100, Cost of goods sold, status active 5100 Cost of goods sold Expense 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t1436 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t1437 button Actions for Cost of goods sold\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/K06_TAB_FOCUS-0.jpg",
+          "sha256": "1369bf5ef66c2c244eae2d11121d8850fd9e47d44199badf3acae4c8a229339d",
+          "bytes": 108941,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "K07_CTRL_K",
+      "observedAt": "2026-10-11T11:59:44.892Z",
+      "action": "Press Control_L+k once after the visible setup Refresh focus highlight.",
+      "expected": "Command palette opens.",
+      "observed": "The settled page remains Business setup with no palette. Ctrl+A also failed the separate selection control, so an application shortcut defect versus input-tool modifier issue is not established.",
+      "result": "fail",
+      "inputApi": "sky.press_key",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1438 group\n\t\t\t\t1439 group\n\t\t\t\t\t1440 group\n\t\t\t\t\t\t1441 group\n\t\t\t\t\t\t\t1442 group\n\t\t\t\t\t\t\t\t1443 text Business setup\n\t\t\t\t\t\t\t\t1444 text Status: Shared foundation\n\t\t\t\t\t\t\t\t1445 text Preview examples stay in memory and reset when refreshed. They are not saved to a server.\n\t\t\t\t\t\t\t\t1446 text Status: Development preview\n\t\t\t\t\t\t\t\t1447 button Refresh setup data\n\t\t\t\t\t\t\t\t1448 group Current business scope LKR\n\t\t\t\t\t\t\t\t\t1449 text BUSINESS GROUP Jentra Holdings. Switch Business group\n\t\t\t\t\t\t\t\t\t1450 text LEGAL ENTITY Jentra Trading (Pvt) Ltd. Switch Legal entity\n\t\t\t\t\t\t\t\t\t1451 text BRANCH Head Office. Switch Branch\n\t\t\t\t\t\t\t\t1452 group Business setup categories\n\t\t\t\t\t\t\t\t\t1453 group\n\t\t\t\t\t\t\t\t\t\t1454 group\n\t\t\t\t\t\t\t\t\t\t\t1455 text DOMAINS\n\t\t\t\t\t\t\t\t\t\t\t1456 button Finance Finance\n\t\t\t\t\t\t\t\t\t\t\t1457 button Parties Parties\n\t\t\t\t\t\t\t\t\t\t\t1458 button Catalogue Catalogue\n\t\t\t\t\t\t\t\t\t\t\t1459 button Governance Governance\n\t\t\t\t\t\t\t\t\t\t\t1460 button Files & data Files & data\n\t\t\t\t\t\t\t\t\t\t\t1461 button Reports Reports\n\t\t\t\t\t\t\t\t1462 group Finance resources\n\t\t\t\t\t\t\t\t\t1463 group\n\t\t\t\t\t\t\t\t\t\t1464 group\n\t\t\t\t\t\t\t\t\t\t\t1465 text FINANCE\n\t\t\t\t\t\t\t\t\t\t\t1466 text Books, periods, currency and tax.\n\t\t\t\t\t\t\t\t\t\t\t1467 button Currencies Currencies\n\t\t\t\t\t\t\t\t\t\t\t1468 button Exchange rates Exchange rates\n\t\t\t\t\t\t\t\t\t\t\t1469 button Tax definitions Tax definitions\n\t\t\t\t\t\t\t\t\t\t\t1470 button Chart of accounts Chart of accounts\n\t\t\t\t\t\t\t\t\t\t\t1471 button Fiscal periods Fiscal periods\n\t\t\t\t\t\t\t\t1472 group Chart of accounts setup list Chart of accounts Posting structure for the immutable ledger. CODE NAME DETAIL STATUS UPDATED\n\t\t\t\t\t\t\t\t\t1473 text Status: 4 visible\n\t\t\t\t\t\t\t\t\t1474 edit (settable, string) Search this list\n\t\t\t\t\t\t\t\t\t1475 text All statuses. Filter by status\n\t\t\t\t\t\t\t\t\t1476 button Refresh list\n\t\t\t\t\t\t\t\t\t1477 button Import\n\t\t\t\t\t\t\t\t\t1478 text Export. Show menu\n\t\t\t\t\t\t\t\t\t1479 button Create account\n\t\t\t\t\t\t\t\t\t1480 group\n\t\t\t\t\t\t\t\t\t\t1481 group\n\t\t\t\t\t\t\t\t\t\t\t1482 group\n\t\t\t\t\t\t\t\t\t\t\t\t1483 group 1000, Cash and cash equivalents, status active 1000 Cash and cash equivalents Asset 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t1484 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t1485 button Actions for Cash and cash equivalents\n\t\t\t\t\t\t\t\t\t\t\t1486 group\n\t\t\t\t\t\t\t\t\t\t\t\t1487 group 1100, Trade receivables, status active 1100 Trade receivables Asset 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t1488 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t1489 button Actions for Trade receivables\n\t\t\t\t\t\t\t\t\t\t\t1490 group\n\t\t\t\t\t\t\t\t\t\t\t\t1491 group 4000, Sales revenue, status active 4000 Sales revenue Revenue 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t1492 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t1493 button Actions for Sales revenue\n\t\t\t\t\t\t\t\t\t\t\t1494 group\n\t\t\t\t\t\t\t\t\t\t\t\t1495 group 5100, Cost of goods sold, status active 5100 Cost of goods sold Expense 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t1496 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t1497 button Actions for Cost of goods sold\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/K07_CTRL_K-0.jpg",
+          "sha256": "1369bf5ef66c2c244eae2d11121d8850fd9e47d44199badf3acae4c8a229339d",
+          "bytes": 108941,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "N04_ACCOUNT_FORM",
+      "observedAt": "2026-10-11T12:00:01.442Z",
+      "action": "Open Create account in development Preview.",
+      "expected": "Form explains Preview reset behavior and has Save preview example, with no server-save claim.",
+      "observed": "New account says nothing is sent to a server and examples reset; Cancel, Save draft and Save preview example are visible.",
+      "result": "pass",
+      "inputApi": "sky.click",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1498 group\n\t\t\t\t1499 group\n\t\t\t\t\t1500 group\n\t\t\t\t\t\t1501 group\n\t\t\t\t\t\t\t1502 group New account Preview examples stay in memory and reset when refreshed. Nothing is sent to a server.\n\t\t\t\t\t\t\t\t1503 button Close\n\t\t\t\t\t\t\t\t1504 group\n\t\t\t\t\t\t\t\t\t1505 group\n\t\t\t\t\t\t\t\t\t\t1506 edit (settable, string) Account code\n\t\t\t\t\t\t\t\t\t\t1507 edit (settable, string) Account name\n\t\t\t\t\t\t\t\t\t\t1508 button Account type Asset\n\t\t\t\t\t\t\t\t\t\t1509 button Normal balance Debit\n\t\t\t\t\t\t\t\t\t\t1510 edit (settable, string) Parent account ID\n\t\t\t\t\t\t\t\t\t\t1511 edit (settable, string) Currency\n\t\t\t\t\t\t\t\t\t\t1512 button Allow posting True\n\t\t\t\t\t\t\t\t\t\t1513 button Status Active\n\t\t\t\t\t\t\t\t1514 button Cancel\n\t\t\t\t\t\t\t\t1515 button Save draft\n\t\t\t\t\t\t\t\t1516 button Save preview example\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N04_ACCOUNT_FORM-0.jpg",
+          "sha256": "e2f4dd59780c9cf05af8ba355c2142038257cd3628371f10c233aaa6e7a2677f",
+          "bytes": 88864,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "N05_ACCOUNT_VALIDATION",
+      "observedAt": "2026-10-11T12:00:16.865Z",
+      "action": "Click Save preview example without entering account code or name.",
+      "expected": "Required fields reject the empty submission without closing the form.",
+      "observed": "Both Account code and Account name display This field is required; the dialog remains open.",
+      "result": "pass",
+      "inputApi": "sky.click",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1517 group\n\t\t\t\t1518 group\n\t\t\t\t\t1519 group\n\t\t\t\t\t\t1520 group\n\t\t\t\t\t\t\t1521 group New account Preview examples stay in memory and reset when refreshed. Nothing is sent to a server.\n\t\t\t\t\t\t\t\t1522 button Close\n\t\t\t\t\t\t\t\t1523 group\n\t\t\t\t\t\t\t\t\t1524 group\n\t\t\t\t\t\t\t\t\t\t1525 edit (settable, string) Account code\n\t\t\t\t\t\t\t\t\t\t\t1526 text This field is required.\n\t\t\t\t\t\t\t\t\t\t1527 edit (settable, string) Account name\n\t\t\t\t\t\t\t\t\t\t\t1528 text This field is required.\n\t\t\t\t\t\t\t\t\t\t1529 button Account type Asset\n\t\t\t\t\t\t\t\t\t\t1530 button Normal balance Debit\n\t\t\t\t\t\t\t\t\t\t1531 edit (settable, string) Parent account ID\n\t\t\t\t\t\t\t\t\t\t1532 edit (settable, string) Currency\n\t\t\t\t\t\t\t\t\t\t1533 button Allow posting True\n\t\t\t\t\t\t\t\t\t\t1534 button Status Active\n\t\t\t\t\t\t\t\t1535 button Cancel\n\t\t\t\t\t\t\t\t1536 button Save draft\n\t\t\t\t\t\t\t\t1537 button Save preview example\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N05_ACCOUNT_VALIDATION-0.jpg",
+          "sha256": "58a90eac8dc8e6b8510f42b290b9352c6f8eb82422284ce8c4e7cfa0cd9f33bf",
+          "bytes": 89934,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "N06_ACCOUNT_CANCEL",
+      "observedAt": "2026-10-11T12:00:33.827Z",
+      "action": "Cancel the untouched empty account form.",
+      "expected": "The form closes and the four sample accounts remain.",
+      "observed": "The visible dialog is closed, Chart of accounts still shows 4 visible; no save action was performed.",
+      "result": "pass",
+      "inputApi": "sky.click",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1538 group\n\t\t\t\t1539 group\n\t\t\t\t\t1540 group\n\t\t\t\t\t\t1541 group\n\t\t\t\t\t\t\t1542 group New account Preview examples stay in memory and reset when refreshed. Nothing is sent to a server.\n\t\t\t\t\t\t\t\t1543 button Close\n\t\t\t\t\t\t\t\t1544 group\n\t\t\t\t\t\t\t\t\t1545 group\n\t\t\t\t\t\t\t\t\t\t1546 edit (settable, string) Account code\n\t\t\t\t\t\t\t\t\t\t\t1547 text This field is required.\n\t\t\t\t\t\t\t\t\t\t1548 edit (settable, string) Account name\n\t\t\t\t\t\t\t\t\t\t\t1549 text This field is required.\n\t\t\t\t\t\t\t\t\t\t1550 button Account type Asset\n\t\t\t\t\t\t\t\t\t\t1551 button Normal balance Debit\n\t\t\t\t\t\t\t\t\t\t1552 edit (settable, string) Parent account ID\n\t\t\t\t\t\t\t\t\t\t1553 edit (settable, string) Currency\n\t\t\t\t\t\t\t\t\t\t1554 button Allow posting True\n\t\t\t\t\t\t\t\t\t\t1555 button Status Active\n\t\t\t\t\t\t\t\t1556 button Cancel\n\t\t\t\t\t\t\t\t1557 button Save draft\n\t\t\t\t\t\t\t\t1558 button Save preview example\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N06_ACCOUNT_CANCEL-0.jpg",
+          "sha256": "9323d13209ca5ae945ae78c12083ab18bc4a6243eb77fd793337d9c27872b0eb",
+          "bytes": 109303,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "N07_WAREHOUSE_SCOPE",
+      "observedAt": "2026-10-11T12:00:59.811Z",
+      "action": "Open Catalogue, then Warehouses through observed controls.",
+      "expected": "Warehouses identifies the selected business/branch and displays the Head Office example.",
+      "observed": "Scoped stock locations for the selected business and branch is shown; Head Office scope contains one HQ-WH Head office warehouse.",
+      "result": "pass",
+      "inputApi": "sky.click",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1609 group\n\t\t\t\t1610 group\n\t\t\t\t\t1611 group\n\t\t\t\t\t\t1612 group\n\t\t\t\t\t\t\t1613 group\n\t\t\t\t\t\t\t\t1614 text Business setup\n\t\t\t\t\t\t\t\t1615 text Status: Shared foundation\n\t\t\t\t\t\t\t\t1616 text Preview examples stay in memory and reset when refreshed. They are not saved to a server.\n\t\t\t\t\t\t\t\t1617 text Status: Development preview\n\t\t\t\t\t\t\t\t1618 button Refresh setup data\n\t\t\t\t\t\t\t\t1619 group Current business scope LKR\n\t\t\t\t\t\t\t\t\t1620 text BUSINESS GROUP Jentra Holdings. Switch Business group\n\t\t\t\t\t\t\t\t\t1621 text LEGAL ENTITY Jentra Trading (Pvt) Ltd. Switch Legal entity\n\t\t\t\t\t\t\t\t\t1622 text BRANCH Head Office. Switch Branch\n\t\t\t\t\t\t\t\t1623 group Business setup categories\n\t\t\t\t\t\t\t\t\t1624 group\n\t\t\t\t\t\t\t\t\t\t1625 group\n\t\t\t\t\t\t\t\t\t\t\t1626 text DOMAINS\n\t\t\t\t\t\t\t\t\t\t\t1627 button Finance Finance\n\t\t\t\t\t\t\t\t\t\t\t1628 button Parties Parties\n\t\t\t\t\t\t\t\t\t\t\t1629 button Catalogue Catalogue\n\t\t\t\t\t\t\t\t\t\t\t1630 button Governance Governance\n\t\t\t\t\t\t\t\t\t\t\t1631 button Files & data Files & data\n\t\t\t\t\t\t\t\t\t\t\t1632 button Reports Reports\n\t\t\t\t\t\t\t\t1633 group Catalogue resources\n\t\t\t\t\t\t\t\t\t1634 group\n\t\t\t\t\t\t\t\t\t\t1635 group\n\t\t\t\t\t\t\t\t\t\t\t1636 text CATALOGUE\n\t\t\t\t\t\t\t\t\t\t\t1637 text Products and measurement rules.\n\t\t\t\t\t\t\t\t\t\t\t1638 button Units of measure Units of measure\n\t\t\t\t\t\t\t\t\t\t\t1639 button Products Products\n\t\t\t\t\t\t\t\t\t\t\t1640 button Warehouses Warehouses\n\t\t\t\t\t\t\t\t1641 group Warehouses setup list Warehouses Scoped stock locations for the selected business and branch. CODE NAME DETAIL STATUS UPDATED\n\t\t\t\t\t\t\t\t\t1642 text Status: 1 visible\n\t\t\t\t\t\t\t\t\t1643 edit (settable, string) Search this list\n\t\t\t\t\t\t\t\t\t1644 text All statuses. Filter by status\n\t\t\t\t\t\t\t\t\t1645 button Refresh list\n\t\t\t\t\t\t\t\t\t1646 button Import\n\t\t\t\t\t\t\t\t\t1647 text Export. Show menu\n\t\t\t\t\t\t\t\t\t1648 button Create warehouse\n\t\t\t\t\t\t\t\t\t1649 group\n\t\t\t\t\t\t\t\t\t\t1650 group\n\t\t\t\t\t\t\t\t\t\t\t1651 group\n\t\t\t\t\t\t\t\t\t\t\t\t1652 group HQ-WH, Head office warehouse, status active HQ-WH Head office warehouse Version 1 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t1653 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t1654 button Actions for Head office warehouse\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N07_WAREHOUSE_SCOPE-0.jpg",
+          "sha256": "4f3a97d9271ae60360909d00415c3164495bf7e83b301f975429049826a7073b",
+          "bytes": 97599,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "N08_WAREHOUSE_FORM",
+      "observedAt": "2026-10-11T12:01:33.390Z",
+      "action": "Open Create warehouse and inspect its completed dialog.",
+      "expected": "Form names the selected branch and labels the Preview save correctly.",
+      "observed": "New warehouse shows Branch HQ · Head Office, memory/reset/no-server guidance and Save preview example.",
+      "result": "pass",
+      "inputApi": "sky.click",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1655 group\n\t\t\t\t1656 group\n\t\t\t\t\t1657 group\n\t\t\t\t\t\t1658 group\n\t\t\t\t\t\t\t1659 group New warehouse Preview examples stay in memory and reset when refreshed. Nothing is sent to a server.\n\t\t\t\t\t\t\t\t1660 button Close\n\t\t\t\t\t\t\t\t1661 group\n\t\t\t\t\t\t\t\t\t1662 group\n\t\t\t\t\t\t\t\t\t\t1663 edit (settable, string) Warehouse code\n\t\t\t\t\t\t\t\t\t\t1664 edit (settable, string) Warehouse name\n\t\t\t\t\t\t\t\t\t\t1665 button Branch HQ · Head Office\n\t\t\t\t\t\t\t\t\t\t1666 button Status Active\n\t\t\t\t\t\t\t\t1667 button Cancel\n\t\t\t\t\t\t\t\t1668 button Save draft\n\t\t\t\t\t\t\t\t1669 button Save preview example\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N08_WAREHOUSE_FORM-0.jpg",
+          "sha256": "bb00799bfdef981347e14350691b4592f497dddaa491d1df3148c3a313aae0c4",
+          "bytes": 80351,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "N09_WAREHOUSE_VALIDATION",
+      "observedAt": "2026-10-11T12:01:48.738Z",
+      "action": "Click Save preview example with empty warehouse code/name.",
+      "expected": "Both required fields are rejected and the dialog stays open.",
+      "observed": "Warehouse code requires 2–20 permitted characters; name requires 2–160 characters. No row was saved.",
+      "result": "pass",
+      "inputApi": "sky.click",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1670 group\n\t\t\t\t1671 group\n\t\t\t\t\t1672 group\n\t\t\t\t\t\t1673 group\n\t\t\t\t\t\t\t1674 group New warehouse Preview examples stay in memory and reset when refreshed. Nothing is sent to a server.\n\t\t\t\t\t\t\t\t1675 button Close\n\t\t\t\t\t\t\t\t1676 group\n\t\t\t\t\t\t\t\t\t1677 group\n\t\t\t\t\t\t\t\t\t\t1678 edit (settable, string) Warehouse code\n\t\t\t\t\t\t\t\t\t\t\t1679 text Use 2–20 letters, numbers, hyphens or underscores.\n\t\t\t\t\t\t\t\t\t\t1680 edit (settable, string) Warehouse name\n\t\t\t\t\t\t\t\t\t\t\t1681 text Use 2–160 characters.\n\t\t\t\t\t\t\t\t\t\t1682 button Branch HQ · Head Office\n\t\t\t\t\t\t\t\t\t\t1683 button Status Active\n\t\t\t\t\t\t\t\t1684 button Cancel\n\t\t\t\t\t\t\t\t1685 button Save draft\n\t\t\t\t\t\t\t\t1686 button Save preview example\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N09_WAREHOUSE_VALIDATION-0.jpg",
+          "sha256": "4ddc19f0a523aae533d4e4d67ff099598231ea751c9324cc9ea9db62f70b35af",
+          "bytes": 83249,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "K08_LITERAL_TEXT",
+      "observedAt": "2026-10-11T12:02:48.132Z",
+      "action": "Click Warehouse code, verify visible caret, type W5-LOCAL with the supported literal text API, then refresh twice.",
+      "expected": "Synthetic code appears in the focused field.",
+      "observed": "The code field remains empty after both observations. The requested text was not delivered; source validation remains unchanged and no save was attempted.",
+      "result": "fail",
+      "inputApi": "sky.type_text",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1738 group\n\t\t\t\t1739 group\n\t\t\t\t\t1740 group\n\t\t\t\t\t\t1741 group\n\t\t\t\t\t\t\t1742 group New warehouse Preview examples stay in memory and reset when refreshed. Nothing is sent to a server.\n\t\t\t\t\t\t\t\t1743 button Close\n\t\t\t\t\t\t\t\t1744 group\n\t\t\t\t\t\t\t\t\t1745 group\n\t\t\t\t\t\t\t\t\t\t1746 edit (settable, string) Warehouse code\n\t\t\t\t\t\t\t\t\t\t\t1747 text Use 2–20 letters, numbers, hyphens or underscores.\n\t\t\t\t\t\t\t\t\t\t1748 edit (settable, string) Warehouse name\n\t\t\t\t\t\t\t\t\t\t\t1749 text Use 2–160 characters.\n\t\t\t\t\t\t\t\t\t\t1750 button Branch HQ · Head Office\n\t\t\t\t\t\t\t\t\t\t1751 button Status Active\n\t\t\t\t\t\t\t\t1752 button Cancel\n\t\t\t\t\t\t\t\t1753 button Save draft\n\t\t\t\t\t\t\t\t1754 button Save preview example\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/K08_LITERAL_TEXT-0.jpg",
+          "sha256": "d20baf8f2cb32113a0ebaa5f9d1d5f10585f10f0d04b5fb847622fbf737aca61",
+          "bytes": 85792,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "K09_FORM_PHYSICAL_INPUT",
+      "observedAt": "2026-10-11T12:04:12.676Z",
+      "action": "Refocus warehouse code, enter q and a physically, Tab to name, enter q and a physically, refreshing after each action.",
+      "expected": "Both synthetic fields contain qa and Tab advances focus.",
+      "observed": "Warehouse code and Warehouse name both show qa, with visible name caret after physical input. Literal text failure is separate from these successful physical events.",
+      "result": "pass",
+      "inputApi": "sky.press_key",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1852 group\n\t\t\t\t1853 group\n\t\t\t\t\t1854 group\n\t\t\t\t\t\t1855 group\n\t\t\t\t\t\t\t1856 group New warehouse Preview examples stay in memory and reset when refreshed. Nothing is sent to a server.\n\t\t\t\t\t\t\t\t1857 button Close\n\t\t\t\t\t\t\t\t1858 group\n\t\t\t\t\t\t\t\t\t1859 group\n\t\t\t\t\t\t\t\t\t\t1860 edit (settable, string) Warehouse code Value: qa\n\t\t\t\t\t\t\t\t\t\t1861 edit (settable, string) Warehouse name Value: qa\n\t\t\t\t\t\t\t\t\t\t1862 button Branch HQ · Head Office\n\t\t\t\t\t\t\t\t\t\t1863 button Status Active\n\t\t\t\t\t\t\t\t1864 button Cancel\n\t\t\t\t\t\t\t\t1865 button Save draft\n\t\t\t\t\t\t\t\t1866 button Save preview example\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/K09_FORM_PHYSICAL_INPUT-0.jpg",
+          "sha256": "91899495a725e4dc99f4f0450282ea4fb789449522761246a5a18a5a501b4f4a",
+          "bytes": 80528,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "N10_PREVIEW_WAREHOUSE_SAVE",
+      "observedAt": "2026-10-11T12:04:57.507Z",
+      "action": "Save the synthetic qa warehouse example under HQ using the isolated r5 Preview.",
+      "expected": "The form completes and displays the new local Preview example.",
+      "observed": "The form closed and Warehouses shows 2 visible: qa plus HQ-WH. This is a local Preview result; the code path temporarily uses the isolated encrypted draft before publishing in memory, with no server posting.",
+      "result": "pass",
+      "inputApi": "sky.click",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1867 group\n\t\t\t\t1868 group\n\t\t\t\t\t1869 group\n\t\t\t\t\t\t1870 group\n\t\t\t\t\t\t\t1871 button New warehouse Preview examples stay in memory and reset when refreshed. Nothing is sent to a server. Save preview example, in progress\n\t\t\t\t\t\t\t\t1872 button Close\n\t\t\t\t\t\t\t\t1873 group\n\t\t\t\t\t\t\t\t\t1874 group\n\t\t\t\t\t\t\t\t\t\t1875 edit (settable, string) Warehouse code Value: qa\n\t\t\t\t\t\t\t\t\t\t1876 edit (settable, string) Warehouse name Value: qa\n\t\t\t\t\t\t\t\t\t\t1877 button Branch HQ · Head Office\n\t\t\t\t\t\t\t\t\t\t1878 button Status Active\n\t\t\t\t\t\t\t\t1879 button Cancel\n\t\t\t\t\t\t\t\t1880 button Save draft\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N10_PREVIEW_WAREHOUSE_SAVE-0.jpg",
+          "sha256": "90349923d77ba93f03a1f0cf8999bf76625cd93c16c4552cfb1464e3012dd7af",
+          "bytes": 100223,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "N11_PREVIEW_RESET",
+      "observedAt": "2026-10-11T12:05:16.927Z",
+      "action": "Click Refresh list after the qa Preview example was visible.",
+      "expected": "The published example resets to the original sample list.",
+      "observed": "Warehouses returned to 1 visible, HQ-WH only; qa is absent. This verifies Preview reset, not encrypted recovery or server persistence.",
+      "result": "pass",
+      "inputApi": "sky.click",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1881 group\n\t\t\t\t1882 group\n\t\t\t\t\t1883 group\n\t\t\t\t\t\t1884 group\n\t\t\t\t\t\t\t1885 group\n\t\t\t\t\t\t\t\t1886 text Business setup\n\t\t\t\t\t\t\t\t1887 text Status: Shared foundation\n\t\t\t\t\t\t\t\t1888 text Preview examples stay in memory and reset when refreshed. They are not saved to a server.\n\t\t\t\t\t\t\t\t1889 text Status: Development preview\n\t\t\t\t\t\t\t\t1890 button Refresh setup data\n\t\t\t\t\t\t\t\t1891 group Current business scope LKR\n\t\t\t\t\t\t\t\t\t1892 text BUSINESS GROUP Jentra Holdings. Switch Business group\n\t\t\t\t\t\t\t\t\t1893 text LEGAL ENTITY Jentra Trading (Pvt) Ltd. Switch Legal entity\n\t\t\t\t\t\t\t\t\t1894 text BRANCH Head Office. Switch Branch\n\t\t\t\t\t\t\t\t1895 group Business setup categories\n\t\t\t\t\t\t\t\t\t1896 group\n\t\t\t\t\t\t\t\t\t\t1897 group\n\t\t\t\t\t\t\t\t\t\t\t1898 text DOMAINS\n\t\t\t\t\t\t\t\t\t\t\t1899 button Finance Finance\n\t\t\t\t\t\t\t\t\t\t\t1900 button Parties Parties\n\t\t\t\t\t\t\t\t\t\t\t1901 button Catalogue Catalogue\n\t\t\t\t\t\t\t\t\t\t\t1902 button Governance Governance\n\t\t\t\t\t\t\t\t\t\t\t1903 button Files & data Files & data\n\t\t\t\t\t\t\t\t\t\t\t1904 button Reports Reports\n\t\t\t\t\t\t\t\t1905 group Catalogue resources\n\t\t\t\t\t\t\t\t\t1906 group\n\t\t\t\t\t\t\t\t\t\t1907 group\n\t\t\t\t\t\t\t\t\t\t\t1908 text CATALOGUE\n\t\t\t\t\t\t\t\t\t\t\t1909 text Products and measurement rules.\n\t\t\t\t\t\t\t\t\t\t\t1910 button Units of measure Units of measure\n\t\t\t\t\t\t\t\t\t\t\t1911 button Products Products\n\t\t\t\t\t\t\t\t\t\t\t1912 button Warehouses Warehouses\n\t\t\t\t\t\t\t\t1913 group Warehouses setup list Warehouses Scoped stock locations for the selected business and branch. CODE NAME DETAIL STATUS UPDATED\n\t\t\t\t\t\t\t\t\t1914 text Status: 1 visible\n\t\t\t\t\t\t\t\t\t1915 edit (settable, string) Search this list\n\t\t\t\t\t\t\t\t\t1916 text All statuses. Filter by status\n\t\t\t\t\t\t\t\t\t1917 button Refresh list\n\t\t\t\t\t\t\t\t\t1918 button Import\n\t\t\t\t\t\t\t\t\t1919 text Export. Show menu\n\t\t\t\t\t\t\t\t\t1920 button Create warehouse\n\t\t\t\t\t\t\t\t\t1921 group\n\t\t\t\t\t\t\t\t\t\t1922 group\n\t\t\t\t\t\t\t\t\t\t\t1923 group\n\t\t\t\t\t\t\t\t\t\t\t\t1924 group HQ-WH, Head office warehouse, status active HQ-WH Head office warehouse Version 1 01 Sep 26\n\t\t\t\t\t\t\t\t\t\t\t\t\t1925 text Status: Active\n\t\t\t\t\t\t\t\t\t\t\t\t\t1926 button Actions for Head office warehouse\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N11_PREVIEW_RESET-0.jpg",
+          "sha256": "c733603c0320f4b54946b0b1950b87aa76c8087cc4a0d6467dd126e07f687f62",
+          "bytes": 97560,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "N12_FINANCE_GUIDANCE",
+      "observedAt": "2026-10-11T12:05:58.478Z",
+      "action": "Navigate to Finance and inspect after the transition.",
+      "expected": "Overview explains that posting/reports require connected scope and permissions.",
+      "observed": "Finance overview explicitly says Posting and financial reports are not available from this page and displays Posting unavailable here.",
+      "result": "pass",
+      "inputApi": "sky.click",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1927 group\n\t\t\t\t1928 group\n\t\t\t\t\t1929 group\n\t\t\t\t\t\t1930 group\n\t\t\t\t\t\t\t1931 group\n\t\t\t\t\t\t\t\t1932 text Finance\n\t\t\t\t\t\t\t\t1933 text Status: Overview\n\t\t\t\t\t\t\t\t1934 text Ledger, AR/AP, cash, tax and financial reporting.\n\t\t\t\t\t\t\t\t1935 group Finance overview Posting and financial reports are not available from this page. They require a connected workspace with the appropriate business scope and permissions.\n\t\t\t\t\t\t\t\t\t1936 text Status: Posting unavailable here\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N12_FINANCE_GUIDANCE-0.jpg",
+          "sha256": "ee9e3f44914418eb1fb7d13a86b45816a5ce3908c436481b20f5058855cdaff2",
+          "bytes": 63171,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "B01_FINANCE_POSTING",
+      "observedAt": "2026-10-11T12:05:58.513Z",
+      "action": "Inspect available Finance overview actions in ordinary offline Preview.",
+      "expected": "A genuine authenticated workspace is needed to post journals and generate authoritative reports.",
+      "observed": "No posting/report action is available here; runtime installation, genuine user scope/MFA and authenticated native checks are still pending. No accounting transaction or report was produced.",
+      "result": "blocked",
+      "inputApi": null,
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1927 group\n\t\t\t\t1928 group\n\t\t\t\t\t1929 group\n\t\t\t\t\t\t1930 group\n\t\t\t\t\t\t\t1931 group\n\t\t\t\t\t\t\t\t1932 text Finance\n\t\t\t\t\t\t\t\t1933 text Status: Overview\n\t\t\t\t\t\t\t\t1934 text Ledger, AR/AP, cash, tax and financial reporting.\n\t\t\t\t\t\t\t\t1935 group Finance overview Posting and financial reports are not available from this page. They require a connected workspace with the appropriate business scope and permissions.\n\t\t\t\t\t\t\t\t\t1936 text Status: Posting unavailable here\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/B01_FINANCE_POSTING-0.jpg",
+          "sha256": "ee9e3f44914418eb1fb7d13a86b45816a5ce3908c436481b20f5058855cdaff2",
+          "bytes": 63171,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "N13_PROCUREMENT_GUIDANCE",
+      "observedAt": "2026-10-11T12:06:32.052Z",
+      "action": "Open Procurement and inspect its settled permissions subset.",
+      "expected": "Development guidance names connected workspace permissions and exposes only permitted product units.",
+      "observed": "Supplier bills and payments need a connected workspace with required permissions. Product units is the only displayed route.",
+      "result": "pass",
+      "inputApi": "sky.click",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1937 group\n\t\t\t\t1938 group\n\t\t\t\t\t1939 group\n\t\t\t\t\t\t1940 group\n\t\t\t\t\t\t\t1941 group\n\t\t\t\t\t\t\t\t1942 text Development preview: supplier bills and payments need a connected workspace with the required permissions.\n\t\t\t\t\t\t\t\t1943 button Product units\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N13_PROCUREMENT_GUIDANCE-0.jpg",
+          "sha256": "730d54df1443dafc9fd8426ec4a3c29f780222b24eb8a86c9993808ee8b6e617",
+          "bytes": 54836,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "B02_SUPPLIER_ACCOUNTING",
+      "observedAt": "2026-10-11T12:06:32.081Z",
+      "action": "Inspect supplier bill/payment availability in ordinary offline Preview.",
+      "expected": "Actual authenticated permissioned accounting must be exercised separately.",
+      "observed": "No supplier bill/payment action is exposed; real suppliers, invoices, payments and delivery were not submitted.",
+      "result": "blocked",
+      "inputApi": null,
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1937 group\n\t\t\t\t1938 group\n\t\t\t\t\t1939 group\n\t\t\t\t\t\t1940 group\n\t\t\t\t\t\t\t1941 group\n\t\t\t\t\t\t\t\t1942 text Development preview: supplier bills and payments need a connected workspace with the required permissions.\n\t\t\t\t\t\t\t\t1943 button Product units\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/B02_SUPPLIER_ACCOUNTING-0.jpg",
+          "sha256": "730d54df1443dafc9fd8426ec4a3c29f780222b24eb8a86c9993808ee8b6e617",
+          "bytes": 54836,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "N14_THEME",
+      "observedAt": "2026-10-11T12:07:06.868Z",
+      "action": "Click the visible theme toggle and inspect the completed transition.",
+      "expected": "Preview switches from light to dark while retaining readable content.",
+      "observed": "The settled Procurement page is dark, Product units and connected-workspace guidance remain readable, and the theme control now uses the sun icon.",
+      "result": "pass",
+      "inputApi": "sky.click",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1944 group\n\t\t\t\t1945 group\n\t\t\t\t\t1946 group\n\t\t\t\t\t\t1947 group\n\t\t\t\t\t\t\t1948 group\n\t\t\t\t\t\t\t\t1949 text Development preview: supplier bills and payments need a connected workspace with the required permissions.\n\t\t\t\t\t\t\t\t1950 button Product units\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N14_THEME-0.jpg",
+          "sha256": "87a08627f21c5cf7523b38d74701bb28a81979b0cfd1e2b7e9c8d88dac36a096",
+          "bytes": 54170,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "N15_DENSITY",
+      "observedAt": "2026-10-11T12:07:51.933Z",
+      "action": "Click the display-density control and inspect the completed layout.",
+      "expected": "Controls switch to compact display density without changing the available route.",
+      "observed": "The Create and Product units controls are visibly shorter than the prior comfortable layout; Procurement guidance and the same single route remain.",
+      "result": "pass",
+      "inputApi": "sky.click",
+      "window": {
+        "id": 67584,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t1972 group\n\t\t\t\t1973 group\n\t\t\t\t\t1974 group\n\t\t\t\t\t\t1975 group\n\t\t\t\t\t\t\t1976 group\n\t\t\t\t\t\t\t\t1977 text Development preview: supplier bills and payments need a connected workspace with the required permissions.\n\t\t\t\t\t\t\t\t1978 button Product units\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t672 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N15_DENSITY-0.jpg",
+          "sha256": "99eebc1b72f95c457251c57dc2d354b12c07b342fb63edb540f3ca3ba08df5ee",
+          "bytes": 53756,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "N16_RESTART_THEME",
+      "observedAt": "2026-10-11T12:09:22.895Z",
+      "action": "Close only the owned Preview window, verify it disappears, relaunch the same exact executable and bind its newly returned window.",
+      "expected": "The selected dark theme survives an ordinary app restart.",
+      "observed": "The previous returned window disappeared. The new returned r5 Preview window opens dark with a sun theme icon; this is preference persistence, not encrypted-draft or authenticated-session recovery.",
+      "result": "pass",
+      "inputApi": "multiple-supported-sky-actions",
+      "window": {
+        "id": 2426922,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t2 group\n\t\t\t\t3 group\n\t\t\t\t\t4 group\n\t\t\t\t\t\t5 group\n\t\t\t\t\t\t\t6 group\n\t\t\t\t\t\t\t\t7 group\n\t\t\t\t\t\t\t\t\t8 text YOUR BUSINESS, IN PERSPECTIVE\n\t\t\t\t\t\t\t\t\t9 text Good morning, Shehan\n\t\t\t\t\t\t\t\t\t10 text One connected view of cash, decisions, and daily operations.\n\t\t\t\t\t\t\t\t\t11 text Status: Preview metrics\n\t\t\t\t\t\t\t\t\t12 text Sample data · 01 Aug – 31 Aug 2026\n\t\t\t\t\t\t\t\t\t13 text Net revenue: LKR 12.84M, +8.4% vs last month\n\t\t\t\t\t\t\t\t\t14 text Cash available: LKR 6.28M, 14.2 weeks runway\n\t\t\t\t\t\t\t\t\t15 text Receivables due: LKR 3.41M, LKR 620K overdue\n\t\t\t\t\t\t\t\t\t16 text Gross margin: 31.8%, +1.9 pts this month\n\t\t\t\t\t\t\t\t\t17 group Cash position 13-week actual and forecast · sample series Illustrative cash position in LKR millions. Solid blue shows actual values through week 8. Dashed teal shows the forecast from week 8 to week 13. This is sample data, not a live business forecast. Actual Forecast Illustrative forecast\n\t\t\t\t\t\t\t\t\t\t18 text Status: LKR\n\t\t\t\t\t\t\t\t\t19 group Needs your attention Example approvals and exceptions Purchase order PO-2026-00842 LKR 486,250 Supplier payment PAY-2026-00318 LKR 218,900 Expense claim EXP-2026-00194 LKR 42,700 Stock adjustment ADJ-2026-00027 14 items Preview queue · 4 of 7 example items\n\t\t\t\t\t\t\t\t\t\t20 text Status: 7 open\n\t\t\t\t\t\t\t\t\t21 group Operating flows Median cycle time and handoff health across the business Lead to cash 4.8 days Successful handoffs Procure to pay 6.2 days Successful handoffs Inventory to ledger 18 min Successful handoffs Service to resolution 7.4 hrs Successful handoffs\n\t\t\t\t\t\t\t\t\t\t22 text Status: Sample model\n\t\t\t\t\t\t\t\t\t\t23 text Status: 92%\n\t\t\t\t\t\t\t\t\t\t24 text Status: 84%\n\t\t\t\t\t\t\t\t\t\t25 group (settable, string) Lead to cash successful handoffs Value: 92%\n\t\t\t\t\t\t\t\t\t\t\t26 text (settable, string) Value: 92\n\t\t\t\t\t\t\t\t\t\t27 group (settable, string) Procure to pay successful handoffs Value: 84%\n\t\t\t\t\t\t\t\t\t\t\t28 text (settable, string) Value: 84\n\t\t\t\t\t\t\t\t\t\t29 text Status: 98%\n\t\t\t\t\t\t\t\t\t\t30 text Status: 89%\n\t\t\t\t\t\t\t\t\t\t31 group (settable, string) Inventory to ledger successful handoffs Value: 98%\n\t\t\t\t\t\t\t\t\t\t\t32 text (settable, string) Value: 98\n\t\t\t\t\t\t\t\t\t\t33 group (settable, string) Service to resolution successful handoffs Value: 89%\n\t\t\t\t\t\t\t\t\t\t\t34 text (settable, string) Value: 89\n\t\t\t\t\t\t\t\t\t35 group Recent business activity A preview of how activity connects across your workspace INV-2026-01084 Sales invoice posted Lanka Office Mart LKR 328,400 S. Perera · 09:42 GRN-2026-00471 Goods receipt completed Ceylon Parts Co. 42 units N. Fernando · 09:18 PAY-2026-00318 Payment submitted Metro Logistics LKR 218,900 A. Silva · 08:56 SRV-2026-00149 Work order fulfilled Serendib Foods 3.2 hours R. Iqbal · 08:31\n\t\t\t\t\t\t\t\t\t\t36 text Status: Sample events\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t39 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Maximize\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N16_RESTART_THEME-0.jpg",
+          "sha256": "4cdebfc030f5b081e0d7187bf4a3d7ed4de882d40306ea7288e32942e0587af2",
+          "bytes": 88558,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "N17_RESTART_DENSITY",
+      "observedAt": "2026-10-11T12:09:57.116Z",
+      "action": "After the verified app restart, navigate back to Procurement and compare the actual control height.",
+      "expected": "Compact controls remain after restart.",
+      "observed": "Product units retains its compact approximately 28-pixel button height versus the earlier comfortable approximately 44-pixel control, while the dark theme remains. Preference files were not read.",
+      "result": "pass",
+      "inputApi": "sky.click",
+      "window": {
+        "id": 2426922,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t3326 group\n\t\t\t\t3327 group\n\t\t\t\t\t3328 group\n\t\t\t\t\t\t3329 group\n\t\t\t\t\t\t\t3330 group\n\t\t\t\t\t\t\t\t3331 text Development preview: supplier bills and payments need a connected workspace with the required permissions.\n\t\t\t\t\t\t\t\t3332 button Product units\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t39 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Maximize\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N17_RESTART_DENSITY-0.jpg",
+          "sha256": "bff25f26aa870ae31799d6300052dc0f0087a4d394dba2db85ec999db8081777",
+          "bytes": 51568,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "N18_MAXIMIZE",
+      "observedAt": "2026-10-11T12:10:25.794Z",
+      "action": "Click the owned window Maximize button and inspect after the animation.",
+      "expected": "Preview adapts to the wider window without visible clipping in this view.",
+      "observed": "The settled 1536 by 816 screenshot retains readable Procurement guidance, command search and Product units; Restore is available.",
+      "result": "pass",
+      "inputApi": "sky.click",
+      "window": {
+        "id": 2426922,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t3480 group\n\t\t\t\t3481 group\n\t\t\t\t\t3482 group\n\t\t\t\t\t\t3483 group\n\t\t\t\t\t\t\t3484 group\n\t\t\t\t\t\t\t\t3485 text Development preview: supplier bills and payments need a connected workspace with the required permissions.\n\t\t\t\t\t\t\t\t3486 button Product units\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t39 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Restore\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N18_MAXIMIZE-0.jpg",
+          "sha256": "8f8bb64e532cec107efcd83d8a2658bd87a622bdc0ecea319bc21e5143163e8d",
+          "bytes": 53544,
+          "width": 1536,
+          "height": 816,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "N19_RESTORE",
+      "observedAt": "2026-10-11T12:10:57.186Z",
+      "action": "Click Restore and inspect the completed narrower layout.",
+      "expected": "Preview retains its content and adapts the command bar.",
+      "observed": "The settled 1267 by 714 window shows the same compact Procurement controls and readable guidance; command search is an icon at the narrower width.",
+      "result": "pass",
+      "inputApi": "sky.click",
+      "window": {
+        "id": 2426922,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t3669 group\n\t\t\t\t3670 group\n\t\t\t\t\t3671 group\n\t\t\t\t\t\t3672 group\n\t\t\t\t\t\t\t3673 group\n\t\t\t\t\t\t\t\t3674 text Development preview: supplier bills and payments need a connected workspace with the required permissions.\n\t\t\t\t\t\t\t\t3675 button Product units\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t39 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Maximize\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/N19_RESTORE-0.jpg",
+          "sha256": "737c09c980adc493b3b4276e3a416e93d584f4a79b3ba0dd5fc630f3c30f7249",
+          "bytes": 51422,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "K10_PALETTE_DOWN",
+      "observedAt": "2026-10-11T12:11:34.848Z",
+      "action": "Open the palette by mouse, then press one physical Down arrow.",
+      "expected": "The second route, Business setup, becomes selected.",
+      "observed": "Business setup has the visible selected-row highlight in the settled dark palette.",
+      "result": "pass",
+      "inputApi": "sky.press_key",
+      "window": {
+        "id": 2426922,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t3990 group\n\t\t\t\t3991 group\n\t\t\t\t\t3992 group\n\t\t\t\t\t\t3993 group\n\t\t\t\t\t\t\t3994 group ↑↓ Navigate Enter Open\n\t\t\t\t\t\t\t\t3995 edit (settable, string) Search modules, records, or commands…\n\t\t\t\t\t\t\t\t3996 group\n\t\t\t\t\t\t\t\t\t3997 button Command centre WORKSPACE\n\t\t\t\t\t\t\t\t\t3998 button Business setup FOUNDATION\n\t\t\t\t\t\t\t\t\t3999 button Sales OPERATIONS\n\t\t\t\t\t\t\t\t\t4000 button Procurement Workspace\n\t\t\t\t\t\t\t\t\t4001 button Finance MANAGEMENT\n\t\t\t\t\t\t\t\t\t4002 button Jentra Control INTELLIGENCE\n\t\t\t\t\t\t\t\t\t4003 button Design system SYSTEM\n\t\t\t\t\t\t\t\t4004 text Status: Permission-aware\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t39 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Maximize\n\t\t\t42 button Close\n\nThe focused UI element is 0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/K10_PALETTE_DOWN-0.jpg",
+          "sha256": "9e68fbe1d15b0912e5a682704d2b61d0289b4f752c4f734973d9e51953900f82",
+          "bytes": 59232,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "K11_PALETTE_ENTER_UNFOCUSED",
+      "observedAt": "2026-10-11T12:12:23.933Z",
+      "action": "Press Return after the visible Business setup palette highlight, then inspect twice.",
+      "expected": "The selected route opens.",
+      "observed": "The palette remains open and the provider reports the window itself as focused. This attempt failed; its focus/input-versus-product cause is unresolved.",
+      "result": "fail",
+      "inputApi": "sky.press_key",
+      "window": {
+        "id": 2426922,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t4650 group\n\t\t\t\t4651 group\n\t\t\t\t\t4652 group\n\t\t\t\t\t\t4653 group\n\t\t\t\t\t\t\t4654 group ↑↓ Navigate Enter Open\n\t\t\t\t\t\t\t\t4655 edit (settable, string) Search modules, records, or commands…\n\t\t\t\t\t\t\t\t4656 group\n\t\t\t\t\t\t\t\t\t4657 button Command centre WORKSPACE\n\t\t\t\t\t\t\t\t\t4658 button Business setup FOUNDATION\n\t\t\t\t\t\t\t\t\t4659 button Sales OPERATIONS\n\t\t\t\t\t\t\t\t\t4660 button Procurement Workspace\n\t\t\t\t\t\t\t\t\t4661 button Finance MANAGEMENT\n\t\t\t\t\t\t\t\t\t4662 button Jentra Control INTELLIGENCE\n\t\t\t\t\t\t\t\t\t4663 button Design system SYSTEM\n\t\t\t\t\t\t\t\t4664 text Status: Permission-aware\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t39 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Maximize\n\t\t\t42 button Close\n\nThe focused UI element is 0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/K11_PALETTE_ENTER_UNFOCUSED-0.jpg",
+          "sha256": "9e68fbe1d15b0912e5a682704d2b61d0289b4f752c4f734973d9e51953900f82",
+          "bytes": 59232,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    },
+    {
+      "id": "K12_FOCUSED_ENTER",
+      "observedAt": "2026-10-11T12:13:18.832Z",
+      "action": "Refocus the palette search edit, press physical f, verify actual edit focus, press Return and inspect after transition.",
+      "expected": "The filtered Finance route opens.",
+      "observed": "The palette closed and the settled Finance overview is visible. Enter succeeds with verified search-edit focus; the earlier window-focused attempt remains recorded as failed.",
+      "result": "pass",
+      "inputApi": "sky.press_key",
+      "window": {
+        "id": 2426922,
+        "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+        "title": "Jentra OS - 20261010 r5 Preview test"
+      },
+      "accessibility": {
+        "focused_element": "1 pane",
+        "tree": "Window: \"Jentra OS - 20261010 r5 Preview test\", App: Jentra_OS.exe.\n\t0 window Jentra OS - 20261010 r5 Preview test Secondary Actions: Raise\n\t\t1 pane\n\t\t\t5721 group\n\t\t\t\t5722 group\n\t\t\t\t\t5723 group\n\t\t\t\t\t\t5724 group\n\t\t\t\t\t\t\t5725 group\n\t\t\t\t\t\t\t\t5726 text Finance\n\t\t\t\t\t\t\t\t5727 text Status: Overview\n\t\t\t\t\t\t\t\t5728 text Ledger, AR/AP, cash, tax and financial reporting.\n\t\t\t\t\t\t\t\t5729 group Finance overview Posting and financial reports are not available from this page. They require a connected workspace with the appropriate business scope and permissions.\n\t\t\t\t\t\t\t\t\t5730 text Status: Posting unavailable here\n\t\t37 title bar (settable, string) Value: Jentra OS - 20261010 r5 Preview test\n\t\t\t38 menu bar System ID: MenuBar\n\t\t\t\t39 menu item System\n\t\t\t40 button Minimize\n\t\t\t41 button Maximize\n\t\t\t42 button Close\n\nThe focused UI element is 1 pane."
+      },
+      "screenshots": [
+        {
+          "path": "docs/verification/wave5/native-preview-20261010-r5/K12_FOCUSED_ENTER-0.jpg",
+          "sha256": "889eed3675b5a838a66f33ffe6226d456d27006b090a261084763a4afede6a62",
+          "bytes": 62298,
+          "width": 1267,
+          "height": 714,
+          "screenshotId": "screenshot-0"
+        }
+      ]
+    }
+  ],
+  "observedWindows": [
+    {
+      "id": 67584,
+      "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+      "title": "Jentra OS - 20261010 r5 Preview test",
+      "boundAt": "2026-10-11T11:54:15.506Z"
+    },
+    {
+      "id": 2426922,
+      "app": "process:C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+      "title": "Jentra OS - 20261010 r5 Preview test",
+      "boundAt": "2026-10-11T12:08:45.459Z"
+    }
+  ],
+  "status": "complete",
+  "nativeLaunched": true,
+  "authenticatedNative": false,
+  "fullNativeKeyboardGate": false,
+  "accountingTransactionsPosted": false,
+  "authoritativeReportsGenerated": false,
+  "actualDelivery": false,
+  "realMfa": false,
+  "actualModelUsage": false,
+  "independentSessionContention": false,
+  "targetScaleLoad": false,
+  "ownerAcceptanceChanged": false,
+  "productionExcluded": true,
+  "realBillingExcluded": true,
+  "boundary": "Actual ordinary offline Preview observations only. The input API documentation/version observation, product SDK/build and native action timestamps are separate. This record cannot establish authenticated native, real accounting or whole-system acceptance.",
+  "inputInterferences": [
+    {
+      "event": "A returned frame briefly showed another app despite Preview window metadata after the sidebar click. It was not used for further input or saved as test proof.",
+      "recovery": "Discarded coordinates; refreshed exact returned Preview window selection."
+    },
+    {
+      "event": "The supported helper then reported user input detected and required get_window_state.",
+      "recovery": "Refreshed Preview state before the next action; the window had become maximized. That change was not claimed as an agent resize."
+    }
+  ],
+  "finishedAt": "2026-10-11T12:13:25.589Z",
+  "counts": {
+    "pass": 27,
+    "fail": 4,
+    "blocked": 2,
+    "observed": 0
+  }
+}

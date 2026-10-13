@@ -1,0 +1,45 @@
+{
+  "value": [
+    {
+      "baseline_rename_fingerprints": {
+        "functions": [
+          {
+            "originalPresent": true,
+            "preservedPresent": false,
+            "originalSignature": "api.reserve_sales_order_stock(uuid,uuid,uuid,uuid,uuid,timestamptz,jsonb,bigint)",
+            "preservedSignature": "api.reserve_sales_order_stock_without_negative_policy(uuid,uuid,uuid,uuid,uuid,timestamptz,jsonb,bigint)",
+            "originalBodyLfSha256": "0e030159650217dff74e0da0664bdbfe1d7b7ddc6108079de231681a9b2c7fae",
+            "preservedBodyLfSha256": null,
+            "originalDefinitionSha256": "98b956846f93a00bc06f6988784262913973d07d93b6cb769232082a8ec510b3",
+            "preservedDefinitionSha256": null
+          },
+          {
+            "originalPresent": true,
+            "preservedPresent": false,
+            "originalSignature": "sales.flow_post_stock(text,jsonb,uuid,uuid)",
+            "preservedSignature": "sales.flow_post_stock_without_negative_policy(text,jsonb,uuid,uuid)",
+            "originalBodyLfSha256": "2fa60ea8f5a0dd5ef48c34cd46b8e357014f179ef98e427214a6991caae00c42",
+            "preservedBodyLfSha256": null,
+            "originalDefinitionSha256": "6717c99c7e4eabb43d05782429e452ba16b52f18d94998401ecb8bce404a64a5",
+            "preservedDefinitionSha256": null
+          },
+          {
+            "originalPresent": true,
+            "preservedPresent": false,
+            "originalSignature": "sales.flow_post(text,uuid,uuid,uuid,uuid,uuid,timestamptz,jsonb,bigint)",
+            "preservedSignature": "sales.flow_post_without_negative_policy(text,uuid,uuid,uuid,uuid,uuid,timestamptz,jsonb,bigint)",
+            "originalBodyLfSha256": "95512fe7ff5ddb2fe00a84ccfc00a4e63245bab24a1f8bf9756ca0405d9c867d",
+            "preservedBodyLfSha256": null,
+            "originalDefinitionSha256": "8c0e356a1cb3a76f05afe3b3f9cdb1a719093247a46fcb96f3036f213432e497",
+            "preservedDefinitionSha256": null
+          }
+        ],
+        "observedAt": "2026-10-13T07:09:58.843424+00:00",
+        "migrationCount": 100
+      }
+    }
+  ],
+  "status": 201,
+  "responseSha256": "fd2a9ec4e96ee0fb8651417f149026dd82e5f31e25d29fc0c47adfe79638a266",
+  "responseBytes": 1608
+}

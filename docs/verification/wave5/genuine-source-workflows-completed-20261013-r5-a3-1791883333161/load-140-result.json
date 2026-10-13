@@ -1,0 +1,201 @@
+{
+  "scopeKey": "load-140",
+  "actorId": "8b740ab8-24f7-4455-a78b-aea0d99d20f6",
+  "commandId": "a7a490c7-4403-4341-816c-3688757f4f02",
+  "priorForecastPreserved": false,
+  "forecast": {
+    "id": "fbec5004-6b0f-4ab5-84f1-b258151c3732",
+    "sourceHash": "3c6f73424436be6378434f23a8bec250ec75d30200bba530f5bd9f9f2cc8a7fc",
+    "sourceCount": 2,
+    "currencies": [
+      {
+        "amount": "2000.125000",
+        "currency": "LKR",
+        "population": 1,
+        "weightedAmount": "1000.062500"
+      },
+      {
+        "amount": "1000.000001",
+        "currency": "USD",
+        "population": 1,
+        "weightedAmount": "333.300000"
+      }
+    ]
+  },
+  "process": {
+    "sourceCount": 4,
+    "activeMinutes": "81.250000",
+    "waitMinutes": "34.250000",
+    "completed": 2,
+    "open": 2,
+    "sourceManifestHash": "21a30aff3a13210054e2d6f32f2ce805b4867388ae665b4b14f327fbcb2702f7"
+  },
+  "forecastResponse": {
+    "id": "fbec5004-6b0f-4ab5-84f1-b258151c3732",
+    "evidence": {
+      "asOf": "2026-10-13T09:22:42.633214Z",
+      "branchId": "3f52204b-76fb-4317-8975-aacdeaec512e",
+      "complete": true,
+      "tenantId": "87d64230-c14e-42a9-8696-e527a1d967e8",
+      "currencies": [
+        {
+          "amount": "2000.125000",
+          "currency": "LKR",
+          "population": 1,
+          "weightedAmount": "1000.062500"
+        },
+        {
+          "amount": "1000.000001",
+          "currency": "USD",
+          "population": 1,
+          "weightedAmount": "333.300000"
+        }
+      ],
+      "horizonEnd": "2026-11-12",
+      "generatedAt": "2026-10-13T09:22:42.633214Z",
+      "sourceCount": 2,
+      "unavailable": {
+        "aging": "STAGE_HISTORY_UNAVAILABLE",
+        "accuracy": "REALIZED_MAPPING_UNAVAILABLE",
+        "velocity": "HISTORICAL_REVISIONS_UNAVAILABLE",
+        "conversion": "HISTORICAL_REVISIONS_UNAVAILABLE"
+      },
+      "horizonStart": "2026-10-13",
+      "observations": [
+        {
+          "id": "3797ae33-27e6-4f67-999e-2eb5cd3ce216",
+          "amount": "1000.000001",
+          "version": "1",
+          "branchId": "3f52204b-76fb-4317-8975-aacdeaec512e",
+          "currency": "USD",
+          "tenantId": "87d64230-c14e-42a9-8696-e527a1d967e8",
+          "probability": "33.33",
+          "legalEntityId": "6b27acf6-ffb0-4842-866a-886b4decb2f2",
+          "expectedCloseDate": "2026-10-15"
+        },
+        {
+          "id": "83a6c3a0-9e55-4ac7-83d9-a32c14ab9912",
+          "amount": "2000.125000",
+          "version": "1",
+          "branchId": "3f52204b-76fb-4317-8975-aacdeaec512e",
+          "currency": "LKR",
+          "tenantId": "87d64230-c14e-42a9-8696-e527a1d967e8",
+          "probability": "50.00",
+          "legalEntityId": "6b27acf6-ffb0-4842-866a-886b4decb2f2",
+          "expectedCloseDate": "2026-10-20"
+        }
+      ],
+      "legalEntityId": "6b27acf6-ffb0-4842-866a-886b4decb2f2",
+      "definitionCode": "pipeline.current_weighted",
+      "sourceContract": "crm.opportunities.current.v1",
+      "recordedThrough": "2026-10-13T09:22:42.633214Z",
+      "definitionVersion": 1
+    },
+    "sourceHash": "3c6f73424436be6378434f23a8bec250ec75d30200bba530f5bd9f9f2cc8a7fc",
+    "canonicalText": "{\"asOf\": \"2026-10-13T09:22:42.633214Z\", \"branchId\": \"3f52204b-76fb-4317-8975-aacdeaec512e\", \"complete\": true, \"tenantId\": \"87d64230-c14e-42a9-8696-e527a1d967e8\", \"currencies\": [{\"amount\": \"2000.125000\", \"currency\": \"LKR\", \"population\": 1, \"weightedAmount\": \"1000.062500\"}, {\"amount\": \"1000.000001\", \"currency\": \"USD\", \"population\": 1, \"weightedAmount\": \"333.300000\"}], \"horizonEnd\": \"2026-11-12\", \"generatedAt\": \"2026-10-13T09:22:42.633214Z\", \"sourceCount\": 2, \"unavailable\": {\"aging\": \"STAGE_HISTORY_UNAVAILABLE\", \"accuracy\": \"REALIZED_MAPPING_UNAVAILABLE\", \"velocity\": \"HISTORICAL_REVISIONS_UNAVAILABLE\", \"conversion\": \"HISTORICAL_REVISIONS_UNAVAILABLE\"}, \"horizonStart\": \"2026-10-13\", \"observations\": [{\"id\": \"3797ae33-27e6-4f67-999e-2eb5cd3ce216\", \"amount\": \"1000.000001\", \"version\": \"1\", \"branchId\": \"3f52204b-76fb-4317-8975-aacdeaec512e\", \"currency\": \"USD\", \"tenantId\": \"87d64230-c14e-42a9-8696-e527a1d967e8\", \"probability\": \"33.33\", \"legalEntityId\": \"6b27acf6-ffb0-4842-866a-886b4decb2f2\", \"expectedCloseDate\": \"2026-10-15\"}, {\"id\": \"83a6c3a0-9e55-4ac7-83d9-a32c14ab9912\", \"amount\": \"2000.125000\", \"version\": \"1\", \"branchId\": \"3f52204b-76fb-4317-8975-aacdeaec512e\", \"currency\": \"LKR\", \"tenantId\": \"87d64230-c14e-42a9-8696-e527a1d967e8\", \"probability\": \"50.00\", \"legalEntityId\": \"6b27acf6-ffb0-4842-866a-886b4decb2f2\", \"expectedCloseDate\": \"2026-10-20\"}], \"legalEntityId\": \"6b27acf6-ffb0-4842-866a-886b4decb2f2\", \"definitionCode\": \"pipeline.current_weighted\", \"sourceContract\": \"crm.opportunities.current.v1\", \"recordedThrough\": \"2026-10-13T09:22:42.633214Z\", \"definitionVersion\": 1}"
+  },
+  "processResponse": {
+    "source": {
+      "asOf": "2026-10-13T09:22:19.058000Z",
+      "branchId": "3f52204b-76fb-4317-8975-aacdeaec512e",
+      "complete": true,
+      "tenantId": "87d64230-c14e-42a9-8696-e527a1d967e8",
+      "windowEnd": "2026-10-12T09:22:20.058000Z",
+      "snapshotId": "23ada213-aebc-4bf7-ab86-77dfd52a1456",
+      "sourceCount": 4,
+      "windowStart": "2026-10-10T09:22:20.058000Z",
+      "documentType": "crm_opportunity",
+      "legalEntityId": "6b27acf6-ffb0-4842-866a-886b4decb2f2",
+      "sourceEventIds": [
+        "00ece7a8-d23b-4db6-9cbe-3931e4c79b5e",
+        "3857ea87-9703-4ad3-bc55-a0452dda7009",
+        "6c94acef-249b-471f-abf8-ead6914b795e",
+        "eacb5c43-d088-4989-9452-1777d8988fae"
+      ],
+      "recordedThrough": "2026-10-13T09:22:19.058000Z",
+      "sourceManifestHash": "21a30aff3a13210054e2d6f32f2ce805b4867388ae665b4b14f327fbcb2702f7",
+      "sourceContractVersion": "workflow.process_events.v1"
+    },
+    "observations": [
+      {
+        "id": "00ece7a8-d23b-4db6-9cbe-3931e4c79b5e",
+        "branchId": "3f52204b-76fb-4317-8975-aacdeaec512e",
+        "tenantId": "87d64230-c14e-42a9-8696-e527a1d967e8",
+        "enteredAt": "2026-10-11T09:56:45.278696Z",
+        "documentId": "3797ae33-27e6-4f67-999e-2eb5cd3ce216",
+        "recordedAt": "2026-10-13T08:56:45.278696Z",
+        "completedAt": "2026-10-11T10:41:45.278696Z",
+        "waitMinutes": "14.875000",
+        "documentType": "crm_opportunity",
+        "activeMinutes": "30.125000",
+        "legalEntityId": "6b27acf6-ffb0-4842-866a-886b4decb2f2"
+      },
+      {
+        "id": "3857ea87-9703-4ad3-bc55-a0452dda7009",
+        "branchId": "3f52204b-76fb-4317-8975-aacdeaec512e",
+        "tenantId": "87d64230-c14e-42a9-8696-e527a1d967e8",
+        "enteredAt": "2026-10-11T10:56:45.278696Z",
+        "documentId": "3797ae33-27e6-4f67-999e-2eb5cd3ce216",
+        "recordedAt": "2026-10-13T08:56:45.278696Z",
+        "completedAt": null,
+        "waitMinutes": "2.250000",
+        "documentType": "crm_opportunity",
+        "activeMinutes": "10.500000",
+        "legalEntityId": "6b27acf6-ffb0-4842-866a-886b4decb2f2"
+      },
+      {
+        "id": "6c94acef-249b-471f-abf8-ead6914b795e",
+        "branchId": "3f52204b-76fb-4317-8975-aacdeaec512e",
+        "tenantId": "87d64230-c14e-42a9-8696-e527a1d967e8",
+        "enteredAt": "2026-10-11T09:56:45.278696Z",
+        "documentId": "83a6c3a0-9e55-4ac7-83d9-a32c14ab9912",
+        "recordedAt": "2026-10-13T08:56:45.278696Z",
+        "completedAt": "2026-10-11T10:41:45.278696Z",
+        "waitMinutes": "14.875000",
+        "documentType": "crm_opportunity",
+        "activeMinutes": "30.125000",
+        "legalEntityId": "6b27acf6-ffb0-4842-866a-886b4decb2f2"
+      },
+      {
+        "id": "eacb5c43-d088-4989-9452-1777d8988fae",
+        "branchId": "3f52204b-76fb-4317-8975-aacdeaec512e",
+        "tenantId": "87d64230-c14e-42a9-8696-e527a1d967e8",
+        "enteredAt": "2026-10-11T10:56:45.278696Z",
+        "documentId": "83a6c3a0-9e55-4ac7-83d9-a32c14ab9912",
+        "recordedAt": "2026-10-13T08:56:45.278696Z",
+        "completedAt": null,
+        "waitMinutes": "2.250000",
+        "documentType": "crm_opportunity",
+        "activeMinutes": "10.500000",
+        "legalEntityId": "6b27acf6-ffb0-4842-866a-886b4decb2f2"
+      }
+    ]
+  },
+  "transport": [
+    {
+      "projectId": "xpdoufauvrbdmxgngetv",
+      "method": "POST",
+      "route": "/rest/v1/rpc/get_pipeline_forecast",
+      "startedAt": "2026-10-13T09:22:39.632Z",
+      "sentAt": "2026-10-13T09:22:39.632Z",
+      "finishedAt": "2026-10-13T09:22:39.802Z",
+      "connectionId": "w5-f4998022-4c43-4d32-ae6b-d9c801ff49ae",
+      "status": 200,
+      "responseSha256": "ebf9adf774ef7bf43c52f92c71a137aed0e4ea4bcc809e08b9c2bedf56c8f2d4",
+      "responseBytes": 3509
+    },
+    {
+      "projectId": "xpdoufauvrbdmxgngetv",
+      "method": "POST",
+      "route": "/rest/v1/rpc/analytics_process_snapshot",
+      "startedAt": "2026-10-13T09:22:39.802Z",
+      "sentAt": "2026-10-13T09:22:39.802Z",
+      "finishedAt": "2026-10-13T09:22:39.951Z",
+      "connectionId": "w5-f4998022-4c43-4d32-ae6b-d9c801ff49ae",
+      "status": 200,
+      "responseSha256": "6ea8c06a2682b66ac076f56763c9ac7d0e538394db9ee41bc1fe0cc7cdd6aa24",
+      "responseBytes": 2732
+    }
+  ],
+  "actualFinishedAt": "2026-10-13T09:22:39.952Z"
+}

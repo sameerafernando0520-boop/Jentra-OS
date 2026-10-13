@@ -1,0 +1,2296 @@
+{
+  "queryBinding": {
+    "path": "docs/verification/wave5/installed-preservation-fingerprints-20261012-r5.sql",
+    "sha256": "8f200dd3a857733c45e4d8b3fc7e4ee7f51c844911ccccbf739630894993a165"
+  },
+  "actualFinishedAt": "2026-10-13T07:33:24.006Z",
+  "response": {
+    "value": [
+      {
+        "installed_preservation": {
+          "observedAt": "2026-10-13T07:33:26.591239+00:00",
+          "accessCounts": {
+            "memberships": 1,
+            "entitlements": 32,
+            "roleAssignments": 1,
+            "rolePermissions": 91
+          },
+          "migrationCount": 114,
+          "protectedProviders": [
+            {
+              "name": "accept_invitation",
+              "schema": "api",
+              "arguments": "p_token text",
+              "definitionSha256": "caaa05b692d7215233b9be947c3f3d5cf4f4540b4e2cf5f39fb49577f93131c7"
+            },
+            {
+              "name": "accept_stock_opening_invitation",
+              "schema": "api",
+              "arguments": "p_invitation_id uuid, p_idempotency_key uuid",
+              "definitionSha256": "cb2aba2c1a13c8b889635d63ea6c31e72c9b973dfb7cf0887900f0cbbce3216d"
+            },
+            {
+              "name": "allocate_customer_receipt",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "c4a8efd7a622515fba3fd4dd5028793bf15fabe6daa649149bac4d3f06822a85"
+            },
+            {
+              "name": "allocate_supplier_credit",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "9d9b6f75ca9007bc2742c13ea3cc7ccac1df158e39f2abf6652694ee6105998e"
+            },
+            {
+              "name": "analytics_pipeline_authorize",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+              "definitionSha256": "d2dc983cde48ad03889b904e5e944d04c645821d76d74d8f54b338f781eb8c82"
+            },
+            {
+              "name": "analytics_process_authorize",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+              "definitionSha256": "c3d9ebd7d239c548039ff99c681fc3747c2bdaca596c6230549198aeab649ee7"
+            },
+            {
+              "name": "analytics_process_event",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_event_id uuid",
+              "definitionSha256": "e86dfd98092106b771dd3311ce43fda7d8e362958d3ad7c559142e6529ee6180"
+            },
+            {
+              "name": "analytics_process_snapshot",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_window_start timestamp with time zone, p_window_end timestamp with time zone, p_as_of timestamp with time zone, p_recorded_through timestamp with time zone",
+              "definitionSha256": "f24764c92e8fe02cdbf0a96c3471a1aabd69aa1fdfef96a075d29a45a46cca59"
+            },
+            {
+              "name": "apply_synthetic_subscription",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_revision_id uuid",
+              "definitionSha256": "b781c95e45609fcbc8374c053d739ebd9d269c4053db670750f008d2394ff5be"
+            },
+            {
+              "name": "approve_receipt_allowance",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "7ced21c0fe49ef253da4956b68ac8bac33fb127d960daa3bd0e070bed327df54"
+            },
+            {
+              "name": "approve_supplier_bill_match",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "01bec83b2a09072cd1d3a073c2e5fda4cd62103fd2810b14a0155d31eb185ac8"
+            },
+            {
+              "name": "assets_authorize",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_capability text",
+              "definitionSha256": "2b6f8f40099b69b28550b43b731e1b7d6c69c699f799d1450d8d5260735f086c"
+            },
+            {
+              "name": "assets_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_issued_at timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "fb8ebd785aa8d4ac3a1cd511a69afa136fad75ea42015585f4a031629c0a1a3d"
+            },
+            {
+              "name": "assets_detail",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_asset_id uuid, p_kind text, p_after uuid",
+              "definitionSha256": "178772afa8db027de9c2799d02e513166795656c5e18ceb700f7049489c3c963"
+            },
+            {
+              "name": "assets_own_receipt",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_idempotency_key uuid, p_action text",
+              "definitionSha256": "3292f2e4a37298218ab7f021b223db82acb83fb7d01794684b04da721462c105"
+            },
+            {
+              "name": "assets_pickers",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_kind text, p_after uuid",
+              "definitionSha256": "30215587280600bb390c28901e48a8c83ff27ae8566aa229a85b47eb09ce975e"
+            },
+            {
+              "name": "assets_register",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "b30910f2b879ec79ffaed4435ea1f9c3e3c908aa109473994d851f9896b0ac80"
+            },
+            {
+              "name": "assets_schedule",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_asset_id uuid, p_book_id uuid, p_after integer",
+              "definitionSha256": "de97fe7bc5b790f318ecdf126c8c6296e809fc3a6e5426727a7268ce9b2ffd94"
+            },
+            {
+              "name": "bank_reconciliation_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "1bd144503867da273fb57e639871883c9473929285d9e2aecc97816ab09e7498"
+            },
+            {
+              "name": "bank_reconciliation_options",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_resource text, p_bank_id uuid, p_after uuid",
+              "definitionSha256": "25d24048f834501ecd3c716f8ebf41be55706c35cd6d72f79e0e27189a988a79"
+            },
+            {
+              "name": "bootstrap_tenant",
+              "schema": "api",
+              "arguments": "p_name text, p_slug text, p_legal_entity_name text, p_legal_entity_code text, p_branch_name text, p_branch_code text, p_timezone text, p_currency_code text, p_idempotency_key uuid",
+              "definitionSha256": "8b30ab19697b6d937e076d61ba047e20512b7bf11505ae27e2811c428cfb246f"
+            },
+            {
+              "name": "budget_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "c7d21cc8ef34bb277344439bb451d7fd8c4cb6505f072dbdec8a5475e08164c3"
+            },
+            {
+              "name": "budget_options",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "1aa2731e7c3f5d9b330089c91b666b66076007203ea85d1f26316120925c17a2"
+            },
+            {
+              "name": "budget_variance_page",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_report_id uuid, p_section text, p_offset integer, p_budget_line_id uuid",
+              "definitionSha256": "df1b05b2ddb266b37dd70656c5cf5f767582c276daf01646318b69ee3fd28349"
+            },
+            {
+              "name": "budget_variance_reports",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "1e0ff12646491df948d6dfa0fc947b5b397231496dcd8e581c9a5cd1abd98e76"
+            },
+            {
+              "name": "cancel_supplier_bill",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "f34bdb39573ccf77235fcf87d5ba103c8d893495a6bf412fc9c4d23d901c4dc5"
+            },
+            {
+              "name": "capture_stock_count_partitions",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "20c6b7bc1df7cd567d52c30df65aaaef31eac9c5b49572d7e1ce22fe4da43889"
+            },
+            {
+              "name": "cash_flow_mapping_options",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of date, p_after uuid",
+              "definitionSha256": "8c62c928c40a16666f9c669a3b3e01749462bd636c0be2719c12984bb745505a"
+            },
+            {
+              "name": "close_control_review_page",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_id uuid, p_section text, p_after integer, p_component_key text",
+              "definitionSha256": "bb6ee1b5865d7856ee93c6d2b8d80b564faa1e5ef2769eeb5ea78b79912092ba"
+            },
+            {
+              "name": "close_control_reviews",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "3c35fd064b87be933cf69a1253f0aee8207dac1fcbef189218fb7b11dd000296"
+            },
+            {
+              "name": "complete_attachment",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_attachment_id uuid, p_checksum_sha256 text, p_expected_version bigint, p_idempotency_key uuid",
+              "definitionSha256": "0149f5e2eff35fd4b994969d44d04d523e60d200371ea2b5d2ed6ee8fcba0e7f"
+            },
+            {
+              "name": "configure_cash_flow_mapping",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "c0ab067a3daf71d7bb6ab391c527279c2808838f44457013ff1252a2db328726"
+            },
+            {
+              "name": "configure_negative_stock_policy",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "bc9a017094e6ec1a799efcc0d5bd0029226ffeec6d0f3fbb6c636466b5e32578"
+            },
+            {
+              "name": "configure_wave3_notification_subscription",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "1c99bf36edb372cd9b4ef0206a07111c44eba23be4eb4dbf9f7324e9bb27f8d7"
+            },
+            {
+              "name": "control_reconciliation_report_page",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_id uuid, p_section text, p_after integer, p_evidence_key text",
+              "definitionSha256": "b52cd556d125a3ee5bcfe2c2e3c900ad2964459932bb68da286316f324d764ac"
+            },
+            {
+              "name": "control_reconciliation_reports",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_resource text, p_after uuid",
+              "definitionSha256": "8c88311fc01ea078d40847d5e1548aa151045bbef0bc3a17d42d83546c8831bc"
+            },
+            {
+              "name": "convert_lead",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "2c4294b8d0b6d381e3a834aaa5980c19f6c94241ff2f25b281ada3251fe79105"
+            },
+            {
+              "name": "convert_quotation_to_order",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "98feed7cd9cf7f139d95fda95b7ff557f6f851ad44fab92449de9783d688e235"
+            },
+            {
+              "name": "create_export_job",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_resource text, p_file_format text, p_filters jsonb, p_columns jsonb, p_row_count integer, p_file_name text, p_file_size bigint, p_idempotency_key uuid",
+              "definitionSha256": "b8725570901c3a3ae44ec9bbff14667f8aeae521fa9a064f665098389462302a"
+            },
+            {
+              "name": "create_invitation",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_email text, p_role_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_expires_in_hours integer",
+              "definitionSha256": "c67aba71ac4f0037559730f104c5765563d806689ca1a61ede1939ad7e0d369d"
+            },
+            {
+              "name": "customer_statement",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_customer_id uuid, p_currency_code text, p_as_of date, p_buckets integer[]",
+              "definitionSha256": "0d356feb1dcb12c0b61c204b298fcf094018426fc528ca4202a350e42ce3fe48"
+            },
+            {
+              "name": "decide_operational_approval",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "1de179632e84b87621f190146f4f79db504276345aaf071addca409fd6d599dd"
+            },
+            {
+              "name": "exchange_revaluation_detail",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_run_id uuid, p_offset integer",
+              "definitionSha256": "fe70f4d0fb06cea4b6c8902e604f2d38a67380a0429428fd8ecac98ec2bd8874"
+            },
+            {
+              "name": "exchange_revaluation_options",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_resource text, p_after uuid",
+              "definitionSha256": "c27d239ca48db679175e21cde928ac35dca1ab22feacc28f651b7297c21ff729"
+            },
+            {
+              "name": "financial_dimension_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "f077af4c29f5bc8313f6f7670023eb60bf4839e60c7d4f019c3448b53f3fdddd"
+            },
+            {
+              "name": "financial_dimensions",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_kind text, p_after uuid, p_search text, p_active_only boolean",
+              "definitionSha256": "34c620f45dad16898b184778f0b1652c62ec636234e1c9087c1015a8eee289cf"
+            },
+            {
+              "name": "financial_statement_page",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_report_id uuid, p_section text, p_offset integer, p_account_id uuid",
+              "definitionSha256": "3c7554a8b1864a932ee83e4771077a9e4f1cb463b017b32c8714c9d5865df772"
+            },
+            {
+              "name": "financial_statement_reports",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "6829d5f91ec0e2951a3eb26a73d9d46b244712358ec4785aec03041c260fbf87"
+            },
+            {
+              "name": "freeze_pipeline_forecast",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_horizon_start date, p_horizon_end date",
+              "definitionSha256": "dd12816fe165fee92292eb63b6b87d5f035194abd852d852d9037afc6a0f776f"
+            },
+            {
+              "name": "generate_budget_variance",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "aac22b4045041c26150251b2806c71c3a03b0913949d568fe149cbdb10528381"
+            },
+            {
+              "name": "generate_close_control_review",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "65f2928709289b450080cad7249ed7bb3d1a99ae183972c6b9a6228283ef9ed9"
+            },
+            {
+              "name": "generate_control_reconciliation_report",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "a1b763427277be18cbfee330440b47f56ab412580b4e8924b3d855dca0288cec"
+            },
+            {
+              "name": "generate_financial_statement",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "c0c3ad73c6fe988032e05574a208247970f61cc7ba1722363dac4613b9e1a77e"
+            },
+            {
+              "name": "generate_inventory_valuation_report",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "29759a265ec4de840fbd3c3fd18bd222d34f2c0496adc3c73dd539bcea153674"
+            },
+            {
+              "name": "generate_operational_report",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "31dcb921841856974370c6b595b9ae34cc09c63523eb541f8bf9ab285af80e20"
+            },
+            {
+              "name": "generate_tax_summary",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "e8cca3a65b08be80623c16080a41dfd657c6dd1d923a89364d8e86088ebed6e6"
+            },
+            {
+              "name": "get_ai_forecast_evidence",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_forecast_id uuid",
+              "definitionSha256": "9269879ab55bd823f4678a38a3e1aebeb7473edaaa4feafbf8ab55138e33f766"
+            },
+            {
+              "name": "get_crm_pipeline_summary",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of_date date",
+              "definitionSha256": "41763c3d18de7da6f3d5016c87083f4dae54e916a48033535b17f4dc57a7d664"
+            },
+            {
+              "name": "get_my_capabilities",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid",
+              "definitionSha256": "4bbd85638248f503f585f2d8b3e639c6f4234982370634e28c4b8855006900bd"
+            },
+            {
+              "name": "get_operator_health",
+              "schema": "api",
+              "arguments": "",
+              "definitionSha256": "b69ff21ff755afbdf87f5b47f9cbf0255b1be92737e33dca8a9e145bd65c8e49"
+            },
+            {
+              "name": "get_operator_tenant_health",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_grant_id uuid",
+              "definitionSha256": "b19e0aae570c1f859132a5826030c3f1d5cf73937f17f5b6c3665e54ba1c4280"
+            },
+            {
+              "name": "get_pipeline_forecast",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_forecast_id uuid",
+              "definitionSha256": "c89424d74eeb98bd0597e5c3e676e8c3f9a51c58a8db29ed6db51df1138d659d"
+            },
+            {
+              "name": "get_sales_order_credit_preview",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_sales_order_id uuid",
+              "definitionSha256": "db2ca6d476505c189bfb47acfc422e586506328cfceebd27e90b60cb9817302e"
+            },
+            {
+              "name": "get_wave5_proposal",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_proposal_id uuid",
+              "definitionSha256": "d24010e944a7d72c6f85ff5c5a551ba2d811346940c38a44dcec19e922fe61ca"
+            },
+            {
+              "name": "get_wave5_subscription",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid",
+              "definitionSha256": "87d0561a700b59cdad77791d057c6e813f52d2f821b59d829fb2f5a165c726bb"
+            },
+            {
+              "name": "get_wave5_usage_allowance",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_metric_code text, p_period_start timestamp with time zone",
+              "definitionSha256": "5abac8bab4b3e00117b7bcd2d80488979bf49a1057f4b26dac4be04a99a228db"
+            },
+            {
+              "name": "goods_receipt_reference_options",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_resource text, p_after uuid, p_search text",
+              "definitionSha256": "77b6aec23885fa4967188df85eb539ae1fb4be94b5af8c8f2cbafa4ca36e7d91"
+            },
+            {
+              "name": "import_setup_records",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_resource text, p_file_format text, p_file_name text, p_file_size bigint, p_rows jsonb, p_idempotency_key uuid",
+              "definitionSha256": "fa0050e8e180f68e5b51fb397a138abaa1637082e33d512582ea7d5cd894fe01"
+            },
+            {
+              "name": "inventory_transfer_holdings",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of date, p_after uuid",
+              "definitionSha256": "99645cf13878df899d281d6733995a5079aaeef34259244c378205d5bda4ad40"
+            },
+            {
+              "name": "inventory_transfer_options",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_resource text, p_warehouse_id uuid, p_product_id uuid, p_after uuid, p_search text",
+              "definitionSha256": "d1075f86f3131571f522026a30056a588c67ddd17a05fe7874e9f9086f8d334f"
+            },
+            {
+              "name": "inventory_transfers",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "d27bbe0a8a18af5e05bea1c975a7d4609b660a11ac4b857174b97499c307d182"
+            },
+            {
+              "name": "inventory_valuation_report_page",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_id uuid, p_section text, p_after integer, p_evidence_key text",
+              "definitionSha256": "52ba4f689aa68671cb83b173d7b3349b6e70e2cee4cc624aaf50087fa01b8b62"
+            },
+            {
+              "name": "inventory_valuation_reports",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_resource text, p_after uuid",
+              "definitionSha256": "fce984c3a1807b2a85ba876415bf32a5be1e714941bff59832303b070c7d7db4"
+            },
+            {
+              "name": "inventory_value_options",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_resource text, p_after uuid",
+              "definitionSha256": "aaa6e8ca533854dfca7ccbac8de5120c350b7dd88d05332397ae5f3bd3ccfb30"
+            },
+            {
+              "name": "invite_stock_opening_approver",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_email text, p_idempotency_key uuid",
+              "definitionSha256": "a8b5f28d4e9bb25c3f02fa1ef6255464e2e5860dbc7831f6bebc4a68b9172c03"
+            },
+            {
+              "name": "issue_operator_tenant_grant",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_operator_id uuid, p_reason text, p_expires_at timestamp with time zone, p_idempotency_key uuid",
+              "definitionSha256": "623168290e27148f0f4544838d1fdbf1e5f3a0a2d85a756228b0db09ca29f3e3"
+            },
+            {
+              "name": "landed_extension_documents",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "61ae61127284a8b3c800f129b867e703e1ad4456f38e03ff8246194ef97fd079"
+            },
+            {
+              "name": "list_my_stock_opening_invitations",
+              "schema": "api",
+              "arguments": "",
+              "definitionSha256": "e23f5510b740b773f4b94b926c1ac1ab0fc185b82902f80ed0ec59a2087d6076"
+            },
+            {
+              "name": "list_my_tenants",
+              "schema": "api",
+              "arguments": "",
+              "definitionSha256": "ebe17d291fd7bfd6ddd98bf8a3d2302d5dbfd05fce9a8aaa84cc13964dfdabcd"
+            },
+            {
+              "name": "maintain_stock_reservations",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "82a261bee39ae13069fb5bb0f58f56b64e5b2901666612f9055515c975621941"
+            },
+            {
+              "name": "manual_journal_detail",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_id uuid",
+              "definitionSha256": "3a2dac6be617c40a2f2d8d3b2277f1bb49e1945434aae07ae1740a69e0199c96"
+            },
+            {
+              "name": "manual_journal_options",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_resource text, p_after uuid, p_search text",
+              "definitionSha256": "3ac9cc7353c48b8f71124e29901d966556a18cd90d2e9e8d17ecf03b2264e068"
+            },
+            {
+              "name": "manual_journal_tax_controls",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid, p_search text",
+              "definitionSha256": "1944061f3ca408ff2af2627107cf7f733c53b4143472df95f6d21f39f969bdcf"
+            },
+            {
+              "name": "manual_journal_tax_options",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_document_date date, p_after uuid, p_search text",
+              "definitionSha256": "1cf86b303d6e54cd3dc3755024c9af41242c2b0ddd8e20ed7a3d7482c6c7cd3f"
+            },
+            {
+              "name": "mark_notification_read",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_notification_id uuid, p_expected_version bigint, p_idempotency_key uuid",
+              "definitionSha256": "36a699be498ab06b1038d8a2a5e159064a54a99f7ac2f5fccd873d88d6a5649d"
+            },
+            {
+              "name": "negative_stock_evidence",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_resource text, p_after bigint",
+              "definitionSha256": "09c67fc4a927576b5659149d4c9a04859754129bc17dab52e3ba68ba8d9e5cac"
+            },
+            {
+              "name": "negative_stock_policy",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+              "definitionSha256": "972000e4c1803057fd994d55906ecb14d29d18fef6a4111a6d11b7215d3b26c8"
+            },
+            {
+              "name": "operational_report_page",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_id uuid, p_section text, p_after integer",
+              "definitionSha256": "a216dc2be3cf9731f800ad9c37da0a5b2996173df5e9879aa451a3b6e6296279"
+            },
+            {
+              "name": "payable_allocation_rates",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_source_currency text, p_target_currency text, p_date date, p_after uuid",
+              "definitionSha256": "d48ef4a91d01a2f27ba980de7d6f33ec90e3841333e889e27dd90a56554fc0f5"
+            },
+            {
+              "name": "payable_allocation_targets",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_source_id uuid, p_after uuid",
+              "definitionSha256": "22dd9199c7ac443f7b0c03bb8e4e4be81b5bbf8a3f765067fa37408742fb03fc"
+            },
+            {
+              "name": "payable_item_detail",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_item_id uuid, p_after uuid",
+              "definitionSha256": "83bd8c4109cf7ee5de7a51f09090d4c7b9ef1cc01a2ab87db989239fa04325d0"
+            },
+            {
+              "name": "people_attendance_clock_batch",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "cbb2eeb438d1e89c2dfb8329cc96f5caff4617b0804bd2a3b84c2188565ec523"
+            },
+            {
+              "name": "people_attendance_clock_batch_detail",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_batch_id uuid, p_after integer",
+              "definitionSha256": "021dc2dd577cdbdd6970c3f4ce82b62133da83c4728d573b2b7aeaab20d7b00c"
+            },
+            {
+              "name": "people_attendance_clock_batches",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+              "definitionSha256": "554b6a3cb65aed44786d368c81002d603f536e5bd2ad6fffb4b035b756ca7b90"
+            },
+            {
+              "name": "people_attendance_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "9f470cb3ee6166078f44f35c0a116e6cde788b0ed73399b669a0f95982871e9d"
+            },
+            {
+              "name": "people_attendance_detail",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_entry_id uuid, p_after uuid",
+              "definitionSha256": "ae6a270eb163923149dba94fa88efd53d187d5ba8b66515a02a753473aa30aa1"
+            },
+            {
+              "name": "people_attendance_entries",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+              "definitionSha256": "7a2175226d6a1d4a7b6af41fab59d15821ad73ff8cc6b5492eabbe3af235d1b0"
+            },
+            {
+              "name": "people_attendance_raw_events",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+              "definitionSha256": "14450d56cbe9909c34ff7b523db0131a024d501c7175310d12f0da3cda3cd094"
+            },
+            {
+              "name": "people_calendar_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "0a6271518f831062f6ed9a80e9ef6d37ca7f0b11ee2f23a81c07582858bcdc0d"
+            },
+            {
+              "name": "people_calendar_detail",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_calendar_id uuid, p_version_id uuid",
+              "definitionSha256": "4d6588c249a30f01a593243e80eaec416310aa3f5c0684fb8b7086514c1bd060"
+            },
+            {
+              "name": "people_calendar_directory",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of date, p_search text, p_after uuid",
+              "definitionSha256": "813d9bf6d0bc897b41caa2ea22694006e88cc20e64fb0b2b84631938994ae960"
+            },
+            {
+              "name": "people_calendar_history",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_calendar_id uuid, p_after uuid",
+              "definitionSha256": "0efc217e8add328e6b1eb18cafb9dd2ca69653c62435c1e6e4419fe7f7808764"
+            },
+            {
+              "name": "people_calendar_local_candidates",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_version_id uuid, p_date date, p_minute integer",
+              "definitionSha256": "9c0c5f346526a195040293b6173b8dc80017ad0f24bdce0081ecf674f38fdd5a"
+            },
+            {
+              "name": "people_calendar_versions",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_calendar_id uuid, p_after uuid",
+              "definitionSha256": "04cc59962294030663de91b5832cfede9f99b45c448cfb681f335d1920c8dbd1"
+            },
+            {
+              "name": "people_employee_branches",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_search text",
+              "definitionSha256": "62e22c8e1a79815e5a89be35ea4665e89238bf4023226d83aba486e74ff4d8b1"
+            },
+            {
+              "name": "people_employee_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "d8b256409088b352005e051e1187b165256813588d193fa60ca4bea964786213"
+            },
+            {
+              "name": "people_employee_detail",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_as_of date, p_status text",
+              "definitionSha256": "8058886e4a732b85f31e44cbb98406e0dd77b0eaf49a028c08074f077629f0c8"
+            },
+            {
+              "name": "people_employee_directory",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of date, p_status text, p_search text, p_after uuid",
+              "definitionSha256": "bfe2a6da75e0d3f7aacda611907afbb8877f78882c97b589fc2487f7ce4b8416"
+            },
+            {
+              "name": "people_employee_history",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+              "definitionSha256": "a9568c4690185654fc0bcf171fc56e77e2c64ba85f03d45c9dd3cb6930f61825"
+            },
+            {
+              "name": "people_hr_access",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_capability text",
+              "definitionSha256": "6d7cd52674fbed6b3b56289adeec761e52b17847c9c65485e632a41b5304026a"
+            },
+            {
+              "name": "people_hr_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "9e5bf9f2a625b25759fb652e64a3f4531d435115b610b27d546b4c2813edf24a"
+            },
+            {
+              "name": "people_hr_document_ticket",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_document_id uuid, p_operation text",
+              "definitionSha256": "6f9ec927fbb8e8d6f7d7fabec4953e89036b5a83568794aa9c7a140158f392cc"
+            },
+            {
+              "name": "people_hr_documents",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+              "definitionSha256": "184f22cabc5c70d41ae6bb6d34ed3ef84f99c3387b90e341a76b9f355fd2f022"
+            },
+            {
+              "name": "people_hr_erasure_status",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+              "definitionSha256": "de96430bfebcb8be52ee84d1a8e091978a3b7533b9df8023071c44b2bbfcdc70"
+            },
+            {
+              "name": "people_hr_export_content",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_export_id uuid",
+              "definitionSha256": "c69b5eaf648c48f68b6f622d3543a03b33adc1ef7eeb779b41b53c6c7b92ecaa"
+            },
+            {
+              "name": "people_hr_link_inbox",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "28064b2b1344a434c283a65705cbcf117c33d0b9337958190f9f7960b793ba74"
+            },
+            {
+              "name": "people_hr_links",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+              "definitionSha256": "814e0fe233f3001871b2b8393cfc53145177e654e042a010526c6672770e0441"
+            },
+            {
+              "name": "people_hr_memberships",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "0c6515b9967cf594d85373720fc3af4e407b34c670512ae197357e96abc17f33"
+            },
+            {
+              "name": "people_hr_own_receipt",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid",
+              "definitionSha256": "5782ec29e6b73c631234616d59ca1338f0171b8b46a062dfe5e88650d49a7fda"
+            },
+            {
+              "name": "people_hr_policy",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+              "definitionSha256": "073e797b1f4000c4aae529ac7e571b7575f668e0f3567732512f11c63cb0fda7"
+            },
+            {
+              "name": "people_hr_profile",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+              "definitionSha256": "de02b3112b36788213033bb277cce8742cab832d7cfbe0bbfaab5e275b4abf66"
+            },
+            {
+              "name": "people_hr_review_history",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_review_id uuid, p_after uuid",
+              "definitionSha256": "43a8e8b0866470b773a81c8f4d12f2f573e2d96aae54d3e6bd0e7b9d0260e3d7"
+            },
+            {
+              "name": "people_hr_reviews",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+              "definitionSha256": "ceb7d880ae5ad1f5cc5cdb2cb9ab03420286df2d8a086b3dc2f11fe54c561768"
+            },
+            {
+              "name": "people_hr_self",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+              "definitionSha256": "d2dba201f33582d451ab29fdde0c13c67bd2b21328543bcd43db19bde9107db5"
+            },
+            {
+              "name": "people_hr_service_document",
+              "schema": "api",
+              "arguments": "p_ticket_id uuid, p_user_id uuid",
+              "definitionSha256": "625709bff05ce7cffee8f4e627f035d8c91d7a6855bfa849337f9ba91c760e72"
+            },
+            {
+              "name": "people_hr_service_verify_upload",
+              "schema": "api",
+              "arguments": "p_ticket_id uuid, p_user_id uuid, p_checksum text, p_byte_size integer",
+              "definitionSha256": "3fa26cacaa255c637ab4dd89818b85266401c92e7fc87524eca68cd68dbdf229"
+            },
+            {
+              "name": "people_hr_subjects",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_capability text, p_search text, p_after uuid",
+              "definitionSha256": "482ad023618c1800050c5497151fad2f5179bdb2cfb987f065ed7fedb19f3c7c"
+            },
+            {
+              "name": "people_hr_worker_claim",
+              "schema": "api",
+              "arguments": "p_limit integer",
+              "definitionSha256": "7acbd785d0a70fe06e3bedec4256d50975e67bd53589f33ecbc64018f5378418"
+            },
+            {
+              "name": "people_hr_worker_complete",
+              "schema": "api",
+              "arguments": "p_job_id uuid, p_lease_id uuid",
+              "definitionSha256": "51e947a2aba4e796803cdd11018b70bf72360455edad027bd77613da14826f28"
+            },
+            {
+              "name": "people_hr_worker_register",
+              "schema": "api",
+              "arguments": "p_artifact_digest text, p_storage_probe_digest text",
+              "definitionSha256": "0948c98c9d642f3b47598a5f19852cb002d87dadfcbbaead454c61bee7f53fa1"
+            },
+            {
+              "name": "people_leave_balance",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_policy_id uuid, p_as_of date, p_recorded_before timestamp with time zone, p_after uuid",
+              "definitionSha256": "f8e9b5e2734fbb51a0650c25e252e7ffb5f3fd3768daa930d934a783a77f5792"
+            },
+            {
+              "name": "people_leave_detail",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_request_id uuid, p_after uuid",
+              "definitionSha256": "9247f82875f8d4930c54bb78fa1b5bc53b15e995de7dd4171e4c0d18f7102d72"
+            },
+            {
+              "name": "people_leave_grant_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "be031cbc80046974baf3fb79ef67bd96fe78cf429ca71abea65ce405ccc63af4"
+            },
+            {
+              "name": "people_leave_own_receipt",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid",
+              "definitionSha256": "e4121a38c08fdfff6721f8b3ee2c06e6e103149ae954ba67323c79bba8130d7d"
+            },
+            {
+              "name": "people_leave_policies",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "e060c9683d96e572dd7042ecb9f58bdc8cc9959998ae36a53b6f83553105b934"
+            },
+            {
+              "name": "people_leave_policy_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "210bc38a69da0fe734f39728c0fe9108771ae38f3af76e1283439f0c56fca089"
+            },
+            {
+              "name": "people_leave_policy_for_version",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_version_id uuid",
+              "definitionSha256": "538a1edf08fb01944079997c2acf338494354a43dec7c5c4cfa09abaca11baa1"
+            },
+            {
+              "name": "people_leave_policy_versions",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_policy_id uuid, p_after uuid",
+              "definitionSha256": "dc74322894b987fbac0f2c623f19ffbe91160bb85e433ac0cf68a7494df61120"
+            },
+            {
+              "name": "people_leave_request_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "37e0463b89680c3f32f5be5032de1df4f4b187451ae059fbf8dbaba837001160"
+            },
+            {
+              "name": "people_leave_requests",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+              "definitionSha256": "d760a5e7445274dff0499cf682b7bf2c85fe2e71fb58cde817cfa0612864f860"
+            },
+            {
+              "name": "people_organization_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "bd19b3c439e5ca3f934af8d47633c68c28cee1c3907d6e757de5ebea6599509e"
+            },
+            {
+              "name": "people_organization_department",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_department_id uuid, p_as_of date",
+              "definitionSha256": "58735b459200245c72aeac57e0d6fbf893d5f83ccbb16ad4051f2411f25ca797"
+            },
+            {
+              "name": "people_organization_department_history",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_department_id uuid, p_after uuid",
+              "definitionSha256": "d01c0035c19085554611aa2fd0a76b80115f37e4d9a2c2e9155ce5be2d0fd34c"
+            },
+            {
+              "name": "people_organization_departments",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of date, p_search text, p_after uuid",
+              "definitionSha256": "f555a1a7d87de44e57286a7faae9f19e0afcd8518c3553ce113b68cdc0564279"
+            },
+            {
+              "name": "people_organization_employee",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_as_of date, p_after uuid",
+              "definitionSha256": "b91abb2d852704d7e45195833fa25bd42916f33e630a161bfac76a703dacf6ab"
+            },
+            {
+              "name": "people_payroll_accounts",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_kind text, p_after uuid",
+              "definitionSha256": "befb20092dd8b1e075c7735f155710a750b586fa0fc83c34422d17a091071161"
+            },
+            {
+              "name": "people_payroll_assignments",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+              "definitionSha256": "8a73431bc44aa2ed0f079864d6e6d9f60222e26c80d7377364e34ca233bd1c9b"
+            },
+            {
+              "name": "people_payroll_authorize",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_capability text",
+              "definitionSha256": "24650e47257f6c35010e238a6657d75c354a685cab3593329d11b41e78c478c8"
+            },
+            {
+              "name": "people_payroll_calculation",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_calculation_id uuid, p_after_code text, p_source_after uuid",
+              "definitionSha256": "2023c052e6ea5ee19f34afe64359e8d78da878549af74d7a2ff648e5853e01ca"
+            },
+            {
+              "name": "people_payroll_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "1ca3c1448c5de104d6a4dd34853257f26dca4f42f23e2f982aa90c6b1fbd4def"
+            },
+            {
+              "name": "people_payroll_configure",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "d95e1ae65178a05a263085eb3a8e2bd5f43c84fe644906a6c74e1a252b784d2c"
+            },
+            {
+              "name": "people_payroll_correction_authorize",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_capability text",
+              "definitionSha256": "ff0096f3fd4a4a2e9dcc6bc361233a784491be3daf72a538cb5629ff8299f358"
+            },
+            {
+              "name": "people_payroll_correction_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "59a86056d5f36b1208188413b88290a624eae63705614e2b452127d1f654791f"
+            },
+            {
+              "name": "people_payroll_correction_detail",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_correction_id uuid, p_section text, p_after uuid",
+              "definitionSha256": "b7f25661939e2643fcbeccc53e16ce34f265d829a56a4bd1588e6bca5a43a4b7"
+            },
+            {
+              "name": "people_payroll_correction_originals",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "b1b883eea0364836a68a7c72e19a6afa50622fdf9fdf75d0652720d87b1f17ba"
+            },
+            {
+              "name": "people_payroll_correction_own_receipt",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_action text",
+              "definitionSha256": "d314ac1ff826a6c380b8904a22cff00b3fc8aec08c56c3b913b689e5ba0d493a"
+            },
+            {
+              "name": "people_payroll_correction_settlement",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "07ab2ce0e612e48b97c32249ed1a2e403a2a50cbc98beca33b7faa1127979824"
+            },
+            {
+              "name": "people_payroll_correction_sources",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_calculation_id uuid, p_after uuid",
+              "definitionSha256": "8a444dc4887039edf824585d5ea47be7ba656fc861d616c792be891dd489c49e"
+            },
+            {
+              "name": "people_payroll_corrections",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "7bcaed296aaaf950c6ad5a2205aeb6133513473cfef226707c8acc9ab83337ff"
+            },
+            {
+              "name": "people_payroll_export",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "d5b7a8165190b864e0a57f67c1af79e9688c3356a857987b385f6228754c9172"
+            },
+            {
+              "name": "people_payroll_export_content",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_export_id uuid",
+              "definitionSha256": "81832353c0257e7e1261bbd963186971c5f566196783dc3b5547a8ce40357930"
+            },
+            {
+              "name": "people_payroll_history",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_run_id uuid, p_after uuid",
+              "definitionSha256": "b199e37c6778cb04f8df30a95e68785dc2b5128f46116b70bbf75300a7857397"
+            },
+            {
+              "name": "people_payroll_obligations",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_run_id uuid, p_after uuid",
+              "definitionSha256": "418dccd7b920cf06b05b4814c8e2691568a0880926fe085c35c0f241bac6337f"
+            },
+            {
+              "name": "people_payroll_own_receipt",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_capability text",
+              "definitionSha256": "c61dfbb193911b95a060118ac311d3398d61dbddc28e16842c97e3f8a8b11333"
+            },
+            {
+              "name": "people_payroll_payslip",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_payslip_id uuid, p_after_code text",
+              "definitionSha256": "980255fba0136cf0fa98edbfe8695d84c4725ffe11138048f1f60225711c8994"
+            },
+            {
+              "name": "people_payroll_payslips",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+              "definitionSha256": "5d1d4a09224023572dfb2c435787c52731e176a1cae24ecbc2cc6501c9b38fdc"
+            },
+            {
+              "name": "people_payroll_rules",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "174bc103d7f2e918930c81c091cc7eaa9ea886978fa231f49097cd9d698f1762"
+            },
+            {
+              "name": "people_payroll_run_detail",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_run_id uuid, p_after uuid",
+              "definitionSha256": "931f3f2decd3b82ce293026bc6e707497ee498b8e067d9f57fe246a8cfd69bad"
+            },
+            {
+              "name": "people_payroll_runs",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "0e75504017dd415d747205c5ff9466274b06a2a4da8b1ef2fd79a24d1e3b5877"
+            },
+            {
+              "name": "people_payroll_self_payslips",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "12005dfb7b071f5a499c1de33770970a77f9bf04981831140615750b6c6f5f2f"
+            },
+            {
+              "name": "people_payroll_settlement",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "427a94ff45b7560f5b7831dff5264835a90065bda571331d80b028cb267035e2"
+            },
+            {
+              "name": "people_payroll_settlements",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_run_id uuid, p_after uuid",
+              "definitionSha256": "20febbdfd2dd6805d301e054778ff9b93e4553055502cded725682dce748958e"
+            },
+            {
+              "name": "people_payroll_snapshot",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_calculation_id uuid, p_section text, p_after integer",
+              "definitionSha256": "4e2f81dd98ec3de67dacd47873dc663471cb144f7355c45fccecc6c4dc0eb324"
+            },
+            {
+              "name": "people_work_claims",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+              "definitionSha256": "a53f6baa3c491460819382f986a35fd534de1f5feb822d46421a247a8d9d195b"
+            },
+            {
+              "name": "people_workforce_authorize",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_capability text",
+              "definitionSha256": "b1fdc9ccc0edf49ec0dd4e8af22186b8f5d565a77160d1fbd16901ccd9695ec1"
+            },
+            {
+              "name": "period_governance_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "207f30fd16e2318e2903d975b75fc067aaab7d28ced8a568501d6d62a0ee2bec"
+            },
+            {
+              "name": "period_governance_options",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_resource text, p_period_id uuid, p_after uuid",
+              "definitionSha256": "7bbf6b192889d5abb431db5e4c00b396bb2bd5ed7725079e22d3e8f8317d16c8"
+            },
+            {
+              "name": "post_customer_receipt",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "36520336e62ef7d666f8e6b0bde2f4d355670b6acedeb5062dfd231acdabadd3"
+            },
+            {
+              "name": "post_delivery",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "87e4fc2ebb161ad8927f8a7abb4cf0bec2d52461119b1790bd58c294f0f0e8fc"
+            },
+            {
+              "name": "post_exchange_revaluation",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "42b9e81570faadda16f1cc683822b82e1bb82ceb1b6352cc1cdd5420ec5817c9"
+            },
+            {
+              "name": "post_goods_receipt",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "7136350baa226f84ade0bb993b706ac02cb5de91770639015578cae178d71daf"
+            },
+            {
+              "name": "post_inventory_value_adjustment",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "0a7c9a085289e0d1fb0193ab7ca202bd60507b5113cb8f86afea50fd4c359fc6"
+            },
+            {
+              "name": "post_landed_extension",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "517513ba68aa34c26ffe48b46ec8ffdaa02905d4e73d4732ea02e9e904691827"
+            },
+            {
+              "name": "post_manual_journal",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "2fb88de12ee20fdfd7a6ef235715a68afd6dc2e7d87d8fe558d60c7c2b12f5f6"
+            },
+            {
+              "name": "post_purchase_return",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "5d43fe5513b052e2736e033080b895a08da7d1e6767b1cbf411fcf0a4fd69497"
+            },
+            {
+              "name": "post_sales_invoice",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "72e0b6943ab9a61bf805ca4e686bf04be2f354c13b1a7218053b46e2f1f91270"
+            },
+            {
+              "name": "post_sales_return",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "5eac68021957506d609212d6ad379df141c7957598049d65d64070b410d34152"
+            },
+            {
+              "name": "post_stock_adjustment",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "1ba9f668212bf96f3ed05eb57c8aa37db4fc14692e47b6cfb0eeb6235cdf9332"
+            },
+            {
+              "name": "post_stock_disposition",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "d1adcef1c652f744a89b0940f6f33aa1d224d1b693608f0298327df6a31f3a92"
+            },
+            {
+              "name": "post_stock_opening",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "f42f8c0ecbb2ceea7150c8a16eaf3e75496847fa5406eef778cc12a0827bf9b9"
+            },
+            {
+              "name": "post_supplier_bill",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "c56511f5967fa0933c6b8f08706b7f4938350d2702ea09a5f76bc6b50d125a20"
+            },
+            {
+              "name": "post_supplier_payment",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "802c4832edae2057a2ec6db95aead48e388c57350ab7638a9c1554b09c9847fa"
+            },
+            {
+              "name": "posted_journal_evidence",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_journal_id uuid, p_after_line integer",
+              "definitionSha256": "9d5dc1ccb275cf1d1778e9652a935470e7641bf95acc9bba0b9ae75708e08927"
+            },
+            {
+              "name": "preview_inventory_value_adjustment",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_payload jsonb",
+              "definitionSha256": "f6d7ef12f9947bcb94e5e0ce5d405753ad0acdae3315900e6bb23942477a6df1"
+            },
+            {
+              "name": "preview_landed_extension",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_payload jsonb",
+              "definitionSha256": "6b5d18e51eb04101d15a99fb204314e6b8495108e87343e330a3b35fbbee0798"
+            },
+            {
+              "name": "procurement_reference_options",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_resource text, p_after uuid, p_search text",
+              "definitionSha256": "ec3b4dfaaeb3fa86a470c5ea1170386d1e000678236282b86125f20623059ff4"
+            },
+            {
+              "name": "project_milestone_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_issued_at timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "fc010be6c98c0063c39c9adefb4e2cc37f498207237656575ac28fe6fb5c77db"
+            },
+            {
+              "name": "project_milestone_detail",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_project_id uuid, p_id uuid, p_after uuid, p_kind text",
+              "definitionSha256": "0a2efaeea51c2029753f61ce77a20ac37c4284d5b4a705f5a61710d365ca41e1"
+            },
+            {
+              "name": "project_milestone_own_receipt",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_project_id uuid, p_idempotency_key uuid, p_action text",
+              "definitionSha256": "63819d4458e0cfa41402f5f4c59d1272420fb4b5a9beaafef1e6bb1b9eb222cb"
+            },
+            {
+              "name": "project_milestones",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_project_id uuid, p_after uuid",
+              "definitionSha256": "76e65241e72b25245cb3e0a125e607e6bb6730a662b9fcb71aa52ef406666753"
+            },
+            {
+              "name": "projects_attendance_claims",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_employee_id uuid, p_after uuid",
+              "definitionSha256": "3eb2fbd2e5b43b1ec0c8b2c298f0c7b130cc832af9990d5fecadf8c228aa2d54"
+            },
+            {
+              "name": "projects_authorize",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_capability text",
+              "definitionSha256": "9b8fc21e6d38d3c476b87b0bc56fbc4b0a345b8db6eedc197d39ea2ddf1c67a4"
+            },
+            {
+              "name": "projects_calendar_candidates",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_version_id uuid, p_date date, p_minute integer, p_second integer",
+              "definitionSha256": "a36d3ffacb6b2882eaf979c0b345a0aaeffb7fbe441f1539b8650d708a73d083"
+            },
+            {
+              "name": "projects_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_issued_at timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "d50fd1b443ba034e3d1f8158a3e38f81b1241da98b4ec6ac2383c85153fb3166"
+            },
+            {
+              "name": "projects_detail",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_project_id uuid, p_kind text, p_parent_id uuid, p_after uuid",
+              "definitionSha256": "8099b7c8b3b68493e49649e0d846ea3b3b4061565818d49443e4bb27cf40ec5e"
+            },
+            {
+              "name": "projects_directory",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "0b34e145cef2290870b7e5283b890cb511e43af112b8baa267345073139710c9"
+            },
+            {
+              "name": "projects_expense_evidence_access",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_project_id uuid, p_expense_id uuid, p_capability text",
+              "definitionSha256": "89c048b03382f9cd364c1afb316d25cfdc2de5d22759a74700ed388b085a900a"
+            },
+            {
+              "name": "projects_expense_evidence_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_issued_at timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "6eacf31977a999e6d386b04f073b2e23fdcaa963ed3202fbc56b9b988671c2a5"
+            },
+            {
+              "name": "projects_expense_evidence_list",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_project_id uuid, p_expense_id uuid, p_after uuid",
+              "definitionSha256": "dc778e373338254a47cb2be49a416bd29b1145d1dbca5da3a2e187e45bfb85a8"
+            },
+            {
+              "name": "projects_expense_evidence_own_receipt",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid",
+              "definitionSha256": "8400bcedea172bfd3ba7a52bd01df91f3b0e98d64dddf1ca7bcac1de3428263b"
+            },
+            {
+              "name": "projects_expense_evidence_service_document",
+              "schema": "api",
+              "arguments": "p_ticket_id uuid, p_user_id uuid",
+              "definitionSha256": "b02e4d15bcdef315cea0ad5f5c95fed44fe6f0163b6a568698264300aa8ae75e"
+            },
+            {
+              "name": "projects_expense_evidence_service_verify",
+              "schema": "api",
+              "arguments": "p_ticket_id uuid, p_user_id uuid, p_checksum text, p_byte_size integer",
+              "definitionSha256": "60fcf6aba50aa3943336aaea56ba9e7e6ff14dc0854375197b150670baaeeaaa"
+            },
+            {
+              "name": "projects_expense_evidence_ticket",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_project_id uuid, p_expense_id uuid, p_document_id uuid, p_operation text",
+              "definitionSha256": "e92da8b5120c9f2dc3ef258368532d1d6c8b5c4bd782c5e4b46aa30b6c9cb103"
+            },
+            {
+              "name": "projects_expense_evidence_worker_claim",
+              "schema": "api",
+              "arguments": "p_limit integer",
+              "definitionSha256": "a91af0079d9a093be38e2df0dc01d54ead3f1bddfcaf6ae8ff25beb8bd177aec"
+            },
+            {
+              "name": "projects_expense_evidence_worker_complete",
+              "schema": "api",
+              "arguments": "p_job_id uuid, p_lease_id uuid",
+              "definitionSha256": "7bf475b6050ced06833ff8d555be473f6e9d9895f712401f6004113525e53147"
+            },
+            {
+              "name": "projects_expense_evidence_worker_register",
+              "schema": "api",
+              "arguments": "p_artifact_digest text, p_storage_probe_digest text",
+              "definitionSha256": "ec2527d2f0f1fd493bbbd1c400554f31197cc3d3586b5db89983465df0f8e0d2"
+            },
+            {
+              "name": "projects_finance_authorize",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_capability text",
+              "definitionSha256": "2942bd27d69e41fbb884dd1eba79b51f557b0b657beceb0c64cd59151fa55511"
+            },
+            {
+              "name": "projects_finance_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_issued_at timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "7eceb8c4d8f303a52a843ad6863b1b2ffe4e52fe4789c02a3a4d50ea3810242a"
+            },
+            {
+              "name": "projects_finance_detail",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_project_id uuid, p_kind text, p_after uuid, p_target_id uuid",
+              "definitionSha256": "a38b9478ca7d395b7bb20142d1e6aec1c3296ba82944382de175e972281060ea"
+            },
+            {
+              "name": "projects_finance_own_receipt",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_action text",
+              "definitionSha256": "07e25b3a8e6264ecf0c49c7e3942860c91550925c4f3227fca7cb5d5b6922e07"
+            },
+            {
+              "name": "projects_finance_pickers",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_kind text, p_after uuid, p_project_id uuid",
+              "definitionSha256": "6b780a19f93432f63ea66097b6afdafc1c060ac0d5eaaf936bb17f51513dec08"
+            },
+            {
+              "name": "projects_margin",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_project_id uuid, p_as_of timestamp with time zone, p_effective_date date",
+              "definitionSha256": "8d604dd88f9f8f05b29f491afe672fa9112f486fc4f175dd69cdfcf9e21e5038"
+            },
+            {
+              "name": "projects_own_receipt",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_idempotency_key uuid, p_action text",
+              "definitionSha256": "5feb42ca4a48fd4c9df39ec92fafc2ab11950432867e6597340398bb60f8a90c"
+            },
+            {
+              "name": "projects_payroll_credit_choices",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_source_revision_id uuid, p_after uuid",
+              "definitionSha256": "fe94767882380da1b2f10f8936c42aa42e8de7e24ceeaa8a9356ffe5cebcfdde"
+            },
+            {
+              "name": "projects_pickers",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_kind text, p_after uuid",
+              "definitionSha256": "425fd9aee0581e63c7deac59f173e5750f9e717fe1fbc4369eaec97af92ae491"
+            },
+            {
+              "name": "purchase_return_source",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_kind text, p_source_id uuid",
+              "definitionSha256": "9f11d7f98a00062407d0b8cb6d955ee525df2e5afb4031d3f9af378656cab121"
+            },
+            {
+              "name": "purchase_return_sources",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_kind text, p_after uuid, p_search text",
+              "definitionSha256": "8efc4fc0b68f46fb5968fc006d9347824d399bcd8b78726a4cdedd4a4e1b51ed"
+            },
+            {
+              "name": "receipt_trace_detail",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_id uuid, p_after bigint",
+              "definitionSha256": "b881222bce7aed0d042cd50bbabae06181fe90103bf3301527aae1bca150cd28"
+            },
+            {
+              "name": "receipt_trace_page",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "785dec52d10ac0c9cb1b7abe40b56705683aa8744d8543ab3f5eb12c0b073d98"
+            },
+            {
+              "name": "record_crm_activity",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "0bb056bbbed42d80da3485c7fff276149d54100b746739f5c7939dbc7c290c7e"
+            },
+            {
+              "name": "record_report_export",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "123c24c8bbf77477dce710782e9b61eab61eb3cc9c406ef11a3f1071515f4eb4"
+            },
+            {
+              "name": "record_wave5_health_probe",
+              "schema": "api",
+              "arguments": "p_id uuid, p_tenant_id uuid, p_code text, p_value text, p_observed_at timestamp with time zone",
+              "definitionSha256": "8aa2acc1ffe4989ae16564fec6d799856009cc1d52fe878e72c3e17b0e4431c8"
+            },
+            {
+              "name": "register_attachment",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_payload jsonb, p_idempotency_key uuid",
+              "definitionSha256": "c5590283a14b59abfdb0130ad8b73440bc351c396ae688f466d0a57badce4a38"
+            },
+            {
+              "name": "reject_wave3_attachment",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "105cd68906f80abb74c51d00aa66ecb1fdb97d8fa013e9c7a110f4aa62ca6a40"
+            },
+            {
+              "name": "release_stock_reservation",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "c759842217722e4d613b1e29c78402cd86414be1bdb1cb99443eb437a9626364"
+            },
+            {
+              "name": "report_export_preview",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_source_type text, p_source_id uuid, p_section text, p_filters jsonb",
+              "definitionSha256": "5cbce23fd56f3c7146cca0e86e0789d4f0d0d553a7859059ec2c57efb29d48f6"
+            },
+            {
+              "name": "reserve_document_number",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_sequence_id uuid, p_document_date date, p_idempotency_key uuid",
+              "definitionSha256": "f952e3ad12a2846e68c510fba1002d80842b7fb853ba11b2baa2a403259fce39"
+            },
+            {
+              "name": "reserve_sales_order_stock",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "421cbdf09cfacfc2eae781a8a82f9c83eeec646d9bfd5a1642ff1ddb12a1be20"
+            },
+            {
+              "name": "reserve_sales_order_stock_without_negative_policy",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "07158eb691841f842fe1359854669ca24e923ae03d92cfe359df4cedb0054932"
+            },
+            {
+              "name": "reverse_customer_allocation",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "2e7d316518588bf9a960b95a45b1615db53a270be5af07b51d6a39675aa8fe47"
+            },
+            {
+              "name": "reverse_goods_receipt",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "4bc2617b80c73b736ce1f2351b6c1bf4309aa835898ce295da6072fafa22d255"
+            },
+            {
+              "name": "reverse_goods_receipt_without_negative_policy",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "760cb68f499ccc52d04ab498af36bbb97d273bd4eaf563f770efcec8bfbbe3a3"
+            },
+            {
+              "name": "reverse_supplier_allocation",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "7bd5f038481f6627d881ce2f316d391f54cdda2d8b3f2705c4d31ac2e1a61a9b"
+            },
+            {
+              "name": "scan_wave3_due_notifications",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "332f4e4c5c9e6efb2685154e88aa662611b2eb10e1a0337ca18549b766c6b478"
+            },
+            {
+              "name": "schedule_synthetic_subscription",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_expected_version bigint, p_plan_code text, p_seats integer, p_trial_starts_at timestamp with time zone, p_trial_ends_at timestamp with time zone",
+              "definitionSha256": "f25fbac808d992d43cc0f7a896a1f113acbb278f81fc6273bc095bfb6f0e68a7"
+            },
+            {
+              "name": "service_asset_authorize",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_capability text",
+              "definitionSha256": "9c456ab82e6b3bec64ce821d0a2f3be80029ce7926b82c069a69d9d127fbf0ed"
+            },
+            {
+              "name": "service_asset_equipment_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_issued_at timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "1aeb202ba0753927d7f871d89d6e08033720a958b422d59a3292cac809e8a8d2"
+            },
+            {
+              "name": "service_asset_link",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_equipment_id uuid",
+              "definitionSha256": "b7cab5399cfb31bbd5e554d6f240180d4d30c9352eb78646862e2ed65816d48b"
+            },
+            {
+              "name": "service_asset_own_receipt",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_idempotency_key uuid",
+              "definitionSha256": "4c256ac643adac105446ea47276e6830e535ff34cc87d3e7b014ac929202277c"
+            },
+            {
+              "name": "service_asset_sources",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "82535772c8a07ea8f735661a40a072f189270160f1f47e4e93631f4d4a807fd5"
+            },
+            {
+              "name": "service_authorize",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_capability text",
+              "definitionSha256": "e9485255872c47292e06fc444c656a467efe6da08f32b5c8b8625e966721f502"
+            },
+            {
+              "name": "service_choices",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_kind text, p_after uuid, p_parent uuid",
+              "definitionSha256": "20e826693bf4b5c1befe3889e3831a4bc2b1855740970e6aee5443a6dfcdac0e"
+            },
+            {
+              "name": "service_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_issued_at timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "6274d33f247ad7f48caae5f739cbe178e3f0742f5e0a5cfbe721b13b847cb443"
+            },
+            {
+              "name": "service_command_customer_base",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_issued_at timestamp with time zone, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "4c2d978bf477077eb508a8bbfc2ffd0a76c143d5224b2cfb885bbdd68ef155b7"
+            },
+            {
+              "name": "service_detail",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_kind text, p_id uuid, p_after uuid",
+              "definitionSha256": "9e098968232aa8840b859ffabe5147f13d5d5a62352d4826d9a6c5cb5915d879"
+            },
+            {
+              "name": "service_list",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_kind text, p_after uuid, p_parent uuid",
+              "definitionSha256": "90752500f35dbfee9f8865db2d7370003efe1f0a8e8727bf3776f515eedf7ddc"
+            },
+            {
+              "name": "service_own_receipt",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_idempotency_key uuid, p_action text",
+              "definitionSha256": "264eb13738e620438f9cd3e81272840600d8d422aa2cb66efa3172157b10a189"
+            },
+            {
+              "name": "service_own_receipt_customer_base",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_idempotency_key uuid, p_action text",
+              "definitionSha256": "dad4c3e0aa4d35eed19b766b016373e8054875c6a00cd16b473aae7196fc5306"
+            },
+            {
+              "name": "stock_count_detail",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_id uuid",
+              "definitionSha256": "04561a683e1907564a288db5ab55e26f7218860387d09d51c9dd65909a507a4f"
+            },
+            {
+              "name": "stock_count_options",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_resource text, p_warehouse_id uuid, p_after uuid, p_search text",
+              "definitionSha256": "3e76112fb1d39ef21cb08660983c26b7071c8c4d4e4ef7e0599c3f45a8ea87b9"
+            },
+            {
+              "name": "stock_count_partitions_page",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_group_id uuid, p_after integer, p_limit integer",
+              "definitionSha256": "8645dc4c9a03e6f7c40183719fce3d0cc58af34ad76405f9bb1bb3fabb1dedcc"
+            },
+            {
+              "name": "stock_counts_page",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "2407b440f15387c231bf7ff166927183cd648ddeb06e91df3cef81b47fd76eed"
+            },
+            {
+              "name": "stock_disposition_detail",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_id uuid",
+              "definitionSha256": "ecda3380ab8785e5fb8988dd7d9b9632a84cc15fb31b8a1ae7b46c85e1c4c79f"
+            },
+            {
+              "name": "stock_disposition_options",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_resource text, p_warehouse_id uuid, p_product_id uuid, p_after uuid",
+              "definitionSha256": "2887e8cd43f5e8d8ae7be8f7a14b406d67e624d74100dd554fe861c806f80757"
+            },
+            {
+              "name": "stock_dispositions_page",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "920b1bbd6143cfa36b4577a621a63cc7cacd5e7d60fc458a62f2f65d82897850"
+            },
+            {
+              "name": "stock_reservation_history",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_id uuid, p_before_version bigint",
+              "definitionSha256": "a59fda4885f4906563ce4dc9c2a046dee497c4ca5a3ae1cebf39aed992d25ce3"
+            },
+            {
+              "name": "stock_reservation_queue",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_filter text, p_after uuid",
+              "definitionSha256": "4ccb7d7a34b60dd9598c63e187507139b80696bd0c623368595f86922e0d9a21"
+            },
+            {
+              "name": "stock_reservations_as_of",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of timestamp with time zone, p_after uuid",
+              "definitionSha256": "17c2bb8e26e01751a147b25a107015b7727de2b5e0c4983a493ab9f83adc05ac"
+            },
+            {
+              "name": "supplier_bill_reference_options",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_resource text, p_after uuid, p_search text",
+              "definitionSha256": "e9a47b4394105eeecdc291d4109327430858e58dd4b139afef9847e8b96b11ad"
+            },
+            {
+              "name": "supplier_payment_reference_options",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_resource text, p_after uuid, p_search text, p_supplier_id uuid, p_cash_bank_account_id uuid, p_date date, p_proposal_id uuid",
+              "definitionSha256": "5b563cf3caa51d373e76c65b620e84199055f9eb48d6b5e314a6114438e2a28c"
+            },
+            {
+              "name": "supplier_statement",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_supplier_id uuid, p_currency_code text, p_as_of date, p_buckets integer[]",
+              "definitionSha256": "fd3f4fba0f95e39a072f562652ec733e349deea875f79a94d536a913bf4f419b"
+            },
+            {
+              "name": "tax_control_page",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_report_id uuid, p_section text, p_offset integer, p_account_id uuid, p_evidence_key text",
+              "definitionSha256": "c0f4ec042e98ccfe3346603e3072f223320ae6e50caea06bc983ecc0c23c9a94"
+            },
+            {
+              "name": "tax_summary_page",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_report_id uuid, p_offset integer, p_source_line_id uuid",
+              "definitionSha256": "8afef6f69b4b19f2507871127829271b782b2057fc8d7271b76f046697949b05"
+            },
+            {
+              "name": "tax_summary_reports",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_after uuid",
+              "definitionSha256": "a3dc2bedab978ef6d3f9fa45c950abc6cb207bd0346fe5165f68aed89855609a"
+            },
+            {
+              "name": "transfer_stock",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "f6b38a863dd747bca674a29f42fe8f9e29eaa7ff02ce51247d321e0f228c4c3b"
+            },
+            {
+              "name": "transfer_stock_without_negative_policy",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "a822e050130f56dc6c49e7a59e85b8caac01d23df35cedbc0344af1c7b9c9300"
+            },
+            {
+              "name": "transition_manual_journal",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "a1944181c98c8eb07b804bd5563f08b51229ad2c39085cfcb2bf6154517d4a21"
+            },
+            {
+              "name": "transition_operational_document",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "db0b630a813adc5c3dafff05bbff3a5754ddb4c6769469264b32e6f48439714e"
+            },
+            {
+              "name": "transition_payment_proposal",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "53467bd61c4473b4dcbdf056579e708762ca0e3bdf860f955a85dfe28958c316"
+            },
+            {
+              "name": "transition_purchase_order",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "ecff287fa8b90e8cea4ed3e191d99cf79429b5795d6bfbc27f8075a5ac21d61e"
+            },
+            {
+              "name": "transition_purchase_requisition",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "5afc66775ab132f4de84d3747a5508b3ee85a8a55084257474a6a7c87ad37a3a"
+            },
+            {
+              "name": "transition_stock_count",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "608bf400587ba2a0bb4d9b77a01b009aaff21f9562e09b82d3a4f2f290e83a93"
+            },
+            {
+              "name": "transition_stock_disposition",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "73635e46c5cb1e00631d08cc2f9fe6e3d670d6b04f198e19fd4f3a24509304d5"
+            },
+            {
+              "name": "transition_stock_opening",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "b6c3c9141f07f87b65911a8686635ff870c93aefbbec2985c4d38fd2b460d400"
+            },
+            {
+              "name": "update_sales_order_fulfillment",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "b769fad12b87e1f9583538ecc99ddc0955e58038ad90722d8f585cae05d051c8"
+            },
+            {
+              "name": "upsert_account",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+              "definitionSha256": "a1172265040a3b1ec8923494f03979c588f77b144169bc3ee197c5456e619ac5"
+            },
+            {
+              "name": "upsert_approval_matrix_step",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+              "definitionSha256": "e2e8ff1447600ad8d850ee3c7730bd8c6b7d92f22dc44132d71de79ecdcc0ad3"
+            },
+            {
+              "name": "upsert_contact",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+              "definitionSha256": "a23c44eba33c2496cc56a44143bf44e485d7d31f97d11c6b22afc0dbf4cf95aa"
+            },
+            {
+              "name": "upsert_customer_receipt",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "3151cf7f13de6657c17e59790890c2d398929f29eee30530a7f527ae646e0c52"
+            },
+            {
+              "name": "upsert_delivery",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "d47298d7952ffab9797a5823c04457a0ca3225d5cedc2b940b3c1d41f2a70caf"
+            },
+            {
+              "name": "upsert_document_sequence",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+              "definitionSha256": "b6dea9ceedbcbbb6ad838f7487038fd95d39fed4ffaf5e8eb877d4bde096bb1c"
+            },
+            {
+              "name": "upsert_exchange_rate",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+              "definitionSha256": "6a1be85d2a57073fa24b9b480a5c0a4546f9b92618a06d1924187643cbcadec3"
+            },
+            {
+              "name": "upsert_fiscal_period",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+              "definitionSha256": "68153eaaec719252a79aebcbfde7b82544fda242e53561b40b7caa8b8dd74dc4"
+            },
+            {
+              "name": "upsert_lead",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "939710987c4018ab8f10a7dcf34adfd472fc6e3aeac14a9cb06f226232fab8a2"
+            },
+            {
+              "name": "upsert_manual_journal",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "2bcce287c161aceddbba313fd4d1afcecd557f19d7170b36d6c6dea8248956ed"
+            },
+            {
+              "name": "upsert_opportunity",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "0f9702203f3b843c52db17f0e5cabd4ed1e26d89b58adf6e010e50fa92707c16"
+            },
+            {
+              "name": "upsert_party",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+              "definitionSha256": "d8d64271e6321120e861ed75cd2ab96bbfcdfe16e3c0c3920e832838bd0fb99f"
+            },
+            {
+              "name": "upsert_payment_proposal",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "75f7965d20b49f0a7ac9824cbcc5508199c9fdd20af121a71844d64dd6a83b3f"
+            },
+            {
+              "name": "upsert_product",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+              "definitionSha256": "f485f30d1b33c8634c328b7caf06c6954bc034b816843985f41edc62fd25850f"
+            },
+            {
+              "name": "upsert_product_unit_conversion",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "37a73afbf1cb16eead200926166830c8b75239eab24b2aa77bff34ef3fef02e9"
+            },
+            {
+              "name": "upsert_purchase_order",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "d94368b27a35d8bb9b9fd73bf553303d74c75c316b79f3ab2b10a09f109f68b0"
+            },
+            {
+              "name": "upsert_purchase_requisition",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "627eb9a8aabd70ef9b2caf082627657ece880b8acde97b9a83f04c11f686018b"
+            },
+            {
+              "name": "upsert_receipt_controls",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "0e3adb5972392e6a5d681fd3732fbc98c9f47bb9eb4b4fff0104828d33f9cd53"
+            },
+            {
+              "name": "upsert_receivables_setup",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "2a641caca192d044f53dd482a13f4249c2f8ec9174a3fdad876b88ef89df753c"
+            },
+            {
+              "name": "upsert_report_definition",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+              "definitionSha256": "eeda82c79a8de947b1a5c2a7172ec31a9c58b5f9dcf920aa9a5fc935bf6995c7"
+            },
+            {
+              "name": "upsert_request_for_quote",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "fea146cface5b5e6b4a50d8611b2f2fd8aac41e2d81bba0750a27476ffbe39e6"
+            },
+            {
+              "name": "upsert_sales_invoice",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "0d08ec558dc703ea693983d6049b5b7cab6d970a402aa0f69158ba315b60811d"
+            },
+            {
+              "name": "upsert_sales_order",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "221296b1e9557254bf732fc144f39b34f66138fe8ca772890ec8d0dafc85aca9"
+            },
+            {
+              "name": "upsert_sales_quotation",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "928fa6b00c99cf1bf0e1ba9a8edba11bfad3e9df52da78f8fe428e32e30c51c7"
+            },
+            {
+              "name": "upsert_sales_return",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "4a6973462ee7126355afeafcc4e73115e249e570e42896e29cbd78b393197970"
+            },
+            {
+              "name": "upsert_stock_count",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "8c99675c30b7e87f5c9c1c473c438956bef5b51b0554df42d77b957a6e396aba"
+            },
+            {
+              "name": "upsert_stock_count_without_negative_policy",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "90c0c441a7e2ac0c9f0ae21683bdc27586e9318c9f75aafb4ca6ac83b7b29715"
+            },
+            {
+              "name": "upsert_stock_disposition",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "694444f7a09bc54c66f3e5b35220156ee4adc85745126611b3d3908fedcad992"
+            },
+            {
+              "name": "upsert_stock_opening",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "720bd7611accfcbbd995663ab29bf4bff75ef0de1f9a4f299dd783f1f7bf98ec"
+            },
+            {
+              "name": "upsert_supplier_bill",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "8df11cd32f57e01145660f015efc0e2c5752eb87f30c560c659faf892e051ef8"
+            },
+            {
+              "name": "upsert_supplier_bill_controls",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint",
+              "definitionSha256": "48762b746218e8b458f82312b1dcd4eb5ad6d685f2a21350956a619b76fd78a0"
+            },
+            {
+              "name": "upsert_tax_definition",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+              "definitionSha256": "db29434cecc6dcc7beb8699b8a19857221effc4b2fc4105a429c682756ad1f8a"
+            },
+            {
+              "name": "upsert_unit",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+              "definitionSha256": "296dec9b6b31b42b54ff5722ff6cfdb063145e44fbd6f8b8a4f3e23c836b6b1d"
+            },
+            {
+              "name": "upsert_warehouse",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+              "definitionSha256": "aa253c57102af508cb23b5444c7aed6ddbbf5311df8675c6556c41ee310b5613"
+            },
+            {
+              "name": "upsert_workflow_definition",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint, p_idempotency_key uuid",
+              "definitionSha256": "cea0cb602b9e0952b05c001539d875a7090ef3cf152af6d618ed59448022e89a"
+            },
+            {
+              "name": "wave3_dashboard",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+              "definitionSha256": "6aaf68960d7ce371dc0a1389aa6b9de595b0badc0141669424a705b10063b03c"
+            },
+            {
+              "name": "wave3_dashboard_queues",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+              "definitionSha256": "7e0dcbd22c2943761dad529cb770c7d0f2a54cb547fdbf5e29eb8ee950ea415f"
+            },
+            {
+              "name": "wave3_document_evidence",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_kind text, p_id uuid, p_after uuid",
+              "definitionSha256": "3785c32b14c684daf2029c8cb1216e4150dfa1a726ead979b81571aeaf6b1ea0"
+            },
+            {
+              "name": "wave3_document_page",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_kind text, p_filters jsonb, p_after uuid",
+              "definitionSha256": "555e4da1c507e8ab1c61b39b9aad5849106a5bfc5127fe7874edb7ffc6266de4"
+            },
+            {
+              "name": "wave3_notification_admin_page",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_resource text, p_after uuid",
+              "definitionSha256": "af51f586d7adb33c75781f173a5b57e4f0d5ff0a0ac81830a579e0df00447e0a"
+            },
+            {
+              "name": "wave3_observability_status",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+              "definitionSha256": "45d9e9937067fd6957d19ab5dc3276adfb89fe78b320983478c9ce391b0c4c8c"
+            },
+            {
+              "name": "wave5_cash_authorize",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+              "definitionSha256": "bc079ecb0dead46447435c847aeaeabcb73c198e56cde84c19606079ef348912"
+            },
+            {
+              "name": "wave5_cash_basis",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_start date, p_end date, p_recorded_through timestamp with time zone",
+              "definitionSha256": "bde3ed6efba243b0091f130c6f488fe926b6a6fd3be2d234c8cea18e337d87d2"
+            },
+            {
+              "name": "wave5_cash_basis_v2",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_start date, p_end date, p_recorded_through timestamp with time zone",
+              "definitionSha256": "3ab49d9c9998601de15e556b3645bad79bc93366ef6dde00d56b789861f15843"
+            },
+            {
+              "name": "wave5_cash_date_authorize",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_kind text",
+              "definitionSha256": "ff36e0b2121464632acf0a9825afa89686515fb2b89cb1463b571b63713251d7"
+            },
+            {
+              "name": "wave5_cash_date_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_issued_at timestamp with time zone, p_action text, p_payload jsonb",
+              "definitionSha256": "ae15977f007ba2dd5f2729adec2a7e708573232511314d11d42f6777e20c47b0"
+            },
+            {
+              "name": "wave5_cash_date_get",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_id uuid",
+              "definitionSha256": "59183dac21fb2dc114747469761044749e805943443d2371a095075cc9d23ef1"
+            },
+            {
+              "name": "wave5_cash_date_sources",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_kind text, p_after uuid",
+              "definitionSha256": "5d1028feed97e211920cf3c31f31c62f443739130a69a79be712fcf8e386e0b0"
+            },
+            {
+              "name": "wave5_cash_get",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_id uuid",
+              "definitionSha256": "e3bea1f68bb29b6cbb29fff40598ee924a8561bfb00afaa23db3d7f3ae96ab54"
+            },
+            {
+              "name": "wave5_cash_get_v2",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_id uuid",
+              "definitionSha256": "307c04b8c841b3359d8c55aa7f5dfd67784794180f12b29bb5c938998a9005ea"
+            },
+            {
+              "name": "wave5_cash_save",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_id uuid, p_source_hash text, p_parameters jsonb",
+              "definitionSha256": "637a93cf9c74c32645e44806162aefecf67bc56bc4388af71e4844aa0514af3d"
+            },
+            {
+              "name": "wave5_cash_save_v2",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_id uuid, p_source_hash text, p_parameters jsonb",
+              "definitionSha256": "2b50baa620db7b4bf63080f05c78b93a394e4a268153a1939ac740bb6c856680"
+            },
+            {
+              "name": "wave5_classification_authorize",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+              "definitionSha256": "b226a553c5f30ff2abcdcdb3a2165ba91593ae5589733a1f549ae413c2c4b4a9"
+            },
+            {
+              "name": "wave5_classification_publish",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_id uuid, p_profit_loss_id uuid, p_balance_sheet_id uuid, p_labels jsonb, p_reason text",
+              "definitionSha256": "c04e8a6c189a5170859a9dc60134eb3087564dde15ffd8911bdece518b4fb059"
+            },
+            {
+              "name": "wave5_correct_usage",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_event_id uuid, p_original_event_id uuid, p_quantity text, p_reason_code text",
+              "definitionSha256": "da1e6bffe70e412075cca0b5fdd1bf79930bb300e1ca36a97eb574df8abc1916"
+            },
+            {
+              "name": "wave5_credential_manage",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_action text, p_id uuid, p_payload jsonb",
+              "definitionSha256": "9fe3bf6e05216b36e6cd0df20893a314746b7e74af55e7f54188df61ffe7f4e6"
+            },
+            {
+              "name": "wave5_delivery_review",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_delivery_id uuid, p_review_id uuid, p_action text, p_reason text",
+              "definitionSha256": "f23fca0520e75334eca46b7b381d3be011b341dae3e1d8b1d9eb4c806dd4ce37"
+            },
+            {
+              "name": "wave5_delivery_worker",
+              "schema": "api",
+              "arguments": "p_action text, p_payload jsonb",
+              "definitionSha256": "e9199fc22b333b8ddaa98c00d0575c1b844ae8227d796d92d69084f37cbfab0f"
+            },
+            {
+              "name": "wave5_edge_control",
+              "schema": "api",
+              "arguments": "p_runtime_id uuid, p_action text, p_payload jsonb",
+              "definitionSha256": "7659bb6645b41ac50957f978604879d72d52202c347f8318caa5c4a04b516dfc"
+            },
+            {
+              "name": "wave5_export_reopen",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_export_id uuid",
+              "definitionSha256": "085b27edce2d94eba76a3f83cafd16e3f8ce6484d716ca4ff99195004cf5db82"
+            },
+            {
+              "name": "wave5_external_worker",
+              "schema": "api",
+              "arguments": "p_action text, p_payload jsonb",
+              "definitionSha256": "8699f1e1ba058ff5c0731202d874069256bda2146073bec0e40c299c2f69831e"
+            },
+            {
+              "name": "wave5_financial_ratios",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_profit_loss_id uuid, p_balance_sheet_id uuid, p_classification_id uuid",
+              "definitionSha256": "915c560f480a4cb0f97c24bb4502daa4114a98589c856efed0501f4499e777a5"
+            },
+            {
+              "name": "wave5_health_collect",
+              "schema": "api",
+              "arguments": "p_collection_id uuid, p_tenant_id uuid",
+              "definitionSha256": "257d5605a86eac9f95c5a064c8b011add60968ab1f830cddd400ef257e5045a0"
+            },
+            {
+              "name": "wave5_integration_authorize",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+              "definitionSha256": "c3536782d9404674d9765c51952d71dc61bf63872841752a89bc644d2d604332"
+            },
+            {
+              "name": "wave5_integration_list",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_subscription_after uuid, p_delivery_after uuid",
+              "definitionSha256": "d43dfe345f10d48f74ecc83cb05ae795b01d56cbca69e6f847561c1b8e3bd645"
+            },
+            {
+              "name": "wave5_integration_manage",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_action text, p_id uuid, p_expected_version bigint, p_payload jsonb",
+              "definitionSha256": "6c8d18356aa444d232644f4e33c09064ff0641da966e5adc69e7a72fbb523585"
+            },
+            {
+              "name": "wave5_model_worker",
+              "schema": "api",
+              "arguments": "p_action text, p_payload jsonb",
+              "definitionSha256": "e5d2caabfa4f34ad3cdfb759c70019aab8c87607683a9169730c21cb1e411ac8"
+            },
+            {
+              "name": "wave5_pipeline_history",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_as_of timestamp with time zone, p_recorded_through timestamp with time zone",
+              "definitionSha256": "781200a9352774852df0c7b6e65616d98e098e19e0d65637b1d65035d4a88d22"
+            },
+            {
+              "name": "wave5_pipeline_realized",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_forecast_id uuid, p_as_of timestamp with time zone",
+              "definitionSha256": "8d22f7f1e34aaf579863f1fb777268c37bb0afc37b8bdf008a04c26c180b989b"
+            },
+            {
+              "name": "wave5_proposal_authorize",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid",
+              "definitionSha256": "cdd038de4ad9f3f61f01b42f28eb9c1e409c2ce56c2251d71677d0cfd91ca255"
+            },
+            {
+              "name": "wave5_proposal_command",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_action text, p_payload jsonb",
+              "definitionSha256": "38e879ca2a563758dfe2f27656dd95294309ed2b5b71aee0d2935732db1555d6"
+            },
+            {
+              "name": "wave5_reserve_usage",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_invocation_id uuid, p_metric_code text, p_period_start timestamp with time zone, p_period_end timestamp with time zone, p_quantity text",
+              "definitionSha256": "2208193f607c55d83289fb93ea3e1ff81fa628d991d5616d8858f2d049e0eba7"
+            },
+            {
+              "name": "wave5_runtime_delivery_worker",
+              "schema": "api",
+              "arguments": "p_runtime_id uuid, p_action text, p_payload jsonb",
+              "definitionSha256": "576f78698fb51b6d49ca0c0d6b6f2e43f1a91a189c77439de957fea35fc2c501"
+            },
+            {
+              "name": "wave5_runtime_worker",
+              "schema": "api",
+              "arguments": "p_runtime_id uuid, p_action text, p_payload jsonb",
+              "definitionSha256": "174ef338fa9cd5ccba2189ac2b3b858a6c65f274917ea0768a3dc57d33a684d0"
+            },
+            {
+              "name": "wave5_settle_usage",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid, p_invocation_id uuid, p_event_id uuid, p_quantity text",
+              "definitionSha256": "b892c24ec7bc553664e767ea189eca98e2df54ad32234baf98d3f3fb077d3c0c"
+            },
+            {
+              "name": "wave5_subscription_authorize",
+              "schema": "api",
+              "arguments": "p_tenant_id uuid",
+              "definitionSha256": "e804028eb3586ea3c574356cc2e70e679b9778034d819a1d3c4dedf5c2ab7ffa"
+            },
+            {
+              "name": "wave5_subscription_due",
+              "schema": "api",
+              "arguments": "p_after uuid",
+              "definitionSha256": "10f57188f1ebef3b64fda48c6e973dfb019c42eb4bc62825113b8a006ad2d951"
+            },
+            {
+              "name": "wave5_worker_entitlement",
+              "schema": "api",
+              "arguments": "p_scope jsonb",
+              "definitionSha256": "dece4bb17de9946e020a9e400325e097f6d31450edd22e5a8db5582c531a7ab2"
+            },
+            {
+              "name": "has_permission",
+              "schema": "core",
+              "arguments": "p_tenant_id uuid, p_permission_code text, p_legal_entity_id uuid, p_branch_id uuid",
+              "definitionSha256": "df550dbe759cae15e1ab9b9d9cd34ce1b2c32927ad95784eb2a88fd02bf5dc09"
+            },
+            {
+              "name": "require_permission",
+              "schema": "core",
+              "arguments": "p_tenant_id uuid, p_permission_code text, p_legal_entity_id uuid, p_branch_id uuid",
+              "definitionSha256": "f42f67cf2e94ee8b74c83b542f35bb6bda663f9bf62e794dc6f521a13074077c"
+            },
+            {
+              "name": "wave2_assert_expected_version",
+              "schema": "core",
+              "arguments": "p_current_version bigint, p_expected_version bigint",
+              "definitionSha256": "ec48005f6e8ab2efcf873f94f4b76dc703a3093c17602f7cb53e85c2749e4e16"
+            },
+            {
+              "name": "wave2_derived_uuid",
+              "schema": "core",
+              "arguments": "p_parent uuid, p_ordinal integer",
+              "definitionSha256": "a0e0a2105242dd42369e79061cf7723d9caf3ebcb66aebe5575005767d7c00a7"
+            },
+            {
+              "name": "wave2_finish_command",
+              "schema": "core",
+              "arguments": "p_tenant_id uuid, p_command_name text, p_aggregate_type text, p_aggregate_id uuid, p_idempotency_key uuid, p_request_hash text, p_before jsonb, p_entity jsonb, p_legal_entity_id uuid, p_branch_id uuid, p_warnings jsonb, p_request_id uuid",
+              "definitionSha256": "78280478596557d4ff61b293cf762f890404a4094260716a17c3a1bcac9fc4a0"
+            },
+            {
+              "name": "wave2_permission",
+              "schema": "core",
+              "arguments": "p_resource text, p_manage boolean",
+              "definitionSha256": "bef16c6f5800e9e0d494e70bb6410681e01f914eab1768947610c48fbe740047"
+            },
+            {
+              "name": "wave2_replay",
+              "schema": "core",
+              "arguments": "p_tenant_id uuid, p_command_name text, p_idempotency_key uuid, p_request_hash text",
+              "definitionSha256": "39a6111fcd32863de490dfe3ff2d3bf7c25fa08e609ee4e0f01b7a35b4aa1e28"
+            },
+            {
+              "name": "wave2_request_hash",
+              "schema": "core",
+              "arguments": "p_command_name text, p_tenant_id uuid, p_legal_entity_id uuid, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "767a203f5690d49ccf8a737dcd8e68245cba628262dc7367f5b9d1d6260abdcd"
+            },
+            {
+              "name": "wave3_assert_expected_version",
+              "schema": "core",
+              "arguments": "p_current_version bigint, p_expected_version bigint, p_current_entity jsonb",
+              "definitionSha256": "3f83c0d0bfe254fa3776ecd946640d4024840f9bd0d7d5ef3f4b8845c8fbe8bc"
+            },
+            {
+              "name": "wave3_finish_command",
+              "schema": "core",
+              "arguments": "p_tenant_id uuid, p_command_name text, p_command_id uuid, p_aggregate_type text, p_aggregate_id uuid, p_idempotency_key uuid, p_request_hash text, p_before jsonb, p_entity jsonb, p_legal_entity_id uuid, p_branch_id uuid, p_source_context jsonb, p_process_event jsonb, p_outbox_events jsonb, p_warnings jsonb, p_request_id uuid, p_correlation_id uuid",
+              "definitionSha256": "a39d0846be9c1647dde9778f3c245499da7768b06dc7434e35c20cd0b877fdb1"
+            },
+            {
+              "name": "wave3_replay",
+              "schema": "core",
+              "arguments": "p_tenant_id uuid, p_command_name text, p_command_id uuid, p_idempotency_key uuid, p_request_hash text",
+              "definitionSha256": "6340ce8a5e18cd200f8937e1985e02a362f0aac18eb8a276a7df11c1b7fc1c91"
+            },
+            {
+              "name": "wave3_request_hash",
+              "schema": "core",
+              "arguments": "p_command_name text, p_command_id uuid, p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_payload jsonb, p_expected_version bigint",
+              "definitionSha256": "024ba0bb89bb2c3c267e2f1d0d63103e01d3b685bb0a9c64eb29a3c8876d0442"
+            },
+            {
+              "name": "wave3_require_scope",
+              "schema": "core",
+              "arguments": "p_tenant_id uuid, p_permission_code text, p_legal_entity_id uuid, p_branch_id uuid",
+              "definitionSha256": "380e88414ada1e93bab0d86c3a2ca10c0617d4d80d9b6a1772e32cb829332815"
+            }
+          ],
+          "accessRowFingerprints": {
+            "core.memberships": "651880e4846b39340a554f6d76ddc40859cc4dca2314f56042fe844779ee145e",
+            "core.role_assignments": "4c2536334494f6286ad457ee982e5d9c84ff495c9a95ce0204254dcb9d7ec83f",
+            "core.role_permissions": "073dfd143b84b7745ea87961879a6a2fa43939ac33f6f67c8302807ecd050ab3",
+            "billing.plan_entitlements": "d14d781b7d2fbb4d7a9d0029fb1aae2672fcea307a79fb029886f03c92642e63"
+          },
+          "existingDesktopAccount": {
+            "authId": "c0ab44a9-7385-4d9c-94f2-4df3efaa453f",
+            "confirmed": true,
+            "membershipCount": 0
+          },
+          "plannedRuntimeAccountCount": 0
+        }
+      }
+    ],
+    "status": 201,
+    "responseSha256": "94412d088c917538bb64faef7222554f5fa8fce8790a18eab84dd2d03d6ac2b0",
+    "responseBytes": 103012
+  }
+}

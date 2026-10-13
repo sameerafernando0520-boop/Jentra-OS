@@ -1,0 +1,444 @@
+{
+  "kind": "wave5-runtime-harness-peer-review",
+  "date": "2026-10-12",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "result": "local-source-reviewed",
+  "scope": "Independent review of the public coordinator, contract, CLI and controlled local tests.",
+  "livePreparationApproved": false,
+  "ownerAcceptanceGranted": false,
+  "decisionBoundary": "This is not a wave5-runtime-harness-independent-preparation-review. It does not approve a private provider, concrete live fixture plan or live execution. The exact runtime owner decision is handled separately by the root agent.",
+  "runtimeReview": {
+    "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+    "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+    "bundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b"
+  },
+  "independentLocalVerification": {
+    "kind": "controlled-independent-wave5-harness-review-verification",
+    "nodeVersion": "v24.11.0",
+    "startedAt": "2026-10-12T09:22:25.481Z",
+    "testFinishedAt": "2026-10-12T09:22:27.586Z",
+    "finishedAt": "2026-10-12T09:22:27.717Z",
+    "command": [
+      "node",
+      "--test",
+      "--test-isolation=none",
+      "--test-reporter=tap",
+      "tools/wave5/runtime_coordinator.test.mjs"
+    ],
+    "exitCode": 0,
+    "signal": null,
+    "spawnError": null,
+    "summary": {
+      "tests": 38,
+      "pass": 38,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "stdout": "TAP version 13\n# Subtest: current runtime bundle is verified byte-for-byte and produces the exact 2,000-session distribution\nok 1 - current runtime bundle is verified byte-for-byte and produces the exact 2,000-session distribution\n  ---\n  duration_ms: 21.9461\n  type: 'test'\n  ...\n# Subtest: the endpoint inventory excludes model, webhook sending and unscoped worker dispatch\nok 2 - the endpoint inventory excludes model, webhook sending and unscoped worker dispatch\n  ---\n  duration_ms: 0.2016\n  type: 'test'\n  ...\n# Subtest: plan validation rejects a shortened, over-rate, wrong-target or incomplete workload\nok 3 - plan validation rejects a shortened, over-rate, wrong-target or incomplete workload\n  ---\n  duration_ms: 0.4392\n  type: 'test'\n  ...\n# Subtest: owner decision binds the exact runtime scope; preparation binds the coordinator without inventing another owner approval\nok 4 - owner decision binds the exact runtime scope; preparation binds the coordinator without inventing another owner approval\n  ---\n  duration_ms: 0.3237\n  type: 'test'\n  ...\n# Subtest: live entry point refuses missing approval before invoking any private provider operation\nok 5 - live entry point refuses missing approval before invoking any private provider operation\n  ---\n  duration_ms: 6.2848\n  type: 'test'\n  ...\n# Subtest: live entry revalidates canonical review and source-bound plan before touching private provider\nok 6 - live entry revalidates canonical review and source-bound plan before touching private provider\n  ---\n  duration_ms: 18.5275\n  type: 'test'\n  ...\n# Subtest: private factory context cannot mutate approved review, plan or bindings, and caller changes cannot affect its copy\nok 7 - private factory context cannot mutate approved review, plan or bindings, and caller changes cannot affect its copy\n  ---\n  duration_ms: 10.9494\n  type: 'test'\n  ...\n# Subtest: a hashed independent review cannot be relabeled approved when its actual verdict or source bindings disagree\nok 8 - a hashed independent review cannot be relabeled approved when its actual verdict or source bindings disagree\n  ---\n  duration_ms: 0.3535\n  type: 'test'\n  ...\n# Subtest: load-001 billing permission and duplicate execution require genuine MFA in the relevant real sessions\nok 9 - load-001 billing permission and duplicate execution require genuine MFA in the relevant real sessions\n  ---\n  duration_ms: 19.8779\n  type: 'test'\n  ...\n# Subtest: fresh installed contracts, capacity, quiesced schedules and exact reviewed populations are mandatory\nok 10 - fresh installed contracts, capacity, quiesced schedules and exact reviewed populations are mandatory\n  ---\n  duration_ms: 6.3205\n  type: 'test'\n  ...\n# Subtest: real session validation requires 2,000 distinct online-verified server rows and exact actor slots\nok 11 - real session validation requires 2,000 distinct online-verified server rows and exact actor slots\n  ---\n  duration_ms: 12.3627\n  type: 'test'\n  ...\n# Subtest: public records do not copy provider handles, raw tokens, response bodies or error details\nok 12 - public records do not copy provider handles, raw tokens, response bodies or error details\n  ---\n  duration_ms: 1.5294\n  type: 'test'\n  ...\n# Subtest: provider GuardError text and uppercase private values are normalized instead of copied into public evidence\nok 13 - provider GuardError text and uppercase private values are normalized instead of copied into public evidence\n  ---\n  duration_ms: 0.7678\n  type: 'test'\n  ...\n# Subtest: slow evidence and provider queueing classify the actual send and prevent sends beyond the workload window\nok 14 - slow evidence and provider queueing classify the actual send and prevent sends beyond the workload window\n  ---\n  duration_ms: 0.5205\n  type: 'test'\n  ...\n# Subtest: a serial provider queue cannot send a timed request after the end or claim undispatched session coverage\nok 15 - a serial provider queue cannot send a timed request after the end or claim undispatched session coverage\n  ---\n  duration_ms: 68.3732\n  type: 'test'\n  ...\n# Subtest: holding an entire warmup in the evidence queue fails actual dispatch lag instead of releasing a passing catch-up burst\nok 16 - holding an entire warmup in the evidence queue fails actual dispatch lag instead of releasing a passing catch-up burst\n  ---\n  duration_ms: 162.4973\n  type: 'test'\n  ...\n# Subtest: response command mismatch, omitted transport hooks and unknown outcomes stay uncertain\nok 17 - response command mismatch, omitted transport hooks and unknown outcomes stay uncertain\n  ---\n  duration_ms: 0.6645\n  type: 'test'\n  ...\n# Subtest: failed intent persistence prevents the request; pre-aborted runs do not dispatch\nok 18 - failed intent persistence prevents the request; pre-aborted runs do not dispatch\n  ---\n  duration_ms: 0.3518\n  type: 'test'\n  ...\n# Subtest: all readiness proofs precede the common release; real transport intervals overlap\nok 19 - all readiness proofs precede the common release; real transport intervals overlap\n  ---\n  duration_ms: 46.1576\n  type: 'test'\n  ...\n# Subtest: serial private transport is detected despite concurrently scheduled promises and slow journaling\nok 20 - serial private transport is detected despite concurrently scheduled promises and slow journaling\n  ---\n  duration_ms: 84.7131\n  type: 'test'\n  ...\n# Subtest: duplicate Auth sessions and failed readiness cannot release a race\nok 21 - duplicate Auth sessions and failed readiness cannot release a race\n  ---\n  duration_ms: 0.3996\n  type: 'test'\n  ...\n# Subtest: a stalled transport times out once and is retained as uncertain without an automatic retry\nok 22 - a stalled transport times out once and is retained as uncertain without an automatic retry\n  ---\n  duration_ms: 19.7201\n  type: 'test'\n  ...\n# Subtest: overlap uses half-open actual transport intervals and never infers missing server spans\nok 23 - overlap uses half-open actual transport intervals and never infers missing server spans\n  ---\n  duration_ms: 0.3133\n  type: 'test'\n  ...\n# Subtest: committed snapshots reject rollback reads, wrong tenants, stale observations and losing effects\nok 24 - committed snapshots reject rollback reads, wrong tenants, stale observations and losing effects\n  ---\n  duration_ms: 0.5479\n  type: 'test'\n  ...\n# Subtest: 100 duplicate response successes still require exactly one committed business effect\nok 25 - 100 duplicate response successes still require exactly one committed business effect\n  ---\n  duration_ms: 0.4539\n  type: 'test'\n  ...\n# Subtest: 20 quota reservations require ten units, ten denials and per-denial zero-effect evidence\nok 26 - 20 quota reservations require ten units, ten denials and per-denial zero-effect evidence\n  ---\n  duration_ms: 0.3167\n  type: 'test'\n  ...\n# Subtest: seat races enforce the final seat and do not forgive audit or receipt effects on a losing request\nok 27 - seat races enforce the final seat and do not forgive audit or receipt effects on a losing request\n  ---\n  duration_ms: 0.1664\n  type: 'test'\n  ...\n# Subtest: admission versus activation allows either lock winner while enforcing the shared seat cap\nok 28 - admission versus activation allows either lock winner while enforcing the shared seat cap\n  ---\n  duration_ms: 0.1141\n  type: 'test'\n  ...\n# Subtest: activation, execution and lease response races require their own committed record counts\nok 29 - activation, execution and lease response races require their own committed record counts\n  ---\n  duration_ms: 0.2261\n  type: 'test'\n  ...\n# Subtest: the duplicate coordinator binds one original command, reads committed effects before and after overlap, and restores only reviewed state\nok 30 - the duplicate coordinator binds one original command, reads committed effects before and after overlap, and restores only reviewed state\n  ---\n  duration_ms: 31.7063\n  type: 'test'\n  ...\n# Subtest: unknown duplicate mutation preserves all original identities and skips restoration even when the committed read shows one effect\nok 31 - unknown duplicate mutation preserves all original identities and skips restoration even when the committed read shows one effect\n  ---\n  duration_ms: 31.2127\n  type: 'test'\n  ...\n# Subtest: nearest-rank p95 uses measured samples and strict limits rather than averaging them\nok 32 - nearest-rank p95 uses measured samples and strict limits rather than averaging them\n  ---\n  duration_ms: 1.0457\n  type: 'test'\n  ...\n# Subtest: unsupported limit fixtures remain blocked and never masquerade as actual rejection evidence\nok 33 - unsupported limit fixtures remain blocked and never masquerade as actual rejection evidence\n  ---\n  duration_ms: 0.6309\n  type: 'test'\n  ...\n# Subtest: database row counters never substitute for an actual no-send observation covering all reviewed workers and the full load window\nok 34 - database row counters never substitute for an actual no-send observation covering all reviewed workers and the full load window\n  ---\n  duration_ms: 5.2681\n  type: 'test'\n  ...\n# Subtest: paced dispatch uses every measured session, gives billing actors read permission only and mints fresh command identities\nok 35 - paced dispatch uses every measured session, gives billing actors read permission only and mints fresh command identities\n  ---\n  duration_ms: 848.6899\n  type: 'test'\n  ...\n# Subtest: a rejected timed request aborts subsequent dispatch and cannot be renamed a successful workload\nok 36 - a rejected timed request aborts subsequent dispatch and cannot be renamed a successful workload\n  ---\n  duration_ms: 1.4933\n  type: 'test'\n  ...\n# Subtest: unsupported generator inflight capacity is retained as incomplete without silently dropping samples\nok 37 - unsupported generator inflight capacity is retained as incomplete without silently dropping samples\n  ---\n  duration_ms: 23.4896\n  type: 'test'\n  ...\n# Subtest: a latency equal to the limit fails, and warmup, incomplete coverage or a cached command cannot pass the load gate\nok 38 - a latency equal to the limit fails, and warmup, incomplete coverage or a cached command cannot pass the load gate\n  ---\n  duration_ms: 515.9867\n  type: 'test'\n  ...\n1..38\n# tests 38\n# suites 0\n# pass 38\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 2019.0176\n",
+    "stderr": "",
+    "stdoutSha256": "176d24398499a947df0a56f6a176fedb2c288a1db4c4169c88a9bf6ec567512c",
+    "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "filesBefore": [
+      {
+        "path": "tools/wave5/runtime_contract.mjs",
+        "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f",
+        "bytes": 31294
+      },
+      {
+        "path": "tools/wave5/runtime_coordinator.mjs",
+        "sha256": "e41ab3830523f030f7a3cf2bb42ebabf24387697afc521b1d94458ec30dbf9be",
+        "bytes": 34881
+      },
+      {
+        "path": "tools/wave5/run_runtime_verification.mjs",
+        "sha256": "143f460b88c1e1dba4a06b7ed869fb5de46e6eff77421ebf8d0aee15efb74b20",
+        "bytes": 9119
+      },
+      {
+        "path": "tools/wave5/runtime_coordinator.test.mjs",
+        "sha256": "d5b8aba2a49673e540a87fd414be38419c65535902c3eff572afd005733b81c8",
+        "bytes": 42005
+      },
+      {
+        "path": "tools/wave5/PRIVATE_PROVIDER_CONTRACT.md",
+        "sha256": "53b691012312db8d0c6b634c8b8cc21690cac73e80a66b286dd4ab97b1c0ec30",
+        "bytes": 21178
+      },
+      {
+        "path": "tools/wave5/verify_local_harness.mjs",
+        "sha256": "db5b4c163c549b32e6e831483fdb4f6c07c8158c50e7ef3565000d04f48e9834",
+        "bytes": 6278
+      },
+      {
+        "path": "docs/verification/wave5/integrated-runtime-protocol-20261006.md",
+        "sha256": "a3f6e654699a418b2ac41f31fa9c8a8e2a4a97582ad6d10dc710bccf58caa64a",
+        "bytes": 9262
+      },
+      {
+        "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
+        "sha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5",
+        "bytes": 115108
+      },
+      {
+        "path": "supabase/migrations/20260831193714_create_greenfield_foundation.sql",
+        "sha256": "d104871a777c31b9562fac2e5200d9801b24c0ebd28a9b0e75a43bdc13171f8a",
+        "bytes": 41494
+      },
+      {
+        "path": "supabase/migrations/20260904121647_wave3_operational_foundation.sql",
+        "sha256": "b7a840b31a2d8a89d0a1539151769130c352fe7ace0ea2d76f4057aab5b2d737",
+        "bytes": 40230
+      },
+      {
+        "path": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+        "sha256": "be586326b7d8ec380a5524a5d8232e67639d677eb192b9fe29da135ee9ffe997",
+        "bytes": 9213
+      },
+      {
+        "path": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+        "sha256": "1ea4ab076cb3deaa9d0f7f92b56c47effc1a0ad45e14839156a2fd6a2d1bd8ed",
+        "bytes": 10964
+      },
+      {
+        "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+        "sha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e",
+        "bytes": 14205
+      },
+      {
+        "path": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+        "sha256": "b75e9cf94107fd9a959ced43f9e643b163ed579f95fb68c8de7b9e739b10d02e",
+        "bytes": 16904
+      },
+      {
+        "path": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+        "sha256": "339e9e86074887d164dd339eb17ac54943c39fca0caf50db575c48529456a9f5",
+        "bytes": 12761
+      },
+      {
+        "path": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql",
+        "sha256": "1a636229a0749cf9d6334ae49efe8ff38627b6a2d1bb642789a28e86efd1c663",
+        "bytes": 28824
+      },
+      {
+        "path": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+        "sha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc",
+        "bytes": 18114
+      },
+      {
+        "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+        "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+        "bytes": 1370575
+      }
+    ],
+    "filesAfter": [
+      {
+        "path": "tools/wave5/runtime_contract.mjs",
+        "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f",
+        "bytes": 31294
+      },
+      {
+        "path": "tools/wave5/runtime_coordinator.mjs",
+        "sha256": "e41ab3830523f030f7a3cf2bb42ebabf24387697afc521b1d94458ec30dbf9be",
+        "bytes": 34881
+      },
+      {
+        "path": "tools/wave5/run_runtime_verification.mjs",
+        "sha256": "143f460b88c1e1dba4a06b7ed869fb5de46e6eff77421ebf8d0aee15efb74b20",
+        "bytes": 9119
+      },
+      {
+        "path": "tools/wave5/runtime_coordinator.test.mjs",
+        "sha256": "d5b8aba2a49673e540a87fd414be38419c65535902c3eff572afd005733b81c8",
+        "bytes": 42005
+      },
+      {
+        "path": "tools/wave5/PRIVATE_PROVIDER_CONTRACT.md",
+        "sha256": "53b691012312db8d0c6b634c8b8cc21690cac73e80a66b286dd4ab97b1c0ec30",
+        "bytes": 21178
+      },
+      {
+        "path": "tools/wave5/verify_local_harness.mjs",
+        "sha256": "db5b4c163c549b32e6e831483fdb4f6c07c8158c50e7ef3565000d04f48e9834",
+        "bytes": 6278
+      },
+      {
+        "path": "docs/verification/wave5/integrated-runtime-protocol-20261006.md",
+        "sha256": "a3f6e654699a418b2ac41f31fa9c8a8e2a4a97582ad6d10dc710bccf58caa64a",
+        "bytes": 9262
+      },
+      {
+        "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
+        "sha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5",
+        "bytes": 115108
+      },
+      {
+        "path": "supabase/migrations/20260831193714_create_greenfield_foundation.sql",
+        "sha256": "d104871a777c31b9562fac2e5200d9801b24c0ebd28a9b0e75a43bdc13171f8a",
+        "bytes": 41494
+      },
+      {
+        "path": "supabase/migrations/20260904121647_wave3_operational_foundation.sql",
+        "sha256": "b7a840b31a2d8a89d0a1539151769130c352fe7ace0ea2d76f4057aab5b2d737",
+        "bytes": 40230
+      },
+      {
+        "path": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+        "sha256": "be586326b7d8ec380a5524a5d8232e67639d677eb192b9fe29da135ee9ffe997",
+        "bytes": 9213
+      },
+      {
+        "path": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+        "sha256": "1ea4ab076cb3deaa9d0f7f92b56c47effc1a0ad45e14839156a2fd6a2d1bd8ed",
+        "bytes": 10964
+      },
+      {
+        "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+        "sha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e",
+        "bytes": 14205
+      },
+      {
+        "path": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+        "sha256": "b75e9cf94107fd9a959ced43f9e643b163ed579f95fb68c8de7b9e739b10d02e",
+        "bytes": 16904
+      },
+      {
+        "path": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+        "sha256": "339e9e86074887d164dd339eb17ac54943c39fca0caf50db575c48529456a9f5",
+        "bytes": 12761
+      },
+      {
+        "path": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql",
+        "sha256": "1a636229a0749cf9d6334ae49efe8ff38627b6a2d1bb642789a28e86efd1c663",
+        "bytes": 28824
+      },
+      {
+        "path": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+        "sha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc",
+        "bytes": 18114
+      },
+      {
+        "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+        "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+        "bytes": 1370575
+      }
+    ],
+    "sourcesUnchanged": true,
+    "a3SourcesMatched": true,
+    "heldWarmupProbe": {
+      "controlledOnly": true,
+      "liveCalls": 0,
+      "warmupRequests": 0,
+      "measuredRequests": 21,
+      "requestsScheduled": 1202,
+      "requestsDispatched": 21,
+      "actualSends": 21,
+      "measuredDistinctSessions": 21,
+      "measuredDistinctScopes": 8,
+      "failureCode": "GENERATOR_CAPACITY_UNSUPPORTED",
+      "maximumSchedulerLagMs": 0,
+      "maximumDispatchLagMs": 60000,
+      "gatePassed": false,
+      "gateCode": "TARGET_SCALE_DURATION_OR_COVERAGE_INCOMPLETE",
+      "unsafeGuardFailureCode": "PROVIDER_FAILURE"
+    },
+    "executedLive": false,
+    "networkCalls": 0,
+    "privateProviderLoaded": false,
+    "credentialsRead": false,
+    "sdkJobs": 0,
+    "nativeActions": 0,
+    "toolChunk": "c1645f",
+    "parentShellExitCode": 0
+  },
+  "primaryLocalVerification": {
+    "path": "docs/verification/wave5/runtime-harness-local-verification-20261012-r5-a3.json",
+    "sha256": "d2d83cefad2a8e535d7850a57b84c13749e7b494f79964d7a01d3c329caff2db",
+    "log": {
+      "path": "docs/verification/wave5/runtime-harness-local-verification-20261012-r5-a3.tap",
+      "sha256": "94670bf3441fbd8c9b1d09c623d7fcc21a1cf4081e66f13255307a14f78e1bbc"
+    },
+    "summary": {
+      "tests": 38,
+      "passed": 38,
+      "failed": 0
+    }
+  },
+  "retainedHistoricalEvidence": [
+    {
+      "path": "docs/verification/wave5/failed-harness-tests-20261012-r5-a1.json",
+      "sha256": "adc9d9d092326c3d5da9c6d0ea5844df134368508e62a77ce2b7a0d1a221211f",
+      "note": "The earlier failed negative-test fixture remains recorded."
+    },
+    {
+      "path": "docs/verification/wave5/runtime-harness-local-verification-20261012-r5-a2.json",
+      "sha256": "92e50fb313a8b065bc492c64b84d7386578348236b49ad6c790acf4cfd1ed4bb",
+      "note": "37 passing tests preceded the held-warmup false-pass finding."
+    },
+    {
+      "path": "docs/verification/wave5/runtime-harness-local-verification-20261012-r5-a2.tap",
+      "sha256": "cd5af510c7ff0791fd87d8611316c8053e495918d9a149d4f2821ad56904a37d"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-harness-review-20261012-r5.json",
+      "sha256": "dfa54d327b6b0f617cc3ac3db784247957151a3d73d2eabe602de08536db8644",
+      "note": "Historical review remains unmodified; this peer review binds only the final a3 sources."
+    }
+  ],
+  "historicalControlledProbes": [
+    {
+      "toolChunk": "b319ea",
+      "exitCode": 0,
+      "controlledOnly": true,
+      "liveCalls": 0,
+      "priorSourceBindings": {
+        "contract": "dee9d2bc2ce71a9e344ca1f8b48e4e00bd1384d5d8f4d7a4f796825dae370d1f",
+        "coordinator": "d707c9a310a7ecc547e2f832605fa74de796e71a3152bf457ca72d4cd6be73e7"
+      },
+      "observed": {
+        "requestedDurationMs": 1100,
+        "measurementStartMonoMs": 500,
+        "samples": [
+          {
+            "phase": "warmup",
+            "transportStartedMonoMs": 1000
+          },
+          {
+            "phase": "measurement",
+            "transportStartedMonoMs": 1600
+          }
+        ],
+        "unsafeGuardFailureCode": "private-controlled-detail"
+      },
+      "significance": "Intent journaling delayed actual sends past phase/deadline; arbitrary GuardError text reached public evidence."
+    },
+    {
+      "toolChunk": "177dc8",
+      "exitCode": 0,
+      "controlledOnly": true,
+      "liveCalls": 0,
+      "privateFactoryLoads": 0,
+      "priorContractSha256": "dee9d2bc2ce71a9e344ca1f8b48e4e00bd1384d5d8f4d7a4f796825dae370d1f",
+      "observed": {
+        "actualIndependentReviewResult": "changes-requested",
+        "preparationClaimsApproved": true,
+        "preparationValidatorAccepted": true,
+        "independentReviewProviderBindingDiffers": true
+      },
+      "significance": "A preparation claim did not validate the parsed independent review verdict or source bindings."
+    },
+    {
+      "toolChunk": "f4477b",
+      "exitCode": 0,
+      "controlledOnly": true,
+      "liveCalls": 0,
+      "priorSourceBindings": {
+        "contract": "0bd11c033750ad7bcbead96ee8eb7e148bfd0f84c123dd15aefb82c0e0371850",
+        "coordinator": "ff969336887c6aeb7a5ad99f87f6aff5835270981f0d9878cfd01fcf365adb44"
+      },
+      "observed": {
+        "warmupRequests": 0,
+        "measuredRequests": 7200,
+        "requestsDispatched": 7200,
+        "firstObservedTransportMonoMs": 60000,
+        "measuredDistinctSessions": 2000,
+        "measuredDistinctScopes": 500,
+        "failureCode": null,
+        "peakInflightRequests": 1201,
+        "maximumDispatchLagMs": 0,
+        "gatePassed": true,
+        "gateCode": null
+      },
+      "significance": "Holding every warmup intent until measurement caused a burst and no actual warmup, yet the prior check passed. This prior outcome remains a failed review probe."
+    }
+  ],
+  "resolvedFindings": [
+    {
+      "id": "R01",
+      "priority": "P1",
+      "problem": "Phase assignment before evidence persistence allowed misclassification and sends beyond the timed window.",
+      "resolution": "The synchronous actual transport-start hook rejects sends outside the reviewed window and classifies phase after evidence/provider queues. Actual send counts exclude blocked attempts.",
+      "source": "tools/wave5/runtime_coordinator.mjs:32",
+      "status": "verified-in-local-source-and-controlled-tests"
+    },
+    {
+      "id": "R02",
+      "priority": "P2",
+      "problem": "A provider GuardError could expose arbitrary detail as a public failure code.",
+      "resolution": "A fixed public allowlist normalizes unknown GuardError and denial codes to PROVIDER_FAILURE.",
+      "source": "tools/wave5/runtime_contract.mjs:42",
+      "status": "verified-in-local-source-and-controlled-tests"
+    },
+    {
+      "id": "R03",
+      "priority": "P2",
+      "problem": "The live entry did not revalidate the canonical review and accepted mutable factory context.",
+      "resolution": "Canonical review and source-bound plan are checked before provider access; copied nested execution context is frozen for factory and live entry.",
+      "source": "tools/wave5/runtime_contract.mjs:171",
+      "status": "verified-in-local-source-and-controlled-tests"
+    },
+    {
+      "id": "R04",
+      "priority": "P2",
+      "problem": "The hash-bound independent review's actual verdict and source scope were not cross-checked.",
+      "resolution": "The parsed review must carry the required verdict and exact runtime/harness/plan/provider/operation bindings before private import.",
+      "source": "tools/wave5/runtime_contract.mjs:156",
+      "status": "verified-in-local-source-and-controlled-tests"
+    },
+    {
+      "id": "R05",
+      "priority": "P1",
+      "problem": "Scheduler lag omitted journal/provider queues, permitting zero actual warmup and a catch-up burst to pass.",
+      "resolution": "Each actual transport start measures lag against scheduled due time and rejects unsupported capacity. The final gate requires rate-bounded actual warmup and exact samples/send counts.",
+      "source": "tools/wave5/runtime_coordinator.mjs:288",
+      "status": "verified-in-local-source-and-controlled-tests",
+      "successorProbeToolChunk": "c1645f"
+    }
+  ],
+  "reviewedBoundaries": [
+    "500 exact reviewed scopes: runtime, foreign and 498 load scopes; 1996 genuine business-actor sessions plus four genuine foreign sessions.",
+    "Session proofs require online Auth plus actual server session rows, unique session/connection IDs, expiry/revocation checks and genuine MFA for runtime roles, load-001 billing and two executor sessions.",
+    "Trusted worker connections use separately verified service-role authority; they do not acquire manufactured Auth session IDs.",
+    "Exact reviewed owner decision persists for the same bounded operation scope. Technical preparation binds the actual provider/plan without inventing another owner approval for unchanged operations.",
+    "Current installation, capacity and protected-provider fingerprints must be verified before execution and refreshed before load; installed SQL is not established by local fixtures.",
+    "Readiness precedes common barriers; actual transport intervals must overlap. Missing backend span evidence stays null.",
+    "All seven source-mapped contention cases require committed before/after effects and losing-attempt zero effects; uncertain mutations retain original identities and skip restoration.",
+    "The source-mapped lease claim commits one attempt/lease with zero usage reservations; authorization alone does not send a webhook.",
+    "Load uses 70/20/10, fixed 60s warmup/300s measurement, 900s total and 100000-request caps; p95 has strict reviewed limits. Actual Auth session population is distinct from peak simultaneous requests.",
+    "Model, webhook, operator and token/fake-Auth load are excluded. SQL row counts remain distinct from actual remote transport observation.",
+    "Unsupported excessive-source/group/output fixtures remain blocked and cannot claim an actual LIMIT_EXCEEDED rejection or exceed reviewed seed caps.",
+    "Public evidence uses fixed fields and safe error codes; private handles/tokens/raw responses and credentials stay outside it."
+  ],
+  "materialUnresolvedLocalFindings": [],
+  "remainingLivePrerequisites": [
+    "Implement and independently review the genuine private provider, dependency/transport implementation, private credential access and exact concrete fixture/restoration/query plan.",
+    "Verify actual installed contracts and capacity, genuine authenticated/MFA/session-row evidence, prepared populations and authoritative no-send observations.",
+    "Run actual barriers, committed effects and the full unshortened workload within the approved scope; report unavailable fixtures separately.",
+    "Authenticated native, actual delivery/model, full keyboard and owner acceptance remain separate evidence gates handled outside this local review."
+  ],
+  "gates": {
+    "localSourceReview": true,
+    "installedSqlVerified": false,
+    "privateProviderPreparationApproved": false,
+    "authenticatedNative": false,
+    "actualDelivery": false,
+    "actualModel": false,
+    "independentSessionContention": false,
+    "targetScaleLoad": false,
+    "ownerAcceptance": false
+  },
+  "preservation": {
+    "sdkJobs": 0,
+    "nativeActions": 0,
+    "networkCalls": 0,
+    "privateProviderLoads": 0,
+    "credentialsOrStoresOrSessionsRead": false,
+    "sqlOrAuthWrites": 0,
+    "primarySourceEdits": 0,
+    "acceptanceChanges": 0,
+    "existingFilesModified": [],
+    "gitMutation": false
+  },
+  "publishedAt": "2026-10-12T09:29:09.402Z"
+}

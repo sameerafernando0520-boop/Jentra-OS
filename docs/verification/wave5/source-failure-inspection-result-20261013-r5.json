@@ -1,0 +1,161 @@
+{
+  "kind": "actual-genuine-runtime-source-failure-inspection",
+  "actualFinishedAt": "2026-10-13T09:10:57.784Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "bundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+  "mfa": {
+    "actorId": "8b740ab8-24f7-4455-a78b-aea0d99d20f6",
+    "factorId": "692d8964-27f9-4fd1-9a2b-8e7aefc52ed8",
+    "sessionId": "7048aa74-63de-40fc-97f0-67f7e7286d9b",
+    "aal": "aal2",
+    "factorStatus": "verified",
+    "serverObservedAt": "2026-10-13 09:10:57.869273+00",
+    "onlineAuthVerified": true,
+    "serverSessionRowVerified": true,
+    "constructedAalClaims": false
+  },
+  "before": {
+    "audit": 0,
+    "outbox": 0,
+    "receipts": 0,
+    "forecasts": 0
+  },
+  "after": {
+    "audit": 1,
+    "outbox": 1,
+    "receipts": 1,
+    "forecasts": 1
+  },
+  "process": {
+    "ok": true,
+    "status": 200,
+    "evidence": {
+      "projectId": "xpdoufauvrbdmxgngetv",
+      "method": "POST",
+      "route": "/rest/v1/rpc/analytics_process_snapshot",
+      "startedAt": "2026-10-13T09:10:55.813Z",
+      "sentAt": "2026-10-13T09:10:55.814Z",
+      "finishedAt": "2026-10-13T09:10:56.704Z",
+      "connectionId": "w5-9a27ac29-1410-43e6-a84d-528925b6da26",
+      "status": 200,
+      "responseSha256": "8e4b4d4a0ffee82a08758f7a18ff1d0ef60ce39c5ec9f0370f1ccd29cd2a9750",
+      "responseBytes": 2732
+    },
+    "result": {
+      "source": {
+        "asOf": "2026-10-13T09:10:56.869000Z",
+        "branchId": "3813692c-f0de-4c69-8e34-d56cf54695b1",
+        "complete": true,
+        "tenantId": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+        "windowEnd": "2026-10-12T09:10:57.869000Z",
+        "snapshotId": "837bbc92-fa47-49b3-b35a-f576eb38246f",
+        "sourceCount": 4,
+        "windowStart": "2026-10-10T09:10:57.869000Z",
+        "documentType": "crm_opportunity",
+        "legalEntityId": "caa2bb06-219a-47e9-8132-66d1271b0ffd",
+        "sourceEventIds": [
+          "34d25769-e5ac-451f-8800-eb862db79e65",
+          "cbe0d78a-4a6a-4c2a-96ac-46523e1ba309",
+          "de4fd834-20c4-4ab4-9eaa-7d1647b69307",
+          "fbc77771-8e5f-4d6d-ade1-409a1370a399"
+        ],
+        "recordedThrough": "2026-10-13T09:10:56.869000Z",
+        "sourceManifestHash": "858deece6e4442477a0ecd1422dae3ee1c07d84c702d571bb7e1d62cea956770",
+        "sourceContractVersion": "workflow.process_events.v1"
+      },
+      "observations": [
+        {
+          "id": "34d25769-e5ac-451f-8800-eb862db79e65",
+          "branchId": "3813692c-f0de-4c69-8e34-d56cf54695b1",
+          "tenantId": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+          "enteredAt": "2026-10-11T10:56:45.278696Z",
+          "documentId": "ca7971c2-40b2-4866-a9b2-831d167a3218",
+          "recordedAt": "2026-10-13T08:56:45.278696Z",
+          "completedAt": null,
+          "waitMinutes": "2.250000",
+          "documentType": "crm_opportunity",
+          "activeMinutes": "10.500000",
+          "legalEntityId": "caa2bb06-219a-47e9-8132-66d1271b0ffd"
+        },
+        {
+          "id": "cbe0d78a-4a6a-4c2a-96ac-46523e1ba309",
+          "branchId": "3813692c-f0de-4c69-8e34-d56cf54695b1",
+          "tenantId": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+          "enteredAt": "2026-10-11T09:56:45.278696Z",
+          "documentId": "95a2f6b7-8518-4ce9-ad93-2d530695e0e0",
+          "recordedAt": "2026-10-13T08:56:45.278696Z",
+          "completedAt": "2026-10-11T10:41:45.278696Z",
+          "waitMinutes": "14.875000",
+          "documentType": "crm_opportunity",
+          "activeMinutes": "30.125000",
+          "legalEntityId": "caa2bb06-219a-47e9-8132-66d1271b0ffd"
+        },
+        {
+          "id": "de4fd834-20c4-4ab4-9eaa-7d1647b69307",
+          "branchId": "3813692c-f0de-4c69-8e34-d56cf54695b1",
+          "tenantId": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+          "enteredAt": "2026-10-11T09:56:45.278696Z",
+          "documentId": "ca7971c2-40b2-4866-a9b2-831d167a3218",
+          "recordedAt": "2026-10-13T08:56:45.278696Z",
+          "completedAt": "2026-10-11T10:41:45.278696Z",
+          "waitMinutes": "14.875000",
+          "documentType": "crm_opportunity",
+          "activeMinutes": "30.125000",
+          "legalEntityId": "caa2bb06-219a-47e9-8132-66d1271b0ffd"
+        },
+        {
+          "id": "fbc77771-8e5f-4d6d-ade1-409a1370a399",
+          "branchId": "3813692c-f0de-4c69-8e34-d56cf54695b1",
+          "tenantId": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+          "enteredAt": "2026-10-11T10:56:45.278696Z",
+          "documentId": "95a2f6b7-8518-4ce9-ad93-2d530695e0e0",
+          "recordedAt": "2026-10-13T08:56:45.278696Z",
+          "completedAt": null,
+          "waitMinutes": "2.250000",
+          "documentType": "crm_opportunity",
+          "activeMinutes": "10.500000",
+          "legalEntityId": "caa2bb06-219a-47e9-8132-66d1271b0ffd"
+        }
+      ]
+    }
+  },
+  "originalCommand": {
+    "ok": true,
+    "status": 200,
+    "evidence": {
+      "projectId": "xpdoufauvrbdmxgngetv",
+      "method": "POST",
+      "route": "/rest/v1/rpc/freeze_pipeline_forecast",
+      "startedAt": "2026-10-13T09:10:56.704Z",
+      "sentAt": "2026-10-13T09:10:56.705Z",
+      "finishedAt": "2026-10-13T09:10:57.122Z",
+      "connectionId": "w5-9a27ac29-1410-43e6-a84d-528925b6da26",
+      "status": 200,
+      "responseSha256": "9be45eeb455956f8aaf85083139317dfb659a4117946a8bae2813a3208eebd5b",
+      "responseBytes": 362
+    },
+    "result": {
+      "entity": {
+        "id": "38742ecf-91fe-4cd3-93c5-9d6f726a59e5",
+        "version": "1",
+        "sourceHash": "0e9255bd3871c3ee8130ec94af09d1e21c4ec73191d8ade81f23923f21ca1e47",
+        "definitionVersion": 1
+      },
+      "warnings": [],
+      "command_id": "ad46d9da-607f-446d-b3c2-1c0e8a1adbc9",
+      "request_id": "0563ec92-0eb4-46fd-a11f-647e5ad71b2b",
+      "correlation_id": "0563ec92-0eb4-46fd-a11f-647e5ad71b2b"
+    }
+  },
+  "originalCommandId": "ad46d9da-607f-446d-b3c2-1c0e8a1adbc9",
+  "newCommands": 0,
+  "originalCommandRepeatedOnlyAfterFreshZeroOutcomeProof": true,
+  "zeroEffects": false,
+  "networkCalls": 7,
+  "credentialsPrinted": false,
+  "automaticRetryPerformed": false,
+  "allSourceWorkflowsPassed": false,
+  "ownerAcceptedCriteria": 3,
+  "production": false,
+  "realBilling": false
+}

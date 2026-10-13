@@ -1,0 +1,203 @@
+{
+  "kind": "offline_installed_verification_preparation_audit",
+  "recordedAt": "2026-10-12T09:52:12.193Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "review": {
+    "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+    "fileSha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+    "bundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+    "operationScopeSha256": "fcdab89d242dc578793eba1d520ea0251699b70b7730c02aea94232805286e63"
+  },
+  "plan": {
+    "path": "docs/verification/wave5/installed-verification-plan-20261012-r5-a2.json",
+    "sha256": "0caf72e72b920efa03246860c4d443e3ad0d2c129218d8cca3d85d79ba3c2077"
+  },
+  "inputs": [
+    {
+      "path": "tools/wave5/prepare_installed_verification_20261012_r5.mjs",
+      "sha256": "6641087a2331e156ee99ad05ddf4adffb06aa5596b9867ce7d6cb9885ba8e719",
+      "bytes": 46103
+    },
+    {
+      "path": "tools/wave5/prepare_installed_verification_successor_20261012_r5_a2.mjs",
+      "sha256": "06f809313f145f2f02aa8d54e04c96762838b0acc145563cb072e55fdaae1626",
+      "bytes": 6012
+    },
+    {
+      "path": "docs/verification/wave5/installed-verification-plan-20261012-r5.json",
+      "sha256": "17aa5cb966070f2766f2ec9460b29a6bcad0d2fa3b6ed027f8790b88868c6ea1",
+      "bytes": 485918
+    },
+    {
+      "path": "docs/verification/wave5/installed-verification-plan-20261012-r5.md",
+      "sha256": "6bca906ea6e5cc58da760d9f816aefdf7ba20df004aeb896328dc180b030ea11",
+      "bytes": 4460
+    },
+    {
+      "path": "docs/verification/wave5/installed-verification-plan-20261012-r5-a2.json",
+      "sha256": "0caf72e72b920efa03246860c4d443e3ad0d2c129218d8cca3d85d79ba3c2077",
+      "bytes": 11046
+    },
+    {
+      "path": "docs/verification/wave5/installed-verification-plan-20261012-r5-a2.md",
+      "sha256": "fab8759b6af65cf245820bbe532424329576a8fd7adc1cea285369e004cffc3c",
+      "bytes": 2220
+    },
+    {
+      "path": "docs/verification/wave5/installed-baseline-rename-fingerprints-20261012-r5.sql",
+      "sha256": "f4beb12842047ebf0ab8892155c092b1bf357ec27b044be62796bd4f81579b0a",
+      "bytes": 1811
+    },
+    {
+      "path": "docs/verification/wave5/installed-catalog-verification-20261012-r5-a2.sql",
+      "sha256": "1e388eef0a161d3fe90da7f2b2490b7e7c773985e69fa9c3a743fac3c4dd9745",
+      "bytes": 94620
+    },
+    {
+      "path": "docs/verification/wave5/installed-strict-metadata-20261012-r5.sql",
+      "sha256": "906dd7f51f80962b627a62e059637ef57eb896b715acfc27820e4ffea9aec41b",
+      "bytes": 6968
+    },
+    {
+      "path": "docs/verification/wave5/installed-preservation-fingerprints-20261012-r5.sql",
+      "sha256": "8f200dd3a857733c45e4d8b3fc7e4ee7f51c844911ccccbf739630894993a165",
+      "bytes": 2810
+    },
+    {
+      "path": "docs/verification/wave5/installed-catalog-verification-20261012-r5.sql",
+      "sha256": "7d84efee06b401d7d75f02f2fa395b86f2669b0c96523237d7beb81cac1e6c08",
+      "bytes": 94542
+    },
+    {
+      "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+      "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+      "bytes": 1370575
+    },
+    {
+      "path": "docs/verification/wave5/current-verification-status-after-20261010-r5-guarded.json",
+      "sha256": "441e9beaaa09e27430a9fd9e1ce6a9e667af3a853d5a037bc301199e4b0d8fd5",
+      "bytes": 1096391
+    },
+    {
+      "path": "tools/wave5/runtime_fixture_spec.mjs",
+      "sha256": "71dd763620cab0ca896dd96c50193350f1926e67f481acfed9b7aaa4b519f2d2",
+      "bytes": 36370
+    }
+  ],
+  "actualLocalChecks": [
+    {
+      "chunkId": "efb64d",
+      "exitCode": 0,
+      "kind": "local source/hash/transaction/ledger-predicate/no-side-effect/dollar-quote checks"
+    },
+    {
+      "chunkId": "a61f65",
+      "exitCode": 0,
+      "kind": "Node syntax check for original preparation"
+    },
+    {
+      "chunkId": "71c0d8",
+      "exitCode": 0,
+      "kind": "Node syntax check for successor"
+    },
+    {
+      "chunkId": "e80373",
+      "exitCode": 0,
+      "kind": "actual new offline original publication"
+    },
+    {
+      "chunkId": "dc4702",
+      "exitCode": 0,
+      "kind": "actual new offline a2 successor publication"
+    }
+  ],
+  "retainedLocalFailures": [
+    {
+      "chunkId": "98a345",
+      "exitCode": 1,
+      "error": "Unsupported reviewed function parameter: p_line inventory.transfer_lines",
+      "resolution": "Narrow parser added schema-qualified composite parameter types before publication.",
+      "sqlCalls": 0
+    },
+    {
+      "chunkId": "b24ba2",
+      "exitCode": 1,
+      "error": "Error: transaction",
+      "resolution": "Local checker trimmed leading whitespace before comparing final ROLLBACK; no generated query changed.",
+      "sqlCalls": 0
+    },
+    {
+      "chunkId": "d2f5c6",
+      "exitCode": 1,
+      "error": "Unsupported reviewed ALTER FUNCTION inventory: procurement_requisition_workflow",
+      "resolution": "Preparation explicitly maps schema moves, renames and three volatility changes before publication.",
+      "sqlCalls": 0
+    },
+    {
+      "chunkId": "a98aa8",
+      "exitCode": 1,
+      "error": "28 !== 30",
+      "resolution": "The checker confused 30 source-mapped rename events with 28 final alias rows; serial rename chains and a later approved alias rewrite explain the difference.",
+      "sqlCalls": 0
+    },
+    {
+      "chunkId": "a0dfc5",
+      "exitCode": 1,
+      "error": "29 !== 30",
+      "resolution": "Retained final rename-history entries total29; finance.build_ar_ap_control_report_v1 is expressly replaced at order39 after the order31 rename. The final body expectation follows order39 source.",
+      "sqlCalls": 0
+    }
+  ],
+  "passedChecks": {
+    "reviewAndAll71SourceHashes": true,
+    "sourceFunctionExpectations": 541,
+    "directlyCreatedTables": 215,
+    "explicitReviewedForcedRls": 72,
+    "functionGrantPredicates": 18,
+    "sourceMappedRenameEvents": 30,
+    "finalAliasRows": 28,
+    "retainedFinalRenameHistoryEntries": 29,
+    "laterAliasBodyRewriteOrder": 39,
+    "actualBeforeAfterBaselinePrerequisites": 3,
+    "dynamicBillWrappers": 3,
+    "guardedReturnTransforms": 2,
+    "volatilityTransforms": 3,
+    "readOnlyRollbackQueries": 4,
+    "originalAndSuccessorPreserved": true,
+    "successorOnlyTwoLiteralCorrections": true,
+    "noAuthMfaDml": true,
+    "noPermissionShim": true,
+    "noPrivateConfigBodiesReturned": true,
+    "noVaultCronHttpWork": true
+  },
+  "limitations": [
+    "These are local SQL source and metadata preparation checks; no PostgreSQL compilation or execution is claimed.",
+    "The catalog body expectation does not substitute for actual grants/RLS/source provider/preservation results, authenticated PostgREST or session tests.",
+    "72 forced-RLS predicates are an explicit/reviewed subset; dynamic loop/table policies are captured by the full catalog but require installed comparison.",
+    "Historical105/25/126 rollback Auth/MFA fixtures remain preserved and are prohibited unchanged; actual account-bound behavior batches remain unprepared until genuine identities/MFA and nonempty reviewed source fixtures exist.",
+    "Missing genuine before hashes for any of the three installed baseline renames must stay incomplete."
+  ],
+  "execution": {
+    "databaseCalls": 0,
+    "sqlExecuted": false,
+    "authChanged": false,
+    "fixtureCreated": false,
+    "privateInputsRead": false,
+    "sdkJobs": 0,
+    "nativeCalls": 0,
+    "statusOrMatrixEdited": false
+  },
+  "gates": {
+    "sourceMappingPrepared": true,
+    "installationVerified": false,
+    "authenticatedNative": false,
+    "realMfa": false,
+    "actualDelivery": false,
+    "actualModelUsage": false,
+    "independentContention": false,
+    "targetScaleLoad": false,
+    "ownerAccepted": 3,
+    "ownerCriteria": 109,
+    "wholeSystemAccepted": false
+  }
+}

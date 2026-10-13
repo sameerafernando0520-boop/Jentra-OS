@@ -108,7 +108,10 @@ void main() {
       await c.read(businessSetupControllerProvider.notifier).refresh();
       await tester.pumpAndSettle();
       expect(
-        c.read(businessSetupControllerProvider).requireValue.items
+        c
+            .read(businessSetupControllerProvider)
+            .requireValue
+            .items
             .any((record) => record.code == 'ACPT-WH'),
         isFalse,
       );

@@ -1,0 +1,24 @@
+{
+  "kind": "controlled-wave5-harness-test-failure",
+  "date": "2026-10-12",
+  "toolChunkId": "610e77",
+  "command": "node --test --test-isolation=none tools/wave5/runtime_coordinator.test.mjs",
+  "exitCode": 1,
+  "tests": 26,
+  "passed": 25,
+  "failed": 1,
+  "skipped": 0,
+  "cancelled": 0,
+  "failure": {
+    "test": "real session validation requires 2,000 distinct online-verified server rows and exact actor slots",
+    "reportedLocation": "tools/wave5/runtime_coordinator.test.mjs:120:12",
+    "message": "Missing expected exception.",
+    "diagnosis": "The negative fixture assigned sessions[1].sessionId to the same sessions[1] row, so it did not create the intended duplicate. The next revision changes the fixture to sessions[0].sessionId. No product guard is weakened."
+  },
+  "networkCalls": 0,
+  "sdkJobs": 0,
+  "executedLive": false,
+  "independentSessionContention": false,
+  "targetScaleLoad": false,
+  "ownerAcceptance": false
+}

@@ -1,4 +1,4 @@
-// NEW r4 variant; preserved predecessor run_windows_userflow_20261010_r3_a2.ps1 SHA-256 ff46dba344fb4d49eaa6ab607c156d94df17a977f453b0f8c357c2ca87ec119f.
+# NEW r4 variant; preserved predecessor run_windows_userflow_20261010_r3_a2.ps1 SHA-256 ff46dba344fb4d49eaa6ab607c156d94df17a977f453b0f8c357c2ca87ec119f.
 param(
  [Parameter(Mandatory=$true)][ValidateSet('Preview','Connected')][string]$Mode,
  [Parameter(Mandatory=$true)][ValidateSet('pubget','analyzer','startupTests','keyboardTests','accountingTests','authTests','cashTests','platformAll','desktopAll','build')][string]$Stage,

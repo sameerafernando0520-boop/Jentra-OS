@@ -1,0 +1,331 @@
+// New public-artifact review only. Default check writes nothing.
+// No SDK, native app, SQL, Auth, secret, worker, deployment or approval execution.
+// All r3/r2/original review files remain immutable historical evidence.
+import {open,lstat,readFile,readdir,realpath} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {isDeepStrictEqual} from 'node:util';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {sources} from './cash_ui_evidence.mjs';
+import {auditInputs,approvedSourcePath} from './desktop_verification_inputs_20261010_r4.mjs';
+import {fullDesktop,sourceGuard,stageEvidence,files,readZipEntries,zipEntryBytes} from './windows_delivery_inputs_20261010_r4.mjs';
+import {verifyExecution,verifierProvenance} from './accounting_execution_verifier_20261010_r3.mjs';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..'),base='docs/verification/wave5/';
+const self='scripts/wave5/prepare_current_runtime_review_20261010_r4.mjs',projectId='xpdoufauvrbdmxgngetv';
+const mode=process.argv[2]??'check';
+if(process.argv.length>3||!['check','compose'].includes(mode))throw Error('CHECK_OR_COMPOSE_ONLY');
+const p={original:base+'complete-app-runtime-review-20261009.json',r13:base+'complete-app-runtime-review-20261009-r13.json',
+ source:approvedSourcePath,full:base+'desktop-verification-approvedAll-20261010-r4.json',
+ matrix:base+'requirement-matrix-20261008.json',matrixMd:base+'requirement-matrix-20261008.md',status:'docs/development/wave5-status.md',
+ original83:base+'owner-golden-decision-20261010-r2.json',original83Promotion:base+'golden-promotion-result-20261010-r2.json',
+ criterion:base+'owner-criterion-decision-20261010-r2.json',criterionResult:base+'owner-criterion-acceptance-after-20261010-r2-serial.json',
+ accountingSource:base+'accounting-checks-source-20261010-r2.json',accountingMd:base+'accounting-checks-result-20261010-r2.md',
+ focusedFailure:base+'desktop-verification-focused-retention-20261010-r4-a1.json',
+ live:base+'complete-live-preflight-20261010-r4-summary.json',liveIndex:base+'complete-live-preflight-20261010-r4-index.json',
+ component:base+'continuation-worker-component-20261009-r14.json',worker:base+'current-runtime-worker-adapter-20261010-r4.json',
+ native:base+'windows-test-verification-20261010-r4.json',nativeMd:base+'windows-test-verification-20261010-r4.md',
+ preview:base+'windows-test-preview-package-20261010-r4.json',connected:base+'windows-test-connected-package-20261010-r4.json',
+ nativePreview:base+'native-preview-userflows-20261010-r4.json',nativePreviewMd:base+'native-preview-userflows-20261010-r4.md',
+ postStorage:base+'windows-userflow-storage-after-20261010-r4.json',
+ statusBefore:base+'current-verification-status-before-20261010-r4-guarded.json',statusAfter:base+'current-verification-status-after-20261010-r4-guarded.json',
+ handoff:'docs/development/wave5-next-session-20261010-r4.md',
+ review:base+'complete-app-runtime-review-20261010-r4.json',markdown:base+'complete-app-runtime-review-20261010-r4.md',result:base+'complete-app-runtime-composition-result-20261010-r4.json'};
+const preserved={original:{fileSha256:'3af2dc69e77c37b939cdd02e27860261e36899b95aa68016b0f0703970de565f',bundleSha256:'13ffe2fdfd412fae36d3ff08c1f33bb59d9de85f20b2707e77ba6b9629eae83e'},
+ r13:{fileSha256:'97c0d0d29b706b1d1283e2408e4ed9b9622b1ef0a4ab2ddae8dec099fe5cf208',bundleSha256:'92a68a58d70a1f9061776be1b6416b8124112577b0a0859ed6f389becc2533d4'}};
+const sha=b=>createHash('sha256').update(b).digest('hex'),eq=(a,b)=>isDeepStrictEqual(a,b);
+const ref=record=>({path:record.path,sha256:record.sha256});
+const must=(ok,message)=>{if(!ok)throw Error(message);},parse=b=>JSON.parse(b.toString('utf8').replace(/^\uFEFF/,''));
+function relative(file){const full=path.resolve(root,file),rel=path.relative(root,full);must(rel&&rel!=='..'&&!rel.startsWith('..'+path.sep)&&!path.isAbsolute(rel),'PATH_ESCAPES_WORKSPACE:'+file);return rel.split(path.sep).join('/');}
+async function bytes(file){const rel=relative(file),full=path.join(root,rel),stat=await lstat(full);must(stat.isFile()&&!stat.isSymbolicLink()&&relative(await realpath(full))===rel,'REGULAR_UNLINKED_INPUT_REQUIRED:'+rel);return readFile(full);}
+async function exists(file){try{await lstat(path.join(root,relative(file)));return true;}catch(e){if(e.code==='ENOENT')return false;throw e;}}
+function runtimeScope(review){
+ const configuration=structuredClone(review.workerConfiguration);
+ for(const k of ['connectedBuildManifest','windowsSourceRevision','verifiedReleaseEntries'])delete configuration.nativeIsolation[k];
+ const execution=structuredClone(review.execution);
+ execution.ownerAcceptance.criteria=execution.ownerAcceptance.criteria.map(({id})=>({id}));
+ for(const k of ['sharedGoldenFailures','currentAcceptedBeforeRuntimeApproval','wholeSystemSignoff'])delete execution.ownerAcceptance[k];
+ return {projectId:review.projectId,accounts:review.accounts,roles:review.roles,assignments:review.assignments,syntheticPlans:review.syntheticPlans,syntheticScopes:review.syntheticScopes,
+  bootstrap:review.bootstrap,workerConfiguration:configuration,execution,migrations:review.migrations,exclusions:review.exclusions,privateProvisioning:review.privateProvisioning};
+}
+function connectorRows(raw){
+ const result=raw.rawConnectorResult??raw,blocks=result?.content?.filter(c=>c.type==='text')??[];
+ must(result?.isError!==true&&blocks.length===1,'EXACT_SAVED_CONNECTOR_RESULT_REQUIRED');
+ const wrapper=JSON.parse(blocks[0].text),text=wrapper.result;
+ must(typeof text==='string','SAVED_SQL_WRAPPER_REQUIRED');
+ const matches=[...text.matchAll(/^<untrusted-data-([A-Za-z0-9-]+)>\r?\n([\s\S]*?)\r?\n<\/untrusted-data-\1>\r?$/gm)];
+ must(matches.length===1,'EXACT_SAVED_CONNECTOR_DATA_BOUNDARY_REQUIRED');return JSON.parse(matches[0][2]);
+}
+function plainConnector(raw){const result=raw.rawConnectorResult??raw,blocks=result?.content?.filter(c=>c.type==='text')??[];must(result?.isError!==true&&blocks.length===1,'EXACT_PLAIN_CONNECTOR_RESULT_REQUIRED');return JSON.parse(blocks[0].text);}
+function imageDimensions(b){
+ if(b.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10]))){must(b.length>=24,'PNG_HEADER_REQUIRED');return{width:b.readUInt32BE(16),height:b.readUInt32BE(20)};}
+ must(b.length>4&&b[0]===255&&b[1]===216,'NATIVE_PNG_OR_JPEG_REQUIRED');
+ let offset=2;while(offset<b.length){must(b[offset]===255,'JPEG_MARKER_INVALID');while(b[offset]===255)offset++;const marker=b[offset++];if(marker===217||marker===218)break;if(marker===1||marker>=208&&marker<=215)continue;
+  must(offset+2<=b.length,'JPEG_SEGMENT_INCOMPLETE');const length=b.readUInt16BE(offset);must(length>=2&&offset+length<=b.length,'JPEG_SEGMENT_LENGTH_INVALID');
+  if([192,193,194,195,197,198,199,201,202,203,205,206,207].includes(marker)){must(length>=8,'JPEG_FRAME_INCOMPLETE');return{width:b.readUInt16BE(offset+5),height:b.readUInt16BE(offset+3)};}offset+=length;
+ }throw Error('JPEG_DIMENSIONS_NOT_FOUND');
+}
+function directOwner(record){must(record.kind==='direct-human-owner-decision'&&record.authorizationKind==='direct-human-message'&&record.submittedByOwner===true&&record.sourceMessage?.role==='user'&&typeof record.sourceMessage.messageId==='string'&&record.sourceMessage.messageId&&typeof record.sourceMessage.threadId==='string'&&Number.isFinite(Date.parse(record.sourceMessage.receivedAt))&&record.messageSha256===sha(Buffer.from(record.messageVerbatim)),'ACTUAL_DIRECT_OWNER_DECISION_REQUIRED');}
+const startup=new Map();
+for(const file of [self,'scripts/wave5/windows_delivery_inputs_20261010_r4.mjs','scripts/wave5/desktop_verification_inputs_20261010_r4.mjs',
+ 'scripts/wave5/accounting_execution_verifier_20261010_r3.mjs','scripts/wave5/cash_ui_evidence.mjs','scripts/wave5/record_continuation_windows.mjs',
+ 'scripts/wave5/prepare_native_runtime_profile.ps1','workers/wave5/validate_runtime_review.mjs','workers/wave5/runtime_launcher.mjs'])startup.set(file,sha(await bytes(file)));
+async function audit(){
+ const bound=new Map(),missing=[];
+ async function bind(file,expected){const rel=relative(file),data=await bytes(rel),actual=sha(data);must((!expected||actual===expected)&&(!bound.has(rel)||bound.get(rel)===actual),'BOUND_INPUT_DRIFT:'+rel);bound.set(rel,actual);return data;}
+ const json=async(file,expected)=>parse(await bind(file,expected));
+ const refs=async records=>{for(const ref of records)await bind(ref.path,ref.sha256);};
+ const original=await json(p.original,preserved.original.fileSha256),prior=await json(p.r13,preserved.r13.fileSha256);
+ for(const [key,review]of [['original',original],['r13',prior]]){
+  const {bundleSha256,...body}=review;must(bundleSha256===preserved[key].bundleSha256&&sha(Buffer.from(JSON.stringify(body)))===bundleSha256&&review.ownerApproved===false&&review.projectId===projectId,'PRESERVED_UNAPPROVED_REVIEW_CHANGED:'+key);
+  must(review.migrations.length===71&&new Set(review.migrations.map(m=>m.path)).size===71&&review.migrations.every((m,i)=>m.order===i+1&&m.installed===false),'EXACT_71_ORDERED_CANDIDATES_REQUIRED');
+ }
+ must(eq(runtimeScope(original),runtimeScope(prior)),'PRESERVED_OPERATION_SCOPE_CHANGED');
+ const scopeSha256=sha(Buffer.from(JSON.stringify(runtimeScope(prior))));
+ must(scopeSha256==='fcdab89d242dc578793eba1d520ea0251699b70b7730c02aea94232805286e63','EXACT_ORIGINAL_RUNTIME_SCOPE_REQUIRED');
+ await refs(prior.migrations);await refs(prior.artifacts);
+ const legacyDrift=[];
+ for(const artifact of original.artifacts){const current=sha(await bytes(artifact.path));if(current!==artifact.sha256)legacyDrift.push({path:artifact.path,originalSha256:artifact.sha256,currentSha256:current});}
+ must(eq(legacyDrift,prior.sourceContinuation.originalArtifactDrift),'UNDECLARED_ORIGINAL_ARTIFACT_DRIFT');
+ const focusedRetention=await json(p.focusedFailure);
+ must(focusedRetention.status==='complete'&&focusedRetention.failure===null&&focusedRetention.preservedFailedAttempt===true&&focusedRetention.allThreeFailedFilesRetained===true&&focusedRetention.observed.length===3&&focusedRetention.actualFocusedTestsStarted===0&&focusedRetention.failedSDKExitCode!==0&&focusedRetention.sharedSourceChanged===false&&focusedRetention.approvedImagesChanged===false&&focusedRetention.dependencyLockChanged===false&&focusedRetention.acceptanceStoresOrSessionsAccessed===false,'EXACT_FAILED_FOCUSED_ATTEMPT_RETENTION_REQUIRED');
+ for(const retained of focusedRetention.observed){must(retained.retainedPath.startsWith(base+'desktop-verification-focusedNonGolden-20261010-r4-a1-failed')&&retained.error===null&&retained.retainedBytesMatch===true&&retained.sha256===retained.retainedSha256,'VERBATIM_FAILED_ATTEMPT_RETENTION_REQUIRED');const data=await bind(retained.retainedPath,retained.sha256);must(data.length===retained.bytes&&data.length===retained.retainedBytes,'FAILED_ATTEMPT_RETENTION_BYTE_COUNT_CHANGED');}
+ const retainedLog=(await bind(base+'desktop-verification-focusedNonGolden-20261010-r4-a1-failed.log')).toString('utf8');
+ must(retainedLog.includes('C:\\src\\flutter\\bin\\cache\\lockfile')&&/Access is denied|permission|access/i.test(retainedLog),'DATED_SDK_CACHE_PERMISSION_FAILURE_REQUIRED');
+ await bind('scripts/wave5/retain_focused_verification_failure_20261010_r4.mjs');
+ const required=[p.source,p.full,p.native,p.nativeMd,p.preview,p.connected,p.worker,p.nativePreview,p.nativePreviewMd,p.postStorage,p.statusBefore,p.statusAfter,p.handoff,p.live,p.liveIndex];
+ for(const file of required)if(!await exists(file))missing.push(file);
+ if(missing.length){for(const [file,h]of startup)await bind(file,h);return{bound,missing,original,prior,scopeSha256,legacyDrift,focusedRetention,ready:false};}
+ const source=await json(p.source),sourceAudit=await auditInputs(p.source),desktop=await fullDesktop({baseSourceHashes:source.sourceHashes});
+ must(source.postImageApproval===true&&source.revision==='r4'&&desktop.record===p.full&&desktop.fullSuitePassed===true&&desktop.failedTests===0&&desktop.skippedTests===0,'FRESH_APPROVED_R4_SUITE_REQUIRED');
+ await bind(desktop.record,desktop.recordSha256);await bind(desktop.log,desktop.logSha256);await refs(source.bindings);await refs(verifierProvenance);
+ for(const [file,h]of Object.entries(source.sourceHashes)){await bind(file,h);await bind(relative(path.join(source.snapshot,file)),h);}
+ for(const resolved of source.resolution)await bind(relative(path.join(source.snapshot,resolved.path)),resolved.sha256);
+ for(const pin of source.toolchain.tooling)must(sha(await readFile(pin.path))===pin.sha256,'CURRENT_SDK_PIN_CHANGED');
+ const image83=await json(p.original83),promotion83=await json(p.original83Promotion),image8=await json(source.ownerImageDecision.path,source.ownerImageDecision.sha256),promotion8=await json(source.promotion.path,source.promotion.sha256);
+ for(const record of [image83,image8])directOwner(record);
+ must(eq(ref(source.original83Approval),{path:p.original83,sha256:bound.get(p.original83)})&&eq(ref(source.original83Promotion),{path:p.original83Promotion,sha256:bound.get(p.original83Promotion)})&&image83.images.length===83&&image8.images.length===8&&source.exactApprovedImageDelta.length===8,'SEPARATE_83_AND_EIGHT_IMAGE_PROVENANCE_REQUIRED');
+ for(const [owner,promotion,count,ref]of [[image83,promotion83,83,{path:p.original83,sha256:bound.get(p.original83)}],[image8,promotion8,8,source.ownerImageDecision]]){
+  must(owner.images.every(i=>i.decision==='accept')&&new Set(owner.images.map(i=>i.approvedPath)).size===count&&promotion.status==='complete'&&promotion.fullPromotion===true&&promotion.publishedImageCount===count&&promotion.failure===null&&promotion.cleanupErrors.length===0&&promotion.postVerificationErrors.length===0&&promotion.ownerDecision.path===ref.path&&promotion.ownerDecision.sha256===ref.sha256,'ACTUAL_EXACT_IMAGE_PROMOTION_REQUIRED');
+ }
+ for(const image of image8.images)await bind(image.approvedPath,image.candidateSha256);
+ const criterion=await json(p.criterion),criterionResult=await json(p.criterionResult),matrix=await json(p.matrix);directOwner(criterion);
+ const accepted=['AC-551','AC-552','AC-553'];
+ must(criterion.criteria.length===3&&eq(criterion.criteria.map(c=>c.id),accepted)&&criterion.criteria.every(c=>c.decision==='accept-complete-criterion')&&criterionResult.status==='complete'&&criterionResult.fullPublication===true&&criterionResult.observedOwnerAcceptedCriteria===3&&eq(criterionResult.ownerDecision,{path:p.criterion,sha256:bound.get(p.criterion)}),'THREE_ACTUAL_CRITERION_DECISIONS_REQUIRED');
+ must(matrix.requirementCount===109&&matrix.rows.length===109&&new Set(matrix.rows.map(r=>r.id)).size===109&&matrix.ownerAcceptedCriteria===3&&eq(matrix.rows.filter(r=>r.ownerAccepted===true).map(r=>r.id),accepted)&&matrix.rows.filter(r=>r.ownerAccepted===false).length===106,'EXACT_THREE_OF_109_REQUIRED');
+ for(const key of ['wholeWaveComplete','ownerSignoff','authenticatedNativeAcceptance','realMfa','actualWorkerDelivery','actualModelUsage','independentSessionContention','targetScaleLoad','nativeKeyboardVerified','newRuntimeInstallationComplete'])must(matrix[key]===false,'SEPARATE_MATRIX_GATE_CHANGED:'+key);
+ const accountingSource=await json(p.accountingSource),accounting=[];await bind(p.accountingMd);await refs(accountingSource.bindings);
+ for(const resolution of accountingSource.resolution)await bind(relative(path.join(accountingSource.snapshot,resolution.path)),resolution.sha256);
+ const accountingSourceDelta=Object.keys(accountingSource.sourceHashes).filter(file=>accountingSource.sourceHashes[file]!==source.sourceHashes[file]).sort();
+ must(accountingSource.kind==='accounting_calculation_gateway_source_manifest'&&accountingSource.stages.length===2&&eq(accountingSource.stages.map(s=>[s.stage,s.files.length]),[['domain',16],['platform',22]])&&eq(accountingSource.toolchain,source.toolchain),'HISTORICAL_38_FILE_ACCOUNTING_SCOPE_REQUIRED');
+ for(const [file,h]of Object.entries(accountingSource.sourceHashes))if(file.startsWith('packages/jentra_domain/')||file.startsWith('packages/jentra_platform/')||['pubspec.yaml','pubspec.lock','analysis_options.yaml'].includes(file))must(source.sourceHashes[file]===h,'CURRENT_ACCOUNTING_EXECUTED_SCOPE_CHANGED:'+file);
+ for(const stage of accountingSource.stages){
+  const file=base+'accounting-checks-'+stage.stage+'-20261010-r2.json',record=await json(file),raw=await bind(record.log,record.logSha256),actual=verifyExecution(raw,stage.workingDirectory,stage.files,0),expectedCount=stage.stage==='domain'?122:406;
+  must(record.stage===stage.stage&&record.status==='complete'&&record.exitCode===0&&record.integrityError===null&&record.spawnError===null&&record.stagePassed===true&&record.serialFileConcurrency===1&&eq(record.sourceManifest,{path:p.accountingSource,sha256:bound.get(p.accountingSource)})&&record.workingDirectory===stage.workingDirectory&&record.executable===stage.executable&&eq(record.args,stage.args)&&eq(record.selectedTestFiles,stage.testFiles)&&record.counts.passed===expectedCount&&record.counts.failed===0&&record.counts.skipped===0&&actual.identities.length===expectedCount&&eq(actual.identities,record.actualTestIdentities),'ACTUAL_HISTORICAL_ACCOUNTING_EXECUTION_REQUIRED');
+  for(const observation of [record.inputAuditBefore,record.inputAuditAfter])must(observation.currentSourceMatchesFrozenInputs===true&&observation.warmSourceMatchesFrozenInputs===true&&eq(observation.sourceHashes,accountingSource.sourceHashes)&&eq(observation.toolchain,accountingSource.toolchain)&&eq(observation.resolution,accountingSource.resolution)&&eq(observation.bindings,accountingSource.bindings),'DATED_ACCOUNTING_INPUT_AUDIT_CHANGED');
+  accounting.push({stage:stage.stage,record:{path:file,sha256:bound.get(file)},log:{path:record.log,sha256:record.logSha256},passed:expectedCount,failed:0,skipped:0,testFiles:stage.files.length,observedAt:record.finishedAt,rerun:false,currentDomainPlatformScopeUnchanged:true,actualTransactions:false});
+ }
+ const live=await json(p.live),index=await json(p.liveIndex);
+ must(live.kind==='read_only_r4_live_preflight_comparison'&&index.kind==='read_only_r4_live_preflight_artifact_index'&&live.projectId===projectId&&index.projectId===projectId&&live.observedAt===index.observedAt&&index.summary.path===p.live&&index.summary.sha256===bound.get(p.live)&&index.summary.bytes===(await bytes(p.live)).length&&eq(live.immutableInputs,index.immutableInputs),'EXACT_CURRENT_R4_LIVE_INDEX_REQUIRED');
+ await refs(index.immutableInputs);
+ const latest=connectorRows(await json(base+'complete-live-preflight-20261010-r4-raw.json')),earlier=await json(base+'complete-live-preflight-20261010-r3-raw.json'),previous=connectorRows(earlier);
+ must(latest.length===1&&previous.length===1&&Object.keys(latest[0]).length===40,'EXACT_40_FIELD_LIVE_ROWS_REQUIRED');
+ const comparable=row=>Object.fromEntries(Object.entries(row).filter(([key])=>key!=='observed_at'));
+ must(eq(comparable(latest[0]),comparable(previous[0]))&&latest[0].observed_at===live.observedAt&&previous[0].observed_at===live.priorObservedAt&&Date.parse(live.observedAt)>Date.parse(live.priorObservedAt)&&live.comparedFields===40&&eq(live.onlyChangedFields,['observed_at']),'ONLY_LIVE_SERVER_OBSERVATION_TIME_MAY_CHANGE');
+ must(live.migrationCount===43&&live.apiFunctions===107&&live.checkedProviders===120&&live.unchangedProviders===120&&live.changedProviders.length===0&&live.wave5ForcedAndEnabledRlsTables===15&&live.rolePermissions===87&&live.roleAssignments===1&&live.entitlements===28&&live.memberships===1&&Object.keys(live.collisionCounters).length===14&&Object.values(live.collisionCounters).every(value=>value===0),'CURRENT_PROVIDER_ACCESS_AND_COLLISION_BASELINE_REQUIRED');
+ for(const [key,value]of Object.entries(live.collisionCounters))must(latest[0][key]===value,'EXACT_COLLISION_COUNTER_CHANGED:'+key);
+ const context=await json(base+'complete-live-preflight-20261010-r4-read-context.json');
+ must(context.kind==='read-only-r4-runtime-metadata-observation'&&context.projectId===projectId&&context.observedAt===live.observedAt&&context.readOnly===true&&eq(context.tools,['supabase_execute_sql','supabase_list_migrations','supabase_list_edge_functions'])&&context.sqlInstalled===false&&context.accountsChanged===false&&context.credentialsInspected===false&&context.edgeDeployed===false,'CURRENT_CONNECTED_READ_CONTEXT_REQUIRED');
+ await bind(context.query.path,context.query.sha256);
+ const ledger=plainConnector(await json(base+'complete-live-preflight-20261010-r4-ledger.json')).migrations,installation=await json(base+'installation-result-20261008.json');
+ must(ledger.length===43&&new Set(ledger.map(row=>row.version)).size===43&&installation.installationComplete===true&&installation.approvedMigrationsInstalled===6&&installation.migrationsInOrder.length===6&&live.originalSixLedger.migrationLedgerListReread===true&&live.originalSixLedger.sixOriginalEntriesMatch===true,'FRESH_LEDGER_AND_INSTALLED_SIX_REQUIRED');
+ const installedSix=installation.migrationsInOrder.map(migration=>{
+  must(ledger.filter(row=>row.name===migration.ledgerEntry.name&&row.version===migration.ledgerEntry.version).length===1&&!prior.migrations.some(candidate=>candidate.path===migration.path),'INSTALLED_SIX_MUST_NOT_BE_REPLAYED');
+  return{sourcePath:migration.path,ledgerEntry:migration.ledgerEntry,currentMatches:1,reinstalled:false};
+ });
+ must(eq(installedSix,live.originalSixLedger.preservedEntries)&&live.originalSixLedger.sourceMigrationNamesReplayed===false,'EXACT_INSTALLED_SIX_LEDGER_MAPPING_REQUIRED');
+ const edge=plainConnector(await json(base+'complete-live-preflight-20261010-r4-edge-list.json')).functions,oldEdge=plainConnector(await json(base+'complete-live-preflight-20261010-r3-edge-list.json')).functions;
+ must(edge.length===2&&eq(edge,oldEdge)&&eq(edge.map(f=>f.slug).sort(),['people-private-documents','people-private-purge'])&&live.edgeInventory.actualListReread===true&&live.edgeInventory.actualFunctionSourceBodyReread===false,'CURRENT_EDGE_METADATA_ONLY_BOUNDARY_REQUIRED');
+ for(const key of ['fullRuntimePreflightComplete','runtimeOwnerApproved','newRuntimeInstallationComplete','authenticatedNative','fullNativeKeyboardGate','realMfa','actualDelivery','actualModelUsage','independentSessionContention','targetScaleLoad','ownerAcceptanceChanged','wholeSystemOwnerSignoff','sqlInstalled','AuthAccountsCreatedOrDeleted','privateSecretsRead','SDKJobsExecuted'])must(live[key]===false,'LIVE_METADATA_OPERATION_GATE_CHANGED:'+key);
+ const previousLive=await json(base+'complete-live-preflight-20261010-r3-summary.json'),nativeTarget=await json(previousLive.nativeAccountMetadata.record.path,previousLive.nativeAccountMetadata.record.sha256);
+ must(nativeTarget.readOnly===true&&nativeTarget.accountName==='jentra-w5-runtime'&&nativeTarget.accountExistenceVerified===true&&nativeTarget.accountExists===false&&nativeTarget.exitCode===2&&nativeTarget.namedError==='NERR_UserNotFound / NET HELPMSG 2221'&&nativeTarget.packageDirectoryExists===false&&nativeTarget.profileDirectoryExists===false&&nativeTarget.provisionedByThisCheck===false&&nativeTarget.accountOrSessionContentsRead===false,'DATED_NATIVE_TARGET_METADATA_REQUIRED');
+ const component=await json(p.component),worker=await json(p.worker),workerSource=await json(component.sourceRecord),workerTests=await json(component.testRecord),deno=await json(component.denoRecord);
+ must(component.revision==='r14'&&component.migrationHashesUnchanged===true&&component.migrations===71&&worker.kind==='current-runtime-worker-adapter'&&worker.revision==='r4'&&worker.workerSourceUnchanged===true&&worker.workerTestsRerun===false&&worker.denoChecksRerun===false&&worker.workerFiles===26&&worker.controlledTests===71&&worker.denoEntrypoints===2&&eq(worker.sourceManifest,{path:p.source,sha256:bound.get(p.source)})&&eq(worker.historicalComponent,{path:p.component,sha256:bound.get(p.component)})&&worker.inputHashesStableDuringPreparation===true,'CURRENT_ADAPTER_WITH_DATED_WORKER_EVIDENCE_REQUIRED');
+ must(workerSource.files.length===26&&new Set(workerSource.files.map(f=>f.path)).size===26&&eq(worker.workerSourceFiles,workerSource.files)&&eq((await readdir(path.join(root,'workers/wave5'))).filter(file=>file.endsWith('.mjs')).map(file=>'workers/wave5/'+file).sort(),workerSource.files.map(f=>f.path).sort()),'EXACT_UNCHANGED_WORKER_INVENTORY_REQUIRED');
+ await refs(worker.bindings);await refs(workerSource.files);await bind(workerTests.log,workerTests.logSha256);
+ must(workerTests.tests===71&&workerTests.passed===71&&workerTests.failed===0&&workerTests.exitCode===0&&workerTests.controlled===true&&workerTests.externalCalls===false&&workerTests.deployed===false&&deno.entrypoints.length===2&&deno.checksRerun===true&&deno.importedJavaScriptTypeChecked===false,'HISTORICAL_WORKER_AND_DENO_COUNTS_REQUIRED');
+ for(const checked of deno.entrypoints){must(checked.exitCode===0,'HISTORICAL_DENO_FAILED');await bind(checked.entrypoint,checked.entrypointSha256);await bind(checked.config,checked.configSha256);await bind(checked.log,checked.logSha256);}
+ must(component.deployments.length===2&&component.deployments.reduce((total,d)=>total+d.files.length,0)===22&&eq(component.deployments,prior.deployments)&&eq(worker.deploymentSourceFileCounts,[14,8]),'EXACT_UNCHANGED_14_AND_EIGHT_PAYLOADS_REQUIRED');
+ for(const deployment of component.deployments){
+  const payload=await json(deployment.payloadPath);must(payload.project_id===projectId&&payload.name===deployment.name&&payload.verify_jwt===false&&payload.files.length===deployment.files.length&&new Set(payload.files.map(f=>f.name)).size===payload.files.length,'UNCHANGED_CUSTOM_AUTH_EDGE_PAYLOAD_REQUIRED');await refs(deployment.files);
+  for(const file of payload.files)must((await bind(file.name)).toString('utf8')===file.content,'CURRENT_EDGE_PAYLOAD_SOURCE_DRIFT');
+ }
+ for(const key of ['liveOperationsPerformed','actualModelUsage','actualWorkerDelivery','installedSql','realMfa','independentSessionContention','targetScaleLoad','ownerAccepted'])must(worker[key]===false,'WORKER_RUNTIME_GATE_CHANGED:'+key);
+ const native=await json(p.native);await bind(p.nativeMd);
+ must(native.kind==='paired-ordinary-native-build-adapter'&&native.revision==='r4'&&native.currentSourceMatch===true&&native.previewBuilt===true&&native.connectedBuilt===true&&native.sourceFilesPerApp===source.selectedSources&&native.ordinaryEntrypoint==='lib/main.dart'&&native.nativeLaunched===false&&eq(native.desktopBaseSourceSuite,desktop),'EXACT_CURRENT_PAIRED_PACKAGE_REPORT_REQUIRED');
+ await bind(p.connected);
+ must(eq(worker.nativeReport,{path:p.native,sha256:bound.get(p.native)})&&eq(worker.connectedManifest,{path:p.connected,sha256:bound.get(p.connected)}),'CURRENT_WORKER_PACKAGE_BINDING_REQUIRED');
+ for(const key of ['authenticatedNativeAcceptance','nativeKeyboardVerified','realMfa','actualAccountingPosting','actualWorkerDelivery','actualModelUsage','independentSessionContention','targetScaleLoad','ownerAccepted','newMigrationsInstalled','formalRuntimeProfileProvisioned','acceptanceStoresReadOrCopied'])must(native[key]===false,'PACKAGING_CHECKPOINT_GATE_CHANGED:'+key);
+ await bind(native.recorder,native.recorderSha256);await bind(native.helper,native.helperSha256);
+ const packages=[];
+ for(const [title,file]of [['Preview',p.preview],['Connected',p.connected]]){
+  const packaged=await json(file),guard=await sourceGuard(title),sourceManifest=await json(guard.manifest.path,guard.manifest.sha256);
+  must(packaged.mode===title.toLowerCase()&&packaged.revision==='r4'&&packaged.entrypoint==='lib/main.dart'&&packaged.controlledEvidence===false&&packaged.current_source_match===true&&packaged.base_source_match===true&&eq(packaged.sourceHashes,source.sourceHashes)&&eq(packaged.buildSourceHashes,sourceManifest.buildSourceHashes)&&eq(packaged.runnerOverlays,sourceManifest.overlays)&&packaged.sourceManifest===guard.manifest.path&&packaged.sourceManifestSha256===guard.manifest.sha256&&eq(packaged.fullDesktopEvidence,desktop),'CURRENT_ORDINARY_PACKAGE_SOURCE_REQUIRED');
+  must(sourceManifest.overlays.length===3&&eq(sourceManifest.overlays.map(row=>row.path).sort(),['apps/jentra_desktop/windows/CMakeLists.txt','apps/jentra_desktop/windows/runner/Runner.rc','apps/jentra_desktop/windows/runner/main.cpp'].sort()),'ONLY_THREE_RUNNER_IDENTITIES_ALLOWED');
+  for(const [item,h]of Object.entries(sourceManifest.buildSourceHashes))await bind(relative(path.join(sourceManifest.snapshot,item)),h);
+  for(const [item,h]of Object.entries(sourceManifest.scriptBindings))await bind(item,h);
+  await bind(sourceManifest.publicBuildBinding.path,sourceManifest.publicBuildBinding.sha256);
+  if(title==='Connected'){must(sourceManifest.publicConfig.publicOnly===true&&sourceManifest.publicConfig.projectId===projectId,'PUBLIC_CONNECTED_CONFIG_REQUIRED');await bind(sourceManifest.publicConfig.path,sourceManifest.publicConfig.sha256);}else must(sourceManifest.publicConfig===null,'PREVIEW_CONNECTED_CONFIG_REFUSED');
+  const actualRelease=await files(packaged.releaseDirectory),actualPackage=(await files(packaged.packageDirectory)).filter(row=>row.path!=='release-manifest.json');
+  must(eq(actualRelease,packaged.releaseFiles)&&eq(actualPackage,packaged.releaseFiles)&&packaged.storageIdentity.company==='com.jentra.test'&&packaged.storageIdentity.product==='JentraOS_WindowsTest_20261010-r4_'+title&&packaged.storageIdentity.defaultStoresRead===false&&packaged.storageIdentity.localStoresCopied===false&&packaged.storageIdentity.newOsUserCreated===false,'ACTUAL_PACKAGE_BYTES_AND_PRODUCT_IDENTITY_REQUIRED');
+  const executableSha=packaged.releaseFiles.find(row=>row.path==='Jentra_OS.exe')?.sha256;
+  for(const identity of [packaged.executableIdentity.build,packaged.executableIdentity.packaged]){must(identity.readOnly===true&&identity.nativeLaunched===false&&identity.CompanyName==='com.jentra.test'&&identity.ProductName==='JentraOS_WindowsTest_20261010-r4_'+title&&identity.OriginalFilename==='Jentra_OS.exe'&&identity.sha256===executableSha,'COMPILED_PE_IDENTITY_REQUIRED');await bind(identity.inspector,identity.inspectorSha256);}
+  const attempt=packaged.toolchainGuard.path.match(/-r4-([a-z][a-z0-9]{0,8})\.json$/)?.[1];must(attempt,'EXACT_CURRENT_BUILD_ATTEMPT_REQUIRED');
+  const build=await stageEvidence(title,'build',attempt);must(build.record===packaged.buildEvidence&&build.recordSha256===packaged.buildEvidenceSha256,'ACTUAL_PACKAGED_SDK_BUILD_REQUIRED');
+  await bind(build.record,build.recordSha256);await bind(build.log,build.logSha256);await bind(build.sdkExitRecord,build.sdkExitRecordSha256);await bind(build.toolchainGuard.path,build.toolchainGuard.sha256);
+  for(const row of packaged.releaseFiles){await bind(relative(path.join(packaged.releaseDirectory,row.path)),row.sha256);await bind(relative(path.join(packaged.packageDirectory,row.path)),row.sha256);}
+  packages.push({mode:title.toLowerCase(),manifest:{path:file,sha256:bound.get(file)},source:{path:guard.manifest.path,sha256:guard.manifest.sha256},releaseFiles:packaged.releaseFiles,packageDirectory:packaged.packageDirectory});
+ }
+ const inputs=await json(native.packageInputs,native.packageInputsSha256),delivery=await json(native.delivery,native.deliveryManifestSha256),archive=await bind(delivery.zip,delivery.zipSha256),entries=readZipEntries(archive);
+ must(inputs.packageName==='Jentra OS Windows Test 20261010 r4'&&inputs.packageDirectory===path.join(root,'dist',inputs.packageName)&&delivery.revision==='r4'&&delivery.packageDirectory===inputs.packageDirectory&&delivery.bothAppsIncluded===true&&delivery.backendChanged===false&&delivery.acceptanceStoresCopied===false&&delivery.nativeLaunched===false&&archive.length===delivery.zipBytes&&native.zip===delivery.zip&&native.zipSha256===delivery.zipSha256&&native.zipBytes===delivery.zipBytes&&eq(await files(inputs.packageDirectory),inputs.packageFiles),'EXACT_CURRENT_DELIVERY_AND_PACKAGE_INVENTORY_REQUIRED');
+ must(eq([...entries.keys()].filter(name=>!name.endsWith('/')).sort(),inputs.packageFiles.map(row=>inputs.packageName+'/'+row.path).sort()),'EXACT_TOTAL_ZIP_FILE_SET_REQUIRED');
+ for(const row of inputs.packageFiles){await bind(relative(path.join(inputs.packageDirectory,row.path)),row.sha256);must(sha(zipEntryBytes(archive,entries.get(inputs.packageName+'/'+row.path),row.bytes))===row.sha256,'DECODED_ZIP_BYTES_CHANGED');}
+ const releaseEntries=packages.reduce((total,item)=>total+item.releaseFiles.length,0);
+ must(delivery.verifiedReleaseEntries===releaseEntries&&native.releaseEntriesVerified===releaseEntries&&delivery.verifiedPackageEntries===inputs.packageFiles.length&&native.packageEntriesVerified===inputs.packageFiles.length,'ACTUAL_RELEASE_AND_PACKAGE_COUNTS_REQUIRED');
+ await bind(inputs.packager,inputs.packagerSha256);await bind('scripts/wave5/windows_delivery_inputs_20261010_r4.mjs',inputs.inputHelperSha256);await bind(delivery.finalizer,delivery.finalizerSha256);
+ const requiredStages=['Connected:build','Connected:pubget','Preview:analyzer','Preview:build','Preview:pubget'];
+ must(native.stages.length===5&&eq(native.stages.map(stage=>stage.mode+':'+stage.stage).sort(),requiredStages),'EXACT_FIVE_PACKAGED_SDK_STAGES_REQUIRED');
+ for(const stage of native.stages){const attempt=stage.record.match(/-r4-([a-z][a-z0-9]{0,8})\.json$/)?.[1];must(attempt,'ACTUAL_STAGE_ATTEMPT_REQUIRED');const actual=await stageEvidence(stage.mode,stage.stage,attempt);must(eq(actual,stage),'PAIRED_ACTUAL_STAGE_EVIDENCE_CHANGED');await bind(actual.record,actual.recordSha256);await bind(actual.log,actual.logSha256);await bind(actual.sdkExitRecord,actual.sdkExitRecordSha256);await bind(actual.toolchainGuard.path,actual.toolchainGuard.sha256);}
+ const nativePreview=await json(p.nativePreview);await bind(p.nativePreviewMd);
+ must(nativePreview.kind==='actual-native-preview-userflow-observations'&&nativePreview.revision==='r4'&&nativePreview.status==='complete'&&nativePreview.mode==='Preview'&&nativePreview.nativeLaunched===true&&nativePreview.observations.length>0&&new Set(nativePreview.observations.map(row=>row.id)).size===nativePreview.observations.length&&Date.parse(nativePreview.finishedAt)>=Date.parse(nativePreview.startedAt),'ACTUAL_COMPLETED_R4_NATIVE_PREVIEW_REQUIRED');
+ must(nativePreview.inputToolVersionIsSeparateFromProductSdk===true&&nativePreview.inputToolEvidence.provider==='@oai/sky'&&nativePreview.inputToolEvidence.bridge==='node_repl'&&Date.parse(nativePreview.inputToolEvidence.documentationObservedAt)<=Date.parse(nativePreview.startedAt)&&eq(nativePreview.productSdk,source.toolchain.sdkMetadata)&&nativePreview.productSuiteObservedAt===desktop.finishedAt,'SEPARATE_ACTUAL_INPUT_TOOL_AND_PRODUCT_VERSION_DATES_REQUIRED');
+ for(const key of ['authenticatedNative','fullNativeKeyboardGate','accountingTransactionsPosted','authoritativeReportsGenerated','actualDelivery','realMfa','actualModelUsage','independentSessionContention','targetScaleLoad','ownerAcceptanceChanged'])must(nativePreview[key]===false,'ORDINARY_PREVIEW_BROADER_GATE_CHANGED:'+key);
+ await refs([nativePreview.package,nativePreview.sourceManifest,nativePreview.prelaunchPathObservation,nativePreview.recorder,nativePreview.predecessor,nativePreview.productBuildEvidence]);
+ const previewPackage=await json(p.preview),storageBefore=await json(nativePreview.prelaunchPathObservation.path),storageAfter=await json(p.postStorage);
+ must(eq(nativePreview.package,{path:p.preview,sha256:bound.get(p.preview)})&&nativePreview.sourceManifest.path===base+'windows-test-preview-source-20261010-r4.json'&&nativePreview.executable===previewPackage.executable&&nativePreview.executableSha256===previewPackage.executableIdentity.packaged.sha256&&sha(await bind(relative(nativePreview.executable)))===nativePreview.executableSha256,'ACTUAL_NATIVE_PACKAGE_AND_EXECUTABLE_REQUIRED');
+ must(storageBefore.revision==='r4'&&storageBefore.allExpectedPathsAbsent===true&&storageBefore.paths.length===4&&storageBefore.paths.every(row=>row.exists===false)&&storageBefore.pathContentsRead===false&&storageBefore.defaultAcceptanceStoresRead===false&&storageBefore.localStoresCopied===false&&storageBefore.OSUserCreated===false&&Date.parse(storageBefore.observedAt)<Date.parse(nativePreview.startedAt),'EXACT_PRELAUNCH_METADATA_REQUIRED');
+ const normalized=value=>value.replace(/^process:/i,'').replaceAll('\\','/').toLowerCase();
+ must(nativePreview.observedWindows.length>0&&nativePreview.observedWindows.every(window=>Number.isInteger(window.id)&&normalized(window.app)===normalized(nativePreview.executable)&&window.title==='Jentra OS - 20261010 r4 Preview test'),'ACTUAL_RETURNED_PREVIEW_WINDOWS_REQUIRED');
+ let screenshotCount=0;
+ const screenshotPaths=new Set(),screenshotHashes=new Set();
+ for(const observation of nativePreview.observations){
+  must(/^[A-Z][A-Z0-9_-]{1,49}$/.test(observation.id)&&['pass','fail','blocked'].includes(observation.result)&&['action','expected','observed'].every(key=>typeof observation[key]==='string'&&observation[key].trim())&&nativePreview.observedWindows.some(window=>window.id===observation.window.id&&window.app===observation.window.app&&window.title===observation.window.title&&Date.parse(window.boundAt)<=Date.parse(observation.observedAt))&&Date.parse(observation.observedAt)>=Date.parse(nativePreview.startedAt)&&Date.parse(observation.observedAt)<=Date.parse(nativePreview.finishedAt)&&observation.screenshots.length>0,'ACTUAL_CLOSED_NATIVE_CASE_REQUIRED');
+  for(const screenshot of observation.screenshots){
+   must(screenshot.path.startsWith(base+'native-preview-20261010-r4/'+observation.id+'-')&&!screenshotPaths.has(screenshot.path),'EXACT_NEW_NATIVE_SCREENSHOT_PATH_REQUIRED');
+   const data=await bind(screenshot.path,screenshot.sha256);must(data.length===screenshot.bytes&&eq(imageDimensions(data),{width:screenshot.width,height:screenshot.height}),'ACTUAL_NATIVE_SCREENSHOT_BYTES_OR_SIZE_CHANGED');
+   screenshotPaths.add(screenshot.path);screenshotHashes.add(screenshot.sha256);screenshotCount++;
+  }
+ }
+ for(const result of ['pass','fail','blocked','observed'])must(nativePreview.observations.filter(row=>row.result===result).length===nativePreview.counts[result],'ACTUAL_NATIVE_COUNTS_CHANGED');
+ must(storageAfter.kind==='exact-product-postlaunch-path-existence'&&storageAfter.revision==='r4'&&storageAfter.paths.length===4&&storageAfter.pathContentsRead===false&&storageAfter.defaultAcceptanceStoresRead===false&&storageAfter.localStoresCopied===false&&storageAfter.OSUserCreated===false&&storageAfter.formalRuntimeProfileProvisioned===false&&Date.parse(storageAfter.observedAt)>=Date.parse(nativePreview.finishedAt),'EXACT_POSTLAUNCH_PATH_METADATA_REQUIRED');
+ for(const before of storageBefore.paths){const match=storageAfter.paths.filter(row=>row.mode===before.mode&&row.kind===before.kind&&row.expectedPath===before.expectedPath);must(match.length===1&&match[0].beforeExists===false&&typeof match[0].afterExists==='boolean','SAME_FOUR_EXPECTED_PRODUCT_PATHS_REQUIRED');}
+ const statusBefore=await json(p.statusBefore),statusAfter=await json(p.statusAfter);
+ must(statusBefore.kind==='current-r4-verification-evidence-before'&&statusAfter.kind==='current-r4-verification-evidence-result'&&statusAfter.status==='complete'&&statusAfter.fullPublication===true&&statusAfter.publicationError===null&&statusAfter.cleanupErrors.length===0&&statusAfter.postVerificationErrors.length===0&&statusAfter.remainingDocuments.length===0&&statusAfter.claimedWithoutPublication.length===0&&statusAfter.observedOwnerAcceptedCriteria===3&&eq(statusAfter.before,{path:p.statusBefore,sha256:bound.get(p.statusBefore)})&&eq(statusBefore.evidence,statusAfter.evidence),'ACTUAL_GUARDED_R4_LIVING_PUBLICATION_REQUIRED');
+ for(const key of ['all109RowsUnchanged','criterionAcceptanceUnchanged','separateGatesUnchanged','allExistingMatrixMetadataPreserved','all109MarkdownCellsUnchanged'])must(statusAfter[key]===true,'LIVING_PUBLICATION_PRESERVATION_CHANGED:'+key);
+ must(statusAfter.sourceEdits===0&&statusAfter.approvedBaselineEdits===0&&statusAfter.acceptanceStoresTouched===false&&statusAfter.SDKJobsExecuted===false&&statusAfter.liveOperations===false&&statusAfter.nativeActionsPerformed===false,'LIVING_PUBLICATION_SCOPE_CHANGED');
+ const living=[p.matrix,p.matrixMd,p.status];
+ must(statusBefore.originalLivingDocuments.length===3&&statusBefore.plannedDocuments.length===3&&statusAfter.observedDocuments.length===3&&statusAfter.retainedRecoveries.length===3&&eq(statusAfter.changedDocuments,living),'EXACT_THREE_LIVING_DOCUMENTS_REQUIRED');
+ for(const file of living){
+  const originalDocument=statusBefore.originalLivingDocuments.find(row=>row.path===file),planned=statusBefore.plannedDocuments.find(row=>row.path===file),observed=statusAfter.observedDocuments.find(row=>row.path===file),recovery=statusAfter.retainedRecoveries.find(row=>row.originalPath===file);
+  must(originalDocument&&planned&&observed&&recovery&&sha(Buffer.from(originalDocument.utf8Base64,'base64'))===originalDocument.sha256&&observed.matchesPlanned===true&&observed.sha256===planned.sha256&&observed.bytes===planned.bytes&&recovery.matchesOriginal===true&&recovery.matchesClaimed===true&&recovery.published===true&&recovery.sha256===originalDocument.sha256,'ACTUAL_LIVING_DOCUMENT_AND_RECOVERY_REQUIRED');
+  await bind(file,observed.sha256);await bind(recovery.path,originalDocument.sha256);
+  if(file===p.matrix)must(eq(matrix.rows,parse(Buffer.from(originalDocument.utf8Base64,'base64')).rows),'ALL_109_EXACT_ROWS_MUST_REMAIN_UNCHANGED');
+ }
+ await refs(statusAfter.validatedInputs.filter(row=>!living.includes(row.path)));
+ must(eq(matrix.currentR4Verification,statusAfter.evidence)&&statusAfter.evidence.sourceManifest.sha256===bound.get(p.source)&&statusAfter.evidence.pairedNativeBuild.sha256===bound.get(p.native)&&statusAfter.evidence.actualNativePreview.record.sha256===bound.get(p.nativePreview)&&statusAfter.evidence.actualNativePreview.report.sha256===bound.get(p.nativePreviewMd)&&eq(statusAfter.evidence.actualNativePreview.counts,nativePreview.counts),'CURRENT_R4_STATUS_INPUT_BINDINGS_REQUIRED');
+ await bind(p.handoff);
+ await bind(desktop.sdkExitRecord.path,desktop.sdkExitRecord.sha256);await refs([desktop.runner,desktop.inputAuditor]);
+ for(const resolved of source.cachedSupport)await bind(relative(path.join(source.snapshot,resolved.path)),resolved.sha256);
+ for(const [file,h]of startup)await bind(file,h);
+ await auditInputs(p.source);
+ for(const [file,h]of bound)must(sha(await bytes(file))===h,'BOUND_INPUT_CHANGED_DURING_REVIEW_AUDIT:'+file);
+ return {bound,missing,ready:true,original,prior,scopeSha256,legacyDrift,focusedRetention,source,sourceAudit,desktop,image83,promotion83,image8,promotion8,criterion,criterionResult,matrix,
+  accounting,accountingSourceDelta,live,index,context,installedSix,nativeTarget,component,worker,workerTests,deno,native,packages,inputs,delivery,nativePreview,screenshotCount,uniqueScreenshotHashes:screenshotHashes.size,statusBefore,statusAfter};
+}
+function concreteScopeMarkdown(a,configuration){
+ const code=value=>'```json\n'+JSON.stringify(value,null,2)+'\n```\n';
+ const cell=value=>String(value).replaceAll('|','\\|').replaceAll('\n',' ');
+ const migrations=a.prior.migrations.map(row=>`| ${row.order} | ${cell(row.owner)} | [${path.posix.basename(row.path)}](../../../${row.path}) | \`${row.sha256}\` |`).join('\n');
+ const installed=a.installedSix.map(row=>`| [${path.posix.basename(row.sourcePath)}](../../../${row.sourcePath}) | \`${row.ledgerEntry.name}\` | \`${row.ledgerEntry.version}\` |`).join('\n');
+ const accounts=a.prior.accounts.map(row=>`| ${cell(row.label)} | \`${row.email}\` | ${row.mainRoles.map(cell).join(', ')||'None'} | ${row.loadRoles.map(cell).join(', ')||'None'} |`).join('\n');
+ return `\n## Exact operations requested after separate approval\n\n${a.prior.execution.stages.map((stage,index)=>`${index+1}. ${stage}`).join('\n')}\n\n## Additional migrations in execution order\n\nInstall only these 71 exact files once, after approval and a fresh immediate collision/source check. Record actual connector ledger versions. The installed six below remain excluded.\n\n| Order | Owner | Source | SHA-256 |\n| --- | --- | --- | --- |\n${migrations}\n\n## Preserved installed migrations\n\nThe connected read at ${a.live.observedAt} and recorded ledger context ${a.context.recordedAt} reread all 43 ledger rows and matched the six original name/version pairs. List tools supply no separate server timestamp. No migration was replayed.\n\n| Excluded source | Actual ledger name | Actual ledger version |\n| --- | --- | --- |\n${installed}\n\n## New private Auth Admin labels\n\nCreate only these six new confirmed password-login accounts through private owner Auth Admin access. Bind actual returned Auth IDs to the reviewed bootstrap. Abort any collision; preserve every existing account. Passwords and TOTP material stay private. Direct auth.users insertion and external email delivery are excluded.\n\n| Label | Exact new email | Main roles | Load roles |\n| --- | --- | --- | --- |\n${accounts}\n\nThe machine review binds 500 exact synthetic tenant scopes, 501 branches, 1,003 roles and 2,003 assignments. Four synthetic plans and source caps follow. The operator has no business membership; its scoped authority lasts at most 45 minutes and genuine-MFA grants at most 30 minutes. Existing acceptance accounts, stores and sessions remain preserved.\n\n${code({bootstrap:a.prior.bootstrap,syntheticPlans:a.prior.syntheticPlans})}\n## Workers, model, private references and native target\n\nThis configuration retains the original bounded operation scope. It changes only the reviewed Connected build reference to r4 and its verified release count. Two exact payloads contain 14 and 8 files. Three jobs expire within 24 hours with at most 4,320 scheduled requests. Model usage permits four invocations of at most 2,000 tokens each, with an 8,000 total ceiling, numeric projection only, no tools/background/store and no real billing. Public product directories do not provision the separate standard Windows profile. No private value is present in this review.\n\n${code(configuration)}\n## Contention and target-scale load\n\nActual independent Auth session IDs, barriers, overlap timestamps and committed effects are required. Controlled tests cannot satisfy this gate. Record host/Auth limitations as incomplete; do not alter global Auth limits or construct JWT claims.\n\n${code({contention:a.prior.execution.contention,load:a.prior.execution.load})}\n## Private access and exclusions\n\n${code({privateProvisioning:a.prior.privateProvisioning,exclusions:a.prior.exclusions})}`;
+}
+const a=await audit();
+if(mode==='check'){
+ console.log(JSON.stringify({mode,composerPrepared:true,eligibleForComposition:a.ready,missingArtifacts:a.missing,ownerApproved:false,
+  scopeSha256:a.scopeSha256,additionalMigrations:71,installedSixExcluded:true,currentVerifiedSource:a.ready,
+  currentDesktop:a.ready?{passed:a.desktop.passedTests,failed:0,skipped:0,record:p.full}:null,
+  ownerAcceptedCriteria:a.ready?3:null,remainingOwnerCriteria:a.ready?106:null,
+  originalApprovedImages:83,laterApprovedImages:a.ready?8:null,
+  retainedFailedFocusedAttempt:{record:p.focusedFailure,actualTestsStarted:0,SDKCachePermissionFailure:true,originalBytesPreserved:true},
+  currentLive:a.ready?{observedAt:a.live.observedAt,migrations:43,apiFunctions:107,unchangedProviders:120}:null,
+  actualOrdinaryPreview:a.ready?{record:p.nativePreview,cases:a.nativePreview.observations.length,counts:a.nativePreview.counts,screenshots:a.screenshotCount,authenticatedNative:false}:null,
+  checkedBindings:a.bound.size,outputsWritten:false,SDKJobsExecuted:false,liveOperationsPerformed:false},null,2));
+}else{
+ must(a.ready&&a.missing.length===0,'CURRENT_R4_PREREQUISITES_PENDING:'+a.missing.join(','));
+ const configuration=structuredClone(a.prior.workerConfiguration),releaseEntries=a.packages.reduce((total,item)=>total+item.releaseFiles.length,0);
+ configuration.nativeIsolation.connectedBuildManifest=p.connected;configuration.nativeIsolation.windowsSourceRevision='r4';configuration.nativeIsolation.verifiedReleaseEntries=releaseEntries;
+ const execution=structuredClone(a.prior.execution);execution.ownerAcceptance.criteria=a.matrix.rows.map(row=>({id:row.id,ownerAccepted:row.ownerAccepted}));
+ execution.ownerAcceptance.sharedGoldenFailures=0;execution.ownerAcceptance.currentAcceptedBeforeRuntimeApproval=3;execution.ownerAcceptance.wholeSystemSignoff=false;
+ const {bundleSha256:previousBundle,...previousBody}=a.prior;
+ const artifacts=[...a.bound].sort(([left],[right])=>left.localeCompare(right)).map(([path,sha256])=>({path,sha256}));
+ const nativeFailures=a.nativePreview.observations.filter(row=>row.result==='fail').map(row=>row.id),nativeBlocked=a.nativePreview.observations.filter(row=>row.result==='blocked').map(row=>row.id);
+ const evidence={finalSourceManifest:p.source,finalSourceInputs:a.source.selectedSources,fullStrictDesktop:{record:p.full,passed:a.desktop.passedTests,failed:0,skipped:0,SDKChildExitRecord:a.desktop.sdkExitRecord},
+  retainedFailedFocusedAttempt:{record:p.focusedFailure,sha256:a.bound.get(p.focusedFailure),actualTestsStarted:0,failedSDKExitCode:a.focusedRetention.failedSDKExitCode,
+   SDKCachePermissionFailure:true,originalBytesPreserved:true,referenceMapping:a.focusedRetention.historicalReferenceMapping,boundary:'The first focused invocation could not acquire SDK cache access; zero tests began. Its three failed files are preserved verbatim. The fresh later passing run is separate evidence.'},
+  original83ImageDecision:p.original83,original83Promotion:p.original83Promotion,laterEightImageDecision:a.source.ownerImageDecision,laterEightPromotion:a.source.promotion,exactLaterImageDelta:a.source.exactApprovedImageDelta,
+  currentLiveSummary:p.live,currentLiveIndex:p.liveIndex,liveObservedAt:a.live.observedAt,checkedProviders:120,unchangedProviders:120,actual43LedgerListReread:true,installedSixPreserved:true,
+  liveObservationLimits:'Saved metadata reads at their exact times only. Edge source bodies were not reread. Private owner credentials and immediate operation authority remain unchecked. Refresh collisions and all source/release bytes immediately before approved operations.',
+  controlledAccounting:{sourceManifest:p.accountingSource,stages:a.accounting,passed:528,failed:0,skipped:0,testFiles:38,checksRerun:false,currentDomainPlatformScopeUnchanged:true,
+   otherCurrentSourceDeltaFromThatDatedManifest:a.accountingSourceDelta,actualTransactions:false,installedBehavior:false,authenticatedNative:false},
+  workerAdapter:p.worker,workerComponent:p.component,workerFiles:26,controlledWorkerTests:71,workerTestsObservedAt:a.workerTests.observedAt,workerTestsRerun:false,
+  denoEntrypoints:2,denoObservedAt:a.deno.observedAt,denoChecksRerun:false,importedJavaScriptTypeChecked:false,deploymentPayloadFiles:[14,8],
+  pairedNativeBuild:p.native,windowsSourceRevision:'r4',previewBuilt:true,connectedBuilt:true,ordinaryEntrypoint:'lib/main.dart',releaseEntries,packageEntries:a.inputs.packageFiles.length,
+  zip:{path:relative(a.delivery.zip),sha256:a.delivery.zipSha256,bytes:a.delivery.zipBytes},nativeLaunched:true,ordinaryPreviewNativeLaunched:true,
+  ordinaryPreview:{record:p.nativePreview,sha256:a.bound.get(p.nativePreview),cases:a.nativePreview.observations.length,counts:a.nativePreview.counts,screenshots:a.screenshotCount,
+   uniqueScreenshotHashes:a.uniqueScreenshotHashes,failedIds:nativeFailures,blockedIds:nativeBlocked,inputToolEvidence:a.nativePreview.inputToolEvidence,authenticated:false,actualTransactions:false},
+  ownerAcceptedCriteria:3,acceptedCriterionIds:['AC-551','AC-552','AC-553'],remainingUnacceptedCriteria:106,criterionOwnerDecision:p.criterion,criterionPublication:p.criterionResult,
+  guardedLivingPublication:{before:p.statusBefore,after:p.statusAfter,fullPublication:true,all109RowsUnchanged:true,criterionAcceptanceUnchanged:true,separateGatesUnchanged:true},
+  finalHandoff:{path:p.handoff,sha256:a.bound.get(p.handoff)},formalRuntimeProfileProvisioned:false,formalRuntimeNativeLaunched:false,installedNewMigrations:false,
+  authenticatedNative:false,nativeKeyboardVerified:false,realMfa:false,actualAccountingPosting:false,authoritativeReportsGenerated:false,actualWorkerDelivery:false,actualModelUsage:false,
+  independentSessionContention:false,targetScaleLoad:false,ownerSignoff:false,wholeSystemAccepted:false,
+  historicalReviewedEvidence:{review:p.r13,sha256:preserved.r13.fileSha256,evidence:a.prior.evidence,boundary:'Preserved earlier reviewed evidence only; none of its SQL, worker, native or load checks is claimed to have rerun by this composition.'}};
+ const body={...previousBody,reviewId:'jentra-complete-app-supabase-runtime-20261010-r4',preparedAt:new Date().toISOString(),ownerApproved:false,approvalReady:true,
+  approvalReadyScope:'Exact public-artifact operation review only. Runtime approval is absent. Immediate live/source/collision/native/private-context checks are required before execution.',
+  supersedes:p.r13,preservedReviews:[{path:p.original,...preserved.original,ownerApproved:false},{path:p.r13,...preserved.r13,ownerApproved:false}],
+  liveBaseline:{...a.prior.liveBaseline,observedAt:a.live.observedAt,migrations:43,apiFunctions:107,rolePermissions:87,roleAssignments:1,entitlements:28,memberships:1,
+   refreshedBy:p.live,expectedLedgerAfterOnlyThisInstall:114,installedSixNeverReplayed:true,migrationLedgerListRereadInR4:true,ledgerListReadContextRecordedAt:a.context.recordedAt,
+   ledgerListSeparateServerTimestampAvailable:false,edgeSourceBodiesRereadInR4:false,nativeTargetMetadataObservedAt:a.nativeTarget.observedAt,completeImmediatePreflightRequiredBeforeOperations:true},
+  workerConfiguration:configuration,execution,evidence,artifacts,migrations:a.prior.migrations,deployments:a.component.deployments,
+  sourceContinuation:{preservedOriginalBundleSha256:a.original.bundleSha256,preservedR13BundleSha256:previousBundle,unchangedRuntimeOperationScopeSha256:a.scopeSha256,
+   exactPreviouslyReviewedOriginalArtifactDrift:a.legacyDrift,currentSourceManifest:{path:p.source,sha256:a.bound.get(p.source)},nativeReport:{path:p.native,sha256:a.bound.get(p.native)},
+   connectedBuildManifest:{path:p.connected,sha256:a.bound.get(p.connected)},workerAdapter:{path:p.worker,sha256:a.bound.get(p.worker)},originalReviewAndPayloadsPreserved:true,
+   earlierApprovalCannotAuthorizeChangedSource:true,nativeBuildManifestMustMatchReviewedArtifact:true,privateOperationContextNotInspected:true},
+  remainingDevelopment:['106 criteria remain unaccepted. The existing three decisions and all approved images authorize no runtime setup.',
+   'Exactly 71 additional migrations and the private Auth Admin/bootstrap/model/Vault/native/Edge/schedule operations require approval of this exact bundle.',
+   'Genuine MFA, authenticated native checks, actual governed exports and delivery, trusted model usage, independent-session contention and target-scale load remain separate open gates.',
+   'Wave 3/4 and Employee changes, acceptance stores, accounts and sessions remain preserved. Production and real billing remain excluded.']};
+ must(eq(runtimeScope(body),runtimeScope(a.prior)),'NEW_R4_OPERATION_SCOPE_CHANGED');
+ must(artifacts.some(row=>row.path===p.connected&&row.sha256===a.bound.get(p.connected))&&artifacts.some(row=>row.path==='scripts/wave5/prepare_native_runtime_profile.ps1')&&artifacts.some(row=>row.path==='workers/wave5/validate_runtime_review.mjs'),'BOUND_NATIVE_PREPROVISION_GUARDS_REQUIRED');
+ const review={...body,bundleSha256:sha(Buffer.from(JSON.stringify(body)))},jsonBytes=Buffer.from(JSON.stringify(review,null,2)+'\n');
+ const markdown=Buffer.from(`# Jentra OS current runtime operation review — October 10, 2026 r4\n\n**Owner runtime approval is absent. Jentra OS remains incomplete.** This review requests the unchanged bounded operations below, only after approval of its exact new SHA. Image decisions and the three accepted process criteria authorize no installation or provisioning.\n\nBundle SHA-256: \`${review.bundleSha256}\`. The [machine manifest](${path.posix.basename(p.review)}) binds ${a.source.selectedSources.toLocaleString('en-US')} current source inputs, fresh ${a.desktop.passedTests}/0/0 controlled desktop tests, the original 83-image approval and separate eight-image decision/promotion, three accepted criteria, paired ordinary Preview/Connected builds and every release/copy/decoded ZIP byte. Original 13ffe and r13 92a68 reviews remain preserved and unapproved.\n\nThe connected Supabase snapshot at ${a.live.observedAt} reports 43 migrations, 107 API functions, 120 unchanged providers, 15 enabled/forced-RLS tables, 87/1/28/1 access counts, 14 zero exact collision counters and the same two People Edge metadata objects. Its 40 SQL fields match the earlier saved read except the observation timestamp. All 43 ledger rows were reread, preserving the six original name/version pairs. Edge source bodies were not reread. Native-target absence retains its separate dated observation at ${a.nativeTarget.observedAt}. Private credentials and complete immediate operation preflight remain unchecked.\n\nThe matching full suite actually executed in the r4 postapproval verification tree at ${a.desktop.finishedAt}, with every expected unique identity and a durable SDK child-exit sidecar. The Windows copies use the same base inputs with exactly three native identity overlays each; this is not a second full suite in those copies. Four SDK files, source/config, script bytes and package resolution were guarded around each packaged SDK stage. There are ${releaseEntries} verified release entries and ${a.inputs.packageFiles.length} total portable entries. Hosted dependency bodies are not separately audited file by file.\n\nThe [actual ordinary Preview session](${path.posix.basename(p.nativePreview)}) subsequently captured ${a.nativePreview.observations.length} cases and ${a.screenshotCount} screenshots: ${a.nativePreview.counts.pass} passed, ${a.nativePreview.counts.fail} failed and ${a.nativePreview.counts.blocked} blocked. Failed IDs: ${nativeFailures.join(', ')||'none'}. Blocked IDs: ${nativeBlocked.join(', ')||'none'}. The exact returned window/process/product identities and screenshot bytes are bound. Input-tool documentation/version observations, product SDK/build and native action times remain separate. Packaging records retain nativeLaunched=false at their earlier checkpoint; this ordinary Preview session records launched=true. It authenticated no user and posted no real transaction. The formal runtime profile and broader authenticated keyboard gate remain incomplete.\n\nThe 122 domain and 406 injected platform accounting checks retain their actual earlier logs, unique execution identities and before/after audits. Their domain/platform and root resolution source scope still matches current inputs. Other current source changes are listed explicitly; the 528 checks were not rerun for this review. They establish no actual posting or installed accounting behavior. The 26 worker source files and 14/8-file payloads were revalidated; 71 controlled tests and two Deno checks retain their original observations, with no delivery, deployment or model call inferred.\n\nExactly AC-551, AC-552 and AC-553 remain accepted; 106 of 109 criteria remain open. The requirement rows, existing criterion decisions and independent gates are preserved by the guarded status publication. Genuine MFA, authenticated native keyboard/restart/revocation, actual export download/reopen, persistent delivery and trusted model use, independent-session contention, 500-tenant/2,000-session load and owner signoff require separate evidence after approval.\n\nThe concrete scope is still 71 ordered additional migrations excluding the installed six; six private Auth Admin labels; 500 synthetic scopes/four plans/exact roles/source caps; a bounded separate operator; the original standard Windows profile; three Vault values/private model configuration; two same-project Edge deployments and three expiring jobs; and bounded genuine MFA/export/delivery/contention/load. Hosting remains ${projectId}. The expected ledger after only these 71 is 114. No SQL, Auth, OS, secret, SDK, hosted delivery or owner-acceptance operation occurs while composing this review. Production and real billing are excluded.\n${concreteScopeMarkdown(a,configuration)}\n`);
+ const journal=await open(path.join(root,p.result),'wx');let jsonHandle=null,markdownHandle=null,error=null;
+ await journal.writeFile(JSON.stringify({status:'in_progress',reviewPath:p.review,markdownPath:p.markdown,ownerApproved:false,liveOperationsPerformed:false},null,2)+'\n');await journal.sync();
+ try{
+  jsonHandle=await open(path.join(root,p.review),'wx');markdownHandle=await open(path.join(root,p.markdown),'wx');
+  for(const [file,h]of a.bound)must(sha(await bytes(file))===h,'INPUT_CHANGED_BEFORE_REVIEW_PUBLICATION:'+file);
+  await jsonHandle.writeFile(jsonBytes);await jsonHandle.sync();await markdownHandle.writeFile(markdown);await markdownHandle.sync();
+  await jsonHandle.close();jsonHandle=null;await markdownHandle.close();markdownHandle=null;
+  for(const [file,h]of a.bound)must(sha(await bytes(file))===h,'INPUT_CHANGED_AFTER_REVIEW_PUBLICATION:'+file);
+  must(sha(await bytes(p.review))===sha(jsonBytes)&&sha(await bytes(p.markdown))===sha(markdown),'ACTUAL_NEW_REVIEW_PUBLICATION_FAILED');
+ }catch(e){error={message:e.message,code:e.code??null};}
+ for(const handle of [jsonHandle,markdownHandle])if(handle)try{await handle.close();}catch(e){error??={message:e.message,code:e.code??null};}
+ const observed=[];
+ for(const file of [p.review,p.markdown])try{const data=await bytes(file);observed.push({path:file,sha256:sha(data),bytes:data.length});}catch(e){observed.push({path:file,error:e.message});}
+ const complete=!error&&observed.length===2&&observed[0].sha256===sha(jsonBytes)&&observed[1].sha256===sha(markdown);
+ const result={status:complete?'complete':'failed',finishedAt:new Date().toISOString(),fullComposition:complete,error,bundleSha256:review.bundleSha256,observedDocuments:observed,
+  boundInputCount:a.bound.size,scopeSha256:a.scopeSha256,ownerApproved:false,approvalExecuted:false,priorReviewsOverwritten:false,sourceEdits:0,approvedImageEdits:0,acceptanceEdits:0,
+  SDKJobsExecuted:false,SQLExecuted:false,AuthOperations:false,OSOperations:false,privateSecretsRead:false,liveOperationsPerformed:false,
+  boundary:'New public review artifacts only. Partial outcomes remain retained; no automatic retry, rollback, runtime approval or execution.'};
+ try{await journal.truncate(0);await journal.write(JSON.stringify(result,null,2)+'\n',0,'utf8');await journal.sync();}finally{await journal.close();}
+ console.log(JSON.stringify(result,null,2));if(!complete)process.exitCode=1;
+}

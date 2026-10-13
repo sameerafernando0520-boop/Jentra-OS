@@ -1,0 +1,242 @@
+{
+  "kind": "wave5-runtime-harness-review",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "observedAt": "2026-10-12T09:22:50.163Z",
+  "ownerApproved": false,
+  "executedLive": false,
+  "privateProviderImplemented": false,
+  "privateProviderLoaded": false,
+  "runtimeReview": {
+    "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+    "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+    "bytes": 1370575,
+    "bundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+    "operationScopeSha256": "fcdab89d242dc578793eba1d520ea0251699b70b7730c02aea94232805286e63"
+  },
+  "operationScopeChanged": false,
+  "additionalOwnerAuthorizationForCoordinatorHashesRequired": false,
+  "ownerApprovedFieldMeaning": "This technical local artifact contains no additional owner decision; existing runtime authorization is separate.",
+  "runtimeOwnerDecision": {
+    "status": "decision-recorded-separately-by-runtime-owner",
+    "noAdditionalOwnerDecisionForHarnessHashesRequired": true
+  },
+  "files": [
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f",
+      "bytes": 31294
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.mjs",
+      "sha256": "e41ab3830523f030f7a3cf2bb42ebabf24387697afc521b1d94458ec30dbf9be",
+      "bytes": 34881
+    },
+    {
+      "path": "tools/wave5/run_runtime_verification.mjs",
+      "sha256": "143f460b88c1e1dba4a06b7ed869fb5de46e6eff77421ebf8d0aee15efb74b20",
+      "bytes": 9119
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.test.mjs",
+      "sha256": "d5b8aba2a49673e540a87fd414be38419c65535902c3eff572afd005733b81c8",
+      "bytes": 42005
+    },
+    {
+      "path": "tools/wave5/PRIVATE_PROVIDER_CONTRACT.md",
+      "sha256": "53b691012312db8d0c6b634c8b8cc21690cac73e80a66b286dd4ab97b1c0ec30",
+      "bytes": 21178
+    },
+    {
+      "path": "tools/wave5/verify_local_harness.mjs",
+      "sha256": "db5b4c163c549b32e6e831483fdb4f6c07c8158c50e7ef3565000d04f48e9834",
+      "bytes": 6278
+    },
+    {
+      "path": "tools/wave5/compose_harness_review.mjs",
+      "sha256": "e6bbc912d5c8fff83666b035aa9d4697def0ae0ddb32382586547595cfe3fd53",
+      "bytes": 13820
+    }
+  ],
+  "contractSources": [
+    {
+      "path": "docs/verification/wave5/integrated-runtime-protocol-20261006.md",
+      "sha256": "a3f6e654699a418b2ac41f31fa9c8a8e2a4a97582ad6d10dc710bccf58caa64a",
+      "bytes": 9262
+    },
+    {
+      "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
+      "sha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5",
+      "bytes": 115108
+    },
+    {
+      "path": "supabase/migrations/20260831193714_create_greenfield_foundation.sql",
+      "sha256": "d104871a777c31b9562fac2e5200d9801b24c0ebd28a9b0e75a43bdc13171f8a",
+      "bytes": 41494
+    },
+    {
+      "path": "supabase/migrations/20260904121647_wave3_operational_foundation.sql",
+      "sha256": "b7a840b31a2d8a89d0a1539151769130c352fe7ace0ea2d76f4057aab5b2d737",
+      "bytes": 40230
+    },
+    {
+      "path": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+      "sha256": "be586326b7d8ec380a5524a5d8232e67639d677eb192b9fe29da135ee9ffe997",
+      "bytes": 9213
+    },
+    {
+      "path": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+      "sha256": "1ea4ab076cb3deaa9d0f7f92b56c47effc1a0ad45e14839156a2fd6a2d1bd8ed",
+      "bytes": 10964
+    },
+    {
+      "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "sha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e",
+      "bytes": 14205
+    },
+    {
+      "path": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+      "sha256": "b75e9cf94107fd9a959ced43f9e643b163ed579f95fb68c8de7b9e739b10d02e",
+      "bytes": 16904
+    },
+    {
+      "path": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "sha256": "339e9e86074887d164dd339eb17ac54943c39fca0caf50db575c48529456a9f5",
+      "bytes": 12761
+    },
+    {
+      "path": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql",
+      "sha256": "1a636229a0749cf9d6334ae49efe8ff38627b6a2d1bb642789a28e86efd1c663",
+      "bytes": 28824
+    },
+    {
+      "path": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "sha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc",
+      "bytes": 18114
+    }
+  ],
+  "localVerification": {
+    "path": "docs/verification/wave5/runtime-harness-local-verification-20261012-r5-a3.json",
+    "sha256": "d2d83cefad2a8e535d7850a57b84c13749e7b494f79964d7a01d3c329caff2db",
+    "bytes": 8690,
+    "actualStartedAt": "2026-10-12T07:23:44.223Z",
+    "actualFinishedAt": "2026-10-12T07:23:46.355Z",
+    "command": [
+      "node",
+      "--test",
+      "--test-isolation=none",
+      "--test-reporter=tap",
+      "tools/wave5/runtime_coordinator.test.mjs"
+    ],
+    "childExitCode": 0,
+    "nodeVersion": "v24.11.0",
+    "summary": {
+      "tests": 38,
+      "passed": 38,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0
+    },
+    "log": {
+      "path": "docs/verification/wave5/runtime-harness-local-verification-20261012-r5-a3.tap",
+      "sha256": "94670bf3441fbd8c9b1d09c623d7fcc21a1cf4081e66f13255307a14f78e1bbc",
+      "bytes": 10241
+    }
+  },
+  "priorFailedAttemptPreserved": {
+    "path": "docs/verification/wave5/failed-harness-tests-20261012-r5-a1.json",
+    "sha256": "adc9d9d092326c3d5da9c6d0ea5844df134368508e62a77ce2b7a0d1a221211f",
+    "bytes": 945
+  },
+  "historicalLocalArtifactsPreserved": [
+    {
+      "path": "docs/verification/wave5/runtime-harness-local-verification-20261012-r5-a2.json",
+      "sha256": "92e50fb313a8b065bc492c64b84d7386578348236b49ad6c790acf4cfd1ed4bb",
+      "bytes": 8689
+    },
+    {
+      "path": "docs/verification/wave5/runtime-harness-review-20261012-r5.json",
+      "sha256": "dfa54d327b6b0f617cc3ac3db784247957151a3d73d2eabe602de08536db8644",
+      "bytes": 9417
+    }
+  ],
+  "supersededLocalEvidenceLimitation": "The earlier 37-test result was genuine local evidence but missed a held-warmup catch-up false pass. Its files are retained; current source rejects actual dispatch lag and requires real nonempty rate-bounded warmup.",
+  "independentLocalCodeReview": "published separately; cannot authorize an absent private provider",
+  "implementation": [
+    "Exact immutable runtime target, all seven reviewed race definitions and concrete source hash checks.",
+    "Common readiness barrier, original command identities, distinct Auth/trusted connections and actual client transport intervals.",
+    "Committed before/after effects, losing-attempt zero effects, uncertain-state retention and exact reviewed restoration.",
+    "Paced 60s warmup plus 300s measurement, 2,000-session/500-scope coverage, 70/20/10 mix and strict p95 limits.",
+    "Synchronous actual-send phase/deadline guards, source-bound immutable factory inputs, fixed public error allowlist and exclusive evidence journal.",
+    "Actual send-minus-scheduled-due lag guard including evidence/provider queues, independent scheduler lag and consistent rate-bounded warmup/sample counts.",
+    "Separate unsupported-boundary, DB-row-count and actual external-transport observation evidence."
+  ],
+  "sourceCorrections": [
+    "Scoped delivery claim creates one lease/attempt and zero usage reservations; actual send remains separate.",
+    "load-001 billing-admin needs genuine AAL2; two distinct genuine AAL2 executor sessions are needed for execution contention.",
+    "Cached duplicate replies cannot identify a unique winner; aggregate committed counts establish uniqueness.",
+    "Invitation acceptance has no caller command/idempotency input; attempt UUID is correlation only.",
+    "Model invocation/delivery attempt rows do not count actual remote sends; a complete reviewed transport observer is required.",
+    "Synthetic activation/admission phases must precede quota buckets; existing busy billing periods cannot be cleared to force a pass.",
+    "One-lease preparation needs only the reviewed accept subscription registered after earlier forecast effects, before the other three receiver paths; there is no public re-enable operation after revoke."
+  ],
+  "boundaryAvailability": [
+    {
+      "kind": "10001Rows",
+      "status": "unsupported-with-reviewed-per-tenant-source-caps"
+    },
+    {
+      "kind": "101Groups",
+      "status": "actual-catalog-fixture-not-reviewed-or-proven"
+    },
+    {
+      "kind": "367DayWindow",
+      "status": "source-mapped-feasible-invalid-request; not-executed"
+    },
+    {
+      "kind": "8MiBPlus1Byte",
+      "status": "actual-output-fixture-not-reviewed-or-proven"
+    }
+  ],
+  "remainingPrivateImplementation": [
+    "Genuine private Supabase Auth/session storage and online identity/server auth.sessions proof for all 2,000 distinct sessions; real MFA.",
+    "Actual reviewed source-listed PostgREST/worker transport with independent connections and honest start/end/response evidence.",
+    "Concrete source-bound new-scope fixture preparation/restoration and read-only committed SQL, including denied-attempt attribution.",
+    "Fresh installed-ledger/signature/grant/RLS/preservation proof and supported database/generator capacity for the exact rate.",
+    "Reviewed full transport observer and online no-inflight/inactive-job proof for model/webhook exclusion during load.",
+    "Feasible separately reviewed excessive-source/group/output fixture scope if current approved caps cannot exercise required limits.",
+    "Source-bound independent preparation review of the real private implementation, dependencies and concrete plan."
+  ],
+  "exclusions": {
+    "production": false,
+    "realBilling": false,
+    "originalSixReplayed": false,
+    "globalAuthChanges": false,
+    "authRowsFabricated": false,
+    "credentialsRead": false,
+    "networkCalls": 0,
+    "sdkJobs": 0,
+    "nativeActions": 0,
+    "installations": 0,
+    "existingSourceEdits": [],
+    "acceptanceStoreEdits": [],
+    "sessionStoreEdits": [],
+    "commits": 0,
+    "pushes": 0
+  },
+  "gates": {
+    "implementationCoordinator": true,
+    "privateSupabaseAdapter": false,
+    "installedSql": false,
+    "genuineMfa": false,
+    "independentSessionContention": false,
+    "targetScaleLoad": false,
+    "invalidBoundaryRejections": false,
+    "authenticatedNative": false,
+    "actualDelivery": false,
+    "actualModel": false,
+    "ownerAcceptance": false
+  },
+  "evidenceBoundary": "Actual local orchestration tests, including controlled transports and virtual-time load populations. No genuine Auth, installed runtime, actual database contention, target-scale latency or owner acceptance is established.",
+  "reviewBodySha256": "913d325a3187c0b222fd2ca20698c3f10e2bc80d1cc5061b7b618c80f3d2fffb"
+}

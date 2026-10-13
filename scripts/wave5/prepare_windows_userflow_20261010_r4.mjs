@@ -6,18 +6,22 @@ import {createHash} from 'node:crypto';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {sources} from './cash_ui_evidence.mjs';
+import {fullDesktop} from './windows_delivery_inputs_20261010_r4.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const revision = 'r4', date = '20261010';
 const buildRoot = path.join(root, 'build/w5win10r4');
 const base = 'docs/verification/wave5/';
-const approvedInput = `${base}desktop-verification-source-20261010-r4.json`;
+const approvedInput = `${base}desktop-verification-source-20261010-r4-approved.json`;
 const publicBindingPath = `${base}current-public-build-binding-20261010-r4.json`;
 const preparationPath = `${base}windows-userflow-preparation-${date}-${revision}.json`;
 const scriptPath = 'scripts/wave5/prepare_windows_userflow_20261010_r4.mjs';
 const runnerPath = 'scripts/wave5/run_windows_userflow_20261010_r4.ps1';
 const wrapperPath = 'scripts/wave5/run_flutter_with_capture_env.mjs';
 const sourceHelperPath = 'scripts/wave5/cash_ui_evidence.mjs';
+const inputHelperPath = 'scripts/wave5/windows_delivery_inputs_20261010_r4.mjs';
+const verificationHelperPath = 'scripts/wave5/desktop_verification_inputs_20261010_r4.mjs';
+const guardedRunnerPath = 'scripts/wave5/run_windows_userflow_guarded_20261010_r4.mjs';
 const sha = b => createHash('sha256').update(b).digest('hex');
 const hash = async p => sha(await readFile(p));
 const exists = async p => {try {await lstat(p); return true;} catch (e) {if (e.code === 'ENOENT') return false; throw e;}};
@@ -75,7 +79,7 @@ async function selectedSources(directory) {
   };
 }
 async function bindings() {
-  return Object.fromEntries(await Promise.all([scriptPath, runnerPath, wrapperPath, sourceHelperPath].map(async p => [p, await hash(path.join(root, p))])));
+  return Object.fromEntries(await Promise.all([scriptPath, runnerPath, wrapperPath, sourceHelperPath,inputHelperPath,verificationHelperPath,guardedRunnerPath].map(async p => [p, await hash(path.join(root, p))])));
 }
 function replaceOne(text, from, to) {
   if (text.split(from).length !== 2) throw Error('RUNNER_IDENTITY_OVERLAY_EXPECTED_EXACTLY_ONCE');
@@ -129,6 +133,8 @@ async function verify(mode, checkConfig = false) {
   const current = await selectedSources(root), copied = await selectedSources(expectedSnapshot);
   if (!equal(current.hashes, manifest.baseSourceHashes)) throw Error(`CURRENT_SOURCE_CHANGED:${difference(current.hashes, manifest.baseSourceHashes).join(',')}`);
   if (!equal(copied.hashes, manifest.buildSourceHashes)) throw Error(`BUILD_SOURCE_CHANGED:${difference(copied.hashes, manifest.buildSourceHashes).join(',')}`);
+  const fullSuite = await fullDesktop(manifest);
+  if (!equal(fullSuite,manifest.fullDesktopEvidence) || !equal(fullSuite,preparation.fullDesktopEvidence)) throw Error('POSTAPPROVAL_FULL_SUITE_BINDING_CHANGED');
   const transform = transformations(mode);
   const changed = difference(current.hashes, copied.hashes);
   if (changed.length !== 3 || changed.some(p => !(p in transform.files)) || manifest.overlays.length !== 3) throw Error('ONLY_THREE_RUNNER_IDENTITY_OVERLAYS_ALLOWED');
@@ -138,7 +144,7 @@ async function verify(mode, checkConfig = false) {
   }
   if (manifest.stores.company !== transform.company || manifest.stores.product !== transform.product || manifest.stores.defaultStoresRead !== false) throw Error('ISOLATED_STORAGE_IDENTITY_INVALID');
   if (mode === 'Connected' && (!manifest.publicBuildConfigIncluded || await hash(path.join(expectedSnapshot, 'public-build-config.json')) !== preparation.publicBuildBinding.configSha256)) throw Error('PUBLIC_CONFIG_BINDING_CHANGED');
-  return {checkedAt:new Date().toISOString(), mode, revision, snapshot:expectedSnapshot, manifest:reference, sourceFileCount:Object.keys(current.hashes).length, currentSourceMatches:true, snapshotSourceMatches:true, lockSha256:current.hashes['pubspec.lock'], runnerOverlayCount:3, publicConfig:checkConfig ? await publicConfig(expectedSnapshot) : null, SDKExecuted:false, nativeLaunched:false, storesRead:false};
+  return {checkedAt:new Date().toISOString(), mode, revision, snapshot:expectedSnapshot, manifest:reference, sourceFileCount:Object.keys(current.hashes).length, currentSourceMatches:true, snapshotSourceMatches:true, lockSha256:current.hashes['pubspec.lock'], runnerOverlayCount:3, fullDesktopEvidence:fullSuite, publicConfig:checkConfig ? await publicConfig(expectedSnapshot) : null, SDKExecuted:false, nativeLaunched:false, storesRead:false};
 }
 
 const [command, mode, option] = process.argv.slice(2);
@@ -151,7 +157,7 @@ if (command === 'verify') {
   const selected = await selectedSources(root);
   const inputBytes = await readFile(path.join(root, approvedInput));
   const approved = JSON.parse(inputBytes);
-  if (approved.revision !== 'r4' || !Number.isInteger(approved.selectedSources) || approved.selectedSources <= 0 ||
+  if (approved.revision !== 'r4' || approved.postImageApproval !== true || !Number.isInteger(approved.selectedSources) || approved.selectedSources <= 0 ||
       Object.keys(approved.sourceHashes ?? {}).length !== approved.selectedSources ||
       approved.sourceInputsSha256 !== sha(Buffer.from(JSON.stringify(approved.sourceHashes))) ||
       !equal(selected.hashes, approved.sourceHashes)) throw Error('CURRENT_SOURCE_MUST_MATCH_FROZEN_R4_INPUTS');
@@ -159,6 +165,7 @@ if (command === 'verify') {
       Object.fromEntries((approved.dependencyScope ?? []).map(p => [p, true])))) throw Error('R4_DESKTOP_DEPENDENCY_SCOPE_CHANGED');
   if (approved.toolchain?.tooling?.length !== 4) throw Error('FOUR_FROZEN_R4_SDK_PINS_REQUIRED');
   for (const pin of approved.toolchain.tooling) if (await hash(pin.path) !== pin.sha256) throw Error('FROZEN_R4_SDK_CHANGED');
+  const fullSuite = await fullDesktop({baseSourceHashes:selected.hashes});
   const publicBindingBytes = await readFile(path.join(root, publicBindingPath));
   const publicBinding = JSON.parse(publicBindingBytes);
   if (publicBinding.projectId !== 'xpdoufauvrbdmxgngetv' || publicBinding.projectUrl !== 'https://xpdoufauvrbdmxgngetv.supabase.co' || publicBinding.readOnly !== true || publicBinding.publicKeyOnly !== true || publicBinding.matchedEnabledPublicKeys !== 1 || publicBinding.keyValuesPrinted !== false || publicBinding.liveOperations !== false) throw Error('FRESH_PUBLIC_PROJECT_BINDING_REQUIRED');
@@ -197,7 +204,7 @@ if (command === 'verify') {
       baseSourceHashes:selected.hashes, buildSourceHashes:built.hashes, sourceFileCount:Object.keys(selected.hashes).length, overlays,
       desktopDependencyScope:selected.desktopMembers, allWorkspaceManifestsIncluded:true, otherApplicationSourceCopied:false,
       approvedSourceInput:{path:approvedInput, sha256:sha(inputBytes)}, scriptBindings,
-      baseVerificationRevision:'r4', baseVerificationIsPreapproval:approved.postImageApproval !== true,
+      baseVerificationRevision:'r4', baseVerificationIsPreapproval:false,fullDesktopEvidence:fullSuite,
       publicBuildBinding:{path:publicBindingPath, sha256:sha(publicBindingBytes), observedAt:publicBinding.observedAt}, publicConfig:config,
       stores:{company:transform.company, product:transform.product,
         applicationSupport:`%APPDATA%\\${transform.company}\\${transform.product}`,
@@ -216,10 +223,11 @@ if (command === 'verify') {
   const fresh = await selectedSources(root);
   if (!equal(fresh.hashes, selected.hashes)) throw Error('CURRENT_SOURCE_CHANGED_DURING_PREPARATION');
   if (!equal(await bindings(), scriptBindings)) throw Error('PREPARER_RUNNER_CHANGED_DURING_PREPARATION');
+  if (!equal(await fullDesktop({baseSourceHashes:fresh.hashes}), fullSuite)) throw Error('POSTAPPROVAL_FULL_SUITE_CHANGED_DURING_PREPARATION');
   await jsonWriteNew(path.join(root, preparationPath), {
     capturedAt:new Date().toISOString(), revision, date, workspace:root, buildRoot, sourceFileCount:Object.keys(selected.hashes).length,
     sourceInputsSha256:sha(Buffer.from(canonical(selected.hashes))), lockSha256:selected.hashes['pubspec.lock'],
-    sourceStable:true, sharedSourceChanged:false, approvedInput:{path:approvedInput, sha256:sha(inputBytes)}, scriptBindings, manifests,
+    sourceStable:true, sharedSourceChanged:false, approvedInput:{path:approvedInput, sha256:sha(inputBytes)}, scriptBindings, manifests,fullDesktopEvidence:fullSuite,
     publicBuildBinding:{path:publicBindingPath, sha256:sha(publicBindingBytes), configSha256:publicBinding.configSha256, observedAt:publicBinding.observedAt},
     SDKExecuted:false, nativeLaunched:false, localStoresRead:false, nativeTargetCollisionCheckPerformed:false, publicBuildConfigIncluded:true,
   });

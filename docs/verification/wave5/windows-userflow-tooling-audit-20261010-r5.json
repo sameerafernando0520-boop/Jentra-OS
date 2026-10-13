@@ -1,0 +1,180 @@
+{
+  "kind": "windows-userflow-tooling-static-audit",
+  "revision": "r5",
+  "observedAt": "2026-10-10T13:33:28.5480725Z",
+  "files": [
+    {
+      "path": "scripts/wave5/prepare_windows_userflow_20261010_r5.mjs",
+      "sha256": "43a1165024ed5ec53d8322582fb388b72888c87fa1420ec9639dd116cbf2e7fe",
+      "bytes": 18881,
+      "syntax": "passed",
+      "checker": "node --check",
+      "predecessor": {
+        "path": "scripts/wave5/prepare_windows_userflow_20261010_r4.mjs",
+        "sha256": "e90bcbf6c7ed7ac986f8d091a3d44d732dfdd0cbceb0ef8152e3347d93d57d12",
+        "bytes": 18706
+      }
+    },
+    {
+      "path": "scripts/wave5/run_windows_userflow_20261010_r5.ps1",
+      "sha256": "48d3cf78e48053d49c9931b2869368437ea6837b2399a762414aca29ee5a5571",
+      "bytes": 10183,
+      "syntax": "passed",
+      "checker": "PowerShell Language.Parser.ParseFile",
+      "predecessor": {
+        "path": "scripts/wave5/run_windows_userflow_20261010_r4.ps1",
+        "sha256": "813d9e61c4638cfac5fd8f389e2725df3bc48fb54f27887802401649ca057191",
+        "bytes": 10013
+      }
+    },
+    {
+      "path": "scripts/wave5/run_windows_userflow_guarded_20261010_r5.mjs",
+      "sha256": "d902f795f1e69114cae191273d96ba138ca23d63525f0ef7ed88c58acb7b23e1",
+      "bytes": 7358,
+      "syntax": "passed",
+      "checker": "node --check",
+      "predecessor": {
+        "path": "scripts/wave5/run_windows_userflow_guarded_20261010_r4.mjs",
+        "sha256": "47f52599044ac3507e7af7a6c60aa7417ea4b29a737ed9a09b1049b91a713038",
+        "bytes": 7179
+      }
+    },
+    {
+      "path": "scripts/wave5/windows_delivery_inputs_20261010_r5.mjs",
+      "sha256": "fbae560aa1c16c09053ca1cb1c307aef90767ab6215b633f187b51b937ef4273",
+      "bytes": 17176,
+      "syntax": "passed",
+      "checker": "node --check",
+      "predecessor": {
+        "path": "scripts/wave5/windows_delivery_inputs_20261010_r4.mjs",
+        "sha256": "db5762bdc0f4f957a5df280b0ccbdca281cb34673b2df63cb5cca8f499150941",
+        "bytes": 14290
+      }
+    },
+    {
+      "path": "scripts/wave5/package_windows_userflow_20261010_r5.mjs",
+      "sha256": "d98e25a4adbf86aced7572232cf6404b4f6f3695c0af9b7c22e7d122809ffc76",
+      "bytes": 9719,
+      "syntax": "passed",
+      "checker": "node --check",
+      "predecessor": {
+        "path": "scripts/wave5/package_windows_userflow_20261010_r4.mjs",
+        "sha256": "8fd9cb64226a1f9c5b7187c179c96aae0c553c6cfde6602b2f21129636dfea94",
+        "bytes": 9544
+      }
+    },
+    {
+      "path": "scripts/wave5/inspect_windows_runner_identity_20261010_r5.ps1",
+      "sha256": "e586edf41d4d44fac03a62fe88e2f03b65464037a59a119454ed73d7a2a86d69",
+      "bytes": 2401,
+      "syntax": "passed",
+      "checker": "PowerShell Language.Parser.ParseFile",
+      "predecessor": {
+        "path": "scripts/wave5/inspect_windows_runner_identity_20261010_r4.ps1",
+        "sha256": "4ca4f1093434fe09955b2290ab8a6fd87b47b56dceae2e8a6840c1de638233e2",
+        "bytes": 2220
+      }
+    },
+    {
+      "path": "scripts/wave5/finalize_windows_userflow_20261010_r5.ps1",
+      "sha256": "1656268c3bf6e163d928e32bccf48a85dab8d3395c27d2607360e1d04ad49918",
+      "bytes": 4579,
+      "syntax": "passed",
+      "checker": "PowerShell Language.Parser.ParseFile",
+      "predecessor": {
+        "path": "scripts/wave5/finalize_windows_userflow_20261010_r4.ps1",
+        "sha256": "c2a17ad1fcb1e9588bf96dcad7aacd7e9e92dbd6860c084810f67d4414711c1b",
+        "bytes": 4404
+      }
+    },
+    {
+      "path": "scripts/wave5/record_windows_userflow_20261010_r5.mjs",
+      "sha256": "e0625aa9f8bf14789db1799a4d86723abd7119e5083ae5d9a4e1c0078f8ce408",
+      "bytes": 13302,
+      "syntax": "passed",
+      "checker": "node --check",
+      "predecessor": {
+        "path": "scripts/wave5/record_windows_userflow_20261010_r4.mjs",
+        "sha256": "94e0db4cfcc5b843576e3a0b016eaf85a023db00734348c5a272a27f88cbedbc",
+        "bytes": 13128
+      }
+    },
+    {
+      "path": "scripts/wave5/observe_windows_userflow_storage_20261010_r5.ps1",
+      "sha256": "71dba6ad5fdeb6f27f32aa3b545a690c03ad45dc188ab4aeadd7dc39a2bebc17",
+      "bytes": 3274,
+      "syntax": "passed",
+      "checker": "PowerShell Language.Parser.ParseFile",
+      "predecessor": {
+        "path": "scripts/wave5/observe_windows_userflow_storage_20261010_r4.ps1",
+        "sha256": "b4bd43c95063a25c2d27e39bd56d3f7a7a9269b2164e602168bd351580dc2e09",
+        "bytes": 3092
+      }
+    },
+    {
+      "path": "scripts/wave5/observe_windows_userflow_storage_after_20261010_r5.ps1",
+      "sha256": "50ac5025667a7f261ee078d232fa58ea6192bd3c296c9bd227ee389dd9f19bbe",
+      "bytes": 2618,
+      "syntax": "passed",
+      "checker": "PowerShell Language.Parser.ParseFile",
+      "predecessor": {
+        "path": "scripts/wave5/observe_windows_userflow_storage_after_20261010_r4.ps1",
+        "sha256": "627e51242cc917dde358e4b9b29bcbc11c5a9d146756e1b2f3b4ca5319b645ff",
+        "bytes": 2430
+      }
+    },
+    {
+      "path": "scripts/wave5/prepare_runtime_worker_adapter_20261010_r5.mjs",
+      "sha256": "ce59646ab7d307ee013ef833ba60b344d9eb625965711e3e2996514bf20620a0",
+      "bytes": 8474,
+      "syntax": "passed",
+      "checker": "node --check",
+      "predecessor": {
+        "path": "scripts/wave5/prepare_runtime_worker_adapter_20261010_r4.mjs",
+        "sha256": "4ebf1b05bde18ce16199ef3487ffe6783f4dc49193090c3c672f99f8c02cdee4",
+        "bytes": 8293
+      }
+    },
+    {
+      "path": "scripts/wave5/record_native_preview_observations_20261010_r5.mjs",
+      "sha256": "aed44a14987fe3fc477eeb3ee593ee82e8faadb8bc3ec9f825771d3037ba49d6",
+      "bytes": 12505,
+      "syntax": "passed",
+      "checker": "node --check",
+      "predecessor": {
+        "path": "scripts/wave5/record_native_preview_observations_20261010_r4.mjs",
+        "sha256": "c7b8cbd5d0a22468851f21fdd070060902cc64200090e6f38b1f636f22ae17b0",
+        "bytes": 11950
+      }
+    },
+    {
+      "path": "scripts/wave5/prepare_current_runtime_review_20261010_r5.mjs",
+      "sha256": "d670915fbac08136b15d0896ee060df477928fb039b3f5ddf27d68091bd2a124",
+      "bytes": 70649,
+      "syntax": "passed",
+      "checker": "node --check",
+      "predecessor": {
+        "path": "scripts/wave5/prepare_current_runtime_review_20261010_r4.mjs",
+        "sha256": "621577990b3f9cbc727b4abbf9ccd3159cd07dc72e53a0aaa5d642a1aeebe080",
+        "bytes": 62723
+      }
+    }
+  ],
+  "javaScriptSyntaxChecks": 8,
+  "powerShellParserChecks": 5,
+  "allSyntaxPassed": true,
+  "SDKJobsExecuted": false,
+  "toolingCLIExecuted": false,
+  "nativeLaunched": false,
+  "AuthOperations": false,
+  "SQLWrites": false,
+  "sourceOrApprovedImageChanges": false,
+  "ownerAcceptanceChanged": false,
+  "historicalR4DraftsPreserved": true,
+  "verifier": {
+    "path": "scripts/wave5/desktop_verification_inputs_20261010_r5.mjs",
+    "sha256": "0007062cd3723cbf9525ac78d776084e910938b1fe2022385c40ec823244bee1"
+  },
+  "peerContractReview": "verification_resume read-only fullDesktop review, tool chunk ab14c9; compatible with frozen r5 approvedAll and approved manifest",
+  "boundary": "Static syntax, hashes and peer contract review only. No SDK job, package preparation, packaging, native user action, live operation or owner decision occurred in this audit."
+}

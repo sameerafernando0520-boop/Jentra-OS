@@ -9,7 +9,7 @@ import {fileURLToPath} from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const base = 'docs/verification/wave5/';
 const wrapperPath = 'scripts/wave5/run_windows_userflow_guarded_20261010_r4.mjs';
-const approvedPath = `${base}desktop-verification-source-20261010-r4.json`;
+const approvedPath = `${base}desktop-verification-source-20261010-r4-approved.json`;
 const prepPath = `${base}windows-userflow-preparation-20261010-r4.json`;
 const [mode, stage, ...options] = process.argv.slice(2);
 const stages = ['pubget','analyzer','startupTests','keyboardTests','accountingTests','authTests','cashTests','platformAll','desktopAll','build'];
@@ -29,6 +29,7 @@ const json = async p => JSON.parse((await bytes(p)).toString('utf8').replace(/^\
 const exists = async p => {try {await lstat(path.join(root,p)); return true;} catch(e) {if(e.code==='ENOENT') return false; throw e;}};
 if (await exists(recordPath) || await exists(sdkRecordPath)) throw Error('NEW_GUARD_AND_SDK_OUTPUT_REQUIRED');
 const prep = await json(prepPath), approved = await json(approvedPath);
+if(approved.postImageApproval!==true||prep.approvedInput.path!==approvedPath||prep.approvedInput.sha256!==await hash(approvedPath)||prep.fullDesktopEvidence?.fullSuitePassed!==true)throw Error('POSTAPPROVAL_PREPARATION_AND_FULL_SUITE_REQUIRED');
 const snapshot = path.join(root,'build/w5win10r4',mode.toLowerCase());
 if (approved.toolchain.tooling.length !== 4) throw Error('FOUR_APPROVED_TOOLCHAIN_BINDINGS_REQUIRED');
 const equal = (a,b) => JSON.stringify(a) === JSON.stringify(b);

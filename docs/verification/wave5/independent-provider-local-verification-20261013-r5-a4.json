@@ -1,0 +1,706 @@
+{
+  "kind": "independent-controlled-wave5-provider-local-verification",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "actualStartedAt": "2026-10-13T06:31:56.874Z",
+  "actualFinishedAt": "2026-10-13T06:32:00.604Z",
+  "nodeVersion": "v24.11.0",
+  "command": [
+    "node",
+    "--test",
+    "--test-isolation=none",
+    "--test-reporter=tap",
+    "tools/wave5/runtime_coordinator.test.mjs",
+    "tools/wave5/supabase_provider.test.mjs",
+    "tools/wave5/supabase_provider_plan.test.mjs",
+    "tools/wave5/supabase_management_read.test.mjs",
+    "tools/wave5/preparation_journal.test.mjs",
+    "tools/wave5/preparation_journal_peer_20261013.test.mjs",
+    "tools/wave5/preparation_file_sink.test.mjs",
+    "tools/wave5/preparation_file_sink_peer_20261013.test.mjs",
+    "tools/wave5/membership_preparation_peer_20261013.test.mjs",
+    "tools/wave5/supabase_provider_peer_20261013.test.mjs"
+  ],
+  "childExitCode": 0,
+  "childSignal": null,
+  "spawnFailure": null,
+  "passed": true,
+  "summary": {
+    "tests": 116,
+    "pass": 116,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "selectedSourcesUnchanged": true,
+  "filesBefore": [
+    {
+      "path": "tools/wave5/supabase_http_transport.mjs",
+      "sha256": "7815b9c8c18bd5d2375480706579c7dd9583b1e95e0424a2178f7b9b5db265c9",
+      "bytes": 15253
+    },
+    {
+      "path": "tools/wave5/supabase_read_store.mjs",
+      "sha256": "48a758dd6c8f29286889a7bddd6f4f7fd24e1a27f153d3d35208a2f2e71c73e6",
+      "bytes": 14778
+    },
+    {
+      "path": "tools/wave5/supabase_membership_fixture.mjs",
+      "sha256": "b39b636fe45cfc21e58f53cf6315d7cfaae606042f64d6869969ebbb380e0993",
+      "bytes": 10162
+    },
+    {
+      "path": "tools/wave5/supabase_runtime_provider.mjs",
+      "sha256": "44220571ab8980e69825ec96149fa855bd50d290e78f701ee0e17562be3074c0",
+      "bytes": 42943
+    },
+    {
+      "path": "tools/wave5/supabase_provider_plan.mjs",
+      "sha256": "ac7bb6bd32add9f76a5a9fb94a48025bd12e25d7684e5b4eafa9cb82afe63c2e",
+      "bytes": 4016
+    },
+    {
+      "path": "tools/wave5/supabase_provider_plan.test.mjs",
+      "sha256": "090dd23865dbb0a1ded1af9a1484d423d916549d472789e9ffc895dd6da5d7eb",
+      "bytes": 3175
+    },
+    {
+      "path": "tools/wave5/supabase_provider.test.mjs",
+      "sha256": "913504ac8e07fd2a0c12959d34ddd44a5e70a8bf35c718ca2f43257d074737b9",
+      "bytes": 45114
+    },
+    {
+      "path": "tools/wave5/SUPABASE_PROVIDER_IMPLEMENTATION.md",
+      "sha256": "b5cfdb87af7c6cce895585302fcba7cfe02217bd5e2635044e3a57d38222e57e",
+      "bytes": 16629
+    },
+    {
+      "path": "tools/wave5/PRIVATE_PROVIDER_CONTRACT.md",
+      "sha256": "53b691012312db8d0c6b634c8b8cc21690cac73e80a66b286dd4ab97b1c0ec30",
+      "bytes": 21178
+    },
+    {
+      "path": "tools/wave5/compose_supabase_provider_preparation.mjs",
+      "sha256": "0c209b4a185759082231ddf83318a4fee1011ecb0b6815a8d1f980dd895af0d0",
+      "bytes": 7442
+    },
+    {
+      "path": "tools/wave5/verify_supabase_provider.mjs",
+      "sha256": "5bf29171ce4d1c7015e4fd3b165a901fe854bf726c0a1903c8918b68694a6381",
+      "bytes": 6622
+    },
+    {
+      "path": "tools/wave5/supabase_management_read.mjs",
+      "sha256": "ddbb103c7dbf82327d77829b21bcaaf44c7f447187644af08c026c03841b5ea4",
+      "bytes": 8221
+    },
+    {
+      "path": "tools/wave5/supabase_management_read.test.mjs",
+      "sha256": "356b76b8a6930f7c485ddbe92f0937cf616d5552335f2b9bef940cc3a525041a",
+      "bytes": 10075
+    },
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f",
+      "bytes": 31294
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.mjs",
+      "sha256": "1df1396865610b73614f5ba9b83a8d9b91d40bb642e26d7443934ef11bcd0f3c",
+      "bytes": 35742
+    },
+    {
+      "path": "tools/wave5/run_runtime_verification.mjs",
+      "sha256": "143f460b88c1e1dba4a06b7ed869fb5de46e6eff77421ebf8d0aee15efb74b20",
+      "bytes": 9119
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.test.mjs",
+      "sha256": "d0582f1c33e3b869411bda08e50a495ecd4a287ae299b570186c271d614036db",
+      "bytes": 45494
+    },
+    {
+      "path": "tools/wave5/runtime_fixture_spec.mjs",
+      "sha256": "71dd763620cab0ca896dd96c50193350f1926e67f481acfed9b7aaa4b519f2d2",
+      "bytes": 36370
+    },
+    {
+      "path": "tools/wave5/supabase_provider_peer_20261013.test.mjs",
+      "sha256": "5ae87dee1af70e282bbacd359a0c385c6ba7d74e2485d621c08bd85e02d4b095",
+      "bytes": 12136
+    },
+    {
+      "path": "tools/wave5/preparation_journal.mjs",
+      "sha256": "95a93eb07bf7bfaadd2121c854683453512203ecc7380225602f2f8330267840",
+      "bytes": 4778
+    },
+    {
+      "path": "tools/wave5/preparation_journal.test.mjs",
+      "sha256": "05e383e82ac6d593bdc066541a4fe48c61904cd7283cfc5decb316ed93fcea86",
+      "bytes": 7217
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink.mjs",
+      "sha256": "c2a3435601bc32fb1c2623fbac070cfd381fb4c2dd7ecf7963a293049344ecad",
+      "bytes": 11697
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink.test.mjs",
+      "sha256": "b05624090af8cf847b45cafc314f3254b6ecd3f664af462a1945da16153541fb",
+      "bytes": 11842
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink_peer_20261013.test.mjs",
+      "sha256": "1b8f8c741beb7b625ba7d1d562ebdc8ac2dc3e6cc3aeafcce36ad5490e91e412",
+      "bytes": 4417
+    },
+    {
+      "path": "tools/wave5/preparation_journal_peer_20261013.test.mjs",
+      "sha256": "1b393f9a7629332233e7aee054755bccd61056875f38f99fefbf0da0bcf2f3b6",
+      "bytes": 3315
+    },
+    {
+      "path": "tools/wave5/membership_preparation_peer_20261013.test.mjs",
+      "sha256": "99f9e6a625f61eb56ee256b1100f8a712d75200ee6b501f5f89f2747d1b29468",
+      "bytes": 7910
+    },
+    {
+      "path": "tools/wave5/verify_preparation_peer_20261013.mjs",
+      "sha256": "5607cd66da87577138e715411d0cec90a8ada74ef1f7e8f087c6b30d86325b9b",
+      "bytes": 4385
+    },
+    {
+      "path": "tools/wave5/probe_preparation_journal_20261013_r5.mjs",
+      "sha256": "a36dce300966d85ff931d9330ece5100fa2c1881912b48f6747ab6e1d3b051c7",
+      "bytes": 3800
+    },
+    {
+      "path": "tools/wave5/audit_installed_plan_peer_20261013_r5.mjs",
+      "sha256": "e559bb4b8daa820e2a82ff10bd8acdcd08b607d3cd9ba5f82ac1579f8e713bcc",
+      "bytes": 4158
+    },
+    {
+      "path": "tools/wave5/write_provider_peer_review_20261013.mjs",
+      "sha256": "7353b4dbcf60cac74618ca845af191be3f7178fc7061d871755fcc795a7d1aa8",
+      "bytes": 22067
+    },
+    {
+      "path": "tools/wave5/verify_provider_peer_20261013.mjs",
+      "sha256": "0745d5c0fa0851d2303b5e1483bb61bdf5d3f3de466b7056a5eb41c242c888a4",
+      "bytes": 9015
+    },
+    {
+      "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+      "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+      "bytes": 1370575
+    },
+    {
+      "path": "docs/verification/wave5/runtime-owner-decision-20261012-r5.json",
+      "sha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab",
+      "bytes": 2756
+    },
+    {
+      "path": "docs/verification/wave5/runtime-harness-peer-review-20261012-r5.json",
+      "sha256": "a6bed603e57a40c1b920aa15174bc5c407e000aebedcf97f9b4e7d3673a73ef4",
+      "bytes": 30085
+    },
+    {
+      "path": "docs/verification/wave5/runtime-fixture-contract-20261012-r5.json",
+      "sha256": "721ae4ada80ebeda08486158154d30f49733ee1ea961fefac23901a3819f22db",
+      "bytes": 19825
+    },
+    {
+      "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
+      "sha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5",
+      "bytes": 115108
+    },
+    {
+      "path": "docs/verification/wave5/installed-verification-plan-20261012-r5-a2.json",
+      "sha256": "0caf72e72b920efa03246860c4d443e3ad0d2c129218d8cca3d85d79ba3c2077",
+      "bytes": 11046
+    },
+    {
+      "path": "docs/verification/wave5/installed-baseline-rename-fingerprints-20261012-r5.sql",
+      "sha256": "f4beb12842047ebf0ab8892155c092b1bf357ec27b044be62796bd4f81579b0a",
+      "bytes": 1811
+    },
+    {
+      "path": "docs/verification/wave5/installed-catalog-verification-20261012-r5-a2.sql",
+      "sha256": "1e388eef0a161d3fe90da7f2b2490b7e7c773985e69fa9c3a743fac3c4dd9745",
+      "bytes": 94620
+    },
+    {
+      "path": "docs/verification/wave5/installed-strict-metadata-20261012-r5.sql",
+      "sha256": "906dd7f51f80962b627a62e059637ef57eb896b715acfc27820e4ffea9aec41b",
+      "bytes": 6968
+    },
+    {
+      "path": "docs/verification/wave5/installed-preservation-fingerprints-20261012-r5.sql",
+      "sha256": "8f200dd3a857733c45e4d8b3fc7e4ee7f51c844911ccccbf739630894993a165",
+      "bytes": 2810
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261012-r5-a8.json",
+      "sha256": "629cd3e5db541cf2a7d2d53ac869af5bfb4b73f27b20cb73bbf4e72b9b5234db",
+      "bytes": 12718
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261012-r5-a8.tap",
+      "sha256": "09567bf7d0e0580025ab5cd05f6a1fafaa3e64c1c61dee96f7271bbe3aac4ed6",
+      "bytes": 21436
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-preparation-plan-20261012-r5-a7.json",
+      "sha256": "f716866dcf05d248cbd6fd0458896783f1d9e9194b9f06a2ecbe93f8a4901c3d",
+      "bytes": 21190
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-late-socket-probe-20261012-r5-a1.json",
+      "sha256": "21be452dae0ca47c2d267ecb8fc8c51097ed8f0ad53ef4c5aea40a27e915f483",
+      "bytes": 782
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a3.json",
+      "sha256": "8f819fa5cddf592f64d30dc55343d29b37cab0a1e0e554168a51ffba86a0a26d",
+      "bytes": 13483
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a3.tap",
+      "sha256": "c920ef0a4838810295d44e1d989578d91cfefb21f09a0ab4ab78430172a94f73",
+      "bytes": 24574
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a4.json",
+      "sha256": "b99b50f32767794141eb9f9cc04c5487b2d0492d31d308d6844175eb927b703f",
+      "bytes": 13482
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a4.tap",
+      "sha256": "c4e6e05bd024619cc0d8943af9ef74519c3f169b684e05e01c0b9bafacad8fc1",
+      "bytes": 22372
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a14.json",
+      "sha256": "51d7b902e763f67862599574a6ee9f04d11b3719df410137ce2613146f7cc616",
+      "bytes": 15037
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a14.tap",
+      "sha256": "14aee4a523ccabc3024fb05e81bc20191134915313b7247e4be8778d48cb4b11",
+      "bytes": 28375
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a16.json",
+      "sha256": "c92f969fd9a25104ac09d2980311e26c139b776c6d19e276f4aa53314e72cb3d",
+      "bytes": 15036
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a16.tap",
+      "sha256": "4e32aa7a9a700c8c3f32a9ab02545c0461622b50bcd2511a9e72813728252f99",
+      "bytes": 27512
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-preparation-plan-20261013-r5-a1.json",
+      "sha256": "3dda1fee257f2bb38ef88a5293ed3d70885472c3304dd56652ec7e4ae7226e63",
+      "bytes": 21546
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-preparation-plan-20261013-r5-a3.json",
+      "sha256": "752e8d05775bade495d1d84a3ab4ee4e07958ba95859c6b0837262959d52a52c",
+      "bytes": 22813
+    },
+    {
+      "path": "docs/verification/wave5/independent-provider-local-verification-20261013-r5-a3.json",
+      "sha256": "8910061b2fc2e7b02080d4cd0459c82b9010d92d660bf710a54273b16b54bf3d",
+      "bytes": 24111
+    },
+    {
+      "path": "docs/verification/wave5/independent-provider-local-verification-20261013-r5-a3.tap",
+      "sha256": "79d71235718fe5be1ae82798c4aa63f3b052805a820857f1d341a1625cf79b82",
+      "bytes": 32216
+    },
+    {
+      "path": "docs/verification/wave5/preparation-journal-peer-probe-20261013-r5-a1.json",
+      "sha256": "e9a612e0ea1143212f27429666de528eff6008972d2bc974f0134078d84c5636",
+      "bytes": 2465
+    },
+    {
+      "path": "docs/verification/wave5/preparation-journal-independent-verification-20261013-r5-a1.json",
+      "sha256": "144ce3a9d974380d56b414a1e610125f943efd8235eb614595676e1ecb21e971",
+      "bytes": 2686
+    },
+    {
+      "path": "docs/verification/wave5/preparation-journal-independent-verification-20261013-r5-a1.tap",
+      "sha256": "4066fa6f1500b20cce0201ac59e31790dad6cda09edd38938c5d4d39d7924c8f",
+      "bytes": 2095
+    },
+    {
+      "path": "docs/verification/wave5/membership-preparation-independent-verification-20261013-r5-a1.json",
+      "sha256": "eb27b9df5de314d68c397531277cd2043f676dfeab07e1d1d0acf77ed1597cbf",
+      "bytes": 4940
+    },
+    {
+      "path": "docs/verification/wave5/membership-preparation-independent-verification-20261013-r5-a1.tap",
+      "sha256": "9f2b7d316d51ed02e6c150006452f593f2da9a88c9364a693b65c792764c0778",
+      "bytes": 942
+    },
+    {
+      "path": "docs/verification/wave5/installed-verification-plan-peer-audit-20261013-r5.json",
+      "sha256": "a3f257533be1ce9b5fb31eb384111aea315dd084fb57ec60cd388b48ba6a4313",
+      "bytes": 16949
+    }
+  ],
+  "filesAfter": [
+    {
+      "path": "tools/wave5/supabase_http_transport.mjs",
+      "sha256": "7815b9c8c18bd5d2375480706579c7dd9583b1e95e0424a2178f7b9b5db265c9",
+      "bytes": 15253
+    },
+    {
+      "path": "tools/wave5/supabase_read_store.mjs",
+      "sha256": "48a758dd6c8f29286889a7bddd6f4f7fd24e1a27f153d3d35208a2f2e71c73e6",
+      "bytes": 14778
+    },
+    {
+      "path": "tools/wave5/supabase_membership_fixture.mjs",
+      "sha256": "b39b636fe45cfc21e58f53cf6315d7cfaae606042f64d6869969ebbb380e0993",
+      "bytes": 10162
+    },
+    {
+      "path": "tools/wave5/supabase_runtime_provider.mjs",
+      "sha256": "44220571ab8980e69825ec96149fa855bd50d290e78f701ee0e17562be3074c0",
+      "bytes": 42943
+    },
+    {
+      "path": "tools/wave5/supabase_provider_plan.mjs",
+      "sha256": "ac7bb6bd32add9f76a5a9fb94a48025bd12e25d7684e5b4eafa9cb82afe63c2e",
+      "bytes": 4016
+    },
+    {
+      "path": "tools/wave5/supabase_provider_plan.test.mjs",
+      "sha256": "090dd23865dbb0a1ded1af9a1484d423d916549d472789e9ffc895dd6da5d7eb",
+      "bytes": 3175
+    },
+    {
+      "path": "tools/wave5/supabase_provider.test.mjs",
+      "sha256": "913504ac8e07fd2a0c12959d34ddd44a5e70a8bf35c718ca2f43257d074737b9",
+      "bytes": 45114
+    },
+    {
+      "path": "tools/wave5/SUPABASE_PROVIDER_IMPLEMENTATION.md",
+      "sha256": "b5cfdb87af7c6cce895585302fcba7cfe02217bd5e2635044e3a57d38222e57e",
+      "bytes": 16629
+    },
+    {
+      "path": "tools/wave5/PRIVATE_PROVIDER_CONTRACT.md",
+      "sha256": "53b691012312db8d0c6b634c8b8cc21690cac73e80a66b286dd4ab97b1c0ec30",
+      "bytes": 21178
+    },
+    {
+      "path": "tools/wave5/compose_supabase_provider_preparation.mjs",
+      "sha256": "0c209b4a185759082231ddf83318a4fee1011ecb0b6815a8d1f980dd895af0d0",
+      "bytes": 7442
+    },
+    {
+      "path": "tools/wave5/verify_supabase_provider.mjs",
+      "sha256": "5bf29171ce4d1c7015e4fd3b165a901fe854bf726c0a1903c8918b68694a6381",
+      "bytes": 6622
+    },
+    {
+      "path": "tools/wave5/supabase_management_read.mjs",
+      "sha256": "ddbb103c7dbf82327d77829b21bcaaf44c7f447187644af08c026c03841b5ea4",
+      "bytes": 8221
+    },
+    {
+      "path": "tools/wave5/supabase_management_read.test.mjs",
+      "sha256": "356b76b8a6930f7c485ddbe92f0937cf616d5552335f2b9bef940cc3a525041a",
+      "bytes": 10075
+    },
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f",
+      "bytes": 31294
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.mjs",
+      "sha256": "1df1396865610b73614f5ba9b83a8d9b91d40bb642e26d7443934ef11bcd0f3c",
+      "bytes": 35742
+    },
+    {
+      "path": "tools/wave5/run_runtime_verification.mjs",
+      "sha256": "143f460b88c1e1dba4a06b7ed869fb5de46e6eff77421ebf8d0aee15efb74b20",
+      "bytes": 9119
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.test.mjs",
+      "sha256": "d0582f1c33e3b869411bda08e50a495ecd4a287ae299b570186c271d614036db",
+      "bytes": 45494
+    },
+    {
+      "path": "tools/wave5/runtime_fixture_spec.mjs",
+      "sha256": "71dd763620cab0ca896dd96c50193350f1926e67f481acfed9b7aaa4b519f2d2",
+      "bytes": 36370
+    },
+    {
+      "path": "tools/wave5/supabase_provider_peer_20261013.test.mjs",
+      "sha256": "5ae87dee1af70e282bbacd359a0c385c6ba7d74e2485d621c08bd85e02d4b095",
+      "bytes": 12136
+    },
+    {
+      "path": "tools/wave5/preparation_journal.mjs",
+      "sha256": "95a93eb07bf7bfaadd2121c854683453512203ecc7380225602f2f8330267840",
+      "bytes": 4778
+    },
+    {
+      "path": "tools/wave5/preparation_journal.test.mjs",
+      "sha256": "05e383e82ac6d593bdc066541a4fe48c61904cd7283cfc5decb316ed93fcea86",
+      "bytes": 7217
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink.mjs",
+      "sha256": "c2a3435601bc32fb1c2623fbac070cfd381fb4c2dd7ecf7963a293049344ecad",
+      "bytes": 11697
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink.test.mjs",
+      "sha256": "b05624090af8cf847b45cafc314f3254b6ecd3f664af462a1945da16153541fb",
+      "bytes": 11842
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink_peer_20261013.test.mjs",
+      "sha256": "1b8f8c741beb7b625ba7d1d562ebdc8ac2dc3e6cc3aeafcce36ad5490e91e412",
+      "bytes": 4417
+    },
+    {
+      "path": "tools/wave5/preparation_journal_peer_20261013.test.mjs",
+      "sha256": "1b393f9a7629332233e7aee054755bccd61056875f38f99fefbf0da0bcf2f3b6",
+      "bytes": 3315
+    },
+    {
+      "path": "tools/wave5/membership_preparation_peer_20261013.test.mjs",
+      "sha256": "99f9e6a625f61eb56ee256b1100f8a712d75200ee6b501f5f89f2747d1b29468",
+      "bytes": 7910
+    },
+    {
+      "path": "tools/wave5/verify_preparation_peer_20261013.mjs",
+      "sha256": "5607cd66da87577138e715411d0cec90a8ada74ef1f7e8f087c6b30d86325b9b",
+      "bytes": 4385
+    },
+    {
+      "path": "tools/wave5/probe_preparation_journal_20261013_r5.mjs",
+      "sha256": "a36dce300966d85ff931d9330ece5100fa2c1881912b48f6747ab6e1d3b051c7",
+      "bytes": 3800
+    },
+    {
+      "path": "tools/wave5/audit_installed_plan_peer_20261013_r5.mjs",
+      "sha256": "e559bb4b8daa820e2a82ff10bd8acdcd08b607d3cd9ba5f82ac1579f8e713bcc",
+      "bytes": 4158
+    },
+    {
+      "path": "tools/wave5/write_provider_peer_review_20261013.mjs",
+      "sha256": "7353b4dbcf60cac74618ca845af191be3f7178fc7061d871755fcc795a7d1aa8",
+      "bytes": 22067
+    },
+    {
+      "path": "tools/wave5/verify_provider_peer_20261013.mjs",
+      "sha256": "0745d5c0fa0851d2303b5e1483bb61bdf5d3f3de466b7056a5eb41c242c888a4",
+      "bytes": 9015
+    },
+    {
+      "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+      "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+      "bytes": 1370575
+    },
+    {
+      "path": "docs/verification/wave5/runtime-owner-decision-20261012-r5.json",
+      "sha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab",
+      "bytes": 2756
+    },
+    {
+      "path": "docs/verification/wave5/runtime-harness-peer-review-20261012-r5.json",
+      "sha256": "a6bed603e57a40c1b920aa15174bc5c407e000aebedcf97f9b4e7d3673a73ef4",
+      "bytes": 30085
+    },
+    {
+      "path": "docs/verification/wave5/runtime-fixture-contract-20261012-r5.json",
+      "sha256": "721ae4ada80ebeda08486158154d30f49733ee1ea961fefac23901a3819f22db",
+      "bytes": 19825
+    },
+    {
+      "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
+      "sha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5",
+      "bytes": 115108
+    },
+    {
+      "path": "docs/verification/wave5/installed-verification-plan-20261012-r5-a2.json",
+      "sha256": "0caf72e72b920efa03246860c4d443e3ad0d2c129218d8cca3d85d79ba3c2077",
+      "bytes": 11046
+    },
+    {
+      "path": "docs/verification/wave5/installed-baseline-rename-fingerprints-20261012-r5.sql",
+      "sha256": "f4beb12842047ebf0ab8892155c092b1bf357ec27b044be62796bd4f81579b0a",
+      "bytes": 1811
+    },
+    {
+      "path": "docs/verification/wave5/installed-catalog-verification-20261012-r5-a2.sql",
+      "sha256": "1e388eef0a161d3fe90da7f2b2490b7e7c773985e69fa9c3a743fac3c4dd9745",
+      "bytes": 94620
+    },
+    {
+      "path": "docs/verification/wave5/installed-strict-metadata-20261012-r5.sql",
+      "sha256": "906dd7f51f80962b627a62e059637ef57eb896b715acfc27820e4ffea9aec41b",
+      "bytes": 6968
+    },
+    {
+      "path": "docs/verification/wave5/installed-preservation-fingerprints-20261012-r5.sql",
+      "sha256": "8f200dd3a857733c45e4d8b3fc7e4ee7f51c844911ccccbf739630894993a165",
+      "bytes": 2810
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261012-r5-a8.json",
+      "sha256": "629cd3e5db541cf2a7d2d53ac869af5bfb4b73f27b20cb73bbf4e72b9b5234db",
+      "bytes": 12718
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261012-r5-a8.tap",
+      "sha256": "09567bf7d0e0580025ab5cd05f6a1fafaa3e64c1c61dee96f7271bbe3aac4ed6",
+      "bytes": 21436
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-preparation-plan-20261012-r5-a7.json",
+      "sha256": "f716866dcf05d248cbd6fd0458896783f1d9e9194b9f06a2ecbe93f8a4901c3d",
+      "bytes": 21190
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-late-socket-probe-20261012-r5-a1.json",
+      "sha256": "21be452dae0ca47c2d267ecb8fc8c51097ed8f0ad53ef4c5aea40a27e915f483",
+      "bytes": 782
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a3.json",
+      "sha256": "8f819fa5cddf592f64d30dc55343d29b37cab0a1e0e554168a51ffba86a0a26d",
+      "bytes": 13483
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a3.tap",
+      "sha256": "c920ef0a4838810295d44e1d989578d91cfefb21f09a0ab4ab78430172a94f73",
+      "bytes": 24574
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a4.json",
+      "sha256": "b99b50f32767794141eb9f9cc04c5487b2d0492d31d308d6844175eb927b703f",
+      "bytes": 13482
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a4.tap",
+      "sha256": "c4e6e05bd024619cc0d8943af9ef74519c3f169b684e05e01c0b9bafacad8fc1",
+      "bytes": 22372
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a14.json",
+      "sha256": "51d7b902e763f67862599574a6ee9f04d11b3719df410137ce2613146f7cc616",
+      "bytes": 15037
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a14.tap",
+      "sha256": "14aee4a523ccabc3024fb05e81bc20191134915313b7247e4be8778d48cb4b11",
+      "bytes": 28375
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a16.json",
+      "sha256": "c92f969fd9a25104ac09d2980311e26c139b776c6d19e276f4aa53314e72cb3d",
+      "bytes": 15036
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-local-verification-20261013-r5-a16.tap",
+      "sha256": "4e32aa7a9a700c8c3f32a9ab02545c0461622b50bcd2511a9e72813728252f99",
+      "bytes": 27512
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-preparation-plan-20261013-r5-a1.json",
+      "sha256": "3dda1fee257f2bb38ef88a5293ed3d70885472c3304dd56652ec7e4ae7226e63",
+      "bytes": 21546
+    },
+    {
+      "path": "docs/verification/wave5/supabase-provider-preparation-plan-20261013-r5-a3.json",
+      "sha256": "752e8d05775bade495d1d84a3ab4ee4e07958ba95859c6b0837262959d52a52c",
+      "bytes": 22813
+    },
+    {
+      "path": "docs/verification/wave5/independent-provider-local-verification-20261013-r5-a3.json",
+      "sha256": "8910061b2fc2e7b02080d4cd0459c82b9010d92d660bf710a54273b16b54bf3d",
+      "bytes": 24111
+    },
+    {
+      "path": "docs/verification/wave5/independent-provider-local-verification-20261013-r5-a3.tap",
+      "sha256": "79d71235718fe5be1ae82798c4aa63f3b052805a820857f1d341a1625cf79b82",
+      "bytes": 32216
+    },
+    {
+      "path": "docs/verification/wave5/preparation-journal-peer-probe-20261013-r5-a1.json",
+      "sha256": "e9a612e0ea1143212f27429666de528eff6008972d2bc974f0134078d84c5636",
+      "bytes": 2465
+    },
+    {
+      "path": "docs/verification/wave5/preparation-journal-independent-verification-20261013-r5-a1.json",
+      "sha256": "144ce3a9d974380d56b414a1e610125f943efd8235eb614595676e1ecb21e971",
+      "bytes": 2686
+    },
+    {
+      "path": "docs/verification/wave5/preparation-journal-independent-verification-20261013-r5-a1.tap",
+      "sha256": "4066fa6f1500b20cce0201ac59e31790dad6cda09edd38938c5d4d39d7924c8f",
+      "bytes": 2095
+    },
+    {
+      "path": "docs/verification/wave5/membership-preparation-independent-verification-20261013-r5-a1.json",
+      "sha256": "eb27b9df5de314d68c397531277cd2043f676dfeab07e1d1d0acf77ed1597cbf",
+      "bytes": 4940
+    },
+    {
+      "path": "docs/verification/wave5/membership-preparation-independent-verification-20261013-r5-a1.tap",
+      "sha256": "9f2b7d316d51ed02e6c150006452f593f2da9a88c9364a693b65c792764c0778",
+      "bytes": 942
+    },
+    {
+      "path": "docs/verification/wave5/installed-verification-plan-peer-audit-20261013-r5.json",
+      "sha256": "a3f257533be1ce9b5fb31eb384111aea315dd084fb57ec60cd388b48ba6a4313",
+      "bytes": 16949
+    }
+  ],
+  "log": {
+    "path": "docs/verification/wave5/independent-provider-local-verification-20261013-r5-a4.tap",
+    "sha256": "797fca3c4982d7541818aed31f375915d6c24c508646f4ac11212e2ed78638e3",
+    "bytes": 32114
+  },
+  "controlledInMemoryMutationProbes": [
+    "mutable-db-tls",
+    "quota-date-truncation",
+    "always-true-synthetic-target"
+  ],
+  "earlierFailurePreserved": "docs/verification/wave5/supabase-provider-local-verification-20261012-r5-a8.json",
+  "executedLive": false,
+  "realPasswordsOrTokensRead": false,
+  "fabricatedJwtOrAuthRows": false,
+  "networkCalls": 0,
+  "authWrites": 0,
+  "databaseCalls": 0,
+  "sdkJobs": 0,
+  "nativeActions": 0,
+  "concretePrivateFactoryReviewed": false,
+  "completePrivateFacilitiesReady": false,
+  "publicEncryptedSinkSourceReviewed": true,
+  "controlledTemporaryFilesystemPersistenceTested": true,
+  "ownerAcceptedCriteria": 3,
+  "ownerCriteria": 109,
+  "gates": {
+    "installedSql": false,
+    "genuineMfa": false,
+    "authenticatedNative": false,
+    "actualDelivery": false,
+    "actualModelUsage": false,
+    "independentSessionContention": false,
+    "targetScaleLoad": false,
+    "ownerAcceptance": false
+  },
+  "limitation": "Fresh independent local controlled tests and in-memory regression mutations only. No source is replaced, no live/private facility is invoked and no runtime gate is promoted."
+}

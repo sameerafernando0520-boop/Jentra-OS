@@ -1,0 +1,136 @@
+{
+  "kind": "actual-wave5-installed-sql-metadata-verification",
+  "actualFinishedAt": "2026-10-13T07:39:02.316Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "runtimeBundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+  "passed": true,
+  "ledgerCount": 114,
+  "installedAdditionalMigrations": 71,
+  "catalog": {
+    "expectedFunctions": 541,
+    "matchingFunctions": 541,
+    "expectedTables": 215,
+    "presentTables": 215,
+    "apiFunctions": 363,
+    "observedAt": "2026-10-13T07:39:01.524549+00:00"
+  },
+  "strict": {
+    "observedAt": "2026-10-13T07:39:03.097788+00:00",
+    "ledgerCount": 114,
+    "realMfaVerified": false,
+    "realAuthVerified": false,
+    "forcedRlsPredicates": 72,
+    "actualDeliveryVerified": false,
+    "functionGrantPredicates": 18,
+    "behaviorFixturesExecuted": false,
+    "strictMetadataPredicatesPassed": true
+  },
+  "preservation": {
+    "priorProvidersChecked": 121,
+    "unchangedProviders": 118,
+    "approvedSourceBodyRevisions": [
+      {
+        "identity": "api.complete_attachment(p_tenant_id uuid, p_attachment_id uuid, p_checksum_sha256 text, p_expected_version bigint, p_idempotency_key uuid)",
+        "priorDefinitionSha256": "c1c51b49c5ac7e804f1cf7ebc37f40994a9337f1a8d6809a1f1aadb8abb5880d",
+        "currentDefinitionSha256": "0149f5e2eff35fd4b994969d44d04d523e60d200371ea2b5d2ed6ee8fcba0e7f",
+        "approvedSourceBodyMatched": true,
+        "matchedSourceSignature": "api.complete_attachment(uuid,uuid,text,bigint,uuid)"
+      },
+      {
+        "identity": "api.register_attachment(p_tenant_id uuid, p_payload jsonb, p_idempotency_key uuid)",
+        "priorDefinitionSha256": "5b08bb4c8f1d6ff406e06648450ee64f79be22680f00953affb336ab143d038a",
+        "currentDefinitionSha256": "c5590283a14b59abfdb0130ad8b73440bc351c396ae688f466d0a57badce4a38",
+        "approvedSourceBodyMatched": true,
+        "matchedSourceSignature": "api.register_attachment(uuid,jsonb,uuid)"
+      },
+      {
+        "identity": "api.reserve_sales_order_stock(p_tenant_id uuid, p_legal_entity_id uuid, p_branch_id uuid, p_command_id uuid, p_idempotency_key uuid, p_client_timestamp timestamp with time zone, p_payload jsonb, p_expected_entity_version bigint)",
+        "priorDefinitionSha256": "98b956846f93a00bc06f6988784262913973d07d93b6cb769232082a8ec510b3",
+        "currentDefinitionSha256": "421cbdf09cfacfc2eae781a8a82f9c83eeec646d9bfd5a1642ff1ddb12a1be20",
+        "approvedSourceBodyMatched": true,
+        "matchedSourceSignature": "api.reserve_sales_order_stock(uuid,uuid,uuid,uuid,uuid,timestamptz,jsonb,bigint)"
+      }
+    ],
+    "existingAccessRowsUnchanged": true,
+    "approvedAdditions": {
+      "existingPermissionRowsUnchanged": true,
+      "existingEntitlementRowsUnchanged": true,
+      "approvedPermissionRowsAdded": 4,
+      "approvedDisabledEntitlementRowsAdded": 4
+    },
+    "entireAccessTablesUnchanged": false,
+    "existingDesktopAccountPreserved": true
+  },
+  "beforeOrder58Captured": true,
+  "threeRenamedBodiesPreserved": true,
+  "originalSixReinstalled": false,
+  "networkCalls": 6,
+  "databaseWrites": 0,
+  "authWrites": 0,
+  "behaviorFixturesExecuted": false,
+  "genuineMfa": false,
+  "authenticatedNative": false,
+  "actualDelivery": false,
+  "actualModelUsage": false,
+  "independentSessionContention": false,
+  "targetScaleLoad": false,
+  "ownerAcceptedCriteria": 3,
+  "production": false,
+  "realBilling": false,
+  "verificationPlan": {
+    "path": "docs/verification/wave5/installed-verification-plan-20261012-r5-a2.json",
+    "sha256": "0caf72e72b920efa03246860c4d443e3ad0d2c129218d8cca3d85d79ba3c2077"
+  },
+  "completedInstallation": {
+    "path": "docs/verification/wave5/approved-management-installation-20261013-r5-1791875214803/99-finish.json",
+    "sha256": "5f4b4612d51274765bc772b99c8c353194c6c500d786989addc7a2ad14bb9fbd"
+  },
+  "approvedAccessAdditionQuery": {
+    "id": "approved-access-additions",
+    "path": "docs/verification/wave5/installed-preservation-additions-20261013-r5.sql",
+    "sha256": "81f5ae56b625c1c025a274a3e4140cfb21073638874334a796cada4b6acbe80a"
+  },
+  "approvedAccessAdditionSources": [
+    {
+      "order": 24,
+      "path": "supabase/migrations/20260925003000_wave3_cash_flow.sql",
+      "sha256": "5c9a3b6db7e562ef8dfdc3ae590c26215e01e23d4cc838b88edd74a48b6e354e",
+      "owner": "Wave 3",
+      "installed": false,
+      "name": "wave3_cash_flow"
+    },
+    {
+      "order": 25,
+      "path": "supabase/migrations/20260925004000_wave3_budgets.sql",
+      "sha256": "56e5ba5993f32297772a994fcdb39c595ee928de9081e6643a4478c4adf021af",
+      "owner": "Wave 3",
+      "installed": false,
+      "name": "wave3_budgets"
+    },
+    {
+      "order": 47,
+      "path": "supabase/migrations/20260930003000_wave3_stock_disposition.sql",
+      "sha256": "6dc6b2a9bddafa05b263aeb44f0c1ac0e2c68bcd1424869edd8a141e999dad83",
+      "owner": "Wave 3",
+      "installed": false,
+      "name": "wave3_stock_disposition"
+    },
+    {
+      "order": 58,
+      "path": "supabase/migrations/20261003090000_wave3_negative_stock_policy.sql",
+      "sha256": "b11c16acddee4cf02a7f706f7e0ff991cbebdd4b5c6d0e02412e657c77334959",
+      "owner": "Wave 3",
+      "installed": false,
+      "name": "wave3_negative_stock_policy"
+    },
+    {
+      "order": 64,
+      "path": "supabase/migrations/20261008100000_wave5_invocation_storage.sql",
+      "sha256": "a9bdd3bf5b1593bd3253930c5a0cd6286f576b7f81161a5832919efbc585d6e8",
+      "owner": "Wave 5",
+      "installed": false,
+      "name": "wave5_invocation_storage"
+    }
+  ],
+  "limitation": "Actual installed source-body/language/security/volatility, table, forced-RLS, grants and preservation metadata. Behavior, Auth, MFA, delivery/model, native and load gates remain open."
+}

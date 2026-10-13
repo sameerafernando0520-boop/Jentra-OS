@@ -1,0 +1,23 @@
+{
+  "kind": "controlled-wave5-late-socket-transport-probe",
+  "observedAt": "2026-10-12T10:09:34.030Z",
+  "actualToolChunk": "202210",
+  "actualExitCode": 0,
+  "executedLive": false,
+  "networkCalls": 0,
+  "sourceBinding": {
+    "path": "tools/wave5/supabase_http_transport.mjs",
+    "bytes": 14630,
+    "sha256": "488672dda28b9011a41133c0079cb42630df590787921444e68d75f4deacd6cf"
+  },
+  "actualOutput": {
+    "controlledOnly": true,
+    "networkCalls": 0,
+    "result": "TRANSPORT_UNCERTAIN",
+    "writesAfterFailure": 1
+  },
+  "expectedWritesAfterFailure": 0,
+  "sourcePassedThisProbe": false,
+  "earlier68TestRecordPreserved": true,
+  "limitation": "Controlled EventEmitter requests only; no actual network or Auth operation. New successor code/test must prevent late writes."
+}

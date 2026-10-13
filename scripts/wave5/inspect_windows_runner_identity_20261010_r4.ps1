@@ -1,4 +1,4 @@
-// NEW r4 variant; preserved predecessor inspect_windows_runner_identity_20261010_r3.ps1 SHA-256 f961fc2308f61a1251def9ac4e2103cd15a8812307b8a1b72ff7d4b057d3c8b8.
+# NEW r4 variant; preserved predecessor inspect_windows_runner_identity_20261010_r3.ps1 SHA-256 f961fc2308f61a1251def9ac4e2103cd15a8812307b8a1b72ff7d4b057d3c8b8.
 param([Parameter(Mandatory=$true)][ValidateSet('Preview','Connected')][string]$Mode,
  [Parameter(Mandatory=$true)][string]$Executable)
 $ErrorActionPreference='Stop'

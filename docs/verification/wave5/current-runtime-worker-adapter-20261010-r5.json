@@ -1,0 +1,774 @@
+{
+  "observedAt": "2026-10-11T11:56:14.827Z",
+  "kind": "current-runtime-worker-adapter",
+  "revision": "r5",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "sourceManifest": {
+    "path": "docs/verification/wave5/desktop-verification-source-20261010-r5-approved.json",
+    "sha256": "d4d234e3603fd5e67f2082108e1eb6ad206739189aeb33c634ccaf5d07d010cf"
+  },
+  "nativeReport": {
+    "path": "docs/verification/wave5/windows-test-verification-20261010-r5.json",
+    "sha256": "0a9b65d7e841ce687d16557c6ec4c709987270d77fcd75f59caf8801d7464c6e"
+  },
+  "connectedManifest": {
+    "path": "docs/verification/wave5/windows-test-connected-package-20261010-r5.json",
+    "sha256": "976055e2095ff23db46fb9540727628dd6dd6de4dd817128c3e32a7d43880d6b"
+  },
+  "historicalComponent": {
+    "path": "docs/verification/wave5/continuation-worker-component-20261009-r14.json",
+    "sha256": "2f89559f7d9a08841fc6cd60213b162d0ecd61cc77fbd9ad172b95cd66efd0ba"
+  },
+  "currentDesktopSuite": {
+    "record": "docs/verification/wave5/desktop-verification-approvedAll-20261010-r5.json",
+    "sha256": "0e9d51dcded80e5d3a47598a1b8451683cd53e66779c44b91a2221ad34274096",
+    "passed": 2010,
+    "failed": 0,
+    "skipped": 0
+  },
+  "historicalWorkerObservedAt": "2026-10-09T18:45:28.623Z",
+  "workerSourceRecord": {
+    "path": "docs/verification/wave5/complete-app-worker-source-20261009-r14.json",
+    "sha256": "3e56117973eba536516c501ec585d2ada6a5ef1ba8b6ce09c4a1eb671bccba53"
+  },
+  "historicalTestRecord": {
+    "path": "docs/verification/wave5/complete-app-worker-tests-20261009-r14.json",
+    "sha256": "fc24a125baf45c545c1e45b887b48a7d61f701ecd40c45fd7fefdbaf3e76725b"
+  },
+  "historicalDenoRecord": {
+    "path": "docs/verification/wave5/supabase-entrypoint-checks-20261009-r14.json",
+    "sha256": "75c4ea2211dd7f2e852c560acb33db36a44409c6250c4ac5f206d34126005f10"
+  },
+  "workerSourceUnchanged": true,
+  "workerTestsRerun": false,
+  "denoChecksRerun": false,
+  "workerFiles": 26,
+  "workerSourceFiles": [
+    {
+      "path": "workers/wave5/bounded_json.mjs",
+      "sha256": "2c9ba6bc68101501970a41abaf02443d4f977bb1ba6bb7457f45bdc226096c05"
+    },
+    {
+      "path": "workers/wave5/delivery_schedule.mjs",
+      "sha256": "29a412b79b5b7e41e37a77d82659a79ee6f90a1960d8573b3aeb7990acee60fa"
+    },
+    {
+      "path": "workers/wave5/edge_configuration.mjs",
+      "sha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13"
+    },
+    {
+      "path": "workers/wave5/edge_receiver.mjs",
+      "sha256": "937c0f37f69c45a30a9dc0483d991cc46ecd4f40c54409a734cda40ca778c39e"
+    },
+    {
+      "path": "workers/wave5/edge_runtime.mjs",
+      "sha256": "29c50f277e90c3a84bcefa9b5e9b1bea8da8a82ef380ec27ab3a4e47063c4ccd"
+    },
+    {
+      "path": "workers/wave5/edge_runtime.test.mjs",
+      "sha256": "3621bd9ca2fba6a4a27323673d9789096b9e71ef51ad2d80c4f0099a39eeb54b"
+    },
+    {
+      "path": "workers/wave5/integration_policy.mjs",
+      "sha256": "f83e76cd5bdaf7997bf001edf6101537db9c34995019e9f7b5c196546a875cea"
+    },
+    {
+      "path": "workers/wave5/integration_policy.test.mjs",
+      "sha256": "b8ca6381cb7425e08d4ea97c95a5f0b5b91304ff91617e3562e8f17c0cf20d82"
+    },
+    {
+      "path": "workers/wave5/model_reader.mjs",
+      "sha256": "9be9ac552738041fb14a1cea2f9fd5e8dda415399512692f11b7430cf634a0a9"
+    },
+    {
+      "path": "workers/wave5/model_runtime.mjs",
+      "sha256": "fce748e511a81bdae957ff76275641142a738d8391132953d4d3c7eec03cfb99"
+    },
+    {
+      "path": "workers/wave5/model_runtime.test.mjs",
+      "sha256": "665784626937177cc6c183dbe44cd2d2c496e3acf39954d3fb1383e0888dfe74"
+    },
+    {
+      "path": "workers/wave5/openai_model_adapter.mjs",
+      "sha256": "557fc6af5dba58910ac46c2d1ac661a0389355ccef7efddb9a3cad94a03201d3"
+    },
+    {
+      "path": "workers/wave5/openai_model_adapter.test.mjs",
+      "sha256": "fbfe0bad596cace689d7e3d063e3d84eb6e256f76f3e4a5df3f2daa8b9e33942"
+    },
+    {
+      "path": "workers/wave5/persistent_control.mjs",
+      "sha256": "81b5aa332971235cca8830c3d5894977d04baa5d0f3b6f1391db346ca9abc4fd"
+    },
+    {
+      "path": "workers/wave5/persistent_control.test.mjs",
+      "sha256": "c84f06d36deea5d2a574118feede7a04e22f7b3570149651fbfdd6f61f199cb4"
+    },
+    {
+      "path": "workers/wave5/request_deadline.test.mjs",
+      "sha256": "1943313a7a29b6440be1189fb70d8d5ab2b1fbe0d668bbaf9291a3251e0c8435"
+    },
+    {
+      "path": "workers/wave5/runtime_launcher.mjs",
+      "sha256": "003dbd624ca5120f267f8434981c356c266bb2e68776ced6459799b707b58d90"
+    },
+    {
+      "path": "workers/wave5/runtime_launcher.test.mjs",
+      "sha256": "0980cb334232597802eac83282cfdb684ba7eea9700b3f3744ff2f20b0e3e64a"
+    },
+    {
+      "path": "workers/wave5/scoped_runtime.mjs",
+      "sha256": "70a8edbb7e8a0bac3fa1856ebb1134ff14413ad5b81f63bc568ae7750d3b2489"
+    },
+    {
+      "path": "workers/wave5/scoped_runtime.test.mjs",
+      "sha256": "e8371c89850dde378d090ad36f21ab65b354bbbdd3eb4b9f03d29b8be45bcbc6"
+    },
+    {
+      "path": "workers/wave5/subscription_schedule.mjs",
+      "sha256": "7699ebd9798620a9514584472b4e147e9b3d148754c72190498fe5406df7d047"
+    },
+    {
+      "path": "workers/wave5/validate_runtime_review.mjs",
+      "sha256": "ced6e61655eec7586afd968f8d518c52be6539348c12e0f8228e30e3bf78e473"
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.mjs",
+      "sha256": "a57cceb2ca5dc2bccc29861cdccb34bac7468a82a7fd402ecc5bd1810b6b0f5f"
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.test.mjs",
+      "sha256": "73e8222fc9bb038a30005ee16a7dcdc194800a104566d4680ef03e4ca1e0fecd"
+    },
+    {
+      "path": "workers/wave5/worker_runtime.mjs",
+      "sha256": "4935409210e61efc168d8604acff9b13f5a3b757cb27f4aee2ed1f2504dc8dc6"
+    },
+    {
+      "path": "workers/wave5/worker_runtime.test.mjs",
+      "sha256": "7fd6bb8bb8ac2f6bfbe45f3874662da21c391346d6a78ef5e7bfc901f1d46c2d"
+    }
+  ],
+  "controlledTests": 71,
+  "denoEntrypoints": 2,
+  "historicalControlledTestsOnly": true,
+  "historicalImportedJavaScriptTypeChecked": false,
+  "deployments": [
+    {
+      "name": "wave5-runtime",
+      "payload": {
+        "path": "docs/verification/wave5/supabase-deploy-wave5-runtime-20261009-r14.json",
+        "sha256": "a1daa7491889f6d9c62fab1a4aff18c84bf47cea32120a9d0a52c2480a5831eb"
+      },
+      "entrypoint": "supabase/functions/wave5-runtime/index.ts",
+      "verifyJwt": false,
+      "files": [
+        {
+          "path": "supabase/functions/wave5-runtime/deno.json",
+          "sha256": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf"
+        },
+        {
+          "path": "supabase/functions/wave5-runtime/index.ts",
+          "sha256": "e76dbfa9f25c09b29646c1f3470fb4e5a3ce5fb237ff212fee40d095f07c3cf8"
+        },
+        {
+          "path": "workers/wave5/bounded_json.mjs",
+          "sha256": "2c9ba6bc68101501970a41abaf02443d4f977bb1ba6bb7457f45bdc226096c05"
+        },
+        {
+          "path": "workers/wave5/edge_configuration.mjs",
+          "sha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13"
+        },
+        {
+          "path": "workers/wave5/edge_runtime.mjs",
+          "sha256": "29c50f277e90c3a84bcefa9b5e9b1bea8da8a82ef380ec27ab3a4e47063c4ccd"
+        },
+        {
+          "path": "workers/wave5/integration_policy.mjs",
+          "sha256": "f83e76cd5bdaf7997bf001edf6101537db9c34995019e9f7b5c196546a875cea"
+        },
+        {
+          "path": "workers/wave5/model_reader.mjs",
+          "sha256": "9be9ac552738041fb14a1cea2f9fd5e8dda415399512692f11b7430cf634a0a9"
+        },
+        {
+          "path": "workers/wave5/model_runtime.mjs",
+          "sha256": "fce748e511a81bdae957ff76275641142a738d8391132953d4d3c7eec03cfb99"
+        },
+        {
+          "path": "workers/wave5/openai_model_adapter.mjs",
+          "sha256": "557fc6af5dba58910ac46c2d1ac661a0389355ccef7efddb9a3cad94a03201d3"
+        },
+        {
+          "path": "workers/wave5/persistent_control.mjs",
+          "sha256": "81b5aa332971235cca8830c3d5894977d04baa5d0f3b6f1391db346ca9abc4fd"
+        },
+        {
+          "path": "workers/wave5/scoped_runtime.mjs",
+          "sha256": "70a8edbb7e8a0bac3fa1856ebb1134ff14413ad5b81f63bc568ae7750d3b2489"
+        },
+        {
+          "path": "workers/wave5/subscription_schedule.mjs",
+          "sha256": "7699ebd9798620a9514584472b4e147e9b3d148754c72190498fe5406df7d047"
+        },
+        {
+          "path": "workers/wave5/worker_endpoints.mjs",
+          "sha256": "a57cceb2ca5dc2bccc29861cdccb34bac7468a82a7fd402ecc5bd1810b6b0f5f"
+        },
+        {
+          "path": "workers/wave5/worker_runtime.mjs",
+          "sha256": "4935409210e61efc168d8604acff9b13f5a3b757cb27f4aee2ed1f2504dc8dc6"
+        }
+      ],
+      "sourceFileCount": 14,
+      "deployed": false
+    },
+    {
+      "name": "wave5-receiver",
+      "payload": {
+        "path": "docs/verification/wave5/supabase-deploy-wave5-receiver-20261009-r14.json",
+        "sha256": "30567e2730dd93b64d6178e67608ba6372ce12546b5d927f9f6a3b754a5001e8"
+      },
+      "entrypoint": "supabase/functions/wave5-receiver/index.ts",
+      "verifyJwt": false,
+      "files": [
+        {
+          "path": "supabase/functions/wave5-receiver/deno.json",
+          "sha256": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf"
+        },
+        {
+          "path": "supabase/functions/wave5-receiver/index.ts",
+          "sha256": "1016066ee9bc98436ebc2b0afe5d4bb6b290d8786a10d038ddac0b5fad3e57f5"
+        },
+        {
+          "path": "workers/wave5/bounded_json.mjs",
+          "sha256": "2c9ba6bc68101501970a41abaf02443d4f977bb1ba6bb7457f45bdc226096c05"
+        },
+        {
+          "path": "workers/wave5/edge_configuration.mjs",
+          "sha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13"
+        },
+        {
+          "path": "workers/wave5/edge_receiver.mjs",
+          "sha256": "937c0f37f69c45a30a9dc0483d991cc46ecd4f40c54409a734cda40ca778c39e"
+        },
+        {
+          "path": "workers/wave5/integration_policy.mjs",
+          "sha256": "f83e76cd5bdaf7997bf001edf6101537db9c34995019e9f7b5c196546a875cea"
+        },
+        {
+          "path": "workers/wave5/persistent_control.mjs",
+          "sha256": "81b5aa332971235cca8830c3d5894977d04baa5d0f3b6f1391db346ca9abc4fd"
+        },
+        {
+          "path": "workers/wave5/worker_runtime.mjs",
+          "sha256": "4935409210e61efc168d8604acff9b13f5a3b757cb27f4aee2ed1f2504dc8dc6"
+        }
+      ],
+      "sourceFileCount": 8,
+      "deployed": false
+    }
+  ],
+  "deploymentSourceFileCounts": [
+    14,
+    8
+  ],
+  "migrationHashesUnchanged": true,
+  "migrationCount": 71,
+  "bindings": [
+    {
+      "path": "docs/verification/wave5/complete-app-runtime-review-20261009.json",
+      "sha256": "3af2dc69e77c37b939cdd02e27860261e36899b95aa68016b0f0703970de565f"
+    },
+    {
+      "path": "docs/verification/wave5/complete-app-worker-source-20261009-r14.json",
+      "sha256": "3e56117973eba536516c501ec585d2ada6a5ef1ba8b6ce09c4a1eb671bccba53"
+    },
+    {
+      "path": "docs/verification/wave5/complete-app-worker-tests-20261009-r14.json",
+      "sha256": "fc24a125baf45c545c1e45b887b48a7d61f701ecd40c45fd7fefdbaf3e76725b"
+    },
+    {
+      "path": "docs/verification/wave5/complete-app-worker-tests-20261009-r14.log",
+      "sha256": "985a88369c139b713204b39b71b8df71adec2743a15a5807b1936772158fec7d"
+    },
+    {
+      "path": "docs/verification/wave5/continuation-worker-component-20261009-r14.json",
+      "sha256": "2f89559f7d9a08841fc6cd60213b162d0ecd61cc77fbd9ad172b95cd66efd0ba"
+    },
+    {
+      "path": "docs/verification/wave5/desktop-verification-approvedAll-20261010-r5.json",
+      "sha256": "0e9d51dcded80e5d3a47598a1b8451683cd53e66779c44b91a2221ad34274096"
+    },
+    {
+      "path": "docs/verification/wave5/desktop-verification-approvedAll-20261010-r5.log",
+      "sha256": "b7a69397f9a8cd8280da285a773e66a2daced6f8c92e829f9afce437acc18a70"
+    },
+    {
+      "path": "docs/verification/wave5/desktop-verification-source-20261010-r5-approved.json",
+      "sha256": "d4d234e3603fd5e67f2082108e1eb6ad206739189aeb33c634ccaf5d07d010cf"
+    },
+    {
+      "path": "docs/verification/wave5/supabase-deploy-wave5-receiver-20261009-r14.json",
+      "sha256": "30567e2730dd93b64d6178e67608ba6372ce12546b5d927f9f6a3b754a5001e8"
+    },
+    {
+      "path": "docs/verification/wave5/supabase-deploy-wave5-runtime-20261009-r14.json",
+      "sha256": "a1daa7491889f6d9c62fab1a4aff18c84bf47cea32120a9d0a52c2480a5831eb"
+    },
+    {
+      "path": "docs/verification/wave5/supabase-entrypoint-checks-20261009-r14.json",
+      "sha256": "75c4ea2211dd7f2e852c560acb33db36a44409c6250c4ac5f206d34126005f10"
+    },
+    {
+      "path": "docs/verification/wave5/supabase-receiver-deno-20261009-r14.log",
+      "sha256": "b7c6d278609c7c983d2b24671ad73d18141c00f411aa6e8a8b2cbda3cd51e7d5"
+    },
+    {
+      "path": "docs/verification/wave5/supabase-runtime-deno-20261009-r14.log",
+      "sha256": "0cedd8e4c43689f457f3fcd67810bdc10dc98918a054656c884c0ccff0c12f92"
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-connected-package-20261010-r5.json",
+      "sha256": "976055e2095ff23db46fb9540727628dd6dd6de4dd817128c3e32a7d43880d6b"
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-verification-20261010-r5.json",
+      "sha256": "0a9b65d7e841ce687d16557c6ec4c709987270d77fcd75f59caf8801d7464c6e"
+    },
+    {
+      "path": "scripts/wave5/prepare_runtime_worker_adapter_20261010_r5.mjs",
+      "sha256": "ce59646ab7d307ee013ef833ba60b344d9eb625965711e3e2996514bf20620a0"
+    },
+    {
+      "path": "scripts/wave5/windows_delivery_inputs_20261010_r5.mjs",
+      "sha256": "fbae560aa1c16c09053ca1cb1c307aef90767ab6215b633f187b51b937ef4273"
+    },
+    {
+      "path": "supabase/functions/wave5-receiver/deno.json",
+      "sha256": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf"
+    },
+    {
+      "path": "supabase/functions/wave5-receiver/index.ts",
+      "sha256": "1016066ee9bc98436ebc2b0afe5d4bb6b290d8786a10d038ddac0b5fad3e57f5"
+    },
+    {
+      "path": "supabase/functions/wave5-runtime/deno.json",
+      "sha256": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf"
+    },
+    {
+      "path": "supabase/functions/wave5-runtime/index.ts",
+      "sha256": "e76dbfa9f25c09b29646c1f3470fb4e5a3ce5fb237ff212fee40d095f07c3cf8"
+    },
+    {
+      "path": "supabase/migrations/20260912152000_product_unit_conversions.sql",
+      "sha256": "1245dd3f3bfca3c00afa4477da67e6a02655ef9f3e25a1c848e5ca3f769f526c"
+    },
+    {
+      "path": "supabase/migrations/20260912153000_procurement_requisition_drafts.sql",
+      "sha256": "9b751a04245677ca999b6e11a4b7935a2e577d5080961553df3af30161b49a2c"
+    },
+    {
+      "path": "supabase/migrations/20260913001000_procurement_requisition_workflow.sql",
+      "sha256": "05533f3c9b038cc1e023c35869a62b987810d776fbba805621678eaa787579d5"
+    },
+    {
+      "path": "supabase/migrations/20260913002000_procurement_reference_options.sql",
+      "sha256": "c56605aa3ab7fafe38dbab4777ca23f731e7a53fd9076ef30a1953fa49adc74c"
+    },
+    {
+      "path": "supabase/migrations/20260913003000_procurement_sourcing.sql",
+      "sha256": "d4f92c0fb5c6d24c48d4c21c7184ef042a635abb654c7a53c92129fbc3503d44"
+    },
+    {
+      "path": "supabase/migrations/20260913004000_procurement_purchase_orders.sql",
+      "sha256": "8a71252b8bf62a0a8a7325a4683ae770039cecd5c72dc30be131c428636e6795"
+    },
+    {
+      "path": "supabase/migrations/20260913005000_procurement_order_workflow.sql",
+      "sha256": "dedb4da3b59ca593a349ecaf4c77fc1adf5dd9e3e56d903726291f6e5e98c077"
+    },
+    {
+      "path": "supabase/migrations/20260913006000_procurement_goods_receipts.sql",
+      "sha256": "f38bc858ea03067f56f44208196312842484bd1263b4b9466dc58cb8a7220b76"
+    },
+    {
+      "path": "supabase/migrations/20260913007000_procurement_supplier_bills.sql",
+      "sha256": "9212e1dea7c9abcb0e3224ff37bc5a3e1495ea73128bb450f99ef79c4c93c722"
+    },
+    {
+      "path": "supabase/migrations/20260914001000_procurement_supplier_settlement.sql",
+      "sha256": "5b776e2dc0eb53a72fa51375f248ab24848768d3141c757233c7b97a4a654bf1"
+    },
+    {
+      "path": "supabase/migrations/20260915001000_payable_allocation_corrections.sql",
+      "sha256": "d175cf49fe16783e2d413d46167e99777904b804873e96dbc185992fc2625666"
+    },
+    {
+      "path": "supabase/migrations/20260915002000_procurement_purchase_returns.sql",
+      "sha256": "44292af187109e00c267a9be60b50a2de8243e97e421c0dee2f0bd7220e2acc6"
+    },
+    {
+      "path": "supabase/migrations/20260916001000_inventory_transfers.sql",
+      "sha256": "de1d6141109130d2c29a8d253966f3d934fa412821baa2ef893ac4691c263dc5"
+    },
+    {
+      "path": "supabase/migrations/20260916002000_inventory_stock_counts.sql",
+      "sha256": "90072604b03523e391fb12bd315032a4a4b968d28789ad0fbbe77a15d204b40b"
+    },
+    {
+      "path": "supabase/migrations/20260918001000_inventory_reservation_release.sql",
+      "sha256": "fb7782b9389615e6a02bcc335d958bba84caa2662c8a85fb295f76120cf9c3e6"
+    },
+    {
+      "path": "supabase/migrations/20260919181407_inventory_receipt_provenance.sql",
+      "sha256": "29becfdc43fef3bbc07a303eb8d79232f6ad3e77cd203d70dd2b82737b7b28e4"
+    },
+    {
+      "path": "supabase/migrations/20260919185538_inventory_landed_value.sql",
+      "sha256": "b13ac607ae1418bd860a5b5012a6adbfcb381217b76f256bd6ca313463eb6d1b"
+    },
+    {
+      "path": "supabase/migrations/20260920202547_inventory_valuation_reports.sql",
+      "sha256": "8d58f47813dbfac15882bc4c80dd64f650fdeb233f14a61b772468adbbceb0db"
+    },
+    {
+      "path": "supabase/migrations/20260921041348_manual_journals.sql",
+      "sha256": "8bea1e05398339b03979bf34569bcb76303c449923b346ece57da3d3d9e79bfd"
+    },
+    {
+      "path": "supabase/migrations/20260922001000_ar_ap_control_reconciliation.sql",
+      "sha256": "9de77b0e06887469a682292311d9cd161d598dcb6f871a34a712dbc38aaa5e26"
+    },
+    {
+      "path": "supabase/migrations/20260923225202_bank_reconciliation.sql",
+      "sha256": "6d914ceb736d69d2becf7130701509e1f617d8493798b5a8922fd9f268b7f6bd"
+    },
+    {
+      "path": "supabase/migrations/20260924185321_wave3_period_governance.sql",
+      "sha256": "c6fae72402c4f47e638d7fd9d74b0f05907937e2ac93568ef3c48edb51e67517"
+    },
+    {
+      "path": "supabase/migrations/20260925002000_wave3_financial_statements.sql",
+      "sha256": "7596ec3e5b1ac2b348e4b23371ff6c54818a5336d276fa3a03f14f1ecd5f17b6"
+    },
+    {
+      "path": "supabase/migrations/20260925003000_wave3_cash_flow.sql",
+      "sha256": "5c9a3b6db7e562ef8dfdc3ae590c26215e01e23d4cc838b88edd74a48b6e354e"
+    },
+    {
+      "path": "supabase/migrations/20260925004000_wave3_budgets.sql",
+      "sha256": "56e5ba5993f32297772a994fcdb39c595ee928de9081e6643a4478c4adf021af"
+    },
+    {
+      "path": "supabase/migrations/20260926001000_wave3_tax_summary.sql",
+      "sha256": "dcef36d0dcbf6b5277e6a79f625314d7595434cd88ced42271baa1cfa86b4969"
+    },
+    {
+      "path": "supabase/migrations/20260926002000_wave3_tax_summary_hardening.sql",
+      "sha256": "7976c8c944fd776729e4c67949706c1265bb0b5df04b076e83db301e8164ddee"
+    },
+    {
+      "path": "supabase/migrations/20260926003000_wave3_tax_control_reconciliation.sql",
+      "sha256": "51fb81ab482fdd6e2091ed46add2e2efa0c377528950393469ef721f081fe17b"
+    },
+    {
+      "path": "supabase/migrations/20260926005000_wave3_governed_journal_tax.sql",
+      "sha256": "78ae3cf5ee32b220f164431bdc0891dc5f87e04c7eeb079ae5665a9462ee2910"
+    },
+    {
+      "path": "supabase/migrations/20260926006000_wave3_tax_control_movements.sql",
+      "sha256": "41c09e5c0f8b6e40c1fca225e4f04196101b1012ebb88ef954234eee4c1e682d"
+    },
+    {
+      "path": "supabase/migrations/20260926007000_wave3_grni_control_reconciliation.sql",
+      "sha256": "b1864d4ac1612ebfc54439873ef5c8afab790051cf399869f55bc8ba4ff67f02"
+    },
+    {
+      "path": "supabase/migrations/20260926008000_wave3_close_control_review.sql",
+      "sha256": "654fadae87a9b0b027d20aec58ce32ff0fe52a19f024e5182e4b24e5dc2da0ba"
+    },
+    {
+      "path": "supabase/migrations/20260926009000_wave3_governed_report_exports.sql",
+      "sha256": "85238e684c967e8377221e55f911fcb9dfa64e7696110ee28eacffe8b6586386"
+    },
+    {
+      "path": "supabase/migrations/20260926010000_wave3_financial_dimensions.sql",
+      "sha256": "34f530f465bc21eff2fd0d137c4fa4b7a8a54d9b82401d91f20110e9f055c900"
+    },
+    {
+      "path": "supabase/migrations/20260926160000_wave4_calendar_resolution.sql",
+      "sha256": "6abd4dceddbb3124b4bfa01efd97ecafabd59f03ee1f85f48b5bc2a2f5685053"
+    },
+    {
+      "path": "supabase/migrations/20260926161000_wave4_organization.sql",
+      "sha256": "6f682652564a030e8a3a6960999aa9c51aa96486ab0f7219d4347f5445e31c45"
+    },
+    {
+      "path": "supabase/migrations/20260927001000_wave3_control_read_plan.sql",
+      "sha256": "bea514edc6178a914c8c7ed3881c1a007bc01760ad60772a4549cb4c41499e49"
+    },
+    {
+      "path": "supabase/migrations/20260927200629_wave3_operational_evidence.sql",
+      "sha256": "50a0ab28a3573a0bacc0415450e40ddb9deed5fd98196ee49df17e4357dba8f6"
+    },
+    {
+      "path": "supabase/migrations/20260927200703_wave3_historical_controls.sql",
+      "sha256": "4d135f473782c8f6fa776fe2cb3190efc0bc34bf6e88f629968c3a0b86743990"
+    },
+    {
+      "path": "supabase/migrations/20260927200706_wave3_inventory_extensions.sql",
+      "sha256": "a89834cd135096cf380e5f0446867c5a3b8b6c5c62f63e0f59011943e9e85eea"
+    },
+    {
+      "path": "supabase/migrations/20260928001000_wave3_posted_journal_evidence.sql",
+      "sha256": "1c0808dcdb36ebba8d320b1bf344c514e0c1ed7d23cf3e01581364adc219c4f5"
+    },
+    {
+      "path": "supabase/migrations/20260928082234_wave4_attendance_intervals.sql",
+      "sha256": "21cb1745977492f343f2992ccc915400f9320a82957f342d943e36a50db60ad6"
+    },
+    {
+      "path": "supabase/migrations/20260928083449_wave4_leave_ledger.sql",
+      "sha256": "1fbdd603a68f1962291c85a90739f599ee629fef27e5714ee6c00e8a0e37d4b3"
+    },
+    {
+      "path": "supabase/migrations/20260929001000_wave3_notifications.sql",
+      "sha256": "ec673056482b7219c4e983bc602bc05cf35ba3f0d6315bead6f5b0f27ea8d2e0"
+    },
+    {
+      "path": "supabase/migrations/20260930001000_wave3_landed_extensions.sql",
+      "sha256": "b472394fcfff0cd7d0d8e2f123e503c6a95ea6521169af62807cafb6bed9718d"
+    },
+    {
+      "path": "supabase/migrations/20260930002000_wave3_count_partitions.sql",
+      "sha256": "18e77c3bb7a9904e96650daa08eec5136758fc5e2d52cab03f6394d97c235613"
+    },
+    {
+      "path": "supabase/migrations/20260930003000_wave3_stock_disposition.sql",
+      "sha256": "6dc6b2a9bddafa05b263aeb44f0c1ac0e2c68bcd1424869edd8a141e999dad83"
+    },
+    {
+      "path": "supabase/migrations/20260930004000_wave3_dashboard_metrics.sql",
+      "sha256": "c915ac0a5bb6367f22ac83008a1a8fc00db9829978fa0cab8d621865b19dad4d"
+    },
+    {
+      "path": "supabase/migrations/20260930005000_wave3_observability.sql",
+      "sha256": "9afecc2a25596b7af50aa099fb0b9ee6fc5c916be06dd10eb52c023c5920031d"
+    },
+    {
+      "path": "supabase/migrations/20260930070000_wave4_synthetic_payroll.sql",
+      "sha256": "5517cc4559c3f91901525b38ec8fbf03633da49c587a0d034a885405a43465b2"
+    },
+    {
+      "path": "supabase/migrations/20260930070500_wave4_clock_batches.sql",
+      "sha256": "6775123b8ef94c61572ebe2c321557a5b0ab3eb976189115da14a374145baffd"
+    },
+    {
+      "path": "supabase/migrations/20260930071000_wave4_fixed_assets.sql",
+      "sha256": "d76ab9fef3720aea51de71288defb6fdae8fa93d82fffb83ecc49566fbbb5bf8"
+    },
+    {
+      "path": "supabase/migrations/20261001080000_wave4_projects_time.sql",
+      "sha256": "52ca0ba293d0a621304e01135db1424e69ebff579f14712b6b6c29d8c031e740"
+    },
+    {
+      "path": "supabase/migrations/20261001090000_wave4_service.sql",
+      "sha256": "28de902e665845c5eb4d26e0a8b3db621a76ccd908d11987126a9932a5679b84"
+    },
+    {
+      "path": "supabase/migrations/20261001100000_wave4_project_expenses_billing.sql",
+      "sha256": "0430f55698a28ee7c26a609bc982a96cbc20319d204c3d5546f9a6ae4272efef"
+    },
+    {
+      "path": "supabase/migrations/20261001110000_wave4_payroll_corrections.sql",
+      "sha256": "709170a703a5fd6808ba15de27a4b6cfcb33470da977203b960e2d04e67437cf"
+    },
+    {
+      "path": "supabase/migrations/20261002080000_wave4_project_payroll_impacts.sql",
+      "sha256": "19a784b4405288cbb4c9fa1403ab4eda52ae75b76712a85e739431bf1dd7ef54"
+    },
+    {
+      "path": "supabase/migrations/20261003090000_wave3_negative_stock_policy.sql",
+      "sha256": "b11c16acddee4cf02a7f706f7e0ff991cbebdd4b5c6d0e02412e657c77334959"
+    },
+    {
+      "path": "supabase/migrations/20261004090000_project_milestones.sql",
+      "sha256": "683fa20c6d5e118f0496bf21f1a117e33686340da2b407adaf1e1e5e06e93fd1"
+    },
+    {
+      "path": "supabase/migrations/20261005090000_service_asset_equipment.sql",
+      "sha256": "d4723bd8025e44ccdc651e6feab21e8ae939f4e2c850a14357453be3e24ca77e"
+    },
+    {
+      "path": "supabase/migrations/20261005120000_wave4_project_expense_evidence.sql",
+      "sha256": "990077dbed0e07e74eb593e77a51cc7ba0b62b5ab50c29700a39d4f235d67aba"
+    },
+    {
+      "path": "supabase/migrations/20261008090000_wave5_historical_pipeline.sql",
+      "sha256": "183a8688dd2c78a9e13032a165d2e1787b3d8f9dd4a15aee9b201eddf4767768"
+    },
+    {
+      "path": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql",
+      "sha256": "1a636229a0749cf9d6334ae49efe8ff38627b6a2d1bb642789a28e86efd1c663"
+    },
+    {
+      "path": "supabase/migrations/20261008100000_wave5_invocation_storage.sql",
+      "sha256": "a9bdd3bf5b1593bd3253930c5a0cd6286f576b7f81161a5832919efbc585d6e8"
+    },
+    {
+      "path": "supabase/migrations/20261008103000_wave5_dated_cash.sql",
+      "sha256": "24b5ab44250ec5239ab2b942277cb104867d8e67288666c6297d4fa694e4b391"
+    },
+    {
+      "path": "supabase/migrations/20261008110000_wave5_governed_export_adapter.sql",
+      "sha256": "fbe68cc451f5044c03be7b68803ff2afbb858004109a5ee2319960d495e193ed"
+    },
+    {
+      "path": "supabase/migrations/20261008113000_wave5_statement_classifications.sql",
+      "sha256": "aad2c6cb360490ad653470858a389354c7016f2346b41e26bff8ac8294dc97c3"
+    },
+    {
+      "path": "supabase/migrations/20261008120000_wave5_cash_payment_dates.sql",
+      "sha256": "1463953b0fa76269740a732a59485ff3d160681fb2a6655eedbd8c0aeda42c8a"
+    },
+    {
+      "path": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "sha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc"
+    },
+    {
+      "path": "supabase/migrations/20261009120000_wave5_supabase_runtime.sql",
+      "sha256": "9ceb592be38ebb6cff35b54e1d09c63d7e700cd95f8b52f3725966ea1d677164"
+    },
+    {
+      "path": "supabase/migrations/20261009123000_wave5_supabase_schedule.sql",
+      "sha256": "4a7a6404ca74f89f165802781782d9ddada1a9c776ac496690aee1609749ccbf"
+    },
+    {
+      "path": "workers/wave5/bounded_json.mjs",
+      "sha256": "2c9ba6bc68101501970a41abaf02443d4f977bb1ba6bb7457f45bdc226096c05"
+    },
+    {
+      "path": "workers/wave5/delivery_schedule.mjs",
+      "sha256": "29a412b79b5b7e41e37a77d82659a79ee6f90a1960d8573b3aeb7990acee60fa"
+    },
+    {
+      "path": "workers/wave5/edge_configuration.mjs",
+      "sha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13"
+    },
+    {
+      "path": "workers/wave5/edge_receiver.mjs",
+      "sha256": "937c0f37f69c45a30a9dc0483d991cc46ecd4f40c54409a734cda40ca778c39e"
+    },
+    {
+      "path": "workers/wave5/edge_runtime.mjs",
+      "sha256": "29c50f277e90c3a84bcefa9b5e9b1bea8da8a82ef380ec27ab3a4e47063c4ccd"
+    },
+    {
+      "path": "workers/wave5/edge_runtime.test.mjs",
+      "sha256": "3621bd9ca2fba6a4a27323673d9789096b9e71ef51ad2d80c4f0099a39eeb54b"
+    },
+    {
+      "path": "workers/wave5/integration_policy.mjs",
+      "sha256": "f83e76cd5bdaf7997bf001edf6101537db9c34995019e9f7b5c196546a875cea"
+    },
+    {
+      "path": "workers/wave5/integration_policy.test.mjs",
+      "sha256": "b8ca6381cb7425e08d4ea97c95a5f0b5b91304ff91617e3562e8f17c0cf20d82"
+    },
+    {
+      "path": "workers/wave5/model_reader.mjs",
+      "sha256": "9be9ac552738041fb14a1cea2f9fd5e8dda415399512692f11b7430cf634a0a9"
+    },
+    {
+      "path": "workers/wave5/model_runtime.mjs",
+      "sha256": "fce748e511a81bdae957ff76275641142a738d8391132953d4d3c7eec03cfb99"
+    },
+    {
+      "path": "workers/wave5/model_runtime.test.mjs",
+      "sha256": "665784626937177cc6c183dbe44cd2d2c496e3acf39954d3fb1383e0888dfe74"
+    },
+    {
+      "path": "workers/wave5/openai_model_adapter.mjs",
+      "sha256": "557fc6af5dba58910ac46c2d1ac661a0389355ccef7efddb9a3cad94a03201d3"
+    },
+    {
+      "path": "workers/wave5/openai_model_adapter.test.mjs",
+      "sha256": "fbfe0bad596cace689d7e3d063e3d84eb6e256f76f3e4a5df3f2daa8b9e33942"
+    },
+    {
+      "path": "workers/wave5/persistent_control.mjs",
+      "sha256": "81b5aa332971235cca8830c3d5894977d04baa5d0f3b6f1391db346ca9abc4fd"
+    },
+    {
+      "path": "workers/wave5/persistent_control.test.mjs",
+      "sha256": "c84f06d36deea5d2a574118feede7a04e22f7b3570149651fbfdd6f61f199cb4"
+    },
+    {
+      "path": "workers/wave5/request_deadline.test.mjs",
+      "sha256": "1943313a7a29b6440be1189fb70d8d5ab2b1fbe0d668bbaf9291a3251e0c8435"
+    },
+    {
+      "path": "workers/wave5/runtime_launcher.mjs",
+      "sha256": "003dbd624ca5120f267f8434981c356c266bb2e68776ced6459799b707b58d90"
+    },
+    {
+      "path": "workers/wave5/runtime_launcher.test.mjs",
+      "sha256": "0980cb334232597802eac83282cfdb684ba7eea9700b3f3744ff2f20b0e3e64a"
+    },
+    {
+      "path": "workers/wave5/scoped_runtime.mjs",
+      "sha256": "70a8edbb7e8a0bac3fa1856ebb1134ff14413ad5b81f63bc568ae7750d3b2489"
+    },
+    {
+      "path": "workers/wave5/scoped_runtime.test.mjs",
+      "sha256": "e8371c89850dde378d090ad36f21ab65b354bbbdd3eb4b9f03d29b8be45bcbc6"
+    },
+    {
+      "path": "workers/wave5/subscription_schedule.mjs",
+      "sha256": "7699ebd9798620a9514584472b4e147e9b3d148754c72190498fe5406df7d047"
+    },
+    {
+      "path": "workers/wave5/validate_runtime_review.mjs",
+      "sha256": "ced6e61655eec7586afd968f8d518c52be6539348c12e0f8228e30e3bf78e473"
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.mjs",
+      "sha256": "a57cceb2ca5dc2bccc29861cdccb34bac7468a82a7fd402ecc5bd1810b6b0f5f"
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.test.mjs",
+      "sha256": "73e8222fc9bb038a30005ee16a7dcdc194800a104566d4680ef03e4ca1e0fecd"
+    },
+    {
+      "path": "workers/wave5/worker_runtime.mjs",
+      "sha256": "4935409210e61efc168d8604acff9b13f5a3b757cb27f4aee2ed1f2504dc8dc6"
+    },
+    {
+      "path": "workers/wave5/worker_runtime.test.mjs",
+      "sha256": "7fd6bb8bb8ac2f6bfbe45f3874662da21c391346d6a78ef5e7bfc901f1d46c2d"
+    }
+  ],
+  "currentSourceMatchesNative": true,
+  "installedWorker": false,
+  "installedSql": false,
+  "newMigrationsInstalled": false,
+  "actualWorkerDelivery": false,
+  "actualModelUsage": false,
+  "realMfa": false,
+  "authenticatedNative": false,
+  "nativeKeyboardVerified": false,
+  "independentSessionContention": false,
+  "targetScaleLoad": false,
+  "ownerAccepted": false,
+  "liveOperationsPerformed": false,
+  "SDKExecuted": false,
+  "workerTestsExecuted": false,
+  "DenoExecuted": false,
+  "nativeLaunched": false,
+  "privateSecretsRead": false,
+  "AuthUsersCreatedOrDeleted": false,
+  "localStoresReadOrCopied": false,
+  "boundary": "Current hash-only revalidation against the fresh r5 paired source and package context. The 71 controlled worker tests and two Deno entrypoint checks retain their October 9 r14 observations. Prepared 14/8-file payloads are not installed or deployed; operation approval and actual runtime effects remain separate.",
+  "inputHashesStableDuringPreparation": true
+}

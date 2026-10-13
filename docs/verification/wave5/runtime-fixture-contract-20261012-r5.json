@@ -1,0 +1,532 @@
+{
+  "kind": "wave5-runtime-fixture-source-contract",
+  "preparedAt": "2026-10-12T09:22:27.706Z",
+  "status": "source-mapping-complete-live-readiness-incomplete",
+  "binding": {
+    "projectId": "xpdoufauvrbdmxgngetv",
+    "projectUrl": "https://xpdoufauvrbdmxgngetv.supabase.co",
+    "reviewPath": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+    "reviewFileSha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+    "runtimeBundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+    "operationScopeSha256": "fcdab89d242dc578793eba1d520ea0251699b70b7730c02aea94232805286e63",
+    "status": "source-mapped; private implementation and actual observations absent",
+    "authorizesOperations": false,
+    "setsRuntimeGates": false,
+    "production": false,
+    "realBilling": false,
+    "installOriginalSix": false
+  },
+  "spec": {
+    "path": "tools/wave5/runtime_fixture_spec.mjs",
+    "sha256": "71dd763620cab0ca896dd96c50193350f1926e67f481acfed9b7aaa4b519f2d2",
+    "bytes": 36370,
+    "pureDeclarative": true
+  },
+  "localChecks": {
+    "kind": "source-only",
+    "signaturesChecked": 13,
+    "distinctSignatures": 12,
+    "namedParametersAndGrantsMatched": true,
+    "queryTemplates": 10,
+    "allQueriesSelectOnly": true,
+    "allExportsDeeplyFrozen": true,
+    "sourceBindingMatchesFrozenReview": true,
+    "SQLExecuted": false,
+    "networkExecuted": false,
+    "SDKExecuted": false,
+    "lastPassedToolChunk": "34c74d",
+    "syntaxToolChunk": "a0a59d"
+  },
+  "retainedLocalCheckerFailures": [
+    {
+      "toolChunk": "1dc853",
+      "exitCode": 1,
+      "reason": "Checker scanned quoted catalog privilege 'EXECUTE' as a mutation keyword.",
+      "moduleDefect": false,
+      "SQLExecuted": false,
+      "outputsWritten": false
+    },
+    {
+      "toolChunk": "9701a8",
+      "exitCode": 1,
+      "reason": "Checker scanned prose 'provider import' inside a string as an import statement.",
+      "moduleDefect": false,
+      "SQLExecuted": false,
+      "outputsWritten": false
+    }
+  ],
+  "signatures": [
+    {
+      "kind": "indexedForecastRead",
+      "signature": "api.get_pipeline_forecast(uuid,uuid,uuid,uuid)",
+      "grant": "authenticated",
+      "functionLine": 102,
+      "grantPath": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+      "grantLine": 120
+    },
+    {
+      "kind": "indexedBillingRead",
+      "signature": "api.get_wave5_subscription(uuid)",
+      "grant": "authenticated",
+      "functionLine": 111,
+      "grantPath": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "grantLine": 119
+    },
+    {
+      "kind": "forecast",
+      "signature": "api.freeze_pipeline_forecast(uuid,uuid,uuid,uuid,uuid,timestamptz,date,date)",
+      "grant": "authenticated",
+      "functionLine": 47,
+      "grantPath": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+      "grantLine": 120
+    },
+    {
+      "kind": "analytics",
+      "signature": "api.analytics_process_snapshot(uuid,uuid,uuid,timestamptz,timestamptz,timestamptz,timestamptz)",
+      "grant": "authenticated",
+      "functionLine": 31,
+      "grantPath": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+      "grantLine": 89
+    },
+    {
+      "kind": "acceptInvitation",
+      "signature": "api.accept_invitation(text)",
+      "grant": "authenticated",
+      "functionLine": 1068,
+      "grantPath": "supabase/migrations/20260831193714_create_greenfield_foundation.sql",
+      "grantLine": 1120
+    },
+    {
+      "kind": "reserveOne",
+      "signature": "api.wave5_reserve_usage(uuid,uuid,text,timestamptz,timestamptz,text)",
+      "grant": "service_role",
+      "functionLine": 60,
+      "grantPath": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "grantLine": 154
+    },
+    {
+      "kind": "activate",
+      "signature": "api.apply_synthetic_subscription(uuid,uuid)",
+      "grant": "service_role",
+      "functionLine": 57,
+      "grantPath": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "grantLine": 105
+    },
+    {
+      "kind": "executeProposal",
+      "signature": "api.wave5_proposal_command(uuid,uuid,uuid,uuid,uuid,timestamptz,text,jsonb)",
+      "grant": "authenticated",
+      "functionLine": 68,
+      "grantPath": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+      "grantLine": 172
+    },
+    {
+      "kind": "claimLease",
+      "signature": "api.wave5_runtime_delivery_worker(uuid,text,jsonb)",
+      "grant": "service_role",
+      "functionLine": 59,
+      "grantPath": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "grantLine": 151
+    },
+    {
+      "kind": "scheduleRevision",
+      "signature": "api.schedule_synthetic_subscription(uuid,uuid,uuid,timestamptz,bigint,text,integer,timestamptz,timestamptz)",
+      "grant": "authenticated",
+      "functionLine": 31,
+      "grantPath": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "grantLine": 104
+    },
+    {
+      "kind": "createInvitation",
+      "signature": "api.create_invitation(uuid,text,uuid,uuid,uuid,integer)",
+      "grant": "authenticated",
+      "functionLine": 1045,
+      "grantPath": "supabase/migrations/20260831193714_create_greenfield_foundation.sql",
+      "grantLine": 1117
+    },
+    {
+      "kind": "createAndApproveProposal",
+      "signature": "api.wave5_proposal_command(uuid,uuid,uuid,uuid,uuid,timestamptz,text,jsonb)",
+      "grant": "authenticated",
+      "functionLine": 68,
+      "grantPath": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+      "grantLine": 172
+    },
+    {
+      "kind": "registerLeaseSubscription",
+      "signature": "api.wave5_integration_manage(uuid,uuid,uuid,text,uuid,bigint,jsonb)",
+      "grant": "authenticated",
+      "functionLine": 62,
+      "grantPath": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "grantLine": 148
+    }
+  ],
+  "queries": [
+    {
+      "name": "installedSignaturesAndGrants",
+      "sha256": "7df659bf6b16807c2241c27b1d4f2782c69d9771d9ba28d31ec618cf9a75ae7b",
+      "parameters": [],
+      "SQLExecuted": false
+    },
+    {
+      "name": "scopeSnapshot",
+      "sha256": "b3ef08ce9ec17b6dc23b8d4bfb8b1d09927ce2aa497de390137cc00023307ce1",
+      "parameters": [
+        {
+          "name": "tenantId",
+          "type": "uuid",
+          "scope": "exact case scope"
+        }
+      ],
+      "SQLExecuted": false
+    },
+    {
+      "name": "invitationProvenance",
+      "sha256": "840e0b0c1477daf06615c362b74c728c8ed648cc055dd86f57df6acae89ecc7a",
+      "parameters": [
+        {
+          "name": "tenantId",
+          "type": "uuid",
+          "scope": "load-001"
+        },
+        {
+          "name": "returnedInvitationsAndActors",
+          "type": "jsonb",
+          "columns": [
+            "invitation_id uuid",
+            "actor_id uuid"
+          ]
+        }
+      ],
+      "SQLExecuted": false
+    },
+    {
+      "name": "invocationProvenance",
+      "sha256": "c0ee1f2d7f899ab1e22a5df710a056ebfb5b9516ddc9b7b2818fd3e9d24cb987",
+      "parameters": [
+        {
+          "name": "tenantId",
+          "type": "uuid",
+          "scope": "load-001"
+        },
+        {
+          "name": "originalInvocationIds",
+          "type": "uuid[]"
+        }
+      ],
+      "SQLExecuted": false
+    },
+    {
+      "name": "activationPrerequisites",
+      "sha256": "8a375f4f66f10a29d09c6c991f2a8688079398b2b37984a1c3b5b7080e199fbe",
+      "parameters": [
+        {
+          "name": "tenantId",
+          "type": "uuid",
+          "scope": "runtime OR load-001"
+        },
+        {
+          "name": "returnedRevisionId",
+          "type": "uuid"
+        }
+      ],
+      "SQLExecuted": false
+    },
+    {
+      "name": "proposalPrerequisites",
+      "sha256": "87d75824c147187a10513f8f2c3902989a8e3476912a49530288fdd40473309f",
+      "parameters": [
+        {
+          "name": "tenantId",
+          "type": "uuid",
+          "scope": "runtime"
+        },
+        {
+          "name": "returnedProposalId",
+          "type": "uuid"
+        }
+      ],
+      "SQLExecuted": false
+    },
+    {
+      "name": "sourcePopulation",
+      "sha256": "b76c0bd569610d0f470e124d8aad2fbf6905fbfb91e1679870ea65f74c67fdd3",
+      "parameters": [
+        {
+          "name": "tenantId",
+          "type": "uuid",
+          "scope": "one exact reviewed tenant"
+        }
+      ],
+      "SQLExecuted": false
+    },
+    {
+      "name": "restorationBaseline",
+      "sha256": "5ed507ac42b1f00fe2a10dd73e203c22330048b8eb263b36fcd5a3f786fd691c",
+      "parameters": [
+        {
+          "name": "tenantId",
+          "type": "uuid",
+          "scope": "load-001 only"
+        },
+        {
+          "name": "returnedApproverAndExecutorIds",
+          "type": "uuid[]",
+          "exactLength": 2
+        }
+      ],
+      "SQLExecuted": false
+    },
+    {
+      "name": "loadLedgers",
+      "sha256": "bafcf6f0b42f832a246d53ece09767c12866ae05ffb023610262f91f762c2649",
+      "parameters": [
+        {
+          "name": "tenantIds",
+          "type": "uuid[]",
+          "scope": "exact complete 500-tenant set"
+        },
+        {
+          "name": "runtimeId",
+          "type": "uuid",
+          "scope": "exact reviewed RT1 runtime"
+        }
+      ],
+      "SQLExecuted": false
+    },
+    {
+      "name": "loadQuiescence",
+      "sha256": "00ff81f8548a9d6a5bbf1b10adc5440228c62369cf73bad647796f9716db53f1",
+      "parameters": [
+        {
+          "name": "runtimeId",
+          "type": "uuid",
+          "scope": "exact reviewed RT1 runtime"
+        }
+      ],
+      "SQLExecuted": false
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+      "sha256": "1ea4ab076cb3deaa9d0f7f92b56c47effc1a0ad45e14839156a2fd6a2d1bd8ed",
+      "bytes": 10964,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "sha256": "339e9e86074887d164dd339eb17ac54943c39fca0caf50db575c48529456a9f5",
+      "bytes": 12761,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+      "sha256": "be586326b7d8ec380a5524a5d8232e67639d677eb192b9fe29da135ee9ffe997",
+      "bytes": 9213,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20260831193714_create_greenfield_foundation.sql",
+      "sha256": "d104871a777c31b9562fac2e5200d9801b24c0ebd28a9b0e75a43bdc13171f8a",
+      "bytes": 41494,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "sha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e",
+      "bytes": 14205,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+      "sha256": "b75e9cf94107fd9a959ced43f9e643b163ed579f95fb68c8de7b9e739b10d02e",
+      "bytes": 16904,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "sha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc",
+      "bytes": 18114,
+      "reviewBindingPresent": true,
+      "reviewBindingMatches": true
+    },
+    {
+      "path": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql",
+      "sha256": "1a636229a0749cf9d6334ae49efe8ff38627b6a2d1bb642789a28e86efd1c663",
+      "bytes": 28824,
+      "reviewBindingPresent": true,
+      "reviewBindingMatches": true
+    },
+    {
+      "path": "supabase/migrations/20260904121647_wave3_operational_foundation.sql",
+      "sha256": "b7a840b31a2d8a89d0a1539151769130c352fe7ace0ea2d76f4057aab5b2d737",
+      "bytes": 40230,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20260901090317_create_wave2_shared_foundation_schema.sql",
+      "sha256": "82886b14daf554e33dbe81d05827850b5fd7b3322a5f2bebe3e6958cbc608d86",
+      "bytes": 36682,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20260903110103_align_wave2_setup_contracts.sql",
+      "sha256": "3ce448a8247fe8e7b28bd1a779b7e7bf1bab705152ba9abf37da7fd94cfac6c9",
+      "bytes": 4123,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20260904125910_create_wave3_crm_pipeline_schema.sql",
+      "sha256": "04723457b9866dbc82d9578556becc16e2797838ea08abc8621ec6dceba634e5",
+      "bytes": 20762,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20261008100000_wave5_invocation_storage.sql",
+      "sha256": "a9bdd3bf5b1593bd3253930c5a0cd6286f576b7f81161a5832919efbc585d6e8",
+      "bytes": 19334,
+      "reviewBindingPresent": true,
+      "reviewBindingMatches": true
+    },
+    {
+      "path": "supabase/migrations/20261009120000_wave5_supabase_runtime.sql",
+      "sha256": "9ceb592be38ebb6cff35b54e1d09c63d7e700cd95f8b52f3725966ea1d677164",
+      "bytes": 12842,
+      "reviewBindingPresent": true,
+      "reviewBindingMatches": true
+    },
+    {
+      "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
+      "sha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5",
+      "bytes": 115108,
+      "reviewBindingPresent": true,
+      "reviewBindingMatches": true
+    },
+    {
+      "path": "workers/wave5/worker_runtime.mjs",
+      "sha256": "4935409210e61efc168d8604acff9b13f5a3b757cb27f4aee2ed1f2504dc8dc6",
+      "bytes": 5230,
+      "reviewBindingPresent": true,
+      "reviewBindingMatches": true
+    },
+    {
+      "path": "workers/wave5/model_runtime.mjs",
+      "sha256": "fce748e511a81bdae957ff76275641142a738d8391132953d4d3c7eec03cfb99",
+      "bytes": 5465,
+      "reviewBindingPresent": true,
+      "reviewBindingMatches": true
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "10001Rows",
+      "status": "unavailable-with-reviewed-caps",
+      "expectedCode": "LIMIT_EXCEEDED",
+      "reason": "RPCs accept no source array/count parameter. Caps200 opportunities/800 events cannot reach10001; no cross-tenant aggregation or extra source seeding."
+    },
+    {
+      "kind": "101Groups",
+      "status": "requires-existing-authorized-reference-catalog-proof",
+      "expectedCode": "LIMIT_EXCEEDED",
+      "reason": "Current migration reference seeds11 currency codes. Fresh catalog proof is required; adding global currency rows is outside this fixture specification."
+    },
+    {
+      "kind": "367DayWindow",
+      "status": "source-supported-without-extra-seeding",
+      "expectedCode": "LIMIT_EXCEEDED",
+      "reason": "Finite, ordered timestamps/dates with exactly367 days; process end≤asOf≤recordedThrough≤actual server time."
+    },
+    {
+      "kind": "8MiBPlus1Byte",
+      "status": "unavailable-with-reviewed-caps",
+      "expectedCode": "LIMIT_EXCEEDED",
+      "reason": "No arbitrary payload/string-size input is projected. UUID/numeric/currency/time projections over capped200/800 rows cannot manufacture an8MiB output; do not pad evidence or widen seed caps."
+    }
+  ],
+  "findings": [
+    {
+      "id": "LEASE_USAGE_IS_SEPARATE",
+      "source": "supabase/migrations/20261008123000_wave5_runtime_scope.sql:101",
+      "detail": "One claim commits one delivery attempt; source performs no usage reservation or HTTP send. Primary coordinator was corrected by its owner to lease1/usage0."
+    },
+    {
+      "id": "LOAD001_BILLING_REQUIRES_REAL_MFA",
+      "source": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql:578",
+      "detail": "Both runtime and load-001 billing roles require MFA. AAL1 load-001 billing reads reject; primary validator was corrected by its owner."
+    },
+    {
+      "id": "ACTIVATION_PRECEDES_USAGE_BUCKETS",
+      "source": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql:75",
+      "detail": "Any quota period ending after revision start yields BILLING_PERIOD_BUSY. Run activation before real model/external/delivery reservations; retain buckets if already present."
+    },
+    {
+      "id": "ONE_SUBSCRIPTION_BEFORE_LEASE_RACE",
+      "source": "supabase/migrations/20261008123000_wave5_runtime_scope.sql:78",
+      "detail": "Claim can materialize one head per enabled subscription/event. Register exact accept after earlier forecast races, freeze one event, then run lease contention; register other3 receivers afterward. Revoke has no public re-enable operation."
+    },
+    {
+      "id": "SUSPENDED_MEMBER_RESTORATION_ORDER",
+      "source": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql:98",
+      "detail": "Raise load-001 seats back to original4 before reactivating both original new approver/executor memberships. Preserve invitation/audit/version evidence. No existing accounts or stores change."
+    },
+    {
+      "id": "ACTUAL_SENDS_ARE_NOT_DB_ROWS",
+      "source": "workers/wave5/worker_runtime.mjs:22",
+      "detail": "Delivery attempt precedes reservation/send; model invocation precedes generate. Read exact ledger rows separately from a source-reviewed complete transport observer and inactive/drained own jobs."
+    },
+    {
+      "id": "OVERSIZED_BOUNDARIES_NOT_REQUEST_ARRAYS",
+      "source": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql:79",
+      "detail": "Row/group/output limits inspect actual generated source projections. RPCs accept scopes/dates/timestamps, not source arrays or padding text. Only367-day input rejection requires no excess source fixtures."
+    }
+  ],
+  "privateAdapterRemaining": [
+    "Actual current installed ledger/signature/grant/RLS/capacity evidence and owner-approved private access remain separately required.",
+    "Actual returned Auth IDs,2000 distinct server-verified genuine sessions, MFA factors and independent connections must be supplied privately.",
+    "No live-ready case UUIDs, original IDs, fixture/preparation/restoration hashes, seeds, or population evidence were fabricated.",
+    "Fixed SELECT templates require actual installed parsing/execution under read-only repeatable-read and an independently reviewed private transport.",
+    "Exact bounded fixture mutations/restoration and all returned source identities must be prepared and technically reviewed before live dispatch.",
+    "10001Rows and8MiBPlus1Byte remain unavailable within approved caps;101Groups requires existing reference-catalog proof and otherwise remains blocked.",
+    "No private provider, full transport observer, SDK/native/runtime operation, installation or acceptance decision is implemented by this module."
+  ],
+  "acceptance": {
+    "accepted": 3,
+    "total": 109,
+    "ids": [
+      "AC-551",
+      "AC-552",
+      "AC-553"
+    ],
+    "open": 106,
+    "wholeSystemAccepted": false
+  },
+  "gates": {
+    "installedSqlProvedByThisTask": false,
+    "genuineMfaProved": false,
+    "authenticatedNativeProved": false,
+    "actualDeliveryProved": false,
+    "independentContentionProved": false,
+    "targetScaleLoadProved": false,
+    "actualModelUsageProved": false,
+    "ownerAcceptanceAdded": false
+  },
+  "preservation": {
+    "frozenReviewFileUnchanged": true,
+    "frozenOperationScopeUnchanged": true,
+    "SQLAndAppSourceUnchangedByThisTask": true,
+    "primaryCoordinatorUnchangedByThisTask": true,
+    "existingAccountsStoresAndSessionsUntouched": true,
+    "gitStagedCommittedPushed": false
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "kind": "failed-read-only-metadata-recorder-attempt",
+  "recordedAt": "2026-10-10 13:29:27 UTC",
+  "script": {
+    "path": "scripts/wave5/record_live_preflight_20261010_r5.mjs",
+    "sha256": "8f3186a88829a6719df62a900f2300169e148e5e7e86415299637a3b4d8cc47d"
+  },
+  "actualToolChunk": "8a11b1",
+  "actualExitCode": 1,
+  "error": "EXACT14_UNCHANGED_ZERO_COLLISIONS_REQUIRED",
+  "cause": "The derived recorder selected the newer r4 summary but read its counters through the older collisions property. The r4 summary uses collisionCounters. This is a local recorder schema mismatch; the freshly read 40 live SQL fields changed only observed_at.",
+  "plannedOutputChecks": [
+    {
+      "path": "docs/verification/wave5/complete-live-preflight-20261010-r5-summary.json",
+      "exists": false
+    },
+    {
+      "path": "docs/verification/wave5/complete-live-preflight-20261010-r5-index.json",
+      "exists": false
+    }
+  ],
+  "outputsWritten": false,
+  "sqlWrites": false,
+  "SDKJobsExecuted": false,
+  "ownerAcceptanceChanged": false
+}

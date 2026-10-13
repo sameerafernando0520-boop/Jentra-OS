@@ -429,121 +429,138 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('configured setup without a gateway disables server confirmation', (
-    tester,
-  ) async {
-    await _pumpJentra(
-      tester,
-      size: const Size(1440, 900),
-      preferences: const AppPreferences(
-        themeMode: ThemeMode.light,
-        density: JentraDensity.comfortable,
-      ),
-      config: const RuntimeConfig(
-        environment: 'development',
-        supabaseUrl: 'https://fixture.jentra.invalid',
-        supabasePublishableKey: 'fixture-public-key',
-      ),
-    );
-    final container = ProviderScope.containerOf(
-      tester.element(find.byType(JentraApp)),
-    );
-    container.read(routerProvider).go('/setup');
-    await tester.pumpAndSettle();
-    expect(find.text('Connection unavailable'), findsOneWidget);
-    expect(find.text('Development preview'), findsNothing);
-    await tester.tap(find.text('Create account'));
-    await tester.pumpAndSettle();
-    expect(
-      find.text('Connect to your workspace before saving to the server.'),
-      findsOneWidget,
-    );
-    expect(
-      tester.widget<JentraPrimaryButton>(
-        find.widgetWithText(JentraPrimaryButton, 'Save to server'),
-      ).onPressed,
-      isNull,
-    );
-    expect(find.text('Save preview example'), findsNothing);
-    expect(tester.takeException(), isNull);
-  });
+  testWidgets(
+    'configured setup without a gateway disables server confirmation',
+    (tester) async {
+      await _pumpJentra(
+        tester,
+        size: const Size(1440, 900),
+        preferences: const AppPreferences(
+          themeMode: ThemeMode.light,
+          density: JentraDensity.comfortable,
+        ),
+        config: const RuntimeConfig(
+          environment: 'development',
+          supabaseUrl: 'https://fixture.jentra.invalid',
+          supabasePublishableKey: 'fixture-public-key',
+        ),
+      );
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(JentraApp)),
+      );
+      container.read(routerProvider).go('/setup');
+      await tester.pumpAndSettle();
+      expect(find.text('Connection unavailable'), findsOneWidget);
+      expect(find.text('Development preview'), findsNothing);
+      await tester.tap(find.text('Create account'));
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Connect to your workspace before saving to the server.'),
+        findsOneWidget,
+      );
+      expect(
+        tester
+            .widget<JentraPrimaryButton>(
+              find.widgetWithText(JentraPrimaryButton, 'Save to server'),
+            )
+            .onPressed,
+        isNull,
+      );
+      expect(find.text('Save preview example'), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
-  testWidgets('configured setup gateway retains server confirmation presentation', (
-    tester,
-  ) async {
-    // Presentation fixture only: no request, sign-in or server save is executed.
-    final client = SupabaseClient(
-      'https://fixture.jentra.invalid',
-      'fixture-public-key',
-    );
-    addTearDown(client.dispose);
-    await _pumpJentra(
-      tester,
-      size: const Size(1440, 900),
-      preferences: const AppPreferences(
-        themeMode: ThemeMode.light,
-        density: JentraDensity.comfortable,
-      ),
-      config: const RuntimeConfig(
-        environment: 'development',
-        supabaseUrl: 'https://fixture.jentra.invalid',
-        supabasePublishableKey: 'fixture-public-key',
-      ),
-      setupGateway: SupabaseBusinessSetupGateway(client),
-      setupState: const BusinessSetupState(
-        category: BusinessSetupCategory.finance,
-        resource: BusinessSetupResource.accounts,
-        items: [],
-        capabilities: {'finance.setup.view', 'finance.setup.manage'},
-        connectivity: ConnectivityState.online,
-      ),
-    );
-    final container = ProviderScope.containerOf(
-      tester.element(find.byType(JentraApp)),
-    );
-    container.read(routerProvider).go('/setup');
-    await tester.pumpAndSettle();
-    expect(find.text('Online confirmation ready'), findsOneWidget);
-    expect(find.text('Development preview'), findsNothing);
-    await tester.tap(find.text('Create account'));
-    await tester.pumpAndSettle();
-    expect(
-      find.text('Draft locally or confirm this version with the server.'),
-      findsOneWidget,
-    );
-    expect(
-      tester.widget<JentraPrimaryButton>(
-        find.widgetWithText(JentraPrimaryButton, 'Save to server'),
-      ).onPressed,
-      isNotNull,
-    );
-    expect(find.text('Save preview example'), findsNothing);
-    expect(tester.takeException(), isNull);
-  });
+  testWidgets(
+    'configured setup gateway retains server confirmation presentation',
+    (tester) async {
+      // Presentation fixture only: no request, sign-in or server save is executed.
+      // Its JSON isolate uses real events, so keep cleanup off the fake clock.
+      final client = (await tester.runAsync(
+        () async => SupabaseClient(
+          'https://fixture.jentra.invalid',
+          'fixture-public-key',
+          authOptions: const AuthClientOptions(autoRefreshToken: false),
+        ),
+      ))!;
+      try {
+        await _pumpJentra(
+          tester,
+          size: const Size(1440, 900),
+          preferences: const AppPreferences(
+            themeMode: ThemeMode.light,
+            density: JentraDensity.comfortable,
+          ),
+          config: const RuntimeConfig(
+            environment: 'development',
+            supabaseUrl: 'https://fixture.jentra.invalid',
+            supabasePublishableKey: 'fixture-public-key',
+          ),
+          setupGateway: SupabaseBusinessSetupGateway(client),
+          setupState: const BusinessSetupState(
+            category: BusinessSetupCategory.finance,
+            resource: BusinessSetupResource.accounts,
+            items: [],
+            capabilities: {'finance.setup.view', 'finance.setup.manage'},
+            connectivity: ConnectivityState.online,
+          ),
+        );
+        final container = ProviderScope.containerOf(
+          tester.element(find.byType(JentraApp)),
+        );
+        container.read(routerProvider).go('/setup');
+        await tester.pumpAndSettle();
+        expect(find.text('Online confirmation ready'), findsOneWidget);
+        expect(find.text('Development preview'), findsNothing);
+        await tester.tap(find.text('Create account'));
+        await tester.pumpAndSettle();
+        expect(
+          find.text('Draft locally or confirm this version with the server.'),
+          findsOneWidget,
+        );
+        expect(
+          tester
+              .widget<JentraPrimaryButton>(
+                find.widgetWithText(JentraPrimaryButton, 'Save to server'),
+              )
+              .onPressed,
+          isNotNull,
+        );
+        expect(find.text('Save preview example'), findsNothing);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.runAsync(client.dispose);
+      }
+    },
+  );
 
-  testWidgets('development Preview procurement explains unavailable accounting', (
-    tester,
-  ) async {
-    await _pumpJentra(
-      tester,
-      size: const Size(1440, 900),
-      preferences: const AppPreferences(
-        themeMode: ThemeMode.light,
-        density: JentraDensity.comfortable,
-      ),
-    );
-    final container = ProviderScope.containerOf(
-      tester.element(find.byType(JentraApp)),
-    );
-    container.read(routerProvider).go('/procurement');
-    await tester.pumpAndSettle();
-    expect(find.textContaining('Development preview: supplier bills'), findsOneWidget);
-    expect(find.text('Product units'), findsOneWidget);
-    expect(find.text('Supplier bills'), findsNothing);
-    expect(find.text('Supplier payments'), findsNothing);
-    expect(find.text('Create requisition'), findsNothing);
-    expect(tester.takeException(), isNull);
-  });
+  testWidgets(
+    'development Preview procurement explains unavailable accounting',
+    (tester) async {
+      await _pumpJentra(
+        tester,
+        size: const Size(1440, 900),
+        preferences: const AppPreferences(
+          themeMode: ThemeMode.light,
+          density: JentraDensity.comfortable,
+        ),
+      );
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(JentraApp)),
+      );
+      container.read(routerProvider).go('/procurement');
+      await tester.pumpAndSettle();
+      expect(
+        find.textContaining('Development preview: supplier bills'),
+        findsOneWidget,
+      );
+      expect(find.text('Product units'), findsOneWidget);
+      expect(find.text('Supplier bills'), findsNothing);
+      expect(find.text('Supplier payments'), findsNothing);
+      expect(find.text('New requisition'), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('configured procurement subset explains missing connection', (
     tester,
@@ -595,7 +612,10 @@ void main() {
     container.read(routerProvider).go('/finance');
     await tester.pumpAndSettle();
     expect(find.text('Finance overview'), findsOneWidget);
-    expect(find.textContaining('Posting and financial reports are not available'), findsOneWidget);
+    expect(
+      find.textContaining('Posting and financial reports are not available'),
+      findsOneWidget,
+    );
     expect(find.text('Posting unavailable here'), findsOneWidget);
     expect(find.text('Finance is mapped and ready'), findsNothing);
     expect(find.text('No legacy module restored'), findsNothing);
@@ -850,11 +870,12 @@ Future<void> _pumpJentra(
     ProviderScope(
       overrides: [
         runtimeConfigProvider.overrideWithValue(
-          config ?? const RuntimeConfig(
-            environment: 'development',
-            supabaseUrl: '',
-            supabasePublishableKey: '',
-          ),
+          config ??
+              const RuntimeConfig(
+                environment: 'development',
+                supabaseUrl: '',
+                supabasePublishableKey: '',
+              ),
         ),
         foundationGatewayProvider.overrideWithValue(null),
         businessSetupGatewayProvider.overrideWithValue(setupGateway),
@@ -898,10 +919,7 @@ Future<void> _precacheBrandAssets(WidgetTester tester) async {
   // frames. Await both PNGs so this fixture does not rely on a previous test.
   await tester.runAsync(() async {
     for (final asset in const [
-      AssetImage(
-        JentraBrandMark.asset,
-        package: JentraBrandMark.assetPackage,
-      ),
+      AssetImage(JentraBrandMark.asset, package: JentraBrandMark.assetPackage),
       AssetImage(
         JentraBrandWordmark.asset,
         package: JentraBrandMark.assetPackage,

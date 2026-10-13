@@ -1,0 +1,25 @@
+{
+  "kind": "failed-public-runtime-composer-check",
+  "recordedAt": "2026-10-12T06:28:10.946Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "composer": {
+    "path": "scripts/wave5/prepare_current_runtime_review_20261010_r5_a2.mjs",
+    "sha256": "64c2f703fd4d96b4cf87dc0b1797f39ecbcfdd90e21a44182f69baabe39deb9c"
+  },
+  "actualToolResult": {
+    "chunkId": "007569",
+    "sessionId": 72319,
+    "exitCode": 1
+  },
+  "command": "node scripts/wave5/prepare_current_runtime_review_20261010_r5_a2.mjs check",
+  "error": "CURRENT_CONNECTED_READ_CONTEXT_REQUIRED",
+  "cause": "The preserved read-context uses operations/contextRecordedAt/liveWrites and has seven exact fields. The reader expected nonexistent kind/tools and operation flags. Two later timestamp references also used nonexistent recordedAt.",
+  "executionTimestampClaimed": false,
+  "outputsWritten": false,
+  "SDKJobsExecuted": false,
+  "nativeActionsPerformed": false,
+  "SQLExecuted": false,
+  "AuthOperations": false,
+  "workerOperations": false,
+  "ownerAcceptanceChanged": false
+}

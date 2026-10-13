@@ -1,0 +1,85 @@
+{
+  "kind": "independent-controlled-wave5-preparation-journal-verification",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "actualStartedAt": "2026-10-13T05:39:02.369Z",
+  "actualFinishedAt": "2026-10-13T05:39:02.511Z",
+  "nodeVersion": "v24.11.0",
+  "command": [
+    "node",
+    "--test",
+    "--test-isolation=none",
+    "--test-reporter=tap",
+    "tools/wave5/preparation_journal_peer_20261013.test.mjs"
+  ],
+  "childExitCode": 0,
+  "childSignal": null,
+  "summary": {
+    "tests": 2,
+    "pass": 2,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "selectedSourcesUnchanged": true,
+  "passed": true,
+  "filesBefore": [
+    {
+      "path": "tools/wave5/preparation_journal.mjs",
+      "sha256": "95a93eb07bf7bfaadd2121c854683453512203ecc7380225602f2f8330267840",
+      "bytes": 4778
+    },
+    {
+      "path": "tools/wave5/preparation_journal_peer_20261013.test.mjs",
+      "sha256": "1b393f9a7629332233e7aee054755bccd61056875f38f99fefbf0da0bcf2f3b6",
+      "bytes": 3315
+    },
+    {
+      "path": "tools/wave5/verify_preparation_peer_20261013.mjs",
+      "sha256": "88f603e47dcbe4a2e4d676c68461296edd4231e517545f07a515cde63ffecf77",
+      "bytes": 3745
+    },
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f",
+      "bytes": 31294
+    }
+  ],
+  "filesAfter": [
+    {
+      "path": "tools/wave5/preparation_journal.mjs",
+      "sha256": "95a93eb07bf7bfaadd2121c854683453512203ecc7380225602f2f8330267840",
+      "bytes": 4778
+    },
+    {
+      "path": "tools/wave5/preparation_journal_peer_20261013.test.mjs",
+      "sha256": "1b393f9a7629332233e7aee054755bccd61056875f38f99fefbf0da0bcf2f3b6",
+      "bytes": 3315
+    },
+    {
+      "path": "tools/wave5/verify_preparation_peer_20261013.mjs",
+      "sha256": "88f603e47dcbe4a2e4d676c68461296edd4231e517545f07a515cde63ffecf77",
+      "bytes": 3745
+    },
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f",
+      "bytes": 31294
+    }
+  ],
+  "log": {
+    "path": "docs/verification/wave5/preparation-journal-independent-verification-20261013-r5-a2.tap",
+    "sha256": "8999485f7c38ed562d953126d1fc370f1415c32bc5458158522ab7c9bdced84a",
+    "bytes": 672
+  },
+  "controlledOnly": true,
+  "executedLive": false,
+  "realCredentialsRead": false,
+  "databaseCalls": 0,
+  "authWrites": 0,
+  "networkCalls": 0,
+  "sdkJobs": 0,
+  "nativeActions": 0,
+  "concretePrivateSinkReviewed": false,
+  "limitation": "Actual local independent assertions over controlled in-memory receipts only. No durable private facility or real fixture was invoked."
+}

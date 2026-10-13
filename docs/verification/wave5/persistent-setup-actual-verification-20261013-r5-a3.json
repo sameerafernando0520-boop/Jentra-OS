@@ -1,0 +1,89 @@
+{
+  "kind": "actual-persistent-setup-after-ambiguous-http-response",
+  "passed": true,
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "bundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+  "actualVerifiedAt": "2026-10-13T10:01:57.458Z",
+  "databaseObservedAt": "2026-10-13T10:01:22.388706+00:00",
+  "reviewedSetupSourceSha256": "c2ae865c9bae23be94dec512dd15645a85c9a7a82b4edbd32fbccf92a7462e41",
+  "bindings": {
+    "before": {
+      "path": "docs/verification/wave5/persistent-setup-20261013-r5-a3-1791885422750/00-before.json",
+      "sha256": "c713402927d8f0c39b62e3394e9964e2d80ac79d4091d634c1af6f995c86b6d2"
+    },
+    "after": {
+      "path": "docs/verification/wave5/persistent-setup-committed-readback-20261013-r5-a3.json",
+      "sha256": "36d94ea699e70d0c938329c5f4d3a7b3cab8b64d05c18921975c71c16fec406f"
+    }
+  },
+  "authority": {
+    "jobIds": [
+      4,
+      5,
+      6
+    ],
+    "enabled": true,
+    "issuedAt": "2026-10-13T09:57:07.481942+00:00",
+    "expiresAt": "2026-10-14T09:57:07.481942+00:00",
+    "runtimeId": "778237e3-3d4e-4871-8cc9-e08b07b989c7",
+    "publicKeySha256": "e3ea9ff3f18e6bb24be674430cc494a31c4cd7d92482367b60383b5aedd6fa9d",
+    "scheduleSecretId": "ca78c81f-eb06-4d57-9d0f-52d5f78fa021"
+  },
+  "ownJobs": [
+    {
+      "name": "jentra-w5-20261009-delivery",
+      "jobId": 4,
+      "active": false,
+      "command": "select intelligence_control.edge_schedule_tick('delivery');",
+      "schedule": "* * * * *"
+    },
+    {
+      "name": "jentra-w5-20261009-subscription",
+      "jobId": 5,
+      "active": false,
+      "command": "select intelligence_control.edge_schedule_tick('subscription');",
+      "schedule": "* * * * *"
+    },
+    {
+      "name": "jentra-w5-20261009-health",
+      "jobId": 6,
+      "active": false,
+      "command": "select intelligence_control.edge_schedule_tick('health');",
+      "schedule": "* * * * *"
+    }
+  ],
+  "vaultSecretIdentities": [
+    {
+      "id": "ca78c81f-eb06-4d57-9d0f-52d5f78fa021",
+      "name": "jentra-w5-runtime-20261009-schedule"
+    },
+    {
+      "id": "2265a75b-8e27-4094-840e-9a68b1801872",
+      "name": "jentra-w5-runtime-20261009-delivery-v1"
+    },
+    {
+      "id": "394d3fe9-af6a-4f0d-9079-a436591f59aa",
+      "name": "jentra-w5-runtime-20261009-delivery-v2"
+    }
+  ],
+  "keyRefs": [
+    {
+      "ref": "w5/runtime/20261008/delivery/v1",
+      "secretId": "2265a75b-8e27-4094-840e-9a68b1801872"
+    },
+    {
+      "ref": "w5/runtime/20261008/delivery/v2",
+      "secretId": "394d3fe9-af6a-4f0d-9079-a436591f59aa"
+    }
+  ],
+  "sourceAttempt": "persistent-setup-20261013-r5-a3-1791885422750",
+  "managementHttpResponseFailurePreserved": true,
+  "laterCollisionGuardStoppedReplay": true,
+  "existingJobsAndVaultIdentitiesPreserved": true,
+  "secretValuesReadOrPrinted": false,
+  "scheduledExecution": false,
+  "actualDelivery": false,
+  "actualModelCalls": 0,
+  "fullProviderCoordinatorPassed": false,
+  "ownerAccepted": false
+}

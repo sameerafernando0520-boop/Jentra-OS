@@ -1,0 +1,23 @@
+{
+  "kind": "failed-public-runtime-composer-check",
+  "recordedAt": "2026-10-11T15:20:36.516Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "composer": {
+    "path": "scripts/wave5/prepare_current_runtime_review_20261010_r5.mjs",
+    "sha256": "d670915fbac08136b15d0896ee060df477928fb039b3f5ddf27d68091bd2a124"
+  },
+  "actualToolResult": {
+    "chunkId": "3e1bb7",
+    "exitCode": 1
+  },
+  "command": "node scripts/wave5/prepare_current_runtime_review_20261010_r5.mjs check",
+  "error": "ACTUAL_DATED_R4_FOCUSED_FAILURE_REQUIRED",
+  "cause": "The preserved historical failure omits beforeAuditFailure and afterAuditFailure. The reader incorrectly required these absent fields to be null. Its real inputAuditBefore/inputAuditAfter objects and raw failure remain unchanged.",
+  "outputsWritten": false,
+  "SDKJobsExecuted": false,
+  "nativeActionsPerformed": false,
+  "SQLExecuted": false,
+  "AuthOperations": false,
+  "workerOperations": false,
+  "ownerAcceptanceChanged": false
+}

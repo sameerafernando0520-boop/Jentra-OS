@@ -1,0 +1,71 @@
+{
+  "replay": {
+    "ok": true,
+    "value": {
+      "entity": {
+        "id": "38742ecf-91fe-4cd3-93c5-9d6f726a59e5",
+        "version": "1",
+        "sourceHash": "0e9255bd3871c3ee8130ec94af09d1e21c4ec73191d8ade81f23923f21ca1e47",
+        "definitionVersion": 1
+      },
+      "warnings": [],
+      "command_id": "ad46d9da-607f-446d-b3c2-1c0e8a1adbc9",
+      "request_id": "0563ec92-0eb4-46fd-a11f-647e5ad71b2b",
+      "correlation_id": "0563ec92-0eb4-46fd-a11f-647e5ad71b2b"
+    },
+    "evidence": {
+      "projectId": "xpdoufauvrbdmxgngetv",
+      "method": "POST",
+      "route": "/rest/v1/rpc/freeze_pipeline_forecast",
+      "startedAt": "2026-10-13T09:22:19.453Z",
+      "sentAt": "2026-10-13T09:22:19.457Z",
+      "finishedAt": "2026-10-13T09:22:19.709Z",
+      "connectionId": "w5-05dc36d3-64fe-4db4-9e04-cecddd1adfa2",
+      "status": 200,
+      "responseSha256": "9be45eeb455956f8aaf85083139317dfb659a4117946a8bae2813a3208eebd5b",
+      "responseBytes": 362
+    }
+  },
+  "foreign": {
+    "ok": false,
+    "value": {
+      "code": "42501",
+      "details": null,
+      "hint": null,
+      "message": "Permission denied or multi-factor authentication required."
+    },
+    "evidence": {
+      "projectId": "xpdoufauvrbdmxgngetv",
+      "method": "POST",
+      "route": "/rest/v1/rpc/analytics_process_snapshot",
+      "startedAt": "2026-10-13T09:22:19.710Z",
+      "sentAt": "2026-10-13T09:22:19.710Z",
+      "finishedAt": "2026-10-13T09:22:21.957Z",
+      "connectionId": "w5-76e6f600-257b-4ed0-b292-6b9f5dd2a7d9",
+      "status": 403,
+      "responseSha256": "40996c525540bd07171f14c7ff3ef51266b4ea98943ca0439f4734324c91944e",
+      "responseBytes": 114
+    }
+  },
+  "wide": {
+    "ok": false,
+    "value": {
+      "code": "54000",
+      "details": null,
+      "hint": null,
+      "message": "LIMIT_EXCEEDED"
+    },
+    "evidence": {
+      "projectId": "xpdoufauvrbdmxgngetv",
+      "method": "POST",
+      "route": "/rest/v1/rpc/analytics_process_snapshot",
+      "startedAt": "2026-10-13T09:22:21.958Z",
+      "sentAt": "2026-10-13T09:22:21.958Z",
+      "finishedAt": "2026-10-13T09:22:22.225Z",
+      "connectionId": "w5-05dc36d3-64fe-4db4-9e04-cecddd1adfa2",
+      "status": 500,
+      "responseSha256": "a2b3f1eba543e9835362de759fed3824b83bf6b6376747e032ccff8ea8d0aa0d",
+      "responseBytes": 70
+    }
+  }
+}

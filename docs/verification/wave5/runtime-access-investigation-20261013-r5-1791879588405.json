@@ -1,0 +1,62 @@
+{
+  "kind": "actual-read-only-runtime-credential-access-investigation",
+  "actualFinishedAt": "2026-10-13T08:19:48.405Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "bundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+  "observations": {
+    "temporaryAccess": {
+      "read": true,
+      "state": "unavailable",
+      "appliedSuccessfully": null,
+      "responseSha256": "df0d1006fe22bfe353b86d17f717a5a5e189d380ca10df2d33f7da187ab70af3",
+      "actualFinishedAt": "2026-10-13T08:19:47.042Z"
+    },
+    "userRoleMapping": {
+      "read": false,
+      "failureCode": "RUNTIME_ACCESS_READ_DENIED",
+      "actualFinishedAt": "2026-10-13T08:19:47.237Z"
+    },
+    "tlsEnforcement": {
+      "read": true,
+      "database": false,
+      "appliedSuccessfully": true,
+      "responseSha256": "8d82b722856dd9353d98917dcf657e98524aa91d69be7069c9e48ec6dc110783",
+      "actualFinishedAt": "2026-10-13T08:19:47.984Z"
+    },
+    "pooler": {
+      "read": true,
+      "connections": [
+        {
+          "databaseType": "PRIMARY",
+          "user": "postgres.xpdoufauvrbdmxgngetv",
+          "host": "aws-0-ap-south-1.pooler.supabase.com",
+          "port": 6543,
+          "database": "postgres",
+          "poolMode": "transaction",
+          "maxClientConnections": null,
+          "defaultPoolSize": null
+        }
+      ],
+      "responseSha256": "ddfb717ddfa06d58aaa73bccb3d8226571970536124406414dc3532321d6d791",
+      "actualFinishedAt": "2026-10-13T08:19:48.219Z"
+    },
+    "secretNames": {
+      "read": true,
+      "modelKeyConfigured": false,
+      "existingSecretValuesRead": false,
+      "secretCount": 7,
+      "responseSha256": "987713f76ddc73287c2ab4ce7b900dfaed2fce9676ffb3d30874db62e1ecf9d2",
+      "actualFinishedAt": "2026-10-13T08:19:48.405Z"
+    }
+  },
+  "networkCalls": 5,
+  "databaseWrites": 0,
+  "authWrites": 0,
+  "settingsChanges": 0,
+  "passwordsOrTokensOrSecretValuesPrinted": false,
+  "temporaryAccessReady": false,
+  "actualDatabaseConnectionsOpened": 0,
+  "actualModelCalls": 0,
+  "production": false,
+  "realBilling": false
+}

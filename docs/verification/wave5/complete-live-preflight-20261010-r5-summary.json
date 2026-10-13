@@ -1,0 +1,224 @@
+{
+  "kind": "read_only_r5_live_preflight_comparison",
+  "recordedAt": "2026-10-10T13:29:45.418Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "observedAt": "2026-10-10 13:25:31.725204+00",
+  "priorObservedAt": "2026-10-10 06:36:27.034589+00",
+  "comparedFields": 40,
+  "onlyChangedFields": [
+    "observed_at"
+  ],
+  "migrationCount": 43,
+  "apiFunctions": 107,
+  "checkedProviders": 120,
+  "unchangedProviders": 120,
+  "changedProviders": [],
+  "wave5ForcedAndEnabledRlsTables": 15,
+  "rolePermissions": 87,
+  "roleAssignments": 1,
+  "entitlements": 28,
+  "memberships": 1,
+  "collisionCounters": {
+    "exact_account_label_collisions": 0,
+    "tenant_id_or_slug_collisions": 0,
+    "entity_id_or_parent_collisions": 0,
+    "branch_id_or_parent_collisions": 0,
+    "plan_code_collisions": 0,
+    "proposed_plan_entitlement_rows": 0,
+    "subscription_id_scope_or_plan_collisions": 0,
+    "exact_role_id_or_code_collisions": 0,
+    "membership_scope_or_id_collisions": 0,
+    "assignment_scope_collisions": 0,
+    "synthetic_allowlist_scope_collisions": 0,
+    "total_operator_rows": 0,
+    "operator_actor_collisions": 0,
+    "operator_grant_scope_collisions": 0
+  },
+  "allPriorCollisionFieldsUnchanged": true,
+  "currentTrialAccount": {
+    "authId": "c0ab44a9-7385-4d9c-94f2-4df3efaa453f",
+    "confirmed": true,
+    "lastSignInAt": "2026-10-09T18:30:22.512847+00:00",
+    "membershipCount": 0
+  },
+  "originalSixLedger": {
+    "migrationLedgerListReread": true,
+    "ledgerRows": 43,
+    "sixOriginalEntriesMatch": true,
+    "preservedEntries": [
+      {
+        "sourcePath": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+        "ledgerEntry": {
+          "name": "wave5_process_metrics",
+          "version": "20261007195453"
+        },
+        "currentMatches": 1,
+        "reinstalled": false
+      },
+      {
+        "sourcePath": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+        "ledgerEntry": {
+          "name": "wave5_pipeline_forecasts",
+          "version": "20261007200707"
+        },
+        "currentMatches": 1,
+        "reinstalled": false
+      },
+      {
+        "sourcePath": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+        "ledgerEntry": {
+          "name": "wave5_trusted_metering",
+          "version": "20261007201325"
+        },
+        "currentMatches": 1,
+        "reinstalled": false
+      },
+      {
+        "sourcePath": "supabase/migrations/20261006153000_wave5_operator_isolation.sql",
+        "ledgerEntry": {
+          "name": "wave5_operator_isolation",
+          "version": "20261007201500"
+        },
+        "currentMatches": 1,
+        "reinstalled": false
+      },
+      {
+        "sourcePath": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+        "ledgerEntry": {
+          "name": "wave5_human_proposals",
+          "version": "20261007201517"
+        },
+        "currentMatches": 1,
+        "reinstalled": false
+      },
+      {
+        "sourcePath": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+        "ledgerEntry": {
+          "name": "wave5_synthetic_subscriptions",
+          "version": "20261007201524"
+        },
+        "currentMatches": 1,
+        "reinstalled": false
+      }
+    ],
+    "sourceMigrationNamesReplayed": false
+  },
+  "edgeInventory": {
+    "actualListReread": true,
+    "actualFunctionSourceBodyReread": false,
+    "unchangedSincePriorR3": true,
+    "deployments": [
+      {
+        "id": "47657765-1d65-4447-8b11-3d779fed8e17",
+        "slug": "people-private-documents",
+        "version": 1,
+        "status": "ACTIVE",
+        "metadataBodyHash": "013bc0f0544765f1f55534b300eb9ff9db1287baa8fd3aaa51a56de44d6f90a8"
+      },
+      {
+        "id": "d79e87c6-cc7e-4647-abb7-73160864750c",
+        "slug": "people-private-purge",
+        "version": 1,
+        "status": "ACTIVE",
+        "metadataBodyHash": "11090fac763e7a81a1fc0a7e607edc6389b2888230e82c2c307d533e89119010"
+      }
+    ]
+  },
+  "immutableInputs": [
+    {
+      "path": "docs/verification/wave5/complete-live-preflight-20261010-r5-raw.json",
+      "sha256": "f3c218ff234187c37a3465b1fcfe71039d2f523a03f1caf0fb1cd2524fcd10cb",
+      "bytes": 46879
+    },
+    {
+      "path": "docs/verification/wave5/complete-live-preflight-20261010-r5-ledger.json",
+      "sha256": "7be1b5e55f5362590b30b2f1c294592eb6570db8235e1c32bccc93a53fab3228",
+      "bytes": 3398
+    },
+    {
+      "path": "docs/verification/wave5/complete-live-preflight-20261010-r5-edge-list.json",
+      "sha256": "7d6e5e79f4bfbc40af59f46e4834604485d109a76d7d3cc0ed23077bba5877fa",
+      "bytes": 1083
+    },
+    {
+      "path": "docs/verification/wave5/complete-live-preflight-20261010-r3-index.json",
+      "sha256": "d0d2a61ae32f556e143b12b2b5c5767670cb6042c825c37a6e36e263b5d693bb",
+      "bytes": 6153
+    },
+    {
+      "path": "docs/verification/wave5/complete-live-preflight-20261010-r5-read-context.json",
+      "sha256": "50dd51afd473ba14b854939923e2c35445c86dc261a33121abc1ef0dc1145515",
+      "bytes": 453
+    },
+    {
+      "path": "docs/verification/wave5/complete-live-preflight-20261010-r3-summary.json",
+      "sha256": "3671734f3f69b04aa412449ec5a1b36d6960a8e6f970f65e0b46dfcd19507788",
+      "bytes": 19023
+    },
+    {
+      "path": "docs/verification/wave5/installation-result-20261008.json",
+      "sha256": "2b7d976846918c5b052667b6e062ca31e6b7e504436b3066d3434bd53b364da3",
+      "bytes": 5858
+    },
+    {
+      "path": "docs/verification/wave5/complete-live-preflight-20261010-r3-raw.json",
+      "sha256": "928a3650e416c53e4e105b5bc949cae36f46bc7d8d7249ce0cadb4a1729d09fd",
+      "bytes": 47149
+    },
+    {
+      "path": "docs/verification/wave5/complete-live-preflight-20261010-r3-edge-list.json",
+      "sha256": "cf8624bcb87111b4ee18be490e295537f419f5e1c873673c30ac0812ea2b4d94",
+      "bytes": 1229
+    },
+    {
+      "path": "docs/verification/wave5/complete-live-preflight-20261010-r2.sql",
+      "sha256": "cf886dbb2fac359b530626b50d99312c14b5398a7d620b22100852154594e250",
+      "bytes": 219060
+    },
+    {
+      "path": "scripts/wave5/record_live_preflight_20261010_r5_a2.mjs",
+      "sha256": "ff6cb105923acfefe11948a437c7b71d36dc4901951074815cfdfdec1487f25a",
+      "bytes": 9960
+    },
+    {
+      "path": "scripts/wave5/record_live_preflight_20261010_r4.mjs",
+      "sha256": "c8ad09c2e0a45e08da8ed40d6c1ed7dd6d9e438ca80a0808d050960056f76d92",
+      "bytes": 9599
+    },
+    {
+      "path": "scripts/wave5/record_live_preflight_20261010_r5.mjs",
+      "sha256": "8f3186a88829a6719df62a900f2300169e148e5e7e86415299637a3b4d8cc47d",
+      "bytes": 9771
+    },
+    {
+      "path": "docs/verification/wave5/failed-live-recorder-attempt-20261010-r5-a1.json",
+      "sha256": "3017eb26a35ecc09484d6653702736f8ff5a8d5e4ddddf534aae3863dce8c969",
+      "bytes": 1040
+    },
+    {
+      "path": "scripts/wave5/record_late_live_preflight_20261010_r3.mjs",
+      "sha256": "be31876cb1a32b4022a5114846024180bed2a2b89fc18ce756fab09f69fd6fcf",
+      "bytes": 9405
+    }
+  ],
+  "readOnly": true,
+  "fullRuntimePreflightComplete": false,
+  "runtimeOwnerApproved": false,
+  "newRuntimeInstallationComplete": false,
+  "authenticatedNative": false,
+  "fullNativeKeyboardGate": false,
+  "realMfa": false,
+  "actualDelivery": false,
+  "actualModelUsage": false,
+  "independentSessionContention": false,
+  "targetScaleLoad": false,
+  "ownerAcceptanceChanged": false,
+  "wholeSystemOwnerSignoff": false,
+  "sqlInstalled": false,
+  "AuthAccountsCreatedOrDeleted": false,
+  "privateSecretsRead": false,
+  "SDKJobsExecuted": false,
+  "productionExcluded": true,
+  "realBillingExcluded": true,
+  "boundary": "Actual saved metadata and migration/Edge-list reads only. No deployment, account, private credential, auth, delivery, load or owner acceptance action."
+}

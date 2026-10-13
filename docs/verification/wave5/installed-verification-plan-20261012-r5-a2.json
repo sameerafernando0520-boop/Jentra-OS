@@ -1,0 +1,202 @@
+{
+  "kind": "offline_prepared_installed_verification_successor",
+  "preparedAt": "2026-10-12T09:46:54.699Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "originalPlan": {
+    "path": "docs/verification/wave5/installed-verification-plan-20261012-r5.json",
+    "sha256": "17aa5cb966070f2766f2ec9460b29a6bcad0d2fa3b6ed027f8790b88868c6ea1",
+    "bytes": 485918,
+    "preserved": true
+  },
+  "review": {
+    "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+    "fileSha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+    "bundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+    "operationScopeSha256": "fcdab89d242dc578793eba1d520ea0251699b70b7730c02aea94232805286e63"
+  },
+  "originalPreparationTool": {
+    "path": "tools/wave5/prepare_installed_verification_20261012_r5.mjs",
+    "sha256": "6641087a2331e156ee99ad05ddf4adffb06aa5596b9867ce7d6cb9885ba8e719"
+  },
+  "successorPreparationTool": {
+    "path": "tools/wave5/prepare_installed_verification_successor_20261012_r5_a2.mjs",
+    "sha256": "06f809313f145f2f02aa8d54e04c96762838b0acc145563cb072e55fdaae1626"
+  },
+  "originalCatalog": {
+    "order": 1,
+    "id": "catalog",
+    "path": "docs/verification/wave5/installed-catalog-verification-20261012-r5.sql",
+    "sha256": "7d84efee06b401d7d75f02f2fa395b86f2669b0c96523237d7beb81cac1e6c08",
+    "bytes": 94542,
+    "mode": "BEGIN REPEATABLE READ READ ONLY; metadata SELECT; ROLLBACK",
+    "expectedChecks": [
+      "every inventoried signature/body LF hash/language/security matches final approved source",
+      "every directly created table exists",
+      "capture all target-schema grants/policies/constraints/triggers/body hashes; review dynamic RLS coverage separately"
+    ]
+  },
+  "corrections": [
+    "Explicit provolatile::text comparison to the expected VALUES text column.",
+    "Hash-only configuration fingerprint replaces raw proconfig values; no configuration/private body is returned."
+  ],
+  "unchanged": [
+    "541 final source function-body expectations",
+    "215 directly created tables",
+    "72 explicit/reviewed force-RLS predicates",
+    "18 exact grant predicates",
+    "33 rename/schema moves with three genuine baseline preservation prerequisites",
+    "all historical query bytes and actual failed local-check records",
+    "all frozen review/status/matrix/app and primary harness source"
+  ],
+  "queries": [
+    {
+      "order": 0,
+      "id": "baseline-renames",
+      "path": "docs/verification/wave5/installed-baseline-rename-fingerprints-20261012-r5.sql",
+      "sha256": "f4beb12842047ebf0ab8892155c092b1bf357ec27b044be62796bd4f81579b0a",
+      "bytes": 1811,
+      "mode": "BEGIN REPEATABLE READ READ ONLY; hash-only SELECT; ROLLBACK",
+      "phases": [
+        "before order58",
+        "after installation"
+      ],
+      "expectedChecks": [
+        "three original installed baseline function bodies hashed before their rename; compare to preserved *_without_negative_policy bodies after installation",
+        "a postinstall original name points to an approved new wrapper and is not the preserved body",
+        "if genuine before fingerprints are absent, preservation remains incomplete"
+      ]
+    },
+    {
+      "order": 1,
+      "id": "catalog",
+      "path": "docs/verification/wave5/installed-catalog-verification-20261012-r5-a2.sql",
+      "sha256": "1e388eef0a161d3fe90da7f2b2490b7e7c773985e69fa9c3a743fac3c4dd9745",
+      "bytes": 94620,
+      "mode": "BEGIN REPEATABLE READ READ ONLY; metadata SELECT; ROLLBACK",
+      "expectedChecks": [
+        "every inventoried signature/body LF hash/language/security matches final approved source",
+        "every directly created table exists",
+        "capture all target-schema grants/policies/constraints/triggers/body hashes; review dynamic RLS coverage separately"
+      ]
+    },
+    {
+      "order": 2,
+      "id": "strict",
+      "path": "docs/verification/wave5/installed-strict-metadata-20261012-r5.sql",
+      "sha256": "906dd7f51f80962b627a62e059637ef57eb896b715acfc27820e4ffea9aec41b",
+      "bytes": 6968,
+      "mode": "BEGIN READ ONLY; metadata assertions with DO raising on false; ROLLBACK",
+      "expectedChecks": [
+        "actual final ledger count114",
+        "explicit source/review force-RLS predicates",
+        "required and forbidden function grants",
+        "anon/public runtime entrypoint denial",
+        "private cash table grants"
+      ]
+    },
+    {
+      "order": 3,
+      "id": "preservation",
+      "path": "docs/verification/wave5/installed-preservation-fingerprints-20261012-r5.sql",
+      "sha256": "8f200dd3a857733c45e4d8b3fc7e4ee7f51c844911ccccbf739630894993a165",
+      "bytes": 2810,
+      "mode": "BEGIN REPEATABLE READ READ ONLY; hash-only SELECT; ROLLBACK",
+      "expectedChecks": [
+        "compare protected access row fingerprints to immediate preinstall live preflight",
+        "compare old120 providers by exact identity to actual preinstall baseline, allowing only explicitly approved replacements",
+        "existing confirmed desktop account retained; no password or token columns read"
+      ]
+    }
+  ],
+  "serialExecution": [
+    "Root binds actual immediately preinstall metadata/ledger/collision records; frozen Oct10 and narrow Oct12 counts are not an immediate preflight.",
+    "Before order58 run the baseline-renames query and preserve the three original actual installed body hashes; run it again after installation and compare the three preserved renamed aliases. No hypothetical before hash can replace a missing actual observation.",
+    "Root installs exactly the71 approved missing sources once, in reviewed order. Record actual connector name/version and submitted bytes for each; never replay original six.",
+    "Run catalog SQL once as one complete connector query. Save full raw result and context. Any absent signature/body mismatch is a failed installed gate, not a source repair or automatic reinstallation.",
+    "Run strict metadata SQL as one complete query. BEGIN/ROLLBACK belong to this one connection. The DO assertion raises on false; a connector failure is retained and must not be turned into a pass.",
+    "Run preservation SQL and requery migration ledger. Compare exact old43 rows and original six versions, protected four access fingerprints, account identity, provider revisions, and explicit approved modifications.",
+    "Only after genuine private Auth Admin account creation and returned-ID binding prepare account-bound rollback cases over exactly reviewed synthetic tenants. Do not replay historical Auth inserts or manufacture MFA factors/claims/session proof.",
+    "For every behavior batch use one caller-owned BEGIN...ROLLBACK, real actor/request context and exact new IDs. Preserve raw error/result and immediately verify protected before/after fingerprints. Do not invoke network, Vault creation, or scheduler registration inside a rollback probe."
+  ],
+  "rollbackBehaviorBatches": [
+    {
+      "id": "bootstrap-mapping",
+      "status": "blocked-until-six-genuine-AuthAdmin-returned-IDs",
+      "historicalSource": "docs/verification/wave5/complete-app-bootstrap-probe-20261009.sql",
+      "historicalAssertions": 25,
+      "required": [
+        "remove71-migration prefix; do not execute Auth fixture insert/constant account IDs",
+        "bind all six actual new Auth IDs to jentra.w5.created_auth_ids on same connection",
+        "exact bootstrap body only in a caller-owned rollback if not already persisted; do not duplicate a committed bootstrap",
+        "no injected jwt AAL2 claim treated as actual MFA; real membership and policy capabilities rechecked"
+      ],
+      "reusableUnchanged": false
+    },
+    {
+      "id": "cash-and-scenario-behavior",
+      "status": "blocked-until-genuine-Auth-and-bounded-source-fixtures",
+      "historicalSource": "docs/verification/wave5/complete-app-candidate-20261009.sql",
+      "required": [
+        "genuine proposer/approver/executor identities and real AAL2",
+        "source caps200/800/100/200 retained",
+        "rollback-only business mutations limited to exact new synthetic runtime scope",
+        "fresh actual payroll/project/statement provider metadata and nonempty fixture source dates"
+      ],
+      "reusableUnchanged": false
+    },
+    {
+      "id": "worker-lease-model-policy",
+      "status": "blocked-until-exact-real-synthetic-bootstrap",
+      "historicalSource": "docs/verification/wave5/complete-app-candidate-20261009.sql",
+      "required": [
+        "actual trusted service authority; scoped runtime APIs only",
+        "activation before runtime usage buckets; accept-only subscription for lease phase",
+        "no real model/transport/cron work in rollback-only SQL",
+        "claim-only effect is lease1/usage0; actual reserve/send is a separate gate"
+      ],
+      "reusableUnchanged": false
+    },
+    {
+      "id": "actual-setup-and-delivery",
+      "status": "separate-reviewed-persistent-runtime-stage",
+      "historicalSource": "supabase/tests/wave5_supabase_setup_test.sql",
+      "required": [
+        "exact reviewed persistent setup outside rollback probes when authority is genuine",
+        "no arbitrary Vault key names or test scheduler jobs",
+        "actual transport observation and real delivery/MFA required independently"
+      ],
+      "reusableUnchanged": false
+    }
+  ],
+  "transactionSemantics": [
+    "No inner COMMIT, migration DDL, permission-registration shim, Auth DML, fabricated MFA, constructed JWT, Vault write, cron write, net.http_post, or persistent business fixture is included in the new SQL.",
+    "Do not split a rollback batch into separate connector calls: a new connection would lose temp tables, local settings and transaction ownership.",
+    "On error PostgreSQL may abort the transaction and the connector may discard the connection; preserve the error. Do not assume a second connection can roll back the first. Save fresh after-state fingerprints before claiming preservation.",
+    "The read-only metadata batches issue no side-effectful application function. Function definition, source-body, policy, grant and access-row outputs are hashes, never secrets or private bodies."
+  ],
+  "prerequisites": "Use the original bound source inventory and preservation prerequisites. Root records actual before/after live context, ledger and account creation separately. No source mapping is an installed proof.",
+  "execution": {
+    "databaseCalls": 0,
+    "sqlExecuted": false,
+    "installedSchemaVerified": false,
+    "fixturesCreated": false,
+    "authChanged": false,
+    "secretRead": false,
+    "networkCalls": 0,
+    "sdkJobs": 0,
+    "statusesChanged": false
+  },
+  "gates": {
+    "sourceMappingPrepared": true,
+    "installationVerified": false,
+    "authenticatedNative": false,
+    "realMfa": false,
+    "actualDelivery": false,
+    "actualModelUsage": false,
+    "independentContention": false,
+    "targetScaleLoad": false,
+    "ownerAccepted": 3,
+    "ownerCriteria": 109,
+    "wholeSystemAccepted": false
+  }
+}

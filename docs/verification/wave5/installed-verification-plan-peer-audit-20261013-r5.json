@@ -1,0 +1,430 @@
+{
+  "kind": "independent-wave5-installed-plan-file-audit",
+  "observedAt": "2026-10-13T05:27:03.752Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "runtime": {
+    "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+    "bytes": 1370575,
+    "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3"
+  },
+  "ownerDecision": {
+    "path": "docs/verification/wave5/runtime-owner-decision-20261012-r5.json",
+    "bytes": 2756,
+    "sha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab"
+  },
+  "originalPlan": {
+    "path": "docs/verification/wave5/installed-verification-plan-20261012-r5.json",
+    "bytes": 485918,
+    "sha256": "17aa5cb966070f2766f2ec9460b29a6bcad0d2fa3b6ed027f8790b88868c6ea1"
+  },
+  "successorPlan": {
+    "path": "docs/verification/wave5/installed-verification-plan-20261012-r5-a2.json",
+    "bytes": 11046,
+    "sha256": "0caf72e72b920efa03246860c4d443e3ad0d2c129218d8cca3d85d79ba3c2077"
+  },
+  "counts": {
+    "functionBodyExpectations": 541,
+    "directlyCreatedTables": 215,
+    "forceRlsPredicates": 72,
+    "grantPredicates": 18
+  },
+  "migrationInputsMatched": 71,
+  "migrationBindings": [
+    {
+      "path": "supabase/migrations/20260912152000_product_unit_conversions.sql",
+      "sha256": "1245dd3f3bfca3c00afa4477da67e6a02655ef9f3e25a1c848e5ca3f769f526c",
+      "bytes": 11495
+    },
+    {
+      "path": "supabase/migrations/20260912153000_procurement_requisition_drafts.sql",
+      "sha256": "9b751a04245677ca999b6e11a4b7935a2e577d5080961553df3af30161b49a2c",
+      "bytes": 11916
+    },
+    {
+      "path": "supabase/migrations/20260913001000_procurement_requisition_workflow.sql",
+      "sha256": "05533f3c9b038cc1e023c35869a62b987810d776fbba805621678eaa787579d5",
+      "bytes": 16044
+    },
+    {
+      "path": "supabase/migrations/20260913002000_procurement_reference_options.sql",
+      "sha256": "c56605aa3ab7fafe38dbab4777ca23f731e7a53fd9076ef30a1953fa49adc74c",
+      "bytes": 7953
+    },
+    {
+      "path": "supabase/migrations/20260913003000_procurement_sourcing.sql",
+      "sha256": "d4f92c0fb5c6d24c48d4c21c7184ef042a635abb654c7a53c92129fbc3503d44",
+      "bytes": 22449
+    },
+    {
+      "path": "supabase/migrations/20260913004000_procurement_purchase_orders.sql",
+      "sha256": "8a71252b8bf62a0a8a7325a4683ae770039cecd5c72dc30be131c428636e6795",
+      "bytes": 22720
+    },
+    {
+      "path": "supabase/migrations/20260913005000_procurement_order_workflow.sql",
+      "sha256": "dedb4da3b59ca593a349ecaf4c77fc1adf5dd9e3e56d903726291f6e5e98c077",
+      "bytes": 12156
+    },
+    {
+      "path": "supabase/migrations/20260913006000_procurement_goods_receipts.sql",
+      "sha256": "f38bc858ea03067f56f44208196312842484bd1263b4b9466dc58cb8a7220b76",
+      "bytes": 46238
+    },
+    {
+      "path": "supabase/migrations/20260913007000_procurement_supplier_bills.sql",
+      "sha256": "9212e1dea7c9abcb0e3224ff37bc5a3e1495ea73128bb450f99ef79c4c93c722",
+      "bytes": 43912
+    },
+    {
+      "path": "supabase/migrations/20260914001000_procurement_supplier_settlement.sql",
+      "sha256": "5b776e2dc0eb53a72fa51375f248ab24848768d3141c757233c7b97a4a654bf1",
+      "bytes": 49138
+    },
+    {
+      "path": "supabase/migrations/20260915001000_payable_allocation_corrections.sql",
+      "sha256": "d175cf49fe16783e2d413d46167e99777904b804873e96dbc185992fc2625666",
+      "bytes": 31505
+    },
+    {
+      "path": "supabase/migrations/20260915002000_procurement_purchase_returns.sql",
+      "sha256": "44292af187109e00c267a9be60b50a2de8243e97e421c0dee2f0bd7220e2acc6",
+      "bytes": 32622
+    },
+    {
+      "path": "supabase/migrations/20260916001000_inventory_transfers.sql",
+      "sha256": "de1d6141109130d2c29a8d253966f3d934fa412821baa2ef893ac4691c263dc5",
+      "bytes": 29880
+    },
+    {
+      "path": "supabase/migrations/20260916002000_inventory_stock_counts.sql",
+      "sha256": "90072604b03523e391fb12bd315032a4a4b968d28789ad0fbbe77a15d204b40b",
+      "bytes": 42532
+    },
+    {
+      "path": "supabase/migrations/20260918001000_inventory_reservation_release.sql",
+      "sha256": "fb7782b9389615e6a02bcc335d958bba84caa2662c8a85fb295f76120cf9c3e6",
+      "bytes": 12953
+    },
+    {
+      "path": "supabase/migrations/20260919181407_inventory_receipt_provenance.sql",
+      "sha256": "29becfdc43fef3bbc07a303eb8d79232f6ad3e77cd203d70dd2b82737b7b28e4",
+      "bytes": 20953
+    },
+    {
+      "path": "supabase/migrations/20260919185538_inventory_landed_value.sql",
+      "sha256": "b13ac607ae1418bd860a5b5012a6adbfcb381217b76f256bd6ca313463eb6d1b",
+      "bytes": 23154
+    },
+    {
+      "path": "supabase/migrations/20260920202547_inventory_valuation_reports.sql",
+      "sha256": "8d58f47813dbfac15882bc4c80dd64f650fdeb233f14a61b772468adbbceb0db",
+      "bytes": 15075
+    },
+    {
+      "path": "supabase/migrations/20260921041348_manual_journals.sql",
+      "sha256": "8bea1e05398339b03979bf34569bcb76303c449923b346ece57da3d3d9e79bfd",
+      "bytes": 32844
+    },
+    {
+      "path": "supabase/migrations/20260922001000_ar_ap_control_reconciliation.sql",
+      "sha256": "9de77b0e06887469a682292311d9cd161d598dcb6f871a34a712dbc38aaa5e26",
+      "bytes": 35716
+    },
+    {
+      "path": "supabase/migrations/20260923225202_bank_reconciliation.sql",
+      "sha256": "6d914ceb736d69d2becf7130701509e1f617d8493798b5a8922fd9f268b7f6bd",
+      "bytes": 24274
+    },
+    {
+      "path": "supabase/migrations/20260924185321_wave3_period_governance.sql",
+      "sha256": "c6fae72402c4f47e638d7fd9d74b0f05907937e2ac93568ef3c48edb51e67517",
+      "bytes": 39235
+    },
+    {
+      "path": "supabase/migrations/20260925002000_wave3_financial_statements.sql",
+      "sha256": "7596ec3e5b1ac2b348e4b23371ff6c54818a5336d276fa3a03f14f1ecd5f17b6",
+      "bytes": 16728
+    },
+    {
+      "path": "supabase/migrations/20260925003000_wave3_cash_flow.sql",
+      "sha256": "5c9a3b6db7e562ef8dfdc3ae590c26215e01e23d4cc838b88edd74a48b6e354e",
+      "bytes": 18526
+    },
+    {
+      "path": "supabase/migrations/20260925004000_wave3_budgets.sql",
+      "sha256": "56e5ba5993f32297772a994fcdb39c595ee928de9081e6643a4478c4adf021af",
+      "bytes": 25816
+    },
+    {
+      "path": "supabase/migrations/20260926001000_wave3_tax_summary.sql",
+      "sha256": "dcef36d0dcbf6b5277e6a79f625314d7595434cd88ced42271baa1cfa86b4969",
+      "bytes": 20009
+    },
+    {
+      "path": "supabase/migrations/20260926002000_wave3_tax_summary_hardening.sql",
+      "sha256": "7976c8c944fd776729e4c67949706c1265bb0b5df04b076e83db301e8164ddee",
+      "bytes": 10884
+    },
+    {
+      "path": "supabase/migrations/20260926003000_wave3_tax_control_reconciliation.sql",
+      "sha256": "51fb81ab482fdd6e2091ed46add2e2efa0c377528950393469ef721f081fe17b",
+      "bytes": 26294
+    },
+    {
+      "path": "supabase/migrations/20260926005000_wave3_governed_journal_tax.sql",
+      "sha256": "78ae3cf5ee32b220f164431bdc0891dc5f87e04c7eeb079ae5665a9462ee2910",
+      "bytes": 30205
+    },
+    {
+      "path": "supabase/migrations/20260926006000_wave3_tax_control_movements.sql",
+      "sha256": "41c09e5c0f8b6e40c1fca225e4f04196101b1012ebb88ef954234eee4c1e682d",
+      "bytes": 26395
+    },
+    {
+      "path": "supabase/migrations/20260926007000_wave3_grni_control_reconciliation.sql",
+      "sha256": "b1864d4ac1612ebfc54439873ef5c8afab790051cf399869f55bc8ba4ff67f02",
+      "bytes": 12571
+    },
+    {
+      "path": "supabase/migrations/20260926008000_wave3_close_control_review.sql",
+      "sha256": "654fadae87a9b0b027d20aec58ce32ff0fe52a19f024e5182e4b24e5dc2da0ba",
+      "bytes": 23518
+    },
+    {
+      "path": "supabase/migrations/20260926009000_wave3_governed_report_exports.sql",
+      "sha256": "85238e684c967e8377221e55f911fcb9dfa64e7696110ee28eacffe8b6586386",
+      "bytes": 10456
+    },
+    {
+      "path": "supabase/migrations/20260926010000_wave3_financial_dimensions.sql",
+      "sha256": "34f530f465bc21eff2fd0d137c4fa4b7a8a54d9b82401d91f20110e9f055c900",
+      "bytes": 28851
+    },
+    {
+      "path": "supabase/migrations/20260926160000_wave4_calendar_resolution.sql",
+      "sha256": "6abd4dceddbb3124b4bfa01efd97ecafabd59f03ee1f85f48b5bc2a2f5685053",
+      "bytes": 4366
+    },
+    {
+      "path": "supabase/migrations/20260926161000_wave4_organization.sql",
+      "sha256": "6f682652564a030e8a3a6960999aa9c51aa96486ab0f7219d4347f5445e31c45",
+      "bytes": 36828
+    },
+    {
+      "path": "supabase/migrations/20260927001000_wave3_control_read_plan.sql",
+      "sha256": "bea514edc6178a914c8c7ed3881c1a007bc01760ad60772a4549cb4c41499e49",
+      "bytes": 1599
+    },
+    {
+      "path": "supabase/migrations/20260927200629_wave3_operational_evidence.sql",
+      "sha256": "50a0ab28a3573a0bacc0415450e40ddb9deed5fd98196ee49df17e4357dba8f6",
+      "bytes": 44405
+    },
+    {
+      "path": "supabase/migrations/20260927200703_wave3_historical_controls.sql",
+      "sha256": "4d135f473782c8f6fa776fe2cb3190efc0bc34bf6e88f629968c3a0b86743990",
+      "bytes": 26758
+    },
+    {
+      "path": "supabase/migrations/20260927200706_wave3_inventory_extensions.sql",
+      "sha256": "a89834cd135096cf380e5f0446867c5a3b8b6c5c62f63e0f59011943e9e85eea",
+      "bytes": 5111
+    },
+    {
+      "path": "supabase/migrations/20260928001000_wave3_posted_journal_evidence.sql",
+      "sha256": "1c0808dcdb36ebba8d320b1bf344c514e0c1ed7d23cf3e01581364adc219c4f5",
+      "bytes": 5310
+    },
+    {
+      "path": "supabase/migrations/20260928082234_wave4_attendance_intervals.sql",
+      "sha256": "21cb1745977492f343f2992ccc915400f9320a82957f342d943e36a50db60ad6",
+      "bytes": 43502
+    },
+    {
+      "path": "supabase/migrations/20260928083449_wave4_leave_ledger.sql",
+      "sha256": "1fbdd603a68f1962291c85a90739f599ee629fef27e5714ee6c00e8a0e37d4b3",
+      "bytes": 65958
+    },
+    {
+      "path": "supabase/migrations/20260929001000_wave3_notifications.sql",
+      "sha256": "ec673056482b7219c4e983bc602bc05cf35ba3f0d6315bead6f5b0f27ea8d2e0",
+      "bytes": 19942
+    },
+    {
+      "path": "supabase/migrations/20260930001000_wave3_landed_extensions.sql",
+      "sha256": "b472394fcfff0cd7d0d8e2f123e503c6a95ea6521169af62807cafb6bed9718d",
+      "bytes": 35849
+    },
+    {
+      "path": "supabase/migrations/20260930002000_wave3_count_partitions.sql",
+      "sha256": "18e77c3bb7a9904e96650daa08eec5136758fc5e2d52cab03f6394d97c235613",
+      "bytes": 21643
+    },
+    {
+      "path": "supabase/migrations/20260930003000_wave3_stock_disposition.sql",
+      "sha256": "6dc6b2a9bddafa05b263aeb44f0c1ac0e2c68bcd1424869edd8a141e999dad83",
+      "bytes": 47552
+    },
+    {
+      "path": "supabase/migrations/20260930004000_wave3_dashboard_metrics.sql",
+      "sha256": "c915ac0a5bb6367f22ac83008a1a8fc00db9829978fa0cab8d621865b19dad4d",
+      "bytes": 8496
+    },
+    {
+      "path": "supabase/migrations/20260930005000_wave3_observability.sql",
+      "sha256": "9afecc2a25596b7af50aa099fb0b9ee6fc5c916be06dd10eb52c023c5920031d",
+      "bytes": 3116
+    },
+    {
+      "path": "supabase/migrations/20260930070000_wave4_synthetic_payroll.sql",
+      "sha256": "5517cc4559c3f91901525b38ec8fbf03633da49c587a0d034a885405a43465b2",
+      "bytes": 106084
+    },
+    {
+      "path": "supabase/migrations/20260930070500_wave4_clock_batches.sql",
+      "sha256": "6775123b8ef94c61572ebe2c321557a5b0ab3eb976189115da14a374145baffd",
+      "bytes": 14141
+    },
+    {
+      "path": "supabase/migrations/20260930071000_wave4_fixed_assets.sql",
+      "sha256": "d76ab9fef3720aea51de71288defb6fdae8fa93d82fffb83ecc49566fbbb5bf8",
+      "bytes": 67232
+    },
+    {
+      "path": "supabase/migrations/20261001080000_wave4_projects_time.sql",
+      "sha256": "52ca0ba293d0a621304e01135db1424e69ebff579f14712b6b6c29d8c031e740",
+      "bytes": 76025
+    },
+    {
+      "path": "supabase/migrations/20261001090000_wave4_service.sql",
+      "sha256": "28de902e665845c5eb4d26e0a8b3db621a76ccd908d11987126a9932a5679b84",
+      "bytes": 104014
+    },
+    {
+      "path": "supabase/migrations/20261001100000_wave4_project_expenses_billing.sql",
+      "sha256": "0430f55698a28ee7c26a609bc982a96cbc20319d204c3d5546f9a6ae4272efef",
+      "bytes": 102406
+    },
+    {
+      "path": "supabase/migrations/20261001110000_wave4_payroll_corrections.sql",
+      "sha256": "709170a703a5fd6808ba15de27a4b6cfcb33470da977203b960e2d04e67437cf",
+      "bytes": 113497
+    },
+    {
+      "path": "supabase/migrations/20261002080000_wave4_project_payroll_impacts.sql",
+      "sha256": "19a784b4405288cbb4c9fa1403ab4eda52ae75b76712a85e739431bf1dd7ef54",
+      "bytes": 22509
+    },
+    {
+      "path": "supabase/migrations/20261003090000_wave3_negative_stock_policy.sql",
+      "sha256": "b11c16acddee4cf02a7f706f7e0ff991cbebdd4b5c6d0e02412e657c77334959",
+      "bytes": 96514
+    },
+    {
+      "path": "supabase/migrations/20261004090000_project_milestones.sql",
+      "sha256": "683fa20c6d5e118f0496bf21f1a117e33686340da2b407adaf1e1e5e06e93fd1",
+      "bytes": 23918
+    },
+    {
+      "path": "supabase/migrations/20261005090000_service_asset_equipment.sql",
+      "sha256": "d4723bd8025e44ccdc651e6feab21e8ae939f4e2c850a14357453be3e24ca77e",
+      "bytes": 24981
+    },
+    {
+      "path": "supabase/migrations/20261005120000_wave4_project_expense_evidence.sql",
+      "sha256": "990077dbed0e07e74eb593e77a51cc7ba0b62b5ab50c29700a39d4f235d67aba",
+      "bytes": 37432
+    },
+    {
+      "path": "supabase/migrations/20261008090000_wave5_historical_pipeline.sql",
+      "sha256": "183a8688dd2c78a9e13032a165d2e1787b3d8f9dd4a15aee9b201eddf4767768",
+      "bytes": 9101
+    },
+    {
+      "path": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql",
+      "sha256": "1a636229a0749cf9d6334ae49efe8ff38627b6a2d1bb642789a28e86efd1c663",
+      "bytes": 28824
+    },
+    {
+      "path": "supabase/migrations/20261008100000_wave5_invocation_storage.sql",
+      "sha256": "a9bdd3bf5b1593bd3253930c5a0cd6286f576b7f81161a5832919efbc585d6e8",
+      "bytes": 19334
+    },
+    {
+      "path": "supabase/migrations/20261008103000_wave5_dated_cash.sql",
+      "sha256": "24b5ab44250ec5239ab2b942277cb104867d8e67288666c6297d4fa694e4b391",
+      "bytes": 19954
+    },
+    {
+      "path": "supabase/migrations/20261008110000_wave5_governed_export_adapter.sql",
+      "sha256": "fbe68cc451f5044c03be7b68803ff2afbb858004109a5ee2319960d495e193ed",
+      "bytes": 6555
+    },
+    {
+      "path": "supabase/migrations/20261008113000_wave5_statement_classifications.sql",
+      "sha256": "aad2c6cb360490ad653470858a389354c7016f2346b41e26bff8ac8294dc97c3",
+      "bytes": 12261
+    },
+    {
+      "path": "supabase/migrations/20261008120000_wave5_cash_payment_dates.sql",
+      "sha256": "1463953b0fa76269740a732a59485ff3d160681fb2a6655eedbd8c0aeda42c8a",
+      "bytes": 35937
+    },
+    {
+      "path": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "sha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc",
+      "bytes": 18114
+    },
+    {
+      "path": "supabase/migrations/20261009120000_wave5_supabase_runtime.sql",
+      "sha256": "9ceb592be38ebb6cff35b54e1d09c63d7e700cd95f8b52f3725966ea1d677164",
+      "bytes": 12842
+    },
+    {
+      "path": "supabase/migrations/20261009123000_wave5_supabase_schedule.sql",
+      "sha256": "4a7a6404ca74f89f165802781782d9ddada1a9c776ac496690aee1609749ccbf",
+      "bytes": 2202
+    }
+  ],
+  "migrationBindingDigestSha256": "ecd6def7a60e38d88920e0dd01eaa0364d75200eb152242a3cf2c81851c20722",
+  "queryBindings": [
+    {
+      "path": "docs/verification/wave5/installed-baseline-rename-fingerprints-20261012-r5.sql",
+      "sha256": "f4beb12842047ebf0ab8892155c092b1bf357ec27b044be62796bd4f81579b0a",
+      "bytes": 1811,
+      "executed": false
+    },
+    {
+      "path": "docs/verification/wave5/installed-catalog-verification-20261012-r5-a2.sql",
+      "sha256": "1e388eef0a161d3fe90da7f2b2490b7e7c773985e69fa9c3a743fac3c4dd9745",
+      "bytes": 94620,
+      "executed": false
+    },
+    {
+      "path": "docs/verification/wave5/installed-strict-metadata-20261012-r5.sql",
+      "sha256": "906dd7f51f80962b627a62e059637ef57eb896b715acfc27820e4ffea9aec41b",
+      "bytes": 6968,
+      "executed": false
+    },
+    {
+      "path": "docs/verification/wave5/installed-preservation-fingerprints-20261012-r5.sql",
+      "sha256": "8f200dd3a857733c45e4d8b3fc7e4ee7f51c844911ccccbf739630894993a165",
+      "bytes": 2810,
+      "executed": false
+    }
+  ],
+  "passed": true,
+  "filesOnly": true,
+  "sqlExecuted": false,
+  "databaseCalls": 0,
+  "networkCalls": 0,
+  "authChanged": false,
+  "sourceChanged": false,
+  "sdkJobs": 0,
+  "nativeActions": 0,
+  "ownerAcceptedCriteria": 3,
+  "ownerCriteria": 109,
+  "installedSchemaVerified": false,
+  "dynamicRlsCoverageVerified": false,
+  "limitation": "Checks current file bindings and prepared inventory counts only. Root must obtain actual installed catalog, strict metadata, preservation and baseline rename observations. No installed result or runtime acceptance is asserted."
+}

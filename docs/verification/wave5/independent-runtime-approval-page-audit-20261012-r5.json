@@ -1,0 +1,91 @@
+{
+  "kind": "independent-frozen-owner-page-audit",
+  "revision": "r5",
+  "startedAt": "2026-10-12T06:48:49.965Z",
+  "finishedAt": "2026-10-12T06:48:50.536Z",
+  "status": "complete_with_date_note",
+  "page": {
+    "path": "dist/Jentra OS Runtime Approval 20261012 r5.html",
+    "sha256": "d21dc56b4a59a37147877782fff145b5419bcac69b81862b9ba0956982e27d9f",
+    "bytes": 1908630
+  },
+  "journal": {
+    "path": "docs/verification/wave5/runtime-approval-page-20261012-r5.json",
+    "sha256": "43353f8dd3d7878a21f23f860110266109325d7c62dea5eb6046c47a296a1dd0"
+  },
+  "bundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+  "decodedEmbeddedDownloads": [
+    {
+      "mime": "application/json",
+      "bytes": 1370575,
+      "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+      "exactPublishedBytes": true
+    },
+    {
+      "mime": "text/markdown",
+      "bytes": 36729,
+      "sha256": "77ed7069562b912df472dcd9aaa99af10e70e66233f5ff34e49bc77212050284",
+      "exactPublishedBytes": true
+    }
+  ],
+  "visibleFixturePlanWorkerScopeExactlyMatches": true,
+  "accountRows": 6,
+  "orderedMigrationRows": 71,
+  "allMigrationHashesMatch": true,
+  "visibleLimits": {
+    "pendingMigrations": 71,
+    "installedSixExcluded": true,
+    "expectedLedger": 114,
+    "syntheticTenants": 500,
+    "plans": 4,
+    "workers": 2,
+    "vaultValues": 3,
+    "jobs": 3,
+    "expiryHours": 24,
+    "modelInvocations": 4,
+    "tokensEach": 2000,
+    "tokensTotal": 8000,
+    "loadSessions": 2000,
+    "warmupSeconds": 60,
+    "measurementSeconds": 300,
+    "requestCap": 100000,
+    "totalSecondsCap": 900
+  },
+  "dates": {
+    "suiteExecutedOctober10Visible": true,
+    "nativeExecutedOctober11Visible": false,
+    "narrowCountOctober12Visible": true,
+    "narrowCountDoesNotRefreshProvidersOrCollisions": true
+  },
+  "ownerAcceptance": {
+    "accepted": 3,
+    "total": 109,
+    "remaining": 106,
+    "runtimeSetupDoesNotChangeAcceptance": true
+  },
+  "allBroaderRuntimeGatesRemainFalse": true,
+  "staticSurfaces": {
+    "scripts": 0,
+    "inputOrFormTags": 0,
+    "externalAssets": 0,
+    "cssUrls": 0,
+    "automaticRequests": 0,
+    "downloadDataUrls": 2,
+    "privateValuesOnlyReferenced": true
+  },
+  "materialIssues": [],
+  "notes": [
+    {
+      "code": "NATIVE_PREVIEW_DATE_MISSING_IN_VISIBLE_COPY",
+      "finding": "The original visible page does not state that the native Preview session executed October11. Suite and narrow-count dates are explicit.",
+      "resolution": "Preserve this frozen page. Root is creating a separate successor page with the native date and33 image files/29 distinct hashes."
+    }
+  ],
+  "frozenPageAndBoundReviewsPreserved": true,
+  "SDKJobsExecuted": false,
+  "nativeActionsPerformed": false,
+  "liveOperationsPerformed": false,
+  "privateInputsOrSessionStoresAccessed": false,
+  "ownerAcceptanceChanged": false,
+  "boundary": "Static page, decoded public download, scope and saved metadata audit only. Root owns browser rendering. No approval or setup operation is performed."
+}

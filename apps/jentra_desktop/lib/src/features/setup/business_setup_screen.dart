@@ -165,14 +165,15 @@ class _PageHeader extends ConsumerWidget {
                 JentraStatusBadge(
                   label: !state.isOnline
                       ? state.fromCache
-                      ? 'Offline · cached view'
-                      : 'Offline'
+                            ? 'Offline · cached view'
+                            : 'Offline'
                       : ref.watch(_setupDevelopmentPreviewProvider)
                       ? 'Development preview'
                       : ref.watch(businessSetupGatewayProvider) == null
                       ? 'Connection unavailable'
                       : 'Online confirmation ready',
-                  tone: state.isOnline &&
+                  tone:
+                      state.isOnline &&
                           ref.watch(businessSetupGatewayProvider) != null
                       ? JentraStatusTone.success
                       : state.isOnline &&
@@ -1718,7 +1719,8 @@ class _SetupRecordDialogState extends ConsumerState<SetupRecordDialog> {
                           ? 'Save preview example'
                           : 'Save to server',
                       loading: _saving,
-                      onPressed: !_saving &&
+                      onPressed:
+                          !_saving &&
                               widget.online &&
                               widget.canManage &&
                               (developmentPreview || backendAvailable)

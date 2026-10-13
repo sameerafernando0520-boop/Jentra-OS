@@ -1,0 +1,59 @@
+{
+  "kind": "wave5-runtime-harness-actual-offline-cli-evidence",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "source": "actual tools.exec_command outputs preserved in this task; public local CLI only",
+  "runtimeBundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+  "runtimeFileSha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+  "harnessReview": {
+    "path": "docs/verification/wave5/runtime-harness-review-20261012-r6.json",
+    "sha256": "5bab5d7789c84ef2accb9eba4e2097478121160b7c330bae26b9ef10cf81acbf"
+  },
+  "cliSource": {
+    "path": "tools/wave5/run_runtime_verification.mjs",
+    "sha256": "143f460b88c1e1dba4a06b7ed869fb5de46e6eff77421ebf8d0aee15efb74b20"
+  },
+  "checks": [
+    {
+      "toolChunkId": "885f06",
+      "command": "node tools/wave5/run_runtime_verification.mjs --review docs/verification/wave5/complete-app-runtime-review-20261010-r5.json --harness-review docs/verification/wave5/runtime-harness-review-20261012-r6.json",
+      "exitCode": 0,
+      "wallTimeSeconds": 0.5604925,
+      "actualResult": {
+        "mode": "offline-validation",
+        "executedLive": false,
+        "networkCalls": 0,
+        "runtimeBundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+        "harnessReviewSha256": "5bab5d7789c84ef2accb9eba4e2097478121160b7c330bae26b9ef10cf81acbf",
+        "planValidated": false,
+        "independentSessionContention": false,
+        "targetScaleLoad": false,
+        "ownerAcceptance": false
+      }
+    },
+    {
+      "toolChunkId": "ef7c68",
+      "command": "node tools/wave5/run_runtime_verification.mjs --review docs/verification/wave5/complete-app-runtime-review-20261010-r5.json --harness-review docs/verification/wave5/runtime-harness-review-20261012-r6.json --execute",
+      "exitCode": 1,
+      "wallTimeSeconds": 0.5171467,
+      "expectedNegativeFixture": true,
+      "actualResult": {
+        "failureCode": "EXPLICIT_OWNER_APPROVAL_REQUIRED",
+        "executedGatePassed": false
+      },
+      "boundary": "This deliberate invocation omits approval/plan/preparation/provider arguments. Its refusal verifies no private import occurs with missing execution inputs; it does not revoke or question the separately approved human runtime decision."
+    }
+  ],
+  "privateProviderLoaded": false,
+  "concretePlanValidated": false,
+  "networkCalls": 0,
+  "sdkJobs": 0,
+  "nativeActions": 0,
+  "credentialsRead": false,
+  "authWrites": 0,
+  "installations": 0,
+  "gates": {
+    "independentSessionContention": false,
+    "targetScaleLoad": false,
+    "ownerAcceptance": false
+  }
+}

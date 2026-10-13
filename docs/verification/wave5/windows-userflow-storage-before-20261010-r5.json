@@ -1,0 +1,71 @@
+{
+    "observedAt":  "2026-10-11T11:53:32.6225846Z",
+    "revision":  "r5",
+    "date":  "20261010",
+    "kind":  "exact-product-prelaunch-path-existence",
+    "method":  "Read-only FileVersionInfo and Test-Path for four exact expected new product directories",
+    "executableIdentities":  [
+                                 {
+                                     "observedAt":  "2026-10-11T11:53:32.4418577Z",
+                                     "mode":  "Preview",
+                                     "executable":  "C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Preview\\Jentra_OS.exe",
+                                     "method":  "System.Diagnostics.FileVersionInfo PE resource read",
+                                     "CompanyName":  "com.jentra.test",
+                                     "ProductName":  "JentraOS_WindowsTest_20261010-r5_Preview",
+                                     "OriginalFilename":  "Jentra_OS.exe",
+                                     "FileDescription":  "Jentra OS Windows Test - 20261010 r5 Preview",
+                                     "sha256":  "9c3a188cce375c5863d28c30e65b148f7f1c8114dab0499712b1dffcdbebfa51",
+                                     "bytes":  93184,
+                                     "readOnly":  true,
+                                     "nativeLaunched":  false
+                                 },
+                                 {
+                                     "observedAt":  "2026-10-11T11:53:32.6124157Z",
+                                     "mode":  "Connected",
+                                     "executable":  "C:\\Users\\sheha\\Desktop\\Jentra OS\\dist\\Jentra OS Windows Test 20261010 r5\\Connected\\Jentra_OS.exe",
+                                     "method":  "System.Diagnostics.FileVersionInfo PE resource read",
+                                     "CompanyName":  "com.jentra.test",
+                                     "ProductName":  "JentraOS_WindowsTest_20261010-r5_Connected",
+                                     "OriginalFilename":  "Jentra_OS.exe",
+                                     "FileDescription":  "Jentra OS Windows Test - 20261010 r5 Connected",
+                                     "sha256":  "f625e4e09ff5a8f6a796547fbfdcecbd66d0129b28acb455e8d35e31d68e6906",
+                                     "bytes":  93184,
+                                     "readOnly":  true,
+                                     "nativeLaunched":  false
+                                 }
+                             ],
+    "paths":  [
+                  {
+                      "mode":  "Preview",
+                      "kind":  "applicationSupport",
+                      "expectedPath":  "C:\\Users\\sheha\\AppData\\Roaming\\com.jentra.test\\JentraOS_WindowsTest_20261010-r5_Preview",
+                      "exists":  false
+                  },
+                  {
+                      "mode":  "Preview",
+                      "kind":  "applicationCache",
+                      "expectedPath":  "C:\\Users\\sheha\\AppData\\Local\\com.jentra.test\\JentraOS_WindowsTest_20261010-r5_Preview",
+                      "exists":  false
+                  },
+                  {
+                      "mode":  "Connected",
+                      "kind":  "applicationSupport",
+                      "expectedPath":  "C:\\Users\\sheha\\AppData\\Roaming\\com.jentra.test\\JentraOS_WindowsTest_20261010-r5_Connected",
+                      "exists":  false
+                  },
+                  {
+                      "mode":  "Connected",
+                      "kind":  "applicationCache",
+                      "expectedPath":  "C:\\Users\\sheha\\AppData\\Local\\com.jentra.test\\JentraOS_WindowsTest_20261010-r5_Connected",
+                      "exists":  false
+                  }
+              ],
+    "allExpectedPathsAbsent":  true,
+    "pathContentsRead":  false,
+    "defaultAcceptanceStoresRead":  false,
+    "localStoresCopied":  false,
+    "OSUserCreated":  false,
+    "nativeLaunched":  false,
+    "expectedNativeDirectoriesObservedAfterLaunch":  false,
+    "boundary":  "Expected unique product paths only. Separate products on the same Windows account do not create an OS security boundary; actual postlaunch path behavior remains unverified."
+}

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-10T08:41:39.816Z",
+  "updatedAt": "2026-10-11T12:20:15.091Z",
   "requirementCount": 109,
   "ownerAcceptedCriteria": 3,
   "wholeWaveComplete": false,
@@ -7207,5 +7207,1188 @@
     "newRuntimeInstallationComplete": false,
     "ownerSignoff": false,
     "boundary": "Fresh bounded verification evidence only. Earlier records, including the predecision0/109 packet, remain historical. No new owner decision, installation, private operation, production or real billing."
+  },
+  "currentR5PendingVerification": {
+    "recordedAt": "2026-10-10T14:50:21.404Z",
+    "phase": "preapproval-review-ready",
+    "sourceManifest": {
+      "path": "docs/verification/wave5/desktop-verification-source-20261010-r5.json",
+      "sha256": "9c9bf1b6de941d24c0d920f2997c488e3f85b9f7e38ec1f941c815da6c95005c"
+    },
+    "selectedSources": 1068,
+    "sourceInputsSha256": "e2819b1cf2a6a84c580b90600f1287fe7d0ed9169292b94b4b337366afa1a10f",
+    "declaredDartDelta": [
+      {
+        "path": "apps/jentra_desktop/lib/src/features/procurement/procurement_screen.dart",
+        "approvedBaseSha256": "f2ade0b59dae2dd87ca73a07ab80b1eddac0a8e316b897f3cf71acb76c586f90",
+        "r5Sha256": "78e17c916117042e5a365f3d20dc2500e93ae7e4481e2ef447038b6943fdb4dc"
+      },
+      {
+        "path": "apps/jentra_desktop/lib/src/features/setup/business_setup_screen.dart",
+        "approvedBaseSha256": "9fa5c9f2e7977b4f6245171ed92beb972a52b58afed517d1f219ddb9900ccdea",
+        "r5Sha256": "97501a3814b0f19351e422156cdb8b10bcddfe9609e85c55434b6bdbe6aeedfa"
+      },
+      {
+        "path": "apps/jentra_desktop/lib/src/features/shared/module_placeholder_screen.dart",
+        "approvedBaseSha256": "9eb90dd52b312b36955d2cddf59429c2ead73652b9a6bb8570391b3f4ef17f5c",
+        "r5Sha256": "b834b8abe8fa4dd41942ac1d1f46088137e390bb457d695bb51040a7490be559"
+      },
+      {
+        "path": "apps/jentra_desktop/test/jentra_app_test.dart",
+        "approvedBaseSha256": "fb1654528ae63934e70da80d5de1220c7f5eded3ddc175f1fef612960a79e336",
+        "r5Sha256": "35b4095ede9e36f10400af32a5c6bd8ed328c3f94b7c07a508ccf031cffabba4"
+      },
+      {
+        "path": "apps/jentra_desktop/test/warehouse_setup_test.dart",
+        "approvedBaseSha256": "6f171fc6b90b51e03bbf946140c4dc8d1354ac3a2def345b66ae57157f14e5c7",
+        "r5Sha256": "c3879ff13c293d921a3dea2fe9d3a143211f393ff90e693aae5511811b463222"
+      }
+    ],
+    "newBehaviorCases": 6,
+    "expectedFullDesktopCases": 2010,
+    "actualCompletedStages": [
+      {
+        "stage": "analyzer",
+        "result": {
+          "path": "docs/verification/wave5/desktop-verification-analyzer-20261010-r5.json",
+          "sha256": "0fc15fb7a93241d798ea363e2739a8de950d83382ae2e869c6d789c7ad39ece5"
+        },
+        "log": {
+          "path": "docs/verification/wave5/desktop-verification-analyzer-20261010-r5.log",
+          "sha256": "4cf18cf6acc9bdf65a794d5c1659196622f74f337344074198a36d3992e6f08d"
+        },
+        "sdkExit": {
+          "path": "docs/verification/wave5/desktop-verification-analyzer-20261010-r5.sdk-exit.json",
+          "sha256": "606bb8042824b21ff404b4d98a47b4c88985467d600cbaed0041269d22d471af"
+        },
+        "actualSDKExit": 0,
+        "counts": null,
+        "actualTestIdentities": [],
+        "strictGoldenComparisonPassed": null,
+        "expectedGoldenFailuresObserved": false,
+        "goldenFilesRegenerated": false
+      },
+      {
+        "stage": "focusedNonGolden",
+        "result": {
+          "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r5.json",
+          "sha256": "0b59461ddeeb0de5f54d1970ede0734be87574dcb8725b33475df57fa68c858f"
+        },
+        "log": {
+          "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r5.log",
+          "sha256": "b5dbf02a1b3c6f1f2ce62cdb9c3ab7adabdf175e4f4ba5e0395b181dc6e5df30"
+        },
+        "sdkExit": {
+          "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r5.sdk-exit.json",
+          "sha256": "787f91fea2b7ac55bcd4e4ef6f61283803807ad4f0fd9ad3d00fb24d27ac828f"
+        },
+        "actualSDKExit": 0,
+        "counts": {
+          "passed": 23,
+          "failed": 0,
+          "skipped": 0
+        },
+        "actualTestIdentities": [
+          "command_palette_keyboard_test.dart: Enter on a document link retains destination scope checks",
+          "command_palette_keyboard_test.dart: Up wraps to the last command and scrolls it into view",
+          "command_palette_keyboard_test.dart: arrow selection and Enter open the selected visible destination",
+          "command_palette_keyboard_test.dart: empty results ignore navigation and Escape closes the palette",
+          "command_palette_keyboard_test.dart: permission revocation removes a selected command before Enter",
+          "command_palette_keyboard_test.dart: search resets selection and Enter opens its first match",
+          "jentra_app_test.dart: Finance landing explains unavailable posting and reports",
+          "jentra_app_test.dart: Wave 2 Business Setup Centre is routed and actionable — AC-216",
+          "jentra_app_test.dart: Wave 2 offline commands are guarded — AC-217",
+          "jentra_app_test.dart: Wave 2 renders every resource and configurable form — FR-201 through FR-240",
+          "jentra_app_test.dart: Wave 2 setup confirms discarding dirty forms — FR-241",
+          "jentra_app_test.dart: Wave 2 setup forms surface field validation — AC-216",
+          "jentra_app_test.dart: Wave 2 setup opens the first permitted resource when finance is hidden — AC-218",
+          "jentra_app_test.dart: Wave 2 unauthorized capability hides and denies setup — AC-218",
+          "jentra_app_test.dart: Wave 2 view-only capability hides mutations — AC-218",
+          "jentra_app_test.dart: configured procurement subset explains missing connection",
+          "jentra_app_test.dart: configured setup gateway retains server confirmation presentation",
+          "jentra_app_test.dart: configured setup without a gateway disables server confirmation",
+          "jentra_app_test.dart: development Preview procurement explains unavailable accounting",
+          "jentra_app_test.dart: development Preview setup explains memory-only examples",
+          "jentra_app_test.dart: foundation shell exposes routes and command palette — AC-6",
+          "main_preview_startup_test.dart: unconfigured startup renders a preview without native stores or a backend",
+          "warehouse_setup_test.dart: warehouse viewer cannot create records"
+        ],
+        "strictGoldenComparisonPassed": null,
+        "expectedGoldenFailuresObserved": false,
+        "goldenFilesRegenerated": false
+      },
+      {
+        "stage": "goldens83",
+        "result": {
+          "path": "docs/verification/wave5/desktop-verification-goldens83-20261010-r5.json",
+          "sha256": "5f520b1e18d0f25a40b6d0e9de876a5f3173c5b26326000f247f528e890f3ea9"
+        },
+        "log": {
+          "path": "docs/verification/wave5/desktop-verification-goldens83-20261010-r5.log",
+          "sha256": "3e56cc7734888e162ee2f1d08e1b2276ed110d9da0ad2c9526faf3d1305812e4"
+        },
+        "sdkExit": {
+          "path": "docs/verification/wave5/desktop-verification-goldens83-20261010-r5.sdk-exit.json",
+          "sha256": "11a5cfa7496fc5856431575cc564f72249dec94e42219e5bee726b7fc9b9fc61"
+        },
+        "actualSDKExit": 1,
+        "counts": {
+          "passed": 75,
+          "failed": 8,
+          "skipped": 0
+        },
+        "actualTestIdentities": [
+          "crm_workspace_test.dart: CRM desktop composition matches its approved visual contract — AC-321",
+          "design_system_catalogue_test.dart: logo-led catalogue 1024_light_compact",
+          "design_system_catalogue_test.dart: logo-led catalogue 1440_dark_compact",
+          "design_system_catalogue_test.dart: logo-led catalogue 1440_light_comfortable",
+          "design_system_catalogue_test.dart: logo-led catalogue 1920_dark_comfortable",
+          "goods_receipt_workspace_test.dart: goods receipt dark at 200% preserves posting controls",
+          "goods_receipt_workspace_test.dart: goods receipt light at 200% preserves posting controls",
+          "inventory_transfer_workspace_test.dart: transfer editor dark at 200 percent",
+          "inventory_transfer_workspace_test.dart: transfer editor light at 200 percent",
+          "inventory_valuation_workspace_test.dart: valuation dark 200 percent",
+          "inventory_valuation_workspace_test.dart: valuation light 200 percent",
+          "jentra_app_test.dart: Wave 2 setup remains reachable at 200% text scale — EC-224",
+          "jentra_app_test.dart: dashboard golden 1024_dark_comfortable — AC-1 / AC-7",
+          "jentra_app_test.dart: dashboard golden 1024_light_compact — AC-1 / AC-7",
+          "jentra_app_test.dart: dashboard golden 1440_dark_compact — AC-1 / AC-7",
+          "jentra_app_test.dart: dashboard golden 1440_light_comfortable — AC-1 / AC-7",
+          "jentra_app_test.dart: dashboard golden 1920_dark_comfortable — AC-1 / AC-7",
+          "jentra_app_test.dart: dashboard golden 1920_light_comfortable — AC-1 / AC-7",
+          "jentra_app_test.dart: setup golden 1024_dark_comfortable — AC-216",
+          "jentra_app_test.dart: setup golden 1024_light_compact — AC-216",
+          "jentra_app_test.dart: setup golden 1440_dark_compact — AC-216",
+          "jentra_app_test.dart: setup golden 1440_light_comfortable — AC-216",
+          "jentra_app_test.dart: setup golden 1920_dark_comfortable — AC-216",
+          "jentra_app_test.dart: setup golden 1920_light_comfortable — AC-216",
+          "landed_value_workspace_test.dart: landed preview dark 200 percent",
+          "landed_value_workspace_test.dart: landed preview light 200 percent",
+          "payroll_workspace_test.dart: payroll workspace dark at 200 percent text scale",
+          "payroll_workspace_test.dart: payroll workspace light at 200 percent text scale",
+          "procurement_workspace_test.dart: AC-321 procurement editor dark at 200% text",
+          "procurement_workspace_test.dart: AC-321 procurement editor light at 200% text",
+          "product_unit_workspace_test.dart: product unit dark at 200%",
+          "product_unit_workspace_test.dart: product unit light at 200%",
+          "purchase_order_workspace_test.dart: purchase order dark at 200% retains actions",
+          "purchase_order_workspace_test.dart: purchase order light at 200% retains actions",
+          "purchase_return_workspace_test.dart: return editor dark at 200 percent",
+          "purchase_return_workspace_test.dart: return editor light at 200 percent",
+          "quick_create_test.dart: customer quick create opens the party workspace and its create control",
+          "quotation_workspace_test.dart: AC-303 editor visual and accessible state 1440_dark",
+          "quotation_workspace_test.dart: AC-303 editor visual and accessible state 1440_light",
+          "quotation_workspace_test.dart: AC-303 explicit conflict comparison retains reviewed local fields",
+          "quotation_workspace_test.dart: AC-303 line editing preserves exact conversion and discount choice",
+          "quotation_workspace_test.dart: AC-303 renders exact saved offer and readable revision decisions",
+          "receipt_trace_workspace_test.dart: receipt trace dark at 200 percent",
+          "receipt_trace_workspace_test.dart: receipt trace light at 200 percent",
+          "receivables_workspace_test.dart: invoice editor dark theme",
+          "receivables_workspace_test.dart: invoice source detail renders exact totals and guarded actions",
+          "receivables_workspace_test.dart: narrow editor at 200 percent text remains scrollable",
+          "receivables_workspace_test.dart: receipt editor offers governed tender and bank fields",
+          "receivables_workspace_test.dart: return editor requires original source and disposition",
+          "receivables_workspace_test.dart: storage failure keeps the offline editor and offers retry",
+          "receivables_workspace_test.dart: uncertain result displays saved-command retry",
+          "reservation_workspace_test.dart: dated reservation queue dark 200 percent",
+          "reservation_workspace_test.dart: dated reservation queue light 200 percent",
+          "reservation_workspace_test.dart: reservation dark 200 percent review",
+          "reservation_workspace_test.dart: reservation light 200 percent review",
+          "sales_order_workspace_test.dart: AC-304 accepted quotation opens explicit conversion fields",
+          "sales_order_workspace_test.dart: AC-304 conflict UI requires inspection before keeping local edits",
+          "sales_order_workspace_test.dart: AC-304 credit dialog explains exact exposure and reasoned override",
+          "sales_order_workspace_test.dart: AC-304 rendered order_editor_1024_text200",
+          "sales_order_workspace_test.dart: AC-304 rendered order_editor_1440_dark",
+          "sales_order_workspace_test.dart: AC-304 rendered order_editor_1440_light",
+          "sales_order_workspace_test.dart: AC-304 reservation UI bounds demand and available stock",
+          "sourcing_recovery_test.dart: supplier quote editor dark retains controls at 200%",
+          "sourcing_recovery_test.dart: supplier quote editor light retains controls at 200%",
+          "stock_count_workspace_test.dart: count editor dark at 200 percent",
+          "stock_count_workspace_test.dart: count editor light at 200 percent",
+          "stock_count_workspace_test.dart: serial identity count dark at 200 percent",
+          "stock_count_workspace_test.dart: serial identity count light at 200 percent",
+          "stock_opening_workspace_test.dart: 200 percent text remains scrollable without overflow",
+          "stock_opening_workspace_test.dart: opening editor renders count lot details and exact preview",
+          "stock_opening_workspace_test.dart: opening editor supports dark theme",
+          "stock_opening_workspace_test.dart: opening register shows exact value and status",
+          "stock_opening_workspace_test.dart: posted opening presents immutable stock and journal references",
+          "stock_opening_workspace_test.dart: uncertain post shows durable retry and blocks replacement",
+          "supplier_bill_workspace_test.dart: supplier bill dark at 200% retains match controls",
+          "supplier_bill_workspace_test.dart: supplier bill light at 200% retains match controls",
+          "supplier_payment_workspace_test.dart: allocation correction dark remains usable at 200 percent",
+          "supplier_payment_workspace_test.dart: allocation correction light remains usable at 200 percent",
+          "supplier_payment_workspace_test.dart: dated AP statement dark retains exact aging",
+          "supplier_payment_workspace_test.dart: dated AP statement light retains exact aging",
+          "supplier_payment_workspace_test.dart: payment proposal dark at 200 percent",
+          "supplier_payment_workspace_test.dart: payment proposal light at 200 percent",
+          "warehouse_setup_test.dart: warehouse form uses selected branch and preserves scope on save"
+        ],
+        "strictGoldenComparisonPassed": false,
+        "expectedGoldenFailuresObserved": true,
+        "goldenFilesRegenerated": false
+      },
+      {
+        "stage": "candidate8",
+        "result": {
+          "path": "docs/verification/wave5/desktop-verification-candidate8-20261010-r5.json",
+          "sha256": "a23e6dc8d52af21f63c52d5ddbb9f52729dedf6cefa2a566b90093c94a829fa5"
+        },
+        "log": {
+          "path": "docs/verification/wave5/desktop-verification-candidate8-20261010-r5.log",
+          "sha256": "d75140a58dd506c6c54764658afdce393453838f8cb43bf9c82a1607d3f369ba"
+        },
+        "sdkExit": {
+          "path": "docs/verification/wave5/desktop-verification-candidate8-20261010-r5.sdk-exit.json",
+          "sha256": "088d64c583f4ae647a2781a0e48f565641c811228a494c76ea5f3d2c83fcd702"
+        },
+        "actualSDKExit": 0,
+        "counts": {
+          "passed": 8,
+          "failed": 0,
+          "skipped": 0
+        },
+        "actualTestIdentities": [
+          "jentra_app_test.dart: Wave 2 setup remains reachable at 200% text scale — EC-224",
+          "jentra_app_test.dart: setup golden 1024_dark_comfortable — AC-216",
+          "jentra_app_test.dart: setup golden 1024_light_compact — AC-216",
+          "jentra_app_test.dart: setup golden 1440_dark_compact — AC-216",
+          "jentra_app_test.dart: setup golden 1440_light_comfortable — AC-216",
+          "jentra_app_test.dart: setup golden 1920_dark_comfortable — AC-216",
+          "jentra_app_test.dart: setup golden 1920_light_comfortable — AC-216",
+          "warehouse_setup_test.dart: warehouse form uses selected branch and preserves scope on save"
+        ],
+        "strictGoldenComparisonPassed": null,
+        "expectedGoldenFailuresObserved": false,
+        "goldenFilesRegenerated": true
+      },
+      {
+        "stage": "candidate8Strict",
+        "result": {
+          "path": "docs/verification/wave5/desktop-verification-candidate8Strict-20261010-r5.json",
+          "sha256": "00d89b1e1e347a03b22ba0c0877ec84ee4f8637dc377e04fe02441f5d4b0cc91"
+        },
+        "log": {
+          "path": "docs/verification/wave5/desktop-verification-candidate8Strict-20261010-r5.log",
+          "sha256": "9180644b791f9de30fa902d0983e5bc055a96495a08b440d48f4d64f1119bf99"
+        },
+        "sdkExit": {
+          "path": "docs/verification/wave5/desktop-verification-candidate8Strict-20261010-r5.sdk-exit.json",
+          "sha256": "169d677b313f178ae42d97e75109370e999fac1da41e5f66a61cf66e1a62c0c2"
+        },
+        "actualSDKExit": 0,
+        "counts": {
+          "passed": 8,
+          "failed": 0,
+          "skipped": 0
+        },
+        "actualTestIdentities": [
+          "jentra_app_test.dart: Wave 2 setup remains reachable at 200% text scale — EC-224",
+          "jentra_app_test.dart: setup golden 1024_dark_comfortable — AC-216",
+          "jentra_app_test.dart: setup golden 1024_light_compact — AC-216",
+          "jentra_app_test.dart: setup golden 1440_dark_compact — AC-216",
+          "jentra_app_test.dart: setup golden 1440_light_comfortable — AC-216",
+          "jentra_app_test.dart: setup golden 1920_dark_comfortable — AC-216",
+          "jentra_app_test.dart: setup golden 1920_light_comfortable — AC-216",
+          "warehouse_setup_test.dart: warehouse form uses selected branch and preserves scope on save"
+        ],
+        "strictGoldenComparisonPassed": true,
+        "expectedGoldenFailuresObserved": false,
+        "goldenFilesRegenerated": false
+      }
+    ],
+    "fullCurrentDesktopSuiteExecuted": false,
+    "fullCurrentDesktopSuitePassed": false,
+    "approvedImageControl": {
+      "passed": 75,
+      "failed": 8,
+      "skipped": 0,
+      "expectedFailuresOnly": true,
+      "strictGoldenComparisonPassed": false
+    },
+    "candidateImages": {
+      "count": 8,
+      "candidateBundleSha256": "91069e594cf9f34b062806f7efd19b7f3f9d0133285c5c39794557dc474a9cf4",
+      "generatedOnlyInIsolatedCopy": true,
+      "strictComparisonPassed": true,
+      "approvedRepositoryImagesChanged": false,
+      "ownerReview": {
+        "path": "docs/verification/wave5/golden-owner-review-20261010-r5.json",
+        "sha256": "f1c0d705106fa3516748d7484b7747dd431e87ec27992990fc2ee1fe807a8fa7"
+      },
+      "gallery": {
+        "path": "dist/Jentra OS Preview Guidance Review 20261010 r5.html",
+        "sha256": "fcebbb2a6856899b668419b7c0fc44bc24834744f339a00387289387be4ce6fb",
+        "bytes": 10903562
+      },
+      "decodedGalleryIntegrity": {
+        "path": "docs/verification/wave5/preview-guidance-gallery-verification-20261010-r5.json",
+        "sha256": "a8e0c2fb347f738226a555d92578c56bbfb7fcb690b51a8dedad26497ff2bae6"
+      },
+      "ownerImageDecisionPending": true,
+      "ownerApprovalRecorded": false,
+      "promoted": false
+    },
+    "historicalR3": {
+      "publication": {
+        "path": "docs/verification/wave5/current-verification-status-after-20261010-r3-guarded.json",
+        "sha256": "918f62e99960966c6ac9c34e2363bc16049c995ee3632794f4b6a8486c3ea8e6"
+      },
+      "sourceManifest": {
+        "path": "docs/verification/wave5/golden-review-postapproval-source-20261010-r2.json",
+        "sha256": "2d055695358df8a3d4b69b551747539800caa8ea70b6d89def6227446da87289"
+      },
+      "fullDesktopRun": {
+        "path": "docs/verification/wave5/golden-review-approvedAll-20261010-r2.json",
+        "sha256": "bfb55910e1c35d8b33f9a327bac3ecf34696d55e4d12afed27260e0561fa93cb"
+      },
+      "passedDesktopTests": 2004,
+      "pairedNativeBuild": {
+        "path": "docs/verification/wave5/windows-test-verification-20261010-r3.json",
+        "sha256": "c87c1830213deb46af97759013a17e319905d3e9e3e912558dd0731484657aa8"
+      },
+      "delivery": {
+        "path": "docs/verification/wave5/windows-test-delivery-20261010-r3.json",
+        "sha256": "d3873b2b6595969c47d9cf531cf300bb8be150d8e54866a8a00a58fea64de1d9"
+      },
+      "actualNativePreview": {
+        "record": {
+          "path": "docs/verification/wave5/native-preview-userflows-20261010-r3.json",
+          "sha256": "56b786ff721e1f3bbd54d4d277801d85e0c9125ceb705705be3b5dcb156d401c"
+        },
+        "report": {
+          "path": "docs/verification/wave5/native-preview-userflows-20261010-r3.md",
+          "sha256": "b3f7547bdf5ed57395b88a7714cbb5a501191350a3312ab282edf2e1a80b6a5a"
+        },
+        "counts": {
+          "pass": 10,
+          "fail": 2,
+          "blocked": 2,
+          "observed": 0
+        },
+        "screenshots": 14,
+        "uniqueScreenshotHashes": 13,
+        "observedCaseIds": [
+          "P01_STARTUP",
+          "K01_INITIAL_CTRL_K",
+          "K02_ESCAPE",
+          "K03_DIRECT_LETTER",
+          "P02_FINANCE_BLOCKED",
+          "P03_SETUP_LIST",
+          "P04_REQUIRED_VALIDATION",
+          "K04_FORM_TAB",
+          "P05_DARK_THEME",
+          "P06_DENSITY",
+          "P07_THEME_RESTART",
+          "P08_PROCUREMENT_BLOCKED",
+          "P09_MAXIMIZED",
+          "K05_CTRL_K_RECHECK"
+        ],
+        "failedCaseIds": [
+          "K01_INITIAL_CTRL_K",
+          "K05_CTRL_K_RECHECK"
+        ],
+        "blockedCaseIds": [
+          "P02_FINANCE_BLOCKED",
+          "P08_PROCUREMENT_BLOCKED"
+        ],
+        "exactNewExecutableAndBoundWindows": true,
+        "prelaunchPathObservation": {
+          "path": "docs/verification/wave5/windows-userflow-storage-before-20261010-r3.json",
+          "sha256": "2b2a12730967aac135527ba92c599f3f18c4f2c498f3c7b0dd2b4f4a4cdea2c5"
+        },
+        "postlaunchPathObservation": {
+          "path": "docs/verification/wave5/windows-userflow-storage-after-20261010-r3.json",
+          "sha256": "65e7be0a61f36444636906427452d7c7c3c2c078e4a22673940211adc6fe6965"
+        },
+        "actualAccountingTransactions": false,
+        "scope": "Ordinary offline Preview observations only. Authenticated native keyboard and native transaction acceptance remain open."
+      },
+      "currentR5SourceMatch": false,
+      "historicalEvidenceOnly": true,
+      "reason": "The current r5 desktop source differs in the five declared Dart inputs; r3 builds and native observations belong to the earlier source."
+    },
+    "historicalAccounting": {
+      "sourceManifest": {
+        "path": "docs/verification/wave5/accounting-checks-source-20261010-r2.json",
+        "sha256": "0590786a5d996879a2430007ff0779a26ac65ee1488e68e1e7ecf8454dfbc8f3"
+      },
+      "stages": [
+        {
+          "stage": "domain",
+          "result": {
+            "path": "docs/verification/wave5/accounting-checks-domain-20261010-r2.json",
+            "sha256": "b1bf13aae6384a15e577f152e1cfccde878e27f9f1b7b7f1e071c5213c9f90d2"
+          },
+          "log": {
+            "path": "docs/verification/wave5/accounting-checks-domain-20261010-r2.log",
+            "sha256": "0382d8f9f67dfc305324e70fa4eb39c72c9fdd6edf1753a225343e3b033fc675"
+          },
+          "passed": 122,
+          "testFiles": 16,
+          "finishedAt": "2026-10-10T06:49:26.206Z"
+        },
+        {
+          "stage": "platform",
+          "result": {
+            "path": "docs/verification/wave5/accounting-checks-platform-20261010-r2.json",
+            "sha256": "f99850f03d7b34d98fc4219897223fe44a1cbea5714dc50a7bc0e42b32b397d4"
+          },
+          "log": {
+            "path": "docs/verification/wave5/accounting-checks-platform-20261010-r2.log",
+            "sha256": "1fed1e76472df94b03d4ef2705651ece4ede097d6c3a5df9d0361ae1289e7e2a"
+          },
+          "passed": 406,
+          "testFiles": 22,
+          "finishedAt": "2026-10-10T06:50:28.913Z"
+        }
+      ],
+      "passed": 528,
+      "failed": 0,
+      "skipped": 0,
+      "testFiles": 38,
+      "currentDomainAndPlatformSourceUnchanged": true,
+      "dependencyLockUnchanged": true,
+      "affectedDomainOrPlatformFiles": [],
+      "currentR5FullSourceMatch": false,
+      "reexecutedInR5": false,
+      "scope": "Dated controlled calculations and injected gateways; unchanged domain/platform inputs do not prove an authenticated user transaction."
+    },
+    "failedR4History": {
+      "sourceManifest": {
+        "path": "docs/verification/wave5/desktop-verification-source-20261010-r4.json",
+        "sha256": "66b9af11a424dc7dd2fa4ba9da8caeaeedcfe2875b82f8bf1e45840e29be24a5"
+      },
+      "analyzer": {
+        "path": "docs/verification/wave5/desktop-verification-analyzer-20261010-r4.json",
+        "sha256": "524d2e697dbf13d3bcf87b0f2f1dee082f12ae0fd04e2150955e3c6e1a94fff1"
+      },
+      "analyzerCleanForDatedR4Source": true,
+      "focusedRetry": {
+        "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4.json",
+        "sha256": "635a9442fbd3f8cedac0e951e4a48ce50ba6bf77171cc5da9e41449e60130f72"
+      },
+      "focusedRetryLog": {
+        "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4.log",
+        "sha256": "75acee6c905502a359c5f256a90be70fd1476a4f995a2967eaeb94e6722246e3"
+      },
+      "focusedRetrySDKExit": {
+        "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4.sdk-exit.json",
+        "sha256": "1a5aee46d232cc29a5b169ebc2ac37991ed55d4056f5fac149e005b54a01d750"
+      },
+      "testerInterruption": {
+        "path": "docs/verification/wave5/desktop-verification-focused-stalled-tester-20261010-r4-a2.json",
+        "sha256": "7b28161d9b7ba31e10b5d2f56d2481971ab110d62ee29b8b99e3d691778496ac"
+      },
+      "focusedRetryOutcome": "failed with pending auth timer, duplicate starts and incomplete cases after an owned tester interruption",
+      "rawReportedSummary": {
+        "passed": 18,
+        "failed": 1,
+        "skipped": 0
+      },
+      "startedEntryCount": 20,
+      "uniqueStartedTestIdentities": [
+        "command_palette_keyboard_test.dart: Enter on a document link retains destination scope checks",
+        "command_palette_keyboard_test.dart: Up wraps to the last command and scrolls it into view",
+        "command_palette_keyboard_test.dart: arrow selection and Enter open the selected visible destination",
+        "command_palette_keyboard_test.dart: empty results ignore navigation and Escape closes the palette",
+        "command_palette_keyboard_test.dart: permission revocation removes a selected command before Enter",
+        "command_palette_keyboard_test.dart: search resets selection and Enter opens its first match",
+        "jentra_app_test.dart: Wave 2 Business Setup Centre is routed and actionable — AC-216",
+        "jentra_app_test.dart: Wave 2 offline commands are guarded — AC-217",
+        "jentra_app_test.dart: Wave 2 renders every resource and configurable form — FR-201 through FR-240",
+        "jentra_app_test.dart: Wave 2 setup forms surface field validation — AC-216",
+        "jentra_app_test.dart: Wave 2 setup opens the first permitted resource when finance is hidden — AC-218",
+        "jentra_app_test.dart: Wave 2 unauthorized capability hides and denies setup — AC-218",
+        "jentra_app_test.dart: Wave 2 view-only capability hides mutations — AC-218",
+        "jentra_app_test.dart: configured setup gateway retains server confirmation presentation",
+        "jentra_app_test.dart: configured setup without a gateway disables server confirmation",
+        "jentra_app_test.dart: development Preview procurement explains unavailable accounting",
+        "jentra_app_test.dart: development Preview setup explains memory-only examples",
+        "jentra_app_test.dart: foundation shell exposes routes and command palette — AC-6"
+      ],
+      "duplicateStartedTestIdentities": [
+        "jentra_app_test.dart: development Preview procurement explains unavailable accounting"
+      ],
+      "missingStartedTestIdentities": [
+        "jentra_app_test.dart: Finance landing explains unavailable posting and reports",
+        "jentra_app_test.dart: Wave 2 setup confirms discarding dirty forms — FR-241",
+        "jentra_app_test.dart: configured procurement subset explains missing connection",
+        "main_preview_startup_test.dart: unconfigured startup renders a preview without native stores or a backend",
+        "warehouse_setup_test.dart: warehouse viewer cannot create records"
+      ],
+      "full23CaseCoverageProven": false,
+      "permissionFailure": {
+        "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4-a1-failed.json",
+        "sha256": "94076f0baa3301e357218e3bed65ac0cefee3957ea51f578657ede8694b61029"
+      },
+      "permissionFailureRetention": {
+        "path": "docs/verification/wave5/desktop-verification-focused-retention-20261010-r4-a1.json",
+        "sha256": "0ce3e38fde503cec0e6036c65692c308f5077aaf8af36b7ae6c0fce3709c9cf2"
+      },
+      "permissionFailureSDKExitCode": 3221225480,
+      "permissionFailureStartedTests": 0,
+      "bindings": [
+        {
+          "path": "scripts/wave5/desktop_verification_inputs_20261010_r4.mjs",
+          "sha256": "6dffc81714c04b6d934307f92d558ee0c91760bc5771f1a334351d18262b7f69"
+        },
+        {
+          "path": "scripts/wave5/prepare_desktop_verification_20261010_r4.mjs",
+          "sha256": "6546e48cf3628b4713606f97965387697bfb440df2b9cf86b67a78b5e2a2075e"
+        },
+        {
+          "path": "scripts/wave5/run_desktop_verification_20261010_r4.mjs",
+          "sha256": "8204c9e6c4084de2614fb6f87249ab52f6f20205a7d7b8efb387103bd533d9ec"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-source-20261010-r4.json",
+          "sha256": "66b9af11a424dc7dd2fa4ba9da8caeaeedcfe2875b82f8bf1e45840e29be24a5"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-analyzer-20261010-r4.json",
+          "sha256": "524d2e697dbf13d3bcf87b0f2f1dee082f12ae0fd04e2150955e3c6e1a94fff1"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-analyzer-20261010-r4.log",
+          "sha256": "4cf18cf6acc9bdf65a794d5c1659196622f74f337344074198a36d3992e6f08d"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-analyzer-20261010-r4.sdk-exit.json",
+          "sha256": "8173496c431ecbe2dd7dfd7b475524bce01c18dc9557acf75c29e3b5e787cbd9"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4.json",
+          "sha256": "635a9442fbd3f8cedac0e951e4a48ce50ba6bf77171cc5da9e41449e60130f72"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4.log",
+          "sha256": "75acee6c905502a359c5f256a90be70fd1476a4f995a2967eaeb94e6722246e3"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4.sdk-exit.json",
+          "sha256": "1a5aee46d232cc29a5b169ebc2ac37991ed55d4056f5fac149e005b54a01d750"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-focused-stalled-tester-20261010-r4-a2.json",
+          "sha256": "7b28161d9b7ba31e10b5d2f56d2481971ab110d62ee29b8b99e3d691778496ac"
+        },
+        {
+          "path": "scripts/wave5/retain_focused_verification_failure_20261010_r4.mjs",
+          "sha256": "eddd1d05c728d95e1bbf27e0cd3105d95b4cf6bf171fc98c9e5b632fbe7508cd"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-focused-retention-20261010-r4-a1.json",
+          "sha256": "0ce3e38fde503cec0e6036c65692c308f5077aaf8af36b7ae6c0fce3709c9cf2"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4-a1-failed.json",
+          "sha256": "94076f0baa3301e357218e3bed65ac0cefee3957ea51f578657ede8694b61029"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4-a1-failed.log",
+          "sha256": "b598a76f2aa7104d8e392f8ef7bb0d5214f146326070b3e3a035be575d93e3c8"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4-a1-failed.sdk-exit.json",
+          "sha256": "d4230b9d8b3f7fc44e7463748d37f05a519b255556acaad9978ca63df1ef98ee"
+        }
+      ],
+      "fullSuitePassed": false,
+      "currentR5SourceMatchClaimed": false,
+      "boundary": "Immutable dated r4 history. Its failed partial focused run and tester interruption do not establish passing tests or current r5 verification."
+    },
+    "latestSavedLiveObservation": {
+      "summary": {
+        "path": "docs/verification/wave5/complete-live-preflight-20261010-r5-summary.json",
+        "sha256": "04db48a15b4e5ceee6ac25f15d91702739dde04f983fc5ae63b9826bab6634ed"
+      },
+      "index": {
+        "path": "docs/verification/wave5/complete-live-preflight-20261010-r5-index.json",
+        "sha256": "1599c4c2c26b366ea387d4c283dd8b40db55fbbdb039c4ec15a157a43f152859"
+      },
+      "report": null,
+      "observedAt": "2026-10-10 13:25:31.725204+00",
+      "migrations": 43,
+      "apiFunctions": 107,
+      "unchangedProviders": 120,
+      "forcedRlsTables": 15,
+      "zeroCollisionCounters": 14,
+      "originalSixLedgerPreserved": true,
+      "failedRecorderAttempt": {
+        "path": "docs/verification/wave5/failed-live-recorder-attempt-20261010-r5-a1.json",
+        "sha256": "3017eb26a35ecc09484d6653702736f8ff5a8d5e4ddddf534aae3863dce8c969"
+      },
+      "failedRecorderScript": {
+        "path": "scripts/wave5/record_live_preflight_20261010_r5.mjs",
+        "sha256": "8f3186a88829a6719df62a900f2300169e148e5e7e86415299637a3b4d8cc47d"
+      },
+      "failedRecorderOutputsWritten": false,
+      "fullRuntimePreflightComplete": false,
+      "runtimeOwnerApproved": false,
+      "refreshedByThisPublisher": false
+    },
+    "currentR5WindowsBuildExecuted": false,
+    "currentR5PackageDelivered": false,
+    "currentR5NativeActionsExecuted": false,
+    "ownerAcceptedCriteria": 3,
+    "remainingUnacceptedCriteria": 106,
+    "all109RowsAndDirectAcceptancePreserved": true,
+    "authenticatedNativeAcceptance": false,
+    "nativeKeyboardVerified": false,
+    "realMfa": false,
+    "actualDelivery": false,
+    "actualModelUsage": false,
+    "independentSessionContention": false,
+    "targetScaleLoad": false,
+    "newRuntimeInstallationComplete": false,
+    "ownerSignoff": false,
+    "wholeWaveComplete": false,
+    "boundary": "Current preapproval verification and review preparation only. Eight strict failures remain failed approved comparisons. No new owner image decision, promotion, full suite, Windows/native, installation, MFA, delivery, model, load, production or billing claim."
+  },
+  "currentR5Verification": {
+    "recordedAt": "2026-10-11T12:20:15.091Z",
+    "revision": "r5",
+    "phase": "postapproval-native-preview-evidence-ready",
+    "sourceManifest": {
+      "path": "docs/verification/wave5/desktop-verification-source-20261010-r5-approved.json",
+      "sha256": "d4d234e3603fd5e67f2082108e1eb6ad206739189aeb33c634ccaf5d07d010cf"
+    },
+    "sourceFileCount": 1068,
+    "sourceInputsSha256": "659e91ab9902080f969f6f14b17404eb1d9854d924a902333be8335fa1af100f",
+    "declaredDartDelta": [
+      {
+        "path": "apps/jentra_desktop/lib/src/features/procurement/procurement_screen.dart",
+        "approvedBaseSha256": "f2ade0b59dae2dd87ca73a07ab80b1eddac0a8e316b897f3cf71acb76c586f90",
+        "r5Sha256": "78e17c916117042e5a365f3d20dc2500e93ae7e4481e2ef447038b6943fdb4dc"
+      },
+      {
+        "path": "apps/jentra_desktop/lib/src/features/setup/business_setup_screen.dart",
+        "approvedBaseSha256": "9fa5c9f2e7977b4f6245171ed92beb972a52b58afed517d1f219ddb9900ccdea",
+        "r5Sha256": "97501a3814b0f19351e422156cdb8b10bcddfe9609e85c55434b6bdbe6aeedfa"
+      },
+      {
+        "path": "apps/jentra_desktop/lib/src/features/shared/module_placeholder_screen.dart",
+        "approvedBaseSha256": "9eb90dd52b312b36955d2cddf59429c2ead73652b9a6bb8570391b3f4ef17f5c",
+        "r5Sha256": "b834b8abe8fa4dd41942ac1d1f46088137e390bb457d695bb51040a7490be559"
+      },
+      {
+        "path": "apps/jentra_desktop/test/jentra_app_test.dart",
+        "approvedBaseSha256": "fb1654528ae63934e70da80d5de1220c7f5eded3ddc175f1fef612960a79e336",
+        "r5Sha256": "35b4095ede9e36f10400af32a5c6bd8ed328c3f94b7c07a508ccf031cffabba4"
+      },
+      {
+        "path": "apps/jentra_desktop/test/warehouse_setup_test.dart",
+        "approvedBaseSha256": "6f171fc6b90b51e03bbf946140c4dc8d1354ac3a2def345b66ae57157f14e5c7",
+        "r5Sha256": "c3879ff13c293d921a3dea2fe9d3a143211f393ff90e693aae5511811b463222"
+      }
+    ],
+    "newBehaviorCases": 6,
+    "expectedFullDesktopCases": 2010,
+    "pendingPredecessor": {
+      "publication": {
+        "path": "docs/verification/wave5/pending-verification-status-after-20261010-r5-guarded.json",
+        "sha256": "bdb8d28b1e9f60036a5e86f18b0226cfba0774809e438436404d83f59ab10cae"
+      },
+      "before": {
+        "path": "docs/verification/wave5/pending-verification-status-before-20261010-r5-guarded.json",
+        "sha256": "356b690a16c7f4669c0c80d00491ead1512dc7b334cf584425caac0ee8f0d29e"
+      },
+      "metadataPreserved": true,
+      "historicalPhase": "preapproval-review-ready"
+    },
+    "original83ImageApproval": {
+      "path": "docs/verification/wave5/owner-golden-decision-20261010-r2.json",
+      "sha256": "75cd961f2dcf626ab8e4646c124be2bd8904fa8083ad96d8081f69cc924b828c"
+    },
+    "original83Promotion": {
+      "path": "docs/verification/wave5/golden-promotion-result-20261010-r2.json",
+      "sha256": "4c6091e20bf5fe3684ea05c56ed17e025917c8db286811cdc8db19d0877172b8"
+    },
+    "laterEightImageApproval": {
+      "path": "docs/verification/wave5/owner-golden-decision-20261010-r5.json",
+      "sha256": "b111d362c464a9053cc500e4c852f89e342f3b3c0d21dc0157c45a902ff70411"
+    },
+    "laterEightImagePromotion": {
+      "path": "docs/verification/wave5/golden-promotion-result-20261010-r5.json",
+      "sha256": "5f392f92a2a73f0207c78f90b38a86b76774ce4ac626caa3548ddafac6766547"
+    },
+    "candidateBundleSha256": "91069e594cf9f34b062806f7efd19b7f3f9d0133285c5c39794557dc474a9cf4",
+    "approvedImageDelta": [
+      {
+        "path": "apps/jentra_desktop/test/goldens/setup_1024_dark_comfortable.png",
+        "priorSha256": "283484cbe6f61d2b80c2ee49a15826ab64c14791ccc32ed1f7cb3faf48316e9f",
+        "approvedSha256": "ded0e790625c69a152c3cd5fd5160ec75e3b111b2fa14e1f1d5f246b2099f813"
+      },
+      {
+        "path": "apps/jentra_desktop/test/goldens/setup_1024_light_compact.png",
+        "priorSha256": "d1035619f0b9a4d333a2415e2baa5c226a647991deb1b7f87d2baf2d93ca664a",
+        "approvedSha256": "28f9d079fee69c1e54f391ffa70e7b18a8befd07d191d76a6fb5406d5a29ac9f"
+      },
+      {
+        "path": "apps/jentra_desktop/test/goldens/setup_1440_dark_compact.png",
+        "priorSha256": "610c272e2fd0bdbb8871ec3e9a31517afc2c15dfbdd1063610a3d667f9d22775",
+        "approvedSha256": "b714bb9eba2ed136028ee89ef6b589c62c83a02b4298809cf683eeb7206f3f38"
+      },
+      {
+        "path": "apps/jentra_desktop/test/goldens/setup_1440_light_comfortable.png",
+        "priorSha256": "2287b8ea1529656302da07695d9655e84f00e46a8ce6d9352a4c9731a0c532df",
+        "approvedSha256": "7697344f5f657aa875c091d35582fcf4c007e897c079059d863054a57a7ac28e"
+      },
+      {
+        "path": "apps/jentra_desktop/test/goldens/setup_1920_dark_comfortable.png",
+        "priorSha256": "373479f6584af00d4754b7e413c28cfe2ff541f8331a3bad2bdb8cfc5f855cbe",
+        "approvedSha256": "40ecbddfd7f82fe547ba25b43c92a9d602a35d6fd3b6681d1f35b723e8fb62c7"
+      },
+      {
+        "path": "apps/jentra_desktop/test/goldens/setup_1920_light_comfortable.png",
+        "priorSha256": "5c2925500c0418335a0d5d625b45e71b74dbcc2264b213423be5cc8c76e7c14f",
+        "approvedSha256": "54ec279691c488cb20a4d738961cab671368712361cb0c6b555bf2bd6da2844d"
+      },
+      {
+        "path": "apps/jentra_desktop/test/goldens/setup_1024_light_compact_text_200.png",
+        "priorSha256": "f85bc1d6279a866fe43d363cece318ddffc5c7a082734ef7e38d85dcfcfe7ee8",
+        "approvedSha256": "9e792a97c98f078a289b238c6d81fb20d361a96f2b7d92f09bb21bae195a3719"
+      },
+      {
+        "path": "apps/jentra_desktop/test/goldens/warehouse_setup_form.png",
+        "priorSha256": "3211c581a1b1224c3a2a4ec45f7a13a198a804999a5519c4b05e832b41d70308",
+        "approvedSha256": "bc89ff78a2b5107fc9c1814d6d42664e48f3bf02d7d4864c497a0b038523d2de"
+      }
+    ],
+    "approvedGoldenFailures": 0,
+    "pairedNativeBuild": {
+      "path": "docs/verification/wave5/windows-test-verification-20261010-r5.json",
+      "sha256": "0a9b65d7e841ce687d16557c6ec4c709987270d77fcd75f59caf8801d7464c6e"
+    },
+    "pairedReport": {
+      "path": "docs/verification/wave5/windows-test-verification-20261010-r5.md",
+      "sha256": "ec77a349327ccc4095e0775ef6c32b2530e67e649aa5d7002921caefded35886"
+    },
+    "delivery": {
+      "path": "docs/verification/wave5/windows-test-delivery-20261010-r5.json",
+      "sha256": "9d55c9c1eb4312d6d73324c368870d240c4719726b7af8a908421f914184a589"
+    },
+    "zip": {
+      "path": "dist/Jentra OS Windows Test 20261010 r5.zip",
+      "sha256": "a89be5f4696fcf6ee584caedebfaaa04274feb5417565765051122a1e9d3c85f",
+      "bytes": 46331525
+    },
+    "runnerIdentityOverlaysPerApp": 3,
+    "previewAndConnectedOrdinaryBuilds": true,
+    "fullDesktopMatchingBase": {
+      "record": {
+        "path": "docs/verification/wave5/desktop-verification-approvedAll-20261010-r5.json",
+        "sha256": "0e9d51dcded80e5d3a47598a1b8451683cd53e66779c44b91a2221ad34274096"
+      },
+      "log": {
+        "path": "docs/verification/wave5/desktop-verification-approvedAll-20261010-r5.log",
+        "sha256": "b7a69397f9a8cd8280da285a773e66a2daced6f8c92e829f9afce437acc18a70"
+      },
+      "sdkExit": {
+        "path": "docs/verification/wave5/desktop-verification-approvedAll-20261010-r5.sdk-exit.json",
+        "sha256": "45518b497f7ae65eaa9ef968d987dee84ec214a72cbe5f212b46c660e7b622f0"
+      },
+      "passed": 2010,
+      "failed": 0,
+      "skipped": 0,
+      "finishedAt": "2026-10-10T15:26:33.587Z",
+      "actualUniqueTestIdentities": 2010,
+      "all83ApprovedGoldenComparisonsIncluded": true,
+      "rerunInIdentityOverlayTrees": false,
+      "executedByThisPublisher": false
+    },
+    "actualNativePreview": {
+      "record": {
+        "path": "docs/verification/wave5/native-preview-userflows-20261010-r5.json",
+        "sha256": "4a8783db056143e7cf6d8031bc30dba7ff7707e315324892acf05fa2fac42840"
+      },
+      "report": {
+        "path": "docs/verification/wave5/native-preview-userflows-20261010-r5.md",
+        "sha256": "06c25fc9ca1729481f3f59a7fcab4ad9edbcc555e4b340992a49164296aaf531"
+      },
+      "counts": {
+        "pass": 27,
+        "fail": 4,
+        "blocked": 2,
+        "observed": 0
+      },
+      "cases": 33,
+      "screenshots": 33,
+      "uniqueScreenshotHashes": 29,
+      "startedAt": "2026-10-11T11:53:49.256Z",
+      "finishedAt": "2026-10-11T12:13:25.589Z",
+      "observedCaseIds": [
+        "N01_LAUNCH",
+        "N02_MOUSE_PALETTE",
+        "K01_PHYSICAL_A",
+        "K02_PHYSICAL_B",
+        "K03_PHYSICAL_C",
+        "K04_CTRL_A_CONTROL",
+        "K05_ESCAPE",
+        "N03_SETUP_GUIDANCE",
+        "K06_TAB_FOCUS",
+        "K07_CTRL_K",
+        "N04_ACCOUNT_FORM",
+        "N05_ACCOUNT_VALIDATION",
+        "N06_ACCOUNT_CANCEL",
+        "N07_WAREHOUSE_SCOPE",
+        "N08_WAREHOUSE_FORM",
+        "N09_WAREHOUSE_VALIDATION",
+        "K08_LITERAL_TEXT",
+        "K09_FORM_PHYSICAL_INPUT",
+        "N10_PREVIEW_WAREHOUSE_SAVE",
+        "N11_PREVIEW_RESET",
+        "N12_FINANCE_GUIDANCE",
+        "B01_FINANCE_POSTING",
+        "N13_PROCUREMENT_GUIDANCE",
+        "B02_SUPPLIER_ACCOUNTING",
+        "N14_THEME",
+        "N15_DENSITY",
+        "N16_RESTART_THEME",
+        "N17_RESTART_DENSITY",
+        "N18_MAXIMIZE",
+        "N19_RESTORE",
+        "K10_PALETTE_DOWN",
+        "K11_PALETTE_ENTER_UNFOCUSED",
+        "K12_FOCUSED_ENTER"
+      ],
+      "failedCaseIds": [
+        "K04_CTRL_A_CONTROL",
+        "K07_CTRL_K",
+        "K08_LITERAL_TEXT",
+        "K11_PALETTE_ENTER_UNFOCUSED"
+      ],
+      "blockedCaseIds": [
+        "B01_FINANCE_POSTING",
+        "B02_SUPPLIER_ACCOUNTING"
+      ],
+      "inputToolEvidence": {
+        "provider": "@oai/sky",
+        "bridge": "node_repl",
+        "documentationBundle": "computer-use/26.1007.21434",
+        "documentationObservedAt": "2026-10-11T10:58:04.422Z",
+        "currentReadDocs": [
+          {
+            "path": "C:/Users/sheha/.codex/plugins/cache/openai-bundled/computer-use/26.1007.21434/skills/computer-use/SKILL.md",
+            "sha256": "8211e4b11a19a0dc4f0ace91096c74c5b36037ca4cb2c8988f0f535bb209e951"
+          },
+          {
+            "path": "C:/Users/sheha/.codex/plugins/cache/openai-bundled/computer-use/26.1007.21434/docs/api.md",
+            "sha256": "c36d005fb98ed79837a1a5d4605ebad036cec95864e5646f451425163d5c16af"
+          },
+          {
+            "path": "C:/Users/sheha/.codex/plugins/cache/openai-bundled/computer-use/26.1007.21434/docs/guidance.md",
+            "sha256": "b171b26bc19f49226bb594bf3ed3f36666e5dd063a996c297986b2b461ac8efd"
+          },
+          {
+            "path": "C:/Users/sheha/.codex/plugins/cache/openai-bundled/computer-use/26.1007.21434/docs/confirmations.md",
+            "sha256": "9c45b3eb20e4a7fb14860e50f635e200b321a52fef6d26f39f7b936bd44be11a"
+          }
+        ],
+        "documentationReadToolChunks": [
+          "35729e",
+          "8f3df7",
+          "118c44"
+        ],
+        "packageVersion": null,
+        "packageVersionVerified": false,
+        "localStorageNamespaceAudit": {
+          "path": "docs/verification/wave5/native-local-storage-namespace-audit-20261011-r5.json",
+          "sha256": "c806fc271dc7ae33b873090df64ac2e75842e7b5ca7315d9f5f89fff384790bf"
+        }
+      },
+      "productSuiteObservedAt": "2026-10-10T15:26:33.587Z",
+      "exactNewExecutableAndBoundWindows": true,
+      "prelaunchPathObservation": {
+        "path": "docs/verification/wave5/windows-userflow-storage-before-20261010-r5.json",
+        "sha256": "fafee7f9083827674a7c4ce3a1626ba663871a78d98708568f6392d45d22ff24"
+      },
+      "postlaunchPathObservation": {
+        "path": "docs/verification/wave5/windows-userflow-storage-after-20261010-r5.json",
+        "sha256": "6134e12245b55bb35f122c553737a06b03b46c44791dbe9d88b22518efceca25"
+      },
+      "actualAccountingTransactions": false,
+      "authenticated": false,
+      "scope": "Actual ordinary offline Preview cases only. Their observed pass/fail/blocked outcomes do not close authenticated keyboard, login, accounting, MFA or owner gates."
+    },
+    "workerAdapter": {
+      "record": {
+        "path": "docs/verification/wave5/current-runtime-worker-adapter-20261010-r5.json",
+        "sha256": "e56a31755d1ebeaced6fb33d4079501ce678def8ef4bb2b5e18568554659d8f4"
+      },
+      "workerFiles": 26,
+      "sourceUnchanged": true,
+      "controlledTests": 71,
+      "denoEntrypoints": 2,
+      "testsRerun": false,
+      "denoChecksRerun": false,
+      "historicalComponent": {
+        "path": "docs/verification/wave5/continuation-worker-component-20261009-r14.json",
+        "sha256": "2f89559f7d9a08841fc6cd60213b162d0ecd61cc77fbd9ad172b95cd66efd0ba"
+      },
+      "historicalObservedAt": "2026-10-09T18:45:28.623Z",
+      "deploymentSourceFileCounts": [
+        14,
+        8
+      ],
+      "deployed": false,
+      "actualDelivery": false,
+      "actualModelUsage": false
+    },
+    "accounting": {
+      "report": {
+        "path": "docs/verification/wave5/accounting-checks-result-20261010-r2.md",
+        "sha256": "669d46394fe8165a0db13460b0fb4349988ce412bcb25d5f994cfcdd1bc022dc"
+      },
+      "sourceManifest": {
+        "path": "docs/verification/wave5/accounting-checks-source-20261010-r2.json",
+        "sha256": "0590786a5d996879a2430007ff0779a26ac65ee1488e68e1e7ecf8454dfbc8f3"
+      },
+      "stages": [
+        {
+          "stage": "domain",
+          "record": {
+            "path": "docs/verification/wave5/accounting-checks-domain-20261010-r2.json",
+            "sha256": "b1bf13aae6384a15e577f152e1cfccde878e27f9f1b7b7f1e071c5213c9f90d2"
+          },
+          "log": {
+            "path": "docs/verification/wave5/accounting-checks-domain-20261010-r2.log",
+            "sha256": "0382d8f9f67dfc305324e70fa4eb39c72c9fdd6edf1753a225343e3b033fc675"
+          },
+          "passed": 122,
+          "failed": 0,
+          "skipped": 0,
+          "testFiles": 16,
+          "observedAt": "2026-10-10T06:49:26.206Z",
+          "rerun": false
+        },
+        {
+          "stage": "platform",
+          "record": {
+            "path": "docs/verification/wave5/accounting-checks-platform-20261010-r2.json",
+            "sha256": "f99850f03d7b34d98fc4219897223fe44a1cbea5714dc50a7bc0e42b32b397d4"
+          },
+          "log": {
+            "path": "docs/verification/wave5/accounting-checks-platform-20261010-r2.log",
+            "sha256": "1fed1e76472df94b03d4ef2705651ece4ede097d6c3a5df9d0361ae1289e7e2a"
+          },
+          "passed": 406,
+          "failed": 0,
+          "skipped": 0,
+          "testFiles": 22,
+          "observedAt": "2026-10-10T06:50:28.913Z",
+          "rerun": false
+        }
+      ],
+      "passed": 528,
+      "failed": 0,
+      "skipped": 0,
+      "exactFiles": 38,
+      "currentDomainAndPlatformSourceUnchanged": true,
+      "dependencyLockUnchanged": true,
+      "reexecutedInR5": false,
+      "currentFullDesktopSourceMatch": false,
+      "actualTransactions": false,
+      "scope": "Dated controlled calculations and injected gateways. The unchanged domain/platform scope does not establish an authenticated user transaction."
+    },
+    "readOnlyLivePreflight": {
+      "index": {
+        "path": "docs/verification/wave5/complete-live-preflight-20261010-r5-index.json",
+        "sha256": "1599c4c2c26b366ea387d4c283dd8b40db55fbbdb039c4ec15a157a43f152859"
+      },
+      "summary": {
+        "path": "docs/verification/wave5/complete-live-preflight-20261010-r5-summary.json",
+        "sha256": "04db48a15b4e5ceee6ac25f15d91702739dde04f983fc5ae63b9826bab6634ed"
+      },
+      "observedAt": "2026-10-10 13:25:31.725204+00",
+      "migrations": 43,
+      "apiFunctions": 107,
+      "unchangedProviders": 120,
+      "forcedRlsTables": 15,
+      "zeroCollisionCounters": 14,
+      "originalSixLedgerPreserved": true,
+      "fullRuntimePreflightComplete": false,
+      "runtimeOwnerApproved": false,
+      "refreshedByThisPublisher": false
+    },
+    "additionalReadOnlyLiveObservation": {
+      "record": {
+        "path": "docs/verification/wave5/resume-live-metadata-20261011-r5.json",
+        "sha256": "1d799b91f9c652bd85565c4356db04596244c5168f9021870ecdfb7e7df237f4"
+      },
+      "observedAt": "2026-10-11 10:26:01.347929+00",
+      "migrations": 43,
+      "apiFunctions": 107,
+      "ledgerRows": 43,
+      "edgeMetadataObjects": 2,
+      "originalSixPreserved": true,
+      "matchedEnabledPublicKeys": 1,
+      "publicKeyValuesPrinted": false,
+      "providersRehashed": false,
+      "rlsAccessOrCollisionsRequeried": false,
+      "trialAccountMembershipRequeried": false,
+      "fullRuntimeImmediatePreflightComplete": false,
+      "runtimeOwnerApproved": false,
+      "refreshedByThisPublisher": false,
+      "scope": "Separate October 11 narrow read of three SQL fields, the ledger, Edge metadata and public-key match. The full October 10 provider/RLS/access/collision observation retains its original date."
+    },
+    "failedR4History": {
+      "sourceManifest": {
+        "path": "docs/verification/wave5/desktop-verification-source-20261010-r4.json",
+        "sha256": "66b9af11a424dc7dd2fa4ba9da8caeaeedcfe2875b82f8bf1e45840e29be24a5"
+      },
+      "analyzer": {
+        "path": "docs/verification/wave5/desktop-verification-analyzer-20261010-r4.json",
+        "sha256": "524d2e697dbf13d3bcf87b0f2f1dee082f12ae0fd04e2150955e3c6e1a94fff1"
+      },
+      "analyzerCleanForDatedR4Source": true,
+      "focusedRetry": {
+        "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4.json",
+        "sha256": "635a9442fbd3f8cedac0e951e4a48ce50ba6bf77171cc5da9e41449e60130f72"
+      },
+      "focusedRetryLog": {
+        "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4.log",
+        "sha256": "75acee6c905502a359c5f256a90be70fd1476a4f995a2967eaeb94e6722246e3"
+      },
+      "focusedRetrySDKExit": {
+        "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4.sdk-exit.json",
+        "sha256": "1a5aee46d232cc29a5b169ebc2ac37991ed55d4056f5fac149e005b54a01d750"
+      },
+      "testerInterruption": {
+        "path": "docs/verification/wave5/desktop-verification-focused-stalled-tester-20261010-r4-a2.json",
+        "sha256": "7b28161d9b7ba31e10b5d2f56d2481971ab110d62ee29b8b99e3d691778496ac"
+      },
+      "focusedRetryOutcome": "failed with pending auth timer, duplicate starts and incomplete cases after an owned tester interruption",
+      "rawReportedSummary": {
+        "passed": 18,
+        "failed": 1,
+        "skipped": 0
+      },
+      "startedEntryCount": 20,
+      "uniqueStartedTestIdentities": [
+        "command_palette_keyboard_test.dart: Enter on a document link retains destination scope checks",
+        "command_palette_keyboard_test.dart: Up wraps to the last command and scrolls it into view",
+        "command_palette_keyboard_test.dart: arrow selection and Enter open the selected visible destination",
+        "command_palette_keyboard_test.dart: empty results ignore navigation and Escape closes the palette",
+        "command_palette_keyboard_test.dart: permission revocation removes a selected command before Enter",
+        "command_palette_keyboard_test.dart: search resets selection and Enter opens its first match",
+        "jentra_app_test.dart: Wave 2 Business Setup Centre is routed and actionable — AC-216",
+        "jentra_app_test.dart: Wave 2 offline commands are guarded — AC-217",
+        "jentra_app_test.dart: Wave 2 renders every resource and configurable form — FR-201 through FR-240",
+        "jentra_app_test.dart: Wave 2 setup forms surface field validation — AC-216",
+        "jentra_app_test.dart: Wave 2 setup opens the first permitted resource when finance is hidden — AC-218",
+        "jentra_app_test.dart: Wave 2 unauthorized capability hides and denies setup — AC-218",
+        "jentra_app_test.dart: Wave 2 view-only capability hides mutations — AC-218",
+        "jentra_app_test.dart: configured setup gateway retains server confirmation presentation",
+        "jentra_app_test.dart: configured setup without a gateway disables server confirmation",
+        "jentra_app_test.dart: development Preview procurement explains unavailable accounting",
+        "jentra_app_test.dart: development Preview setup explains memory-only examples",
+        "jentra_app_test.dart: foundation shell exposes routes and command palette — AC-6"
+      ],
+      "duplicateStartedTestIdentities": [
+        "jentra_app_test.dart: development Preview procurement explains unavailable accounting"
+      ],
+      "missingStartedTestIdentities": [
+        "jentra_app_test.dart: Finance landing explains unavailable posting and reports",
+        "jentra_app_test.dart: Wave 2 setup confirms discarding dirty forms — FR-241",
+        "jentra_app_test.dart: configured procurement subset explains missing connection",
+        "main_preview_startup_test.dart: unconfigured startup renders a preview without native stores or a backend",
+        "warehouse_setup_test.dart: warehouse viewer cannot create records"
+      ],
+      "full23CaseCoverageProven": false,
+      "permissionFailure": {
+        "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4-a1-failed.json",
+        "sha256": "94076f0baa3301e357218e3bed65ac0cefee3957ea51f578657ede8694b61029"
+      },
+      "permissionFailureRetention": {
+        "path": "docs/verification/wave5/desktop-verification-focused-retention-20261010-r4-a1.json",
+        "sha256": "0ce3e38fde503cec0e6036c65692c308f5077aaf8af36b7ae6c0fce3709c9cf2"
+      },
+      "permissionFailureSDKExitCode": 3221225480,
+      "permissionFailureStartedTests": 0,
+      "bindings": [
+        {
+          "path": "scripts/wave5/desktop_verification_inputs_20261010_r4.mjs",
+          "sha256": "6dffc81714c04b6d934307f92d558ee0c91760bc5771f1a334351d18262b7f69"
+        },
+        {
+          "path": "scripts/wave5/prepare_desktop_verification_20261010_r4.mjs",
+          "sha256": "6546e48cf3628b4713606f97965387697bfb440df2b9cf86b67a78b5e2a2075e"
+        },
+        {
+          "path": "scripts/wave5/run_desktop_verification_20261010_r4.mjs",
+          "sha256": "8204c9e6c4084de2614fb6f87249ab52f6f20205a7d7b8efb387103bd533d9ec"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-source-20261010-r4.json",
+          "sha256": "66b9af11a424dc7dd2fa4ba9da8caeaeedcfe2875b82f8bf1e45840e29be24a5"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-analyzer-20261010-r4.json",
+          "sha256": "524d2e697dbf13d3bcf87b0f2f1dee082f12ae0fd04e2150955e3c6e1a94fff1"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-analyzer-20261010-r4.log",
+          "sha256": "4cf18cf6acc9bdf65a794d5c1659196622f74f337344074198a36d3992e6f08d"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-analyzer-20261010-r4.sdk-exit.json",
+          "sha256": "8173496c431ecbe2dd7dfd7b475524bce01c18dc9557acf75c29e3b5e787cbd9"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4.json",
+          "sha256": "635a9442fbd3f8cedac0e951e4a48ce50ba6bf77171cc5da9e41449e60130f72"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4.log",
+          "sha256": "75acee6c905502a359c5f256a90be70fd1476a4f995a2967eaeb94e6722246e3"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4.sdk-exit.json",
+          "sha256": "1a5aee46d232cc29a5b169ebc2ac37991ed55d4056f5fac149e005b54a01d750"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-focused-stalled-tester-20261010-r4-a2.json",
+          "sha256": "7b28161d9b7ba31e10b5d2f56d2481971ab110d62ee29b8b99e3d691778496ac"
+        },
+        {
+          "path": "scripts/wave5/retain_focused_verification_failure_20261010_r4.mjs",
+          "sha256": "eddd1d05c728d95e1bbf27e0cd3105d95b4cf6bf171fc98c9e5b632fbe7508cd"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-focused-retention-20261010-r4-a1.json",
+          "sha256": "0ce3e38fde503cec0e6036c65692c308f5077aaf8af36b7ae6c0fce3709c9cf2"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4-a1-failed.json",
+          "sha256": "94076f0baa3301e357218e3bed65ac0cefee3957ea51f578657ede8694b61029"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4-a1-failed.log",
+          "sha256": "b598a76f2aa7104d8e392f8ef7bb0d5214f146326070b3e3a035be575d93e3c8"
+        },
+        {
+          "path": "docs/verification/wave5/desktop-verification-focusedNonGolden-20261010-r4-a1-failed.sdk-exit.json",
+          "sha256": "d4230b9d8b3f7fc44e7463748d37f05a519b255556acaad9978ca63df1ef98ee"
+        }
+      ],
+      "fullSuitePassed": false,
+      "currentR5SourceMatchClaimed": false,
+      "boundary": "Immutable dated r4 history. Its failed partial focused run and tester interruption do not establish passing tests or current r5 verification."
+    },
+    "ownerAcceptedCriteria": 3,
+    "remainingUnacceptedCriteria": 106,
+    "all109RowsAndExistingAcceptanceUnchanged": true,
+    "currentR5PendingVerificationPreserved": true,
+    "authenticatedNativeAcceptance": false,
+    "nativeKeyboardVerified": false,
+    "realMfa": false,
+    "actualDelivery": false,
+    "actualModelUsage": false,
+    "independentSessionContention": false,
+    "targetScaleLoad": false,
+    "newRuntimeInstallationComplete": false,
+    "ownerSignoff": false,
+    "wholeWaveComplete": false,
+    "boundary": "Current source-bound controlled verification, paired packages and actual offline Preview evidence only. SDK, native and live observation dates remain separate. No new criterion decision, installation, private operation, production or real billing."
   }
 }

@@ -1,0 +1,111 @@
+{
+  "kind": "wave5-runtime-fixture-source-binding-verification",
+  "preparedAt": "2026-10-12T09:24:24.896Z",
+  "status": "passed-source-only",
+  "originalReport": {
+    "path": "docs/verification/wave5/runtime-fixture-contract-20261012-r5.json",
+    "sha256": "721ae4ada80ebeda08486158154d30f49733ee1ea961fefac23901a3819f22db"
+  },
+  "spec": {
+    "path": "tools/wave5/runtime_fixture_spec.mjs",
+    "sha256": "71dd763620cab0ca896dd96c50193350f1926e67f481acfed9b7aaa4b519f2d2",
+    "bytes": 36370,
+    "pureDeclarative": true
+  },
+  "all17CurrentSourceBytesMatchReport": true,
+  "recursiveFreezeVerified": true,
+  "directlyBoundByCurrentR5Review": 7,
+  "currentSourceOnlyWithoutDirectR5ArtifactBinding": [
+    {
+      "path": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+      "sha256": "1ea4ab076cb3deaa9d0f7f92b56c47effc1a0ad45e14839156a2fd6a2d1bd8ed",
+      "bytes": 10964,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "sha256": "339e9e86074887d164dd339eb17ac54943c39fca0caf50db575c48529456a9f5",
+      "bytes": 12761,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+      "sha256": "be586326b7d8ec380a5524a5d8232e67639d677eb192b9fe29da135ee9ffe997",
+      "bytes": 9213,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20260831193714_create_greenfield_foundation.sql",
+      "sha256": "d104871a777c31b9562fac2e5200d9801b24c0ebd28a9b0e75a43bdc13171f8a",
+      "bytes": 41494,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "sha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e",
+      "bytes": 14205,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+      "sha256": "b75e9cf94107fd9a959ced43f9e643b163ed579f95fb68c8de7b9e739b10d02e",
+      "bytes": 16904,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20260904121647_wave3_operational_foundation.sql",
+      "sha256": "b7a840b31a2d8a89d0a1539151769130c352fe7ace0ea2d76f4057aab5b2d737",
+      "bytes": 40230,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20260901090317_create_wave2_shared_foundation_schema.sql",
+      "sha256": "82886b14daf554e33dbe81d05827850b5fd7b3322a5f2bebe3e6958cbc608d86",
+      "bytes": 36682,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20260903110103_align_wave2_setup_contracts.sql",
+      "sha256": "3ce448a8247fe8e7b28bd1a779b7e7bf1bab705152ba9abf37da7fd94cfac6c9",
+      "bytes": 4123,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    },
+    {
+      "path": "supabase/migrations/20260904125910_create_wave3_crm_pipeline_schema.sql",
+      "sha256": "04723457b9866dbc82d9578556becc16e2797838ea08abc8621ec6dceba634e5",
+      "bytes": 20762,
+      "reviewBindingPresent": false,
+      "reviewBindingMatches": null
+    }
+  ],
+  "clarification": "The13 source signature/grant checks are current local SQL-source mappings. Only7 source files are directly bound by r5 artifacts;10 baseline source migrations are separately snapshotted. Neither local mapping nor this byte check establishes actual installed signatures/grants/source. Fresh live installed-contract proof remains required.",
+  "retainedFailure": {
+    "toolChunk": "23d66b",
+    "exitCode": 1,
+    "reason": "Local checker incorrectly required all17 baseline/source files to be direct r5 artifacts; actual per-source fields already distinguished7 bound/10 unbound.",
+    "moduleDefect": false,
+    "SQLExecuted": false,
+    "outputsWritten": false
+  },
+  "SQLExecuted": false,
+  "networkExecuted": false,
+  "SDKExecuted": false,
+  "AuthOrStoreOperations": false,
+  "gatesPromoted": false,
+  "ownerAcceptance": {
+    "accepted": 3,
+    "total": 109,
+    "open": 106,
+    "additionalAcceptance": false
+  },
+  "frozenOriginalReportPreserved": true
+}

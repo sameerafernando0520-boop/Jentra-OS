@@ -1,0 +1,45 @@
+{
+  "kind": "wave5-private-owner-input-helper-local-verification",
+  "recordedAt": "2026-10-13T06:35:36.455Z",
+  "executedBy": "root after delegated agent usage limit",
+  "attempts": [
+    {
+      "command": "powershell.exe -NoProfile -File scripts/wave5/prepare_private_owner_access_20261013_r5.ps1 -ValidateOnly",
+      "chunkId": "64f3c4",
+      "exitCode": 1,
+      "reason": "Host Windows PowerShell AuthorizationManager blocked initial process policy; no helper body ran."
+    },
+    {
+      "command": "powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -File scripts/wave5/prepare_private_owner_access_20261013_r5.ps1 -ValidateOnly",
+      "chunkId": "68fc9f",
+      "exitCode": 0,
+      "passed": true,
+      "actualInputRead": false,
+      "secretFilesCreated": 0,
+      "networkCalls": 0,
+      "databaseWrites": 0,
+      "authWrites": 0
+    }
+  ],
+  "files": [
+    {
+      "path": "scripts/wave5/prepare_private_owner_access_20261013_r5.ps1",
+      "sha256": "3e760848688dbd82b0eb0ed83cef2c6cbf1c65c721241801870ed23555ccb199",
+      "bytes": 6105
+    },
+    {
+      "path": "dist/Jentra OS Private Owner Access 20261013 r5.cmd",
+      "sha256": "c7aadd1453fd4991ec509c966f7bd2469f1a338519fe04b892aa1e112434c828",
+      "bytes": 147
+    },
+    {
+      "path": "docs/verification/wave5/private-owner-access-20261013-r5.md",
+      "sha256": "236e302adf05afacea281ec019774656907c2cdcc8edf1be08e7e31dd3e4f5b3",
+      "bytes": 2896
+    }
+  ],
+  "actualCredentialStorageTested": false,
+  "tokenValidityVerified": false,
+  "operationAlreadyApproved": true,
+  "newOwnerAcceptance": false
+}
