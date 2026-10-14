@@ -47,7 +47,7 @@ const independentReview = { kind: 'wave5-runtime-harness-independent-preparation
 binding.independentReviewBodySha256 = hashJson(independentReview);
 const preflight = {
   kind: 'online-installed-wave5-harness-preflight', projectId: PROJECT_ID, url: PROJECT_URL, runtimeBundleSha256: review.bundleSha256,
-  harnessReviewSha256: H, planSha256: H, observedAt: iso(-1000), validUntil: iso(3600000), installedMigrationCount: 114,
+  harnessReviewSha256: H, planSha256: H, observedAt: iso(-1000), validUntil: iso(3600000), installedMigrationCount: 115,
   pending71Installed: true, originalSixPreserved: true, signaturesGrantsForcedRlsVerified: true, protectedSourcesUnchanged: true,
   scopeDigestSha256: hashJson(review.syntheticScopes), capacitySupported: true, noGlobalAuthChanges: true,
   noFabricatedAuth: true, noAcceptanceScopes: true, ledgerSha256: H, contractFingerprintSha256: H, capacityEvidenceSha256: H,
@@ -165,7 +165,8 @@ test('load-001 billing permission and duplicate execution require genuine MFA in
 
 test('fresh installed contracts, capacity, quiesced schedules and exact reviewed populations are mandatory', () => {
   assert.equal(validatePreflight(preflight, review, plan, binding, now), preflight);
-  for (const change of [{ installedMigrationCount: 43 }, { pending71Installed: false }, { observedAt: iso(-300001) },
+  for (const change of [{ installedMigrationCount: 43 }, { installedMigrationCount: 114 }, { installedMigrationCount: 116 },
+    { installedMigrationCount: 115.5 }, { installedMigrationCount: '115' }, { pending71Installed: false }, { observedAt: iso(-300001) },
     { scopeDigestSha256: 'b'.repeat(64) }, { capacitySupported: false }, { noFabricatedAuth: false }, { operatorMembershipCount: 1 },
     { nonemptyIndexedForecastsAll500: false }, { reviewedSchedulesQuiesced: false }, { noModelOrWebhookInLoad: false }]) {
     assert.throws(() => validatePreflight({ ...preflight, ...change }, review, plan, binding, now));

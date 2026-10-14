@@ -391,7 +391,7 @@ test('caller callback replacement after construction cannot replace the reviewed
 test('Auth ID labels are order-independent, but a substituted creation ID stops before any installed read', async () => {
   const input = context(), controlledProof = { kind: 'online-installed-wave5-harness-preflight', projectId: PROJECT_ID, url: PROJECT_URL,
     runtimeBundleSha256: review.bundleSha256, harnessReviewSha256: input.binding.harnessReviewSha256, planSha256: input.binding.planSha256,
-    observedAt: new Date().toISOString(), validUntil: new Date(Date.now() + 1800000).toISOString(), installedMigrationCount: 114,
+    observedAt: new Date().toISOString(), validUntil: new Date(Date.now() + 1800000).toISOString(), installedMigrationCount: 115,
     pending71Installed: true, originalSixPreserved: true, signaturesGrantsForcedRlsVerified: true, protectedSourcesUnchanged: true,
     scopeDigestSha256: hashJson(review.syntheticScopes), capacitySupported: true, noGlobalAuthChanges: true, noFabricatedAuth: true,
     noAcceptanceScopes: true, ledgerSha256: sha('local-ledger-input'), contractFingerprintSha256: sha('local-contract-input'),

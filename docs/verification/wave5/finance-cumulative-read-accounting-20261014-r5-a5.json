@@ -1,0 +1,47 @@
+{
+  "kind": "conservative-finance-continuation-read-accounting",
+  "recordedAt": "2026-10-14T03:55:33.553Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "originalConcreteFinancePlanCap": 150,
+  "recordedAfterA3Stop": 128,
+  "shapeInvestigationCalls": 1,
+  "chargedA8OwnerIdentityReads": 1,
+  "chargedA9OwnerIdentityReads": 1,
+  "cumulativeChargedPriorCalls": 131,
+  "scope": "Conservative continuation budget accounting; this is not a count of all project activity or every connector query.",
+  "evidence": [
+    {
+      "path": "docs/verification/wave5/finance-pipeline-shape-readonly-investigation-20261014-r5-a4.json",
+      "sha256": "039a8b42ab7b93302853e094e9448e458a5c42d3020bbac765b7f96dae4a3d3e"
+    },
+    {
+      "path": "docs/verification/wave5/private-owner-scope-refresh-20261014-r5-a8.json",
+      "sha256": "232ba925717dfaae261c9cecb1a654d24e218b7a52df3f71daaf18d94b75c0c7"
+    },
+    {
+      "path": "docs/verification/wave5/private-owner-input-ready-20261014-r5-a9.json",
+      "sha256": "d46ee968a50955e39154947f03833415bbe41e39b8771bb603bacd2ee52b615e"
+    }
+  ],
+  "actualA9Refresh": {
+    "path": "docs/verification/wave5/private-owner-scope-refresh-20261014-r5-a9.json",
+    "sha256": "2f1e12d56cab2c788c2bfae76cd586079d4c8951bf1a05ad522ca29d169bd2cf"
+  },
+  "freshPrivateReady": {
+    "path": "docs/verification/wave5/private-owner-input-ready-20261014-r5-a9.json",
+    "sha256": "d46ee968a50955e39154947f03833415bbe41e39b8771bb603bacd2ee52b615e",
+    "expiresAt": "2026-10-14T05:53:48.705Z"
+  },
+  "originalRuntimeAuthorityExpiresAt": "2026-10-14T09:57:07.481942Z",
+  "authorityExtended": false,
+  "exportsExecutedByThisRecord": 0,
+  "successorExportCapAuthorizedByThisRecord": false,
+  "originalSourcesCountersConsumedIntentsAnd150CapPreserved": true,
+  "preparationFailurePreserved": {
+    "execChunk": "8a9580",
+    "code": "EXACT_REFRESH_MODE_LISTS_REQUIRED",
+    "liveCalls": 0,
+    "filesMutated": 0,
+    "repair": "Verified thirteen existing A8 mode lists, including the added latest-ready selector; original adapter hash remained unchanged before source-only repair."
+  }
+}

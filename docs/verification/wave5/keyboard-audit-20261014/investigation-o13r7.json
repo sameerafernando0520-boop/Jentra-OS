@@ -1,0 +1,683 @@
+{
+  "kind": "source-bound-native-keyboard-investigation",
+  "dateAsiaColombo": "2026-10-14",
+  "revision": "o13r7",
+  "startedAt": "2026-10-14T03:58:09.724Z",
+  "finishedAt": "2026-10-14T03:58:19.056Z",
+  "result": "Cause not yet established; standalone receiver prepared and analyzer source errors repaired.",
+  "directObservationBoundary": "Root performed the actual sky calls and inspected tool screenshots. This investigator did not perform or replay native actions; no fresh screenshot file was persisted by root.",
+  "rootObservation": {
+    "binding": {
+      "path": "docs/verification/wave5/native-preview-keyboard-observation-20261014-o13r7.json",
+      "bytes": 1953,
+      "sha256": "6ed4d9a165f5a726baaed5f2a0586ef36255ec09ac45121932e3392029e3cca7"
+    },
+    "record": {
+      "kind": "actual-root-native-preview-keyboard-observation",
+      "project": "Jentra OS",
+      "observationDateAsiaColombo": "2026-10-14",
+      "testedExecutable": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9o13r7/preview/apps/jentra_desktop/build/windows/x64/runner/Release/Jentra_OS.exe",
+      "targetWindowReturnedBySky": {
+        "id": 394504,
+        "title": "Jentra OS - Preview test"
+      },
+      "selectedUniqueWindowFromLiveInventory": true,
+      "tool": "Computer Use via @oai/sky",
+      "observations": [
+        {
+          "action": "Control_L+k from fresh dashboard",
+          "result": "The command palette did not become visible; focus remained the window."
+        },
+        {
+          "action": "Click the visible Search control",
+          "result": "Command palette opened, with the search edit reported as focused by UI Automation."
+        },
+        {
+          "action": "sky.type_text('Finance') in the observed focused edit",
+          "result": "No text became visible in the immediately refreshed palette."
+        },
+        {
+          "action": "sky.press_key('f') in the same palette",
+          "result": "The edit displayed f and the list filtered to Finance."
+        },
+        {
+          "action": "Return with Finance selected",
+          "result": "The native app navigated to Finance; the settled page explicitly states that posting requires a connected workspace."
+        },
+        {
+          "action": "Control_L+k from settled Finance",
+          "result": "The command palette did not become visible; focus was reported as pane."
+        }
+      ],
+      "physicalLetterAndEnterNavigationObserved": true,
+      "ctrlKPassed": false,
+      "literalTextInjectionPassed": false,
+      "sourceDefectVersusInputToolLimitationEstablished": false,
+      "nativeKeyboardWholeGatePassed": false,
+      "authenticatedNative": false,
+      "previewFixturesOnly": true,
+      "appSourceEditedByThisObservation": false,
+      "acceptanceStoresOrExistingSessionsChanged": false,
+      "newIsolatedPreviewStoreMayBeCreatedByApp": true,
+      "accountCreatedOrDeleted": false,
+      "authenticationDialogsAutomated": false,
+      "additionalRequirementAcceptance": 0,
+      "production": false,
+      "realBilling": false
+    }
+  },
+  "terminology": "Key-style means sky.press_key; a human physical keyboard has not been independently tested.",
+  "rootFreshVerification": {
+    "binding": {
+      "path": "docs/verification/wave5/fresh-desktop-verification-20261014-o13r7.json",
+      "bytes": 55132,
+      "sha256": "2ab7ec506a756c1bf5c89cc6d72cbc1f9eeebd5792648aa58f35d47a336fc1b3"
+    },
+    "fullDesktopTests": {
+      "testFiles": 138,
+      "batches": 23,
+      "passed": 2026,
+      "failed": 0,
+      "skipped": 0,
+      "terminalCompletion": true
+    },
+    "freshRenderTestCases": 26,
+    "freshPngs": 86,
+    "builds": [
+      {
+        "mode": "preview",
+        "exitCode": 0,
+        "startedAt": "2026-10-13T18:09:54.6721497Z",
+        "finishedAt": "2026-10-13T18:13:01.6059465Z",
+        "executable": {
+          "absolutePath": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9o13r7\\preview\\apps\\jentra_desktop/build/windows/x64/runner/Release/Jentra_OS.exe",
+          "bytes": 93184,
+          "sha256": "88ffac37c5d4b7ae5b4b83ceb91ba939c420753223979ca0061acc46581c8e74"
+        },
+        "sourceInputs": 1069,
+        "authenticatedNative": false
+      },
+      {
+        "mode": "connected",
+        "exitCode": 0,
+        "startedAt": "2026-10-13T18:21:31.0372470Z",
+        "finishedAt": "2026-10-13T18:24:10.7222525Z",
+        "executable": {
+          "absolutePath": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9o13r7\\connected\\apps\\jentra_desktop/build/windows/x64/runner/Release/Jentra_OS.exe",
+          "bytes": 93184,
+          "sha256": "3e32fdce805196d6031d54d98b33ddcf659dd905ae08a3d762362e6bc6fff994"
+        },
+        "sourceInputs": 1069,
+        "authenticatedNative": false
+      }
+    ],
+    "boundary": "Existing root evidence read and hashed; no SDK analysis/test/build/render run by this investigator."
+  },
+  "currentReadOnlySourceGuards": [
+    {
+      "path": "docs/verification/wave5/windows-test-preview-source-20261009-o13r7.json",
+      "bytes": 304008,
+      "sha256": "1035fc053bb3658086a940bd9a0a76a2f8aa1818bfae35ff4ce010cb4467664c",
+      "mode": "Preview",
+      "snapshot": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9o13r7\\preview",
+      "baseInputs": 1069,
+      "buildInputs": 1069,
+      "overlays": [
+        {
+          "path": "apps/jentra_desktop/windows/CMakeLists.txt",
+          "baseSha256": "442109673c1704f2475e8ed9a7798fa638b1fcc7f770ec93c717c07dbdee7485",
+          "buildSha256": "90d36b7a9554489487d21e486d68195d1c0ab13ca984332ae67ac4f25c67b73e"
+        },
+        {
+          "path": "apps/jentra_desktop/windows/runner/Runner.rc",
+          "baseSha256": "7897aa6b404b5d79aac6125b386d5f0b974c2d4bb4d89852bded2e4fe4d9ac5f",
+          "buildSha256": "5bab565f9cf793baac1b6bed0883497d2ab8f41efc720c38171f3b714737cc72"
+        },
+        {
+          "path": "apps/jentra_desktop/windows/runner/main.cpp",
+          "baseSha256": "6a1a66dd32f87feeff487c4d6cee76f265f70e3269c9e702fdf9b66cee20664b",
+          "buildSha256": "f915bc656907137d4a13c8b66101450bd86386dfe69c2eb94ca0d196d3ab55dc"
+        }
+      ],
+      "mismatches": []
+    },
+    {
+      "path": "docs/verification/wave5/windows-test-connected-source-20261009-o13r7.json",
+      "bytes": 304037,
+      "sha256": "bad554a8312e22aa8c87462fe1e343fe97a99d26830442e1df0157a834c49430",
+      "mode": "Connected",
+      "snapshot": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win9o13r7\\connected",
+      "baseInputs": 1069,
+      "buildInputs": 1069,
+      "overlays": [
+        {
+          "path": "apps/jentra_desktop/windows/CMakeLists.txt",
+          "baseSha256": "442109673c1704f2475e8ed9a7798fa638b1fcc7f770ec93c717c07dbdee7485",
+          "buildSha256": "90d36b7a9554489487d21e486d68195d1c0ab13ca984332ae67ac4f25c67b73e"
+        },
+        {
+          "path": "apps/jentra_desktop/windows/runner/Runner.rc",
+          "baseSha256": "7897aa6b404b5d79aac6125b386d5f0b974c2d4bb4d89852bded2e4fe4d9ac5f",
+          "buildSha256": "a55974a8cca9a811d0fb791007ae42b7654617785753f5ad85288876dedf4d63"
+        },
+        {
+          "path": "apps/jentra_desktop/windows/runner/main.cpp",
+          "baseSha256": "6a1a66dd32f87feeff487c4d6cee76f265f70e3269c9e702fdf9b66cee20664b",
+          "buildSha256": "f365e3f056db4455cf2615eadc89dc6249f5612e2526bb52e2385db1a5e2a544"
+        }
+      ],
+      "mismatches": []
+    }
+  ],
+  "earlierReadOnlyAudit": {
+    "beforeToolChunk": "42de56",
+    "beforeObservedAt": "2026-10-14T01:14:07.918Z",
+    "afterToolChunk": "d4e069",
+    "afterStartedAt": "2026-10-14T01:22:17.181Z",
+    "afterFinishedAt": "2026-10-14T01:22:24.463Z",
+    "result": "Zero mismatches in 1069 workspace and 1069 snapshot inputs for each Preview/Connected manifest, and all selected public evidence/SDK/documentation/binary bindings unchanged."
+  },
+  "productSourceBindings": [
+    {
+      "workspace": {
+        "path": "apps/jentra_desktop/lib/src/shell/jentra_shell.dart",
+        "bytes": 31458,
+        "sha256": "6b740df8a2764ccd991ed77f0e9965544420520d0f4cb8492f20caf850ec3177"
+      },
+      "previewSnapshot": {
+        "path": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9o13r7/preview/apps/jentra_desktop/lib/src/shell/jentra_shell.dart",
+        "bytes": 31458,
+        "sha256": "6b740df8a2764ccd991ed77f0e9965544420520d0f4cb8492f20caf850ec3177"
+      },
+      "bytesEqual": true,
+      "identityOverlayExpected": false
+    },
+    {
+      "workspace": {
+        "path": "apps/jentra_desktop/lib/src/app.dart",
+        "bytes": 938,
+        "sha256": "2cc94fc6fcfe85352834d9c370452f9d4f765b03a1de5653ca51099ef082fffb"
+      },
+      "previewSnapshot": {
+        "path": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9o13r7/preview/apps/jentra_desktop/lib/src/app.dart",
+        "bytes": 938,
+        "sha256": "2cc94fc6fcfe85352834d9c370452f9d4f765b03a1de5653ca51099ef082fffb"
+      },
+      "bytesEqual": true,
+      "identityOverlayExpected": false
+    },
+    {
+      "workspace": {
+        "path": "apps/jentra_desktop/lib/src/router.dart",
+        "bytes": 25395,
+        "sha256": "0e9d763cfe4f96705aea4bd0467d588b87907093b7427e33df72de9fe3933f0f"
+      },
+      "previewSnapshot": {
+        "path": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9o13r7/preview/apps/jentra_desktop/lib/src/router.dart",
+        "bytes": 25395,
+        "sha256": "0e9d763cfe4f96705aea4bd0467d588b87907093b7427e33df72de9fe3933f0f"
+      },
+      "bytesEqual": true,
+      "identityOverlayExpected": false
+    },
+    {
+      "workspace": {
+        "path": "apps/jentra_desktop/test/command_palette_keyboard_test.dart",
+        "bytes": 7873,
+        "sha256": "8ee60ebd5ebfe68dc581ec3d94b1cbf6bfc4162945dd1e8d0be021ff69495faa"
+      },
+      "previewSnapshot": {
+        "path": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9o13r7/preview/apps/jentra_desktop/test/command_palette_keyboard_test.dart",
+        "bytes": 7873,
+        "sha256": "8ee60ebd5ebfe68dc581ec3d94b1cbf6bfc4162945dd1e8d0be021ff69495faa"
+      },
+      "bytesEqual": true,
+      "identityOverlayExpected": false
+    },
+    {
+      "workspace": {
+        "path": "apps/jentra_desktop/test/jentra_app_test.dart",
+        "bytes": 33002,
+        "sha256": "35b4095ede9e36f10400af32a5c6bd8ed328c3f94b7c07a508ccf031cffabba4"
+      },
+      "previewSnapshot": {
+        "path": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9o13r7/preview/apps/jentra_desktop/test/jentra_app_test.dart",
+        "bytes": 33002,
+        "sha256": "35b4095ede9e36f10400af32a5c6bd8ed328c3f94b7c07a508ccf031cffabba4"
+      },
+      "bytesEqual": true,
+      "identityOverlayExpected": false
+    },
+    {
+      "workspace": {
+        "path": "apps/jentra_desktop/lib/src/features/setup/business_setup_screen.dart",
+        "bytes": 98182,
+        "sha256": "97501a3814b0f19351e422156cdb8b10bcddfe9609e85c55434b6bdbe6aeedfa"
+      },
+      "previewSnapshot": {
+        "path": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9o13r7/preview/apps/jentra_desktop/lib/src/features/setup/business_setup_screen.dart",
+        "bytes": 98182,
+        "sha256": "97501a3814b0f19351e422156cdb8b10bcddfe9609e85c55434b6bdbe6aeedfa"
+      },
+      "bytesEqual": true,
+      "identityOverlayExpected": false
+    },
+    {
+      "workspace": {
+        "path": "apps/jentra_desktop/windows/runner/flutter_window.cpp",
+        "bytes": 2193,
+        "sha256": "d615eedc06ae37321e59c2c00c7687d1887dcd97904eb7225fafd8dcb5b83da6"
+      },
+      "previewSnapshot": {
+        "path": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9o13r7/preview/apps/jentra_desktop/windows/runner/flutter_window.cpp",
+        "bytes": 2193,
+        "sha256": "d615eedc06ae37321e59c2c00c7687d1887dcd97904eb7225fafd8dcb5b83da6"
+      },
+      "bytesEqual": true,
+      "identityOverlayExpected": false
+    },
+    {
+      "workspace": {
+        "path": "apps/jentra_desktop/windows/runner/flutter_window.h",
+        "bytes": 961,
+        "sha256": "0252b804f5da380c7709cbe1daff2b8d18daf6c49d7e6dd43e5af3c99c19f56c"
+      },
+      "previewSnapshot": {
+        "path": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9o13r7/preview/apps/jentra_desktop/windows/runner/flutter_window.h",
+        "bytes": 961,
+        "sha256": "0252b804f5da380c7709cbe1daff2b8d18daf6c49d7e6dd43e5af3c99c19f56c"
+      },
+      "bytesEqual": true,
+      "identityOverlayExpected": false
+    },
+    {
+      "workspace": {
+        "path": "apps/jentra_desktop/windows/runner/win32_window.cpp",
+        "bytes": 8822,
+        "sha256": "4e4f4dcf8e86ea6e097562cb3476039e693449bd8045367538afee579c017511"
+      },
+      "previewSnapshot": {
+        "path": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9o13r7/preview/apps/jentra_desktop/windows/runner/win32_window.cpp",
+        "bytes": 8822,
+        "sha256": "4e4f4dcf8e86ea6e097562cb3476039e693449bd8045367538afee579c017511"
+      },
+      "bytesEqual": true,
+      "identityOverlayExpected": false
+    },
+    {
+      "workspace": {
+        "path": "apps/jentra_desktop/windows/runner/main.cpp",
+        "bytes": 1310,
+        "sha256": "6a1a66dd32f87feeff487c4d6cee76f265f70e3269c9e702fdf9b66cee20664b"
+      },
+      "previewSnapshot": {
+        "path": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9o13r7/preview/apps/jentra_desktop/windows/runner/main.cpp",
+        "bytes": 1320,
+        "sha256": "f915bc656907137d4a13c8b66101450bd86386dfe69c2eb94ca0d196d3ab55dc"
+      },
+      "bytesEqual": false,
+      "identityOverlayExpected": true
+    }
+  ],
+  "sdkSourceBindings": [
+    {
+      "path": "C:/src/flutter/packages/flutter/lib/src/widgets/shortcuts.dart",
+      "bytes": 61848,
+      "sha256": "df53fdfddf3ef3717f01c5c4a523c210b822679b9866c8cf7727764a912816a2"
+    },
+    {
+      "path": "C:/src/flutter/packages/flutter/lib/src/widgets/default_text_editing_shortcuts.dart",
+      "bytes": 52142,
+      "sha256": "59c5a8373f879933cfd98168d7988775925934c0f6a6334196e9acb3391a0dc7"
+    },
+    {
+      "path": "C:/src/flutter/packages/flutter/lib/src/services/hardware_keyboard.dart",
+      "bytes": 59015,
+      "sha256": "6e0d5e82c715a0077a757c88dfe760fcbb8d2f26739fb48083085aef2865026c"
+    },
+    {
+      "path": "C:/src/flutter/engine/src/flutter/shell/platform/windows/keyboard_manager.cc",
+      "bytes": 16509,
+      "sha256": "fe26e6f13d7986eb8c331de4f9ca3f328d1c43ff471b368da7007ba8a09f03d8"
+    },
+    {
+      "path": "C:/src/flutter/engine/src/flutter/shell/platform/windows/keyboard_key_embedder_handler.cc",
+      "bytes": 26236,
+      "sha256": "0cf4ebb6fd000d1eeac1444d3b563ee9643a32b17f6fbc9fed1713ff9886056c"
+    },
+    {
+      "path": "C:/src/flutter/engine/src/flutter/shell/platform/windows/flutter_window.cc",
+      "bytes": 38347,
+      "sha256": "2ea136476dc34cff635075e60d2058caa17cdfece6538a8bd48051e5b08cf51b"
+    },
+    {
+      "path": "C:/src/flutter/bin/cache/flutter.version.json",
+      "bytes": 559,
+      "sha256": "0e2d66b4e635a5776806b941ad1da530640d61b74d3e13511f0858e45510b6a3"
+    }
+  ],
+  "documentationAndSkills": [
+    {
+      "path": "C:/Users/sheha/.codex/plugins/cache/openai-bundled/computer-use/26.1007.21434/docs/api.md",
+      "bytes": 8028,
+      "sha256": "c36d005fb98ed79837a1a5d4605ebad036cec95864e5646f451425163d5c16af"
+    },
+    {
+      "path": "C:/Users/sheha/.codex/plugins/cache/openai-bundled/computer-use/26.1007.21434/docs/guidance.md",
+      "bytes": 13907,
+      "sha256": "b171b26bc19f49226bb594bf3ed3f36666e5dd063a996c297986b2b461ac8efd"
+    },
+    {
+      "path": "C:/Users/sheha/.codex/plugins/cache/openai-curated-remote/superpowers/6.4.2/skills/systematic-debugging/SKILL.md",
+      "bytes": 9465,
+      "sha256": "808fc5717aa88ad65efff312b11c186294d3e6ee301afb584e2f86599b137787"
+    },
+    {
+      "path": "C:/Users/sheha/.codex/plugins/cache/openai-curated-remote/superpowers/6.4.2/skills/using-superpowers/SKILL.md",
+      "bytes": 3192,
+      "sha256": "82c5c8866ad7f5dd4440ce66bd7806ba48a2f13771beae5cf112e53f08fe36ba"
+    }
+  ],
+  "sdkMetadata": {
+    "frameworkVersion": "3.47.5",
+    "channel": "stable",
+    "repositoryUrl": "https://github.com/flutter/flutter.git",
+    "frameworkRevision": "6a19cca56475dbfba1478ee68d7bd0c2ef891da1",
+    "frameworkCommitDate": "2026-09-17 14:13:22 -0400",
+    "engineRevision": "af7e796e161ae0bb1ff0758c71a7105418bd9ded",
+    "engineCommitDate": "2026-09-16 18:35:09.000Z",
+    "engineContentHash": "ab598368592da0064197e2bc15c7f5b0a2c6bb1f",
+    "engineBuildDate": "2026-09-17 01:05:21.428",
+    "dartSdkVersion": "3.13.4",
+    "devToolsVersion": "2.60.0",
+    "flutterVersion": "3.47.5"
+  },
+  "previewExecutable": {
+    "path": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9o13r7/preview/apps/jentra_desktop/build/windows/x64/runner/Release/Jentra_OS.exe",
+    "bytes": 93184,
+    "sha256": "88ffac37c5d4b7ae5b4b83ceb91ba939c420753223979ca0061acc46581c8e74"
+  },
+  "previewEngine": {
+    "path": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9o13r7/preview/apps/jentra_desktop/build/windows/x64/runner/Release/flutter_windows.dll",
+    "bytes": 21274112,
+    "sha256": "8bd7b61eee31aa436edb182db41624d1cd3b2688a7e03622320dbeae067b5251"
+  },
+  "currentSdkEngine": {
+    "path": "C:/src/flutter/bin/cache/artifacts/engine/windows-x64-release/flutter_windows.dll",
+    "bytes": 21274112,
+    "sha256": "8bd7b61eee31aa436edb182db41624d1cd3b2688a7e03622320dbeae067b5251"
+  },
+  "previewMatchesCurrentSdkEngine": true,
+  "versionBoundary": "Local source bytes and DLL identity are distinct evidence from binary instrumentation; external report tool/SDK versions differ.",
+  "preservedEvidence": [
+    {
+      "path": "docs/verification/wave5/fresh-desktop-verification-20261014-o13r7.json",
+      "bytes": 55132,
+      "sha256": "2ab7ec506a756c1bf5c89cc6d72cbc1f9eeebd5792648aa58f35d47a336fc1b3"
+    },
+    {
+      "path": "docs/verification/wave5/native-preview-keyboard-observation-20261014-o13r7.json",
+      "bytes": 1953,
+      "sha256": "6ed4d9a165f5a726baaed5f2a0586ef36255ec09ac45121932e3392029e3cca7"
+    },
+    {
+      "path": "docs/verification/wave5/native-keyboard-failure-investigation-20261012-r5.json",
+      "bytes": 44652,
+      "sha256": "c3785b68693e9665a0b25d06020a7b494547a2f9607efdf0de70e19379c00ddc"
+    },
+    {
+      "path": "docs/verification/wave5/native-keyboard-artifact-review-20261013-r5.json",
+      "bytes": 31774,
+      "sha256": "3771c62f9ea13a4505d0d6222369173a3f8175b251e3e1abbd92b8270efa8274"
+    },
+    {
+      "path": "docs/verification/wave5/native-preview-userflows-20261010-r5.json",
+      "bytes": 93448,
+      "sha256": "4a8783db056143e7cf6d8031bc30dba7ff7707e315324892acf05fa2fac42840"
+    },
+    {
+      "path": "docs/verification/wave5/keyboard-audit-20261014/probe-preparation.json",
+      "bytes": 9797,
+      "sha256": "31611534b10221ea0e438a0f0b0c1e4f50b4c433b91008ff537a51c31a16a878"
+    },
+    {
+      "path": "docs/verification/wave5/keyboard-audit-20261014/probe-source-repair-a3.json",
+      "bytes": 10419,
+      "sha256": "a1705863b306b3b58dc5a37997c7abbc6eadde0d5aa9be2cf8f7e4d2f7ed1c6f"
+    }
+  ],
+  "productFindings": [
+    {
+      "source": "apps/jentra_desktop/lib/src/shell/jentra_shell.dart",
+      "lines": "34-40",
+      "finding": "Standard CallbackShortcuts SingleActivator(keyK,control:true) with autofocus child Focus; no Control remapping."
+    },
+    {
+      "source": "apps/jentra_desktop/lib/src/shell/jentra_shell.dart",
+      "lines": "618-651,687-694",
+      "finding": "Palette handles arrow/Enter, ignores other keys, and uses normal autofocus TextField without formatter explaining whole-string loss."
+    },
+    {
+      "source": "apps/jentra_desktop/test/command_palette_keyboard_test.dart",
+      "lines": "61-63",
+      "finding": "Widget fixture holds Control, sends K, releases Control; it bypasses Windows/tool delivery. enterText bypasses native literal delivery."
+    },
+    {
+      "source": "apps/jentra_desktop/windows/runner/flutter_window.cpp",
+      "lines": "54-60",
+      "finding": "Normal Flutter message forwarding; no custom keyboard normalization/filter."
+    },
+    {
+      "source": "apps/jentra_desktop/windows/runner/main.cpp",
+      "finding": "Normal TranslateMessage/DispatchMessage Windows loop; only title differs in the approved snapshot overlay."
+    },
+    {
+      "source": "apps/jentra_desktop/windows/runner/win32_window.cpp",
+      "lines": "210-213,249",
+      "finding": "Normal native child focus setup; UIA categories alone do not identify Dart focus ancestry or actual modifier state."
+    }
+  ],
+  "frameworkFindings": [
+    {
+      "source": "C:/src/flutter/packages/flutter/lib/src/widgets/shortcuts.dart",
+      "lines": "576-580,1212-1215",
+      "finding": "Activator requires correct trigger down/repeat and pressed modifiers."
+    },
+    {
+      "source": "C:/src/flutter/packages/flutter/lib/src/widgets/default_text_editing_shortcuts.dart",
+      "lines": "318-320",
+      "finding": "Default Control+A maps to SelectAllTextIntent; modifier loss can affect both product shortcut and standard editor."
+    },
+    {
+      "source": "C:/src/flutter/engine/src/flutter/shell/platform/windows/keyboard_key_embedder_handler.cc",
+      "lines": "115-121,160-175,227-245",
+      "finding": "Physical fallback identity derives from scan code; zero scan ordinary keys can share identity and pressed records."
+    },
+    {
+      "source": "C:/src/flutter/engine/src/flutter/shell/platform/windows/keyboard_manager.cc",
+      "lines": "223-237,246-247,387-398",
+      "finding": "Packet keys bypass ordinary key events, but standalone printable WM_CHAR dispatches text. Packet bypass alone does not show Unicode unsupported."
+    },
+    {
+      "source": "C:/src/flutter/engine/src/flutter/shell/platform/windows/keyboard_key_embedder_handler.cc",
+      "lines": "425-496",
+      "finding": "Modifier synchronization consults native key state and can synthesize corrections; actual trace remains necessary."
+    }
+  ],
+  "primaryWebSources": [
+    {
+      "title": "Flutter SingleActivator",
+      "url": "https://api.flutter.dev/flutter/widgets/SingleActivator-class.html",
+      "claim": "Trigger event with required modifier state."
+    },
+    {
+      "title": "Flutter HardwareKeyboard",
+      "url": "https://api.flutter.dev/flutter/services/HardwareKeyboard-class.html",
+      "claim": "Native event regularization and possible synthesized corrections."
+    },
+    {
+      "title": "Windows KEYBDINPUT",
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-keybdinput",
+      "claim": "Packet/Unicode text and scan-code injection are distinct routes."
+    },
+    {
+      "title": "Windows SendInput",
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-sendinput",
+      "claim": "Existing keyboard state and integrity boundaries affect injection."
+    },
+    {
+      "title": "First-hand Computer Use receiver report",
+      "url": "https://github.com/openai/codex/issues/43575",
+      "inspectedState": "Open when read",
+      "evidenceType": "External first-hand receiver trace; not a current Jentra observation or confirmed maintainer diagnosis.",
+      "versionBoundary": "Reported Flutter3.44.9/bundle26.901.51231 differs from Jentra3.47.5/documentation26.1007.21434.",
+      "claim": "Same literal-empty/key-style-success/Control-selection failure; report traces zero scan fields and compares supplying scan information."
+    },
+    {
+      "title": "Flutter equal-scan-code proposal",
+      "url": "https://github.com/flutter/flutter/issues/99198",
+      "inspectedState": "Open when read",
+      "claim": "Distinct logical keys may share zero scan codes in emulated Windows shortcuts."
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "H1",
+      "priority": "leading",
+      "hypothesis": "Zero ordinary-key scan fields collapse modifier/trigger physical identity and lose Control at K/A/V.",
+      "support": "External receiver report plus compatible current engine fallback and correlated Jentra failures.",
+      "stillMissing": "Current Jentra native scan fields/Flutter event trace.",
+      "distinguishingResult": "Probe Control and letter show the same fallback physical ID, trigger Control false; single key works."
+    },
+    {
+      "id": "H2",
+      "priority": "alternative",
+      "hypothesis": "Activation/sequence changes native or Flutter modifier/focus state.",
+      "distinguishingResult": "Distinct physical IDs with incorrect modifier state or missing local focused key delivery."
+    },
+    {
+      "id": "H3",
+      "priority": "conditional product path",
+      "hypothesis": "Correctly delivered chord does not reach shell Focus ancestor.",
+      "distinguishingResult": "Default receiver accepts the chord; product receives correct K/Control state but binding does not fire."
+    },
+    {
+      "id": "H4",
+      "priority": "literal route alternative",
+      "hypothesis": "Literal input uses a different text/paste route from key-style input.",
+      "stillMissing": "Current sky implementation is uninspected; do not assume clipboard or Unicode.",
+      "distinguishingResult": "Visible Ctrl/V without text, absent literal events or differing text route in local receiver."
+    }
+  ],
+  "standaloneReceiver": {
+    "projectRoot": "C:/Users/sheha/Desktop/Jentra OS/build/w5kbdprobe20261014",
+    "windowTitle": "Jentra Keyboard Probe - TEST ONLY",
+    "currentMain": {
+      "path": "build/w5kbdprobe20261014/lib/main.dart",
+      "bytes": 5649,
+      "sha256": "49a57c93ad6c14c14943a760ffa04e4a386c2d6ce8a28b54359c44674800229d"
+    },
+    "initialPreparation": {
+      "path": "docs/verification/wave5/keyboard-audit-20261014/probe-preparation.json",
+      "bytes": 9797,
+      "sha256": "31611534b10221ea0e438a0f0b0c1e4f50b4c433b91008ff537a51c31a16a878"
+    },
+    "successorRepair": {
+      "path": "docs/verification/wave5/keyboard-audit-20261014/probe-source-repair-a3.json",
+      "bytes": 10419,
+      "sha256": "a1705863b306b3b58dc5a37997c7abbc6eadde0d5aa9be2cf8f7e4d2f7ed1c6f"
+    },
+    "exactTwoChangeRepairVerified": true,
+    "historicalRootAnalysis": {
+      "attempt": "a2",
+      "exitCode": 1,
+      "issues": 20,
+      "errors": "19 constant LogicalKeyboardKey set elements plus missing class-closing brace.",
+      "outputs": [
+        {
+          "path": "docs/verification/wave5/keyboard-audit-20261014/actual-probe-pubget.json",
+          "bytes": 594,
+          "sha256": "a1480d11bfcf73c7819535dec4b83f398de69fe6b6274e458aa6fa6cad3aec02"
+        },
+        {
+          "path": "docs/verification/wave5/keyboard-audit-20261014/actual-probe-pubget.log",
+          "bytes": 249,
+          "sha256": "bd70674ac5b6ef275bd42a56a3dcbd888b14acf65cad203723dee2c80174a5f6"
+        },
+        {
+          "path": "docs/verification/wave5/keyboard-audit-20261014/actual-probe-pubget-a2.json",
+          "bytes": 638,
+          "sha256": "3224260f5eddb9fa2287dab97afc928a8d737d8c9596d8c8f42d9e09d92cd3cf"
+        },
+        {
+          "path": "docs/verification/wave5/keyboard-audit-20261014/actual-probe-pubget-a2.log",
+          "bytes": 260,
+          "sha256": "fb07a009e29e56e123877ac7e1998f160bf8ad73e19352f68431bdf8178aad89"
+        },
+        {
+          "path": "docs/verification/wave5/keyboard-audit-20261014/actual-probe-analysis-a2.json",
+          "bytes": 655,
+          "sha256": "2b64f3044d6eb1e75a0b3561291dbb6a817b821e375f6eb44a0bd9ba1141116e"
+        },
+        {
+          "path": "docs/verification/wave5/keyboard-audit-20261014/actual-probe-analysis-a2.log",
+          "bytes": 5552,
+          "sha256": "f98981360075edf26a15eb2803028eecd2b301fe3ad4dc1dccef9922f044602e"
+        }
+      ],
+      "preserved": true
+    },
+    "preparationBoundary": "Original docs/probe.dart and initial preparation retain failing source. Successor repair binds corrected main and root-SDK-regenerated plugin files.",
+    "scope": "SDK-only default MaterialApp/TextField, no product imports/config/plugins/storage.",
+    "UI": "Eight local allowlisted KeyDown/KeyUp metadata rows, physical/logical IDs, Control/pressed state, accepted CtrlK count, synthetic text/selection.",
+    "privacy": "No character payload, clipboard/device/global-input capture, persistence or network; observer returns false, gated by field focus/window lifecycle and removed on dispose.",
+    "pendingRootActions": [
+      "Run scoped analyze --no-pub lib/main.dart, then build windows --release --no-pub --target=lib/main.dart serially.",
+      "Bind actual built EXE/DLL and final managed/generated project files.",
+      "Select actual unique probe window, click/observe synthetic field and separately observe key-style k, Control_L+k and literal Finance.",
+      "Compare IDs/modifier/acceptance counter/text/selection before proposing product changes."
+    ],
+    "analysisOrBuildRunByThisInvestigator": false,
+    "nativeRunByThisInvestigator": false
+  },
+  "fixBoundary": [
+    "If zero-scan collisions are confirmed, address the injection/scan-code compatibility boundary; never weaken Control+K to plain K.",
+    "A missing-scan normalization comparison belongs first in an isolated receiver, preserves nonzero/extended data, excludes packet/IME paths, and is not a production patch.",
+    "Correct received chord with product-only failure justifies a narrow Focus/binding diagnostic rather than speculative global shortcut duplication."
+  ],
+  "skills": {
+    "initiallyUnavailable": true,
+    "restoredBeforeProbeSourceRepair": true,
+    "applied": "Superpowers systematic-debugging: actual failed analysis read, exact two source errors isolated, narrow repair, red evidence preserved and real validation pending.",
+    "usingSuperpowersBoundary": "Read skill explicitly exempts dispatched subagents from orchestration workflow."
+  },
+  "preservedNativeGates": {
+    "originalNativeReport": {
+      "cases": 33,
+      "passed": 27,
+      "failed": 4,
+      "blocked": 2,
+      "sha256": "4a8783db056143e7cf6d8031bc30dba7ff7707e315324892acf05fa2fac42840"
+    },
+    "historicalFailuresRelabeled": false,
+    "fullNativeKeyboard": false,
+    "authenticatedNative": false,
+    "ownerAcceptanceGranted": false,
+    "rootCauseProven": false
+  },
+  "investigatorActions": {
+    "sdkJobs": 0,
+    "nativeActions": 0,
+    "liveProjectCalls": 0,
+    "credentialsOrStoresOrSessionsRead": false,
+    "productSourceEdits": 0,
+    "existingSnapshotEdits": 0,
+    "existingBuildOutputEdits": 0,
+    "baselinesChanged": false,
+    "acceptanceChanges": 0,
+    "gitMutation": false,
+    "standaloneSourceRepaired": true,
+    "newStandaloneProjectPrepared": true,
+    "publicSourceAndDocumentationReads": true
+  }
+}

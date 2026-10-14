@@ -214,7 +214,7 @@ export function validatePreflight(proof, review, plan, binding, nowMs = Date.now
     'ONLINE_PREFLIGHT_BINDING_REQUIRED');
   requireGuard(nowMs - millis(proof.observedAt) >= 0 && nowMs - millis(proof.observedAt) <= 300000
     && millis(proof.validUntil) >= nowMs + LOAD_LIMITS.maxRunMs, 'FRESH_PREFLIGHT_REQUIRED');
-  requireGuard(proof.installedMigrationCount === 114 && proof.pending71Installed === true && proof.originalSixPreserved === true
+  requireGuard(proof.installedMigrationCount === 115 && proof.pending71Installed === true && proof.originalSixPreserved === true
     && proof.signaturesGrantsForcedRlsVerified === true && proof.protectedSourcesUnchanged === true
     && proof.scopeDigestSha256 === hashJson(review.syntheticScopes) && proof.capacitySupported === true
     && proof.noGlobalAuthChanges === true && proof.noFabricatedAuth === true && proof.noAcceptanceScopes === true,

@@ -1,0 +1,1546 @@
+TAP version 13
+# Subtest: managed runtime schedule without its secret is denied before any backend call
+ok 1 - managed runtime schedule without its secret is denied before any backend call
+  ---
+  duration_ms: 22.1913
+  type: 'test'
+  ...
+# Subtest: all managed receiver routes still deny unsigned bytes before key reads, backend writes or fault responses
+ok 2 - all managed receiver routes still deny unsigned bytes before key reads, backend writes or fault responses
+  ---
+  duration_ms: 4.1708
+  type: 'test'
+  ...
+# Subtest: both handlers reject unreviewed HTTP origins before accessing provider credentials
+ok 3 - both handlers reject unreviewed HTTP origins before accessing provider credentials
+  ---
+  duration_ms: 2.2645
+  type: 'test'
+  ...
+# Subtest: all handler source is preserved apart from the single reviewed route import
+ok 4 - all handler source is preserved apart from the single reviewed route import
+  ---
+  duration_ms: 8.2788
+  type: 'test'
+  ...
+# Subtest: gateway and documented in-function namespaces select the same exact route
+ok 5 - gateway and documented in-function namespaces select the same exact route
+  ---
+  duration_ms: 1.0473
+  type: 'test'
+  ...
+# Subtest: unreviewed hosts, namespaces, routes, queries and fragments remain rejected
+ok 6 - unreviewed hosts, namespaces, routes, queries and fragments remain rejected
+  ---
+  duration_ms: 0.3042
+  type: 'test'
+  ...
+# Subtest: documented platform paths reach auth denial before credentials or backend effects
+ok 7 - documented platform paths reach auth denial before credentials or backend effects
+  ---
+  duration_ms: 20.5825
+  type: 'test'
+  ...
+# Subtest: HTTP platform is classified exactly and remains denied by the diagnostic-only revision
+ok 8 - HTTP platform is classified exactly and remains denied by the diagnostic-only revision
+  ---
+  duration_ms: 2.523
+  type: 'test'
+  ...
+# Subtest: finite classes separate lookalikes, ports, credentials and malformed requests without logging values
+ok 9 - finite classes separate lookalikes, ports, credentials and malformed requests without logging values
+  ---
+  duration_ms: 0.6119
+  type: 'test'
+  ...
+# Subtest: v4 keeps every v3 allowed or rejected route outcome unchanged
+ok 10 - v4 keeps every v3 allowed or rejected route outcome unchanged
+  ---
+  duration_ms: 2.5794
+  type: 'test'
+  ...
+# Subtest: one finite diagnostic is emitted across concurrent handlers without accessing private request fields
+ok 11 - one finite diagnostic is emitted across concurrent handlers without accessing private request fields
+  ---
+  duration_ms: 1.9126
+  type: 'test'
+  ...
+# Subtest: sink failure leaves the authenticated handler and its return unchanged
+ok 12 - sink failure leaves the authenticated handler and its return unchanged
+  ---
+  duration_ms: 0.3385
+  type: 'test'
+  ...
+# Subtest: both v4 factories preserve the full v3 handler source except for the route import
+ok 13 - both v4 factories preserve the full v3 handler source except for the route import
+  ---
+  duration_ms: 11.0186
+  type: 'test'
+  ...
+# Subtest: public wave5-runtime/schedule selects the fixed route
+ok 14 - public wave5-runtime/schedule selects the fixed route
+  ---
+  duration_ms: 4.0294
+  type: 'test'
+  ...
+# Subtest: project namespace wave5-runtime/schedule selects the fixed route
+ok 15 - project namespace wave5-runtime/schedule selects the fixed route
+  ---
+  duration_ms: 0.3039
+  type: 'test'
+  ...
+# Subtest: platform namespace wave5-runtime/schedule selects the fixed route
+ok 16 - platform namespace wave5-runtime/schedule selects the fixed route
+  ---
+  duration_ms: 0.2338
+  type: 'test'
+  ...
+# Subtest: platform public prefix wave5-runtime/schedule is excluded
+ok 17 - platform public prefix wave5-runtime/schedule is excluded
+  ---
+  duration_ms: 0.2817
+  type: 'test'
+  ...
+# Subtest: public wave5-runtime/external/forecast selects the fixed route
+ok 18 - public wave5-runtime/external/forecast selects the fixed route
+  ---
+  duration_ms: 0.2243
+  type: 'test'
+  ...
+# Subtest: project namespace wave5-runtime/external/forecast selects the fixed route
+ok 19 - project namespace wave5-runtime/external/forecast selects the fixed route
+  ---
+  duration_ms: 0.2837
+  type: 'test'
+  ...
+# Subtest: platform namespace wave5-runtime/external/forecast selects the fixed route
+ok 20 - platform namespace wave5-runtime/external/forecast selects the fixed route
+  ---
+  duration_ms: 0.1936
+  type: 'test'
+  ...
+# Subtest: platform public prefix wave5-runtime/external/forecast is excluded
+ok 21 - platform public prefix wave5-runtime/external/forecast is excluded
+  ---
+  duration_ms: 0.208
+  type: 'test'
+  ...
+# Subtest: public wave5-runtime/model/suggestion selects the fixed route
+ok 22 - public wave5-runtime/model/suggestion selects the fixed route
+  ---
+  duration_ms: 0.2296
+  type: 'test'
+  ...
+# Subtest: project namespace wave5-runtime/model/suggestion selects the fixed route
+ok 23 - project namespace wave5-runtime/model/suggestion selects the fixed route
+  ---
+  duration_ms: 0.3316
+  type: 'test'
+  ...
+# Subtest: platform namespace wave5-runtime/model/suggestion selects the fixed route
+ok 24 - platform namespace wave5-runtime/model/suggestion selects the fixed route
+  ---
+  duration_ms: 0.2619
+  type: 'test'
+  ...
+# Subtest: platform public prefix wave5-runtime/model/suggestion is excluded
+ok 25 - platform public prefix wave5-runtime/model/suggestion is excluded
+  ---
+  duration_ms: 0.1756
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects other host
+ok 26 - wave5-runtime rejects other host
+  ---
+  duration_ms: 0.2491
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects platform lookalike
+ok 27 - wave5-runtime rejects platform lookalike
+  ---
+  duration_ms: 0.1121
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects platform subdomain
+ok 28 - wave5-runtime rejects platform subdomain
+  ---
+  duration_ms: 0.1264
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects project lookalike
+ok 29 - wave5-runtime rejects project lookalike
+  ---
+  duration_ms: 0.0961
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects platform HTTP
+ok 30 - wave5-runtime rejects platform HTTP
+  ---
+  duration_ms: 0.1
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects project HTTP
+ok 31 - wave5-runtime rejects project HTTP
+  ---
+  duration_ms: 0.1236
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects platform other port
+ok 32 - wave5-runtime rejects platform other port
+  ---
+  duration_ms: 0.1145
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects platform explicit default port
+ok 33 - wave5-runtime rejects platform explicit default port
+  ---
+  duration_ms: 0.101
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects username
+ok 34 - wave5-runtime rejects username
+  ---
+  duration_ms: 0.1313
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects empty userinfo
+ok 35 - wave5-runtime rejects empty userinfo
+  ---
+  duration_ms: 0.1078
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects password
+ok 36 - wave5-runtime rejects password
+  ---
+  duration_ms: 0.1415
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects query
+ok 37 - wave5-runtime rejects query
+  ---
+  duration_ms: 0.2052
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects empty query
+ok 38 - wave5-runtime rejects empty query
+  ---
+  duration_ms: 0.1075
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects hash
+ok 39 - wave5-runtime rejects hash
+  ---
+  duration_ms: 0.245
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects empty hash
+ok 40 - wave5-runtime rejects empty hash
+  ---
+  duration_ms: 0.2053
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects bare route
+ok 41 - wave5-runtime rejects bare route
+  ---
+  duration_ms: 0.105
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects other function
+ok 42 - wave5-runtime rejects other function
+  ---
+  duration_ms: 0.1025
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects unrelated function
+ok 43 - wave5-runtime rejects unrelated function
+  ---
+  duration_ms: 0.0892
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects unknown route
+ok 44 - wave5-runtime rejects unknown route
+  ---
+  duration_ms: 0.1479
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects extra suffix
+ok 45 - wave5-runtime rejects extra suffix
+  ---
+  duration_ms: 0.0968
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects trailing slash
+ok 46 - wave5-runtime rejects trailing slash
+  ---
+  duration_ms: 0.0828
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects doubled namespace slash
+ok 47 - wave5-runtime rejects doubled namespace slash
+  ---
+  duration_ms: 0.1053
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects doubled route slash
+ok 48 - wave5-runtime rejects doubled route slash
+  ---
+  duration_ms: 0.0889
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects encoded namespace
+ok 49 - wave5-runtime rejects encoded namespace
+  ---
+  duration_ms: 0.1385
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects encoded route slash
+ok 50 - wave5-runtime rejects encoded route slash
+  ---
+  duration_ms: 0.1551
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects raw path normalization
+ok 51 - wave5-runtime rejects raw path normalization
+  ---
+  duration_ms: 0.085
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects backslash normalization
+ok 52 - wave5-runtime rejects backslash normalization
+  ---
+  duration_ms: 0.0745
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects leading whitespace
+ok 53 - wave5-runtime rejects leading whitespace
+  ---
+  duration_ms: 0.0881
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects invalid URL
+ok 54 - wave5-runtime rejects invalid URL
+  ---
+  duration_ms: 0.1376
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects unsupported URL value
+ok 55 - wave5-runtime rejects unsupported URL value
+  ---
+  duration_ms: 0.0666
+  type: 'test'
+  ...
+# Subtest: wave5-runtime caller cannot expand fixed routes
+ok 56 - wave5-runtime caller cannot expand fixed routes
+  ---
+  duration_ms: 0.1968
+  type: 'test'
+  ...
+# Subtest: wave5-runtime caller can only narrow routes
+ok 57 - wave5-runtime caller can only narrow routes
+  ---
+  duration_ms: 0.1453
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects unreviewed endpoint PROJECT/functions/v1/wave5-runtime/
+ok 58 - wave5-runtime rejects unreviewed endpoint PROJECT/functions/v1/wave5-runtime/
+  ---
+  duration_ms: 0.1147
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects unreviewed endpoint PROJECT/functions/v1/wave5-runtime?
+ok 59 - wave5-runtime rejects unreviewed endpoint PROJECT/functions/v1/wave5-runtime?
+  ---
+  duration_ms: 0.0671
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects unreviewed endpoint PROJECT/functions/v1/wave5-runtime\#
+ok 60 - wave5-runtime rejects unreviewed endpoint PROJECT/functions/v1/wave5-runtime\#
+  ---
+  duration_ms: 0.066
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects unreviewed endpoint https://other.invalid/functions/v1/wave5-runtime
+ok 61 - wave5-runtime rejects unreviewed endpoint https://other.invalid/functions/v1/wave5-runtime
+  ---
+  duration_ms: 0.0659
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects unreviewed endpoint http://xpdoufauvrbdmxgngetv.supabase.co/functions/v1/wave5-runtime
+ok 62 - wave5-runtime rejects unreviewed endpoint http://xpdoufauvrbdmxgngetv.supabase.co/functions/v1/wave5-runtime
+  ---
+  duration_ms: 0.0764
+  type: 'test'
+  ...
+# Subtest: wave5-runtime rejects unreviewed endpoint PROJECT/functions/v1/unreviewed
+ok 63 - wave5-runtime rejects unreviewed endpoint PROJECT/functions/v1/unreviewed
+  ---
+  duration_ms: 0.1278
+  type: 'test'
+  ...
+# Subtest: public wave5-receiver/accept selects the fixed route
+ok 64 - public wave5-receiver/accept selects the fixed route
+  ---
+  duration_ms: 0.1044
+  type: 'test'
+  ...
+# Subtest: project namespace wave5-receiver/accept selects the fixed route
+ok 65 - project namespace wave5-receiver/accept selects the fixed route
+  ---
+  duration_ms: 0.1187
+  type: 'test'
+  ...
+# Subtest: platform namespace wave5-receiver/accept selects the fixed route
+ok 66 - platform namespace wave5-receiver/accept selects the fixed route
+  ---
+  duration_ms: 0.1065
+  type: 'test'
+  ...
+# Subtest: platform public prefix wave5-receiver/accept is excluded
+ok 67 - platform public prefix wave5-receiver/accept is excluded
+  ---
+  duration_ms: 0.0709
+  type: 'test'
+  ...
+# Subtest: public wave5-receiver/redirect selects the fixed route
+ok 68 - public wave5-receiver/redirect selects the fixed route
+  ---
+  duration_ms: 0.0732
+  type: 'test'
+  ...
+# Subtest: project namespace wave5-receiver/redirect selects the fixed route
+ok 69 - project namespace wave5-receiver/redirect selects the fixed route
+  ---
+  duration_ms: 0.0699
+  type: 'test'
+  ...
+# Subtest: platform namespace wave5-receiver/redirect selects the fixed route
+ok 70 - platform namespace wave5-receiver/redirect selects the fixed route
+  ---
+  duration_ms: 0.0757
+  type: 'test'
+  ...
+# Subtest: platform public prefix wave5-receiver/redirect is excluded
+ok 71 - platform public prefix wave5-receiver/redirect is excluded
+  ---
+  duration_ms: 0.1081
+  type: 'test'
+  ...
+# Subtest: public wave5-receiver/timeout selects the fixed route
+ok 72 - public wave5-receiver/timeout selects the fixed route
+  ---
+  duration_ms: 0.103
+  type: 'test'
+  ...
+# Subtest: project namespace wave5-receiver/timeout selects the fixed route
+ok 73 - project namespace wave5-receiver/timeout selects the fixed route
+  ---
+  duration_ms: 0.0684
+  type: 'test'
+  ...
+# Subtest: platform namespace wave5-receiver/timeout selects the fixed route
+ok 74 - platform namespace wave5-receiver/timeout selects the fixed route
+  ---
+  duration_ms: 0.065
+  type: 'test'
+  ...
+# Subtest: platform public prefix wave5-receiver/timeout is excluded
+ok 75 - platform public prefix wave5-receiver/timeout is excluded
+  ---
+  duration_ms: 0.0944
+  type: 'test'
+  ...
+# Subtest: public wave5-receiver/reject selects the fixed route
+ok 76 - public wave5-receiver/reject selects the fixed route
+  ---
+  duration_ms: 0.0912
+  type: 'test'
+  ...
+# Subtest: project namespace wave5-receiver/reject selects the fixed route
+ok 77 - project namespace wave5-receiver/reject selects the fixed route
+  ---
+  duration_ms: 0.1208
+  type: 'test'
+  ...
+# Subtest: platform namespace wave5-receiver/reject selects the fixed route
+ok 78 - platform namespace wave5-receiver/reject selects the fixed route
+  ---
+  duration_ms: 0.0722
+  type: 'test'
+  ...
+# Subtest: platform public prefix wave5-receiver/reject is excluded
+ok 79 - platform public prefix wave5-receiver/reject is excluded
+  ---
+  duration_ms: 0.0689
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects other host
+ok 80 - wave5-receiver rejects other host
+  ---
+  duration_ms: 0.0815
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects platform lookalike
+ok 81 - wave5-receiver rejects platform lookalike
+  ---
+  duration_ms: 0.0745
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects platform subdomain
+ok 82 - wave5-receiver rejects platform subdomain
+  ---
+  duration_ms: 1.6505
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects project lookalike
+ok 83 - wave5-receiver rejects project lookalike
+  ---
+  duration_ms: 0.079
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects platform HTTP
+ok 84 - wave5-receiver rejects platform HTTP
+  ---
+  duration_ms: 0.0652
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects project HTTP
+ok 85 - wave5-receiver rejects project HTTP
+  ---
+  duration_ms: 0.0807
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects platform other port
+ok 86 - wave5-receiver rejects platform other port
+  ---
+  duration_ms: 0.0656
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects platform explicit default port
+ok 87 - wave5-receiver rejects platform explicit default port
+  ---
+  duration_ms: 0.0609
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects username
+ok 88 - wave5-receiver rejects username
+  ---
+  duration_ms: 0.0601
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects empty userinfo
+ok 89 - wave5-receiver rejects empty userinfo
+  ---
+  duration_ms: 0.0547
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects password
+ok 90 - wave5-receiver rejects password
+  ---
+  duration_ms: 0.0557
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects query
+ok 91 - wave5-receiver rejects query
+  ---
+  duration_ms: 0.0572
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects empty query
+ok 92 - wave5-receiver rejects empty query
+  ---
+  duration_ms: 0.0601
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects hash
+ok 93 - wave5-receiver rejects hash
+  ---
+  duration_ms: 0.0676
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects empty hash
+ok 94 - wave5-receiver rejects empty hash
+  ---
+  duration_ms: 0.0585
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects bare route
+ok 95 - wave5-receiver rejects bare route
+  ---
+  duration_ms: 0.0609
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects other function
+ok 96 - wave5-receiver rejects other function
+  ---
+  duration_ms: 0.062
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects unrelated function
+ok 97 - wave5-receiver rejects unrelated function
+  ---
+  duration_ms: 0.0841
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects unknown route
+ok 98 - wave5-receiver rejects unknown route
+  ---
+  duration_ms: 0.0593
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects extra suffix
+ok 99 - wave5-receiver rejects extra suffix
+  ---
+  duration_ms: 0.0643
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects trailing slash
+ok 100 - wave5-receiver rejects trailing slash
+  ---
+  duration_ms: 0.0601
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects doubled namespace slash
+ok 101 - wave5-receiver rejects doubled namespace slash
+  ---
+  duration_ms: 0.0633
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects doubled route slash
+ok 102 - wave5-receiver rejects doubled route slash
+  ---
+  duration_ms: 0.0581
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects encoded namespace
+ok 103 - wave5-receiver rejects encoded namespace
+  ---
+  duration_ms: 0.0589
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects encoded route slash
+ok 104 - wave5-receiver rejects encoded route slash
+  ---
+  duration_ms: 0.062
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects raw path normalization
+ok 105 - wave5-receiver rejects raw path normalization
+  ---
+  duration_ms: 0.0535
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects backslash normalization
+ok 106 - wave5-receiver rejects backslash normalization
+  ---
+  duration_ms: 0.0562
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects leading whitespace
+ok 107 - wave5-receiver rejects leading whitespace
+  ---
+  duration_ms: 0.0585
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects invalid URL
+ok 108 - wave5-receiver rejects invalid URL
+  ---
+  duration_ms: 0.2498
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects unsupported URL value
+ok 109 - wave5-receiver rejects unsupported URL value
+  ---
+  duration_ms: 0.0557
+  type: 'test'
+  ...
+# Subtest: wave5-receiver caller cannot expand fixed routes
+ok 110 - wave5-receiver caller cannot expand fixed routes
+  ---
+  duration_ms: 0.0736
+  type: 'test'
+  ...
+# Subtest: wave5-receiver caller can only narrow routes
+ok 111 - wave5-receiver caller can only narrow routes
+  ---
+  duration_ms: 0.0811
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects unreviewed endpoint PROJECT/functions/v1/wave5-receiver/
+ok 112 - wave5-receiver rejects unreviewed endpoint PROJECT/functions/v1/wave5-receiver/
+  ---
+  duration_ms: 0.0697
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects unreviewed endpoint PROJECT/functions/v1/wave5-receiver?
+ok 113 - wave5-receiver rejects unreviewed endpoint PROJECT/functions/v1/wave5-receiver?
+  ---
+  duration_ms: 0.1
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects unreviewed endpoint PROJECT/functions/v1/wave5-receiver\#
+ok 114 - wave5-receiver rejects unreviewed endpoint PROJECT/functions/v1/wave5-receiver\#
+  ---
+  duration_ms: 0.067
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects unreviewed endpoint https://other.invalid/functions/v1/wave5-receiver
+ok 115 - wave5-receiver rejects unreviewed endpoint https://other.invalid/functions/v1/wave5-receiver
+  ---
+  duration_ms: 0.0731
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects unreviewed endpoint http://xpdoufauvrbdmxgngetv.supabase.co/functions/v1/wave5-receiver
+ok 116 - wave5-receiver rejects unreviewed endpoint http://xpdoufauvrbdmxgngetv.supabase.co/functions/v1/wave5-receiver
+  ---
+  duration_ms: 0.0623
+  type: 'test'
+  ...
+# Subtest: wave5-receiver rejects unreviewed endpoint PROJECT/functions/v1/unreviewed
+ok 117 - wave5-receiver rejects unreviewed endpoint PROJECT/functions/v1/unreviewed
+  ---
+  duration_ms: 0.0599
+  type: 'test'
+  ...
+# Subtest: diagnostics contain only fixed enum and boolean fields, never supplied data
+ok 118 - diagnostics contain only fixed enum and boolean fields, never supplied data
+  ---
+  duration_ms: 2.3021
+  type: 'test'
+  ...
+# Subtest: diagnostics distinguish the exact proposed internal namespace
+ok 119 - diagnostics distinguish the exact proposed internal namespace
+  ---
+  duration_ms: 0.2927
+  type: 'test'
+  ...
+# Subtest: diagnostics distinguish the preserved public prefix
+ok 120 - diagnostics distinguish the preserved public prefix
+  ---
+  duration_ms: 0.1749
+  type: 'test'
+  ...
+# Subtest: diagnostics classify invalid URL input without echoing it
+ok 121 - diagnostics classify invalid URL input without echoing it
+  ---
+  duration_ms: 0.2645
+  type: 'test'
+  ...
+# Subtest: diagnostics classify an unknown origin without echoing it
+ok 122 - diagnostics classify an unknown origin without echoing it
+  ---
+  duration_ms: 0.1938
+  type: 'test'
+  ...
+# Subtest: one diagnostic survives 32 concurrent requests without reading headers/body/method
+ok 123 - one diagnostic survives 32 concurrent requests without reading headers/body/method
+  ---
+  duration_ms: 0.7435
+  type: 'test'
+  ...
+# Subtest: diagnostic sink failure cannot interrupt or repeat the authenticated handler
+ok 124 - diagnostic sink failure cannot interrupt or repeat the authenticated handler
+  ---
+  duration_ms: 0.287
+  type: 'test'
+  ...
+# Subtest: diagnostic configuration cannot inject a dynamic worker label
+ok 125 - diagnostic configuration cannot inject a dynamic worker label
+  ---
+  duration_ms: 1.016
+  type: 'test'
+  ...
+# Subtest: edge_runtime successor changes only the route import bytes
+ok 126 - edge_runtime successor changes only the route import bytes
+  ---
+  duration_ms: 71.2341
+  type: 'test'
+  ...
+# Subtest: edge_receiver successor changes only the route import bytes
+ok 127 - edge_receiver successor changes only the route import bytes
+  ---
+  duration_ms: 2.9153
+  type: 'test'
+  ...
+# Subtest: internal schedule still rejects unsigned requests before a trusted RPC
+ok 128 - internal schedule still rejects unsigned requests before a trusted RPC
+  ---
+  duration_ms: 40.2779
+  type: 'test'
+  ...
+# Subtest: internal schedule preserves hashed secret and server denial before health
+ok 129 - internal schedule preserves hashed secret and server denial before health
+  ---
+  duration_ms: 7.2621
+  type: 'test'
+  ...
+# Subtest: internal schedule preserves revoked runtime denial
+ok 130 - internal schedule preserves revoked runtime denial
+  ---
+  duration_ms: 1.4792
+  type: 'test'
+  ...
+# Subtest: internal duplicate tick still performs no health or finish effect
+ok 131 - internal duplicate tick still performs no health or finish effect
+  ---
+  duration_ms: 2.1165
+  type: 'test'
+  ...
+# Subtest: internal allowed tick preserves server-selected scope and durable finish order
+ok 132 - internal allowed tick preserves server-selected scope and durable finish order
+  ---
+  duration_ms: 2.8433
+  type: 'test'
+  ...
+# Subtest: internal schedule cannot add a client-selected tenant
+ok 133 - internal schedule cannot add a client-selected tenant
+  ---
+  duration_ms: 1.8148
+  type: 'test'
+  ...
+# Subtest: internal request cannot select a different Supabase project through environment
+ok 134 - internal request cannot select a different Supabase project through environment
+  ---
+  duration_ms: 0.9081
+  type: 'test'
+  ...
+# Subtest: internal model route still reports provider absence without invoking anything
+ok 135 - internal model route still reports provider absence without invoking anything
+  ---
+  duration_ms: 1.2677
+  type: 'test'
+  ...
+# Subtest: unsupported internal runtime method remains 404 before backend access
+ok 136 - unsupported internal runtime method remains 404 before backend access
+  ---
+  duration_ms: 0.6917
+  type: 'test'
+  ...
+# Subtest: unreviewed origins and paths do not even read platform credentials
+ok 137 - unreviewed origins and paths do not even read platform credentials
+  ---
+  duration_ms: 2.5552
+  type: 'test'
+  ...
+# Subtest: internal requests retain the configured concurrent request cap
+ok 138 - internal requests retain the configured concurrent request cap
+  ---
+  duration_ms: 18.3645
+  type: 'test'
+  ...
+# Subtest: internal receiver accept still requires signed headers before private key lookup
+ok 139 - internal receiver accept still requires signed headers before private key lookup
+  ---
+  duration_ms: 1.8556
+  type: 'test'
+  ...
+# Subtest: internal receiver redirect still requires signed headers before private key lookup
+ok 140 - internal receiver redirect still requires signed headers before private key lookup
+  ---
+  duration_ms: 0.6077
+  type: 'test'
+  ...
+# Subtest: internal receiver timeout still requires signed headers before private key lookup
+ok 141 - internal receiver timeout still requires signed headers before private key lookup
+  ---
+  duration_ms: 0.3272
+  type: 'test'
+  ...
+# Subtest: internal receiver reject still requires signed headers before private key lookup
+ok 142 - internal receiver reject still requires signed headers before private key lookup
+  ---
+  duration_ms: 0.345
+  type: 'test'
+  ...
+# Subtest: internal receiver still validates exact bytes before durable ACK
+ok 143 - internal receiver still validates exact bytes before durable ACK
+  ---
+  duration_ms: 2.4471
+  type: 'test'
+  ...
+# Subtest: internal receiver forged signature cannot create a receipt
+ok 144 - internal receiver forged signature cannot create a receipt
+  ---
+  duration_ms: 0.7301
+  type: 'test'
+  ...
+# Subtest: internal receiver rejects stale signed time before key lookup
+ok 145 - internal receiver rejects stale signed time before key lookup
+  ---
+  duration_ms: 0.3488
+  type: 'test'
+  ...
+# Subtest: internal receiver rejects noncanonical signed payload before key lookup
+ok 146 - internal receiver rejects noncanonical signed payload before key lookup
+  ---
+  duration_ms: 0.492
+  type: 'test'
+  ...
+# Subtest: internal receiver still denies server-revoked scope after HMAC verification
+ok 147 - internal receiver still denies server-revoked scope after HMAC verification
+  ---
+  duration_ms: 0.7125
+  type: 'test'
+  ...
+# Subtest: internal receiver still rejects another injected project before key lookup
+ok 148 - internal receiver still rejects another injected project before key lookup
+  ---
+  duration_ms: 0.7921
+  type: 'test'
+  ...
+# Subtest: the observed project namespace reaches only the exact existing runtime routes
+ok 149 - the observed project namespace reaches only the exact existing runtime routes
+  ---
+  duration_ms: 1.4017
+  type: 'test'
+  ...
+# Subtest: the same exact managed origin admits only the reviewed receiver namespace
+ok 150 - the same exact managed origin admits only the reviewed receiver namespace
+  ---
+  duration_ms: 1.2226
+  type: 'test'
+  ...
+# Subtest: HTTP public prefixes, platform hosts, lookalikes, credentials, ports and noncanonical URLs stay denied
+ok 151 - HTTP public prefixes, platform hosts, lookalikes, credentials, ports and noncanonical URLs stay denied
+  ---
+  duration_ms: 0.4106
+  type: 'test'
+  ...
+# Subtest: endpoint configuration remains canonical public HTTPS, and per-handler route subsets still restrict access
+ok 152 - endpoint configuration remains canonical public HTTPS, and per-handler route subsets still restrict access
+  ---
+  duration_ms: 0.3904
+  type: 'test'
+  ...
+# Subtest: the finite diagnostic proves the exact HTTP project class without raw request data
+ok 153 - the finite diagnostic proves the exact HTTP project class without raw request data
+  ---
+  duration_ms: 2.3494
+  type: 'test'
+  ...
+# Subtest: a factory emits one finite v5 diagnostic across concurrent calls, and preserves handler authentication results
+ok 154 - a factory emits one finite v5 diagnostic across concurrent calls, and preserves handler authentication results
+  ---
+  duration_ms: 1.2418
+  type: 'test'
+  ...
+# Subtest: unsigned schedule is rejected before any trusted RPC/effect
+ok 155 - unsigned schedule is rejected before any trusted RPC/effect
+  ---
+  duration_ms: 28.154
+  type: 'test'
+  ...
+# Subtest: schedule secret is hashed and server denial precedes health
+ok 156 - schedule secret is hashed and server denial precedes health
+  ---
+  duration_ms: 6.7325
+  type: 'test'
+  ...
+# Subtest: expired/revoked runtime denies before scheduled work
+ok 157 - expired/revoked runtime denies before scheduled work
+  ---
+  duration_ms: 1.5022
+  type: 'test'
+  ...
+# Subtest: duplicate/overlapping tick does not collect or finish again
+ok 158 - duplicate/overlapping tick does not collect or finish again
+  ---
+  duration_ms: 1.6444
+  type: 'test'
+  ...
+# Subtest: health is collected for server-selected scope and outcome persisted
+ok 159 - health is collected for server-selected scope and outcome persisted
+  ---
+  duration_ms: 2.3075
+  type: 'test'
+  ...
+# Subtest: subscription tick uses a bounded persistent page
+ok 160 - subscription tick uses a bounded persistent page
+  ---
+  duration_ms: 1.4078
+  type: 'test'
+  ...
+# Subtest: empty delivery tick reconciles and performs no network send
+ok 161 - empty delivery tick reconciles and performs no network send
+  ---
+  duration_ms: 2.5581
+  type: 'test'
+  ...
+# Subtest: failed provider readiness persists failure instead of completed
+ok 162 - failed provider readiness persists failure instead of completed
+  ---
+  duration_ms: 2.4345
+  type: 'test'
+  ...
+# Subtest: invalid routes/origins never access trusted backend
+ok 163 - invalid routes/origins never access trusted backend
+  ---
+  duration_ms: 1.3755
+  type: 'test'
+  ...
+# Subtest: malformed schedule schema is rejected before authorization
+ok 164 - malformed schedule schema is rejected before authorization
+  ---
+  duration_ms: 1.0287
+  type: 'test'
+  ...
+# Subtest: missing model key yields explicit provider absence without invocation
+ok 165 - missing model key yields explicit provider absence without invocation
+  ---
+  duration_ms: 0.7837
+  type: 'test'
+  ...
+# Subtest: platform DNS records are normalized to the pinned transport address contract
+ok 166 - platform DNS records are normalized to the pinned transport address contract
+  ---
+  duration_ms: 0.2165
+  type: 'test'
+  ...
+# Subtest: nonempty scheduled delivery signs exact bytes, persists outcome and settles within batch cap
+ok 167 - nonempty scheduled delivery signs exact bytes, persists outcome and settles within batch cap
+  ---
+  duration_ms: 5.5941
+  type: 'test'
+  ...
+# Subtest: receiver verifies bytes before durable ACK
+ok 168 - receiver verifies bytes before durable ACK
+  ---
+  duration_ms: 2.0809
+  type: 'test'
+  ...
+# Subtest: receiver returns persisted deduplication result
+ok 169 - receiver returns persisted deduplication result
+  ---
+  duration_ms: 0.7458
+  type: 'test'
+  ...
+# Subtest: forged signature cannot create receipt
+ok 170 - forged signature cannot create receipt
+  ---
+  duration_ms: 0.4805
+  type: 'test'
+  ...
+# Subtest: stale timestamp is rejected before private key lookup
+ok 171 - stale timestamp is rejected before private key lookup
+  ---
+  duration_ms: 0.2596
+  type: 'test'
+  ...
+# Subtest: noncanonical signed event is rejected before private key lookup
+ok 172 - noncanonical signed event is rejected before private key lookup
+  ---
+  duration_ms: 0.4433
+  type: 'test'
+  ...
+# Subtest: oversized receiver body is rejected before key lookup
+ok 173 - oversized receiver body is rejected before key lookup
+  ---
+  duration_ms: 0.687
+  type: 'test'
+  ...
+# Subtest: server revocation after signature prevents ACK
+ok 174 - server revocation after signature prevents ACK
+  ---
+  duration_ms: 1.6586
+  type: 'test'
+  ...
+# Subtest: redirect probe authenticates source but creates no ACK
+ok 175 - redirect probe authenticates source but creates no ACK
+  ---
+  duration_ms: 1.0163
+  type: 'test'
+  ...
+# Subtest: timeout probe persists ACK before delayed response
+ok 176 - timeout probe persists ACK before delayed response
+  ---
+  duration_ms: 0.953
+  type: 'test'
+  ...
+# Subtest: reject probe authenticates before bounded failure
+ok 177 - reject probe authenticates before bounded failure
+  ---
+  duration_ms: 1.591
+  type: 'test'
+  ...
+# Subtest: unsigned schedule is rejected before any trusted RPC/effect
+ok 178 - unsigned schedule is rejected before any trusted RPC/effect
+  ---
+  duration_ms: 37.2762
+  type: 'test'
+  ...
+# Subtest: schedule secret is hashed and server denial precedes health
+ok 179 - schedule secret is hashed and server denial precedes health
+  ---
+  duration_ms: 5.884
+  type: 'test'
+  ...
+# Subtest: expired/revoked runtime denies before scheduled work
+ok 180 - expired/revoked runtime denies before scheduled work
+  ---
+  duration_ms: 1.7991
+  type: 'test'
+  ...
+# Subtest: duplicate/overlapping tick does not collect or finish again
+ok 181 - duplicate/overlapping tick does not collect or finish again
+  ---
+  duration_ms: 2.4139
+  type: 'test'
+  ...
+# Subtest: health is collected for server-selected scope and outcome persisted
+ok 182 - health is collected for server-selected scope and outcome persisted
+  ---
+  duration_ms: 3.7182
+  type: 'test'
+  ...
+# Subtest: subscription tick uses a bounded persistent page
+ok 183 - subscription tick uses a bounded persistent page
+  ---
+  duration_ms: 2.2918
+  type: 'test'
+  ...
+# Subtest: empty delivery tick reconciles and performs no network send
+ok 184 - empty delivery tick reconciles and performs no network send
+  ---
+  duration_ms: 3.7059
+  type: 'test'
+  ...
+# Subtest: failed provider readiness persists failure instead of completed
+ok 185 - failed provider readiness persists failure instead of completed
+  ---
+  duration_ms: 1.8144
+  type: 'test'
+  ...
+# Subtest: invalid routes/origins never access trusted backend
+ok 186 - invalid routes/origins never access trusted backend
+  ---
+  duration_ms: 1.1914
+  type: 'test'
+  ...
+# Subtest: malformed schedule schema is rejected before authorization
+ok 187 - malformed schedule schema is rejected before authorization
+  ---
+  duration_ms: 1.3311
+  type: 'test'
+  ...
+# Subtest: missing model key yields explicit provider absence without invocation
+ok 188 - missing model key yields explicit provider absence without invocation
+  ---
+  duration_ms: 1.1789
+  type: 'test'
+  ...
+# Subtest: platform DNS records are normalized to the pinned transport address contract
+ok 189 - platform DNS records are normalized to the pinned transport address contract
+  ---
+  duration_ms: 0.4286
+  type: 'test'
+  ...
+# Subtest: nonempty scheduled delivery signs exact bytes, persists outcome and settles within batch cap
+ok 190 - nonempty scheduled delivery signs exact bytes, persists outcome and settles within batch cap
+  ---
+  duration_ms: 8.5723
+  type: 'test'
+  ...
+# Subtest: receiver verifies bytes before durable ACK
+ok 191 - receiver verifies bytes before durable ACK
+  ---
+  duration_ms: 2.3433
+  type: 'test'
+  ...
+# Subtest: receiver returns persisted deduplication result
+ok 192 - receiver returns persisted deduplication result
+  ---
+  duration_ms: 1.283
+  type: 'test'
+  ...
+# Subtest: forged signature cannot create receipt
+ok 193 - forged signature cannot create receipt
+  ---
+  duration_ms: 0.9394
+  type: 'test'
+  ...
+# Subtest: stale timestamp is rejected before private key lookup
+ok 194 - stale timestamp is rejected before private key lookup
+  ---
+  duration_ms: 0.485
+  type: 'test'
+  ...
+# Subtest: noncanonical signed event is rejected before private key lookup
+ok 195 - noncanonical signed event is rejected before private key lookup
+  ---
+  duration_ms: 0.5858
+  type: 'test'
+  ...
+# Subtest: oversized receiver body is rejected before key lookup
+ok 196 - oversized receiver body is rejected before key lookup
+  ---
+  duration_ms: 1.0686
+  type: 'test'
+  ...
+# Subtest: server revocation after signature prevents ACK
+ok 197 - server revocation after signature prevents ACK
+  ---
+  duration_ms: 0.9183
+  type: 'test'
+  ...
+# Subtest: redirect probe authenticates source but creates no ACK
+ok 198 - redirect probe authenticates source but creates no ACK
+  ---
+  duration_ms: 0.9501
+  type: 'test'
+  ...
+# Subtest: timeout probe persists ACK before delayed response
+ok 199 - timeout probe persists ACK before delayed response
+  ---
+  duration_ms: 0.7848
+  type: 'test'
+  ...
+# Subtest: reject probe authenticates before bounded failure
+ok 200 - reject probe authenticates before bounded failure
+  ---
+  duration_ms: 0.7862
+  type: 'test'
+  ...
+# Subtest: unsafe IPv4, IPv6, mapped and noncanonical addresses fail
+ok 201 - unsafe IPv4, IPv6, mapped and noncanonical addresses fail
+  ---
+  duration_ms: 3.9863
+  type: 'test'
+  ...
+# Subtest: all DNS answers and each attempt must remain safe
+ok 202 - all DNS answers and each attempt must remain safe
+  ---
+  duration_ms: 0.9317
+  type: 'test'
+  ...
+# Subtest: event scope and private payload injection rejected before delivery
+ok 203 - event scope and private payload injection rejected before delivery
+  ---
+  duration_ms: 0.4527
+  type: 'test'
+  ...
+# Subtest: signature binds exact bytes, event identity, timestamp and rotating key version
+ok 204 - signature binds exact bytes, event identity, timestamp and rotating key version
+  ---
+  duration_ms: 1.0684
+  type: 'test'
+  ...
+# Subtest: bounded retries retain stable event identity and reach dead letter
+ok 205 - bounded retries retain stable event identity and reach dead letter
+  ---
+  duration_ms: 0.3268
+  type: 'test'
+  ...
+# Subtest: injected transport sees pinned public address and revocation prevents send
+ok 206 - injected transport sees pinned public address and revocation prevents send
+  ---
+  duration_ms: 0.8324
+  type: 'test'
+  ...
+# Subtest: unknown transport result requires reconciliation without an automatic retry or raw errors
+ok 207 - unknown transport result requires reconciliation without an automatic retry or raw errors
+  ---
+  duration_ms: 0.4158
+  type: 'test'
+  ...
+# Subtest: integration credentials bind expiry, revocation, scope, hash, command and allowance
+ok 208 - integration credentials bind expiry, revocation, scope, hash, command and allowance
+  ---
+  duration_ms: 0.8481
+  type: 'test'
+  ...
+# Subtest: exhausted attempts fail before authority, DNS or transport
+ok 209 - exhausted attempts fail before authority, DNS or transport
+  ---
+  duration_ms: 0.5069
+  type: 'test'
+  ...
+# Subtest: prompt injection and private fields cannot enter the numeric redaction manifest
+ok 210 - prompt injection and private fields cannot enter the numeric redaction manifest
+  ---
+  duration_ms: 3.4762
+  type: 'test'
+  ...
+# Subtest: trusted invocation records outcome before exact settlement, then rechecks current access
+ok 211 - trusted invocation records outcome before exact settlement, then rechecks current access
+  ---
+  duration_ms: 1.9698
+  type: 'test'
+  ...
+# Subtest: unknown outcomes persist without releasing quota or automatically resending
+ok 212 - unknown outcomes persist without releasing quota or automatically resending
+  ---
+  duration_ms: 0.6385
+  type: 'test'
+  ...
+# Subtest: unreviewed providers and untrusted/model-generated usage cannot settle
+ok 213 - unreviewed providers and untrusted/model-generated usage cannot settle
+  ---
+  duration_ms: 0.3592
+  type: 'test'
+  ...
+# Subtest: HTTP model adapter counts full input, fixes schema, refuses tools and trusts only provider usage
+ok 214 - HTTP model adapter counts full input, fixes schema, refuses tools and trusts only provider usage
+  ---
+  duration_ms: 31.3053
+  type: 'test'
+  ...
+# Subtest: unreviewed model and insufficient token budget cannot issue model generation
+ok 215 - unreviewed model and insufficient token budget cannot issue model generation
+  ---
+  duration_ms: 1.1875
+  type: 'test'
+  ...
+# Subtest: RPC/model response limit is enforced while streaming
+ok 216 - RPC/model response limit is enforced while streaming
+  ---
+  duration_ms: 1.0326
+  type: 'test'
+  ...
+# Subtest: delivery scheduling serializes batches and wakes on shutdown
+ok 217 - delivery scheduling serializes batches and wakes on shutdown
+  ---
+  duration_ms: 15.0825
+  type: 'test'
+  ...
+# Subtest: real RPC adapter binds service authorization and API schema without logging a key
+ok 218 - real RPC adapter binds service authorization and API schema without logging a key
+  ---
+  duration_ms: 3.5925
+  type: 'test'
+  ...
+# Subtest: control has no in-memory delivery or metering authority; original identity reaches persistent RPC
+ok 219 - control has no in-memory delivery or metering authority; original identity reaches persistent RPC
+  ---
+  duration_ms: 0.6173
+  type: 'test'
+  ...
+# Subtest: scheduler reconciles acknowledged persisted attempts before claiming new work
+ok 220 - scheduler reconciles acknowledged persisted attempts before claiming new work
+  ---
+  duration_ms: 21.9206
+  type: 'test'
+  ...
+# Subtest: worker transport rejects unsafe URLs and bounds provider output/errors
+ok 221 - worker transport rejects unsafe URLs and bounds provider output/errors
+  ---
+  duration_ms: 1.3079
+  type: 'test'
+  ...
+# Subtest: scheduled request deadline cancels an unfinished body before trusted work and frees its slot
+ok 222 - scheduled request deadline cancels an unfinished body before trusted work and frees its slot
+  ---
+  duration_ms: 55.6521
+  type: 'test'
+  ...
+# Subtest: receiver deadline cancels an unfinished signed request without key lookup or receipt
+ok 223 - receiver deadline cancels an unfinished signed request without key lookup or receipt
+  ---
+  duration_ms: 15.079
+  type: 'test'
+  ...
+# Subtest: receiver timeout-probe delay observes the deadline after its durable receipt
+ok 224 - receiver timeout-probe delay observes the deadline after its durable receipt
+  ---
+  duration_ms: 15.9799
+  type: 'test'
+  ...
+# Subtest: external endpoint observes caller cancellation before any persistent control call
+ok 225 - external endpoint observes caller cancellation before any persistent control call
+  ---
+  duration_ms: 1.7467
+  type: 'test'
+  ...
+# Subtest: bounded response reader applies an explicit abort signal and preserves byte limits
+ok 226 - bounded response reader applies an explicit abort signal and preserves byte limits
+  ---
+  duration_ms: 2.3012
+  type: 'test'
+  ...
+# Subtest: delivery cancellation during DNS discards a late answer and sends no request
+ok 227 - delivery cancellation during DNS discards a late answer and sends no request
+  ---
+  duration_ms: 1.1535
+  type: 'test'
+  ...
+# Subtest: delivery cancellation during transport remains unknown and passes the abort signal to transport
+ok 228 - delivery cancellation during transport remains unknown and passes the abort signal to transport
+  ---
+  duration_ms: 0.5443
+  type: 'test'
+  ...
+# Subtest: subscription cancellation during readiness prevents activation after the awaited provider
+ok 229 - subscription cancellation during readiness prevents activation after the awaited provider
+  ---
+  duration_ms: 0.5444
+  type: 'test'
+  ...
+# Subtest: scheduled request deadline cancels an unfinished body before trusted work and frees its slot
+ok 230 - scheduled request deadline cancels an unfinished body before trusted work and frees its slot
+  ---
+  duration_ms: 39.1789
+  type: 'test'
+  ...
+# Subtest: receiver deadline cancels an unfinished signed request without key lookup or receipt
+ok 231 - receiver deadline cancels an unfinished signed request without key lookup or receipt
+  ---
+  duration_ms: 11.2318
+  type: 'test'
+  ...
+# Subtest: receiver timeout-probe delay observes the deadline after its durable receipt
+ok 232 - receiver timeout-probe delay observes the deadline after its durable receipt
+  ---
+  duration_ms: 17.1555
+  type: 'test'
+  ...
+# Subtest: external endpoint observes caller cancellation before any persistent control call
+ok 233 - external endpoint observes caller cancellation before any persistent control call
+  ---
+  duration_ms: 1.7249
+  type: 'test'
+  ...
+# Subtest: bounded response reader applies an explicit abort signal and preserves byte limits
+ok 234 - bounded response reader applies an explicit abort signal and preserves byte limits
+  ---
+  duration_ms: 2.2762
+  type: 'test'
+  ...
+# Subtest: delivery cancellation during DNS discards a late answer and sends no request
+ok 235 - delivery cancellation during DNS discards a late answer and sends no request
+  ---
+  duration_ms: 1.3437
+  type: 'test'
+  ...
+# Subtest: delivery cancellation during transport remains unknown and passes the abort signal to transport
+ok 236 - delivery cancellation during transport remains unknown and passes the abort signal to transport
+  ---
+  duration_ms: 0.4872
+  type: 'test'
+  ...
+# Subtest: subscription cancellation during readiness prevents activation after the awaited provider
+ok 237 - subscription cancellation during readiness prevents activation after the awaited provider
+  ---
+  duration_ms: 0.6369
+  type: 'test'
+  ...
+# Subtest: unbound review refuses launch before credentials or network
+ok 238 - unbound review refuses launch before credentials or network
+  ---
+  duration_ms: 2.7918
+  type: 'test'
+  ...
+# Subtest: approval binds exact review bytes and an explicit human reference
+ok 239 - approval binds exact review bytes and an explicit human reference
+  ---
+  duration_ms: 0.2891
+  type: 'test'
+  ...
+# Subtest: bound receiver rejects alternate host and URL credentials
+ok 240 - bound receiver rejects alternate host and URL credentials
+  ---
+  duration_ms: 0.4005
+  type: 'test'
+  ...
+# Subtest: hosted review refuses a local Node listener before private configuration
+ok 241 - hosted review refuses a local Node listener before private configuration
+  ---
+  duration_ms: 0.4894
+  type: 'test'
+  ...
+# Subtest: hosted review refuses altered destination and unbounded batch configuration
+ok 242 - hosted review refuses altered destination and unbounded batch configuration
+  ---
+  duration_ms: 0.3202
+  type: 'test'
+  ...
+# Subtest: worker claims, reconciliation and scheduler use the scoped server port
+ok 243 - worker claims, reconciliation and scheduler use the scoped server port
+  ---
+  duration_ms: 20.7124
+  type: 'test'
+  ...
+# Subtest: quota, activation and health retain their exact tenant identity
+ok 244 - quota, activation and health retain their exact tenant identity
+  ---
+  duration_ms: 1.2975
+  type: 'test'
+  ...
+# Subtest: model and external requests keep scope data for SQL authorization
+ok 245 - model and external requests keep scope data for SQL authorization
+  ---
+  duration_ms: 1.6852
+  type: 'test'
+  ...
+# Subtest: unapproved RPC names fail before any transport
+ok 246 - unapproved RPC names fail before any transport
+  ---
+  duration_ms: 0.5954
+  type: 'test'
+  ...
+# Subtest: external endpoint rejects arbitrary dispatch and does not leak provider diagnostics
+ok 247 - external endpoint rejects arbitrary dispatch and does not leak provider diagnostics
+  ---
+  duration_ms: 18.3898
+  type: 'test'
+  ...
+# Subtest: unreviewed model endpoint cannot retrieve a caller source or invoke a provider
+ok 248 - unreviewed model endpoint cannot retrieve a caller source or invoke a provider
+  ---
+  duration_ms: 1.058
+  type: 'test'
+  ...
+# Subtest: model endpoint binds only the request caller and rejects extra private payload fields
+ok 249 - model endpoint binds only the request caller and rejects extra private payload fields
+  ---
+  duration_ms: 1.7495
+  type: 'test'
+  ...
+# Subtest: synthetic subscription scan is bounded and resumes original revision after a stopped batch
+ok 250 - synthetic subscription scan is bounded and resumes original revision after a stopped batch
+  ---
+  duration_ms: 0.9378
+  type: 'test'
+  ...
+# Subtest: missing providers fail before claiming or executing
+ok 251 - missing providers fail before claiming or executing
+  ---
+  duration_ms: 3.3632
+  type: 'test'
+  ...
+# Subtest: claimed committed job reserves before sending and records ACK before settlement
+ok 252 - claimed committed job reserves before sending and records ACK before settlement
+  ---
+  duration_ms: 3.5629
+  type: 'test'
+  ...
+# Subtest: unknown transport persists review state and keeps its reservation without settlement
+ok 253 - unknown transport persists review state and keeps its reservation without settlement
+  ---
+  duration_ms: 0.4834
+  type: 'test'
+  ...
+# Subtest: revocation during DNS prevents send and settlement
+ok 254 - revocation during DNS prevents send and settlement
+  ---
+  duration_ms: 0.4058
+  type: 'test'
+  ...
+# Subtest: subscription worker invokes existing server activation with exact identities
+ok 255 - subscription worker invokes existing server activation with exact identities
+  ---
+  duration_ms: 0.4597
+  type: 'test'
+  ...
+# Subtest: external command validates request, credentials and durable allowance before dispatch
+ok 256 - external command validates request, credentials and durable allowance before dispatch
+  ---
+  duration_ms: 3.1046
+  type: 'test'
+  ...
+1..256
+# tests 256
+# suites 0
+# pass 256
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3384.8937

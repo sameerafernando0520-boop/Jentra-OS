@@ -1,0 +1,21 @@
+{
+  "kind": "preliminary-controlled-export-tests-observed-failure",
+  "observedAt": "2026-10-14T07:00:14.132Z",
+  "toolChunkId": "9b0c7a",
+  "exitCode": 1,
+  "tests": 51,
+  "passed": 50,
+  "failed": 1,
+  "failingTest": "changed old source hashes or omitted consumed intents are rejected by public plan construction",
+  "reportedError": "Missing expected exception.",
+  "line": 265,
+  "diagnosis": "structuredClone preserved the fixture alias between supplied and expected binding rows, so the negative tamper changed both values. Isolate the supplied test rows before tampering.",
+  "testSource": {
+    "path": "docs/verification/wave5/task3-export-continuation-20261014/test-source-before-binding-alias-fix.txt",
+    "sha256": "b9e9110fa37dafd621e8668ebfbc432bb4331608cd942c97888f392a47535ecb",
+    "bytes": 29767
+  },
+  "fullTapFileSaved": false,
+  "liveOperations": 0,
+  "privateCredentialsRead": false
+}

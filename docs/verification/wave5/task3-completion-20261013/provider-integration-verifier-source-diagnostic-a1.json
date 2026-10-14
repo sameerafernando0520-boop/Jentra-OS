@@ -1,0 +1,11 @@
+{
+  "kind": "public-verifier-inventory-pretest-failure",
+  "failureCode": "ENOENT",
+  "path": "tools/wave5/supabase_auth_transport.mjs",
+  "cause": "Root verifier named a nonexistent transport instead of reading the wrapper's exact seven transitive public imports.",
+  "actualControlledTestsExecuted": 0,
+  "liveActions": 0,
+  "correction": "Inventory now uses runtime_fixture_spec.mjs and supabase_http_transport.mjs from the actual wrapper source. The read-only driver is being repaired before the integration run.",
+  "productFailureClaimed": false,
+  "supersedingIntegrationRequired": true
+}

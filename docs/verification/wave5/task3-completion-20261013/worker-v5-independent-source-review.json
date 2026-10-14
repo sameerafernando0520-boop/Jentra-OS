@@ -1,0 +1,114 @@
+{
+  "kind": "independent-worker-v5-narrow-managed-hop-routing-source-review",
+  "reviewedAt": "2026-10-13T21:38:36.275Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "technicalVerdict": "approve narrow existing-development worker source successor",
+  "inference": "V4 proves non-HTTPS project hostname/default port/function namespace. HTTP is a source-bound hypothesis to be confirmed by the one bounded V5 probe.",
+  "routeChange": "Only canonical HTTP on exact current project hostname and exact existing function namespace; public configured endpoints remain HTTPS.",
+  "publicHttpFunctionPrefixDenied": true,
+  "platformHttpDenied": true,
+  "foreignHostsPortsQueryHashUserinfoDenied": true,
+  "endpointsAndAllowedRoutesUnchanged": true,
+  "callerScheduleHmacMfaAndScopeChecksUnchanged": true,
+  "factoryAndEntrypointImportsOnly": true,
+  "finiteDiagnosticOnly": true,
+  "rawRequestValuesLogged": false,
+  "directDelegation": "docs/verification/wave5/task3-completion-20261013/resumed-autonomy-delegation.json",
+  "personalHumanExactSourceSignatureClaimed": false,
+  "sourcePreparation": {
+    "path": "docs/verification/wave5/worker-v5-routing-source-preparation-20261014-r5.json",
+    "bytes": 3113,
+    "sha256": "4eec5ddd2313a89e52f22498d71204c6b4b3413658c73293bad500029ea255cd"
+  },
+  "sourceBindings": [
+    {
+      "path": "workers/wave5/edge_route_20261014_r5_v5.mjs",
+      "bytes": 4539,
+      "sha256": "ee309ad07a804a8cd029988756665fef60a5293ad71162d4efca3b88cee4e95a"
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261014_r5_v5.mjs",
+      "bytes": 6921,
+      "sha256": "2b4e03939314c30b9908ed1b2313eed6a13db5f8708b35d80f309108b673800e"
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261014_r5_v5.mjs",
+      "bytes": 5658,
+      "sha256": "4d6f2f20b363ab8cd26e9b6bfb4121ad927532dc4e7b458cc95b5c607e74c26f"
+    },
+    {
+      "path": "supabase/functions/wave5-runtime/index_20261014_r5_v5.ts",
+      "bytes": 733,
+      "sha256": "a25e75691dd946a768117f31f38b9151397123bade4b7a7c2b61a1b450de1df9"
+    },
+    {
+      "path": "supabase/functions/wave5-receiver/index_20261014_r5_v5.ts",
+      "bytes": 757,
+      "sha256": "c94e7dbf3dde7767d8d653a60af9f4b048c4162e1f0eb226dff77c6e9f437bba"
+    },
+    {
+      "path": "workers/wave5/edge_route_20261014_r5_v4.mjs",
+      "bytes": 4177,
+      "sha256": "ea01c16c75905e431131f0128d9ec9972a77e1b1e58b0a90f2e9b75dd0cfc3b0"
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261014_r5_v4.mjs",
+      "bytes": 6921,
+      "sha256": "4ce1af5886dd0fe9f20a0ae33ef89b53ac492dc1fea4c42e099c0c4ebb23cb0c"
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261014_r5_v4.mjs",
+      "bytes": 5658,
+      "sha256": "2b138496f7879cdef9231e8c315ba62103bdd29e9383be321ef157b708fd60b9"
+    },
+    {
+      "path": "supabase/functions/wave5-runtime/index_20261014_r5_v4.ts",
+      "bytes": 733,
+      "sha256": "ef89264e2adac5aa329c73aee987d802e22b50a2084053134154b104054c82e2"
+    },
+    {
+      "path": "supabase/functions/wave5-receiver/index_20261014_r5_v4.ts",
+      "bytes": 757,
+      "sha256": "95d79654c59910e85cc7e0b462a10df223d6bce8d91ae2796b0ed1a6ca33c4c9"
+    },
+    {
+      "path": "docs/verification/wave5/worker-v4-diagnostic-actual-finite-ingress-20261014-r5.json",
+      "bytes": 2445,
+      "sha256": "6110068ae98a04a151dee872687f324675acefccf826b8bce6ec52dd5c44fdfd"
+    }
+  ],
+  "actualIndependentControlledRun": {
+    "startedAt": "2026-10-13T21:38:36.091Z",
+    "finishedAt": "2026-10-13T21:38:36.275Z",
+    "exitCode": 0,
+    "tests": 10,
+    "passed": 10,
+    "log": {
+      "path": "docs/verification/wave5/task3-completion-20261013/worker-v5-independent-focused-tests.tap",
+      "bytes": 2589,
+      "sha256": "cd6149fb09c5d85e5553cdfe89e3b1678bca666c5d3467875c98d3acaf8b8d2b"
+    },
+    "testSources": [
+      {
+        "path": "workers/wave5/edge_route_project_http_20261014_r5_v5.test.mjs",
+        "bytes": 4231,
+        "sha256": "220c184fee4057c6730e4901100f91b8a5357b9c2ac57cc746b2c62d0748f798"
+      },
+      {
+        "path": "workers/wave5/edge_factory_project_http_20261014_r5_v5.test.mjs",
+        "bytes": 2839,
+        "sha256": "57da93ce0b3e10b1ccdeeebd03cd3dcdd7897f90bed85d05141c92e68e471a36"
+      }
+    ]
+  },
+  "deploymentPayloadReviewStillRequired": true,
+  "probesSentByReviewer": 0,
+  "schedulesResumedByReviewer": false,
+  "actualAuthenticatedWorkerSuccess": false,
+  "actualDelivery": false,
+  "nativeAcceptance": false,
+  "targetScaleLoad": false,
+  "productionReleaseReady": false,
+  "newPermissionsOrAccounts": 0,
+  "acceptanceRowsAdded": 0
+}

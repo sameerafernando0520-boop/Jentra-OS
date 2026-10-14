@@ -1,0 +1,19 @@
+{
+  "kind": "verified-primary-api-key-header-guidance",
+  "verifiedAt": "2026-10-14T06:33:00.188Z",
+  "source": {
+    "title": "Supabase API keys: known limitations",
+    "url": "https://supabase.com/docs/guides/getting-started/api-keys#known-limitations"
+  },
+  "method": "Official page opened with web tool during this source-only implementation.",
+  "supportedClaims": [
+    "Publishable and secret API keys are not JWTs.",
+    "Opaque secret keys use apikey rather than Authorization Bearer.",
+    "An authenticated user separately supplies its own JWT."
+  ],
+  "localSourceInference": "The saved opaque shape is rejected by the old JWT-only guard. V7 changes privileged key format handling and header placement; the already-correct user JWT path stays unchanged.",
+  "realKeyContentsRead": false,
+  "realKeyValidityOrRoleClaimed": false,
+  "newDictionaryParsing": false,
+  "newEnvironmentNames": false
+}

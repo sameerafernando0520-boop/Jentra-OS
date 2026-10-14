@@ -1,0 +1,12 @@
+import fs from 'node:fs/promises';
+import {hashBytes} from './runtime_contract.mjs';
+const root=new URL('../../',import.meta.url),must=(v,c)=>{if(!v)throw Error(c);};
+const prior='tools/wave5/refresh_private_owner_scope_20261014_r5_a6.mjs';
+const bytes=await fs.readFile(new URL(prior,root));
+must(hashBytes(bytes)==='3910f1311d69ac9b2bc8a682174e5546f24b6edcf176ab7bc56a8f0087480022','EXACT_OWNER_REFRESH_A6_REQUIRED');
+const text=bytes.toString('utf8');must((text.match(/a6/g)||[]).length===4,'EXACT_FOUR_PUBLICATION_FILENAMES_REQUIRED');
+const next=text.replaceAll('a6','a7'),file='tools/wave5/refresh_private_owner_scope_20261014_r5_a7.mjs';
+await fs.writeFile(new URL(file,root),next,{flag:'wx'});
+const record={kind:'source-only-expired-owner-scope-successor',preparedAt:new Date().toISOString(),predecessor:{path:prior,sha256:hashBytes(bytes)},successor:{path:file,sha256:hashBytes(next)},changes:'Exactly four additive publication filenames a6 to a7; project/owner/read-only/expiry guards unchanged.',expiredA6Attempt:{failureCode:'EXACT_FRESH_PRIVATE_INPUT_REQUIRED',phase:'private-metadata-validation',privateCredentialUnsealed:false,childDispatched:false,networkCalls:0,settingsChanges:0},originalMetadataPreserved:true,networkCalls:0,renewedAuthorityClaimed:false};
+await fs.writeFile(new URL('docs/verification/wave5/private-owner-scope-expiry-recovery-20261014-r5-a7.json',root),JSON.stringify(record,null,2)+'\n',{flag:'wx'});
+process.stdout.write(JSON.stringify(record)+'\n');

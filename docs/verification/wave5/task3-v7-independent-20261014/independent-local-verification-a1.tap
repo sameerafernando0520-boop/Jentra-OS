@@ -1,0 +1,242 @@
+TAP version 13
+# Subtest: peer: credential validation does not coerce objects or accept a reserved family through legacy fallback
+ok 1 - peer: credential validation does not coerce objects or accept a reserved family through legacy fallback
+  ---
+  duration_ms: 3.0735
+  type: 'test'
+  ...
+# Subtest: peer: whitespace, URL-like, dictionary, authorization and unicode key forms never produce service headers
+ok 2 - peer: whitespace, URL-like, dictionary, authorization and unicode key forms never produce service headers
+  ---
+  duration_ms: 0.9885
+  type: 'test'
+  ...
+# Subtest: peer: unrecognized origins, suffixes, query and fragment routes stop before reading even fake environment
+ok 3 - peer: unrecognized origins, suffixes, query and fragment routes stop before reading even fake environment
+  ---
+  duration_ms: 34.799
+  type: 'test'
+  ...
+# Subtest: peer: exact existing project configuration remains required without dictionary or alias fallback
+ok 4 - peer: exact existing project configuration remains required without dictionary or alias fallback
+  ---
+  duration_ms: 1.2116
+  type: 'test'
+  ...
+# Subtest: peer: a correctly shaped service key never authorizes an unsigned or malformed scheduler request
+ok 5 - peer: a correctly shaped service key never authorizes an unsigned or malformed scheduler request
+  ---
+  duration_ms: 16.4634
+  type: 'test'
+  ...
+# Subtest: peer: server tick refusal stays a no-op with one hashed-secret RPC and no control or finish work
+ok 6 - peer: server tick refusal stays a no-op with one hashed-secret RPC and no control or finish work
+  ---
+  duration_ms: 1.1847
+  type: 'test'
+  ...
+# Subtest: peer: the original eight request slots throttle the ninth and are released after settlement
+ok 7 - peer: the original eight request slots throttle the ninth and are released after settlement
+  ---
+  duration_ms: 10.3801
+  type: 'test'
+  ...
+# Subtest: peer: unfinished scheduler body observes cancellation, cancels the stream and performs zero RPCs
+ok 8 - peer: unfinished scheduler body observes cancellation, cancels the stream and performs zero RPCs
+  ---
+  duration_ms: 22.9753
+  type: 'test'
+  ...
+# Subtest: peer: caller abort reaches the default service fetch signal and produces no replay or additional RPC
+ok 9 - peer: caller abort reaches the default service fetch signal and produces no replay or additional RPC
+  ---
+  duration_ms: 1.7622
+  type: 'test'
+  ...
+# Subtest: peer: raw backend denial bodies and thrown details stay absent from scheduler response with no retry
+ok 10 - peer: raw backend denial bodies and thrown details stay absent from scheduler response with no retry
+  ---
+  duration_ms: 2.4094
+  type: 'test'
+  ...
+# Subtest: peer: alternate signed serializations or extra event fields remain invalid before key lookup
+not ok 11 - peer: alternate signed serializations or extra event fields remain invalid before key lookup
+  ---
+  duration_ms: 3.1932
+  type: 'test'
+  location: 'C:\\Users\\sheha\\Desktop\\Jentra OS\\docs\\verification\\wave5\\task3-v7-independent-20261014\\provider_credentials_peer.test.mjs:147:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    503 !== 400
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 400
+  actual: 503
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/docs/verification/wave5/task3-v7-independent-20261014/provider_credentials_peer.test.mjs:151:72)
+    async Test.run (node:internal/test_runner/test:1113:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: peer: every forged-HMAC fault route performs only the modern key lookup, with no receipt or fault effect
+ok 12 - peer: every forged-HMAC fault route performs only the modern key lookup, with no receipt or fault effect
+  ---
+  duration_ms: 3.328
+  type: 'test'
+  ...
+# Subtest: peer: unknown and path-shaped scoped RPC names cannot cause service dispatch
+ok 13 - peer: unknown and path-shaped scoped RPC names cannot cause service dispatch
+  ---
+  duration_ms: 0.9554
+  type: 'test'
+  ...
+# Subtest: peer: a denied caller-owned JWT read cannot fall back to the privileged service transport
+ok 14 - peer: a denied caller-owned JWT read cannot fall back to the privileged service transport
+  ---
+  duration_ms: 1.5508
+  type: 'test'
+  ...
+# Subtest: peer: changed public authority on settled model reopen denies before usage settlement or generation
+ok 15 - peer: changed public authority on settled model reopen denies before usage settlement or generation
+  ---
+  duration_ms: 2.7899
+  type: 'test'
+  ...
+# Subtest: only >=32-character legacy JWT shapes or opaque secret shapes produce immutable service headers
+ok 16 - only >=32-character legacy JWT shapes or opaque secret shapes produce immutable service headers
+  ---
+  duration_ms: 0.092
+  type: 'test'
+  ...
+# Subtest: publishable, malformed, prefixed, whitespace, short and non-string service inputs fail before RPC dispatch
+ok 17 - publishable, malformed, prefixed, whitespace, short and non-string service inputs fail before RPC dispatch
+  ---
+  duration_ms: 0.5175
+  type: 'test'
+  ...
+# Subtest: reserved API-key prefixes cannot become legacy service JWTs by appending dot-separated segments
+ok 18 - reserved API-key prefixes cannot become legacy service JWTs by appending dot-separated segments
+  ---
+  duration_ms: 0.1226
+  type: 'test'
+  ...
+# Subtest: modern RPC sends only apikey with unchanged URL/profile/redirect/body and 15-second request signal
+ok 19 - modern RPC sends only apikey with unchanged URL/profile/redirect/body and 15-second request signal
+  ---
+  duration_ms: 0.3166
+  type: 'test'
+  ...
+# Subtest: legacy RPC headers, method, body and redirect behavior remain byte-for-byte predecessor equivalents
+ok 20 - legacy RPC headers, method, body and redirect behavior remain byte-for-byte predecessor equivalents
+  ---
+  duration_ms: 0.3828
+  type: 'test'
+  ...
+# Subtest: existing HTTPS and URL-boundary guards reject unsafe targets before any header-bearing request
+ok 21 - existing HTTPS and URL-boundary guards reject unsafe targets before any header-bearing request
+  ---
+  duration_ms: 0.1705
+  type: 'test'
+  ...
+# Subtest: server 401/403 remain access denials and private failure bodies are never promoted to error messages
+ok 22 - server 401/403 remain access denials and private failure bodies are never promoted to error messages
+  ---
+  duration_ms: 0.2427
+  type: 'test'
+  ...
+# Subtest: every scoped persistent-control family uses the V7 modern transport and exact original runtime envelope
+ok 23 - every scoped persistent-control family uses the V7 modern transport and exact original runtime envelope
+  ---
+  duration_ms: 1.0653
+  type: 'test'
+  ...
+# Subtest: default runtime accepts either provider format but unsigned schedule still denies before any backend work
+ok 24 - default runtime accepts either provider format but unsigned schedule still denies before any backend work
+  ---
+  duration_ms: 0.5466
+  type: 'test'
+  ...
+# Subtest: default real runtime ports use corrected modern headers on raw edge and scoped readiness/health calls
+ok 25 - default real runtime ports use corrected modern headers on raw edge and scoped readiness/health calls
+  ---
+  duration_ms: 3.0818
+  type: 'test'
+  ...
+# Subtest: default runtime preserves malformed-body and backend-denial gates without retries
+ok 26 - default runtime preserves malformed-body and backend-denial gates without retries
+  ---
+  duration_ms: 0.8112
+  type: 'test'
+  ...
+# Subtest: default delivery control retains the exact lazy worker-runtime module and performs no external send for an empty queue
+ok 27 - default delivery control retains the exact lazy worker-runtime module and performs no external send for an empty queue
+  ---
+  duration_ms: 2.8452
+  type: 'test'
+  ...
+# Subtest: provider compatibility never bypasses the existing durable readiness provider contract
+ok 28 - provider compatibility never bypasses the existing durable readiness provider contract
+  ---
+  duration_ms: 2.1777
+  type: 'test'
+  ...
+# Subtest: default signed receiver uses V7 modern or unchanged legacy headers for exact key lookup and receipt RPC
+ok 29 - default signed receiver uses V7 modern or unchanged legacy headers for exact key lookup and receipt RPC
+  ---
+  duration_ms: 1.7445
+  type: 'test'
+  ...
+# Subtest: all unsigned receiver routes retain authentication denials and cannot invoke backend or fault responses
+ok 30 - all unsigned receiver routes retain authentication denials and cannot invoke backend or fault responses
+  ---
+  duration_ms: 1.8804
+  type: 'test'
+  ...
+# Subtest: forged HMAC and stale timestamp preserve original denial order under modern credentials
+ok 31 - forged HMAC and stale timestamp preserve original denial order under modern credentials
+  ---
+  duration_ms: 0.7029
+  type: 'test'
+  ...
+# Subtest: malformed or publishable service keys never enter signed receiver/default runtime backend paths
+ok 32 - malformed or publishable service keys never enter signed receiver/default runtime backend paths
+  ---
+  duration_ms: 1.5028
+  type: 'test'
+  ...
+# Subtest: default model path keeps the caller JWT/public apikey while all service-control RPCs use V7 modern apikey-only
+ok 33 - default model path keeps the caller JWT/public apikey while all service-control RPCs use V7 modern apikey-only
+  ---
+  duration_ms: 1.045
+  type: 'test'
+  ...
+# Subtest: missing public model caller JWT still denies without service fallback, user read or provider call
+ok 34 - missing public model caller JWT still denies without service fallback, user read or provider call
+  ---
+  duration_ms: 0.3797
+  type: 'test'
+  ...
+# Subtest: factory construction performs no env reads, network operations or dictionary parsing
+ok 35 - factory construction performs no env reads, network operations or dictionary parsing
+  ---
+  duration_ms: 0.1547
+  type: 'test'
+  ...
+# Subtest: scope, routes, caller checks, caps and lazy imports are preserved by exact minimal source transformations
+ok 36 - scope, routes, caller checks, caps and lazy imports are preserved by exact minimal source transformations
+  ---
+  duration_ms: 13.0344
+  type: 'test'
+  ...
+1..36
+# tests 36
+# suites 0
+# pass 35
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 222.5706

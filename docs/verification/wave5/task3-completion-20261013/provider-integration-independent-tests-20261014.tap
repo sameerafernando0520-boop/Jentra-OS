@@ -1,0 +1,358 @@
+TAP version 13
+# Subtest: construction and reviewed operation wrapping perform no credential, connection or SQL I/O
+ok 1 - construction and reviewed operation wrapping perform no credential, connection or SQL I/O
+  ---
+  duration_ms: 62.6306
+  type: 'test'
+  ...
+# Subtest: unreviewed execution context, actor population, pool and timeout bounds fail before I/O
+ok 2 - unreviewed execution context, actor population, pool and timeout bounds fail before I/O
+  ---
+  duration_ms: 126.6227
+  type: 'test'
+  ...
+# Subtest: writer role, operation case, action and active AbortSignal are mandatory
+ok 3 - writer role, operation case, action and active AbortSignal are mandatory
+  ---
+  duration_ms: 26.2386
+  type: 'test'
+  ...
+# Subtest: accessor-based role or database configuration is rejected without invoking getters
+ok 4 - accessor-based role or database configuration is rejected without invoking getters
+  ---
+  duration_ms: 37.1665
+  type: 'test'
+  ...
+# Subtest: legitimate public fixture prepares seats and restores exact memberships, versions and unused invitations
+ok 5 - legitimate public fixture prepares seats and restores exact memberships, versions and unused invitations
+  ---
+  duration_ms: 56.5977
+  type: 'test'
+  ...
+# Subtest: admissions invitation winner restores observed cap 3 to original 4
+ok 6 - admissions invitation winner restores observed cap 3 to original 4
+  ---
+  duration_ms: 39.4099
+  type: 'test'
+  ...
+# Subtest: admissions activation winner restores observed cap 2 and occupied 2 to original 4
+ok 7 - admissions activation winner restores observed cap 2 and occupied 2 to original 4
+  ---
+  duration_ms: 39.2654
+  type: 'test'
+  ...
+# Subtest: successive seats and admissions cases preserve original identity and revoke only acknowledged returned invitations
+ok 8 - successive seats and admissions cases preserve original identity and revoke only acknowledged returned invitations
+  ---
+  duration_ms: 43.4808
+  type: 'test'
+  ...
+# Subtest: arbitrary SQL, foreign tenant, foreign actor and unauthorized seat values never reach PostgreSQL
+ok 9 - arbitrary SQL, foreign tenant, foreign actor and unauthorized seat values never reach PostgreSQL
+  ---
+  duration_ms: 26.5779
+  type: 'test'
+  ...
+# Subtest: foreign membership identity, stale version and reordered cap update fail with no committed effect
+ok 10 - foreign membership identity, stale version and reordered cap update fail with no committed effect
+  ---
+  duration_ms: 83.3203
+  type: 'test'
+  ...
+# Subtest: server baseline, assignment or original seat drift is rejected before any fixture DML
+ok 11 - server baseline, assignment or original seat drift is rejected before any fixture DML
+  ---
+  duration_ms: 93.7855
+  type: 'test'
+  ...
+# Subtest: restoration requires its committed case and rejects foreign subscription or unsupported outcomes
+ok 12 - restoration requires its committed case and rejects foreign subscription or unsupported outcomes
+  ---
+  duration_ms: 149.7669
+  type: 'test'
+  ...
+# Subtest: unproved admissions cap 2 with an admitted member fails before restoration DML
+ok 13 - unproved admissions cap 2 with an admitted member fails before restoration DML
+  ---
+  duration_ms: 39.022
+  type: 'test'
+  ...
+# Subtest: restoration cannot COMMIT without fresh final subscription, memberships and assignment readback
+ok 14 - restoration cannot COMMIT without fresh final subscription, memberships and assignment readback
+  ---
+  duration_ms: 25.2605
+  type: 'test'
+  ...
+# Subtest: only durable acknowledged intent/confirmed invitation pairs with exact reviewed actor and scope are adopted
+ok 15 - only durable acknowledged intent/confirmed invitation pairs with exact reviewed actor and scope are adopted
+  ---
+  duration_ms: 341.7797
+  type: 'test'
+  ...
+# Subtest: arbitrary invitation IDs and billing-actor/email changes fail before revocation SQL
+ok 16 - arbitrary invitation IDs and billing-actor/email changes fail before revocation SQL
+  ---
+  duration_ms: 55.3415
+  type: 'test'
+  ...
+# Subtest: uncertain invitation acknowledgement adopts no result and blocks further fixture mutations
+ok 17 - uncertain invitation acknowledgement adopts no result and blocks further fixture mutations
+  ---
+  duration_ms: 50.3869
+  type: 'test'
+  ...
+# Subtest: confirmed invitation observations reject raw tokens and unverified original-record claims
+ok 18 - confirmed invitation observations reject raw tokens and unverified original-record claims
+  ---
+  duration_ms: 69.7548
+  type: 'test'
+  ...
+# Subtest: TLS chain and hostname verification destroy unverified leases; target/URI overrides are rejected
+ok 19 - TLS chain and hostname verification destroy unverified leases; target/URI overrides are rejected
+  ---
+  duration_ms: 155.4771
+  type: 'test'
+  ...
+# Subtest: abort while BEGIN is pending destroys the lease and never commits or recycles an open transaction
+ok 20 - abort while BEGIN is pending destroys the lease and never commits or recycles an open transaction
+  ---
+  duration_ms: 87.9422
+  type: 'test'
+  ...
+# Subtest: abort during pending pool acquisition returns promptly and destroys the later lease
+ok 21 - abort during pending pool acquisition returns promptly and destroys the later lease
+  ---
+  duration_ms: 56.3171
+  type: 'test'
+  ...
+# Subtest: abort while the real preparation journal waits for COMMIT intent destroys staged writes
+ok 22 - abort while the real preparation journal waits for COMMIT intent destroys staged writes
+  ---
+  duration_ms: 91.4347
+  type: 'test'
+  ...
+# Subtest: uncertain COMMIT has no automatic replay or restoration and exposes only a fixed code
+ok 23 - uncertain COMMIT has no automatic replay or restoration and exposes only a fixed code
+  ---
+  duration_ms: 51.5673
+  type: 'test'
+  ...
+# Subtest: query timeout, private callback error and target drift are bounded and sanitized
+ok 24 - query timeout, private callback error and target drift are bounded and sanitized
+  ---
+  duration_ms: 277.6341
+  type: 'test'
+  ...
+# Subtest: close destroys a still-open fixture transaction and blocks new connections
+ok 25 - close destroys a still-open fixture transaction and blocks new connections
+  ---
+  duration_ms: 58.9693
+  type: 'test'
+  ...
+# Subtest: per-operation cancellation leaves another independently acquired writer connection usable
+ok 26 - per-operation cancellation leaves another independently acquired writer connection usable
+  ---
+  duration_ms: 86.7333
+  type: 'test'
+  ...
+# Subtest: closing during acquisition cancels the wait and destroys a late lease without aborting the owner signal
+ok 27 - closing during acquisition cancels the wait and destroys a late lease without aborting the owner signal
+  ---
+  duration_ms: 66.1656
+  type: 'test'
+  ...
+# Subtest: bounded pool preserves distinct acquired backend identities with queued clients
+ok 28 - bounded pool preserves distinct acquired backend identities with queued clients
+  ---
+  duration_ms: 73.7902
+  type: 'test'
+  ...
+# Subtest: exact seats and admissions prepare/restore use the original operation signal and reviewed writer role
+ok 29 - exact seats and admissions prepare/restore use the original operation signal and reviewed writer role
+  ---
+  duration_ms: 1.5213
+  type: 'test'
+  ...
+# Subtest: other races and public methods preserve arguments, return values and receiver
+ok 30 - other races and public methods preserve arguments, return values and receiver
+  ---
+  duration_ms: 0.4224
+  type: 'test'
+  ...
+# Subtest: altered case hashes or foreign membership scopes fail before writer context or public operation
+ok 31 - altered case hashes or foreign membership scopes fail before writer context or public operation
+  ---
+  duration_ms: 0.7855
+  type: 'test'
+  ...
+# Subtest: a failing public close still closes both pools and repeated close shares one completion
+ok 32 - a failing public close still closes both pools and repeated close shares one completion
+  ---
+  duration_ms: 0.6256
+  type: 'test'
+  ...
+# Subtest: a failing pool close cannot skip closing the other pool or expose its raw error
+ok 33 - a failing pool close cannot skip closing the other pool or expose its raw error
+  ---
+  duration_ms: 0.5003
+  type: 'test'
+  ...
+# Subtest: invitation adoption follows actual durable acknowledgment and receives no raw recovery or extra fields
+ok 34 - invitation adoption follows actual durable acknowledgment and receives no raw recovery or extra fields
+  ---
+  duration_ms: 3.4527
+  type: 'test'
+  ...
+# Subtest: invalid or absent durable receipt prevents any invitation adoption
+ok 35 - invalid or absent durable receipt prevents any invitation adoption
+  ---
+  duration_ms: 1.2824
+  type: 'test'
+  ...
+# Subtest: intent and uncertain invitation projection contains only allowed fields and retains original digest
+ok 36 - intent and uncertain invitation projection contains only allowed fields and retains original digest
+  ---
+  duration_ms: 0.9541
+  type: 'test'
+  ...
+# Subtest: non-invitation journal record keeps the original private sink behavior without writer adoption
+ok 37 - non-invitation journal record keeps the original private sink behavior without writer adoption
+  ---
+  duration_ms: 0.4237
+  type: 'test'
+  ...
+# Subtest: all source/dependency bytes must match the reviewed manifest
+ok 38 - all source/dependency bytes must match the reviewed manifest
+  ---
+  duration_ms: 1.8554
+  type: 'test'
+  ...
+# Subtest: unsafe manifest paths, duplicate paths or omitted wrapper cannot trigger private file reads
+ok 39 - unsafe manifest paths, duplicate paths or omitted wrapper cannot trigger private file reads
+  ---
+  duration_ms: 1.2929
+  type: 'test'
+  ...
+# Subtest: canonical approval/context rejection precedes private configuration and driver getters
+ok 40 - canonical approval/context rejection precedes private configuration and driver getters
+  ---
+  duration_ms: 13.31
+  type: 'test'
+  ...
+# Subtest: actual public runtime provider composes with both real driver classes, protected sink and operation wrapper without I/O
+ok 41 - actual public runtime provider composes with both real driver classes, protected sink and operation wrapper without I/O
+  ---
+  duration_ms: 1595.2038
+  type: 'test'
+  ...
+# Subtest: changed source review rejects before the private config callback or driver getter
+ok 42 - changed source review rejects before the private config callback or driver getter
+  ---
+  duration_ms: 249.0145
+  type: 'test'
+  ...
+# Subtest: actual factory failure closes both pools and does not return raw private callback errors
+ok 43 - actual factory failure closes both pools and does not return raw private callback errors
+  ---
+  duration_ms: 517.0162
+  type: 'test'
+  ...
+# Subtest: unchanged actual membership fixture/journal completes exact seats preparation and restoration through router, wrapper and token-free sink
+ok 44 - unchanged actual membership fixture/journal completes exact seats preparation and restoration through router, wrapper and token-free sink
+  ---
+  duration_ms: 114.9577
+  type: 'test'
+  ...
+# Subtest: factory and client construction do not read credentials or connect
+ok 45 - factory and client construction do not read credentials or connect
+  ---
+  duration_ms: 3.1779
+  type: 'test'
+  ...
+# Subtest: unverified TLS and mismatching certificate each destroy the acquired lease
+ok 46 - unverified TLS and mismatching certificate each destroy the acquired lease
+  ---
+  duration_ms: 5.8019
+  type: 'test'
+  ...
+# Subtest: endpoint and connection URI overrides fail before credential callback
+ok 47 - endpoint and connection URI overrides fail before credential callback
+  ---
+  duration_ms: 2.4827
+  type: 'test'
+  ...
+# Subtest: SQL outside exact source allowlist and reads outside transaction are rejected
+ok 48 - SQL outside exact source allowlist and reads outside transaction are rejected
+  ---
+  duration_ms: 1.8611
+  type: 'test'
+  ...
+# Subtest: queued clients preserve pool bound and actual lease identities remain distinct
+ok 49 - queued clients preserve pool bound and actual lease identities remain distinct
+  ---
+  duration_ms: 368.9965
+  type: 'test'
+  ...
+# Subtest: server errors are redacted and failed or unfinished transactions destroy their lease
+ok 50 - server errors are redacted and failed or unfinished transactions destroy their lease
+  ---
+  duration_ms: 1.8853
+  type: 'test'
+  ...
+# Subtest: end during delayed BEGIN destroys the lease before it can be recycled
+ok 51 - end during delayed BEGIN destroys the lease before it can be recycled
+  ---
+  duration_ms: 1.29
+  type: 'test'
+  ...
+# Subtest: preflight hashes actual controlled transaction and treats session counts as preliminary
+ok 52 - preflight hashes actual controlled transaction and treats session counts as preliminary
+  ---
+  duration_ms: 1.3561
+  type: 'test'
+  ...
+# Subtest: credential callback errors and late private target drift expose fixed failure codes
+ok 53 - credential callback errors and late private target drift expose fixed failure codes
+  ---
+  duration_ms: 0.3902
+  type: 'test'
+  ...
+# Subtest: pooler startup identity stays separate from real transaction backend identity
+ok 54 - pooler startup identity stays separate from real transaction backend identity
+  ---
+  duration_ms: 0.7191
+  type: 'test'
+  ...
+# Subtest: complete observer accepts only source-bound authenticated continuous controlled captures
+ok 55 - complete observer accepts only source-bound authenticated continuous controlled captures
+  ---
+  duration_ms: 2.4111
+  type: 'test'
+  ...
+# Subtest: empty logs, missing coverage, sequence gaps and forged completeness are rejected
+ok 56 - empty logs, missing coverage, sequence gaps and forged completeness are rejected
+  ---
+  duration_ms: 1.3409
+  type: 'test'
+  ...
+# Subtest: actual dispatch attempts fail zero-effect observation even without remote outcome rows
+ok 57 - actual dispatch attempts fail zero-effect observation even without remote outcome rows
+  ---
+  duration_ms: 1.435
+  type: 'test'
+  ...
+# Subtest: active job, inflight work, truncated interval and mismatched observer source fail closed
+ok 58 - active job, inflight work, truncated interval and mismatched observer source fail closed
+  ---
+  duration_ms: 1.817
+  type: 'test'
+  ...
+1..58
+# tests 58
+# suites 0
+# pass 58
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5417.6255

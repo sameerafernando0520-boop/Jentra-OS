@@ -1,0 +1,112 @@
+TAP version 13
+# Subtest: never-settling private callback is bounded and cleanup does not wait for that promise
+ok 1 - never-settling private callback is bounded and cleanup does not wait for that promise
+  ---
+  duration_ms: 44.2198
+  type: 'test'
+  ...
+# Subtest: close cancels private initialization immediately and late callback cannot construct a pool
+ok 2 - close cancels private initialization immediately and late callback cannot construct a pool
+  ---
+  duration_ms: 3.5424
+  type: 'test'
+  ...
+# Subtest: private callback cannot inject an arbitrary error code or credential value into public failure
+ok 3 - private callback cannot inject an arbitrary error code or credential value into public failure
+  ---
+  duration_ms: 0.8331
+  type: 'test'
+  ...
+# Subtest: factory and client construction do not read credentials or connect
+ok 4 - factory and client construction do not read credentials or connect
+  ---
+  duration_ms: 9.1135
+  type: 'test'
+  ...
+# Subtest: unverified TLS and mismatching certificate each destroy the acquired lease
+ok 5 - unverified TLS and mismatching certificate each destroy the acquired lease
+  ---
+  duration_ms: 5.7345
+  type: 'test'
+  ...
+# Subtest: endpoint and connection URI overrides fail before credential callback
+ok 6 - endpoint and connection URI overrides fail before credential callback
+  ---
+  duration_ms: 0.6937
+  type: 'test'
+  ...
+# Subtest: SQL outside exact source allowlist and reads outside transaction are rejected
+ok 7 - SQL outside exact source allowlist and reads outside transaction are rejected
+  ---
+  duration_ms: 1.796
+  type: 'test'
+  ...
+# Subtest: queued clients preserve pool bound and actual lease identities remain distinct
+ok 8 - queued clients preserve pool bound and actual lease identities remain distinct
+  ---
+  duration_ms: 353.1906
+  type: 'test'
+  ...
+# Subtest: server errors are redacted and failed or unfinished transactions destroy their lease
+ok 9 - server errors are redacted and failed or unfinished transactions destroy their lease
+  ---
+  duration_ms: 1.1181
+  type: 'test'
+  ...
+# Subtest: end during delayed BEGIN destroys the lease before it can be recycled
+ok 10 - end during delayed BEGIN destroys the lease before it can be recycled
+  ---
+  duration_ms: 1.1917
+  type: 'test'
+  ...
+# Subtest: preflight hashes actual controlled transaction and treats session counts as preliminary
+ok 11 - preflight hashes actual controlled transaction and treats session counts as preliminary
+  ---
+  duration_ms: 3.5898
+  type: 'test'
+  ...
+# Subtest: credential callback errors and late private target drift expose fixed failure codes
+ok 12 - credential callback errors and late private target drift expose fixed failure codes
+  ---
+  duration_ms: 0.8919
+  type: 'test'
+  ...
+# Subtest: pooler startup identity stays separate from real transaction backend identity
+ok 13 - pooler startup identity stays separate from real transaction backend identity
+  ---
+  duration_ms: 0.9054
+  type: 'test'
+  ...
+# Subtest: complete observer accepts only source-bound authenticated continuous controlled captures
+ok 14 - complete observer accepts only source-bound authenticated continuous controlled captures
+  ---
+  duration_ms: 1.4261
+  type: 'test'
+  ...
+# Subtest: empty logs, missing coverage, sequence gaps and forged completeness are rejected
+ok 15 - empty logs, missing coverage, sequence gaps and forged completeness are rejected
+  ---
+  duration_ms: 1.0151
+  type: 'test'
+  ...
+# Subtest: actual dispatch attempts fail zero-effect observation even without remote outcome rows
+ok 16 - actual dispatch attempts fail zero-effect observation even without remote outcome rows
+  ---
+  duration_ms: 0.6472
+  type: 'test'
+  ...
+# Subtest: active job, inflight work, truncated interval and mismatched observer source fail closed
+ok 17 - active job, inflight work, truncated interval and mismatched observer source fail closed
+  ---
+  duration_ms: 0.7605
+  type: 'test'
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 645.593

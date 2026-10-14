@@ -1,0 +1,419 @@
+{
+  "kind": "wave5-concurrency-load-and-release-protocol-result",
+  "observedAt": "2026-10-13T21:40:10.335Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "actualLoadPerformed": false,
+  "actualPostgresConnection": false,
+  "privateDatabaseCredentialRead": false,
+  "liveSqlWrites": 0,
+  "liveAuthCreated": 0,
+  "genuineLoadSessionsCreated": 0,
+  "SDKJobs": 0,
+  "productionReleased": false,
+  "controlledLocal": {
+    "originalHelper": {
+      "binding": {
+        "path": "docs/verification/wave5/task3-load-release-20261013/local-verification-a2.json",
+        "bytes": 48922,
+        "sha256": "174d5002f68ce3280a4dc903081be80defa5ba2374170d3665c10393aa0c1fb2"
+      },
+      "counts": {
+        "tests": 14,
+        "pass": 14,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "passed": true
+    },
+    "originalPublicProvider": {
+      "binding": {
+        "path": "docs/verification/wave5/task3-load-release-20261013/local-verification-a2.json",
+        "bytes": 48922,
+        "sha256": "174d5002f68ce3280a4dc903081be80defa5ba2374170d3665c10393aa0c1fb2"
+      },
+      "counts": {
+        "tests": 121,
+        "pass": 121,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "passed": true,
+      "boundary": "Pre-startup-repair source population in the saved original record."
+    },
+    "constructorRouter": {
+      "binding": {
+        "path": "docs/verification/wave5/task3-load-release-20261013/provider-router-verification.json",
+        "bytes": 4330,
+        "sha256": "51c471c4a033b8cc120d42e4d9cfe0e167eaec72db25a5b95d23634bc8c3245b"
+      },
+      "counts": {
+        "tests": 6,
+        "pass": 6,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "passed": true
+    },
+    "fixtureWriter": {
+      "binding": {
+        "path": "docs/verification/wave5/task3-load-release-20261013/fixture_writer-verification.json",
+        "bytes": 13142,
+        "sha256": "2a5b86b3aedb2c329dbbd7b03065d589d68b6c848865de670f07a9b2f4d376a1"
+      },
+      "counts": {
+        "tests": 28,
+        "pass": 28,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "passed": true
+    },
+    "historicalOperationIntegration": {
+      "binding": {
+        "path": "docs/verification/wave5/task3-load-release-20261013/provider-operation-verification.json",
+        "bytes": 9930,
+        "sha256": "7772313a59b71a6c02c331e6ab5f5c29e64cc2ce94c112639f930e436da05da8"
+      },
+      "counts": {
+        "tests": 16,
+        "pass": 16,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "passed": true,
+      "boundary": "Historical before later public baseline/driver/manifest successor changes."
+    },
+    "boundedReadonlyLifecycle": {
+      "binding": {
+        "path": "docs/verification/wave5/task3-load-release-20261013/readonly-lifecycle-verification.json",
+        "bytes": 6879,
+        "sha256": "3d0f9aceaf35a582512631f1a70411e6dec30004b71d5f773b59a2d82e6e10db"
+      },
+      "counts": {
+        "tests": 17,
+        "pass": 17,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "passed": true
+    },
+    "currentIndependentIntegration": {
+      "binding": {
+        "path": "docs/verification/wave5/task3-completion-20261013/provider-integration-independent-review-20261014-a2.json",
+        "bytes": 11461,
+        "sha256": "170ba1a1a81169dafb322c0a03d537627cee273d7595b2b5351bc8be14d1b0ce"
+      },
+      "counts": {
+        "tests": 61,
+        "pass": 61,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "passed": true,
+      "sourcesCurrent": true
+    },
+    "currentIndependentPublicProvider": {
+      "binding": {
+        "path": "docs/verification/wave5/task3-acceptance-20261013/runtime-provider-local-verification-20261014-acceptance-a3.json",
+        "bytes": 40973,
+        "sha256": "8f1fd91c80f04e899c13e1a443babc465be2859588324117a1b76f6500b085cf"
+      },
+      "counts": {
+        "tests": 122,
+        "passed": 122,
+        "failed": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      "passed": true
+    }
+  },
+  "originalOfflineHarness": {
+    "binding": {
+      "path": "docs/verification/wave5/task3-load-release-20261013/local-verification-a2.json",
+      "bytes": 48922,
+      "sha256": "174d5002f68ce3280a4dc903081be80defa5ba2374170d3665c10393aa0c1fb2"
+    },
+    "failureCode": "HARNESS_SOURCE_DRIFT",
+    "passed": false,
+    "originalReviewPreserved": true,
+    "changedFiles": [
+      {
+        "path": "tools/wave5/runtime_coordinator.mjs",
+        "approvedSha256": "e41ab3830523f030f7a3cf2bb42ebabf24387697afc521b1d94458ec30dbf9be",
+        "actualSha256": "1df1396865610b73614f5ba9b83a8d9b91d40bb642e26d7443934ef11bcd0f3c"
+      },
+      {
+        "path": "tools/wave5/runtime_coordinator.test.mjs",
+        "approvedSha256": "d5b8aba2a49673e540a87fd414be38419c65535902c3eff572afd005733b81c8",
+        "actualSha256": "d0582f1c33e3b869411bda08e50a495ecd4a287ae299b570186c271d614036db"
+      }
+    ]
+  },
+  "successorOfflineHarness": {
+    "review": {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/runtime-harness-review-20261014-acceptance-a1.json",
+      "bytes": 20023,
+      "sha256": "5b86ce5ac1b1fdc5877c96ff8efff6dc6021d9aac02cb2f0dcc1169cb2c5f123"
+    },
+    "testRecord": {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/runtime-provider-local-verification-20261014-acceptance-a3.json",
+      "bytes": 40973,
+      "sha256": "8f1fd91c80f04e899c13e1a443babc465be2859588324117a1b76f6500b085cf"
+    },
+    "offlineRecord": {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/runtime-harness-offline-validation-20261014-acceptance-a1.json",
+      "bytes": 5500,
+      "sha256": "a0ac97291881ea2bd4ff16ff1f214461338a1ce0c8dc6803d3b1a1e10678eb53"
+    },
+    "counts": {
+      "tests": 122,
+      "passed": 122,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "todo": 0
+    },
+    "offlineExitCode": 0,
+    "planValidated": false,
+    "currentSourceDrift": [],
+    "rootIndependentIntegrationReviewComplete": true,
+    "executedLive": false
+  },
+  "strict115Baseline": {
+    "independentReview": {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/load-baseline-115-independent-review.json",
+      "bytes": 6289,
+      "sha256": "d3217a56799e9e94e0dabe313cda6cd870fd412c702ef9af08c41890391de682"
+    },
+    "laterLiveReadback": {
+      "path": "docs/verification/wave5/task3-completion-20261013/installed-cash-independent-readback-20261014.json",
+      "bytes": 4891,
+      "sha256": "b90d5514a3d602de970637ab06132eaec3728143433e03985b9e96449bc9fbf3"
+    },
+    "actualInstalledMigrations": 115,
+    "historicalOriginalInstalledMigrations": 114,
+    "apiFunctions": 363,
+    "livePreflightForThisRunVerified": false
+  },
+  "privateReadiness": {
+    "binding": {
+      "path": "docs/verification/wave5/task3-completion-20261013/private-readiness-resume-readback.json",
+      "bytes": 2956,
+      "sha256": "3b5667249de3c7703b1b5d8b79ebc9c9330b6939a49d78e78c75f69134f4a515"
+    },
+    "userReportedReady": true,
+    "successfulInputSaveEvidenced": false,
+    "lastCredentialPresenceObservation": {
+      "observedAt": "2026-10-13T18:22:30.9341990+00:00",
+      "publicRuntimeInputMetadataExists": false,
+      "sealedDatabaseFileExists": false,
+      "sealedModelFileExists": false,
+      "credentialValuesRead": false
+    },
+    "credentialValuesRead": false,
+    "modelKeyRequiredForLoad": false
+  },
+  "observedCapacity": {
+    "binding": {
+      "path": "docs/verification/wave5/task3-load-release-20261013/read-only-live-audit.json",
+      "bytes": 7467,
+      "sha256": "8bf2fb9311450de5d29d0e9bace47b4c54ed8314710d69aef56fa540c741ee52"
+    },
+    "maxConnections": 60,
+    "serverConnections": 13,
+    "databaseBytes": 132680851,
+    "sharedBuffers": "224MB",
+    "authSessionRowsTotal": 21,
+    "reviewedLoadActorSessionRowsExcludingOperator": 15,
+    "onlineVerifiedTargetPopulationCount": null,
+    "capacitySupportedFor2000Sessions": null
+  },
+  "target": {
+    "scopes": 500,
+    "distinctGenuineSessions": 2000,
+    "warmupSeconds": 60,
+    "measuredSeconds": 300,
+    "maxRunSeconds": 900,
+    "initialRequestsPerSecond": 20,
+    "maximumTimedRequests": 100000,
+    "maxInflight": 2000,
+    "expectedScheduledSendsAtInitialRate": 7200,
+    "expectedMeasuredSendsAtInitialRate": 6000,
+    "measuredMixPercent": {
+      "indexedReads": 70,
+      "ordinaryForecastCommands": 20,
+      "boundedAnalytics": 10
+    },
+    "strictP95LimitsMs": {
+      "indexedReads": 500,
+      "ordinaryForecastCommands": 1500,
+      "boundedAnalytics": 3000
+    },
+    "raceParticipants": {
+      "duplicates": 100,
+      "seats": 2,
+      "admissions": 2,
+      "activation": 2,
+      "execution": 2,
+      "outboxLeases": 2,
+      "quota": 20
+    }
+  },
+  "measuredResult": {
+    "sessionCount": null,
+    "scopeCount": null,
+    "warmupMs": null,
+    "measurementMs": null,
+    "operationCounts": null,
+    "p95Ms": null,
+    "errorCount": null,
+    "actualOverlap": null,
+    "committedRaceEffects": null,
+    "deniedZeroEffects": null,
+    "fixtureRestoration": null
+  },
+  "implementation": {
+    "fullPublicProviderAlreadyExists": true,
+    "readOnlyAdapterImplemented": true,
+    "constructorRouterImplemented": true,
+    "exactFixtureWriterImplemented": true,
+    "fixtureWriterLiveConfigured": false,
+    "completeObserverValidationAdapterImplemented": true,
+    "completeAuthenticCaptureConfigured": false,
+    "continuousCurrentJobsAndWorkersQuiescenceVerified": false,
+    "actualSourceBindingsForIndependentReview": {
+      "routerSha256": "1ed26789894554d2462017a6234e56ae6b131d004152d8eb73300d858f919730",
+      "readOnlyDriverSha256": "ca0e3a8373160058aa8b929efbfeaab624ecb04fc2016919568f823262f25c07",
+      "fixtureDriverSha256": "ff9b4a3788b11c4558b8be0fb79e0e565d2ea4b7c137473d531df388cd4c1298",
+      "dependencyManifestSha256": "dc09b9a8ce22b6c1aa06ac182705c1b90e58e0f9fcc229d4746d9f98bd9abd8c"
+    }
+  },
+  "releaseAudit": {
+    "sourceCheckRecord": {
+      "path": "docs/verification/wave5/task3-load-release-20261013/source-release-checks.json",
+      "bytes": 133659,
+      "sha256": "01469327f00b071b200aac07475046020e2967c228b5ab594eeb1729cd4c80d5"
+    },
+    "sourceFiles": 543,
+    "checkCount": 89,
+    "checklistTotals": {
+      "PASS": 21,
+      "FAIL": 0,
+      "MANUAL": 48,
+      "SKIP": 20
+    },
+    "sourceScanCurrentAtPackaging": false,
+    "currentSourceDrift": [
+      {
+        "path": "supabase/functions/wave5-receiver/index_20261014_r5_v4.ts",
+        "bytes": 757,
+        "sha256": "95d79654c59910e85cc7e0b462a10df223d6bce8d91ae2796b0ed1a6ca33c4c9",
+        "notInRecordedSourceScan": true
+      },
+      {
+        "path": "supabase/functions/wave5-receiver/index_20261014_r5_v5.ts",
+        "bytes": 757,
+        "sha256": "c94e7dbf3dde7767d8d653a60af9f4b048c4162e1f0eb226dff77c6e9f437bba",
+        "notInRecordedSourceScan": true
+      },
+      {
+        "path": "supabase/functions/wave5-runtime/index_20261014_r5_v4.ts",
+        "bytes": 733,
+        "sha256": "ef89264e2adac5aa329c73aee987d802e22b50a2084053134154b104054c82e2",
+        "notInRecordedSourceScan": true
+      },
+      {
+        "path": "supabase/functions/wave5-runtime/index_20261014_r5_v5.ts",
+        "bytes": 733,
+        "sha256": "a25e75691dd946a768117f31f38b9151397123bade4b7a7c2b61a1b450de1df9",
+        "notInRecordedSourceScan": true
+      },
+      {
+        "path": "supabase/migrations/20261013184757_wave5_cash_conflict_http409_20261014_r5.sql",
+        "bytes": 3327,
+        "sha256": "99cd801ba156872fb8f6346cc74e667ef9398e3628f466ae0ff44f37b7fdf520",
+        "notInRecordedSourceScan": true
+      },
+      {
+        "path": "workers/wave5/edge_receiver_20261014_r5_v4.mjs",
+        "bytes": 5658,
+        "sha256": "2b138496f7879cdef9231e8c315ba62103bdd29e9383be321ef157b708fd60b9",
+        "notInRecordedSourceScan": true
+      },
+      {
+        "path": "workers/wave5/edge_receiver_20261014_r5_v5.mjs",
+        "bytes": 5658,
+        "sha256": "4d6f2f20b363ab8cd26e9b6bfb4121ad927532dc4e7b458cc95b5c607e74c26f",
+        "notInRecordedSourceScan": true
+      },
+      {
+        "path": "workers/wave5/edge_route_20261014_r5_v4.mjs",
+        "bytes": 4177,
+        "sha256": "ea01c16c75905e431131f0128d9ec9972a77e1b1e58b0a90f2e9b75dd0cfc3b0",
+        "notInRecordedSourceScan": true
+      },
+      {
+        "path": "workers/wave5/edge_route_20261014_r5_v5.mjs",
+        "bytes": 4539,
+        "sha256": "ee309ad07a804a8cd029988756665fef60a5293ad71162d4efca3b88cee4e95a",
+        "notInRecordedSourceScan": true
+      },
+      {
+        "path": "workers/wave5/edge_runtime_20261014_r5_v4.mjs",
+        "bytes": 6921,
+        "sha256": "4ce1af5886dd0fe9f20a0ae33ef89b53ac492dc1fea4c42e099c0c4ebb23cb0c",
+        "notInRecordedSourceScan": true
+      },
+      {
+        "path": "workers/wave5/edge_runtime_20261014_r5_v5.mjs",
+        "bytes": 6921,
+        "sha256": "2b4e03939314c30b9908ed1b2313eed6a13db5f8708b35d80f309108b673800e",
+        "notInRecordedSourceScan": true
+      }
+    ],
+    "currentPopulationFileCount": 554,
+    "hostedDartAdvisoryRecord": {
+      "path": "docs/verification/wave5/task3-load-release-20261013/dart-dependency-audit.json",
+      "bytes": 17423,
+      "sha256": "a3983f70e067eee9f103d66483415fb357331f6ca0139ff3ac6fbe89676feedd"
+    },
+    "localNpmAdvisoryRecord": {
+      "path": "docs/verification/wave5/task3-load-release-20261013/npm-dependency-audit.json",
+      "bytes": 899,
+      "sha256": "dea5a5205bafc48d9c977ccc46a87161380a1ccd9511203c414d2de59c97a82c"
+    },
+    "productionReleaseReady": false
+  },
+  "gates": {
+    "fullIndependentSessionContention": false,
+    "targetScaleLoad": false,
+    "productionRelease": false
+  },
+  "requiredNextEvidence": [
+    "Bind final dependency manifest/current reviewed source digests into an outside-repository private provider and preparation review",
+    "Successful sealed database input save observed by the live owner",
+    "2,000 distinct genuine fresh online-verified sessions with exact distribution/MFA",
+    "Actual Auth token quota/JWT lifetime and feasible authorized pre-provisioning without changing global policy or fabricating IPs",
+    "Actual region/tier/cache/generator capacity proof and nonempty reviewed 500-scope fixtures",
+    "Authentic complete capture of all current reviewed worker transports plus continuous job/inflight quiescence",
+    "Full seven-race committed effect/overlap/restoration evidence and exact 360-second load/P95 result",
+    "Staging/production separation, isolated restore, delivered monitoring alerts, native accessibility, signed MSIX and controlled pilot"
+  ],
+  "boundary": "Local tests, dependency audits, source review and connector reads are completed preparation. No target-scale workload, live driver, fabricated JWT, hand-written capture or production acceptance is claimed."
+}

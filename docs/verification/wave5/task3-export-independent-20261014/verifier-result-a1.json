@@ -1,0 +1,78 @@
+{
+  "kind": "independent-export-budget-day-review-verification",
+  "verifiedAt": "2026-10-14T03:56:06.680Z",
+  "passed": false,
+  "checksPassed": 10,
+  "checksTotal": 12,
+  "checks": [
+    {
+      "name": "All 33 preserved inputs and audit before/after bindings remain exact",
+      "passed": false,
+      "failure": "scripts/wave5/run_private_management_installer_20261013_r5.ps1\n+ actual - expected\n\n+ 'a78e3126021e7556e0c7866e109c7b69785a628c9081da4a1619e6c6e5f3d556'\n- '99f9af0c2204ce7d745d125c6db724aaef3e2bbac1bf3c0f9f135e9df7489091'\n"
+    },
+    {
+      "name": "Every directly cited public budget evidence digest matches",
+      "passed": true
+    },
+    {
+      "name": "Original approval authorizes at most eight exports and does not contain numeric 150",
+      "passed": true
+    },
+    {
+      "name": "All consumed plan source and prior evidence bindings match preserved execution inputs",
+      "passed": true
+    },
+    {
+      "name": "Conservative prior 130 retains unknown first reserve, all 50 A3 calls, pipeline read and A8 GET",
+      "passed": true
+    },
+    {
+      "name": "Completed dates retain exact distinct approval and canonical/raw original replay evidence",
+      "passed": true
+    },
+    {
+      "name": "24 ordinary attempts include two complete six-call genuine sessions and exactly two original export writes",
+      "passed": true
+    },
+    {
+      "name": "Consolidated before/after query is one identical exact read-only statement with original digest recipes",
+      "passed": true
+    },
+    {
+      "name": "A8 is expired now and a fresh charged metadata binding is required before export unseal/dispatch",
+      "passed": true
+    },
+    {
+      "name": "Current required ceiling is 156 with a charged single refresh; 155 or omitted calls cannot fit",
+      "passed": true
+    },
+    {
+      "name": "UTC day amendment preserves fixture facts, two currencies and unchanged supported reopen contract",
+      "passed": false,
+      "failure": "The expression evaluated to a falsy value:\n\n  assert.ok(adapter.includes(\"job.resource not in('wave3.w5_pipeline','wave3.w5_cash')\"))\n"
+    },
+    {
+      "name": "All original inputs remain unchanged throughout this independent audit",
+      "passed": true
+    }
+  ],
+  "sourcePreservationMatches": true,
+  "report": {
+    "path": "docs/verification/wave5/task3-export-independent-20261014/export-budget-day-independent-review-a1.json",
+    "bytes": 64335,
+    "sha256": "f3a47beec69a923ba824145576c1133131e0702d921f7268bfea541a72641a18"
+  },
+  "markdown": {
+    "path": "docs/verification/wave5/task3-export-independent-20261014/export-budget-day-independent-review-a1.md",
+    "bytes": 2621,
+    "sha256": "32b34b0ce6760562d72efd53152204702c3012da880face46a073e0695890287"
+  },
+  "verifier": {
+    "path": "docs/verification/wave5/task3-export-independent-20261014/verify_budget_day_review.mjs",
+    "bytes": 23885,
+    "sha256": "7e407ad8623c7cfd6b90870252b5891ec0992bdb296555173bae5adb508f6dbd"
+  },
+  "networkCalls": 0,
+  "privateCredentialsRead": false,
+  "SDKJobs": 0
+}

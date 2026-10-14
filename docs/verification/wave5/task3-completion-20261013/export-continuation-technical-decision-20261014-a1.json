@@ -1,0 +1,467 @@
+{
+  "kind": "delegated-source-only-export-continuation-technical-decision",
+  "decidedAt": "2026-10-14T03:54:59.755Z",
+  "author": "/root, acting as the delegated technical owner",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "runtimeBundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+  "decision": "approve additive source implementation of the same two governed exports, subject to the independent and generated-plan gates below",
+  "sourceImplementationAuthorized": true,
+  "liveExecutionAuthorizedByThisDecision": false,
+  "personalHumanExactSourceSignatureClaimed": false,
+  "originalHumanApprovalAndConcrete150PlanPreserved": true,
+  "originalAttemptCountersReset": false,
+  "originalConcreteCumulativeCap": 150,
+  "preservedPriorBeforeNewRefresh": 130,
+  "requiredAdditionalReadOnlyOwnerRefreshAttempts": 1,
+  "priorConservativeBoundAfterRequiredRefresh": 131,
+  "ordinaryContinuationAttempts": 24,
+  "ordinaryCumulativeLimit": 155,
+  "reservedReadOnlyResolutionAttempts": 1,
+  "maximumCumulativeAttemptLimit": 156,
+  "explicitAdditionalCeiling": 6,
+  "attemptedAndFailedRequestsChargedBeforeDispatch": true,
+  "transportRetries": 0,
+  "unlistedCallsAllowed": 0,
+  "maximumRunMs": 900000,
+  "maximumSingleRequestMs": 45000,
+  "ordinaryDispatchResolutionReserveMs": 45000,
+  "originalRuntimeExpiryUnchanged": "2026-10-14T09:57:07.481942Z",
+  "runtimeExpiryExtensionAuthorized": false,
+  "originalFixtureUtcDay": "2026-10-13",
+  "requiredActualExportUtcDay": "2026-10-14",
+  "serverDayAndExpiryCheckedBeforeWrites": true,
+  "newSourcePaths": [
+    "tools/wave5/finance_exports_20261014_r5_a5.mjs",
+    "tools/wave5/prepare_finance_exports_20261014_r5_a5.mjs",
+    "docs/verification/wave5/task3-export-continuation-20261014/finance_exports_20261014_r5_a5.test.mjs"
+  ],
+  "topology": "Additive relative imports beside unchanged A3 sources; live owner alone copies new files into the approved frozen execution snapshot.",
+  "exactSource": {
+    "scope": {
+      "key": "runtime",
+      "tenantId": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "entityId": "caa2bb06-219a-47e9-8132-66d1271b0ffd",
+      "branchId": "3813692c-f0de-4c69-8e34-d56cf54695b1"
+    },
+    "actorId": "8b740ab8-24f7-4455-a78b-aea0d99d20f6",
+    "pipelineId": "e8e582b2-6ce0-4b2d-beca-8ad3203abbfc",
+    "pipelineSourceCount": 2,
+    "pipelineSourceBasisHash": "5d5ac676da84df7d7e780f6cadb38464bfc8d671d9a3f88924e5a4563cf94301",
+    "pipelineRows": [
+      {
+        "currency": "LKR",
+        "population": 1,
+        "amount": "2000.125000",
+        "weightedAmount": "1000.062500"
+      },
+      {
+        "currency": "USD",
+        "population": 1,
+        "amount": "1000.000001",
+        "weightedAmount": "333.300000"
+      }
+    ],
+    "statementId": "a336c6af-0141-e585-3fa0-b7688a63b6d3",
+    "statementKind": "profit_loss",
+    "statementSection": "accounts",
+    "statementRows": 10,
+    "exportIds": [
+      {
+        "commandId": "d4a0ad64-f138-b857-30d6-6fe0afe64e4f",
+        "documentId": "5594aa22-a243-337d-e574-9095f97b46c2",
+        "documentType": "report_export",
+        "toStatus": "registered",
+        "actorId": "8b740ab8-24f7-4455-a78b-aea0d99d20f6"
+      },
+      {
+        "commandId": "217bcee3-d103-9513-a3e7-cc56d26e45be",
+        "documentId": "7ea25345-a8c0-45b0-f22b-8d1d0fba5318",
+        "documentType": "report_export",
+        "toStatus": "registered",
+        "actorId": "8b740ab8-24f7-4455-a78b-aea0d99d20f6"
+      }
+    ],
+    "originalFixtureDay": "2026-10-13",
+    "proposedActualExportUtcDay": "2026-10-14",
+    "exportDayAmendmentExplicitAndPending": true,
+    "fixtureDatesOrAmountsModified": false,
+    "latestPipelineSubstitutionAllowed": false,
+    "currencyConversionOrCoercionAllowed": false,
+    "sourceBasisHashIsDistinctFromCanonicalExportDocumentHash": true
+  },
+  "requiredBefore": {
+    "installedMigrationCount": 115,
+    "installedApiFunctionCount": 363,
+    "originalBaselineSourceHash": "ff90ee8cb1e1a33982eedfc1d05a8b8118a463d8e2bd9a36ac9f1469eb40be38",
+    "wholeSourceHash": "6419aa1d51407cd016915da47a56ae28f5f3f50458c562b011e2b16da54bccb3",
+    "journals": 9,
+    "lines": 18,
+    "publications": 3,
+    "classifications": 1,
+    "dateProposals": 3,
+    "dateDecisions": 3,
+    "scenarios": 0,
+    "exports": 0,
+    "originalProcessRows": 4,
+    "priorStatementAppends": 3,
+    "approvedExportReceipts": 0,
+    "approvedExportJobs": 0,
+    "staleCommandReceipts": 0,
+    "staleCommandProposals": 0,
+    "activeOriginalCashInvocations": 0,
+    "allSevenInstalledFunctionMd5s": {
+      "financial_statement_page": "411a49de3b16cb18743d1388fe4e6d7f",
+      "record_report_export": "8c27c35f2d47803cb9f213a35d2bb935",
+      "report_export_preview": "6add0cd5eee10a4dfea120608e73a625",
+      "wave5_cash_date_command": "1073f011cc41fd591ae30e37fee6f411",
+      "wave5_cash_date_get": "9cffa55ebb5785b32c9028cb87c31f12",
+      "wave5_cash_date_sources": "8e788ef2aeecdfd6ade8bb9347840a82",
+      "wave5_export_reopen": "0480817ae2c4fc0957c1d95051ef293f"
+    }
+  },
+  "requiredAfter": {
+    "exports": 2,
+    "approvedExportReceipts": 2,
+    "approvedExportJobs": 2,
+    "documentedProcessAppends": 5,
+    "additionalExportProcessEvents": 2,
+    "originalBaselineSourceHash": "ff90ee8cb1e1a33982eedfc1d05a8b8118a463d8e2bd9a36ac9f1469eb40be38",
+    "sourceExcludingOnlyOriginalTwoExportEvents": "6419aa1d51407cd016915da47a56ae28f5f3f50458c562b011e2b16da54bccb3",
+    "unchangedDateStateHash": true,
+    "unchangedPipelineRecordHash": true,
+    "unchangedStatementRecordHash": true,
+    "rawWholeSourceHashMustChangeForOnlyTheTwoReviewedExportEvents": true,
+    "exactOriginalExportCommandAndActorIdentities": true,
+    "staleCommandReceipts": 0,
+    "staleCommandProposals": 0,
+    "activeOriginalCashInvocations": 0
+  },
+  "ordinaryCallInventory": [
+    {
+      "ordinal": 1,
+      "stage": "preflight",
+      "method": "POST",
+      "route": "management /database/query",
+      "purpose": "One consolidated before snapshot, exact source/function/ledger/day checks, absent original export receipts/jobs, completed date state and quiescence.",
+      "proof": "Persist raw response + SQL hash before validating; all scalar subqueries share this SQL statement snapshot.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 2,
+      "stage": "private-key-acquisition",
+      "method": "GET",
+      "route": "management /api-keys?reveal=true",
+      "purpose": "Retrieve the existing legacy anonymous API key for the same project.",
+      "proof": "Key response remains private; discard service-role value; do not publish raw keys.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 3,
+      "stage": "writer",
+      "method": "POST",
+      "route": "/auth/v1/token?grant_type=password",
+      "purpose": "Sign in the same approved existing proposer account.",
+      "proof": "Use the private existing account credential; genuine returned session only.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 4,
+      "stage": "writer",
+      "method": "POST",
+      "route": "/auth/v1/factors/692d8964-27f9-4fd1-9a2b-8e7aefc52ed8/challenge",
+      "purpose": "Challenge the same approved existing TOTP factor.",
+      "proof": "No enrollment/new factor; no fake forwarded IP or quota modification.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 5,
+      "stage": "writer",
+      "method": "POST",
+      "route": "management /database/query",
+      "purpose": "Read the actual server clock for the TOTP calculation.",
+      "proof": "Do not reuse stale local or preflight time for TOTP.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 6,
+      "stage": "writer",
+      "method": "POST",
+      "route": "/auth/v1/factors/692d8964-27f9-4fd1-9a2b-8e7aefc52ed8/verify",
+      "purpose": "Verify the actual TOTP challenge.",
+      "proof": "Raw tokens and seed remain private; require returned aal2 claims.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 7,
+      "stage": "writer",
+      "method": "GET",
+      "route": "/auth/v1/user",
+      "purpose": "Verify the received access token online.",
+      "proof": "Actor must equal the existing proposer.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 8,
+      "stage": "writer",
+      "method": "POST",
+      "route": "management /database/query",
+      "purpose": "Verify the actual returned UUID session row and actor in auth.sessions.",
+      "proof": "Retain existing helper server row checks; require distinct writer/reopen IDs.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 9,
+      "stage": "independent-reopen",
+      "method": "POST",
+      "route": "/auth/v1/token?grant_type=password",
+      "purpose": "Sign in the same approved existing proposer account.",
+      "proof": "Use the private existing account credential; genuine returned session only.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 10,
+      "stage": "independent-reopen",
+      "method": "POST",
+      "route": "/auth/v1/factors/692d8964-27f9-4fd1-9a2b-8e7aefc52ed8/challenge",
+      "purpose": "Challenge the same approved existing TOTP factor.",
+      "proof": "No enrollment/new factor; no fake forwarded IP or quota modification.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 11,
+      "stage": "independent-reopen",
+      "method": "POST",
+      "route": "management /database/query",
+      "purpose": "Read the actual server clock for the TOTP calculation.",
+      "proof": "Do not reuse stale local or preflight time for TOTP.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 12,
+      "stage": "independent-reopen",
+      "method": "POST",
+      "route": "/auth/v1/factors/692d8964-27f9-4fd1-9a2b-8e7aefc52ed8/verify",
+      "purpose": "Verify the actual TOTP challenge.",
+      "proof": "Raw tokens and seed remain private; require returned aal2 claims.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 13,
+      "stage": "independent-reopen",
+      "method": "GET",
+      "route": "/auth/v1/user",
+      "purpose": "Verify the received access token online.",
+      "proof": "Actor must equal the existing proposer.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 14,
+      "stage": "independent-reopen",
+      "method": "POST",
+      "route": "management /database/query",
+      "purpose": "Verify the actual returned UUID session row and actor in auth.sessions.",
+      "proof": "Retain existing helper server row checks; require distinct writer/reopen IDs.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 15,
+      "stage": "pipeline",
+      "method": "POST",
+      "route": "api.report_export_preview",
+      "purpose": "Preview the fixed existing two-currency pipeline/currencies, filters={}.",
+      "proof": "Exact scope + pipeline ID + source-basis hash + both decimal rows; canonical text SHA equals preview hash.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 16,
+      "stage": "pipeline",
+      "method": "POST",
+      "route": "management /database/query",
+      "purpose": "Immediate original stale-command quiescence read before the only pipeline registration.",
+      "proof": "Persist response before validation; stale receipts/proposals and active cash invocations remain zero.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 17,
+      "stage": "pipeline",
+      "method": "POST",
+      "route": "api.record_report_export",
+      "purpose": "Register the original deterministic pipeline export command and export ID once.",
+      "proof": "Acknowledge private/public original intent before dispatch; validate actual response and durable result receipt.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 18,
+      "stage": "pipeline",
+      "method": "POST",
+      "route": "api.wave5_export_reopen",
+      "purpose": "Reopen the registered pipeline export through the distinct genuine session.",
+      "proof": "Match returned IDs/hash/metadata and reproduce byte-identical CSV locally.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 19,
+      "stage": "statement",
+      "method": "POST",
+      "route": "api.report_export_preview",
+      "purpose": "Preview the original profit-loss statement/accounts, filters={}.",
+      "proof": "Original immutable publication; no financial statement generation.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 20,
+      "stage": "statement",
+      "method": "POST",
+      "route": "api.financial_statement_page",
+      "purpose": "Read the same original statement through the distinct fresh session.",
+      "proof": "Saved original summary identical; ten rows; no next page; rows equal preview.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 21,
+      "stage": "statement",
+      "method": "POST",
+      "route": "management /database/query",
+      "purpose": "Immediate original stale-command quiescence read before the only statement registration.",
+      "proof": "Preserve the same fail-closed quiescence checks.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 22,
+      "stage": "statement",
+      "method": "POST",
+      "route": "api.record_report_export",
+      "purpose": "Register the original deterministic statement export command and export ID once.",
+      "proof": "No changed IDs or replay; same durable intent/response acknowledgments.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 23,
+      "stage": "statement",
+      "method": "POST",
+      "route": "api.report_export_preview",
+      "purpose": "Reproduce the same statement canonical source through the distinct fresh session.",
+      "proof": "Exact canonical source/hash equality and local CSV byte equality; registered statement reopen is not claimed.",
+      "attempts": 1,
+      "automaticRetries": 0
+    },
+    {
+      "ordinal": 24,
+      "stage": "reconciliation",
+      "method": "POST",
+      "route": "management /database/query",
+      "purpose": "One consolidated after snapshot using the identical scoped query.",
+      "proof": "Same original baseline/date/statement/pipeline digests; exactly two receipts/jobs/events; preserve old sources and stale-command absence.",
+      "attempts": 1,
+      "automaticRetries": 0
+    }
+  ],
+  "reservedResolution": {
+    "ordinal": "R1",
+    "maximumAttempts": 1,
+    "method": "POST",
+    "route": "management /database/query",
+    "condition": "Only after a pending original export registration has an uncertain response or unacknowledged result; never replay the command.",
+    "queryRecipe": "Existing receiptResolutionSql(pending original reviewed command ID) scoped to the same tenant; pending command must be one of the two approved export command IDs.",
+    "automaticRetry": false,
+    "requiredAfterFailedAttempt": true
+  },
+  "permittedExportRpcNames": [
+    "report_export_preview",
+    "record_report_export",
+    "wave5_export_reopen",
+    "financial_statement_page"
+  ],
+  "onlyPermittedBusinessCommands": [
+    {
+      "commandId": "d4a0ad64-f138-b857-30d6-6fe0afe64e4f",
+      "documentId": "5594aa22-a243-337d-e574-9095f97b46c2",
+      "documentType": "report_export",
+      "toStatus": "registered",
+      "actorId": "8b740ab8-24f7-4455-a78b-aea0d99d20f6"
+    },
+    {
+      "commandId": "217bcee3-d103-9513-a3e7-cc56d26e45be",
+      "documentId": "7ea25345-a8c0-45b0-f22b-8d1d0fba5318",
+      "documentType": "report_export",
+      "toStatus": "registered",
+      "actorId": "8b740ab8-24f7-4455-a78b-aea0d99d20f6"
+    }
+  ],
+  "genuineSessionChecksRetained": [
+    "same existing actor and TOTP factor",
+    "actual password session",
+    "actual MFA challenge and verification",
+    "server TOTP clock",
+    "online user verification",
+    "actual UUID session row",
+    "distinct writer and reopen session IDs"
+  ],
+  "freshScopeRequirements": {
+    "expiredA8Rejected": true,
+    "newAdditiveMetadataAndRefreshFilenames": true,
+    "existingCredentialReuseAuthorityPreserved": true,
+    "onlyOneBoundedReadOnlyProjectCheck": true,
+    "readinessRefreshAttemptChargedEvenIfPersistenceFails": true,
+    "finalMetadataAndRefreshHashesBoundInGeneratedPlan": true,
+    "expiredOrMismatchedMetadataRejectedBeforePrivateUnsealOrRequest": true
+  },
+  "executionPrerequisites": [
+    "independent budget/day/query review with exact public artifact hash",
+    "controlled source tests and independent successor source review",
+    "one new charged readiness refresh with public proof",
+    "generated snapshot plan with exact metadata/source/consumed-intent/evidence hashes",
+    "primary review of the generated plan and exact private adapter delta",
+    "exclusive new export-only once intent"
+  ],
+  "previouslyCompletedDateCommandsReexecuted": false,
+  "oldUncertainCommandReplayed": false,
+  "sourceOrAmountsOrCurrenciesOrExistingIdsChanged": false,
+  "dateScenarioModelDeliveryOrSchemaWritesAuthorized": false,
+  "privateOrLiveOperationsOwnedBy": "Continue Jentra OS Wave 5, thread 01a121e1-81f0-76c1-8060-699f36ec225e",
+  "registeredStatementReopenClaimed": false,
+  "statementFreshPageAndPreviewCsvReproductionRequired": true,
+  "nativeAcceptance": false,
+  "targetScaleLoad": false,
+  "productionReleaseReady": false,
+  "networkCallsByDecisionRecorder": 0,
+  "evidence": [
+    {
+      "path": "docs/verification/wave5/task3-completion-20261013/resumed-autonomy-delegation.json",
+      "bytes": 943,
+      "sha256": "cc3bcca39e3831f83a08f54c76a74c1e715616ffed63ad1adf2a387a6f8e4795"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-owner-decision-20261012-r5.json",
+      "bytes": 2756,
+      "sha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab"
+    },
+    {
+      "path": "docs/verification/wave5/task3-export-continuation-20261014/budget-feasibility.json",
+      "bytes": 48915,
+      "sha256": "1124bf1696224f1d62863a7f043990811fde953bae7703a40171fe75598855ec"
+    }
+  ]
+}

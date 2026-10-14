@@ -1,0 +1,136 @@
+TAP version 13
+# Subtest: only >=32-character legacy JWT shapes or opaque secret shapes produce immutable service headers
+ok 1 - only >=32-character legacy JWT shapes or opaque secret shapes produce immutable service headers
+  ---
+  duration_ms: 11.1567
+  type: 'test'
+  ...
+# Subtest: publishable, malformed, prefixed, whitespace, short and non-string service inputs fail before RPC dispatch
+ok 2 - publishable, malformed, prefixed, whitespace, short and non-string service inputs fail before RPC dispatch
+  ---
+  duration_ms: 1.4433
+  type: 'test'
+  ...
+# Subtest: reserved API-key prefixes cannot become legacy service JWTs by appending dot-separated segments
+ok 3 - reserved API-key prefixes cannot become legacy service JWTs by appending dot-separated segments
+  ---
+  duration_ms: 0.4128
+  type: 'test'
+  ...
+# Subtest: modern RPC sends only apikey with unchanged URL/profile/redirect/body and 15-second request signal
+ok 4 - modern RPC sends only apikey with unchanged URL/profile/redirect/body and 15-second request signal
+  ---
+  duration_ms: 43.4045
+  type: 'test'
+  ...
+# Subtest: legacy RPC headers, method, body and redirect behavior remain byte-for-byte predecessor equivalents
+ok 5 - legacy RPC headers, method, body and redirect behavior remain byte-for-byte predecessor equivalents
+  ---
+  duration_ms: 3.4379
+  type: 'test'
+  ...
+# Subtest: existing HTTPS and URL-boundary guards reject unsafe targets before any header-bearing request
+ok 6 - existing HTTPS and URL-boundary guards reject unsafe targets before any header-bearing request
+  ---
+  duration_ms: 0.4525
+  type: 'test'
+  ...
+# Subtest: server 401/403 remain access denials and private failure bodies are never promoted to error messages
+ok 7 - server 401/403 remain access denials and private failure bodies are never promoted to error messages
+  ---
+  duration_ms: 1.2247
+  type: 'test'
+  ...
+# Subtest: every scoped persistent-control family uses the V7 modern transport and exact original runtime envelope
+ok 8 - every scoped persistent-control family uses the V7 modern transport and exact original runtime envelope
+  ---
+  duration_ms: 4.6287
+  type: 'test'
+  ...
+# Subtest: default runtime accepts either provider format but unsigned schedule still denies before any backend work
+ok 9 - default runtime accepts either provider format but unsigned schedule still denies before any backend work
+  ---
+  duration_ms: 12.2152
+  type: 'test'
+  ...
+# Subtest: default real runtime ports use corrected modern headers on raw edge and scoped readiness/health calls
+ok 10 - default real runtime ports use corrected modern headers on raw edge and scoped readiness/health calls
+  ---
+  duration_ms: 11.272
+  type: 'test'
+  ...
+# Subtest: default runtime preserves malformed-body and backend-denial gates without retries
+ok 11 - default runtime preserves malformed-body and backend-denial gates without retries
+  ---
+  duration_ms: 2.4682
+  type: 'test'
+  ...
+# Subtest: default delivery control retains the exact lazy worker-runtime module and performs no external send for an empty queue
+ok 12 - default delivery control retains the exact lazy worker-runtime module and performs no external send for an empty queue
+  ---
+  duration_ms: 4.132
+  type: 'test'
+  ...
+# Subtest: provider compatibility never bypasses the existing durable readiness provider contract
+ok 13 - provider compatibility never bypasses the existing durable readiness provider contract
+  ---
+  duration_ms: 2.603
+  type: 'test'
+  ...
+# Subtest: default signed receiver uses V7 modern or unchanged legacy headers for exact key lookup and receipt RPC
+ok 14 - default signed receiver uses V7 modern or unchanged legacy headers for exact key lookup and receipt RPC
+  ---
+  duration_ms: 17.3963
+  type: 'test'
+  ...
+# Subtest: all unsigned receiver routes retain authentication denials and cannot invoke backend or fault responses
+ok 15 - all unsigned receiver routes retain authentication denials and cannot invoke backend or fault responses
+  ---
+  duration_ms: 2.4097
+  type: 'test'
+  ...
+# Subtest: forged HMAC and stale timestamp preserve original denial order under modern credentials
+ok 16 - forged HMAC and stale timestamp preserve original denial order under modern credentials
+  ---
+  duration_ms: 4.8727
+  type: 'test'
+  ...
+# Subtest: malformed or publishable service keys never enter signed receiver/default runtime backend paths
+ok 17 - malformed or publishable service keys never enter signed receiver/default runtime backend paths
+  ---
+  duration_ms: 18.6071
+  type: 'test'
+  ...
+# Subtest: default model path keeps the caller JWT/public apikey while all service-control RPCs use V7 modern apikey-only
+ok 18 - default model path keeps the caller JWT/public apikey while all service-control RPCs use V7 modern apikey-only
+  ---
+  duration_ms: 6.1673
+  type: 'test'
+  ...
+# Subtest: missing public model caller JWT still denies without service fallback, user read or provider call
+ok 19 - missing public model caller JWT still denies without service fallback, user read or provider call
+  ---
+  duration_ms: 1.1473
+  type: 'test'
+  ...
+# Subtest: factory construction performs no env reads, network operations or dictionary parsing
+ok 20 - factory construction performs no env reads, network operations or dictionary parsing
+  ---
+  duration_ms: 0.3335
+  type: 'test'
+  ...
+# Subtest: scope, routes, caller checks, caps and lazy imports are preserved by exact minimal source transformations
+ok 21 - scope, routes, caller checks, caps and lazy imports are preserved by exact minimal source transformations
+  ---
+  duration_ms: 28.0088
+  type: 'test'
+  ...
+1..21
+# tests 21
+# suites 0
+# pass 21
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 301.5935

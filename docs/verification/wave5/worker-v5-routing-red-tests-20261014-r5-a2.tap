@@ -1,0 +1,156 @@
+TAP version 13
+# Subtest: the observed project namespace reaches only the exact existing runtime routes
+not ok 1 - the observed project namespace reaches only the exact existing runtime routes
+  ---
+  duration_ms: 1.8285
+  type: 'test'
+  location: 'C:\\Users\\sheha\\Desktop\\Jentra OS\\workers\\wave5\\edge_route_project_http_20261014_r5_v5.test.mjs:9:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + null
+    - '/schedule'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '/schedule'
+  actual: ~
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/edge_route_project_http_20261014_r5_v5.test.mjs:10:42)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.start (node:internal/test_runner/test:1003:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17)
+  ...
+# Subtest: the same exact managed origin admits only the reviewed receiver namespace
+not ok 2 - the same exact managed origin admits only the reviewed receiver namespace
+  ---
+  duration_ms: 1.3046
+  type: 'test'
+  location: 'C:\\Users\\sheha\\Desktop\\Jentra OS\\workers\\wave5\\edge_route_project_http_20261014_r5_v5.test.mjs:12:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    null !== '/accept'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '/accept'
+  actual: ~
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/edge_route_project_http_20261014_r5_v5.test.mjs:13:43)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+  ...
+# Subtest: HTTP public prefixes, platform hosts, lookalikes, credentials, ports and noncanonical URLs stay denied
+ok 3 - HTTP public prefixes, platform hosts, lookalikes, credentials, ports and noncanonical URLs stay denied
+  ---
+  duration_ms: 0.5051
+  type: 'test'
+  ...
+# Subtest: endpoint configuration remains canonical public HTTPS, and per-handler route subsets still restrict access
+ok 4 - endpoint configuration remains canonical public HTTPS, and per-handler route subsets still restrict access
+  ---
+  duration_ms: 0.2997
+  type: 'test'
+  ...
+# Subtest: the finite diagnostic proves the exact HTTP project class without raw request data
+not ok 5 - the finite diagnostic proves the exact HTTP project class without raw request data
+  ---
+  duration_ms: 1.5949
+  type: 'test'
+  location: 'C:\\Users\\sheha\\Desktop\\Jentra OS\\workers\\wave5\\edge_route_project_http_20261014_r5_v5.test.mjs:28:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+        hash: false,
+        hostnameClass: 'project_host',
+        https: false,
+    +   originClass: 'other',
+    -   originClass: 'public_project_http',
+        pathClass: 'function_namespace',
+        portClass: 'default',
+        query: false,
+    +   routeRecognized: false,
+    -   routeRecognized: true,
+        userinfo: false
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    originClass: 'public_project_http'
+    pathClass: 'function_namespace'
+    hostnameClass: 'project_host'
+    portClass: 'default'
+    https: false
+    query: false
+    hash: false
+    userinfo: false
+    routeRecognized: true
+  actual:
+    originClass: 'other'
+    pathClass: 'function_namespace'
+    hostnameClass: 'project_host'
+    portClass: 'default'
+    https: false
+    query: false
+    hash: false
+    userinfo: false
+    routeRecognized: false
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/edge_route_project_http_20261014_r5_v5.test.mjs:30:9)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1106:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+    Test.postRun (node:internal/test_runner/test:1235:19)
+    Test.run (node:internal/test_runner/test:1163:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: a factory emits one finite v5 diagnostic across concurrent calls, and preserves handler authentication results
+not ok 6 - a factory emits one finite v5 diagnostic across concurrent calls, and preserves handler authentication results
+  ---
+  duration_ms: 0.7635
+  type: 'test'
+  location: 'C:\\Users\\sheha\\Desktop\\Jentra OS\\workers\\wave5\\edge_route_project_http_20261014_r5_v5.test.mjs:34:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'wave5_ingress_v4'
+    - 'wave5_ingress_v5'
+                      ^
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'wave5_ingress_v5'
+  actual: 'wave5_ingress_v4'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/edge_route_project_http_20261014_r5_v5.test.mjs:39:60)
+    async Test.run (node:internal/test_runner/test:1113:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 2
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 154.7605

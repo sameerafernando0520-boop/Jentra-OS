@@ -1,0 +1,93 @@
+{
+  "kind": "independent-frozen-a3-framework-prereview",
+  "reviewer": "/root/completion_peer",
+  "reviewedAt": "2026-10-14T06:39:04.527Z",
+  "inputs": [
+    {
+      "path": "tools/wave5/finance_remaining_20261014_r5_a3.mjs",
+      "sha256": "8cf6068a4f4863c27d234b96755b2e1f9332c13590a25e5b66ef4742da87bd52",
+      "bytes": 56166
+    },
+    {
+      "path": "tools/wave5/private_existing_actor_session_20261013_r5.mjs",
+      "sha256": "0d9dc4bfbd703fb7637f0acc89eaa195c2b6a17bdf4f4e566b0ba925f76c4540",
+      "bytes": 4562
+    },
+    {
+      "path": "tools/wave5/finance_https_transport_20261013_r5_a2.mjs",
+      "sha256": "1ecbb7beaf53b5a32dd48e860dc78159b225e428bf36687972443dea2a1a3a58",
+      "bytes": 8610
+    },
+    {
+      "path": "docs/verification/wave5/task3-completion-20261013/export-continuation-technical-decision-20261014-a1.json",
+      "sha256": "90b0d2c6767b983308bb4d8258583da26bd03b746941daac6fd1737d703bebee",
+      "bytes": 18329
+    },
+    {
+      "path": "docs/verification/wave5/task3-completion-20261013/export-continuation-technical-decision-20261014-a2.json",
+      "sha256": "493f4e266bf1c427f4830a224f712f8869df22734855d6359e28a5547bd555d1",
+      "bytes": 21081
+    },
+    {
+      "path": "docs/verification/wave5/task3-export-independent-20261014/export-budget-day-independent-review-a2.json",
+      "sha256": "7564bc4564fcbf1e68af2484373d3bd4571a2694c57f94d2633fbb88518a308b",
+      "bytes": 68458
+    }
+  ],
+  "scope": {
+    "sourceFilesEdited": 0,
+    "privateInputsRead": 0,
+    "networkRequests": 0,
+    "liveSql": 0,
+    "sdkJobs": 0,
+    "oldArtifactsOverwritten": 0
+  },
+  "controlledTimeReserveProbe": {
+    "source": "tools/wave5/finance_remaining_20261014_r5_a3.mjs",
+    "runMaximumMs": 900000,
+    "maximumRequestMs": 45000,
+    "ordinaryDispatchElapsedMs": 855000,
+    "ordinaryDispatchAccepted": true,
+    "hypotheticalFullRequestFinishesAtElapsedMs": 900000,
+    "resolutionAtThatTimeDeniedBy": "REMAINING_EXECUTION_DEADLINE_REQUIRED",
+    "liveRequestDispatched": false
+  },
+  "findings": [
+    {
+      "severity": "required_successor_control",
+      "source": "tools/wave5/finance_remaining_20261014_r5_a3.mjs",
+      "finding": "The frozen A3 budget permits an ordinary request at elapsed855000, leaving only one45s window rather than a maximum45s request plus45s receipt-resolution reserve.",
+      "requiredSuccessorBehavior": "Check ordinary request+resolution windows against the earliest run, fresh owner-scope and original runtime expiry before dispatch. Permit only the one approved read-only resolution in its reserved window; no resend."
+    },
+    {
+      "severity": "required_successor_control",
+      "source": "tools/wave5/private_existing_actor_session_20261013_r5.mjs",
+      "finding": "The frozen session helper awaits save(file,proof) but does not validate the returned receipt.",
+      "requiredSuccessorBehavior": "Wrap save to require acknowledged public evidence path/SHA before returning actual writer or reopen session. Persist management clocks and UUID session results before validation."
+    },
+    {
+      "severity": "required_successor_control",
+      "source": "tools/wave5/finance_remaining_20261014_r5_a3.mjs",
+      "finding": "The old pipeline export guard expects one LKR row with population2; the source-only successor decision explicitly permits the immutable LKR/USD pair.",
+      "requiredSuccessorBehavior": "Use only fixed pipelineId e8e582b2-6ce0-4b2d-beca-8ad3203abbfc, source-basis hash5d5ac676da84df7d7e780f6cadb38464bfc8d671d9a3f88924e5a4563cf94301, and exact two decimal rows; canonical document hash remains distinct. No latest selection or number coercion."
+    },
+    {
+      "severity": "required_successor_control",
+      "source": "tools/wave5/finance_remaining_20261014_r5_a3.mjs",
+      "finding": "Original initialization creates key/management/directory before its cleanup try. A new export-only helper should guard all post-private initialization exits.",
+      "requiredSuccessorBehavior": "Release timer/transports/key material on startup evidence/directory/intent failures as well as request failures. Scope gate must finish before private reads."
+    }
+  ],
+  "currentAuthority": {
+    "historicalSourceOnly156Decision": "90b0d2c6767b983308bb4d8258583da26bd03b746941daac6fd1737d703bebee",
+    "currentSourceOnly157Decision": "493f4e266bf1c427f4830a224f712f8869df22734855d6359e28a5547bd555d1",
+    "newFreshScopeAndGeneratedPlanPending": true,
+    "expiredA9MustFail": true
+  },
+  "recommendationsSentToAuthor": true,
+  "successorFilesNotYetReviewed": true,
+  "independentSuccessorApprovalGranted": false,
+  "authenticatedNative": false,
+  "targetScaleLoad": false,
+  "production": false
+}

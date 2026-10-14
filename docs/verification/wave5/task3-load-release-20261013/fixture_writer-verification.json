@@ -1,0 +1,275 @@
+{
+  "kind": "bounded-membership-fixture-writer-controlled-verification",
+  "startedAt": "2026-10-13T18:59:33.466Z",
+  "finishedAt": "2026-10-13T18:59:35.609Z",
+  "passed": true,
+  "sourcesUnchangedDuringRun": true,
+  "counts": {
+    "tests": 28,
+    "pass": 28,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "actualControlledTestIdentities": [
+    "construction and reviewed operation wrapping perform no credential, connection or SQL I/O",
+    "unreviewed execution context, actor population, pool and timeout bounds fail before I/O",
+    "writer role, operation case, action and active AbortSignal are mandatory",
+    "accessor-based role or database configuration is rejected without invoking getters",
+    "legitimate public fixture prepares seats and restores exact memberships, versions and unused invitations",
+    "admissions invitation winner restores observed cap 3 to original 4",
+    "admissions activation winner restores observed cap 2 and occupied 2 to original 4",
+    "successive seats and admissions cases preserve original identity and revoke only acknowledged returned invitations",
+    "arbitrary SQL, foreign tenant, foreign actor and unauthorized seat values never reach PostgreSQL",
+    "foreign membership identity, stale version and reordered cap update fail with no committed effect",
+    "server baseline, assignment or original seat drift is rejected before any fixture DML",
+    "restoration requires its committed case and rejects foreign subscription or unsupported outcomes",
+    "unproved admissions cap 2 with an admitted member fails before restoration DML",
+    "restoration cannot COMMIT without fresh final subscription, memberships and assignment readback",
+    "only durable acknowledged intent/confirmed invitation pairs with exact reviewed actor and scope are adopted",
+    "arbitrary invitation IDs and billing-actor/email changes fail before revocation SQL",
+    "uncertain invitation acknowledgement adopts no result and blocks further fixture mutations",
+    "confirmed invitation observations reject raw tokens and unverified original-record claims",
+    "TLS chain and hostname verification destroy unverified leases; target/URI overrides are rejected",
+    "abort while BEGIN is pending destroys the lease and never commits or recycles an open transaction",
+    "abort during pending pool acquisition returns promptly and destroys the later lease",
+    "abort while the real preparation journal waits for COMMIT intent destroys staged writes",
+    "uncertain COMMIT has no automatic replay or restoration and exposes only a fixed code",
+    "query timeout, private callback error and target drift are bounded and sanitized",
+    "close destroys a still-open fixture transaction and blocks new connections",
+    "per-operation cancellation leaves another independently acquired writer connection usable",
+    "closing during acquisition cancels the wait and destroys a late lease without aborting the owner signal",
+    "bounded pool preserves distinct acquired backend identities with queued clients"
+  ],
+  "exitCode": 0,
+  "nodeVersion": "v24.11.0",
+  "pinnedPgVersion": "8.23.1",
+  "sourceBindings": [
+    {
+      "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+      "bytes": 1370575,
+      "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-owner-decision-20261012-r5.json",
+      "bytes": 2756,
+      "sha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/fixture_writer.mjs",
+      "bytes": 28582,
+      "sha256": "ff9b4a3788b11c4558b8be0fb79e0e565d2ea4b7c137473d531df388cd4c1298"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/fixture_writer.test.mjs",
+      "bytes": 25326,
+      "sha256": "9c63a4bb872d0b54a8171b506c15eef177b90733297a3ed84e97987fa7c41446"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/fixture_writer_test_support.mjs",
+      "bytes": 14695,
+      "sha256": "ee2ab1abf3a0288c30ab02c2d1070ff6feb1c9d40bf17fb4db422f21a0e9959f"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/fixture_writer_verification.mjs",
+      "bytes": 5886,
+      "sha256": "54bc8f0c939d20d7bdef737ae606d53ca323b65819be008c819bdd58df42d9a1"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/node_modules/pg/package.json",
+      "bytes": 1668,
+      "sha256": "b1e53333a3d0c2c47c49a5cb919d221135dc03145df740925b899bc2baacc435"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/package-lock.json",
+      "bytes": 5706,
+      "sha256": "f35522511d05c71a76a7796bb51711ae69322165433a14706626a2b454bbb0a5"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/package.json",
+      "bytes": 160,
+      "sha256": "60d5f8cc5f0d813092ab2401a5c13e25f81b6818716871d4d375ac147a5d5c84"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/postgres_transport.mjs",
+      "bytes": 11229,
+      "sha256": "4a435629e163b65c8f032729c2eeafc190ee0fb0eb6ded43f492613eee90c4ec"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider_pg_factory.mjs",
+      "bytes": 2158,
+      "sha256": "1ed26789894554d2462017a6234e56ae6b131d004152d8eb73300d858f919730"
+    },
+    {
+      "path": "tools/wave5/preparation_journal.mjs",
+      "bytes": 4778,
+      "sha256": "95a93eb07bf7bfaadd2121c854683453512203ecc7380225602f2f8330267840"
+    },
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "bytes": 31294,
+      "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f"
+    },
+    {
+      "path": "tools/wave5/runtime_fixture_spec.mjs",
+      "bytes": 36370,
+      "sha256": "71dd763620cab0ca896dd96c50193350f1926e67f481acfed9b7aaa4b519f2d2"
+    },
+    {
+      "path": "tools/wave5/supabase_membership_fixture.mjs",
+      "bytes": 10162,
+      "sha256": "b39b636fe45cfc21e58f53cf6315d7cfaae606042f64d6869969ebbb380e0993"
+    },
+    {
+      "path": "tools/wave5/supabase_read_store.mjs",
+      "bytes": 14778,
+      "sha256": "48a758dd6c8f29286889a7bddd6f4f7fd24e1a27f153d3d35208a2f2e71c73e6"
+    },
+    {
+      "path": "tools/wave5/supabase_runtime_provider.mjs",
+      "bytes": 44367,
+      "sha256": "dfc40e82d0a754f35b4d713b83257ba3781f60520c11259cee1a791c580be8b0"
+    }
+  ],
+  "sourceBindingsAfter": [
+    {
+      "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+      "bytes": 1370575,
+      "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-owner-decision-20261012-r5.json",
+      "bytes": 2756,
+      "sha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/fixture_writer.mjs",
+      "bytes": 28582,
+      "sha256": "ff9b4a3788b11c4558b8be0fb79e0e565d2ea4b7c137473d531df388cd4c1298"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/fixture_writer.test.mjs",
+      "bytes": 25326,
+      "sha256": "9c63a4bb872d0b54a8171b506c15eef177b90733297a3ed84e97987fa7c41446"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/fixture_writer_test_support.mjs",
+      "bytes": 14695,
+      "sha256": "ee2ab1abf3a0288c30ab02c2d1070ff6feb1c9d40bf17fb4db422f21a0e9959f"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/fixture_writer_verification.mjs",
+      "bytes": 5886,
+      "sha256": "54bc8f0c939d20d7bdef737ae606d53ca323b65819be008c819bdd58df42d9a1"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/node_modules/pg/package.json",
+      "bytes": 1668,
+      "sha256": "b1e53333a3d0c2c47c49a5cb919d221135dc03145df740925b899bc2baacc435"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/package-lock.json",
+      "bytes": 5706,
+      "sha256": "f35522511d05c71a76a7796bb51711ae69322165433a14706626a2b454bbb0a5"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/package.json",
+      "bytes": 160,
+      "sha256": "60d5f8cc5f0d813092ab2401a5c13e25f81b6818716871d4d375ac147a5d5c84"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/postgres_transport.mjs",
+      "bytes": 11229,
+      "sha256": "4a435629e163b65c8f032729c2eeafc190ee0fb0eb6ded43f492613eee90c4ec"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider_pg_factory.mjs",
+      "bytes": 2158,
+      "sha256": "1ed26789894554d2462017a6234e56ae6b131d004152d8eb73300d858f919730"
+    },
+    {
+      "path": "tools/wave5/preparation_journal.mjs",
+      "bytes": 4778,
+      "sha256": "95a93eb07bf7bfaadd2121c854683453512203ecc7380225602f2f8330267840"
+    },
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "bytes": 31294,
+      "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f"
+    },
+    {
+      "path": "tools/wave5/runtime_fixture_spec.mjs",
+      "bytes": 36370,
+      "sha256": "71dd763620cab0ca896dd96c50193350f1926e67f481acfed9b7aaa4b519f2d2"
+    },
+    {
+      "path": "tools/wave5/supabase_membership_fixture.mjs",
+      "bytes": 10162,
+      "sha256": "b39b636fe45cfc21e58f53cf6315d7cfaae606042f64d6869969ebbb380e0993"
+    },
+    {
+      "path": "tools/wave5/supabase_read_store.mjs",
+      "bytes": 14778,
+      "sha256": "48a758dd6c8f29286889a7bddd6f4f7fd24e1a27f153d3d35208a2f2e71c73e6"
+    },
+    {
+      "path": "tools/wave5/supabase_runtime_provider.mjs",
+      "bytes": 44367,
+      "sha256": "dfc40e82d0a754f35b4d713b83257ba3781f60520c11259cee1a791c580be8b0"
+    }
+  ],
+  "log": {
+    "path": "docs/verification/wave5/task3-load-release-20261013/fixture_writer-verification.tap",
+    "bytes": 7069,
+    "sha256": "4bcb8e9af8dde5735fbb36abf430d79ad0d8a62fb6b1cabce3a17ad60d4561cd"
+  },
+  "exactSourceSqlHashes": {
+    "subscription": "f24345de617cba8b815979387820edc323e01d25f3abb99640631b56ffc28e71",
+    "memberships": "6672f54716c5acec5e279f46acc596c28be0c93849e079c0e57b9f2660d74e98",
+    "assignments": "50a01b7fd82dd87d911ca6c247a32372abd27be625a9aaa641317ee3ca2907e3",
+    "occupied": "fae87b988009be91c527ac8f9991d01547509548673b750a6198f88314e850be",
+    "suspend": "3323e52e7f997c84aeb7c0030e027f8bc7f3937fefb044521a2c8058261e6a4a",
+    "seats": "fed0355c836abd6969fa1cd18a0374373ed960ffebbdbe980424570450dcfa3e",
+    "restoreMember": "ff51aed7e859607d8b8893c1e3b65f0653b9a7a7cf4051f1ea6f0ce5e707b645",
+    "revokeExactUnused": "686b475878fed92c9a73c3fb76961f3ff72f7f1bfdce174edd89ef81ccbd9a99"
+  },
+  "interface": {
+    "factory": "createBoundedMembershipFixturePgDriver({executionContext,authIds,credentialProvider,PoolClass?,maximumConnections?,acquireTimeoutMs?,statementTimeoutMs?})",
+    "operation": "runWithSignal(signal,callback,{caseId,action}) where action is prepare or restore and case is reviewed seats/admissions",
+    "invitationObservation": "observeInvitationJournalRecord(tokenFreeObservation,acknowledgment): acknowledged source-bound intent/confirmed pair; original raw digest verified only inside the private sink wrapper",
+    "close": "Idempotent; close cancels pending client I/O, destroys open transactions and closes the pool without aborting the owner signal."
+  },
+  "implementedPolicy": {
+    "separateExplicitWriterRole": true,
+    "existingReadOnlyPolicyUnchanged": true,
+    "originalPublicFixtureUnchanged": true,
+    "exactLoad001TenantOnly": true,
+    "exactSixAuthIdsAndApproverExecutorRows": true,
+    "originalFourSeatsAndSameRowVersions": true,
+    "preparedCapThreeOnly": true,
+    "restorationCaps": "seats: 3 to 4; admissions: 3 to 4, or observed cap 2 with both suspended and occupied=2 to 4",
+    "tlsChainAndHostnameRequired": true,
+    "credentialCallbackOnlyAtConnect": true,
+    "boundedPoolMaximum": 8,
+    "defaultPoolMaximum": 2,
+    "acquireTimeoutMaximumMs": 10000,
+    "statementTimeoutMaximumMs": 25000,
+    "abortDestroysPendingBeginOrOpenTransaction": true,
+    "unknownCommitStopsWithoutReplay": true,
+    "rawInvitationTokensExcludedFromWriter": true,
+    "invitationIdsRequireAcknowledgedIntentConfirmedPair": true,
+    "finalRestoreRequiresFreshReadback": true,
+    "errorsSanitized": true
+  },
+  "evidenceBoundary": "28 local controlled cases with a fake pg Pool, the unchanged real createMembershipFixture and preparation journal. Controlled identities/receipts are not real Auth, actual PostgreSQL, delivered network, load or acceptance results. Runtime private wiring and independent source review remain required before coordinated approved fixture execution.",
+  "liveQueriesOrWritesPerformed": 0,
+  "actualPostgresConnections": 0,
+  "networkCalls": 0,
+  "privateCredentialsRead": false,
+  "globalAuthChanged": false,
+  "SDKExecuted": false,
+  "personalHumanSignatureClaimed": false,
+  "acceptanceDecisionsAdded": 0,
+  "productionActionsPerformed": 0
+}

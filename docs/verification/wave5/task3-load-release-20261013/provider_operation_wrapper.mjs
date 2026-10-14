@@ -9,6 +9,8 @@ const base='docs/verification/wave5/task3-load-release-20261013';
 const localDirectory=path.dirname(fileURLToPath(import.meta.url)),workspace=path.resolve(localDirectory,'../../../..');
 const bindingKeys=['routerSha256','readOnlyDriverSha256','fixtureDriverSha256','dependencyManifestSha256'];
 const requiredSources=['postgres_transport.mjs','fixture_writer.mjs','provider_pg_factory.mjs','provider_operation_wrapper.mjs','external_observer.mjs'];
+const publicSources=['runtime_contract.mjs','runtime_fixture_spec.mjs','supabase_runtime_provider.mjs','supabase_read_store.mjs',
+  'supabase_membership_fixture.mjs','preparation_journal.mjs','supabase_http_transport.mjs'].map(name=>`tools/wave5/${name}`);
 function reviewedBindings(actual,reviewed){
   const exact=value=>value&&Object.keys(value).length===bindingKeys.length&&bindingKeys.every(key=>isSha(value[key]));
   requireGuard(exact(actual)&&exact(reviewed)&&hashJson(actual)===hashJson(reviewed),'REVIEWED_PRIVATE_PROVIDER_REQUIRED');
@@ -19,30 +21,34 @@ function reviewedBindings(actual,reviewed){
 export async function verifyProviderManifestFiles(manifest,readBytes){
   requireGuard(manifest?.kind==='exact-installed-pg-helper-dependency-file-manifest'
     &&manifest.pinnedPgVersion==='8.23.1'&&typeof readBytes==='function'
-    &&Array.isArray(manifest.files)&&manifest.files.length>0&&Array.isArray(manifest.providerSourceFiles),
+    &&Array.isArray(manifest.files)&&manifest.files.length>0&&Array.isArray(manifest.providerSourceFiles)
+    &&Array.isArray(manifest.publicSourceFiles)&&manifest.publicSourceFiles.length===publicSources.length,
     'REVIEWED_PRIVATE_PROVIDER_REQUIRED');
-  const entries=[manifest.package,manifest.lockfile,...manifest.files,...manifest.providerSourceFiles];
+  const entries=[manifest.package,manifest.lockfile,...manifest.files,...manifest.providerSourceFiles,...manifest.publicSourceFiles];
   const allowed=file=>typeof file==='string'&&!file.includes('\\')&&!file.includes('..')
     &&(file===`${base}/package.json`||file===`${base}/package-lock.json`
       ||file.startsWith(`${base}/node_modules/`)
       ||requiredSources.some(name=>file===`${base}/${name}`)
-      ||new RegExp(`^${base}/fixture_writer[^/]*\\.mjs$`).test(file));
+      ||new RegExp(`^${base}/fixture_writer[^/]*\\.mjs$`).test(file)||publicSources.includes(file));
   requireGuard(entries.every(entry=>entry&&allowed(entry.path)&&isSha(entry.sha256)
     &&Number.isSafeInteger(entry.bytes)&&entry.bytes>=0)
     &&new Set(entries.map(entry=>entry.path)).size===entries.length
-    &&requiredSources.every(name=>manifest.providerSourceFiles.some(entry=>entry.path===`${base}/${name}`)),
+    &&requiredSources.every(name=>manifest.providerSourceFiles.some(entry=>entry.path===`${base}/${name}`))
+    &&publicSources.every(file=>manifest.publicSourceFiles.some(entry=>entry.path===file)),
     'REVIEWED_PRIVATE_PROVIDER_REQUIRED');
   for(const entry of entries){
     const bytes=await readBytes(entry.path);
     requireGuard(bytes.length===entry.bytes&&hashBytes(bytes)===entry.sha256,'PRIVATE_PROVIDER_SOURCE_DRIFT');
   }
-  return Object.freeze({verified:true,sourceFileCount:manifest.providerSourceFiles.length,dependencyFileCount:manifest.files.length});
+  return Object.freeze({verified:true,sourceFileCount:manifest.providerSourceFiles.length,
+    publicSourceFileCount:manifest.publicSourceFiles.length,dependencyFileCount:manifest.files.length});
 }
 
-async function verifyActualSourceFiles(actual,reviewed){
+async function verifyActualSourceFiles(actual,reviewed,manifestName='dependency-source-manifest.json'){
   reviewedBindings(actual,reviewed);
+  requireGuard(typeof manifestName==='string'&&/^[A-Za-z0-9-]+\.json$/.test(manifestName),'REVIEWED_PRIVATE_PROVIDER_REQUIRED');
   let bytes,manifest;
-  try{bytes=await fs.readFile(path.join(localDirectory,'dependency-source-manifest.json'));manifest=JSON.parse(bytes);}
+  try{bytes=await fs.readFile(path.join(localDirectory,manifestName));manifest=JSON.parse(bytes);}
   catch{throw new GuardError('REVIEWED_PRIVATE_PROVIDER_REQUIRED');}
   requireGuard(hashBytes(bytes)===actual.dependencyManifestSha256,'PRIVATE_PROVIDER_SOURCE_DRIFT');
   requireGuard(Array.isArray(manifest?.providerSourceFiles),'REVIEWED_PRIVATE_PROVIDER_REQUIRED');
@@ -50,7 +56,7 @@ async function verifyActualSourceFiles(actual,reviewed){
   requireGuard(named['provider_pg_factory.mjs']===actual.routerSha256&&named['postgres_transport.mjs']===actual.readOnlyDriverSha256
     &&named['fixture_writer.mjs']===actual.fixtureDriverSha256,'PRIVATE_PROVIDER_SOURCE_DRIFT');
   await verifyProviderManifestFiles(manifest,async file=>{
-    const resolved=path.resolve(workspace,file),relative=path.relative(localDirectory,resolved);
+    const resolved=path.resolve(workspace,file),relative=path.relative(workspace,resolved);
     requireGuard(relative!==''&&!relative.startsWith(`..${path.sep}`)&&!path.isAbsolute(relative),'REVIEWED_PRIVATE_PROVIDER_REQUIRED');
     const actualPath=await fs.realpath(resolved);
     requireGuard(actualPath===resolved,'REVIEWED_PRIVATE_PROVIDER_REQUIRED');
@@ -117,18 +123,26 @@ export function createProviderOperationWrapper({provider,reviewedCases,readDrive
 
 // Canonical reviewed context and actual source verification both precede the
 // first private configuration callback. No driver opens a connection here.
-export async function createReviewedSupabaseProvider({executionContext,actualSourceBindings,independentlyReviewedSourceBindings,
-  readDriver,fixtureDriver,privateConfigProvider,requestFactory,agentFactory}){
-  const context=reviewedExecutionContext(executionContext);
-  await verifyActualSourceFiles(actualSourceBindings,independentlyReviewedSourceBindings);
+export async function createReviewedSupabaseProvider(input){
+  const context=reviewedExecutionContext(input?.executionContext);
+  const {actualSourceBindings,independentlyReviewedSourceBindings,sourceManifestName}=input;
+  await verifyActualSourceFiles(actualSourceBindings,independentlyReviewedSourceBindings,sourceManifestName);
+  const {readDriver,fixtureDriver}=input;
   const PgClient=createProviderPgClientFactory({readOnlyPgClient:readDriver?.PgClient,fixturePgClient:fixtureDriver?.PgClient,
     actualSourceBindings,independentlyReviewedSourceBindings});
-  requireGuard(typeof privateConfigProvider==='function'&&typeof fixtureDriver.runWithSignal==='function',
+  requireGuard(typeof input.privateConfigProvider==='function'&&typeof fixtureDriver.runWithSignal==='function'
+    &&typeof fixtureDriver.close==='function'&&typeof readDriver.close==='function',
     'PRIVATE_PROVIDER_INCOMPLETE');
-  const config=await privateConfigProvider();
-  requireGuard(config&&typeof config==='object','PRIVATE_PROVIDER_INCOMPLETE');
-  const privateConfig={...config,PgClient,appendPreparationEvidence:createAcknowledgedInvitationSink({
-    appendPreparationEvidence:config.appendPreparationEvidence,fixtureDriver})};
-  const provider=createSupabaseRuntimeProvider({executionContext:context,privateConfig,requestFactory,agentFactory});
-  return createProviderOperationWrapper({provider,reviewedCases:context.plan.cases,readDriver,fixtureDriver});
+  try{
+    const config=await input.privateConfigProvider();
+    requireGuard(config&&typeof config==='object','PRIVATE_PROVIDER_INCOMPLETE');
+    const privateConfig={...config,PgClient,appendPreparationEvidence:createAcknowledgedInvitationSink({
+      appendPreparationEvidence:config.appendPreparationEvidence,fixtureDriver})};
+    const provider=createSupabaseRuntimeProvider({executionContext:context,privateConfig,
+      requestFactory:input.requestFactory,agentFactory:input.agentFactory});
+    return createProviderOperationWrapper({provider,reviewedCases:context.plan.cases,readDriver,fixtureDriver});
+  }catch(error){
+    await Promise.allSettled([()=>readDriver.close(),()=>fixtureDriver.close()].map(operation=>Promise.resolve().then(operation)));
+    throw error instanceof GuardError?error:new GuardError('PROVIDER_FAILURE');
+  }
 }

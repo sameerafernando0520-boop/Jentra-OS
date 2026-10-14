@@ -1,0 +1,114 @@
+{
+  "kind": "independent-controlled-export-source-verification",
+  "reviewer": "/root/completion_peer",
+  "checkedAt": "2026-10-14T09:50:56.963Z",
+  "actualNetworkRequests": 0,
+  "privateCredentialFilesRead": false,
+  "SDKJobs": 0,
+  "liveOrPrivateWrites": 0,
+  "originalAuthoredTestSource": {
+    "path": "docs/verification/wave5/task3-export-continuation-20261014/finance_exports_20261014_r5_a5.test.mjs",
+    "sha256": "40acbc250ef4792cad09f33a71ea5a05b282f9f822427354d977aa5449ef0699",
+    "bytes": 30824
+  },
+  "copiedRunner": {
+    "path": "docs/verification/wave5/task3-export-source-independent-20261014/independent-combined.test.mjs",
+    "sha256": "fdab9d1349692b92ddc95cfe7c240d148eee7afc28795b190420543c9b2a1530",
+    "bytes": 37880
+  },
+  "outputRedirection": {
+    "onlyAuthorSuiteAdaptation": true,
+    "exactReplacedLine": "const base='docs/verification/wave5/task3-export-continuation-20261014';",
+    "exactReplacementLine": "const base='docs/verification/wave5/task3-export-source-independent-20261014';",
+    "authorTestBodiesUnchanged": true
+  },
+  "appendedPeerFragment": {
+    "path": "docs/verification/wave5/task3-export-source-independent-20261014/peer-cases-a1.mjs",
+    "sha256": "0edc0b4ca4b60f23f0ec26095b037b51d0fe179e22eabf5bb09b33be7e1004e3",
+    "bytes": 7049
+  },
+  "sourcesBefore": [
+    {
+      "path": "tools/wave5/finance_exports_20261014_r5_a5.mjs",
+      "sha256": "6e16122506ab9e64d88dc03b0a5fbe013c2b758013269006ed6799610fbb0e97",
+      "bytes": 50697
+    },
+    {
+      "path": "tools/wave5/prepare_finance_exports_20261014_r5_a5.mjs",
+      "sha256": "030c44b84a8c5073c6c2157352fd70783c232ee256befda6ec28e9b6a723cd32",
+      "bytes": 5797
+    },
+    {
+      "path": "docs/verification/wave5/task3-export-continuation-20261014/finance_exports_20261014_r5_a5.test.mjs",
+      "sha256": "40acbc250ef4792cad09f33a71ea5a05b282f9f822427354d977aa5449ef0699",
+      "bytes": 30824
+    }
+  ],
+  "sourcesAfter": [
+    {
+      "path": "tools/wave5/finance_exports_20261014_r5_a5.mjs",
+      "sha256": "6e16122506ab9e64d88dc03b0a5fbe013c2b758013269006ed6799610fbb0e97",
+      "bytes": 50697
+    },
+    {
+      "path": "tools/wave5/prepare_finance_exports_20261014_r5_a5.mjs",
+      "sha256": "030c44b84a8c5073c6c2157352fd70783c232ee256befda6ec28e9b6a723cd32",
+      "bytes": 5797
+    },
+    {
+      "path": "docs/verification/wave5/task3-export-continuation-20261014/finance_exports_20261014_r5_a5.test.mjs",
+      "sha256": "40acbc250ef4792cad09f33a71ea5a05b282f9f822427354d977aa5449ef0699",
+      "bytes": 30824
+    }
+  ],
+  "sourcesUnchanged": true,
+  "syntax": [
+    {
+      "path": "tools/wave5/finance_exports_20261014_r5_a5.mjs",
+      "exitCode": 0,
+      "signal": null,
+      "stderr": ""
+    },
+    {
+      "path": "tools/wave5/prepare_finance_exports_20261014_r5_a5.mjs",
+      "exitCode": 0,
+      "signal": null,
+      "stderr": ""
+    },
+    {
+      "path": "docs/verification/wave5/task3-export-continuation-20261014/finance_exports_20261014_r5_a5.test.mjs",
+      "exitCode": 0,
+      "signal": null,
+      "stderr": ""
+    }
+  ],
+  "command": {
+    "binary": "C:/Program Files/nodejs/node.exe",
+    "args": [
+      "--test",
+      "--test-concurrency=1",
+      "docs/verification/wave5/task3-export-source-independent-20261014/independent-combined.test.mjs"
+    ],
+    "timeoutMs": 45000
+  },
+  "tests": {
+    "exitCode": 0,
+    "signal": null,
+    "tests": 0,
+    "passed": 0,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "tap": {
+      "path": "docs/verification/wave5/task3-export-source-independent-20261014/independent-controlled-tests-a1.tap",
+      "sha256": "832a783edd4cb833eafd57d8cc544b1bcffb68ffd2194695a346ec47d81e695c",
+      "bytes": 6711
+    }
+  },
+  "passed": true,
+  "limits": [
+    "Controlled Auth, SQL and response fixtures are test inputs, not genuine acceptance evidence.",
+    "No A10 metadata/profile was created; the suite uses in-memory hypothetical values only.",
+    "Original runtime expiry is unchanged; passing source tests do not authorize execution."
+  ]
+}

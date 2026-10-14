@@ -1,0 +1,373 @@
+{
+  "kind": "primary-independent-current-load-preparation-package-review",
+  "reviewedAt": "2026-10-13T21:45:51.330Z",
+  "technicalVerdict": "approve exact source-bound helper composition for the existing development protocol when its private and live prerequisites are satisfied",
+  "artifactBindingsVerified": 62,
+  "dependencyFilesVerified": 139,
+  "helperSourceFilesVerified": 5,
+  "publicImportedSourceFilesVerified": 7,
+  "currentHarnessBindingsVerified": 18,
+  "driverBindings": {
+    "routerSha256": "1ed26789894554d2462017a6234e56ae6b131d004152d8eb73300d858f919730",
+    "readOnlyDriverSha256": "ca0e3a8373160058aa8b929efbfeaab624ecb04fc2016919568f823262f25c07",
+    "fixtureDriverSha256": "ff9b4a3788b11c4558b8be0fb79e0e565d2ea4b7c137473d531df388cd4c1298",
+    "dependencyManifestSha256": "dc09b9a8ce22b6c1aa06ac182705c1b90e58e0f9fcc229d4746d9f98bd9abd8c"
+  },
+  "independentlyReviewedSourceBindings": {
+    "routerSha256": "1ed26789894554d2462017a6234e56ae6b131d004152d8eb73300d858f919730",
+    "readOnlyDriverSha256": "ca0e3a8373160058aa8b929efbfeaab624ecb04fc2016919568f823262f25c07",
+    "fixtureDriverSha256": "ff9b4a3788b11c4558b8be0fb79e0e565d2ea4b7c137473d531df388cd4c1298",
+    "dependencyManifestSha256": "dc09b9a8ce22b6c1aa06ac182705c1b90e58e0f9fcc229d4746d9f98bd9abd8c"
+  },
+  "sourceVerification": {
+    "verified": true,
+    "sourceFileCount": 5,
+    "publicSourceFileCount": 7,
+    "dependencyFileCount": 139
+  },
+  "sourceManifest": {
+    "path": "docs/verification/wave5/task3-load-release-20261013/source-manifest-a2.json",
+    "bytes": 157387,
+    "sha256": "41b2fb69a2bfbd491ac52c740c4a6ba150d29ff948329927a5fdcbbbeeffced0"
+  },
+  "dependencyManifest": {
+    "path": "docs/verification/wave5/task3-load-release-20261013/dependency-source-manifest.json",
+    "bytes": 34241,
+    "sha256": "dc09b9a8ce22b6c1aa06ac182705c1b90e58e0f9fcc229d4746d9f98bd9abd8c"
+  },
+  "harness": {
+    "path": "docs/verification/wave5/task3-acceptance-20261013/runtime-harness-review-20261014-acceptance-a1.json",
+    "bytes": 20023,
+    "sha256": "5b86ce5ac1b1fdc5877c96ff8efff6dc6021d9aac02cb2f0dcc1169cb2c5f123"
+  },
+  "integration": {
+    "path": "docs/verification/wave5/task3-completion-20261013/provider-integration-independent-review-20261014-a2.json",
+    "bytes": 11461,
+    "sha256": "170ba1a1a81169dafb322c0a03d537627cee273d7595b2b5351bc8be14d1b0ce"
+  },
+  "protocol": {
+    "path": "docs/verification/wave5/task3-load-release-20261013/protocol-result-a2.json",
+    "bytes": 16303,
+    "sha256": "7a6b2e1d88ec93efeca5163e193bad25ddc10849207bf077b4a004763a63bd18"
+  },
+  "artifactBindings": [
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/.gitignore",
+      "bytes": 26,
+      "sha256": "913a5e80446aad84df3f5d4efba5f43196845a8a0c2611394f0fbfff8d4bac3d"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/dart-dependency-audit.json",
+      "bytes": 17423,
+      "sha256": "a3983f70e067eee9f103d66483415fb357331f6ca0139ff3ac6fbe89676feedd"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/dependency-source-manifest.json",
+      "bytes": 34241,
+      "sha256": "dc09b9a8ce22b6c1aa06ac182705c1b90e58e0f9fcc229d4746d9f98bd9abd8c"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/external_observer.mjs",
+      "bytes": 6586,
+      "sha256": "a40786ae7fdb954e212555a6279b3bdcea8ea56fd576d71d56ef8380e63e3011"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/finalize_evidence.mjs",
+      "bytes": 19146,
+      "sha256": "c578f49b4f8d9b74a7fe4906d86cfae26fc879ebd82e41cf23eae7b5e74b9426"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/fixture_writer_test_support.mjs",
+      "bytes": 14695,
+      "sha256": "ee2ab1abf3a0288c30ab02c2d1070ff6feb1c9d40bf17fb4db422f21a0e9959f"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/fixture_writer_verification.mjs",
+      "bytes": 5886,
+      "sha256": "54bc8f0c939d20d7bdef737ae606d53ca323b65819be008c819bdd58df42d9a1"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/fixture_writer-verification.json",
+      "bytes": 13142,
+      "sha256": "2a5b86b3aedb2c329dbbd7b03065d589d68b6c848865de670f07a9b2f4d376a1"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/fixture_writer-verification.tap",
+      "bytes": 7069,
+      "sha256": "4bcb8e9af8dde5735fbb36abf430d79ad0d8a62fb6b1cabce3a17ad60d4561cd"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/fixture_writer.mjs",
+      "bytes": 28582,
+      "sha256": "ff9b4a3788b11c4558b8be0fb79e0e565d2ea4b7c137473d531df388cd4c1298"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/fixture_writer.test.mjs",
+      "bytes": 25326,
+      "sha256": "9c63a4bb872d0b54a8171b506c15eef177b90733297a3ed84e97987fa7c41446"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/local-verification-a2.json",
+      "bytes": 48922,
+      "sha256": "174d5002f68ce3280a4dc903081be80defa5ba2374170d3665c10393aa0c1fb2"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/local-verification-a2.tap",
+      "bytes": 36858,
+      "sha256": "7dcf37db04ee7264c4e7384dce1a45c22a17cd5b01f533212a8e2b6c8e57c061"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/local-verification.json",
+      "bytes": 48935,
+      "sha256": "9deaaf9e11fed76a9b4d83cb75c77c91fe46057d65af9772be2e749da5bde61f"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/local-verification.tap",
+      "bytes": 37751,
+      "sha256": "4d222af162a518b4e7254a6c75a204cfa8fb5f2acd97a5c84540b40cfc973eb2"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/npm-dependency-audit.json",
+      "bytes": 899,
+      "sha256": "dea5a5205bafc48d9c977ccc46a87161380a1ccd9511203c414d2de59c97a82c"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/osv_dependency_audit.mjs",
+      "bytes": 3793,
+      "sha256": "ae4c0ffb271f03264f02cffe9c9cd49749689705dfb4c8e601a8b1ea48b3969a"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/package-lock.json",
+      "bytes": 5706,
+      "sha256": "f35522511d05c71a76a7796bb51711ae69322165433a14706626a2b454bbb0a5"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/package.json",
+      "bytes": 160,
+      "sha256": "60d5f8cc5f0d813092ab2401a5c13e25f81b6818716871d4d375ac147a5d5c84"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/postgres_transport-before-credential-bound.mjs",
+      "bytes": 11229,
+      "sha256": "4a435629e163b65c8f032729c2eeafc190ee0fb0eb6ded43f492613eee90c4ec"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/postgres_transport.mjs",
+      "bytes": 12249,
+      "sha256": "ca0e3a8373160058aa8b929efbfeaab624ecb04fc2016919568f823262f25c07"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/private-provider-wiring.md",
+      "bytes": 16850,
+      "sha256": "3d449efb365a0677d658fdaa2ee0f6b81a97b094170f62ad1ec501dd32d1da40"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/protocol-result-a2.json",
+      "bytes": 16303,
+      "sha256": "7a6b2e1d88ec93efeca5163e193bad25ddc10849207bf077b4a004763a63bd18"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/protocol-result.json",
+      "bytes": 15142,
+      "sha256": "25bfff7bf7111e1eab469423bf41172fc91083a5d65a275e58d31587117b3396"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider_operation_verification.mjs",
+      "bytes": 3935,
+      "sha256": "42c1acfa995513b6308ced7efe990351fd754258a2059ca15864d216ff2ef866"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider_operation_wrapper.mjs",
+      "bytes": 10408,
+      "sha256": "dba663a72081027615089c6abe58f1af2763da8107fe2b2af537ae8dc534f6de"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider_operation_wrapper.test.mjs",
+      "bytes": 21070,
+      "sha256": "404d78d64798d0386a627e4d3df149fb2720551b18fc6720fd0b11d5a2aefff4"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider_pg_factory.mjs",
+      "bytes": 2158,
+      "sha256": "1ed26789894554d2462017a6234e56ae6b131d004152d8eb73300d858f919730"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider_pg_factory.test.mjs",
+      "bytes": 3121,
+      "sha256": "f658abbadfe11a9e05f5953a4bc7cc9ae1ccb221c60beb36e795bb3687bed5da"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-operation-control-source-manifest-256dabbc-5d15-42f9-be12-b0a08c3d9e0d.json",
+      "bytes": 34046,
+      "sha256": "2e451320363d0c18675bcc92db1039e56d8c05d4e8987863ab68b3101f448408"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-operation-control-source-manifest-3deb5311-876e-4503-9a43-b8d524bf71b3.json",
+      "bytes": 32804,
+      "sha256": "f2603f612c42cafe210064f15a71e422f0e93c1729745602b879c9ad7c4d1f6e"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-operation-control-source-manifest-575845f7-3942-4c75-bc2d-a68cbf912c2c.json",
+      "bytes": 34046,
+      "sha256": "2e451320363d0c18675bcc92db1039e56d8c05d4e8987863ab68b3101f448408"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-operation-control-source-manifest-5c4ad0ba-deb6-4e07-8828-c8bc80acd12e.json",
+      "bytes": 34046,
+      "sha256": "2e451320363d0c18675bcc92db1039e56d8c05d4e8987863ab68b3101f448408"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-operation-control-source-manifest-6bf06b60-a25f-419a-8662-ccc8d4d8c229.json",
+      "bytes": 34046,
+      "sha256": "2e451320363d0c18675bcc92db1039e56d8c05d4e8987863ab68b3101f448408"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-operation-control-source-manifest-7b657ca5-5689-43d4-a0b6-85117211c58a.json",
+      "bytes": 32804,
+      "sha256": "f2603f612c42cafe210064f15a71e422f0e93c1729745602b879c9ad7c4d1f6e"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-operation-control-source-manifest-81612660-9553-4a46-9c00-ef3460f5b320.json",
+      "bytes": 32804,
+      "sha256": "f2603f612c42cafe210064f15a71e422f0e93c1729745602b879c9ad7c4d1f6e"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-operation-control-source-manifest-8622884f-d0ca-4831-b48b-8a7c4d10bbf5.json",
+      "bytes": 32804,
+      "sha256": "f2603f612c42cafe210064f15a71e422f0e93c1729745602b879c9ad7c4d1f6e"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-operation-control-source-manifest-8ed8d6d6-4947-4ea8-a59a-86cb6ae9e30a.json",
+      "bytes": 32804,
+      "sha256": "f2603f612c42cafe210064f15a71e422f0e93c1729745602b879c9ad7c4d1f6e"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-operation-control-source-manifest-8f67c657-c950-4dbd-b655-f48fa72d699d.json",
+      "bytes": 32804,
+      "sha256": "f2603f612c42cafe210064f15a71e422f0e93c1729745602b879c9ad7c4d1f6e"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-operation-control-source-manifest-ae375ca9-6ac3-422c-9b13-2aad2860a7fc.json",
+      "bytes": 34046,
+      "sha256": "2e451320363d0c18675bcc92db1039e56d8c05d4e8987863ab68b3101f448408"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-operation-control-source-manifest-c8f78608-3fc1-4e3a-b04b-5ad5abb55c6b.json",
+      "bytes": 32804,
+      "sha256": "f2603f612c42cafe210064f15a71e422f0e93c1729745602b879c9ad7c4d1f6e"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-operation-control-source-manifest-ca3de111-bcb6-4cb2-b522-5c6e6655d26f.json",
+      "bytes": 32804,
+      "sha256": "f2603f612c42cafe210064f15a71e422f0e93c1729745602b879c9ad7c4d1f6e"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-operation-control-source-manifest-cbae750b-d853-4d7d-a26e-5ff85c7a3388.json",
+      "bytes": 34046,
+      "sha256": "2e451320363d0c18675bcc92db1039e56d8c05d4e8987863ab68b3101f448408"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-operation-control-source-manifest-d01c5a79-e492-4cf3-8ba7-af8525d92d55.json",
+      "bytes": 32804,
+      "sha256": "f2603f612c42cafe210064f15a71e422f0e93c1729745602b879c9ad7c4d1f6e"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-operation-verification.json",
+      "bytes": 9930,
+      "sha256": "7772313a59b71a6c02c331e6ab5f5c29e64cc2ce94c112639f930e436da05da8"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-operation-verification.tap",
+      "bytes": 4162,
+      "sha256": "10a22ca6913c71d5eae9c9cdfad50c9ec28a084f9592ef054e0b052ecae2b44c"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-router-verification.json",
+      "bytes": 4330,
+      "sha256": "51c471c4a033b8cc120d42e4d9cfe0e167eaec72db25a5b95d23634bc8c3245b"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider-router-verification.tap",
+      "bytes": 1317,
+      "sha256": "4ecd0c8f22d2231ea02a76a2bb89d6b2610523bf9989e4d4558556c33b6ea2d1"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/read-only-capacity.sql",
+      "bytes": 2386,
+      "sha256": "0553b69b411a5ac8d848d846287ac0ad6070fc17969a0aec743e6cd40c58eb24"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/read-only-live-audit.json",
+      "bytes": 7467,
+      "sha256": "8bf2fb9311450de5d29d0e9bace47b4c54ed8314710d69aef56fa540c741ee52"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/README.md",
+      "bytes": 1719,
+      "sha256": "37a5394a91fe557e63da6237e6c92d95ce63c288d92fcba9b0cb4392041817bc"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/readonly_credential_lifecycle.test.mjs",
+      "bytes": 2307,
+      "sha256": "09f0f24162cc5b5f4cea382ec07f3a141e840827531dd7ba44c373aa16efd3aa"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/readonly_lifecycle_verification.mjs",
+      "bytes": 3706,
+      "sha256": "08c104911d09a701a1d86155cdbf0e04f606d4e837f6fb9cd9d7273996286863"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/readonly-lifecycle-verification.json",
+      "bytes": 6879,
+      "sha256": "3d0f9aceaf35a582512631f1a70411e6dec30004b71d5f773b59a2d82e6e10db"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/readonly-lifecycle-verification.tap",
+      "bytes": 4052,
+      "sha256": "2de8b5381724aee34afb79a0ed8c590ef05ece3730c9b89866a2080349627a5a"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/release-audit.md",
+      "bytes": 10809,
+      "sha256": "949512e2a9bea1133e0250dfdf1b69be5a2552d9fa69156591d783b5893a820f"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/source_release_scan.mjs",
+      "bytes": 16784,
+      "sha256": "72f2d05f5eba1604421cced73fa67dc639a598225185ca65aa553c0de8674112"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/source-manifest.json",
+      "bytes": 156353,
+      "sha256": "cf991cc4d0057d94046d1c66ac9fd00c54e4b43df2a446d327c4f41c593ef395"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/source-release-checks.json",
+      "bytes": 133659,
+      "sha256": "01469327f00b071b200aac07475046020e2967c228b5ab594eeb1729cd4c80d5"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/transport_helpers.test.mjs",
+      "bytes": 13446,
+      "sha256": "0295c05ae60db061c272f248b3c70bc2e3842f2d8608dd8d36edf7b4d9cde998"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/verify_local_helpers.mjs",
+      "bytes": 6042,
+      "sha256": "85633775e5a1af88517925734ebca5fa6ac12a66fb4e6946abb1a4d99d688e3d"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/verify_provider_router.mjs",
+      "bytes": 2949,
+      "sha256": "b0b06ee2b4b60be0f1155c4aff6fb8c550c104c3dc0dec6c300511c2ac662c09"
+    }
+  ],
+  "personalHumanExactSourceSignatureClaimed": false,
+  "privateInputsRead": false,
+  "actualNetworkRequests": 0,
+  "actualPostgresConnections": 0,
+  "actualLoadPassed": false,
+  "authenticatedWindowsPassed": false,
+  "productionReleaseReady": false,
+  "remaining": "Private DB and source-bound provider configuration; genuine session capacity and freshness; authentic complete external capture and quiescence; actual seven races/target workload and production operational evidence."
+}

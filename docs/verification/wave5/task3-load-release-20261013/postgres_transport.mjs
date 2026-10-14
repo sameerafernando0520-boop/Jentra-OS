@@ -41,14 +41,29 @@ export function createBoundedPgDriver({ credentialProvider, PoolClass = Pool, ma
   must(Number.isInteger(acquireTimeoutMs) && acquireTimeoutMs > 0 && acquireTimeoutMs <= 10000
     && Number.isInteger(statementTimeoutMs) && statementTimeoutMs > 0 && statementTimeoutMs <= 25000,
     'BOUNDED_DATABASE_TIMEOUT_REQUIRED');
-  let pool = null, target = null, initialising = null, closed = false, poolFailure = false;
+  let pool = null, target = null, initialising = null, closing = null, closed = false, poolFailure = false;
+  const lifecycle = new AbortController();
   let activeConnections = 0, peakConnections = 0, actualConnections = 0;
   const wrappers = new Set();
+  const boundedCredentials = () => new Promise((resolve, reject) => {
+    let settled = false;
+    const finish = (callback, value) => {
+      if (settled) return;
+      settled = true; clearTimeout(timer); lifecycle.signal.removeEventListener('abort', abort); callback(value);
+    };
+    const abort = () => finish(reject, new PrivatePgError('POSTGRES_DRIVER_CLOSED_OR_FAILED'));
+    const timer = setTimeout(() => finish(reject, new PrivatePgError('PRIVATE_DATABASE_CONFIG_TIMEOUT')), acquireTimeoutMs);
+    lifecycle.signal.addEventListener('abort', abort, { once: true });
+    Promise.resolve().then(() => {
+      must(!lifecycle.signal.aborted, 'POSTGRES_DRIVER_CLOSED_OR_FAILED'); return credentialProvider();
+    }).then(value => finish(resolve, value), () => finish(reject, new PrivatePgError('PRIVATE_DATABASE_CONFIG_UNAVAILABLE')));
+    if (lifecycle.signal.aborted) abort();
+  });
   async function initialise(requested) {
     must(!closed && !poolFailure, 'POSTGRES_DRIVER_CLOSED_OR_FAILED');
     if (!initialising) initialising = (async () => {
       try {
-        target = snapshotPrivateDatabaseConfig(await credentialProvider());
+        target = snapshotPrivateDatabaseConfig(await boundedCredentials());
         must(!closed, 'POSTGRES_DRIVER_CLOSED_OR_FAILED');
         must(equalPrivateTarget(requested, target), 'PRIVATE_DATABASE_TARGET_DRIFT');
         must(!target.ssl.minVersion || ['TLSv1.2', 'TLSv1.3'].includes(target.ssl.minVersion),
@@ -134,8 +149,11 @@ export function createBoundedPgDriver({ credentialProvider, PoolClass = Pool, ma
   return Object.freeze({ PgClient, limits: Object.freeze({ maximumConnections, acquireTimeoutMs, statementTimeoutMs }),
     metrics: () => Object.freeze({ actualConnections, activeConnections, peakConnections,
       waitingConnections: pool?.waitingCount ?? 0, driverFailed: poolFailure }),
-    async close() { closed = true; await Promise.allSettled([...wrappers].map(client => client.end()));
-      if (initialising) await initialising.catch(() => {}); if (pool) await pool.end(); }
+    close() { return closing ??= (async () => {
+      closed = true; lifecycle.abort();
+      await Promise.allSettled([...wrappers].map(client => client.end()));
+      if (initialising) await initialising.catch(() => {}); if (pool) await pool.end();
+    })(); }
   });
 }
 

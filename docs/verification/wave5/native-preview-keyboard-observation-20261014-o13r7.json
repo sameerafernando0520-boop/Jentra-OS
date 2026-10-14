@@ -1,0 +1,32 @@
+{
+  "kind": "actual-root-native-preview-keyboard-observation",
+  "project": "Jentra OS",
+  "observationDateAsiaColombo": "2026-10-14",
+  "testedExecutable": "C:/Users/sheha/Desktop/Jentra OS/build/w5win9o13r7/preview/apps/jentra_desktop/build/windows/x64/runner/Release/Jentra_OS.exe",
+  "targetWindowReturnedBySky": {"id": 394504, "title": "Jentra OS - Preview test"},
+  "selectedUniqueWindowFromLiveInventory": true,
+  "tool": "Computer Use via @oai/sky",
+  "observations": [
+    {"action": "Control_L+k from fresh dashboard", "result": "The command palette did not become visible; focus remained the window."},
+    {"action": "Click the visible Search control", "result": "Command palette opened, with the search edit reported as focused by UI Automation."},
+    {"action": "sky.type_text('Finance') in the observed focused edit", "result": "No text became visible in the immediately refreshed palette."},
+    {"action": "sky.press_key('f') in the same palette", "result": "The edit displayed f and the list filtered to Finance."},
+    {"action": "Return with Finance selected", "result": "The native app navigated to Finance; the settled page explicitly states that posting requires a connected workspace."},
+    {"action": "Control_L+k from settled Finance", "result": "The command palette did not become visible; focus was reported as pane."}
+  ],
+  "physicalLetterAndEnterNavigationObserved": true,
+  "ctrlKPassed": false,
+  "literalTextInjectionPassed": false,
+  "sourceDefectVersusInputToolLimitationEstablished": false,
+  "nativeKeyboardWholeGatePassed": false,
+  "authenticatedNative": false,
+  "previewFixturesOnly": true,
+  "appSourceEditedByThisObservation": false,
+  "acceptanceStoresOrExistingSessionsChanged": false,
+  "newIsolatedPreviewStoreMayBeCreatedByApp": true,
+  "accountCreatedOrDeleted": false,
+  "authenticationDialogsAutomated": false,
+  "additionalRequirementAcceptance": 0,
+  "production": false,
+  "realBilling": false
+}

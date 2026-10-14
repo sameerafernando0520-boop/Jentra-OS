@@ -1,0 +1,15 @@
+import fs from 'node:fs/promises';
+import {spawnSync} from 'node:child_process';
+import {hashBytes} from './runtime_contract.mjs';
+const files=['tools/wave5/finance_exports_20261014_r5_a5.mjs','tools/wave5/prepare_finance_exports_20261014_r5_a5.mjs','docs/verification/wave5/task3-export-continuation-20261014/finance_exports_20261014_r5_a5.test.mjs'];
+const bindings=async()=>Promise.all(files.map(async path=>{const b=await fs.readFile(path);return {path,bytes:b.length,sha256:hashBytes(b)};}));
+const before=await bindings(),startedAt=new Date().toISOString();
+const run=spawnSync(process.execPath,['--test','--test-isolation=none','--test-reporter=tap',files[2]],{encoding:'utf8',timeout:60000,maxBuffer:2*1024*1024});
+const output=(run.stdout??'')+(run.stderr??''),after=await bindings();
+const count=name=>Number(new RegExp('^# '+name+' (\\d+)$','m').exec(output)?.[1]??NaN);
+const sourceStable=JSON.stringify(before)===JSON.stringify(after),log='docs/verification/wave5/finance-exports-root-controlled-tests-20261014-r5-a6.tap';
+await fs.writeFile(log,output,{flag:'wx'});
+const record={kind:'actual-root-controlled-export-continuation-tests',startedAt,finishedAt:new Date().toISOString(),exitCode:run.status,signal:run.signal,errorCode:run.error?.code??null,sourceStable,sourceBindingsBefore:before,sourceBindingsAfter:after,counts:{tests:count('tests'),passed:count('pass'),failed:count('fail'),skipped:count('skipped')},log:{path:log,sha256:hashBytes(output)},networkRequests:0,privateInputsRead:false,actualExports:false,authenticatedNative:false,targetScaleLoad:false};
+const file='docs/verification/wave5/finance-exports-root-controlled-verification-20261014-r5-a6.json',text=JSON.stringify(record,null,2)+'\n';await fs.writeFile(file,text,{flag:'wx'});
+process.stdout.write(JSON.stringify({path:file,sha256:hashBytes(text),...record})+'\n');
+if(run.status!==0||!sourceStable||record.counts.tests<54||record.counts.failed!==0||record.counts.skipped!==0)process.exitCode=1;

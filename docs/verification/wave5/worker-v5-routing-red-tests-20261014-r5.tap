@@ -1,0 +1,112 @@
+✖ the observed project namespace reaches only the exact existing runtime routes (10.064ms)
+✖ the same exact managed origin admits only the reviewed receiver namespace (2.147ms)
+✔ HTTP public prefixes, platform hosts, lookalikes, credentials, ports and noncanonical URLs stay denied (2.5693ms)
+✔ endpoint configuration remains canonical public HTTPS, and per-handler route subsets still restrict access (0.5729ms)
+✖ the finite diagnostic proves the exact HTTP project class without raw request data (3.0567ms)
+✖ a factory emits one finite v5 diagnostic across concurrent calls, and preserves handler authentication results (1.3405ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 2
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 323.0704
+
+✖ failing tests:
+
+test at workers\wave5\edge_route_project_http_20261014_r5_v5.test.mjs:9:1
+✖ the observed project namespace reaches only the exact existing runtime routes (10.064ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + null
+  - '/schedule'
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/edge_route_project_http_20261014_r5_v5.test.mjs:10:42)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.start (node:internal/test_runner/test:1003:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: '/schedule',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\edge_route_project_http_20261014_r5_v5.test.mjs:12:1
+✖ the same exact managed origin admits only the reviewed receiver namespace (2.147ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  null !== '/accept'
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/edge_route_project_http_20261014_r5_v5.test.mjs:13:43)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: '/accept',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\edge_route_project_http_20261014_r5_v5.test.mjs:28:1
+✖ the finite diagnostic proves the exact HTTP project class without raw request data (3.0567ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+      hash: false,
+      hostnameClass: 'project_host',
+      https: false,
+  +   originClass: 'other',
+  -   originClass: 'public_project_http',
+      pathClass: 'function_namespace',
+      portClass: 'default',
+      query: false,
+  +   routeRecognized: false,
+  -   routeRecognized: true,
+      userinfo: false
+    }
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/edge_route_project_http_20261014_r5_v5.test.mjs:30:9)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { originClass: 'other', pathClass: 'function_namespace', hostnameClass: 'project_host', portClass: 'default', https: false, query: false, hash: false, userinfo: false, routeRecognized: false },
+    expected: { originClass: 'public_project_http', pathClass: 'function_namespace', hostnameClass: 'project_host', portClass: 'default', https: false, query: false, hash: false, userinfo: false, routeRecognized: true },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\edge_route_project_http_20261014_r5_v5.test.mjs:34:1
+✖ a factory emits one finite v5 diagnostic across concurrent calls, and preserves handler authentication results (1.3405ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'wave5_ingress_v4'
+  - 'wave5_ingress_v5'
+                    ^
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/edge_route_project_http_20261014_r5_v5.test.mjs:39:60)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'wave5_ingress_v4',
+    expected: 'wave5_ingress_v5',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,73 @@
+{
+  "kind": "source-only-narrow-managed-project-http-routing-successor",
+  "preparedAt": "2026-10-13T21:35:29.962Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "sourceFiles": [
+    {
+      "path": "workers/wave5/edge_route_20261014_r5_v5.mjs",
+      "bytes": 4539,
+      "sha256": "ee309ad07a804a8cd029988756665fef60a5293ad71162d4efca3b88cee4e95a"
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261014_r5_v5.mjs",
+      "bytes": 6921,
+      "sha256": "2b4e03939314c30b9908ed1b2313eed6a13db5f8708b35d80f309108b673800e"
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261014_r5_v5.mjs",
+      "bytes": 5658,
+      "sha256": "4d6f2f20b363ab8cd26e9b6bfb4121ad927532dc4e7b458cc95b5c607e74c26f"
+    },
+    {
+      "path": "supabase/functions/wave5-runtime/index_20261014_r5_v5.ts",
+      "bytes": 733,
+      "sha256": "a25e75691dd946a768117f31f38b9151397123bade4b7a7c2b61a1b450de1df9"
+    },
+    {
+      "path": "supabase/functions/wave5-receiver/index_20261014_r5_v5.ts",
+      "bytes": 757,
+      "sha256": "c94e7dbf3dde7767d8d653a60af9f4b048c4162e1f0eb226dff77c6e9f437bba"
+    }
+  ],
+  "predecessorFiles": [
+    {
+      "path": "workers/wave5/edge_route_20261014_r5_v4.mjs",
+      "sha256": "ea01c16c75905e431131f0128d9ec9972a77e1b1e58b0a90f2e9b75dd0cfc3b0"
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261014_r5_v4.mjs",
+      "sha256": "4ce1af5886dd0fe9f20a0ae33ef89b53ac492dc1fea4c42e099c0c4ebb23cb0c"
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261014_r5_v4.mjs",
+      "sha256": "2b138496f7879cdef9231e8c315ba62103bdd29e9383be321ef157b708fd60b9"
+    },
+    {
+      "path": "supabase/functions/wave5-runtime/index_20261014_r5_v4.ts",
+      "sha256": "ef89264e2adac5aa329c73aee987d802e22b50a2084053134154b104054c82e2"
+    },
+    {
+      "path": "supabase/functions/wave5-receiver/index_20261014_r5_v4.ts",
+      "sha256": "95d79654c59910e85cc7e0b462a10df223d6bce8d91ae2796b0ed1a6ca33c4c9"
+    }
+  ],
+  "actualFiniteObservation": {
+    "path": "docs/verification/wave5/worker-v4-diagnostic-actual-finite-ingress-20261014-r5.json",
+    "sha256": "6110068ae98a04a151dee872687f324675acefccf826b8bce6ec52dd5c44fdfd"
+  },
+  "regressionRed": {
+    "path": "docs/verification/wave5/worker-v5-routing-red-tests-20261014-r5-a2.tap",
+    "sha256": "9c30cb079b369be8206a42e95f97c6c10f324950daa4b3a9c120f7514ab23402"
+  },
+  "exactSchemeHypothesis": "The observed non-HTTPS project/default-port/namespace tuple is HTTP. V5 publishes a finite public_project_http class to confirm this after deployment.",
+  "changedRouteEligibility": "Only canonical http://xpdoufauvrbdmxgngetv.supabase.co with the exact reviewed function namespace and route. No public HTTP /functions/v1 prefix, HTTP platform hostname, credentials, query, fragment, noncanonical form or nondefault port.",
+  "publicHttpsEndpointsUnchanged": true,
+  "handlerAuthenticationAndScopeUnchanged": true,
+  "factoryChanges": "Only the route module import.",
+  "schedulesRemainPaused": true,
+  "independentReviewPending": true,
+  "deployed": false,
+  "actualDelivery": false,
+  "production": false,
+  "realBilling": false
+}

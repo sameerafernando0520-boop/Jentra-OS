@@ -1,0 +1,819 @@
+{
+  "kind": "independent-current-115-public-runtime-provider-verification",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "actualStartedAt": "2026-10-13T21:35:33.502Z",
+  "actualFinishedAt": "2026-10-13T21:35:38.971Z",
+  "nodeVersion": "v24.11.0",
+  "command": [
+    "node",
+    "--test",
+    "--test-isolation=none",
+    "--test-reporter=tap",
+    "tools/wave5/runtime_coordinator.test.mjs",
+    "tools/wave5/supabase_provider.test.mjs",
+    "tools/wave5/supabase_provider_plan.test.mjs",
+    "tools/wave5/supabase_management_read.test.mjs",
+    "tools/wave5/preparation_journal.test.mjs",
+    "tools/wave5/preparation_file_sink.test.mjs",
+    "tools/wave5/supabase_provider_peer_20261013.test.mjs",
+    "tools/wave5/provider_live_response_regression_20261013_r5.test.mjs",
+    "tools/wave5/membership_preparation_peer_20261013.test.mjs",
+    "tools/wave5/preparation_journal_peer_20261013.test.mjs",
+    "tools/wave5/preparation_file_sink_peer_20261013.test.mjs"
+  ],
+  "childExitCode": 1,
+  "childSignal": null,
+  "spawnFailure": null,
+  "summary": {
+    "tests": 122,
+    "passed": 114,
+    "failed": 8,
+    "skipped": 0,
+    "cancelled": 0,
+    "todo": 0
+  },
+  "testIdentities": [
+    "independent membership fixture never begins COMMIT after cancellation while its intent receipt waits",
+    "private preparation file acknowledgement follows actual encrypted file flush and supports read-only recovery of original identities",
+    "exclusive encrypted files preserve concurrent record order and chain storage receipt hashes without reusing an existing directory",
+    "private encryption key and source binding are copied before caller mutation and closed sink cannot create another record",
+    "wrong project, source binding, sequence or original identifier stops encrypted persistence before any directory or file appears",
+    "read-only recovery rejects wrong key, source drift, changed encrypted bytes, missing original records and partial files without modifying storage",
+    "encrypted preparation storage refuses a repository destination or absent private key without filesystem access",
+    "recovery completeness requires an independent exact expected head and refuses a truncated tail without claiming replay authority",
+    "encrypted storage and recovery reject a directory junction or symbolic link before creating or reading any record",
+    "independent encrypted recovery distinguishes an available prefix from a complete journal and never modifies the prefix",
+    "preparation persistence acknowledges original identities before a mutation starts and saves returned identities before resolving",
+    "failed intent persistence, invalid durable receipt or changed case scope prevents every mutation and further attempt",
+    "uncertain commit retains its original intent and blocks retry or restoration without exposing arbitrary error text",
+    "failed confirmed-result persistence stops after exactly one send and attempts to preserve returned recovery identifiers",
+    "preparation checkpoint copies the original mutable baseline before acknowledged persistence",
+    "caller fields cannot overwrite the source-bound preparation envelope or sequence",
+    "a waiting acknowledged intent cannot dispatch after another preparation has become uncertain",
+    "independent preparation record preserves its reserved source-bound envelope against caller entry overrides",
+    "independent waiting preparation never dispatches after another acknowledged operation becomes uncertain",
+    "actual replay preserves the original command separately from genuine request and correlation IDs",
+    "actual compound permission denial requires its exact message, SQLSTATE and HTTP status",
+    "current runtime bundle is verified byte-for-byte and produces the exact 2,000-session distribution",
+    "the endpoint inventory excludes model, webhook sending and unscoped worker dispatch",
+    "plan validation rejects a shortened, over-rate, wrong-target or incomplete workload",
+    "owner decision binds the exact runtime scope; preparation binds the coordinator without inventing another owner approval",
+    "live entry point refuses missing approval before invoking any private provider operation",
+    "live entry revalidates canonical review and source-bound plan before touching private provider",
+    "private factory context cannot mutate approved review, plan or bindings, and caller changes cannot affect its copy",
+    "a hashed independent review cannot be relabeled approved when its actual verdict or source bindings disagree",
+    "load-001 billing permission and duplicate execution require genuine MFA in the relevant real sessions",
+    "fresh installed contracts, capacity, quiesced schedules and exact reviewed populations are mandatory",
+    "real session validation requires 2,000 distinct online-verified server rows and exact actor slots",
+    "public records do not copy provider handles, raw tokens, response bodies or error details",
+    "provider GuardError text and uppercase private values are normalized instead of copied into public evidence",
+    "slow evidence and provider queueing classify the actual send and prevent sends beyond the workload window",
+    "a serial provider queue cannot send a timed request after the end or claim undispatched session coverage",
+    "holding an entire warmup in the evidence queue fails actual dispatch lag instead of releasing a passing catch-up burst",
+    "response command mismatch, omitted transport hooks and unknown outcomes stay uncertain",
+    "failed intent persistence prevents the request; pre-aborted runs do not dispatch",
+    "public case-preparation intent retains exact reviewed identities and is acknowledged before any provider setup",
+    "failed public case-preparation persistence prevents the provider setup and every later case operation",
+    "all readiness proofs precede the common release; real transport intervals overlap",
+    "serial private transport is detected despite concurrently scheduled promises and slow journaling",
+    "duplicate Auth sessions and failed readiness cannot release a race",
+    "a stalled transport times out once and is retained as uncertain without an automatic retry",
+    "overlap uses half-open actual transport intervals and never infers missing server spans",
+    "committed snapshots reject rollback reads, wrong tenants, stale observations and losing effects",
+    "100 duplicate response successes still require exactly one committed business effect",
+    "20 quota reservations require ten units, ten denials and per-denial zero-effect evidence",
+    "seat races enforce the final seat and do not forgive audit or receipt effects on a losing request",
+    "admission versus activation allows either lock winner while enforcing the shared seat cap",
+    "activation, execution and lease response races require their own committed record counts",
+    "the duplicate coordinator binds one original command, reads committed effects before and after overlap, and restores only reviewed state",
+    "unknown duplicate mutation preserves all original identities and skips restoration even when the committed read shows one effect",
+    "nearest-rank p95 uses measured samples and strict limits rather than averaging them",
+    "unsupported limit fixtures remain blocked and never masquerade as actual rejection evidence",
+    "database row counters never substitute for an actual no-send observation covering all reviewed workers and the full load window",
+    "paced dispatch uses every measured session, gives billing actors read permission only and mints fresh command identities",
+    "a rejected timed request aborts subsequent dispatch and cannot be renamed a successful workload",
+    "unsupported generator inflight capacity is retained as incomplete without silently dropping samples",
+    "a latency equal to the limit fails, and warmup, incomplete coverage or a cached command cannot pass the load gate",
+    "failed durable live-start journaling clears the run timer and closes the provider before a failed finish write",
+    "Management bridge performs a fixed typed SELECT over verified TLS and reports actual isolation without a repeatable-read claim",
+    "arbitrary SQL, unknown scopes and unsupported provenance reads are rejected before a Management request exists",
+    "Management transport does not send its private bearer before TLS verifies and rejects late or invalid handshakes",
+    "query error, redirect, malformed body, oversized body and unproved read-only mode fail closed without exposing private response text",
+    "Management reads bind all 500 exact scopes and only a supplied genuine actor/session pair",
+    "mutating caller review or Auth IDs after construction cannot retarget a later Management SELECT",
+    "Management abort and total queue timeout stop this bridge only and never retry the original request",
+    "Management read metadata and result hashes change with actual server results and incomplete packet identity is rejected",
+    "HTTPS resolves actual socket queue before send hook, uses fixed target/schema, and exposes hashes without credentials",
+    "deadline hook failure leaves queued request unsent and arbitrary private GuardError detail is normalized",
+    "late socket assignment after a request error cannot invoke transport hooks or write bytes",
+    "new TLS handshake queues remain unsent and run the current deadline hook only after certificate verification",
+    "TLS verification failures and late handshake events after request failure cannot write credential-bearing bytes",
+    "transport denies arbitrary routes, wrong verbs/profiles, foreign connections and malformed factor IDs before request creation",
+    "each HTTP participant uses a separate agent and private transport errors never reveal raw text",
+    "malformed response and bounded response overflow fail closed",
+    "TOTP uses published RFC 6238 secret and counters; it neither synthesizes Auth claims nor accepts malformed secrets",
+    "real sign-in path keeps password private and rejects substituted returned Auth ID before row verification",
+    "operator cannot enter Auth load acquisition or read another private session",
+    "read store constructor performs no I/O; exact catalog query runs in committed read-only repeatable-read transaction",
+    "batch proofs bind actual SQL recipe and share one fresh backend/snapshot",
+    "quota request preserves the exact PostgreSQL microsecond trial period through committed reads and RPC mapping",
+    "invalid query, unknown tenant, extra Auth actor and non-reviewed invitation cohort cannot open DB connections",
+    "private DB targets require exact project or official project-suffixed pooler with verified TLS",
+    "post-construction target/TLS changes cannot redirect later read or membership connections",
+    "failed read rolls back, never commits, and redacts PostgreSQL private error",
+    "only exact integer strings convert; fractional/overflow/rounded quotas and versions are rejected",
+    "server session proof requires a committed row for the exact six actual actor IDs and selects no credential columns",
+    "every mapped load/race operation uses exact reviewed signature parameters and private tokens have no invented command",
+    "mapper rejects changed command, wrong runtime, changed scope and arbitrary operations",
+    "outcomes verify returned original command; only exact actual Postgres denials are accepted and server spans stay absent",
+    "indexed billing reads bind the exact tenant and the existing runtime/load-001 activation allowlist",
+    "calendar rejects impossible dates, inverted windows, future recorded evidence and 367-day supported workload",
+    "scheduled activation binds exact approved synthetic plan, seven-day server window and allowed race seats",
+    "provider revalidates approval and bundle before touching any private getter or client",
+    "provider denies wrong query/calendar/dependency bindings before constructing any DB/HTTPS clients",
+    "uninstalled/capacity-incomplete preflight fails before Auth acquisition or user RPC/fixture mutation",
+    "caller callback replacement after construction cannot replace the reviewed preflight path",
+    "Auth ID labels are order-independent, but a substituted creation ID stops before any installed read",
+    "membership fixture requires reviewed context before constructing a mutation client",
+    "membership fixture SQL never deletes history, rewinds versions, touches Auth or changes targets through interpolation",
+    "membership preparation/restoration commit exact rows and raise original cap before reactivation",
+    "unknown membership COMMIT outcome retains original state evidence and forbids subsequent retries/restoration",
+    "membership baseline, original assignments and SQL intent persist before any suspend/cap change or COMMIT",
+    "failed membership baseline persistence prevents administrative writes and never falls back to an in-memory-only fixture",
+    "independent DB/TLS probe preserves target, password and CA bytes after caller and earlier driver mutation",
+    "independent regression probe detects reintroduced mutable DB configuration without changing current files",
+    "independent quota mapper preserves server microseconds; both query fields are lossless PostgreSQL text",
+    "independent regression probe detects reintroduced JavaScript Date quota truncation",
+    "independent billing response probe checks all500 reviewed scopes and rejects the wrong target flag or tenant",
+    "independent callback probe retains the reviewed preflight reference across caller replacements",
+    "independent mutation probe detects removal of private callback snapshot without changing source bytes",
+    "independent regression probe detects an always-true synthetic target assumption",
+    "independent private DB validator rejects URI, TLS bypass and foreign-project overrides",
+    "independent transport probe requires verified TLS and the current deadline before any body write",
+    "independent transport probe allocates separate agents and rejects route redirects before creation",
+    "independent public evidence probe drops raw private fields and normalizes arbitrary error codes",
+    "independent fixture review retains caps, lease-only usage0, bounded activation scope and unsupported boundaries",
+    "pure source-bound plan retains exact seven races/four truthful boundaries/full load bounds and freezes nested sources",
+    "pure plan rejects absent actual private source hashes, source omission and out-of-scope load rate without any provider import/run"
+  ],
+  "testFileCount": 11,
+  "coordinatorCaseCount": 41,
+  "exactAllCoordinatorIdentitiesObserved": true,
+  "passed": false,
+  "testsExecuted": true,
+  "selectedSourcesUnchanged": true,
+  "sourcesUnchangedDuringRun": true,
+  "filesBefore": [
+    {
+      "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+      "bytes": 1370575,
+      "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3"
+    },
+    {
+      "path": "docs/verification/wave5/integrated-runtime-protocol-20261006.md",
+      "bytes": 9262,
+      "sha256": "a3f6e654699a418b2ac41f31fa9c8a8e2a4a97582ad6d10dc710bccf58caa64a"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
+      "bytes": 115108,
+      "sha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5"
+    },
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/load-baseline-115-independent-review.json",
+      "bytes": 6289,
+      "sha256": "d3217a56799e9e94e0dabe313cda6cd870fd412c702ef9af08c41890391de682"
+    },
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/review_load_baseline_115.mjs",
+      "bytes": 9326,
+      "sha256": "62f016c0890ab169fcb29eca002184a36b16891435fdd02db4668a7259241617"
+    },
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/verify_baseline_115_provider.mjs",
+      "bytes": 7856,
+      "sha256": "18d7064127ab2afd4abdc03f730bd7804a8d57ee2bebb34b8f890f8d5718e35e"
+    },
+    {
+      "path": "docs/verification/wave5/task3-completion-20261013/load-baseline-115-source-application.json",
+      "bytes": 2786,
+      "sha256": "8a5427720e6288bc386dd18883026e8298ea22a37c82caadf459a31f437197e0"
+    },
+    {
+      "path": "docs/verification/wave5/task3-peer-review-20261013/runtime-harness-review-20261013-peer-a2.json",
+      "bytes": 15713,
+      "sha256": "3dda27da6179a21a9e4a6dd25fad3154086708bdab3471ad758e7346ba0b2d1e"
+    },
+    {
+      "path": "supabase/migrations/20260831193714_create_greenfield_foundation.sql",
+      "bytes": 41494,
+      "sha256": "d104871a777c31b9562fac2e5200d9801b24c0ebd28a9b0e75a43bdc13171f8a"
+    },
+    {
+      "path": "supabase/migrations/20260904121647_wave3_operational_foundation.sql",
+      "bytes": 40230,
+      "sha256": "b7a840b31a2d8a89d0a1539151769130c352fe7ace0ea2d76f4057aab5b2d737"
+    },
+    {
+      "path": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+      "bytes": 9213,
+      "sha256": "be586326b7d8ec380a5524a5d8232e67639d677eb192b9fe29da135ee9ffe997"
+    },
+    {
+      "path": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+      "bytes": 10964,
+      "sha256": "1ea4ab076cb3deaa9d0f7f92b56c47effc1a0ad45e14839156a2fd6a2d1bd8ed"
+    },
+    {
+      "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "bytes": 14205,
+      "sha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e"
+    },
+    {
+      "path": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+      "bytes": 16904,
+      "sha256": "b75e9cf94107fd9a959ced43f9e643b163ed579f95fb68c8de7b9e739b10d02e"
+    },
+    {
+      "path": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "bytes": 12761,
+      "sha256": "339e9e86074887d164dd339eb17ac54943c39fca0caf50db575c48529456a9f5"
+    },
+    {
+      "path": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql",
+      "bytes": 28824,
+      "sha256": "1a636229a0749cf9d6334ae49efe8ff38627b6a2d1bb642789a28e86efd1c663"
+    },
+    {
+      "path": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "bytes": 18114,
+      "sha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc"
+    },
+    {
+      "path": "tools/wave5/PRIVATE_PROVIDER_CONTRACT.md",
+      "bytes": 21178,
+      "sha256": "53b691012312db8d0c6b634c8b8cc21690cac73e80a66b286dd4ab97b1c0ec30"
+    },
+    {
+      "path": "tools/wave5/compose_harness_review.mjs",
+      "bytes": 13820,
+      "sha256": "e6bbc912d5c8fff83666b035aa9d4697def0ae0ddb32382586547595cfe3fd53"
+    },
+    {
+      "path": "tools/wave5/membership_preparation_peer_20261013.test.mjs",
+      "bytes": 7910,
+      "sha256": "99f9e6a625f61eb56ee256b1100f8a712d75200ee6b501f5f89f2747d1b29468"
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink.mjs",
+      "bytes": 11697,
+      "sha256": "c2a3435601bc32fb1c2623fbac070cfd381fb4c2dd7ecf7963a293049344ecad"
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink.test.mjs",
+      "bytes": 11842,
+      "sha256": "b05624090af8cf847b45cafc314f3254b6ecd3f664af462a1945da16153541fb"
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink_peer_20261013.test.mjs",
+      "bytes": 4417,
+      "sha256": "1b8f8c741beb7b625ba7d1d562ebdc8ac2dc3e6cc3aeafcce36ad5490e91e412"
+    },
+    {
+      "path": "tools/wave5/preparation_journal.mjs",
+      "bytes": 4778,
+      "sha256": "95a93eb07bf7bfaadd2121c854683453512203ecc7380225602f2f8330267840"
+    },
+    {
+      "path": "tools/wave5/preparation_journal.test.mjs",
+      "bytes": 7217,
+      "sha256": "05e383e82ac6d593bdc066541a4fe48c61904cd7283cfc5decb316ed93fcea86"
+    },
+    {
+      "path": "tools/wave5/preparation_journal_peer_20261013.test.mjs",
+      "bytes": 3315,
+      "sha256": "1b393f9a7629332233e7aee054755bccd61056875f38f99fefbf0da0bcf2f3b6"
+    },
+    {
+      "path": "tools/wave5/provider_live_response_regression_20261013_r5.test.mjs",
+      "bytes": 1785,
+      "sha256": "7d29dc771f10b4b9e5581f7d0f4aef5d7cb62d5c06d6c4d7a4744198d39c3ef0"
+    },
+    {
+      "path": "tools/wave5/run_runtime_verification.mjs",
+      "bytes": 9119,
+      "sha256": "143f460b88c1e1dba4a06b7ed869fb5de46e6eff77421ebf8d0aee15efb74b20"
+    },
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "bytes": 31294,
+      "sha256": "7bc04153aa169c2f85f4371c74319c2eded1f6666a97609ba29f5a2ad94d1da2"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.mjs",
+      "bytes": 35744,
+      "sha256": "c1542ad519fdb557f53046636810ffcbcbc61ecef7ecb2656ccc4a915b6b368e"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.test.mjs",
+      "bytes": 47951,
+      "sha256": "ef4d4586b5a53d639c244c890f3103902f616e7debe026b68547757184ffd076"
+    },
+    {
+      "path": "tools/wave5/runtime_fixture_spec.mjs",
+      "bytes": 36370,
+      "sha256": "71dd763620cab0ca896dd96c50193350f1926e67f481acfed9b7aaa4b519f2d2"
+    },
+    {
+      "path": "tools/wave5/supabase_http_transport.mjs",
+      "bytes": 15253,
+      "sha256": "7815b9c8c18bd5d2375480706579c7dd9583b1e95e0424a2178f7b9b5db265c9"
+    },
+    {
+      "path": "tools/wave5/supabase_management_read.mjs",
+      "bytes": 8221,
+      "sha256": "ddbb103c7dbf82327d77829b21bcaaf44c7f447187644af08c026c03841b5ea4"
+    },
+    {
+      "path": "tools/wave5/supabase_management_read.test.mjs",
+      "bytes": 10075,
+      "sha256": "356b76b8a6930f7c485ddbe92f0937cf616d5552335f2b9bef940cc3a525041a"
+    },
+    {
+      "path": "tools/wave5/supabase_membership_fixture.mjs",
+      "bytes": 10162,
+      "sha256": "b39b636fe45cfc21e58f53cf6315d7cfaae606042f64d6869969ebbb380e0993"
+    },
+    {
+      "path": "tools/wave5/supabase_provider.test.mjs",
+      "bytes": 46828,
+      "sha256": "472534e60d15b169dd480fa991c85805661b68a8531677054c218ecd683efafe"
+    },
+    {
+      "path": "tools/wave5/supabase_provider_peer_20261013.test.mjs",
+      "bytes": 18957,
+      "sha256": "2951fb7a0c605d8873fb2c3e012c6af33a91b607293ddd53f84d2b8eea828535"
+    },
+    {
+      "path": "tools/wave5/supabase_provider_plan.mjs",
+      "bytes": 4016,
+      "sha256": "ac7bb6bd32add9f76a5a9fb94a48025bd12e25d7684e5b4eafa9cb82afe63c2e"
+    },
+    {
+      "path": "tools/wave5/supabase_provider_plan.test.mjs",
+      "bytes": 3175,
+      "sha256": "090dd23865dbb0a1ded1af9a1484d423d916549d472789e9ffc895dd6da5d7eb"
+    },
+    {
+      "path": "tools/wave5/supabase_read_store.mjs",
+      "bytes": 14778,
+      "sha256": "48a758dd6c8f29286889a7bddd6f4f7fd24e1a27f153d3d35208a2f2e71c73e6"
+    },
+    {
+      "path": "tools/wave5/supabase_runtime_provider.mjs",
+      "bytes": 44367,
+      "sha256": "dfc40e82d0a754f35b4d713b83257ba3781f60520c11259cee1a791c580be8b0"
+    },
+    {
+      "path": "tools/wave5/verify_local_harness.mjs",
+      "bytes": 6278,
+      "sha256": "db5b4c163c549b32e6e831483fdb4f6c07c8158c50e7ef3565000d04f48e9834"
+    }
+  ],
+  "filesAfter": [
+    {
+      "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+      "bytes": 1370575,
+      "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3"
+    },
+    {
+      "path": "docs/verification/wave5/integrated-runtime-protocol-20261006.md",
+      "bytes": 9262,
+      "sha256": "a3f6e654699a418b2ac41f31fa9c8a8e2a4a97582ad6d10dc710bccf58caa64a"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
+      "bytes": 115108,
+      "sha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5"
+    },
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/load-baseline-115-independent-review.json",
+      "bytes": 6289,
+      "sha256": "d3217a56799e9e94e0dabe313cda6cd870fd412c702ef9af08c41890391de682"
+    },
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/review_load_baseline_115.mjs",
+      "bytes": 9326,
+      "sha256": "62f016c0890ab169fcb29eca002184a36b16891435fdd02db4668a7259241617"
+    },
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/verify_baseline_115_provider.mjs",
+      "bytes": 7856,
+      "sha256": "18d7064127ab2afd4abdc03f730bd7804a8d57ee2bebb34b8f890f8d5718e35e"
+    },
+    {
+      "path": "docs/verification/wave5/task3-completion-20261013/load-baseline-115-source-application.json",
+      "bytes": 2786,
+      "sha256": "8a5427720e6288bc386dd18883026e8298ea22a37c82caadf459a31f437197e0"
+    },
+    {
+      "path": "docs/verification/wave5/task3-peer-review-20261013/runtime-harness-review-20261013-peer-a2.json",
+      "bytes": 15713,
+      "sha256": "3dda27da6179a21a9e4a6dd25fad3154086708bdab3471ad758e7346ba0b2d1e"
+    },
+    {
+      "path": "supabase/migrations/20260831193714_create_greenfield_foundation.sql",
+      "bytes": 41494,
+      "sha256": "d104871a777c31b9562fac2e5200d9801b24c0ebd28a9b0e75a43bdc13171f8a"
+    },
+    {
+      "path": "supabase/migrations/20260904121647_wave3_operational_foundation.sql",
+      "bytes": 40230,
+      "sha256": "b7a840b31a2d8a89d0a1539151769130c352fe7ace0ea2d76f4057aab5b2d737"
+    },
+    {
+      "path": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+      "bytes": 9213,
+      "sha256": "be586326b7d8ec380a5524a5d8232e67639d677eb192b9fe29da135ee9ffe997"
+    },
+    {
+      "path": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+      "bytes": 10964,
+      "sha256": "1ea4ab076cb3deaa9d0f7f92b56c47effc1a0ad45e14839156a2fd6a2d1bd8ed"
+    },
+    {
+      "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "bytes": 14205,
+      "sha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e"
+    },
+    {
+      "path": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+      "bytes": 16904,
+      "sha256": "b75e9cf94107fd9a959ced43f9e643b163ed579f95fb68c8de7b9e739b10d02e"
+    },
+    {
+      "path": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "bytes": 12761,
+      "sha256": "339e9e86074887d164dd339eb17ac54943c39fca0caf50db575c48529456a9f5"
+    },
+    {
+      "path": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql",
+      "bytes": 28824,
+      "sha256": "1a636229a0749cf9d6334ae49efe8ff38627b6a2d1bb642789a28e86efd1c663"
+    },
+    {
+      "path": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "bytes": 18114,
+      "sha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc"
+    },
+    {
+      "path": "tools/wave5/PRIVATE_PROVIDER_CONTRACT.md",
+      "bytes": 21178,
+      "sha256": "53b691012312db8d0c6b634c8b8cc21690cac73e80a66b286dd4ab97b1c0ec30"
+    },
+    {
+      "path": "tools/wave5/compose_harness_review.mjs",
+      "bytes": 13820,
+      "sha256": "e6bbc912d5c8fff83666b035aa9d4697def0ae0ddb32382586547595cfe3fd53"
+    },
+    {
+      "path": "tools/wave5/membership_preparation_peer_20261013.test.mjs",
+      "bytes": 7910,
+      "sha256": "99f9e6a625f61eb56ee256b1100f8a712d75200ee6b501f5f89f2747d1b29468"
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink.mjs",
+      "bytes": 11697,
+      "sha256": "c2a3435601bc32fb1c2623fbac070cfd381fb4c2dd7ecf7963a293049344ecad"
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink.test.mjs",
+      "bytes": 11842,
+      "sha256": "b05624090af8cf847b45cafc314f3254b6ecd3f664af462a1945da16153541fb"
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink_peer_20261013.test.mjs",
+      "bytes": 4417,
+      "sha256": "1b8f8c741beb7b625ba7d1d562ebdc8ac2dc3e6cc3aeafcce36ad5490e91e412"
+    },
+    {
+      "path": "tools/wave5/preparation_journal.mjs",
+      "bytes": 4778,
+      "sha256": "95a93eb07bf7bfaadd2121c854683453512203ecc7380225602f2f8330267840"
+    },
+    {
+      "path": "tools/wave5/preparation_journal.test.mjs",
+      "bytes": 7217,
+      "sha256": "05e383e82ac6d593bdc066541a4fe48c61904cd7283cfc5decb316ed93fcea86"
+    },
+    {
+      "path": "tools/wave5/preparation_journal_peer_20261013.test.mjs",
+      "bytes": 3315,
+      "sha256": "1b393f9a7629332233e7aee054755bccd61056875f38f99fefbf0da0bcf2f3b6"
+    },
+    {
+      "path": "tools/wave5/provider_live_response_regression_20261013_r5.test.mjs",
+      "bytes": 1785,
+      "sha256": "7d29dc771f10b4b9e5581f7d0f4aef5d7cb62d5c06d6c4d7a4744198d39c3ef0"
+    },
+    {
+      "path": "tools/wave5/run_runtime_verification.mjs",
+      "bytes": 9119,
+      "sha256": "143f460b88c1e1dba4a06b7ed869fb5de46e6eff77421ebf8d0aee15efb74b20"
+    },
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "bytes": 31294,
+      "sha256": "7bc04153aa169c2f85f4371c74319c2eded1f6666a97609ba29f5a2ad94d1da2"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.mjs",
+      "bytes": 35744,
+      "sha256": "c1542ad519fdb557f53046636810ffcbcbc61ecef7ecb2656ccc4a915b6b368e"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.test.mjs",
+      "bytes": 47951,
+      "sha256": "ef4d4586b5a53d639c244c890f3103902f616e7debe026b68547757184ffd076"
+    },
+    {
+      "path": "tools/wave5/runtime_fixture_spec.mjs",
+      "bytes": 36370,
+      "sha256": "71dd763620cab0ca896dd96c50193350f1926e67f481acfed9b7aaa4b519f2d2"
+    },
+    {
+      "path": "tools/wave5/supabase_http_transport.mjs",
+      "bytes": 15253,
+      "sha256": "7815b9c8c18bd5d2375480706579c7dd9583b1e95e0424a2178f7b9b5db265c9"
+    },
+    {
+      "path": "tools/wave5/supabase_management_read.mjs",
+      "bytes": 8221,
+      "sha256": "ddbb103c7dbf82327d77829b21bcaaf44c7f447187644af08c026c03841b5ea4"
+    },
+    {
+      "path": "tools/wave5/supabase_management_read.test.mjs",
+      "bytes": 10075,
+      "sha256": "356b76b8a6930f7c485ddbe92f0937cf616d5552335f2b9bef940cc3a525041a"
+    },
+    {
+      "path": "tools/wave5/supabase_membership_fixture.mjs",
+      "bytes": 10162,
+      "sha256": "b39b636fe45cfc21e58f53cf6315d7cfaae606042f64d6869969ebbb380e0993"
+    },
+    {
+      "path": "tools/wave5/supabase_provider.test.mjs",
+      "bytes": 46828,
+      "sha256": "472534e60d15b169dd480fa991c85805661b68a8531677054c218ecd683efafe"
+    },
+    {
+      "path": "tools/wave5/supabase_provider_peer_20261013.test.mjs",
+      "bytes": 18957,
+      "sha256": "2951fb7a0c605d8873fb2c3e012c6af33a91b607293ddd53f84d2b8eea828535"
+    },
+    {
+      "path": "tools/wave5/supabase_provider_plan.mjs",
+      "bytes": 4016,
+      "sha256": "ac7bb6bd32add9f76a5a9fb94a48025bd12e25d7684e5b4eafa9cb82afe63c2e"
+    },
+    {
+      "path": "tools/wave5/supabase_provider_plan.test.mjs",
+      "bytes": 3175,
+      "sha256": "090dd23865dbb0a1ded1af9a1484d423d916549d472789e9ffc895dd6da5d7eb"
+    },
+    {
+      "path": "tools/wave5/supabase_read_store.mjs",
+      "bytes": 14778,
+      "sha256": "48a758dd6c8f29286889a7bddd6f4f7fd24e1a27f153d3d35208a2f2e71c73e6"
+    },
+    {
+      "path": "tools/wave5/supabase_runtime_provider.mjs",
+      "bytes": 44367,
+      "sha256": "dfc40e82d0a754f35b4d713b83257ba3781f60520c11259cee1a791c580be8b0"
+    },
+    {
+      "path": "tools/wave5/verify_local_harness.mjs",
+      "bytes": 6278,
+      "sha256": "db5b4c163c549b32e6e831483fdb4f6c07c8158c50e7ef3565000d04f48e9834"
+    }
+  ],
+  "currentHarnessBindingsBefore": [
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "bytes": 31294,
+      "sha256": "7bc04153aa169c2f85f4371c74319c2eded1f6666a97609ba29f5a2ad94d1da2"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.mjs",
+      "bytes": 35744,
+      "sha256": "c1542ad519fdb557f53046636810ffcbcbc61ecef7ecb2656ccc4a915b6b368e"
+    },
+    {
+      "path": "tools/wave5/run_runtime_verification.mjs",
+      "bytes": 9119,
+      "sha256": "143f460b88c1e1dba4a06b7ed869fb5de46e6eff77421ebf8d0aee15efb74b20"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.test.mjs",
+      "bytes": 47951,
+      "sha256": "ef4d4586b5a53d639c244c890f3103902f616e7debe026b68547757184ffd076"
+    },
+    {
+      "path": "tools/wave5/PRIVATE_PROVIDER_CONTRACT.md",
+      "bytes": 21178,
+      "sha256": "53b691012312db8d0c6b634c8b8cc21690cac73e80a66b286dd4ab97b1c0ec30"
+    },
+    {
+      "path": "tools/wave5/verify_local_harness.mjs",
+      "bytes": 6278,
+      "sha256": "db5b4c163c549b32e6e831483fdb4f6c07c8158c50e7ef3565000d04f48e9834"
+    },
+    {
+      "path": "tools/wave5/compose_harness_review.mjs",
+      "bytes": 13820,
+      "sha256": "e6bbc912d5c8fff83666b035aa9d4697def0ae0ddb32382586547595cfe3fd53"
+    },
+    {
+      "path": "docs/verification/wave5/integrated-runtime-protocol-20261006.md",
+      "bytes": 9262,
+      "sha256": "a3f6e654699a418b2ac41f31fa9c8a8e2a4a97582ad6d10dc710bccf58caa64a"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
+      "bytes": 115108,
+      "sha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5"
+    },
+    {
+      "path": "supabase/migrations/20260831193714_create_greenfield_foundation.sql",
+      "bytes": 41494,
+      "sha256": "d104871a777c31b9562fac2e5200d9801b24c0ebd28a9b0e75a43bdc13171f8a"
+    },
+    {
+      "path": "supabase/migrations/20260904121647_wave3_operational_foundation.sql",
+      "bytes": 40230,
+      "sha256": "b7a840b31a2d8a89d0a1539151769130c352fe7ace0ea2d76f4057aab5b2d737"
+    },
+    {
+      "path": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+      "bytes": 9213,
+      "sha256": "be586326b7d8ec380a5524a5d8232e67639d677eb192b9fe29da135ee9ffe997"
+    },
+    {
+      "path": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+      "bytes": 10964,
+      "sha256": "1ea4ab076cb3deaa9d0f7f92b56c47effc1a0ad45e14839156a2fd6a2d1bd8ed"
+    },
+    {
+      "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "bytes": 14205,
+      "sha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e"
+    },
+    {
+      "path": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+      "bytes": 16904,
+      "sha256": "b75e9cf94107fd9a959ced43f9e643b163ed579f95fb68c8de7b9e739b10d02e"
+    },
+    {
+      "path": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "bytes": 12761,
+      "sha256": "339e9e86074887d164dd339eb17ac54943c39fca0caf50db575c48529456a9f5"
+    },
+    {
+      "path": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql",
+      "bytes": 28824,
+      "sha256": "1a636229a0749cf9d6334ae49efe8ff38627b6a2d1bb642789a28e86efd1c663"
+    },
+    {
+      "path": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "bytes": 18114,
+      "sha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc"
+    }
+  ],
+  "currentHarnessBindingsAfter": [
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "bytes": 31294,
+      "sha256": "7bc04153aa169c2f85f4371c74319c2eded1f6666a97609ba29f5a2ad94d1da2"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.mjs",
+      "bytes": 35744,
+      "sha256": "c1542ad519fdb557f53046636810ffcbcbc61ecef7ecb2656ccc4a915b6b368e"
+    },
+    {
+      "path": "tools/wave5/run_runtime_verification.mjs",
+      "bytes": 9119,
+      "sha256": "143f460b88c1e1dba4a06b7ed869fb5de46e6eff77421ebf8d0aee15efb74b20"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.test.mjs",
+      "bytes": 47951,
+      "sha256": "ef4d4586b5a53d639c244c890f3103902f616e7debe026b68547757184ffd076"
+    },
+    {
+      "path": "tools/wave5/PRIVATE_PROVIDER_CONTRACT.md",
+      "bytes": 21178,
+      "sha256": "53b691012312db8d0c6b634c8b8cc21690cac73e80a66b286dd4ab97b1c0ec30"
+    },
+    {
+      "path": "tools/wave5/verify_local_harness.mjs",
+      "bytes": 6278,
+      "sha256": "db5b4c163c549b32e6e831483fdb4f6c07c8158c50e7ef3565000d04f48e9834"
+    },
+    {
+      "path": "tools/wave5/compose_harness_review.mjs",
+      "bytes": 13820,
+      "sha256": "e6bbc912d5c8fff83666b035aa9d4697def0ae0ddb32382586547595cfe3fd53"
+    },
+    {
+      "path": "docs/verification/wave5/integrated-runtime-protocol-20261006.md",
+      "bytes": 9262,
+      "sha256": "a3f6e654699a418b2ac41f31fa9c8a8e2a4a97582ad6d10dc710bccf58caa64a"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
+      "bytes": 115108,
+      "sha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5"
+    },
+    {
+      "path": "supabase/migrations/20260831193714_create_greenfield_foundation.sql",
+      "bytes": 41494,
+      "sha256": "d104871a777c31b9562fac2e5200d9801b24c0ebd28a9b0e75a43bdc13171f8a"
+    },
+    {
+      "path": "supabase/migrations/20260904121647_wave3_operational_foundation.sql",
+      "bytes": 40230,
+      "sha256": "b7a840b31a2d8a89d0a1539151769130c352fe7ace0ea2d76f4057aab5b2d737"
+    },
+    {
+      "path": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+      "bytes": 9213,
+      "sha256": "be586326b7d8ec380a5524a5d8232e67639d677eb192b9fe29da135ee9ffe997"
+    },
+    {
+      "path": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+      "bytes": 10964,
+      "sha256": "1ea4ab076cb3deaa9d0f7f92b56c47effc1a0ad45e14839156a2fd6a2d1bd8ed"
+    },
+    {
+      "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "bytes": 14205,
+      "sha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e"
+    },
+    {
+      "path": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+      "bytes": 16904,
+      "sha256": "b75e9cf94107fd9a959ced43f9e643b163ed579f95fb68c8de7b9e739b10d02e"
+    },
+    {
+      "path": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "bytes": 12761,
+      "sha256": "339e9e86074887d164dd339eb17ac54943c39fca0caf50db575c48529456a9f5"
+    },
+    {
+      "path": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql",
+      "bytes": 28824,
+      "sha256": "1a636229a0749cf9d6334ae49efe8ff38627b6a2d1bb642789a28e86efd1c663"
+    },
+    {
+      "path": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "bytes": 18114,
+      "sha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc"
+    }
+  ],
+  "harnessSourceCount": 18,
+  "importedTestSourceCount": 22,
+  "childOnlyTemporaryDirectory": "docs/verification/wave5/task3-acceptance-20261013/provider-a2-temp-fgqDJm",
+  "priorAttemptPreserved": {
+    "path": "docs/verification/wave5/task3-acceptance-20261013/runtime-provider-local-verification-20261014-acceptance-a1.json",
+    "bytes": 78203,
+    "sha256": "102879e30e1f6d944a681eeebcb025ae5b6f4dcf2135a30bd130b0866e44d66a"
+  },
+  "successorReason": "The first attempt could not create a junction in sandbox AC/Temp; it also inventoried unrelated other-owned finance test source. This attempt uses only a child writable TEMP/TMP and the exact test import closure plus 18 harness inputs. Product code and tests are unchanged.",
+  "runtimeReview": {
+    "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+    "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+    "bytes": 1370575,
+    "bundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+    "operationScopeSha256": "fcdab89d242dc578793eba1d520ea0251699b70b7730c02aea94232805286e63"
+  },
+  "independentBaselineReview": {
+    "path": "docs/verification/wave5/task3-acceptance-20261013/load-baseline-115-independent-review.json",
+    "bytes": 6289,
+    "sha256": "d3217a56799e9e94e0dabe313cda6cd870fd412c702ef9af08c41890391de682"
+  },
+  "log": {
+    "path": "docs/verification/wave5/task3-acceptance-20261013/runtime-provider-local-verification-20261014-acceptance-a2.tap",
+    "bytes": 41155,
+    "sha256": "bec9cc8b2b71f5d39bda7e71b4eec52d4ac26234a72969945946c2871dc0cd66"
+  },
+  "writerAndWrapperTestsRepeated": false,
+  "executedLive": false,
+  "privateProviderLoaded": false,
+  "networkCalls": 0,
+  "privateCredentialsRead": false,
+  "SDKJobs": 0,
+  "SQLMutations": 0,
+  "acceptanceDecisionsAdded": 0,
+  "boundary": "122 actual local Node cases across the existing 11 public provider test files, including 41 coordinator cases. Controlled Auth, PostgreSQL, transport and virtual-time workloads prove implementation guards only; fresh live source/preflight, genuine sessions, actual contention/P95 and native acceptance remain required."
+}

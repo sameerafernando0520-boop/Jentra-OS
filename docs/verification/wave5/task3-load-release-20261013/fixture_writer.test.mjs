@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {freshId, hashJson, PROJECT_ID} from '../../../../tools/wave5/runtime_contract.mjs';
 import {MEMBERSHIP_FIXTURE_SQL} from '../../../../tools/wave5/supabase_membership_fixture.mjs';
 import {createBoundedMembershipFixturePgDriver, FIXTURE_WRITER_ROLE} from './fixture_writer.mjs';
-import {setup, config, beginState, deferred} from './fixture_writer_test_support.mjs';
+import {setup, config, beginState, deferred, tokenFreeAcknowledgment} from './fixture_writer_test_support.mjs';
 
 const cleanup = (t, fixture) => { t.after(() => fixture.driver.close()); return fixture; };
 const mutations = queries => queries.filter(query => Object.entries(MEMBERSHIP_FIXTURE_SQL)
@@ -39,6 +39,16 @@ test('writer role, operation case, action and active AbortSignal are mandatory',
   const aborted = new AbortController(); aborted.abort();
   assert.throws(() => f.driver.runWithSignal(aborted.signal, () => {}, {caseId: f.race('seats').caseId, action: 'prepare'}));
   assert.equal(f.state.callbacks, 0);
+});
+
+test('accessor-based role or database configuration is rejected without invoking getters', t => {
+  const f = cleanup(t, setup()); let reads = 0;
+  for (const key of ['application_name', 'password', 'ssl']) {
+    const unsafe = {...config()}; Object.defineProperty(unsafe, key, {enumerable: true, get() { reads++; throw Error('CONTROLLED_SECRET'); }});
+    assert.throws(() => f.driver.runWithSignal(new AbortController().signal, () => new f.driver.PgClient(unsafe),
+      {caseId: f.race('seats').caseId, action: 'prepare'}));
+  }
+  assert.equal(reads, 0); assert.equal(f.state.callbacks, 0);
 });
 
 test('legitimate public fixture prepares seats and restores exact memberships, versions and unused invitations', async t => {
@@ -142,6 +152,30 @@ test('restoration requires its committed case and rejects foreign subscription o
   }
 });
 
+test('unproved admissions cap 2 with an admitted member fails before restoration DML', async t => {
+  const f = cleanup(t, setup()); await f.run('prepare', 'admissions');
+  f.state.database.subscription.seats = 2; f.state.database.members[0].status = 'active';
+  const start = f.state.queries.length; await assert.rejects(f.run('restore', 'admissions'));
+  assert.equal(mutations(f.state.queries.slice(start)).length, 0); assert.equal(f.state.commits, 1);
+});
+
+test('restoration cannot COMMIT without fresh final subscription, memberships and assignment readback', async t => {
+  const f = cleanup(t, setup()); await f.run('prepare'); const original = structuredClone(f.state.database);
+  const client = await f.driver.runWithSignal(new AbortController().signal, async () => {
+    const client = new f.driver.PgClient(config()); await client.connect(); await client.query('BEGIN');
+    await client.query(MEMBERSHIP_FIXTURE_SQL.subscription, [f.target.tenantId]);
+    await client.query(MEMBERSHIP_FIXTURE_SQL.memberships, [f.target.tenantId, [f.authIds.approver, f.authIds.executor]]);
+    await client.query(MEMBERSHIP_FIXTURE_SQL.assignments, [f.target.tenantId, [f.authIds.approver, f.authIds.executor]]);
+    await client.query(MEMBERSHIP_FIXTURE_SQL.seats, [f.target.tenantId, 4, original.subscription.id, original.subscription.version]);
+    for (const member of original.members)
+      await client.query(MEMBERSHIP_FIXTURE_SQL.restoreMember, [f.target.tenantId, member.id, member.user_id, member.version]);
+    await client.query(MEMBERSHIP_FIXTURE_SQL.occupied, [f.target.tenantId]); return client;
+  }, {caseId: f.race('seats').caseId, action: 'restore'});
+  const before = f.state.queries.length; await assert.rejects(client.query('COMMIT'));
+  assert.equal(f.state.queries.length, before); assert.equal(f.driver.metrics().uncertainCommit, false);
+  assert.deepEqual(f.state.database, original); assert.equal(f.state.commits, 1);
+});
+
 function invitationRecord(f, changes = {}) {
   return {kind: 'wave5-private-preparation-journal-record', projectId: PROJECT_ID, runtimeBundleSha256: f.context.review.bundleSha256,
     planBodySha256: f.context.binding.planBodySha256, sourceSha256: f.context.plan.preparationJournalSourceSha256,
@@ -188,6 +222,19 @@ test('uncertain invitation acknowledgement adopts no result and blocks further f
   assert.deepEqual(f.observe(uncertain, f.receipt(uncertain)), {adopted: false, uncertain: true});
   assert.throws(() => f.observe({...intent, phase: 'confirmed'}, f.receipt(intent)));
   assert.throws(() => f.run('restore'), /FIXTURE_UNCERTAIN_INVITATION_REQUIRES_REVIEW/);
+});
+
+test('confirmed invitation observations reject raw tokens and unverified original-record claims', async t => {
+  const f = cleanup(t, setup()); await f.run('prepare'); const intent = invitationRecord(f); f.observe(intent);
+  const raw = {...intent, phase: 'confirmed', details: {result: {ok: true, value: {invitation_id: freshId(), token: 'PRIVATE_CONTROLLED_TOKEN'},
+    transportEvidenceSha256: hashJson('controlled')}}};
+  const projected = tokenFreeAcknowledgment(raw, f.receipt(raw));
+  assert.ok(!JSON.stringify(projected).includes('PRIVATE_CONTROLLED_TOKEN'));
+  assert.throws(() => f.driver.observeInvitationJournalRecord(projected.observation,
+    {...projected.acknowledgment, originalRecordHashVerified: false}));
+  const unsafe = {...projected.observation, details: raw.details};
+  assert.throws(() => f.driver.observeInvitationJournalRecord(unsafe,
+    {...projected.acknowledgment, observationSha256: hashJson(unsafe)}), /FIXTURE_RETURNED_INVITATION_ID_REQUIRED/);
 });
 
 test('TLS chain and hostname verification destroy unverified leases; target/URI overrides are rejected', async t => {
@@ -248,6 +295,8 @@ test('query timeout, private callback error and target drift are bounded and san
   await assert.rejects(failing.run('prepare'), error => !error.message.includes('SECRET') && error.message === 'PROVIDER_FAILURE');
   const drift = cleanup(t, setup({credentialProvider: async () => ({...config(), password: 'CONTROLLED_DIFFERENT_VALUE'})}));
   await assert.rejects(drift.run('prepare')); assert.equal(drift.state.connected, 0);
+  const missing = cleanup(t, setup({acquireTimeoutMs: 5, credentialProvider: () => new Promise(() => {})}));
+  await assert.rejects(missing.run('prepare')); assert.equal(missing.state.connected, 0);
 });
 
 test('close destroys a still-open fixture transaction and blocks new connections', async t => {
@@ -255,6 +304,26 @@ test('close destroys a still-open fixture transaction and blocks new connections
   assert.deepEqual(f.state.releases, [true]); assert.equal(f.state.implicitRollbacks, 1);
   assert.equal(f.driver.metrics().activeConnections, 0); assert.throws(() => f.run('prepare'));
   await client.end(); assert.deepEqual(f.state.releases, [true]);
+  await f.driver.close(); assert.equal(f.state.poolEnds, 1);
+});
+
+test('per-operation cancellation leaves another independently acquired writer connection usable', async t => {
+  const f = cleanup(t, setup()), first = new AbortController(), second = new AbortController();
+  const connect = controller => f.driver.runWithSignal(controller.signal, async () => {
+    const client = new f.driver.PgClient(config()); await client.connect(); return client;
+  }, {caseId: f.race('seats').caseId, action: 'prepare'});
+  const a = await connect(first), b = await connect(second); first.abort();
+  assert.equal(second.signal.aborted, false); assert.equal(f.driver.metrics().activeConnections, 1);
+  assert.ok(b.processID > 0); assert.equal(a.processID, undefined); await b.end();
+  assert.deepEqual(f.state.releases, [true, false]); assert.equal(f.driver.metrics().activeConnections, 0);
+});
+
+test('closing during acquisition cancels the wait and destroys a late lease without aborting the owner signal', async t => {
+  const gate = deferred(), f = cleanup(t, setup({acquireGate: gate.promise})), controller = new AbortController();
+  const pending = f.run('prepare', 'seats', controller); await f.acquisitionStarted.promise; await f.driver.close();
+  await assert.rejects(pending); assert.equal(controller.signal.aborted, false); gate.resolve();
+  await new Promise(resolve => setImmediate(resolve)); assert.deepEqual(f.state.releases, [true]);
+  await f.driver.close(); assert.equal(f.state.poolEnds, 1);
 });
 
 test('bounded pool preserves distinct acquired backend identities with queued clients', async t => {

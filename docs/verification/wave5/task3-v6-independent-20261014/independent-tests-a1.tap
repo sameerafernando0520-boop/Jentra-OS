@@ -1,0 +1,136 @@
+TAP version 13
+# Subtest: URL classifier has only the five approved exact classes without parsing or normalizing aliases
+ok 1 - URL classifier has only the five approved exact classes without parsing or normalizing aliases
+  ---
+  duration_ms: 1.6491
+  type: 'test'
+  ...
+# Subtest: service role classifier reports shape only and never decodes, parses or publishes key content
+ok 2 - service role classifier reports shape only and never decodes, parses or publishes key content
+  ---
+  duration_ms: 0.3567
+  type: 'test'
+  ...
+# Subtest: only the three fixed approved names are read and dictionary JSON is never parsed or emitted
+ok 3 - only the three fixed approved names are read and dictionary JSON is never parsed or emitted
+  ---
+  duration_ms: 0.834
+  type: 'test'
+  ...
+# Subtest: factory/import construction performs no diagnostic environment access or observation
+ok 4 - factory/import construction performs no diagnostic environment access or observation
+  ---
+  duration_ms: 1.5416
+  type: 'test'
+  ...
+# Subtest: one module/isolate emits at most one closed record across concurrent requests and multiple wrappers
+ok 5 - one module/isolate emits at most one closed record across concurrent requests and multiple wrappers
+  ---
+  duration_ms: 27.5671
+  type: 'test'
+  ...
+# Subtest: diagnostic environment getter failure is swallowed after the exact original response and consumes the single attempt
+ok 6 - diagnostic environment getter failure is swallowed after the exact original response and consumes the single attempt
+  ---
+  duration_ms: 3.0594
+  type: 'test'
+  ...
+# Subtest: throwing env.get property and rejected/throwing sinks preserve response bytes and status
+ok 7 - throwing env.get property and rejected/throwing sinks preserve response bytes and status
+  ---
+  duration_ms: 14.6264
+  type: 'test'
+  ...
+# Subtest: a diagnostic never delays handler output waiting for an unresolved sink promise
+ok 8 - a diagnostic never delays handler output waiting for an unresolved sink promise
+  ---
+  duration_ms: 2.2725
+  type: 'test'
+  ...
+# Subtest: diagnostic is sequenced after the original handler so a one-shot failing diagnostic getter cannot alter that outcome
+ok 9 - diagnostic is sequenced after the original handler so a one-shot failing diagnostic getter cannot alter that outcome
+  ---
+  duration_ms: 1.5714
+  type: 'test'
+  ...
+# Subtest: original synchronous throw or rejected handler error remains the exact same object
+ok 10 - original synchronous throw or rejected handler error remains the exact same object
+  ---
+  duration_ms: 3.5876
+  type: 'test'
+  ...
+# Subtest: diagnostic does not inspect request URL, headers, body or stringify raw request values
+ok 11 - diagnostic does not inspect request URL, headers, body or stringify raw request values
+  ---
+  duration_ms: 1.3899
+  type: 'test'
+  ...
+# Subtest: actual runtime provider-unavailable response is identical to V5 including diagnostic getter/sink failures
+ok 12 - actual runtime provider-unavailable response is identical to V5 including diagnostic getter/sink failures
+  ---
+  duration_ms: 7.7779
+  type: 'test'
+  ...
+# Subtest: actual schedule denial and every unsigned receiver route stay identical to V5 without backend/fault responses
+ok 13 - actual schedule denial and every unsigned receiver route stay identical to V5 without backend/fault responses
+  ---
+  duration_ms: 13.1628
+  type: 'test'
+  ...
+# Subtest: V5 route bytes and every authenticated handler body are exact prefix/import-only predecessors
+ok 14 - V5 route bytes and every authenticated handler body are exact prefix/import-only predecessors
+  ---
+  duration_ms: 7.757
+  type: 'test'
+  ...
+# Subtest: the full accepted/denied routing matrix is unchanged and aliases/forwarded fields remain untrusted
+ok 15 - the full accepted/denied routing matrix is unchanged and aliases/forwarded fields remain untrusted
+  ---
+  duration_ms: 8.0524
+  type: 'test'
+  ...
+# Subtest: both new entrypoints install exactly one provider diagnostic without the old ingress wrapper or added startup env reads
+ok 16 - both new entrypoints install exactly one provider diagnostic without the old ingress wrapper or added startup env reads
+  ---
+  duration_ms: 1.7971
+  type: 'test'
+  ...
+# Subtest: sink catch-property failure cannot replace the original sync or async response
+ok 17 - sink catch-property failure cannot replace the original sync or async response
+  ---
+  duration_ms: 4.8728
+  type: 'test'
+  ...
+# Subtest: a failed first diagnostic consumes the isolate attempt across later and separately constructed wrappers
+ok 18 - a failed first diagnostic consumes the isolate attempt across later and separately constructed wrappers
+  ---
+  duration_ms: 2.883
+  type: 'test'
+  ...
+# Subtest: service-role and dictionary accessors can fail after the original response without exposing their value
+ok 19 - service-role and dictionary accessors can fail after the original response without exposing their value
+  ---
+  duration_ms: 8.3224
+  type: 'test'
+  ...
+# Subtest: closed descriptor classification cannot coerce raw objects or read unknown environment properties
+ok 20 - closed descriptor classification cannot coerce raw objects or read unknown environment properties
+  ---
+  duration_ms: 1.6035
+  type: 'test'
+  ...
+# Subtest: diagnostic does not become a provider repair or an authentication statement for JWT-shaped fixture data
+ok 21 - diagnostic does not become a provider repair or an authentication statement for JWT-shaped fixture data
+  ---
+  duration_ms: 1.2003
+  type: 'test'
+  ...
+1..21
+# tests 21
+# suites 0
+# pass 21
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 198.7762

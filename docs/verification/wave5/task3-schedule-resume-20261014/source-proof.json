@@ -1,0 +1,561 @@
+{
+  "kind": "source-only-exact-three-job-schedule-resume-successor-proof",
+  "preparedAt": "2026-10-14T10:04:13.280Z",
+  "author": "/root/requirement_acceptance",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "runtimeBundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+  "source": {
+    "path": "tools/wave5/resume_worker_schedules_20261014_r5_v7.mjs",
+    "sha256": "5ddfd0b63b38a729508bfcb14544e430b23caf85dcd8a5acd01f6e9d085576d9",
+    "bytes": 27871
+  },
+  "predecessor": {
+    "path": "tools/wave5/start_scheduled_delivery_20261013_r5_a4.mjs",
+    "sha256": "930e6c3ca3bc26c0a91448df834746c234e6e211280d900747f2f4ddf17ff096"
+  },
+  "originalSql": {
+    "path": "docs/verification/wave5/scheduled-delivery-start-20261013-r5.sql",
+    "sha256": "94019d7ea0386ed21e04602f8678aed75ddcaaf1dfec8ae4810c714431641322"
+  },
+  "originalReadSql": {
+    "path": "docs/verification/wave5/scheduled-delivery-start-read-20261013-r5-a2.sql",
+    "sha256": "0555cc9a7719d5d3c9ac381357f4a8147c5febecd83aaaeccfaf48deef24a371"
+  },
+  "consumedOriginalA4Intent": {
+    "path": "docs/verification/wave5/scheduled-delivery-start-once-20261013-r5-a4.json",
+    "sha256": "f0bf227cddae5132fc4a95f05715489fdb866107b0e0d2fdbad1424e8b7b504d"
+  },
+  "originalIntentOverwritten": false,
+  "oldSourceFilesEdited": 0,
+  "oldEvidenceOverwritten": 0,
+  "preservedOriginalAuthorityIssuedAt": "2026-10-13T09:57:07.481942Z",
+  "preservedOriginalAuthorityExpiresAt": "2026-10-14T09:57:07.481942Z",
+  "originalAuthorityExpiredAtProof": true,
+  "sourceOnly": true,
+  "executionPermittedByThisProof": false,
+  "finalOperationReviewRequired": true,
+  "finalOperationReviewPresent": false,
+  "exactV7HumanDeploymentApproval": {
+    "path": "docs/verification/wave5/worker-v7-provider-owner-decision-20261014-r5.json",
+    "sha256": "0f513290971c544eaabd15a56aca78ff5a6a5ddc09e2a8dcca52f87178ef0066"
+  },
+  "exactV7UnsignedProbe": {
+    "path": "docs/verification/wave5/task3-completion-20261013/worker-v7-independent-actual-probe-result-20261014.json",
+    "sha256": "25297e420e7ac1fa62b2fef2e6b4e678a3ff13d7dd8fd59b6fadab2d46f8e236"
+  },
+  "exactV7SourceReadbackReview": {
+    "path": "docs/verification/wave5/task3-completion-20261013/worker-v7-independent-deployment-and-probe-review-20261014.json",
+    "sha256": "d15f3a3941175dcd258b252069c881badb0f8670d1f3b07b3669d3257bc0220f"
+  },
+  "returnedActualV7SourceRowsBound": 25,
+  "actualUnsigned403IsServiceKeyRoleProof": false,
+  "sqlInventory": {
+    "read": {
+      "path": "docs/verification/wave5/task3-schedule-resume-20261014/resume-read.sql",
+      "sha256": "1ac85aa6ec1d110f220f7c88776f28c226c1eac31c6cb0157c52d5d755403dd8",
+      "bytes": 2825
+    },
+    "readOnlyRequests": 2,
+    "writeRequests": 1,
+    "maximumManagementAttempts": 3,
+    "writeTemplate": {
+      "path": "docs/verification/wave5/task3-schedule-resume-20261014/resume-write-review-template.sql",
+      "sha256": "60705b10f0c006918902d67e988724e01ad51b17458eea823aa6d43d40eba2c5",
+      "bytes": 4968
+    },
+    "actualWriteSqlFormula": "buildResumeSql(exact independently reviewed four guard fingerprints). The final operation record must pin the generated full SQL SHA256 and the exact source hash.",
+    "allowedGuardSignatures": [
+      "intelligence_control.runtime_scope_allowed(uuid,uuid,uuid,uuid)",
+      "intelligence_control.edge_schedule_tick(text)",
+      "api.wave5_runtime_worker(uuid,text,jsonb)",
+      "api.wave5_edge_control(uuid,text,jsonb)"
+    ],
+    "unknownSignaturesOrNonhexMd5ValuesRejected": true,
+    "guardFingerprintPopulation": 4,
+    "writableActions": [
+      "cron.alter_job(4,active:=true)",
+      "cron.alter_job(5,active:=true)",
+      "cron.alter_job(6,active:=true)"
+    ],
+    "schemaOrDataMutationElsewhereAllowed": false,
+    "guardChecks": [
+      "exact authority row locked; original issuance/expiry; enabled and unexpired",
+      "exact original runtime/tenant/entity/branch scope",
+      "115 migrations and363 API functions",
+      "exact four unchanged server guard function MD5s and existing service_role RPC execute grants",
+      "exact two original completed export jobs and finance.report.export receipts",
+      "exact three existing paused minute jobs, commands and names",
+      "unchanged outside cron hash",
+      "zero worker ticks and zero quota periods before resume",
+      "at least24 retained cron runs plus remaining possible minute slots <=4320"
+    ],
+    "mutationsOfKeysOrAuthorityOrScopeOrGrantsOrLeasesOrCounters": 0,
+    "automaticRetries": 0,
+    "readOnlyOutcomeResolution": "The third, normal after-read doubles as the one bounded readback after an actually dispatched uncertain write. No fourth request or replay is allowed.",
+    "SqlExecutedByAuthor": false,
+    "databaseSyntaxOrCurrentFingerprintValidationPerformed": false
+  },
+  "jobIds": [
+    4,
+    5,
+    6
+  ],
+  "exactJobs": [
+    {
+      "jobId": 4,
+      "name": "jentra-w5-20261009-delivery",
+      "schedule": "* * * * *",
+      "command": "select intelligence_control.edge_schedule_tick('delivery');"
+    },
+    {
+      "jobId": 5,
+      "name": "jentra-w5-20261009-subscription",
+      "schedule": "* * * * *",
+      "command": "select intelligence_control.edge_schedule_tick('subscription');"
+    },
+    {
+      "jobId": 6,
+      "name": "jentra-w5-20261009-health",
+      "schedule": "* * * * *",
+      "command": "select intelligence_control.edge_schedule_tick('health');"
+    }
+  ],
+  "maximumScheduleRequestsOriginal": 4320,
+  "scheduledRequestsAlreadyObserved": 24,
+  "countersReset": false,
+  "budgetInterpretation": "The original installed scheduler has no separate cumulative HTTP counter. Three once-per-minute jobs within the retained24-hour authority define the lifetime4320 bound. The saved24 observed responses remain separate from zero worker ticks. The new guarded read also requires retained cron-run count >=24 and enforces that count plus all remaining possible minute slots <=4320. Missing retained run history fails closed; it is never reset or fabricated.",
+  "cli": {
+    "validate": "node tools/wave5/resume_worker_schedules_20261014_r5_v7.mjs --validate",
+    "execute": "node tools/wave5/resume_worker_schedules_20261014_r5_v7.mjs --execute <exact separately reviewed final operation JSON SHA256>",
+    "fixedFinalOperationReview": "docs/verification/wave5/task3-schedule-resume-20261014/final-operation-review.json",
+    "fixedExclusiveNewOnceIntent": "docs/verification/wave5/task3-schedule-resume-20261014/resume-once.json",
+    "validateReadsPrivateInput": false,
+    "validateNetworkCalls": 0,
+    "executeCurrentStatus": "rejects ORIGINAL_SCHEDULE_AUTHORITY_EXPIRED before public operation-file validation, stdin, private parsing or request",
+    "executeBeforePrivateInputRequirements": [
+      "unexpired original deadline",
+      "exact current separate operation review and query/source hashes",
+      "actual successful original exports proof",
+      "fresh hash-bound same-project/bundle/SID owner metadata",
+      "all old/new source and evidence bindings",
+      "exact independently reviewed private adapter and its current-SID check"
+    ],
+    "oldV7DeploymentApprovalAlonePermitsResume": false,
+    "freshOwnerMetadataExtendsOriginalRuntimeExpiry": false
+  },
+  "tests": {
+    "record": {
+      "path": "docs/verification/wave5/task3-schedule-resume-20261014/controlled-verification-a2.json",
+      "sha256": "f2caa55c7de49144ac4060c1fa46deaf049f90dff2f971698bd5d4821de80bb3",
+      "bytes": 8842
+    },
+    "log": {
+      "path": "docs/verification/wave5/task3-schedule-resume-20261014/controlled-verification-a2.tap",
+      "sha256": "915b3b3ce11016718fc4cff03d1cf18bb18ed1a63caa513320f910fb5219b877",
+      "bytes": 5066
+    },
+    "counts": {
+      "tests": 20,
+      "pass": 20,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "testIdentities": [
+      {
+        "status": "ok",
+        "index": 1,
+        "name": "time: exact original authority boundary rejects equality, later clocks and extensions"
+      },
+      {
+        "status": "ok",
+        "index": 2,
+        "name": "fingerprints: exact sorted four fixed signatures and hexadecimal values only"
+      },
+      {
+        "status": "ok",
+        "index": 3,
+        "name": "SQL: only three cron activations remain and exact scope/expiry/115/363/export/budget checks are present"
+      },
+      {
+        "status": "ok",
+        "index": 4,
+        "name": "exports: exact two completed original commands and independent artifact reproductions are necessary"
+      },
+      {
+        "status": "ok",
+        "index": 5,
+        "name": "operation review: legitimate exact separate review with actual export proof validates only before expiry"
+      },
+      {
+        "status": "ok",
+        "index": 6,
+        "name": "operation review: deployment approval, altered jobs/source/caps/expiry and reset attempts cannot grant resume"
+      },
+      {
+        "status": "ok",
+        "index": 7,
+        "name": "metadata: expired, wrong owner/project/bundle and extension do not pass with a valid final review"
+      },
+      {
+        "status": "ok",
+        "index": 8,
+        "name": "snapshot: exact paused scope and hashes validate without resetting recorded24"
+      },
+      {
+        "status": "ok",
+        "index": 9,
+        "name": "snapshot: tenant denial, stale clock, count drift, outside jobs, exports and role grants stop before activation"
+      },
+      {
+        "status": "ok",
+        "index": 10,
+        "name": "workflow: legitimate preparation, activation and readback are exactly read/write/read with durable acknowledgments"
+      },
+      {
+        "status": "ok",
+        "index": 11,
+        "name": "workflow: bad before snapshot persists stop and performs no activation"
+      },
+      {
+        "status": "ok",
+        "index": 12,
+        "name": "workflow: unacknowledged once intent performs zero network calls"
+      },
+      {
+        "status": "ok",
+        "index": 13,
+        "name": "workflow: unacknowledged preflight or write attempt is not dispatched"
+      },
+      {
+        "status": "ok",
+        "index": 14,
+        "name": "workflow: an uncertain write is never replayed and one actual readback can establish enabled state"
+      },
+      {
+        "status": "ok",
+        "index": 15,
+        "name": "workflow: failed write plus paused readback stops with uncertain mutation and no replay"
+      },
+      {
+        "status": "ok",
+        "index": 16,
+        "name": "workflow: expiry during preparation rejects before dispatch and does not alter authority"
+      },
+      {
+        "status": "ok",
+        "index": 17,
+        "name": "transport: no construction IO, strict endpoint/query, verified TLS and exactly three charged attempts"
+      },
+      {
+        "status": "ok",
+        "index": 18,
+        "name": "transport: unverified chain or plaintext socket never sends header-bearing body"
+      },
+      {
+        "status": "ok",
+        "index": 19,
+        "name": "transport: network error is sanitized and never automatically retried"
+      },
+      {
+        "status": "ok",
+        "index": 20,
+        "name": "CLI: expired execute rejects before reading any stdin or public operation gate"
+      }
+    ],
+    "syntaxPassed": true,
+    "offlineValidationPassed": true,
+    "actualExpiredExecuteRejectedBeforePrivateUse": true,
+    "sourceBindingsUnchangedDuringRun": true
+  },
+  "initialFailure": {
+    "record": {
+      "path": "docs/verification/wave5/task3-schedule-resume-20261014/controlled-verification-a1.json",
+      "sha256": "80c3917649a365acfd5e90c67c3650110ef10b647340674321ac183c1d97a887",
+      "bytes": 8847
+    },
+    "log": {
+      "path": "docs/verification/wave5/task3-schedule-resume-20261014/controlled-verification-a1.tap",
+      "sha256": "ea6c75a242369e86057742e37fb60d34139ef9bfdd67b54f2f7c892e0077e87f",
+      "bytes": 5684
+    },
+    "sourceBefore": {
+      "path": "docs/verification/wave5/task3-schedule-resume-20261014/helper-before-durability-fix.mjs",
+      "sha256": "4fefbc0bf43b502489f452fdd9ec60a0ca380d60d7c3a0cf1c873b20e9a92258",
+      "bytes": 27810
+    },
+    "cause": "A failed pre-dispatch durable write-attempt acknowledgment was originally treated as an uncertain dispatched write. The final source distinguishes dispatch; pre-dispatch failure stops immediately and cannot reach a success readback.",
+    "exactTwoLocationFixReverseVerified": true,
+    "oldFailurePreserved": true
+  },
+  "sourceBindings": [
+    {
+      "path": "docs/verification/wave5/complete-app-runtime-review-20261010-r5.json",
+      "sha256": "b1b0cb94a8aa705b5cc6ff674ed215a8487a960ff0a594f7abffadfbc4e57cc3",
+      "bytes": 1370575
+    },
+    {
+      "path": "docs/verification/wave5/runtime-global-readonly-snapshot-20261013-r5-a4.json",
+      "sha256": "4b798483071ff24515534786bbf10805aff0933074e59cf7ea392a54afb6faca",
+      "bytes": 3932
+    },
+    {
+      "path": "docs/verification/wave5/runtime-owner-decision-20261012-r5.json",
+      "sha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab",
+      "bytes": 2756
+    },
+    {
+      "path": "docs/verification/wave5/scheduled-delivery-start-20261013-r5.sql",
+      "sha256": "94019d7ea0386ed21e04602f8678aed75ddcaaf1dfec8ae4810c714431641322",
+      "bytes": 3356
+    },
+    {
+      "path": "docs/verification/wave5/scheduled-delivery-start-intent-20261013-r5.json",
+      "sha256": "f885fcf190bd017889915e9805d01194779f18b2d13662d4e15e4c1cb6ec8296",
+      "bytes": 2130
+    },
+    {
+      "path": "docs/verification/wave5/scheduled-delivery-start-once-20261013-r5-a4.json",
+      "sha256": "f0bf227cddae5132fc4a95f05715489fdb866107b0e0d2fdbad1424e8b7b504d",
+      "bytes": 782
+    },
+    {
+      "path": "docs/verification/wave5/scheduled-delivery-start-read-20261013-r5-a2.sql",
+      "sha256": "0555cc9a7719d5d3c9ac381357f4a8147c5febecd83aaaeccfaf48deef24a371",
+      "bytes": 1471
+    },
+    {
+      "path": "docs/verification/wave5/task3-completion-20261013/worker-v7-independent-actual-probe-result-20261014.json",
+      "sha256": "25297e420e7ac1fa62b2fef2e6b4e678a3ff13d7dd8fd59b6fadab2d46f8e236",
+      "bytes": 1262
+    },
+    {
+      "path": "docs/verification/wave5/task3-completion-20261013/worker-v7-independent-deployment-and-probe-review-20261014.json",
+      "sha256": "d15f3a3941175dcd258b252069c881badb0f8670d1f3b07b3669d3257bc0220f",
+      "bytes": 13647
+    },
+    {
+      "path": "docs/verification/wave5/task3-schedule-resume-20261014/controlled-verification-a1.json",
+      "sha256": "80c3917649a365acfd5e90c67c3650110ef10b647340674321ac183c1d97a887",
+      "bytes": 8847
+    },
+    {
+      "path": "docs/verification/wave5/task3-schedule-resume-20261014/controlled-verification-a1.tap",
+      "sha256": "ea6c75a242369e86057742e37fb60d34139ef9bfdd67b54f2f7c892e0077e87f",
+      "bytes": 5684
+    },
+    {
+      "path": "docs/verification/wave5/task3-schedule-resume-20261014/controlled-verification-a2.json",
+      "sha256": "f2caa55c7de49144ac4060c1fa46deaf049f90dff2f971698bd5d4821de80bb3",
+      "bytes": 8842
+    },
+    {
+      "path": "docs/verification/wave5/task3-schedule-resume-20261014/controlled-verification-a2.tap",
+      "sha256": "915b3b3ce11016718fc4cff03d1cf18bb18ed1a63caa513320f910fb5219b877",
+      "bytes": 5066
+    },
+    {
+      "path": "docs/verification/wave5/task3-schedule-resume-20261014/finalize_source_proof.mjs",
+      "sha256": "752a8eb3485bc1484cea6f1093a55e1f11a336f30fb7bafb573858a5b23d694b",
+      "bytes": 14723
+    },
+    {
+      "path": "docs/verification/wave5/task3-schedule-resume-20261014/helper-before-durability-fix.mjs",
+      "sha256": "4fefbc0bf43b502489f452fdd9ec60a0ca380d60d7c3a0cf1c873b20e9a92258",
+      "bytes": 27810
+    },
+    {
+      "path": "docs/verification/wave5/task3-schedule-resume-20261014/resume_worker_schedules.test.mjs",
+      "sha256": "47505f7fe592e12cf3e3f0aabb00673d65b685b8bc85b7af669259f0afcfcad6",
+      "bytes": 15464
+    },
+    {
+      "path": "docs/verification/wave5/task3-schedule-resume-20261014/test-before-durability-fix.mjs",
+      "sha256": "47505f7fe592e12cf3e3f0aabb00673d65b685b8bc85b7af669259f0afcfcad6",
+      "bytes": 15464
+    },
+    {
+      "path": "docs/verification/wave5/task3-schedule-resume-20261014/verify_controlled_sources.mjs",
+      "sha256": "ddbabe636a4cbbb8490743585f1f8ddfb3607647a3e2d0cec6bfa6b1c561aae9",
+      "bytes": 4143
+    },
+    {
+      "path": "docs/verification/wave5/task3-v7-provider-20261014/candidate-manifest.json",
+      "sha256": "49a943f5a26de7d17c49ac3fef3f3bd43a2a53122297cebb55c786792523bbc6",
+      "bytes": 15469
+    },
+    {
+      "path": "docs/verification/wave5/worker-v7-provider-after-functions-20261014-r5.json",
+      "sha256": "9fc7e2c8271fd06dda0ffcf0b5193e81ec01ede93f1358c7e1646691e6d18590",
+      "bytes": 2055
+    },
+    {
+      "path": "docs/verification/wave5/worker-v7-provider-deployment-before-20261014-r5-a2.json",
+      "sha256": "2b5081e39bfc976ca82fd8dcd030196b4dd1101bb99258e071dc20be94f56c12",
+      "bytes": 2073
+    },
+    {
+      "path": "docs/verification/wave5/worker-v7-provider-deployment-source-verification-20261014-r5-a2.json",
+      "sha256": "9deaf816923888e44b7b35fa0b961b2915f3ce7c6df41df5b184a3391adfa9e6",
+      "bytes": 13509
+    },
+    {
+      "path": "docs/verification/wave5/worker-v7-provider-owner-decision-20261014-r5.json",
+      "sha256": "0f513290971c544eaabd15a56aca78ff5a6a5ddc09e2a8dcca52f87178ef0066",
+      "bytes": 1632
+    },
+    {
+      "path": "docs/verification/wave5/worker-v7-provider-receiver-readback-20261014-r5.json",
+      "sha256": "e6847097814f2e16934817b8cb5374609c868d0a756ba93b9abb609c7799aefd",
+      "bytes": 40993
+    },
+    {
+      "path": "docs/verification/wave5/worker-v7-provider-runtime-readback-20261014-r5.json",
+      "sha256": "1c4eeab9d7bbd24c5814952c8fb521daabaa38a0c565cad5d4d94b70fb059104",
+      "bytes": 64647
+    },
+    {
+      "path": "tools/wave5/approved_management_installer.mjs",
+      "sha256": "f6266b37e9c5eb254a794aedd512984d35865e2ff4ddfd19f6a67cf5f9750bd5",
+      "bytes": 18163
+    },
+    {
+      "path": "tools/wave5/private_runtime_seal.mjs",
+      "sha256": "1395a91ee666d40c5504c8977b5d4f64aa4d54b383dfe147fe78eb07a5d7a206",
+      "bytes": 2916
+    },
+    {
+      "path": "tools/wave5/probe_worker_v7_provider_ingress_20261014_r5.mjs",
+      "sha256": "7c356df7c5f1454f5c564d59324b8e04612157ccd1d02ddbf814e78d404062b4",
+      "bytes": 4573
+    },
+    {
+      "path": "tools/wave5/resume_worker_schedules_20261014_r5_v7.mjs",
+      "sha256": "5ddfd0b63b38a729508bfcb14544e430b23caf85dcd8a5acd01f6e9d085576d9",
+      "bytes": 27871
+    },
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "sha256": "7bc04153aa169c2f85f4371c74319c2eded1f6666a97609ba29f5a2ad94d1da2",
+      "bytes": 31294
+    },
+    {
+      "path": "tools/wave5/start_scheduled_delivery_20261013_r5_a4.mjs",
+      "sha256": "930e6c3ca3bc26c0a91448df834746c234e6e211280d900747f2f4ddf17ff096",
+      "bytes": 7230
+    },
+    {
+      "path": "workers/wave5/bounded_json.mjs",
+      "sha256": "2c9ba6bc68101501970a41abaf02443d4f977bb1ba6bb7457f45bdc226096c05",
+      "bytes": 2310
+    },
+    {
+      "path": "workers/wave5/edge_configuration.mjs",
+      "sha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13",
+      "bytes": 1072
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261014_r5_v7.mjs",
+      "sha256": "f62c297ca4ae3fae9cb9c8a21e4247b67f37b4fd5d8f29dad88fa01621f837e8",
+      "bytes": 5722
+    },
+    {
+      "path": "workers/wave5/edge_route_20261014_r5_v6.mjs",
+      "sha256": "37b7f363c7243ce5126908f982865dec2ddcdc59307965b649f9f39d102701d4",
+      "bytes": 7360
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261014_r5_v7.mjs",
+      "sha256": "bf772c3a77f5f050c98dfb0e4e61de63235aa42b4618451f9dc69a5e24697cd8",
+      "bytes": 7004
+    },
+    {
+      "path": "workers/wave5/entries/receiver_20261014_r5_v7.ts",
+      "sha256": "bb034262915109c34492fb6fe31fbbdc5c9c0b9508804e209aea9b8fa0664a98",
+      "bytes": 602
+    },
+    {
+      "path": "workers/wave5/entries/runtime_20261014_r5_v7.ts",
+      "sha256": "28a562cc40ba9c17921ed8018936eeb9fc8328171ca2e78f327b393769263c80",
+      "bytes": 598
+    },
+    {
+      "path": "workers/wave5/integration_policy.mjs",
+      "sha256": "f83e76cd5bdaf7997bf001edf6101537db9c34995019e9f7b5c196546a875cea",
+      "bytes": 10120
+    },
+    {
+      "path": "workers/wave5/model_reader.mjs",
+      "sha256": "9be9ac552738041fb14a1cea2f9fd5e8dda415399512692f11b7430cf634a0a9",
+      "bytes": 1247
+    },
+    {
+      "path": "workers/wave5/model_runtime.mjs",
+      "sha256": "fce748e511a81bdae957ff76275641142a738d8391132953d4d3c7eec03cfb99",
+      "bytes": 5465
+    },
+    {
+      "path": "workers/wave5/openai_model_adapter.mjs",
+      "sha256": "557fc6af5dba58910ac46c2d1ac661a0389355ccef7efddb9a3cad94a03201d3",
+      "bytes": 3194
+    },
+    {
+      "path": "workers/wave5/persistent_control.mjs",
+      "sha256": "81b5aa332971235cca8830c3d5894977d04baa5d0f3b6f1391db346ca9abc4fd",
+      "bytes": 5107
+    },
+    {
+      "path": "workers/wave5/persistent_control_20261014_r5_v7.mjs",
+      "sha256": "6f65d9d46efea233289c7f143c2da3e0d8911406c1bc15c7b8a1bedf7eff27c6",
+      "bytes": 5208
+    },
+    {
+      "path": "workers/wave5/provider_credentials_20261014_r5_v7.mjs",
+      "sha256": "d539a06939b45fe2b981fa6d7ee59cd8da9cbdecea0fc9bea8632913dbb62bc5",
+      "bytes": 907
+    },
+    {
+      "path": "workers/wave5/scoped_runtime_20261014_r5_v7.mjs",
+      "sha256": "2f987b41e70db5aedefc1a84f0e6f41b022820c5594371ea470d04ce18eb0f5e",
+      "bytes": 1803
+    },
+    {
+      "path": "workers/wave5/subscription_schedule.mjs",
+      "sha256": "7699ebd9798620a9514584472b4e147e9b3d148754c72190498fe5406df7d047",
+      "bytes": 1292
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.mjs",
+      "sha256": "a57cceb2ca5dc2bccc29861cdccb34bac7468a82a7fd402ecc5bd1810b6b0f5f",
+      "bytes": 3210
+    },
+    {
+      "path": "workers/wave5/worker_runtime.mjs",
+      "sha256": "4935409210e61efc168d8604acff9b13f5a3b757cb27f4aee2ed1f2504dc8dc6",
+      "bytes": 5230
+    }
+  ],
+  "sourceBindingsUnchangedDuringFinalization": true,
+  "actualPrivateInputsRead": 0,
+  "actualProjectApiRequests": 0,
+  "liveWrites": 0,
+  "SDKJobs": 0,
+  "schedulesResumed": false,
+  "actualDelivery": false,
+  "actualTrustedModelUsage": false,
+  "authenticatedNative": false,
+  "targetScaleLoad": false,
+  "additionalRequirementAcceptance": 0,
+  "productionReleaseReady": false,
+  "personalHumanExactSourceSignatureClaimed": false,
+  "limitations": [
+    "The original09:57 authority expired before this source proof finished. A later metadata refresh or completing exports cannot reactivate this authority. Any new runtime authority would require a separate concrete scope and decision; this helper deliberately does not implement it.",
+    "Neither a final operation gate nor actual export success is supplied here. The source helper is concrete and controlled-tested, but currently cannot be executed live. It preserves original expiry and fails before private use.",
+    "The saved unsigned403 proves the handler rejects unauthenticated ingress; it does not prove the real service key role/validity, backend success, HMAC receiver acceptance or delivery. Existing server function bodies, service_role grants, caller/scope/HMAC and readiness checks stay authoritative.",
+    "All controlled sessions, token text, function MD5s, clocks, transport replies and persistence acknowledgments were fake. No SQL, socket, live provider, private token, actual model or SDK job was used.",
+    "The write-review template intentionally contains four non-executable markers. Only a separate independently reviewed current fingerprint record can produce the exact full SQL pinned in an operation gate.",
+    "Cron run retention and the arithmetic bound are conservative source checks. Their current database truth was not inspected by this author; an absent or changed baseline must stop the live owner rather than be waived.",
+    "Exports must complete first. No registered statement reopen, native file save, target-scale load, owner acceptance or release readiness follows from this scheduler source work."
+  ]
+}

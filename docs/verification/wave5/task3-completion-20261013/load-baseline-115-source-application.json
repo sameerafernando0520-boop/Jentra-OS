@@ -1,0 +1,65 @@
+{
+  "kind": "installed-115-load-preflight-source-successor",
+  "appliedAt": "2026-10-13T21:29:51.633Z",
+  "authority": {
+    "kind": "direct-user-delegation-and-live-owner-source-ownership-grant",
+    "userInstruction": "do the best things. You decide all what is good and do it. don't ask me again.",
+    "ownerChat": "01a121e1-81f0-76c1-8060-699f36ec225e",
+    "scope": "narrow runtime_contract validator/test successor for actual installed 115-migration baseline",
+    "personalHumanExactSourceSignatureClaimed": false
+  },
+  "installationEvidence": {
+    "path": "docs/verification/wave5/task3-completion-20261013/installed-cash-independent-verification-20261014.json",
+    "bytes": 2154,
+    "sha256": "613e3f2871e023532a595c6fefec008def556dc579a92baa78b56991efbf55cf"
+  },
+  "expectedOnlineCount": 115,
+  "historical71InstallCountRetained": 114,
+  "originalRuntimeReviewEdited": false,
+  "observationCountTransformed": false,
+  "migrationReplayPerformed": false,
+  "behavior": "Require exactly the actual 115 ledger; reject old114, future116, fractional and string values. All other preflight requirements are unchanged.",
+  "before": [
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "bytes": 31294,
+      "sha256": "2f518fdffa0f8b6e947118a259f10fbfb20b41e7fcc7e6ef3146461030f8747f",
+      "savedPath": "docs/verification/wave5/task3-completion-20261013/load-baseline-115-before/tools/wave5/runtime_contract.mjs"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.test.mjs",
+      "bytes": 47807,
+      "sha256": "b32d651f0d8edd87f369dc47227644f5ffd31b0f53680afab8065fb53dc90557",
+      "savedPath": "docs/verification/wave5/task3-completion-20261013/load-baseline-115-before/tools/wave5/runtime_coordinator.test.mjs"
+    },
+    {
+      "path": "tools/wave5/supabase_provider.test.mjs",
+      "bytes": 46828,
+      "sha256": "72f29ca192982a288b396f2e1d2649421096c80d82c3b788878170fd269d443e",
+      "savedPath": "docs/verification/wave5/task3-completion-20261013/load-baseline-115-before/tools/wave5/supabase_provider.test.mjs"
+    }
+  ],
+  "after": [
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "bytes": 31294,
+      "sha256": "7bc04153aa169c2f85f4371c74319c2eded1f6666a97609ba29f5a2ad94d1da2"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.test.mjs",
+      "bytes": 47951,
+      "sha256": "ef4d4586b5a53d639c244c890f3103902f616e7debe026b68547757184ffd076"
+    },
+    {
+      "path": "tools/wave5/supabase_provider.test.mjs",
+      "bytes": 46828,
+      "sha256": "472534e60d15b169dd480fa991c85805661b68a8531677054c218ecd683efafe"
+    }
+  ],
+  "independentReviewPending": true,
+  "actualNetworkRequests": 0,
+  "SQLMutations": 0,
+  "privateInputRead": false,
+  "fullLoadPerformed": false,
+  "productionReleaseReady": false
+}

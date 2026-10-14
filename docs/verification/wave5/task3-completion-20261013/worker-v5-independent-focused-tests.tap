@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: managed runtime schedule without its secret is denied before any backend call
+ok 1 - managed runtime schedule without its secret is denied before any backend call
+  ---
+  duration_ms: 25.6616
+  type: 'test'
+  ...
+# Subtest: all managed receiver routes still deny unsigned bytes before key reads, backend writes or fault responses
+ok 2 - all managed receiver routes still deny unsigned bytes before key reads, backend writes or fault responses
+  ---
+  duration_ms: 2.1573
+  type: 'test'
+  ...
+# Subtest: both handlers reject unreviewed HTTP origins before accessing provider credentials
+ok 3 - both handlers reject unreviewed HTTP origins before accessing provider credentials
+  ---
+  duration_ms: 0.8677
+  type: 'test'
+  ...
+# Subtest: all handler source is preserved apart from the single reviewed route import
+ok 4 - all handler source is preserved apart from the single reviewed route import
+  ---
+  duration_ms: 6.9698
+  type: 'test'
+  ...
+# Subtest: the observed project namespace reaches only the exact existing runtime routes
+ok 5 - the observed project namespace reaches only the exact existing runtime routes
+  ---
+  duration_ms: 0.5004
+  type: 'test'
+  ...
+# Subtest: the same exact managed origin admits only the reviewed receiver namespace
+ok 6 - the same exact managed origin admits only the reviewed receiver namespace
+  ---
+  duration_ms: 0.3405
+  type: 'test'
+  ...
+# Subtest: HTTP public prefixes, platform hosts, lookalikes, credentials, ports and noncanonical URLs stay denied
+ok 7 - HTTP public prefixes, platform hosts, lookalikes, credentials, ports and noncanonical URLs stay denied
+  ---
+  duration_ms: 0.4339
+  type: 'test'
+  ...
+# Subtest: endpoint configuration remains canonical public HTTPS, and per-handler route subsets still restrict access
+ok 8 - endpoint configuration remains canonical public HTTPS, and per-handler route subsets still restrict access
+  ---
+  duration_ms: 0.2525
+  type: 'test'
+  ...
+# Subtest: the finite diagnostic proves the exact HTTP project class without raw request data
+ok 9 - the finite diagnostic proves the exact HTTP project class without raw request data
+  ---
+  duration_ms: 0.4704
+  type: 'test'
+  ...
+# Subtest: a factory emits one finite v5 diagnostic across concurrent calls, and preserves handler authentication results
+ok 10 - a factory emits one finite v5 diagnostic across concurrent calls, and preserves handler authentication results
+  ---
+  duration_ms: 0.4636
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 98.9999

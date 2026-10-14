@@ -1,0 +1,45 @@
+{
+  "kind": "independent-saved-live-worker-v6-observation-verification",
+  "reviewedAt": "2026-10-14T03:47:46.903Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "sourceRowsVerified": 22,
+  "deployedVersion": 6,
+  "peopleFunctionsPreserved": true,
+  "probeServerUuid": "01a137fb-9b24-7899-afaa-4a77485551e8",
+  "actualProbeStatus": 503,
+  "actualProbeCode": "WORKER_PROVIDER_UNAVAILABLE",
+  "matchingProviderClassification": {
+    "kind": "wave5_provider_v6",
+    "worker": "runtime",
+    "supabaseUrlClass": "exact_configured_https",
+    "serviceRoleShape": "opaque_secret_style",
+    "secretKeysDictionaryPresent": true
+  },
+  "sourceInference": "The exact-HTTPS URL check passes and the JWT-only service-key guard rejects the observed opaque key shape before request authentication.",
+  "keyAuthenticityOrRoleVerified": false,
+  "sourceRepairNeeded": true,
+  "liveReviewerRequests": 0,
+  "rawPrivateValuesRead": false,
+  "schedulesRemainPaused": true,
+  "deliverySuccess": false,
+  "authenticatedNativeAcceptance": false,
+  "targetScaleLoad": false,
+  "productionReleaseReady": false,
+  "evidence": [
+    {
+      "path": "docs/verification/wave5/worker-v6-diagnostic-deployment-source-verification-20261014-r5.json",
+      "bytes": 10644,
+      "sha256": "9f63f3d516a5e647f025e0492de97eb57bba0c7dcd2b9266324bc91116974789"
+    },
+    {
+      "path": "docs/verification/wave5/worker-v6-diagnostic-fixed-unauthenticated-probe-20261014-r5.json",
+      "bytes": 1003,
+      "sha256": "3ae95fd6de996dce9c9beb5b0389c8faefb50fef8f412edc9c05d759a91b0524"
+    },
+    {
+      "path": "docs/verification/wave5/worker-v6-diagnostic-actual-finite-provider-20261014-r5.json",
+      "bytes": 1913,
+      "sha256": "4f44b570b6251801eb585ceb78e426fa7c67899e455978c5f748befc497cb2ff"
+    }
+  ]
+}
