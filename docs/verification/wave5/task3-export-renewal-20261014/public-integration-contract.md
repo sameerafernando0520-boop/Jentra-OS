@@ -1,0 +1,36 @@
+The a6 export successor is source-only. It has no approval, renewed runtime, private-input refresh, generated execution profile, consumed intent, or live export evidence. Root must independently review these exact sources before constructing an operation packet. The source rejects the old a5 profile and expired window.
+
+The proposed accounting is the saved134 actual/charged calls, one actual fresh owner GET, and three actual renewal-control attempts: preflight, the two-row expiry transaction, and readback. Only successful evidence for those four additional attempts permits138 as the export prior. The unchanged24 ordered export attempts reach162; one conditional read-only receipt resolution permits163. Failed attempts remain charged and stop the continuation; another owner refresh, additional query, retry or replacement count requires an additive review. The separate proposed health/schedule stages are outside this helper. Its source does not authorize the overall171 proposal.
+
+The original UTC13 finance basis, two currencies, statement, two export command IDs, MFA actor/factor, four RPC routes, CSV filenames,68 original frozen source bindings, consumed intents, three successful date pairs, and the a5 files remain bound and unchanged. The export timestamp is the actual preflight server timestamp within the approved window. This permits crossing midnight without changing any source accounting date or replaying date commands.
+
+Public files required by the source are fixed paths under `docs/verification/wave5/`:
+
+| Binding | Required path |
+| --- | --- |
+| Profile | `task3-export-renewal-20261014/execution-profile-a1.json` |
+| Source policy | `task3-export-renewal-20261014/source-policy-a1.json` |
+| Independent policy review | `task3-export-renewal-20261014/independent-policy-review-a1.json` |
+| Direct owner decision | `runtime-renewal-export-owner-decision-20261014-r5-a1.json` |
+| Actual two-row readback | `runtime-renewal-two-row-readback-20261014-r5-a1.json` |
+| Actual fresh owner metadata | `private-owner-input-ready-20261014-r5-a10.json` |
+| Actual one-GET owner refresh | `private-owner-scope-refresh-20261014-r5-a10.json` |
+| Actual cumulative accounting | `finance-cumulative-read-accounting-20261014-r5-a7.json` |
+| Existing134 dependency evidence | `runtime-expiry-dependency-readonly-20261014-r5-a1.json` |
+| Final operation review | `task3-export-renewal-20261014/final-operation-review-a1.json` |
+
+Every profile control binding includes its exact path and SHA256. The generated plan contains the profile plus eight control bindings and the complete fixed source population. No optional path is read from an unvalidated control object. All actual records above remain absent at source freeze except the already-existing dependency evidence. The controlled tests construct hypothetical objects only in memory and never publish them as actual records.
+
+The authoritative field validators are `validateExportsProfile`, `validateExportsWindow`, `validateExportsPreparation` and `validateExportsFinalReview` in the helper. The controlled `publicPreparationInputs()` fixture demonstrates the full shape, explicitly labelled test data. Integration must populate records from actual evidence; copying a controlled fixture would fabricate approval and is forbidden.
+
+The source policy binds the operation bundle digest, all three exact a6 source digests, unchanged a5 digests, original window identities/hashes, maximum120-minute window policy, original150 cap, proposed138/162/163 counts, original export commands, immutable UTC13 basis, exact SQL digest,900-second run limit,45-second request limit,90-second ordinary reserve and45-second resolution reserve. The independent policy record must bind that policy file, the same three sources, operation digest, SQL digest and accounting. Neither record authorizes live execution.
+
+The direct human decision must record the real `questionItemId`, actual `decidedAt`, `approvalSource: direct-user-reply`, `approved: true`, and the exact reply `Approve the exact two-row runtime renewal and export a6 continuation`. It binds the policy/review hashes and exact operation bundle,120-minute maximum, proposed budget, paused schedules, and production/billing exclusions. A delegated technical decision, old V7 approval, prose approval, or boolean alone cannot pass. These JSON checks do not authenticate a human by themselves: the independent reviewer must verify the record against the actual direct human response and pin its file hash in the final review.
+
+The actual renewal record requires `kind: actual-two-row-runtime-expiry-renewal-readback`, actual/committed flags, actual `appliedAt` and `observedAt`, exactly two affected rows, the exact runtime ID and scope IDs, both original issued_at values and old expiries, both unchanged non-window hashes, both actual equal new expiries, and preservation evidence for paused jobs/counters/other values. It binds the human decision, source policy, and operation bundle. Its `controlCallAccounting` has exactly three successful receipt hashes, phases `preflight`, `two-row-expiry-write`, `readback`, ordinals136,137,138, zero retries and zero failed attempts. The cumulative accounting record binds this actual readback and one actual A10 refresh, and requires zero other calls after the saved134 basis.
+
+The per-run window is an immutable object with exactly `notBefore`, `edgeExpiresAt`, `scopeExpiresAt`, `privateExpiresAt` and `expiresAt`. Root derives it from the actual application/readback and fresh metadata. Both runtime expiry values must agree and be at most120 minutes after notBefore. `expiresAt` is the earliest of those two and private metadata. Metadata must have been created after the direct approval, be no more than120 minutes long, and not be future-dated. No default window, fixed old expiry, mutable module-global state, missing row or silently later deadline is accepted.
+
+`--preflight <finalReviewSha256>` is public-only. It verifies the exact frozen root, generated preparation, source/public hashes, direct decision/readback controls, final independent operation review, and actual adapter-after hash, then returns only `{passed, networkCalls:0, privateInputsRead:false, planSha256, finalReviewSha256}`. It returns before stdin, DPAPI/private-key access, intent creation, or network calls. Root's private adapter must call this mode before unsealing credentials. `--validate` checks the generated plan/profile only. `--execute` repeats preflight, requires the identical `exportWindow` in private input, rechecks public/source bytes after stdin and before unsealing/intent creation, and uses a new exclusive a6 intent.
+
+Remaining integration: finish and independently review the exact renewal SQL, source policy, adapter candidate and operation packet; obtain the exact direct human decision; execute only the bounded approved owner refresh and renewal sequence; record actual successful receipts and both expiry rows; construct/hash the real profile and generated plan inside the reviewed frozen snapshot; publish the independent final operation review; then execute once if every check passes. This agent has performed none of those runtime steps, copied no a6 file into the frozen snapshot, modified no adapter, and accepted no requirement.

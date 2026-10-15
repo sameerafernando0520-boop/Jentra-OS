@@ -1,0 +1,86 @@
+{
+  "kind": "additive-renewal-a3-source-repair",
+  "preparedAt": "2026-10-15T09:22:46.345Z",
+  "sourceOnly": true,
+  "executionPermitted": false,
+  "predecessors": [
+    {
+      "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-preflight-read-a1.sql",
+      "bytes": 5164,
+      "sha256": "6e58be0ba744340f8883fc9b59dc7443192df2f3dc282aca8d7ee8cdd0484e65"
+    },
+    {
+      "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-expiry-update-template-a2.sql",
+      "bytes": 14846,
+      "sha256": "f8eab2e077a83c9d60c6be8a068396df054064ba8f4b1c39c6adea16d7bf3724"
+    }
+  ],
+  "sources": [
+    {
+      "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-preflight-read-a3.sql",
+      "bytes": 7772,
+      "sha256": "546b3490cccecb4ae46740d4960dd64a919e35ba813261fefc17725d5afbae93"
+    },
+    {
+      "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-expiry-update-template-a3.sql",
+      "bytes": 20941,
+      "sha256": "ba2d17a9d47b64974d6086a16aaa25f3c04efbed60344ba18ba09fc8d543eeff"
+    }
+  ],
+  "financeBaseline": {
+    "journals": 9,
+    "lines": 18,
+    "publications": 3,
+    "classifications": 1,
+    "dateProposals": 3,
+    "dateDecisions": 3,
+    "scenarios": 0,
+    "exports": 0,
+    "processEvents": 7
+  },
+  "effectBaseline": {
+    "ticks": 0,
+    "outcomes": 0,
+    "quotaPeriods": 0,
+    "deliveryOutcomes": 0,
+    "receiverReceipts": 0,
+    "modelInvocations": 0,
+    "usageEvents": 0,
+    "modelOutcomes": 0
+  },
+  "changes": [
+    "Write transaction fixes UTC for unchanged non-window hash bindings.",
+    "Read returns no row in a non-UTC session.",
+    "Read projects finance/effect/billing evidence; write guards exact counters before and after two expiry updates.",
+    "Write returns actual server post-commit application observation after COMMIT; preflight remains expiry anchor."
+  ],
+  "contract": {
+    "readColumn": "renewal_snapshot",
+    "writeColumn": "renewal_application",
+    "writeFields": [
+      "runtimeId",
+      "appliedAt",
+      "expiresAt",
+      "affectedRows",
+      "applicationTimestampProvenance"
+    ],
+    "readAddedFields": [
+      "timeZone",
+      "financeCounters",
+      "effectCounters",
+      "billingWindow"
+    ],
+    "applicationTimestampMeaning": "Actual server observation after successful COMMIT; not exact row-update or commit timestamp."
+  },
+  "validation": {
+    "predecessorHashesVerified": true,
+    "approvalInputsRemainNull": true,
+    "exactExpiryUpdateStatements": 2,
+    "counterGuards": 2,
+    "readUtcFilter": true,
+    "databaseParsed": false,
+    "databaseExecuted": false,
+    "managementCalls": 0,
+    "privateInputRead": false
+  }
+}

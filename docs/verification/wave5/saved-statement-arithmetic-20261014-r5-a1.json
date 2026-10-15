@@ -1,0 +1,430 @@
+{
+  "kind": "offline-independent-saved-synthetic-statement-arithmetic-verification",
+  "verifiedAt": "2026-10-14T17:15:32.935Z",
+  "passed": true,
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "savedStatementAsOf": "2026-10-13",
+  "inputBindings": [
+    {
+      "path": "tools/wave5/verify_saved_statement_arithmetic_20261014_r5.mjs",
+      "bytes": 10305,
+      "sha256": "3b1964f07c605ba5565f5735f0d13dd58948c843e1c7a5363afde861db8c22e0"
+    },
+    {
+      "path": "tools/wave5/finance_cash_fixture_20261013_r5.mjs",
+      "bytes": 20620,
+      "sha256": "8d5e670368fd89a9e9a98f10aa4befc1f2bc4ed0b28de913aa89ee64766291f9"
+    },
+    {
+      "path": "build/wave5-approved-execution-20261013-r5-a2/tools/wave5/finance_cash_fixture_20261013_r5.mjs",
+      "bytes": 20620,
+      "sha256": "8d5e670368fd89a9e9a98f10aa4befc1f2bc4ed0b28de913aa89ee64766291f9"
+    },
+    {
+      "path": "build/wave5-approved-execution-20261013-r5-a2/docs/verification/wave5/genuine-finance-finance-20261013-r5-1791894738890/00-source-before.json",
+      "bytes": 786,
+      "sha256": "f40cc84d5c98a5858bc19f295ccf33957a07e9be50c5d2340a8b12ecea1d8175"
+    },
+    {
+      "path": "build/wave5-approved-execution-20261013-r5-a2/docs/verification/wave5/genuine-finance-finance-20261013-r5-1791894738890/statement-profit_loss.json",
+      "bytes": 1249,
+      "sha256": "288af4da9c6d99b04dd9bbb32012dd2523e68e19d72fa19fde7d5ca64fa1f62d"
+    },
+    {
+      "path": "build/wave5-approved-execution-20261013-r5-a2/docs/verification/wave5/genuine-finance-finance-20261013-r5-1791894738890/statement-balance_sheet.json",
+      "bytes": 1264,
+      "sha256": "d7fbe84b8d4ee62dd505394ce95927ab6a10de868d67e5a5df0df383374b6971"
+    },
+    {
+      "path": "build/wave5-approved-execution-20261013-r5-a2/docs/verification/wave5/genuine-finance-finance-20261013-r5-1791894738890/statement-trial_balance.json",
+      "bytes": 1224,
+      "sha256": "4760766652816587f6c1d925a6598256c9dcf4c84dc6af449600d8b63603ff87"
+    },
+    {
+      "path": "build/wave5-approved-execution-20261013-r5-a2/docs/verification/wave5/genuine-finance-finance-20261013-r5-1791894738890/ratios-and-classification.json",
+      "bytes": 3216,
+      "sha256": "c030a882ed507839cc753a6fd29870fea7b23529675579648b6a0ea270d78dda"
+    },
+    {
+      "path": "apps/jentra_desktop/lib/src/features/financial_statements/financial_statement_screen.dart",
+      "bytes": 20902,
+      "sha256": "2a879f8cc4448d526591fc7d0c4d4f6bae5ec28bfc7586b51f40a190120efdef"
+    }
+  ],
+  "arithmetic": "exact integer micro-units; no binary floating-point amounts",
+  "summaryFieldChecks": [
+    {
+      "kind": "profit_loss",
+      "field": "account_count",
+      "expected": 10,
+      "actual": 10,
+      "matched": true
+    },
+    {
+      "kind": "profit_loss",
+      "field": "journal_count",
+      "expected": 16,
+      "actual": 16,
+      "matched": true
+    },
+    {
+      "kind": "profit_loss",
+      "field": "period_debit",
+      "expected": "105219.000012",
+      "actual": "105219.000012",
+      "matched": true
+    },
+    {
+      "kind": "profit_loss",
+      "field": "period_credit",
+      "expected": "105219.000012",
+      "actual": "105219.000012",
+      "matched": true
+    },
+    {
+      "kind": "profit_loss",
+      "field": "closing_debit",
+      "expected": "105209.000008",
+      "actual": "105209.000008",
+      "matched": true
+    },
+    {
+      "kind": "profit_loss",
+      "field": "closing_credit",
+      "expected": "105209.000008",
+      "actual": "105209.000008",
+      "matched": true
+    },
+    {
+      "kind": "profit_loss",
+      "field": "difference",
+      "expected": "0.000000",
+      "actual": "0.000000",
+      "matched": true
+    },
+    {
+      "kind": "profit_loss",
+      "field": "revenue",
+      "expected": "3000.000001",
+      "actual": "3000.000001",
+      "matched": true
+    },
+    {
+      "kind": "profit_loss",
+      "field": "expenses",
+      "expected": "1212.000005",
+      "actual": "1212.000005",
+      "matched": true
+    },
+    {
+      "kind": "profit_loss",
+      "field": "net_profit",
+      "expected": "1787.999996",
+      "actual": "1787.999996",
+      "matched": true
+    },
+    {
+      "kind": "profit_loss",
+      "field": "assets",
+      "expected": null,
+      "actual": null,
+      "matched": true
+    },
+    {
+      "kind": "profit_loss",
+      "field": "liabilities",
+      "expected": null,
+      "actual": null,
+      "matched": true
+    },
+    {
+      "kind": "profit_loss",
+      "field": "equity",
+      "expected": null,
+      "actual": null,
+      "matched": true
+    },
+    {
+      "kind": "profit_loss",
+      "field": "current_earnings",
+      "expected": null,
+      "actual": null,
+      "matched": true
+    },
+    {
+      "kind": "balance_sheet",
+      "field": "account_count",
+      "expected": 10,
+      "actual": 10,
+      "matched": true
+    },
+    {
+      "kind": "balance_sheet",
+      "field": "journal_count",
+      "expected": 16,
+      "actual": 16,
+      "matched": true
+    },
+    {
+      "kind": "balance_sheet",
+      "field": "period_debit",
+      "expected": "105219.000012",
+      "actual": "105219.000012",
+      "matched": true
+    },
+    {
+      "kind": "balance_sheet",
+      "field": "period_credit",
+      "expected": "105219.000012",
+      "actual": "105219.000012",
+      "matched": true
+    },
+    {
+      "kind": "balance_sheet",
+      "field": "closing_debit",
+      "expected": "105209.000008",
+      "actual": "105209.000008",
+      "matched": true
+    },
+    {
+      "kind": "balance_sheet",
+      "field": "closing_credit",
+      "expected": "105209.000008",
+      "actual": "105209.000008",
+      "matched": true
+    },
+    {
+      "kind": "balance_sheet",
+      "field": "difference",
+      "expected": "0.000000",
+      "actual": "0.000000",
+      "matched": true
+    },
+    {
+      "kind": "balance_sheet",
+      "field": "revenue",
+      "expected": null,
+      "actual": null,
+      "matched": true
+    },
+    {
+      "kind": "balance_sheet",
+      "field": "expenses",
+      "expected": null,
+      "actual": null,
+      "matched": true
+    },
+    {
+      "kind": "balance_sheet",
+      "field": "net_profit",
+      "expected": null,
+      "actual": null,
+      "matched": true
+    },
+    {
+      "kind": "balance_sheet",
+      "field": "assets",
+      "expected": "103997.000003",
+      "actual": "103997.000003",
+      "matched": true
+    },
+    {
+      "kind": "balance_sheet",
+      "field": "liabilities",
+      "expected": "1209.000005",
+      "actual": "1209.000005",
+      "matched": true
+    },
+    {
+      "kind": "balance_sheet",
+      "field": "equity",
+      "expected": "101000.000002",
+      "actual": "101000.000002",
+      "matched": true
+    },
+    {
+      "kind": "balance_sheet",
+      "field": "current_earnings",
+      "expected": "1787.999996",
+      "actual": "1787.999996",
+      "matched": true
+    },
+    {
+      "kind": "trial_balance",
+      "field": "account_count",
+      "expected": 10,
+      "actual": 10,
+      "matched": true
+    },
+    {
+      "kind": "trial_balance",
+      "field": "journal_count",
+      "expected": 16,
+      "actual": 16,
+      "matched": true
+    },
+    {
+      "kind": "trial_balance",
+      "field": "period_debit",
+      "expected": "105219.000012",
+      "actual": "105219.000012",
+      "matched": true
+    },
+    {
+      "kind": "trial_balance",
+      "field": "period_credit",
+      "expected": "105219.000012",
+      "actual": "105219.000012",
+      "matched": true
+    },
+    {
+      "kind": "trial_balance",
+      "field": "closing_debit",
+      "expected": "105209.000008",
+      "actual": "105209.000008",
+      "matched": true
+    },
+    {
+      "kind": "trial_balance",
+      "field": "closing_credit",
+      "expected": "105209.000008",
+      "actual": "105209.000008",
+      "matched": true
+    },
+    {
+      "kind": "trial_balance",
+      "field": "difference",
+      "expected": "0.000000",
+      "actual": "0.000000",
+      "matched": true
+    },
+    {
+      "kind": "trial_balance",
+      "field": "revenue",
+      "expected": null,
+      "actual": null,
+      "matched": true
+    },
+    {
+      "kind": "trial_balance",
+      "field": "expenses",
+      "expected": null,
+      "actual": null,
+      "matched": true
+    },
+    {
+      "kind": "trial_balance",
+      "field": "net_profit",
+      "expected": null,
+      "actual": null,
+      "matched": true
+    },
+    {
+      "kind": "trial_balance",
+      "field": "assets",
+      "expected": null,
+      "actual": null,
+      "matched": true
+    },
+    {
+      "kind": "trial_balance",
+      "field": "liabilities",
+      "expected": null,
+      "actual": null,
+      "matched": true
+    },
+    {
+      "kind": "trial_balance",
+      "field": "equity",
+      "expected": null,
+      "actual": null,
+      "matched": true
+    },
+    {
+      "kind": "trial_balance",
+      "field": "current_earnings",
+      "expected": null,
+      "actual": null,
+      "matched": true
+    }
+  ],
+  "summaryFieldCheckCount": 42,
+  "ratioChecks": [
+    {
+      "name": "quick_ratio",
+      "numerator": "102997.000002",
+      "denominator": "1209.000005",
+      "exactValue": "85.191894",
+      "matched": true
+    },
+    {
+      "name": "current_ratio",
+      "numerator": "103997.000003",
+      "denominator": "1209.000005",
+      "exactValue": "86.019024",
+      "matched": true
+    },
+    {
+      "name": "assets_to_equity",
+      "numerator": "103997.000003",
+      "denominator": "102787.999998",
+      "exactValue": "1.011762",
+      "matched": true
+    },
+    {
+      "name": "net_profit_margin",
+      "numerator": "1787.999996",
+      "denominator": "3000.000001",
+      "exactValue": "0.596000",
+      "matched": true
+    },
+    {
+      "name": "gross_profit_margin",
+      "numerator": "1799.999999",
+      "denominator": "3000.000001",
+      "exactValue": "0.600000",
+      "matched": true
+    },
+    {
+      "name": "liabilities_to_assets",
+      "numerator": "1209.000005",
+      "denominator": "103997.000003",
+      "exactValue": "0.011625",
+      "matched": true
+    }
+  ],
+  "ratioInputAndResultCheckCount": 6,
+  "cutoff": {
+    "fixtureJournals": 9,
+    "includedJournals": 8,
+    "sourceLines": 16,
+    "excludedFutureJournal": "905e182c-3a5e-75f0-1f11-786cb48a103e",
+    "nextDayControlOnly": {
+      "date": "2026-10-14",
+      "includedJournals": 9,
+      "bankIncrease": "3.000000",
+      "payrollLiabilityIncrease": "3.000000",
+      "actualNextDayReportQueried": false
+    }
+  },
+  "journalCountSemantics": "The stored journal_count is the source-line count. Existing UI explicitly labels it journal lines/source lines; 16 is correct for 8 two-line journals.",
+  "limitations": {
+    "source": "Reviewed administrative fixture amounts and saved genuine response summaries, not new live ledger rows.",
+    "canonicalFullStatementBodiesAvailable": false,
+    "fullCanonicalBodyReproduction": false,
+    "actualUserJournalPosting": false,
+    "operationalPayrollApproval": false,
+    "newLiveDatabaseVerification": false,
+    "newRequirementAcceptance": false,
+    "authenticatedNative": false,
+    "production": false,
+    "realBilling": false
+  },
+  "actions": {
+    "networkCalls": 0,
+    "liveSql": 0,
+    "privateInputs": 0,
+    "existingFilesChanged": 0,
+    "SDKJobs": 0
+  }
+}

@@ -1,0 +1,29 @@
+✖ docs\verification\wave5\task3-export-renewal-20261014\finance_exports_20261014_r5_a6.test.mjs (6.7124ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18.3644
+
+✖ failing tests:
+
+test at docs\verification\wave5\task3-export-renewal-20261014\finance_exports_20261014_r5_a6.test.mjs:1:1
+✖ docs\verification\wave5\task3-export-renewal-20261014\finance_exports_20261014_r5_a6.test.mjs (6.7124ms)
+  Error: spawn EPERM
+      at ChildProcess.spawn (node:internal/child_process:421:11)
+      at spawn (node:child_process:796:9)
+      at TestContext.<anonymous> (node:internal/test_runner/runner:398:19)
+      at FileTest.runInAsyncScope (node:async_hooks:214:14)
+      at FileTest.run (node:internal/test_runner/test:1106:25)
+      at FileTest.start (node:internal/test_runner/test:1003:17)
+      at runTestFile (node:internal/test_runner/runner:477:32)
+      at node:internal/test_runner/runner:769:25
+      at node:internal/per_context/primordials:559:37
+      at new Promise (<anonymous>) {
+    errno: -4048,
+    code: 'EPERM',
+    syscall: 'spawn'
+  }

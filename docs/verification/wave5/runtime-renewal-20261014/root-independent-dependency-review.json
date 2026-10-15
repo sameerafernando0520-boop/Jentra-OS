@@ -1,0 +1,793 @@
+{
+  "kind": "root-independent-runtime-expiry-dependency-review",
+  "reviewer": "/root/independent_review",
+  "reviewedAt": "2026-10-15T06:09:19.843410+00:00",
+  "clientDateContext": "2026-10-15",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "conclusion": "Saved dependency facts and provisional arithmetic verified. No renewal or export execution authorization; proposal findings and additive-source review remain open.",
+  "actualObservation": {
+    "binding": {
+      "path": "docs/verification/wave5/runtime-expiry-dependency-readonly-20261014-r5-a1.json",
+      "sha256": "0dc87893b6635d3ef4fb64c724e6aab2a42dd89d9d07ffc42251105f7c3141dc",
+      "bytes": 16994
+    },
+    "observedAt": "2026-10-14T11:43:59.499017+00:00",
+    "rawConnectorSnapshotProjectionExact": true,
+    "migrations": 115,
+    "apiFunctions": 363
+  },
+  "expiredRows": {
+    "authority": {
+      "jobIds": [
+        4,
+        5,
+        6
+      ],
+      "enabled": true,
+      "issuedAt": "2026-10-13T09:57:07.481942+00:00",
+      "expiresAt": "2026-10-14T09:57:07.481942+00:00",
+      "runtimeId": "778237e3-3d4e-4871-8cc9-e08b07b989c7",
+      "unexpired": false,
+      "nonWindowHash": "77cac80be8b4bccfad6c4a56fe14c52b03171e5524a46fe7a55ee4c958d90139",
+      "publicKeySha256": "e3ea9ff3f18e6bb24be674430cc494a31c4cd7d92482367b60383b5aedd6fa9d",
+      "scheduleSecretId": "ca78c81f-eb06-4d57-9d0f-52d5f78fa021"
+    },
+    "workerScopeAggregate": {
+      "count": 1,
+      "enabled": 1,
+      "issuedMax": "2026-10-13T08:13:04.144135+00:00",
+      "issuedMin": "2026-10-13T08:13:04.144135+00:00",
+      "unexpired": 0,
+      "expiresMax": "2026-10-14T08:13:04.144135+00:00",
+      "expiresMin": "2026-10-14T08:13:04.144135+00:00",
+      "nonWindowHash": "3119068e9ab1628e43855122d6e1ad8c2f89811561c15f2ec22d27336db2a387"
+    },
+    "edgeOnlyRenewalInsufficient": true,
+    "earliestOriginalExpiry": "2026-10-14T08:13:04.144135+00:00",
+    "declaredScopeTuple": {
+      "tenantId": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "legalEntityId": "caa2bb06-219a-47e9-8132-66d1271b0ffd",
+      "branchId": "3813692c-f0de-4c69-8e34-d56cf54695b1"
+    },
+    "exactScopeTupleStillRequiresFreshIndividualRowPreflight": true,
+    "countExactlyOneAtSavedObservation": true
+  },
+  "subscriptionWindows": {
+    "count": 1,
+    "trialCount": 1,
+    "trialEndsMax": "2026-10-20T08:13:04.144135+00:00",
+    "trialEndsMin": "2026-10-20T08:13:04.144135+00:00",
+    "periodEndsMax": null,
+    "periodEndsMin": null
+  },
+  "operatorAuthorityWindows": [],
+  "jobs": [
+    {
+      "name": "jentra-w5-20261009-delivery",
+      "jobId": 4,
+      "active": false,
+      "command": "select intelligence_control.edge_schedule_tick('delivery');",
+      "schedule": "* * * * *"
+    },
+    {
+      "name": "jentra-w5-20261009-subscription",
+      "jobId": 5,
+      "active": false,
+      "command": "select intelligence_control.edge_schedule_tick('subscription');",
+      "schedule": "* * * * *"
+    },
+    {
+      "name": "jentra-w5-20261009-health",
+      "jobId": 6,
+      "active": false,
+      "command": "select intelligence_control.edge_schedule_tick('health');",
+      "schedule": "* * * * *"
+    }
+  ],
+  "outsideJobHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+  "ownTicks": {
+    "count": 0,
+    "running": 0
+  },
+  "keyReferencesMetadataOnly": [
+    {
+      "ref": "w5/runtime/20261008/delivery/v1",
+      "secretId": "2265a75b-8e27-4094-840e-9a68b1801872"
+    },
+    {
+      "ref": "w5/runtime/20261008/delivery/v2",
+      "secretId": "394d3fe9-af6a-4f0d-9079-a436591f59aa"
+    }
+  ],
+  "installedFunctionBindings": [
+    {
+      "oid": "2913664",
+      "grants": [
+        "postgres=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "identity": "api.wave5_edge_control(uuid,text,jsonb)",
+      "bodySha256": "91850c1686eb52b997564568b536747f563163e80d358d04874d1c1283e4d015",
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "securityDefiner": true,
+      "definitionSha256": "7659bb6645b41ac50957f978604879d72d52202c347f8318caa5c4a04b516dfc",
+      "localMigrationSource": "supabase/migrations/20261009120000_wave5_supabase_runtime.sql",
+      "exactLocalBodyMatchesObservedInstalledBody": true
+    },
+    {
+      "oid": "2913561",
+      "grants": [
+        "postgres=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "identity": "api.wave5_runtime_delivery_worker(uuid,text,jsonb)",
+      "bodySha256": "7fe0c609f81e5ee942517ac5b7370c3a1ef1232a700e2a95c63d9aa425a482e3",
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "securityDefiner": true,
+      "definitionSha256": "576f78698fb51b6d49ca0c0d6b6f2e43f1a91a189c77439de957fea35fc2c501",
+      "localMigrationSource": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "exactLocalBodyMatchesObservedInstalledBody": true
+    },
+    {
+      "oid": "2913565",
+      "grants": [
+        "postgres=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "identity": "api.wave5_runtime_worker(uuid,text,jsonb)",
+      "bodySha256": "3ae1ff01c51e655b442c307ac64752dabd8e45e4c0f5168ed7ef5a3e8c7f1550",
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "securityDefiner": true,
+      "definitionSha256": "174ef338fa9cd5ccba2189ac2b3b858a6c65f274917ea0768a3dc57d33a684d0",
+      "localMigrationSource": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "exactLocalBodyMatchesObservedInstalledBody": true
+    },
+    {
+      "oid": "2913766",
+      "grants": [
+        "postgres=X/postgres"
+      ],
+      "identity": "intelligence_control.edge_schedule_tick(text)",
+      "bodySha256": "8fecbd2673c72f0a28b16d5a2a272e017f15647899e65306968acaac0fd519ff",
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "securityDefiner": true,
+      "definitionSha256": "c330d3cc533e3b2e0ca08997089463ca24371a5d267c70f74da1b4793ee5eea4",
+      "localMigrationSource": "supabase/migrations/20261009123000_wave5_supabase_schedule.sql",
+      "exactLocalBodyMatchesObservedInstalledBody": true
+    },
+    {
+      "oid": "2913535",
+      "grants": [
+        "postgres=X/postgres"
+      ],
+      "identity": "intelligence_control.runtime_scope_allowed(uuid,uuid,uuid,uuid)",
+      "bodySha256": "52d09fa523f6766e5cea3ab3e591ee581840be5779a745d90b0efc3905cefb7a",
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "securityDefiner": true,
+      "definitionSha256": "04dd1c054f35e24ebc62c205b8672392f656745d5e2b52c4f4ab4bd19c67adb9",
+      "localMigrationSource": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "exactLocalBodyMatchesObservedInstalledBody": true
+    },
+    {
+      "oid": "2913536",
+      "grants": [
+        "postgres=X/postgres"
+      ],
+      "identity": "intelligence_control.runtime_tenant_allowed(uuid,uuid)",
+      "bodySha256": "6e60d0231efc0fc2afcfb75b845338385dd3a21e088564dd7ddf36c6350090af",
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "securityDefiner": true,
+      "definitionSha256": "50e7a58ed44e041ee6bdf18254e17ff3ca4259c5de03f2ce10ee880968250280",
+      "localMigrationSource": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "exactLocalBodyMatchesObservedInstalledBody": true
+    },
+    {
+      "oid": "2913537",
+      "grants": [
+        "postgres=X/postgres"
+      ],
+      "identity": "intelligence_control.runtime_worker_required(uuid)",
+      "bodySha256": "dab2dfd59274c75b93c951668febfd6e080b00db41ca88f491d6e38f45136f6b",
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "securityDefiner": true,
+      "definitionSha256": "a2e98ffe2a5d5e8ca2d3dc37af67a6065e9b6f50c8bb6627a6bcb6fcfa885b12",
+      "localMigrationSource": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "exactLocalBodyMatchesObservedInstalledBody": true
+    }
+  ],
+  "guardImplications": [
+    "runtime_scope_allowed requires matching runtime/tenant/entity/branch, active branch, enabled scope, issued_at<=statement_timestamp and expires_at>statement_timestamp.",
+    "runtime_worker_required requires worker authority and at least one allowed runtime scope. Edge control calls it before checking its separate enabled/unexpired Edge authority.",
+    "edge_schedule_tick on expired authority OR invalid runtime scope unschedules only recorded own jobs with exact reviewed names and disables the Edge authority.",
+    "The three API RPC ACLs permit postgres/service_role; four internal functions permit postgres only. All seven captured bodies exactly match local migration bodies, are security definer and set empty search_path.",
+    "Catalogue grants and an unsigned403 do not establish actual deployed service credential role/validity. Existing trial through October20 does not bypass worker scope expiry."
+  ],
+  "credentialProof": {
+    "unsignedV7Probe": {
+      "kind": "independent-actual-worker-v7-unsigned-probe-result-review",
+      "reviewedAt": "2026-10-14T07:01:40.723Z",
+      "projectId": "xpdoufauvrbdmxgngetv",
+      "deployedVersion": 7,
+      "returnedSourceRowsVerified": 25,
+      "actualUnsignedProbePassed": true,
+      "serverRequestUuid": "01a13935-b70f-73e2-b419-1efecfb5da65",
+      "status": 403,
+      "code": "WORKER_ACCESS_DENIED",
+      "actualRequests": 1,
+      "previous503InitializationFailureResolvedAtUnsignedIngress": true,
+      "backendServiceKeyRoleOrValidityVerified": false,
+      "schedulesRemainPaused": true,
+      "scheduleResumeAuthorized": false,
+      "actualDelivery": false,
+      "actualTrustedModelUsage": false,
+      "authenticatedNative": false,
+      "targetScaleLoad": false,
+      "productionReleaseReady": false,
+      "reviewerNetworkRequests": 0,
+      "evidence": [
+        {
+          "path": "docs/verification/wave5/task3-completion-20261013/worker-v7-independent-deployment-and-probe-review-20261014.json",
+          "bytes": 13647,
+          "sha256": "d15f3a3941175dcd258b252069c881badb0f8670d1f3b07b3669d3257bc0220f"
+        },
+        {
+          "path": "docs/verification/wave5/worker-v7-provider-fixed-unauthenticated-probe-20261014-r5.json",
+          "bytes": 993,
+          "sha256": "e6342c931a9bc82caf15e70a74057bc0290d7670fd81565c1fb243eabaef00ab"
+        }
+      ]
+    },
+    "privateKeyReadByReviewer": false,
+    "backendServiceKeyRoleOrValidityVerifiedByReviewer": false,
+    "actualFreshSignedBackendProofRequired": true
+  },
+  "frozenA5": {
+    "source": {
+      "path": "tools/wave5/finance_exports_20261014_r5_a5.mjs",
+      "sha256": "ab9ec8c1a97a0a009081e5aba58db1359fd6d5df3a3d0ce2680bf4c43f50a544",
+      "bytes": 50820
+    },
+    "fixedExpiry": "2026-10-14T09:57:07.481942Z",
+    "fixedExportDay": "2026-10-14",
+    "fixedPrior": 132,
+    "fixedLimit": 157,
+    "rootAndSnapshotCopies": [
+      {
+        "path": "tools/wave5/finance_exports_20261014_r5_a5.mjs",
+        "bytes": 50820,
+        "sha256": "ab9ec8c1a97a0a009081e5aba58db1359fd6d5df3a3d0ce2680bf4c43f50a544",
+        "snapshotPath": "build/wave5-approved-execution-20261013-r5-a2/tools/wave5/finance_exports_20261014_r5_a5.mjs",
+        "rootAndSnapshotExact": true
+      },
+      {
+        "path": "tools/wave5/prepare_finance_exports_20261014_r5_a5.mjs",
+        "bytes": 5797,
+        "sha256": "030c44b84a8c5073c6c2157352fd70783c232ee256befda6ec28e9b6a723cd32",
+        "snapshotPath": "build/wave5-approved-execution-20261013-r5-a2/tools/wave5/prepare_finance_exports_20261014_r5_a5.mjs",
+        "rootAndSnapshotExact": true
+      },
+      {
+        "path": "docs/verification/wave5/task3-export-continuation-20261014/finance_exports_20261014_r5_a5.test.mjs",
+        "bytes": 31586,
+        "sha256": "fedd5d9c86d767508bc9e214225316f457ac3b24dce1e1359a581448c998a351",
+        "snapshotPath": "build/wave5-approved-execution-20261013-r5-a2/docs/verification/wave5/task3-export-continuation-20261014/finance_exports_20261014_r5_a5.test.mjs",
+        "rootAndSnapshotExact": true
+      }
+    ],
+    "latestRootControlledProof": {
+      "path": "docs/verification/wave5/finance-exports-root-controlled-verification-20261014-r5-a6.json",
+      "sha256": "2c248d90cebc7ab2e8dcbd8fc4715514b5e5d7b18f72621bdcefd905ca5d5f36",
+      "bytes": 1926
+    },
+    "latestRootControlledCounts": {
+      "tests": 54,
+      "passed": 54,
+      "failed": 0,
+      "skipped": 0
+    },
+    "historicalIndependentProof": {
+      "path": "docs/verification/wave5/task3-export-source-independent-20261014/independent-source-review-a1.json",
+      "sha256": "1223b1efdd7b85d73742f2f6aa5f4192d90907b6bbd6e45bd20d567649a0dd9d",
+      "bytes": 12474
+    },
+    "historicalIndependentPassingChecks": 64,
+    "existingSourceCannotBeEnabledBySqlRenewalAlone": true,
+    "a6SourceReviewPending": true,
+    "a6ActualExecutionNotAuthorized": true
+  },
+  "scheduler": {
+    "currentCapturedBinding": {
+      "path": "tools/wave5/resume_worker_schedules_20261014_r5_v7.mjs",
+      "sha256": "7e4c409cdc4f4ed7435751ce108b5a268672e0efee78be79ec53d8641ab986ba",
+      "bytes": 39411
+    },
+    "historicalCapturedBindingAtEarlierReview": {
+      "sha256": "de6d01128fa19939d12117eb9dabd18207faf8325392d1c230553480318686f4",
+      "bytes": 30653
+    },
+    "currentFileStillPinsOriginalIssuedAndExpiry": true,
+    "currentSqlHas24HourFromOriginalIssuedCeiling": true,
+    "notClaimedPreservedOrIndependentlyApprovedAtCurrentHash": true,
+    "wholeRuntimeRequestCap": 4320,
+    "old404RequestsRemainCharged": 24,
+    "anyManualHealthAlsoConsumesWorkerCap": true,
+    "renewalCannotResetIssuedAtOrRequestCounters": true
+  },
+  "provisionalBudget": {
+    "actualChargedBaseline": 134,
+    "actualBaselineBinding": {
+      "path": "docs/verification/wave5/runtime-expiry-dependency-readonly-20261014-r5-a1.json",
+      "sha256": "0dc87893b6635d3ef4fb64c724e6aab2a42dd89d9d07ffc42251105f7c3141dc",
+      "bytes": 16994
+    },
+    "futureOwnerReadinessGet": 1,
+    "futureRenewalControlAttempts": 3,
+    "conditionalPriorAtExports": 138,
+    "ordinaryExports": 24,
+    "ordinaryCumulativeMaximum": 162,
+    "conditionalReadOnlyResolutionReserve": 1,
+    "conditionalExportsCeiling": 163,
+    "signedHealthManagementMaximum": 5,
+    "separateScheduleManagementMaximum": 3,
+    "conditionalOverallCeiling": 171,
+    "arithmetic": "134+1+3=138;138+24+1=163;163+5+3=171",
+    "fourActualPreExportAttemptsMustBeProven": true,
+    "futureCallsObserved": false,
+    "ceilingsApprovedByThisReview": false,
+    "extraOrDifferentCallsRequireNewReview": true,
+    "historicalCeilingsPreserved": [
+      150,
+      156,
+      157,
+      159,
+      160
+    ]
+  },
+  "renewalProposalReview": {
+    "proposal": {
+      "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-proposal-a1.json",
+      "sha256": "df7c308396bd40651ce689b0715268f3dfe767b1e6dd8917556370fb64ff990d",
+      "bytes": 17408
+    },
+    "manifest": {
+      "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-packet-manifest-a1.json",
+      "sha256": "5654c8e04b008c34bf809b78f1f477909a2dce59a649daf92f4d148a283f85b0",
+      "bytes": 6471
+    },
+    "packetDependencyChecks": [
+      {
+        "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-preflight-read-a1.sql",
+        "expectedSha256": "6e58be0ba744340f8883fc9b59dc7443192df2f3dc282aca8d7ee8cdd0484e65",
+        "actualSha256": "6e58be0ba744340f8883fc9b59dc7443192df2f3dc282aca8d7ee8cdd0484e65",
+        "expectedBytes": 5164,
+        "actualBytes": 5164,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-expiry-update-template-a1.sql",
+        "expectedSha256": "dc5cfd525be7ceac7a4d34114ef09609555156944ca1170520f5f3eb89151e27",
+        "actualSha256": "dc5cfd525be7ceac7a4d34114ef09609555156944ca1170520f5f3eb89151e27",
+        "expectedBytes": 12760,
+        "actualBytes": 12760,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-call-inventory-a1.json",
+        "expectedSha256": "01e9124e5517617c7d44cd269644b58c4c30e3c78deb5b47520f85e7a2bc0136",
+        "actualSha256": "01e9124e5517617c7d44cd269644b58c4c30e3c78deb5b47520f85e7a2bc0136",
+        "expectedBytes": 3742,
+        "actualBytes": 3742,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-proposal-a1.json",
+        "expectedSha256": "df7c308396bd40651ce689b0715268f3dfe767b1e6dd8917556370fb64ff990d",
+        "actualSha256": "df7c308396bd40651ce689b0715268f3dfe767b1e6dd8917556370fb64ff990d",
+        "expectedBytes": 17408,
+        "actualBytes": 17408,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-proposal-a1.md",
+        "expectedSha256": "e14d515eff2f601fa84a5fbea1a98109976a8b4a1421d3865ca853216f63ab37",
+        "actualSha256": "e14d515eff2f601fa84a5fbea1a98109976a8b4a1421d3865ca853216f63ab37",
+        "expectedBytes": 8173,
+        "actualBytes": 8173,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/task3-runtime-renewal-20261014/local-validation-a1.json",
+        "expectedSha256": "0c98805a3ccd97e3ebab5337a54a0bbaf95cb08371e883e4a54ac6b98fa34708",
+        "actualSha256": "0c98805a3ccd97e3ebab5337a54a0bbaf95cb08371e883e4a54ac6b98fa34708",
+        "expectedBytes": 1382,
+        "actualBytes": 1382,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/runtime-global-readonly-snapshot-20261014-r5-a8.json",
+        "expectedSha256": "2c88a2610f211532be235a34cd38748b389eb3d0276b25393838002b5cf13a44",
+        "actualSha256": "2c88a2610f211532be235a34cd38748b389eb3d0276b25393838002b5cf13a44",
+        "expectedBytes": 3320,
+        "actualBytes": 3320,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/runtime-global-readonly-snapshot-20261014-r5-a9.json",
+        "expectedSha256": "4345c3d2fd850dc0ef49d4465487ed31c40d41f36fabfd06f41d4bbde660f8e3",
+        "actualSha256": "4345c3d2fd850dc0ef49d4465487ed31c40d41f36fabfd06f41d4bbde660f8e3",
+        "expectedBytes": 5147,
+        "actualBytes": 5147,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/runtime-expiry-dependency-readonly-20261014-r5-a1.json",
+        "expectedSha256": "0dc87893b6635d3ef4fb64c724e6aab2a42dd89d9d07ffc42251105f7c3141dc",
+        "actualSha256": "0dc87893b6635d3ef4fb64c724e6aab2a42dd89d9d07ffc42251105f7c3141dc",
+        "expectedBytes": 16994,
+        "actualBytes": 16994,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/task3-completion-20261013/worker-v7-independent-actual-probe-result-20261014.json",
+        "expectedSha256": "25297e420e7ac1fa62b2fef2e6b4e678a3ff13d7dd8fd59b6fadab2d46f8e236",
+        "actualSha256": "25297e420e7ac1fa62b2fef2e6b4e678a3ff13d7dd8fd59b6fadab2d46f8e236",
+        "expectedBytes": 1262,
+        "actualBytes": 1262,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/task3-completion-20261013/worker-v7-independent-deployment-and-probe-review-20261014.json",
+        "expectedSha256": "d15f3a3941175dcd258b252069c881badb0f8670d1f3b07b3669d3257bc0220f",
+        "actualSha256": "d15f3a3941175dcd258b252069c881badb0f8670d1f3b07b3669d3257bc0220f",
+        "expectedBytes": 13647,
+        "actualBytes": 13647,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/worker-v7-provider-deployment-source-verification-20261014-r5-a2.json",
+        "expectedSha256": "9deaf816923888e44b7b35fa0b961b2915f3ce7c6df41df5b184a3391adfa9e6",
+        "actualSha256": "9deaf816923888e44b7b35fa0b961b2915f3ce7c6df41df5b184a3391adfa9e6",
+        "expectedBytes": 13509,
+        "actualBytes": 13509,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/runtime-owner-decision-20261012-r5.json",
+        "expectedSha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab",
+        "actualSha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab",
+        "expectedBytes": 2756,
+        "actualBytes": 2756,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/task3-completion-20261013/export-continuation-technical-decision-20261014-a1.json",
+        "expectedSha256": "90b0d2c6767b983308bb4d8258583da26bd03b746941daac6fd1737d703bebee",
+        "actualSha256": "90b0d2c6767b983308bb4d8258583da26bd03b746941daac6fd1737d703bebee",
+        "expectedBytes": 18329,
+        "actualBytes": 18329,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/task3-completion-20261013/export-continuation-technical-decision-20261014-a2.json",
+        "expectedSha256": "493f4e266bf1c427f4830a224f712f8869df22734855d6359e28a5547bd555d1",
+        "actualSha256": "493f4e266bf1c427f4830a224f712f8869df22734855d6359e28a5547bd555d1",
+        "expectedBytes": 21081,
+        "actualBytes": 21081,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/task3-export-source-independent-20261014/independent-source-review-a1.json",
+        "expectedSha256": "1223b1efdd7b85d73742f2f6aa5f4192d90907b6bbd6e45bd20d567649a0dd9d",
+        "actualSha256": "1223b1efdd7b85d73742f2f6aa5f4192d90907b6bbd6e45bd20d567649a0dd9d",
+        "expectedBytes": 12474,
+        "actualBytes": 12474,
+        "matches": true
+      },
+      {
+        "path": "tools/wave5/finance_exports_20261014_r5_a5.mjs",
+        "expectedSha256": "ab9ec8c1a97a0a009081e5aba58db1359fd6d5df3a3d0ce2680bf4c43f50a544",
+        "actualSha256": "ab9ec8c1a97a0a009081e5aba58db1359fd6d5df3a3d0ce2680bf4c43f50a544",
+        "expectedBytes": 50820,
+        "actualBytes": 50820,
+        "matches": true
+      },
+      {
+        "path": "tools/wave5/prepare_finance_exports_20261014_r5_a5.mjs",
+        "expectedSha256": "030c44b84a8c5073c6c2157352fd70783c232ee256befda6ec28e9b6a723cd32",
+        "actualSha256": "030c44b84a8c5073c6c2157352fd70783c232ee256befda6ec28e9b6a723cd32",
+        "expectedBytes": 5797,
+        "actualBytes": 5797,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/task3-export-continuation-20261014/finance_exports_20261014_r5_a5.test.mjs",
+        "expectedSha256": "fedd5d9c86d767508bc9e214225316f457ac3b24dce1e1359a581448c998a351",
+        "actualSha256": "fedd5d9c86d767508bc9e214225316f457ac3b24dce1e1359a581448c998a351",
+        "expectedBytes": 31586,
+        "actualBytes": 31586,
+        "matches": true
+      },
+      {
+        "path": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+        "expectedSha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc",
+        "actualSha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc",
+        "expectedBytes": 18114,
+        "actualBytes": 18114,
+        "matches": true
+      },
+      {
+        "path": "supabase/migrations/20261009120000_wave5_supabase_runtime.sql",
+        "expectedSha256": "9ceb592be38ebb6cff35b54e1d09c63d7e700cd95f8b52f3725966ea1d677164",
+        "actualSha256": "9ceb592be38ebb6cff35b54e1d09c63d7e700cd95f8b52f3725966ea1d677164",
+        "expectedBytes": 12842,
+        "actualBytes": 12842,
+        "matches": true
+      },
+      {
+        "path": "supabase/migrations/20261009123000_wave5_supabase_schedule.sql",
+        "expectedSha256": "4a7a6404ca74f89f165802781782d9ddada1a9c776ac496690aee1609749ccbf",
+        "actualSha256": "4a7a6404ca74f89f165802781782d9ddada1a9c776ac496690aee1609749ccbf",
+        "expectedBytes": 2202,
+        "actualBytes": 2202,
+        "matches": true
+      },
+      {
+        "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+        "expectedSha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e",
+        "actualSha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e",
+        "expectedBytes": 14205,
+        "actualBytes": 14205,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
+        "expectedSha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5",
+        "actualSha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5",
+        "expectedBytes": 115108,
+        "actualBytes": 115108,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/supabase-runtime-setup-20261009.sql",
+        "expectedSha256": "c2ae865c9bae23be94dec512dd15645a85c9a7a82b4edbd32fbccf92a7462e41",
+        "actualSha256": "c2ae865c9bae23be94dec512dd15645a85c9a7a82b4edbd32fbccf92a7462e41",
+        "expectedBytes": 3408,
+        "actualBytes": 3408,
+        "matches": true
+      },
+      {
+        "path": "tools/wave5/resume_worker_schedules_20261014_r5_v7.mjs",
+        "expectedSha256": "cb0ba93deb908935c89e0f9124481ecb26a4138c998db955b935950fb8c8d306",
+        "actualSha256": "7e4c409cdc4f4ed7435751ce108b5a268672e0efee78be79ec53d8641ab986ba",
+        "expectedBytes": 36432,
+        "actualBytes": 39411,
+        "matches": false
+      },
+      {
+        "path": "workers/wave5/edge_runtime_20261014_r5_v7.mjs",
+        "expectedSha256": "bf772c3a77f5f050c98dfb0e4e61de63235aa42b4618451f9dc69a5e24697cd8",
+        "actualSha256": "bf772c3a77f5f050c98dfb0e4e61de63235aa42b4618451f9dc69a5e24697cd8",
+        "expectedBytes": 7004,
+        "actualBytes": 7004,
+        "matches": true
+      },
+      {
+        "path": "workers/wave5/edge_configuration.mjs",
+        "expectedSha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13",
+        "actualSha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13",
+        "expectedBytes": 1072,
+        "actualBytes": 1072,
+        "matches": true
+      },
+      {
+        "path": "docs/verification/wave5/task3-runtime-renewal-20261014/prepare-renewal-packet-a1.mjs",
+        "expectedSha256": "ab4b6e187cd66044d01a0bf36d891a15b0b2cdaa843e1dfa7b7d49628464c6fb",
+        "actualSha256": "ab4b6e187cd66044d01a0bf36d891a15b0b2cdaa843e1dfa7b7d49628464c6fb",
+        "expectedBytes": 32223,
+        "actualBytes": 32223,
+        "matches": true
+      }
+    ],
+    "allDeclaredPacketBindingsMatch": false,
+    "template": {
+      "binding": {
+        "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-expiry-update-template-a1.sql",
+        "sha256": "dc5cfd525be7ceac7a4d34114ef09609555156944ca1170520f5f3eb89151e27",
+        "bytes": 12760
+      },
+      "nullApprovalAndTimeInputsFailClosed": true,
+      "onlyTwoExistingExpiresAtUpdates": true,
+      "preserveIssuedAtAndNonWindowHashes": true,
+      "maximumWindowMinutes": 120,
+      "requiresExactOldRows115363SevenFunctionsAclsAndPausedJobs": true,
+      "checksRowsAffectedAndPoststate": true,
+      "noCronResumeOrSecretRead": true,
+      "notDatabaseParsedOrExecuted": true
+    },
+    "findings": [
+      {
+        "id": "R1",
+        "priority": "P1",
+        "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-proposal-a1.md",
+        "line": 1,
+        "finding": "The owner Markdown has a backtick between essentially every character, including prose and spaces. It is not a readable concrete owner review.",
+        "remedy": "Preserve a1 and emit a readable additive Markdown/packet successor with new exact hashes."
+      },
+      {
+        "id": "R2",
+        "priority": "P2",
+        "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-proposal-a1.json",
+        "line": 182,
+        "finding": "The proposal names the a6 test under task3-export-continuation-20261014, but actual a6 EXPORTS_SOURCE_PATHS binds task3-export-renewal-20261014.",
+        "remedy": "Reconcile exact test/source paths in an additive reviewed proposal before binding source or owner approval."
+      },
+      {
+        "id": "R3",
+        "priority": "P1",
+        "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-packet-manifest-a1.json",
+        "line": 144,
+        "finding": "The packet scheduler dependency no longer matches its current source bytes.",
+        "observedMismatch": [
+          {
+            "path": "tools/wave5/resume_worker_schedules_20261014_r5_v7.mjs",
+            "expectedSha256": "cb0ba93deb908935c89e0f9124481ecb26a4138c998db955b935950fb8c8d306",
+            "actualSha256": "7e4c409cdc4f4ed7435751ce108b5a268672e0efee78be79ec53d8641ab986ba",
+            "expectedBytes": 36432,
+            "actualBytes": 39411,
+            "matches": false
+          }
+        ],
+        "remedy": "Preserve the older packet and rebind/review the intended final scheduler successor. Do not call the current file frozen under the earlier hash."
+      },
+      {
+        "id": "R4",
+        "priority": "P1",
+        "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-proposal-a1.json",
+        "line": 193,
+        "finding": "The older proposal preserves the UTC14 export day. Current root-directed a6 policy instead proposes a fresh server-anchored <=120-minute window that may cross UTC midnight while retaining UTC13 fixture dates. These are different calendar authorization scopes; the current client date is October15.",
+        "remedy": "An additive exact packet/source/policy/owner decision must explicitly bind the current rolling execution-window rule; no silent reuse of the old UTC14-only authorization."
+      }
+    ],
+    "readyForOwnerOperationApproval": false
+  },
+  "unresolvedGates": [
+    "Corrected, hash-consistent, readable proposal and exact human operation/calendar/budget authorization.",
+    "Fresh private owner context and post-approval server anchor, exact two rows/7functions/ACL/non-window hashes, table contracts, preserved trial and paused jobs.",
+    "One actual bounded renewal transaction and durable charged preflight/write/readback, no replay after uncertainty and no issued_at/counter reset.",
+    "Frozen additive a6 source/preparer/tests, independent controlled review and actual plan/profile/final private-adapter binding.",
+    "Actual original two governed exports with independent-session source reproduction/reopen evidence.",
+    "Fresh signed backend health proof with exact matching completed tick/outcome while jobs remain paused, then separate bounded three-job resumption successor and review.",
+    "Authenticated native/MFA/recovery/model/actual delivery/contention/load/whole-system owner acceptance remain separate."
+  ],
+  "reviewerActions": {
+    "newPublicReportsOnly": true,
+    "networkCalls": 0,
+    "privateInputsRead": false,
+    "SQLExecuted": false,
+    "SDKJobs": 0,
+    "sourceReplacements": 0,
+    "acceptanceChanges": 0,
+    "runtimeRenewals": 0,
+    "scheduleResumes": 0,
+    "actualExports": 0,
+    "a6TestsExecutedByThisReport": 0,
+    "production": false,
+    "realBilling": false
+  },
+  "inputBindings": [
+    {
+      "path": "docs/verification/wave5/runtime-expiry-dependency-readonly-20261014-r5-a1.json",
+      "sha256": "0dc87893b6635d3ef4fb64c724e6aab2a42dd89d9d07ffc42251105f7c3141dc",
+      "bytes": 16994
+    },
+    {
+      "path": "docs/verification/wave5/runtime-global-readonly-snapshot-20261014-r5-a9.json",
+      "sha256": "4345c3d2fd850dc0ef49d4465487ed31c40d41f36fabfd06f41d4bbde660f8e3",
+      "bytes": 5147
+    },
+    {
+      "path": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "sha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc",
+      "bytes": 18114
+    },
+    {
+      "path": "supabase/migrations/20261009120000_wave5_supabase_runtime.sql",
+      "sha256": "9ceb592be38ebb6cff35b54e1d09c63d7e700cd95f8b52f3725966ea1d677164",
+      "bytes": 12842
+    },
+    {
+      "path": "supabase/migrations/20261009123000_wave5_supabase_schedule.sql",
+      "sha256": "4a7a6404ca74f89f165802781782d9ddada1a9c776ac496690aee1609749ccbf",
+      "bytes": 2202
+    },
+    {
+      "path": "tools/wave5/finance_exports_20261014_r5_a5.mjs",
+      "sha256": "ab9ec8c1a97a0a009081e5aba58db1359fd6d5df3a3d0ce2680bf4c43f50a544",
+      "bytes": 50820
+    },
+    {
+      "path": "tools/wave5/prepare_finance_exports_20261014_r5_a5.mjs",
+      "sha256": "030c44b84a8c5073c6c2157352fd70783c232ee256befda6ec28e9b6a723cd32",
+      "bytes": 5797
+    },
+    {
+      "path": "docs/verification/wave5/task3-export-continuation-20261014/finance_exports_20261014_r5_a5.test.mjs",
+      "sha256": "fedd5d9c86d767508bc9e214225316f457ac3b24dce1e1359a581448c998a351",
+      "bytes": 31586
+    },
+    {
+      "path": "docs/verification/wave5/finance-exports-root-controlled-verification-20261014-r5-a6.json",
+      "sha256": "2c248d90cebc7ab2e8dcbd8fc4715514b5e5d7b18f72621bdcefd905ca5d5f36",
+      "bytes": 1926
+    },
+    {
+      "path": "docs/verification/wave5/finance-exports-root-source-review-and-copy-20261014-r5-a5.json",
+      "sha256": "c698c7402ed90e379f2c0777b423c95568b9248979e3197fbedab6c3820e03a8",
+      "bytes": 2781
+    },
+    {
+      "path": "docs/verification/wave5/task3-export-source-independent-20261014/independent-source-review-a1.json",
+      "sha256": "1223b1efdd7b85d73742f2f6aa5f4192d90907b6bbd6e45bd20d567649a0dd9d",
+      "bytes": 12474
+    },
+    {
+      "path": "tools/wave5/resume_worker_schedules_20261014_r5_v7.mjs",
+      "sha256": "7e4c409cdc4f4ed7435751ce108b5a268672e0efee78be79ec53d8641ab986ba",
+      "bytes": 39411
+    },
+    {
+      "path": "docs/verification/wave5/task3-completion-20261013/worker-v7-independent-actual-probe-result-20261014.json",
+      "sha256": "25297e420e7ac1fa62b2fef2e6b4e678a3ff13d7dd8fd59b6fadab2d46f8e236",
+      "bytes": 1262
+    },
+    {
+      "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-proposal-a1.json",
+      "sha256": "df7c308396bd40651ce689b0715268f3dfe767b1e6dd8917556370fb64ff990d",
+      "bytes": 17408
+    },
+    {
+      "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-proposal-a1.md",
+      "sha256": "e14d515eff2f601fa84a5fbea1a98109976a8b4a1421d3865ca853216f63ab37",
+      "bytes": 8173
+    },
+    {
+      "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-call-inventory-a1.json",
+      "sha256": "01e9124e5517617c7d44cd269644b58c4c30e3c78deb5b47520f85e7a2bc0136",
+      "bytes": 3742
+    },
+    {
+      "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-preflight-read-a1.sql",
+      "sha256": "6e58be0ba744340f8883fc9b59dc7443192df2f3dc282aca8d7ee8cdd0484e65",
+      "bytes": 5164
+    },
+    {
+      "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-expiry-update-template-a1.sql",
+      "sha256": "dc5cfd525be7ceac7a4d34114ef09609555156944ca1170520f5f3eb89151e27",
+      "bytes": 12760
+    },
+    {
+      "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-packet-manifest-a1.json",
+      "sha256": "5654c8e04b008c34bf809b78f1f477909a2dce59a649daf92f4d148a283f85b0",
+      "bytes": 6471
+    },
+    {
+      "path": "docs/verification/wave5/task3-runtime-renewal-20261014/local-validation-a1.json",
+      "sha256": "0c98805a3ccd97e3ebab5337a54a0bbaf95cb08371e883e4a54ac6b98fa34708",
+      "bytes": 1382
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+export function validateExportsPreparation(plan){
+ must(plan?.kind==='source-bound-renewed-export-a6-preparation'&&plan.projectId===PROJECT&&plan.runtimeBundleSha256===BUNDLE
+  &&plan.priorConservativeBound===138&&plan.ordinaryAttempts===24&&plan.ordinaryLimit===162&&plan.cumulativeLimit===163&&plan.resolutionAttempts===1
+  &&plan.originalConcreteCap===150&&plan.explicitAdditionalCeiling===13&&plan.originalFixtureUtcDay===FINANCE_CALENDAR.fixtureDay
+  &&plan.profileBinding?.path===EXPORTS_PROFILE&&digest(plan.profileBinding.sha256)
+  &&exactKeys(plan.controlBindings,Object.keys(EXPORTS_PROFILE_PATHS))&&sameFinanceJson(plan.controlBindings.dependency,EXPORTS_DEPENDENCY)
+  &&sameFinanceJson(plan.preservedBindings,EXPORTS_PRESERVED_BINDINGS)
+  &&sameFinanceJson(plan.permittedOriginalExportCommands,EXPORTS_COMMANDS)&&plan.consolidatedSqlSha256===EXPORTS_SQL_SHA256
+  &&plan.finalReviewPath===EXPORTS_FINAL_REVIEW&&plan.liveExecutionAuthorizedByPreparation===false&&plan.personalHumanExactSourceSignatureClaimed===false
+  &&plan.exclusiveOncePath===EXPORTS_ONCE&&plan.snapshotRoot===EXECUTION_ROOT&&plan.publicEvidenceRoot===PUBLIC_EVIDENCE_ROOT
+  &&plan.maximumRunMs===900000&&plan.maximumSingleRequestMs===45000&&plan.ordinaryDispatchMustReserveInflightAndResolutionMs===90000
+  &&plan.successfulDateCommandsReexecuted===false&&plan.transportRetries===0&&plan.unlistedCallsAllowed===0,'EXACT_SOURCE_BOUND_EXPORT_ONLY_PLAN_REQUIRED');
+ validateExportsWindow(plan.window);
+ must(Array.isArray(plan.sourceBindings)&&plan.sourceBindings.length>68&&new Set(plan.sourceBindings.map(row=>row.path)).size===plan.sourceBindings.length
+  &&plan.sourceBindings.every(row=>typeof row.path==='string'&&/^[a-zA-Z0-9_./-]+$/.test(row.path)&&!row.path.includes('..')&&digest(row.sha256))
+  &&EXPORTS_SOURCE_PATHS.every(file=>plan.sourceBindings.some(row=>row.path===file))
+  &&EXPORTS_A5_SOURCE_BINDINGS.every(binding=>plan.sourceBindings.some(row=>sameFinanceJson(row,binding)))
+  &&Array.isArray(plan.publicBindings)&&sameFinanceJson(plan.publicBindings,[plan.profileBinding,...Object.values(plan.controlBindings)])
+  &&new Set(plan.publicBindings.map(row=>row.path)).size===9&&plan.privateAdapterPredecessor?.path==='scripts/wave5/run_private_management_installer_20261013_r5.ps1'
+  &&digest(plan.privateAdapterPredecessor.sha256),'EXACT_EXPORT_SOURCE_POPULATION_AND_PROFILE_REQUIRED');
+ for(const [name,file] of Object.entries(EXPORTS_PROFILE_PATHS))must(plan.controlBindings[name]?.path===file&&digest(plan.controlBindings[name].sha256),
+  'FIXED_EXPORT_PREPARATION_PUBLIC_FILE_REQUIRED');
+}
+export async function verifyExportsPreparation(){
+ must(path.resolve(await fs.realpath(root))===path.resolve(EXECUTION_ROOT),'EXACT_FROZEN_EXPORT_EXECUTION_ROOT_REQUIRED');
+ const planPath=path.join(root,EXPORTS_PLAN),stat=await fs.lstat(planPath);
+ must(stat.isFile()&&!stat.isSymbolicLink()&&stat.size<=1048576&&path.resolve(await fs.realpath(planPath))===path.resolve(planPath),
+  'BOUNDED_UNREDIRECTED_EXPORT_PLAN_REQUIRED');
+ const bytes=await fs.readFile(planPath),plan=JSON.parse(bytes);validateExportsPreparation(plan);
+ const context=await loadExportsProfile(plan.profileBinding),old=await verifyRemainingPreparation(),preserved=await loadExportsPreserved();
+ must(old.plan.sourceBindings.length===68,'EXACT_68_PRESERVED_ORIGINAL_BINDINGS_REQUIRED');
+ must(sameFinanceJson(plan.controlBindings,context.profile.controlBindings)&&sameFinanceJson(plan.privateAdapterPredecessor,context.profile.privateAdapterPredecessor)
+  &&sameFinanceJson(plan.window,context.profile.window),'EXACT_GENERATED_EXPORT_PROFILE_REQUIRED');
+ const expected=[...new Set([...old.plan.sourceBindings.map(row=>row.path),...Object.values(EXPORTS_PRESERVED_BINDINGS).map(row=>row.path),
+  ...EXPORTS_A5_SOURCE_BINDINGS.map(row=>row.path),...EXPORTS_SOURCE_PATHS])].sort();
+ must(sameFinanceJson(plan.sourceBindings.map(row=>row.path).sort(),expected),'NO_ADDED_OR_REMOVED_EXPORT_DEPENDENCY_BINDING_REQUIRED');
+ for(const binding of [...old.plan.sourceBindings,...Object.values(EXPORTS_PRESERVED_BINDINGS),...EXPORTS_A5_SOURCE_BINDINGS])
+  must(plan.sourceBindings.some(row=>sameFinanceJson(row,binding)),'ALL_ORIGINAL_EXPORT_DEPENDENCY_BINDINGS_REQUIRED');
+ for(const binding of context.documents.sourcePolicy.exportSourceBindings)
+  must(plan.sourceBindings.some(row=>sameFinanceJson(row,binding)),'EXACT_INDEPENDENTLY_REVIEWED_A6_SOURCES_REQUIRED');
+ for(const binding of plan.sourceBindings)await readExactRemainingFile(EXECUTION_ROOT,binding);
+ for(const binding of plan.publicBindings)await readExactRemainingFile(PUBLIC_EVIDENCE_ROOT,binding);
+ return {plan,planSha256:hashBytes(bytes),profile:context.profile,controls:context.documents,preserved:preserved.documents};
+}
+export function validateExportsFinalReview(review,{plan,planSha256},now=Date.now()){
+ validateExportsPreparation(plan);validateExportsTime(now,{now,window:plan.window});
+ must(review?.kind==='independent-renewed-export-a6-final-operation-review'&&review.technicalDecision==='approve'&&review.executionPermitted===true
+  &&review.projectId===PROJECT&&review.runtimeBundleSha256===BUNDLE&&sameFinanceJson(review.generatedPlan,{path:EXPORTS_PLAN,sha256:planSha256})
+  &&sameFinanceJson(review.sourceBindings,plan.sourceBindings)&&sameFinanceJson(review.executionProfileBinding,plan.profileBinding)
+  &&sameFinanceJson(review.controlBindings,plan.controlBindings)&&sameFinanceJson(review.window,plan.window)
+  &&review.privateAdapter?.beforeSha256===plan.privateAdapterPredecessor.sha256&&digest(review.privateAdapter.afterSha256)
+  &&review.priorConservativeBound===138&&review.ordinaryLimit===162&&review.cumulativeLimit===163&&review.ordinaryAttempts===24&&review.resolutionAttempts===1
+  &&sameFinanceJson(review.permittedOriginalExportCommands,EXPORTS_COMMANDS)&&review.originalFixtureUtcDay===FINANCE_CALENDAR.fixtureDay
+  &&review.directHumanDecisionVerified===true&&review.actualTwoRowReadbackVerified===true&&review.personalHumanExactSourceSignatureClaimed===false,
+  'EXACT_INDEPENDENT_EXPORT_FINAL_OPERATION_REVIEW_REQUIRED');
+ return review;
+}

@@ -1,0 +1,103 @@
+{
+  "kind": "root-controlled-a6-and-export-adapter-verification",
+  "passed": true,
+  "observedAt": "2026-10-15T09:13:16.159Z",
+  "sourceProof": {
+    "path": "docs/verification/wave5/task3-export-renewal-20261014/export-a6-source-proof-a1.json",
+    "sha256": "f09dd220faf37ef7f8521bb99f3b2d28b5fe16abf8534429cae54aa729fff774"
+  },
+  "sources": [
+    {
+      "root": "workspace",
+      "path": "tools/wave5/finance_exports_20261014_r5_a6.mjs",
+      "bytes": 60550,
+      "sha256": "2b265ea5c5f4921923a1feafb8daf8b8d2538daa20a9cc97deb1bd6b51ccf559"
+    },
+    {
+      "root": "workspace",
+      "path": "tools/wave5/prepare_finance_exports_20261014_r5_a6.mjs",
+      "bytes": 6068,
+      "sha256": "65775e0c2c5eb55d143bea771068482f051155e25cffc0df80f48839f2635330"
+    },
+    {
+      "root": "workspace",
+      "path": "docs/verification/wave5/task3-export-renewal-20261014/finance_exports_20261014_r5_a6.test.mjs",
+      "bytes": 45231,
+      "sha256": "ba33c96ed6ac89e043358734ea43a4686c64426ef91eb377b534378dc865619e"
+    }
+  ],
+  "preservedBindingsVerifiedBeforeAndAfter": 83,
+  "predecessor": {
+    "path": "scripts/wave5/run_private_management_installer_20261013_r5.ps1",
+    "sha256": "b01b6c20cb2819cb419fa10423bce37c0cba86b44ee7e2f5b9c0c9387d19be1f"
+  },
+  "candidate": {
+    "path": "scripts/wave5/run_private_management_installer_20261015_r5_a1.candidate.ps1",
+    "sha256": "a0b0babf2cf2806016e5f7d5293df0079e370edd2c95d35f7b2e955dfed5f891"
+  },
+  "rootControls": [
+    "exact_preserved_adapter_and_frozen_export_source",
+    "changed_predecessor_and_unbounded_source_hash_refused",
+    "current_day_window_crosses_midnight_with_earliest_private_expiry",
+    "late_private_expiry_cannot_extend_runtime_and_missing_rows_stop",
+    "UTC_calendar_validation_rejects_normalization_and_nonUTC",
+    "gate_clones_window_and_cannot_gain_time_from_caller_mutation",
+    "transport_failure_is_charged_before_dispatch_and_never_retried",
+    "original_export_command_identities_and_no_cash_command_route",
+    "actual_approval_readback_profile_and_intent_are_not_fabricated"
+  ],
+  "ast": {
+    "kind": "root_adapter_ast_review",
+    "passed": true,
+    "parseErrors": 0,
+    "checks": [
+      "only_final_review_parameter_added",
+      "all_old_modes_preserved_in_order",
+      "unchanged_function_Assert-TaskPrivateAcl",
+      "unchanged_function_Convert-TaskUtcTimestamp",
+      "only_export_execution_gains_private_access",
+      "no_new_decryption_or_seal_creation_command",
+      "public_preflight_precedes_all_private_metadata_and_dpapi",
+      "preflight_is_mandatory_for_export_execution",
+      "preflight_uses_hidden_direct_process",
+      "preflight_has_closed_stdin_and_bounded_wait",
+      "metadata_review_and_window_rechecked_before_unseal",
+      "exact_reviewed_window_passed_to_child",
+      "temporary_private_config_cleared"
+    ],
+    "candidateExecuted": false,
+    "privateInputsRead": false,
+    "networkCalls": 0
+  },
+  "authoredSuite": {
+    "command": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "--experimental-test-isolation=none",
+      "--test",
+      "--test-reporter=tap",
+      "--test-concurrency=1",
+      "docs/verification/wave5/task3-export-renewal-20261014/finance_exports_20261014_r5_a6.test.mjs"
+    ],
+    "exitCode": 0,
+    "tests": 98,
+    "passed": 98,
+    "failed": 0,
+    "log": {
+      "path": "docs/verification/wave5/root-export-adapter-20261015/root-a6-suite-a2.log",
+      "sha256": "89c896a63380b4d7bdc5b1ed180dc1f4ddf93dcdf94cf12488d07b9e7ee06b62"
+    }
+  },
+  "priorHarnessFailure": {
+    "toolChunk": "433b7f",
+    "reason": "child process returned no exit status; no test execution claim",
+    "log": "docs/verification/wave5/root-export-adapter-20261015/root-a6-suite-a1.log"
+  },
+  "sourceReviewOnly": true,
+  "adapterExecuted": false,
+  "adapterInstalled": false,
+  "networkCalls": 0,
+  "privateInputsRead": false,
+  "executionApproved": false,
+  "acceptanceChanged": false,
+  "independentAgentReviewPending": true
+}

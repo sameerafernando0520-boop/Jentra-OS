@@ -1,0 +1,160 @@
+// The following approval/readback/profile values are controlled test objects
+// only. No future public control file is created by these tests.
+async function publicPreparationInputs(){
+ const snapshot='build/wave5-approved-execution-20261013-r5-a2/',preserved={};
+ for(const [name,binding] of Object.entries(EXPORTS_PRESERVED_BINDINGS))preserved[name]=await readJson(snapshot+binding.path);
+ const oldPlan=preserved.a3Plan,sourceBindings=[];
+ for(const binding of [...oldPlan.sourceBindings,...Object.values(EXPORTS_PRESERVED_BINDINGS),...EXPORTS_A5_SOURCE_BINDINGS])
+  if(!sourceBindings.some(row=>row.path===binding.path))sourceBindings.push(binding);
+ const exportSourceBindings=[];
+ for(const file of EXPORTS_SOURCE_PATHS){const binding={path:file,sha256:hashBytes(await fs.readFile(file))};sourceBindings.push(binding);exportSourceBindings.push(binding);}
+ const controlBindings=Object.fromEntries(Object.entries(EXPORTS_PROFILE_PATHS).map(([name,file])=>[name,{path:file,sha256:digest}]));
+ controlBindings.dependency=EXPORTS_DEPENDENCY;
+ const sourcePolicy={kind:'source-only-export-a6-renewal-policy',projectId:PROJECT,runtimeBundleSha256:BUNDLE,runtimeId:EXPORTS_RUNTIME_ID,
+  sourceImplementationOnly:true,liveExecutionAuthorized:false,originalConcreteCumulativeCap:150,budget:EXPORTS_REVIEWED_BUDGET,
+  windowMode:'server-clock-at-application',maximumWindowMs:7200000,originalWindow:EXPORTS_ORIGINAL_WINDOW,dependencyBinding:EXPORTS_DEPENDENCY,
+  permittedOriginalExportCommands:EXPORTS_COMMANDS,originalFixtureUtcDay:'2026-10-13',a5SourceBindings:EXPORTS_A5_SOURCE_BINDINGS,
+  preservedOriginalSourceCount:68,consolidatedSqlSha256:EXPORTS_SQL_SHA256,maximumRunMs:900000,maximumRequestMs:45000,
+  ordinaryReserveMs:90000,resolutionReserveMs:45000,transportRetries:0,unlistedCallsAllowed:0,schedulesMustRemainPaused:true,
+  onlyTwoExpiryFieldsMayChange:true,renewalOperationBundleSha256:digest,exportSourceBindings};
+ const independentReview={kind:'independent-export-a6-policy-review',passed:true,sourceOnly:true,liveExecutionAuthorized:false,
+  policyBinding:controlBindings.sourcePolicy,exportSourceBindings,budget:EXPORTS_REVIEWED_BUDGET,renewalOperationBundleSha256:digest,
+  exactConsolidatedSqlSha256:EXPORTS_SQL_SHA256};
+ const ownerDecision={kind:'direct-human-runtime-renewal-and-export-a6-decision',approved:true,approvalSource:'direct-user-reply',
+  exactReply:EXPORTS_OWNER_REPLY,questionItemId:'CONTROLLED_TEST_ONLY_NEVER_AN_ACTUAL_HUMAN_REPLY',projectId:PROJECT,runtimeBundleSha256:BUNDLE,
+  runtimeId:EXPORTS_RUNTIME_ID,sourcePolicyBinding:controlBindings.sourcePolicy,independentReviewBinding:controlBindings.independentReview,
+  operationBundleSha256:digest,budget:EXPORTS_REVIEWED_BUDGET,maximumWindowMs:7200000,onlyTwoExpiryFieldsMayChange:true,schedulesMustRemainPaused:true,
+  productionAuthorized:false,realBillingAuthorized:false,decidedAt:'2026-10-14T13:00:00.000Z'};
+ const controlCallAccounting={attempts:3,failedAttempts:0,automaticRetries:0,receipts:['preflight','two-row-expiry-write','readback'].map((phase,i)=>
+  ({ordinal:136+i,phase,successful:true,responseSha256:digest}))};
+ const renewalReadback={kind:'actual-two-row-runtime-expiry-renewal-readback',actual:true,committed:true,projectId:PROJECT,runtimeId:EXPORTS_RUNTIME_ID,
+  ownerDecisionBinding:controlBindings.ownerDecision,sourcePolicyBinding:controlBindings.sourcePolicy,operationBundleSha256:digest,
+  appliedAt:testWindow.notBefore,observedAt:'2026-10-14T13:30:01.000Z',affectedRows:2,onlyTwoExpiryFieldsChanged:true,issuedAtUnchanged:true,
+  nonWindowValuesUnchanged:true,jobsPaused:true,countersUnchanged:true,secretValuesRead:false,controlCallAccounting,
+  scope:{count:1,runtimeId:EXPORTS_RUNTIME_ID,tenantId:FINANCE_SCOPE.tenantId,legalEntityId:FINANCE_SCOPE.entityId,branchId:FINANCE_SCOPE.branchId,
+   issuedAt:EXPORTS_ORIGINAL_WINDOW.scopeIssuedAt,oldExpiresAt:EXPORTS_ORIGINAL_WINDOW.scopeExpiresAt,
+   expiresAt:testWindow.scopeExpiresAt,nonWindowHash:EXPORTS_ORIGINAL_WINDOW.scopeNonWindowHash},
+  edge:{count:1,runtimeId:EXPORTS_RUNTIME_ID,issuedAt:EXPORTS_ORIGINAL_WINDOW.edgeIssuedAt,oldExpiresAt:EXPORTS_ORIGINAL_WINDOW.edgeExpiresAt,
+   expiresAt:testWindow.edgeExpiresAt,nonWindowHash:EXPORTS_ORIGINAL_WINDOW.edgeNonWindowHash}};
+ const metadata={kind:'wave5-private-owner-input-metadata',projectId:PROJECT,runtimeBundleSha256:BUNDLE,metadataFilename:'metadata-renewed-a10.json',
+  containsPlaintextCredential:false,reuseAuthorizationQuestionId:'["request_user_input_async","call_637ea7df9a28457388be21396163da04",0]',
+  createdAt:'2026-10-14T13:05:00.000Z',expiresAt:testWindow.privateExpiresAt,helperSha256:digest,refreshEvidence:controlBindings.refresh};
+ const refresh={kind:'actual-private-owner-scope-refresh',projectId:PROJECT,organizationId:ORGANIZATION,actualStatus:'ACTIVE_HEALTHY',readOnlyOwnerApiCalls:1,
+  actualVerifiedAt:metadata.createdAt,helperSha256:digest,databaseWrites:0,authWrites:0,settingsChanges:0};
+ const dependency=await readJson(EXPORTS_DEPENDENCY.path);
+ const accounting={kind:'conservative-renewed-export-a6-read-accounting',projectId:PROJECT,recordedPriorBinding:EXPORTS_DEPENDENCY,recordedPrior:134,
+  chargedA10OwnerIdentityReads:1,chargedRenewalControlCalls:3,otherFinanceCallsSinceDependency:0,cumulativeChargedPriorCalls:138,
+  actualA10Refresh:controlBindings.refresh,actualRenewalReadback:controlBindings.renewalReadback,renewalCallAccounting:controlCallAccounting};
+ const profile={kind:'source-reviewed-renewed-export-a6-profile',projectId:PROJECT,runtimeBundleSha256:BUNDLE,priorConservativeBound:138,ordinaryAttempts:24,
+  ordinaryLimit:162,cumulativeLimit:163,resolutionAttempts:1,originalFixtureUtcDay:'2026-10-13',personalHumanExactSourceSignatureClaimed:false,
+  controlBindings,window:testWindow,privateAdapterPredecessor:{path:'scripts/wave5/run_private_management_installer_20261013_r5.ps1',sha256:digest}};
+ return {profileBinding:{path:EXPORTS_PROFILE,sha256:digest},profile,documents:{sourcePolicy,independentReview,ownerDecision,renewalReadback,metadata,refresh,accounting,dependency},
+  oldPlan,preserved,sourceBindings,preparedAt:stamp};
+}
+test('actual immutable evidence plus controlled renewal objects produce only a public plan for138/162/163',async()=>{
+ const inputs=await publicPreparationInputs();assert.equal(validateExportsConsumed(inputs.preserved).reexecutionAllowed,false);
+ const plan=buildExportsPreparation(inputs);assert.equal(plan.priorConservativeBound,138);assert.equal(plan.ordinaryLimit,162);assert.equal(plan.cumulativeLimit,163);
+ assert.equal(plan.networkCallsDuringPreparation,0);assert.equal(plan.liveExecutionAuthorizedByPreparation,false);assert.equal(plan.publicBindings.length,9);
+ assert.equal(plan.originalConcreteCap,150);assert.equal(plan.originalFixtureUtcDay,'2026-10-13');assert.equal(inputs.oldPlan.sourceBindings.length,68);
+});
+for(const [label,change] of [
+ ['a5 profile',x=>x.profile.kind='source-reviewed-export-execution-profile'],
+ ['stale132 prior',x=>x.profile.priorConservativeBound=132],['160 minimum',x=>x.profile.cumulativeLimit=160],
+ ['unreviewed cap drift',x=>x.documents.sourcePolicy.budget={...EXPORTS_REVIEWED_BUDGET,total:164}],
+ ['A9 metadata',x=>x.profile.controlBindings.metadata.path='docs/verification/wave5/private-owner-input-ready-20261014-r5-a9.json'],
+ ['expired private proof',x=>x.documents.metadata.expiresAt='2026-10-14T05:53:48.705Z'],
+ ['private TTL above2h',x=>x.documents.metadata.expiresAt='2026-10-14T15:05:00.001Z'],
+ ['future private proof',x=>x.documents.metadata.createdAt='2026-10-14T14:00:00.001Z'],
+ ['missing direct approval',x=>x.documents.ownerDecision.approved=false],
+ ['delegated approval',x=>x.documents.ownerDecision.approvalSource='delegated-technical-decision'],
+ ['old worker approval',x=>x.documents.ownerDecision.exactReply='Approve the exact V7 worker correction'],
+ ['wrong approved bundle',x=>x.documents.ownerDecision.operationBundleSha256=hashBytes('different')],
+ ['future approval',x=>x.documents.ownerDecision.decidedAt='2026-10-14T14:01:00.000Z'],
+ ['wrong independent policy',x=>x.documents.independentReview.policyBinding={...x.profile.controlBindings.sourcePolicy,sha256:hashBytes('another')}],
+ ['unreviewed source bytes',x=>x.documents.sourcePolicy.exportSourceBindings[0].sha256=hashBytes('another')],
+ ['one row only',x=>x.documents.renewalReadback.affectedRows=1],
+ ['scope row absent',x=>delete x.documents.renewalReadback.scope],
+ ['edge row absent',x=>delete x.documents.renewalReadback.edge],
+ ['old scope expiry',x=>x.documents.renewalReadback.scope.expiresAt=EXPORTS_ORIGINAL_WINDOW.scopeExpiresAt],
+ ['unequal expiry rows',x=>x.documents.renewalReadback.edge.expiresAt='2026-10-14T15:29:00.000Z'],
+ ['more than120min',x=>x.documents.renewalReadback.edge.expiresAt=x.documents.renewalReadback.scope.expiresAt='2026-10-14T15:30:00.001Z'],
+ ['changed issued_at',x=>x.documents.renewalReadback.scope.issuedAt='2026-10-14T13:30:00.000Z'],
+ ['changed row identity',x=>x.documents.renewalReadback.scope.branchId=writerId],
+ ['changed non-window hash',x=>x.documents.renewalReadback.scope.nonWindowHash=digest],
+ ['resumed jobs',x=>x.documents.renewalReadback.jobsPaused=false],
+ ['reset counters',x=>x.documents.renewalReadback.countersUnchanged=false],
+ ['readback before write',x=>x.documents.renewalReadback.observedAt='2026-10-14T13:29:59.000Z'],
+ ['readback too delayed',x=>x.documents.renewalReadback.observedAt='2026-10-14T13:30:45.001Z'],
+ ['future applied window',x=>x.documents.renewalReadback.appliedAt='2026-10-14T14:10:00.000Z'],
+ ['uncommitted readback',x=>x.documents.renewalReadback.committed=false],
+ ['missing renewal charges',x=>x.documents.accounting.chargedRenewalControlCalls=0],
+ ['repeat refresh',x=>x.documents.refresh.readOnlyOwnerApiCalls=2],
+ ['extra charged query',x=>x.documents.accounting.otherFinanceCallsSinceDependency=1],
+ ['failed renewal attempt',x=>x.documents.renewalReadback.controlCallAccounting.failedAttempts=1],
+ ['reset renewal ordinal',x=>x.documents.renewalReadback.controlCallAccounting.receipts[0].ordinal=1],
+ ['missing receipt hash',x=>delete x.documents.renewalReadback.controlCallAccounting.receipts[0].responseSha256],
+ ['unknown renewal phase',x=>x.documents.renewalReadback.controlCallAccounting.receipts[1].phase='unreviewed-write'],
+ ['stale prior ledger',x=>x.documents.dependency.conservativeContinuationAccounting.cumulativeChargedCalls=133]
+])test(`public profile refuses ${label} before preparation or execution`,async()=>{
+ const inputs=clone(await publicPreparationInputs());change(inputs);assert.throws(()=>buildExportsPreparation(inputs));
+});
+test('omitted or changed original68, a5 sources and consumed intents fail public plan construction',async()=>{
+ const inputs=await publicPreparationInputs();
+ for(const file of [inputs.oldPlan.sourceBindings[0].path,EXPORTS_A5_SOURCE_BINDINGS[0].path,EXPORTS_PRESERVED_BINDINGS.a3Once.path]){
+  const missing=clone(inputs);missing.sourceBindings=missing.sourceBindings.filter(row=>row.path!==file);assert.throws(()=>buildExportsPreparation(missing));
+  const changed=clone(inputs);changed.sourceBindings.find(row=>row.path===file).sha256=digest;assert.throws(()=>buildExportsPreparation(changed));
+ }
+ const altered=clone(inputs);altered.oldPlan.sourceBindings.pop();assert.throws(()=>buildExportsPreparation(altered));
+});
+test('unlisted and duplicate public bindings are rejected',async()=>{
+ const plan=buildExportsPreparation(await publicPreparationInputs());
+ for(const binding of [plan.profileBinding,{path:'private/unreviewed.env',sha256:digest}]){const altered=clone(plan);altered.publicBindings.push(binding);assert.throws(()=>validateExportsPreparation(altered));}
+});
+function finalReviewFor(plan){return {kind:'independent-renewed-export-a6-final-operation-review',technicalDecision:'approve',executionPermitted:true,
+ projectId:PROJECT,runtimeBundleSha256:BUNDLE,generatedPlan:{path:EXPORTS_PLAN,sha256:digest},sourceBindings:plan.sourceBindings,
+ executionProfileBinding:plan.profileBinding,controlBindings:plan.controlBindings,window:plan.window,
+ privateAdapter:{beforeSha256:plan.privateAdapterPredecessor.sha256,afterSha256:digest},priorConservativeBound:138,ordinaryLimit:162,cumulativeLimit:163,
+ ordinaryAttempts:24,resolutionAttempts:1,permittedOriginalExportCommands:EXPORTS_COMMANDS,originalFixtureUtcDay:'2026-10-13',
+ directHumanDecisionVerified:true,actualTwoRowReadbackVerified:true,personalHumanExactSourceSignatureClaimed:false};}
+test('final review binds exact owner, readback, policy, profile, window and adapter before private input',async()=>{
+ const plan=buildExportsPreparation(await publicPreparationInputs()),review=finalReviewFor(plan);
+ assert.equal(validateExportsFinalReview(review,{plan,planSha256:digest},now()).executionPermitted,true);
+ for(const change of [r=>r.executionPermitted=false,r=>r.generatedPlan.sha256=hashBytes('another plan'),r=>r.cumulativeLimit=160,
+  r=>r.controlBindings={...r.controlBindings,ownerDecision:{...r.controlBindings.ownerDecision,sha256:hashBytes('wrong owner')}},
+  r=>r.controlBindings={...r.controlBindings,renewalReadback:{...r.controlBindings.renewalReadback,sha256:hashBytes('wrong readback')}},
+  r=>r.sourceBindings=r.sourceBindings.slice(1),r=>r.directHumanDecisionVerified=false,r=>r.actualTwoRowReadbackVerified=false,
+  r=>r.technicalDecision='approve this source generally',r=>r.window={...r.window,expiresAt:'2026-10-14T15:30:00.000Z'}]){
+  const changed=clone(review);change(changed);assert.throws(()=>validateExportsFinalReview(changed,{plan,planSha256:digest},now()));}
+ assert.throws(()=>validateExportsFinalReview(review,{plan,planSha256:digest},Date.parse(plan.window.expiresAt)));
+});
+test('no missing or implicit deadline, malformed UTC, fabricated extra window fields or future not-before is accepted',()=>{
+ for(const window of [undefined,{}, {...testWindow,scopeExpiresAt:undefined},{...testWindow,expiresAt:'2026-10-14T15:30:00.000Z'},
+  {...testWindow,notBefore:'2026-10-14T14:00:01.000Z'},{...testWindow,notBefore:'2026-02-30T14:00:00.000Z'},
+  {...testWindow,notBefore:'2026-10-14 13:30:00'},{...testWindow,notBefore:'2026-10-14T13:30:00+05:30'},
+  {...testWindow,additionalAllowance:true}])assert.throws(()=>validateExportsTime(stamp,{now:now(),window}));
+});
+test('the approved window can span midnight while the immutable fixture day remainsUTC13',async()=>{
+ const inputs=clone(await publicPreparationInputs()),start='2026-10-14T23:30:00.000Z',end='2026-10-15T01:30:00.000Z',current='2026-10-15T00:01:00.000Z';
+ inputs.documents.ownerDecision.decidedAt='2026-10-14T23:00:00.000Z';
+ inputs.documents.metadata.createdAt=inputs.documents.refresh.actualVerifiedAt='2026-10-14T23:20:00.000Z';
+ inputs.documents.metadata.expiresAt='2026-10-15T01:20:00.000Z';
+ inputs.documents.renewalReadback.appliedAt=start;inputs.documents.renewalReadback.observedAt='2026-10-14T23:30:01.000Z';
+ inputs.documents.renewalReadback.edge.expiresAt=inputs.documents.renewalReadback.scope.expiresAt=end;
+ inputs.profile.window={notBefore:start,edgeExpiresAt:end,scopeExpiresAt:end,privateExpiresAt:inputs.documents.metadata.expiresAt,expiresAt:inputs.documents.metadata.expiresAt};
+ inputs.preparedAt=current;const plan=buildExportsPreparation(inputs);assert.equal(plan.originalFixtureUtcDay,'2026-10-13');
+ assert.equal(validateExportsTime(current,{now:Date.parse(current),window:plan.window}),Date.parse(current));
+ assert.throws(()=>validateExportsTime('2026-10-15T01:20:00.000Z',{now:Date.parse(current),window:plan.window}));
+});
+test('no mutable module window is shared by interleaved gates',async()=>{
+ let clock=now();const short={...testWindow,privateExpiresAt:new Date(clock+90000).toISOString(),expiresAt:new Date(clock+90000).toISOString()},
+  one=createExportsCallGate({now:()=>clock,window:short}),two=createExportsCallGate({now:()=>clock,window:testWindow});
+ short.expiresAt=testWindow.expiresAt;clock++;
+ await assert.rejects(one.dispatch(exportsCallDescriptors()[0],()=>assert.fail('expired reserve')));
+ await two.dispatch(exportsCallDescriptors()[0],async()=>response([]));assert.equal(two.snapshot().actualOrdinaryAttempts,1);
+});
+test('actual prior134 dependency digest is immutable and no future actual control files were created',async()=>{
+ assert.equal(hashBytes(await fs.readFile(EXPORTS_DEPENDENCY.path)),EXPORTS_DEPENDENCY.sha256);
+ for(const file of [EXPORTS_PROFILE,...Object.entries(EXPORTS_PROFILE_PATHS).filter(([name])=>name!=='dependency').map(([,file])=>file)])
+  await assert.rejects(fs.access(file),/ENOENT/);
+ for(const binding of EXPORTS_A5_SOURCE_BINDINGS)assert.equal(hashBytes(await fs.readFile(binding.path)),binding.sha256);
+});

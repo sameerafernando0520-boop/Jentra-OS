@@ -1,0 +1,77 @@
+{
+  "kind": "renewal-source-packet-validation",
+  "checkedAt": "2026-10-15T06:10:02.251Z",
+  "passed": true,
+  "checks": [
+    {
+      "name": "original packet and21 immutable evidence bindings remain exact; changing scheduler excluded",
+      "passed": true
+    },
+    {
+      "name": "readable Markdown has no per-character backticks",
+      "passed": true
+    },
+    {
+      "name": "only two expiry UPDATE statements",
+      "passed": true
+    },
+    {
+      "name": "no job resumption or outbound request in renewal SQL",
+      "passed": true
+    },
+    {
+      "name": "actual approval/window inputs remain NULL",
+      "passed": true
+    },
+    {
+      "name": "both original issue/expiry/hash values are guarded",
+      "passed": true
+    },
+    {
+      "name": "seven installed identities remain exact",
+      "passed": true
+    },
+    {
+      "name": "freshness uses advancing clock before and after row locks",
+      "passed": true
+    },
+    {
+      "name": "table and unchanged billing contracts checked",
+      "passed": true
+    },
+    {
+      "name": "finance ceiling includes renewal controls",
+      "passed": true
+    },
+    {
+      "name": "all future management attempts included",
+      "passed": true
+    },
+    {
+      "name": "unperformed resolution is not invented",
+      "passed": true
+    },
+    {
+      "name": "no approval or calendar permission inferred",
+      "passed": true
+    },
+    {
+      "name": "correct new a6 test path and bounded cross-day proposal",
+      "passed": true
+    }
+  ],
+  "validatedChecks": 14,
+  "privateInputsRead": false,
+  "actualNetworkRequests": 0,
+  "SDKJobs": 0,
+  "SQLParsedOrExecutedOnDatabase": false,
+  "sourceOnly": true,
+  "SQLRuntimeBehaviorVerified": false,
+  "approvalRecorded": false,
+  "renewalExecuted": false,
+  "preservedFormattingFailure": {
+    "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-proposal-a1.md",
+    "sha256": "e14d515eff2f601fa84a5fbea1a98109976a8b4a1421d3865ca853216f63ab37",
+    "cause": "The initial Markdown generator inserted a backtick between every character through an empty-string replacement. The original remains preserved; a2 rewrites readable prose only."
+  }
+}

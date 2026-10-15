@@ -1,0 +1,441 @@
+{
+  "kind": "source-only-two-existing-expiry-runtime-renewal-proposal",
+  "preparedAt": "2026-10-14T17:21:01.895Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "runtimeBundleSha256": "db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b",
+  "runtimeId": "778237e3-3d4e-4871-8cc9-e08b07b989c7",
+  "humanApproval": {
+    "required": true,
+    "recorded": false,
+    "decisionBinding": null,
+    "approvedAt": null,
+    "proposalExactHashMustBeBound": true
+  },
+  "executionPermitted": false,
+  "sqlExecuted": false,
+  "privateOrLiveActionsPerformed": false,
+  "recordedState": {
+    "asOfDependencyRead": "2026-10-14T11:43:59.499017+00:00",
+    "asOfGlobalRead": "2026-10-14T10:00:08.776229Z",
+    "oldAuthorityExpired": true,
+    "authority": {
+      "jobIds": [
+        4,
+        5,
+        6
+      ],
+      "enabled": true,
+      "issuedAt": "2026-10-13T09:57:07.481942+00:00",
+      "expiresAt": "2026-10-14T09:57:07.481942+00:00",
+      "runtimeId": "778237e3-3d4e-4871-8cc9-e08b07b989c7",
+      "unexpired": false,
+      "nonWindowHash": "77cac80be8b4bccfad6c4a56fe14c52b03171e5524a46fe7a55ee4c958d90139",
+      "publicKeySha256": "e3ea9ff3f18e6bb24be674430cc494a31c4cd7d92482367b60383b5aedd6fa9d",
+      "scheduleSecretId": "ca78c81f-eb06-4d57-9d0f-52d5f78fa021"
+    },
+    "workerScope": {
+      "count": 1,
+      "enabled": 1,
+      "issuedMax": "2026-10-13T08:13:04.144135+00:00",
+      "issuedMin": "2026-10-13T08:13:04.144135+00:00",
+      "unexpired": 0,
+      "expiresMax": "2026-10-14T08:13:04.144135+00:00",
+      "expiresMin": "2026-10-14T08:13:04.144135+00:00",
+      "nonWindowHash": "3119068e9ab1628e43855122d6e1ad8c2f89811561c15f2ec22d27336db2a387"
+    },
+    "scopeIdentity": {
+      "tenantId": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "legalEntityId": "caa2bb06-219a-47e9-8132-66d1271b0ffd",
+      "branchId": "3813692c-f0de-4c69-8e34-d56cf54695b1"
+    },
+    "pausedJobs": [
+      {
+        "name": "jentra-w5-20261009-delivery",
+        "jobId": 4,
+        "active": false,
+        "command": "select intelligence_control.edge_schedule_tick('delivery');",
+        "schedule": "* * * * *"
+      },
+      {
+        "name": "jentra-w5-20261009-subscription",
+        "jobId": 5,
+        "active": false,
+        "command": "select intelligence_control.edge_schedule_tick('subscription');",
+        "schedule": "* * * * *"
+      },
+      {
+        "name": "jentra-w5-20261009-health",
+        "jobId": 6,
+        "active": false,
+        "command": "select intelligence_control.edge_schedule_tick('health');",
+        "schedule": "* * * * *"
+      }
+    ],
+    "migrations": 115,
+    "apiFunctions": 363,
+    "original404Requests": 24,
+    "ticks": 0,
+    "deliveryOutcomes": 0,
+    "receiverReceipts": 0,
+    "quotaPeriods": 0,
+    "finance": {
+      "journals": 9,
+      "lines": 18,
+      "publications": 3,
+      "classifications": 1,
+      "dateProposals": 3,
+      "dateDecisions": 3,
+      "scenarios": 0,
+      "exports": 0
+    },
+    "V7": {
+      "returnedSourceRowsVerified": 25,
+      "unsignedProbeStatus": 403,
+      "code": "WORKER_ACCESS_DENIED",
+      "backendServiceKeyRoleOrValidityVerified": false
+    },
+    "snapshotsMayBecomeStale": true,
+    "noCurrentLiveStateInferredFromSavedState": true
+  },
+  "requestedChange": {
+    "maximumWindowMinutes": 120,
+    "serverAnchor": null,
+    "commonNewExpiry": null,
+    "anchorRule": "Actual server timestamp from one fresh preflight after exact human approval. No use of proposal creation time or saved pre-approval read; both rows receive min(anchor+approved<=120min,actual private-owner scope expiry). The common expiry is never reset during preparation/retry.",
+    "updateOnly": [
+      {
+        "table": "intelligence_control.edge_authorities",
+        "field": "expires_at",
+        "rows": 1,
+        "runtimeId": "778237e3-3d4e-4871-8cc9-e08b07b989c7"
+      },
+      {
+        "table": "intelligence_control.runtime_worker_scopes",
+        "field": "expires_at",
+        "rows": 1,
+        "runtimeId": "778237e3-3d4e-4871-8cc9-e08b07b989c7",
+        "tenantId": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+        "legalEntityId": "caa2bb06-219a-47e9-8132-66d1271b0ffd",
+        "branchId": "3813692c-f0de-4c69-8e34-d56cf54695b1"
+      }
+    ],
+    "atomic": true,
+    "preserveBothIssuedAt": true,
+    "preserveBothNonWindowHashes": true,
+    "noNewScopesOrGrants": true,
+    "oldExpiryRecordedRatherThanOverwrittenInEvidence": true,
+    "schemaMaximumStill7DaysFromEachOriginalIssuedAt": true,
+    "scopeOrDDLDriftStops": true,
+    "scopeAlsoExpiredThereforeEdgeOnlyRenewalInsufficient": true
+  },
+  "retainedControls": {
+    "sixOriginalActors": true,
+    "syntheticScopesUnchanged": true,
+    "existingMfaOnly": true,
+    "noConstructedAal": true,
+    "oldReceiptsAndIntentsPreserved": true,
+    "modelWholeRuntimeMaximum": 4,
+    "newModelCallsInThisProposal": 0,
+    "recordedActualModelCalls": 0,
+    "originalScheduledWorkerRequestWholeCap": 4320,
+    "oldRequestsCharge": 24,
+    "oneSignedHealthCharge": 1,
+    "noBudgetReset": true,
+    "workerDestinationsAndProviderUnchanged": true,
+    "noNewSecrets": true,
+    "noNewDestinations": true,
+    "globalAuthChanges": false,
+    "newUsers": 0,
+    "newRolesOrGrants": 0,
+    "production": false,
+    "realBilling": false
+  },
+  "budget": {
+    "current": 134,
+    "futureOwner": 1,
+    "renewal": 3,
+    "exportsOrdinary": 24,
+    "exportsReservedResolution": 1,
+    "health": 5,
+    "schedule": 3,
+    "futureMaximum": 37,
+    "overallMaximum": 171,
+    "priorAtExports": 138,
+    "exportOrdinaryMaximum": 162,
+    "financeThroughExportsMaximum": 163,
+    "old160MissingRenewalControlsPreservedAsHistorical": true
+  },
+  "oldBudgetCaps": [
+    150,
+    156,
+    157,
+    159,
+    160
+  ],
+  "proposedNewCeilingsApproved": false,
+  "humanApprovalScope": "Approve only these two existing expiry fields and the explicitly cumulative163/171 request ceilings for the same isolated development scope. Actual exports, manual health readiness and three-job resumption each remain separately gated by exact source/plan/operation review; renewal itself does not run them.",
+  "requiredSourceSuccessors": {
+    "existingA5FilesMustRemainUnchanged": true,
+    "exports": [
+      "tools/wave5/finance_exports_20261014_r5_a6.mjs",
+      "tools/wave5/prepare_finance_exports_20261014_r5_a6.mjs",
+      "docs/verification/wave5/task3-export-continuation-20261014/finance_exports_20261014_r5_a6.test.mjs"
+    ],
+    "status": "not implemented by this proposal",
+    "mustBind": [
+      "exact new direct human reply and proposal hash",
+      "actual fresh owner metadata/readiness proof",
+      "exact two-expiry preflight/rendered SQL/readback and common deadline",
+      "actual new call ledger138 prior only after4 recorded attempts",
+      "new source/test/dependency fingerprints",
+      "new private-adapter delta and final operation review before private unseal"
+    ],
+    "calendar": "Preserve UTC13 fixture dates and the already reviewed UTC14 export day. If execution would require another export day, stop for a separate exact calendar amendment; no filename-driven reset.",
+    "schedule": "The existing V7 resume helper pins the old expiry and contains a24h-from-issued check. It cannot be replayed after renewal. A new versioned source/SQL must bind the new human-approved common window while preserving issued_at, all7 installed functions/ACLs and4320 count."
+  },
+  "backendGate": {
+    "unsigned403DoesNotProveServiceKey": true,
+    "grantsAloneDoNotProveKeyValidity": true,
+    "required": "After exports and before cron resume, one bounded signed manual health request while jobs stay paused. Require the exact deployed V7 bytes, actual2xx completed/count1/collected response, exactly one matching completed health tick and successful outcome, unchanged model count0 and preserved scope/caps. This reaches unchanged worker_required service-role enforcement. Failure keeps schedules paused; no credentials/key claims are constructed.",
+    "missingInputsRemainMissing": true,
+    "newSecretsOrProviderChangesAuthorized": false
+  },
+  "failureBehavior": {
+    "oneRenewalWriteOnly": true,
+    "uncertainWriteReadbackOnly": true,
+    "noReplay": true,
+    "expiredOrStaleOwnerInputsStop": true,
+    "actualRequestAttemptsChargedBeforeDispatch": true,
+    "evidenceSavedBeforeValidation": true,
+    "localAuditMayFinishAfterDeadlineWithoutRenewingAuthority": true,
+    "unexpectedRowsOrFunctionsOrNonWindowDriftAbortTransaction": true,
+    "jobStatesRemainPaused": true,
+    "noSecondRenewalOrWindowReset": true
+  },
+  "separateOpenWork": [
+    "Authenticated Windows workflows, keyboard, restart and recovery need actual private-profile/native evidence.",
+    "Private database transport/fixture writer inputs remain a separate dependency.",
+    "Full2,000-session load capacity and production release checks remain unproved.",
+    "Renewing time does not accept any requirement row, create genuine model evidence, or complete all finance/cash gates."
+  ],
+  "exactGuardFunctionBindings": [
+    {
+      "oid": "2913664",
+      "grants": [
+        "postgres=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "identity": "api.wave5_edge_control(uuid,text,jsonb)",
+      "bodySha256": "91850c1686eb52b997564568b536747f563163e80d358d04874d1c1283e4d015",
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "securityDefiner": true,
+      "definitionSha256": "7659bb6645b41ac50957f978604879d72d52202c347f8318caa5c4a04b516dfc"
+    },
+    {
+      "oid": "2913561",
+      "grants": [
+        "postgres=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "identity": "api.wave5_runtime_delivery_worker(uuid,text,jsonb)",
+      "bodySha256": "7fe0c609f81e5ee942517ac5b7370c3a1ef1232a700e2a95c63d9aa425a482e3",
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "securityDefiner": true,
+      "definitionSha256": "576f78698fb51b6d49ca0c0d6b6f2e43f1a91a189c77439de957fea35fc2c501"
+    },
+    {
+      "oid": "2913565",
+      "grants": [
+        "postgres=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "identity": "api.wave5_runtime_worker(uuid,text,jsonb)",
+      "bodySha256": "3ae1ff01c51e655b442c307ac64752dabd8e45e4c0f5168ed7ef5a3e8c7f1550",
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "securityDefiner": true,
+      "definitionSha256": "174ef338fa9cd5ccba2189ac2b3b858a6c65f274917ea0768a3dc57d33a684d0"
+    },
+    {
+      "oid": "2913766",
+      "grants": [
+        "postgres=X/postgres"
+      ],
+      "identity": "intelligence_control.edge_schedule_tick(text)",
+      "bodySha256": "8fecbd2673c72f0a28b16d5a2a272e017f15647899e65306968acaac0fd519ff",
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "securityDefiner": true,
+      "definitionSha256": "c330d3cc533e3b2e0ca08997089463ca24371a5d267c70f74da1b4793ee5eea4"
+    },
+    {
+      "oid": "2913535",
+      "grants": [
+        "postgres=X/postgres"
+      ],
+      "identity": "intelligence_control.runtime_scope_allowed(uuid,uuid,uuid,uuid)",
+      "bodySha256": "52d09fa523f6766e5cea3ab3e591ee581840be5779a745d90b0efc3905cefb7a",
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "securityDefiner": true,
+      "definitionSha256": "04dd1c054f35e24ebc62c205b8672392f656745d5e2b52c4f4ab4bd19c67adb9"
+    },
+    {
+      "oid": "2913536",
+      "grants": [
+        "postgres=X/postgres"
+      ],
+      "identity": "intelligence_control.runtime_tenant_allowed(uuid,uuid)",
+      "bodySha256": "6e60d0231efc0fc2afcfb75b845338385dd3a21e088564dd7ddf36c6350090af",
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "securityDefiner": true,
+      "definitionSha256": "50e7a58ed44e041ee6bdf18254e17ff3ca4259c5de03f2ce10ee880968250280"
+    },
+    {
+      "oid": "2913537",
+      "grants": [
+        "postgres=X/postgres"
+      ],
+      "identity": "intelligence_control.runtime_worker_required(uuid)",
+      "bodySha256": "dab2dfd59274c75b93c951668febfd6e080b00db41ca88f491d6e38f45136f6b",
+      "configuration": [
+        "search_path=\"\""
+      ],
+      "securityDefiner": true,
+      "definitionSha256": "a2e98ffe2a5d5e8ca2d3dc37af67a6065e9b6f50c8bb6627a6bcb6fcfa885b12"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "docs/verification/wave5/runtime-global-readonly-snapshot-20261014-r5-a8.json",
+      "bytes": 3320,
+      "sha256": "2c88a2610f211532be235a34cd38748b389eb3d0276b25393838002b5cf13a44"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-global-readonly-snapshot-20261014-r5-a9.json",
+      "bytes": 5147,
+      "sha256": "4345c3d2fd850dc0ef49d4465487ed31c40d41f36fabfd06f41d4bbde660f8e3"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-expiry-dependency-readonly-20261014-r5-a1.json",
+      "bytes": 16994,
+      "sha256": "0dc87893b6635d3ef4fb64c724e6aab2a42dd89d9d07ffc42251105f7c3141dc"
+    },
+    {
+      "path": "docs/verification/wave5/task3-completion-20261013/worker-v7-independent-actual-probe-result-20261014.json",
+      "bytes": 1262,
+      "sha256": "25297e420e7ac1fa62b2fef2e6b4e678a3ff13d7dd8fd59b6fadab2d46f8e236"
+    },
+    {
+      "path": "docs/verification/wave5/task3-completion-20261013/worker-v7-independent-deployment-and-probe-review-20261014.json",
+      "bytes": 13647,
+      "sha256": "d15f3a3941175dcd258b252069c881badb0f8670d1f3b07b3669d3257bc0220f"
+    },
+    {
+      "path": "docs/verification/wave5/worker-v7-provider-deployment-source-verification-20261014-r5-a2.json",
+      "bytes": 13509,
+      "sha256": "9deaf816923888e44b7b35fa0b961b2915f3ce7c6df41df5b184a3391adfa9e6"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-owner-decision-20261012-r5.json",
+      "bytes": 2756,
+      "sha256": "90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab"
+    },
+    {
+      "path": "docs/verification/wave5/task3-completion-20261013/export-continuation-technical-decision-20261014-a1.json",
+      "bytes": 18329,
+      "sha256": "90b0d2c6767b983308bb4d8258583da26bd03b746941daac6fd1737d703bebee"
+    },
+    {
+      "path": "docs/verification/wave5/task3-completion-20261013/export-continuation-technical-decision-20261014-a2.json",
+      "bytes": 21081,
+      "sha256": "493f4e266bf1c427f4830a224f712f8869df22734855d6359e28a5547bd555d1"
+    },
+    {
+      "path": "docs/verification/wave5/task3-export-source-independent-20261014/independent-source-review-a1.json",
+      "bytes": 12474,
+      "sha256": "1223b1efdd7b85d73742f2f6aa5f4192d90907b6bbd6e45bd20d567649a0dd9d"
+    },
+    {
+      "path": "tools/wave5/finance_exports_20261014_r5_a5.mjs",
+      "bytes": 50820,
+      "sha256": "ab9ec8c1a97a0a009081e5aba58db1359fd6d5df3a3d0ce2680bf4c43f50a544"
+    },
+    {
+      "path": "tools/wave5/prepare_finance_exports_20261014_r5_a5.mjs",
+      "bytes": 5797,
+      "sha256": "030c44b84a8c5073c6c2157352fd70783c232ee256befda6ec28e9b6a723cd32"
+    },
+    {
+      "path": "docs/verification/wave5/task3-export-continuation-20261014/finance_exports_20261014_r5_a5.test.mjs",
+      "bytes": 31586,
+      "sha256": "fedd5d9c86d767508bc9e214225316f457ac3b24dce1e1359a581448c998a351"
+    },
+    {
+      "path": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "bytes": 18114,
+      "sha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc"
+    },
+    {
+      "path": "supabase/migrations/20261009120000_wave5_supabase_runtime.sql",
+      "bytes": 12842,
+      "sha256": "9ceb592be38ebb6cff35b54e1d09c63d7e700cd95f8b52f3725966ea1d677164"
+    },
+    {
+      "path": "supabase/migrations/20261009123000_wave5_supabase_schedule.sql",
+      "bytes": 2202,
+      "sha256": "4a7a6404ca74f89f165802781782d9ddada1a9c776ac496690aee1609749ccbf"
+    },
+    {
+      "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "bytes": 14205,
+      "sha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
+      "bytes": 115108,
+      "sha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5"
+    },
+    {
+      "path": "docs/verification/wave5/supabase-runtime-setup-20261009.sql",
+      "bytes": 3408,
+      "sha256": "c2ae865c9bae23be94dec512dd15645a85c9a7a82b4edbd32fbccf92a7462e41"
+    },
+    {
+      "path": "tools/wave5/resume_worker_schedules_20261014_r5_v7.mjs",
+      "bytes": 36432,
+      "sha256": "cb0ba93deb908935c89e0f9124481ecb26a4138c998db955b935950fb8c8d306"
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261014_r5_v7.mjs",
+      "bytes": 7004,
+      "sha256": "bf772c3a77f5f050c98dfb0e4e61de63235aa42b4618451f9dc69a5e24697cd8"
+    },
+    {
+      "path": "workers/wave5/edge_configuration.mjs",
+      "bytes": 1072,
+      "sha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13"
+    }
+  ],
+  "externalSqlReferences": [
+    {
+      "url": "https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-ROWS",
+      "use": "FOR UPDATE locks existing rows until transaction end."
+    },
+    {
+      "url": "https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT",
+      "use": "Use a recorded server anchor and actual clock for post-lock freshness; do not treat statement_timestamp as an advancing deadline clock."
+    }
+  ],
+  "independentReviewPending": true,
+  "concreteHumanQuestionOwnedByRoot": true
+}

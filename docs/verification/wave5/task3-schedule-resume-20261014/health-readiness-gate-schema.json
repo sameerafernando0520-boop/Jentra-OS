@@ -1,0 +1,86 @@
+{
+  "kind": "source-only-scheduler-health-readiness-gate-contract",
+  "actualEvidenceSupplied": false,
+  "actualProbeAuthorized": false,
+  "fixedProviderReviewPath": "docs/verification/wave5/task3-schedule-resume-20261014/actual-provider-authority-review.json",
+  "providerReviewKind": "independent-actual-v7-deployed-health-readiness-review",
+  "requiredProviderReviewFields": [
+    "technicalDecision=approve",
+    "passed=true",
+    "independentlyReviewed=true",
+    "projectId",
+    "runtimeBundleSha256",
+    "runtimeId",
+    "deployedVersion=7",
+    "candidateBundleSha256",
+    "observedAt",
+    "guardFingerprints",
+    "readinessTick",
+    "actualHealthResultBinding",
+    "actualBeforeStateBinding",
+    "actualDispatchBinding",
+    "actualAfterStateBinding",
+    "healthControllerSourceBinding",
+    "evidenceBindings",
+    "actualDeployedWorkerBackendAuthorizationVerified=true",
+    "actualServiceKeyRoleAndValidityVerified=true",
+    "unsignedProbeUsedAsRoleProof=false",
+    "keyFormatUsedAsRoleProof=false",
+    "secretsPublished=false",
+    "priorScheduledRequestsObserved=24",
+    "readinessRequestsCharged=1",
+    "cumulativeReviewedWorkerRequests=25"
+  ],
+  "actualHealthResultKind": "actual-v7-deployed-health-readiness-result",
+  "rootHealthController": {
+    "path": "tools/wave5/probe_worker_v7_health_20261014_r5.mjs",
+    "sha256": "2719101d830e5d1353d5bd0392ab35b43571644d139217779d4de0de3bf61082",
+    "bytes": 21923
+  },
+  "transport": "One existing database-owned edge_schedule_tick health invocation; schedule-key token/hash authentication, not HMAC. No client schedule-secret retrieval.",
+  "tick": {
+    "id": "actual UUID",
+    "kind": "health",
+    "state": "completed",
+    "tickSha256": "actual SQL-produced full-row digest",
+    "outcomeSha256": "actual SQL-produced full-outcome digest"
+  },
+  "effectsBefore": {
+    "ticks": 0,
+    "outcomes": 0,
+    "quotaPeriods": 0,
+    "deliveryOutcomes": 0,
+    "receiverReceipts": 0,
+    "modelInvocations": 0,
+    "modelOutcomes": 0,
+    "usageEvents": 0
+  },
+  "effectsAfter": {
+    "ticks": 1,
+    "outcomes": 1,
+    "quotaPeriods": 0,
+    "deliveryOutcomes": 0,
+    "receiverReceipts": 0,
+    "modelInvocations": 0,
+    "modelOutcomes": 0,
+    "usageEvents": 0
+  },
+  "successfulHttp": {
+    "netRequestId": "actual positive integer",
+    "status": 200,
+    "serverRequestId": "actual server UUID",
+    "response": {
+      "state": "completed",
+      "count": 1,
+      "states": [
+        "collected"
+      ]
+    },
+    "responseSha256": "digest of exact successful public response bytes"
+  },
+  "requiredRawLineage": "Full actual before-state, enqueue dispatch and successful after-state records are hash-bound. Match request ID, actual observed/dispatched/tick-start/completion times, HTTP content/hash/bytes/server UUID, sole completed health tick, full raw tick/outcome rows, positive lease and exact success summary.",
+  "beforePrivateUse": "Pin all provider, controller and raw evidence hashes in the separate final operation review and source/evidence bindings, then verify bytes before stdin or unseal.",
+  "originalAuthorityExpiresAt": "2026-10-14T09:57:07.481942Z",
+  "sourceCanRenewAuthority": false,
+  "currentExecutionAllowed": false
+}

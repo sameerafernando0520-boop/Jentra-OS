@@ -1,0 +1,118 @@
+// Additive correction and finalization of a public proposal, never an executor.
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
+const root=fileURLToPath(new URL('../../../../',import.meta.url)),dir='docs/verification/wave5/task3-runtime-renewal-20261014/';
+const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
+const read=name=>fs.readFile(path.join(root,dir+name));
+const originalManifestBytes=await read('renewal-packet-manifest-a1.json'),originalManifest=JSON.parse(originalManifestBytes);
+if(sha(originalManifestBytes)!=='5654c8e04b008c34bf809b78f1f477909a2dce59a649daf92f4d148a283f85b0')throw Error('ORIGINAL_PACKET_DRIFT');
+for(const row of [...originalManifest.files,...originalManifest.evidence,originalManifest.generator]){
+ const bytes=await fs.readFile(path.join(root,row.path));if(sha(bytes)!==row.sha256||bytes.length!==row.bytes)throw Error('PRESERVED_PACKET_INPUT_DRIFT');
+}
+const proposal=JSON.parse(await read('renewal-proposal-a1.json')),inventory=JSON.parse(await read('renewal-call-inventory-a1.json'));
+let sql=(await read('renewal-expiry-update-template-a1.sql')).toString();
+sql=sql.replace("SET LOCAL lock_timeout='5s';","SET LOCAL standard_conforming_strings=on;\nSET LOCAL search_path=pg_catalog;\nSET LOCAL lock_timeout='5s';")
+ .replaceAll('to_jsonb(s)', 'to_jsonb(scope_row)').replaceAll('runtime_worker_scopes s WHERE', 'runtime_worker_scopes scope_row WHERE')
+ .replace('OR v_maximum_minutes NOT BETWEEN 1 AND 120','OR v_maximum_minutes IS NULL OR v_maximum_minutes NOT BETWEEN 1 AND 120')
+ .replace("IF v_server_anchor<v_human_approved_at", "IF NOT isfinite(v_human_approved_at) OR NOT isfinite(v_server_anchor) OR NOT isfinite(v_owner_metadata_expires_at)\n  OR v_server_anchor<v_human_approved_at")
+ .replace('JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname=', 'JOIN pg_namespace ns ON ns.oid=p.pronamespace WHERE ns.nspname=');
+const contract=[
+ {name:'runtime_id',type:'uuid',required:true},{name:'enabled',type:'boolean',required:true},
+ {name:'issued_at',type:'timestamp with time zone',required:true},{name:'expires_at',type:'timestamp with time zone',required:true},
+ {name:'schedule_secret_id',type:'uuid',required:true},{name:'schedule_secret_hash',type:'text',required:true},
+ {name:'publishable_key',type:'text',required:true},{name:'job_ids',type:'bigint[]',required:true}];
+const scopeContract=[{name:'runtime_id',type:'uuid',required:true},{name:'tenant_id',type:'uuid',required:true},
+ {name:'legal_entity_id',type:'uuid',required:true},{name:'branch_id',type:'uuid',required:true},{name:'enabled',type:'boolean',required:true},
+ {name:'issued_at',type:'timestamp with time zone',required:true},{name:'expires_at',type:'timestamp with time zone',required:true}];
+const columns=table=>`(SELECT jsonb_agg(jsonb_build_object('name',attname,'type',atttypid::regtype::text,'required',attnotnull) ORDER BY attnum)
+ FROM pg_attribute WHERE attrelid='${table}'::regclass AND attnum>0 AND NOT attisdropped)`;
+const guard=` IF ${columns('intelligence_control.edge_authorities')} IS DISTINCT FROM '${JSON.stringify(contract)}'::jsonb
+  OR ${columns('intelligence_control.runtime_worker_scopes')} IS DISTINCT FROM '${JSON.stringify(scopeContract)}'::jsonb
+  THEN RAISE EXCEPTION 'EXACT_TWO_TABLE_COLUMN_CONTRACTS_REQUIRED'; END IF;
+ IF (SELECT count(*) FROM billing.tenant_subscriptions WHERE tenant_id='babe6c86-a764-4d3a-80a3-952a7c096c2c'
+  AND status='trialing' AND trial_ends_at='2026-10-20T08:13:04.144135+00:00'::timestamptz
+  AND trial_ends_at>=v_new_expiry)<>1 THEN RAISE EXCEPTION 'UNCHANGED_BILLING_WINDOW_MUST_COVER_RENEWAL'; END IF;
+`;
+const marker=" IF clock_timestamp()-v_server_anchor>interval '45 seconds'";
+if(sql.split(marker).length!==2)throw Error('ONE_FINAL_TIME_GUARD_REQUIRED');sql=sql.replace(marker,guard+marker);
+const files=[];
+async function save(name,value){const bytes=typeof value==='string'?Buffer.from(value):Buffer.from(JSON.stringify(value,null,2)+'\n');
+ const file=dir+name,h=await fs.open(path.join(root,file),'wx');try{await h.writeFile(bytes);await h.sync();}finally{await h.close();}
+ const binding={path:file,sha256:sha(bytes),bytes:bytes.length};files.push(binding);return binding;}
+const sqlBinding=await save('renewal-expiry-update-template-a2.sql',sql);
+const existingSQL=await read('renewal-preflight-read-a1.sql');
+proposal.preparedAt=new Date().toISOString();proposal.successorOf={path:dir+'renewal-proposal-a1.json',sha256:sha(await read('renewal-proposal-a1.json'))};
+proposal.sqlTemplate=sqlBinding;proposal.readSql={path:dir+'renewal-preflight-read-a1.sql',sha256:sha(existingSQL),bytes:existingSQL.length};
+proposal.packetRevision='a2';proposal.sourceOnly=true;proposal.schemaContracts={edgeAuthority:contract,workerScope:scopeContract};
+proposal.currentReviewDateUtc=proposal.preparedAt.slice(0,10);
+proposal.calendarGate={originalFixtureUtcDay:'2026-10-13',previouslyReviewedExportUtcDay:'2026-10-14',
+ currentUtcDay:proposal.preparedAt.slice(0,10),automaticCalendarReset:false,anotherDayAuthorized:false,
+ result:proposal.preparedAt.slice(0,10)==='2026-10-14'?'Existing export day remains a separate gate.':'The old UTC14 export day is past. Runtime renewal alone does not amend the export day; an exact separate calendar/source amendment is required before exports.'};
+proposal.sourceInspectionNotes=['Actual saved dependency read establishes two independent expired rows and exact seven installed function/ACL bindings.',
+ 'Both source table contracts allow at most7 days from the unchanged original issued_at; the proposed renewal remains bounded by that constraint.',
+ 'The installed guard bodies are preserved. A24h-from-issued check exists in the old desktop schedule-resume helper, which must receive an additive successor; the proposal never edits installed functions.',
+ 'The SQL template is not compiled/rendered with actual approval values and was not executed or database-tested.'];
+proposal.proposalStillNotApproval=true;
+const proposalBinding=await save('renewal-proposal-a2.json',proposal);
+const markdown=`This is a proposal to renew the same isolated development runtime for **at most 120 minutes**, measured from an actual fresh server preflight after approval of this exact packet. It would atomically change only the expiry field in the existing edge-authority row and its one existing worker-scope row. Both original issue times, scope IDs, non-window hashes, actors, MFA, roles, grants, providers, secrets and destinations stay fixed. The three jobs stay paused during renewal. **No execution is approved by this packet.**
+
+The saved dependency read at 11:43 UTC on 14 October records two expired permissions: the worker scope expired at 08:13 UTC and the edge authority at 09:57 UTC. Renewing only the edge row would leave backend scope checks denied. The read also binds seven installed functions and ACLs, 115 migrations and 363 API functions. The earlier global snapshot records three approved date pairs, zero exports, zero worker ticks, delivery outcomes, receiver receipts and quota periods, and 24 old scheduled HTTP 404 responses. Those saved observations may now be stale and require fresh checks.
+
+The exact V7 deployment has 25 verified returned source rows. Its one unsigned request returned HTTP 403 WORKER_ACCESS_DENIED. That proves the unsigned ingress denial; it does not prove that the configured service key is valid or authorized by the backend.
+
+All proposed management attempts are included in the cumulative ceiling:
+
+| Phase | Maximum new attempts | Cumulative maximum |
+| --- | ---: | ---: |
+| Already recorded | 0 | 134 |
+| One actual owner readiness GET | 1 | 135 |
+| Renewal preflight, one transaction, readback | 3 | 138 |
+| Original two exports: 24 ordinary calls and one reserved read-only resolution | 25 | 163 |
+| One signed health dispatch: preflight, dispatch, at most three readback polls | 5 | 168 |
+| Separate three-job resume: preflight, one transaction, readback | 3 | 171 |
+
+The new overall maximum is **134 + 37 = 171**. The ordinary export maximum is 162; its conditional resolution makes 163. These are proposed maxima, not invented future observations. A6 may use 138 as its prior only after the four preceding attempts actually occur. Fewer, different or additional calls require a revised exact plan and review. The earlier 150, 156, 157, 159 and 160 records remain preserved. The 160 calculation omitted renewal-control overhead.
+
+The guarded SQL has NULL approval and timestamp inputs, so it fails closed as saved. A later exact helper must bind the actual direct human reply, fresh owner metadata, post-approval server anchor, rendered SQL and independent operation review. The template locks the two exact old rows, checks their original expiries and hashes, seven function/ACL bindings, forced RLS and table types, the unchanged billing trial, exact paused jobs and outside-job preservation. It changes only two expiry fields and aborts on any count or postcheck mismatch. It does not select Vault values or change schema, functions, users, grants, secrets or jobs. The original seven-day-from-issue table limits remain. [PostgreSQL row-lock documentation](https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-ROWS) and [clock semantics](https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT) support the lock and freshness design; the SQL itself has not been run on a database.
+
+After the original exports, schedules still require one successful, bounded signed manual health invocation while all three jobs remain paused. Require its actual completed response, matching completed health tick and successful outcome through the unchanged backend service-role checks. Keep the model count unchanged. An unsigned 403, catalogue grant or key-shaped string is insufficient. Charge the manual health request as request 25 under the original cumulative 4,320 scheduled-worker request cap. This proposal includes no model invocation; the original cumulative maximum of four remains. Failure keeps schedules paused. Actual schedule resumption has its own final operation review.
+
+The frozen a5 and old schedule helper remain unchanged. New a6 source, tests, preparation, actual renewal readback and final private-adapter gate are required. The old helper's fixed expiry and 24-hour-from-issue check cannot be waived. Fixture dates stay 13 October. The previous export day was UTC 14 October; the current review day is UTC ${proposal.currentReviewDateUtc}. Renewal alone does not authorize another export day. A separate exact calendar/source amendment is required before any export on a different day.
+
+The proposal does not resolve missing Windows profile/native keyboard, restart or recovery evidence, private database inputs, 2,000-session load capacity or production release checks. It accepts no requirement rows. Approval, actual timestamps and successful operations are all still absent.
+
+Exact proposal JSON SHA-256: ${proposalBinding.sha256}. The a2 manifest binds this proposal, SQL, inventory, validation, source and all earlier evidence.
+`;
+const mdBinding=await save('renewal-proposal-a2.md',markdown);
+const checks=[
+ ['all original packet files/evidence remain exact',true],
+ ['readable Markdown has no per-character backticks',!markdown.startsWith('`T`h')&&!markdown.includes('`h`e`')],
+ ['only two expiry UPDATE statements',(sql.match(/^ UPDATE /gm)||[]).length===2&&!/^ UPDATE .* SET (?!expires_at=)/m.test(sql)],
+ ['no job resumption or outbound request in renewal SQL',!sql.includes('cron.alter_job')&&!sql.includes('net.http_post')&&!sql.includes('vault.decrypted_secrets')],
+ ['actual approval/window inputs remain NULL',/v_human_approval_sha256 text := NULL/.test(sql)&&/v_server_anchor timestamptz := NULL/.test(sql)&&proposal.humanApproval.recorded===false],
+ ['both original issue/expiry/hash values are guarded',sql.includes(proposal.recordedState.authority.issuedAt)&&sql.includes(proposal.recordedState.workerScope.issuedMin)&&sql.includes(proposal.recordedState.authority.nonWindowHash)&&sql.includes(proposal.recordedState.workerScope.nonWindowHash)],
+ ['seven installed identities remain exact',proposal.exactGuardFunctionBindings.length===7&&proposal.exactGuardFunctionBindings.every(row=>sql.includes(row.definitionSha256)&&sql.includes(row.identity))],
+ ['freshness uses advancing clock before and after row locks',sql.split('clock_timestamp()-v_server_anchor').length===3&&sql.includes('FOR UPDATE')],
+ ['table and unchanged billing contracts checked',sql.includes('EXACT_TWO_TABLE_COLUMN_CONTRACTS_REQUIRED')&&sql.includes('UNCHANGED_BILLING_WINDOW_MUST_COVER_RENEWAL')],
+ ['finance ceiling includes renewal controls',inventory.arithmetic.priorAtExports===138&&134+1+3+24+1===163&&inventory.arithmetic.financeThroughExportsMaximum===163],
+ ['all future management attempts included',inventory.phases.reduce((n,row)=>n+row.maximumAttempts,0)===37&&134+37===171],
+ ['unperformed resolution is not invented',inventory.caveat.includes('never fabricate charges')],
+ ['no approval or calendar permission inferred',!proposal.executionPermitted&&!proposal.humanApproval.recorded&&!proposal.calendarGate.anotherDayAuthorized]
+].map(([name,passed])=>({name,passed}));
+if(checks.some(row=>!row.passed))throw Error('SOURCE_PACKET_VALIDATION_FAILED');
+const validation=await save('local-validation-a2.json',{kind:'renewal-source-packet-validation',checkedAt:new Date().toISOString(),passed:true,checks,
+ validatedChecks:checks.length,privateInputsRead:false,actualNetworkRequests:0,SDKJobs:0,SQLParsedOrExecutedOnDatabase:false,
+ sourceOnly:true,SQLRuntimeBehaviorVerified:false,approvalRecorded:false,renewalExecuted:false,
+ preservedFormattingFailure:{path:dir+'renewal-proposal-a1.md',sha256:sha(await read('renewal-proposal-a1.md')),cause:'The initial Markdown generator inserted a backtick between every character through an empty-string replacement. The original remains preserved; a2 rewrites readable prose only.'}});
+const self=await fs.readFile(fileURLToPath(import.meta.url));
+const manifest={kind:'unapproved-runtime-renewal-source-packet-a2',preparedAt:new Date().toISOString(),author:'/root/completion_peer',sourceOnly:true,
+ executionPermitted:false,humanApprovalRecorded:false,independentReviewPending:true,proposal:proposalBinding,files,
+ unchangedCallInventory:originalManifest.files.find(row=>row.path.endsWith('renewal-call-inventory-a1.json')),
+ unchangedPreflight:proposal.readSql,originalPacket:{path:dir+'renewal-packet-manifest-a1.json',bytes:originalManifestBytes.length,sha256:sha(originalManifestBytes)},
+ source:{path:dir+'finalize-renewal-packet-a2.mjs',bytes:self.length,sha256:sha(self)},evidence:originalManifest.evidence,
+ limitations:['No SQL parsing/database execution or live/private action occurred.','Current UTC15 is not an export calendar authorization.','The source proposal does not create actual human approval or an actual future window.']};
+const bytes=Buffer.from(JSON.stringify(manifest,null,2)+'\n'),file=dir+'renewal-packet-manifest-a2.json';await fs.writeFile(path.join(root,file),bytes,{flag:'wx'});
+console.log(JSON.stringify({sourceOnly:true,executionPermitted:false,proposal:proposalBinding,markdown:mdBinding,sql:sqlBinding,validation,
+ manifest:{path:file,bytes:bytes.length,sha256:sha(bytes)}}));

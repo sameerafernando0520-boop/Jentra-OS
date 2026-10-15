@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import {EventEmitter} from 'node:events';
 import {createHash} from 'node:crypto';
 import {
- PROJECT,BUNDLE,RUNTIME,ISSUED,EXPIRES,SOURCE,PRESERVED,JOBS,GUARDS,EXPORT_COMMANDS,READ_SQL,
- buildResumeSql,validateTime,validateFingerprints,validateExportsProof,validateFinalReview,validateSnapshot,
+ PROJECT,BUNDLE,RUNTIME,TENANT,ISSUED,EXPIRES,SOURCE,PROVIDER_REVIEW,PRESERVED,JOBS,GUARDS,EXPORT_COMMANDS,READ_SQL,
+ buildResumeSql,validateTime,validateFingerprints,validateExportsProof,validateProviderAuthority,validateFinalReview,validateSnapshot,
  createScheduleTransport,runScheduleResume,main,
 } from '../../../../tools/wave5/resume_worker_schedules_20261014_r5_v7.mjs';
 
@@ -21,6 +21,16 @@ const exportsProof={kind:'genuine-export-only-successor-result',passed:true,proj
  successfulDateCommandsReexecuted:false,oldUncertainCommandReplayed:false,artifacts:EXPORT_COMMANDS.map((row,i)=>({
   exportId:row.exportId,sourceHash:'a'.repeat(64),fileSha256:'b'.repeat(64),independentSessionId:'10000000-0000-4000-8000-000000000001',
   registeredPipelineReopen:i===0,statementFreshSourceReproduction:i===1,registeredStatementReopen:false}))};
+const providerBinding={path:PROVIDER_REVIEW,sha256:'d'.repeat(64)};
+const providerEvidence={path:'docs/verification/wave5/CONTROLLED_FAKE_NO_REAL_PROVIDER_REQUEST.json',sha256:'e'.repeat(64)};
+const providerAuthority={kind:'independent-actual-v7-backend-provider-authority-review',technicalDecision:'approve',passed:true,
+ independentlyReviewed:true,projectId:PROJECT,runtimeBundleSha256:BUNDLE,runtimeId:RUNTIME,deployedVersion:7,
+ candidateBundleSha256:'2a540cabaf0b8ac10f1a553e07b5cea0e886cb9ec380ff8560f500eba4b1f35c',
+ credentialSource:'existing-injected-worker-service-key',backendRole:'service_role',actualReadOnlyBackendAuthorizationVerified:true,
+ actualServiceKeyRoleAndValidityVerified:true,unsignedProbeUsedAsRoleProof:false,keyFormatUsedAsRoleProof:false,secretsPublished:false,
+ observedAt:new Date(now-1000).toISOString(),guardFingerprints:fingerprints,evidenceBindings:[providerEvidence],actualChecks:[{
+  rpc:'wave5_runtime_worker',action:'entitlement',readOnly:true,httpStatus:200,authorized:true,runtimeId:RUNTIME,tenantId:TENANT,
+  responseSha256:'f'.repeat(64),serverRequestId:'10000000-0000-4000-8000-000000000009',evidenceBinding:providerEvidence}]};
 function finalReview(){return {kind:'independent-exact-three-job-schedule-resume-operation-review',technicalDecision:'approve',executionPermitted:true,
  projectId:PROJECT,runtimeBundleSha256:BUNDLE,sourceBinding:{path:SOURCE,sha256:'a'.repeat(64)},jobIds:[4,5,6],
  originalAuthorityExpiresAt:EXPIRES,originalAuthorityIssuedAt:ISSUED,authorizationExpiresAt:new Date(Date.parse(EXPIRES)).toISOString(),
@@ -28,7 +38,7 @@ function finalReview(){return {kind:'independent-exact-three-job-schedule-resume
  newUsers:0,newPermissions:0,newSecrets:0,newDestinations:0,extendedExpiry:false,personalHumanExactSourceSignatureClaimed:false,
  v7ProbeProof:PRESERVED[7],v7OwnerDecision:PRESERVED[6],exportsMustCompleteFirst:true,oldA4IntentReused:false,countersReset:false,
  currentOwnerSidVerifiedByPrivateAdapter:true,separateScheduleResumeDecision:true,guardFingerprints:fingerprints,
- readSqlSha256:hash(READ_SQL),writeSqlSha256:hash(buildResumeSql(fingerprints)),ownerSid:metadata.ownerSid};}
+ readSqlSha256:hash(READ_SQL),writeSqlSha256:hash(buildResumeSql(fingerprints)),ownerSid:metadata.ownerSid,providerAuthorityBinding:providerBinding};}
 function state(active=false){return {observedAt:new Date(now).toISOString(),scopeAllowed:true,migrationCount:115,apiFunctionCount:363,
  serviceRoleRpcGrants:true,completedOriginalExports:true,guardFingerprints:structuredClone(fingerprints),
  authority:{runtimeId:RUNTIME,enabled:true,issuedAt:ISSUED,expiresAt:EXPIRES,jobIds:[4,5,6]},
@@ -87,8 +97,8 @@ test('exports: exact two completed original commands and independent artifact re
 });
 
 test('operation review: legitimate exact separate review with actual export proof validates only before expiry',()=>{
- assert.equal(validateFinalReview(finalReview(),{sourceSha256:'a'.repeat(64),metadata,exportsProof,now}).executionPermitted,true);
- assert.throws(()=>validateFinalReview(finalReview(),{sourceSha256:'a'.repeat(64),metadata,exportsProof,now:Date.parse(EXPIRES)}),/EXPIRED/);
+ assert.equal(validateFinalReview(finalReview(),{sourceSha256:'a'.repeat(64),metadata,exportsProof,providerAuthority,now}).executionPermitted,true);
+ assert.throws(()=>validateFinalReview(finalReview(),{sourceSha256:'a'.repeat(64),metadata,exportsProof,providerAuthority,now:Date.parse(EXPIRES)}),/EXPIRED/);
 });
 
 test('operation review: deployment approval, altered jobs/source/caps/expiry and reset attempts cannot grant resume',()=>{
@@ -97,13 +107,47 @@ test('operation review: deployment approval, altered jobs/source/caps/expiry and
   {scheduledRequestsAlreadyObserved:0},{maximumManagementAttempts:4},{automaticRetries:1},{extendedExpiry:true},
   {newSecrets:1},{oldA4IntentReused:true},{countersReset:true},{personalHumanExactSourceSignatureClaimed:true},
   {writeSqlSha256:'b'.repeat(64)},{guardFingerprints:[]},{currentOwnerSidVerifiedByPrivateAdapter:false}])
-  assert.throws(()=>validateFinalReview({...finalReview(),...changes},{sourceSha256:'a'.repeat(64),metadata,exportsProof,now}));
+  assert.throws(()=>validateFinalReview({...finalReview(),...changes},{sourceSha256:'a'.repeat(64),metadata,exportsProof,providerAuthority,now}));
 });
 
 test('metadata: expired, wrong owner/project/bundle and extension do not pass with a valid final review',()=>{
  for(const changes of [{expiresAt:'2026-10-14T09:00:00Z'},{ownerSid:'other'},{projectId:'foreign'},
   {runtimeBundleSha256:'b'.repeat(64)},{containsPlaintextCredential:true},{createdAt:'2026-10-14T10:00:00Z'}])
-  assert.throws(()=>validateFinalReview(finalReview(),{sourceSha256:'a'.repeat(64),metadata:{...metadata,...changes},exportsProof,now}));
+  assert.throws(()=>validateFinalReview(finalReview(),{sourceSha256:'a'.repeat(64),metadata:{...metadata,...changes},exportsProof,providerAuthority,now}));
+});
+
+test('provider authority: missing actual record cannot be replaced by unsigned403 or grant/format assertions',()=>{
+ for(const actual of [undefined,null,{...providerAuthority,kind:'independent-actual-worker-v7-unsigned-probe-result-review'},
+  {...providerAuthority,actualServiceKeyRoleAndValidityVerified:false},{...providerAuthority,unsignedProbeUsedAsRoleProof:true},
+  {...providerAuthority,keyFormatUsedAsRoleProof:true},{...providerAuthority,secretsPublished:true}])
+  assert.throws(()=>validateFinalReview(finalReview(),{sourceSha256:'a'.repeat(64),metadata,exportsProof,providerAuthority:actual,now}),/PROVIDER/);
+});
+
+test('provider authority: actual controlled read-only authorization record validates with its exact fixed public binding',()=>{
+ assert.equal(validateProviderAuthority(providerAuthority,{binding:providerBinding,guardFingerprints:fingerprints,now}),providerAuthority);
+ for(const binding of [{...providerBinding,path:'docs/verification/wave5/unsigned-probe.json'},
+  {...providerBinding,sha256:'unknown'},undefined])
+  assert.throws(()=>validateProviderAuthority(providerAuthority,{binding,guardFingerprints:fingerprints,now}),/PROVIDER/);
+});
+
+test('provider authority: foreign scope/version/role, stale or future clocks and mismatched guard source cannot pass',()=>{
+ for(const changes of [{projectId:'foreign'},{runtimeBundleSha256:'a'.repeat(64)},{runtimeId:'foreign'},
+  {deployedVersion:6},{candidateBundleSha256:'b'.repeat(64)},{backendRole:'anon'},{independentlyReviewed:false},
+  {credentialSource:'arbitrary-local-key'},{guardFingerprints:[]},{observedAt:new Date(now+1).toISOString()},
+  {observedAt:new Date(now-300000).toISOString()},{actualReadOnlyBackendAuthorizationVerified:false}])
+  assert.throws(()=>validateProviderAuthority({...providerAuthority,...changes},{binding:providerBinding,guardFingerprints:fingerprints,now}),/PROVIDER/);
+});
+
+test('provider authority: denied/mutating/unknown backend checks or malformed/missing request evidence are rejected',()=>{
+ const check=providerAuthority.actualChecks[0];
+ for(const changes of [{rpc:'wave5_edge_control'},{action:'delivery.claim'},{readOnly:false},{httpStatus:403},{authorized:false},
+  {tenantId:'foreign'},{runtimeId:'foreign'},{responseSha256:'unbound'},{serverRequestId:'not-a-server-uuid'},
+  {evidenceBinding:{...providerEvidence,sha256:'a'.repeat(64)}}])
+  assert.throws(()=>validateProviderAuthority({...providerAuthority,actualChecks:[{...check,...changes}]},
+   {binding:providerBinding,guardFingerprints:fingerprints,now}),/PROVIDER/);
+ for(const changes of [{evidenceBindings:[]},{actualChecks:[]},{evidenceBindings:[{path:'../secret',sha256:'e'.repeat(64)}]},
+  {evidenceBindings:[providerEvidence,providerEvidence]}])
+  assert.throws(()=>validateProviderAuthority({...providerAuthority,...changes},{binding:providerBinding,guardFingerprints:fingerprints,now}),/PROVIDER/);
 });
 
 test('snapshot: exact paused scope and hashes validate without resetting recorded24',()=>{

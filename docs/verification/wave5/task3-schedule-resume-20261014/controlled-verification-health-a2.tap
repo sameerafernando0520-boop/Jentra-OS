@@ -1,0 +1,190 @@
+TAP version 13
+# Subtest: time: exact original authority boundary rejects equality, later clocks and extensions
+ok 1 - time: exact original authority boundary rejects equality, later clocks and extensions
+  ---
+  duration_ms: 1.3301
+  type: 'test'
+  ...
+# Subtest: fingerprints: exact sorted seven fixed signatures and hexadecimal values only
+ok 2 - fingerprints: exact sorted seven fixed signatures and hexadecimal values only
+  ---
+  duration_ms: 0.4181
+  type: 'test'
+  ...
+# Subtest: SQL: only three cron activations remain and exact scope/expiry/115/363/export/budget checks are present
+ok 3 - SQL: only three cron activations remain and exact scope/expiry/115/363/export/budget checks are present
+  ---
+  duration_ms: 0.4732
+  type: 'test'
+  ...
+# Subtest: exports: exact two completed original commands and independent artifact reproductions are necessary
+ok 4 - exports: exact two completed original commands and independent artifact reproductions are necessary
+  ---
+  duration_ms: 0.8133
+  type: 'test'
+  ...
+# Subtest: operation review: legitimate exact separate review with actual export proof validates only before expiry
+ok 5 - operation review: legitimate exact separate review with actual export proof validates only before expiry
+  ---
+  duration_ms: 1.177
+  type: 'test'
+  ...
+# Subtest: operation review: deployment approval, altered jobs/source/caps/expiry and reset attempts cannot grant resume
+ok 6 - operation review: deployment approval, altered jobs/source/caps/expiry and reset attempts cannot grant resume
+  ---
+  duration_ms: 1.5934
+  type: 'test'
+  ...
+# Subtest: metadata: expired, wrong owner/project/bundle and extension do not pass with a valid final review
+ok 7 - metadata: expired, wrong owner/project/bundle and extension do not pass with a valid final review
+  ---
+  duration_ms: 1.0355
+  type: 'test'
+  ...
+# Subtest: provider authority: missing actual record cannot be replaced by unsigned403 or grant/format assertions
+ok 8 - provider authority: missing actual record cannot be replaced by unsigned403 or grant/format assertions
+  ---
+  duration_ms: 0.5942
+  type: 'test'
+  ...
+# Subtest: provider authority: controlled deployed health result validates with exact fixed public binding
+ok 9 - provider authority: controlled deployed health result validates with exact fixed public binding
+  ---
+  duration_ms: 0.8399
+  type: 'test'
+  ...
+# Subtest: provider authority: foreign scope/version/role, stale or future clocks and mismatched guard source cannot pass
+ok 10 - provider authority: foreign scope/version/role, stale or future clocks and mismatched guard source cannot pass
+  ---
+  duration_ms: 0.4708
+  type: 'test'
+  ...
+# Subtest: provider authority: missing or malformed public health lineage cannot pass
+ok 11 - provider authority: missing or malformed public health lineage cannot pass
+  ---
+  duration_ms: 0.2149
+  type: 'test'
+  ...
+# Subtest: readiness tick: exactly one completed health identity and both original row digests are required
+ok 12 - readiness tick: exactly one completed health identity and both original row digests are required
+  ---
+  duration_ms: 0.222
+  type: 'test'
+  ...
+# Subtest: health lineage: local service-role success, wrong target or lack of actual server-key authentication never substitutes
+ok 13 - health lineage: local service-role success, wrong target or lack of actual server-key authentication never substitutes
+  ---
+  duration_ms: 0.7852
+  type: 'test'
+  ...
+# Subtest: health effects: any extra tick/outcome or quota/delivery/model/usage effect is rejected before job activation
+ok 14 - health effects: any extra tick/outcome or quota/delivery/model/usage effect is rejected before job activation
+  ---
+  duration_ms: 3.8773
+  type: 'test'
+  ...
+# Subtest: health accounting: readiness request is kept as one additional request without resetting earlier24
+ok 15 - health accounting: readiness request is kept as one additional request without resetting earlier24
+  ---
+  duration_ms: 0.6474
+  type: 'test'
+  ...
+# Subtest: health raw lineage: HTTP body hash, server UUID, net request and exact completed tick must all match
+ok 16 - health raw lineage: HTTP body hash, server UUID, net request and exact completed tick must all match
+  ---
+  duration_ms: 2.157
+  type: 'test'
+  ...
+# Subtest: health raw lineage: missing source/capture/dispatch/readback bindings cannot be accepted by the final review
+ok 17 - health raw lineage: missing source/capture/dispatch/readback bindings cannot be accepted by the final review
+  ---
+  duration_ms: 0.465
+  type: 'test'
+  ...
+# Subtest: snapshot: exact paused scope and hashes validate without resetting recorded24
+ok 18 - snapshot: exact paused scope and hashes validate without resetting recorded24
+  ---
+  duration_ms: 0.179
+  type: 'test'
+  ...
+# Subtest: snapshot: tenant denial, stale clock, count drift, outside jobs, exports and role grants stop before activation
+ok 19 - snapshot: tenant denial, stale clock, count drift, outside jobs, exports and role grants stop before activation
+  ---
+  duration_ms: 0.5652
+  type: 'test'
+  ...
+# Subtest: workflow: legitimate preparation, activation and readback are exactly read/write/read with durable acknowledgments
+ok 20 - workflow: legitimate preparation, activation and readback are exactly read/write/read with durable acknowledgments
+  ---
+  duration_ms: 0.5205
+  type: 'test'
+  ...
+# Subtest: workflow: bad before snapshot persists stop and performs no activation
+ok 21 - workflow: bad before snapshot persists stop and performs no activation
+  ---
+  duration_ms: 0.2226
+  type: 'test'
+  ...
+# Subtest: workflow: unacknowledged once intent performs zero network calls
+ok 22 - workflow: unacknowledged once intent performs zero network calls
+  ---
+  duration_ms: 0.1305
+  type: 'test'
+  ...
+# Subtest: workflow: unacknowledged preflight or write attempt is not dispatched
+ok 23 - workflow: unacknowledged preflight or write attempt is not dispatched
+  ---
+  duration_ms: 0.3412
+  type: 'test'
+  ...
+# Subtest: workflow: an uncertain write is never replayed and one actual readback can establish enabled state
+ok 24 - workflow: an uncertain write is never replayed and one actual readback can establish enabled state
+  ---
+  duration_ms: 0.3947
+  type: 'test'
+  ...
+# Subtest: workflow: failed write plus paused readback stops with uncertain mutation and no replay
+ok 25 - workflow: failed write plus paused readback stops with uncertain mutation and no replay
+  ---
+  duration_ms: 0.5245
+  type: 'test'
+  ...
+# Subtest: workflow: expiry during preparation rejects before dispatch and does not alter authority
+ok 26 - workflow: expiry during preparation rejects before dispatch and does not alter authority
+  ---
+  duration_ms: 0.1392
+  type: 'test'
+  ...
+# Subtest: transport: no construction IO, strict endpoint/query, verified TLS and exactly three charged attempts
+ok 27 - transport: no construction IO, strict endpoint/query, verified TLS and exactly three charged attempts
+  ---
+  duration_ms: 1.507
+  type: 'test'
+  ...
+# Subtest: transport: unverified chain or plaintext socket never sends header-bearing body
+ok 28 - transport: unverified chain or plaintext socket never sends header-bearing body
+  ---
+  duration_ms: 0.6524
+  type: 'test'
+  ...
+# Subtest: transport: network error is sanitized and never automatically retried
+ok 29 - transport: network error is sanitized and never automatically retried
+  ---
+  duration_ms: 0.2395
+  type: 'test'
+  ...
+# Subtest: CLI: expired execute rejects before reading any stdin or public operation gate
+ok 30 - CLI: expired execute rejects before reading any stdin or public operation gate
+  ---
+  duration_ms: 0.6118
+  type: 'test'
+  ...
+1..30
+# tests 30
+# suites 0
+# pass 30
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 57.1191

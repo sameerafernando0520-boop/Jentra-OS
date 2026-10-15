@@ -1,0 +1,122 @@
+// UTC-only parsing prevents local timezone interpretation and invalid calendar
+// normalization. PostgreSQL microseconds remain bound by the source records.
+const utcMillis=value=>{
+ must(typeof value==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|\+00:00)$/.test(value),
+  'EXPLICIT_UTC_EXPORT_TIMESTAMP_REQUIRED');
+ const milliseconds=Date.parse(value);
+ must(Number.isFinite(milliseconds)&&new Date(milliseconds).toISOString().slice(0,19)===value.slice(0,19),'VALID_UTC_EXPORT_TIMESTAMP_REQUIRED');
+ return milliseconds;
+};
+export function validateExportsWindow(window){
+ must(exactKeys(window,['notBefore','edgeExpiresAt','scopeExpiresAt','privateExpiresAt','expiresAt']),'EXPLICIT_REVIEWED_EXPORT_WINDOW_REQUIRED');
+ const start=utcMillis(window.notBefore),edge=utcMillis(window.edgeExpiresAt),scopeEnd=utcMillis(window.scopeExpiresAt),
+  privateEnd=utcMillis(window.privateExpiresAt),end=utcMillis(window.expiresAt);
+ must(edge===scopeEnd&&edge>start&&edge-start<=EXPORTS_MAX_WINDOW_MS&&privateEnd>start
+  &&end===Math.min(edge,scopeEnd,privateEnd)&&end>start,'EXACT_BOTH_RENEWED_EXPIRIES_AND_EARLIEST_DEADLINE_REQUIRED');
+ return window;
+}
+export function validateExportsTime(value,{now=Date.now(),server=false,window}={}){
+ validateExportsWindow(window);
+ const clock=typeof value==='number'?value:utcMillis(value);
+ must(Number.isFinite(clock)&&Number.isFinite(now)&&clock>=utcMillis(window.notBefore)&&clock<utcMillis(window.expiresAt)
+  &&clock<=now+10000,'CURRENT_REVIEWED_EXPORT_WINDOW_REQUIRED');
+ if(server)must(now-clock>=-10000&&now-clock<=45000,'FRESH_EXPORT_SERVER_CLOCK_REQUIRED');
+ return clock;
+}
+export function validateExportsProfile(profile,documents,now=Date.now()){
+ const {sourcePolicy,independentReview,ownerDecision,renewalReadback,metadata,refresh,accounting,dependency}=documents??{};
+ must(profile?.kind==='source-reviewed-renewed-export-a6-profile'&&profile.projectId===PROJECT&&profile.runtimeBundleSha256===BUNDLE
+  &&profile.priorConservativeBound===138&&profile.ordinaryAttempts===24&&profile.ordinaryLimit===162&&profile.cumulativeLimit===163
+  &&profile.resolutionAttempts===1&&profile.originalFixtureUtcDay===FINANCE_CALENDAR.fixtureDay
+  &&profile.personalHumanExactSourceSignatureClaimed===false&&exactKeys(profile.controlBindings,Object.keys(EXPORTS_PROFILE_PATHS)),
+  'EXACT_RENEWED_A6_EXPORT_PROFILE_REQUIRED');
+ for(const [name,file] of Object.entries(EXPORTS_PROFILE_PATHS))must(profile.controlBindings[name]?.path===file&&digest(profile.controlBindings[name].sha256),
+  'FIXED_REVIEWED_EXPORT_PROFILE_BINDINGS_REQUIRED');
+ must(sameFinanceJson(profile.controlBindings.dependency,EXPORTS_DEPENDENCY),'PINNED_CURRENT134_ACCOUNTING_DEPENDENCY_REQUIRED');
+ must(sourcePolicy?.kind==='source-only-export-a6-renewal-policy'&&sourcePolicy.projectId===PROJECT&&sourcePolicy.runtimeBundleSha256===BUNDLE
+  &&sourcePolicy.runtimeId===EXPORTS_RUNTIME_ID&&sourcePolicy.sourceImplementationOnly===true&&sourcePolicy.liveExecutionAuthorized===false
+  &&sourcePolicy.originalConcreteCumulativeCap===150&&sameFinanceJson(sourcePolicy.budget,EXPORTS_REVIEWED_BUDGET)
+  &&sourcePolicy.windowMode==='server-clock-at-application'&&sourcePolicy.maximumWindowMs===EXPORTS_MAX_WINDOW_MS
+  &&sameFinanceJson(sourcePolicy.originalWindow,EXPORTS_ORIGINAL_WINDOW)&&sameFinanceJson(sourcePolicy.dependencyBinding,EXPORTS_DEPENDENCY)
+  &&sameFinanceJson(sourcePolicy.permittedOriginalExportCommands,EXPORTS_COMMANDS)&&sourcePolicy.originalFixtureUtcDay===FINANCE_CALENDAR.fixtureDay
+  &&sameFinanceJson(sourcePolicy.a5SourceBindings,EXPORTS_A5_SOURCE_BINDINGS)&&sourcePolicy.preservedOriginalSourceCount===68
+  &&sourcePolicy.consolidatedSqlSha256===EXPORTS_SQL_SHA256&&hashBytes(EXPORTS_FACTS_SQL)===EXPORTS_SQL_SHA256
+  &&sourcePolicy.maximumRunMs===900000&&sourcePolicy.maximumRequestMs===45000&&sourcePolicy.ordinaryReserveMs===90000
+  &&sourcePolicy.resolutionReserveMs===45000&&sourcePolicy.transportRetries===0&&sourcePolicy.unlistedCallsAllowed===0
+  &&sourcePolicy.schedulesMustRemainPaused===true&&sourcePolicy.onlyTwoExpiryFieldsMayChange===true
+  &&digest(sourcePolicy.renewalOperationBundleSha256)&&Array.isArray(sourcePolicy.exportSourceBindings)
+  &&sourcePolicy.exportSourceBindings.length===EXPORTS_SOURCE_PATHS.length&&sourcePolicy.exportSourceBindings.every((row,i)=>
+   row.path===EXPORTS_SOURCE_PATHS[i]&&digest(row.sha256)),'EXACT_SOURCE_ONLY_A6_RENEWAL_POLICY_REQUIRED');
+ must(independentReview?.kind==='independent-export-a6-policy-review'&&independentReview.passed===true
+  &&independentReview.sourceOnly===true&&independentReview.liveExecutionAuthorized===false
+  &&sameFinanceJson(independentReview.policyBinding,profile.controlBindings.sourcePolicy)
+  &&sameFinanceJson(independentReview.exportSourceBindings,sourcePolicy.exportSourceBindings)
+  &&sameFinanceJson(independentReview.budget,EXPORTS_REVIEWED_BUDGET)
+  &&independentReview.renewalOperationBundleSha256===sourcePolicy.renewalOperationBundleSha256
+  &&independentReview.exactConsolidatedSqlSha256===EXPORTS_SQL_SHA256,'EXACT_INDEPENDENT_A6_POLICY_REVIEW_REQUIRED');
+ // A boolean or delegated technical approval alone is insufficient. The final
+ // operation review pins the exact direct-user reply record and its byte hash.
+ must(ownerDecision?.kind==='direct-human-runtime-renewal-and-export-a6-decision'&&ownerDecision.approved===true
+  &&ownerDecision.approvalSource==='direct-user-reply'&&ownerDecision.exactReply===EXPORTS_OWNER_REPLY
+  &&typeof ownerDecision.questionItemId==='string'&&ownerDecision.questionItemId.length>=16&&ownerDecision.questionItemId.length<=300
+  &&ownerDecision.projectId===PROJECT&&ownerDecision.runtimeBundleSha256===BUNDLE&&ownerDecision.runtimeId===EXPORTS_RUNTIME_ID
+  &&sameFinanceJson(ownerDecision.sourcePolicyBinding,profile.controlBindings.sourcePolicy)
+  &&sameFinanceJson(ownerDecision.independentReviewBinding,profile.controlBindings.independentReview)
+  &&ownerDecision.operationBundleSha256===sourcePolicy.renewalOperationBundleSha256
+  &&sameFinanceJson(ownerDecision.budget,EXPORTS_REVIEWED_BUDGET)&&ownerDecision.maximumWindowMs===EXPORTS_MAX_WINDOW_MS
+  &&ownerDecision.onlyTwoExpiryFieldsMayChange===true&&ownerDecision.schedulesMustRemainPaused===true
+  &&ownerDecision.productionAuthorized===false&&ownerDecision.realBillingAuthorized===false
+  &&utcMillis(ownerDecision.decidedAt)<=now,'EXACT_DIRECT_HUMAN_RENEWAL_AND_A6_DECISION_REQUIRED');
+ const start=utcMillis(renewalReadback?.appliedAt),observed=utcMillis(renewalReadback?.observedAt);
+ must(renewalReadback?.kind==='actual-two-row-runtime-expiry-renewal-readback'&&renewalReadback.actual===true&&renewalReadback.committed===true
+  &&renewalReadback.projectId===PROJECT&&renewalReadback.runtimeId===EXPORTS_RUNTIME_ID
+  &&sameFinanceJson(renewalReadback.ownerDecisionBinding,profile.controlBindings.ownerDecision)
+  &&sameFinanceJson(renewalReadback.sourcePolicyBinding,profile.controlBindings.sourcePolicy)
+  &&renewalReadback.operationBundleSha256===sourcePolicy.renewalOperationBundleSha256
+  &&renewalReadback.affectedRows===2&&renewalReadback.onlyTwoExpiryFieldsChanged===true&&renewalReadback.issuedAtUnchanged===true
+  &&renewalReadback.nonWindowValuesUnchanged===true&&renewalReadback.jobsPaused===true&&renewalReadback.countersUnchanged===true
+  &&renewalReadback.secretValuesRead===false&&renewalReadback.scope?.count===1&&renewalReadback.edge?.count===1
+  &&renewalReadback.scope.runtimeId===EXPORTS_RUNTIME_ID&&renewalReadback.edge.runtimeId===EXPORTS_RUNTIME_ID
+  &&renewalReadback.scope.tenantId===FINANCE_SCOPE.tenantId&&renewalReadback.scope.legalEntityId===FINANCE_SCOPE.entityId
+  &&renewalReadback.scope.branchId===FINANCE_SCOPE.branchId
+  &&renewalReadback.scope.issuedAt===EXPORTS_ORIGINAL_WINDOW.scopeIssuedAt&&renewalReadback.edge.issuedAt===EXPORTS_ORIGINAL_WINDOW.edgeIssuedAt
+  &&renewalReadback.scope.oldExpiresAt===EXPORTS_ORIGINAL_WINDOW.scopeExpiresAt&&renewalReadback.edge.oldExpiresAt===EXPORTS_ORIGINAL_WINDOW.edgeExpiresAt
+  &&renewalReadback.scope.nonWindowHash===EXPORTS_ORIGINAL_WINDOW.scopeNonWindowHash
+  &&renewalReadback.edge.nonWindowHash===EXPORTS_ORIGINAL_WINDOW.edgeNonWindowHash
+  &&start>=utcMillis(ownerDecision.decidedAt)&&observed>=start&&observed-start<=45000&&observed<=now
+  &&now-observed<=EXPORTS_MAX_WINDOW_MS,'ACTUAL_BOTH_EXPIRY_ROWS_AND_PRESERVATION_READBACK_REQUIRED');
+ must(metadata?.kind==='wave5-private-owner-input-metadata'&&metadata.projectId===PROJECT&&metadata.runtimeBundleSha256===BUNDLE
+  &&metadata.metadataFilename==='metadata-renewed-a10.json'&&metadata.containsPlaintextCredential===false
+  &&metadata.reuseAuthorizationQuestionId==='["request_user_input_async","call_637ea7df9a28457388be21396163da04",0]'
+  &&sameFinanceJson(metadata.refreshEvidence,profile.controlBindings.refresh)&&utcMillis(metadata.createdAt)<=now
+  &&utcMillis(metadata.createdAt)>=utcMillis(ownerDecision.decidedAt)&&utcMillis(metadata.expiresAt)>now
+  &&utcMillis(metadata.expiresAt)>utcMillis(metadata.createdAt)
+  &&utcMillis(metadata.expiresAt)-utcMillis(metadata.createdAt)<=EXPORTS_MAX_WINDOW_MS,'EXACT_FRESH_A10_EXPORT_METADATA_REQUIRED');
+ must(refresh?.kind==='actual-private-owner-scope-refresh'&&refresh.projectId===PROJECT&&refresh.organizationId===ORGANIZATION
+  &&refresh.actualStatus==='ACTIVE_HEALTHY'&&refresh.readOnlyOwnerApiCalls===1&&refresh.actualVerifiedAt===metadata.createdAt
+  &&digest(refresh.helperSha256)&&refresh.helperSha256===metadata.helperSha256&&refresh.databaseWrites===0&&refresh.authWrites===0&&refresh.settingsChanges===0,
+  'ACTUAL_CHARGED_A10_READINESS_REFRESH_REQUIRED');
+ must(dependency?.kind==='actual-readonly-runtime-expiry-dependency-investigation'&&dependency.projectId===PROJECT&&dependency.mutation===false
+  &&dependency.conservativeContinuationAccounting?.cumulativeChargedCalls===134
+  &&dependency.conservativeContinuationAccounting.actualA10RefreshPerformed===false
+  &&accounting?.kind==='conservative-renewed-export-a6-read-accounting'&&accounting.projectId===PROJECT
+  &&sameFinanceJson(accounting.recordedPriorBinding,EXPORTS_DEPENDENCY)&&accounting.recordedPrior===134
+  &&accounting.chargedA10OwnerIdentityReads===1&&accounting.chargedRenewalControlCalls===3&&accounting.otherFinanceCallsSinceDependency===0
+  &&accounting.cumulativeChargedPriorCalls===138&&sameFinanceJson(accounting.actualA10Refresh,profile.controlBindings.refresh)
+  &&sameFinanceJson(accounting.actualRenewalReadback,profile.controlBindings.renewalReadback)
+  &&sameFinanceJson(accounting.renewalCallAccounting,renewalReadback.controlCallAccounting),
+  'EXACT_CHARGED_EXPORT_PRIOR138_REQUIRED');
+ const renewalCalls=renewalReadback.controlCallAccounting;
+ must(renewalCalls?.attempts===3&&renewalCalls.failedAttempts===0&&renewalCalls.automaticRetries===0
+  &&Array.isArray(renewalCalls.receipts)&&renewalCalls.receipts.length===3&&renewalCalls.receipts.every((row,i)=>
+   row.ordinal===136+i&&row.phase===['preflight','two-row-expiry-write','readback'][i]&&row.successful===true&&digest(row.responseSha256)),
+  'THREE_ACTUALLY_CHARGED_RENEWAL_CONTROL_RECEIPTS_REQUIRED');
+ const window=immutableJson({notBefore:new Date(start).toISOString(),
+  edgeExpiresAt:new Date(utcMillis(renewalReadback.edge.expiresAt)).toISOString(),
+  scopeExpiresAt:new Date(utcMillis(renewalReadback.scope.expiresAt)).toISOString(),
+  privateExpiresAt:new Date(utcMillis(metadata.expiresAt)).toISOString(),
+  expiresAt:new Date(Math.min(utcMillis(renewalReadback.edge.expiresAt),utcMillis(renewalReadback.scope.expiresAt),utcMillis(metadata.expiresAt))).toISOString()});
+ must(sameFinanceJson(profile.window,window)&&profile.privateAdapterPredecessor?.path==='scripts/wave5/run_private_management_installer_20261013_r5.ps1'
+  &&digest(profile.privateAdapterPredecessor.sha256),'REVIEWED_EXPORT_WINDOW_AND_ADAPTER_REQUIRED');
+ validateExportsTime(now,{now,window});return {window,controlBindings:profile.controlBindings,priorConservativeBound:138};
+}

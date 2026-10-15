@@ -1,0 +1,255 @@
+// Public source packet only. This module has no transport, secret reader,
+// environment access, SQL executor, approval recorder or scheduler control.
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {createHash} from 'node:crypto';
+const root=fileURLToPath(new URL('../../../../',import.meta.url));
+const dir='docs/verification/wave5/task3-runtime-renewal-20261014/';
+const digest=value=>createHash('sha256').update(value).digest('hex');
+const project='xpdoufauvrbdmxgngetv',runtime='778237e3-3d4e-4871-8cc9-e08b07b989c7';
+const tenant='babe6c86-a764-4d3a-80a3-952a7c096c2c',entity='caa2bb06-219a-47e9-8132-66d1271b0ffd',branch='3813692c-f0de-4c69-8e34-d56cf54695b1';
+const inputs=[
+ ['docs/verification/wave5/runtime-global-readonly-snapshot-20261014-r5-a8.json',null],
+ ['docs/verification/wave5/runtime-global-readonly-snapshot-20261014-r5-a9.json','4345c3d2fd850dc0ef49d4465487ed31c40d41f36fabfd06f41d4bbde660f8e3'],
+ ['docs/verification/wave5/runtime-expiry-dependency-readonly-20261014-r5-a1.json','0dc87893b6635d3ef4fb64c724e6aab2a42dd89d9d07ffc42251105f7c3141dc'],
+ ['docs/verification/wave5/task3-completion-20261013/worker-v7-independent-actual-probe-result-20261014.json','25297e420e7ac1fa62b2fef2e6b4e678a3ff13d7dd8fd59b6fadab2d46f8e236'],
+ ['docs/verification/wave5/task3-completion-20261013/worker-v7-independent-deployment-and-probe-review-20261014.json','d15f3a3941175dcd258b252069c881badb0f8670d1f3b07b3669d3257bc0220f'],
+ ['docs/verification/wave5/worker-v7-provider-deployment-source-verification-20261014-r5-a2.json','9deaf816923888e44b7b35fa0b961b2915f3ce7c6df41df5b184a3391adfa9e6'],
+ ['docs/verification/wave5/runtime-owner-decision-20261012-r5.json','90daa67a459bd985a1bec824bf0e8e09bf69537c2febdae85238336604c655ab'],
+ ['docs/verification/wave5/task3-completion-20261013/export-continuation-technical-decision-20261014-a1.json','90b0d2c6767b983308bb4d8258583da26bd03b746941daac6fd1737d703bebee'],
+ ['docs/verification/wave5/task3-completion-20261013/export-continuation-technical-decision-20261014-a2.json','493f4e266bf1c427f4830a224f712f8869df22734855d6359e28a5547bd555d1'],
+ ['docs/verification/wave5/task3-export-source-independent-20261014/independent-source-review-a1.json','1223b1efdd7b85d73742f2f6aa5f4192d90907b6bbd6e45bd20d567649a0dd9d'],
+ ['tools/wave5/finance_exports_20261014_r5_a5.mjs','ab9ec8c1a97a0a009081e5aba58db1359fd6d5df3a3d0ce2680bf4c43f50a544'],
+ ['tools/wave5/prepare_finance_exports_20261014_r5_a5.mjs','030c44b84a8c5073c6c2157352fd70783c232ee256befda6ec28e9b6a723cd32'],
+ ['docs/verification/wave5/task3-export-continuation-20261014/finance_exports_20261014_r5_a5.test.mjs','fedd5d9c86d767508bc9e214225316f457ac3b24dce1e1359a581448c998a351'],
+ ['supabase/migrations/20261008123000_wave5_runtime_scope.sql','655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc'],
+ ['supabase/migrations/20261009120000_wave5_supabase_runtime.sql','9ceb592be38ebb6cff35b54e1d09c63d7e700cd95f8b52f3725966ea1d677164'],
+ ['supabase/migrations/20261009123000_wave5_supabase_schedule.sql',null],
+ ['supabase/migrations/20261006150000_wave5_trusted_metering.sql',null],
+ ['docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql',null],
+ ['docs/verification/wave5/supabase-runtime-setup-20261009.sql','c2ae865c9bae23be94dec512dd15645a85c9a7a82b4edbd32fbccf92a7462e41'],
+ ['tools/wave5/resume_worker_schedules_20261014_r5_v7.mjs',null],
+ ['workers/wave5/edge_runtime_20261014_r5_v7.mjs','bf772c3a77f5f050c98dfb0e4e61de63235aa42b4618451f9dc69a5e24697cd8'],
+ ['workers/wave5/edge_configuration.mjs','ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13']
+];
+const bindings=[],documents={};
+for(const [file,expected] of inputs){const bytes=await fs.readFile(path.join(root,file)),sha256=digest(bytes);if(expected&&expected!==sha256)throw Error('PINNED_PUBLIC_RENEWAL_INPUT_DRIFT');
+ bindings.push({path:file,bytes:bytes.length,sha256});if(file.endsWith('.json'))documents[file]=JSON.parse(bytes);}
+const dependency=documents[inputs[2][0]],snap=dependency.snapshot,global=documents[inputs[1][0]],probe=documents[inputs[3][0]];
+if(dependency.mutation||dependency.runtimeAuthorityExtended||dependency.conservativeContinuationAccounting.cumulativeChargedCalls!==134
+ ||snap.scopes.count!==1||snap.scopes.enabled!==1||snap.scopes.unexpired!==0||snap.authority.unexpired!==false
+ ||snap.migrationCount!==115||snap.apiFunctionCount!==363||snap.guardFunctionBindings.length!==7||probe.status!==403
+ ||probe.backendServiceKeyRoleOrValidityVerified!==false||probe.returnedSourceRowsVerified!==25)throw Error('EXACT_POST_EXPIRY_PUBLIC_STATE_REQUIRED');
+const g=snap.guardFunctionBindings,authority=snap.authority,scope=snap.scopes;
+const signatures=g.map(row=>row.identity),sigSql=signatures.map(value=>"'"+value+"'").join(',');
+const jsonSql=value=>JSON.stringify(value).replaceAll("'","''");
+const guardExpression=`(SELECT jsonb_agg(jsonb_build_object('identity',p.oid::regprocedure::text,'oid',p.oid::text,
+ 'bodySha256',encode(extensions.digest(p.prosrc,'sha256'),'hex'),
+ 'definitionSha256',encode(extensions.digest(pg_get_functiondef(p.oid),'sha256'),'hex'),
+ 'securityDefiner',p.prosecdef,'configuration',p.proconfig,'grants',p.proacl) ORDER BY p.oid::regprocedure::text)
+ FROM pg_proc p WHERE p.oid=ANY(ARRAY[${signatures.map(s=>"'"+s+"'::regprocedure").join(',')}]))`;
+const scopeHash=`(SELECT encode(extensions.digest(coalesce(jsonb_agg(to_jsonb(s)-'expires_at' ORDER BY tenant_id,legal_entity_id,branch_id)::text,'[]'),'sha256'),'hex')
+ FROM intelligence_control.runtime_worker_scopes s WHERE runtime_id='${runtime}')`;
+const outside=`(SELECT encode(extensions.digest(coalesce(jsonb_agg(to_jsonb(j) ORDER BY jobid)::text,'[]'),'sha256'),'hex') FROM cron.job j WHERE jobid NOT IN(4,5,6))`;
+const readSql=`-- SOURCE-ONLY proposal. This exact read is used for renewal preflight and readback.
+-- No Vault values, headers, bodies, keys or Auth credentials are selected.
+SELECT jsonb_build_object(
+ 'observedAt',statement_timestamp(),
+ 'migrationCount',(SELECT count(*) FROM supabase_migrations.schema_migrations),
+ 'apiFunctionCount',(SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='api'),
+ 'authority',(SELECT jsonb_build_object('runtimeId',runtime_id,'enabled',enabled,'issuedAt',issued_at,'expiresAt',expires_at,
+  'jobIds',job_ids,'nonWindowHash',encode(extensions.digest((to_jsonb(a)-'expires_at')::text,'sha256'),'hex'))
+  FROM intelligence_control.edge_authorities a WHERE runtime_id='${runtime}'),
+ 'scopeCount',(SELECT count(*) FROM intelligence_control.runtime_worker_scopes WHERE runtime_id='${runtime}'),
+ 'scope',(SELECT jsonb_build_object('tenantId',tenant_id,'legalEntityId',legal_entity_id,'branchId',branch_id,'enabled',enabled,
+  'issuedAt',issued_at,'expiresAt',expires_at) FROM intelligence_control.runtime_worker_scopes
+  WHERE runtime_id='${runtime}' AND tenant_id='${tenant}' AND legal_entity_id='${entity}' AND branch_id='${branch}'),
+ 'scopeNonWindowHash',${scopeHash},
+ 'scopeAllowed',intelligence_control.runtime_scope_allowed('${runtime}','${tenant}','${entity}','${branch}'),
+ 'guardFunctionBindings',${guardExpression},
+ 'containsUnexpected24HourFunctionCeiling',(SELECT coalesce(bool_or(p.prosrc ~* 'issued_at[[:space:]]*\\+[[:space:]]*interval[[:space:]]+''24 hours'''),false)
+  FROM pg_proc p WHERE p.oid=ANY(ARRAY[${signatures.map(s=>"'"+s+"'::regprocedure").join(',')}])),
+ 'ownJobs',(SELECT jsonb_agg(jsonb_build_object('jobId',jobid,'name',jobname,'schedule',schedule,'command',command,'active',active) ORDER BY jobid)
+  FROM cron.job WHERE jobid IN(4,5,6)),
+ 'outsideJobHash',${outside},
+ 'keyReferences',(SELECT jsonb_agg(jsonb_build_object('ref',ref,'secretId',secret_id) ORDER BY ref) FROM intelligence_control.edge_key_refs WHERE runtime_id='${runtime}'),
+ 'ticks',(SELECT count(*) FROM intelligence_control.edge_ticks WHERE runtime_id='${runtime}'),
+ 'modelInvocations',(SELECT count(*) FROM intelligence_control.model_invocations WHERE tenant_id='${tenant}'),
+ 'recordedCronRuns',(SELECT count(*) FROM cron.job_run_details WHERE jobid IN(4,5,6) AND start_time>='${authority.issuedAt}'::timestamptz),
+ 'tableContracts',(SELECT jsonb_agg(jsonb_build_object('name',c.oid::regclass::text,'rls',c.relrowsecurity,'forceRls',c.relforcerowsecurity,
+  'columns',(SELECT jsonb_agg(jsonb_build_object('name',a.attname,'type',a.atttypid::regtype::text,'required',a.attnotnull) ORDER BY a.attnum)
+   FROM pg_attribute a WHERE a.attrelid=c.oid AND a.attnum>0 AND NOT a.attisdropped),
+  'constraints',(SELECT jsonb_agg(pg_get_constraintdef(k.oid) ORDER BY k.conname) FROM pg_constraint k WHERE k.conrelid=c.oid),
+  'userTriggers',(SELECT count(*) FROM pg_trigger t WHERE t.tgrelid=c.oid AND NOT t.tgisinternal)) ORDER BY c.oid::regclass::text)
+  FROM pg_class c WHERE c.oid IN('intelligence_control.edge_authorities'::regclass,'intelligence_control.runtime_worker_scopes'::regclass))
+) AS renewal_snapshot;
+`;
+const updateSql=`-- SOURCE-ONLY guarded template; the NULL approval/time inputs make it fail closed.
+-- A new exact successor helper must bind actual human approval, preflight,
+-- owner metadata, rendered SQL and final independent operation review.
+-- No SQL in this packet has been executed or database-tested.
+BEGIN;
+SET LOCAL lock_timeout='5s';
+SET LOCAL statement_timeout='30s';
+DO $renew_exact_two_expiries$
+DECLARE
+ v_human_approval_sha256 text := NULL;
+ v_review_packet_sha256 text := NULL;
+ v_human_approved_at timestamptz := NULL;
+ v_server_anchor timestamptz := NULL;
+ v_owner_metadata_expires_at timestamptz := NULL;
+ v_maximum_minutes integer := 120;
+ v_new_expiry timestamptz;
+ a intelligence_control.edge_authorities%rowtype;
+ s intelligence_control.runtime_worker_scopes%rowtype;
+ n integer;
+BEGIN
+ IF v_human_approval_sha256 IS NULL OR v_human_approval_sha256 !~ '^[a-f0-9]{64}$'
+  OR v_review_packet_sha256 IS NULL OR v_review_packet_sha256 !~ '^[a-f0-9]{64}$'
+  OR v_human_approved_at IS NULL OR v_server_anchor IS NULL OR v_owner_metadata_expires_at IS NULL
+  OR v_maximum_minutes NOT BETWEEN 1 AND 120 THEN RAISE EXCEPTION 'ACTUAL_EXACT_HUMAN_APPROVAL_AND_WINDOW_REQUIRED'; END IF;
+ IF v_server_anchor<v_human_approved_at OR v_server_anchor>clock_timestamp()+interval '10 seconds'
+  OR clock_timestamp()-v_server_anchor>interval '45 seconds' THEN RAISE EXCEPTION 'FRESH_POST_APPROVAL_SERVER_ANCHOR_REQUIRED'; END IF;
+ v_new_expiry:=least(v_server_anchor+make_interval(mins=>v_maximum_minutes),v_owner_metadata_expires_at);
+ IF v_new_expiry<=clock_timestamp()+interval '90 seconds' THEN RAISE EXCEPTION 'BOUNDED_RENEWAL_WINDOW_REQUIRED'; END IF;
+ SELECT * INTO STRICT a FROM intelligence_control.edge_authorities WHERE runtime_id='${runtime}' FOR UPDATE;
+ SELECT * INTO STRICT s FROM intelligence_control.runtime_worker_scopes WHERE runtime_id='${runtime}'
+  AND tenant_id='${tenant}' AND legal_entity_id='${entity}' AND branch_id='${branch}' FOR UPDATE;
+ PERFORM jobid FROM cron.job WHERE jobid IN(4,5,6) ORDER BY jobid FOR SHARE;
+ IF current_user<>'postgres' OR NOT a.enabled OR NOT s.enabled
+  OR a.issued_at<>'${authority.issuedAt}'::timestamptz OR a.expires_at<>'${authority.expiresAt}'::timestamptz
+  OR s.issued_at<>'${scope.issuedMin}'::timestamptz OR s.expires_at<>'${scope.expiresMin}'::timestamptz
+  OR (SELECT count(*) FROM intelligence_control.runtime_worker_scopes WHERE runtime_id='${runtime}')<>1
+  OR a.job_ids IS DISTINCT FROM ARRAY[4,5,6]::bigint[] THEN RAISE EXCEPTION 'EXACT_TWO_OLD_ROWS_REQUIRED'; END IF;
+ IF v_new_expiry>a.issued_at+interval '7 days' OR v_new_expiry>s.issued_at+interval '7 days'
+  THEN RAISE EXCEPTION 'ORIGINAL_SCHEMA_WINDOW_LIMIT_REQUIRED'; END IF;
+ IF encode(extensions.digest((to_jsonb(a)-'expires_at')::text,'sha256'),'hex')<>'${authority.nonWindowHash}'
+  OR ${scopeHash}<>'${scope.nonWindowHash}' THEN RAISE EXCEPTION 'UNCHANGED_NON_WINDOW_ROW_HASHES_REQUIRED'; END IF;
+ IF (SELECT count(*) FROM supabase_migrations.schema_migrations)<>115
+  OR (SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid=p.pronamespace WHERE n.nspname='api')<>363
+  OR ${guardExpression} IS DISTINCT FROM '${jsonSql(g)}'::jsonb
+  THEN RAISE EXCEPTION 'UNCHANGED_115_363_AND_SEVEN_FUNCTION_ACL_BINDINGS_REQUIRED'; END IF;
+ IF EXISTS(SELECT 1 FROM pg_proc p WHERE p.oid=ANY(ARRAY[${signatures.map(v=>"'"+v+"'::regprocedure").join(',')}])
+  AND p.prosrc ~* 'issued_at[[:space:]]*\\+[[:space:]]*interval[[:space:]]+''24 hours''')
+  THEN RAISE EXCEPTION 'SEPARATELY_REVIEWED_SOURCE_SUCCESSOR_REQUIRED'; END IF;
+ IF EXISTS(SELECT 1 FROM pg_trigger WHERE tgrelid IN('intelligence_control.edge_authorities'::regclass,
+  'intelligence_control.runtime_worker_scopes'::regclass) AND NOT tgisinternal)
+  THEN RAISE EXCEPTION 'UNREVIEWED_UPDATE_TRIGGER_FORBIDDEN'; END IF;
+ IF (SELECT count(*) FROM pg_class WHERE oid IN('intelligence_control.edge_authorities'::regclass,
+  'intelligence_control.runtime_worker_scopes'::regclass) AND relrowsecurity AND relforcerowsecurity)<>2
+  THEN RAISE EXCEPTION 'ORIGINAL_FORCED_RLS_REQUIRED'; END IF;
+ IF (SELECT jsonb_agg(jsonb_build_object('jobId',jobid,'name',jobname,'schedule',schedule,'command',command,'active',active) ORDER BY jobid)
+  FROM cron.job WHERE jobid IN(4,5,6)) IS DISTINCT FROM '${jsonSql(snap.ownJobs)}'::jsonb
+  OR (SELECT count(*) FROM cron.job WHERE jobname IN('jentra-w5-20261009-delivery','jentra-w5-20261009-subscription','jentra-w5-20261009-health'))<>3
+  OR ${outside}<>'${snap.outsideJobHash}' THEN RAISE EXCEPTION 'EXACT_THREE_PAUSED_JOBS_AND_OUTSIDE_PRESERVATION_REQUIRED'; END IF;
+ IF (SELECT jsonb_agg(jsonb_build_object('ref',ref,'secretId',secret_id) ORDER BY ref) FROM intelligence_control.edge_key_refs WHERE runtime_id='${runtime}')
+  IS DISTINCT FROM '${jsonSql(snap.keyReferences)}'::jsonb THEN RAISE EXCEPTION 'UNCHANGED_TWO_KEY_REFERENCES_REQUIRED'; END IF;
+ IF EXISTS(SELECT 1 FROM intelligence_control.edge_ticks WHERE runtime_id='${runtime}')
+  OR EXISTS(SELECT 1 FROM intelligence_control.model_invocations WHERE tenant_id='${tenant}')
+  THEN RAISE EXCEPTION 'PRESERVED_ZERO_WORKER_MODEL_START_REQUIRED'; END IF;
+ IF clock_timestamp()-v_server_anchor>interval '45 seconds' OR clock_timestamp()>=v_new_expiry-interval '90 seconds'
+  THEN RAISE EXCEPTION 'ANCHOR_OR_RENEWAL_WINDOW_EXPIRED'; END IF;
+ UPDATE intelligence_control.edge_authorities SET expires_at=v_new_expiry
+  WHERE runtime_id='${runtime}' AND expires_at='${authority.expiresAt}'::timestamptz;
+ GET DIAGNOSTICS n=ROW_COUNT; IF n<>1 THEN RAISE EXCEPTION 'EXACT_ONE_EDGE_EXPIRY_UPDATE_REQUIRED'; END IF;
+ UPDATE intelligence_control.runtime_worker_scopes SET expires_at=v_new_expiry
+  WHERE runtime_id='${runtime}' AND tenant_id='${tenant}' AND legal_entity_id='${entity}' AND branch_id='${branch}'
+   AND expires_at='${scope.expiresMin}'::timestamptz;
+ GET DIAGNOSTICS n=ROW_COUNT; IF n<>1 THEN RAISE EXCEPTION 'EXACT_ONE_SCOPE_EXPIRY_UPDATE_REQUIRED'; END IF;
+ SELECT * INTO STRICT a FROM intelligence_control.edge_authorities WHERE runtime_id='${runtime}';
+ IF a.expires_at<>v_new_expiry OR encode(extensions.digest((to_jsonb(a)-'expires_at')::text,'sha256'),'hex')<>'${authority.nonWindowHash}'
+  OR ${scopeHash}<>'${scope.nonWindowHash}'
+  OR (SELECT expires_at FROM intelligence_control.runtime_worker_scopes WHERE runtime_id='${runtime}' AND tenant_id='${tenant}'
+   AND legal_entity_id='${entity}' AND branch_id='${branch}')<>v_new_expiry
+  OR NOT intelligence_control.runtime_scope_allowed('${runtime}','${tenant}','${entity}','${branch}')
+  OR EXISTS(SELECT 1 FROM cron.job WHERE jobid IN(4,5,6) AND active)
+  OR ${outside}<>'${snap.outsideJobHash}' THEN RAISE EXCEPTION 'EXACT_TWO_EXPIRIES_ONLY_POSTCHECK_REQUIRED'; END IF;
+END $renew_exact_two_expiries$;
+COMMIT;
+`;
+const inventory={kind:'unapproved-bounded-renewal-and-completion-call-inventory',projectId:project,runtimeId:runtime,
+ actualBaseline:{chargedCalls:134,source:bindings[2],old131PlusFailedA8PlusActualA9:133,dependencyRead:1,actualA10Refresh:false},
+ phases:[
+  {phase:'owner-readiness',maximumAttempts:1,method:'GET',route:'/v1/projects/xpdoufauvrbdmxgngetv',readOnly:true,cumulativeMaximum:135},
+  {phase:'renewal-control',maximumAttempts:3,sequence:['preflight read with actual post-approval server time','one exact two-expiry transaction','one identical readback, also the only uncertainty resolution'],method:'POST',route:'/v1/projects/xpdoufauvrbdmxgngetv/database/query',cumulativeMaximum:138,ordinaryWriteMaximum:1,retries:0},
+  {phase:'original-two-exports',maximumAttempts:25,ordinaryAttempts:24,readOnlyUncertaintyReserve:1,sourceDecision:bindings[8],orderedInventory:'Unchanged24 original a5 call purposes and exact original command IDs; new a6 plan must rebind expiry and proven138 baseline.',ordinaryCumulativeMaximum:162,cumulativeMaximum:163,replays:0},
+  {phase:'signed-health-readiness',maximumAttempts:5,sequence:['one bounded preflight','one manual edge_schedule_tick(health) dispatch','at most3 bounded readback polls'],method:'POST',route:'/v1/projects/xpdoufauvrbdmxgngetv/database/query',cumulativeMaximum:168,modelInvocations:0,manualWorkerRequestsMaximum:1,scheduledWorkerWholeCap:4320,knownOldWorkerRequests:24,afterManualHealthMaximum:25},
+  {phase:'exact-three-schedule-resume',maximumAttempts:3,sequence:['preflight','one exact three-job resume transaction','readback or uncertainty resolution'],method:'POST',route:'/v1/projects/xpdoufauvrbdmxgngetv/database/query',cumulativeMaximum:171,newJobs:0,automaticRetries:0,executionRequiresCompletedSignedHealthAndExports:true}
+ ],
+ arithmetic:{current:134,futureOwner:1,renewal:3,exportsOrdinary:24,exportsReservedResolution:1,health:5,schedule:3,futureMaximum:37,overallMaximum:171,
+  priorAtExports:138,exportOrdinaryMaximum:162,financeThroughExportsMaximum:163,old160MissingRenewalControlsPreservedAsHistorical:true},
+ caveat:'These are maximum actual attempt bounds, not evidence that future calls occurred. New a6 implementation must bind the actual proven predecessor count. Fewer/different earlier calls or any additional request requires an additive review; never fabricate charges to reach138.',
+ noAutomaticRetries:true,privateKeyAdminOrAdditionalReadinessCallsAuthorized:false,approvalRecorded:false,executionPermitted:false};
+const proposal={kind:'source-only-two-existing-expiry-runtime-renewal-proposal',preparedAt:new Date().toISOString(),projectId:project,
+ runtimeBundleSha256:'db525758554036fa99ec02d00c85bd8401ef7ebce787e2a983db1c69a08baf7b',runtimeId:runtime,
+ humanApproval:{required:true,recorded:false,decisionBinding:null,approvedAt:null,proposalExactHashMustBeBound:true},
+ executionPermitted:false,sqlExecuted:false,privateOrLiveActionsPerformed:false,
+ recordedState:{asOfDependencyRead:snap.observedAt,asOfGlobalRead:'2026-10-14T10:00:08.776229Z',oldAuthorityExpired:true,
+  authority,workerScope:scope,scopeIdentity:{tenantId:tenant,legalEntityId:entity,branchId:branch},pausedJobs:snap.ownJobs,
+  migrations:115,apiFunctions:363,original404Requests:24,ticks:0,deliveryOutcomes:0,receiverReceipts:0,quotaPeriods:0,
+  finance:{journals:9,lines:18,publications:3,classifications:1,dateProposals:3,dateDecisions:3,scenarios:0,exports:0},
+  V7:{returnedSourceRowsVerified:25,unsignedProbeStatus:403,code:'WORKER_ACCESS_DENIED',backendServiceKeyRoleOrValidityVerified:false},
+  snapshotsMayBecomeStale:true,noCurrentLiveStateInferredFromSavedState:true},
+ requestedChange:{maximumWindowMinutes:120,serverAnchor:null,commonNewExpiry:null,
+  anchorRule:'Actual server timestamp from one fresh preflight after exact human approval. No use of proposal creation time or saved pre-approval read; both rows receive min(anchor+approved<=120min,actual private-owner scope expiry). The common expiry is never reset during preparation/retry.',
+  updateOnly:[{table:'intelligence_control.edge_authorities',field:'expires_at',rows:1,runtimeId:runtime},
+   {table:'intelligence_control.runtime_worker_scopes',field:'expires_at',rows:1,runtimeId:runtime,tenantId:tenant,legalEntityId:entity,branchId:branch}],
+  atomic:true,preserveBothIssuedAt:true,preserveBothNonWindowHashes:true,noNewScopesOrGrants:true,oldExpiryRecordedRatherThanOverwrittenInEvidence:true,
+  schemaMaximumStill7DaysFromEachOriginalIssuedAt:true,scopeOrDDLDriftStops:true,scopeAlsoExpiredThereforeEdgeOnlyRenewalInsufficient:true},
+ retainedControls:{sixOriginalActors:true,syntheticScopesUnchanged:true,existingMfaOnly:true,noConstructedAal:true,oldReceiptsAndIntentsPreserved:true,
+  modelWholeRuntimeMaximum:4,newModelCallsInThisProposal:0,recordedActualModelCalls:0,originalScheduledWorkerRequestWholeCap:4320,oldRequestsCharge:24,
+  oneSignedHealthCharge:1,noBudgetReset:true,workerDestinationsAndProviderUnchanged:true,noNewSecrets:true,noNewDestinations:true,
+  globalAuthChanges:false,newUsers:0,newRolesOrGrants:0,production:false,realBilling:false},
+ budget:inventory.arithmetic,oldBudgetCaps:[150,156,157,159,160],proposedNewCeilingsApproved:false,
+ humanApprovalScope:'Approve only these two existing expiry fields and the explicitly cumulative163/171 request ceilings for the same isolated development scope. Actual exports, manual health readiness and three-job resumption each remain separately gated by exact source/plan/operation review; renewal itself does not run them.',
+ requiredSourceSuccessors:{existingA5FilesMustRemainUnchanged:true,
+  exports:['tools/wave5/finance_exports_20261014_r5_a6.mjs','tools/wave5/prepare_finance_exports_20261014_r5_a6.mjs','docs/verification/wave5/task3-export-continuation-20261014/finance_exports_20261014_r5_a6.test.mjs'],
+  status:'not implemented by this proposal',mustBind:['exact new direct human reply and proposal hash','actual fresh owner metadata/readiness proof','exact two-expiry preflight/rendered SQL/readback and common deadline','actual new call ledger138 prior only after4 recorded attempts','new source/test/dependency fingerprints','new private-adapter delta and final operation review before private unseal'],
+  calendar:'Preserve UTC13 fixture dates and the already reviewed UTC14 export day. If execution would require another export day, stop for a separate exact calendar amendment; no filename-driven reset.',
+  schedule:'The existing V7 resume helper pins the old expiry and contains a24h-from-issued check. It cannot be replayed after renewal. A new versioned source/SQL must bind the new human-approved common window while preserving issued_at, all7 installed functions/ACLs and4320 count.'},
+ backendGate:{unsigned403DoesNotProveServiceKey:true,grantsAloneDoNotProveKeyValidity:true,
+  required:'After exports and before cron resume, one bounded signed manual health request while jobs stay paused. Require the exact deployed V7 bytes, actual2xx completed/count1/collected response, exactly one matching completed health tick and successful outcome, unchanged model count0 and preserved scope/caps. This reaches unchanged worker_required service-role enforcement. Failure keeps schedules paused; no credentials/key claims are constructed.',
+  missingInputsRemainMissing:true,newSecretsOrProviderChangesAuthorized:false},
+ failureBehavior:{oneRenewalWriteOnly:true,uncertainWriteReadbackOnly:true,noReplay:true,expiredOrStaleOwnerInputsStop:true,
+  actualRequestAttemptsChargedBeforeDispatch:true,evidenceSavedBeforeValidation:true,localAuditMayFinishAfterDeadlineWithoutRenewingAuthority:true,
+  unexpectedRowsOrFunctionsOrNonWindowDriftAbortTransaction:true,jobStatesRemainPaused:true,noSecondRenewalOrWindowReset:true},
+ separateOpenWork:['Authenticated Windows workflows, keyboard, restart and recovery need actual private-profile/native evidence.',
+  'Private database transport/fixture writer inputs remain a separate dependency.',
+  'Full2,000-session load capacity and production release checks remain unproved.',
+  'Renewing time does not accept any requirement row, create genuine model evidence, or complete all finance/cash gates.'],
+ exactGuardFunctionBindings:g,evidence:bindings,
+ externalSqlReferences:[{url:'https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-ROWS',use:'FOR UPDATE locks existing rows until transaction end.'},
+  {url:'https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT',use:'Use a recorded server anchor and actual clock for post-lock freshness; do not treat statement_timestamp as an advancing deadline clock.'}],
+ independentReviewPending:true,concreteHumanQuestionOwnedByRoot:true};
+const files=[];
+async function save(name,value){const bytes=typeof value==='string'?Buffer.from(value):Buffer.from(JSON.stringify(value,null,2)+'\n');
+ const file=dir+name,h=await fs.open(path.join(root,file),'wx');try{await h.writeFile(bytes);await h.sync();}finally{await h.close();}
+ const record={path:file,bytes:bytes.length,sha256:digest(bytes)};files.push(record);return record;}
+await save('renewal-preflight-read-a1.sql',readSql);await save('renewal-expiry-update-template-a1.sql',updateSql);
+await save('renewal-call-inventory-a1.json',inventory);const proposalBinding=await save('renewal-proposal-a1.json',proposal);
+const md=`The proposal renews the same isolated development runtime for **at most120 minutes**, starting only from an actual fresh server check after approval of this exact packet. It atomically changes only \\`expires_at\\` on the existing edge-authority row and its one existing worker-scope row. Both original \\`issued_at\\` values, scope IDs, enabled flags, non-window hashes, roles, actors, MFA, secrets, providers and destinations remain unchanged. The three jobs remain paused during renewal. **This packet grants no execution permission.**\n\nThe saved11:43:59UTC dependency read shows the worker scope expired08:13UTC and the edge authority expired09:57UTC. Renewing only the edge row would leave backend scope checks denied. It also records115 migrations/363 API functions and seven exact installed function/ACL bindings. The saved10:00UTC snapshot shows three approved date pairs, zero exports, zero worker ticks/outcomes/receipts/quota periods and24 old scheduled HTTP404 responses. These saved states must be checked again before any action. V7 returned25 exact source rows and one unsigned403 denial; that proves the ingress denial and does not prove the deployed service key's validity or role.\n\nThe complete proposed request budget keeps the actual134 calls already recorded. One fresh owner GET plus3 renewal management calls gives138 only after those4 attempts actually occur. The original24 ordered export calls and one conditional receipt resolution then have a163 ceiling. At most5 signed-health management calls and3 separate schedule-control calls bring the overall ceiling to171: **134+37**. These are proposed maxima, not invented future observations. The earlier150/156/157/159/160 records remain preserved;160 omitted the renewal-control overhead. Fewer/different preceding calls require a new exact plan/review.\n\nThe guarded SQL template contains NULL approval/anchor inputs and therefore fails closed. Its final successor must bind the actual human reply, fresh server timestamp, private-owner metadata, exact rendered SQL and independent operation review. It locks the two exact old rows, requires known original expiries and non-window hashes, seven function/ACL fingerprints, exact paused jobs and outside-job preservation, and checks both original seven-day schema limits. It updates only two expiry fields and aborts on a changed count or postcheck. It does not select Vault values or change schema/functions/grants/jobs. PostgreSQL documents the [row-lock lifetime](https://www.postgresql.org/docs/current/explicit-locking.html#LOCKING-ROWS) and the distinction between [statement and current clock time](https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-CURRENT).\n\nBefore schedules resume, the new operation source must first finish the two original exports and prove one bounded signed manual health invocation while jobs remain paused. Success must include the actual completed response and matching completed tick/outcome through the unchanged service-role backend guards; an unsigned403 or catalogue grant is insufficient. The manual health request is charged as request25 under the original4320 whole-runtime scheduled-worker cap. No new model call is proposed; the original maximum4 remains cumulative. Failure retains the pause. Three-job resumption is a separate operation review.\n\nThe frozen a5 export/helper/test and old resume source remain unchanged. New a6 source, preparation, tests, actual renewal readback/approval bindings and final private-adapter gate are still required. The old resume helper's hardcoded24h/old-expiry checks cannot be waived. UTC13 fixture dates and the reviewed UTC14 export day remain; another calendar day requires a separate amendment. The renewal does not resolve Windows private-profile evidence, missing private DB input, full2,000-session load capacity or production release gates, and accepts no requirement rows.\n\nExact proposal JSON SHA256: ${proposalBinding.sha256}. All inputs, SQL and request inventory are bound in renewal-packet-manifest-a1.json.\n`;
+await save('renewal-proposal-a1.md',md.replaceAll('\\`','`'));
+const checks=[
+ ['exact dependency record verified',digest(await fs.readFile(path.join(root,inputs[2][0])))===inputs[2][1]],
+ ['two existing UPDATE targets only',(updateSql.match(/^ UPDATE /gm)||[]).length===2],
+ ['expiry fields only',updateSql.includes('UPDATE intelligence_control.edge_authorities SET expires_at=v_new_expiry')&&updateSql.includes('UPDATE intelligence_control.runtime_worker_scopes SET expires_at=v_new_expiry')],
+ ['all approval timestamps remain unset',!proposal.humanApproval.recorded&&proposal.requestedChange.serverAnchor===null&&proposal.requestedChange.commonNewExpiry===null&&updateSql.includes('v_server_anchor timestamptz := NULL')],
+ ['no cron execution in renewal SQL',!updateSql.includes('cron.alter_job')&&!updateSql.includes('net.http_post')&&!updateSql.includes('vault.decrypted_secrets')],
+ ['preserved134 plus37 equals171',134+inventory.phases.reduce((n,row)=>n+row.maximumAttempts,0)===171],
+ ['finance138 plus24 plus1 equals163',134+1+3+24+1===163&&inventory.arithmetic.priorAtExports===138],
+ ['actual403 does not promote key validity',proposal.recordedState.V7.backendServiceKeyRoleOrValidityVerified===false],
+ ['two independent expiries retained',authority.expiresAt!==scope.expiresMin&&updateSql.includes(authority.expiresAt)&&updateSql.includes(scope.expiresMin)],
+ ['old source populations unchanged',true]
+ ].map(([name,passed])=>({name,passed}));
+for(const row of bindings){const bytes=await fs.readFile(path.join(root,row.path));if(digest(bytes)!==row.sha256)throw Error('SOURCE_CHANGED_DURING_PROPOSAL');}
+await save('local-validation-a1.json',{kind:'source-packet-only-bounded-local-validation',checkedAt:new Date().toISOString(),passed:checks.every(row=>row.passed),checks,
+ oldInputsUnchanged:true,networkRequests:0,privateInputsRead:false,SQLParsedOrExecutedOnDatabase:false,SQLGuardRuntimeTested:false,
+ approvalsCreated:0,renewalsExecuted:0,schedulesResumed:0,limitations:'These Node checks validate packet binding, arithmetic and source text. Independent SQL/source review and actual fresh execution checks remain required.'});
+const selfBytes=await fs.readFile(fileURLToPath(import.meta.url));
+const manifest={kind:'unapproved-exact-runtime-renewal-source-packet',preparedAt:new Date().toISOString(),projectId:project,
+ author:'/root/completion_peer',sourceOnly:true,executionPermitted:false,independentReviewPending:true,humanApprovalRecorded:false,
+ generator:{path:dir+'prepare-renewal-packet-a1.mjs',bytes:selfBytes.length,sha256:digest(selfBytes)},files,evidence:bindings};
+const manifestBytes=Buffer.from(JSON.stringify(manifest,null,2)+'\n'),manifestPath=dir+'renewal-packet-manifest-a1.json';await fs.writeFile(path.join(root,manifestPath),manifestBytes,{flag:'wx'});
+console.log(JSON.stringify({prepared:true,sourceOnly:true,executionPermitted:false,proposal:proposalBinding,
+ manifest:{path:manifestPath,bytes:manifestBytes.length,sha256:digest(manifestBytes)},files,networkRequests:0,privateInputsRead:false}));

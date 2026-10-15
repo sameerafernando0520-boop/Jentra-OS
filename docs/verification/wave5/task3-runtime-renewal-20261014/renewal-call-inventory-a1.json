@@ -1,0 +1,107 @@
+{
+  "kind": "unapproved-bounded-renewal-and-completion-call-inventory",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "runtimeId": "778237e3-3d4e-4871-8cc9-e08b07b989c7",
+  "actualBaseline": {
+    "chargedCalls": 134,
+    "source": {
+      "path": "docs/verification/wave5/runtime-expiry-dependency-readonly-20261014-r5-a1.json",
+      "bytes": 16994,
+      "sha256": "0dc87893b6635d3ef4fb64c724e6aab2a42dd89d9d07ffc42251105f7c3141dc"
+    },
+    "old131PlusFailedA8PlusActualA9": 133,
+    "dependencyRead": 1,
+    "actualA10Refresh": false
+  },
+  "phases": [
+    {
+      "phase": "owner-readiness",
+      "maximumAttempts": 1,
+      "method": "GET",
+      "route": "/v1/projects/xpdoufauvrbdmxgngetv",
+      "readOnly": true,
+      "cumulativeMaximum": 135
+    },
+    {
+      "phase": "renewal-control",
+      "maximumAttempts": 3,
+      "sequence": [
+        "preflight read with actual post-approval server time",
+        "one exact two-expiry transaction",
+        "one identical readback, also the only uncertainty resolution"
+      ],
+      "method": "POST",
+      "route": "/v1/projects/xpdoufauvrbdmxgngetv/database/query",
+      "cumulativeMaximum": 138,
+      "ordinaryWriteMaximum": 1,
+      "retries": 0
+    },
+    {
+      "phase": "original-two-exports",
+      "maximumAttempts": 25,
+      "ordinaryAttempts": 24,
+      "readOnlyUncertaintyReserve": 1,
+      "sourceDecision": {
+        "path": "docs/verification/wave5/task3-completion-20261013/export-continuation-technical-decision-20261014-a2.json",
+        "bytes": 21081,
+        "sha256": "493f4e266bf1c427f4830a224f712f8869df22734855d6359e28a5547bd555d1"
+      },
+      "orderedInventory": "Unchanged24 original a5 call purposes and exact original command IDs; new a6 plan must rebind expiry and proven138 baseline.",
+      "ordinaryCumulativeMaximum": 162,
+      "cumulativeMaximum": 163,
+      "replays": 0
+    },
+    {
+      "phase": "signed-health-readiness",
+      "maximumAttempts": 5,
+      "sequence": [
+        "one bounded preflight",
+        "one manual edge_schedule_tick(health) dispatch",
+        "at most3 bounded readback polls"
+      ],
+      "method": "POST",
+      "route": "/v1/projects/xpdoufauvrbdmxgngetv/database/query",
+      "cumulativeMaximum": 168,
+      "modelInvocations": 0,
+      "manualWorkerRequestsMaximum": 1,
+      "scheduledWorkerWholeCap": 4320,
+      "knownOldWorkerRequests": 24,
+      "afterManualHealthMaximum": 25
+    },
+    {
+      "phase": "exact-three-schedule-resume",
+      "maximumAttempts": 3,
+      "sequence": [
+        "preflight",
+        "one exact three-job resume transaction",
+        "readback or uncertainty resolution"
+      ],
+      "method": "POST",
+      "route": "/v1/projects/xpdoufauvrbdmxgngetv/database/query",
+      "cumulativeMaximum": 171,
+      "newJobs": 0,
+      "automaticRetries": 0,
+      "executionRequiresCompletedSignedHealthAndExports": true
+    }
+  ],
+  "arithmetic": {
+    "current": 134,
+    "futureOwner": 1,
+    "renewal": 3,
+    "exportsOrdinary": 24,
+    "exportsReservedResolution": 1,
+    "health": 5,
+    "schedule": 3,
+    "futureMaximum": 37,
+    "overallMaximum": 171,
+    "priorAtExports": 138,
+    "exportOrdinaryMaximum": 162,
+    "financeThroughExportsMaximum": 163,
+    "old160MissingRenewalControlsPreservedAsHistorical": true
+  },
+  "caveat": "These are maximum actual attempt bounds, not evidence that future calls occurred. New a6 implementation must bind the actual proven predecessor count. Fewer/different earlier calls or any additional request requires an additive review; never fabricate charges to reach138.",
+  "noAutomaticRetries": true,
+  "privateKeyAdminOrAdditionalReadinessCallsAuthorized": false,
+  "approvalRecorded": false,
+  "executionPermitted": false
+}
