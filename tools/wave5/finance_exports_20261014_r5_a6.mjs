@@ -188,7 +188,7 @@ export function validateExportsProfile(profile,documents,now=Date.now()){
   &&metadata.metadataFilename==='metadata-renewed-a10.json'&&metadata.containsPlaintextCredential===false
   &&metadata.reuseAuthorizationQuestionId==='["request_user_input_async","call_637ea7df9a28457388be21396163da04",0]'
   &&sameFinanceJson(metadata.refreshEvidence,profile.controlBindings.refresh)&&utcMillis(metadata.createdAt)<=now
-  &&utcMillis(metadata.createdAt)>=utcMillis(ownerDecision.decidedAt)&&utcMillis(metadata.expiresAt)>now
+  &&utcMillis(metadata.createdAt)>=utcMillis(ownerDecision.decidedAt)&&utcMillis(metadata.createdAt)<=start&&utcMillis(metadata.expiresAt)>now
   &&utcMillis(metadata.expiresAt)>utcMillis(metadata.createdAt)
   &&utcMillis(metadata.expiresAt)-utcMillis(metadata.createdAt)<=EXPORTS_MAX_WINDOW_MS,'EXACT_FRESH_A10_EXPORT_METADATA_REQUIRED');
  must(refresh?.kind==='actual-private-owner-scope-refresh'&&refresh.projectId===PROJECT&&refresh.organizationId===ORGANIZATION

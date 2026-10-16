@@ -1,0 +1,48 @@
+{
+  "kind": "independent-health-test-fixture-correction",
+  "createdAt": "2026-10-15T17:59:58.208Z",
+  "sourceEdited": false,
+  "failure": "Case 27 advanced the injected controller clock but reused the authored transport assertion against its original separate fixture clock.",
+  "correction": "Only that peer case now injects a preflight transport using the same virtual clock. The original startup deadline and reserve expectation are retained.",
+  "preserved": [
+    {
+      "name": "peer_cases_a1.mjs",
+      "bytes": 9595,
+      "sha256": "1e2f26aee038d4fb55dcbccd8a75e026437b90a9808c468aac76f2b1ee358b17"
+    },
+    {
+      "name": "run_independent_health_a1.mjs",
+      "bytes": 4159,
+      "sha256": "3cd0905806559020d29d50b70b316a841643692244ece3c4195e47e68d321920"
+    },
+    {
+      "name": "health_readiness.independent-a1.test.mjs",
+      "bytes": 23805,
+      "sha256": "82aa9299d4e8d0b15176f1e0caf0fc01b624d1241167b391bacdc24d0a4006cb"
+    },
+    {
+      "name": "independent-health-a1.tap",
+      "bytes": 9130,
+      "sha256": "669f3bfcdfa06b9340c73ff4c053f20577d80cb01bed158a5bb99eb8d34b9c51"
+    },
+    {
+      "name": "independent-local-verification-a1.json",
+      "bytes": 4227,
+      "sha256": "421d737848f87533da31604f50d2c1c49d22b4a667e9f7d170666665155ea4b7"
+    }
+  ],
+  "successors": [
+    {
+      "name": "peer_cases_a2.mjs",
+      "bytes": 9876,
+      "sha256": "64ba62408c3c07c45590d862558668852e9acb83da3e96a3d42724c0bb6e3224"
+    },
+    {
+      "name": "run_independent_health_a2.mjs",
+      "bytes": 4159,
+      "sha256": "d8ccd74f5d37059de1ad31b7106ecfcabbea6796c539befe90699ed5ef3d7538"
+    }
+  ],
+  "actualNetworkRequests": 0,
+  "actualSqlExecutions": 0
+}

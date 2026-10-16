@@ -1,0 +1,189 @@
+{
+  "kind": "independent-source-only-export-private-adapter-review",
+  "reviewedAt": "2026-10-15T17:58:51.918Z",
+  "technicalDecision": "changes-required",
+  "passed": false,
+  "reviewedCandidate": "scripts/wave5/run_private_management_installer_20261015_r5_a1.candidate.ps1",
+  "inputs": [
+    {
+      "path": "tools/wave5/prepare_export_private_adapter_20261015_r5_a1.mjs",
+      "bytes": 11209,
+      "sha256": "dd5fb37381a7671bd879b6e5a532f97aa66ed6d7b6f6f8410a0337240f173867"
+    },
+    {
+      "path": "scripts/wave5/run_private_management_installer_20261015_r5_a1.candidate.ps1",
+      "bytes": 45317,
+      "sha256": "a0b0babf2cf2806016e5f7d5293df0079e370edd2c95d35f7b2e955dfed5f891"
+    },
+    {
+      "path": "scripts/wave5/run_private_management_installer_20261013_r5.ps1",
+      "bytes": 38718,
+      "sha256": "b01b6c20cb2819cb419fa10423bce37c0cba86b44ee7e2f5b9c0c9387d19be1f"
+    },
+    {
+      "path": "tools/wave5/finance_exports_20261014_r5_a6.mjs",
+      "bytes": 60550,
+      "sha256": "2b265ea5c5f4921923a1feafb8daf8b8d2538daa20a9cc97deb1bd6b51ccf559"
+    },
+    {
+      "path": "docs/verification/wave5/root-export-adapter-20261015/root-verification-a1.json",
+      "bytes": 3991,
+      "sha256": "bdc3d4aa5d1ac3dba09a919f6459d7aaa275d2e8292a77e0def690e8f9a3fc2d"
+    },
+    {
+      "path": "docs/verification/wave5/task3-export-renewal-20261014/export-a6-source-proof-a1.json",
+      "bytes": 24164,
+      "sha256": "f09dd220faf37ef7f8521bb99f3b2d28b5fe16abf8534429cae54aa729fff774"
+    },
+    {
+      "path": "docs/verification/wave5/root-export-adapter-20261015/peer-adapter-source-a1.test.mjs",
+      "bytes": 8716,
+      "sha256": "a6a172f55463a5f3250a8184e4d778671e0ca0a20c86bf7c40a0ab608233a832"
+    }
+  ],
+  "reviewScope": [
+    "pure builder and exact predecessor",
+    "candidate source semantics and PowerShell AST only",
+    "public-only a6 preflight ordering",
+    "review and A10 metadata/source bindings",
+    "immutable reviewed window",
+    "legacy behavior and public output paths"
+  ],
+  "findings": [
+    {
+      "id": "EXP-ADAPTER-001",
+      "priority": 1,
+      "status": "open-in-frozen-a1",
+      "title": "Recheck and preserve the exact export child and plan before private unseal",
+      "file": "scripts/wave5/run_private_management_installer_20261015_r5_a1.candidate.ps1",
+      "lines": [
+        287,
+        289,
+        382,
+        385,
+        387,
+        433,
+        446
+      ],
+      "observed": "The child hash is checked before public preflight. After preflight the final guard checks only A10 metadata, final review and time; it does not check the child source or generated plan. The adapter then decrypts and sends the owner token and runtime seal to a newly launched child.",
+      "impact": "A child replacement after successful public preflight can receive private stdin. A modified child's own verification is not a protection. A changed plan also is not detected by the adapter's final pre-unseal guard, although the genuine unmodified child later rejects it.",
+      "requiredCorrection": "Bind exact child and generated plan hashes at the final pre-DPAPI gate and prevent reviewed execution inputs from being replaced through private child launch. Keep legacy modes and historical candidate bytes unchanged.",
+      "regression": "peer-adapter-source-a1.test.mjs test 10 genuinely fails MISSING_FINAL_CHILD_SOURCE_HASH_CHECK; static read also confirms missing final plan check.",
+      "reportedToSourceOwner": true
+    }
+  ],
+  "verifiedProperties": [
+    "Pure builder reproduces the exact candidate bytes and rejects changed predecessor or malformed child hash.",
+    "All historical parameter modes keep their order; only two export modes are added.",
+    "Only ExecuteExportsA6 gains private and runtime-seal access; ValidateExportsA6 remains public-only.",
+    "Manifest, isolated child source, A10 metadata path, final review, generated plan and current adapter hash are selected before the public preflight.",
+    "The mandatory public-only a6 --preflight has closed stdin, direct hidden execution, a 60-second wait and exact returned plan/review hash checks before private metadata validation and DPAPI.",
+    "The final guard rechecks exact metadata, exact review and reviewed start/deadline with a 90-second reserve.",
+    "The reviewed window object is passed as private JSON; the adapter derives no new expiry.",
+    "ProcessStartInfo.Arguments supplies --execute and the bounded hexadecimal hash as separate parsed command-line arguments.",
+    "The bound a6 preflight returns before stdin, and genuine execution repeats public preparation/review/adapter checks before intent or network.",
+    "Bound a6 success/error output contains explicit public summaries; the original adapter output/error block and two ACL/UTC functions are preserved byte-for-byte."
+  ],
+  "actualVerification": {
+    "peerSourceTests": {
+      "command": [
+        "node",
+        "--experimental-test-isolation=none",
+        "--test",
+        "--test-reporter=tap",
+        "--test-concurrency=1",
+        "docs/verification/wave5/root-export-adapter-20261015/peer-adapter-source-a1.test.mjs"
+      ],
+      "chunk_id": "5c13c2",
+      "wall_time_seconds": 0.8506812,
+      "exit_code": 1,
+      "original_token_count": 1121,
+      "output": "TAP version 13\n# Subtest: all three reviewed input hashes are exact\nok 1 - all three reviewed input hashes are exact\n  ---\n  duration_ms: 2.4174\n  type: 'test'\n  ...\n# Subtest: pure builder reproduces the candidate bytes without running it\nok 2 - pure builder reproduces the candidate bytes without running it\n  ---\n  duration_ms: 3.0042\n  type: 'test'\n  ...\n# Subtest: changed predecessor and malformed source hashes are refused\nok 3 - changed predecessor and malformed source hashes are refused\n  ---\n  duration_ms: 0.9165\n  type: 'test'\n  ...\n# Subtest: all legacy parameter modes retain their order and only two export modes are added\nok 4 - all legacy parameter modes retain their order and only two export modes are added\n  ---\n  duration_ms: 0.4916\n  type: 'test'\n  ...\n# Subtest: validation exports gain no private mode or runtime seal permission\nok 5 - validation exports gain no private mode or runtime seal permission\n  ---\n  duration_ms: 1.3282\n  type: 'test'\n  ...\n# Subtest: exact manifest, isolated child, A10 metadata, review and self hash are selected\nok 6 - exact manifest, isolated child, A10 metadata, review and self hash are selected\n  ---\n  duration_ms: 0.4023\n  type: 'test'\n  ...\n# Subtest: mandatory public preflight precedes private metadata validation and every DPAPI read\nok 7 - mandatory public preflight precedes private metadata validation and every DPAPI read\n  ---\n  duration_ms: 0.1785\n  type: 'test'\n  ...\n# Subtest: public child has closed stdin, hidden direct execution and bounded wait\nok 8 - public child has closed stdin, hidden direct execution and bounded wait\n  ---\n  duration_ms: 0.1547\n  type: 'test'\n  ...\n# Subtest: final pre-DPAPI guard rechecks the exact metadata, final review and immutable deadline\nok 9 - final pre-DPAPI guard rechecks the exact metadata, final review and immutable deadline\n  ---\n  duration_ms: 0.1724\n  type: 'test'\n  ...\n# Subtest: required final source and plan rechecks before DPAPI are present\nnot ok 10 - required final source and plan rechecks before DPAPI are present\n  ---\n  duration_ms: 1.2158\n  type: 'test'\n  location: 'C:\\\\Users\\\\sheha\\\\Desktop\\\\Jentra OS\\\\docs\\\\verification\\\\wave5\\\\root-export-adapter-20261015\\\\peer-adapter-source-a1.test.mjs:75:1'\n  failureType: 'testCodeFailure'\n  error: 'MISSING_FINAL_CHILD_SOURCE_HASH_CHECK'\n  code: 'ERR_ASSERTION'\n  name: 'AssertionError'\n  expected: true\n  actual: false\n  operator: '=='\n  stack: |-\n    TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/docs/verification/wave5/root-export-adapter-20261015/peer-adapter-source-a1.test.mjs:77:9)\n    Test.runInAsyncScope (node:async_hooks:214:14)\n    Test.run (node:internal/test_runner/test:1106:25)\n    Test.processPendingSubtests (node:internal/test_runner/test:788:18)\n    Test.postRun (node:internal/test_runner/test:1235:19)\n    Test.run (node:internal/test_runner/test:1163:12)\n    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)\n  ...\n# Subtest: private window is serialized from the reviewed object without deriving a new expiry\nok 11 - private window is serialized from the reviewed object without deriving a new expiry\n  ---\n  duration_ms: 0.2337\n  type: 'test'\n  ...\n# Subtest: the bounded review hash is a separate command-line argument in the existing Arguments path\nok 12 - the bounded review hash is a separate command-line argument in the existing Arguments path\n  ---\n  duration_ms: 0.1508\n  type: 'test'\n  ...\n# Subtest: public export preflight refuses an invalid hash before all supplied reads\nok 13 - public export preflight refuses an invalid hash before all supplied reads\n  ---\n  duration_ms: 0.9315\n  type: 'test'\n  ...\n# Subtest: public source preflight returns before stdin and actual execution rechecks its public bindings\nok 14 - public source preflight returns before stdin and actual execution rechecks its public bindings\n  ---\n  duration_ms: 0.2704\n  type: 'test'\n  ...\n# Subtest: bound export child writes explicit public summaries and clears private configuration\nok 15 - bound export child writes explicit public summaries and clears private configuration\n  ---\n  duration_ms: 0.8741\n  type: 'test'\n  ...\n# Subtest: legacy public output and error sanitization blocks are preserved exactly\nok 16 - legacy public output and error sanitization blocks are preserved exactly\n  ---\n  duration_ms: 0.1572\n  type: 'test'\n  ...\n1..16\n# tests 16\n# suites 0\n# pass 15\n# fail 1\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 150.0478\n",
+      "tests": 16,
+      "passed": 15,
+      "failed": 1,
+      "intentionalRegressionRequirement": true
+    },
+    "readOnlyAst": {
+      "chunk_id": "342a67",
+      "wall_time_seconds": 0.9347758,
+      "exit_code": 0,
+      "original_token_count": 71,
+      "output": "{\"networkCalls\":0,\"privateInputsRead\":false,\"candidateExecuted\":false,\"candidateParseErrors\":0,\"predecessorParseErrors\":0,\"legacyFunctions\":[{\"exactlyOne\":true,\"unchanged\":true,\"name\":\"Assert-TaskPrivateAcl\"},{\"exactlyOne\":true,\"unchanged\":true,\"name\":\"Convert-TaskUtcTimestamp\"}]}\r\n",
+      "parseErrors": 0,
+      "legacyAclAndUtcFunctionsUnchanged": true
+    },
+    "rootEvidenceReadOnly": {
+      "rootSuiteClaim": {
+        "tests": 98,
+        "passed": 98,
+        "failed": 0
+      },
+      "rootControls": 9,
+      "rootAstChecks": 13,
+      "independentlyRerunByThisReviewer": false
+    },
+    "historicalReaderError": {
+      "toolChunk": "7d954a",
+      "error": "Initial local source reader selected the historical A3 plan outside the frozen execution snapshot and received ENOENT. The later read used the exact build snapshot path; no private or network read occurred.",
+      "correctedReadToolChunk": "84eaf7"
+    }
+  },
+  "adjacentManagementTemplate": {
+    "sourceOnly": true,
+    "templateExecuted": false,
+    "parseErrors": 0,
+    "inputBindings": [
+      {
+        "path": "docs/verification/wave5/root-management-adapter-20261015/adapter-template-a1.ps1",
+        "bytes": 12706,
+        "sha256": "d75e67d9daf2214c865bd0570c5d9c223116b1f7ed361de9de1d6b2535f96587"
+      },
+      {
+        "path": "tools/wave5/run_worker_v7_health_20261015_r5.mjs",
+        "bytes": 13143,
+        "sha256": "b64736b4f0c4802db996d45b4014465cbc7b9fabbb97a525b61811fbede8050b"
+      },
+      {
+        "path": "tools/wave5/resume_worker_schedules_20261015_r5_a1.mjs",
+        "bytes": 50979,
+        "sha256": "64eecc9158ed143692726860daa4b58c8cf67c5b36a1bffaad0793125c94d732"
+      }
+    ],
+    "integrationFinding": {
+      "id": "MGMT-TEMPLATE-001",
+      "priority": 2,
+      "status": "unresolved-source-interface",
+      "title": "Align target-specific plan binding and preflight result shapes",
+      "detail": "The common template requires review.generatedPlan.path/sha256 and proof.planSha256/finalReviewSha256. Both Health and Scheduler use review.planBinding. Scheduler --preflight currently returns planPath/reviewPath/reviewSha256 without planSha256/finalReviewSha256. These interfaces cannot satisfy the template and stop before private input.",
+      "additionalIncompleteSource": "The template intentionally retains four unresolved SHA markers; its named Renewal launcher tools/wave5/renew_runtime_authority_20261015_r5_a1.mjs was absent at review time.",
+      "reportedToSourceOwner": true,
+      "runtimeFailureClaimed": false
+    }
+  },
+  "limits": {
+    "sourceReviewOnly": true,
+    "sourceFilesChanged": false,
+    "originalAdapterChanged": false,
+    "candidateExecuted": false,
+    "adapterInstalled": false,
+    "privateInputsRead": false,
+    "networkCalls": 0,
+    "intentsCreated": 0,
+    "renewalPerformed": false,
+    "exportsPerformed": false,
+    "schedulesResumed": false,
+    "executionApproved": false,
+    "newOwnerAcceptance": false,
+    "productionAuthorized": false,
+    "realBillingAuthorized": false
+  },
+  "remainingGates": [
+    "Correct and independently review an additive adapter successor.",
+    "Align and freeze the management target interfaces and source hashes.",
+    "Obtain the exact direct human decision for renewal and increased call ceiling; no source review creates that decision.",
+    "Refresh A10 privately, reconcile charged attempts, perform only approved renewal controls, then bind genuine readback/profile/plan/final review.",
+    "Complete actual exports, service authority/health, scheduler persistence and real delivery separately.",
+    "Authenticated native, contention, target-scale load, trusted model use and remaining owner acceptance remain separate."
+  ]
+}

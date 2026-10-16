@@ -1,0 +1,90 @@
+TAP version 13
+# Subtest: peer: actual owner refresh must precede renewal application for the ordinal135-before136 accounting contract
+not ok 1 - peer: actual owner refresh must precede renewal application for the ordinal135-before136 accounting contract
+  ---
+  duration_ms: 26.3876
+  type: 'test'
+  location: 'C:\\Users\\sheha\\Desktop\\Jentra OS\\docs\\verification\\wave5\\runtime-renewal-20261014\\export-a6-independent-peer-a1.test.mjs:71:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception: a refresh after appliedAt cannot be ordinal135 before the renewal136-138 sequence'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/docs/verification/wave5/runtime-renewal-20261014/export-a6-independent-peer-a1.test.mjs:74:9)
+    async Test.run (node:internal/test_runner/test:1113:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)
+  ...
+# Subtest: peer: an owner refresh after renewal readback cannot validate the same predecessor138 evidence
+not ok 2 - peer: an owner refresh after renewal readback cannot validate the same predecessor138 evidence
+  ---
+  duration_ms: 20.2316
+  type: 'test'
+  location: 'C:\\Users\\sheha\\Desktop\\Jentra OS\\docs\\verification\\wave5\\runtime-renewal-20261014\\export-a6-independent-peer-a1.test.mjs:76:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception: renewal readback was complete13:30:01 before the owner refresh'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/docs/verification/wave5/runtime-renewal-20261014/export-a6-independent-peer-a1.test.mjs:79:9)
+    async Test.run (node:internal/test_runner/test:1113:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:788:7)
+  ...
+# Subtest: peer: a failed individual renewal receipt cannot be hidden by zero failedAttempts
+ok 3 - peer: a failed individual renewal receipt cannot be hidden by zero failedAttempts
+  ---
+  duration_ms: 10.0685
+  type: 'test'
+  ...
+# Subtest: peer: a duplicated successful receipt ordinal cannot stand in for all three renewal phases
+ok 4 - peer: a duplicated successful receipt ordinal cannot stand in for all three renewal phases
+  ---
+  duration_ms: 8.6409
+  type: 'test'
+  ...
+# Subtest: peer: the common runtime expiry cannot override an earlier private-owner deadline
+ok 5 - peer: the common runtime expiry cannot override an earlier private-owner deadline
+  ---
+  duration_ms: 14.3284
+  type: 'test'
+  ...
+# Subtest: peer: explicit UTC windows reject a DST/local offset and leap-day normalization
+ok 6 - peer: explicit UTC windows reject a DST/local offset and leap-day normalization
+  ---
+  duration_ms: 0.3961
+  type: 'test'
+  ...
+# Subtest: peer: common 120-minute window is accepted across the Oct15/16 boundary without altering fixture dates
+ok 7 - peer: common 120-minute window is accepted across the Oct15/16 boundary without altering fixture dates
+  ---
+  duration_ms: 18.2744
+  type: 'test'
+  ...
+# Subtest: peer: final public-review read failure returns before adapter access
+ok 8 - peer: final public-review read failure returns before adapter access
+  ---
+  duration_ms: 14.8709
+  type: 'test'
+  ...
+# Subtest: peer: a public preparation failure performs no final-review or adapter read
+ok 9 - peer: a public preparation failure performs no final-review or adapter read
+  ---
+  duration_ms: 0.3557
+  type: 'test'
+  ...
+# Subtest: peer: control binding substitution in a final review blocks adapter access
+ok 10 - peer: control binding substitution in a final review blocks adapter access
+  ---
+  duration_ms: 18.506
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 8
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 240.2795
