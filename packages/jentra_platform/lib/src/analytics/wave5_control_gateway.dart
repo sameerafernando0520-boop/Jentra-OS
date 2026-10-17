@@ -274,11 +274,13 @@ final class SupabaseWave5ControlGateway implements Wave5ControlRepository {
         )) {
       throw const FormatException('Invalid exact usage projection.');
     }
-    if (parseProcessMetricUtc(raw['periodStart'] as String) !=
-        parseProcessMetricUtc(periodStart)) {
+    final start = parseProcessMetricUtc(raw['periodStart'] as String);
+    if (start != parseProcessMetricUtc(periodStart)) {
       throw const FormatException('Usage period mismatch.');
     }
-    parseProcessMetricUtc(raw['periodEnd'] as String);
+    if (!parseProcessMetricUtc(raw['periodEnd'] as String).isAfter(start)) {
+      throw const FormatException('Invalid allowance period.');
+    }
     parseProcessMetricUtc(raw['generatedAt'] as String);
     final expected =
         BigInt.parse(raw['limit'] as String) -
@@ -445,7 +447,8 @@ final class SupabaseWave5ControlGateway implements Wave5ControlRepository {
       'p_trial_starts_at': p['trialStart'],
       'p_trial_ends_at': p['trialEnd'],
     });
-    if (raw is! Map<String, Object?> || raw['entity'] is! Map<String, Object?>) {
+    if (raw is! Map<String, Object?> ||
+        raw['entity'] is! Map<String, Object?>) {
       throw const FormatException('Invalid subscription receipt.');
     }
     final e = raw['entity'] as Map<String, Object?>;

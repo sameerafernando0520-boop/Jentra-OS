@@ -1,0 +1,37 @@
+{
+  "kind": "independent-disposable-plan-hash-parse-hold-race-proof",
+  "observedAt": "2026-10-17T05:40:45.091Z",
+  "candidateScope": {
+    "path": "scripts/wave5/run_private_management_installer_20261016_r5_a2.candidate.ps1",
+    "sha256": "4dd4911e892fa75dfdaaa0e0ea9036ddaa2e93d5a040c736515b55cec9053c15"
+  },
+  "test": {
+    "path": "docs/verification/wave5/root-export-adapter-20261016/peer-plan-read-race-a2.test.mjs",
+    "bytes": 5359,
+    "sha256": "2706adbf298e9637c00e3934103d9de00be0d6a649080e2a8e6d56741024fb4e"
+  },
+  "reproduced": true,
+  "execution": {
+    "label": "controlled-public-plan-race",
+    "chunk_id": "825235",
+    "wall_time_seconds": 1.7297012,
+    "exit_code": 0,
+    "original_token_count": 104,
+    "output": "TAP version 13\n# Subtest: controlled concurrent replacement proves a2 can hold the approved plan while trusting a different cached inventory\nok 1 - controlled concurrent replacement proves a2 can hold the approved plan while trusting a different cached inventory\n  ---\n  duration_ms: 938.8397\n  type: 'test'\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 1\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 977.6547\n"
+  },
+  "trace": [
+    "Hash approved disposable plan.",
+    "Replace it with a disposable plan that has an empty source inventory.",
+    "Parse the replacement into the cached plan.",
+    "Restore the approved bytes.",
+    "Acquire the approved plan's exact hash-verified hold using the actual embedded helper.",
+    "Observe that the cached inventory is empty and its required dependency can still be written while the approved plan is held."
+  ],
+  "limits": {
+    "actualPrivateAdapterExecuted": false,
+    "privateInputsRead": false,
+    "networkCalls": 0,
+    "liveEffectClaimed": false,
+    "ownedDisposableFixturesRemoved": true
+  }
+}

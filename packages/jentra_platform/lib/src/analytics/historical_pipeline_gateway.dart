@@ -43,7 +43,10 @@ final class HistoricalPipelineGateway {
       throw const FormatException('Realized basis differs from frozen cohort.');
     }
     final sums = <String, BigInt>{}, ids = <String>{};
-    final cohort = frozen.observations.map((r) => r.id).toSet();
+    final cohort = {
+      for (final observation in frozen.observations)
+        observation.id: observation.currency,
+    };
     for (final rawRow in raw['documents'] as List) {
       if (rawRow is! Map || rawRow.length != 8) {
         throw const FormatException('Invalid realized document.');
@@ -57,7 +60,8 @@ final class HistoricalPipelineGateway {
       );
       final amount = r['amount'] as String, currency = r['currency'] as String;
       if (!ids.add(id) ||
-          !cohort.contains(r['opportunityId']) ||
+          !cohort.containsKey(r['opportunityId']) ||
+          cohort[r['opportunityId']] != currency ||
           (scope.branchId != null && r['branchId'] != scope.branchId) ||
           !RegExp(
             r'^-?(0|[1-9][0-9]{0,13})(\.[0-9]{1,6})?$',
@@ -85,6 +89,13 @@ final class HistoricalPipelineGateway {
     String asOf,
     String recordedThrough,
   ) async {
+    final businessCutoff = parseProcessMetricUtc(asOf);
+    final recordedCutoff = parseProcessMetricUtc(recordedThrough);
+    if (businessCutoff.isAfter(recordedCutoff)) {
+      throw const FormatException(
+        'Business cutoff must not exceed the recorded cutoff.',
+      );
+    }
     final raw = await rpc('wave5_pipeline_history', {
       'p_tenant_id': scope.tenantId,
       'p_legal_entity_id': scope.legalEntityId,
@@ -114,10 +125,9 @@ final class HistoricalPipelineGateway {
         s['tenantId'] != scope.tenantId ||
         s['legalEntityId'] != scope.legalEntityId ||
         s['branchId'] != scope.branchId ||
-        parseProcessMetricUtc(data['asOf'] as String) !=
-            parseProcessMetricUtc(asOf) ||
+        parseProcessMetricUtc(data['asOf'] as String) != businessCutoff ||
         parseProcessMetricUtc(data['recordedThrough'] as String) !=
-            parseProcessMetricUtc(recordedThrough) ||
+            recordedCutoff ||
         data['complete'] != true ||
         data['revisions'] is! List) {
       throw const FormatException('Historical basis mismatch.');
@@ -152,7 +162,7 @@ final class HistoricalPipelineGateway {
     return calculateHistoricalPipeline(
       scope,
       rows,
-      parseProcessMetricUtc(asOf),
+      businessCutoff,
       complete: true,
     );
   }

@@ -1,0 +1,530 @@
+{
+  "kind": "area4-export-and-integration-source-completion-report",
+  "recordedAt": "2026-10-16T19:13:06.958Z",
+  "sourceOnly": true,
+  "executionPermitted": false,
+  "actualStateBaseline": {
+    "chargedPriorCalls": 137,
+    "verifiedDatabaseAt": "2026-10-16T12:13:25.833347Z",
+    "bothOriginalAuthoritiesExpired": true,
+    "ownJobsPaused": true,
+    "actualExports": 0
+  },
+  "proposedBudget": {
+    "recordedPrior": 137,
+    "ownerRefresh": 1,
+    "renewal": 3,
+    "priorAtExports": 141,
+    "exportsOrdinary": 24,
+    "exportsResolutionReserve": 1,
+    "throughExportsMaximum": 166,
+    "healthMaximum": 5,
+    "throughHealthMaximum": 171,
+    "schedulerMaximum": 3,
+    "overallMaximum": 174,
+    "historicalWorkerRequests": 24,
+    "readinessWorkerRequests": 1,
+    "reviewedWorkerRequests": 25,
+    "wholeWorkerMaximum": 4320
+  },
+  "budgetApproved": false,
+  "sourceChangesComplete": true,
+  "actualWorkflowComplete": false,
+  "syntax": {
+    "schedulerSyntaxExit": 0,
+    "healthSyntaxExit": 0,
+    "schedulerSourceValidationExit": 0
+  },
+  "controlledTests": {
+    "tests": 27,
+    "pass": 27,
+    "fail": 0,
+    "skip": 0,
+    "exitCode": 0,
+    "syntheticPortsOnly": true,
+    "independentHumanAcceptance": false
+  },
+  "sourceBeforeAfterUnchanged": [
+    {
+      "path": "tools/wave5/run_worker_v7_health_20261015_r5.mjs",
+      "sha256": "86d881ed3587b6bde28fb8e8ad33c9526d50b6ebc305fb1ff432f44bf4edbd75",
+      "bytes": 15280
+    },
+    {
+      "path": "tools/wave5/resume_worker_schedules_20261015_r5_a1.mjs",
+      "sha256": "2b823d111990d2f93f1dcefe62d2bc48c2498a40b333311e4894738928a8604f",
+      "bytes": 57669
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/entrypoints.test.mjs",
+      "sha256": "b8ab6cca5120d1aee1db8b5e11678380f59394e6e57b136a97e6db2ce7c75a51",
+      "bytes": 18322
+    },
+    {
+      "path": "tools/wave5/probe_worker_v7_health_20261014_r5.mjs",
+      "sha256": "e01c262cdd75f85c6fb56e155691cf37ac274380a55f92cd39881acd59694108",
+      "bytes": 23877
+    },
+    {
+      "path": "tools/wave5/finance_exports_20261016_r5_a7.mjs",
+      "sha256": "ec1cbf544b2974db26b1fcb25a04fc1d54610e7149090a3dcbd5c185adb247c6",
+      "bytes": 64366
+    }
+  ],
+  "sourceValidation": {
+    "passed": true,
+    "preservedBindings": 19,
+    "returnedSourceRows": 25,
+    "readSqlSha256": "33206db5e1b96579173a5bd2a997f13fca4245cdcca5bbfd3fd98a4d144417fd",
+    "executePrerequisitesPending": true,
+    "privateInputsRead": false,
+    "networkCalls": 0,
+    "originalExpiry": "2026-10-14T09:57:07.481942Z",
+    "deployedArchiveBindings": 39,
+    "currentProductCandidate": {
+      "path": "workers/wave5/model_runtime.mjs",
+      "sha256": "7776efd148c1257c4cd78eba3345b13fe19406012cd4b58f7b0a6769ef77a72e"
+    },
+    "candidateDiffersFromDeployed": true,
+    "originalExpiryStillImmutable": "2026-10-14T09:57:07.481942Z",
+    "newRenewalRequired": true,
+    "actualResumeAllowed": false,
+    "sourceOnly": true,
+    "intentsCreated": 0
+  },
+  "deployedArchive": {
+    "manifest": {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/deployed-archive-manifest.json",
+      "sha256": "8e0cf9712d58fcc01204fd2669afdaf88f74f57581883916a9b3344e2f9fbdca"
+    },
+    "exactCopiedInputs": 39,
+    "codeExecutedFromArchive": false,
+    "currentProductCandidate": {
+      "path": "workers/wave5/model_runtime.mjs",
+      "sha256": "7776efd148c1257c4cd78eba3345b13fe19406012cd4b58f7b0a6769ef77a72e",
+      "deployedSha256": "fce748e511a81bdae957ff76275641142a738d8391132953d4d3c7eec03cfb99",
+      "installedByThisArchive": false
+    },
+    "candidateDiffersFromDeployed": true
+  },
+  "interfaces": {
+    "health": {
+      "source": "tools/wave5/run_worker_v7_health_20261015_r5.mjs",
+      "plan": "docs/verification/wave5/task3-health-readiness-20261014/execution-plan-20261015-a1.json",
+      "review": "docs/verification/wave5/task3-health-readiness-20261014/final-operation-review-20261015-a1.json"
+    },
+    "scheduler": {
+      "source": "tools/wave5/resume_worker_schedules_20261015_r5_a1.mjs",
+      "plan": "docs/verification/wave5/task3-schedule-resume-20261014/renewed-execution-plan-20261015-r5-a1.json",
+      "review": "docs/verification/wave5/task3-schedule-resume-20261014/final-operation-review-20261015-r5-a1.json"
+    },
+    "argv": [
+      "--preflight <finalReviewSha256>",
+      "--execute <finalReviewSha256>"
+    ],
+    "exactPreflightKeys": [
+      "passed",
+      "networkCalls",
+      "privateInputsRead",
+      "planSha256",
+      "finalReviewSha256"
+    ],
+    "exactPrivateInputKeys": [
+      "projectId",
+      "bundleSha256",
+      "ownerToken"
+    ],
+    "privateInputMaximumBytes": 8192,
+    "privateInputTimeoutMs": 15000,
+    "planBindingField": "generatedPlan; optional planBinding must match",
+    "lockInventories": [
+      "sourceBindings",
+      "publicBindings"
+    ],
+    "healthImportSourcePaths": [
+      "tools/wave5/approved_management_installer.mjs",
+      "tools/wave5/enroll_mfa_management_20261013_r5.mjs",
+      "tools/wave5/finance_cash_fixture_20261013_r5.mjs",
+      "tools/wave5/finance_cash_workflows_20261013_r5.mjs",
+      "tools/wave5/finance_exports_20261016_r5_a7.mjs",
+      "tools/wave5/finance_https_transport_20261013_r5.mjs",
+      "tools/wave5/finance_https_transport_20261013_r5_a2.mjs",
+      "tools/wave5/finance_remaining_20261014_r5_a3.mjs",
+      "tools/wave5/private_existing_actor_session_20261013_r5.mjs",
+      "tools/wave5/private_runtime_http.mjs",
+      "tools/wave5/private_runtime_seal.mjs",
+      "tools/wave5/probe_worker_v7_health_20261014_r5.mjs",
+      "tools/wave5/resume_worker_schedules_20261014_r5_v7.mjs",
+      "tools/wave5/resume_worker_schedules_20261015_r5_a1.mjs",
+      "tools/wave5/run_worker_v7_health_20261015_r5.mjs",
+      "tools/wave5/runtime_contract.mjs",
+      "tools/wave5/runtime_fixture_spec.mjs",
+      "tools/wave5/supabase_http_transport.mjs"
+    ],
+    "renewalRawResponseBindings": [
+      "renewalPreflightResponse",
+      "renewalWriteResponse",
+      "renewalReadbackResponse"
+    ],
+    "renewalReceiptOrdinals": [
+      139,
+      140,
+      141
+    ],
+    "serverWindowAnchorMeaning": "Actual raw preflight observation; distinct from actual raw server post-COMMIT appliedAt"
+  },
+  "requirements": [
+    {
+      "id": "FR-515",
+      "statementSha256": "695e9b69733f91b4776f971fa8c8a200d7ac42c997089b60e4aaa51cf87fe7ed",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "primaryGroup": "G3",
+      "prerequisites": [
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "exactRemainingEvidence": "Create/download/hash/reopen genuine governed exports, preserving calculation/source basis and rechecking permissions at each step and after revocation."
+    },
+    {
+      "id": "FR-535",
+      "statementSha256": "a1ead2d9be4a19fd5f81c4b801b527ec720bbf2b774df89df19764152b7a45e7",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "primaryGroup": "G3",
+      "prerequisites": [
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "exactRemainingEvidence": "Verify governed notification/export workflow/file/outbox source permissions and actual delivery. Recorded outbox fixtures currently have no confirmed scheduled external receipts."
+    },
+    {
+      "id": "AC-506",
+      "statementSha256": "6af17144ef06065bfb84cd73def6b27cf5b6fb91ef91a69305752693d2133ea9",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "primaryGroup": "G3",
+      "prerequisites": [
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "exactRemainingEvidence": "Complete dated residual controls, immutable scenario freeze, genuine governed export and permission revocation/reopen denial with no ledger changes."
+    },
+    {
+      "id": "EC-506",
+      "statementSha256": "b633b3e153b49f6b039df9f4358e07bfd704f7aa2dbded644e79f55cb589228c",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "primaryGroup": "G3",
+      "prerequisites": [
+        "P1",
+        "P2",
+        "P3"
+      ],
+      "exactRemainingEvidence": "Complete live changed-scenario/permission invalidation of reuse/download and preservation of earlier authorized frozen basis."
+    },
+    {
+      "id": "FR-521",
+      "statementSha256": "7d257e603db05dbdf2dc776a5981f7604123eaad98ce0295afbac01e6a3c3af4",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "primaryGroup": "G5",
+      "prerequisites": [
+        "P0",
+        "P1",
+        "P3"
+      ],
+      "exactRemainingEvidence": "Prove installed scoped endpoint registration, actual HMAC rotation, exact payload transport, and unsafe destination/DNS/redirect rejection beyond local policy fixtures."
+    },
+    {
+      "id": "FR-522",
+      "statementSha256": "c8deb2ccdab484a10296ecf210bf83ad8a81102267ac8c401bb9bfdeb4749dbe",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "primaryGroup": "G5",
+      "prerequisites": [
+        "P0",
+        "P1",
+        "P3"
+      ],
+      "exactRemainingEvidence": "After coordinated routing repair, observe real committed-event signed attempts, retries, stable identities, durable receiver receipt and dead-letter/replay evidence."
+    },
+    {
+      "id": "FR-523",
+      "statementSha256": "4623f08c907079491f8275c3b064a43efbcd229544d463e95547c6b9e76b1758",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "primaryGroup": "G5",
+      "prerequisites": [
+        "P0",
+        "P1",
+        "P3"
+      ],
+      "exactRemainingEvidence": "Exercise real expiring/revoked external credentials, named commands, schema/idempotency/throttle/live entitlement checks and receipt-preserving retries."
+    },
+    {
+      "id": "AC-510",
+      "statementSha256": "becf4379972fd6cde0678618d3785515bd7d6b7adf20965d2bc359106a2d619d",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "primaryGroup": "G5",
+      "prerequisites": [
+        "P0",
+        "P1",
+        "P3"
+      ],
+      "exactRemainingEvidence": "Complete actual signed bounded delivery/retry/rotation/replay to the failing/accepting consumer and unsafe destination rejection; routing tests alone cannot prove it."
+    },
+    {
+      "id": "AC-511",
+      "statementSha256": "4a87632883b6d985e14088efa7cf858161bc42c3731ea1bcb8b0befd6a78318c",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "primaryGroup": "G5",
+      "prerequisites": [
+        "P0",
+        "P1",
+        "P3"
+      ],
+      "exactRemainingEvidence": "Complete genuine external credential expiry/revocation/foreign target/duplicate command requests with mutation denial or shared original receipt."
+    },
+    {
+      "id": "EC-509",
+      "statementSha256": "8cc3900401e05a6d1aab9315d000c032efd7f6e1e7683540bee6d80094a0f828",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "primaryGroup": "G5",
+      "prerequisites": [
+        "P0",
+        "P1",
+        "P3"
+      ],
+      "exactRemainingEvidence": "Observe actual timeout/duplicate success/signature/DNS/redirect behavior and durable bounded attempt evidence through deployed workers."
+    },
+    {
+      "id": "EC-510",
+      "statementSha256": "249dfa560fa14d96cd5f11afc5c60eb137bce624a205f37299e9cd11b3fc67a6",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "primaryGroup": "G5",
+      "prerequisites": [
+        "P0",
+        "P1",
+        "P3"
+      ],
+      "exactRemainingEvidence": "Observe genuine external credential rotation/revocation, stale schemas and changed-payload replay rejection before business effects."
+    }
+  ],
+  "assignedRequirements": 11,
+  "acceptedByThisWork": 0,
+  "acceptanceChanged": false,
+  "actualWorkPending": [
+    "genuine owner refresh and explicit bounded authority renewal",
+    "actual renewal/export/provider/health/scheduler records",
+    "actual delivery and receiver receipts, retries, dead letters and replay protection",
+    "external-command restrictions and all eleven row acceptance gaps"
+  ],
+  "limitations": [
+    "Controlled tests and archived source verification are not actual workflow acceptance.",
+    "a7 exporter, renewal controller and private adapter are separately owned and must be independently frozen/reviewed.",
+    "Saved candidate differs from deployed V7; archive preservation does not install product changes.",
+    "No future approval, private owner input, renewal or operation result was created."
+  ],
+  "actions": {
+    "networkCalls": 0,
+    "privateInputsRead": false,
+    "liveWrites": 0,
+    "SDKExecuted": false,
+    "deployment": false,
+    "intentsCreated": 0,
+    "approvalCreated": false,
+    "productionRelease": false
+  },
+  "inputBindings": [
+    {
+      "path": "tools/wave5/approved_management_installer.mjs",
+      "sha256": "f6266b37e9c5eb254a794aedd512984d35865e2ff4ddfd19f6a67cf5f9750bd5",
+      "bytes": 18163
+    },
+    {
+      "path": "tools/wave5/enroll_mfa_management_20261013_r5.mjs",
+      "sha256": "ede49ffd20a111a063b00b375b32fdef40c69b09364a4ae72e5f2a5e7a608240",
+      "bytes": 13561
+    },
+    {
+      "path": "tools/wave5/finance_cash_fixture_20261013_r5.mjs",
+      "sha256": "8d5e670368fd89a9e9a98f10aa4befc1f2bc4ed0b28de913aa89ee64766291f9",
+      "bytes": 20620
+    },
+    {
+      "path": "tools/wave5/finance_cash_workflows_20261013_r5.mjs",
+      "sha256": "15758ebee2def57d0b3796cd9911090207ba7c9d49bbcbaa8b4201b9a420b64c",
+      "bytes": 29581
+    },
+    {
+      "path": "tools/wave5/finance_exports_20261016_r5_a7.mjs",
+      "sha256": "ec1cbf544b2974db26b1fcb25a04fc1d54610e7149090a3dcbd5c185adb247c6",
+      "bytes": 64366
+    },
+    {
+      "path": "tools/wave5/finance_https_transport_20261013_r5.mjs",
+      "sha256": "5eb2b839a9249fd457073d4b63523d311f06ecc2d392710db2f823259395ba0f",
+      "bytes": 8347
+    },
+    {
+      "path": "tools/wave5/finance_https_transport_20261013_r5_a2.mjs",
+      "sha256": "1ecbb7beaf53b5a32dd48e860dc78159b225e428bf36687972443dea2a1a3a58",
+      "bytes": 8610
+    },
+    {
+      "path": "tools/wave5/finance_remaining_20261014_r5_a3.mjs",
+      "sha256": "8cf6068a4f4863c27d234b96755b2e1f9332c13590a25e5b66ef4742da87bd52",
+      "bytes": 56166
+    },
+    {
+      "path": "tools/wave5/private_existing_actor_session_20261013_r5.mjs",
+      "sha256": "0d9dc4bfbd703fb7637f0acc89eaa195c2b6a17bdf4f4e566b0ba925f76c4540",
+      "bytes": 4562
+    },
+    {
+      "path": "tools/wave5/private_runtime_http.mjs",
+      "sha256": "d52ae919e4c13bd1745ef806658744dfc2c52df7b61d24d9f87afac06de7be2c",
+      "bytes": 5080
+    },
+    {
+      "path": "tools/wave5/private_runtime_seal.mjs",
+      "sha256": "1395a91ee666d40c5504c8977b5d4f64aa4d54b383dfe147fe78eb07a5d7a206",
+      "bytes": 2916
+    },
+    {
+      "path": "tools/wave5/probe_worker_v7_health_20261014_r5.mjs",
+      "sha256": "e01c262cdd75f85c6fb56e155691cf37ac274380a55f92cd39881acd59694108",
+      "bytes": 23877
+    },
+    {
+      "path": "tools/wave5/resume_worker_schedules_20261014_r5_v7.mjs",
+      "sha256": "8bf3fcbb9ec17a2697afa7c4e360e664503e0128922fb8361b64450af73e8372",
+      "bytes": 40178
+    },
+    {
+      "path": "tools/wave5/resume_worker_schedules_20261015_r5_a1.mjs",
+      "sha256": "2b823d111990d2f93f1dcefe62d2bc48c2498a40b333311e4894738928a8604f",
+      "bytes": 57669
+    },
+    {
+      "path": "tools/wave5/run_worker_v7_health_20261015_r5.mjs",
+      "sha256": "86d881ed3587b6bde28fb8e8ad33c9526d50b6ebc305fb1ff432f44bf4edbd75",
+      "bytes": 15280
+    },
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "sha256": "7bc04153aa169c2f85f4371c74319c2eded1f6666a97609ba29f5a2ad94d1da2",
+      "bytes": 31294
+    },
+    {
+      "path": "tools/wave5/runtime_fixture_spec.mjs",
+      "sha256": "71dd763620cab0ca896dd96c50193350f1926e67f481acfed9b7aaa4b519f2d2",
+      "bytes": 36370
+    },
+    {
+      "path": "tools/wave5/supabase_http_transport.mjs",
+      "sha256": "7815b9c8c18bd5d2375480706579c7dd9583b1e95e0424a2178f7b9b5db265c9",
+      "bytes": 15253
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/entrypoints.test.mjs",
+      "sha256": "b8ab6cca5120d1aee1db8b5e11678380f59394e6e57b136a97e6db2ce7c75a51",
+      "bytes": 18322
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/deployed-archive-manifest.json",
+      "sha256": "8e0cf9712d58fcc01204fd2669afdaf88f74f57581883916a9b3344e2f9fbdca",
+      "bytes": 16115
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/continuation-call-inventory-a1.json",
+      "sha256": "305503c62e6cc662971fddfe43672f86b6b89a7f328d440711312d06cb6407c0",
+      "bytes": 3742
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/health-launcher-before.mjs",
+      "sha256": "b64736b4f0c4802db996d45b4014465cbc7b9fabbb97a525b61811fbede8050b",
+      "bytes": 13143
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/scheduler-before.mjs",
+      "sha256": "64eecc9158ed143692726860daa4b58c8cf67c5b36a1bffaad0793125c94d732",
+      "bytes": 50979
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/health-launcher-21-test-checkpoint.mjs",
+      "sha256": "639881dbfc68c70741dd5714e4e5fd85142d0ee4705eec1e96e6c79c63880116",
+      "bytes": 13501
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/scheduler-21-test-checkpoint.mjs",
+      "sha256": "902878e90cc410ba56d56a7db962fe70bba73aa6021f031a17c4623d1ac6053b",
+      "bytes": 53254
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/checkpoint-lineage.json",
+      "sha256": "4e42713317127e796476247e569ab40109f63131e9f6d2d4ee50cdf5320c20da",
+      "bytes": 1287
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/README.md",
+      "sha256": "fb2dc7b3683d38f13013c5a795cd8019ef902f34a3b837e339ec46e429d6bf95",
+      "bytes": 6028
+    },
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/open-requirement-prerequisites.json",
+      "sha256": "80c38df769ed4a35eab9c886d9516dbe570bd00efee8c1b2829c0b6319144f5a",
+      "bytes": 53461
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/current-state-verification-a1.json",
+      "sha256": "1d10f95d8c0f23534d101475f1a5d72dcff6711296a6dc59a064fb03a28590fb",
+      "bytes": 3948
+    }
+  ],
+  "evidenceBindings": [
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/controlled-entrypoints-a1.tap",
+      "sha256": "6cf79c24fa43087b2ad399be9f5206cc58151c2ab5fe5c67bb2806803419d9c9",
+      "bytes": 4899
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/controlled-entrypoints-a1.exit.txt",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "bytes": 3
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/controlled-entrypoints-a2.tap",
+      "sha256": "084e1d64876d85ad0de6477a237089a3f1db7005accaffa19c8b823b49bab777",
+      "bytes": 6203
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/controlled-entrypoints-a2.exit.txt",
+      "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "bytes": 3
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/verification-a2-before-hashes.json",
+      "sha256": "a511e625a8f98d6dd226fdfd2e86fb1bd323db03d153b6195b02d96b5ff133b2",
+      "bytes": 1180
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/scheduler-source-validation-a2.json",
+      "sha256": "b0f0540dc71255f790856fe55e77c94b0ebfb14bbbc5c2ee3dd78a4cade62629",
+      "bytes": 634
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/syntax-and-validation-a2.json",
+      "sha256": "85b98684363f5da36abafc2323c1e37dd9efc18d4a2e0451cb1343d2a2fa7083",
+      "bytes": 99
+    }
+  ]
+}

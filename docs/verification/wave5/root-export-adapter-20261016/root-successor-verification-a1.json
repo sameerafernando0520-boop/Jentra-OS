@@ -1,0 +1,91 @@
+{
+  "kind": "root-independent-export-a7-and-adapter-source-verification",
+  "passed": true,
+  "verifiedAt": "2026-10-17T05:40:07.015Z",
+  "sourceProof": {
+    "path": "docs/verification/wave5/task3-export-renewal-20261016/export-a7-source-proof-a1.json",
+    "sha256": "4cca7186a850b19b4f28103f40b575d10e77faa3c904f9b6fa34afe5c19ad1fa",
+    "bytes": 31773
+  },
+  "sourceBindings": [
+    {
+      "path": "tools/wave5/finance_exports_20261016_r5_a7.mjs",
+      "sha256": "ec1cbf544b2974db26b1fcb25a04fc1d54610e7149090a3dcbd5c185adb247c6",
+      "bytes": 64366
+    },
+    {
+      "path": "tools/wave5/prepare_finance_exports_20261016_r5_a7.mjs",
+      "sha256": "75a64c93fcece042615af6804a42b67b0c2863f2e907bdbb149cf6a631d2cca1",
+      "bytes": 6309
+    },
+    {
+      "path": "docs/verification/wave5/task3-export-renewal-20261016/finance_exports_20261016_r5_a7.test.mjs",
+      "sha256": "3c1f4f6f924d06d7e132dd6467cebd39c7cc26d5e17b10af3356714d6aeb95e5",
+      "bytes": 52318
+    }
+  ],
+  "exactPreservedAndNewBindings": 93,
+  "originalFrozenBindings": 68,
+  "allBindingsVerified": true,
+  "exactPublicHoldInventoryCount": 16,
+  "actualCurrentChargedCalls": 137,
+  "conditionalBudgetOnly": {
+    "recordedPrior": 137,
+    "ownerRefreshCalls": 1,
+    "renewalControlCalls": 3,
+    "prior": 141,
+    "ordinary": 24,
+    "ordinaryLimit": 165,
+    "resolution": 1,
+    "total": 166
+  },
+  "conditionalOverallMaximum": 174,
+  "a7IndependentTest": {
+    "toolChunkId": "c3f92b",
+    "exitCode": 0,
+    "tests": 124,
+    "pass": 124,
+    "fail": 0,
+    "skipped": 0,
+    "tap": {
+      "path": "docs/verification/wave5/root-export-adapter-20261016/root-a7-independent-suite-a1.tap",
+      "sha256": "34332fb7ca7a9071c63fe829a85018908bc4bc0518160e3f32bdfee918886002",
+      "bytes": 29230
+    }
+  },
+  "adapterMechanismExecution": {
+    "path": "docs/verification/wave5/root-export-adapter-20261016/root-controlled-execution-a3.json",
+    "sha256": "7814c54e45e987e9efdb958c49b4f2690170c8e373e9222f12c9b4ac5ca79635",
+    "bytes": 1203
+  },
+  "candidate": {
+    "path": "scripts/wave5/run_private_management_installer_20261017_r5_a3.candidate.ps1",
+    "sha256": "aba5237681017897064118d2529c9401d92e6054257a19d4c01a6196f076dcf3",
+    "bytes": 51254
+  },
+  "candidateTechnicalReviewPending": true,
+  "historicalA6OriginalSha256": "2b265ea5c5f4921923a1feafb8daf8b8d2538daa20a9cc97deb1bd6b51ccf559",
+  "reviewedA6ChronologyRepairSha256": "71f6743f5600cdb5e6697c70c4ab8d48afdd8f4b4cb250dfba3fe09fe83c76c2",
+  "oldEvidencePreserved": true,
+  "missingActualOperationControls": [
+    "docs/verification/wave5/task3-export-renewal-20261016/execution-profile-a1.json",
+    "docs/verification/wave5/task3-export-renewal-20261016/final-operation-review-a1.json",
+    "docs/verification/wave5/finance-exports-preparation-20261016-r5-a7.json",
+    "docs/verification/wave5/finance-exports-once-20261016-r5-a7.json",
+    "docs/verification/wave5/task3-export-renewal-20261016/source-policy-a1.json",
+    "docs/verification/wave5/task3-export-renewal-20261016/independent-policy-review-a1.json",
+    "docs/verification/wave5/runtime-renewal-export-owner-decision-20261016-r5-a7.json",
+    "docs/verification/wave5/runtime-renewal-two-row-readback-20261016-r5-a7.json",
+    "docs/verification/wave5/private-owner-input-ready-20261014-r5-a10.json",
+    "docs/verification/wave5/private-owner-scope-refresh-20261014-r5-a10.json",
+    "docs/verification/wave5/finance-cumulative-read-accounting-20261016-r5-a7.json"
+  ],
+  "privateInputsRead": false,
+  "networkCalls": 0,
+  "actualRenewals": 0,
+  "actualExports": 0,
+  "acceptanceChanged": false,
+  "production": false,
+  "realBilling": false,
+  "limitation": "Controlled source and public-file evidence only. Actual source approval, owner decision, A10 refresh, renewal, authenticated exports and later runtime/acceptance gates remain separate."
+}

@@ -1,0 +1,189 @@
+{
+  "kind": "independent-source-only-export-private-adapter-review-a3",
+  "reviewedAt": "2026-10-17T05:43:28.738Z",
+  "passed": true,
+  "technicalDecision": "approve-source-only",
+  "candidate": {
+    "path": "scripts/wave5/run_private_management_installer_20261017_r5_a3.candidate.ps1",
+    "sha256": "aba5237681017897064118d2529c9401d92e6054257a19d4c01a6196f076dcf3"
+  },
+  "inputs": [
+    {
+      "path": "tools/wave5/prepare_export_private_adapter_20261017_r5_a3.mjs",
+      "bytes": 4202,
+      "sha256": "1cb2c4305d1c6841d796d0858473d50b21a6fc8bd8ef2289e4d9858cfa8b41c3"
+    },
+    {
+      "path": "scripts/wave5/run_private_management_installer_20261017_r5_a3.candidate.ps1",
+      "bytes": 51254,
+      "sha256": "aba5237681017897064118d2529c9401d92e6054257a19d4c01a6196f076dcf3"
+    },
+    {
+      "path": "docs/verification/wave5/root-export-adapter-20261017/source-candidate-a3.json",
+      "bytes": 1586,
+      "sha256": "e7a03edbf8d0a78cf40382bd1aa842a08208b4c9d0d7af4fe397a473895969dd"
+    },
+    {
+      "path": "docs/verification/wave5/root-export-adapter-20261017/peer-source-race-a3.test.mjs",
+      "bytes": 8567,
+      "sha256": "01e8231b9dbddbba316c5f0c2a833b2dcf29f0bc61a2d8e7440b1c5f96805524"
+    },
+    {
+      "path": "docs/verification/wave5/root-export-adapter-20261016/public-read-holds-a2.ps1",
+      "bytes": 3005,
+      "sha256": "f8b82f70c0cce59208ebe670459e5cc2dbffede6496a238524a7b8f277f44388"
+    },
+    {
+      "path": "docs/verification/wave5/root-export-adapter-20261016/independent-review-a2.json",
+      "bytes": 10702,
+      "sha256": "7ee97fa0ca612911885b2d3f5b314e5f95bd9612dd0e6d9de9a4371f8e662699"
+    },
+    {
+      "path": "docs/verification/wave5/root-export-adapter-20261016/peer-plan-read-race-a2.json",
+      "bytes": 1819,
+      "sha256": "ed0772eea96ee85eb4aaa8c020fc0ae15470bb0eeb6fbb7df5ebdd9941372724"
+    },
+    {
+      "path": "docs/verification/wave5/root-export-adapter-20261016/root-successor-verification-a1.json",
+      "bytes": 3872,
+      "sha256": "d3469627a8c0e047c162494bec2b045a7b07924a01affac51ec6dac043e62436"
+    },
+    {
+      "path": "docs/verification/wave5/task3-export-renewal-20261016/export-a7-source-proof-a1.json",
+      "bytes": 31773,
+      "sha256": "4cca7186a850b19b4f28103f40b575d10e77faa3c904f9b6fa34afe5c19ad1fa"
+    },
+    {
+      "path": "tools/wave5/finance_exports_20261016_r5_a7.mjs",
+      "bytes": 64366,
+      "sha256": "ec1cbf544b2974db26b1fcb25a04fc1d54610e7149090a3dcbd5c185adb247c6"
+    },
+    {
+      "path": "tools/wave5/prepare_export_private_adapter_20261016_r5_a2.mjs",
+      "bytes": 7865,
+      "sha256": "f49815dc2f2b394a004669ecf7697b5676d51807bc9767cf5bd98902f94d7b41"
+    },
+    {
+      "path": "scripts/wave5/run_private_management_installer_20261016_r5_a2.candidate.ps1",
+      "bytes": 50926,
+      "sha256": "4dd4911e892fa75dfdaaa0e0ea9036ddaa2e93d5a040c736515b55cec9053c15"
+    },
+    {
+      "path": "scripts/wave5/run_private_management_installer_20261013_r5.ps1",
+      "bytes": 38718,
+      "sha256": "b01b6c20cb2819cb419fa10423bce37c0cba86b44ee7e2f5b9c0c9387d19be1f"
+    }
+  ],
+  "bindingsObservedAt": "2026-10-17T05:43:07.631Z",
+  "findingResolution": [
+    {
+      "id": "EXP-ADAPTER-001",
+      "status": "resolved-in-reviewed-source",
+      "evidence": "Final pre-DPAPI guard rehashes child, plan, metadata and final review. Full source/public inventories, plan, final review, manifest and adapter have verified read holds before preflight and through ordinary child exit; error cleanup terminates/waits before disposing holds."
+    },
+    {
+      "id": "EXP-ADAPTER-002",
+      "status": "resolved-in-reviewed-source",
+      "evidence": "The exact a2-to-a3 candidate delta is two early verified holds: final review before review parsing, then plan before hashing/parsing/inventory/window derivation. The approved file cannot be replaced after acquiring those holds. Wrong bytes fail the held hash check before parsing."
+    }
+  ],
+  "verifiedScope": [
+    "Pure builder reproduces the exact frozen candidate and rejects changed predecessor.",
+    "Exact candidate parses with zero errors; historical ACL and UTC functions remain unchanged.",
+    "Source-only validation performs the complete pinned public preflight and exits before any private metadata/DPAPI access.",
+    "All 16 future public bindings and complete source inventory are held by hash before public preflight, with explicit plan/review/manifest/self and child holds.",
+    "Window is derived from the pinned held plan and serialized unchanged; no new expiry is computed by the adapter.",
+    "Bound child receives only the fixed execute mode and review hash through command-line parsing; private JSON uses the existing stdin path.",
+    "Existing error/public output blocks remain preserved and the bound A7 child exposes explicit public success/failure summaries."
+  ],
+  "actualVerification": {
+    "peerSourceAndRaceTests": {
+      "label": "a3-independent-race-and-source",
+      "chunk_id": "bc5b31",
+      "wall_time_seconds": 4.748021,
+      "exit_code": 0,
+      "original_token_count": 557,
+      "output": "TAP version 13\n# Subtest: frozen a3, a2, predecessor, helper and A7 source hashes match\nok 1 - frozen a3, a2, predecessor, helper and A7 source hashes match\n  ---\n  duration_ms: 1.307\n  type: 'test'\n  ...\n# Subtest: pure additive a3 builder reproduces the exact candidate without running it\nok 2 - pure additive a3 builder reproduces the exact candidate without running it\n  ---\n  duration_ms: 1.7447\n  type: 'test'\n  ...\n# Subtest: exact a2 to a3 adapter delta consists only of the two early verified holds\nok 3 - exact a2 to a3 adapter delta consists only of the two early verified holds\n  ---\n  duration_ms: 0.6886\n  type: 'test'\n  ...\n# Subtest: pinned review and plan holds precede reads and inventory/window derivation\nok 4 - pinned review and plan holds precede reads and inventory/window derivation\n  ---\n  duration_ms: 0.2305\n  type: 'test'\n  ...\n# Subtest: full reviewed inventory remains held before preflight and final source/plan checks precede DPAPI\nok 5 - full reviewed inventory remains held before preflight and final source/plan checks precede DPAPI\n  ---\n  duration_ms: 0.186\n  type: 'test'\n  ...\n# Subtest: validation, reviewed window, child lifetime and cleanup remain bound\nok 6 - validation, reviewed window, child lifetime and cleanup remain bound\n  ---\n  duration_ms: 0.2025\n  type: 'test'\n  ...\n# Subtest: review: replacement after the verified hold is denied and approved bytes are parsed\nok 7 - review: replacement after the verified hold is denied and approved bytes are parsed\n  ---\n  duration_ms: 903.2047\n  type: 'test'\n  ...\n# Subtest: review: wrong bytes are rejected before parsing\nok 8 - review: wrong bytes are rejected before parsing\n  ---\n  duration_ms: 625.2094\n  type: 'test'\n  ...\n# Subtest: plan: replacement after the verified hold is denied and approved bytes are parsed\nok 9 - plan: replacement after the verified hold is denied and approved bytes are parsed\n  ---\n  duration_ms: 1405.4457\n  type: 'test'\n  ...\n# Subtest: plan: wrong bytes are rejected before parsing\nok 10 - plan: wrong bytes are rejected before parsing\n  ---\n  duration_ms: 1134.108\n  type: 'test'\n  ...\n1..10\n# tests 10\n# suites 0\n# pass 10\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 4105.5537\n",
+      "tests": 10,
+      "passed": 10,
+      "failed": 0
+    },
+    "exactCandidateAst": {
+      "label": "a3-exact-ast",
+      "chunk_id": "74857b",
+      "wall_time_seconds": 1.0245814,
+      "exit_code": 0,
+      "original_token_count": 62,
+      "output": "{\"privateInputsRead\":false,\"candidateExecuted\":false,\"predecessorParseErrors\":0,\"candidateParseErrors\":0,\"networkCalls\":0,\"legacyFunctions\":[{\"name\":\"Assert-TaskPrivateAcl\",\"unchanged\":true},{\"name\":\"Convert-TaskUtcTimestamp\",\"unchanged\":true}]}\r\n"
+    },
+    "independentPublicSourceAudit": {
+      "label": "independent-93-public-binding-audit",
+      "chunk_id": "0ae5d9",
+      "wall_time_seconds": 0.7791399,
+      "exit_code": 0,
+      "original_token_count": 91,
+      "output": "{\"passed\":true,\"observedAt\":\"2026-10-17T05:42:36.099Z\",\"proof\":{\"path\":\"docs/verification/wave5/task3-export-renewal-20261016/export-a7-source-proof-a1.json\",\"bytes\":31773,\"sha256\":\"4cca7186a850b19b4f28103f40b575d10e77faa3c904f9b6fa34afe5c19ad1fa\"},\"bindings\":93,\"roots\":{\"frozen\":76,\"workspace\":17},\"sourceOnly\":true,\"networkCalls\":0,\"privateInputsRead\":false}\n",
+      "bindings": 93,
+      "frozenFiles": 76,
+      "workspaceFiles": 17,
+      "privateFilesRead": 0
+    },
+    "separateRootA7Suite": {
+      "proofPath": "docs/verification/wave5/root-export-adapter-20261016/root-successor-verification-a1.json",
+      "tests": 124,
+      "passed": 124,
+      "rerunByThisReviewer": false
+    },
+    "retainedEvidence": {
+      "a2RaceReproduced": true,
+      "a2CandidateAndGeneratorPreserved": true,
+      "a1CandidateAndGeneratorAndReviewPreserved": true,
+      "primitiveWindows19TestsExecutedUtcDay": "2026-10-16",
+      "actualEmbeddedLock8TestsIndependentlyRerunUtcDay": "2026-10-17"
+    }
+  },
+  "historicalSourceChronology": {
+    "a6OriginalSha256": "2b265ea5c5f4921923a1feafb8daf8b8d2538daa20a9cc97deb1bd6b51ccf559",
+    "a6ReviewedRepairSha256": "71f6743f5600cdb5e6697c70c4ab8d48afdd8f4b4cb250dfba3fe09fe83c76c2",
+    "separatelyExplainedByRootSuccessorProof": true
+  },
+  "conditionalAccounting": {
+    "recordedPrior": 137,
+    "ownerRefresh": 1,
+    "renewalControls": 3,
+    "priorAtExports": 141,
+    "ordinaryExportCalls": 24,
+    "ordinaryEnd": 165,
+    "oneResolutionReserve": 1,
+    "maximumThroughExports": 166,
+    "overallMaximum": 174,
+    "authorizedByThisReview": false,
+    "freshLiveCounterReadPerformed": false
+  },
+  "limits": {
+    "sourceTechnicalReviewOnly": true,
+    "actualPrivateAdapterExecuted": false,
+    "privateInputsRead": false,
+    "networkCalls": 0,
+    "liveWrites": 0,
+    "intentsCreated": 0,
+    "installed": false,
+    "actualRenewals": 0,
+    "actualExports": 0,
+    "executionApproved": false,
+    "directHumanApprovalCreated": false,
+    "acceptanceChanged": false,
+    "SDKJobs": 0,
+    "nativeUIUsed": false,
+    "gitOperations": false,
+    "productionAuthorized": false,
+    "realBillingAuthorized": false
+  },
+  "remainingPrerequisites": [
+    "An exact direct human decision for the bounded renewal/export operation and increased ceiling.",
+    "Fresh private A10 readiness and honest accounting of all actual attempts.",
+    "Actual two-row renewal, genuine readback and source-bound profile/plan/final operation review.",
+    "Installation of only the reviewed adapter/source into the intended paths after required approval.",
+    "Actual exports, health/provider authority, persistent scheduling/delivery, trusted model, contention/load, authenticated native and remaining owner acceptance remain separate."
+  ]
+}

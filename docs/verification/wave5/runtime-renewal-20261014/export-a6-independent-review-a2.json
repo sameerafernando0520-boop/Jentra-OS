@@ -1,0 +1,125 @@
+{
+  "kind": "independent-minimal-a6-chronology-repair-review",
+  "reviewedAt": "2026-10-16T12:21:56.745888+00:00",
+  "reviewer": "/root/independent_review",
+  "technicalDecision": "approve-minimal-source-repair-only",
+  "sourceRepairApproved": true,
+  "operationApproval": false,
+  "liveExecutionAuthorized": false,
+  "personalHumanExactSourceSignatureClaimed": false,
+  "currentSource": {
+    "path": "tools/wave5/finance_exports_20261014_r5_a6.mjs",
+    "sha256": "71f6743f5600cdb5e6697c70c4ab8d48afdd8f4b4cb250dfba3fe09fe83c76c2"
+  },
+  "preservedBeforeSource": {
+    "path": "docs/verification/wave5/runtime-renewal-20261014/a6-helper-before-chronology-a1.mjs.txt",
+    "sha256": "2b265ea5c5f4921923a1feafb8daf8b8d2538daa20a9cc97deb1bd6b51ccf559",
+    "bytes": 60550
+  },
+  "exactDelta": {
+    "singleChangedLine": 191,
+    "addition": "&&utcMillis(metadata.createdAt)<=start",
+    "removingAdditionRestoresOldBytesExactly": true,
+    "otherHelperBytesChanged": false,
+    "preparerUnchanged": true,
+    "authored98TestSourceUnchanged": true,
+    "a5AndOriginal68PopulationUnchanged": true
+  },
+  "findingClosure": {
+    "id": "A6-CHRONOLOGY-01",
+    "status": "resolved-in-reviewed-source",
+    "basis": "Fresh owner metadata.createdAt equals refresh.actualVerifiedAt by the existing binding, and must now be no later than renewalReadback.appliedAt. Both previously accepted after-application/after-readback controlled cases are rejected.",
+    "additionalControllerChronology": "Root reports the separately owned renewal controller will enforce owner refresh before its actual preflight and bind preflightObservedAt; that controller is outside this narrowly completed review."
+  },
+  "actualPeerExecution": {
+    "record": {
+      "path": "docs/verification/wave5/runtime-renewal-20261014/export-a6-independent-execution-a2.json",
+      "sha256": "4c43762d91ee7daa8fd3f876e4f32cb35fff4a1f64a8582ad37f5c3a9c36f558",
+      "bytes": 59138
+    },
+    "counts": {
+      "tests": 10,
+      "pass": 10,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "exitCode": 0,
+    "sourceStable": true,
+    "uniqueBindings": 83,
+    "bindingRows": 86,
+    "test": {
+      "path": "docs/verification/wave5/runtime-renewal-20261014/export-a6-independent-peer-a1.test.mjs",
+      "sha256": "c7f25437b831db9678e3b3bf7544b1d18e4374ca600039d44b56aff63bf07730",
+      "bytes": 12794
+    },
+    "tap": {
+      "path": "docs/verification/wave5/runtime-renewal-20261014/export-a6-independent-peer-a2.tap",
+      "sha256": "95f8febb9600fe8b7a29dac01aab1acbced2e073af28c4f680d1581c8f8724a9",
+      "bytes": 2515
+    },
+    "root98RerunByReviewer": false
+  },
+  "preservedFailureHistory": {
+    "review": {
+      "path": "docs/verification/wave5/runtime-renewal-20261014/export-a6-independent-review-a1.json",
+      "sha256": "75bcaa983ecd87801579f477b4e96bd81758176bfa4f9eeeee6a9a6f5ec3f15d",
+      "bytes": 35939
+    },
+    "markdown": {
+      "path": "docs/verification/wave5/runtime-renewal-20261014/export-a6-independent-review-a1.md",
+      "sha256": "b0e07f43f0b8a53d68bf5ece72b7a3bccf1346905b405c697f09fa647475143b",
+      "bytes": 2829
+    },
+    "tap": {
+      "path": "docs/verification/wave5/runtime-renewal-20261014/export-a6-independent-peer-a1.tap",
+      "sha256": "f9851969178f82528e0d27570b5493f4df8b89ba35c19c528217d65b8a425880",
+      "bytes": 3885
+    },
+    "counts": {
+      "tests": 10,
+      "pass": 8,
+      "fail": 2
+    },
+    "overwritten": false
+  },
+  "budgetBoundary": {
+    "a6SourceStillUsesConditionalPrior": 138,
+    "a6SourceStillUsesOrdinaryLimit": 162,
+    "a6SourceStillUsesExportMaximum": 163,
+    "parentReportedActualChargedBaselineNow": 137,
+    "parentReportedBaselineNotIndependentlyRequeriedByReviewer": true,
+    "requiredRebasedSuccessor": {
+      "afterOwner1AndRenewal3": 141,
+      "after24OrdinaryExports": 165,
+      "afterOneReadOnlyResolutionMaximum": 166,
+      "afterFiveHealthControlCallsMaximum": 171,
+      "afterThreeScheduleControlCallsOverallMaximum": 174
+    },
+    "currentA6IsNotAnExecutableContinuationOfNew137Baseline": true,
+    "a7ReviewPendingFrozenSourceFromRoot": true,
+    "noCounterOrIntentResetPermitted": true
+  },
+  "remainingGates": [
+    "Root fresh98-case authored suite for the repaired hash.",
+    "A separately frozen/reviewed a7 source and policy rebased to actual137 plus bounded future attempts.",
+    "Actual direct-human exact operation approval, fresh owner context, exact two-row renewal/readback and chronological call ledger.",
+    "Actual plan/profile/final private-adapter source review, exclusive intent and authorized single execution.",
+    "Actual exports, backend signed health, schedule resumption, authenticated native/MFA/recovery/model/delivery/contention/load and owner acceptance remain separate."
+  ],
+  "actions": {
+    "networkCalls": 0,
+    "privateInputsRead": false,
+    "SQLExecuted": false,
+    "SDKJobs": 0,
+    "sourceEditsByReviewer": 0,
+    "snapshotCopies": 0,
+    "adapterExecuted": false,
+    "actualExports": 0,
+    "acceptanceChanged": false,
+    "newActualApprovalProfileOrIntentCreated": false,
+    "production": false,
+    "realBilling": false
+  }
+}

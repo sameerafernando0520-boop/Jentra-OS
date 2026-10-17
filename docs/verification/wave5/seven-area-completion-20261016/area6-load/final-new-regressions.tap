@@ -1,0 +1,106 @@
+TAP version 13
+# Subtest: offline CLI accepts a controlled fixture that binds the actual trace module without private imports
+ok 1 - offline CLI accepts a controlled fixture that binds the actual trace module without private imports
+  ---
+  duration_ms: 63.7396
+  type: 'test'
+  ...
+# Subtest: offline CLI rejects a missing mandatory trace source binding
+ok 2 - offline CLI rejects a missing mandatory trace source binding
+  ---
+  duration_ms: 29.8088
+  type: 'test'
+  ...
+# Subtest: offline CLI rejects trace source drift even when coordinator bytes match
+ok 3 - offline CLI rejects trace source drift even when coordinator bytes match
+  ---
+  duration_ms: 39.2073
+  type: 'test'
+  ...
+# Subtest: a complete controlled dispatch trace passes without opening network or database connections
+ok 4 - a complete controlled dispatch trace passes without opening network or database connections
+  ---
+  duration_ms: 992.6942
+  type: 'test'
+  ...
+# Subtest: reported 2,000-session coverage cannot hide one actual measured session
+ok 5 - reported 2,000-session coverage cannot hide one actual measured session
+  ---
+  duration_ms: 118.6567
+  type: 'test'
+  ...
+# Subtest: reported 500-scope coverage cannot hide one actual measured scope
+ok 6 - reported 500-scope coverage cannot hide one actual measured scope
+  ---
+  duration_ms: 161.4337
+  type: 'test'
+  ...
+# Subtest: reported good p95 cannot hide a slow read population
+ok 7 - reported good p95 cannot hide a slow read population
+  ---
+  duration_ms: 172.4688
+  type: 'test'
+  ...
+# Subtest: trace digest must match the actual sample population
+ok 8 - trace digest must match the actual sample population
+  ---
+  duration_ms: 68.5856
+  type: 'test'
+  ...
+# Subtest: duplicated attempt identity cannot be counted as two sends
+ok 9 - duplicated attempt identity cannot be counted as two sends
+  ---
+  duration_ms: 119.4687
+  type: 'test'
+  ...
+# Subtest: phase labels must follow the recorded transport boundary
+ok 10 - phase labels must follow the recorded transport boundary
+  ---
+  duration_ms: 149.8351
+  type: 'test'
+  ...
+# Subtest: negative elapsed time cannot be hidden by a positive summary
+ok 11 - negative elapsed time cannot be hidden by a positive summary
+  ---
+  duration_ms: 139.0374
+  type: 'test'
+  ...
+# Subtest: a duplicated scheduled slot cannot substitute for a missing one
+ok 12 - a duplicated scheduled slot cannot substitute for a missing one
+  ---
+  duration_ms: 145.6755
+  type: 'test'
+  ...
+# Subtest: misclassified actual operations cannot be hidden by correct mix totals
+ok 13 - misclassified actual operations cannot be hidden by correct mix totals
+  ---
+  duration_ms: 123.0063
+  type: 'test'
+  ...
+# Subtest: distinct session IDs cannot reuse one claimed independent connection
+ok 14 - distinct session IDs cannot reuse one claimed independent connection
+  ---
+  duration_ms: 142.3878
+  type: 'test'
+  ...
+# Subtest: a maximum dispatch lag summary must match actual dispatch intervals
+ok 15 - a maximum dispatch lag summary must match actual dispatch intervals
+  ---
+  duration_ms: 115.7866
+  type: 'test'
+  ...
+# Subtest: a reported peak cannot understate actual overlapping transports
+ok 16 - a reported peak cannot understate actual overlapping transports
+  ---
+  duration_ms: 164.5747
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2780.9941

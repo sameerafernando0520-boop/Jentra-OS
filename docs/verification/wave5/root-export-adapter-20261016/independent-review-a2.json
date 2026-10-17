@@ -1,0 +1,177 @@
+{
+  "kind": "independent-source-only-export-private-adapter-review-a2",
+  "reviewedAt": "2026-10-17T05:40:45.105Z",
+  "technicalDecision": "changes-required",
+  "passed": false,
+  "inputs": [
+    {
+      "path": "tools/wave5/prepare_export_private_adapter_20261016_r5_a2.mjs",
+      "bytes": 7865,
+      "sha256": "f49815dc2f2b394a004669ecf7697b5676d51807bc9767cf5bd98902f94d7b41"
+    },
+    {
+      "path": "scripts/wave5/run_private_management_installer_20261016_r5_a2.candidate.ps1",
+      "bytes": 50926,
+      "sha256": "4dd4911e892fa75dfdaaa0e0ea9036ddaa2e93d5a040c736515b55cec9053c15"
+    },
+    {
+      "path": "docs/verification/wave5/root-export-adapter-20261016/public-read-holds-a2.ps1",
+      "bytes": 3005,
+      "sha256": "f8b82f70c0cce59208ebe670459e5cc2dbffede6496a238524a7b8f277f44388"
+    },
+    {
+      "path": "docs/verification/wave5/root-export-adapter-20261016/root-adapter-controls-a2.test.mjs",
+      "bytes": 9339,
+      "sha256": "14bd0272388c4dbc01b675d15e74d5aafa9edb9b66ba3ca43abe09e15bc70cd5"
+    },
+    {
+      "path": "tools/wave5/finance_exports_20261016_r5_a7.mjs",
+      "bytes": 64366,
+      "sha256": "ec1cbf544b2974db26b1fcb25a04fc1d54610e7149090a3dcbd5c185adb247c6"
+    },
+    {
+      "path": "tools/wave5/prepare_finance_exports_20261016_r5_a7.mjs",
+      "bytes": 6309,
+      "sha256": "75a64c93fcece042615af6804a42b67b0c2863f2e907bdbb149cf6a631d2cca1"
+    },
+    {
+      "path": "docs/verification/wave5/root-export-adapter-20261016/root-controlled-execution-a3.json",
+      "bytes": 1203,
+      "sha256": "7814c54e45e987e9efdb958c49b4f2690170c8e373e9222f12c9b4ac5ca79635"
+    },
+    {
+      "path": "docs/verification/wave5/root-export-adapter-20261016/peer-windows-sharing-a2.json",
+      "bytes": 6019,
+      "sha256": "af9cbf5927899d7e51200ee19300a237835c519ba37cd38ff71e6789d54e661e"
+    },
+    {
+      "path": "docs/verification/wave5/root-export-adapter-20261016/peer-plan-read-race-a2.test.mjs",
+      "bytes": 5359,
+      "sha256": "2706adbf298e9637c00e3934103d9de00be0d6a649080e2a8e6d56741024fb4e"
+    },
+    {
+      "path": "docs/verification/wave5/root-export-adapter-20261015/independent-review-a1.json",
+      "bytes": 13972,
+      "sha256": "ffa5d528e0ef822554ceec45cd64cc25f0614c0687e7114a5e28241b675c9f73"
+    },
+    {
+      "path": "scripts/wave5/run_private_management_installer_20261013_r5.ps1",
+      "bytes": 38718,
+      "sha256": "b01b6c20cb2819cb419fa10423bce37c0cba86b44ee7e2f5b9c0c9387d19be1f"
+    },
+    {
+      "path": "tools/wave5/prepare_export_private_adapter_20261015_r5_a1.mjs",
+      "bytes": 11209,
+      "sha256": "dd5fb37381a7671bd879b6e5a532f97aa66ed6d7b6f6f8410a0337240f173867"
+    },
+    {
+      "path": "scripts/wave5/run_private_management_installer_20261015_r5_a1.candidate.ps1",
+      "bytes": 45317,
+      "sha256": "a0b0babf2cf2806016e5f7d5293df0079e370edd2c95d35f7b2e955dfed5f891"
+    }
+  ],
+  "bindingsObservedAt": "2026-10-17T05:39:56.490Z",
+  "finding": {
+    "id": "EXP-ADAPTER-002",
+    "priority": 1,
+    "status": "open-in-frozen-a2",
+    "title": "Hold the pinned review and plan before parsing their inventories",
+    "file": "scripts/wave5/run_private_management_installer_20261016_r5_a2.candidate.ps1",
+    "lines": [
+      340,
+      341,
+      343,
+      348,
+      362,
+      369
+    ],
+    "detail": "The review and plan are hashed and separately read before their verified holds. The source/public inventories are enumerated from the cached parsed plan before the plan hold is acquired. A transient replacement can be parsed and approved bytes restored before the hold, so an approved on-disk hash can coexist with a different cached inventory/window. Full public preflight sees the restored approved plan and does not prove the parent held its complete inventory.",
+    "reproduction": "The disposable Windows proof demonstrates this ordering gap with the actual public hold helper: the approved plan is held and hashed, but an omitted dependency remains writable. This is a source/control race proof, not execution of the private adapter.",
+    "requiredCorrection": "Acquire the exact final-review hold before parsing the review. Acquire the exact plan hold from that pinned review before plan hashing/parsing. Parse only while the verified handles are active, then derive window/inventories and acquire every remaining hold.",
+    "reportedToSourceOwner": true,
+    "sourceOwnerConfirmed": true
+  },
+  "a1Finding": {
+    "id": "EXP-ADAPTER-001",
+    "status": "addressed-in-a2-source",
+    "details": "A2 adds final child+plan rechecks and uses FileShare.Read holds with hash checks, duplicate-collision checks, path/reparse checks and disposal. EXP-ADAPTER-002 prevents overall source approval."
+  },
+  "verifiedProperties": [
+    "Exact a2 generator/candidate/hold helper/a7 source hashes match the candidate record.",
+    "Both source and public binding inventories, exact child, plan, final review, manifest and self are named for holds before child preflight.",
+    "A7 validates all 16 future public bindings and an exact preserved-source inventory; this is source mapping, not a generated current plan.",
+    "Final pre-DPAPI guard rehashes exact child, generated plan, metadata and review and reserves reviewed time.",
+    "ACL/UTC legacy functions remain byte-for-byte unchanged and the exact candidate parses without errors.",
+    "Successful and exceptional child cleanup closes all public holds; actual embedded helper controls proved release after success, failure, wrong hash and duplicate collision."
+  ],
+  "actualVerification": {
+    "planRace": {
+      "label": "controlled-public-plan-race",
+      "chunk_id": "825235",
+      "wall_time_seconds": 1.7297012,
+      "exit_code": 0,
+      "original_token_count": 104,
+      "output": "TAP version 13\n# Subtest: controlled concurrent replacement proves a2 can hold the approved plan while trusting a different cached inventory\nok 1 - controlled concurrent replacement proves a2 can hold the approved plan while trusting a different cached inventory\n  ---\n  duration_ms: 938.8397\n  type: 'test'\n  ...\n1..1\n# tests 1\n# suites 0\n# pass 1\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 977.6547\n"
+    },
+    "rootControlsIndependentRerun": {
+      "label": "independent-root-controls-rerun",
+      "chunk_id": "c8555f",
+      "wall_time_seconds": 4.2638001,
+      "exit_code": 0,
+      "original_token_count": 499,
+      "output": "TAP version 13\n# Subtest: both adapter builders retain exact original templates and embed the reviewed lock implementation\nok 1 - both adapter builders retain exact original templates and embed the reviewed lock implementation\n  ---\n  duration_ms: 2.1842\n  type: 'test'\n  ...\n# Subtest: export adapter locks source/public inventories, exact plan, review, manifest and self before public preflight\nok 2 - export adapter locks source/public inventories, exact plan, review, manifest and self before public preflight\n  ---\n  duration_ms: 0.251\n  type: 'test'\n  ...\n# Subtest: management adapter holds complete public inventory before any child or private read\nok 3 - management adapter holds complete public inventory before any child or private read\n  ---\n  duration_ms: 0.1616\n  type: 'test'\n  ...\n# Subtest: PowerShell parser accepts both generated adapters without executing either\nok 4 - PowerShell parser accepts both generated adapters without executing either\n  ---\n  duration_ms: 748.7755\n  type: 'test'\n  ...\n# Subtest: actual embedded lock functions prevent replacement and release handles after release\nok 5 - actual embedded lock functions prevent replacement and release handles after release\n  ---\n  duration_ms: 748.4227\n  type: 'test'\n  ...\n# Subtest: actual embedded lock functions prevent replacement and release handles after fail\nok 6 - actual embedded lock functions prevent replacement and release handles after fail\n  ---\n  duration_ms: 670.9524\n  type: 'test'\n  ...\n# Subtest: partial actual lock acquisition releases handles on badSecond\nok 7 - partial actual lock acquisition releases handles on badSecond\n  ---\n  duration_ms: 641.5794\n  type: 'test'\n  ...\n# Subtest: partial actual lock acquisition releases handles on duplicateCollision\nok 8 - partial actual lock acquisition releases handles on duplicateCollision\n  ---\n  duration_ms: 654.0402\n  type: 'test'\n  ...\n1..8\n# tests 8\n# suites 0\n# pass 8\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 3515.2634\n",
+      "tests": 8,
+      "passed": 8,
+      "failed": 0,
+      "scopeCaveat": "The adjacent management builder was an active draft and changed during this review; its exact loaded version is not promoted to a frozen verdict."
+    },
+    "exactCandidateAst": {
+      "label": "exact-candidate-readonly-ast",
+      "chunk_id": "468401",
+      "wall_time_seconds": 1.7545127,
+      "exit_code": 0,
+      "original_token_count": 62,
+      "output": "{\"legacyFunctions\":[{\"unchanged\":true,\"name\":\"Assert-TaskPrivateAcl\"},{\"unchanged\":true,\"name\":\"Convert-TaskUtcTimestamp\"}],\"candidateParseErrors\":0,\"candidateExecuted\":false,\"predecessorParseErrors\":0,\"networkCalls\":0,\"privateInputsRead\":false}\r\n"
+    },
+    "historicalPrimitiveEvidence": {
+      "path": "docs/verification/wave5/root-export-adapter-20261016/peer-windows-sharing-a2.json",
+      "sha256": "af9cbf5927899d7e51200ee19300a237835c519ba37cd38ff71e6789d54e661e",
+      "executedUtcDay": "2026-10-16",
+      "tests": 19,
+      "passed": 19,
+      "rerunToday": false
+    }
+  },
+  "preservation": {
+    "originalPredecessorAndA1GeneratorCandidateReviewUnchanged": true,
+    "a2CandidateAndGeneratorUnchanged": true,
+    "a6History": "The original Oct15 review bound then-current A6 child 2b265ea5...; current A7 explicitly binds later A6 child 71f6743f.... This review does not claim that every historical A6 source binding is still current."
+  },
+  "budget": {
+    "recordedPriorInA7": 137,
+    "conditionalPriorAtExports": 141,
+    "conditionalOrdinaryEnd": 165,
+    "conditionalExportCeiling": 166,
+    "conditionalOverall": 174,
+    "approvedByThisReview": false,
+    "freshLiveCounterReadPerformed": false
+  },
+  "adjacentManagement": {
+    "sourceDraftOnly": true,
+    "finalVerdictIssued": false,
+    "earlyReadHoldIssueAlsoReported": true
+  },
+  "limits": {
+    "sourceReviewOnly": true,
+    "actualPrivateAdapterExecuted": false,
+    "privateInputsRead": false,
+    "networkCalls": 0,
+    "liveWrites": 0,
+    "intentsCreated": 0,
+    "sourceImplementationChangedByReviewer": false,
+    "executionApproved": false,
+    "acceptanceChanged": false,
+    "productionAuthorized": false,
+    "realBillingAuthorized": false
+  }
+}

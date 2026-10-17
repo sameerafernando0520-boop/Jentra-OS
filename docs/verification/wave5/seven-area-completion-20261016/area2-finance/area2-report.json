@@ -1,0 +1,212 @@
+{
+  "kind": "area2-finance-development-and-evidence-review",
+  "recordedAt": "2026-10-16T12:22:59.373Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "area": "Authoritative analytics history and exact financial basis",
+  "sourceFixes": [
+    "Reject realized documents whose currency differs from the specific frozen opportunity, even if both currencies exist elsewhere in the forecast.",
+    "Parse and reject malformed/reversed history cutoffs before invoking the RPC; use those parsed instants when checking the response."
+  ],
+  "scopedFlutterTests": {
+    "passed": 6,
+    "failed": 0,
+    "exitCode": 0,
+    "toolChunk": "1874e6"
+  },
+  "scopedAnalysis": {
+    "exitCode": 0,
+    "issues": 0
+  },
+  "controlledFinancialAuditTests": {
+    "passed": 8,
+    "failed": 0,
+    "exitCode": 0,
+    "toolChunk": "edd013"
+  },
+  "historicalRatioRowsReproduced": 9,
+  "historicalStatementOperandPairsReproduced": 6,
+  "preservedFailures": [
+    "Sandboxed format produced formatted files but exited 1 on the inaccessible telemetry cache; authorized rerun exited 0.",
+    "Sandboxed Flutter test could not open SDK lockfile; preserved platform-focused-test.log.",
+    "First authorized focused test had five passes and one incorrect matcher expectation; preserved platform-focused-test-unsandboxed.log; strict UTC parser throws DomainError VALIDATION_ERROR and final test matches it."
+  ],
+  "openRows": [
+    {
+      "id": "FR-505",
+      "fullStatement": "FR-505: Every metric result MUST identify definition version, unit, scope, filters, business cutoff, recorded cutoff, source versions, generation time, population counts, completeness, and drill-through basis.",
+      "statementSha256": "af1ffc1334e1b50a8ef2667cc5c335a3daa0f34cab47bf3f5750bbd493ae3890",
+      "decision": "open_missing_evidence",
+      "recommendation": "Retain full canonical manifest and basis for every process, history, ratio, cash and export result; statement summaries alone do not reproduce canonical statement hashes."
+    },
+    {
+      "id": "FR-506",
+      "fullStatement": "FR-506: Process analytics MUST use immutable recorded transitions and an explicit cohort; events recorded after the captured cutoff MUST not alter that result, and current document status MUST not substitute for history.",
+      "statementSha256": "d5427e374f542f47e3991130f4d70c7506e1da169bb740f97d8124237bade2a7",
+      "decision": "open_missing_evidence",
+      "recommendation": "Run late source commit/backfill after a captured complete server snapshot and reproduce retained cutoff and transition manifests under current authorization."
+    },
+    {
+      "id": "FR-509",
+      "fullStatement": "FR-509: Pipeline conversion, aging, coverage, velocity, and owner metrics MUST publish their cohorts and history basis; unavailable historical amount, probability, ownership, or stage evidence MUST block the affected metric.",
+      "statementSha256": "c9c2060cc83791b31d78b310145c7f8ef79c012e74f6ca488d64a252e32deb5e",
+      "decision": "open_missing_evidence",
+      "recommendation": "Run complete historical stage/amount/probability/owner source cases and the missing-history/gap rejection against installed providers."
+    },
+    {
+      "id": "FR-510",
+      "fullStatement": "FR-510: Pipeline forecasts MUST freeze opportunity revisions, explicit probability/close-date assumptions, currency, and any approved FX-rate version; different currencies MUST not be silently summed.",
+      "statementSha256": "ada91c09895586844a62639ff85f4638990fed918613eb0b50e4f7637ce85a3c",
+      "decision": "open_missing_evidence",
+      "recommendation": "Retain genuine frozen opportunity revisions and assumptions with separate currencies; test source changes, missing FX and freeze/reopen."
+    },
+    {
+      "id": "FR-511",
+      "fullStatement": "FR-511: Forecast accuracy MUST compare a frozen forecast with a defined realized-result cohort and horizon; zero denominators and missing mappings MUST produce a named unavailable state rather than infinity or fabricated zero.",
+      "statementSha256": "c45a8ddb0ad697632219aefed6b0b8614c1ef6acec8e1074b7ccdd91722bd823",
+      "decision": "open_missing_evidence",
+      "recommendation": "Capture a nonempty realized cohort after its horizon and verify exact invoice/credit mapping, zero denominator and incomplete mapping states through genuine actors."
+    },
+    {
+      "id": "FR-512",
+      "fullStatement": "FR-512: Financial ratios MUST reference exact authoritative statement snapshots, governed account classifications, and versioned formulas using the same scope, period, currency, and publication basis.",
+      "statementSha256": "465839a954b557546ad1ec9d4bba5b895425150a4c0dd0ba5aa9fc82b6da5141",
+      "decision": "open_missing_evidence",
+      "recommendation": "Retain full immutable statements and governed account classifications, reproduce classified operands and formulas, and verify matching scope/period/currency."
+    },
+    {
+      "id": "FR-513",
+      "fullStatement": "FR-513: Cash forecasts MUST consume verified bank/cash controls and dated remaining obligations, excluding duplicate allocations and explicitly separating receivables, payables, payroll, and unsupported obligation kinds.",
+      "statementSha256": "c1e9cd5ed229aa504c1c29d233eefaf5fa1f97df335f9ff6b3b2d3996b650ff5",
+      "decision": "open_missing_evidence",
+      "recommendation": "Retain dated bank/cash controls and each AR/AP/payroll/project residual with settlements, reversals and duplicate-allocation rejection."
+    },
+    {
+      "id": "FR-514",
+      "fullStatement": "FR-514: Forecast scenarios MUST preserve immutable versions of assumptions and overrides; a projected balance MUST never post or amend a journal, obligation, stock movement, or source document.",
+      "statementSha256": "8724f52b35fbfb2534027d78b177ba08099f3a1dfa3399b59535892f226f4ebc",
+      "decision": "open_missing_evidence",
+      "recommendation": "Execute actual scenario revision/freeze/reopen and compare before/after journal, stock, obligation and source fingerprints; actual scenarios remain unproved."
+    },
+    {
+      "id": "NFR-502",
+      "fullStatement": "NFR-502: Monetary values, ratios, probabilities, usage amounts, and durations MUST use decimal strings and exact integer/decimal arithmetic; zero binary floating-point financial calculations are permitted.",
+      "statementSha256": "787cfc211a1742ccc79e0ae0e7ef7628b58888c9159a5301a4c8f48b3df98ce8",
+      "decision": "open_missing_evidence",
+      "recommendation": "Complete exact decimal cross-provider and export reproduction, including usage/probabilities and negative/zero states; this audit covers nine retained ratio rows only."
+    },
+    {
+      "id": "NFR-510",
+      "fullStatement": "NFR-510: Identical validated source snapshots and definition versions MUST reproduce identical metric values irrespective of input ordering; historical replay MUST preserve recorded cutoff and current authorization checks.",
+      "statementSha256": "ce722619cb9037bd9d1a8c65b85748e75f6a93936d7f4ec948ac353fd118e407",
+      "decision": "open_missing_evidence",
+      "recommendation": "Replay each installed provider with reordered complete snapshots and current permission checks; retain stable exact values and recorded cutoff."
+    },
+    {
+      "id": "AC-504",
+      "fullStatement": "AC-504: Pipeline evidence and accuracy (FR-509, FR-510, FR-511, NFR-502) Given frozen opportunities, currencies, assumptions, forecasts, and realized cohorts When conversion, forecast, and accuracy are requested Then totals follow the published basis and missing history or zero denominators are explicit.",
+      "statementSha256": "73df7256252de698649d6ba6854817ec8a92ffeea3a758052f6c986a74ab7d55",
+      "decision": "open_missing_evidence",
+      "recommendation": "Complete authoritative frozen forecast/history/realized cohorts and all missing-history, mixed-currency and zero-denominator cases."
+    },
+    {
+      "id": "AC-505",
+      "fullStatement": "AC-505: Financial ratios (FR-512, NFR-502) Given authoritative statement snapshots with matching scope and formula revisions When a ratio is calculated Then its exact numerator, denominator, value, and source evidence are reproducible.",
+      "statementSha256": "e8567d843cfe66fe90083a779a0ff01a49b3508e63c2f678ee5389c3d6497c7f",
+      "decision": "open_missing_evidence",
+      "recommendation": "Reproduce classified numerator/denominator from account-level authoritative publications, not just precomputed operands or summaries."
+    },
+    {
+      "id": "EC-504",
+      "fullStatement": "EC-504: Empty samples, mixed currencies, negative/zero denominator, missing FX or historical opportunity revision do not fabricate ratios; verify with AC-504/505.",
+      "statementSha256": "aa6191e1b4069626fd851282b016695ef2d0adebffcfccd84749113eb585f1b3",
+      "decision": "open_missing_evidence",
+      "recommendation": "Exercise installed empty/negative/zero/mixed-currency/missing-FX/missing-history paths; the client now rejects per-opportunity currency substitution."
+    },
+    {
+      "id": "EC-505",
+      "fullStatement": "EC-505: A settlement, reversal, credit, payroll liability or absent AP provider would double-count or omit an obligation; fail the affected forecast basis; verify with AC-506.",
+      "statementSha256": "b253faa236653ee6c080cc2a174a1b5e7976d1a7fbfad54d5e919f02c2842128",
+      "decision": "open_missing_evidence",
+      "recommendation": "Execute settled/reversed/credited/payroll/AP residual coverage against installed providers; reject any incomplete or duplicated obligation basis."
+    },
+    {
+      "id": "FR-552",
+      "fullStatement": "FR-552: The input MUST be a complete bounded authorized snapshot of events; source contract revision, scope, document kind, row count, immutable source manifest and cutoffs MUST travel with it. A partially fetched page MUST not be accepted as a complete calculation input.",
+      "statementSha256": "5994b3c88332fba9f22bf61e42743548a4751fb9904738d2d275e51a22b3abd4",
+      "decision": "open_missing_evidence",
+      "recommendation": "Retain a complete bounded authorized event snapshot manifest and reject truncation at the installed provider boundary, with source revision/count/cutoffs bound."
+    }
+  ],
+  "acceptanceDecisionsAdded": 0,
+  "liveQueries": 0,
+  "privateInputsRead": false,
+  "migrationsApplied": false,
+  "financialSourcePostingPerformed": false,
+  "inputBindings": [
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/delegated-technical-acceptance-matrix.json",
+      "bytes": 682113,
+      "sha256": "b5298d9333030d758998322b4285a99669545d5052c2a1b83fc49299761664a6"
+    },
+    {
+      "path": "packages/jentra_platform/lib/src/analytics/historical_pipeline_gateway.dart",
+      "bytes": 6979,
+      "sha256": "88db6efe43d879fbad0d408d1b111c423e1f73030e397e13aec622b519648a7e"
+    },
+    {
+      "path": "packages/jentra_platform/test/analytics/historical_pipeline_gateway_test.dart",
+      "bytes": 7219,
+      "sha256": "415702247dfaf3e625950f162242d100da623f0f418ac08e7503a3d1ca389dda"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area2-finance/audit_financial_evidence.mjs",
+      "bytes": 6063,
+      "sha256": "5a4d4caa03a21c3125cb073f5cbdce021d4821bdd3dee808ca4f7b6b85f90d0c"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area2-finance/audit_financial_evidence.test.mjs",
+      "bytes": 3191,
+      "sha256": "ae3bfac1e5f195ceb1ad9323f8bbfd1b61111bc908b862dca59d08479864ff9d"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area2-finance/financial-evidence-reproduction.json",
+      "bytes": 4113,
+      "sha256": "71773a16471c032bf0be9cc431c3fb70120e89bf43a4a0ab3726434af933c977"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area2-finance/platform-focused-test.log",
+      "bytes": 249,
+      "sha256": "bd70674ac5b6ef275bd42a56a3dcbd888b14acf65cad203723dee2c80174a5f6"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area2-finance/platform-focused-test-unsandboxed.log",
+      "bytes": 2342,
+      "sha256": "4ee0989d3d139d1d5794837440edf3e41abe96ad3103a5228e6da5349483a67f"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area2-finance/platform-focused-test-final.log",
+      "bytes": 685,
+      "sha256": "70d1e07252ae6ae0a9567c3b9dca6fc507c15588c5eca47ab8b3911a099ea3de"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area2-finance/scoped-analysis.log",
+      "bytes": 104,
+      "sha256": "bff6260190b3253b409762fd502c6ab2444875b35deb9f2417b6b696faf6da1a"
+    },
+    {
+      "path": "supabase/migrations/20261008090000_wave5_historical_pipeline.sql",
+      "bytes": 9101,
+      "sha256": "183a8688dd2c78a9e13032a165d2e1787b3d8f9dd4a15aee9b201eddf4767768"
+    }
+  ],
+  "sourceDocumentation": [
+    {
+      "url": "https://supabase.com/changelog",
+      "note": "Reviewed current change index; recent HTTP TLS deprecation does not alter this local DTO validation patch."
+    },
+    {
+      "url": "https://supabase.com/docs/guides/database/postgres/row-level-security",
+      "note": "Authorization remains the installed provider responsibility; no client hash or this offline audit grants access."
+    }
+  ]
+}

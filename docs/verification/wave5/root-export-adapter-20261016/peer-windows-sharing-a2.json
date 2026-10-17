@@ -1,0 +1,59 @@
+{
+  "kind": "independent-disposable-windows-file-sharing-control",
+  "observedAt": "2026-10-16T12:22:50.497Z",
+  "passed": true,
+  "platform": "win32",
+  "nodeVersion": "v24.11.0",
+  "powershell": "C:/Users/sheha/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe",
+  "test": {
+    "path": "docs/verification/wave5/root-export-adapter-20261016/peer-windows-sharing-a2.test.mjs",
+    "bytes": 7887,
+    "sha256": "14621f4048d80c0f882563b4c559fc2dbc8331a8f0d0c61a60d17a2d1b3aa19e"
+  },
+  "primitive": "[IO.File]::Open(path,FileMode.Open,FileAccess.Read,FileShare.Read)",
+  "checks": {
+    "tests": 19,
+    "passed": 19,
+    "failed": 0,
+    "separateNodeProcessReadExactBytes": true,
+    "separateNodeProcessImportedHeldModule": true,
+    "concurrentTruncatingWritesDenied": true,
+    "concurrentWritableOpenDenied": true,
+    "concurrentDeleteDenied": true,
+    "concurrentRenameDenied": true,
+    "concurrentAtomicReplacementDenied": true,
+    "bytesUnchangedAfterMutationAttempts": true,
+    "handlesReleasedAfterSuccess": true,
+    "handlesReleasedAfterControlledFailure": true,
+    "handlesReleasedAfterPartialHashFailure": true,
+    "ownedDisposableFixturesRemoved": true
+  },
+  "execution": {
+    "command": [
+      "node",
+      "--experimental-test-isolation=none",
+      "--test",
+      "--test-reporter=tap",
+      "--test-concurrency=1",
+      "docs/verification/wave5/root-export-adapter-20261016/peer-windows-sharing-a2.test.mjs"
+    ],
+    "chunk_id": "f2c758",
+    "wall_time_seconds": 3.7886483,
+    "exit_code": 0,
+    "original_token_count": 942,
+    "output": "TAP version 13\n# Subtest: Windows FileShare.Read allows Node imports and denies changes, then releases after release\n    # Subtest: separate Node process reads exact bytes and imports the held source\n    ok 1 - separate Node process reads exact bytes and imports the held source\n      ---\n      duration_ms: 94.5894\n      type: 'test'\n      ...\n    # Subtest: concurrent truncating writes are denied\n    ok 2 - concurrent truncating writes are denied\n      ---\n      duration_ms: 3.2269\n      type: 'test'\n      ...\n    # Subtest: concurrent writable opens are denied\n    ok 3 - concurrent writable opens are denied\n      ---\n      duration_ms: 1.2079\n      type: 'test'\n      ...\n    # Subtest: concurrent delete is denied\n    ok 4 - concurrent delete is denied\n      ---\n      duration_ms: 1.347\n      type: 'test'\n      ...\n    # Subtest: concurrent source rename is denied\n    ok 5 - concurrent source rename is denied\n      ---\n      duration_ms: 1.4925\n      type: 'test'\n      ...\n    # Subtest: concurrent atomic replacement is denied\n    ok 6 - concurrent atomic replacement is denied\n      ---\n      duration_ms: 3.9306\n      type: 'test'\n      ...\n    # Subtest: all held bytes remain exact after the attempted changes\n    ok 7 - all held bytes remain exact after the attempted changes\n      ---\n      duration_ms: 1.1656\n      type: 'test'\n      ...\n    # Subtest: handles are released and ordinary writes succeed after exit\n    ok 8 - handles are released and ordinary writes succeed after exit\n      ---\n      duration_ms: 4.4569\n      type: 'test'\n      ...\n    1..8\nok 1 - Windows FileShare.Read allows Node imports and denies changes, then releases after release\n  ---\n  duration_ms: 650.0909\n  type: 'test'\n  ...\n# Subtest: Windows FileShare.Read allows Node imports and denies changes, then releases after fail\n    # Subtest: separate Node process reads exact bytes and imports the held source\n    ok 1 - separate Node process reads exact bytes and imports the held source\n      ---\n      duration_ms: 77.2187\n      type: 'test'\n      ...\n    # Subtest: concurrent truncating writes are denied\n    ok 2 - concurrent truncating writes are denied\n      ---\n      duration_ms: 0.9021\n      type: 'test'\n      ...\n    # Subtest: concurrent writable opens are denied\n    ok 3 - concurrent writable opens are denied\n      ---\n      duration_ms: 0.7491\n      type: 'test'\n      ...\n    # Subtest: concurrent delete is denied\n    ok 4 - concurrent delete is denied\n      ---\n      duration_ms: 0.4545\n      type: 'test'\n      ...\n    # Subtest: concurrent source rename is denied\n    ok 5 - concurrent source rename is denied\n      ---\n      duration_ms: 0.4845\n      type: 'test'\n      ...\n    # Subtest: concurrent atomic replacement is denied\n    ok 6 - concurrent atomic replacement is denied\n      ---\n      duration_ms: 88.4431\n      type: 'test'\n      ...\n    # Subtest: all held bytes remain exact after the attempted changes\n    ok 7 - all held bytes remain exact after the attempted changes\n      ---\n      duration_ms: 2.832\n      type: 'test'\n      ...\n    # Subtest: handles are released and ordinary writes succeed after exit\n    ok 8 - handles are released and ordinary writes succeed after exit\n      ---\n      duration_ms: 4.2743\n      type: 'test'\n      ...\n    1..8\nok 2 - Windows FileShare.Read allows Node imports and denies changes, then releases after fail\n  ---\n  duration_ms: 1837.1522\n  type: 'test'\n  ...\n# Subtest: hash failure after one successful hold still releases every opened handle\nok 3 - hash failure after one successful hold still releases every opened handle\n  ---\n  duration_ms: 1022.0042\n  type: 'test'\n  ...\n1..3\n# tests 19\n# suites 0\n# pass 19\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 3530.5197\n"
+  },
+  "scope": {
+    "fixtureDataOnly": true,
+    "actualCandidateTested": false,
+    "privateAdapterExecuted": false,
+    "privateInputsRead": false,
+    "networkCalls": 0,
+    "liveWrites": 0,
+    "intentsCreated": 0,
+    "sourceTechnicalApprovalImplied": false,
+    "runtimeReadinessImplied": false,
+    "acceptanceChanged": false
+  },
+  "remaining": "Tie this proven Windows primitive and complete reviewed file population to the exact frozen a2 adapter AST before issuing a source-only successor review."
+}

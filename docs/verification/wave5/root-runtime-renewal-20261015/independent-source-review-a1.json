@@ -1,0 +1,76 @@
+{
+  "kind": "independent-runtime-renewal-controller-source-review",
+  "reviewedAt": "2026-10-17T05:43:42.047Z",
+  "passed": true,
+  "sourceOnly": true,
+  "executionPermitted": false,
+  "sourceBindings": [
+    {
+      "path": "tools/wave5/renew_runtime_authority_20261015_r5_a1.mjs",
+      "sha256": "b3d8d2dda66e0945b1451d2d5f57d4daefbdf00cb2799d59543220a7d952956d"
+    },
+    {
+      "path": "docs/verification/wave5/root-runtime-renewal-20261015/renew_runtime_authority_20261015_r5_a1.test.mjs",
+      "sha256": "f55039fe103b78487c96ae132d567d3c56c079cffd88fe1c3940b2d7ce08d79d"
+    }
+  ],
+  "sqlBindings": {
+    "read": {
+      "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-preflight-read-a3.sql",
+      "sha256": "546b3490cccecb4ae46740d4960dd64a919e35ba813261fefc17725d5afbae93"
+    },
+    "write": {
+      "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-expiry-update-template-a3.sql",
+      "sha256": "ba2d17a9d47b64974d6086a16aaa25f3c04efbed60344ba18ba09fc8d543eeff"
+    }
+  },
+  "proposalBinding": {
+    "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-proposal-a2.json",
+    "sha256": "8bb011428684768dc98b520e895b2bad0d1f9ddf7e17cd198083cc56bca9ef2c"
+  },
+  "sourceRepairBinding": {
+    "path": "docs/verification/wave5/task3-runtime-renewal-20261014/source-repair-a3.json",
+    "sha256": "f5d4242bc5cc464ff9391ae394c2c674195a1ace46d2be21bb77c09b8dddc722"
+  },
+  "sourceProofBinding": {
+    "path": "docs/verification/wave5/root-runtime-renewal-20261015/renewal-controller-source-proof-a1.json",
+    "sha256": "1d63258a3e682808bda62e608c17ba85b0c90ace14a304586fb6d1e1c5ad06bb",
+    "bytes": 9103
+  },
+  "independentControlledExecution": {
+    "toolChunkId": "57394f",
+    "exitCode": 0,
+    "tests": 115,
+    "pass": 115,
+    "fail": 0,
+    "skipped": 0,
+    "tapBinding": {
+      "path": "docs/verification/wave5/root-runtime-renewal-20261015/root-independent-controller-a1.tap",
+      "sha256": "34a907c3c5f02689ab975a7aecbb7041252574a84df3ee96df26ff71451f1606",
+      "bytes": 19963
+    }
+  },
+  "checks": [
+    "Public-only preflight validates exact controller/test/SQL/control/current137 files and repeats the complete public gate before private execution.",
+    "The explicit public closure includes ten controls, both SQL files, all six current-charge observations and the fixed A10 helper; sourceBindings contains only the controller and tests.",
+    "The metadata and owner readiness record follow the real exact human decision and bind original A10 source and organization; no credential is embedded in source or public output.",
+    "At most three ordered attempts139/140/141 are charged and persisted before dispatch. Raw response bytes are acknowledged before any state validation.",
+    "The only write is the fixed a3 template with five validated literal substitutions. Original issue times, non-window hashes, paused jobs, schema, ACL, counters and billing constraints remain guarded.",
+    "The actual server preflight anchors the expiry; post-commit application observation and final server readback remain distinct. All three anchor aliases agree and three response bindings hash durable raw bytes.",
+    "An uncertain dispatched write permits one readback and no replay. A failed or uncertain result cannot publish a successful readback or enable export continuation.",
+    "Private handoff uses only projectId, bundleSha256 and ownerToken, enforces bounded input/TLS/time/response limits, clears configuration and prints public summaries only."
+  ],
+  "privateInputsRead": false,
+  "networkCalls": 0,
+  "SQLExecuted": false,
+  "actualRenewalPerformed": false,
+  "ownerDecisionCreated": false,
+  "acceptanceChanged": false,
+  "remaining": [
+    "Exact source-only policy and independent policy review",
+    "Direct exact human runtime approval",
+    "Actual A10 owner refresh",
+    "Actual reviewed plan and final operation review",
+    "Only then the three bounded actual requests and authenticated later gates"
+  ]
+}

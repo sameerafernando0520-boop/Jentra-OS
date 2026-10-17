@@ -24,23 +24,26 @@ export const AUTHORITY_HASH='77cac80be8b4bccfad6c4a56fe14c52b03171e5524a46fe7a55
 export const SCOPE_HASH='3119068e9ab1628e43855122d6e1ad8c2f89811561c15f2ec22d27336db2a387';
 export const OUTSIDE_HASH='4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945';
 export const SCHEDULE_REPLY='Approve the exact renewed V7 three-job schedule resume';
-export const BUDGET=Object.freeze({recordedPrior:134,ownerRefresh:1,renewal:3,priorAtExports:138,
- exportsOrdinary:24,exportsResolutionReserve:1,throughExportsMaximum:163,healthMaximum:5,
- throughHealthMaximum:168,schedulerMaximum:3,overallMaximum:171,historicalWorkerRequests:24,
+export const BUDGET=Object.freeze({recordedPrior:137,ownerRefresh:1,renewal:3,priorAtExports:141,
+ exportsOrdinary:24,exportsResolutionReserve:1,throughExportsMaximum:166,healthMaximum:5,
+ throughHealthMaximum:171,schedulerMaximum:3,overallMaximum:174,historicalWorkerRequests:24,
  readinessWorkerRequests:1,reviewedWorkerRequests:25,wholeWorkerMaximum:4320});
 export const RENEWAL_PROPOSAL=Object.freeze({path:'docs/verification/wave5/task3-runtime-renewal-20261014/renewal-proposal-a2.json',
  sha256:'8bb011428684768dc98b520e895b2bad0d1f9ddf7e17cd198083cc56bca9ef2c'});
-export const CALL_INVENTORY=Object.freeze({path:'docs/verification/wave5/task3-runtime-renewal-20261014/renewal-call-inventory-a1.json',
- sha256:'01e9124e5517617c7d44cd269644b58c4c30e3c78deb5b47520f85e7a2bc0136'});
+export const CALL_INVENTORY=Object.freeze({path:'docs/verification/wave5/seven-area-completion-20261016/continuation-call-inventory-a1.json',
+ sha256:'305503c62e6cc662971fddfe43672f86b6b89a7f328d440711312d06cb6407c0'});
+export const DEPLOYED_ARCHIVE='build/wave5-deployed-v7-archive-20261017/';
+export const ARCHIVE_MANIFEST=Object.freeze({path:'docs/verification/wave5/seven-area-completion-20261016/area4-integrations/deployed-archive-manifest.json',
+ sha256:'8e0cf9712d58fcc01204fd2669afdaf88f74f57581883916a9b3344e2f9fbdca'});
 export const FIXED_CONTROLS=Object.freeze({
  metadata:'docs/verification/wave5/private-owner-input-ready-20261014-r5-a10.json',
  refresh:'docs/verification/wave5/private-owner-scope-refresh-20261014-r5-a10.json',
- accounting:'docs/verification/wave5/finance-cumulative-read-accounting-20261014-r5-a7.json',
- humanRenewalDecision:'docs/verification/wave5/runtime-renewal-export-owner-decision-20261014-r5-a1.json',
- renewalReadback:'docs/verification/wave5/runtime-renewal-two-row-readback-20261014-r5-a1.json',
- sourcePolicy:'docs/verification/wave5/task3-export-renewal-20261014/source-policy-a1.json',
- independentPolicyReview:'docs/verification/wave5/task3-export-renewal-20261014/independent-policy-review-a1.json',
- exportsPlan:'docs/verification/wave5/finance-exports-preparation-20261014-r5-a6.json',
+ accounting:'docs/verification/wave5/finance-cumulative-read-accounting-20261016-r5-a7.json',
+ humanRenewalDecision:'docs/verification/wave5/runtime-renewal-export-owner-decision-20261016-r5-a7.json',
+ renewalReadback:'docs/verification/wave5/runtime-renewal-two-row-readback-20261016-r5-a7.json',
+ sourcePolicy:'docs/verification/wave5/task3-export-renewal-20261016/source-policy-a1.json',
+ independentPolicyReview:'docs/verification/wave5/task3-export-renewal-20261016/independent-policy-review-a1.json',
+ exportsPlan:'docs/verification/wave5/finance-exports-preparation-20261016-r5-a7.json',
  providerAuthorityReview:PROVIDER_REVIEW});
 const root=fileURLToPath(new URL('../../',import.meta.url));
 const sha=value=>createHash('sha256').update(value).digest('hex');
@@ -49,12 +52,38 @@ const digest=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
 const uuid=value=>typeof value==='string'&&/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/.test(value);
 const exact=(value,keys)=>value&&typeof value==='object'&&!Array.isArray(value)&&same(Object.keys(value).sort(),[...keys].sort());
 const receipt=value=>value&&typeof value.path==='string'&&digest(value.sha256);
+export function schedulePlanBinding(review){
+ must(review?.generatedPlan?.path===PLAN&&receipt(review.generatedPlan)
+  &&(review.planBinding===undefined||same(review.planBinding,review.generatedPlan)),'EXACT_GENERATED_SCHEDULE_PLAN_REQUIRED');
+ return review.generatedPlan;
+}
 const publicPath=value=>typeof value==='string'&&/^[A-Za-z0-9_./-]+$/.test(value)&&!value.includes('..')
- &&(value.startsWith('docs/verification/wave5/')||value.startsWith('tools/wave5/')||value===PRIVATE_ADAPTER);
+ &&(value.startsWith('docs/verification/wave5/')||value.startsWith('tools/wave5/')||value.startsWith(DEPLOYED_ARCHIVE)
+ ||value.startsWith('workers/wave5/')||value.startsWith('supabase/')||value.startsWith('scripts/wave5/'));
 export const PRESERVED=Object.freeze([...ORIGINAL_BINDINGS,
  {path:'tools/wave5/resume_worker_schedules_20261014_r5_v7.mjs',sha256:'8bf3fcbb9ec17a2697afa7c4e360e664503e0128922fb8361b64450af73e8372'},
  {path:'docs/verification/wave5/task3-schedule-resume-20261014/source-proof-health-a3.json',sha256:'c99d71eee8fcc8f4735f8bcb40626ee48fb9ef40ae8ee48e8b00f42fd00049bf'},
- RENEWAL_PROPOSAL,CALL_INVENTORY].map(row=>Object.freeze({...row})));
+ RENEWAL_PROPOSAL,CALL_INVENTORY,ARCHIVE_MANIFEST].map(row=>Object.freeze({...row})));
+
+export function validateLockInventory(plan,required){
+ const sources=plan?.sourceBindings,publicFiles=plan?.publicBindings;
+ must(Array.isArray(sources)&&Array.isArray(publicFiles)&&[...sources,...publicFiles].every(row=>receipt(row)&&publicPath(row.path)),
+  'EXPLICIT_SOURCE_AND_PUBLIC_LOCK_INVENTORIES_REQUIRED');
+ const all=[...sources,...publicFiles];
+ must(new Set(all.map(row=>row.path)).size===all.length&&required.every(row=>all.some(item=>same(item,row)))
+  &&all.every(row=>required.some(item=>same(item,row))),'EXHAUSTIVE_EXACT_PUBLIC_LOCK_INVENTORY_REQUIRED');
+ return all;
+}
+const uniqueBindings=rows=>{const byPath=new Map();for(const row of rows){must(receipt(row),'BOUND_PUBLIC_INVENTORY_ROW_REQUIRED');
+ if(byPath.has(row.path))must(same(byPath.get(row.path),row),'NO_CONFLICTING_PUBLIC_BINDINGS_REQUIRED');else byPath.set(row.path,row);}return [...byPath.values()];};
+export function validateCallInventory(value){
+ must(value?.kind==='unapproved-bounded-seven-area-continuation-call-inventory'&&value.projectId===PROJECT&&value.runtimeId===RUNTIME
+  &&value.sourceOnly===true&&value.executionPermitted===false&&value.approvalRecorded===false&&value.actualBaseline?.chargedCalls===137
+  &&same(value.arithmetic,{actualPrior:137,ownerRefresh:1,renewal:3,priorAtExports:141,exportsOrdinary:24,exportsResolutionReserve:1,
+   throughExportsMaximum:166,healthMaximum:5,throughHealthMaximum:171,schedulerMaximum:3,overallMaximum:174,maximumFutureAttempts:37})
+  &&value.unchangedWorkerBounds?.knownHistoricalRequests===24&&value.unchangedWorkerBounds.maximumWorkerRequests===4320,
+  'EXACT_137_BASELINE_UNAPPROVED_174_INVENTORY_REQUIRED');return value;
+}
 
 // Parse explicit UTC and retain microseconds for identity checks and SQL. A
 // millisecond local clock fails slightly early at a sub-ms deadline, never late.
@@ -245,19 +274,35 @@ export function validateProviderAuthority(proof,{binding,fingerprints,healthResu
 function snapshotOf(response){
  must(Array.isArray(response)&&response.length===1&&response[0].renewal_snapshot,'ACTUAL_RENEWAL_RAW_RESPONSE_REQUIRED');return response[0].renewal_snapshot;
 }
+export function validateRenewalTimeline({readback:r,human,metadata,before,after,writeResponse,window,now=Date.now()}){
+ must(Number.isSafeInteger(human?.maximumWindowMs)&&human.maximumWindowMs>0&&human.maximumWindowMs<=7200000,
+  'BOUNDED_HUMAN_RENEWAL_WINDOW_REQUIRED');
+ const anchor=micros(r.serverWindowAnchor),applied=micros(r.appliedAt),observed=micros(r.observedAt);
+ must(anchor>=micros(human.decidedAt)&&anchor===micros(before.observedAt)&&applied>=anchor&&applied-anchor<=45000000n
+  &&observed>=applied&&observed-applied<=45000000n&&observed===micros(after.observedAt)&&utc(r.observedAt)<=now
+  &&applied===micros(window.notBefore),'ACTUAL_SERVER_RENEWAL_TIMELINE_REQUIRED');
+ const end=anchor+BigInt(human.maximumWindowMs)*1000n,ownerEnd=micros(metadata.expiresAt);
+ must(micros(r.edge.expiresAt)===(end<ownerEnd?end:ownerEnd),'EXACT_PREFLIGHT_ANCHORED_EXPIRY_REQUIRED');
+ must(Array.isArray(writeResponse)&&writeResponse.length===1,'ACTUAL_RENEWAL_WRITE_RESPONSE_REQUIRED');
+ const application=writeResponse[0].renewal_application;
+ must(application?.runtimeId===RUNTIME&&application.affectedRows===2&&application.applicationTimestampProvenance==='server-post-commit-observation'
+  &&sameTime(application.appliedAt,r.appliedAt)&&sameTime(application.expiresAt,r.edge.expiresAt),
+  'ACTUAL_POST_COMMIT_SERVER_APPLICATION_REQUIRED');
+ return true;
+}
 export function validateRenewal(plan,documents,now=Date.now()){
- const {humanRenewalDecision:human,renewalReadback:r,metadata,refresh,accounting,sourcePolicy,independentPolicyReview,renewalPreflightResponse,renewalReadbackResponse}=documents;
+ const {humanRenewalDecision:human,renewalReadback:r,metadata,refresh,accounting,sourcePolicy,independentPolicyReview,renewalPreflightResponse,renewalWriteResponse,renewalReadbackResponse}=documents;
  const controls=plan.controlBindings,window=plan.window;validateTime(now,window);
- must(human?.kind==='direct-human-runtime-renewal-and-export-a6-decision'&&human.approved===true&&human.approvalSource==='direct-user-reply'
-  &&human.exactReply==='Approve the exact two-row runtime renewal and export a6 continuation'&&typeof human.questionItemId==='string'&&human.questionItemId.length>=16
+ must(human?.kind==='direct-human-runtime-renewal-and-export-a7-decision'&&human.approved===true&&human.approvalSource==='direct-user-reply'
+  &&human.exactReply==='Approve the exact two-row runtime renewal and export a7 continuation'&&typeof human.questionItemId==='string'&&human.questionItemId.length>=16
   &&human.projectId===PROJECT&&human.runtimeBundleSha256===BUNDLE&&human.runtimeId===RUNTIME
   &&same(human.sourcePolicyBinding,controls.sourcePolicy)&&same(human.independentReviewBinding,controls.independentPolicyReview)
   &&human.operationBundleSha256===plan.renewalOperationBundleSha256&&human.maximumWindowMs>0&&human.maximumWindowMs<=7200000
   &&human.onlyTwoExpiryFieldsMayChange===true&&human.schedulesMustRemainPaused===true&&human.productionAuthorized===false&&human.realBillingAuthorized===false,
   'DIRECT_HUMAN_TWO_ROW_RENEWAL_DECISION_REQUIRED');
- must(sourcePolicy?.kind==='source-only-export-a6-renewal-policy'&&sourcePolicy.sourceImplementationOnly===true&&sourcePolicy.liveExecutionAuthorized===false
+ must(sourcePolicy?.kind==='source-only-export-a7-renewal-policy'&&sourcePolicy.sourceImplementationOnly===true&&sourcePolicy.liveExecutionAuthorized===false
   &&sourcePolicy.renewalOperationBundleSha256===plan.renewalOperationBundleSha256&&sourcePolicy.onlyTwoExpiryFieldsMayChange===true
-  &&independentPolicyReview?.kind==='independent-export-a6-policy-review'&&independentPolicyReview.passed===true&&independentPolicyReview.sourceOnly===true
+  &&independentPolicyReview?.kind==='independent-export-a7-policy-review'&&independentPolicyReview.passed===true&&independentPolicyReview.sourceOnly===true
   &&independentPolicyReview.liveExecutionAuthorized===false&&same(independentPolicyReview.policyBinding,controls.sourcePolicy)
   &&independentPolicyReview.renewalOperationBundleSha256===plan.renewalOperationBundleSha256,'ACTUAL_REVIEWED_RENEWAL_SOURCE_POLICY_REQUIRED');
  must(r?.kind==='actual-two-row-runtime-expiry-renewal-readback'&&r.actual===true&&r.committed===true&&r.projectId===PROJECT&&r.runtimeId===RUNTIME
@@ -270,8 +315,6 @@ export function validateRenewal(plan,documents,now=Date.now()){
   &&r.scope.nonWindowHash===SCOPE_HASH&&r.edge.nonWindowHash===AUTHORITY_HASH&&sameTime(r.edge.expiresAt,window.edgeExpiresAt)&&sameTime(r.scope.expiresAt,window.scopeExpiresAt)
   &&sameTime(r.appliedAt,window.notBefore)&&micros(r.appliedAt)>=micros(human.decidedAt)&&micros(r.observedAt)>=micros(r.appliedAt)
   &&micros(r.observedAt)-micros(r.appliedAt)<=45000000n&&utc(r.observedAt)<=now,'ACTUAL_BOTH_RENEWED_ROWS_AND_PRESERVATION_REQUIRED');
- const expectedEnd=micros(r.appliedAt)+BigInt(human.maximumWindowMs)*1000n,ownerEnd=micros(metadata?.expiresAt);
- must(micros(r.edge.expiresAt)===(expectedEnd<ownerEnd?expectedEnd:ownerEnd),'EXACT_POST_APPROVAL_SERVER_ANCHOR_AND_OWNER_MINIMUM_REQUIRED');
  must(metadata?.kind==='wave5-private-owner-input-metadata'&&metadata.projectId===PROJECT&&metadata.runtimeBundleSha256===BUNDLE
   &&metadata.metadataFilename==='metadata-renewed-a10.json'&&metadata.containsPlaintextCredential===false&&typeof metadata.ownerSid==='string'
   &&micros(metadata.createdAt)>=micros(human.decidedAt)&&utc(metadata.createdAt)<=now&&sameTime(metadata.expiresAt,window.privateExpiresAt)
@@ -281,17 +324,21 @@ export function validateRenewal(plan,documents,now=Date.now()){
   &&refresh.readOnlyOwnerApiCalls===1&&sameTime(refresh.actualVerifiedAt,metadata.createdAt)&&digest(refresh.helperSha256)
   &&refresh.helperSha256===metadata.helperSha256&&refresh.databaseWrites===0&&refresh.authWrites===0&&refresh.settingsChanges===0,
   'ACTUAL_ONE_CHARGED_OWNER_REFRESH_REQUIRED');
- must(accounting?.kind==='conservative-renewed-export-a6-read-accounting'&&accounting.projectId===PROJECT&&accounting.recordedPrior===134
+ must(accounting?.kind==='conservative-renewed-export-a7-read-accounting'&&accounting.projectId===PROJECT&&accounting.recordedPrior===137
   &&accounting.chargedA10OwnerIdentityReads===1&&accounting.chargedRenewalControlCalls===3&&accounting.otherFinanceCallsSinceDependency===0
-  &&accounting.cumulativeChargedPriorCalls===138&&same(accounting.actualA10Refresh,controls.refresh)&&same(accounting.actualRenewalReadback,controls.renewalReadback)
-  &&same(accounting.renewalCallAccounting,r.controlCallAccounting),'ACTUAL_CHARGED_134_PLUS_1_PLUS_3_REQUIRED');
+  &&accounting.cumulativeChargedPriorCalls===141&&same(accounting.actualA10Refresh,controls.refresh)&&same(accounting.actualRenewalReadback,controls.renewalReadback)
+  &&same(accounting.renewalCallAccounting,r.controlCallAccounting),'ACTUAL_CHARGED_137_PLUS_1_PLUS_3_REQUIRED');
  const calls=r.controlCallAccounting;
  must(calls?.attempts===3&&calls.failedAttempts===0&&calls.automaticRetries===0&&calls.receipts?.length===3&&calls.receipts.every((row,i)=>
-  row.ordinal===136+i&&row.phase===['preflight','two-row-expiry-write','readback'][i]&&row.successful===true&&digest(row.responseSha256))
-  &&calls.receipts[0].responseSha256===controls.renewalPreflightResponse.sha256&&calls.receipts[2].responseSha256===controls.renewalReadbackResponse.sha256,
+  row.ordinal===139+i&&row.phase===['preflight','two-row-expiry-write','readback'][i]&&row.successful===true&&digest(row.responseSha256))
+  &&calls.receipts[0].responseSha256===controls.renewalPreflightResponse.sha256&&calls.receipts[1].responseSha256===controls.renewalWriteResponse.sha256
+  &&calls.receipts[2].responseSha256===controls.renewalReadbackResponse.sha256,
   'THREE_ACTUAL_RENEWAL_RECEIPTS_AND_RAW_BINDINGS_REQUIRED');
  const before=snapshotOf(renewalPreflightResponse),after=snapshotOf(renewalReadbackResponse);
- must(sameTime(before.observedAt,r.appliedAt)&&sameTime(after.observedAt,r.observedAt)&&before.migrationCount===115&&after.migrationCount===115
+ validateRenewalTimeline({readback:r,human,metadata,before,after,writeResponse:renewalWriteResponse,window,now});
+ must(sameTime(before.observedAt,r.serverWindowAnchor)&&micros(before.observedAt)>=micros(human.decidedAt)
+  &&micros(before.observedAt)<=micros(r.appliedAt)&&micros(r.appliedAt)-micros(before.observedAt)<=45000000n
+  &&sameTime(after.observedAt,r.observedAt)&&before.migrationCount===115&&after.migrationCount===115
   &&before.apiFunctionCount===363&&after.apiFunctionCount===363&&before.authority?.runtimeId===RUNTIME&&after.authority?.runtimeId===RUNTIME
   &&before.authority.enabled===true&&after.authority.enabled===true&&same(before.authority.jobIds,[4,5,6])&&same(after.authority.jobIds,[4,5,6])
   &&sameTime(before.authority.issuedAt,ISSUED)&&sameTime(after.authority.issuedAt,ISSUED)&&sameTime(before.authority.expiresAt,ORIGINAL_EXPIRY)
@@ -316,12 +363,13 @@ export function validatePlan(plan,documents,now=Date.now()){
  validateTime(now,plan.window);validateFingerprints(plan.guardFingerprints);validateReadinessTick(plan.readinessTick);
  must(same(plan.controlBindings?.renewalProposal,RENEWAL_PROPOSAL)&&same(plan.controlBindings.callInventory,CALL_INVENTORY)
   &&Object.entries(FIXED_CONTROLS).every(([key,file])=>plan.controlBindings[key]?.path===file&&digest(plan.controlBindings[key].sha256))
-  &&['renewalPreflightResponse','renewalReadbackResponse','completedExports','humanScheduleDecision'].every(key=>receipt(plan.controlBindings[key])&&publicPath(plan.controlBindings[key].path)),
+  &&['renewalPreflightResponse','renewalWriteResponse','renewalReadbackResponse','completedExports','humanScheduleDecision'].every(key=>receipt(plan.controlBindings[key])&&publicPath(plan.controlBindings[key].path)),
   'EXACT_RENEWED_PUBLIC_CONTROL_BINDINGS_REQUIRED');
+ validateCallInventory(documents.callInventory);
  validateRenewal(plan,documents,now);validateExportsProof(documents.completedExports);
- must(documents.exportsPlan?.kind==='source-bound-renewed-export-a6-preparation'&&documents.completedExports.planSha256===plan.controlBindings.exportsPlan.sha256
+ must(documents.exportsPlan?.kind==='source-bound-renewed-export-a7-preparation'&&documents.completedExports.planSha256===plan.controlBindings.exportsPlan.sha256
   &&sameTime(documents.exportsPlan.window?.notBefore,plan.window.notBefore)&&sameTime(documents.exportsPlan.window.expiresAt,plan.window.expiresAt)
-  &&documents.exportsPlan.priorConservativeBound===138&&documents.exportsPlan.ordinaryLimit===162&&documents.exportsPlan.cumulativeLimit===163,
+  &&documents.exportsPlan.priorConservativeBound===141&&documents.exportsPlan.ordinaryLimit===165&&documents.exportsPlan.cumulativeLimit===166,
   'ACTUAL_COMPLETED_RENEWED_EXPORT_PLAN_REQUIRED');
  validateProviderAuthority(documents.providerAuthorityReview,{binding:plan.controlBindings.providerAuthorityReview,fingerprints:plan.guardFingerprints,
   healthResult:documents.healthResult,healthEvidence:documents.healthEvidence,window:plan.window,now});
@@ -332,7 +380,7 @@ export function validateFinalReview(review,{plan,planSha256,sourceSha256,documen
  validatePlan(plan,documents,now);
  must(review?.kind==='independent-exact-renewed-three-job-schedule-resume-operation-review'&&review.technicalDecision==='approve'
   &&review.executionPermitted===true&&review.independentlyReviewed===true&&review.controlledFixture===false&&review.projectId===PROJECT&&review.runtimeBundleSha256===BUNDLE
-  &&review.runtimeId===RUNTIME&&same(review.planBinding,{path:PLAN,sha256:planSha256})&&same(review.sourceBinding,{path:SOURCE,sha256:sourceSha256})
+  &&review.runtimeId===RUNTIME&&same(schedulePlanBinding(review),{path:PLAN,sha256:planSha256})&&same(review.sourceBinding,{path:SOURCE,sha256:sourceSha256})
   &&same(review.sourceBinding,plan.sourceBinding)&&same(review.window,plan.window)&&same(review.budget,BUDGET)&&review.maximumManagementAttempts===3
   &&review.separateScheduleResumeDecision===true&&review.personalHumanExactSourceSignatureClaimed===false&&review.currentOwnerSidVerifiedByPrivateAdapter===true
   &&review.ownerSid===documents.metadata.ownerSid&&review.exportsCompletedFirst===true&&review.actualDeployedHealthVerified===true
@@ -369,7 +417,8 @@ export function createScheduleTransport(token,{writeSql,window,requestFactory=ht
  let attempts=0;
  return async(sql,readOnly)=>{
   validateTime(now(),window);must(attempts<3,'THREE_SCHEDULE_MANAGEMENT_ATTEMPTS_ONLY');
-  must((readOnly===true&&sql===READ_SQL)||(readOnly===false&&sql===writeSql),'FIXED_SCHEDULE_QUERY_ONLY');attempts++;
+  must((attempts===1&&readOnly===false&&sql===writeSql)||((attempts===0||attempts===2)&&readOnly===true&&sql===READ_SQL),
+   'EXACT_ORDERED_SCHEDULE_QUERY_REQUIRED');attempts++;
   const body=JSON.stringify({query:sql,read_only:readOnly});
   return new Promise((resolve,reject)=>{let req,timer,settled=false,sent=false,size=0;const chunks=[];
    const fail=code=>{if(settled)return;settled=true;clearTimeout(timer);req?.destroy();const e=Error(code);e.publicCode=code;e.sent=sent;reject(e);};
@@ -397,7 +446,7 @@ export async function runScheduleResume({plan,transport,persist,once,validatePub
   readinessTick:plan.readinessTick,oldA4IntentReused:false,countersReset:false,automaticRetry:false})),'DURABLE_EXCLUSIVE_NEW_RESUME_INTENT_REQUIRED');
  async function capture(file,sql,readOnly){
   validateTime(now(),plan.window);must(attempts<3,'THREE_SCHEDULE_MANAGEMENT_ATTEMPTS_ONLY');
-  must(receipt(await persist(file+'-attempt.json',{attempt:attempts+1,maximumCumulativeManagementOrdinal:168+attempts+1,
+  must(receipt(await persist(file+'-attempt.json',{attempt:attempts+1,maximumCumulativeManagementOrdinal:171+attempts+1,
    readOnly,sqlSha256:sha(sql),actualAttemptAt:new Date(now()).toISOString()})),'DURABLE_SCHEDULE_ATTEMPT_REQUIRED');
   validateTime(now(),plan.window);attempts++;if(!readOnly)mutationAttempted=true;
   const response=await transport(sql,readOnly);
@@ -418,7 +467,7 @@ export async function runScheduleResume({plan,transport,persist,once,validatePub
   phase='actual-readback';const after=validateSnapshot(await read('03-after'),{plan,active:true,now:now(),before});
   const result={kind:'actual-exact-renewed-v7-three-job-schedule-resume-result',passed:true,projectId:PROJECT,runtimeBundleSha256:BUNDLE,runtimeId:RUNTIME,
    jobIds:[4,5,6],ownJobs:after.ownJobs,authority:after.authority,scopes:after.scopes,window:plan.window,budget:BUDGET,
-   managementAttempts:attempts,maximumCumulativeManagementBound:168+attempts,writeResponseUncertain:uncertain,enabledStateConfirmedByReadback:true,
+   managementAttempts:attempts,maximumCumulativeManagementBound:171+attempts,writeResponseUncertain:uncertain,enabledStateConfirmedByReadback:true,
    originalAuthorityExpiresAt:ORIGINAL_EXPIRY,originalScopeExpiresAt:SCOPE_OLD_EXPIRY,existingJobsAndAuthorityPreserved:true,countersReset:false,automaticRetry:false,
    scheduledRequestsAlreadyObserved:24,readinessRequestsCharged:1,cumulativeReviewedWorkerRequests:25,maximumScheduleRequestsOriginal:4320,
    readinessTick:plan.readinessTick,actualDelivery:false,actualTrustedModelUsage:false,nativeAccepted:false,targetScaleLoad:false,productionReleaseReady:false};
@@ -429,22 +478,38 @@ export async function runScheduleResume({plan,transport,persist,once,validatePub
 
 export async function exactFile(relative,expected,{workspace=root}={}){
  must(publicPath(relative)&&digest(expected),'PUBLIC_SCHEDULE_BINDING_REQUIRED');
- const target=path.resolve(workspace,relative),real=await fs.realpath(target);
- must(real===target&&(await fs.lstat(target)).isFile(),'EXACT_PUBLIC_REGULAR_FILE_REQUIRED');
- const bytes=await fs.readFile(target);must(sha(bytes)===expected,'SCHEDULE_SOURCE_OR_EVIDENCE_CHANGED');return bytes;
+ const target=path.resolve(workspace,relative),real=await fs.realpath(target),stat=await fs.lstat(target);
+ must(real===target&&stat.isFile()&&!stat.isSymbolicLink()&&stat.size<=8388608,'EXACT_PUBLIC_REGULAR_FILE_REQUIRED');
+ const bytes=await fs.readFile(target);must(bytes.length<=8388608&&sha(bytes)===expected,'SCHEDULE_SOURCE_OR_EVIDENCE_CHANGED');return bytes;
 }
 export async function validatePreservedSources({workspace=root}={}){
  for(const binding of PRESERVED)await exactFile(binding.path,binding.sha256,{workspace});
- const original=await validateOriginalSources({workspace});return {...original,preservedBindings:PRESERVED.length,
-  originalExpiryStillImmutable:ORIGINAL_EXPIRY,newRenewalRequired:true,actualResumeAllowed:false};
+ const archived=await validateDeployedArchive({workspace});
+ const original=await validateOriginalSources({workspace:path.join(workspace,DEPLOYED_ARCHIVE)});return {...original,preservedBindings:PRESERVED.length,
+  deployedArchiveBindings:archived.bindings.length,currentProductCandidate:archived.currentProductCandidate,
+  candidateDiffersFromDeployed:true,originalExpiryStillImmutable:ORIGINAL_EXPIRY,newRenewalRequired:true,actualResumeAllowed:false};
+}
+export async function validateDeployedArchive({workspace=root}={}){
+ const manifest=JSON.parse(await exactFile(ARCHIVE_MANIFEST.path,ARCHIVE_MANIFEST.sha256,{workspace}));
+ must(manifest?.kind==='exact-deployed-v7-source-archive'&&manifest.archiveRoot===DEPLOYED_ARCHIVE&&manifest.codeExecutedFromArchive===false
+  &&manifest.originalFilesOverwritten===false&&manifest.sourceOnlyArchiveDoesNotAuthorizeExecution===true&&manifest.entries?.length===39,
+  'EXACT_SOURCE_ONLY_DEPLOYED_ARCHIVE_REQUIRED');
+ const bindings=manifest.entries.map(row=>{must(row.path===DEPLOYED_ARCHIVE+row.originalPath&&publicPath(row.path),'EXACT_ARCHIVED_RELATIVE_SOURCE_REQUIRED');
+  return {path:row.path,sha256:row.sha256};});
+ for(const item of bindings)await exactFile(item.path,item.sha256,{workspace});
+ const currentProductCandidate={path:manifest.currentProductCandidate.path,sha256:manifest.currentProductCandidate.sha256};
+ must(currentProductCandidate.path==='workers/wave5/model_runtime.mjs'&&manifest.currentProductCandidate.deployedSha256==='fce748e511a81bdae957ff76275641142a738d8391132953d4d3c7eec03cfb99'
+  &&currentProductCandidate.sha256==='7776efd148c1257c4cd78eba3345b13fe19406012cd4b58f7b0a6769ef77a72e'&&manifest.currentProductCandidate.installedByThisArchive===false,
+  'EXACT_CHANGED_PRODUCT_CANDIDATE_SEPARATE_FROM_DEPLOYED_REQUIRED');
+ await exactFile(currentProductCandidate.path,currentProductCandidate.sha256,{workspace});return {bindings,currentProductCandidate};
 }
 export async function loadPublicGate(reviewSha256,{workspace=root,now=Date.now()}={}){
  must(digest(reviewSha256),'PINNED_EXACT_SCHEDULE_OPERATION_REVIEW_SHA_REQUIRED');
  // Everything below is public source/evidence reading. No credential, stdin,
  // filesystem mutation, intent, socket or private folder access occurs here.
  const review=JSON.parse(await exactFile(REVIEW,reviewSha256,{workspace}));
- must(review.planBinding?.path===PLAN&&digest(review.planBinding.sha256),'FIXED_RENEWED_PLAN_BINDING_REQUIRED');
- const planBytes=await exactFile(PLAN,review.planBinding.sha256,{workspace}),plan=JSON.parse(planBytes);
+ const planBinding=schedulePlanBinding(review);
+ const planBytes=await exactFile(PLAN,planBinding.sha256,{workspace}),plan=JSON.parse(planBytes);
  validateTime(now,plan.window);await validatePreservedSources({workspace});
  const documents={};must(plan.controlBindings&&typeof plan.controlBindings==='object','PUBLIC_CONTROL_INVENTORY_REQUIRED');
  for(const [name,binding] of Object.entries(plan.controlBindings))documents[name]=JSON.parse(await exactFile(binding?.path,binding?.sha256,{workspace}));
@@ -454,13 +519,19 @@ export async function loadPublicGate(reviewSha256,{workspace=root,now=Date.now()
  documents.healthEvidence={before:documents.healthBefore,dispatch:documents.healthDispatch,after:documents.healthAfter};
  const sourceSha256=sha(await fs.readFile(path.join(workspace,SOURCE)));
  validateFinalReview(review,{plan,planSha256:sha(planBytes),sourceSha256,documents,now});
- const required=[...PRESERVED,{path:SOURCE,sha256:sourceSha256},review.planBinding,...Object.values(plan.controlBindings),...provider.evidenceBindings,
-  {path:PRIVATE_ADAPTER,sha256:review.privateAdapter.afterSha256}];
+ const archived=await validateDeployedArchive({workspace});
+ const inputs=uniqueBindings([...PRESERVED,...archived.bindings,archived.currentProductCandidate,{path:SOURCE,sha256:sourceSha256},
+  ...Object.values(plan.controlBindings),...provider.evidenceBindings,{path:PRIVATE_ADAPTER,sha256:review.privateAdapter.afterSha256}]);
+ const locks=validateLockInventory(plan,inputs);
+ if(plan.sourceAndEvidenceBindings!==undefined)must(same(uniqueBindings(plan.sourceAndEvidenceBindings).sort((a,b)=>a.path.localeCompare(b.path)),
+  [...locks].sort((a,b)=>a.path.localeCompare(b.path))),'EXACT_PLAN_SOURCE_EVIDENCE_ALIAS_REQUIRED');
+ const required=uniqueBindings([...inputs,planBinding]);
  must(Array.isArray(review.sourceAndEvidenceBindings)&&review.sourceAndEvidenceBindings.every(binding=>receipt(binding)&&publicPath(binding.path))
   &&new Set(review.sourceAndEvidenceBindings.map(binding=>binding.path)).size===review.sourceAndEvidenceBindings.length
-  &&required.every(binding=>review.sourceAndEvidenceBindings.some(row=>same(row,binding))),'ALL_EXACT_SOURCE_AND_ACTUAL_EVIDENCE_BINDINGS_REQUIRED');
+  &&required.length===review.sourceAndEvidenceBindings.length&&required.every(binding=>review.sourceAndEvidenceBindings.some(row=>same(row,binding))),
+  'ALL_EXACT_SOURCE_AND_ACTUAL_EVIDENCE_BINDINGS_REQUIRED');
  for(const binding of review.sourceAndEvidenceBindings)await exactFile(binding.path,binding.sha256,{workspace});
- validateTime(now,plan.window);return {plan,review,documents,reviewSha256};
+ validateTime(now,plan.window);return {plan,review,documents,reviewSha256,planSha256:sha(planBytes)};
 }
 async function save(directory,file,value){
  const relative=path.posix.join(directory,file),target=path.resolve(root,relative);must(publicPath(relative)&&target.startsWith(path.resolve(root)+path.sep),'PUBLIC_RESUME_OUTPUT_REQUIRED');
@@ -468,16 +539,19 @@ async function save(directory,file,value){
  try{await handle.writeFile(bytes);await handle.sync();}finally{await handle.close();}return {path:relative,sha256:sha(bytes)};
 }
 export async function main(argv=process.argv.slice(2),{stdin=process.stdin,stdout=process.stdout,now=Date.now,
- publicGate=loadPublicGate,sourceGate=validatePreservedSources,run=runScheduleResume,requestFactory=https.request}={}){
+ publicGate=loadPublicGate,sourceGate=validatePreservedSources,run=runScheduleResume,requestFactory=https.request,stdinTimeoutMs=15000}={}){
  must((argv.length===1&&argv[0]==='--validate')||(argv.length===2&&['--preflight','--execute'].includes(argv[0])),'EXACT_SCHEDULE_RESUME_MODE_REQUIRED');
  if(argv[0]==='--validate'){const value=await sourceGate();stdout.write(JSON.stringify({...value,sourceOnly:true,privateInputsRead:false,networkCalls:0,intentsCreated:0})+'\n');return value;}
  must(digest(argv[1]),'PINNED_EXACT_SCHEDULE_OPERATION_REVIEW_SHA_REQUIRED');
  let verified=await publicGate(argv[1],{now:now()});
- if(argv[0]==='--preflight'){const value={passed:true,sourceOnly:true,planPath:PLAN,reviewPath:REVIEW,reviewSha256:argv[1],window:verified.plan.window,
-  privateInputsRead:false,networkCalls:0,intentsCreated:0,actualResumePerformed:false};stdout.write(JSON.stringify(value)+'\n');return value;}
- let incoming='',cfg;
+ if(argv[0]==='--preflight'){const value={passed:true,networkCalls:0,privateInputsRead:false,planSha256:verified.planSha256,finalReviewSha256:argv[1]};
+  must(digest(value.planSha256),'EXACT_PREFLIGHT_PLAN_DIGEST_REQUIRED');stdout.write(JSON.stringify(value)+'\n');return value;}
+ must(Number.isSafeInteger(stdinTimeoutMs)&&stdinTimeoutMs>0&&stdinTimeoutMs<=15000,'BOUNDED_PRIVATE_INPUT_TIMEOUT_REQUIRED');
+ let incoming='',cfg,timer;
  try{
-  for await(const chunk of stdin){validateTime(now(),verified.plan.window);incoming+=chunk;must(Buffer.byteLength(incoming)<=16000,'PRIVATE_INPUT_LIMIT');}
+  await Promise.race([(async()=>{for await(const chunk of stdin){validateTime(now(),verified.plan.window);incoming+=chunk;must(Buffer.byteLength(incoming)<=8192,'PRIVATE_INPUT_LIMIT');}})(),
+   new Promise((_,reject)=>{timer=setTimeout(()=>{stdin.destroy?.();const e=Error('PRIVATE_INPUT_TIMEOUT');e.publicCode='PRIVATE_INPUT_TIMEOUT';reject(e);},stdinTimeoutMs);})]);
+  clearTimeout(timer);
   validateTime(now(),verified.plan.window);try{cfg=JSON.parse(incoming);}catch{must(false,'EXACT_MANAGEMENT_ONLY_INPUT_REQUIRED');}incoming='';
   must(exact(cfg,['projectId','bundleSha256','ownerToken'])&&cfg.projectId===PROJECT&&cfg.bundleSha256===BUNDLE,'EXACT_MANAGEMENT_ONLY_INPUT_REQUIRED');
   verified=await publicGate(argv[1],{now:now()});validateTime(now(),verified.plan.window);
@@ -491,7 +565,7 @@ export async function main(argv=process.argv.slice(2),{stdin=process.stdin,stdou
    once:value=>save('',ONCE,{...value,finalReviewSha256:argv[1],completedExportsBinding:verified.plan.controlBindings.completedExports,directory}),
    persist:(file,value)=>save(directory,file,value)});
   stdout.write(JSON.stringify({passed:true,evidencePath:directory+'99-result.json',managementAttempts:result.managementAttempts,actualDelivery:false})+'\n');return result;
- }finally{if(cfg)cfg.ownerToken=null;incoming='';}
+ }finally{clearTimeout(timer);if(cfg)cfg.ownerToken=null;incoming='';}
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))main().catch(error=>{
  process.stderr.write(JSON.stringify({failureCode:error.publicCode??'SCHEDULE_RESUME_STOP',secretsPrinted:false})+'\n');process.exitCode=1;});

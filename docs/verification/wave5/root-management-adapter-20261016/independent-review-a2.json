@@ -1,0 +1,183 @@
+{
+  "kind": "independent-source-only-management-private-adapter-review-a2",
+  "reviewedAt": "2026-10-17T05:45:46.724Z",
+  "passed": true,
+  "technicalDecision": "approve-source-only",
+  "candidate": {
+    "path": "scripts/wave5/run_private_health_scheduler_20261016_r5_a2.candidate.ps1",
+    "sha256": "7d3559d196932587ea76eafbd527bd6943362ad5c321b5c58873aa822343cce7",
+    "futureInstalledPath": "scripts/wave5/run_private_health_scheduler_20261015_r5_a1.ps1",
+    "installed": false
+  },
+  "inputs": [
+    {
+      "path": "tools/wave5/prepare_management_private_adapter_20261016_r5_a2.mjs",
+      "bytes": 6317,
+      "sha256": "c3939130b49065b9c2560781430da117262706e2b1c54055729f5f260cd12339"
+    },
+    {
+      "path": "scripts/wave5/run_private_health_scheduler_20261016_r5_a2.candidate.ps1",
+      "bytes": 17230,
+      "sha256": "7d3559d196932587ea76eafbd527bd6943362ad5c321b5c58873aa822343cce7"
+    },
+    {
+      "path": "docs/verification/wave5/root-management-adapter-20261016/source-candidate-a2.json",
+      "bytes": 1727,
+      "sha256": "76046e6ef91a4b0806cbb48eb8ae77f88e9291ee037306cdd9e3348ede8fc9c4"
+    },
+    {
+      "path": "docs/verification/wave5/root-management-adapter-20261016/peer-management-a2.test.mjs",
+      "bytes": 9612,
+      "sha256": "0d3cb45af079c90f2714e03ce053f2b4384f018bc1bc7dbc445299883b12bb83"
+    },
+    {
+      "path": "docs/verification/wave5/root-management-adapter-20261015/adapter-template-a1.ps1",
+      "bytes": 12706,
+      "sha256": "d75e67d9daf2214c865bd0570c5d9c223116b1f7ed361de9de1d6b2535f96587"
+    },
+    {
+      "path": "docs/verification/wave5/root-export-adapter-20261016/public-read-holds-a2.ps1",
+      "bytes": 3005,
+      "sha256": "f8b82f70c0cce59208ebe670459e5cc2dbffede6496a238524a7b8f277f44388"
+    },
+    {
+      "path": "tools/wave5/renew_runtime_authority_20261015_r5_a1.mjs",
+      "bytes": 39376,
+      "sha256": "b3d8d2dda66e0945b1451d2d5f57d4daefbdf00cb2799d59543220a7d952956d"
+    },
+    {
+      "path": "tools/wave5/run_worker_v7_health_20261015_r5.mjs",
+      "bytes": 15280,
+      "sha256": "86d881ed3587b6bde28fb8e8ad33c9526d50b6ebc305fb1ff432f44bf4edbd75"
+    },
+    {
+      "path": "tools/wave5/resume_worker_schedules_20261015_r5_a1.mjs",
+      "bytes": 57669,
+      "sha256": "2b823d111990d2f93f1dcefe62d2bc48c2498a40b333311e4894738928a8604f"
+    },
+    {
+      "path": "tools/wave5/refresh_private_owner_scope_20261014_r5_a10.mjs",
+      "bytes": 4580,
+      "sha256": "a3fe771a022dac5ba3a81a33591e7017fb6f446a2e813affd09fc6e40738d07a"
+    },
+    {
+      "path": "docs/verification/wave5/root-export-adapter-20261017/independent-review-a3.json",
+      "bytes": 10994,
+      "sha256": "b1f18ceb697a1180a643a5f08dfa8bd2babe35edbac447c977007db42a414185"
+    },
+    {
+      "path": "docs/verification/wave5/root-export-adapter-20261016/peer-windows-sharing-a2.json",
+      "bytes": 6019,
+      "sha256": "af9cbf5927899d7e51200ee19300a237835c519ba37cd38ff71e6789d54e661e"
+    },
+    {
+      "path": "docs/verification/wave5/root-export-adapter-20261015/independent-review-a1.json",
+      "bytes": 13972,
+      "sha256": "ffa5d528e0ef822554ceec45cd64cc25f0614c0687e7114a5e28241b675c9f73"
+    }
+  ],
+  "bindingsObservedAt": "2026-10-17T05:45:24.116Z",
+  "reviewScope": [
+    "Exact common adapter candidate and pure builder reproduction",
+    "Pinned Renewal/Health/Scheduler public launcher interfaces",
+    "Early verified review/plan holds and complete public/source hold inventories",
+    "A10 public metadata, current-SID private ACL/path guards and bounded credential handoff",
+    "Reviewed window, child lifetime, output whitelist and cleanup"
+  ],
+  "findingResolution": [
+    {
+      "id": "MGMT-TEMPLATE-001",
+      "status": "resolved-in-reviewed-source",
+      "evidence": "All frozen children accept canonical generatedPlan. Health/Scheduler reject conflicting legacy aliases. All three --preflight entry points return passed/networkCalls/privateInputsRead/planSha256/finalReviewSha256 as required by the adapter."
+    },
+    {
+      "id": "EXP-ADAPTER-002-adjacent-management-ordering",
+      "status": "resolved-in-reviewed-source",
+      "evidence": "The common adapter acquires verified review hold before reading review, then verified plan hold before asserting/reading plan. It enumerates source/public inventories only after these holds. It embeds the same f8b82f70... helper tested by disposable Windows controls."
+    }
+  ],
+  "verifiedProperties": [
+    "Pure builder exactly reproduces the frozen candidate from the preserved template; malformed source population and changed template are refused.",
+    "All three child hashes and the A10 helper hash match actual public source files; no unresolved source marker remains.",
+    "Complete source/public inventories and explicit source/plan/review/metadata/self holds precede any child.",
+    "Validate completes the bounded public-only child preflight and exits before Windows SID, private metadata or DPAPI access.",
+    "Execute requires exact project, runtime bundle, A10 helper, current SID, private temp folder/token/metadata paths, protected current-SID ACLs and identical private/public metadata.",
+    "Metadata must be fresh, positive-lived, at most 120 minutes and valid through the reviewed end. Reviewed start/end and a 90-second reserve are checked before credential handoff.",
+    "Final source/metadata/review/plan hashes are rechecked immediately before DPAPI while the public holds remain active.",
+    "Private stdin contains exactly projectId, bundleSha256 and ownerToken. No runtime encryption key or Auth/session payload is added.",
+    "New-TaskProcess uses separate ArgumentList entries, closed preflight stdin, direct hidden execution and removes inherited SUPABASE_ACCESS_TOKEN.",
+    "Public results are reconstructed from a small whitelist; unexpected error strings map to a bounded diagnostic. Plaintext strings/BSTR/secure string and child/held handles have cleanup paths."
+  ],
+  "actualVerification": {
+    "peerTests": {
+      "label": "management-independent-source-and-interface",
+      "chunk_id": "3bd3bb",
+      "wall_time_seconds": 0.6490472,
+      "exit_code": 0,
+      "original_token_count": 868,
+      "output": "TAP version 13\n# Subtest: frozen management candidate, template and helper hashes are exact\nok 1 - frozen management candidate, template and helper hashes are exact\n  ---\n  duration_ms: 0.9513\n  type: 'test'\n  ...\n# Subtest: pure builder reproduces the exact candidate and rejects a changed template\nok 2 - pure builder reproduces the exact candidate and rejects a changed template\n  ---\n  duration_ms: 0.8014\n  type: 'test'\n  ...\n# Subtest: all three child files and the A10 refresh binding match actual frozen bytes\nok 3 - all three child files and the A10 refresh binding match actual frozen bytes\n  ---\n  duration_ms: 5.4185\n  type: 'test'\n  ...\n# Subtest: review and plan are held before every parse and inventory derivation\nok 4 - review and plan are held before every parse and inventory derivation\n  ---\n  duration_ms: 0.1935\n  type: 'test'\n  ...\n# Subtest: complete inventories, metadata, exact source/plan/review and self are held before preflight\nok 5 - complete inventories, metadata, exact source/plan/review and self are held before preflight\n  ---\n  duration_ms: 0.1434\n  type: 'test'\n  ...\n# Subtest: public preflight and Validate exit precede SID/private metadata and DPAPI use\nok 6 - public preflight and Validate exit precede SID/private metadata and DPAPI use\n  ---\n  duration_ms: 0.117\n  type: 'test'\n  ...\n# Subtest: fresh A10 metadata is bound to exact project, bundle, helper, SID, private paths and ACL\nok 7 - fresh A10 metadata is bound to exact project, bundle, helper, SID, private paths and ACL\n  ---\n  duration_ms: 0.1083\n  type: 'test'\n  ...\n# Subtest: last checks use held source, metadata, review, plan and reviewed deadline before DPAPI\nok 8 - last checks use held source, metadata, review, plan and reviewed deadline before DPAPI\n  ---\n  duration_ms: 0.1007\n  type: 'test'\n  ...\n# Subtest: private handoff contains only project, bundle and owner token and emits whitelisted public summaries\nok 9 - private handoff contains only project, bundle and owner token and emits whitelisted public summaries\n  ---\n  duration_ms: 0.1439\n  type: 'test'\n  ...\n# Subtest: execution has a reviewed deadline and all exceptional paths close child and held files\nok 10 - execution has a reviewed deadline and all exceptional paths close child and held files\n  ---\n  duration_ms: 0.1708\n  type: 'test'\n  ...\n# Subtest: Health and Scheduler accept canonical generatedPlan and refuse conflicting legacy aliases\nok 11 - Health and Scheduler accept canonical generatedPlan and refuse conflicting legacy aliases\n  ---\n  duration_ms: 1.0696\n  type: 'test'\n  ...\n# Subtest: Renewal public --preflight returns the exact adapter proof without stdin or private/runtime ports\nok 12 - Renewal public --preflight returns the exact adapter proof without stdin or private/runtime ports\n  ---\n  duration_ms: 0.3888\n  type: 'test'\n  ...\n# Subtest: Health public --preflight returns the exact adapter proof without stdin or private/runtime ports\nok 13 - Health public --preflight returns the exact adapter proof without stdin or private/runtime ports\n  ---\n  duration_ms: 0.2026\n  type: 'test'\n  ...\n# Subtest: Scheduler public --preflight returns the exact adapter proof without stdin or private/runtime ports\nok 14 - Scheduler public --preflight returns the exact adapter proof without stdin or private/runtime ports\n  ---\n  duration_ms: 0.3173\n  type: 'test'\n  ...\n1..14\n# tests 14\n# suites 0\n# pass 14\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 77.8471\n",
+      "tests": 14,
+      "passed": 14,
+      "failed": 0
+    },
+    "exactCandidateAst": {
+      "label": "management-exact-ast",
+      "chunk_id": "076310",
+      "wall_time_seconds": 1.011082,
+      "exit_code": 0,
+      "original_token_count": 82,
+      "output": "{\"candidateParseErrors\":0,\"candidateExecuted\":false,\"networkCalls\":0,\"templateParseErrors\":0,\"templateFunctions\":[{\"unchanged\":true,\"name\":\"Assert-TaskFile\"},{\"unchanged\":true,\"name\":\"Convert-TaskUtc\"},{\"unchanged\":true,\"name\":\"Assert-TaskPrivateAcl\"},{\"unchanged\":true,\"name\":\"New-TaskProcess\"}],\"privateInputsRead\":false}\r\n",
+      "parseErrors": 0,
+      "allFourTemplateFunctionsUnchanged": true
+    },
+    "injectedPublicInterfaceTests": {
+      "genuinePrivateInputUsed": false,
+      "genuineOperationProfileCreated": false,
+      "fakeAuthOrMfaClaimsCreated": false,
+      "stdinAndRuntimeCapabilitiesWerePoisonPorts": true,
+      "purpose": "Verify launcher proof shape and early return only; actual operation controls remain required."
+    },
+    "sharedWindowsControls": {
+      "primitiveTests": 19,
+      "primitiveExecutionUtcDay": "2026-10-16",
+      "actualEmbeddedFunctionTestsIndependentlyRerun": 8,
+      "embeddedExecutionUtcDay": "2026-10-17",
+      "earlyHoldRaceControls": 4,
+      "earlyHoldExecutionUtcDay": "2026-10-17",
+      "separateEvidenceBound": true
+    }
+  },
+  "scopeBoundary": {
+    "commonWrapperAndPublicInterfaceReview": true,
+    "fullControllerSqlVerdictDelegatedToSeparateReview": true,
+    "sourceReviewCannotCreateCurrentHumanOrReadbackEvidence": true,
+    "limitsFromPlansMustStillBeApproved": true
+  },
+  "limits": {
+    "sourceTechnicalReviewOnly": true,
+    "actualPrivateAdapterExecuted": false,
+    "privateInputsRead": false,
+    "networkCalls": 0,
+    "liveWrites": 0,
+    "intentsCreated": 0,
+    "actualOwnerRefreshes": 0,
+    "actualRenewals": 0,
+    "actualExports": 0,
+    "actualHealthInvocations": 0,
+    "schedulesResumed": false,
+    "executionApproved": false,
+    "directHumanApprovalCreated": false,
+    "acceptanceChanged": false,
+    "SDKJobs": 0,
+    "nativeUIUsed": false,
+    "gitOperations": false,
+    "productionAuthorized": false,
+    "realBillingAuthorized": false
+  },
+  "remainingPrerequisites": [
+    "Separate frozen controller/SQL source review and exact human operation decision.",
+    "Current honest attempt accounting, private A10 readiness and approved bounded runtime renewal.",
+    "Genuine operation-specific plans, full binding inventories and pinned final reviews.",
+    "Exact installation/readback and subsequent export, provider/health, scheduler, delivery, model, native, load and acceptance evidence remain separate."
+  ]
+}

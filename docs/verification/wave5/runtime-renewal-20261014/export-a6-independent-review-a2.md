@@ -1,0 +1,9 @@
+# Independent a6 chronology repair review
+
+The minimal source repair is verified. At line 191, `validateExportsProfile` now requires `metadata.createdAt <= renewalReadback.appliedAt`. Removing precisely that added guard restores every byte of the archived original helper. The existing equality between metadata.createdAt and refresh.actualVerifiedAt makes this the owner-refresh chronology check needed by the two regressions. No other helper byte, preparer, authored test, original 68 or a5 binding changed.
+
+The unchanged ten-case peer test was rerun against helper SHA `71f6743f5600cdb5e6697c70c4ab8d48afdd8f4b4cb250dfba3fe09fe83c76c2`: **10 passed, 0 failed, 0 skipped**. All 83 unique source/evidence bindings remained stable before and after execution, allowing only the exact reviewed helper delta. The [new execution record](export-a6-independent-execution-a2.json) and [TAP log](export-a6-independent-peer-a2.tap) preserve that result. The earlier 8-pass/2-fail TAP/review and exact original helper archive remain unchanged. Root owns the separate fresh 98-test run.
+
+This approves the narrow source repair only. A6 still assumes the older conditional 138/162/163 ledger. Root now reports 137 actual charged calls; a new successor must therefore use **141 after owner 1+renewal 3,165 after 24 ordinary exports,166 with the one resolution reserve,171 after health 5 and174 overall after scheduler 3**. That new baseline was provided by Root and was not independently re-queried here. No A6 execution or budget reset is authorized. The separately owned renewal controller and frozen a7 successor still need their own independent review.
+
+[The machine review](export-a6-independent-review-a2.json) records the exact delta, hashes, closure, preserved failure history and remaining gates. No private/network/SQL/SDK/source-edit/copy/adapter/acceptance or actual export action occurred. Production and real billing remain excluded.

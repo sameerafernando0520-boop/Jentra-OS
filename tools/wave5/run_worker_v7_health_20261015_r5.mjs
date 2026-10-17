@@ -8,10 +8,21 @@ import {createHash,randomUUID} from 'node:crypto';
 import {isDeepStrictEqual as same} from 'node:util';
 import {setTimeout as delay} from 'node:timers/promises';
 import {PROJECT,RUNTIME,BUNDLE,SOURCE,PRIVATE_ADAPTER,PREFLIGHT_SQL,validateReview,buildDispatchSql,buildReadbackSql,runHealthReadiness} from './probe_worker_v7_health_20261014_r5.mjs';
-import {EXPORTS_PROFILE,EXPORTS_PROFILE_PATHS,validateExportsProfile} from './finance_exports_20261014_r5_a6.mjs';
+import {EXPORTS_PROFILE,EXPORTS_PROFILE_PATHS,validateExportsProfile} from './finance_exports_20261016_r5_a7.mjs';
 import {validateExportsProof} from './resume_worker_schedules_20261014_r5_v7.mjs';
+import {CALL_INVENTORY,validateCallInventory,validateLockInventory} from './resume_worker_schedules_20261015_r5_a1.mjs';
 
 export const LAUNCHER='tools/wave5/run_worker_v7_health_20261015_r5.mjs';
+export const HEALTH_IMPORT_DEPENDENCIES=Object.freeze([
+ 'tools/wave5/approved_management_installer.mjs','tools/wave5/enroll_mfa_management_20261013_r5.mjs',
+ 'tools/wave5/finance_cash_fixture_20261013_r5.mjs','tools/wave5/finance_cash_workflows_20261013_r5.mjs',
+ 'tools/wave5/finance_exports_20261016_r5_a7.mjs','tools/wave5/finance_https_transport_20261013_r5.mjs',
+ 'tools/wave5/finance_https_transport_20261013_r5_a2.mjs','tools/wave5/finance_remaining_20261014_r5_a3.mjs',
+ 'tools/wave5/private_existing_actor_session_20261013_r5.mjs','tools/wave5/private_runtime_http.mjs',
+ 'tools/wave5/private_runtime_seal.mjs','tools/wave5/probe_worker_v7_health_20261014_r5.mjs',
+ 'tools/wave5/resume_worker_schedules_20261014_r5_v7.mjs','tools/wave5/resume_worker_schedules_20261015_r5_a1.mjs',
+ 'tools/wave5/run_worker_v7_health_20261015_r5.mjs','tools/wave5/runtime_contract.mjs',
+ 'tools/wave5/runtime_fixture_spec.mjs','tools/wave5/supabase_http_transport.mjs']);
 const BASE='docs/verification/wave5/task3-health-readiness-20261014/';
 export const PLAN=BASE+'execution-plan-20261015-a1.json',REVIEW=BASE+'final-operation-review-20261015-a1.json';
 export const ONCE=BASE+'actual-health-once-20261015-a1.json';
@@ -22,30 +33,42 @@ const digest=x=>typeof x==='string'&&/^[a-f0-9]{64}$/.test(x);
 const must=(ok,code)=>{if(!ok){const e=Error(code);e.publicCode=code;throw e;}};
 const binding=x=>x&&typeof x.path==='string'&&digest(x.sha256);
 const sameBinding=(a,b)=>binding(a)&&binding(b)&&a.path===b.path&&a.sha256===b.sha256;
+export function healthPlanBinding(review){
+ must(review?.generatedPlan?.path===PLAN&&binding(review.generatedPlan)
+  &&(review.planBinding===undefined||sameBinding(review.planBinding,review.generatedPlan)),'EXACT_GENERATED_HEALTH_PLAN_REQUIRED');
+ return review.generatedPlan;
+}
+export function validateHealthImportInventory(plan){
+ must(Array.isArray(plan?.sourceBindings)&&HEALTH_IMPORT_DEPENDENCIES.every(file=>plan.sourceBindings.some(row=>row.path===file&&binding(row))),
+  'COMPLETE_HEALTH_IMPORT_SOURCE_LOCKS_REQUIRED');return true;
+}
 const publicPath=p=>typeof p==='string'&&/^(docs\/verification\/wave5\/|tools\/wave5\/|scripts\/wave5\/|workers\/wave5\/|supabase\/)/.test(p)
  &&/^[A-Za-z0-9_./-]+$/.test(p)&&!p.split('/').includes('..')&&!p.includes('//');
 
 export async function readPublicFile(item,{workspace=root}={}){
  must(binding(item)&&publicPath(item.path),'PINNED_PUBLIC_HEALTH_FILE_REQUIRED');
  const target=path.resolve(workspace,item.path),stat=await fs.lstat(target);
- must(stat.isFile()&&!stat.isSymbolicLink()&&stat.size<=1048576&&path.resolve(await fs.realpath(target))===target,'BOUNDED_UNREDIRECTED_PUBLIC_HEALTH_FILE_REQUIRED');
- const bytes=await fs.readFile(target);must(bytes.length<=1048576&&sha(bytes)===item.sha256,'PUBLIC_HEALTH_BINDING_CHANGED');return bytes;
+ must(stat.isFile()&&!stat.isSymbolicLink()&&stat.size<=8388608&&path.resolve(await fs.realpath(target))===target,'BOUNDED_UNREDIRECTED_PUBLIC_HEALTH_FILE_REQUIRED');
+ const bytes=await fs.readFile(target);must(bytes.length<=8388608&&sha(bytes)===item.sha256,'PUBLIC_HEALTH_BINDING_CHANGED');return bytes;
 }
 
 export async function preflightHealthOperation({finalReviewSha256,readPublic=readPublicFile,now=Date.now,validateProfile=validateExportsProfile}={}){
  must(digest(finalReviewSha256),'PINNED_HEALTH_FINAL_REVIEW_REQUIRED');
  const get=async item=>JSON.parse(await readPublic(item));
  const review=await get({path:REVIEW,sha256:finalReviewSha256});validateReview(review,now());
- must(review.planBinding?.path===PLAN&&review.launcherBinding?.path===LAUNCHER&&review.privateAdapter?.path===PRIVATE_ADAPTER
+ const planBinding=healthPlanBinding(review);
+ must(review.launcherBinding?.path===LAUNCHER&&review.privateAdapter?.path===PRIVATE_ADAPTER
   &&sameBinding(review.privateAdapterBinding,{path:PRIVATE_ADAPTER,sha256:review.privateAdapter.afterSha256}),'EXACT_HEALTH_PLAN_LAUNCHER_ADAPTER_REQUIRED');
- const plan=await get(review.planBinding);
+ const plan=await get(planBinding);
  must(plan?.kind==='source-bound-deployed-v7-health-plan'&&plan.projectId===PROJECT&&plan.runtimeId===RUNTIME&&plan.runtimeBundleSha256===BUNDLE
-  &&plan.maximumManagementAttempts===5&&plan.maximumHealthInvocations===1&&plan.overallCumulativeMaximum===171
-  &&plan.maximumCumulativeAfterHealth===168&&plan.maximumCumulativeBeforeHealth===163&&plan.automaticRetries===0
+  &&plan.maximumManagementAttempts===5&&plan.maximumHealthInvocations===1&&plan.overallCumulativeMaximum===174
+  &&plan.maximumCumulativeAfterHealth===171&&plan.maximumCumulativeBeforeHealth===166&&plan.automaticRetries===0
   &&plan.exclusiveOncePath===ONCE&&plan.finalReviewPath===REVIEW&&plan.liveExecutionAuthorizedByPreparation===false,
   'EXACT_BOUNDED_HEALTH_PLAN_REQUIRED');
  must(plan.controlBindings?.exportsProfile?.path===EXPORTS_PROFILE&&plan.controlBindings.metadata?.path===EXPORTS_PROFILE_PATHS.metadata
-  &&plan.controlBindings.operationDecision?.path===OPERATION_DECISION,'FIXED_HEALTH_CONTROL_PATHS_REQUIRED');
+  &&plan.controlBindings.operationDecision?.path===OPERATION_DECISION&&sameBinding(plan.controlBindings.callInventory,CALL_INVENTORY),
+  'FIXED_HEALTH_CONTROL_PATHS_REQUIRED');
+ validateCallInventory(await get(CALL_INVENTORY));
  const profile=await get(plan.controlBindings.exportsProfile),documents={};
  for(const [key,p] of Object.entries(EXPORTS_PROFILE_PATHS)){
   must(profile.controlBindings?.[key]?.path===p,'FIXED_EXPORT_PROFILE_CONTROL_REQUIRED');documents[key]=await get(profile.controlBindings[key]);
@@ -56,19 +79,21 @@ export async function preflightHealthOperation({finalReviewSha256,readPublic=rea
   &&sameBinding(review.actualRenewalReadbackBinding,profile.controlBindings.renewalReadback)
   &&sameBinding(review.completedExportsBinding,plan.controlBindings.completedExports)
   &&same(plan.window,{notBefore:profile.window.notBefore,expiresAt:profile.window.expiresAt})
-  &&Date.parse(review.serverWindowAnchor)===Date.parse(plan.window.notBefore)
+  &&Date.parse(review.serverWindowAnchor)===Date.parse(documents.renewalReadback.serverWindowAnchor)
+  &&Date.parse(documents.renewalReadback.appliedAt)===Date.parse(plan.window.notBefore)
+  &&Date.parse(documents.renewalReadback.appliedAt)>=Date.parse(review.serverWindowAnchor)
   &&Date.parse(review.renewedExpiry)===Date.parse(documents.renewalReadback.edge.expiresAt)
   &&Date.parse(review.authorizationExpiresAt)===Date.parse(plan.window.expiresAt),'EXACT_ACTUAL_HEALTH_RENEWAL_WINDOW_REQUIRED');
  const decision=await get(plan.controlBindings.operationDecision);
  must(decision?.kind==='direct-human-renewed-health-scheduler-decision'&&decision.approved===true&&decision.approvalSource==='direct-user-reply'
   &&typeof decision.questionItemId==='string'&&decision.questionItemId.length>=16&&decision.projectId===PROJECT&&decision.runtimeId===RUNTIME
   &&decision.runtimeBundleSha256===BUNDLE&&decision.healthInvocationAuthorized===true&&decision.maximumHealthInvocations===1
-  &&decision.maximumHealthManagementAttempts===5&&decision.overallCumulativeMaximum===171&&decision.maximumScheduleRequests===4320
+  &&decision.maximumHealthManagementAttempts===5&&decision.overallCumulativeMaximum===174&&decision.maximumScheduleRequests===4320
   &&decision.healthKeepsSchedulesPaused===true&&decision.productionAuthorized===false&&decision.realBillingAuthorized===false
   &&decision.operationBundleSha256===documents.ownerDecision.operationBundleSha256
   &&Date.parse(decision.decidedAt)<=Date.parse(documents.renewalReadback.appliedAt),'EXPLICIT_RENEWED_HEALTH_OPERATION_AUTHORITY_REQUIRED');
  const exportsResult=validateExportsProof(await get(review.completedExportsBinding));
- must(exportsResult.priorConservativeBound===138&&exportsResult.totalWorkflowRequestBound===162&&exportsResult.maximumCumulativeAttemptLimit===163,
+ must(exportsResult.priorConservativeBound===141&&exportsResult.totalWorkflowRequestBound===165&&exportsResult.maximumCumulativeAttemptLimit===166,
   'ACTUAL_EXPORT_CALL_ACCOUNTING_REQUIRED');
  must(Array.isArray(plan.sourceAndEvidenceBindings)&&new Set(plan.sourceAndEvidenceBindings.map(x=>x.path)).size===plan.sourceAndEvidenceBindings.length,
   'UNIQUE_HEALTH_SOURCE_AND_EVIDENCE_REQUIRED');
@@ -78,10 +103,12 @@ export async function preflightHealthOperation({finalReviewSha256,readPublic=rea
  for(const artifact of exportsResult.artifacts){must(sameBinding(artifact.artifact,{path:artifact.artifact?.path,sha256:artifact.fileSha256}),
   'ACTUAL_EXPORT_ARTIFACT_BINDING_REQUIRED');required.push(artifact.artifact);}
  for(const item of required)must(plan.sourceAndEvidenceBindings.some(x=>sameBinding(x,item)),'ALL_HEALTH_SOURCE_AND_EVIDENCE_BINDINGS_REQUIRED');
+ validateHealthImportInventory(plan);
+ validateLockInventory(plan,plan.sourceAndEvidenceBindings);
  for(const item of plan.sourceAndEvidenceBindings)await readPublic(item);
  must(same(review.sourceAndEvidenceBindings,plan.sourceAndEvidenceBindings),'EXACT_FINAL_HEALTH_SOURCE_INVENTORY_REQUIRED');
  validateReview(review,now());must(Date.parse(plan.window.expiresAt)-now()>=90000,'HEALTH_PRIVATE_INPUT_RESOLUTION_MARGIN_REQUIRED');
- return {review,plan,publicResult:{passed:true,networkCalls:0,privateInputsRead:false,planSha256:review.planBinding.sha256,finalReviewSha256}};
+ return {review,plan,publicResult:{passed:true,networkCalls:0,privateInputsRead:false,planSha256:planBinding.sha256,finalReviewSha256}};
 }
 
 export function createHealthTransport(ownerToken,{review,requestFactory=https.request,now=Date.now}={}){
@@ -132,7 +159,7 @@ export async function main(argv=process.argv.slice(2),{stdin=process.stdin,stdou
  if(argv[0]==='--preflight'){stdout.write(JSON.stringify(checked.publicResult)+'\n');return checked.publicResult;}
  let text='',cfg,timer;
  try{
-  await Promise.race([(async()=>{for await(const chunk of stdin){text+=chunk;must(text.length<=8192,'PRIVATE_HEALTH_INPUT_LIMIT');}})(),
+  await Promise.race([(async()=>{for await(const chunk of stdin){text+=chunk;must(Buffer.byteLength(text)<=8192,'PRIVATE_HEALTH_INPUT_LIMIT');}})(),
    new Promise((_,reject)=>{timer=setTimeout(()=>{stdin.destroy?.();reject(Error('PRIVATE_HEALTH_INPUT_TIMEOUT'));},15000);})]);
   clearTimeout(timer);cfg=JSON.parse(text);text='';
   must(same(Object.keys(cfg).sort(),['bundleSha256','ownerToken','projectId'])&&cfg.projectId===PROJECT&&cfg.bundleSha256===BUNDLE,
@@ -141,7 +168,7 @@ export async function main(argv=process.argv.slice(2),{stdin=process.stdin,stdou
   const transport=createHealthTransport(cfg.ownerToken,{review:checked.review,now});
   const directory=BASE+'actual-'+randomUUID()+'/';await fs.mkdir(path.join(root,directory));
   const result=await run({review:checked.review,transport,now,
-   once:value=>save(ONCE,{...value,finalReviewSha256:argv[1],planBinding:checked.review.planBinding,directory}),
+   once:async value=>{checked=await preflight({finalReviewSha256:argv[1],now});return save(ONCE,{...value,finalReviewSha256:argv[1],planBinding:healthPlanBinding(checked.review),directory});},
    persist:(file,value)=>save(directory+file,value),wait:(ms,{signal})=>delay(ms,undefined,{signal})});
   stdout.write(JSON.stringify({passed:true,evidencePath:directory+'99-result.json',managementAttempts:result.managementAttempts,actualDelivery:false})+'\n');return result;
  }finally{clearTimeout(timer);if(cfg)cfg.ownerToken=null;text='';}

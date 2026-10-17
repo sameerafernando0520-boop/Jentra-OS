@@ -39,7 +39,8 @@ async function validateHarness(harness, review, runtimeFileSha256) {
     'HASH_BOUND_HARNESS_REVIEW_REQUIRED');
   requireGuard(Array.isArray(harness.files) && harness.files.length >= 5 && Array.isArray(harness.contractSources)
     && harness.contractSources.length >= 7, 'HARNESS_SOURCE_BINDINGS_REQUIRED');
-  const requiredCode = ['tools/wave5/runtime_contract.mjs', 'tools/wave5/runtime_coordinator.mjs', 'tools/wave5/run_runtime_verification.mjs'];
+  const requiredCode = ['tools/wave5/runtime_contract.mjs', 'tools/wave5/runtime_coordinator.mjs',
+    'tools/wave5/runtime_load_trace_20261017_r5.mjs', 'tools/wave5/run_runtime_verification.mjs'];
   requireGuard(requiredCode.every(file => harness.files.some(ref => ref.path === file)), 'CURRENT_COORDINATOR_BINDINGS_REQUIRED');
   const all = [...harness.files, ...harness.contractSources];
   requireGuard(new Set(all.map(ref => ref.path)).size === all.length, 'DUPLICATE_HARNESS_BINDING');

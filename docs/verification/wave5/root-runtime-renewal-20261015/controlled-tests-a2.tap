@@ -1,0 +1,682 @@
+TAP version 13
+# Subtest: controlled full contract accepts exact137/141/166 accounting
+ok 1 - controlled full contract accepts exact137/141/166 accounting
+  ---
+  duration_ms: 15.7984
+  type: 'test'
+  ...
+# Subtest: historical134 dependency and old proposal caps remain unchanged
+ok 2 - historical134 dependency and old proposal caps remain unchanged
+  ---
+  duration_ms: 1.8463
+  type: 'test'
+  ...
+# Subtest: contract rejects old recorded budget
+ok 3 - contract rejects old recorded budget
+  ---
+  duration_ms: 2.1479
+  type: 'test'
+  ...
+# Subtest: contract rejects old after-owner budget
+ok 4 - contract rejects old after-owner budget
+  ---
+  duration_ms: 2.5196
+  type: 'test'
+  ...
+# Subtest: contract rejects old renewal cap
+ok 5 - contract rejects old renewal cap
+  ---
+  duration_ms: 3.6217
+  type: 'test'
+  ...
+# Subtest: contract rejects extra call since baseline
+ok 6 - contract rejects extra call since baseline
+  ---
+  duration_ms: 2.4302
+  type: 'test'
+  ...
+# Subtest: contract rejects omitted new calls
+ok 7 - contract rejects omitted new calls
+  ---
+  duration_ms: 2.8405
+  type: 'test'
+  ...
+# Subtest: contract rejects false human approval
+ok 8 - contract rejects false human approval
+  ---
+  duration_ms: 3.637
+  type: 'test'
+  ...
+# Subtest: contract rejects old human reply
+ok 9 - contract rejects old human reply
+  ---
+  duration_ms: 2.8786
+  type: 'test'
+  ...
+# Subtest: contract rejects indirect human source
+ok 10 - contract rejects indirect human source
+  ---
+  duration_ms: 2.1554
+  type: 'test'
+  ...
+# Subtest: contract rejects future human decision
+ok 11 - contract rejects future human decision
+  ---
+  duration_ms: 3.8239
+  type: 'test'
+  ...
+# Subtest: contract rejects policy scope changed
+ok 12 - contract rejects policy scope changed
+  ---
+  duration_ms: 2.4164
+  type: 'test'
+  ...
+# Subtest: contract rejects cap drift
+ok 13 - contract rejects cap drift
+  ---
+  duration_ms: 2.321
+  type: 'test'
+  ...
+# Subtest: contract rejects false policy review
+ok 14 - contract rejects false policy review
+  ---
+  duration_ms: 2.7232
+  type: 'test'
+  ...
+# Subtest: contract rejects false final review
+ok 15 - contract rejects false final review
+  ---
+  duration_ms: 1.6389
+  type: 'test'
+  ...
+# Subtest: contract rejects wrong plan hash
+ok 16 - contract rejects wrong plan hash
+  ---
+  duration_ms: 1.5762
+  type: 'test'
+  ...
+# Subtest: contract rejects wrong adapter path
+ok 17 - contract rejects wrong adapter path
+  ---
+  duration_ms: 2.6083
+  type: 'test'
+  ...
+# Subtest: contract rejects missing public closure
+ok 18 - contract rejects missing public closure
+  ---
+  duration_ms: 2.2938
+  type: 'test'
+  ...
+# Subtest: contract rejects extra public closure
+ok 19 - contract rejects extra public closure
+  ---
+  duration_ms: 3.1092
+  type: 'test'
+  ...
+# Subtest: contract rejects changed public closure
+ok 20 - contract rejects changed public closure
+  ---
+  duration_ms: 2.4227
+  type: 'test'
+  ...
+# Subtest: contract rejects missing current raw evidence
+ok 21 - contract rejects missing current raw evidence
+  ---
+  duration_ms: 1.7522
+  type: 'test'
+  ...
+# Subtest: contract rejects failed advisor result
+ok 22 - contract rejects failed advisor result
+  ---
+  duration_ms: 1.4788
+  type: 'test'
+  ...
+# Subtest: contract rejects invented prior ledger
+ok 23 - contract rejects invented prior ledger
+  ---
+  duration_ms: 1.5578
+  type: 'test'
+  ...
+# Subtest: contract rejects future calls mislabeled actual
+ok 24 - contract rejects future calls mislabeled actual
+  ---
+  duration_ms: 2.4293
+  type: 'test'
+  ...
+# Subtest: contract rejects old readback path
+ok 25 - contract rejects old readback path
+  ---
+  duration_ms: 1.3395
+  type: 'test'
+  ...
+# Subtest: contract rejects metadata not actual A10 filename
+ok 26 - contract rejects metadata not actual A10 filename
+  ---
+  duration_ms: 1.3491
+  type: 'test'
+  ...
+# Subtest: contract rejects refresh attempts reset
+ok 27 - contract rejects refresh attempts reset
+  ---
+  duration_ms: 1.8556
+  type: 'test'
+  ...
+# Subtest: contract rejects missing static review
+ok 28 - contract rejects missing static review
+  ---
+  duration_ms: 1.4745
+  type: 'test'
+  ...
+# Subtest: window rejects stale
+ok 29 - window rejects stale
+  ---
+  duration_ms: 0.1158
+  type: 'test'
+  ...
+# Subtest: window rejects unbounded
+ok 30 - window rejects unbounded
+  ---
+  duration_ms: 0.0552
+  type: 'test'
+  ...
+# Subtest: window rejects invalid day
+ok 31 - window rejects invalid day
+  ---
+  duration_ms: 0.0522
+  type: 'test'
+  ...
+# Subtest: window rejects offset
+ok 32 - window rejects offset
+  ---
+  duration_ms: 0.0457
+  type: 'test'
+  ...
+# Subtest: window rejects not-before in future
+ok 33 - window rejects not-before in future
+  ---
+  duration_ms: 0.0857
+  type: 'test'
+  ...
+# Subtest: window rejects insufficient90second reserve
+ok 34 - window rejects insufficient90second reserve
+  ---
+  duration_ms: 0.0784
+  type: 'test'
+  ...
+# Subtest: public preflight verifies exact closure and returns only five safe fields
+ok 35 - public preflight verifies exact closure and returns only five safe fields
+  ---
+  duration_ms: 5.3302
+  type: 'test'
+  ...
+# Subtest: public preflight rejects changed public bytes
+ok 36 - public preflight rejects changed public bytes
+  ---
+  duration_ms: 2.6237
+  type: 'test'
+  ...
+# Subtest: public preflight rejects changed adapter bytes
+ok 37 - public preflight rejects changed adapter bytes
+  ---
+  duration_ms: 3.0961
+  type: 'test'
+  ...
+# Subtest: public CLI preflight reads no stdin, network, or once intent
+ok 38 - public CLI preflight reads no stdin, network, or once intent
+  ---
+  duration_ms: 5.4599
+  type: 'test'
+  ...
+# Subtest: invalid final review fails before stdin or transport
+ok 39 - invalid final review fails before stdin or transport
+  ---
+  duration_ms: 0.3025
+  type: 'test'
+  ...
+# Subtest: execute rechecks public files after stdin and before transport or intent
+ok 40 - execute rechecks public files after stdin and before transport or intent
+  ---
+  duration_ms: 3.2183
+  type: 'test'
+  ...
+# Subtest: execute rejects second preflight plan replacement before transport
+ok 41 - execute rejects second preflight plan replacement before transport
+  ---
+  duration_ms: 1.3454
+  type: 'test'
+  ...
+# Subtest: exact SQL rendering changes only five null slots
+ok 42 - exact SQL rendering changes only five null slots
+  ---
+  duration_ms: 2.3688
+  type: 'test'
+  ...
+# Subtest: transport rejects original null template
+ok 43 - transport rejects original null template
+  ---
+  duration_ms: 0.1127
+  type: 'test'
+  ...
+# Subtest: transport rejects valid substitution plus extra SQL
+ok 44 - transport rejects valid substitution plus extra SQL
+  ---
+  duration_ms: 1.7097
+  type: 'test'
+  ...
+# Subtest: transport rejects date literal outside strict UTC
+ok 45 - transport rejects date literal outside strict UTC
+  ---
+  duration_ms: 1.8356
+  type: 'test'
+  ...
+# Subtest: snapshot rejects scope count
+ok 46 - snapshot rejects scope count
+  ---
+  duration_ms: 1.5117
+  type: 'test'
+  ...
+# Subtest: snapshot rejects one row only expiry
+ok 47 - snapshot rejects one row only expiry
+  ---
+  duration_ms: 2.8431
+  type: 'test'
+  ...
+# Subtest: snapshot rejects future server timestamp
+ok 48 - snapshot rejects future server timestamp
+  ---
+  duration_ms: 1.9591
+  type: 'test'
+  ...
+# Subtest: snapshot rejects stale server timestamp
+ok 49 - snapshot rejects stale server timestamp
+  ---
+  duration_ms: 1.8386
+  type: 'test'
+  ...
+# Subtest: snapshot rejects issued timestamp
+ok 50 - snapshot rejects issued timestamp
+  ---
+  duration_ms: 1.3481
+  type: 'test'
+  ...
+# Subtest: snapshot rejects nonwindow hash
+ok 51 - snapshot rejects nonwindow hash
+  ---
+  duration_ms: 1.5412
+  type: 'test'
+  ...
+# Subtest: snapshot rejects schedule resumed
+ok 52 - snapshot rejects schedule resumed
+  ---
+  duration_ms: 1.6353
+  type: 'test'
+  ...
+# Subtest: snapshot rejects outside job change
+ok 53 - snapshot rejects outside job change
+  ---
+  duration_ms: 1.246
+  type: 'test'
+  ...
+# Subtest: snapshot rejects function body
+ok 54 - snapshot rejects function body
+  ---
+  duration_ms: 2.0559
+  type: 'test'
+  ...
+# Subtest: snapshot rejects key binding
+ok 55 - snapshot rejects key binding
+  ---
+  duration_ms: 1.2873
+  type: 'test'
+  ...
+# Subtest: snapshot rejects effects
+ok 56 - snapshot rejects effects
+  ---
+  duration_ms: 1.1775
+  type: 'test'
+  ...
+# Subtest: snapshot rejects finance
+ok 57 - snapshot rejects finance
+  ---
+  duration_ms: 1.2431
+  type: 'test'
+  ...
+# Subtest: snapshot rejects schema column
+ok 58 - snapshot rejects schema column
+  ---
+  duration_ms: 1.2392
+  type: 'test'
+  ...
+# Subtest: snapshot rejects user trigger
+ok 59 - snapshot rejects user trigger
+  ---
+  duration_ms: 1.2599
+  type: 'test'
+  ...
+# Subtest: snapshot rejects RLS
+ok 60 - snapshot rejects RLS
+  ---
+  duration_ms: 2.2067
+  type: 'test'
+  ...
+# Subtest: snapshot rejects billing
+ok 61 - snapshot rejects billing
+  ---
+  duration_ms: 1.9836
+  type: 'test'
+  ...
+# Subtest: snapshot rejects historical run reset
+ok 62 - snapshot rejects historical run reset
+  ---
+  duration_ms: 1.5179
+  type: 'test'
+  ...
+# Subtest: snapshot rejects 24h ceiling
+ok 63 - snapshot rejects 24h ceiling
+  ---
+  duration_ms: 1.3673
+  type: 'test'
+  ...
+# Subtest: three controlled calls charge139/140/141 before dispatch and publish server provenance
+ok 64 - three controlled calls charge139/140/141 before dispatch and publish server provenance
+  ---
+  duration_ms: 6.877
+  type: 'test'
+  ...
+# Subtest: controlled renewal crosses UTC midnight without replaying original date
+ok 65 - controlled renewal crosses UTC midnight without replaying original date
+  ---
+  duration_ms: 3.9341
+  type: 'test'
+  ...
+# Subtest: raw HTTP error evidence is acknowledged before status validation
+ok 66 - raw HTTP error evidence is acknowledged before status validation
+  ---
+  duration_ms: 2.7367
+  type: 'test'
+  ...
+# Subtest: invalid JSON raw bytes are durable before parse failure
+ok 67 - invalid JSON raw bytes are durable before parse failure
+  ---
+  duration_ms: 2.5723
+  type: 'test'
+  ...
+# Subtest: preflight transport failure is charged and never retried
+ok 68 - preflight transport failure is charged and never retried
+  ---
+  duration_ms: 2.5877
+  type: 'test'
+  ...
+# Subtest: uncertain write gets exactly one readback and cannot fabricate appliedAt
+ok 69 - uncertain write gets exactly one readback and cannot fabricate appliedAt
+  ---
+  duration_ms: 3.5024
+  type: 'test'
+  ...
+# Subtest: write raw evidence failure resolves once and never publishes
+ok 70 - write raw evidence failure resolves once and never publishes
+  ---
+  duration_ms: 5.8458
+  type: 'test'
+  ...
+# Subtest: attempt evidence failure prevents dispatch while retaining conservative charge
+ok 71 - attempt evidence failure prevents dispatch while retaining conservative charge
+  ---
+  duration_ms: 2.9917
+  type: 'test'
+  ...
+# Subtest: application rejects missing application without successful readback proof
+ok 72 - application rejects missing application without successful readback proof
+  ---
+  duration_ms: 3.3403
+  type: 'test'
+  ...
+# Subtest: application rejects client provenance without successful readback proof
+ok 73 - application rejects client provenance without successful readback proof
+  ---
+  duration_ms: 6.7878
+  type: 'test'
+  ...
+# Subtest: application rejects preflight timestamp used as appliedAt without successful readback proof
+ok 74 - application rejects preflight timestamp used as appliedAt without successful readback proof
+  ---
+  duration_ms: 3.9895
+  type: 'test'
+  ...
+# Subtest: application rejects future application without successful readback proof
+ok 75 - application rejects future application without successful readback proof
+  ---
+  duration_ms: 3.017
+  type: 'test'
+  ...
+# Subtest: application rejects only one row without successful readback proof
+ok 76 - application rejects only one row without successful readback proof
+  ---
+  duration_ms: 2.744
+  type: 'test'
+  ...
+# Subtest: application rejects wrong renewed expiry without successful readback proof
+ok 77 - application rejects wrong renewed expiry without successful readback proof
+  ---
+  duration_ms: 2.8536
+  type: 'test'
+  ...
+# Subtest: late postcommit application over45seconds blocks continuation
+ok 78 - late postcommit application over45seconds blocks continuation
+  ---
+  duration_ms: 3.1439
+  type: 'test'
+  ...
+# Subtest: readback must follow actual application within45seconds
+ok 79 - readback must follow actual application within45seconds
+  ---
+  duration_ms: 4.7925
+  type: 'test'
+  ...
+# Subtest: readback schema constraints must equal preflight constraints
+ok 80 - readback schema constraints must equal preflight constraints
+  ---
+  duration_ms: 3.5463
+  type: 'test'
+  ...
+# Subtest: readback network failure consumes final call with no retry
+ok 81 - readback network failure consumes final call with no retry
+  ---
+  duration_ms: 4.3925
+  type: 'test'
+  ...
+# Subtest: exclusive intent collision prevents all network
+ok 82 - exclusive intent collision prevents all network
+  ---
+  duration_ms: 2.2681
+  type: 'test'
+  ...
+# Subtest: run expiry after once prevents dispatch
+ok 83 - run expiry after once prevents dispatch
+  ---
+  duration_ms: 2.4031
+  type: 'test'
+  ...
+# Subtest: per-request timeout resolves uncertain write once and preserves failures
+ok 84 - per-request timeout resolves uncertain write once and preserves failures
+  ---
+  duration_ms: 16.7848
+  type: 'test'
+  ...
+# Subtest: aborted before dispatch stops without a network call
+ok 85 - aborted before dispatch stops without a network call
+  ---
+  duration_ms: 3.0151
+  type: 'test'
+  ...
+# Subtest: publish receipt failure cannot turn into another write
+ok 86 - publish receipt failure cannot turn into another write
+  ---
+  duration_ms: 3.6836
+  type: 'test'
+  ...
+# Subtest: checked context is immutable after run starts
+ok 87 - checked context is immutable after run starts
+  ---
+  duration_ms: 3.3078
+  type: 'test'
+  ...
+# Subtest: transport uses exact verified HTTPS project endpoint and no redirects
+ok 88 - transport uses exact verified HTTPS project endpoint and no redirects
+  ---
+  duration_ms: 2.3491
+  type: 'test'
+  ...
+# Subtest: transport rejects unauthorized TLS before body dispatch
+ok 89 - transport rejects unauthorized TLS before body dispatch
+  ---
+  duration_ms: 1.6225
+  type: 'test'
+  ...
+# Subtest: transport rejects unencrypted socket before body dispatch
+ok 90 - transport rejects unencrypted socket before body dispatch
+  ---
+  duration_ms: 1.6691
+  type: 'test'
+  ...
+# Subtest: transport deadline bounds stalled TLS handshake
+ok 91 - transport deadline bounds stalled TLS handshake
+  ---
+  duration_ms: 33.0082
+  type: 'test'
+  ...
+# Subtest: transport rejects wrong route SQL before request creation
+ok 92 - transport rejects wrong route SQL before request creation
+  ---
+  duration_ms: 2.4262
+  type: 'test'
+  ...
+# Subtest: transport preserves raw nonJSON response for durable caller evidence
+ok 93 - transport preserves raw nonJSON response for durable caller evidence
+  ---
+  duration_ms: 1.7716
+  type: 'test'
+  ...
+# Subtest: transport enforces response cap
+ok 94 - transport enforces response cap
+  ---
+  duration_ms: 1.5565
+  type: 'test'
+  ...
+# Subtest: transport failures do not silently retry
+ok 95 - transport failures do not silently retry
+  ---
+  duration_ms: 1.2736
+  type: 'test'
+  ...
+# Subtest: transport accepts exact three calls and rejects fourth
+ok 96 - transport accepts exact three calls and rejects fourth
+  ---
+  duration_ms: 2.115
+  type: 'test'
+  ...
+# Subtest: transport rejects a NULL write after preflight
+ok 97 - transport rejects a NULL write after preflight
+  ---
+  duration_ms: 1.4542
+  type: 'test'
+  ...
+# Subtest: transport carries immutable approved window through delayed dispatch
+ok 98 - transport carries immutable approved window through delayed dispatch
+  ---
+  duration_ms: 1.2801
+  type: 'test'
+  ...
+# Subtest: closed transport cannot be reused
+ok 99 - closed transport cannot be reused
+  ---
+  duration_ms: 1.1276
+  type: 'test'
+  ...
+# Subtest: source-only tests did not create any actual operation file
+ok 100 - source-only tests did not create any actual operation file
+  ---
+  duration_ms: 2.2257
+  type: 'test'
+  ...
+# Subtest: all server anchor aliases and raw response bindings retain exact provenance
+ok 101 - all server anchor aliases and raw response bindings retain exact provenance
+  ---
+  duration_ms: 4.9749
+  type: 'test'
+  ...
+# Subtest: window expires during public checks before private input is allowed
+ok 102 - window expires during public checks before private input is allowed
+  ---
+  duration_ms: 3.0514
+  type: 'test'
+  ...
+# Subtest: source bytes drift blocks public preflight
+ok 103 - source bytes drift blocks public preflight
+  ---
+  duration_ms: 2.6276
+  type: 'test'
+  ...
+# Subtest: policy current ledger mismatch fails closed
+ok 104 - policy current ledger mismatch fails closed
+  ---
+  duration_ms: 1.2914
+  type: 'test'
+  ...
+# Subtest: review current ledger mismatch fails closed
+ok 105 - review current ledger mismatch fails closed
+  ---
+  duration_ms: 1.245
+  type: 'test'
+  ...
+# Subtest: extra management private configuration rejected before transport
+ok 106 - extra management private configuration rejected before transport
+  ---
+  duration_ms: 1.225
+  type: 'test'
+  ...
+# Subtest: oversized management configuration rejected before transport
+ok 107 - oversized management configuration rejected before transport
+  ---
+  duration_ms: 1.3106
+  type: 'test'
+  ...
+# Subtest: invalid final review digest rejected before any public read
+ok 108 - invalid final review digest rejected before any public read
+  ---
+  duration_ms: 0.105
+  type: 'test'
+  ...
+# Subtest: failed readback raw response remains retained and cannot be replayed
+ok 109 - failed readback raw response remains retained and cannot be replayed
+  ---
+  duration_ms: 3.7634
+  type: 'test'
+  ...
+# Subtest: evidence receipt digest mismatch fails before any dispatch
+ok 110 - evidence receipt digest mismatch fails before any dispatch
+  ---
+  duration_ms: 2.2051
+  type: 'test'
+  ...
+# Subtest: future metadata not-before blocks contract despite otherwise valid timestamps
+ok 111 - future metadata not-before blocks contract despite otherwise valid timestamps
+  ---
+  duration_ms: 1.39
+  type: 'test'
+  ...
+# Subtest: observed readback before application fails even with valid row state
+ok 112 - observed readback before application fails even with valid row state
+  ---
+  duration_ms: 1.4596
+  type: 'test'
+  ...
+1..112
+# tests 112
+# suites 0
+# pass 112
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 354.8613

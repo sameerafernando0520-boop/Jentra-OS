@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: exact generated management candidate reproduces all four frozen source pins
+ok 1 - exact generated management candidate reproduces all four frozen source pins
+  ---
+  duration_ms: 5.3307
+  type: 'test'
+  ...
+# Subtest: a3 reproduces exact candidate bytes and preserves the rejected a2 candidate
+ok 2 - a3 reproduces exact candidate bytes and preserves the rejected a2 candidate
+  ---
+  duration_ms: 1.9018
+  type: 'test'
+  ...
+# Subtest: exact export review and plan are held before their first parse and all inventory enumeration
+ok 3 - exact export review and plan are held before their first parse and all inventory enumeration
+  ---
+  duration_ms: 0.2514
+  type: 'test'
+  ...
+# Subtest: management draft applies the same hold-before-parse order before public child launch
+ok 4 - management draft applies the same hold-before-parse order before public child launch
+  ---
+  duration_ms: 0.1299
+  type: 'test'
+  ...
+# Subtest: PowerShell AST parses the exact a3 candidate and repaired management text without running them
+ok 5 - PowerShell AST parses the exact a3 candidate and repaired management text without running them
+  ---
+  duration_ms: 702.266
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 746.7149

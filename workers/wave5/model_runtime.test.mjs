@@ -31,3 +31,38 @@ test('unreviewed providers and untrusted/model-generated usage cannot settle',as
  s.policy.approved=true;s.provider.trustedUsage=false;await assert.rejects(invokeReviewedModel(s),/TRUSTED_USAGE_MISMATCH/);
  assert.equal(s.trace.includes('settle'),false);
 });
+
+test('an adapter without trusted usage cannot read protected evidence or send a provider request',async()=>{
+ const s=setup();s.provider.trustedUsage=false;
+ s.reader.forecast=async()=>{s.trace.push('forecast');return evidence;};
+ await assert.rejects(invokeReviewedModel(s),/TRUSTED_USAGE_MISMATCH/);
+ assert.deepEqual(s.trace,[]);
+});
+
+test('settled replays validate saved usage and suggestion before any settlement write',async()=>{
+ for(const saved of [
+  {tokens:'21',suggestion},
+  {tokens:'-1',suggestion},
+  {tokens:7,suggestion},
+  {tokens:'7',suggestion:{...suggestion,sourceHash:'b'.repeat(64)}},
+  {tokens:'7',suggestion:{...suggestion,sql:'select private'}},
+ ]) {
+  const s=setup();s.control.beginModelInvocation=async()=>({state:'settled',...saved});
+  await assert.rejects(invokeReviewedModel(s),/TRUSTED_USAGE_MISMATCH|MODEL_CONTRACT_MISMATCH/);
+  assert.equal(s.trace.includes('settle'),false);
+  assert.equal(s.trace.includes('generate'),false);
+ }
+});
+
+test('valid settled replay reauthorizes before and after idempotent usage settlement without a provider send',async()=>{
+ const s=setup();s.control.beginModelInvocation=async()=>({state:'settled',tokens:'7',suggestion});
+ assert.deepEqual(await invokeReviewedModel(s),suggestion);
+ assert.deepEqual(s.trace,['authorize','settle','authorize']);
+});
+
+test('access lost during settled usage reconciliation prevents output from reopening',async()=>{
+ const s=setup();s.control.beginModelInvocation=async()=>({state:'settled',tokens:'7',suggestion});
+ let calls=0;s.reader.authorize=async()=>{s.trace.push('authorize');if(++calls===2)throw Error('SOURCE_AUTHORITY_CHANGED');};
+ await assert.rejects(invokeReviewedModel(s),/SOURCE_AUTHORITY_CHANGED/);
+ assert.deepEqual(s.trace,['authorize','settle','authorize']);
+});

@@ -1,0 +1,31 @@
+{
+  "kind": "exact-source-checkpoint-preservation",
+  "sourceOnly": true,
+  "reconstruction": "Reversed only subsequent UTF-8 byte-limit and public-file-size fixes; both bytes match the exact SHA-256 values observed before those edits.",
+  "testHistory": {
+    "firstRun": {
+      "tests": 21,
+      "pass": 15,
+      "fail": 6,
+      "reason": "Controlled fixture fingerprints were not sorted; test fixture corrected without changing production guards."
+    },
+    "correctedRun": {
+      "tests": 21,
+      "pass": 21,
+      "fail": 0,
+      "proof": "Direct tool TAP output observed in this agent turn; not reconstructed as a saved TAP artifact."
+    }
+  },
+  "sources": [
+    {
+      "source": "tools/wave5/run_worker_v7_health_20261015_r5.mjs",
+      "preservedPath": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/health-launcher-21-test-checkpoint.mjs",
+      "sha256": "639881dbfc68c70741dd5714e4e5fd85142d0ee4705eec1e96e6c79c63880116"
+    },
+    {
+      "source": "tools/wave5/resume_worker_schedules_20261015_r5_a1.mjs",
+      "preservedPath": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/scheduler-21-test-checkpoint.mjs",
+      "sha256": "902878e90cc410ba56d56a7db962fe70bba73aa6021f031a17c4623d1ac6053b"
+    }
+  ]
+}

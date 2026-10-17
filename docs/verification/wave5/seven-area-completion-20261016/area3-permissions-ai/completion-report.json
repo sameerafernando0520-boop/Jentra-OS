@@ -1,0 +1,392 @@
+{
+  "kind": "area3-permissions-ai-operator-source-completion-review",
+  "generatedAt": "2026-10-16T12:14:12.118Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "assignedRequirementCount": 26,
+  "skills": [
+    "Supabase: supabase",
+    "engineering-advanced-skills: focused-fix (scope, trace, diagnosis and targeted verification)",
+    "engineering-advanced-skills: api-design-reviewer (contract principles; no OpenAPI score claimed)"
+  ],
+  "documentation": [
+    {
+      "url": "https://supabase.com/docs/guides/database/postgres/row-level-security",
+      "method": "Supabase search_docs",
+      "usedFor": "Current authorization, JWT freshness, service-key and MFA review"
+    },
+    {
+      "url": "https://supabase.com/changelog.md",
+      "method": "web open",
+      "result": "Unsupported markdown content-type; no claim of successful changelog scan"
+    }
+  ],
+  "scope": {
+    "entry": "worker_endpoints.mjs createReviewedModelHandler -> invokeReviewedModel",
+    "dependencies": [
+      "model_reader.mjs (caller-authenticated scoped evidence and live authorization)",
+      "persistent_control.mjs (trusted invocation and usage RPCs)",
+      "openai_model_adapter.mjs (reviewed provider and trusted usage)",
+      "supabase/migrations/20261008100000_wave5_invocation_storage.sql (immutable invocation/outcome storage)"
+    ],
+    "consumers": "All workers/wave5/*.test.mjs executed serially in one controlled Node test process"
+  },
+  "fixes": [
+    {
+      "id": "A3-01",
+      "severity": "high",
+      "problem": "Provider trustedUsage was checked after retrieval, quota reservation and provider generation.",
+      "change": "Reject untrusted usage adapters before protected retrieval or any side effect.",
+      "proof": "red-before-fix.tap test 5; focused-after-fix.tap test 5"
+    },
+    {
+      "id": "A3-02",
+      "severity": "medium",
+      "problem": "Settled replay performed usage settlement before checking persisted token quantity and suggestion.",
+      "change": "Apply shared exact usage/suggestion validation before replay settlement; malformed, over-budget and foreign suggestions cannot cause a settlement write.",
+      "proof": "red-before-fix.tap test 6; focused-after-fix.tap test 6 (five invalid fixtures)"
+    },
+    {
+      "id": "A3-03",
+      "severity": "high",
+      "problem": "Settled replay returned evidence after asynchronous usage settlement without a final source-authority check.",
+      "change": "Reauthorize the source after settlement and before returning a saved suggestion, matching the fresh invocation flow.",
+      "proof": "red-before-fix.tap tests 7-8; focused-after-fix.tap tests 7-8"
+    }
+  ],
+  "tests": {
+    "beforeFix": {
+      "binding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area3-permissions-ai/red-before-fix.tap",
+        "bytes": 4730,
+        "sha256": "fe505417e204caa70a6d0a9b8a0c45ae5c1b2e509f7b2afb299f6b3d8b6a905e"
+      },
+      "tests": 8,
+      "passed": 4,
+      "failed": 4,
+      "skipped": 0
+    },
+    "focusedAfterFix": {
+      "binding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area3-permissions-ai/focused-after-fix.tap",
+        "bytes": 3895,
+        "sha256": "154a9cb2869cab4f8a03f7b4e827d5c6939b090fd03be6910ce51d4eb95a2e73"
+      },
+      "tests": 16,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0
+    },
+    "allWorkersAfterFix": {
+      "binding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area3-permissions-ai/all-worker-after-fix.tap",
+        "bytes": 52223,
+        "sha256": "f5fcef9fc5556d02cccb3eaa279da779433dba32666aebeb09843ac1e4a5b978"
+      },
+      "tests": 260,
+      "passed": 260,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "sourceBindings": [
+    {
+      "path": "workers/wave5/model_runtime.mjs",
+      "bytes": 5939,
+      "sha256": "7776efd148c1257c4cd78eba3345b13fe19406012cd4b58f7b0a6769ef77a72e"
+    },
+    {
+      "path": "workers/wave5/model_runtime.test.mjs",
+      "bytes": 4671,
+      "sha256": "18269e047c204243dc0e6a18659f655350ec0a99d2f0879796144c18e849a018"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area3-permissions-ai/model_runtime.before.mjs",
+      "bytes": 5465,
+      "sha256": "fce748e511a81bdae957ff76275641142a738d8391132953d4d3c7eec03cfb99"
+    }
+  ],
+  "reviewedReferenceBindings": [
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/delegated-technical-acceptance-matrix.json",
+      "bytes": 682113,
+      "sha256": "b5298d9333030d758998322b4285a99669545d5052c2a1b83fc49299761664a6"
+    },
+    {
+      "path": "workers/wave5/model_reader.mjs",
+      "bytes": 1247,
+      "sha256": "9be9ac552738041fb14a1cea2f9fd5e8dda415399512692f11b7430cf634a0a9"
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.mjs",
+      "bytes": 3210,
+      "sha256": "a57cceb2ca5dc2bccc29861cdccb34bac7468a82a7fd402ecc5bd1810b6b0f5f"
+    },
+    {
+      "path": "workers/wave5/openai_model_adapter.mjs",
+      "bytes": 3194,
+      "sha256": "557fc6af5dba58910ac46c2d1ac661a0389355ccef7efddb9a3cad94a03201d3"
+    },
+    {
+      "path": "supabase/migrations/20261008100000_wave5_invocation_storage.sql",
+      "bytes": 19334,
+      "sha256": "a9bdd3bf5b1593bd3253930c5a0cd6286f576b7f81161a5832919efbc585d6e8"
+    },
+    {
+      "path": "supabase/migrations/20261006153000_wave5_operator_isolation.sql",
+      "bytes": 9342,
+      "sha256": "29ce2ed18e40fb3fbf916e11b9ae82742eb75a52f252085eed48da9af9d88e8b"
+    },
+    {
+      "path": "supabase/tests/wave5_operator_isolation_test.sql",
+      "bytes": 4771,
+      "sha256": "406cda83a83d60b45b24ddff0480dc4855476c2f6bc92ffa79fc7b59c58cf861"
+    },
+    {
+      "path": "supabase/tests/wave5_human_proposals_test.sql",
+      "bytes": 7251,
+      "sha256": "2403defdde67743ee31e3c77eaa1a726479437100c62bdeccae247a5bdda93d4"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-expiry-dependency-readonly-20261014-r5-a1.json",
+      "bytes": 16994,
+      "sha256": "0dc87893b6635d3ef4fb64c724e6aab2a42dd89d9d07ffc42251105f7c3141dc"
+    },
+    {
+      "path": "docs/verification/wave5/native-and-private-readiness-20261014-r5-a4.json",
+      "bytes": 575,
+      "sha256": "1130db0d2425f6822b31900f33789616b1059e946eaf6883134a55729161c34e"
+    }
+  ],
+  "rows": [
+    {
+      "id": "FR-501",
+      "fullStatement": "FR-501: Every query, job, proposal, integration, and command MUST carry a tenant and its applicable entity/branch scope, resolved against live membership rather than client-supplied actor or role claims.",
+      "statementSha256": "070032ff0eb0b5668be74284a3029af69b6a3296c20b5dfe63a6a8e34de45804",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Complete genuine scoped/foreign/branch and access-loss cases for every query, job, proposal, integration and command; 500 process/forecast reads with two sessions cover only those reads.",
+      "candidateImprovement": null
+    },
+    {
+      "id": "FR-503",
+      "fullStatement": "FR-503: Each metric MUST require its analytics capability, entitlement, and every underlying source permission; lost access MUST invalidate displayed evidence and prevent saved-result reopen or drill-through.",
+      "statementSha256": "231acc7076da1fa567a33d2fddf1c51da36a3b8e157adbd3f65206d248e7af31",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Verify live source permission/entitlement revocation for all metrics and saved-result creation/reopen/drill-through, including immediate protected display clearing.",
+      "candidateImprovement": "Settled model output now rechecks current source authority after settlement and before returning evidence. Native clearing and every other projection still need genuine actor evidence."
+    },
+    {
+      "id": "FR-504",
+      "fullStatement": "FR-504: Analytics projections MUST exclude private HR, credentials, payment details, unrestricted audit payloads, and raw free-text reasons by default; authorized private data MUST require a separately reviewed projection.",
+      "statementSha256": "01dc3db362fd557a6a9a09f729880d87d8f7b17f0a64c0e051f533e5451fde56",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Inspect every analytics projection, exported payload and prompt against the prohibited-field list; limited metadata and process wire-shape checks do not cover all projections.",
+      "candidateImprovement": null
+    },
+    {
+      "id": "NFR-501",
+      "fullStatement": "NFR-501: Every tenant-bearing base table MUST enable and force RLS; every new view/RPC/job/export MUST pass foreign-ID, cross-tenant, cross-branch, source-permission-loss, and anonymous-denial cases with zero leaked results.",
+      "statementSha256": "afaa90ae1b473f02b58f1bbdafd3e89391a776477b69ff21083ee609b3916217",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Installed metadata checks cover forced RLS/grants, but every new view/RPC/job/export still needs all anonymous/foreign/branch/source-revocation zero-leak behavior cases.",
+      "candidateImprovement": null
+    },
+    {
+      "id": "NFR-507",
+      "fullStatement": "NFR-507: Secret/PII checks of client binaries, exports, prompts and logs MUST find zero prohibited fields; access-revocation tests MUST clear visible evidence before another protected read or action is possible.",
+      "statementSha256": "b88ed469802877df6433f28c10b5be98c655b02f5f9ac9c9248b9750c5a44431",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Complete zero-prohibited-field scans of Connected binary, exports, actual prompts and logs plus native access-revocation display clearing before another protected action.",
+      "candidateImprovement": "Settled model output now rechecks current source authority after settlement and before returning evidence. Native clearing and every other projection still need genuine actor evidence."
+    },
+    {
+      "id": "AC-501",
+      "fullStatement": "AC-501: Scoped source access (FR-501, FR-503, FR-504, NFR-501, NFR-507) Given permitted and forbidden identities across two tenants and branches When a metric, job, drill-through, or saved result is requested and access changes Then only currently permitted projections are returned and protected evidence is cleared.",
+      "statementSha256": "c6ff83def6ec92e08a570767c034695f480cb24899973cdd352f013b0987ecd4",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Complete permitted/forbidden two-tenant/branch metric/job/detail/saved-result behavior before/after access changes and immediate visible evidence clearing.",
+      "candidateImprovement": "Settled model output now rechecks current source authority after settlement and before returning evidence. Native clearing and every other projection still need genuine actor evidence."
+    },
+    {
+      "id": "EC-501",
+      "fullStatement": "EC-501: Tenant/entity/branch mismatch or permission loss during a running job causes denial/cleared evidence, including report download; verify with AC-501.",
+      "statementSha256": "0ad2bee0655d42485402d3c57e1e2c9ba59d32bf0f8b921fcd53cbe77f23a9c6",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Exercise live tenant/entity/branch mismatch and permission loss during active jobs, including report download and cleared native evidence.",
+      "candidateImprovement": "Settled model output now rechecks current source authority after settlement and before returning evidence. Native clearing and every other projection still need genuine actor evidence."
+    },
+    {
+      "id": "FR-557",
+      "fullStatement": "FR-557: The source adapter MUST require existing `analytics.view`, `workflow.process.view`, the proposed `analytics` entitlement, and the allowlisted source-domain permission in the requested entity/branch, and MUST revalidate permitted source detail before drill-through.",
+      "statementSha256": "c606e5c2a51ffc38073b5a562bade6b83026610dd97bd28893526b69925523f0",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Exercise installed analytics/workflow/source capability, entitlement, tenant/entity/branch and current drill-through permission cases through genuine actors.",
+      "candidateImprovement": null
+    },
+    {
+      "id": "NFR-553",
+      "fullStatement": "NFR-553: Every adapter MUST pass anonymous, foreign tenant/entity/branch, own-event-without-source-permission, revoked access, and missing entitlement cases with zero protected rows or aggregate leakage.",
+      "statementSha256": "ea53bdd479b70e60687c9470fda1341515adec1978d6103eee9e32cecb6fcc39",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Complete all genuine anonymous/foreign/own-event-without-source-permission/revocation/missing-entitlement zero-leak adapter cases.",
+      "candidateImprovement": null
+    },
+    {
+      "id": "AC-554",
+      "fullStatement": "AC-554: Source permission is stronger than own-event visibility (FR-557, NFR-553) Given an event actor who lacks the underlying source-domain read permission When an aggregate or drill-through is requested with otherwise valid IDs Then neither the event projection nor its metric value is returned.",
+      "statementSha256": "75cb7f0b4d67936a5199d423cfdc1c61cfe321b7d7d9fbd32d7f26b501c66079",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Use a genuine own-event actor lacking source-domain permission and prove zero event/aggregate/detail output from the installed adapter.",
+      "candidateImprovement": null
+    },
+    {
+      "id": "EC-556",
+      "fullStatement": "EC-556: Null entity source, mismatched branch, foreign IDs, own-event RLS visibility, hidden source domain or capability loss does not grant analytics access; covered by AC-554/558.",
+      "statementSha256": "b75f70d2439d4e57add2c7db0854c7c6d0a20c60208a9b87805e22423ad49b20",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Domain foreign/null scopes reject correctly; genuine own-event RLS/source permission/capability loss adapter cases remain incomplete.",
+      "candidateImprovement": null
+    },
+    {
+      "id": "FR-516",
+      "fullStatement": "FR-516: AI retrieval MUST use an allowlist of scoped read tools and redact disallowed fields before any provider invocation; retrieved text MUST not grant permissions, choose tools, or override the application policy.",
+      "statementSha256": "8607f98af7a5c67350e873772cfab28a19d9a6e045811568ddb365c9844624e5",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Complete the reviewed private retrieval/provider path with genuine scoped evidence, malicious source text and field redaction before actual invocation; no model invocation occurred.",
+      "candidateImprovement": "Untrusted model adapters are rejected before retrieval; saved outcomes are validated before usage settlement. Controlled regression evidence only; actual provider/actor/settlement checks remain."
+    },
+    {
+      "id": "FR-517",
+      "fullStatement": "FR-517: An AI action MUST first create an immutable proposal revision containing its allowlisted command, target revisions, parameter hash, evidence references, explanation, expiry, and estimated resource budget.",
+      "statementSha256": "6bee3082ec894e5dd5e3d06334ed24ab390f1182f2267d70d9df7363afb5bc8d",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Read back genuine immutable proposals with exact allowlisted command, target versions/hash, evidence, explanation, expiry and budget; verify edit/revision behavior.",
+      "candidateImprovement": null
+    },
+    {
+      "id": "FR-518",
+      "fullStatement": "FR-518: Proposal approval MUST be an explicit online human decision bound to that exact revision/hash; a distinct approver with the required capability and MFA MUST approve a material mutation, and any edit MUST invalidate approval.",
+      "statementSha256": "b0c92aafdf8d11acc8b64db2a2e334e9d76f2066cec97a44f4f7916b019c840b",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Exercise genuine distinct proposer/approver sessions and MFA, self-approval denial, exact revision approval, edit invalidation and downgrade/expiry rejection.",
+      "candidateImprovement": null
+    },
+    {
+      "id": "FR-519",
+      "fullStatement": "FR-519: Execution MUST recheck approval, expiry, live source revisions, scope, permissions, entitlement, and limits, then invoke the existing business command once; AI MUST not run arbitrary SQL or bypass its posting checks.",
+      "statementSha256": "f84e2e854a02ef8007eef1fbdc42eaeeabe3c1801f3c367f6d0a58c4650c0ea0",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Run approved execution through existing business command checks with stale/expired/revoked targets and overlapping genuine executor requests.",
+      "candidateImprovement": null
+    },
+    {
+      "id": "FR-520",
+      "fullStatement": "FR-520: AI quota reservations and usage settlement MUST be recorded by a trusted worker using a unique invocation identity; provider retries and uncertain completion MUST not silently double-charge usage or execute twice.",
+      "statementSha256": "76ce358c7c90478aaabfc7cbdcc75ab0d8d7762270139e57950fe0aeff87af01",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Complete trusted worker invocation reservation/usage settlement, retries and unknown outcome reconciliation; the private model key and actual usage remain absent.",
+      "candidateImprovement": "Untrusted model adapters are rejected before retrieval; saved outcomes are validated before usage settlement. Controlled regression evidence only; actual provider/actor/settlement checks remain."
+    },
+    {
+      "id": "AC-507",
+      "fullStatement": "AC-507: Scoped AI retrieval (FR-516, NFR-507) Given malicious source text, private fields, and an unconfigured model provider When scoped retrieval and a model request are attempted Then only allowlisted redacted evidence is eligible and absent providers do not fabricate output.",
+      "statementSha256": "0c922d4c72d95a150cdf817ad5d7122e450a24c0281e2441492124283ea8b3b6",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Complete installed scoped retrieval/malicious text/private field and absent-provider attempts; full private coordinator/redaction behavior remains incomplete.",
+      "candidateImprovement": "Untrusted model adapters are rejected before retrieval; saved outcomes are validated before usage settlement. Controlled regression evidence only; actual provider/actor/settlement checks remain."
+    },
+    {
+      "id": "AC-508",
+      "fullStatement": "AC-508: Approval binds the proposed action (FR-517, FR-518) Given a proposal with target versions, expiry and exact parameter hash When the proposer self-approves, another user approves, or an approved revision is edited Then self-approval is denied and only the unchanged separately approved revision is executable.",
+      "statementSha256": "71213b00942c97588c20927dd74293fadd426c4f1429ee31fc4ece804a3c9c65",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Run genuine self-approval denial, distinct required-MFA approval and approved-revision edit invalidation through the installed workflow.",
+      "candidateImprovement": null
+    },
+    {
+      "id": "AC-509",
+      "fullStatement": "AC-509: Safe execution and AI usage (FR-502, FR-519, FR-520, NFR-506) Given an approved proposal, retries, uncertain provider completion, and a stale target When overlapping execution requests occur Then the existing business command validates live state and creates at most one effect/usage settlement.",
+      "statementSha256": "e4754b2b6e9916d1848b13aefe7a7df089838987644d2bcdfb1f3da35bf50339",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Run stale and overlapping genuine approved execution plus retries/unknown provider completion, reconciling exactly one business effect and usage settlement.",
+      "candidateImprovement": "Untrusted model adapters are rejected before retrieval; saved outcomes are validated before usage settlement. Controlled regression evidence only; actual provider/actor/settlement checks remain."
+    },
+    {
+      "id": "EC-507",
+      "fullStatement": "EC-507: Retrieved prompt injection, unavailable model, exhausted quota, or unknown provider outcome cannot authorize execution; verify with AC-507/509.",
+      "statementSha256": "1f90ef9ec8ef2596a3f84c9ccaa8863682a85cab2b8341e36ad55e447587e3bc",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Complete real reviewed retrieval injection/provider-unavailable/quota/unknown-outcome policy boundaries; no genuine model output or settlement exists.",
+      "candidateImprovement": "Untrusted model adapters are rejected before retrieval; saved outcomes are validated before usage settlement. Controlled regression evidence only; actual provider/actor/settlement checks remain."
+    },
+    {
+      "id": "EC-508",
+      "fullStatement": "EC-508: Approval expires, proposer equals approver, target changes, or MFA assurance drops; deny execution and retain proposal/decision; verify with AC-508/509.",
+      "statementSha256": "00d0c79010735867d30c6cf2554a1b6cad7802ab2f49336cc9d059c8bfb22cd3",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Complete genuine expiry/self-approval/stale-target/MFA-downgrade execution denials with retained proposal and decision evidence.",
+      "candidateImprovement": null
+    },
+    {
+      "id": "FR-527",
+      "fullStatement": "FR-527: Operator dashboards MUST expose only a separately authorized operational projection; a tenant owner role MUST not grant cross-tenant operator access, and business rows MUST remain outside default health views.",
+      "statementSha256": "c7e7a356da1e29826a3756b22d32514f31c63f250fba3443541a1377f52077f2",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Use the separate genuine MFA operator identity to verify owner denial, cross-tenant isolation and only reviewed health projections.",
+      "candidateImprovement": null
+    },
+    {
+      "id": "FR-528",
+      "fullStatement": "FR-528: Operator access to a selected tenant MUST require an explicit reasoned, expiring, MFA-protected access grant with immutable access audit; service-role credentials MUST remain absent from the desktop application.",
+      "statementSha256": "14dfbc2b1aeb42f3f821c3bbaeba88e85d9eadfef335a176b9bce4a1249d39e0",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Issue the exact reviewed expiring/reasoned operator authority and prove MFA access plus immutable audits and expiry/revocation; scan Connected binary for service secrets.",
+      "candidateImprovement": null
+    },
+    {
+      "id": "FR-529",
+      "fullStatement": "FR-529: Operator health MUST show bounded worker lag, retry/dead-letter counts, quota states, and contract readiness with generation timestamps; missing probes MUST be labelled unknown and MUST not imply healthy delivery.",
+      "statementSha256": "30781ea7164d5d0198fc8da9381476790549785f100e38ff6941ff57f6fe81cd",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Observe installed worker lag/retries/dead-letter/quota/readiness timestamps and missing-probe unknown states using real authorized operator reads.",
+      "candidateImprovement": null
+    },
+    {
+      "id": "AC-514",
+      "fullStatement": "AC-514: Operator isolation (FR-527, FR-528, FR-529, NFR-501, NFR-507) Given a tenant owner, an operator and an expiring tenant-access grant When each opens health or tenant evidence Then only permitted projections appear and unknown probes remain unknown with audited access.",
+      "statementSha256": "45aa36fe560bb515954d7f600ebd6027c101288cfde2d184c06291469c9b5a3f",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Run genuine tenant-owner/operator/grant expiry cases with authorized projections, audit and stopped-probe unknown readiness.",
+      "candidateImprovement": null
+    },
+    {
+      "id": "EC-512",
+      "fullStatement": "EC-512: Operator grant expires mid-read or health probes stop reporting; deny tenant evidence and display unknown readiness; verify with AC-514.",
+      "statementSha256": "004d050caf89e79ecd15be6c8aab5e5a00a5c839acc45dcf81410c6576b6a16e",
+      "acceptanceRecommendation": "remain_open",
+      "remainingEvidence": "Exercise real operator grant expiry mid-read and stopped health probes with access denial and unknown readiness.",
+      "candidateImprovement": null
+    }
+  ],
+  "acceptedThisPass": 0,
+  "remainingAssignedRows": 26,
+  "actualBoundaries": {
+    "liveSqlCalls": 0,
+    "providerCalls": 0,
+    "privateInputsRead": false,
+    "SDKJobs": 0,
+    "deployments": 0,
+    "frozenOrVersionedV7FilesModified": false,
+    "liveInstalledFixClaimed": false,
+    "genuineActorMatrixCompleted": false,
+    "genuineMfaOperatorVerified": false,
+    "actualProviderUsageReconciled": false,
+    "authenticatedNativeAcceptance": false
+  },
+  "remainingActions": [
+    "Independent source review and new exact source bindings before any candidate deployment.",
+    "Use genuinely authenticated permitted/forbidden tenant/entity/branch actors for all 11 protected-source rows.",
+    "Run actual reviewed provider retrieval, distinct MFA approval, execution denials and trusted settlement/unknown reconciliation for all 10 AI rows.",
+    "Use the separate authorized MFA operator, expiring reasoned grant and stopped-probe cases for all 5 operator rows."
+  ],
+  "historicalEvidenceBoundary": "October 14 snapshots were inspected as historical evidence only. They show both expired runtime windows, paused jobs, no operator authority, and no sealed model input. This agent made no fresh live or private observation."
+}

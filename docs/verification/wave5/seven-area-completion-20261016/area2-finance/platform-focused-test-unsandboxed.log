@@ -1,0 +1,30 @@
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/historical_pipeline_gateway_test.dart
+00:00 +0: realized documents preserve exact signed invoices and credits within the frozen currency cohort
+00:00 +1: realized mappings reject duplicate IDs, foreign cohorts, signed mismatch and out-of-range SQL revisions
+00:00 +2: trusted historical wire preserves decimal scale and ignores object key order
+00:00 +3: foreign scope and altered digest fail before exposing a total
+00:00 +4: reversed history cutoffs fail before invoking the authority
+00:00 +5: malformed history cutoffs fail before invoking the authority
+00:00 +5 -1: malformed history cutoffs fail before invoking the authority [E]
+  Expected: throws <Instance of 'FormatException'>
+    Actual: <Instance of 'Future<HistoricalPipelineMetrics>'>
+     Which: threw DomainError:<DomainError(VALIDATION_ERROR, A valid UTC instant is required.)>
+            stack package:jentra_domain/src/analytics/process_metrics.dart 529:5                _invalid
+                  package:jentra_domain/src/analytics/process_metrics.dart 65:22                parseProcessMetricUtc
+                  package:jentra_platform/src/analytics/historical_pipeline_gateway.dart 92:28  HistoricalPipelineGateway.read
+                  test\analytics\historical_pipeline_gateway_test.dart 224:19                   main.<fn>
+                  ===== asynchronous gap ===========================
+                  package:matcher                                                               expectLater
+                  package:flutter_test/src/widget_tester.dart 507:8                             expectLater
+                  test\analytics\historical_pipeline_gateway_test.dart 223:15                   main.<fn>
+                  
+            which is not an instance of 'FormatException'
+  
+  package:matcher                                              expectLater
+  package:flutter_test/src/widget_tester.dart 507:8            expectLater
+  test\analytics\historical_pipeline_gateway_test.dart 223:15  main.<fn>
+  
+00:00 +5 -1: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/historical_pipeline_gateway_test.dart: malformed history cutoffs fail before invoking the authority

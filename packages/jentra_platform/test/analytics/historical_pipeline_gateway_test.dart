@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jentra_domain/analytics.dart';
+import 'package:jentra_domain/jentra_domain.dart' show DomainError;
 import 'package:jentra_platform/analytics_platform.dart';
 
 String id(int i) => '10000000-0000-0000-0000-${i.toString().padLeft(12, '0')}';
@@ -103,6 +104,11 @@ void main() {
         [
           {...base, 'postedAt': '2026-11-03T00:00:00Z'},
         ],
+        [
+          // Both currencies exist in this forecast. A document must still
+          // match the currency of its own frozen opportunity.
+          {...base, 'currency': opportunity.currency == 'LKR' ? 'USD' : 'LKR'},
+        ],
       ]) {
         await expectLater(
           HistoricalPipelineGateway(
@@ -189,6 +195,44 @@ void main() {
           throwsFormatException,
         );
       }
+    },
+  );
+  test('reversed history cutoffs fail before invoking the authority', () async {
+    var calls = 0;
+    final gateway = HistoricalPipelineGateway((_, _) async {
+      calls++;
+      return wire();
+    });
+    await expectLater(
+      gateway.read(scope, '2026-10-03T00:00:00Z', '2026-10-02T00:00:00Z'),
+      throwsFormatException,
+    );
+    expect(calls, 0);
+  });
+  test(
+    'malformed history cutoffs fail before invoking the authority',
+    () async {
+      var calls = 0;
+      final gateway = HistoricalPipelineGateway((_, _) async {
+        calls++;
+        return wire();
+      });
+      for (final dates in [
+        ('2026-10-03', '2026-10-03T00:00:00Z'),
+        ('2026-10-03T00:00:00Z', '2026-10-03T00:00:00+05:30'),
+      ]) {
+        await expectLater(
+          gateway.read(scope, dates.$1, dates.$2),
+          throwsA(
+            isA<DomainError>().having(
+              (error) => error.code,
+              'code',
+              'VALIDATION_ERROR',
+            ),
+          ),
+        );
+      }
+      expect(calls, 0);
     },
   );
 }

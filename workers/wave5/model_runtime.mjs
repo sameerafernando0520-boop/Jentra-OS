@@ -37,8 +37,17 @@ export function validateModelSuggestion(output,evidence) {
  return Object.freeze({...output});
 }
 
+function validateTrustedOutcome(response,maxTokens,evidence) {
+ requireValue(response && typeof response.tokens==='string' && /^(0|[1-9][0-9]{0,6})$/.test(response.tokens) &&
+  BigInt(response.tokens)<=BigInt(maxTokens),'TRUSTED_USAGE_MISMATCH');
+ return validateModelSuggestion(response.suggestion,evidence);
+}
+
 export async function invokeReviewedModel({reader,control,provider,request,policy}) {
  requireValue(policy?.revision===1 && policy?.approved===true && provider?.policyRevision===1,'MODEL_PROVIDER_UNAVAILABLE');
+ // A provider without the reviewed usage contract must not receive evidence,
+ // reserve quota, or send a request before its adapter is rejected.
+ requireValue(provider.trustedUsage===true,'TRUSTED_USAGE_MISMATCH');
  requireValue(request && uuid.test(request.invocationId) && uuid.test(request.usageEventId) &&
   typeof request.maxTokens==='string' && /^[1-9][0-9]{0,6}$/.test(request.maxTokens),'VALIDATION_ERROR');
  const evidence=redactForecastEvidence(await reader.forecast(request));
@@ -47,9 +56,11 @@ export async function invokeReviewedModel({reader,control,provider,request,polic
   manifestHash:digest,policyRevision:1});
  // Persisted settled output can reopen; pending/unknown never issues a new send.
  if(invocation.state==='settled') {
+  const suggestion=validateTrustedOutcome(invocation,request.maxTokens,evidence);
   await reader.authorize(request,evidence);
   await control.settleUsage({tenantId:evidence.scope.tenantId,invocationId:request.invocationId,eventId:request.usageEventId,quantity:invocation.tokens});
-  return validateModelSuggestion(invocation.suggestion,evidence);
+  await reader.authorize(request,evidence);
+  return suggestion;
  }
  requireValue(invocation.state==='new','MODEL_OUTCOME_REQUIRES_REVIEW');
  await control.reserveUsage({tenantId:evidence.scope.tenantId,invocationId:request.invocationId,metric:'ai.tokens',
@@ -65,9 +76,8 @@ export async function invokeReviewedModel({reader,control,provider,request,polic
  // or generated JSON usage field cannot settle the trusted reservation.
  let suggestion;
  try {
-  requireValue(provider.trustedUsage===true && typeof response.tokens==='string' && /^(0|[1-9][0-9]{0,6})$/.test(response.tokens) &&
-   BigInt(response.tokens)<=BigInt(request.maxTokens),'TRUSTED_USAGE_MISMATCH');
-  suggestion=validateModelSuggestion(response.suggestion,evidence);
+  requireValue(provider.trustedUsage===true,'TRUSTED_USAGE_MISMATCH');
+  suggestion=validateTrustedOutcome(response,request.maxTokens,evidence);
  } catch(error) {await control.recordModelOutcome(request.invocationId,{state:'unknown'});throw error;}
  await control.recordModelOutcome(request.invocationId,{state:'settled',tokens:response.tokens,suggestion});
  await control.settleUsage({tenantId:evidence.scope.tenantId,invocationId:request.invocationId,eventId:request.usageEventId,quantity:response.tokens});

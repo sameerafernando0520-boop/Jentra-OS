@@ -1,0 +1,727 @@
+{
+  "kind": "independent-seven-area-quality-and-release-review",
+  "recordedAt": "2026-10-16T19:10:10.792Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "areaPartition": [
+    {
+      "area": 1,
+      "rowIds": [
+        "FR-530",
+        "FR-531",
+        "NFR-508",
+        "AC-515",
+        "EC-513",
+        "FR-558",
+        "FR-559",
+        "AC-556",
+        "EC-558"
+      ],
+      "count": 9
+    },
+    {
+      "area": 2,
+      "rowIds": [
+        "FR-505",
+        "FR-506",
+        "FR-509",
+        "FR-510",
+        "FR-511",
+        "FR-512",
+        "FR-513",
+        "FR-514",
+        "NFR-502",
+        "NFR-510",
+        "AC-504",
+        "AC-505",
+        "EC-504",
+        "EC-505",
+        "FR-552"
+      ],
+      "count": 15
+    },
+    {
+      "area": 3,
+      "rowIds": [
+        "FR-501",
+        "FR-503",
+        "FR-504",
+        "NFR-501",
+        "NFR-507",
+        "AC-501",
+        "EC-501",
+        "FR-557",
+        "NFR-553",
+        "AC-554",
+        "EC-556",
+        "FR-516",
+        "FR-517",
+        "FR-518",
+        "FR-519",
+        "FR-520",
+        "AC-507",
+        "AC-508",
+        "AC-509",
+        "EC-507",
+        "EC-508",
+        "FR-527",
+        "FR-528",
+        "FR-529",
+        "AC-514",
+        "EC-512"
+      ],
+      "count": 26
+    },
+    {
+      "area": 4,
+      "rowIds": [
+        "FR-515",
+        "FR-535",
+        "AC-506",
+        "EC-506",
+        "FR-521",
+        "FR-522",
+        "FR-523",
+        "AC-510",
+        "AC-511",
+        "EC-509",
+        "EC-510"
+      ],
+      "count": 11
+    },
+    {
+      "area": 5,
+      "rowIds": [
+        "FR-524",
+        "FR-525",
+        "FR-526",
+        "AC-512",
+        "AC-513",
+        "EC-511"
+      ],
+      "count": 6
+    },
+    {
+      "area": 6,
+      "rowIds": [
+        "FR-502",
+        "FR-508",
+        "NFR-503",
+        "NFR-504",
+        "NFR-505",
+        "NFR-506",
+        "AC-503",
+        "EC-514",
+        "NFR-552",
+        "AC-555",
+        "EC-557"
+      ],
+      "count": 11
+    },
+    {
+      "area": 7,
+      "rowIds": [
+        "FR-533",
+        "FR-560",
+        "AC-516",
+        "EC-515",
+        "FR-532",
+        "NFR-509",
+        "NFR-554",
+        "AC-558"
+      ],
+      "count": 8
+    }
+  ],
+  "assignedOpenRows": 86,
+  "totalAccepted": 23,
+  "newAcceptanceRecommended": 0,
+  "area7Rows": [
+    {
+      "id": "FR-532",
+      "fullStatement": "FR-532: Every provider adapter MUST advertise its supported contract revision and readiness; missing or incompatible providers MUST block only dependent operations and MUST not turn fixture data into live evidence.",
+      "statementSha256": "c9db2a8fbe85645cfda098355b082314b39b7d9addeb72aeac4f72f2be32b444",
+      "decision": "remain_open",
+      "reason": "Actual installed provider readiness/missing/incompatible and dependent-operation isolation across all required adapters remain unproved; fixture success grants no live evidence."
+    },
+    {
+      "id": "FR-533",
+      "fullStatement": "FR-533: Wave 5 development MUST use additive owned paths, preserve concurrent Wave 3/4 work, and refresh source ownership before changing any shared composition, authorization, report, workflow, or finance contract.",
+      "statementSha256": "22e7b6fe59d689db908c3c73919b717e4288944e96391a78c7422b871b76a7be",
+      "decision": "remain_open",
+      "reason": "The bounded current ownership is attributable; complete historical refresh for every shared composition/authorization/report/workflow/finance integration is not established."
+    },
+    {
+      "id": "NFR-509",
+      "fullStatement": "NFR-509: Analysis MUST report zero warnings/errors; critical changed domain branches MUST target at least 90% coverage, with deterministic fixtures for every acceptance criterion and edge case.",
+      "statementSha256": "bdbe466982bcbc8f3d1cd92637e82c790acf5ee97b27aacbc70dd38ae9555eea",
+      "decision": "remain_open",
+      "reason": "Scoped changed-source analysis and controlled cases pass. Current whole-source zero-findings, critical-domain branch coverage tied to current source, and deterministic coverage of all criteria/edge cases remain required."
+    },
+    {
+      "id": "AC-516",
+      "fullStatement": "AC-516: Concurrent development boundary (FR-533, FR-534) Given an active Wave 3/4 checkout and installed-development ledger When Wave 5 changes and candidate verification occur Then owned paths remain attributable and candidate effects roll back without implicit installation.",
+      "statementSha256": "6cc7b1dd4c87570002b2adee3fe98ef445ef95f6d33bd11a10ef09704dc601c1",
+      "decision": "remain_open",
+      "reason": "Historical rollback and installed ledger are distinct and retained; a complete concurrent shared-change attribution and integration history remains required."
+    },
+    {
+      "id": "EC-515",
+      "fullStatement": "EC-515: A parallel chat changes a shared provider signature or source file; refresh ownership/fingerprint before integration; verify with AC-516.",
+      "statementSha256": "9ebb4d2913737b3cfba906530c9139dd0f6b15f4fcdfb7dd89317dd13e230896",
+      "decision": "remain_open",
+      "reason": "Current source fingerprints are refreshed here; a complete independently bound shared-provider drift/ownership integration event remains required."
+    },
+    {
+      "id": "FR-560",
+      "fullStatement": "FR-560: Development MUST use new slice-owned files first, with no edits to shared barrels, router, main, existing migrations, dashboard metrics, or process-event producers until ownership is refreshed for integration.",
+      "statementSha256": "68d87f171f1da6e71370aa34350774bd43be18e4e6e16cb56ccf98ace850e43d",
+      "decision": "remain_open",
+      "reason": "Preserved first slice work and present ownership do not reconstruct every later shared barrel/router/main/migration/dashboard/producer ownership refresh."
+    },
+    {
+      "id": "NFR-554",
+      "fullStatement": "NFR-554: Deterministic domain cases MUST cover input permutations, exact boundaries, duplicates and malformed source rows; native previews MUST cover both themes/densities and 200% text, and source analysis MUST have zero findings.",
+      "statementSha256": "373dfb02eccca0dace0ba00ca42bfde3823a4c838381355dd3ffe81c0e2d32d2",
+      "decision": "remain_open",
+      "reason": "Historical process fixtures and preview results exist, but complete current source-bound native theme/density/200% variants are not authenticated native acceptance."
+    },
+    {
+      "id": "AC-558",
+      "fullStatement": "AC-558: Source and quality contract (FR-551, FR-552, NFR-554) Given malformed scope/UTC/manifest data and a verified immutable definition When domain verification and analysis run Then invalid input is rejected deterministically and all required cases pass without analysis findings.",
+      "statementSha256": "8d7adafad44676781025ba380e77b032f00f1fd17698b4d78c17a81a6f871506",
+      "decision": "remain_open",
+      "reason": "Malformed scope/UTC/manifest domain cases pass in retained evidence; linked complete provider snapshot and current native quality cases remain incomplete."
+    }
+  ],
+  "sourceEvidenceBindingsChecked": 51,
+  "uniqueVerifiedBindings": [
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/delegated-technical-acceptance-matrix.json",
+      "bytes": 682113,
+      "sha256": "b5298d9333030d758998322b4285a99669545d5052c2a1b83fc49299761664a6"
+    },
+    {
+      "path": "packages/jentra_platform/lib/src/analytics/historical_pipeline_gateway.dart",
+      "bytes": 6979,
+      "sha256": "88db6efe43d879fbad0d408d1b111c423e1f73030e397e13aec622b519648a7e"
+    },
+    {
+      "path": "packages/jentra_platform/test/analytics/historical_pipeline_gateway_test.dart",
+      "bytes": 7219,
+      "sha256": "415702247dfaf3e625950f162242d100da623f0f418ac08e7503a3d1ca389dda"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area2-finance/audit_financial_evidence.mjs",
+      "bytes": 6063,
+      "sha256": "5a4d4caa03a21c3125cb073f5cbdce021d4821bdd3dee808ca4f7b6b85f90d0c"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area2-finance/audit_financial_evidence.test.mjs",
+      "bytes": 3191,
+      "sha256": "ae3bfac1e5f195ceb1ad9323f8bbfd1b61111bc908b862dca59d08479864ff9d"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area2-finance/financial-evidence-reproduction.json",
+      "bytes": 4113,
+      "sha256": "71773a16471c032bf0be9cc431c3fb70120e89bf43a4a0ab3726434af933c977"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area2-finance/platform-focused-test.log",
+      "bytes": 249,
+      "sha256": "bd70674ac5b6ef275bd42a56a3dcbd888b14acf65cad203723dee2c80174a5f6"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area2-finance/platform-focused-test-unsandboxed.log",
+      "bytes": 2342,
+      "sha256": "4ee0989d3d139d1d5794837440edf3e41abe96ad3103a5228e6da5349483a67f"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area2-finance/platform-focused-test-final.log",
+      "bytes": 685,
+      "sha256": "70d1e07252ae6ae0a9567c3b9dca6fc507c15588c5eca47ab8b3911a099ea3de"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area2-finance/scoped-analysis.log",
+      "bytes": 104,
+      "sha256": "bff6260190b3253b409762fd502c6ab2444875b35deb9f2417b6b696faf6da1a"
+    },
+    {
+      "path": "supabase/migrations/20261008090000_wave5_historical_pipeline.sql",
+      "bytes": 9101,
+      "sha256": "183a8688dd2c78a9e13032a165d2e1787b3d8f9dd4a15aee9b201eddf4767768"
+    },
+    {
+      "path": "workers/wave5/model_runtime.mjs",
+      "bytes": 5939,
+      "sha256": "7776efd148c1257c4cd78eba3345b13fe19406012cd4b58f7b0a6769ef77a72e"
+    },
+    {
+      "path": "workers/wave5/model_runtime.test.mjs",
+      "bytes": 4671,
+      "sha256": "18269e047c204243dc0e6a18659f655350ec0a99d2f0879796144c18e849a018"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area3-permissions-ai/model_runtime.before.mjs",
+      "bytes": 5465,
+      "sha256": "fce748e511a81bdae957ff76275641142a738d8391132953d4d3c7eec03cfb99"
+    },
+    {
+      "path": "workers/wave5/model_reader.mjs",
+      "bytes": 1247,
+      "sha256": "9be9ac552738041fb14a1cea2f9fd5e8dda415399512692f11b7430cf634a0a9"
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.mjs",
+      "bytes": 3210,
+      "sha256": "a57cceb2ca5dc2bccc29861cdccb34bac7468a82a7fd402ecc5bd1810b6b0f5f"
+    },
+    {
+      "path": "workers/wave5/openai_model_adapter.mjs",
+      "bytes": 3194,
+      "sha256": "557fc6af5dba58910ac46c2d1ac661a0389355ccef7efddb9a3cad94a03201d3"
+    },
+    {
+      "path": "supabase/migrations/20261008100000_wave5_invocation_storage.sql",
+      "bytes": 19334,
+      "sha256": "a9bdd3bf5b1593bd3253930c5a0cd6286f576b7f81161a5832919efbc585d6e8"
+    },
+    {
+      "path": "supabase/migrations/20261006153000_wave5_operator_isolation.sql",
+      "bytes": 9342,
+      "sha256": "29ce2ed18e40fb3fbf916e11b9ae82742eb75a52f252085eed48da9af9d88e8b"
+    },
+    {
+      "path": "supabase/tests/wave5_operator_isolation_test.sql",
+      "bytes": 4771,
+      "sha256": "406cda83a83d60b45b24ddff0480dc4855476c2f6bc92ffa79fc7b59c58cf861"
+    },
+    {
+      "path": "supabase/tests/wave5_human_proposals_test.sql",
+      "bytes": 7251,
+      "sha256": "2403defdde67743ee31e3c77eaa1a726479437100c62bdeccae247a5bdda93d4"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-expiry-dependency-readonly-20261014-r5-a1.json",
+      "bytes": 16994,
+      "sha256": "0dc87893b6635d3ef4fb64c724e6aab2a42dd89d9d07ffc42251105f7c3141dc"
+    },
+    {
+      "path": "docs/verification/wave5/native-and-private-readiness-20261014-r5-a4.json",
+      "bytes": 575,
+      "sha256": "1130db0d2425f6822b31900f33789616b1059e946eaf6883134a55729161c34e"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area3-permissions-ai/red-before-fix.tap",
+      "bytes": 4730,
+      "sha256": "fe505417e204caa70a6d0a9b8a0c45ae5c1b2e509f7b2afb299f6b3d8b6a905e"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area3-permissions-ai/focused-after-fix.tap",
+      "bytes": 3895,
+      "sha256": "154a9cb2869cab4f8a03f7b4e827d5c6939b090fd03be6910ce51d4eb95a2e73"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area3-permissions-ai/all-worker-after-fix.tap",
+      "bytes": 52223,
+      "sha256": "f5fcef9fc5556d02cccb3eaa279da779433dba32666aebeb09843ac1e4a5b978"
+    },
+    {
+      "path": "packages/jentra_platform/lib/src/analytics/wave5_control_gateway.dart",
+      "bytes": 16497,
+      "sha256": "6755dd4d4ef2a74fcbbcd52fb1fc172c47fe12ba6a9f8c773dfe2449aa3bdbdb"
+    },
+    {
+      "path": "packages/jentra_platform/test/analytics/wave5_usage_period_20261016_test.dart",
+      "bytes": 1887,
+      "sha256": "0378722e5cc0672e0b92f86324aa30b92114be57778c84eb3b93fb25fa8b9e28"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area5-subscriptions/wave5_control_gateway.before.dart",
+      "bytes": 16375,
+      "sha256": "5f0992c128f48814b475a61fc6e5532a9789d90b85b289ae881727b2ef7e1029"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area5-subscriptions/red-regression.log",
+      "bytes": 249,
+      "sha256": "bd70674ac5b6ef275bd42a56a3dcbd888b14acf65cad203723dee2c80174a5f6"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area5-subscriptions/red-regression-20261017.log",
+      "bytes": 3371,
+      "sha256": "f374fcf43bfb2ffd9458c56cb8530c62c934edc088ac133f9e12ba30d19c26d4"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area5-subscriptions/green-regression-20261017.log",
+      "bytes": 472,
+      "sha256": "2acbcc47e07f13ae2a7abbfb52e8da56d969c0d3ea9006b88105de63085cdb06"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area5-subscriptions/analyze-20261017.log",
+      "bytes": 98,
+      "sha256": "572aa765250342fddcc9397b9e9114253baa03e4b9ae1706e62e1ca473b0e914"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area5-subscriptions/format.log",
+      "bytes": 168,
+      "sha256": "d810c90978fa471a2a5f2a9cab5056a870a372917599b1054ef8751cc0f73cf7"
+    },
+    {
+      "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "bytes": 14205,
+      "sha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e"
+    },
+    {
+      "path": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "bytes": 12761,
+      "sha256": "339e9e86074887d164dd339eb17ac54943c39fca0caf50db575c48529456a9f5"
+    },
+    {
+      "path": "supabase/tests/wave5_trusted_metering_test.sql",
+      "bytes": 5502,
+      "sha256": "bea1cc526f081d058d7af1269eb60a969fb2298f168c6f32dfeb0ac4754d2605"
+    },
+    {
+      "path": "supabase/tests/wave5_synthetic_subscriptions_test.sql",
+      "bytes": 7090,
+      "sha256": "5f95742ec6695481ab6eb99b75e8ad2064caaef2f25146d76a4080999c93bb62"
+    },
+    {
+      "path": "tools/wave5/runtime_fixture_spec.mjs",
+      "bytes": 36370,
+      "sha256": "71dd763620cab0ca896dd96c50193350f1926e67f481acfed9b7aaa4b519f2d2"
+    },
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "bytes": 31294,
+      "sha256": "7bc04153aa169c2f85f4371c74319c2eded1f6666a97609ba29f5a2ad94d1da2"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area5-subscriptions/verify_area5.mjs",
+      "bytes": 4610,
+      "sha256": "85df88037a41512c3b0a8477e70e9a0c2e99bf15b9aa2ec9451ec6559dcd8e16"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area5-subscriptions/README.md",
+      "bytes": 4380,
+      "sha256": "06290eb4b07623d44fb08337345306a8a7b4f8e5618b8eb1fb17f9e40cf665ed"
+    },
+    {
+      "path": "docs/verification/wave5/subscription-development-result-20261006.json",
+      "bytes": 17176,
+      "sha256": "7b9d1f30be3ef31d3a8268209ff5e88b6bfb5b72e3d2acfae37a44aa2469d4e0"
+    },
+    {
+      "path": "docs/verification/wave5/subscription-native-development-result-20261006.json",
+      "bytes": 17735,
+      "sha256": "abc1a3ef19063b2167dff55e3cfdbb8391cce89e8485b5b74039b60c848e074e"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/root-readonly-attempt-a1.json",
+      "bytes": 6771,
+      "sha256": "5b9b136a1e0b414b40a8cd314e9a7b1b6a7ea201c594cd12e510562fb3b105a4"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/root-readonly-result-a1.json",
+      "bytes": 13758,
+      "sha256": "010900eea3f210b95d1d9e3f5e15b8c59663d90ad8f638fdc8e3cc919703b7de"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/root-advisors-attempt-a1.json",
+      "bytes": 290,
+      "sha256": "47822988c8200b8adf01a3d9ced4a24f2f79440152418c6ddfe38d1cf0d55bd2"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/root-security-advisors-result-a1.json",
+      "bytes": 52328,
+      "sha256": "865b97745c013beb18414231699e10e58b585f98f8bff57de16448fba4b7c18b"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/root-performance-advisors-result-a1.json",
+      "bytes": 331372,
+      "sha256": "cb45cd5bcc061edb44ebeb8b150d255b5c25e0d5b838f504754b9eef38e51722"
+    }
+  ],
+  "semanticReviews": [
+    {
+      "area": 2,
+      "conclusion": "No confirmed defect in changed currency/cohort or parsed-cutoff checks.",
+      "evidence": "6 focused Flutter cases, scoped analyzer zero findings, 8 controlled retained-finance audit cases; author logs inspected and hashes verified, not rerun here."
+    },
+    {
+      "area": 3,
+      "conclusion": "Early trusted-usage guard precedes protected evidence/quota/provider work; replay validates usage/suggestion before settlement and reauthorizes after await.",
+      "evidence": "16 focused and 260 whole-worker controlled cases; actual provider deployment/use remains unproved."
+    },
+    {
+      "area": 5,
+      "conclusion": "Positive authoritative period required; historical generatedAt after periodEnd remains valid. Exact arithmetic/requested period checks retained.",
+      "evidence": "5 focused Flutter cases and scoped analyzer zero findings; no live quota race."
+    },
+    {
+      "area": 6,
+      "conclusion": "Trace validator recomputes coverage, scheduled slots, operation classes and P95. Cross-session connection reuse question sent to area author before final freeze.",
+      "evidence": "Author work in progress; final source hash/review follow-up will be additive."
+    },
+    {
+      "area": 4,
+      "conclusion": "Draft health/scheduler operation launchers remain separate from actual execution.",
+      "evidence": "Author controlled checkpoint inspected; final source package and independent review pending."
+    }
+  ],
+  "actualWorkerControlledLog": {
+    "binding": {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area3-permissions-ai/all-worker-after-fix.tap",
+      "bytes": 52223,
+      "sha256": "f5fcef9fc5556d02cccb3eaa279da779433dba32666aebeb09843ac1e4a5b978"
+    },
+    "tests": 260,
+    "passed": 260,
+    "failed": 0,
+    "skipped": 0
+  },
+  "currentSavedObservation": {
+    "binding": {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/current-state-verification-a1.json",
+      "bytes": 3948,
+      "sha256": "1d10f95d8c0f23534d101475f1a5d72dcff6711296a6dc59a064fb03a28590fb"
+    },
+    "databaseObservedAt": "2026-10-16T12:13:25.833347+00:00",
+    "cumulativeCharge": 137,
+    "ledger": 115,
+    "apiFunctions": 363,
+    "expiredAuthorities": true,
+    "pausedJobs": 3,
+    "ticks": 0,
+    "exports": 0,
+    "scenarios": 0,
+    "advisorGroups": {
+      "security": [
+        {
+          "name": "rls_enabled_no_policy",
+          "level": "INFO",
+          "count": 215,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy"
+        },
+        {
+          "name": "auth_leaked_password_protection",
+          "level": "WARN",
+          "count": 1,
+          "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection"
+        }
+      ],
+      "performance": [
+        {
+          "name": "unindexed_foreign_keys",
+          "level": "INFO",
+          "count": 289,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys"
+        },
+        {
+          "name": "no_primary_key",
+          "level": "INFO",
+          "count": 1,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0004_no_primary_key"
+        },
+        {
+          "name": "unused_index",
+          "level": "INFO",
+          "count": 781,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index"
+        },
+        {
+          "name": "duplicate_index",
+          "level": "WARN",
+          "count": 1,
+          "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0009_duplicate_index"
+        }
+      ]
+    }
+  },
+  "release": {
+    "verdict": "NOT_READY_FOR_PRODUCTION",
+    "historicalShipGate": {
+      "binding": {
+        "path": "docs/verification/wave5/task3-load-release-20261013/source-release-checks.json",
+        "bytes": 133659,
+        "sha256": "01469327f00b071b200aac07475046020e2967c228b5ab594eeb1729cd4c80d5"
+      },
+      "checks": 89,
+      "totals": {
+        "PASS": 21,
+        "MANUAL": 48,
+        "SKIP": 20
+      },
+      "originalObservedAt": "2026-10-13T18:27:33.832Z",
+      "currentWholeSourceScanClaimed": false
+    },
+    "ciBinding": {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 3745,
+      "sha256": "2bef7e532bf197428361e1c38ac163aaecf8e695de98a017f9418831d122b548"
+    },
+    "unsignedBuildConfigured": true,
+    "gates": [
+      {
+        "gate": "staging-production separation and migration rehearsal",
+        "status": "missing executed evidence in reviewed artifacts"
+      },
+      {
+        "gate": "isolated backup restore and consistency/recovery verification",
+        "status": "missing executed evidence in reviewed artifacts"
+      },
+      {
+        "gate": "monitoring and delivered alert receipt",
+        "status": "missing executed evidence in reviewed artifacts"
+      },
+      {
+        "gate": "signed MSIX and clean-account installation/upgrade/rollback",
+        "status": "unsigned CI only; separate certificate metadata observation saved"
+      },
+      {
+        "gate": "performance and accessibility certification",
+        "status": "actual target load and authenticated native variant matrix incomplete"
+      },
+      {
+        "gate": "controlled pilot and release decision",
+        "status": "missing executed evidence in reviewed artifacts"
+      }
+    ],
+    "advisorMeaning": "No ERROR-level advisor entries in saved observation. INFO RLS/no-policy findings are not proof of access leakage; index findings are not measured latency. Leaked-password-protection and duplicate-index WARNs require scoped resolution/review, not automatic waiver or destructive index deletion."
+  },
+  "historicalCoverage": {
+    "binding": {
+      "path": "docs/verification/wave5/coverage-final-20261006.json",
+      "bytes": 5991,
+      "sha256": "232299577913d143dc926a841b7d32c9ef53b13dd4ea8f77802d2c12f20c9ce6"
+    },
+    "originalScope": "Changed Wave 5 analytics files only; no full-wave acceptance inferred",
+    "criticalDomainBranchesAtLeast90": true,
+    "currentSourceComparisons": [
+      {
+        "path": "packages/jentra_domain/lib/src/analytics/cash_scenarios.dart",
+        "originalSha256": "a69bb0fb2e7d4ca73c25dfcb18fa52145fa9930f466ec37fb9bc6c24c0d9574b",
+        "currentSha256": "e45f69c3964a64fc33016d4639fd065a00ee4ce8f40ef3f8c12e9e96e97ae12f",
+        "branchPercent": 100
+      },
+      {
+        "path": "packages/jentra_domain/lib/src/analytics/forecast_metrics.dart",
+        "originalSha256": "0aee27af662770dbe766fab82d31700395b95ba1b3100ff62b48d78bc086e958",
+        "currentSha256": "0aee27af662770dbe766fab82d31700395b95ba1b3100ff62b48d78bc086e958",
+        "branchPercent": 96.15
+      },
+      {
+        "path": "packages/jentra_domain/lib/src/analytics/governed_controls.dart",
+        "originalSha256": "45199ff1fe661007010eb80a03fb6614fe2156a02b7bd6adf93f6e801cf718b3",
+        "currentSha256": "45199ff1fe661007010eb80a03fb6614fe2156a02b7bd6adf93f6e801cf718b3",
+        "branchPercent": 100
+      },
+      {
+        "path": "packages/jentra_domain/lib/src/analytics/pipeline_forecast_repository.dart",
+        "originalSha256": "2e076a3b49d050b792c19698c4327657eb9bbe6bb36b85f17e88441da1742827",
+        "currentSha256": "2e076a3b49d050b792c19698c4327657eb9bbe6bb36b85f17e88441da1742827",
+        "branchPercent": 95.45
+      },
+      {
+        "path": "packages/jentra_domain/lib/src/analytics/process_metric_repository.dart",
+        "originalSha256": "784c3ee25a6f71caf97e50221b8107d1a61e14c423dc5613bd9520d6bd533104",
+        "currentSha256": "784c3ee25a6f71caf97e50221b8107d1a61e14c423dc5613bd9520d6bd533104",
+        "branchPercent": 100
+      },
+      {
+        "path": "packages/jentra_domain/lib/src/analytics/process_metrics.dart",
+        "originalSha256": "31d1b3bdbb230d7239f304130652db9562f282b25497ab2b55a5baa732201f50",
+        "currentSha256": "31d1b3bdbb230d7239f304130652db9562f282b25497ab2b55a5baa732201f50",
+        "branchPercent": 95.06
+      },
+      {
+        "path": "packages/jentra_platform/lib/src/analytics/pipeline_forecast_gateway.dart",
+        "originalSha256": "ac3213083a852164127cd2264dfcf4d9130dec4f441947d2be9af98e00dc727a",
+        "currentSha256": "ac3213083a852164127cd2264dfcf4d9130dec4f441947d2be9af98e00dc727a",
+        "branchPercent": 41.18
+      },
+      {
+        "path": "packages/jentra_platform/lib/src/analytics/process_filter_store.dart",
+        "originalSha256": "46feb6096313146ff361313971249f65154f34ce650f83a2f5fc43dc21e649bc",
+        "currentSha256": "46feb6096313146ff361313971249f65154f34ce650f83a2f5fc43dc21e649bc",
+        "branchPercent": 71.43
+      },
+      {
+        "path": "packages/jentra_platform/lib/src/analytics/process_metric_gateway.dart",
+        "originalSha256": "1b3a2503be06ab37a538459665f26d3669dba3e91925bf293eaeb6c560719db6",
+        "currentSha256": "1b3a2503be06ab37a538459665f26d3669dba3e91925bf293eaeb6c560719db6",
+        "branchPercent": 56
+      },
+      {
+        "path": "packages/jentra_platform/lib/src/analytics/process_metric_hasher.dart",
+        "originalSha256": "65e132f435a1bee8584b365f5b63d59cfdfaf9e57b034840bd068fc39285dde1",
+        "currentSha256": "65e132f435a1bee8584b365f5b63d59cfdfaf9e57b034840bd068fc39285dde1",
+        "branchPercent": 100
+      },
+      {
+        "path": "packages/jentra_platform/lib/src/analytics/wave5_command_store.dart",
+        "originalSha256": "4cab0c6c9d9656dc2f49c4407698d601bff3b0f815947b95947c9562f3a18530",
+        "currentSha256": "26748780e024bfd454c9a10d0b42d330029bb1d51cc35173c37372f413d32b21",
+        "branchPercent": 75
+      },
+      {
+        "path": "packages/jentra_platform/lib/src/analytics/wave5_control_gateway.dart",
+        "originalSha256": "145a856bfac8eeeceac571c4d43f82e0988a2e2290463864067fd13e4e4dd880",
+        "currentSha256": "6755dd4d4ef2a74fcbbcd52fb1fc172c47fe12ba6a9f8c773dfe2449aa3bdbdb",
+        "branchPercent": 48.08
+      }
+    ],
+    "currentWholeWaveCoverageClaimed": false
+  },
+  "reviewedInputBindings": [
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/delegated-technical-acceptance-matrix.json",
+      "bytes": 682113,
+      "sha256": "b5298d9333030d758998322b4285a99669545d5052c2a1b83fc49299761664a6"
+    },
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/open-requirement-prerequisites.json",
+      "bytes": 53461,
+      "sha256": "80c38df769ed4a35eab9c886d9516dbe570bd00efee8c1b2829c0b6319144f5a"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area2-finance/area2-report.json",
+      "bytes": 13393,
+      "sha256": "613a51a6660582fc9fc1570c1c15c456d2d2470f9c96e20f14833bd2857499fc"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area3-permissions-ai/completion-report.json",
+      "bytes": 26085,
+      "sha256": "11d11457641ed04b4842fae6aa5f6161b7bcb3908454fe7282de9ccc3cc9a65d"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area5-subscriptions/sourceproof.json",
+      "bytes": 9400,
+      "sha256": "19df38a6c334e3bb9237447bb452e7eb4981da8c99b20bb19e1fa6cb4a47f49f"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/README.md",
+      "bytes": 5271,
+      "sha256": "14eb46759de45bcb51ce5e43fa355467d5e2a7349f63e47fcd29b083f88a7408"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area4-integrations/checkpoint-lineage.json",
+      "bytes": 1287,
+      "sha256": "4e42713317127e796476247e569ab40109f63131e9f6d2d4ee50cdf5320c20da"
+    },
+    {
+      "path": "docs/blueprint/05_TEST_AND_DELIVERY.md",
+      "bytes": 4314,
+      "sha256": "81b71888987d2755d3811060f741f5c504df630093f2df9c9c135f78f7dd3556"
+    }
+  ],
+  "actualBoundaries": {
+    "liveQueries": 0,
+    "privateInputsRead": false,
+    "SDKJobs": 0,
+    "deployments": 0,
+    "sourceCodeMutations": 0,
+    "globalAcceptanceMatrixModified": false,
+    "productionReleasePerformed": false
+  },
+  "limitation": "This report verifies saved source/evidence bindings and reviewed changes. It does not transform controlled fixtures, historical tests, advisor reads or a successful package build into current native/provider/load/production acceptance."
+}

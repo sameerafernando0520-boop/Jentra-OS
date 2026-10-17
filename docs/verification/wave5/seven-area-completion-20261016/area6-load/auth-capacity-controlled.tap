@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: saved one-source settings cannot issue the complete fresh cohort
+ok 1 - saved one-source settings cannot issue the complete fresh cohort
+  ---
+  duration_ms: 0.8802
+  type: 'test'
+  ...
+# Subtest: two genuine sources give an optimistic necessary bound without claiming actual capacity
+ok 2 - two genuine sources give an optimistic necessary bound without claiming actual capacity
+  ---
+  duration_ms: 0.1709
+  type: 'test'
+  ...
+# Subtest: reserving five minutes for final online verification still needs two sources
+ok 3 - reserving five minutes for final online verification still needs two sources
+  ---
+  duration_ms: 0.1503
+  type: 'test'
+  ...
+# Subtest: uneven distribution rounds issuance upward with exact integer arithmetic
+ok 4 - uneven distribution rounds issuance upward with exact integer arithmetic
+  ---
+  duration_ms: 0.1269
+  type: 'test'
+  ...
+# Subtest: invalid or exhausted freshness windows fail rather than imply capacity
+ok 5 - invalid or exhausted freshness windows fail rather than imply capacity
+  ---
+  duration_ms: 0.4654
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 24.3593

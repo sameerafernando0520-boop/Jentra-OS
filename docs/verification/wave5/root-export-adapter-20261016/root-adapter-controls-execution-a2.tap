@@ -1,0 +1,58 @@
+TAP version 13
+# Subtest: both adapter builders retain exact original templates and embed the reviewed lock implementation
+ok 1 - both adapter builders retain exact original templates and embed the reviewed lock implementation
+  ---
+  duration_ms: 1.2093
+  type: 'test'
+  ...
+# Subtest: export adapter locks source/public inventories, exact plan, review, manifest and self before public preflight
+ok 2 - export adapter locks source/public inventories, exact plan, review, manifest and self before public preflight
+  ---
+  duration_ms: 0.2115
+  type: 'test'
+  ...
+# Subtest: management adapter holds complete public inventory before any child or private read
+ok 3 - management adapter holds complete public inventory before any child or private read
+  ---
+  duration_ms: 0.1556
+  type: 'test'
+  ...
+# Subtest: PowerShell parser accepts both generated adapters without executing either
+ok 4 - PowerShell parser accepts both generated adapters without executing either
+  ---
+  duration_ms: 650.4902
+  type: 'test'
+  ...
+# Subtest: actual embedded lock functions prevent replacement and release handles after release
+ok 5 - actual embedded lock functions prevent replacement and release handles after release
+  ---
+  duration_ms: 677.0788
+  type: 'test'
+  ...
+# Subtest: actual embedded lock functions prevent replacement and release handles after fail
+ok 6 - actual embedded lock functions prevent replacement and release handles after fail
+  ---
+  duration_ms: 677.714
+  type: 'test'
+  ...
+# Subtest: partial actual lock acquisition releases handles on badSecond
+ok 7 - partial actual lock acquisition releases handles on badSecond
+  ---
+  duration_ms: 691.645
+  type: 'test'
+  ...
+# Subtest: partial actual lock acquisition releases handles on duplicateCollision
+ok 8 - partial actual lock acquisition releases handles on duplicateCollision
+  ---
+  duration_ms: 765.513
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3495.8735

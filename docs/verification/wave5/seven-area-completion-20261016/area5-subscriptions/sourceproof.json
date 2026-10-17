@@ -1,0 +1,199 @@
+{
+  "kind": "wave5-area5-subscriptions-development-and-evidence-review",
+  "recordedAt": "2026-10-16T19:06:51.956Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "productFix": "Reject empty or inverted available allowance periods while retaining historical observation timestamps.",
+  "tests": {
+    "actualFocusedCases": 5,
+    "before": {
+      "exitCode": 1,
+      "passed": 3,
+      "failed": 2
+    },
+    "after": {
+      "exitCode": 0,
+      "passed": 5,
+      "failed": 0
+    },
+    "scopedAnalysisExitCode": 0,
+    "formattedFiles": 2,
+    "initialSdkLockfileFailureCountedAsTestFailure": false
+  },
+  "historicalEvidence": [
+    {
+      "path": "docs/verification/wave5/subscription-development-result-20261006.json",
+      "bytes": 17176,
+      "sha256": "7b9d1f30be3ef31d3a8268209ff5e88b6bfb5b72e3d2acfae37a44aa2469d4e0",
+      "assertions": 124,
+      "failed": 0,
+      "originalRunDate": "2026-10-06",
+      "rollback": true,
+      "currentRun": false,
+      "installedAcceptanceClaimed": false,
+      "independentContentionClaimed": false
+    },
+    {
+      "path": "docs/verification/wave5/subscription-native-development-result-20261006.json",
+      "bytes": 17735,
+      "sha256": "abc1a3ef19063b2167dff55e3cfdbb8391cce89e8485b5b74039b60c848e074e",
+      "assertions": 126,
+      "failed": 0,
+      "originalRunDate": "2026-10-06",
+      "rollback": true,
+      "currentRun": false,
+      "installedAcceptanceClaimed": false,
+      "independentContentionClaimed": false
+    }
+  ],
+  "requirements": [
+    {
+      "id": "FR-524",
+      "fullStatement": "FR-524: Plan, trial, seat, and entitlement changes MUST be versioned, effective-dated, privileged and audited; synthetic trials MUST have an explicit start/end and MUST not enable real subscriptions or paid billing.",
+      "statementSha256": "c49bbf3826a5ab01944351e929ae995a89d72b5abd845148d0571742d21e8cd0",
+      "accepted": false,
+      "decision": "open_missing_live_evidence",
+      "remaining": "Complete live effective-date plan/trial/seat/entitlement transitions, audited history and expiry with synthetic-only effects; one activation case is narrower."
+    },
+    {
+      "id": "FR-525",
+      "fullStatement": "FR-525: Metering MUST use append-only trusted-source usage events with deduplicated event identities and reasoned correction records; client reports MUST not be authoritative billable usage.",
+      "statementSha256": "e5c8f73f3f1d72b1226c2e748d236cc86aabc07376bd44eef6a24be11a93ee12",
+      "accepted": false,
+      "decision": "open_missing_live_evidence",
+      "remaining": "Complete duplicate trusted usage and reasoned correction readbacks, ensuring append-only history and rejection of client-authoritative metering."
+    },
+    {
+      "id": "FR-526",
+      "fullStatement": "FR-526: Enforced quotas and seats MUST use atomic reservations/settlement and explicit over-limit states; concurrent requests MUST not exceed a hard limit, and a denied command MUST not consume a business effect.",
+      "statementSha256": "473b972517c7643fa01d1eadc309e74568cfd07fabaff750fd210783ba468503",
+      "accepted": false,
+      "decision": "open_missing_live_evidence",
+      "remaining": "Complete every required independent overlapping quota/seat reservation race and explicit over-limit/no-effect denial with no hard-cap overshoot."
+    },
+    {
+      "id": "AC-512",
+      "fullStatement": "AC-512: Synthetic plans and trials (FR-524, FR-532) Given a synthetic tenant, scheduled plan changes and trial expiry When effective capabilities are resolved before and after the boundary Then entitlements follow audited versions and unsupported providers remain unavailable.",
+      "statementSha256": "da34a73a983aeb561bd0337b6671448ff2b713a6b3c9d3ecaab09a5faf5d6cca",
+      "accepted": false,
+      "decision": "open_missing_live_evidence",
+      "remaining": "Resolve audited synthetic entitlements before/after scheduled plan and trial boundaries, preserving unavailable unsupported provider states."
+    },
+    {
+      "id": "AC-513",
+      "fullStatement": "AC-513: Metering and hard limits (FR-525, FR-526, NFR-506) Given duplicate trusted usage events, correction records, and concurrent quota reservations When usage and remaining allowance are resolved Then history stays immutable and counted effects do not exceed the configured hard cap.",
+      "statementSha256": "caf88c1510e30954e71615185514fb186e59700987251d2b84898817df20de7f",
+      "accepted": false,
+      "decision": "open_missing_live_evidence",
+      "remaining": "Complete immutable trusted metering corrections/deduplication and concurrent quota/seat allowance proof against hard caps."
+    },
+    {
+      "id": "EC-511",
+      "fullStatement": "EC-511: Trial expiry and overlapping seat/usage reservations use server UTC and live effective versions, including a correction of prior usage; verify with AC-512/513.",
+      "statementSha256": "f26e0c96ad2aea03f2286856305469b5a76879a2be26618cbdc5571859fcded6",
+      "accepted": false,
+      "decision": "open_missing_live_evidence",
+      "remaining": "Complete live UTC trial/effective-version boundaries and overlapping seat/usage/correction races."
+    }
+  ],
+  "newAcceptanceCount": 0,
+  "allSixComplete": false,
+  "wholeWaveComplete": false,
+  "liveCalls": 0,
+  "privateInputsRead": false,
+  "independentReservationRaceExecuted": false,
+  "billingProviderEnabled": false,
+  "realBillingPerformed": false,
+  "migrationsInstalled": false,
+  "sources": [
+    {
+      "path": "packages/jentra_platform/lib/src/analytics/wave5_control_gateway.dart",
+      "bytes": 16497,
+      "sha256": "6755dd4d4ef2a74fcbbcd52fb1fc172c47fe12ba6a9f8c773dfe2449aa3bdbdb"
+    },
+    {
+      "path": "packages/jentra_platform/test/analytics/wave5_usage_period_20261016_test.dart",
+      "bytes": 1887,
+      "sha256": "0378722e5cc0672e0b92f86324aa30b92114be57778c84eb3b93fb25fa8b9e28"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area5-subscriptions/wave5_control_gateway.before.dart",
+      "bytes": 16375,
+      "sha256": "5f0992c128f48814b475a61fc6e5532a9789d90b85b289ae881727b2ef7e1029"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area5-subscriptions/red-regression.log",
+      "bytes": 249,
+      "sha256": "bd70674ac5b6ef275bd42a56a3dcbd888b14acf65cad203723dee2c80174a5f6"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area5-subscriptions/red-regression-20261017.log",
+      "bytes": 3371,
+      "sha256": "f374fcf43bfb2ffd9458c56cb8530c62c934edc088ac133f9e12ba30d19c26d4"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area5-subscriptions/green-regression-20261017.log",
+      "bytes": 472,
+      "sha256": "2acbcc47e07f13ae2a7abbfb52e8da56d969c0d3ea9006b88105de63085cdb06"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area5-subscriptions/analyze-20261017.log",
+      "bytes": 98,
+      "sha256": "572aa765250342fddcc9397b9e9114253baa03e4b9ae1706e62e1ca473b0e914"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area5-subscriptions/format.log",
+      "bytes": 168,
+      "sha256": "d810c90978fa471a2a5f2a9cab5056a870a372917599b1054ef8751cc0f73cf7"
+    },
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/delegated-technical-acceptance-matrix.json",
+      "bytes": 682113,
+      "sha256": "b5298d9333030d758998322b4285a99669545d5052c2a1b83fc49299761664a6"
+    },
+    {
+      "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "bytes": 14205,
+      "sha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e"
+    },
+    {
+      "path": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "bytes": 12761,
+      "sha256": "339e9e86074887d164dd339eb17ac54943c39fca0caf50db575c48529456a9f5"
+    },
+    {
+      "path": "supabase/tests/wave5_trusted_metering_test.sql",
+      "bytes": 5502,
+      "sha256": "bea1cc526f081d058d7af1269eb60a969fb2298f168c6f32dfeb0ac4754d2605"
+    },
+    {
+      "path": "supabase/tests/wave5_synthetic_subscriptions_test.sql",
+      "bytes": 7090,
+      "sha256": "5f95742ec6695481ab6eb99b75e8ad2064caaef2f25146d76a4080999c93bb62"
+    },
+    {
+      "path": "tools/wave5/runtime_fixture_spec.mjs",
+      "bytes": 36370,
+      "sha256": "71dd763620cab0ca896dd96c50193350f1926e67f481acfed9b7aaa4b519f2d2"
+    },
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "bytes": 31294,
+      "sha256": "7bc04153aa169c2f85f4371c74319c2eded1f6666a97609ba29f5a2ad94d1da2"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area5-subscriptions/verify_area5.mjs",
+      "bytes": 4610,
+      "sha256": "85df88037a41512c3b0a8477e70e9a0c2e99bf15b9aa2ec9451ec6559dcd8e16"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area5-subscriptions/README.md",
+      "bytes": 4380,
+      "sha256": "06290eb4b07623d44fb08337345306a8a7b4f8e5618b8eb1fb17f9e40cf665ed"
+    }
+  ],
+  "documentation": [
+    "https://supabase.com/docs/guides/local-development/testing/overview",
+    "https://supabase.com/docs/guides/database/postgres/row-level-security"
+  ],
+  "documentationCaveat": "Supabase changelog markdown fetch returned unsupported content type; official testing and RLS documentation were read successfully."
+}

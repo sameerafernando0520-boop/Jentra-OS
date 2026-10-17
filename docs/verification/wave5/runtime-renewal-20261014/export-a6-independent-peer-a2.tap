@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: peer: actual owner refresh must precede renewal application for the ordinal135-before136 accounting contract
+ok 1 - peer: actual owner refresh must precede renewal application for the ordinal135-before136 accounting contract
+  ---
+  duration_ms: 14.6893
+  type: 'test'
+  ...
+# Subtest: peer: an owner refresh after renewal readback cannot validate the same predecessor138 evidence
+ok 2 - peer: an owner refresh after renewal readback cannot validate the same predecessor138 evidence
+  ---
+  duration_ms: 11.3853
+  type: 'test'
+  ...
+# Subtest: peer: a failed individual renewal receipt cannot be hidden by zero failedAttempts
+ok 3 - peer: a failed individual renewal receipt cannot be hidden by zero failedAttempts
+  ---
+  duration_ms: 7.1714
+  type: 'test'
+  ...
+# Subtest: peer: a duplicated successful receipt ordinal cannot stand in for all three renewal phases
+ok 4 - peer: a duplicated successful receipt ordinal cannot stand in for all three renewal phases
+  ---
+  duration_ms: 6.1916
+  type: 'test'
+  ...
+# Subtest: peer: the common runtime expiry cannot override an earlier private-owner deadline
+ok 5 - peer: the common runtime expiry cannot override an earlier private-owner deadline
+  ---
+  duration_ms: 7.887
+  type: 'test'
+  ...
+# Subtest: peer: explicit UTC windows reject a DST/local offset and leap-day normalization
+ok 6 - peer: explicit UTC windows reject a DST/local offset and leap-day normalization
+  ---
+  duration_ms: 0.245
+  type: 'test'
+  ...
+# Subtest: peer: common 120-minute window is accepted across the Oct15/16 boundary without altering fixture dates
+ok 7 - peer: common 120-minute window is accepted across the Oct15/16 boundary without altering fixture dates
+  ---
+  duration_ms: 9.9335
+  type: 'test'
+  ...
+# Subtest: peer: final public-review read failure returns before adapter access
+ok 8 - peer: final public-review read failure returns before adapter access
+  ---
+  duration_ms: 8.2935
+  type: 'test'
+  ...
+# Subtest: peer: a public preparation failure performs no final-review or adapter read
+ok 9 - peer: a public preparation failure performs no final-review or adapter read
+  ---
+  duration_ms: 0.2234
+  type: 'test'
+  ...
+# Subtest: peer: control binding substitution in a final review blocks adapter access
+ok 10 - peer: control binding substitution in a final review blocks adapter access
+  ---
+  duration_ms: 8.4124
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 117.9955

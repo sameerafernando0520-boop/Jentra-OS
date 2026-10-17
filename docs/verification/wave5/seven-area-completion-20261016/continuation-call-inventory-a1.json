@@ -1,0 +1,107 @@
+{
+  "kind": "unapproved-bounded-seven-area-continuation-call-inventory",
+  "preparedFor": "2026-10-17 continuation of seven area completion",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "runtimeId": "778237e3-3d4e-4871-8cc9-e08b07b989c7",
+  "sourceOnly": true,
+  "executionPermitted": false,
+  "approvalRecorded": false,
+  "actualBaseline": {
+    "chargedCalls": 137,
+    "priorChargedCalls": 134,
+    "additionalActualReadonlySql": 1,
+    "additionalActualAdvisorCalls": 2,
+    "observedDatabaseAt": "2026-10-16T12:13:25.833347Z",
+    "verificationBinding": {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/current-state-verification-a1.json",
+      "sha256": "1d10f95d8c0f23534d101475f1a5d72dcff6711296a6dc59a064fb03a28590fb"
+    },
+    "currentSqlBinding": {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/root-readonly-result-a1.json",
+      "sha256": "010900eea3f210b95d1d9e3f5e15b8c59663d90ad8f638fdc8e3cc919703b7de"
+    },
+    "securityBinding": {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/root-security-advisors-result-a1.json",
+      "sha256": "865b97745c013beb18414231699e10e58b585f98f8bff57de16448fba4b7c18b"
+    },
+    "performanceBinding": {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/root-performance-advisors-result-a1.json",
+      "sha256": "cb45cd5bcc061edb44ebeb8b150d255b5c25e0d5b838f504754b9eef38e51722"
+    }
+  },
+  "phases": [
+    {
+      "name": "actual owner readiness",
+      "maximumAttempts": 1,
+      "cumulativeMaximum": 138,
+      "readOnly": true
+    },
+    {
+      "name": "renewal preflight, one transaction, one readback",
+      "maximumAttempts": 3,
+      "cumulativeMaximum": 141,
+      "maximumWrites": 1
+    },
+    {
+      "name": "original two exports",
+      "ordinaryAttempts": 24,
+      "readOnlyResolutionReserve": 1,
+      "maximumAttempts": 25,
+      "ordinaryCumulativeMaximum": 165,
+      "cumulativeMaximum": 166
+    },
+    {
+      "name": "one deployed health readiness invocation",
+      "maximumAttempts": 5,
+      "maximumHealthInvocations": 1,
+      "cumulativeMaximum": 171,
+      "jobsRemainPaused": true
+    },
+    {
+      "name": "exact three-job resume",
+      "maximumAttempts": 3,
+      "maximumWrites": 1,
+      "cumulativeMaximum": 174,
+      "jobIds": [
+        4,
+        5,
+        6
+      ]
+    }
+  ],
+  "arithmetic": {
+    "actualPrior": 137,
+    "ownerRefresh": 1,
+    "renewal": 3,
+    "priorAtExports": 141,
+    "exportsOrdinary": 24,
+    "exportsResolutionReserve": 1,
+    "throughExportsMaximum": 166,
+    "healthMaximum": 5,
+    "throughHealthMaximum": 171,
+    "schedulerMaximum": 3,
+    "overallMaximum": 174,
+    "maximumFutureAttempts": 37
+  },
+  "unchangedWorkerBounds": {
+    "knownHistoricalRequests": 24,
+    "manualHealthMaximum": 1,
+    "reviewedBeforeResume": 25,
+    "maximumWorkerRequests": 4320,
+    "maximumOriginalModelInvocations": 4,
+    "newModelInvocationsIncluded": 0
+  },
+  "window": {
+    "maximumRenewalMilliseconds": 7200000,
+    "expiryAnchor": "Actual post-approval server preflight observedAt; appliedAt is separately observed after COMMIT.",
+    "bothOriginalIssuedAtPreserved": true,
+    "onlyTwoExistingExpiryFieldsMayChange": true,
+    "bothSevenDayFromOriginalIssueConstraintsPreserved": true
+  },
+  "limitations": [
+    "No future call, approval, owner metadata, preflight, renewal or live result is created by this inventory.",
+    "Future phases must use real predecessor receipts, not invented charges to reach 141.",
+    "Any extra or failed attempt must be charged and reviewed before proceeding; no automatic retry or write replay.",
+    "The earlier 134/138/163/168/171 and 135/139/164/169/172 proposals remain historical."
+  ]
+}

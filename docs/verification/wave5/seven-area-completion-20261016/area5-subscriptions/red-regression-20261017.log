@@ -1,0 +1,57 @@
+
+┌─────────────────────────────────────────────────────────┐
+│ A new version of Flutter is available!                  │
+│                                                         │
+│ To update to the latest version, run "flutter upgrade". │
+└─────────────────────────────────────────────────────────┘
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/wave5_usage_period_20261016_test.dart
+00:00 +0: rejects an empty authoritative allowance period
+00:00 +0 -1: rejects an empty authoritative allowance period [E]
+  Expected: throws <Instance of 'FormatException'>
+    Actual: <Instance of 'Future<Map<String, Object?>>'>
+     Which: emitted {
+                      'state': 'available',
+                      'tenantId': '10000000-0000-0000-0000-000000000001',
+                      'metricCode': 'ai.tokens',
+                      'periodStart': '2026-10-01T00:00:00.000000Z',
+                      'periodEnd': '2026-10-01T00:00:00.000000Z',
+                      'limit': '100',
+                      'settled': '50',
+                      'reserved': '10',
+                      'remaining': '40',
+                      'generatedAt': '2026-11-02T00:00:00.000000Z'
+                    }
+  
+  package:matcher                                             expectLater
+  package:flutter_test/src/widget_tester.dart 507:8           expectLater
+  test\analytics\wave5_usage_period_20261016_test.dart 24:11  main.<fn>
+  
+00:00 +0 -1: rejects an inverted authoritative allowance period
+00:00 +0 -2: rejects an inverted authoritative allowance period [E]
+  Expected: throws <Instance of 'FormatException'>
+    Actual: <Instance of 'Future<Map<String, Object?>>'>
+     Which: emitted {
+                      'state': 'available',
+                      'tenantId': '10000000-0000-0000-0000-000000000001',
+                      'metricCode': 'ai.tokens',
+                      'periodStart': '2026-10-01T00:00:00.000000Z',
+                      'periodEnd': '2026-09-30T23:59:59.999999Z',
+                      'limit': '100',
+                      'settled': '50',
+                      'reserved': '10',
+                      'remaining': '40',
+                      'generatedAt': '2026-11-02T00:00:00.000000Z'
+                    }
+  
+  package:matcher                                             expectLater
+  package:flutter_test/src/widget_tester.dart 507:8           expectLater
+  test\analytics\wave5_usage_period_20261016_test.dart 28:11  main.<fn>
+  
+00:00 +0 -2: retains historical allowance observed after period end
+00:00 +1 -2: accepts the smallest positive microsecond period
+00:00 +2 -2: keeps exact arithmetic and requested period validation
+00:00 +3 -2: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/wave5_usage_period_20261016_test.dart: rejects an empty authoritative allowance period
+  C:/Users/sheha/Desktop/Jentra OS/packages/jentra_platform/test/analytics/wave5_usage_period_20261016_test.dart: rejects an inverted authoritative allowance period

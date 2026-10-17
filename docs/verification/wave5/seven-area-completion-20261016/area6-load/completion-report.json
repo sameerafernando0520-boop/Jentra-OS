@@ -1,0 +1,544 @@
+{
+  "kind": "wave5-area6-load-controlled-completion-report",
+  "publishedAt": "2026-10-16T19:12:34.701Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "scope": {
+    "assignedIds": [
+      "FR-502",
+      "FR-508",
+      "NFR-503",
+      "NFR-504",
+      "NFR-505",
+      "NFR-506",
+      "AC-503",
+      "EC-514",
+      "NFR-552",
+      "AC-555",
+      "EC-557"
+    ],
+    "rows": 11,
+    "newAcceptedRows": 0,
+    "acceptedRows": 0,
+    "openRows": 11
+  },
+  "baseline": {
+    "installedMigrations": 115,
+    "apiFunctions": 363,
+    "cumulativeManagementAttempts": 137,
+    "authorityWindowsExpired": 2,
+    "jobsPaused": 3,
+    "provenance": "Root-coordinated Oct16 observation; this child made no new live or private request."
+  },
+  "skillsApplied": [
+    "engineering-advanced-skills:performance-profiler",
+    "engineering-advanced-skills:chaos-engineering",
+    "supabase"
+  ],
+  "actual": {
+    "liveSqlCalls": 0,
+    "networkCalls": 0,
+    "privateDatabaseInputsRead": false,
+    "genuineSessionsCreated": 0,
+    "sdkJobs": 0,
+    "fullTargetLoad": "NOT_RUN",
+    "sevenRaceProtocolExecuted": false,
+    "productionReleased": false,
+    "ownerAcceptance": false
+  },
+  "changes": [
+    {
+      "defect": "checkLoadResult trusted reported measured session/scope coverage and P95 summaries instead of deriving them from actual samples.",
+      "repair": "Mandatory integrated trace validation recomputes coverage, actual strict P95, sample hash, exact scheduled slots/classes, operation/actor restrictions, stable independent session/connection identity, monotonic transport/elapsed times, actual dispatch lag and minimum actual transport peak."
+    },
+    {
+      "defect": "A new imported validator would otherwise be optional in the CLI source-bound harness review.",
+      "repair": "The existing CLI now requires the exact new trace module as a mandatory reviewed source binding before any private module can load."
+    }
+  ],
+  "verification": {
+    "before": {
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area6-load/before-trace-regressions.tap",
+        "bytes": 7566,
+        "sha256": "d3c0ac41187853993bc461f35060eee8dcfdf45ed21969d10b26790e21c6445e"
+      },
+      "counts": {
+        "tests": 10,
+        "pass": 1,
+        "fail": 9,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    "firstConsumers": {
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area6-load/after-trace-and-consumers.tap",
+        "bytes": 27668,
+        "sha256": "f8db70f19e3aa02eb12838771e4024dbd99cbace3250f2b2dfbc70f304e3af30"
+      },
+      "counts": {
+        "tests": 105,
+        "pass": 105,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    "sandboxAttempt": {
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area6-load/complete-consumer-verification.tap",
+        "bytes": 51579,
+        "sha256": "cb5ec43106d65fff7f477914d0041498be5cdc13cabcea72f8f70ec30bd86af0"
+      },
+      "counts": {
+        "tests": 193,
+        "pass": 192,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "failure": "One existing temporary Windows junction creation failed with sandbox EPERM. No assertion failure in the new trace controls.",
+      "resolution": "Automatic approval allowed the exact controlled suite outside the sandbox; no source/test weakening or skip."
+    },
+    "finalNewRegressions": {
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area6-load/final-new-regressions.tap",
+        "bytes": 3394,
+        "sha256": "bd934d9ea56fe0f5883fe3367563a6c2c847a8799f835df7e0d6f27adbfb9f35"
+      },
+      "counts": {
+        "tests": 16,
+        "pass": 16,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      }
+    },
+    "finalCompleteConsumers": {
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area6-load/final-complete-consumer-verification.tap",
+        "bytes": 52003,
+        "sha256": "721e2cb735c28bb0889b6118334613433a7d20340d8f96da7e8634d5bff148a0"
+      },
+      "counts": {
+        "tests": 199,
+        "pass": 199,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "exitCode": 0,
+      "command": [
+        "C:/Program Files/nodejs/node.exe",
+        "--test",
+        "--test-isolation=none",
+        "--test-reporter=tap",
+        "--test-timeout=5000",
+        "tools/wave5/runtime_coordinator.test.mjs",
+        "tools/wave5/supabase_provider.test.mjs",
+        "tools/wave5/supabase_provider_plan.test.mjs",
+        "tools/wave5/supabase_management_read.test.mjs",
+        "tools/wave5/preparation_journal.test.mjs",
+        "tools/wave5/preparation_file_sink.test.mjs",
+        "tools/wave5/supabase_provider_peer_20261013.test.mjs",
+        "tools/wave5/provider_live_response_regression_20261013_r5.test.mjs",
+        "tools/wave5/membership_preparation_peer_20261013.test.mjs",
+        "tools/wave5/preparation_journal_peer_20261013.test.mjs",
+        "tools/wave5/preparation_file_sink_peer_20261013.test.mjs",
+        "docs/verification/wave5/seven-area-completion-20261016/area6-load/load_trace.test.mjs",
+        "docs/verification/wave5/seven-area-completion-20261016/area6-load/cli_trace_binding.test.mjs",
+        "docs/verification/wave5/task3-load-release-20261013/fixture_writer.test.mjs",
+        "docs/verification/wave5/task3-load-release-20261013/provider_operation_wrapper.test.mjs",
+        "docs/verification/wave5/task3-load-release-20261013/transport_helpers.test.mjs",
+        "docs/verification/wave5/task3-load-release-20261013/readonly_credential_lifecycle.test.mjs"
+      ]
+    },
+    "authCapacityArithmetic": {
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area6-load/auth-capacity-controlled.tap",
+        "bytes": 1199,
+        "sha256": "37a01f1c71029f35c8ef3ad8f82b9d3539c3811b1b4ddfc3a67df851e9f68dde"
+      },
+      "counts": {
+        "tests": 5,
+        "pass": 5,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "exitCode": 0
+    },
+    "distinctPassingTests": 204,
+    "countsAreControlledOnly": true,
+    "independentSourceReview": "Area7 reviewed initial trace fix and requested connection/peak/lag hardening; final source binding review requested separately."
+  },
+  "authCapacity": {
+    "savedSettingsAreHistorical": true,
+    "oneGenuineSource": {
+      "assumptions": {
+        "sessions": 2000,
+        "sourceGroups": 1,
+        "quota": 150,
+        "quotaWindowSeconds": 300,
+        "burst": 30,
+        "jwtLifetimeSeconds": 3600,
+        "minimumRemainingSeconds": 900,
+        "verificationTailSeconds": 0
+      },
+      "actualVerified": false,
+      "networkCalls": 0,
+      "genuineSessionsCreated": 0,
+      "interpretation": "Necessary optimistic token-bucket bound only; shared project limits, deployed route limits, online verification throughput and genuine independent sources remain unverified.",
+      "maximumIssuanceSeconds": "2700",
+      "minimumCohortIssuanceSeconds": "3940",
+      "maximumTokensPerSourceInWindow": "1380",
+      "minimumGenuineSourceGroups": "2",
+      "arithmeticAllowsCohort": false
+    },
+    "twoGenuineSourcesWithVerificationTail": {
+      "assumptions": {
+        "sessions": 2000,
+        "sourceGroups": 2,
+        "quota": 150,
+        "quotaWindowSeconds": 300,
+        "burst": 30,
+        "jwtLifetimeSeconds": 3600,
+        "minimumRemainingSeconds": 900,
+        "verificationTailSeconds": 300
+      },
+      "actualVerified": false,
+      "networkCalls": 0,
+      "genuineSessionsCreated": 0,
+      "interpretation": "Necessary optimistic token-bucket bound only; shared project limits, deployed route limits, online verification throughput and genuine independent sources remain unverified.",
+      "maximumIssuanceSeconds": "2400",
+      "minimumCohortIssuanceSeconds": "1940",
+      "maximumTokensPerSourceInWindow": "1230",
+      "minimumGenuineSourceGroups": "2",
+      "arithmeticAllowsCohort": true
+    },
+    "arrangement": "A candidate is two genuinely separate owner-controlled source hosts, each provisioning 1000 legitimate Auth sessions at the existing policy. Do not spoof forwarding IPs, copy token IDs, manufacture JWTs or change global policy.",
+    "remainingProof": "Verify the deployed limiter actually permits independent source budgets and no shared lower cap; legitimate source infrastructure/permission, real MFA, actual session persistence, 2000 online Auth+committed session row checks within300s, >=900s remaining lifetime, exact distribution and generator/reference capacity. GET/user verification quota is unresolved. The model is necessary arithmetic, not a working arrangement."
+  },
+  "rows": [
+    {
+      "id": "FR-502",
+      "fullStatement": "FR-502: Every authoritative command MUST reuse the existing authenticated command, optimistic-version, receipt, audit, and outbox infrastructure; identical retries MUST not duplicate its effects.",
+      "statementSha256": "6caf56829bca71670c42d7bb93a56aec0a42ca3a6913fb898da39a278f628b74",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "nextEvidence": "Run the seven committed races, then extend exact retry/version/receipt/audit/outbox checks to every remaining authoritative command family; one forecast duplicate race alone does not close this universal criterion."
+    },
+    {
+      "id": "FR-508",
+      "fullStatement": "FR-508: Analytics reads MUST bound time range, source rows, groups, output, and pages; a limit breach MUST fail explicitly without a partial total.",
+      "statementSha256": "5f36bb7e54e92e35e391fdac763295cc67213271cc72ebc7054af2961faef87a",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "nextEvidence": "Exercise actual installed time/rows/groups/output/pages boundaries across every analytics surface; retain named rejection and zero partial totals, including genuine pagination permission loss."
+    },
+    {
+      "id": "NFR-503",
+      "fullStatement": "NFR-503: Interactive pages MUST default to 50 rows and cap at 200; synchronous calculations MUST cap at 10,000 source rows, 100 groups, 366 days, and 8 MiB serialized output, unless a later approved slice sets tighter bounds.",
+      "statementSha256": "41006b1dc749452cf742cc0b07e5b4c19db7af9e11ef5594ba6d13eaa5fa807a",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "nextEvidence": "Verify actual default50/cap200 pages and exact 10000rows/100groups/366UTCdays/8MiB boundaries. Three over-limit fixture populations exceed or are absent from the existing reviewed preparation; do not fabricate evidence."
+    },
+    {
+      "id": "NFR-504",
+      "fullStatement": "NFR-504: Indexed ordinary reads MUST meet p95 below 500 ms and ordinary commands below 1.5 s at the published workload on the reference environment; target-scale evidence MUST cover 500 tenants and 2,000 concurrent sessions.",
+      "statementSha256": "13a18b1cf0af9ab673b7302cd742060e9e8da202318dd177f03f1d3e45774075",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "nextEvidence": "Run the published 500-scope/2000 genuine-session 60s+300s protocol and independently audit actual dispatch trace, zero errors and strict P95 read<500ms/command<1500ms on a recorded reference environment."
+    },
+    {
+      "id": "NFR-505",
+      "fullStatement": "NFR-505: Larger allowed work MUST use bounded resumable jobs with explicit cancellation/failure state and at most 1,000 rows per committed chunk; synchronous bounded analytic calculations MUST target p95 below 3 s.",
+      "statementSha256": "1a8d599d6c543ea0372bbc5faa2b27f2c95f67ca59f3d26a17ac9c4d3f09f8c9",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "nextEvidence": "Identify/implement the allowed large analytics job path with durable scoped progress, <=1000rows/committed chunk, failure/cancellation/resume and source authorization; the reviewed load provider contains no implementation or live demonstration of that job lifecycle. Measure bounded analytics P95<3000ms."
+    },
+    {
+      "id": "NFR-506",
+      "fullStatement": "NFR-506: At least 100 duplicate requests and independent overlapping-session tests MUST demonstrate one authoritative effect per command/invocation/event and no hard-quota overshoot; sequential SQL MUST not count as contention proof.",
+      "statementSha256": "f73685c11c9ccdad8aef63e61caf48379208eaec4df376baefec31f3338b7897",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "nextEvidence": "Run all seven genuine independent overlapping committed races (100duplicates,2seats,2admissions,2activation,2execution,2leases,20quota); preserve winner/loser effects and no overshoot. Controlled barriers are preparation only."
+    },
+    {
+      "id": "AC-503",
+      "fullStatement": "AC-503: Bounded calculations (FR-508, NFR-503, NFR-504, NFR-505) Given limit-boundary datasets and a published reference workload When reads, calculations, or jobs execute Then limits reject excess atomically and measured latency meets the stated budget.",
+      "statementSha256": "ec94e4115265b8728555f40aca18bd4a127b8443ae20581bb4c36bca6168e2ec",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "nextEvidence": "Combine installed exact-boundary rejection/zero-effect evidence, allowed resumable job evidence and the actual reference-workload latency report; these are three distinct unclosed dependencies."
+    },
+    {
+      "id": "EC-514",
+      "fullStatement": "EC-514: Date-range/source/group/output limit, job crash, cancellation or unavailable database worker returns a named state without partial total; verify with AC-503.",
+      "statementSha256": "41b0009044919a3e91fb8dfdba5d012c3cbb3a72809e5129e309e03dfca1bba1",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "nextEvidence": "Inject bounded job crash, cancellation and unavailable worker failures in an isolated reviewed fixture; verify named state, no partial totals, durable progress and safe resume without replaying uncertain effects."
+    },
+    {
+      "id": "NFR-552",
+      "fullStatement": "NFR-552: Snapshots MUST reject more than 10,000 source rows, 100 groups, 366 UTC days, or 8 MiB output; pages MUST default to 50 and cap at 200.",
+      "statementSha256": "da6bb7a4b2b1dd5d713d3f84a7d1d306b926ebf6c9d1931b776de3bcccadc7b0",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "nextEvidence": "Exercise exact and over-limit process snapshot time/rows/groups/output/page boundaries through the installed adapter, with zero partial totals and no hidden truncation."
+    },
+    {
+      "id": "AC-555",
+      "fullStatement": "AC-555: Bounded complete snapshot (FR-552, NFR-552) Given page truncation, duplicate identities and source/group/time/output boundaries When a snapshot is submitted Then incomplete or over-limit input fails without a partial result and allowed boundary input succeeds.",
+      "statementSha256": "0926c231506be08dd11a584c6814210cad8f0528667a9c69f89c66483a22dc6d",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "nextEvidence": "Prove actual paginated source completeness, duplicate identity rejection and allowed/excess source/group/time/output boundaries; fresh controlled arithmetic is narrower than installed pagination evidence."
+    },
+    {
+      "id": "EC-557",
+      "fullStatement": "EC-557: Pagination loses permission or reaches a retrieval cap, malformed UTC, inverted window or oversized output fails without partial totals; covered by AC-555/558.",
+      "statementSha256": "897e1adae92bb58bcde92b57012523a86c7f7490917f60aa9d38dd298d141434",
+      "decision": "open_missing_evidence",
+      "accepted": false,
+      "nextEvidence": "Run real pagination permission loss/retrieval-cap cases plus malformed UTC/inverted windows/oversized serialized output, and verify all-or-nothing failure with protected aggregates cleared."
+    }
+  ],
+  "historicReview": {
+    "binding": {
+      "path": "docs/verification/wave5/task3-completion-20261013/load-package-independent-final-review-20261014.json",
+      "bytes": 17224,
+      "sha256": "4754512c5f4bd25cf952b88e83b63e108f24ddf8226d821c9a4607efae80cce2"
+    },
+    "originalUnchanged": true,
+    "currentApproval": false,
+    "limitation": "The old 18-source harness and load package reviews remain historical. Coordinator/CLI changed and imported trace module is new; execution requires a separate successor source review and concrete private/live prerequisites."
+  },
+  "evidenceCapturedAfterRun": true,
+  "sourceBindings": [
+    {
+      "path": "tools/wave5/runtime_contract.mjs",
+      "bytes": 31294,
+      "sha256": "7bc04153aa169c2f85f4371c74319c2eded1f6666a97609ba29f5a2ad94d1da2"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.mjs",
+      "bytes": 35853,
+      "sha256": "8975b77077e5f7bc9bf45e61dee1e6fa4521cfd44dec24c84b47f16ff43719ed"
+    },
+    {
+      "path": "tools/wave5/run_runtime_verification.mjs",
+      "bytes": 9173,
+      "sha256": "93d5442f48bf58b1acae5fccd8d7aebdf5cc0daae46c3f67d0124ff453065a85"
+    },
+    {
+      "path": "tools/wave5/runtime_coordinator.test.mjs",
+      "bytes": 47951,
+      "sha256": "ef4d4586b5a53d639c244c890f3103902f616e7debe026b68547757184ffd076"
+    },
+    {
+      "path": "tools/wave5/PRIVATE_PROVIDER_CONTRACT.md",
+      "bytes": 21178,
+      "sha256": "53b691012312db8d0c6b634c8b8cc21690cac73e80a66b286dd4ab97b1c0ec30"
+    },
+    {
+      "path": "tools/wave5/verify_local_harness.mjs",
+      "bytes": 6278,
+      "sha256": "db5b4c163c549b32e6e831483fdb4f6c07c8158c50e7ef3565000d04f48e9834"
+    },
+    {
+      "path": "tools/wave5/compose_harness_review.mjs",
+      "bytes": 13820,
+      "sha256": "e6bbc912d5c8fff83666b035aa9d4697def0ae0ddb32382586547595cfe3fd53"
+    },
+    {
+      "path": "docs/verification/wave5/integrated-runtime-protocol-20261006.md",
+      "bytes": 9262,
+      "sha256": "a3f6e654699a418b2ac41f31fa9c8a8e2a4a97582ad6d10dc710bccf58caa64a"
+    },
+    {
+      "path": "docs/verification/wave5/runtime-bootstrap-complete-app-20261009.sql",
+      "bytes": 115108,
+      "sha256": "6c327db3699b444bf41e0be0d3d4a08334c9fd573d38b8fe0234f2e1ea665fa5"
+    },
+    {
+      "path": "supabase/migrations/20260831193714_create_greenfield_foundation.sql",
+      "bytes": 41494,
+      "sha256": "d104871a777c31b9562fac2e5200d9801b24c0ebd28a9b0e75a43bdc13171f8a"
+    },
+    {
+      "path": "supabase/migrations/20260904121647_wave3_operational_foundation.sql",
+      "bytes": 40230,
+      "sha256": "b7a840b31a2d8a89d0a1539151769130c352fe7ace0ea2d76f4057aab5b2d737"
+    },
+    {
+      "path": "supabase/migrations/20261006140000_wave5_process_metrics.sql",
+      "bytes": 9213,
+      "sha256": "be586326b7d8ec380a5524a5d8232e67639d677eb192b9fe29da135ee9ffe997"
+    },
+    {
+      "path": "supabase/migrations/20261006143000_wave5_pipeline_forecasts.sql",
+      "bytes": 10964,
+      "sha256": "1ea4ab076cb3deaa9d0f7f92b56c47effc1a0ad45e14839156a2fd6a2d1bd8ed"
+    },
+    {
+      "path": "supabase/migrations/20261006150000_wave5_trusted_metering.sql",
+      "bytes": 14205,
+      "sha256": "632d768e736e35c40ff33ed8aeb7de30c4a421cdce813751b69e67c128c39c1e"
+    },
+    {
+      "path": "supabase/migrations/20261006160000_wave5_human_proposals.sql",
+      "bytes": 16904,
+      "sha256": "b75e9cf94107fd9a959ced43f9e643b163ed579f95fb68c8de7b9e739b10d02e"
+    },
+    {
+      "path": "supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql",
+      "bytes": 12761,
+      "sha256": "339e9e86074887d164dd339eb17ac54943c39fca0caf50db575c48529456a9f5"
+    },
+    {
+      "path": "supabase/migrations/20261008093000_wave5_persistent_delivery.sql",
+      "bytes": 28824,
+      "sha256": "1a636229a0749cf9d6334ae49efe8ff38627b6a2d1bb642789a28e86efd1c663"
+    },
+    {
+      "path": "supabase/migrations/20261008123000_wave5_runtime_scope.sql",
+      "bytes": 18114,
+      "sha256": "655df9b9bfa373dbbe8872ca802815f9c730c4f3543b72c7950640563e2da8dc"
+    },
+    {
+      "path": "tools/wave5/runtime_load_trace_20261017_r5.mjs",
+      "bytes": 5579,
+      "sha256": "8b1925f69b42a1e4ff92a3a0d3b624716f77e6929340ba1cd4f25b1d7c8cf762"
+    },
+    {
+      "path": "tools/wave5/supabase_provider.test.mjs",
+      "bytes": 46828,
+      "sha256": "472534e60d15b169dd480fa991c85805661b68a8531677054c218ecd683efafe"
+    },
+    {
+      "path": "tools/wave5/supabase_provider_plan.test.mjs",
+      "bytes": 3175,
+      "sha256": "090dd23865dbb0a1ded1af9a1484d423d916549d472789e9ffc895dd6da5d7eb"
+    },
+    {
+      "path": "tools/wave5/supabase_management_read.test.mjs",
+      "bytes": 10075,
+      "sha256": "356b76b8a6930f7c485ddbe92f0937cf616d5552335f2b9bef940cc3a525041a"
+    },
+    {
+      "path": "tools/wave5/preparation_journal.test.mjs",
+      "bytes": 7217,
+      "sha256": "05e383e82ac6d593bdc066541a4fe48c61904cd7283cfc5decb316ed93fcea86"
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink.test.mjs",
+      "bytes": 11842,
+      "sha256": "b05624090af8cf847b45cafc314f3254b6ecd3f664af462a1945da16153541fb"
+    },
+    {
+      "path": "tools/wave5/supabase_provider_peer_20261013.test.mjs",
+      "bytes": 18957,
+      "sha256": "2951fb7a0c605d8873fb2c3e012c6af33a91b607293ddd53f84d2b8eea828535"
+    },
+    {
+      "path": "tools/wave5/provider_live_response_regression_20261013_r5.test.mjs",
+      "bytes": 1785,
+      "sha256": "7d29dc771f10b4b9e5581f7d0f4aef5d7cb62d5c06d6c4d7a4744198d39c3ef0"
+    },
+    {
+      "path": "tools/wave5/membership_preparation_peer_20261013.test.mjs",
+      "bytes": 7910,
+      "sha256": "99f9e6a625f61eb56ee256b1100f8a712d75200ee6b501f5f89f2747d1b29468"
+    },
+    {
+      "path": "tools/wave5/preparation_journal_peer_20261013.test.mjs",
+      "bytes": 3315,
+      "sha256": "1b393f9a7629332233e7aee054755bccd61056875f38f99fefbf0da0bcf2f3b6"
+    },
+    {
+      "path": "tools/wave5/preparation_file_sink_peer_20261013.test.mjs",
+      "bytes": 4417,
+      "sha256": "1b8f8c741beb7b625ba7d1d562ebdc8ac2dc3e6cc3aeafcce36ad5490e91e412"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/fixture_writer.test.mjs",
+      "bytes": 25326,
+      "sha256": "9c63a4bb872d0b54a8171b506c15eef177b90733297a3ed84e97987fa7c41446"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/provider_operation_wrapper.test.mjs",
+      "bytes": 21070,
+      "sha256": "404d78d64798d0386a627e4d3df149fb2720551b18fc6720fd0b11d5a2aefff4"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/transport_helpers.test.mjs",
+      "bytes": 13446,
+      "sha256": "0295c05ae60db061c272f248b3c70bc2e3842f2d8608dd8d36edf7b4d9cde998"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/readonly_credential_lifecycle.test.mjs",
+      "bytes": 2307,
+      "sha256": "09f0f24162cc5b5f4cea382ec07f3a141e840827531dd7ba44c373aa16efd3aa"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area6-load/load_trace.test.mjs",
+      "bytes": 5368,
+      "sha256": "c256f018c97e39fbd71fae3b56f7eb4c5005db6685304d70b381c3d6f3b495a9"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area6-load/cli_trace_binding.test.mjs",
+      "bytes": 2323,
+      "sha256": "a8525727560143deb4eb43fa26d62c927d04eeb0c2da7bc1dc0a35bff3635992"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area6-load/auth_capacity_model.mjs",
+      "bytes": 1950,
+      "sha256": "9a3e3330dafb8d75b4fdfc1dce94bf3ff46476f2709ceb0564906395c42acc75"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area6-load/auth_capacity_model.test.mjs",
+      "bytes": 1824,
+      "sha256": "a0a12b11c302a7116760501e67563e0ed16d5cb5f30b0118cc6ed86a83e0b60e"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/area6-load/finalize_report.mjs",
+      "bytes": 12239,
+      "sha256": "deae52c4709b9fe5ca4b86661b69ab9c6fc5a6313efa7341a8b8c4cb00c7b6d1"
+    }
+  ],
+  "preservedBeforeSource": {
+    "path": "docs/verification/wave5/seven-area-completion-20261016/area6-load/runtime_coordinator-before-trace-validation.mjs",
+    "bytes": 35744,
+    "sha256": "c1542ad519fdb557f53046636810ffcbcbc61ecef7ecb2656ccc4a915b6b368e"
+  },
+  "historicalSourceInputs": [
+    {
+      "path": "docs/verification/wave5/requirement-readiness-matrix-20261014-r5-a4.json",
+      "bytes": 711074,
+      "sha256": "18cd0a372fcae93a15df74b5e53d9b27977ec0f917ffe376ad3e2ef08b4f29f7"
+    },
+    {
+      "path": "docs/verification/wave5/task3-acceptance-20261013/runtime-harness-review-20261014-acceptance-a1.json",
+      "bytes": 20023,
+      "sha256": "5b86ce5ac1b1fdc5877c96ff8efff6dc6021d9aac02cb2f0dcc1169cb2c5f123"
+    },
+    {
+      "path": "docs/verification/wave5/task3-load-release-20261013/protocol-result-a2.json",
+      "bytes": 16303,
+      "sha256": "7a6b2e1d88ec93efeca5163e193bad25ddc10849207bf077b4a004763a63bd18"
+    }
+  ],
+  "acceptanceRecommendation": "Keep all eleven rows open. Authoritative execution, full installed limits, genuine target-scale load and allowed resumable jobs need their own evidence. No controlled test count closes those gates."
+}

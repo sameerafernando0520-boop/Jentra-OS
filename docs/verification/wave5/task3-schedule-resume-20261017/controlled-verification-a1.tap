@@ -1,0 +1,262 @@
+TAP version 13
+# Subtest: both launchers require generatedPlan and allow only the matching optional alias
+ok 1 - both launchers require generatedPlan and allow only the matching optional alias
+  ---
+  duration_ms: 4.9152
+  type: 'test'
+  ...
+# Subtest: both public readers accept the real pinned 1.37 MB predecessor review without private access
+ok 2 - both public readers accept the real pinned 1.37 MB predecessor review without private access
+  ---
+  duration_ms: 14.3521
+  type: 'test'
+  ...
+# Subtest: exact source/public lock arrays cover the union once, reject omissions and conflicting aliases
+ok 3 - exact source/public lock arrays cover the union once, reject omissions and conflicting aliases
+  ---
+  duration_ms: 0.8142
+  type: 'test'
+  ...
+# Subtest: health lock inventory covers the exact complete static import graph including a7 dependencies
+ok 4 - health lock inventory covers the exact complete static import graph including a7 dependencies
+  ---
+  duration_ms: 6.6724
+  type: 'test'
+  ...
+# Subtest: current call inventory binds actual137 and proposed174 without granting approval
+ok 5 - current call inventory binds actual137 and proposed174 without granting approval
+  ---
+  duration_ms: 0.8878
+  type: 'test'
+  ...
+# Subtest: deployed archive validates old immutable39 files while separately preserving current product candidate
+ok 6 - deployed archive validates old immutable39 files while separately preserving current product candidate
+  ---
+  duration_ms: 138.7306
+  type: 'test'
+  ...
+# Subtest: raw preflight anchor differs from genuine post-COMMIT application time
+ok 7 - raw preflight anchor differs from genuine post-COMMIT application time
+  ---
+  duration_ms: 2.1335
+  type: 'test'
+  ...
+# Subtest: renewal keeps microsecond anchor and rejects using appliedAt to calculate expiry
+ok 8 - renewal keeps microsecond anchor and rejects using appliedAt to calculate expiry
+  ---
+  duration_ms: 0.4514
+  type: 'test'
+  ...
+# Subtest: renewal rejects timestamp fabrication, missing raw write, and excessive application delay
+ok 9 - renewal rejects timestamp fabrication, missing raw write, and excessive application delay
+  ---
+  duration_ms: 0.4886
+  type: 'test'
+  ...
+# Subtest: owner expiry truncates the server-anchor window
+ok 10 - owner expiry truncates the server-anchor window
+  ---
+  duration_ms: 0.263
+  type: 'test'
+  ...
+# Subtest: renewed window can cross UTC midnight but cannot exceed scope seven-day maximum
+ok 11 - renewed window can cross UTC midnight but cannot exceed scope seven-day maximum
+  ---
+  duration_ms: 0.3417
+  type: 'test'
+  ...
+# Subtest: scheduler SQL only enables the three fixed jobs after all server-side guards
+ok 12 - scheduler SQL only enables the three fixed jobs after all server-side guards
+  ---
+  duration_ms: 2.3904
+  type: 'test'
+  ...
+# Subtest: snapshot requires both renewed rows, paused state and one health tick without deliveries
+ok 13 - snapshot requires both renewed rows, paused state and one health tick without deliveries
+  ---
+  duration_ms: 2.3935
+  type: 'test'
+  ...
+# Subtest: scheduler five-key preflight never consumes stdin or dispatches
+ok 14 - scheduler five-key preflight never consumes stdin or dispatches
+  ---
+  duration_ms: 0.4824
+  type: 'test'
+  ...
+# Subtest: health five-key preflight never consumes stdin or dispatches
+ok 15 - health five-key preflight never consumes stdin or dispatches
+  ---
+  duration_ms: 0.3167
+  type: 'test'
+  ...
+# Subtest: failed public gates stop both execute paths before private stdin
+ok 16 - failed public gates stop both execute paths before private stdin
+  ---
+  duration_ms: 0.8067
+  type: 'test'
+  ...
+# Subtest: scheduler public gate repeats after input before any intent or transport
+ok 17 - scheduler public gate repeats after input before any intent or transport
+  ---
+  duration_ms: 1.4906
+  type: 'test'
+  ...
+# Subtest: scheduler management input rejects actor/runtime-seal fields
+ok 18 - scheduler management input rejects actor/runtime-seal fields
+  ---
+  duration_ms: 0.5685
+  type: 'test'
+  ...
+# Subtest: health private input is bounded by UTF-8 bytes rather than characters
+ok 19 - health private input is bounded by UTF-8 bytes rather than characters
+  ---
+  duration_ms: 0.5595
+  type: 'test'
+  ...
+# Subtest: scheduler private input has a bounded timeout
+ok 20 - scheduler private input has a bounded timeout
+  ---
+  duration_ms: 6.253
+  type: 'test'
+  ...
+# Subtest: scheduler transport enforces read/write/read and stops repeated mutation
+ok 21 - scheduler transport enforces read/write/read and stops repeated mutation
+  ---
+  duration_ms: 1.8504
+  type: 'test'
+  ...
+# Subtest: health transport permits one dispatch and binds all readbacks to returned request ID
+ok 22 - health transport permits one dispatch and binds all readbacks to returned request ID
+  ---
+  duration_ms: 2.0527
+  type: 'test'
+  ...
+# Subtest: scheduler controller completes only with actual enabled readback and preserves all call accounting
+ok 23 - scheduler controller completes only with actual enabled readback and preserves all call accounting
+  ---
+  duration_ms: 1.5742
+  type: 'test'
+  ...
+# Subtest: scheduler lost write response causes one readback and no replay
+ok 24 - scheduler lost write response causes one readback and no replay
+  ---
+  duration_ms: 1.205
+  type: 'test'
+  ...
+# Subtest: missing durable acknowledgement prevents dispatch and cannot claim success
+ok 25 - missing durable acknowledgement prevents dispatch and cannot claim success
+  ---
+  duration_ms: 2.3064
+  type: 'test'
+  ...
+# Subtest: public gate drift before write prevents schedule mutation
+ok 26 - public gate drift before write prevents schedule mutation
+  ---
+  duration_ms: 1.4602
+  type: 'test'
+  ...
+# Subtest: expired renewed window stops before any durable intent or network
+ok 27 - expired renewed window stops before any durable intent or network
+  ---
+  duration_ms: 0.3144
+  type: 'test'
+  ...
+# Subtest: conditional direct preapproval accepts the genuine earlier timestamp without inventing a human exact window
+ok 28 - conditional direct preapproval accepts the genuine earlier timestamp without inventing a human exact window
+  ---
+  duration_ms: 0.9839
+  type: 'test'
+  ...
+# Subtest: conditional source preserves exact frozen SQL, request caps and nonhuman validation functions
+ok 29 - conditional source preserves exact frozen SQL, request caps and nonhuman validation functions
+  ---
+  duration_ms: 0.215
+  type: 'test'
+  ...
+# Subtest: conditional source uses distinct additive plan, review, decision and once paths
+ok 30 - conditional source uses distinct additive plan, review, decision and once paths
+  ---
+  duration_ms: 0.1428
+  type: 'test'
+  ...
+# Subtest: conditional contract rejects a blanket approval, later exact-window record or fabricated human window
+ok 31 - conditional contract rejects a blanket approval, later exact-window record or fabricated human window
+  ---
+  duration_ms: 1.2183
+  type: 'test'
+  ...
+# Subtest: conditional contract rejects unrelated reply, question or timestamp instead of copying claimed authority
+ok 32 - conditional contract rejects unrelated reply, question or timestamp instead of copying claimed authority
+  ---
+  duration_ms: 1.1984
+  type: 'test'
+  ...
+# Subtest: conditional contract binds the exact new source, bundle and all three owner/health/scope record hashes
+ok 33 - conditional contract binds the exact new source, bundle and all three owner/health/scope record hashes
+  ---
+  duration_ms: 1.5532
+  type: 'test'
+  ...
+# Subtest: both source policy and independent scope review must approve the exact conditional source contract without execution permission
+ok 34 - both source policy and independent scope review must approve the exact conditional source contract without execution permission
+  ---
+  duration_ms: 1.9984
+  type: 'test'
+  ...
+# Subtest: conditional preapproval cannot move after renewal or be laundered through a fake late health timestamp
+ok 35 - conditional preapproval cannot move after renewal or be laundered through a fake late health timestamp
+  ---
+  duration_ms: 0.6085
+  type: 'test'
+  ...
+# Subtest: conditional actual window uses exact server preflight rather than later application time
+ok 36 - conditional actual window uses exact server preflight rather than later application time
+  ---
+  duration_ms: 0.4825
+  type: 'test'
+  ...
+# Subtest: conditional window is exactly truncated by the actual A10 expiry
+ok 37 - conditional window is exactly truncated by the actual A10 expiry
+  ---
+  duration_ms: 0.3928
+  type: 'test'
+  ...
+# Subtest: conditional maximum window retains microseconds and allows UTC midnight crossing
+ok 38 - conditional maximum window retains microseconds and allows UTC midnight crossing
+  ---
+  duration_ms: 0.3575
+  type: 'test'
+  ...
+# Subtest: conditional bound cannot omit original seven-day guards or broaden job IDs, management or model/delivery scope
+ok 39 - conditional bound cannot omit original seven-day guards or broaden job IDs, management or model/delivery scope
+  ---
+  duration_ms: 1.696
+  type: 'test'
+  ...
+# Subtest: conditional approval requires every stated actual precondition, not an undifferentiated approved flag
+ok 40 - conditional approval requires every stated actual precondition, not an undifferentiated approved flag
+  ---
+  duration_ms: 0.6369
+  type: 'test'
+  ...
+# Subtest: conditional actual-window gate rejects missing provenance, changed charge, false aliases and post-preflight owner refresh
+ok 41 - conditional actual-window gate rejects missing provenance, changed charge, false aliases and post-preflight owner refresh
+  ---
+  duration_ms: 1.3001
+  type: 'test'
+  ...
+# Subtest: conditional contract rejects expired or over-seven-day authority before any later operation claim
+ok 42 - conditional contract rejects expired or over-seven-day authority before any later operation claim
+  ---
+  duration_ms: 0.2939
+  type: 'test'
+  ...
+1..42
+# tests 42
+# suites 0
+# pass 42
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 283.1974

@@ -1,6 +1,7 @@
 import { performance } from 'node:perf_hooks';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { setMaxListeners } from 'node:events';
+import { validateLoadTrace } from './runtime_load_trace_20261017_r5.mjs';
 import {
   PROJECT_ID, PROJECT_URL, LOAD_CLASSES, LOAD_LIMITS, OPERATIONS, COUNTERS, RACE_KINDS, GuardError,
   requireGuard, hashJson, freshId, isSha, isUuid, safeFailure, reviewedExecutionContext,
@@ -322,6 +323,7 @@ export function checkLoadResult(result, plan) {
   const commands = result.samples.filter(s => s.operation === 'forecast');
   requireGuard(new Set(commands.map(s => s.commandId)).size === commands.length
     && commands.every(s => s.commandId === s.originalCommandId), 'FRESH_FORECAST_COMMANDS_REQUIRED');
+  validateLoadTrace(result, plan);
   return true;
 }
 

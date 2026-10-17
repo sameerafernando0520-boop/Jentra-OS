@@ -1,0 +1,10 @@
+# Owner delegation authority audit
+
+The independently retrieved user messages support **delegated technical approval** for the concrete bounded synthetic continuation. The user asked the agent to act as owner for testing, then said to decide what is good and proceed without asking again, and later requested completion across seven areas. The helper question around the broad reply is preserved verbatim; earlier setup-ready answers remain user reports, not verification.
+
+The assessed scope is the existing project/runtime/company scope: recorded137 calls plus at most37 new counted attempts, maximum174; only two existing expiry fields for at most120 minutes using the server-anchor/owner-expiry minimum; two original export commands; one health invocation; and exact jobs4/5/6 only after genuine renewal, exports, health/provider and unchanged-guard evidence. Production, billing, deletion, resets, extra model/destination/spending caps and personal whole-system sign-off remain excluded.
+
+A root decision may honestly use kind `delegated-owner-runtime-continuation-approval` and source `explicit-user-owner-delegation`, binding this evidence/audit, concrete source/policy/review/bundle, scope and caps. Its `agentDecisionAt` must be the actual time of the agent decision. User turn timestamps do not establish exact reply time. Do not manufacture an exact human phrase, question ID or later human decision timestamp. A conditional decision can bind the expiry formula/jobs now; a later technical eligibility record binds actual receipts/window after the gates pass.
+
+The frozen code's exact-reply and later-human-timestamp predicates need an additive, independently reviewed authority-aware successor. This audit does not satisfy those predicates through invented data, renew expired rows, create a runtime approval record, or execute anything. Missing private credentials or prohibited credential/MFA/UAC interactions still require real user action when existing authorized sealed inputs and rights cannot resolve them. Continue every other unblocked task without redundant permission questions.
+

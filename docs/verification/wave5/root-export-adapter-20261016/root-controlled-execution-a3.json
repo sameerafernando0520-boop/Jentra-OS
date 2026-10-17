@@ -1,0 +1,34 @@
+{
+  "kind": "actual-controlled-adapter-mechanism-execution",
+  "recordedAt": "2026-10-16 19:11:43 UTC",
+  "command": [
+    "node",
+    "--experimental-test-isolation=none",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "docs/verification/wave5/root-export-adapter-20261016/root-adapter-controls-a2.test.mjs"
+  ],
+  "result": {
+    "chunk_id": "0ef522",
+    "wall_time_seconds": 3.8205128999999998,
+    "exit_code": 0,
+    "original_token_count": 40,
+    "output": "  duration_ms: 594.5916\r\n  type: 'test'\r\n  ...\r\n1..8\r\n# tests 8\r\n# suites 0\r\n# pass 8\r\n# fail 0\r\n# cancelled 0\r\n# skipped 0\r\n# todo 0\r\n# duration_ms 3144.402\r\n"
+  },
+  "scope": {
+    "actualPrivateAdapterExecuted": false,
+    "generatedPublicFixtureAdaptersParsed": true,
+    "actualEmbeddedReadHoldFunctionsTested": true,
+    "privateInputsRead": false,
+    "networkCalls": 0,
+    "intentsConsumed": false
+  },
+  "earlierLocalHarnessFailure": {
+    "chunkId": "a3f76c",
+    "exitCode": 1,
+    "cause": "URL pathname retained %20 in workspace path",
+    "repair": "Use fileURLToPath to decode workspace URL before reading public sources",
+    "failurePreservedInToolHistory": true
+  }
+}

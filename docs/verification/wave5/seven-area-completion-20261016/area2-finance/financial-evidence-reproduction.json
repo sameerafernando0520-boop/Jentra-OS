@@ -1,0 +1,118 @@
+{
+  "kind": "offline-retained-financial-evidence-reproduction",
+  "passed": true,
+  "sourceObservedAt": {
+    "profitLoss": "2026-10-13T12:32:33.900454+00:00",
+    "balanceSheet": "2026-10-13T12:32:34.323533+00:00"
+  },
+  "administrativeSyntheticSource": true,
+  "actualUserPostingProved": false,
+  "ratioArithmeticRows": [
+    {
+      "bundle": "ratiosBase",
+      "code": "assets_to_equity",
+      "numerator": "103997.000003",
+      "exactValue": "1.011762",
+      "denominator": "102787.999998",
+      "unavailableReason": null,
+      "operandsReproducedFromStatementSummaries": true
+    },
+    {
+      "bundle": "ratiosBase",
+      "code": "net_profit_margin",
+      "numerator": "1787.999996",
+      "exactValue": "0.596000",
+      "denominator": "3000.000001",
+      "unavailableReason": null,
+      "operandsReproducedFromStatementSummaries": true
+    },
+    {
+      "bundle": "ratiosBase",
+      "code": "liabilities_to_assets",
+      "numerator": "1209.000005",
+      "exactValue": "0.011625",
+      "denominator": "103997.000003",
+      "unavailableReason": null,
+      "operandsReproducedFromStatementSummaries": true
+    },
+    {
+      "bundle": "ratios",
+      "code": "quick_ratio",
+      "numerator": "102997.000002",
+      "exactValue": "85.191894",
+      "denominator": "1209.000005",
+      "unavailableReason": null,
+      "operandsReproducedFromStatementSummaries": false
+    },
+    {
+      "bundle": "ratios",
+      "code": "current_ratio",
+      "numerator": "103997.000003",
+      "exactValue": "86.019024",
+      "denominator": "1209.000005",
+      "unavailableReason": null,
+      "operandsReproducedFromStatementSummaries": false
+    },
+    {
+      "bundle": "ratios",
+      "code": "assets_to_equity",
+      "numerator": "103997.000003",
+      "exactValue": "1.011762",
+      "denominator": "102787.999998",
+      "unavailableReason": null,
+      "operandsReproducedFromStatementSummaries": true
+    },
+    {
+      "bundle": "ratios",
+      "code": "net_profit_margin",
+      "numerator": "1787.999996",
+      "exactValue": "0.596000",
+      "denominator": "3000.000001",
+      "unavailableReason": null,
+      "operandsReproducedFromStatementSummaries": true
+    },
+    {
+      "bundle": "ratios",
+      "code": "gross_profit_margin",
+      "numerator": "1799.999999",
+      "exactValue": "0.600000",
+      "denominator": "3000.000001",
+      "unavailableReason": null,
+      "operandsReproducedFromStatementSummaries": false
+    },
+    {
+      "bundle": "ratios",
+      "code": "liabilities_to_assets",
+      "numerator": "1209.000005",
+      "exactValue": "0.011625",
+      "denominator": "103997.000003",
+      "unavailableReason": null,
+      "operandsReproducedFromStatementSummaries": true
+    }
+  ],
+  "statementOperandsReproduced": 6,
+  "classifiedOperandsRequireAccountClassificationManifest": true,
+  "canonicalStatementHashesRecomputed": false,
+  "liveQueries": 0,
+  "acceptanceDecisionsAdded": 0,
+  "limitations": [
+    "The retained statement files contain summaries, not full canonical account-level publications.",
+    "Classified formula arithmetic is checked, but account-classification source operands cannot be independently reconstructed from these files.",
+    "This reproduces historical captured evidence; it does not establish current authorization, new live provider execution, source posting, concurrency, export or native acceptance."
+  ],
+  "verifiedAt": "2026-10-16T12:14:20.462Z",
+  "inputBindings": [
+    {
+      "path": "docs/verification/wave5/genuine-finance-finance-20261013-r5-1791894738890/statement-profit_loss.json",
+      "sha256": "288af4da9c6d99b04dd9bbb32012dd2523e68e19d72fa19fde7d5ca64fa1f62d"
+    },
+    {
+      "path": "docs/verification/wave5/genuine-finance-finance-20261013-r5-1791894738890/statement-balance_sheet.json",
+      "sha256": "d7fbe84b8d4ee62dd505394ce95927ab6a10de868d67e5a5df0df383374b6971"
+    },
+    {
+      "path": "docs/verification/wave5/genuine-finance-finance-20261013-r5-1791894738890/ratios-and-classification.json",
+      "sha256": "c030a882ed507839cc753a6fd29870fea7b23529675579648b6a0ea270d78dda"
+    }
+  ]
+}

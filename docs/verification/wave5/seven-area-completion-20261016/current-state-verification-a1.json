@@ -1,0 +1,117 @@
+{
+  "kind": "independent-current-live-state-projection-verification",
+  "passed": true,
+  "verifiedAt": "2026-10-16T12:21:10.572Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "actualDatabaseObservedAt": "2026-10-16T12:13:25.833347+00:00",
+  "sourceBindings": [
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/root-readonly-attempt-a1.json",
+      "bytes": 6771,
+      "sha256": "5b9b136a1e0b414b40a8cd314e9a7b1b6a7ea201c594cd12e510562fb3b105a4"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/root-readonly-result-a1.json",
+      "bytes": 13758,
+      "sha256": "010900eea3f210b95d1d9e3f5e15b8c59663d90ad8f638fdc8e3cc919703b7de"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/root-advisors-attempt-a1.json",
+      "bytes": 290,
+      "sha256": "47822988c8200b8adf01a3d9ced4a24f2f79440152418c6ddfe38d1cf0d55bd2"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/root-security-advisors-result-a1.json",
+      "bytes": 52328,
+      "sha256": "865b97745c013beb18414231699e10e58b585f98f8bff57de16448fba4b7c18b"
+    },
+    {
+      "path": "docs/verification/wave5/seven-area-completion-20261016/root-performance-advisors-result-a1.json",
+      "bytes": 331372,
+      "sha256": "cb45cd5bcc061edb44ebeb8b150d255b5c25e0d5b838f504754b9eef38e51722"
+    }
+  ],
+  "actualDatabaseReadCalls": 1,
+  "actualAdvisorReadCalls": 2,
+  "cumulativeConservativeCharge": 137,
+  "originalPriorCharge": 134,
+  "guardFunctionBindingsVerified": 7,
+  "installedMigrationCount": 115,
+  "installedApiFunctionCount": 363,
+  "scopeAndAuthorityExpired": true,
+  "threeSchedulesRemainPaused": true,
+  "actualWorkerTicks": 0,
+  "actualExports": 0,
+  "actualScenarios": 0,
+  "finance": {
+    "lines": 18,
+    "exports": 0,
+    "journals": 9,
+    "scenarios": 0,
+    "publications": 3,
+    "dateDecisions": 3,
+    "dateProposals": 3,
+    "processEvents": 7,
+    "classifications": 1
+  },
+  "advisorGroups": {
+    "security": [
+      {
+        "name": "rls_enabled_no_policy",
+        "level": "INFO",
+        "count": 215,
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy"
+      },
+      {
+        "name": "auth_leaked_password_protection",
+        "level": "WARN",
+        "count": 1,
+        "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection"
+      }
+    ],
+    "performance": [
+      {
+        "name": "unindexed_foreign_keys",
+        "level": "INFO",
+        "count": 289,
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys"
+      },
+      {
+        "name": "no_primary_key",
+        "level": "INFO",
+        "count": 1,
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0004_no_primary_key"
+      },
+      {
+        "name": "unused_index",
+        "level": "INFO",
+        "count": 781,
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index"
+      },
+      {
+        "name": "duplicate_index",
+        "level": "WARN",
+        "count": 1,
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0009_duplicate_index"
+      }
+    ]
+  },
+  "mutations": 0,
+  "privateInputsRead": false,
+  "requirementsNewlyAccepted": 0,
+  "proposedBudgetOnly": {
+    "actualPrior": 137,
+    "ownerReadiness": 1,
+    "renewalControl": 3,
+    "priorAtExports": 141,
+    "exportsOrdinary": 24,
+    "exportsResolutionReserve": 1,
+    "throughExports": 166,
+    "healthMaximum": 5,
+    "throughHealth": 171,
+    "scheduleMaximum": 3,
+    "totalMaximum": 174,
+    "approved": false
+  },
+  "limitation": "Current-state and advisor observations are read-only. They do not create actual renewal, native, contention, provider, load or production acceptance."
+}

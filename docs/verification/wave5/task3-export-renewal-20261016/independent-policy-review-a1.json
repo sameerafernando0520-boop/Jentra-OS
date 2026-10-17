@@ -1,0 +1,104 @@
+{
+  "kind": "independent-export-a7-policy-review",
+  "reviewedAt": "2026-10-17T13:16:36.827Z",
+  "passed": true,
+  "sourceOnly": true,
+  "liveExecutionAuthorized": false,
+  "policyBinding": {
+    "path": "docs/verification/wave5/task3-export-renewal-20261016/source-policy-a1.json",
+    "sha256": "fddf8cab9460aa590889468fc0bcd693a857697a6da8ffe6e24e3b14b6665813"
+  },
+  "exportSourceBindings": [
+    {
+      "path": "tools/wave5/finance_exports_20261016_r5_a7.mjs",
+      "sha256": "ec1cbf544b2974db26b1fcb25a04fc1d54610e7149090a3dcbd5c185adb247c6"
+    },
+    {
+      "path": "tools/wave5/prepare_finance_exports_20261016_r5_a7.mjs",
+      "sha256": "75a64c93fcece042615af6804a42b67b0c2863f2e907bdbb149cf6a631d2cca1"
+    },
+    {
+      "path": "docs/verification/wave5/task3-export-renewal-20261016/finance_exports_20261016_r5_a7.test.mjs",
+      "sha256": "3c1f4f6f924d06d7e132dd6467cebd39c7cc26d5e17b10af3356714d6aeb95e5"
+    }
+  ],
+  "budget": {
+    "recordedPrior": 137,
+    "ownerRefreshCalls": 1,
+    "renewalControlCalls": 3,
+    "prior": 141,
+    "ordinary": 24,
+    "ordinaryLimit": 165,
+    "resolution": 1,
+    "total": 166
+  },
+  "currentChargeBinding": {
+    "path": "docs/verification/wave5/task3-export-renewal-20261016/recorded-call-accounting-137-a1.json",
+    "sha256": "f74dc940a839267f8d1d19982f08b122a43455b911d93dab9be85604050d1963"
+  },
+  "renewalOperationBundleSha256": "7b196512d368a4ac39f7113c0d5b04c21178cf0779179caf1f1f9fd8418d04de",
+  "exactConsolidatedSqlSha256": "f0783ac9e8b2041f2566c0fa64e8616d65c9fd2246f0a1809a36f4ce23f3b291",
+  "renewalControllerSourceBindings": [
+    {
+      "path": "tools/wave5/renew_runtime_authority_20261015_r5_a1.mjs",
+      "sha256": "b3d8d2dda66e0945b1451d2d5f57d4daefbdf00cb2799d59543220a7d952956d"
+    },
+    {
+      "path": "docs/verification/wave5/root-runtime-renewal-20261015/renew_runtime_authority_20261015_r5_a1.test.mjs",
+      "sha256": "f55039fe103b78487c96ae132d567d3c56c079cffd88fe1c3940b2d7ce08d79d"
+    }
+  ],
+  "renewalSqlBindings": {
+    "read": {
+      "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-preflight-read-a3.sql",
+      "sha256": "546b3490cccecb4ae46740d4960dd64a919e35ba813261fefc17725d5afbae93"
+    },
+    "write": {
+      "path": "docs/verification/wave5/task3-runtime-renewal-20261014/renewal-expiry-update-template-a3.sql",
+      "sha256": "ba2d17a9d47b64974d6086a16aaa25f3c04efbed60344ba18ba09fc8d543eeff"
+    }
+  },
+  "operationManifestBinding": {
+    "path": "docs/verification/wave5/root-runtime-review-20261017/operation-bundle.draft-a1.json",
+    "sha256": "7b196512d368a4ac39f7113c0d5b04c21178cf0779179caf1f1f9fd8418d04de"
+  },
+  "reviewedInputBindings": 189,
+  "preservedOriginalSnapshotBindings": 68,
+  "preservedDeployedArchiveBindings": 39,
+  "sourceReviews": [
+    {
+      "name": "Renewal controller",
+      "path": "docs/verification/wave5/root-runtime-renewal-20261015/independent-source-review-a1.json",
+      "sha256": "bd28c026a0b91866e72dd798205c72de85a34a8908eb339dd09fe38fb559fe8d",
+      "bytes": 4023
+    },
+    {
+      "name": "Export adapter a3",
+      "path": "docs/verification/wave5/root-export-adapter-20261017/independent-review-a3.json",
+      "sha256": "b1f18ceb697a1180a643a5f08dfa8bd2babe35edbac447c977007db42a414185",
+      "bytes": 10994
+    },
+    {
+      "name": "Management adapter a2",
+      "path": "docs/verification/wave5/root-management-adapter-20261016/independent-review-a2.json",
+      "sha256": "30288741537aa600492b896866949d0e8a427c57e505eaad1d2037a0a125610c",
+      "bytes": 12504
+    }
+  ],
+  "reviewNotes": [
+    "Exact new policy values match the frozen export and controller interfaces and all 189 source/evidence files match their hashes.",
+    "The publication preserves the source-only proposal flags. No approval, authority or successful runtime observation is inferred.",
+    "Renewal/export and single paused-schedule health decisions are separate. Scheduler requires its later actual-window decision; a reply now cannot satisfy it.",
+    "After exact approval only the six absent snapshot files and two reviewed adapter installations are proposed; original68 sources, consumed intents, accounts and sessions remain preserved."
+  ],
+  "networkCalls": 0,
+  "privateInputsRead": false,
+  "ownerDecisionCreated": false,
+  "actualOwnerRefreshPerformed": false,
+  "actualRenewalPerformed": false,
+  "actualExports": 0,
+  "executionPermitted": false,
+  "acceptanceChanged": false,
+  "production": false,
+  "realBilling": false
+}

@@ -1,0 +1,142 @@
+TAP version 13
+# Subtest: both launchers require generatedPlan and allow only the matching optional alias
+ok 1 - both launchers require generatedPlan and allow only the matching optional alias
+  ---
+  duration_ms: 3.8939
+  type: 'test'
+  ...
+# Subtest: raw preflight anchor differs from genuine post-COMMIT application time
+ok 2 - raw preflight anchor differs from genuine post-COMMIT application time
+  ---
+  duration_ms: 12.7471
+  type: 'test'
+  ...
+# Subtest: renewal keeps microsecond anchor and rejects using appliedAt to calculate expiry
+ok 3 - renewal keeps microsecond anchor and rejects using appliedAt to calculate expiry
+  ---
+  duration_ms: 0.7453
+  type: 'test'
+  ...
+# Subtest: renewal rejects timestamp fabrication, missing raw write, and excessive application delay
+ok 4 - renewal rejects timestamp fabrication, missing raw write, and excessive application delay
+  ---
+  duration_ms: 0.5162
+  type: 'test'
+  ...
+# Subtest: owner expiry truncates the server-anchor window
+ok 5 - owner expiry truncates the server-anchor window
+  ---
+  duration_ms: 0.56
+  type: 'test'
+  ...
+# Subtest: renewed window can cross UTC midnight but cannot exceed scope seven-day maximum
+ok 6 - renewed window can cross UTC midnight but cannot exceed scope seven-day maximum
+  ---
+  duration_ms: 0.5086
+  type: 'test'
+  ...
+# Subtest: scheduler SQL only enables the three fixed jobs after all server-side guards
+ok 7 - scheduler SQL only enables the three fixed jobs after all server-side guards
+  ---
+  duration_ms: 1.0828
+  type: 'test'
+  ...
+# Subtest: snapshot requires both renewed rows, paused state and one health tick without deliveries
+ok 8 - snapshot requires both renewed rows, paused state and one health tick without deliveries
+  ---
+  duration_ms: 1.9866
+  type: 'test'
+  ...
+# Subtest: scheduler five-key preflight never consumes stdin or dispatches
+ok 9 - scheduler five-key preflight never consumes stdin or dispatches
+  ---
+  duration_ms: 0.8551
+  type: 'test'
+  ...
+# Subtest: health five-key preflight never consumes stdin or dispatches
+ok 10 - health five-key preflight never consumes stdin or dispatches
+  ---
+  duration_ms: 0.9363
+  type: 'test'
+  ...
+# Subtest: failed public gates stop both execute paths before private stdin
+ok 11 - failed public gates stop both execute paths before private stdin
+  ---
+  duration_ms: 0.7469
+  type: 'test'
+  ...
+# Subtest: scheduler public gate repeats after input before any intent or transport
+ok 12 - scheduler public gate repeats after input before any intent or transport
+  ---
+  duration_ms: 2.3893
+  type: 'test'
+  ...
+# Subtest: scheduler management input rejects actor/runtime-seal fields
+ok 13 - scheduler management input rejects actor/runtime-seal fields
+  ---
+  duration_ms: 0.6427
+  type: 'test'
+  ...
+# Subtest: health private input is bounded by UTF-8 bytes rather than characters
+ok 14 - health private input is bounded by UTF-8 bytes rather than characters
+  ---
+  duration_ms: 1.3547
+  type: 'test'
+  ...
+# Subtest: scheduler private input has a bounded timeout
+ok 15 - scheduler private input has a bounded timeout
+  ---
+  duration_ms: 7.8669
+  type: 'test'
+  ...
+# Subtest: scheduler transport enforces read/write/read and stops repeated mutation
+ok 16 - scheduler transport enforces read/write/read and stops repeated mutation
+  ---
+  duration_ms: 2.1207
+  type: 'test'
+  ...
+# Subtest: health transport permits one dispatch and binds all readbacks to returned request ID
+ok 17 - health transport permits one dispatch and binds all readbacks to returned request ID
+  ---
+  duration_ms: 2.011
+  type: 'test'
+  ...
+# Subtest: scheduler controller completes only with actual enabled readback and preserves all call accounting
+ok 18 - scheduler controller completes only with actual enabled readback and preserves all call accounting
+  ---
+  duration_ms: 1.5415
+  type: 'test'
+  ...
+# Subtest: scheduler lost write response causes one readback and no replay
+ok 19 - scheduler lost write response causes one readback and no replay
+  ---
+  duration_ms: 1.0189
+  type: 'test'
+  ...
+# Subtest: missing durable acknowledgement prevents dispatch and cannot claim success
+ok 20 - missing durable acknowledgement prevents dispatch and cannot claim success
+  ---
+  duration_ms: 1.3841
+  type: 'test'
+  ...
+# Subtest: public gate drift before write prevents schedule mutation
+ok 21 - public gate drift before write prevents schedule mutation
+  ---
+  duration_ms: 0.6127
+  type: 'test'
+  ...
+# Subtest: expired renewed window stops before any durable intent or network
+ok 22 - expired renewed window stops before any durable intent or network
+  ---
+  duration_ms: 0.2036
+  type: 'test'
+  ...
+1..22
+# tests 22
+# suites 0
+# pass 22
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 138.2609
