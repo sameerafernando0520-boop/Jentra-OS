@@ -1,0 +1,1805 @@
+{
+  "kind": "actual-current-source-windows-candidate-verification",
+  "startedAt": "2026-10-17T13:40:08.934Z",
+  "finishedAt": "2026-10-17T18:15:17.572Z",
+  "sourceManifest": {
+    "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/source-manifest-a2.json",
+    "sha256": "856ac2944f2b9cde7db2b2f15cc0ad6bfdd7904bd09bba30fe6c9a284079c583"
+  },
+  "sourceCountVerified": 1071,
+  "stages": [
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "01-pubget-offline",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "pub",
+        "get",
+        "--offline"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview",
+      "pid": 1380,
+      "startedAt": "2026-10-17T13:40:11.639Z",
+      "finishedAt": "2026-10-17T13:40:55.617Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": null,
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/01-pubget-offline-exit.json",
+        "sha256": "b235f2a15256890c86ba0a8500e36476a1ff99b4468fabc61c71f6a090d4eab2"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/01-pubget-offline.log",
+        "sha256": "0ff6c7bdf9da52ec2dc4f40f2a382720bca48b110dfd41b520345f9b5986bb47",
+        "bytes": 503
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/01-pubget-offline-result.json",
+        "sha256": "5cb045abc96c0ab870772479aca8d780d460f55f98301d5e9a897e989e335089"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "02-analyze",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "analyze",
+        "apps/jentra_desktop/lib",
+        "apps/jentra_desktop/test/wave5_workspaces_test.dart",
+        "apps/jentra_desktop/test/wave5_continuation_test.dart",
+        "apps/jentra_desktop/test/reviewed_model_workspace_test.dart",
+        "apps/jentra_desktop/test/process_metric_workspace_test.dart",
+        "packages/jentra_platform/lib/src/analytics",
+        "packages/jentra_platform/lib/src/auth",
+        "packages/jentra_platform/test/analytics",
+        "packages/jentra_platform/test/auth"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview",
+      "pid": 11544,
+      "startedAt": "2026-10-17T13:40:58.524Z",
+      "finishedAt": "2026-10-17T13:45:30.036Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": null,
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/02-analyze-exit.json",
+        "sha256": "f259cc9202cbe9791d4bb2c1cbc7014ceef8be2a52b3e004e19405a75dd81c7d"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/02-analyze.log",
+        "sha256": "2e34fcd98d0ffd5ff110f85d811f77e3571b6d0be677799fd4a1a1dcb7f92c28",
+        "bytes": 198
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/02-analyze-result.json",
+        "sha256": "354b39054d61677ca3861bae437363dd29d771d4f233a93daf8db04be3fc9865"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "03-platform-01",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/analytics/cash_conflict_http409_20261013_r5_test.dart",
+        "test/analytics/cash_payment_dates_gateway_test.dart",
+        "test/analytics/cash_scenario_store_test.dart",
+        "test/analytics/dated_cash_gateway_test.dart",
+        "test/analytics/governed_analytics_export_test.dart",
+        "test/analytics/historical_pipeline_gateway_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\packages\\jentra_platform",
+      "pid": 19052,
+      "startedAt": "2026-10-17T13:45:33.598Z",
+      "finishedAt": "2026-10-17T13:46:25.123Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 28,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/03-platform-01-exit.json",
+        "sha256": "b8f68443a79fc9394bbe2fb46b431d892f73776f9c7212ed21e5ccaa84a2f87a"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/03-platform-01.log",
+        "sha256": "671c812327842596cf55567b943932bcb560835010a5a99d99f6cd625f56c96e",
+        "bytes": 7275
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/03-platform-01-result.json",
+        "sha256": "a314a609707d275a627a7a7a8f16d5172381604956141ba033957669d9ac6b84"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "03-platform-02",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/analytics/pipeline_forecast_gateway_test.dart",
+        "test/analytics/process_filter_store_test.dart",
+        "test/analytics/process_metric_gateway_test.dart",
+        "test/analytics/process_metric_hasher_test.dart",
+        "test/analytics/reviewed_model_gateway_test.dart",
+        "test/analytics/statement_ratio_adapter_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\packages\\jentra_platform",
+      "pid": 16176,
+      "startedAt": "2026-10-17T13:46:28.083Z",
+      "finishedAt": "2026-10-17T13:46:46.258Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 30,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/03-platform-02-exit.json",
+        "sha256": "f620b6185e068b7ccec1338f7fb52fc18e3d6b16ef8fe57dbb5e312ffef0aa55"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/03-platform-02.log",
+        "sha256": "cd35c1f876e53e7728da8dcd7f7ac390698cf13f66c5b3c5a08dbdbd5a59322d",
+        "bytes": 7400
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/03-platform-02-result.json",
+        "sha256": "fdb9841041d5c4e299d5e6b50ccb788442c77965febcaf11a724a7141c10a493"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "03-platform-03",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/analytics/wave5_command_store_test.dart",
+        "test/analytics/wave5_control_gateway_test.dart",
+        "test/analytics/wave5_usage_period_20261016_test.dart",
+        "test/auth/google_loopback_test.dart",
+        "test/auth/google_provider_settings_test.dart",
+        "test/auth/pkce_exchange_http_client_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\packages\\jentra_platform",
+      "pid": 15872,
+      "startedAt": "2026-10-17T13:46:48.822Z",
+      "finishedAt": "2026-10-17T13:47:12.704Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 32,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/03-platform-03-exit.json",
+        "sha256": "90480fac29956773189bd6bac6ed1fd8a22da79f7f04e7c93aef3961cbd43a0f"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/03-platform-03.log",
+        "sha256": "b2bfb590250c8e9140c25ce045c8fe3d62ce0e97c7fdba892d0e9288c7db3ad4",
+        "bytes": 7548
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/03-platform-03-result.json",
+        "sha256": "604488ffdc926eb95186548b9d4435639872d6e8c298df477075ccf5d14c819a"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-01",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/asset_equipment_workspace_test.dart",
+        "test/assets_workspace_test.dart",
+        "test/auth_capabilities_test.dart",
+        "test/bank_access_interaction_test.dart",
+        "test/bank_access_visual_test.dart",
+        "test/bank_dialog_access_20261003_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 11064,
+      "startedAt": "2026-10-17T13:47:14.977Z",
+      "finishedAt": "2026-10-17T13:48:22.422Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 89,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-01-exit.json",
+        "sha256": "0cf788ea5c2c60210e4aca060970b5977b70cd4c404f48af4707da40850cb6c5"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-01.log",
+        "sha256": "6b6aaeb6a2c4416336c01505c2047f1f7763a93ac40de26f3b3e56faa7ec94ac",
+        "bytes": 18868
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-01-result.json",
+        "sha256": "812af09e6d51706b99aa4a584d1ee952649cca029e17b14389c0fd491a982c9e"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-02",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/bank_reconciliation_workspace_test.dart",
+        "test/budget_workspace_test.dart",
+        "test/calendar_resolution_dialog_test.dart",
+        "test/calendar_workspace_test.dart",
+        "test/cash_flow_mapping_workspace_test.dart",
+        "test/close_review_workspace_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 10520,
+      "startedAt": "2026-10-17T13:48:25.554Z",
+      "finishedAt": "2026-10-17T13:48:55.099Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 68,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-02-exit.json",
+        "sha256": "9cc9d62376ad401f4dc1f2648f580e7a1199afea6914b9e4582565a80b958f15"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-02.log",
+        "sha256": "dda0cba894055e7aff8873f6093e1dbca77aca6ce6cad6df9119ad8169880460",
+        "bytes": 15524
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-02-result.json",
+        "sha256": "00bd6f38814bb75a1e2a49871cfd620f2cd28d3cd3b4b361bdc3c4e47c01fae8"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-03",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/command_palette_keyboard_test.dart",
+        "test/conflict_comparison_interaction_test.dart",
+        "test/control_reconciliation_workspace_test.dart",
+        "test/count_partition_workspace_test.dart",
+        "test/crm_workspace_test.dart",
+        "test/current_wave3_workspaces_visual_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 14600,
+      "startedAt": "2026-10-17T13:48:56.919Z",
+      "finishedAt": "2026-10-17T13:50:22.280Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 130,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-03-exit.json",
+        "sha256": "1de1e04556346324e9d96da008db75499b2a54a16178962885b12c7225aa5ccf"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-03.log",
+        "sha256": "5a32d4750537dc70672f4f1736c726e86d62701b2e227750b52db4915c72085b",
+        "bytes": 26627
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-03-result.json",
+        "sha256": "445cfb4631d01fd9f3ede6260b2c8fa788c7b6dcefb4ac2b8d932e08814768db"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-04",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/design_system_catalogue_test.dart",
+        "test/dimension_dialog_access_20261003_test.dart",
+        "test/disposition_workspace_test.dart",
+        "test/employee_workspace_test.dart",
+        "test/expense_evidence_workspace_test.dart",
+        "test/finance_dialog_access_20261003_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 10572,
+      "startedAt": "2026-10-17T13:50:24.054Z",
+      "finishedAt": "2026-10-17T13:51:02.609Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 69,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-04-exit.json",
+        "sha256": "bd3e91edd5608e7c7b936302d583b120d8f9cb4fce30399417bd84729d459603"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-04.log",
+        "sha256": "db0238996ce622050fa40efadc2d142e505fc629a00eee990412cabb09c683dc",
+        "bytes": 15305
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-04-result.json",
+        "sha256": "ce7958b41a9ed3698108e143820723c371cd3fd1ff62722bbe9b81ff950d777d"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-05",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/finance_provider_connectivity_20261003_test.dart",
+        "test/financial_dimension_workspace_test.dart",
+        "test/financial_statement_workspace_test.dart",
+        "test/goods_receipt_workspace_test.dart",
+        "test/inventory_control_dialog_access_20261003_test.dart",
+        "test/inventory_provider_connection_access_20261003_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 19624,
+      "startedAt": "2026-10-17T13:51:04.390Z",
+      "finishedAt": "2026-10-17T13:55:03.200Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 94,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-05-exit.json",
+        "sha256": "955847ee572bc116428cb3f2157cf386ec4939f19c3fd5adb5f5f634d8e9a554"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-05.log",
+        "sha256": "0dcf08076e455dcac222b3bcbc38798fc4e1b783db62198d2736ea1bab9f02c6",
+        "bytes": 21366
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-05-result.json",
+        "sha256": "b3c4710e1fbd5fc5c14efb568fdb6b8c3210d1f55e9613ec2932054fb963eebc"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-06",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/inventory_reference_access_test.dart",
+        "test/inventory_sealing_access_test.dart",
+        "test/inventory_transfer_workspace_test.dart",
+        "test/inventory_valuation_recovery_edges_test.dart",
+        "test/inventory_valuation_workspace_test.dart",
+        "test/inventory_value_recovery_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 11920,
+      "startedAt": "2026-10-17T14:22:48.673Z",
+      "finishedAt": "2026-10-17T17:55:43.910Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 141,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-06-exit.json",
+        "sha256": "f55eb55a09ec73f0c1dc53be142665a63d588c9b2c51493508676f245ede5ade"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-06.log",
+        "sha256": "ec9a454669b202b06366e2f632856d6893627b410b09bb88bb2bc180581e3b5d",
+        "bytes": 31318
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-06-result.json",
+        "sha256": "24e753dde327ac45928342fbed633d7bdc6c49f0dda54e2d4770bf7ef1d1ed0e"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-07",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/inventory_workflow_interaction_test.dart",
+        "test/jentra_app_test.dart",
+        "test/landed_extension_interaction_test.dart",
+        "test/landed_extension_read_access_test.dart",
+        "test/landed_extension_workspace_test.dart",
+        "test/landed_read_chain_epoch_20261003_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 12264,
+      "startedAt": "2026-10-17T17:55:46.852Z",
+      "finishedAt": "2026-10-17T17:57:43.688Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 54,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-07-exit.json",
+        "sha256": "d706bfacbe489b0012b178de5115715a4d9d38100dd41c83a23dedaee91beda5"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-07.log",
+        "sha256": "8ac0b3dc9e1de967b24f2520c7852f716f427a326ad671d9be8275e0a7ba6cfe",
+        "bytes": 11606
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-07-result.json",
+        "sha256": "f7ea0c3a78bdfec2aa970847ea61faa671e2017a341584e61fc24f7e06f73971"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-08",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/landed_read_recovery_test.dart",
+        "test/landed_value_workspace_test.dart",
+        "test/login_account_screen_test.dart",
+        "test/main_preview_startup_test.dart",
+        "test/manual_journal_workspace_test.dart",
+        "test/milestones_workspace_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 12984,
+      "startedAt": "2026-10-17T17:57:54.463Z",
+      "finishedAt": "2026-10-17T17:59:00.900Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 95,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-08-exit.json",
+        "sha256": "fdc127b8bd46d4a3979ee0fc42afa27ebaf0252619c6a7d57b672a4b5eb5529d"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-08.log",
+        "sha256": "ae604d7e3f68fe336521074c02ecfd347d660b06c6716e5bda968e0ab0413c71",
+        "bytes": 20029
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-08-result.json",
+        "sha256": "e8478dd20a9a712d492739fb33bc47fc0b6cd56f1a491ada95a95304a1741538"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-09",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/negative_stock_policy_controller_20261003_test.dart",
+        "test/negative_stock_policy_widgets_20261003_test.dart",
+        "test/notification_admin_workspace_test.dart",
+        "test/notification_diagnostics_visual_test.dart",
+        "test/operational_attachment_access_test.dart",
+        "test/operational_deep_link_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 12380,
+      "startedAt": "2026-10-17T17:59:04.443Z",
+      "finishedAt": "2026-10-17T18:00:06.090Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 97,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-09-exit.json",
+        "sha256": "08c7e79af9fdffb36cdd82684eb5d83e8706a2c5284bc53841c3b6f8708e40b8"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-09.log",
+        "sha256": "b4b1d3abacd0ad4c42f92d4e6289a9e464b6d06754ba6191a5c1b98cf85a9f0e",
+        "bytes": 22674
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-09-result.json",
+        "sha256": "3a150693aaad34609fef95d9d0764fdd0672a93094d1c014aff1a286f96bee14"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-10",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/operational_detail_visual_test.dart",
+        "test/operational_metrics_visual_test.dart",
+        "test/operational_read_dialog_epoch_20261003_test.dart",
+        "test/operational_workspace_test.dart",
+        "test/organization_workspace_test.dart",
+        "test/payroll_correction_workspace_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 1364,
+      "startedAt": "2026-10-17T18:00:09.403Z",
+      "finishedAt": "2026-10-17T18:00:52.396Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 69,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-10-exit.json",
+        "sha256": "e5524e7c4a45e54974904e061a36cfd3667eb9fed7da5efebcbef6e81e7330c1"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-10.log",
+        "sha256": "bda3472fe8d31ec14f631c8e717d638edd0f54d61c337945e6d6fce2e9924a3f",
+        "bytes": 15496
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-10-result.json",
+        "sha256": "eae7ae6ebe9d991d619950d87e7f2746b05854ba71455be89a5d93e8e59c6193"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-11",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/payroll_workspace_test.dart",
+        "test/period_fx_governance_edges_20261003_test.dart",
+        "test/period_fx_workspace_test.dart",
+        "test/posted_journal_workspace_test.dart",
+        "test/private_hr_workspace_test.dart",
+        "test/process_metric_workspace_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 10508,
+      "startedAt": "2026-10-17T18:00:56.470Z",
+      "finishedAt": "2026-10-17T18:03:01.189Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 87,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-11-exit.json",
+        "sha256": "a357037dcdb5e4d30962f6a8d4e5065c40fd699fdccbf5b12e4051d71b6872b3"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-11.log",
+        "sha256": "089fe22d70e24dd01af595753c6bbc76b5138c190272ff03e4d7de585e962224",
+        "bytes": 18861
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-11-result.json",
+        "sha256": "76ea3972894a86383f2f27373647d5bf2910fe59eea37b9cbfc8e4807f94a4b7"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-12",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/procurement_access_recovery_test.dart",
+        "test/procurement_connectivity_provider_20261003_test.dart",
+        "test/procurement_dialog_access_20261003_test.dart",
+        "test/procurement_inflight_recovery_20261003_test.dart",
+        "test/procurement_interaction_test.dart",
+        "test/procurement_reference_access_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 18752,
+      "startedAt": "2026-10-17T18:03:04.700Z",
+      "finishedAt": "2026-10-17T18:03:43.479Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 92,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-12-exit.json",
+        "sha256": "1b402e44791e88507b778a919c0dafc7df239bf98deca3d2b320cfbab08ab3ca"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-12.log",
+        "sha256": "0c037ebee1d145d707a4754ff4654c6339e33b1515f0e399d1a9f5dd5528fc46",
+        "bytes": 21331
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-12-result.json",
+        "sha256": "af0fe5d8c4e20413b0551558319d47dd8e800cbb8172c953ef954f77328a0d5d"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-13",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/procurement_workspace_test.dart",
+        "test/product_unit_workspace_test.dart",
+        "test/project_finance_workspace_test.dart",
+        "test/projects_workspace_test.dart",
+        "test/purchase_order_workspace_test.dart",
+        "test/purchase_return_interaction_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 15188,
+      "startedAt": "2026-10-17T18:03:45.235Z",
+      "finishedAt": "2026-10-17T18:04:33.806Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 88,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-13-exit.json",
+        "sha256": "ffbcdbdf9d8d3cd15fc8b994e2233e0c36e1aadee4c17af5d7dfbd73c81fd4a3"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-13.log",
+        "sha256": "9d7377a73c2c2efeca6f59a75ea87742ded289b42b61d95cebd71fde152c0532",
+        "bytes": 19617
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-13-result.json",
+        "sha256": "1f74c0823c1cbcc671eb5537b8e6077ea7f6875ab9cfaf7423f597a0dd2f4f13"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-14",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/purchase_return_workspace_test.dart",
+        "test/quick_create_test.dart",
+        "test/quotation_confirmation_access_20261003_test.dart",
+        "test/quotation_controller_test.dart",
+        "test/quotation_navigation_test.dart",
+        "test/quotation_reference_access_20261003_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 15612,
+      "startedAt": "2026-10-17T18:04:37.445Z",
+      "finishedAt": "2026-10-17T18:05:13.819Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 44,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-14-exit.json",
+        "sha256": "631b62fa06e69d8530958e9f18d5fc33f0bc73ba070fabf565be23216d1d9234"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-14.log",
+        "sha256": "9b200e1d67d32cd16248264e8c06146e34c50f1c7a1fb33b884263dc0a814261",
+        "bytes": 11221
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-14-result.json",
+        "sha256": "827d31eb836f2a61dc11ef38026a912abc6d6fd01799cfdbce898a2d64bdcc84"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-15",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/quotation_reference_origin_access_20261003_test.dart",
+        "test/quotation_return_continuation_epoch_20261003_test.dart",
+        "test/quotation_workspace_test.dart",
+        "test/receipt_order_interaction_test.dart",
+        "test/receipt_trace_workspace_test.dart",
+        "test/receivable_dialog_result_epoch_20261003_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 10584,
+      "startedAt": "2026-10-17T18:05:15.551Z",
+      "finishedAt": "2026-10-17T18:06:10.610Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 66,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-15-exit.json",
+        "sha256": "a7879fd3ff8efef8a4de31018a91e8bc10be37a34e73201b58f44ebdfa81360a"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-15.log",
+        "sha256": "5682d0bb3076d9fe3f8028a4a167e78246235c02feb751b634bd7eda94c10fdc",
+        "bytes": 16318
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-15-result.json",
+        "sha256": "33f85db9edc97ff7b8d9c5a9c5352bb7b9511f3ca099742e1284383225c16e49"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-16",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/receivable_statement_access_test.dart",
+        "test/receivables_controller_test.dart",
+        "test/receivables_workspace_test.dart",
+        "test/report_export_workspace_test.dart",
+        "test/report_progress_visual_test.dart",
+        "test/report_read_denial_recovery_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 13724,
+      "startedAt": "2026-10-17T18:06:14.402Z",
+      "finishedAt": "2026-10-17T18:06:57.783Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 92,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-16-exit.json",
+        "sha256": "cbbadbe60224e3682c176f7dc7fcf86f6dd9fad8f987a275bc1b3025296629db"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-16.log",
+        "sha256": "382fd6dc9b7f12f2f1d9190209caa7d58e0f9da07f1db2a40ebbeee770bc2fd0",
+        "bytes": 20708
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-16-result.json",
+        "sha256": "518fd90a30f3e41f091ac1cfe9b17bd8f3df2c1da9939d96a3b5a7fcac09a375"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-17",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/report_stale_denial_test.dart",
+        "test/report_wait_recovery_test.dart",
+        "test/report_workflow_interaction_test.dart",
+        "test/requisition_interaction_test.dart",
+        "test/reservation_access_recovery_test.dart",
+        "test/reservation_recovery_access_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 9252,
+      "startedAt": "2026-10-17T18:06:59.884Z",
+      "finishedAt": "2026-10-17T18:07:27.927Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 70,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-17-exit.json",
+        "sha256": "0de172e1311052ce2cec648cd750bed6a7c6d251144c2730804b1ebd972a21a7"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-17.log",
+        "sha256": "300c2f81d15a3148427a239845fb5eddcd4433dba23c106b6515464b978ef941",
+        "bytes": 15418
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-17-result.json",
+        "sha256": "43df68f9ac728673ea7efdeb1a0b09d08b357c4c6651d6d60fd082bfae2d3bfd"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-18",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/reservation_recovery_render_test.dart",
+        "test/reservation_workspace_test.dart",
+        "test/reviewed_model_workspace_test.dart",
+        "test/root_connection_provider_access_20261003_test.dart",
+        "test/sales_command_preparation_epoch_20261003_test.dart",
+        "test/sales_dialog_access_20261003_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 6436,
+      "startedAt": "2026-10-17T18:07:29.602Z",
+      "finishedAt": "2026-10-17T18:08:03.468Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 88,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-18-exit.json",
+        "sha256": "8ef39e32ebe97267adbd416172ea9ca1440ee8b792e02f6669ff25d3fc1d7bde"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-18.log",
+        "sha256": "a60bdcaed1a7000c0de52ea06e636857b8fb857a45e2ae1c04796851d967d831",
+        "bytes": 19610
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-18-result.json",
+        "sha256": "4d18275844eb64c8c7fd9ba59da1a2ab2d16335285a6394a38e2c3842aec8097"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-19",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/sales_local_storage_failure_test.dart",
+        "test/sales_order_controller_test.dart",
+        "test/sales_order_workspace_test.dart",
+        "test/security_optional_confirmation_epoch_test.dart",
+        "test/security_review_finance_recovery_test.dart",
+        "test/security_review_procurement_sealing_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 8732,
+      "startedAt": "2026-10-17T18:08:05.113Z",
+      "finishedAt": "2026-10-17T18:08:39.289Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 103,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-19-exit.json",
+        "sha256": "8c9324ec33a490ef376d7d61c8b9d28bb5461ab9fbbb0e702623e405f85009f5"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-19.log",
+        "sha256": "5d09062e6a1886c4d2d967f6a5e39a26c977f5e8ceceaaa7cf0f2847911b4e51",
+        "bytes": 22848
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-19-result.json",
+        "sha256": "bd80c795459d93071aa1304738e694f3f72d1a03f4967c3f0916ed26c0065869"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-20",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/security_review_receivables_test.dart",
+        "test/security_review_sealing_test.dart",
+        "test/security_second_procurement_failure_epoch_test.dart",
+        "test/security_second_purchase_return_disposal_test.dart",
+        "test/service_acknowledgement_test.dart",
+        "test/service_workspace_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 1348,
+      "startedAt": "2026-10-17T18:08:40.979Z",
+      "finishedAt": "2026-10-17T18:09:07.296Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 139,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-20-exit.json",
+        "sha256": "5185f448c6cb7ab1576dd1e5c13534e4ff96d79c95e9fb4ce14ca70c9df65588"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-20.log",
+        "sha256": "c409f8216a1e90836101b6f7e73be609c3651a24ff5edde1e65d116c52b05456",
+        "bytes": 32070
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-20-result.json",
+        "sha256": "a1e351156791bc751fe555e7fd3b7e540019fa5ba8009539d8fcfabf43e9c1e6"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-21",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/sourcing_interaction_test.dart",
+        "test/sourcing_recovery_test.dart",
+        "test/stock_count_workspace_test.dart",
+        "test/stock_opening_access_test.dart",
+        "test/stock_opening_controller_test.dart",
+        "test/stock_opening_workspace_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 16988,
+      "startedAt": "2026-10-17T18:09:11.704Z",
+      "finishedAt": "2026-10-17T18:10:07.088Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 62,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-21-exit.json",
+        "sha256": "49b0d4b10d5721703c3ae958be7ab6211c29184aa42b5ff3fc0cf453cfd2a438"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-21.log",
+        "sha256": "4f73e1252c6c115564c9e563d5b1e784de565c4ccfb198a34087abf2de6dd13b",
+        "bytes": 13873
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-21-result.json",
+        "sha256": "a1b7ee063d6bf55e083f256c9b5fb71412626fa3262709f3b5fd3c3dc879d6aa"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-22",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/supplier_bill_workspace_test.dart",
+        "test/supplier_payment_interaction_test.dart",
+        "test/supplier_payment_lifecycle_20261003_test.dart",
+        "test/supplier_payment_workspace_test.dart",
+        "test/tax_summary_workspace_test.dart",
+        "test/transfer_interaction_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 19736,
+      "startedAt": "2026-10-17T18:10:10.079Z",
+      "finishedAt": "2026-10-17T18:10:48.627Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 53,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-22-exit.json",
+        "sha256": "1df2479617243c22e9c348d305ef99403709375209601f2b018533c700668cae"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-22.log",
+        "sha256": "8fb116daf722bfe0a21770053be47396b871cf8c8fbd71bb495d0b53b8079187",
+        "bytes": 12185
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-22-result.json",
+        "sha256": "e0eba91c9675af1a79f524916f5c1c081d2b9dcb4bd21003e7aad275e49479a9"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "04-desktop-23",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/transfer_sealing_access_test.dart",
+        "test/warehouse_setup_test.dart",
+        "test/wave5_cash_epoch_test.dart",
+        "test/wave5_continuation_test.dart",
+        "test/wave5_workspaces_test.dart",
+        "test/workforce_workspace_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 13012,
+      "startedAt": "2026-10-17T18:10:50.353Z",
+      "finishedAt": "2026-10-17T18:11:25.483Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 136,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-23-exit.json",
+        "sha256": "a6b83d32490226498ab6fb028087858f3bae32248b12e904a68938733351edd2"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-23.log",
+        "sha256": "1f96342d18136defbe8eb4f7f65a3f6366362b21d9c1d9e65166bd8482c17340",
+        "bytes": 27700
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/04-desktop-23-result.json",
+        "sha256": "03ca14884d9d67099f094473c3379f7e18213fc53b86c37d5c24748f464b669c"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "05-render-analytics",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "--name=at 200%",
+        "test/wave5_workspaces_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 6368,
+      "startedAt": "2026-10-17T18:11:27.058Z",
+      "finishedAt": "2026-10-17T18:11:39.356Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 36,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/05-render-analytics-exit.json",
+        "sha256": "3d8b21bbfbf770efe21268bb62a298c9b33f7b102501fe3947c03c0a82d28e52"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/05-render-analytics.log",
+        "sha256": "20c0bf6f25906f8ab00910d6f8a549726919ef51092ff326732debeedb4a7cce",
+        "bytes": 1920
+      },
+      "captureEnvironment": {
+        "W5_FRAME_DIR": "C:\\Users\\sheha\\Desktop\\Jentra OS\\docs\\verification\\wave5\\seven-area-completion-20261016\\area1-windows\\current-candidate-20261017\\run-a2\\frames-analytics"
+      },
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/05-render-analytics-result.json",
+        "sha256": "2974d1713ddc8581a6d235cb5dfc9ab58aada7801a52cab0d88da6e434339b11"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "05-render-continuation",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "--name=fresh render",
+        "test/wave5_continuation_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 8640,
+      "startedAt": "2026-10-17T18:11:40.970Z",
+      "finishedAt": "2026-10-17T18:11:58.441Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 44,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/05-render-continuation-exit.json",
+        "sha256": "d9aca3f4c59b6997adf5fb6beaef44a24f41690448e573e78085778703befca0"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/05-render-continuation.log",
+        "sha256": "37dbc098fc36deacec0743cfec4adde13a167947ae196e012f11469182e03dd2",
+        "bytes": 3830
+      },
+      "captureEnvironment": {
+        "W5_CONTINUATION_FRAME_DIR": "C:\\Users\\sheha\\Desktop\\Jentra OS\\docs\\verification\\wave5\\seven-area-completion-20261016\\area1-windows\\current-candidate-20261017\\run-a2\\frames-continuation"
+      },
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/05-render-continuation-result.json",
+        "sha256": "e680c3c0851bd1e627930c798bb576d7609ed04b527b136a9992f694da901af1"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "05-render-model",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "--name=model fresh render",
+        "test/reviewed_model_workspace_test.dart"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 9812,
+      "startedAt": "2026-10-17T18:12:00.613Z",
+      "finishedAt": "2026-10-17T18:12:11.502Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": {
+        "passed": 12,
+        "skipped": 0,
+        "failed": 0
+      },
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/05-render-model-exit.json",
+        "sha256": "769758c42819c33c334e99519e2908994c60912d596da4b7e8a29fac687908f3"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/05-render-model.log",
+        "sha256": "9f297c420524dcd1105db803fcaf75397940d2295f3ca900ccaed9b1a7404c41",
+        "bytes": 1560
+      },
+      "captureEnvironment": {
+        "W5_MODEL_FRAME_DIR": "C:\\Users\\sheha\\Desktop\\Jentra OS\\docs\\verification\\wave5\\seven-area-completion-20261016\\area1-windows\\current-candidate-20261017\\run-a2\\frames-model"
+      },
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/05-render-model-result.json",
+        "sha256": "6bf4a94270c471b1fac36295373592daa943ab304d77dd140ae79cb230d4c6c2"
+      }
+    },
+    {
+      "kind": "actual-sdk-process-exit",
+      "stage": "06-build-windows",
+      "command": [
+        "C:\\Program Files\\nodejs\\node.exe",
+        "C:\\Users\\sheha\\Desktop\\Jentra OS\\scripts\\wave5\\run_flutter_with_capture_env.mjs",
+        "C:/src/flutter/bin/cache/dart-sdk/bin/dart.exe",
+        "C:/src/flutter/bin/cache/flutter_tools.snapshot",
+        "--suppress-analytics",
+        "build",
+        "windows",
+        "--release",
+        "--no-pub",
+        "--target=lib/main.dart",
+        "--dart-define=JENTRA_ENVIRONMENT=preview"
+      ],
+      "cwd": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop",
+      "pid": 13012,
+      "startedAt": "2026-10-17T18:12:13.379Z",
+      "finishedAt": "2026-10-17T18:15:12.953Z",
+      "code": 0,
+      "signal": null,
+      "spawnError": null,
+      "passed": true,
+      "counts": null,
+      "actualExit": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/06-build-windows-exit.json",
+        "sha256": "52d9305a10cb1f86920d683c7bd4448ebf6fcf5dcf3a3dc996fb61841494e854"
+      },
+      "log": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/06-build-windows.log",
+        "sha256": "077aaab332b0298df21ac85390752cf17ff80abdbbeb2a279afdab0397fe4f45",
+        "bytes": 130
+      },
+      "captureEnvironment": {},
+      "sourceCountVerified": 1071,
+      "sourceStable": true,
+      "goldenBaselinesUpdated": false,
+      "resultBinding": {
+        "path": "docs/verification/wave5/seven-area-completion-20261016/area1-windows/current-candidate-20261017/run-a2/06-build-windows-result.json",
+        "sha256": "1546195dac73f39aa8339c8627d5d5f6e963891d5b8fb34bd8ad9f09c66d5a51"
+      }
+    }
+  ],
+  "desktopFiles": 138,
+  "desktopPassed": 2026,
+  "platformFiles": 18,
+  "platformPassed": 90,
+  "renderFiles": 62,
+  "executable": {
+    "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\Jentra_OS.exe",
+    "sha256": "839338ca2d80710cfa4cafe7628fe04f9be15174dbcc34153b4dafaa27720553",
+    "bytes": 93184,
+    "modifiedAt": "2026-10-17T18:15:10.283Z"
+  },
+  "releaseArtifacts": [
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\app_links_plugin.dll",
+      "sha256": "00e2f4de74cef453e87f221b8b1d1e3df499e28bb0ebfe097a3a2e4895ea2e1f",
+      "bytes": 150016
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\connectivity_plus_plugin.dll",
+      "sha256": "59f91a030107d6e73d353f30de2b5336c50e286eaf8c199908a2a8b1e4afbdd9",
+      "bytes": 101888
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\dartjni.dll",
+      "sha256": "321c310daed74594d8475e82b32fa2ce4015dbcac5785848a6d5698b744ed60d",
+      "bytes": 58368
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\app.so",
+      "sha256": "04505d32047a78d95656d3a0f66166a2a7fdacf43935d70ed2b0586666423b2f",
+      "bytes": 17613704
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\AssetManifest.bin",
+      "sha256": "be464e34b6efc7727a3784fefd5561bc3849273d3a302eaa5bb72c85fc096a55",
+      "bytes": 2145
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\FontManifest.json",
+      "sha256": "81b8de69a2aeb6ffddeba50f6115e2deec59307bc8c5aa1ba11762f62db2d028",
+      "bytes": 1454
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\fonts\\MaterialIcons-Regular.otf",
+      "sha256": "c23b3bb08b5b084b036a1447c19a9970335f452d25b4495fdb17539dc4e69a55",
+      "bytes": 17684
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\NativeAssetsManifest.json",
+      "sha256": "82eac0ffac26ecd67c5f0528d5783e4d7ec24f53fa8c764d8e5e36f9327b9a04",
+      "bytes": 189
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\NOTICES.Z",
+      "sha256": "239552ae126aedf23fa5f0414f9f78004175297f9ba3a59aa66c3996d69d2edf",
+      "bytes": 124711
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\packages\\jentra_design_system\\assets\\brand\\jentra-logo-board.png",
+      "sha256": "bcb444dafed12cfbca2e2077e50dd4fc8f0ce7c5e212a91fddd08dafecba1ba6",
+      "bytes": 1477131
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\packages\\jentra_design_system\\assets\\brand\\jentra-mark.png",
+      "sha256": "9670c0a23c40185a2a067648253d1eb94d380b5a30ddb6441ed1449d6f05ee0e",
+      "bytes": 406813
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\packages\\jentra_design_system\\assets\\fonts\\IBMPlexMono-Regular.ttf",
+      "sha256": "6a3412f058c7d8dfd9170c41e85ade48e5156ecb89356110ca57a0a27734af46",
+      "bytes": 135580
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\packages\\jentra_design_system\\assets\\fonts\\IBMPlexMono-SemiBold.ttf",
+      "sha256": "d3c38e55c78f5b0f28009fddba4834ec503278936a5986032424c9bd2d23aa46",
+      "bytes": 140216
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\packages\\jentra_design_system\\assets\\fonts\\Manrope-Bold.ttf",
+      "sha256": "ec45a353e86a9988decd9d33b2e126f9bb672f5a14e816a5440b49e208aa45df",
+      "bytes": 96492
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\packages\\jentra_design_system\\assets\\fonts\\Manrope-Medium.ttf",
+      "sha256": "84f74f48c092b4b8b757c833e9de475a1e7ea946763d59754451c61a6a056f91",
+      "bytes": 96624
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\packages\\jentra_design_system\\assets\\fonts\\Manrope-Regular.ttf",
+      "sha256": "b746e7de1dacdb2bcbfd3b45bf8a30a5c0de02f47604b101bbde461070b624ce",
+      "bytes": 96544
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\packages\\jentra_design_system\\assets\\fonts\\Manrope-SemiBold.ttf",
+      "sha256": "50edc86b3a47f41facf9726a086ed00bdd8c7846c66caecdfb582b8a144d022b",
+      "bytes": 96664
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\packages\\jentra_design_system\\assets\\fonts\\NotoSansSinhala-Medium.ttf",
+      "sha256": "839df9dc62fa9bcab9b02e638c3b7e2ea59cc49fd79bf99055f4d9c23f0e2b3d",
+      "bytes": 89716
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\packages\\jentra_design_system\\assets\\fonts\\NotoSansSinhala-Regular.ttf",
+      "sha256": "c5504cbd3ee50feac33ff7737b588c7a3eefee4faaa07d379fb392e4586b6858",
+      "bytes": 90296
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\packages\\jentra_design_system\\assets\\fonts\\NotoSansSinhala-SemiBold.ttf",
+      "sha256": "685e86b1b629ae5bed68a4dc07613b994018edbcf9d085b63642e4d033f8d67d",
+      "bytes": 89084
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\packages\\jentra_design_system\\assets\\fonts\\NotoSansTamil-Medium.ttf",
+      "sha256": "1d1ff88260e6ea6928be2e2b1d19a054807ca91c1d7ac2cb18c9538bc10e36c7",
+      "bytes": 46480
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\packages\\jentra_design_system\\assets\\fonts\\NotoSansTamil-Regular.ttf",
+      "sha256": "038cff72449bf6dcb6b47aa53a7f9b2bf93c8defc056890bb778291b263418ad",
+      "bytes": 46600
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\packages\\jentra_design_system\\assets\\fonts\\NotoSansTamil-SemiBold.ttf",
+      "sha256": "8b8729103b51f5775b4309e07dd6fcb937747548ca595e4edebb17d936142de6",
+      "bytes": 46400
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\packages\\material_ui\\shaders\\ink_sparkle.frag",
+      "sha256": "1fe8436a743884cb65078fe8c7b38e18f5365f2a2961270916f426fd13c604af",
+      "bytes": 21856
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\shaders\\ink_sparkle.frag",
+      "sha256": "1fe8436a743884cb65078fe8c7b38e18f5365f2a2961270916f426fd13c604af",
+      "bytes": 21856
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\flutter_assets\\shaders\\stretch_effect.frag",
+      "sha256": "bc7599dbbbaab310efe41520574138d21fb18a88c8fe4495ed79315309336f6f",
+      "bytes": 17616
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\data\\icudtl.dat",
+      "sha256": "325a86063d26334c2eabe1743cea073b612540fbf3d8fc2ef0b5708e3763a8c7",
+      "bytes": 864880
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\file_selector_windows_plugin.dll",
+      "sha256": "e12019154e62b95bfeec8208d8b8e731f2f9ee59a80c67c50968a689670fd0ba",
+      "bytes": 110592
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\flutter_secure_storage_windows_plugin.dll",
+      "sha256": "fa7b4d5c0df585397dd7975cc8fc72b22adcdd959c83b821e7d0c8034bb9c377",
+      "bytes": 158208
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\flutter_windows.dll",
+      "sha256": "8bd7b61eee31aa436edb182db41624d1cd3b2688a7e03622320dbeae067b5251",
+      "bytes": 21274112
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\Jentra_OS.exe",
+      "sha256": "839338ca2d80710cfa4cafe7628fe04f9be15174dbcc34153b4dafaa27720553",
+      "bytes": 93184
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\pdfium.dll",
+      "sha256": "019b6ee6e54e5508002e43c5199b00f6caca26d32dd23c7bb229ff6855cd5394",
+      "bytes": 7176704
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\sqlite3.dll",
+      "sha256": "98b4be674137b85ec111a7a29223e87aa41c3e964d61f73602471ddd7b9c56ce",
+      "bytes": 1709056
+    },
+    {
+      "path": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\w5win20261017a2\\preview\\apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\url_launcher_windows_plugin.dll",
+      "sha256": "defdb683799d0175ca692314422da51e6b970cdf3f53d621b8ddb3cddd4a172c",
+      "bytes": 98304
+    }
+  ],
+  "sourceStable": true,
+  "toolchainAndDependenciesStable": true,
+  "goldenBaselinesUpdated": false,
+  "nativeLaunched": false,
+  "installed": false,
+  "authenticatedNative": false,
+  "productionSigned": false,
+  "ownerAcceptance": false,
+  "SDKExecuted": true
+}
