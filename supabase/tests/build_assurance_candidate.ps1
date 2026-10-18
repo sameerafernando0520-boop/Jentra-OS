@@ -1,26 +1,30 @@
 [CmdletBinding()]
-param([ValidateSet('A1','A2','A4','A4b','A3')][string]$Slice = 'A1')
+param([ValidateSet('A1','A2','A4','A4b','A3','A5')][string]$Slice = 'A1')
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
 $migration = Get-Content -LiteralPath (Join-Path $root 'candidates/20261018090000_assurance_engagement_core.sql') -Raw
 $tests = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'assurance_core_test.sql') -Raw
-if ($Slice -in 'A2','A4','A4b','A3') {
+if ($Slice -in 'A2','A4','A4b','A3','A5') {
   # A2 is applied on top of A1 after A1's assertions, as a sequential install would be.
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261018120000_assurance_testing_carry_forward.sql') -Raw)
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $PSScriptRoot 'assurance_testing_test.sql') -Raw)
 }
-if ($Slice -in 'A4','A4b','A3') {
+if ($Slice -in 'A4','A4b','A3','A5') {
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261018150000_assurance_evidence_adapters_export.sql') -Raw)
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $PSScriptRoot 'assurance_evidence_test.sql') -Raw)
 }
-if ($Slice -in 'A4b','A3') {
+if ($Slice -in 'A4b','A3','A5') {
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261018170000_assurance_adapters_monitoring.sql') -Raw)
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $PSScriptRoot 'assurance_monitoring_test.sql') -Raw)
 }
-if ($Slice -eq 'A3') {
+if ($Slice -in 'A3','A5') {
   # A3 installs after A4b (later timestamp) and reuses the earlier fixtures.
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261018190000_assurance_universe_plans.sql') -Raw)
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $PSScriptRoot 'assurance_planning_test.sql') -Raw)
+}
+if ($Slice -eq 'A5') {
+  $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261018210000_assurance_workspace.sql') -Raw)
+  $tests += "`n" + (Get-Content -LiteralPath (Join-Path $PSScriptRoot 'assurance_workspace_test.sql') -Raw)
 }
 $tests = [regex]::Replace($tests, '(?m)^select (is|ok|throws_ok)\(', 'insert into assurance_assertions select $1(')
 $diagnostic = @'

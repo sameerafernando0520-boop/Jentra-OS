@@ -14,6 +14,8 @@ import 'features/negative_stock/negative_stock_policy_screen.dart';
 import 'features/manual_journal/manual_journal_screen.dart';
 import 'features/control_reconciliation/control_reconciliation_controller.dart';
 import 'features/control_reconciliation/control_reconciliation_screen.dart';
+import 'features/assurance/assurance_workspace_controller.dart';
+import 'features/assurance/assurance_workspace_screen.dart';
 import 'features/close_review/close_review_controller.dart';
 import 'features/close_review/close_review_screen.dart';
 import 'features/journal_evidence/posted_journal_screen.dart';
@@ -279,6 +281,15 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const CloseReviewScreen(),
             onExit: (context, state) async =>
                 await ref.read(closeReviewControllerProvider)?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/governance/audit',
+            builder: (context, state) => const AssuranceWorkspaceScreen(),
+            onExit: (context, state) async =>
+                await ref
+                    .read(assuranceWorkspaceControllerProvider)
+                    ?.canLeave() ??
                 true,
           ),
           GoRoute(

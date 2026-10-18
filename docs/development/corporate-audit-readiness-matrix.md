@@ -1,4 +1,4 @@
-# Corporate Audit & Assurance — readiness matrix (18 Oct 2026, after A3)
+# Corporate Audit & Assurance — readiness matrix (18 Oct 2026, after A5)
 
 Legend: **D** domain test · **R** candidate rollback pgTAP · **I** installed · **N** native authenticated · **C** contention/load · **O** owner accepted. "–" = not yet.
 
@@ -26,8 +26,8 @@ Legend: **D** domain test · **R** candidate rollback pgTAP · **I** installed �
 | FR-6820 | Carry-forward | ✓ | ✓ | – | – | – | – |
 | FR-6821 | Evidence adapters | ✓ | ✓ (8 of 8 kinds exercised) | – | – | – | – |
 | FR-6822 | Governed export | ✓ (+ platform verifier) | ✓ | – | – | – | – |
-| FR-6823 | Templates/reminders/dashboards | ✓ (templates, recurrence) | ✓ (templates, recurrence) | – | – | – | – |
-| FR-6824 | Desktop workspace | – | – | – | – | – | – |
+| FR-6823 | Templates/reminders/dashboards | ✓ (templates, recurrence, reminder levels) | ✓ (templates, recurrence, overdue queue) | – | – | – | – |
+| FR-6824 | Desktop workspace | ✓ (controller, widget, 200% goldens) | ✓ (read models) | – | – | – | – |
 | FR-6825 | Process metrics | ✓ (calc) | – | – | – | – | – |
 
 0 of 25 requirements are installed or accepted.

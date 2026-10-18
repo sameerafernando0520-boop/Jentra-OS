@@ -66,13 +66,24 @@ so the local migration folder still matches the live 115-migration ledger.
 | Automated tests | 36 assurance domain tests; full `jentra_domain` suite 434/434; analyzer clean |
 | Not covered | reminders, escalations and overdue dashboards; occurrences are instantiated by explicit command (no scheduler); plan amendment after approval needs a new plan; risk scale and frequencies are defaults pending as-is discovery |
 
+## Slice A5 — Governance & Audit desktop workspace
+
+| Category | Result |
+|---|---|
+| Source changes | `supabase/candidates/20261018210000_assurance_workspace.sql` (read-only `api.assurance_engagements`, `api.assurance_overview`; no tables); `supabase/tests/assurance_workspace_test.sql`; builder `-Slice A5`; Dart `assurance_workspace.dart` (`ReminderLevel`, `AssuranceOverview`, `AssuranceEngagementPage`); platform `SupabaseAssuranceGateway`; desktop `features/assurance/` (controller, screen), route `/governance/audit`, navigation entry gated by `assurance.evidence.view` |
+| Candidate database evidence | 228/228 (… + 20 A5) in one rollback transaction, exact build text ([record](../verification/assurance/a5-candidate-rollback-20261018.json)); earlier slice builds byte-identical |
+| Installed behaviour | none; post-run 2026-10-18 11:59 UTC: 115 / 363, no assurance objects or synthetic data left |
+| Automated tests | 40 assurance domain tests (full `jentra_domain` 438/438); platform assurance gateway 6/6; desktop `assurance_workspace_test.dart` 13/13 including 200% light/dark goldens produced by this work; full desktop suite 2039/2039; analyzers clean on changed files |
+| What the workspace does | My work (own requests and findings with reminder levels), overdue team work, engagement register, read-only engagement detail, and the finding owner's management response (encrypted local draft, sealed request retried with the same key on an uncertain outcome; version conflicts require a refresh) |
+| Not covered | reminders and escalations are shown, not delivered (no notifications or scheduler); all other assurance commands (planning, evidence, testing, reporting, export) have no desktop screens yet; no authenticated Windows walkthrough; no accessibility review beyond automated renders |
+
 ## Next unblocked slices
-1. **A5** desktop Governance & Audit workspace with encrypted draft recovery and all principal states, plus reminders, escalations and overdue dashboards (FR-6823 remainder).
-2. Platform client layer: typed responses, uncertain-result replay, revocation handling.
-3. Scheduled monitoring runs and occurrence scheduling; tenant-configurable rule thresholds.
+1. Desktop screens for the remaining assurance roles: auditor evidence requests and review, testing, findings issue, planning (A3) and audit-pack export with the platform verifier.
+2. Reminder delivery through the existing Wave 3 notification channel, and scheduled monitoring/occurrence runs.
+3. Tenant-configurable SLA, reminder bands and rule thresholds once as-is discovery is done.
 
 ## Blockers needing you
-- **Installation approval** for the candidate (runbook below). Not requested yet; it would cover A1 + A2 + A4 + A4b + A3 together.
+- **Installation approval** for the candidate (runbook below). Not requested yet; it would cover A1 + A2 + A4 + A4b + A3 + A5 together.
 - **As-is process discovery**: prior PBC lists, audit calendar, report templates, the risk scale you use and the people/roles involved (blueprint §2). A3 uses a 5×5 likelihood × impact scale and once/semiannual/quarterly/monthly cadences as defaults until then.
 - Genuine MFA, native Windows walkthrough and owner sign-off remain private-interaction gates.
 
