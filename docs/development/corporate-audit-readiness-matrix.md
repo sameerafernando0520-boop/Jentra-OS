@@ -1,11 +1,11 @@
-# Corporate Audit & Assurance — readiness matrix (18 Oct 2026, after A4b)
+# Corporate Audit & Assurance — readiness matrix (18 Oct 2026, after A3)
 
 Legend: **D** domain test · **R** candidate rollback pgTAP · **I** installed · **N** native authenticated · **C** contention/load · **O** owner accepted. "–" = not yet.
 
 | FR | Summary | D | R | I | N | C | O |
 |---|---|---|---|---|---|---|---|
-| FR-6801 | Universe & risk assessment | – | – | – | – | – | – |
-| FR-6802 | Plan approval | – | – | – | – | – | – |
+| FR-6801 | Universe & risk assessment | ✓ | ✓ | – | – | – | – |
+| FR-6802 | Plan approval | ✓ | ✓ | – | – | – | – |
 | FR-6803 | Scoped engagement | ✓ | ✓ | – | – | – | – |
 | FR-6804 | Lead/team, time-bound external | ✓ | ✓ | – | – | – | – |
 | FR-6805 | Control mapping + independence | ✓ | ✓ | – | – | – | – |
@@ -26,7 +26,7 @@ Legend: **D** domain test · **R** candidate rollback pgTAP · **I** installed �
 | FR-6820 | Carry-forward | ✓ | ✓ | – | – | – | – |
 | FR-6821 | Evidence adapters | ✓ | ✓ (8 of 8 kinds exercised) | – | – | – | – |
 | FR-6822 | Governed export | ✓ (+ platform verifier) | ✓ | – | – | – | – |
-| FR-6823 | Templates/reminders/dashboards | – | – | – | – | – | – |
+| FR-6823 | Templates/reminders/dashboards | ✓ (templates, recurrence) | ✓ (templates, recurrence) | – | – | – | – |
 | FR-6824 | Desktop workspace | – | – | – | – | – | – |
 | FR-6825 | Process metrics | ✓ (calc) | – | – | – | – | – |
 

@@ -1,7 +1,7 @@
 # 68 — Corporate Audit & Assurance
 
 Candidate specification, 18 October 2026. Cross-cutting capability over the
-existing platform foundations. **Status: slices A1, A2, A4 and A4b are candidate source with
+existing platform foundations. **Status: slices A1, A2, A4, A4b and A3 are candidate source with
 rollback-only database evidence. Nothing is installed.** See
 [corporate-audit-status.md](../development/corporate-audit-status.md).
 
@@ -75,8 +75,8 @@ Archiving requires every open finding to be closed, risk-accepted or carried for
 
 | ID | Requirement | A1 |
 |---|---|---|
-| FR-6801 | Maintain audit universe items with risk assessments | open (A3) |
-| FR-6802 | Approve annual/periodic audit plans with maker-checker | open (A3) |
+| FR-6801 | Maintain audit universe items with risk assessments | A3 source + rollback (likelihood × impact 1–5, assessor ≠ area owner, history retained) |
+| FR-6802 | Approve annual/periodic audit plans with maker-checker | A3 source + rollback (approver ≠ maker/submitter, recent MFA, approval digest, uncovered high-risk areas shown) |
 | FR-6803 | Create engagements bound to tenant, legal entity, optional branch and period | source + rollback |
 | FR-6804 | Assign lead auditor and team; external members time-bound ≤ 90 days | source + rollback |
 | FR-6805 | Map controls (code, owner, risk) into an engagement | source + rollback |
@@ -97,7 +97,7 @@ Archiving requires every open finding to be closed, risk-accepted or carried for
 | FR-6820 | Carry unresolved findings into the next cycle (`carry_forward`, once only, MFA) | A2 source + rollback |
 | FR-6821 | Automated evidence adapters over immutable module reports (financial statements, close review, control reconciliation, tax summary, inventory valuation) and an IT access-review snapshot; each calls the owning module guard as the current user | A4/A4b source + rollback; all eight kinds exercised, including period snapshots for procurement three-way match and workforce attendance approvals (no supplier, employee or actor identities) |
 | FR-6822 | Governed audit-pack export: deterministic manifest of the latest issued report, cutoff digest and evidence metadata; recorded digest; exact `manifest_text` for client hash and reopen | A4 source + rollback; platform verifier tested; on-device download not run |
-| FR-6823 | Templates, recurring engagements, reminders, escalations, overdue dashboards | open (A3/A5) |
+| FR-6823 | Templates, recurring engagements, reminders, escalations, overdue dashboards | templates and recurring engagements: A3 source + rollback; reminders, escalations, dashboards open (A5) |
 | FR-6824 | Desktop "Governance & Audit" workspace | open (A5) |
 | FR-6825 | Process metrics (§9) | domain calculations only |
 
@@ -152,6 +152,8 @@ API (candidate):
 - A2: `api.assurance_test_command(...)` for `design_test`, `execute_test`, `review_test`, `carry_forward` (same receipts, version and event history); `api.assurance_tests(...)` read model.
 - A4: `api.assurance_evidence_command(...)` for `collect_system_evidence` and `export_pack` (recent MFA); `api.assurance_verify_evidence(...)` re-derives a system item under current module authority; `api.assurance_export_manifest(...)` returns `manifest`, `manifest_text`, `manifest_sha256`, `manifest_bytes`.
 - A4b: the same command adds `run_monitoring` (`assurance.test.perform`, fields `evidence_id`, `control_id`; lead/auditor in fieldwork or reporting; system snapshots only). Snapshot kinds take no `source_id` and cover the engagement period.
+- A3: `api.assurance_plan_command(...)` for `register_item`, `assess_risk`, `retire_item`, `create_template`, `create_plan`, `add_plan_item`, `remove_plan_item`, `submit_plan`, `decide_plan` (recent MFA), `cancel_plan` (all `assurance.plan.manage`) and `instantiate_engagement` (`assurance.engagement.manage`); expected version is the universe item or plan version (0 to create); history in `assurance.plan_events`. Reads: `api.assurance_universe(...)`, `api.assurance_plan(...)` (planners or evidence viewers).
+- Risk rating = likelihood × impact (1–5 each): ≥ 20 critical, ≥ 10 high, ≥ 5 medium, else low. Plan states `draft → submitted → approved`; `submitted → draft` on return; `draft|submitted → cancelled`; approval is final. Frequencies once/semiannual/quarterly/monthly = 1/2/4/12 occurrences; occurrence k of n spans days ⌊(k−1)·d/n⌋ … ⌊k·d/n⌋−1 of the d-day plan period, identical in SQL and Dart.
 - Sample size = min(population, 10/25/40/60 by control risk low/medium/high/critical); positions = ((start − 1 + ⌊i·population/size⌋) mod population) + 1, identical in SQL and Dart.
 
 Payload fields per action are exact allow-lists (`assurance.action_fields`,
@@ -197,8 +199,8 @@ production deployment, real MFA, contention/load, owner sign-off.
 
 | Gate | State |
 |---|---|
-| Domain tests | 29 pass (`assurance_test.dart`, `assurance_testing_test.dart`, `assurance_evidence_test.dart`); platform pack verifier 3 pass |
-| Candidate pgTAP rollback | A1 55/55 ([evidence](../verification/assurance/a1-candidate-rollback-20261018.json)); A1+A2 98/98 ([evidence](../verification/assurance/a2-candidate-rollback-20261018.json)); A1+A2+A4 129/129 ([evidence](../verification/assurance/a4-candidate-rollback-20261018.json)); A1+A2+A4+A4b 153/153 ([evidence](../verification/assurance/a4b-candidate-rollback-20261018.json)); all rolled back |
+| Domain tests | 36 pass (`assurance_test.dart`, `assurance_testing_test.dart`, `assurance_evidence_test.dart`, `assurance_planning_test.dart`); platform pack verifier 3 pass |
+| Candidate pgTAP rollback | A1 55/55 ([evidence](../verification/assurance/a1-candidate-rollback-20261018.json)); A1+A2 98/98 ([evidence](../verification/assurance/a2-candidate-rollback-20261018.json)); A1+A2+A4 129/129 ([evidence](../verification/assurance/a4-candidate-rollback-20261018.json)); A1+A2+A4+A4b 153/153 ([evidence](../verification/assurance/a4b-candidate-rollback-20261018.json)); A1+A2+A4+A4b+A3 208/208 ([evidence](../verification/assurance/a3-candidate-rollback-20261018.json)); all rolled back |
 | Installation | not performed; requires explicit approval |
 | Desktop widget/accessibility | not started |
 | Export/download/reopen | server manifest + digest and client verifier tested; real device download not run |

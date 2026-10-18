@@ -1,0 +1,80 @@
+{
+  "kind": "candidate-rollback-pgtap",
+  "slice": "assurance-a3-universe-plans-templates",
+  "blueprint": "68_CORPORATE_AUDIT_ASSURANCE_SPEC.md",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "tool": "supabase execute_sql (single transaction ending in rollback)",
+  "build": "supabase/tests/build_assurance_candidate.ps1 -Slice A3 (A1, A2, A4, A4b, A3 DDL+tests in install order); executed text is the exact build output, including the fail-on-any-failure diagnostic block",
+  "installed": false,
+  "rolledBack": true,
+  "sources": {
+    "supabase/candidates/20261018090000_assurance_engagement_core.sql": "ecce6d8a7f4a68c58820b7772283a43fcea261644fac2627c04060fbacf56a86",
+    "supabase/candidates/20261018120000_assurance_testing_carry_forward.sql": "f3b8b6eee2e79870ce4d44879670e6ca464fb3efcd622943896dbcdce6080071",
+    "supabase/candidates/20261018150000_assurance_evidence_adapters_export.sql": "c0edcbdc50c7a1543eaa07f19a9a02470c5add77a3929f51e4d05e337fcb555a",
+    "supabase/candidates/20261018170000_assurance_adapters_monitoring.sql": "f822183c95b4ec08b0c4a48043fac21e6dfd5f5c2d7dd507ea74ba0f0d52f251",
+    "supabase/candidates/20261018190000_assurance_universe_plans.sql": "a4857ca80fbe9a4587787a466ffdfb4ff70e1744e147ccf8836f3cb641890db2",
+    "supabase/tests/assurance_planning_test.sql": "4d526ac12dee9fc40a4e5dcb6e215e841087f682d13ab419ef4544bc015b4ecd",
+    "supabase/tests/build_assurance_candidate.ps1": "c1db4552088a319fa392c98e60a94420df07f132fa82590d77ac4d9f825c0553"
+  },
+  "builtQuerySha256": "a8f91eae3ae82e6573a02e9a3a918a70099a151ba200b176e1e105abcf2f3072",
+  "unchangedEarlierBuilds": {
+    "A1": "51879e0093f065c208c7765fa4beea42dc5d6011331f3200f79d067fc7b7d774",
+    "A2": "159a5599319c3f29d0dbee1db52cd5e54cc4cd8889b69e0d2669a824619ba004",
+    "A4": "fe8abdac3b372772ba315623cee22bbf44bfba27019bb59dd81c1835559c2929",
+    "A4b": "6e37858ccb14f84166aed23603a5b40b2ae6f51bc6107788c85badf6ccd0d54f"
+  },
+  "result": {
+    "assertions": 208,
+    "passed": 208,
+    "failures": null,
+    "a1": 55,
+    "a2": 43,
+    "a4": 31,
+    "a4b": 24,
+    "a3": 55
+  },
+  "syntheticSourceData": "no additional module data; reuses the synthetic tenant and actors of the earlier suites and grants assurance.plan.manage to the synthetic manager and reviewer roles inside the transaction",
+  "postRun": {
+    "observedAt": "2026-10-18 09:01:09.156102+00",
+    "migrations": 115,
+    "latestMigration": "20261013184757",
+    "apiFunctions": 363,
+    "assuranceSchema": 0,
+    "assurancePermissions": 0,
+    "pgtapExtension": 0,
+    "fixtureUsers": 0,
+    "fixtureTenants": 0,
+    "fixtureSupplierBills": 0,
+    "fixtureEmployees": 0
+  },
+  "covers": [
+    "24 tables force RLS; planning API authenticated-only; helpers not client-callable",
+    "risk rating bands over likelihood x impact; deterministic occurrence periods",
+    "universe categories and owners validated; registration replays its receipt; ids unique",
+    "risk assessment needs planning capability and independence from the area owner; stale versions rejected; history retained and immutable",
+    "templates are exact allow-lists, requests must reference template controls, versions are appended and immutable",
+    "only risk-assessed areas are planned; an area owner cannot lead its audit; frequency allow-list; one active item per area",
+    "a submitted plan is locked; the maker cannot approve; approval needs recent MFA; return-to-draft and resubmit",
+    "uncovered high/critical areas are shown to the approver; approval records approver and a digest; approved plan and items cannot be rewritten",
+    "engagements come only from approved plans, need engagement authority, are bounded by frequency, replay their receipt and are created once per occurrence",
+    "instantiated engagement takes the occurrence period, planned lead, template controls and PBC requests owned by the area owner, and one creation event",
+    "instantiated engagements keep A1 independence rules and version history",
+    "retired areas are not instantiated; areas in open plans cannot be retired; approved plans are not cancelled",
+    "evidence viewers read the universe; external reviewers, other tenants and wrong-branch reads are refused",
+    "one plan or universe event per aggregate version; planning history immutable"
+  ],
+  "notCovered": [
+    "reminders, escalations and overdue dashboards (FR-6823 remainder)",
+    "automatic scheduling of occurrences; instantiation is an explicit command",
+    "plan amendments after approval (a new plan is required)"
+  ],
+  "doesNotEstablish": [
+    "installation",
+    "genuine MFA",
+    "the organisation's actual audit universe, risk scale or plan cadence (as-is discovery not done)",
+    "independent-session contention",
+    "target-scale latency",
+    "authenticated native Windows use",
+    "owner acceptance"
+  ]
+}

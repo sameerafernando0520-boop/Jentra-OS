@@ -56,14 +56,24 @@ so the local migration folder still matches the live 115-migration ledger.
 | Automated tests | 31 assurance domain tests; full `jentra_domain` suite 429/429; analyzer clean |
 | Not covered | monitoring is on demand per snapshot (no scheduler); rule thresholds fixed in source; no rules for finance/inventory snapshots; real data volumes not measured |
 
+## Slice A3 — audit universe, risk assessment, plans, templates, recurring engagements
+
+| Category | Result |
+|---|---|
+| Source changes | `supabase/candidates/20261018190000_assurance_universe_plans.sql` (7 tables, `api.assurance_plan_command` with 11 actions, `api.assurance_universe`, `api.assurance_plan`); `supabase/tests/assurance_planning_test.sql`; builder `-Slice A3`; Dart `assurance_planning.dart` (`assuranceRiskRating`, `AuditFrequency`, `assuranceOccurrencePeriod`, `PlanStatus`, `assuranceTemplateValid`, `AssurancePlanCommands`) |
+| Candidate database evidence | 208/208 (55 A1 + 43 A2 + 31 A4 + 24 A4b + 55 A3) in one rollback transaction, exact build text ([record](../verification/assurance/a3-candidate-rollback-20261018.json)); earlier slice builds byte-identical |
+| Installed behaviour | none; post-run 2026-10-18 09:01 UTC: 115 / 363, no assurance objects or synthetic data left |
+| Automated tests | 36 assurance domain tests; full `jentra_domain` suite 434/434; analyzer clean |
+| Not covered | reminders, escalations and overdue dashboards; occurrences are instantiated by explicit command (no scheduler); plan amendment after approval needs a new plan; risk scale and frequencies are defaults pending as-is discovery |
+
 ## Next unblocked slices
-1. **A3** universe, risk assessments, plan approval (maker-checker), templates and recurring engagements.
-2. **A5** desktop Governance & Audit workspace with encrypted draft recovery and all principal states.
-3. Scheduled monitoring runs and tenant-configurable rule thresholds (after A3 recurring engagements).
+1. **A5** desktop Governance & Audit workspace with encrypted draft recovery and all principal states, plus reminders, escalations and overdue dashboards (FR-6823 remainder).
+2. Platform client layer: typed responses, uncertain-result replay, revocation handling.
+3. Scheduled monitoring runs and occurrence scheduling; tenant-configurable rule thresholds.
 
 ## Blockers needing you
-- **Installation approval** for the candidate (runbook below). Not requested yet; it would cover A1 + A2 + A4 + A4b together.
-- **As-is process discovery**: prior PBC lists, audit calendar, report templates and the people/roles involved (blueprint §2).
+- **Installation approval** for the candidate (runbook below). Not requested yet; it would cover A1 + A2 + A4 + A4b + A3 together.
+- **As-is process discovery**: prior PBC lists, audit calendar, report templates, the risk scale you use and the people/roles involved (blueprint §2). A3 uses a 5×5 likelihood × impact scale and once/semiannual/quarterly/monthly cadences as defaults until then.
 - Genuine MFA, native Windows walkthrough and owner sign-off remain private-interaction gates.
 
 Related: [readiness matrix](corporate-audit-readiness-matrix.md) ·
