@@ -36,13 +36,23 @@ so the local migration folder still matches the live 115-migration ledger.
 | Automated tests | 24 assurance domain tests; full `jentra_domain` suite 422/422; analyzer clean |
 | Native / contention / visual | none |
 
+## Slice A4 — evidence adapters and audit-pack export
+
+| Category | Result |
+|---|---|
+| Source changes | `supabase/candidates/20261018150000_assurance_evidence_adapters_export.sql`; `supabase/tests/assurance_evidence_test.sql`; builder `-Slice A4`; Dart `assurance_evidence.dart` (source kinds, commands, `AuditPackManifest`, `EvidenceVerification`); platform `AssurancePackVerifier` (`jentra_assurance_platform.dart`) |
+| Candidate database evidence | 129/129 (55 A1 + 43 A2 + 31 A4) in one rollback transaction ([record](../verification/assurance/a4-candidate-rollback-20261018.json)); an earlier 128/128 run preceded the `manifest_text` addition and is superseded |
+| Installed behaviour | none; post-run 2026-10-18 04:52 UTC: 115 / 363, no assurance objects, no synthetic finance reports left |
+| Automated tests | 29 assurance domain tests (full `jentra_domain` suite green); platform verifier 3/3; analyzers clean |
+| Not covered | financial statement, close review, tax summary, inventory valuation adapters not exercised with fixtures; procurement and workforce adapters not built; continuous-monitoring candidate generation not built; no on-device download |
+
 ## Next unblocked slices
-1. **A3** universe, risk assessments, plan approval (maker-checker), templates and recurring engagements.
-2. **A4** evidence adapters (finance close, trial balance, bank rec, three-way match, inventory counts, privileged access/MFA) and governed audit-pack export with download/hash/reopen.
+1. **A4b** procurement (three-way match) and workforce adapters; fixture coverage for the four unexercised kinds; continuous-monitoring exception candidates.
+2. **A3** universe, risk assessments, plan approval (maker-checker), templates and recurring engagements.
 3. **A5** desktop Governance & Audit workspace with encrypted draft recovery and all principal states.
 
 ## Blockers needing you
-- **Installation approval** for the candidate (runbook below). Not requested yet; it would cover A1 + A2 together.
+- **Installation approval** for the candidate (runbook below). Not requested yet; it would cover A1 + A2 + A4 together.
 - **As-is process discovery**: prior PBC lists, audit calendar, report templates and the people/roles involved (blueprint §2).
 - Genuine MFA, native Windows walkthrough and owner sign-off remain private-interaction gates.
 

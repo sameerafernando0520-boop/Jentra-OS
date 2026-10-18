@@ -1,0 +1,71 @@
+{
+  "kind": "candidate-rollback-pgtap",
+  "slice": "assurance-a4-evidence-adapters-export",
+  "blueprint": "68_CORPORATE_AUDIT_ASSURANCE_SPEC.md",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "tool": "supabase execute_sql (single transaction ending in rollback)",
+  "build": "supabase/tests/build_assurance_candidate.ps1 -Slice A4 (A1 DDL+tests, A2 DDL+tests, A4 DDL+tests)",
+  "installed": false,
+  "rolledBack": true,
+  "sources": {
+    "supabase/candidates/20261018090000_assurance_engagement_core.sql": "ecce6d8a7f4a68c58820b7772283a43fcea261644fac2627c04060fbacf56a86",
+    "supabase/candidates/20261018120000_assurance_testing_carry_forward.sql": "f3b8b6eee2e79870ce4d44879670e6ca464fb3efcd622943896dbcdce6080071",
+    "supabase/candidates/20261018150000_assurance_evidence_adapters_export.sql": "c0edcbdc50c7a1543eaa07f19a9a02470c5add77a3929f51e4d05e337fcb555a",
+    "supabase/tests/assurance_evidence_test.sql": "d765f519ef2e9c55e69714f07ae94c585bed9190cd45c917f2bad3673b9c4dc8",
+    "supabase/tests/build_assurance_candidate.ps1": "ef916a14f07b04c31e3bc819410533de4de14e7d6a0deb65eb6cfd3b8818f14c"
+  },
+  "builtQuerySha256": "fe8abdac3b372772ba315623cee22bbf44bfba27019bb59dd81c1835559c2929",
+  "unchangedEarlierBuilds": {
+    "A1": "51879e0093f065c208c7765fa4beea42dc5d6011331f3200f79d067fc7b7d774",
+    "A2": "159a5599319c3f29d0dbee1db52cd5e54cc4cd8889b69e0d2669a824619ba004"
+  },
+  "result": {
+    "assertions": 129,
+    "passed": 129,
+    "failures": null,
+    "a1": 55,
+    "a2": 43,
+    "a4": 31
+  },
+  "syntheticSourceData": "three finance.control_reports rows inserted inside the transaction and rolled back",
+  "postRun": {
+    "observedAt": "2026-10-18 04:52:56.837935+00",
+    "migrations": 115,
+    "apiFunctions": 363,
+    "assuranceSchema": 0,
+    "assurancePermissions": 0,
+    "pgtapExtension": 0,
+    "fixtureUsers": 0,
+    "fixtureFinanceReports": 0
+  },
+  "covers": [
+    "A4 tables force RLS, API-only; adapter helpers not client-callable",
+    "unknown source kind rejected; collector needs the owning module's authority (finance.view + finance.controls.reconcile)",
+    "other-branch source unreachable; source as-of must fall in the audit period",
+    "digest equals SHA-256 of the canonical authoritative source row; provenance records module, method, query version, source and cutoff",
+    "access review requires audit.read, is restricted, stored as an immutable snapshot with no identities or emails",
+    "re-verification matches for module and snapshot evidence; losing module authority blocks re-reading",
+    "collector cannot accept own system evidence; no collection after freeze",
+    "export needs assurance.report.export, an issued report and recent MFA; superseded report versions cannot be exported",
+    "reopened manifest re-hashes to the recorded digest and size and binds report and cutoff digests; no storage paths",
+    "active external reviewer receives the same pack but cannot export; outsider denied; export records immutable",
+    "manifest_text is the exact hashed text, so a client verifies downloaded bytes without re-serialising JSON"
+  ],
+  "notCovered": [
+    "financial statement, close review, tax summary and inventory valuation adapters were not exercised with fixtures (only control reconciliation and access review)",
+    "procurement and workforce adapters are not implemented"
+  ],
+  "doesNotEstablish": [
+    "installation",
+    "genuine MFA",
+    "real export file download on a device",
+    "independent-session contention",
+    "target-scale latency",
+    "authenticated native Windows use",
+    "owner acceptance"
+  ],
+  "priorAttempt": {
+    "outcome": "128/128 against an earlier source revision",
+    "cause": "manifest API then gained manifest_text (exact hashed text for client verification); suite rerun on the final source"
+  }
+}
