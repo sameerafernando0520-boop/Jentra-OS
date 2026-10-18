@@ -5,14 +5,14 @@ candidate and its SHA-256.
 
 ## Preconditions
 1. Refresh live ledger read-only: migration count/latest version, `api` function count, confirm no `assurance` schema and no `assurance.%` permissions.
-2. Confirm candidate hash still matches the reviewed one (A1: `ecce6d8a…6a86`; re-record if A2 changes it).
+2. Confirm candidate hashes still match the reviewed ones (A1 `ecce6d8a…6a86`, A2 `f3b8b6ee…0071`); install A1 then A2 in order.
 3. Fresh rollback suite passes against the same live state, within the same day.
 4. No concurrent migration work in progress; existing 115 migrations untouched.
 
 ## Install (only after approval)
 1. Copy the candidate into `supabase/migrations/` under its timestamp; do not edit any applied migration.
 2. Apply through the normal migration path (one migration, one transaction).
-3. Post-check: 12 tables with forced RLS; zero table grants to `anon`/`authenticated`/`service_role`; two `api.assurance_*` functions executable by `authenticated` only; 15 permissions; no role granted any `assurance.%` capability.
+3. Post-check (after A1 + A2): 14 tables with forced RLS; zero table grants to `anon`/`authenticated`/`service_role`; four `api.assurance*` functions executable by `authenticated` only; 15 permissions; no role granted any `assurance.%` capability.
 4. Run the installed variant of the pgTAP suite (still inside `begin … rollback`) and record evidence.
 
 ## Roll back an installation

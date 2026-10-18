@@ -10,7 +10,7 @@ Each layer is separate evidence; none substitutes for a later one.
    then a read-only post-check that `assurance` schema, permissions, pgTAP and fixture users are absent.
    Required coverage: grants/forced RLS; tenant/entity/branch isolation; external limits; SoD; recent MFA;
    idempotency/version; immutable history; provenance/digest; holds; report issue/reopen.
-3. **Still to add (A2)** — `decide_risk` approve/reject, `dismiss_exception`, `cancel_request`, archive guard with carried findings, late-failure rollback (trigger fault leaves no receipt), revoke_team_member.
+3. **A2 (done, 98/98 rollback)** — test design/execution/review, `decide_risk` approve/reject, `dismiss_exception`, `cancel_request`, archive guard with carry-forward, late-failure rollback, `revoke_team_member`. Build with `build_assurance_candidate.ps1 -Slice A2`.
 4. **Platform client** — typed response validation, uncertain-result handling (timeout after commit → replay same key), revocation.
 5. **Desktop** — widget/controller tests for loading, empty, denied, error, offline; keyboard, focus, 200% text, light/dark goldens.
 6. **Recovery** — encrypted draft restore after restart and after access loss (draft discarded, never submitted).

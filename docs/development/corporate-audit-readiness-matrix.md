@@ -1,4 +1,4 @@
-# Corporate Audit & Assurance — readiness matrix (18 Oct 2026)
+# Corporate Audit & Assurance — readiness matrix (18 Oct 2026, after A2)
 
 Legend: **D** domain test · **R** candidate rollback pgTAP · **I** installed · **N** native authenticated · **C** contention/load · **O** owner accepted. "–" = not yet.
 
@@ -13,17 +13,17 @@ Legend: **D** domain test · **R** candidate rollback pgTAP · **I** installed �
 | FR-6807 | Evidence provenance metadata | ✓ | ✓ | – | – | – | – |
 | FR-6808 | Evidence review + rework | ✓ | ✓ | – | – | – | – |
 | FR-6809 | Freeze with cutoff digest | – | ✓ | – | – | – | – |
-| FR-6810 | Test procedures / sampling | ✓ (sampling) | – | – | – | – | – |
+| FR-6810 | Test procedures / sampling | ✓ | ✓ | – | – | – | – |
 | FR-6811 | Exceptions ≠ findings | ✓ | ✓ | – | – | – | – |
 | FR-6812 | Ordered attributable events | ✓ | ✓ | – | – | – | – |
 | FR-6813 | Independent finding issuance | ✓ | ✓ | – | – | – | – |
 | FR-6814 | Management response | ✓ | ✓ | – | – | – | – |
-| FR-6815 | Independent risk decision | ✓ | – | – | – | – | – |
+| FR-6815 | Independent risk decision | ✓ | ✓ | – | – | – | – |
 | FR-6816 | Remediation + independent retest | ✓ | ✓ | – | – | – | – |
 | FR-6817 | Reopen findings | ✓ | ✓ | – | – | – | – |
 | FR-6818 | Immutable versioned report | – | ✓ | – | – | – | – |
 | FR-6819 | Legal holds, segregated release | ✓ | ✓ | – | – | – | – |
-| FR-6820 | Carry-forward | – | partial | – | – | – | – |
+| FR-6820 | Carry-forward | ✓ | ✓ | – | – | – | – |
 | FR-6821 | Evidence adapters | – | – | – | – | – | – |
 | FR-6822 | Governed export | – | – | – | – | – | – |
 | FR-6823 | Templates/reminders/dashboards | – | – | – | – | – | – |

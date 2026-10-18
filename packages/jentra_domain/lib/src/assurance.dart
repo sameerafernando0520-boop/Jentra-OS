@@ -600,11 +600,136 @@ List<int> assuranceSystematicSample(int population, int size, int start) {
   if (start < 1 || start > population) {
     throw const FormatException('Sample start outside population.');
   }
-  final step = population / size;
+  // Integer arithmetic, identical to assurance.systematic_sample in SQL.
   return [
     for (var i = 0; i < size; i++)
-      ((start - 1 + (i * step).floor()) % population) + 1,
+      ((start - 1 + (i * population) ~/ size) % population) + 1,
   ];
+}
+
+/// Commands served by `api.assurance_test_command` (slice A2).
+abstract final class AssuranceTestCommands {
+  static const _capabilities = <String, String>{
+    'design_test': 'assurance.test.perform',
+    'execute_test': 'assurance.test.perform',
+    'review_test': 'assurance.test.review',
+    'carry_forward': 'assurance.finding.issue',
+  };
+
+  static const _fields = <String, List<String>>{
+    'design_test': [
+      'procedure_id',
+      'control_id',
+      'code',
+      'objective',
+      'population_size',
+      'sample_start',
+    ],
+    'execute_test': [
+      'run_id',
+      'procedure_id',
+      'items_tested',
+      'exceptions_found',
+      'conclusion',
+      'workpaper_sha256',
+    ],
+    'review_test': ['procedure_id', 'decision', 'reason'],
+    'carry_forward': [
+      'finding_id',
+      'source_finding_id',
+      'exception_id',
+      'control_id',
+    ],
+  };
+
+  static String capability(String action) =>
+      _capabilities[action] ??
+      (throw const FormatException('Unknown assurance test action.'));
+
+  static Set<String> fields(String action) {
+    capability(action);
+    return {'action', 'engagement_id', ..._fields[action]!};
+  }
+
+  static bool requiresRecentMfa(String action) {
+    capability(action);
+    return action == 'carry_forward';
+  }
+
+  /// [sampleSize] is the server-recorded size for `execute_test`.
+  static void validate(
+    String action,
+    Map<String, Object?> p, {
+    int? sampleSize,
+  }) {
+    final allowed = fields(action);
+    for (final k in p.keys) {
+      if (!allowed.contains(k)) {
+        throw FormatException('Unexpected assurance field $k.');
+      }
+    }
+    if (p['action'] != action) {
+      throw const FormatException('Assurance action changed.');
+    }
+    assuranceId(p['engagement_id']);
+    switch (action) {
+      case 'design_test':
+        assuranceId(p['procedure_id']);
+        assuranceId(p['control_id']);
+        final code = p['code'];
+        if (code is! String || !_controlCode.hasMatch(code)) {
+          throw const FormatException('Invalid test code.');
+        }
+        assuranceText(p['objective'], 3, 2000);
+        final pop = _count(p['population_size'], 1, 100000000);
+        _count(p['sample_start'], 1, pop);
+      case 'execute_test':
+        assuranceId(p['run_id']);
+        assuranceId(p['procedure_id']);
+        final items = _count(p['items_tested'], 1, 60);
+        if (sampleSize != null && items != sampleSize) {
+          throw const FormatException('Every sampled item must be tested.');
+        }
+        final found = _count(p['exceptions_found'], 0, items);
+        assuranceTestConclusion(p['conclusion'], found);
+        assuranceDigest(p['workpaper_sha256']);
+      case 'review_test':
+        assuranceId(p['procedure_id']);
+        if (!{'accept', 'return'}.contains(p['decision'])) {
+          throw const FormatException('Unknown test review decision.');
+        }
+        assuranceText(p['reason'], 3, 1000);
+      case 'carry_forward':
+        for (final k in [
+          'finding_id',
+          'source_finding_id',
+          'exception_id',
+          'control_id',
+        ]) {
+          assuranceId(p[k]);
+        }
+    }
+  }
+}
+
+int _count(Object? v, int min, int max) {
+  if (v is! int || v < min || v > max) {
+    throw FormatException('Whole number $min–$max required.');
+  }
+  return v;
+}
+
+/// An effective conclusion cannot rest on a sample with exceptions.
+String assuranceTestConclusion(Object? conclusion, int exceptionsFound) {
+  if (conclusion != 'effective' && conclusion != 'ineffective') {
+    throw const FormatException('Unknown test conclusion.');
+  }
+  if (conclusion == 'effective' && exceptionsFound > 0) {
+    throw const FormatException(
+      'Exceptions require an ineffective conclusion.',
+    );
+  }
+  return conclusion as String;
 }
 
 /// One immutable engagement event as returned by `api.assurance_engagement`.

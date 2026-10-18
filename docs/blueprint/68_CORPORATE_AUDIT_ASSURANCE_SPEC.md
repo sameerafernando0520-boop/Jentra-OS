@@ -1,7 +1,7 @@
 # 68 — Corporate Audit & Assurance
 
 Candidate specification, 18 October 2026. Cross-cutting capability over the
-existing platform foundations. **Status: slice A1 is candidate source with
+existing platform foundations. **Status: slices A1 and A2 are candidate source with
 rollback-only database evidence. Nothing is installed.** See
 [corporate-audit-status.md](../development/corporate-audit-status.md).
 
@@ -84,17 +84,17 @@ Archiving requires every open finding to be closed, risk-accepted or carried for
 | FR-6807 | Submit evidence metadata: source module/reference, cutoff, method, query version, SHA-256, size, classification, generated protected path | source + rollback |
 | FR-6808 | Review evidence; rejection reopens and counts rework | source + rollback |
 | FR-6809 | Freeze evidence at an explicit cutoff with a reproducible digest | source + rollback |
-| FR-6810 | Test procedures, sample selection and test runs | domain only (sampling); tables open (A2) |
+| FR-6810 | Test procedures with server-computed risk-based samples, immutable test runs, independent review | A2 source + rollback |
 | FR-6811 | Record exceptions without auto-creating findings; continuous monitoring may only create candidates | source + rollback |
 | FR-6812 | Every command writes one ordered, attributable event with from/to status and timestamp | source + rollback |
 | FR-6813 | Issue findings from exceptions by someone other than the recorder | source + rollback |
 | FR-6814 | Management response by the finding owner with due date; explicit risk-acceptance request | source + rollback |
-| FR-6815 | Independent risk-acceptance decision | source; rollback partial (not exercised) |
+| FR-6815 | Independent risk-acceptance decision | source + rollback (A2 suite) |
 | FR-6816 | Remediation evidence by owner; independent retest; failed retests retained | source + rollback |
 | FR-6817 | Reopen closed or risk-accepted findings | source + rollback |
 | FR-6818 | Issue immutable, versioned report with digest over cutoff, findings snapshot and summary; reopen/reissue | source + rollback |
 | FR-6819 | Legal holds with segregated release | source + rollback |
-| FR-6820 | Carry unresolved findings into the next cycle (`carried_from_finding_id`) | column + archive guard; rollover command open |
+| FR-6820 | Carry unresolved findings into the next cycle (`carry_forward`, once only, MFA) | A2 source + rollback |
 | FR-6821 | Automated evidence adapters (finance, procurement, inventory, workforce, IT) | open (A4) |
 | FR-6822 | Governed audit-pack export with download/hash/reopen verification | open (A4) |
 | FR-6823 | Templates, recurring engagements, reminders, escalations, overdue dashboards | open (A3/A5) |
@@ -149,6 +149,8 @@ The candidate grants **no business role** any of these capabilities.
 API (candidate):
 - `api.assurance_command(tenant, entity, branch, idempotency_key, payload, expected_version) → {engagement_id, version, status, action, aggregate_type, aggregate_id, to_status}`
 - `api.assurance_engagement(tenant, entity, branch, engagement_id) → {engagement, controls, requests[evidence metadata], exceptions, findings, reports, events}`
+- A2: `api.assurance_test_command(...)` for `design_test`, `execute_test`, `review_test`, `carry_forward` (same receipts, version and event history); `api.assurance_tests(...)` read model.
+- Sample size = min(population, 10/25/40/60 by control risk low/medium/high/critical); positions = ((start − 1 + ⌊i·population/size⌋) mod population) + 1, identical in SQL and Dart.
 
 Payload fields per action are exact allow-lists (`assurance.action_fields`,
 mirrored in `AssuranceCommands.fields`). Error codes: `22023` validation,
@@ -193,8 +195,8 @@ production deployment, real MFA, contention/load, owner sign-off.
 
 | Gate | State |
 |---|---|
-| Domain tests | 19 pass (`test/assurance_test.dart`) |
-| Candidate pgTAP rollback | 55/55, rolled back ([evidence](../verification/assurance/a1-candidate-rollback-20261018.json)) |
+| Domain tests | 24 pass (`assurance_test.dart`, `assurance_testing_test.dart`) |
+| Candidate pgTAP rollback | A1 55/55 ([evidence](../verification/assurance/a1-candidate-rollback-20261018.json)); A1+A2 98/98 ([evidence](../verification/assurance/a2-candidate-rollback-20261018.json)); both rolled back |
 | Installation | not performed; requires explicit approval |
 | Desktop widget/accessibility | not started |
 | Export/download/reopen | not started |

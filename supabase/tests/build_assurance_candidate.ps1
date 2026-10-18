@@ -1,9 +1,14 @@
 [CmdletBinding()]
-param()
+param([ValidateSet('A1','A2')][string]$Slice = 'A1')
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
 $migration = Get-Content -LiteralPath (Join-Path $root 'candidates/20261018090000_assurance_engagement_core.sql') -Raw
 $tests = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'assurance_core_test.sql') -Raw
+if ($Slice -eq 'A2') {
+  # A2 is applied on top of A1 after A1's assertions, as a sequential install would be.
+  $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261018120000_assurance_testing_carry_forward.sql') -Raw)
+  $tests += "`n" + (Get-Content -LiteralPath (Join-Path $PSScriptRoot 'assurance_testing_test.sql') -Raw)
+}
 $tests = [regex]::Replace($tests, '(?m)^select (is|ok|throws_ok)\(', 'insert into assurance_assertions select $1(')
 $diagnostic = @'
 reset role;
