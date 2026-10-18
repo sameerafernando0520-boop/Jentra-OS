@@ -17,7 +17,7 @@ begin
   end if;
 end $$;
 '@
-$query = "begin;`nset local lock_timeout='3s';`nset local statement_timeout='120s';`n$migration`ncreate temporary table assurance_assertions(message text);`ngrant insert on assurance_assertions to authenticated;`n$tests`n$diagnostic`nselect (select count(*) from assurance_assertions) assertions, (select count(*) from assurance_assertions where message like 'ok%') passed;`nrollback;"
+$query = "begin;`nset local lock_timeout='3s';`nset local statement_timeout='120s';`n$migration`ncreate temporary table assurance_assertions(message text);`ngrant insert on assurance_assertions to authenticated;`n$tests`n$diagnostic`nselect (select count(*) from assurance_assertions) assertions, (select count(*) from assurance_assertions where message like 'ok%') passed, (select string_agg(message, E'\n') from assurance_assertions where message not like 'ok%') failures;`nrollback;"
 if ($query -match '(?im)^\s*commit\s*;' -or $query.TrimEnd() -notmatch 'rollback;$') {
   throw 'Assurance verification must end with rollback.'
 }

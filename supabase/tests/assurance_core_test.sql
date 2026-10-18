@@ -71,6 +71,18 @@ select pg_temp.aid('tenant'),pg_temp.aid(x||'.m'),pg_temp.aid(x||'.r'),pg_temp.a
 from unnest(array['manager','lead','auditor','reviewer','owner','external']) x;
 insert into core.role_assignments(tenant_id,membership_id,role_id,legal_entity_id,branch_id,created_by)
 values(pg_temp.aid('other'),pg_temp.aid('foreign.m'),pg_temp.aid('foreign.r'),null,null,pg_temp.aid('manager'));
+-- Entity-wide viewer (no branch restriction) for the branch-scope isolation check.
+insert into auth.users(id,instance_id,aud,role,email,encrypted_password,email_confirmed_at,created_at,updated_at)
+values(pg_temp.aid('entityviewer'),'00000000-0000-0000-0000-000000000000','authenticated','authenticated',
+  'entityviewer@assurance.jentra.test','',now(),now(),now());
+insert into core.memberships(id,tenant_id,user_id,status)
+values(pg_temp.aid('entityviewer.m'),pg_temp.aid('tenant'),pg_temp.aid('entityviewer'),'active');
+insert into core.roles(id,tenant_id,code,name,requires_mfa)
+values(pg_temp.aid('entityviewer.r'),pg_temp.aid('tenant'),'assurance-entityviewer','entityviewer',false);
+insert into core.role_permissions(tenant_id,role_id,permission_code)
+values(pg_temp.aid('tenant'),pg_temp.aid('entityviewer.r'),'assurance.evidence.view');
+insert into core.role_assignments(tenant_id,membership_id,role_id,legal_entity_id,branch_id,created_by)
+values(pg_temp.aid('tenant'),pg_temp.aid('entityviewer.m'),pg_temp.aid('entityviewer.r'),pg_temp.aid('tenant.entity'),null,pg_temp.aid('manager'));
 
 -- Structural controls.
 select ok((select count(*)=12 and bool_and(relrowsecurity and relforcerowsecurity) from pg_class c
@@ -121,7 +133,11 @@ select throws_ok($$select api.assurance_engagement(pg_temp.aid('tenant'),pg_temp
   '42501',null,'foreign actor denied in tenant');
 reset role;select pg_temp.actor('manager');set local role authenticated;
 select throws_ok($$select api.assurance_engagement(pg_temp.aid('tenant'),pg_temp.aid('tenant.entity'),pg_temp.aid('tenant.branch2'),pg_temp.aid('eng'))$$,
-  'P0002','ASSURANCE_ENGAGEMENT_NOT_FOUND','other branch cannot broaden reads');
+  '42501','Permission denied or multi-factor authentication required.','branch-scoped role cannot read another branch (authority before existence)');
+reset role;select pg_temp.actor('entityviewer');set local role authenticated;
+select throws_ok($$select api.assurance_engagement(pg_temp.aid('tenant'),pg_temp.aid('tenant.entity'),pg_temp.aid('tenant.branch2'),pg_temp.aid('eng'))$$,
+  'P0002','ASSURANCE_ENGAGEMENT_NOT_FOUND','entity-wide viewer cannot reach a branch engagement through another branch');
+reset role;select pg_temp.actor('manager');set local role authenticated;
 select throws_ok($$select api.assurance_engagement(pg_temp.aid('tenant'),pg_temp.aid('other.entity'),null,pg_temp.aid('eng'))$$,
   'P0002','ASSURANCE_SCOPE_NOT_FOUND','foreign entity scope rejected');
 

@@ -1,0 +1,61 @@
+{
+  "kind": "candidate-rollback-pgtap",
+  "slice": "assurance-a1-engagement-core",
+  "blueprint": "68_CORPORATE_AUDIT_ASSURANCE_SPEC.md",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "tool": "supabase execute_sql (single transaction ending in rollback)",
+  "installed": false,
+  "rolledBack": true,
+  "sources": {
+    "supabase/candidates/20261018090000_assurance_engagement_core.sql": "ecce6d8a7f4a68c58820b7772283a43fcea261644fac2627c04060fbacf56a86",
+    "supabase/tests/assurance_core_test.sql": "9166eca081d587d4df08e761d83feadea0fcf870aaf1771c208855ebecd0c644",
+    "supabase/tests/build_assurance_candidate.ps1": "31d820d45edd1cf542c5abbd86fbecfb51d88d8fb1375ae3669214be9f2b0314"
+  },
+  "builtQuerySha256": "51879e0093f065c208c7765fa4beea42dc5d6011331f3200f79d067fc7b7d774",
+  "preRun": {
+    "observedAt": "2026-10-17 18:43:36.530641+00",
+    "migrations": 115,
+    "latestMigration": "20261013184757",
+    "apiFunctions": 363,
+    "assuranceSchema": 0,
+    "assurancePermissions": 0
+  },
+  "result": {
+    "assertions": 55,
+    "passed": 55,
+    "failures": null
+  },
+  "priorAttempt": {
+    "assertions": 54,
+    "passed": 53,
+    "failure": "test 16 expected P0002 but the API correctly returned 42501 (authority checked before existence); expectation corrected and an entity-wide-viewer P0002 case added"
+  },
+  "postRun": {
+    "observedAt": "2026-10-18 03:37:20.227666+00",
+    "migrations": 115,
+    "apiFunctions": 363,
+    "assuranceSchema": 0,
+    "assurancePermissions": 0,
+    "pgtapExtension": 0,
+    "fixtureUsers": 0
+  },
+  "covers": [
+    "forced RLS and no direct table grants on all 12 assurance tables",
+    "tenant / entity / branch isolation; authority before existence",
+    "idempotent replay, key reuse mismatch, optimistic version conflict",
+    "independence: team member cannot own controls; control owner cannot join team or retest",
+    "evidence provenance: generated storage path, SHA-256, byte size, immutable items, rework count",
+    "evidence freeze: lead only, recent MFA (stale MFA rejected), cutoff digest, immutable after freeze",
+    "exceptions never auto-create findings; recorder cannot issue own finding",
+    "management response by owner only; remediation; failed and passed independent retests retained; reopen",
+    "external auditor: time-bound, read-only, no storage reference, expiry denies immediately",
+    "report issuance: independent issuer, append-only versions, reopen and reissue",
+    "legal hold placement and segregated release",
+    "permission revocation denies replay and preserves attributed history",
+    "one attributable event per engagement version"
+  ],
+  "doesNotEstablish": [
+    "installation", "genuine MFA", "independent-session contention", "target-scale latency",
+    "authenticated native Windows use", "export/download/reopen", "owner acceptance"
+  ]
+}
