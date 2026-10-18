@@ -1,4 +1,6 @@
 import 'dart:convert';
+
+import 'package:cryptography/cryptography.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -192,6 +194,123 @@ void main() {
         reason: '$bad',
       );
     }
+  });
+
+  CommandEnvelope<Map<String, Object?>> auditor(Map<String, Object?> p) =>
+      CommandEnvelope(
+        commandId: uid(30),
+        idempotencyKey: uid(31),
+        context: scope,
+        expectedEntityVersion: 7,
+        payload: {'engagement_id': eng, ...p},
+      );
+
+  test('auditor commands route by family and verify the aggregate', () async {
+    final export = auditor({
+      'action': 'export_pack',
+      'export_id': uid(40),
+      'report_id': uid(41),
+    });
+    response = {
+      'engagement_id': eng,
+      'version': 8,
+      'status': 'issued',
+      'action': 'export_pack',
+      'aggregate_type': 'export',
+      'aggregate_id': uid(40),
+      'to_status': 'exported',
+    };
+    await gateway.auditorCommand(export);
+    expect(
+      requests.single.url.path,
+      endsWith('/rpc/assurance_evidence_command'),
+    );
+    expect((jsonDecode(requests.single.body) as Map)['p_expected_version'], 7);
+    response = {...response! as Map, 'aggregate_id': uid(42)};
+    await expectLater(
+      gateway.auditorCommand(export),
+      throwsA(
+        isA<DomainError>().having((e) => e.code, 'code', 'UNCERTAIN_RESULT'),
+      ),
+    );
+    requests.clear();
+    await expectLater(
+      gateway.auditorCommand(auditor({'action': 'respond'})),
+      throwsFormatException,
+    );
+    await expectLater(
+      gateway.auditorCommand(
+        auditor({
+          'action': 'record_exception',
+          'exception_id': uid(43),
+          'control_id': uid(44),
+          'description': 'x',
+          'severity': 'high',
+        }),
+      ),
+      throwsFormatException,
+    );
+    expect(requests, isEmpty);
+  });
+
+  test('independence refusals do not read as lost access', () async {
+    status = 400;
+    response = {
+      'code': '42501',
+      'message': 'ASSURANCE_INDEPENDENT_REVIEW_REQUIRED',
+    };
+    await expectLater(
+      gateway.auditorCommand(
+        auditor({
+          'action': 'dismiss_exception',
+          'exception_id': uid(43),
+          'reason': 'Clock skew',
+        }),
+      ),
+      throwsA(
+        isA<DomainError>().having(
+          (e) => e.code,
+          'code',
+          'SEGREGATION_OF_DUTIES_VIOLATION',
+        ),
+      ),
+    );
+  });
+
+  test('an audit pack is read and hashed over its exact text', () async {
+    final manifest = {
+      'format': 'jentra.assurance.audit_pack.v1',
+      'engagement': {'id': eng, 'evidence_cutoff_digest': 'c' * 64},
+      'report': {'digest': 'd' * 64, 'report_version': 1},
+      'evidence': [
+        {
+          'id': uid(50),
+          'sha256': 'e' * 64,
+          'byte_size': 10,
+          'source_module': 'finance',
+        },
+      ],
+    };
+    final text = jsonEncode(manifest);
+    final sha = (await Sha256().hash(
+      utf8.encode(text),
+    )).bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+    response = {
+      'export_id': uid(40),
+      'manifest': manifest,
+      'manifest_text': text,
+      'manifest_sha256': sha,
+      'manifest_bytes': utf8.encode(text).length,
+    };
+    final v = await gateway.auditPack(scope, uid(40));
+    expect(v.verified, isTrue);
+    expect(
+      requests.single.url.path,
+      endsWith('/rpc/assurance_export_manifest'),
+    );
+    response = {...response! as Map, 'manifest_sha256': 'f' * 64};
+    expect((await gateway.auditPack(scope, uid(40))).verified, isFalse);
+    await expectLater(gateway.auditPack(scope, uid(41)), throwsFormatException);
   });
 
   test('invalid responses are rejected before sending', () async {

@@ -2,7 +2,10 @@ import 'package:jentra_domain/jentra_assurance.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-/// Governance & Audit workspace reads and the finding-owner response command.
+import 'assurance_pack_verifier.dart';
+
+/// Governance & Audit workspace reads, the finding-owner response and the
+/// auditor commands offered on an engagement.
 abstract interface class AssuranceGateway {
   Future<AssuranceOverview> overview(TenantContext scope);
   Future<AssuranceEngagementPage> engagements(
@@ -15,6 +18,15 @@ abstract interface class AssuranceGateway {
   Future<Map<String, Object?>> respond(
     CommandEnvelope<Map<String, Object?>> command,
   );
+
+  /// One [AuditorAction], versioned against the engagement; the receipt must
+  /// confirm the same aggregate one version later.
+  Future<Map<String, Object?>> auditorCommand(
+    CommandEnvelope<Map<String, Object?>> command,
+  );
+
+  /// Reads an export and hashes the exact manifest bytes.
+  Future<AuditPackVerification> auditPack(TenantContext scope, String exportId);
 }
 
 final class SupabaseAssuranceGateway implements AssuranceGateway {
@@ -55,6 +67,9 @@ final class SupabaseAssuranceGateway implements AssuranceGateway {
     final message = e.message;
     final code = switch (e.code) {
       '42501' when message.contains('MFA') => 'MFA_REQUIRED',
+      // Independence and team rules refuse one action, not workspace access.
+      '42501' when _segregation.containsKey(message) =>
+        'SEGREGATION_OF_DUTIES_VIOLATION',
       '42501' => 'PERMISSION_DENIED',
       '40001' => 'VERSION_CONFLICT',
       'P0002' => 'NOT_FOUND',
@@ -66,6 +81,7 @@ final class SupabaseAssuranceGateway implements AssuranceGateway {
       message: switch (code) {
         'MFA_REQUIRED' =>
           'Complete recent MFA in account security, then retry the saved request.',
+        'SEGREGATION_OF_DUTIES_VIOLATION' => _segregation[message]!,
         'PERMISSION_DENIED' =>
           'Audit access is required in this entity and branch.',
         'VERSION_CONFLICT' =>
@@ -77,13 +93,32 @@ final class SupabaseAssuranceGateway implements AssuranceGateway {
     );
   }
 
+  static const _segregation = {
+    'ASSURANCE_INDEPENDENT_REVIEW_REQUIRED':
+        'Someone other than the person who recorded this exception must decide it.',
+    'ASSURANCE_SELF_REVIEW_FORBIDDEN':
+        'Someone other than the collector must review this evidence.',
+    'ASSURANCE_INDEPENDENCE_REQUIRED':
+        'The owner must be independent of the audit team.',
+    'ASSURANCE_TEAM_MEMBER_REQUIRED':
+        'Only this engagement\'s audit team can do this.',
+    'ASSURANCE_EXTERNAL_READ_ONLY': 'External reviewers have read-only access.',
+  };
+
   static String _validation(String m) => switch (m) {
     'ASSURANCE_TRANSITION_INVALID' =>
-      'This finding no longer accepts a response.',
+      'This item has changed state. Refresh the engagement.',
     'ASSURANCE_ENGAGEMENT_CLOSED' => 'The engagement is closed.',
+    'ASSURANCE_EVIDENCE_FROZEN' =>
+      'Evidence is frozen or the engagement is not in fieldwork.',
+    'ASSURANCE_REPORT_NOT_ISSUED' => 'No issued report can be exported yet.',
+    'ASSURANCE_REPORT_SUPERSEDED' =>
+      'A newer report version exists. Refresh and export that one.',
+    'ASSURANCE_MEMBER_REQUIRED' =>
+      'The owner must be an active member of this organisation.',
     'IDEMPOTENCY_MISMATCH' =>
-      'A different request already used this key. Start a new response.',
-    _ => 'Check the response, due date and risk acceptance choice.',
+      'A different request already used this key. Start a new request.',
+    _ => 'Check the entered details and try again.',
   };
 
   Map<String, Object?> _map(Object? r, String what) => r is Map
@@ -157,5 +192,47 @@ final class SupabaseAssuranceGateway implements AssuranceGateway {
       );
     }
     return r.cast<String, Object?>();
+  }
+
+  @override
+  Future<Map<String, Object?>> auditorCommand(
+    CommandEnvelope<Map<String, Object?>> c,
+  ) async {
+    final p = c.payload, version = c.expectedEntityVersion;
+    final action = AuditorAction.of(p['action'] as String? ?? '');
+    if (version == null) {
+      throw const FormatException('Auditor commands are versioned.');
+    }
+    action.validate(p, now: c.clientTimestamp, tenantId: c.context.tenantId);
+    final r = await _call(action.rpc.function, c.context, {
+      'p_idempotency_key': c.idempotencyKey,
+      'p_payload': p,
+      'p_expected_version': version,
+    });
+    if (r is! Map || !action.confirms(r.cast(), p, version)) {
+      throw const DomainError(
+        code: 'UNCERTAIN_RESULT',
+        message: 'Confirmation could not be verified. Retry the saved request.',
+      );
+    }
+    return r.cast<String, Object?>();
+  }
+
+  @override
+  Future<AuditPackVerification> auditPack(
+    TenantContext s,
+    String exportId,
+  ) async {
+    assuranceId(exportId);
+    final v = await AssurancePackVerifier.verify(
+      _map(
+        await _call('assurance_export_manifest', s, {'p_export_id': exportId}),
+        'audit pack',
+      ),
+    );
+    if (v.pack.exportId != exportId) {
+      throw const FormatException('Audit pack identity does not match.');
+    }
+    return v;
   }
 }

@@ -754,9 +754,22 @@ final class AssuranceEvent {
   final DateTime occurredAt;
 }
 
+/// Engagement events also record test (A2) and evidence (A4/A4b) commands.
+const _testAndEvidenceEventActions = {
+  'design_test',
+  'execute_test',
+  'review_test',
+  'carry_forward',
+  'collect_system_evidence',
+  'export_pack',
+  'run_monitoring',
+};
+
 String _knownAction(Object? v) {
   if (v is! String) throw const FormatException('Unknown assurance action.');
-  AssuranceCommands.capability(v);
+  if (!_testAndEvidenceEventActions.contains(v)) {
+    AssuranceCommands.capability(v);
+  }
   return v;
 }
 

@@ -77,6 +77,15 @@ The candidate was kept in `supabase/candidates/` until installation; it is now a
 | What the workspace does | My work (own requests and findings with reminder levels), overdue team work, engagement register, read-only engagement detail, and the finding owner's management response (encrypted local draft, sealed request retried with the same key on an uncertain outcome; version conflicts require a refresh) |
 | Not covered | reminders and escalations are shown, not delivered (no notifications or scheduler); all other assurance commands (planning, evidence, testing, reporting, export) have no desktop screens yet; no authenticated Windows walkthrough; no accessibility review beyond automated renders |
 
+## Slice A6a — auditor actions on the engagement view (desktop)
+
+| Category | Result |
+|---|---|
+| Source changes | Domain `assurance_auditor.dart` (`AuditorAction` catalogue routing seven commands to `api.assurance_command` / `api.assurance_evidence_command`, receipt confirmation by aggregate and version; `AuditorEngagementView` with state- and capability-based availability that mirrors the server rules); `AssuranceEvent` now accepts the A2 test and A4/A4b evidence actions that engagement histories already contain (previously an engagement with testing or collection could not be opened). Platform `auditorCommand` and `auditPack` (manifest read and hashed on device); independence refusals map to `SEGREGATION_OF_DUTIES_VIOLATION` instead of lost access. Desktop: request evidence, collect a system snapshot, review evidence, record/dismiss exceptions, issue findings and export the audit pack from the engagement view; each is an encrypted draft sealed with generated ids and the engagement version and retried with the same key; only a pack that hashes to its recorded digest can be saved |
+| Candidate / installed database evidence | none new — no SQL changed; uses the installed A1–A5 APIs |
+| Automated tests | domain 446/446 (8 new); platform assurance gateway 9/9; desktop `assurance_workspace_test.dart` 22/22 including new 200% light/dark goldens `governance_engagement_*_200.png` produced by this work; analyzers clean on changed files |
+| Not covered | test design/execution/review screens, planning screens, freeze/issue report/risk decision/retest screens, non-snapshot evidence sources (need a source picker); reminder delivery; no authenticated Windows walkthrough, genuine MFA or accessibility review |
+
 ## Installation — development project, 18 October 2026
 
 | Category | Result |
@@ -89,7 +98,7 @@ The candidate was kept in `supabase/candidates/` until installation; it is now a
 | Not established | real users still have no assurance capability (no role grants); no native authenticated use, genuine MFA, contention/load or owner acceptance; production not touched |
 
 ## Next unblocked slices
-1. Desktop screens for the remaining assurance roles: auditor evidence requests and review, testing, findings issue, planning (A3) and audit-pack export with the platform verifier.
+1. Remaining desktop screens: test design/execution/review, planning (A3), freeze, report issue, risk decisions and retest (A6a covered evidence, exceptions, findings issue and pack export).
 2. Reminder delivery through the existing Wave 3 notification channel, and scheduled monitoring/occurrence runs.
 3. Tenant-configurable SLA, reminder bands and rule thresholds once as-is discovery is done.
 

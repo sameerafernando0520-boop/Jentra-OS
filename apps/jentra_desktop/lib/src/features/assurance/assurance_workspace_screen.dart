@@ -236,6 +236,8 @@ class AssuranceWorkspace extends StatelessWidget {
               ),
             ),
           ],
+          if (c.commanding) _CommandCard(controller: c),
+          if (c.pack != null) _PackCard(controller: c),
           const SizedBox(height: 16),
           if (c.section == 'work') ...[
             if (o == null && !c.busy)
@@ -284,43 +286,66 @@ class AssuranceWorkspace extends StatelessWidget {
                 enabled: c.verified,
               ),
           ] else if (c.detail != null)
-            _EngagementDetailView(detail: c.detail!, onClose: c.closeDetail),
+            _EngagementDetailView(controller: c),
         ],
       );
     },
   );
 }
 
+const _snapshotLabels = {
+  'it_control.access_review': 'Access review',
+  'procurement.three_way_match': 'Three-way match overrides',
+  'workforce.attendance_approvals': 'Attendance approvals',
+};
+
 class _EngagementDetailView extends StatelessWidget {
-  const _EngagementDetailView({required this.detail, required this.onClose});
-  final Map<String, Object?> detail;
-  final VoidCallback onClose;
+  const _EngagementDetailView({required this.controller});
+  final AssuranceWorkspaceController controller;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final c = controller, theme = Theme.of(context), detail = c.detail!;
+    final v = c.view, caps = c.capabilities, me = c.scope.actorId;
     final e = (detail['engagement'] as Map).cast<String, Object?>();
     List<Map<String, Object?>> rows(String k) => [
       for (final x in detail[k] as List) (x as Map).cast<String, Object?>(),
     ];
+    final ready = !c.busy && c.online && c.verified && !c.commandPending;
+    Widget act(String label, String action, Map<String, Object?> prefill) =>
+        TextButton(
+          onPressed: ready ? () => c.startCommand(action, prefill) : null,
+          child: Text(label),
+        );
     Widget heading(String t) => Padding(
       padding: const EdgeInsets.only(top: 16, bottom: 4),
       child: Text(t, style: theme.textTheme.titleMedium),
     );
+    Widget row(String text, List<Widget> actions) => Wrap(
+      spacing: 8,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [Text(text), ...actions],
+    );
+    String code(String controlId) => v?.control(controlId)?.code ?? 'control';
+    final report = v?.currentReport;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+        Wrap(
+          spacing: 8,
+          crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            Expanded(
-              child: Text(
-                '${e['name']} · ${e['status']}',
-                style: theme.textTheme.titleLarge,
-              ),
+            Text(
+              '${e['name']} · ${e['status']}',
+              style: theme.textTheme.titleLarge,
             ),
             TextButton(
-              onPressed: onClose,
+              onPressed: c.closeDetail,
               child: const Text('Back to register'),
+            ),
+            TextButton(
+              onPressed: ready ? () => c.open(e['id']! as String) : null,
+              child: const Text('Refresh engagement'),
             ),
           ],
         ),
@@ -331,13 +356,75 @@ class _EngagementDetailView extends StatelessWidget {
         if (e['evidence_cutoff_digest'] != null)
           SelectableText('Evidence cutoff ${e['evidence_cutoff_digest']}'),
         heading('Controls'),
-        for (final x in rows('controls'))
-          Text('${x['control_code']} · ${x['title']} · ${x['risk']}'),
+        if (v != null)
+          for (final x in v.controls)
+            row('${x.code} · ${x.title} · ${x.risk.name}', [
+              if (v.canRequestEvidence(caps))
+                act('Request evidence', 'request_evidence', {
+                  'control_id': x.id,
+                  'owner_id': x.ownerId,
+                  'due_date': _plusDays(c.today, 14),
+                  'description': '',
+                  'label': '${x.code} · ${x.title}',
+                }),
+              if (v.canRecordException(caps))
+                act('Record exception', 'record_exception', {
+                  'control_id': x.id,
+                  'description': '',
+                  'severity': x.risk.name,
+                  'label': '${x.code} · ${x.title}',
+                }),
+            ]),
         heading('Evidence requests'),
-        for (final x in rows('requests'))
-          Text(
-            '${x['status']} · due ${x['due_date']} · rework ${x['rework_count']}${x['evidence'] is Map ? ' · ${(x['evidence'] as Map)['sha256']}' : ''}',
-          ),
+        if (v != null && v.requests.isEmpty)
+          const Text('No evidence requested.'),
+        if (v != null)
+          for (final r in v.requests)
+            row(
+              '${code(r.controlId)} · ${r.status.name} · due ${r.dueDate}${r.evidenceSha256 == null ? '' : ' · ${r.evidenceSha256}'}',
+              [
+                if (v.canCollect(caps, r))
+                  act('Collect system snapshot', 'collect_system_evidence', {
+                    'request_id': r.id,
+                    'source_kind': 'it_control.access_review',
+                    'source_id': null,
+                    'label': '${code(r.controlId)} · due ${r.dueDate}',
+                  }),
+                if (v.canReview(caps, r, me))
+                  act('Review evidence', 'review_evidence', {
+                    'request_id': r.id,
+                    'decision': 'accept',
+                    'reason': '',
+                    'label': '${code(r.controlId)} · ${r.evidenceSha256}',
+                  }),
+              ],
+            ),
+        heading('Exceptions'),
+        if (v != null && v.exceptions.isEmpty)
+          const Text('No exceptions recorded.'),
+        if (v != null)
+          for (final x in v.exceptions)
+            row(
+              '${code(x.controlId)} · ${x.severity.name} · ${x.status.name} · ${x.source.replaceAll('_', ' ')}',
+              [
+                if (v.canIssueFinding(caps, x))
+                  act('Issue finding', 'issue_finding', {
+                    'exception_id': x.id,
+                    'owner_id': v.control(x.controlId)?.ownerId ?? '',
+                    'title': '',
+                    'severity': x.severity.name,
+                    'label':
+                        '${code(x.controlId)} · ${x.severity.name} exception',
+                  }),
+                if (v.canDismiss(caps, x))
+                  act('Dismiss', 'dismiss_exception', {
+                    'exception_id': x.id,
+                    'reason': '',
+                    'label':
+                        '${code(x.controlId)} · ${x.severity.name} exception',
+                  }),
+              ],
+            ),
         heading('Findings'),
         if (rows('findings').isEmpty) const Text('No findings issued.'),
         for (final x in rows('findings'))
@@ -346,12 +433,203 @@ class _EngagementDetailView extends StatelessWidget {
         if (rows('reports').isEmpty) const Text('No report issued.'),
         for (final x in rows('reports'))
           SelectableText('Version ${x['report_version']} · ${x['digest']}'),
+        if (v != null && report != null && v.canExport(caps))
+          act('Export audit pack', 'export_pack', {
+            'report_id': report.id,
+            'label': 'Report version ${report.version}',
+          }),
         heading('History'),
         for (final x in rows('events'))
           Text(
             '${x['version']} · ${x['action']}${x['to_status'] == null ? '' : ' → ${x['to_status']}'} · ${x['occurred_at']}',
           ),
       ],
+    );
+  }
+}
+
+String _plusDays(String civil, int days) =>
+    DateTime.parse('${civil}T00:00:00Z')
+        .add(Duration(days: days))
+        .toIso8601String()
+        .substring(0, 10);
+
+class _CommandCard extends StatelessWidget {
+  const _CommandCard({required this.controller});
+  final AssuranceWorkspaceController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = controller, theme = Theme.of(context), a = c.commandAction!;
+    final f = c.commandForm, locked = c.commandPending || c.busy;
+    final id = f[a.aggregateKey];
+    Widget text(String key, String label, {int lines = 1}) => TextFormField(
+      key: ValueKey('$key-$id'),
+      initialValue: f[key] as String?,
+      enabled: !c.commandPending && !c.busy,
+      maxLines: lines,
+      decoration: InputDecoration(labelText: label),
+      onChanged: (value) => c.commandField(key, value),
+    );
+    Widget choice(String key, Map<String, String> options) => Wrap(
+      spacing: 8,
+      runSpacing: 4,
+      children: [
+        for (final MapEntry(key: value, value: label) in options.entries)
+          ChoiceChip(
+            label: Text(label),
+            selected: f[key] == value,
+            onSelected: c.commandPending || c.busy
+                ? null
+                : (_) => c.commandField(key, value),
+          ),
+      ],
+    );
+    const severities = {
+      'low': 'Low',
+      'medium': 'Medium',
+      'high': 'High',
+      'critical': 'Critical',
+    };
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(a.label, style: theme.textTheme.titleLarge),
+              Text('${f['label'] ?? ''}'),
+              const SizedBox(height: 8),
+              ...switch (a.action) {
+                'request_evidence' => [
+                  text('due_date', 'Due · YYYY-MM-DD'),
+                  text('description', 'What evidence is needed', lines: 3),
+                  const Text('The request goes to the control owner.'),
+                ],
+                'collect_system_evidence' => [
+                  choice('source_kind', _snapshotLabels),
+                  const Text(
+                    'The server builds an immutable snapshot over the audit period and records its digest; you cannot review evidence you collect.',
+                  ),
+                ],
+                'review_evidence' => [
+                  choice('decision', const {
+                    'accept': 'Accept',
+                    'reject': 'Return for rework',
+                  }),
+                  text('reason', 'Reason', lines: 2),
+                ],
+                'record_exception' => [
+                  text('description', 'What was observed', lines: 3),
+                  choice('severity', severities),
+                  const Text(
+                    'An exception is not a finding; another team member decides it.',
+                  ),
+                ],
+                'dismiss_exception' => [
+                  text('reason', 'Why it is not a finding', lines: 2),
+                ],
+                'issue_finding' => [
+                  text('title', 'Finding title'),
+                  choice('severity', severities),
+                  const Text(
+                    'The finding goes to the control owner for a management response.',
+                  ),
+                ],
+                _ => [
+                  const Text(
+                    'The pack lists the issued report and evidence digests, not stored files. It is hashed again on this device before it can be saved.',
+                  ),
+                ],
+              },
+              if (a.requiresRecentMfa)
+                const Text(
+                  'Requires multi-factor authentication completed in the last 15 minutes.',
+                ),
+              if (c.commandPending)
+                const Text(
+                  'The outcome is uncertain or awaits MFA. Retry uses the same encrypted request.',
+                ),
+              if (c.commandConflicted)
+                const Text(
+                  'The engagement changed. Refresh it, then start again.',
+                ),
+              Wrap(
+                spacing: 8,
+                children: [
+                  FilledButton(
+                    onPressed:
+                        c.busy ||
+                            !c.online ||
+                            !c.verified ||
+                            c.commandConflicted
+                        ? null
+                        : c.submitCommand,
+                    child: Text(
+                      c.commandPending ? 'Retry saved request' : 'Send',
+                    ),
+                  ),
+                  OutlinedButton(
+                    onPressed: locked ? null : c.saveCommand,
+                    child: const Text('Save draft locally'),
+                  ),
+                  OutlinedButton(
+                    onPressed: c.busy || c.commandPending
+                        ? null
+                        : c.discardCommand,
+                    child: const Text('Discard draft'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PackCard extends StatelessWidget {
+  const _PackCard({required this.controller});
+  final AssuranceWorkspaceController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = controller, p = c.pack!, theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Audit pack', style: theme.textTheme.titleLarge),
+              Text(
+                p.verified
+                    ? 'Verified: the downloaded text hashes to the recorded digest.'
+                    : 'Not verified: the downloaded text does not match the recorded digest.',
+                style: p.verified
+                    ? null
+                    : TextStyle(color: theme.colorScheme.error),
+              ),
+              SelectableText('Recorded ${p.pack.recordedSha256}'),
+              SelectableText('Computed ${p.computedSha256}'),
+              Text(
+                'Report version ${p.pack.reportVersion} · ${p.pack.evidence.length} evidence items',
+              ),
+              FilledButton(
+                onPressed: p.verified && c.files != null && !c.busy
+                    ? c.savePack
+                    : null,
+                child: const Text('Save verified pack'),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

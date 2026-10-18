@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
+
+import 'package:cryptography/cryptography.dart';
 
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +14,8 @@ import 'package:jentra_desktop/src/shell/navigation.dart';
 import 'package:jentra_domain/jentra_assurance.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_assurance_platform.dart';
+import 'package:jentra_platform/jentra_finance_platform.dart'
+    show ReportExportFiles;
 import 'package:jentra_platform/jentra_platform.dart';
 
 import 'support/procurement_fakes.dart' show Keys;
@@ -41,8 +46,24 @@ Map<String, Object?> work(
   'level': level,
 };
 
+class FakeFiles implements ReportExportFiles {
+  String? path;
+  Uint8List? bytes;
+  @override
+  Future<String?> choose(String fileName) async => 'C:/audit/$fileName';
+  @override
+  Future<void> write(String p, Uint8List b, String mimeType) async {
+    path = p;
+    bytes = b;
+  }
+}
+
 class FakeAssuranceGateway implements AssuranceGateway {
-  String? failure, respondFailure;
+  String? failure, respondFailure, auditorFailure;
+  String status = 'fieldwork';
+  bool tamperPack = false;
+  List<Map<String, Object?>> requests = [], exceptions = [], reports = [];
+  final auditorCommands = <CommandEnvelope<Map<String, Object?>>>[];
   bool responded = false;
   Completer<void>? overviewPause;
   final overviewEntered = Completer<void>();
@@ -119,7 +140,7 @@ class FakeAssuranceGateway implements AssuranceGateway {
     'engagement': {
       'id': id,
       'name': 'FY27 Treasury',
-      'status': 'fieldwork',
+      'status': status,
       'version': 1,
       'period_start': '2026-04-01',
       'period_end': '2027-03-31',
@@ -137,10 +158,10 @@ class FakeAssuranceGateway implements AssuranceGateway {
         'risk': 'high',
       },
     ],
-    'requests': [],
-    'exceptions': [],
+    'requests': requests,
+    'exceptions': exceptions,
     'findings': [],
-    'reports': [],
+    'reports': reports,
     'events': [
       {
         'version': 1,
@@ -176,6 +197,49 @@ class FakeAssuranceGateway implements AssuranceGateway {
       'to_status': 'remediating',
     };
   }
+
+  @override
+  Future<Map<String, Object?>> auditorCommand(
+    CommandEnvelope<Map<String, Object?>> c,
+  ) async {
+    auditorCommands.add(c);
+    if (auditorFailure != null) {
+      throw DomainError(
+        code: auditorFailure!,
+        message: 'Refused: $auditorFailure',
+      );
+    }
+    final p = c.payload, a = AuditorAction.of(p['action']! as String);
+    return {
+      'engagement_id': p['engagement_id'],
+      'version': c.expectedEntityVersion! + 1,
+      'action': a.action,
+      'aggregate_type': 'x',
+      'aggregate_id': p[a.aggregateKey],
+      'to_status': null,
+    };
+  }
+
+  @override
+  Future<AuditPackVerification> auditPack(TenantContext s, String id) async {
+    final manifest = {
+      'format': 'jentra.assurance.audit_pack.v1',
+      'engagement': {'id': eng, 'evidence_cutoff_digest': 'c' * 64},
+      'report': {'digest': 'd' * 64, 'report_version': 1},
+      'evidence': <Object?>[],
+    };
+    final text = jsonEncode(manifest), bytes = utf8.encode(text);
+    final sha = (await Sha256().hash(bytes)).bytes
+        .map((b) => b.toRadixString(16).padLeft(2, '0'))
+        .join();
+    return AssurancePackVerifier.verify({
+      'export_id': id,
+      'manifest': manifest,
+      'manifest_text': text,
+      'manifest_sha256': tamperPack ? 'f' * 64 : sha,
+      'manifest_bytes': bytes.length,
+    });
+  }
 }
 
 void main() {
@@ -191,15 +255,27 @@ void main() {
   late FakeAssuranceGateway gateway;
   late AssuranceWorkspaceController c;
   var disposed = false;
-  AssuranceWorkspaceController make({bool canRespond = true}) =>
-      AssuranceWorkspaceController(
-        scope: scope,
-        gateway: gateway,
-        drafts: drafts,
-        online: true,
-        canRespond: canRespond,
-        clock: () => today,
-      );
+  late FakeFiles files;
+  const auditor = {
+    'assurance.evidence.request',
+    'assurance.test.review',
+    'assurance.test.perform',
+    'assurance.finding.issue',
+    'assurance.report.export',
+  };
+  AssuranceWorkspaceController make({
+    bool canRespond = true,
+    Set<String> capabilities = auditor,
+  }) => AssuranceWorkspaceController(
+    scope: scope,
+    gateway: gateway,
+    drafts: drafts,
+    online: true,
+    canRespond: canRespond,
+    capabilities: capabilities,
+    files: files,
+    clock: () => today,
+  );
   setUpAll(() async {
     await (FontLoader(
       'MaterialIcons',
@@ -217,6 +293,7 @@ void main() {
       EncryptedDraftRepository(db, DraftCipher(keyStore: Keys())),
     );
     gateway = FakeAssuranceGateway();
+    files = FakeFiles();
     c = make();
   });
   tearDown(() async {
@@ -390,6 +467,144 @@ void main() {
     );
   });
 
+  Map<String, Object?> candidate() => {
+    'id': uid(40),
+    'control_id': uid(30),
+    'severity': 'high',
+    'status': 'candidate',
+    'source': 'continuous_monitoring',
+  };
+  Future<void> openEngagement() async {
+    await c.initialize();
+    await c.open(eng);
+  }
+
+  test('auditor commands need the capability', () async {
+    c.dispose();
+    c = make(capabilities: const {'assurance.evidence.view'});
+    await openEngagement();
+    expect(c.view!.canRecordException(c.capabilities), isFalse);
+    await c.startCommand('record_exception', {'control_id': uid(30)});
+    expect(c.commanding, isFalse);
+  });
+
+  test(
+    'an exception is sealed with a generated id and the engagement version',
+    () async {
+      await openEngagement();
+      await c.startCommand('record_exception', {
+        'control_id': uid(30),
+        'description': '',
+        'severity': 'high',
+        'label': 'TRS-SIGN',
+      });
+      c.commandField('description', 'Single signatory released two payments');
+      await c.submitCommand();
+      expect(c.error, isNull);
+      final sent = gateway.auditorCommands.single;
+      expect(sent.expectedEntityVersion, 1);
+      expect(sent.payload.keys.toSet(), {
+        'action',
+        'engagement_id',
+        'exception_id',
+        'control_id',
+        'description',
+        'severity',
+      });
+      expect(sent.payload['exception_id'], matches(RegExp(r'^[0-9a-f-]{36}$')));
+      expect(c.commanding, isFalse);
+      expect(
+        await drafts.load(scope, AssuranceWorkspaceController.commandSlot),
+        isNull,
+      );
+      expect(c.message, 'Record exception recorded.');
+    },
+  );
+
+  test('invalid commands are not sealed or sent', () async {
+    await openEngagement();
+    await c.startCommand('record_exception', {
+      'control_id': uid(30),
+      'description': 'x',
+      'severity': 'high',
+    });
+    await c.submitCommand();
+    expect(gateway.auditorCommands, isEmpty);
+    expect(c.commandPending, isFalse);
+    expect(c.error, isNotNull);
+  });
+
+  test('MFA keeps the sealed request and the workspace', () async {
+    gateway.exceptions = [candidate()];
+    await openEngagement();
+    expect(
+      c.view!.canIssueFinding(c.capabilities, c.view!.exceptions.single),
+      isTrue,
+    );
+    await c.startCommand('issue_finding', {
+      'exception_id': uid(40),
+      'owner_id': actor,
+      'title': 'Payments released by one signatory',
+      'severity': 'high',
+    });
+    gateway.auditorFailure = 'MFA_REQUIRED';
+    await c.submitCommand();
+    expect(c.commandPending, isTrue);
+    expect(c.accessDenied, isFalse);
+    expect(c.view, isNotNull);
+    expect(c.error, contains('MFA_REQUIRED'));
+    gateway.auditorFailure = null;
+    await c.submitCommand();
+    expect(gateway.auditorCommands, hasLength(2));
+    expect(
+      gateway.auditorCommands.first.idempotencyKey,
+      gateway.auditorCommands.last.idempotencyKey,
+    );
+    expect(c.commandPending, isFalse);
+  });
+
+  test('an independence refusal releases the request, not access', () async {
+    gateway.exceptions = [candidate()];
+    await openEngagement();
+    await c.startCommand('dismiss_exception', {
+      'exception_id': uid(40),
+      'reason': 'Within tolerance',
+    });
+    gateway.auditorFailure = 'SEGREGATION_OF_DUTIES_VIOLATION';
+    await c.submitCommand();
+    expect(c.commandPending, isFalse);
+    expect(c.accessDenied, isFalse);
+    expect(c.view, isNotNull);
+  });
+
+  test('an export is verified on this device before it can be saved', () async {
+    gateway.status = 'issued';
+    gateway.reports = [
+      {'id': uid(50), 'report_version': 1, 'digest': 'd' * 64},
+    ];
+    await openEngagement();
+    await c.startCommand('export_pack', {'report_id': uid(50)});
+    await c.submitCommand();
+    expect(c.pack!.verified, isTrue);
+    await c.savePack();
+    expect(files.path, startsWith('C:/audit/audit-pack-'));
+    expect(files.bytes, c.pack!.pack.bytes);
+  });
+
+  test('a pack that does not match its digest is never saved', () async {
+    gateway.status = 'issued';
+    gateway.tamperPack = true;
+    gateway.reports = [
+      {'id': uid(50), 'report_version': 1, 'digest': 'd' * 64},
+    ];
+    await openEngagement();
+    await c.startCommand('export_pack', {'report_id': uid(50)});
+    await c.submitCommand();
+    expect(c.pack!.verified, isFalse);
+    expect(c.message, contains('Do not use it'));
+    await c.savePack();
+    expect(files.path, isNull);
+  });
   Future<void> render(WidgetTester t, bool dark) async {
     t.view.physicalSize = const Size(1024, 2400);
     t.view.devicePixelRatio = 1;
@@ -437,6 +652,48 @@ void main() {
         c.select('engagements');
         await t.pumpAndSettle();
         expect(find.textContaining('2 overdue'), findsOneWidget);
+      },
+    );
+  }
+  for (final dark in [false, true]) {
+    testWidgets(
+      'governance engagement ${dark ? 'dark' : 'light'} 200 percent auditor actions',
+      (t) async {
+        gateway.exceptions = [candidate()];
+        gateway.requests = [
+          {
+            'id': uid(60),
+            'control_id': uid(30),
+            'owner_id': lead,
+            'due_date': '2026-10-25',
+            'status': 'submitted',
+            'rework_count': 0,
+            'evidence': {
+              'id': uid(61),
+              'sha256': 'a' * 64,
+              'collected_by': lead,
+            },
+          },
+        ];
+        await t.runAsync(openEngagement);
+        await t.runAsync(
+          () => c.startCommand('review_evidence', {
+            'request_id': uid(60),
+            'decision': 'accept',
+            'reason': '',
+            'label': 'TRS-SIGN',
+          }),
+        );
+        await render(t, dark);
+        expect(t.takeException(), isNull);
+        expect(find.text('Issue finding'), findsOneWidget);
+        expect(find.text('Return for rework'), findsOneWidget);
+        await expectLater(
+          find.byType(Scaffold),
+          matchesGoldenFile(
+            'goldens/governance_engagement_${dark ? 'dark' : 'light'}_200.png',
+          ),
+        );
       },
     );
   }
