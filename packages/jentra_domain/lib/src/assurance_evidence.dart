@@ -1,8 +1,10 @@
-// Corporate Audit & Assurance A4: system evidence adapters and audit packs.
+// Corporate Audit & Assurance A4/A4b: system evidence adapters, continuous
+// monitoring and audit packs.
 //
 // Mirrors api.assurance_evidence_command, api.assurance_verify_evidence and
 // api.assurance_export_manifest in
-// supabase/candidates/20261018150000_assurance_evidence_adapters_export.sql.
+// supabase/candidates/20261018150000_assurance_evidence_adapters_export.sql and
+// supabase/candidates/20261018170000_assurance_adapters_monitoring.sql.
 // Hashing is done by the platform layer over the exact `manifest_text` bytes.
 import 'dart:convert';
 
@@ -42,13 +44,55 @@ const assuranceSourceKinds =
         queryVersion: 'core.access_review.v1',
         classification: 'restricted',
       ),
+      'procurement.three_way_match': (
+        module: 'procurement',
+        queryVersion: 'proc.supplier_bill_match.v1',
+        classification: 'confidential',
+      ),
+      'workforce.attendance_approvals': (
+        module: 'workforce',
+        queryVersion: 'people.attendance_approvals.v1',
+        classification: 'restricted',
+      ),
     };
+
+/// Kinds the server builds as an immutable period snapshot over the
+/// engagement period (A4b). They take no `source_id`, and only they can be
+/// input to `run_monitoring`.
+const assuranceSnapshotKinds = {
+  'it_control.access_review',
+  'procurement.three_way_match',
+  'workforce.attendance_approvals',
+};
+
+/// Continuous-monitoring rules (`assurance.monitoring_rules`). A hit becomes a
+/// candidate exception only; promotion to a finding stays a separate,
+/// independent decision.
+const assuranceMonitoringRules = <String, ({String kind, String severity})>{
+  'ACCESS_PRIVILEGED_NO_MFA': (
+    kind: 'it_control.access_review',
+    severity: 'high',
+  ),
+  'P2P_MATCH_OVERRIDE': (
+    kind: 'procurement.three_way_match',
+    severity: 'medium',
+  ),
+  'P2P_OVERRIDE_BY_CREATOR': (
+    kind: 'procurement.three_way_match',
+    severity: 'high',
+  ),
+  'HR_ATTENDANCE_SELF_APPROVAL': (
+    kind: 'workforce.attendance_approvals',
+    severity: 'high',
+  ),
+};
 
 /// Commands served by `api.assurance_evidence_command`.
 abstract final class AssuranceEvidenceCommands {
   static const _capabilities = <String, String>{
     'collect_system_evidence': 'assurance.evidence.request',
     'export_pack': 'assurance.report.export',
+    'run_monitoring': 'assurance.test.perform',
   };
   static const _fields = <String, List<String>>{
     'collect_system_evidence': [
@@ -58,6 +102,7 @@ abstract final class AssuranceEvidenceCommands {
       'source_id',
     ],
     'export_pack': ['export_id', 'report_id'],
+    'run_monitoring': ['evidence_id', 'control_id'],
   };
 
   static String capability(String action) =>
@@ -92,13 +137,16 @@ abstract final class AssuranceEvidenceCommands {
       if (!assuranceSourceKinds.containsKey(kind)) {
         throw const FormatException('Unknown evidence source kind.');
       }
-      if (kind == 'it_control.access_review') {
+      if (assuranceSnapshotKinds.contains(kind)) {
         if (p['source_id'] != null) {
-          throw const FormatException('Access review takes no source id.');
+          throw const FormatException('Period snapshots take no source id.');
         }
       } else {
         assuranceId(p['source_id']);
       }
+    } else if (action == 'run_monitoring') {
+      assuranceId(p['evidence_id']);
+      assuranceId(p['control_id']);
     } else {
       assuranceId(p['export_id']);
       assuranceId(p['report_id']);

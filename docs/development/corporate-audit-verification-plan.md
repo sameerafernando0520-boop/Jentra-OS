@@ -11,7 +11,8 @@ Each layer is separate evidence; none substitutes for a later one.
    Required coverage: grants/forced RLS; tenant/entity/branch isolation; external limits; SoD; recent MFA;
    idempotency/version; immutable history; provenance/digest; holds; report issue/reopen.
 3. **A2 (done, 98/98 rollback)** — test design/execution/review, `decide_risk` approve/reject, `dismiss_exception`, `cancel_request`, archive guard with carry-forward, late-failure rollback, `revoke_team_member`. Build with `build_assurance_candidate.ps1 -Slice A2`.
-3b. **A4 (done, 129/129 rollback)** — adapters (module guard reuse, branch/period checks, canonical digest), access-review snapshot, re-verification, export MFA/supersession, manifest re-hash, external read. Build with `-Slice A4`. Still to exercise: financial statement, close review, tax summary and inventory valuation adapters with fixtures.
+3b. **A4 (done, 129/129 rollback)** — adapters (module guard reuse, branch/period checks, canonical digest), access-review snapshot, re-verification, export MFA/supersession, manifest re-hash, external read. Build with `-Slice A4`.
+3c. **A4b (done, 153/153 rollback)** — the four remaining report kinds with fixtures and re-verification; procurement three-way-match and workforce attendance snapshots (module guards, People entitlement, no identities); monitoring rules create candidates once, never findings, with independent promotion. Build with `-Slice A4b`.
 4. **Platform client** — typed response validation, uncertain-result handling (timeout after commit → replay same key), revocation.
 5. **Desktop** — widget/controller tests for loading, empty, denied, error, offline; keyboard, focus, 200% text, light/dark goldens.
 6. **Recovery** — encrypted draft restore after restart and after access loss (draft discarded, never submitted).

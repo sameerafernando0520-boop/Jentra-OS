@@ -77,10 +77,84 @@ void main() {
     }
   });
 
+  test('period snapshots take no source id', () {
+    for (final kind in assuranceSnapshotKinds) {
+      final p = {
+        'action': 'collect_system_evidence',
+        'engagement_id': eng,
+        'request_id': uid(6),
+        'evidence_id': uid(7),
+        'source_kind': kind,
+      };
+      AssuranceEvidenceCommands.validate('collect_system_evidence', p);
+      expect(
+        () => AssuranceEvidenceCommands.validate('collect_system_evidence', {
+          ...p,
+          'source_id': uid(4),
+        }),
+        throwsFormatException,
+        reason: kind,
+      );
+    }
+  });
+
+  test('monitoring command and rules mirror the server', () {
+    expect(
+      AssuranceEvidenceCommands.capability('run_monitoring'),
+      'assurance.test.perform',
+    );
+    expect(
+      AssuranceEvidenceCommands.requiresRecentMfa('run_monitoring'),
+      isFalse,
+    );
+    final run = {
+      'action': 'run_monitoring',
+      'engagement_id': eng,
+      'evidence_id': uid(7),
+      'control_id': uid(8),
+    };
+    AssuranceEvidenceCommands.validate('run_monitoring', run);
+    for (final patch in <Map<String, Object?>>[
+      {'control_id': null},
+      {'evidence_id': 'x'},
+      {'severity': 'low'},
+      {'rule_code': 'P2P_MATCH_OVERRIDE'},
+    ]) {
+      expect(
+        () => AssuranceEvidenceCommands.validate('run_monitoring', {
+          ...run,
+          ...patch,
+        }),
+        throwsFormatException,
+        reason: '$patch',
+      );
+    }
+    expect(
+      assuranceMonitoringRules.values.every(
+        (r) =>
+            assuranceSnapshotKinds.contains(r.kind) &&
+            AssuranceSeverity.values.any((s) => s.name == r.severity),
+      ),
+      isTrue,
+    );
+  });
+
   test('source kinds carry module, query version and classification', () {
     expect(
       assuranceSourceKinds['it_control.access_review']!.classification,
       'restricted',
+    );
+    expect(
+      assuranceSourceKinds['workforce.attendance_approvals']!.classification,
+      'restricted',
+    );
+    expect(
+      assuranceSourceKinds['procurement.three_way_match']!.queryVersion,
+      'proc.supplier_bill_match.v1',
+    );
+    expect(
+      assuranceSnapshotKinds.every(assuranceSourceKinds.containsKey),
+      isTrue,
     );
     expect(
       assuranceSourceKinds.values.every(

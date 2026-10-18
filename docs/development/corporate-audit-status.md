@@ -44,15 +44,25 @@ so the local migration folder still matches the live 115-migration ledger.
 | Candidate database evidence | 129/129 (55 A1 + 43 A2 + 31 A4) in one rollback transaction ([record](../verification/assurance/a4-candidate-rollback-20261018.json)); an earlier 128/128 run preceded the `manifest_text` addition and is superseded |
 | Installed behaviour | none; post-run 2026-10-18 04:52 UTC: 115 / 363, no assurance objects, no synthetic finance reports left |
 | Automated tests | 29 assurance domain tests (full `jentra_domain` suite green); platform verifier 3/3; analyzers clean |
-| Not covered | financial statement, close review, tax summary, inventory valuation adapters not exercised with fixtures; procurement and workforce adapters not built; continuous-monitoring candidate generation not built; no on-device download |
+| Not covered | no on-device download (adapter kinds, procurement/workforce and monitoring gaps closed in A4b below) |
+
+## Slice A4b — procurement/workforce adapters and continuous monitoring
+
+| Category | Result |
+|---|---|
+| Source changes | `supabase/candidates/20261018170000_assurance_adapters_monitoring.sql` (period snapshots `procurement.three_way_match` and `workforce.attendance_approvals`, `assurance.monitoring_hits`, four monitoring rules, `run_monitoring`); `supabase/tests/assurance_monitoring_test.sql`; builder `-Slice A4b`; Dart `assuranceSnapshotKinds`, `assuranceMonitoringRules`, `run_monitoring` contract |
+| Candidate database evidence | 153/153 (55 A1 + 43 A2 + 31 A4 + 24 A4b) in one rollback transaction ([record](../verification/assurance/a4b-candidate-rollback-20261018.json)); earlier slice builds byte-identical |
+| Installed behaviour | none; post-run 2026-10-18 08:26 UTC: 115 / 363, no assurance objects, no synthetic bills, suppliers, employees or periods left |
+| Automated tests | 31 assurance domain tests; full `jentra_domain` suite 429/429; analyzer clean |
+| Not covered | monitoring is on demand per snapshot (no scheduler); rule thresholds fixed in source; no rules for finance/inventory snapshots; real data volumes not measured |
 
 ## Next unblocked slices
-1. **A4b** procurement (three-way match) and workforce adapters; fixture coverage for the four unexercised kinds; continuous-monitoring exception candidates.
-2. **A3** universe, risk assessments, plan approval (maker-checker), templates and recurring engagements.
-3. **A5** desktop Governance & Audit workspace with encrypted draft recovery and all principal states.
+1. **A3** universe, risk assessments, plan approval (maker-checker), templates and recurring engagements.
+2. **A5** desktop Governance & Audit workspace with encrypted draft recovery and all principal states.
+3. Scheduled monitoring runs and tenant-configurable rule thresholds (after A3 recurring engagements).
 
 ## Blockers needing you
-- **Installation approval** for the candidate (runbook below). Not requested yet; it would cover A1 + A2 + A4 together.
+- **Installation approval** for the candidate (runbook below). Not requested yet; it would cover A1 + A2 + A4 + A4b together.
 - **As-is process discovery**: prior PBC lists, audit calendar, report templates and the people/roles involved (blueprint §2).
 - Genuine MFA, native Windows walkthrough and owner sign-off remain private-interaction gates.
 

@@ -1,4 +1,4 @@
-# Corporate Audit & Assurance — readiness matrix (18 Oct 2026, after A4)
+# Corporate Audit & Assurance — readiness matrix (18 Oct 2026, after A4b)
 
 Legend: **D** domain test · **R** candidate rollback pgTAP · **I** installed · **N** native authenticated · **C** contention/load · **O** owner accepted. "–" = not yet.
 
@@ -24,7 +24,7 @@ Legend: **D** domain test · **R** candidate rollback pgTAP · **I** installed �
 | FR-6818 | Immutable versioned report | – | ✓ | – | – | – | – |
 | FR-6819 | Legal holds, segregated release | ✓ | ✓ | – | – | – | – |
 | FR-6820 | Carry-forward | ✓ | ✓ | – | – | – | – |
-| FR-6821 | Evidence adapters | ✓ | ✓ (2 of 6 kinds exercised) | – | – | – | – |
+| FR-6821 | Evidence adapters | ✓ | ✓ (8 of 8 kinds exercised) | – | – | – | – |
 | FR-6822 | Governed export | ✓ (+ platform verifier) | ✓ | – | – | – | – |
 | FR-6823 | Templates/reminders/dashboards | – | – | – | – | – | – |
 | FR-6824 | Desktop workspace | – | – | – | – | – | – |

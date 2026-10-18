@@ -1,0 +1,76 @@
+{
+  "kind": "candidate-rollback-pgtap",
+  "slice": "assurance-a4b-procurement-workforce-monitoring",
+  "blueprint": "68_CORPORATE_AUDIT_ASSURANCE_SPEC.md",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "tool": "supabase execute_sql (single transaction ending in rollback)",
+  "build": "supabase/tests/build_assurance_candidate.ps1 -Slice A4b (A1, A2, A4, A4b DDL+tests in install order)",
+  "installed": false,
+  "rolledBack": true,
+  "sources": {
+    "supabase/candidates/20261018090000_assurance_engagement_core.sql": "ecce6d8a7f4a68c58820b7772283a43fcea261644fac2627c04060fbacf56a86",
+    "supabase/candidates/20261018120000_assurance_testing_carry_forward.sql": "f3b8b6eee2e79870ce4d44879670e6ca464fb3efcd622943896dbcdce6080071",
+    "supabase/candidates/20261018150000_assurance_evidence_adapters_export.sql": "c0edcbdc50c7a1543eaa07f19a9a02470c5add77a3929f51e4d05e337fcb555a",
+    "supabase/candidates/20261018170000_assurance_adapters_monitoring.sql": "f822183c95b4ec08b0c4a48043fac21e6dfd5f5c2d7dd507ea74ba0f0d52f251",
+    "supabase/tests/assurance_monitoring_test.sql": "e361dfc40876468cd1dbad52d62bb341c255c9b87511de1c4f5d6f5ce3cac194",
+    "supabase/tests/build_assurance_candidate.ps1": "1588f5962420e2701447881931c6a4c738c7ba49258dc75b297bba1f5600b52c"
+  },
+  "builtQuerySha256": "6e37858ccb14f84166aed23603a5b40b2ae6f51bc6107788c85badf6ccd0d54f",
+  "unchangedEarlierBuilds": {
+    "A1": "51879e0093f065c208c7765fa4beea42dc5d6011331f3200f79d067fc7b7d774",
+    "A2": "159a5599319c3f29d0dbee1db52cd5e54cc4cd8889b69e0d2669a824619ba004",
+    "A4": "fe8abdac3b372772ba315623cee22bbf44bfba27019bb59dd81c1835559c2929"
+  },
+  "result": {
+    "assertions": 153,
+    "passed": 153,
+    "failures": null,
+    "a1": 55,
+    "a2": 43,
+    "a4": 31,
+    "a4b": 24
+  },
+  "syntheticSourceData": "inside the transaction and rolled back: one fiscal period; one financial statement, tax report, close review and valuation report; one supplier party, four supplier bills and two match approvals; one employee and three attendance entries (their revision foreign key is deferred and never checked because the transaction rolls back); an entity-wide auditor role; the tenant's subscription set to the existing synthetic plan w4_employee_synthetic",
+  "postRun": {
+    "observedAt": "2026-10-18 08:26:02.146914+00",
+    "migrations": 115,
+    "latestMigration": "20261013184757",
+    "apiFunctions": 363,
+    "assuranceSchema": 0,
+    "assurancePermissions": 0,
+    "pgtapExtension": 0,
+    "fixtureUsers": 0,
+    "fixtureSupplierBills": 0,
+    "fixtureSuppliers": 0,
+    "fixtureEmployees": 0,
+    "fixtureFiscalPeriods": 0
+  },
+  "covers": [
+    "17 tables force RLS; snapshot builder and monitoring hits are not client-reachable",
+    "financial statement, tax summary, close review and inventory valuation evidence digests equal SHA-256 of their source rows, with module and query version recorded",
+    "close review re-verification fails without current entity-wide finance authority and succeeds once it is restored; all four report kinds re-verify",
+    "procurement snapshot requires procurement.bills.view; workforce snapshot honours the People module entitlement (PEOPLE_ENTITLEMENT_REQUIRED)",
+    "period snapshots reject a source id",
+    "three-way-match snapshot counts posted in-period bills only (draft and out-of-period excluded) and flags overrides approved by the bill creator; no supplier identity",
+    "attendance snapshot counts statuses, self-decisions and pending entries; restricted; no employee or actor identity",
+    "control owner cannot run monitoring; report evidence is rejected as a monitoring source",
+    "four rules fire once each across access, procurement and workforce snapshots; re-running adds nothing",
+    "monitoring creates candidate exceptions only (source continuous_monitoring), never findings; descriptions carry counts, not identities",
+    "the monitoring runner cannot promote its own candidate; an independent reviewer can dismiss one",
+    "monitoring hits are immutable; each run is a receipted command with one event per engagement version"
+  ],
+  "notCovered": [
+    "monitoring rules run on demand per snapshot; there is no scheduler",
+    "rule thresholds are fixed in source, not tenant-configurable",
+    "inventory, finance and IT snapshots beyond the access review have no monitoring rules"
+  ],
+  "doesNotEstablish": [
+    "installation",
+    "genuine MFA",
+    "real procurement or workforce data volumes",
+    "independent-session contention",
+    "target-scale latency",
+    "authenticated native Windows use",
+    "owner acceptance"
+  ]
+}
