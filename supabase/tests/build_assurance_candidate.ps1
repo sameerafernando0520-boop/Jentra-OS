@@ -1,5 +1,10 @@
 [CmdletBinding()]
-param([ValidateSet('A1','A2','A4','A4b','A3','A5')][string]$Slice = 'A1')
+param(
+  [ValidateSet('A1','A2','A4','A4b','A3','A5')][string]$Slice = 'A1',
+  # Installed variant: runs the same suites against the installed schema
+  # (no candidate DDL) and expects the final 24-table schema at every stage.
+  [switch]$Installed
+)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
 $migration = Get-Content -LiteralPath (Join-Path $root 'candidates/20261018090000_assurance_engagement_core.sql') -Raw
@@ -25,6 +30,13 @@ if ($Slice -in 'A3','A5') {
 if ($Slice -eq 'A5') {
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261018210000_assurance_workspace.sql') -Raw)
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $PSScriptRoot 'assurance_workspace_test.sql') -Raw)
+}
+if ($Installed) {
+  $migration = '-- installed variant: schema already installed; no candidate DDL'
+  foreach ($candidate in Get-ChildItem -LiteralPath (Join-Path $root 'candidates') -Filter '20261018*_assurance_*.sql') {
+    $tests = $tests.Replace((Get-Content -LiteralPath $candidate.FullName -Raw), '')
+  }
+  $tests = [regex]::Replace($tests, 'count\(\*\)=(12|14|16|17) and bool_and', 'count(*)=24 and bool_and')
 }
 $tests = [regex]::Replace($tests, '(?m)^select (is|ok|throws_ok)\(', 'insert into assurance_assertions select $1(')
 $diagnostic = @'

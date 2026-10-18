@@ -1,6 +1,6 @@
 # Corporate Audit & Assurance — status, 18 October 2026
 
-**Jentra OS remains incomplete. Corporate Audit & Assurance is candidate source only; nothing is installed.**
+**Jentra OS remains incomplete. Corporate Audit & Assurance (A1–A5) is installed in the development project only (2026-10-18); nothing is in production.** The per-slice "Installed behaviour" rows below record the state at the time of each candidate run; the installation section near the end supersedes them.
 Spec: [blueprint 68](../blueprint/68_CORPORATE_AUDIT_ASSURANCE_SPEC.md).
 
 ## Current-state inventory (read-only, dev project `xpdoufauvrbdmxgngetv`)
@@ -23,8 +23,8 @@ Spec: [blueprint 68](../blueprint/68_CORPORATE_AUDIT_ASSURANCE_SPEC.md).
 | Contention / load | none |
 | Visual / accessibility | none (no UI yet) |
 
-The candidate is deliberately in `supabase/candidates/`, not `supabase/migrations/`,
-so the local migration folder still matches the live 115-migration ledger.
+The candidate was kept in `supabase/candidates/` until installation; it is now also in
+`supabase/migrations/` under its ledger version (see the installation section).
 
 ## Slice A2 — testing and carry-forward
 
@@ -61,7 +61,7 @@ so the local migration folder still matches the live 115-migration ledger.
 | Category | Result |
 |---|---|
 | Source changes | `supabase/candidates/20261018190000_assurance_universe_plans.sql` (7 tables, `api.assurance_plan_command` with 11 actions, `api.assurance_universe`, `api.assurance_plan`); `supabase/tests/assurance_planning_test.sql`; builder `-Slice A3`; Dart `assurance_planning.dart` (`assuranceRiskRating`, `AuditFrequency`, `assuranceOccurrencePeriod`, `PlanStatus`, `assuranceTemplateValid`, `AssurancePlanCommands`) |
-| Candidate database evidence | 208/208 (55 A1 + 43 A2 + 31 A4 + 24 A4b + 55 A3) in one rollback transaction, exact build text ([record](../verification/assurance/a3-candidate-rollback-20261018.json)); earlier slice builds byte-identical |
+| Candidate database evidence | 208/208 (55 A1 + 43 A2 + 31 A4 + 24 A4b + 55 A3) in one rollback transaction, build text with comment lines removed ([record](../verification/assurance/a3-candidate-rollback-20261018.json)); earlier slice builds byte-identical |
 | Installed behaviour | none; post-run 2026-10-18 09:01 UTC: 115 / 363, no assurance objects or synthetic data left |
 | Automated tests | 36 assurance domain tests; full `jentra_domain` suite 434/434; analyzer clean |
 | Not covered | reminders, escalations and overdue dashboards; occurrences are instantiated by explicit command (no scheduler); plan amendment after approval needs a new plan; risk scale and frequencies are defaults pending as-is discovery |
@@ -71,11 +71,22 @@ so the local migration folder still matches the live 115-migration ledger.
 | Category | Result |
 |---|---|
 | Source changes | `supabase/candidates/20261018210000_assurance_workspace.sql` (read-only `api.assurance_engagements`, `api.assurance_overview`; no tables); `supabase/tests/assurance_workspace_test.sql`; builder `-Slice A5`; Dart `assurance_workspace.dart` (`ReminderLevel`, `AssuranceOverview`, `AssuranceEngagementPage`); platform `SupabaseAssuranceGateway`; desktop `features/assurance/` (controller, screen), route `/governance/audit`, navigation entry gated by `assurance.evidence.view` |
-| Candidate database evidence | 228/228 (… + 20 A5) in one rollback transaction, exact build text ([record](../verification/assurance/a5-candidate-rollback-20261018.json)); earlier slice builds byte-identical |
+| Candidate database evidence | 228/228 (… + 20 A5) in one rollback transaction, build text with comment lines removed ([record](../verification/assurance/a5-candidate-rollback-20261018.json)); earlier slice builds byte-identical |
 | Installed behaviour | none; post-run 2026-10-18 11:59 UTC: 115 / 363, no assurance objects or synthetic data left |
 | Automated tests | 40 assurance domain tests (full `jentra_domain` 438/438); platform assurance gateway 6/6; desktop `assurance_workspace_test.dart` 13/13 including 200% light/dark goldens produced by this work; full desktop suite 2039/2039; analyzers clean on changed files |
 | What the workspace does | My work (own requests and findings with reminder levels), overdue team work, engagement register, read-only engagement detail, and the finding owner's management response (encrypted local draft, sealed request retried with the same key on an uncertain outcome; version conflicts require a refresh) |
 | Not covered | reminders and escalations are shown, not delivered (no notifications or scheduler); all other assurance commands (planning, evidence, testing, reporting, export) have no desktop screens yet; no authenticated Windows walkthrough; no accessibility review beyond automated renders |
+
+## Installation — development project, 18 October 2026
+
+| Category | Result |
+|---|---|
+| Authority | owner approval given in the development session; development project `xpdoufauvrbdmxgngetv` only |
+| Preconditions | ledger 115 (latest `20261013184757`); candidate hashes matched; A5 rollback suite 228/228 the same day |
+| Installed | six migrations through `apply_migration`: `20261018153931` A1, `20261018154123` A2, `20261018154309` A4, `20261018154450` A4b, `20261018155008` A3, `20261018155041` A5; repository copies in `supabase/migrations/` (byte-identical to the candidates). Ledger text equals the files except SQL comments (executable text identical) |
+| Post-install check | 121 migrations; 24 assurance tables all forcing RLS, no table grants; 12 `api.assurance*` functions, authenticated only; 375 `api` functions; 15 `assurance.*` permissions, granted to no role; helpers not client-callable; no pgTAP |
+| Installed suite | `build_assurance_candidate.ps1 -Slice A5 -Installed`: 228/228 against the installed schema, rolled back; no fixtures, engagements, receipts or universe items left ([record](../verification/assurance/installation-dev-20261018.json)) |
+| Not established | real users still have no assurance capability (no role grants); no native authenticated use, genuine MFA, contention/load or owner acceptance; production not touched |
 
 ## Next unblocked slices
 1. Desktop screens for the remaining assurance roles: auditor evidence requests and review, testing, findings issue, planning (A3) and audit-pack export with the platform verifier.
@@ -83,7 +94,7 @@ so the local migration folder still matches the live 115-migration ledger.
 3. Tenant-configurable SLA, reminder bands and rule thresholds once as-is discovery is done.
 
 ## Blockers needing you
-- **Installation approval** for the candidate (runbook below). Not requested yet; it would cover A1 + A2 + A4 + A4b + A3 + A5 together.
+- **Role grants**: which tenant roles receive which `assurance.*` capabilities in the development project (none are granted, so the installed APIs refuse every real user). Production installation needs separate approval.
 - **As-is process discovery**: prior PBC lists, audit calendar, report templates, the risk scale you use and the people/roles involved (blueprint §2). A3 uses a 5×5 likelihood × impact scale and once/semiannual/quarterly/monthly cadences as defaults until then.
 - Genuine MFA, native Windows walkthrough and owner sign-off remain private-interaction gates.
 

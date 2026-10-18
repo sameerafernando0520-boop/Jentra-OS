@@ -1,7 +1,13 @@
 # Corporate Audit & Assurance — installation / rollback runbook
 
-**Not authorised.** Installation requires explicit owner approval naming this
-candidate and its SHA-256.
+**Development project: installed 2026-10-18** with the owner's approval in the development session, as ledger versions
+`20261018153931` (A1), `20261018154123` (A2), `20261018154309` (A4), `20261018154450` (A4b),
+`20261018155008` (A3) and `20261018155041` (A5). Repository copies are in `supabase/migrations/`;
+evidence: [installation record](../verification/assurance/installation-dev-20261018.json).
+The installed statements differ from the repository files only in SQL comments.
+
+**Production: not authorised.** Any other project needs its own explicit approval naming the
+migrations and their SHA-256.
 
 ## Preconditions
 1. Refresh live ledger read-only: migration count/latest version, `api` function count, confirm no `assurance` schema and no `assurance.%` permissions.
@@ -13,7 +19,7 @@ candidate and its SHA-256.
 1. Copy the candidate into `supabase/migrations/` under its timestamp; do not edit any applied migration.
 2. Apply through the normal migration path (one migration, one transaction).
 3. Post-check (after A1 + A2 + A4 + A4b + A3 + A5): 24 tables with forced RLS; zero table grants to `anon`/`authenticated`/`service_role`; twelve `api.assurance*` functions executable by `authenticated` only; 15 permissions; no role granted any `assurance.%` capability.
-4. Run the installed variant of the pgTAP suite (still inside `begin … rollback`) and record evidence.
+4. Run the installed variant of the pgTAP suite (`build_assurance_candidate.ps1 -Slice A5 -Installed`, still inside `begin … rollback`) and record evidence.
 
 ## Roll back an installation
 Only if no business data has been written (holds and history must never be destroyed):
