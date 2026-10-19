@@ -1,8 +1,11 @@
 create extension if not exists pgtap with schema extensions;
 set local search_path=extensions,public,pg_catalog;
 select no_plan();
-select is((select count(*)::integer from pg_class c join pg_namespace n on n.oid=c.relnamespace
- where n.nspname='people_payroll' and c.relkind='r' and c.relrowsecurity and c.relforcerowsecurity),15,
+-- Later Wave 4 migrations add payroll tables, so a fixed count (15) went stale;
+-- every table, however many, must have forced RLS (at least the original 15).
+select ok((select count(*)>=15 and bool_and(c.relrowsecurity and c.relforcerowsecurity)
+ from pg_class c join pg_namespace n on n.oid=c.relnamespace
+ where n.nspname='people_payroll' and c.relkind='r'),
  'all payroll tables are forced RLS');
 select ok(not exists(select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
  where n.nspname='people_payroll' and c.relkind='r' and has_table_privilege('authenticated',c.oid,'SELECT')),

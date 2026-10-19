@@ -100,6 +100,8 @@ select ok(
   ),
   'PUBLIC and anon cannot execute Wave 3 internal routines'
 );
+-- 20260927200629_wave3_operational_evidence grants exactly three storage RLS
+-- predicates to authenticated (policies run as the caller); nothing else.
 select ok(
   not exists (
     select 1
@@ -107,6 +109,11 @@ select ok(
     where g.grantee = 'authenticated'
       and g.specific_schema in ('core', 'finance')
       and g.routine_name like 'wave3_%'
+      and (g.specific_schema, g.routine_name) not in (
+        ('core', 'wave3_source_descriptor'),
+        ('core', 'wave3_attachment_access'),
+        ('core', 'wave3_storage_access')
+      )
   ),
   'authenticated clients cannot bypass named API commands through Wave 3 helpers'
 );

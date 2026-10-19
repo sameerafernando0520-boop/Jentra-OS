@@ -54,15 +54,15 @@ BUILDS = [
     ('wave3_negative_stock_policy', 'build_negative_stock_policy_candidate_20261003',
      ['-Suite', 'procurement', '-CandidatePath', NEGATIVE_STOCK,
       '-AssertionsPath', '@wave3_negative_stock_policy_20261003_test.sql']),
-    ('wave3_negative_stock_policy_replay_diagnostic', 'build_negative_stock_policy_candidate_20261003',
-     ['-Suite', 'procurement', '-CandidatePath', NEGATIVE_STOCK,
-      '-AssertionsPath', '@wave3_negative_stock_policy_replay_diagnostic_20261004_test.sql']),
+    # Not built: wave3_negative_stock_policy_replay_diagnostic_20261004_test.sql and
+    # wave3_negative_stock_tracking_red_20261005_test.sql are dated snapshots of
+    # the policy suite taken while it was being fixed (red/diagnostic runs). Every
+    # assertion in them is in wave3_negative_stock_policy_20261003_test.sql except
+    # the replay diagnostic's own probe of a superseded hash hypothesis; they fail
+    # only where the policy suite was later corrected. They stay in wave_tests.
     ('wave3_negative_stock_multi_actor', 'build_negative_stock_policy_candidate_20261003',
      ['-Suite', 'procurement', '-CandidatePath', NEGATIVE_STOCK,
       '-AssertionsPath', '@wave3_negative_stock_multi_actor_red_20261004_test.sql']),
-    ('wave3_negative_stock_tracking', 'build_negative_stock_policy_candidate_20261003',
-     ['-Suite', 'procurement', '-CandidatePath', NEGATIVE_STOCK,
-      '-AssertionsPath', '@wave3_negative_stock_tracking_red_20261005_test.sql']),
     ('wave4_employee', 'build_employee_candidate', ['-Installed']),
     ('wave4_calendar', 'build_calendar_candidate', ['-Installed']),
     ('wave4_calendar_resolution', 'build_calendar_resolution_candidate', ['-Installed']),
@@ -106,6 +106,15 @@ def wave5_remaining():
     names = ['wave5_process_metrics_test.sql', 'wave5_remaining_adapters_test.sql',
              'wave5_realized_mapping_test.sql']
     parts = ['begin;'] + [read(FRAGMENTS / n).split(FINISH)[0] for n in names]
+    # The adapters suite's cash section asserts the v2 AR/AP-only basis
+    # (dated_transaction_cash_ar_and_ap.v2), which 20261008120000_wave5_cash_
+    # payment_dates replaced with the five-provider v3 basis; installed, its save
+    # stops on CASH_COMPLETE_PROVIDERS_REQUIRED. prepare_runtime_candidate.mjs
+    # likewise leaves this legacy v2 cash fixture out, and the v3 basis, save and
+    # export are asserted in wave5_cash_payment_dates_test.sql (wave5_runtime).
+    # Its fixture rows stay: realized_mapping reads them.
+    parts[2] = parts[2].split('create temporary table w5_cash as')[0]
+    names[1] += ' (fixture rows only; v2 cash assertions superseded by v3)'
     return '\n'.join(parts) + '\n' + FINISH + '\nrollback;\n', names
 
 
