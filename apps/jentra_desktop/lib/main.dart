@@ -162,6 +162,9 @@ Future<void> main() async {
         assuranceSettingsGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseAssuranceSettingsGateway(client),
         ),
+        assuranceReminderGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseAssuranceReminderGateway(client),
+        ),
         closeReviewGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseCloseReviewGateway(client),
         ),
