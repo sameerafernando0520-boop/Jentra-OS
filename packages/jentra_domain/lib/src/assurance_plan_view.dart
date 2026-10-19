@@ -201,6 +201,11 @@ final class AssurancePlanDetail {
       _manage(caps) &&
       (status == PlanStatus.draft || status == PlanStatus.submitted);
 
+  /// An approved plan is changed through a superseding draft (A9); the server
+  /// refuses a second open revision.
+  bool canRevise(Set<String> caps) =>
+      _manage(caps) && status == PlanStatus.approved;
+
   /// Assessed, active areas not already planned, whose owner is not the
   /// prospective lead.
   List<UniverseItem> plannable(AssuranceUniverse u) => [

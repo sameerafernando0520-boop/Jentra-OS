@@ -7,4 +7,5 @@ export 'src/assurance_evidence.dart';
 export 'src/assurance_evidence_upload.dart';
 export 'src/assurance_plan_view.dart';
 export 'src/assurance_planning.dart';
+export 'src/assurance_settings.dart';
 export 'src/assurance_workspace.dart';

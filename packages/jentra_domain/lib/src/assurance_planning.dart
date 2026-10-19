@@ -16,17 +16,46 @@ const assuranceUniverseCategories = {
   'project',
 };
 
-/// Likelihood × impact (each 1–5): ≥ 20 critical, ≥ 10 high, ≥ 5 medium,
-/// otherwise low.
-AssuranceSeverity assuranceRiskRating(int likelihood, int impact) {
+/// Score cut-offs for a risk rating (likelihood × impact, 1–25). The tenant
+/// may change them (A9 settings); [standard] is the default.
+final class RatingBands {
+  const RatingBands(this.critical, this.high, this.medium);
+
+  /// ≥ 20 critical, ≥ 10 high, ≥ 5 medium, otherwise low.
+  static const standard = RatingBands(20, 10, 5);
+
+  final int critical;
+  final int high;
+  final int medium;
+
+  /// Each 2–25 and strictly descending, as `api.assurance_settings_command`.
+  bool get valid =>
+      critical <= 25 && medium >= 2 && critical > high && high > medium;
+
+  AssuranceSeverity rate(int score) {
+    if (score >= critical) return AssuranceSeverity.critical;
+    if (score >= high) return AssuranceSeverity.high;
+    if (score >= medium) return AssuranceSeverity.medium;
+    return AssuranceSeverity.low;
+  }
+
+  Map<String, Object?> toJson() => {
+    'critical': critical,
+    'high': high,
+    'medium': medium,
+  };
+}
+
+/// Likelihood × impact (each 1–5) rated with [bands].
+AssuranceSeverity assuranceRiskRating(
+  int likelihood,
+  int impact, {
+  RatingBands bands = RatingBands.standard,
+}) {
   if (likelihood < 1 || likelihood > 5 || impact < 1 || impact > 5) {
     throw const FormatException('Likelihood and impact are 1 to 5.');
   }
-  final score = likelihood * impact;
-  if (score >= 20) return AssuranceSeverity.critical;
-  if (score >= 10) return AssuranceSeverity.high;
-  if (score >= 5) return AssuranceSeverity.medium;
-  return AssuranceSeverity.low;
+  return bands.rate(likelihood * impact);
 }
 
 enum AuditFrequency {
@@ -69,18 +98,21 @@ enum PlanStatus {
   draft,
   submitted,
   approved,
-  cancelled;
+  cancelled,
+  superseded;
 
   static PlanStatus parse(Object? v) => values.firstWhere(
     (s) => s.name == v,
     orElse: () => throw const FormatException('Unknown plan status.'),
   );
 
-  /// Transitions the server allows. Approval is final; changes need a new plan.
+  /// Transitions the server allows. An approved plan changes only when an
+  /// approved revision supersedes it.
   Set<PlanStatus> get next => switch (this) {
     draft => {submitted, cancelled},
     submitted => {approved, draft, cancelled},
-    approved || cancelled => const {},
+    approved => {superseded},
+    cancelled || superseded => const {},
   };
 }
 
@@ -146,6 +178,7 @@ abstract final class AssurancePlanCommands {
     'submit_plan': 'assurance.plan.manage',
     'decide_plan': 'assurance.plan.manage',
     'cancel_plan': 'assurance.plan.manage',
+    'supersede_plan': 'assurance.plan.manage',
     'instantiate_engagement': 'assurance.engagement.manage',
   };
   static const _fields = <String, List<String>>{
@@ -173,6 +206,7 @@ abstract final class AssurancePlanCommands {
     'submit_plan': ['plan_id'],
     'decide_plan': ['plan_id', 'decision', 'reason'],
     'cancel_plan': ['plan_id', 'reason'],
+    'supersede_plan': ['plan_id', 'supersedes_plan_id', 'name'],
     'instantiate_engagement': [
       'plan_id',
       'plan_item_id',
@@ -202,6 +236,7 @@ abstract final class AssurancePlanCommands {
       'register_item',
       'create_template',
       'create_plan',
+      'supersede_plan',
     }.contains(action);
   }
 
@@ -275,6 +310,10 @@ abstract final class AssurancePlanCommands {
       case 'cancel_plan':
         assuranceId(p['plan_id']);
         assuranceText(p['reason'], 3, 1000);
+      case 'supersede_plan':
+        assuranceId(p['plan_id']);
+        assuranceId(p['supersedes_plan_id']);
+        assuranceText(p['name'], 3, 160);
       case 'instantiate_engagement':
         assuranceId(p['plan_id']);
         assuranceId(p['plan_item_id']);

@@ -75,7 +75,7 @@ void main() {
       PlanStatus.draft,
       PlanStatus.cancelled,
     });
-    expect(PlanStatus.approved.next, isEmpty);
+    expect(PlanStatus.approved.next, {PlanStatus.superseded});
     expect(AssurancePlanCommands.requiresRecentMfa('decide_plan'), isTrue);
     expect(AssurancePlanCommands.requiresRecentMfa('submit_plan'), isFalse);
     expect(

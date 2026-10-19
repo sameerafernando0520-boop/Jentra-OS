@@ -4,6 +4,8 @@ import 'package:jentra_domain/jentra_assurance.dart';
 
 import '../../app_providers.dart';
 import 'assurance_planning_controller.dart';
+import 'assurance_settings_controller.dart';
+import 'assurance_settings_panel.dart';
 
 class AssurancePlanningScreen extends ConsumerWidget {
   const AssurancePlanningScreen({super.key});
@@ -20,13 +22,18 @@ class AssurancePlanningScreen extends ConsumerWidget {
       );
     }
     final c = ref.watch(assurancePlanningControllerProvider);
+    final settings = ref.watch(assuranceSettingsControllerProvider);
     return c == null
         ? const Center(
             child: Text(
               'Choose an entity and branch where you can plan audits or view audit evidence.',
             ),
           )
-        : AssurancePlanning(key: ValueKey(c), controller: c);
+        : AssurancePlanning(
+            key: ValueKey(c),
+            controller: c,
+            settings: settings,
+          );
   }
 }
 
@@ -39,8 +46,12 @@ const _categories = {
 };
 
 class AssurancePlanning extends StatelessWidget {
-  const AssurancePlanning({super.key, required this.controller});
+  const AssurancePlanning({super.key, required this.controller, this.settings});
   final AssurancePlanningController controller;
+
+  /// Tenant settings (A9); when present the page offers a Settings section and
+  /// rates risk with the tenant's bands.
+  final AssuranceSettingsController? settings;
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
@@ -110,9 +121,10 @@ class AssurancePlanning extends StatelessWidget {
                 onPressed: c.busy || !c.online ? null : c.refresh,
                 child: const Text('Refresh'),
               ),
-              for (final (key, label) in const [
+              for (final (key, label) in [
                 ('universe', 'Audit universe'),
                 ('plans', 'Plans'),
+                if (settings != null) ('settings', 'Settings'),
               ])
                 ChoiceChip(
                   label: Text(label),
@@ -121,7 +133,11 @@ class AssurancePlanning extends StatelessWidget {
                 ),
             ],
           ),
-          if (c.commanding) _PlanCommandCard(controller: c),
+          if (c.commanding)
+            _PlanCommandCard(
+              controller: c,
+              bands: settings?.page?.effective.bands ?? RatingBands.standard,
+            ),
           const SizedBox(height: 16),
           if (c.section == 'universe' && u != null) ...[
             if (u.canRegister(caps))
@@ -157,6 +173,8 @@ class AssurancePlanning extends StatelessWidget {
               const Text('No templates. Plan items can be added without one.'),
             for (final t in u.currentTemplates)
               Text('${t.code} v${t.version} · ${t.name}'),
+          ] else if (c.section == 'settings' && settings != null) ...[
+            AssuranceSettingsPanel(controller: settings!),
           ] else if (c.section == 'plans') ...[
             if (manage)
               act('Create plan', 'create_plan', {
@@ -218,6 +236,12 @@ class AssurancePlanning extends StatelessWidget {
                     'decision': 'approve',
                     'reason': '',
                   }),
+                if (p.canRevise(caps))
+                  act('Revise plan', 'supersede_plan', {
+                    'supersedes_plan_id': p.id,
+                    'name':
+                        '${p.name.length > 150 ? p.name.substring(0, 150) : p.name} (revised)',
+                  }),
                 if (p.canCancel(caps))
                   act('Cancel plan', 'cancel_plan', {'reason': ''}),
               ],
@@ -263,8 +287,9 @@ class AssurancePlanning extends StatelessWidget {
 }
 
 class _PlanCommandCard extends StatelessWidget {
-  const _PlanCommandCard({required this.controller});
+  const _PlanCommandCard({required this.controller, required this.bands});
   final AssurancePlanningController controller;
+  final RatingBands bands;
 
   static const _labels = {
     'register_item': 'Register audit area',
@@ -277,6 +302,7 @@ class _PlanCommandCard extends StatelessWidget {
     'decide_plan': 'Decide plan',
     'cancel_plan': 'Cancel plan',
     'instantiate_engagement': 'Create engagement',
+    'supersede_plan': 'Revise approved plan',
   };
 
   @override
@@ -311,7 +337,7 @@ class _PlanCommandCard extends StatelessWidget {
       final l = int.tryParse('${f['likelihood']}'),
           i = int.tryParse('${f['impact']}');
       if (l == null || i == null) return null;
-      return '${assuranceRiskRating(l, i).name} (score ${l * i})';
+      return '${assuranceRiskRating(l, i, bands: bands).name} (score ${l * i})';
     }
 
     return Padding(
@@ -370,6 +396,12 @@ class _PlanCommandCard extends StatelessWidget {
                   text('lead_auditor_id', 'Lead auditor user ID'),
                   text('scope_summary', 'Scope summary', lines: 2),
                   const Text('The lead auditor must not own the area.'),
+                ],
+                'supersede_plan' => [
+                  text('name', 'Name of the revision'),
+                  const Text(
+                    "Copies this plan's period and areas into a new draft. The approved plan stays in force until the revision is approved, then it is marked superseded.",
+                  ),
                 ],
                 'submit_plan' => [
                   const Text(

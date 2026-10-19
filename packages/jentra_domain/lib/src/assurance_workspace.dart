@@ -26,16 +26,22 @@ enum ReminderLevel {
   bool get late => this == overdue || this == escalated;
 }
 
-/// Same bands as `assurance.reminder_level`: more than 7 days late is
-/// escalated, 1–7 days late overdue, due within 3 days due soon.
-ReminderLevel assuranceReminderLevel(DateTime? due, DateTime today) {
+/// Same bands as `assurance.reminder_level`: more than [escalateAfterDays]
+/// late is escalated, at least a day late overdue, due within [dueSoonDays]
+/// (or today) due soon. The defaults are the server defaults.
+ReminderLevel assuranceReminderLevel(
+  DateTime? due,
+  DateTime today, {
+  int dueSoonDays = 3,
+  int escalateAfterDays = 7,
+}) {
   if (due == null) return ReminderLevel.onTrack;
   final d = DateTime.utc(due.year, due.month, due.day);
   final t = DateTime.utc(today.year, today.month, today.day);
   final late = t.difference(d).inDays;
-  if (late > 7) return ReminderLevel.escalated;
+  if (late > escalateAfterDays) return ReminderLevel.escalated;
   if (late >= 1) return ReminderLevel.overdue;
-  if (-late <= 3) return ReminderLevel.dueSoon;
+  if (-late <= dueSoonDays) return ReminderLevel.dueSoon;
   return ReminderLevel.onTrack;
 }
 
@@ -53,32 +59,43 @@ int _count(Object? v) => v is int && v >= 0
     : throw const FormatException('A non-negative count is required.');
 
 final class AssuranceWorkItem {
-  AssuranceWorkItem.fromJson(Map<String, Object?> j, DateTime today)
-    : engagementId = assuranceId(j['engagement_id']),
-      engagementName = assuranceText(j['engagement_name'], 3, 160),
-      engagementVersion =
-          j['engagement_version'] is int && (j['engagement_version'] as int) > 0
-          ? j['engagement_version'] as int
-          : throw const FormatException('Engagement version required.'),
-      kind = switch (j['kind']) {
-        'evidence_request' || 'finding' => j['kind'] as String,
-        _ => throw const FormatException('Unknown work item kind.'),
-      },
-      itemId = assuranceId(j['item_id']),
-      title = assuranceText(j['title'], 1, 160),
-      ownerId = assuranceId(j['owner_id']),
-      status = j['status'] is String
-          ? j['status'] as String
-          : throw const FormatException('Work item status required.'),
-      dueDate = j['due_date'] == null ? null : _date(j['due_date']),
-      level = ReminderLevel.parse(j['level']) {
+  AssuranceWorkItem.fromJson(
+    Map<String, Object?> j,
+    DateTime today, {
+    int dueSoonDays = 3,
+    int escalateAfterDays = 7,
+  }) : engagementId = assuranceId(j['engagement_id']),
+       engagementName = assuranceText(j['engagement_name'], 3, 160),
+       engagementVersion =
+           j['engagement_version'] is int &&
+               (j['engagement_version'] as int) > 0
+           ? j['engagement_version'] as int
+           : throw const FormatException('Engagement version required.'),
+       kind = switch (j['kind']) {
+         'evidence_request' || 'finding' => j['kind'] as String,
+         _ => throw const FormatException('Unknown work item kind.'),
+       },
+       itemId = assuranceId(j['item_id']),
+       title = assuranceText(j['title'], 1, 160),
+       ownerId = assuranceId(j['owner_id']),
+       status = j['status'] is String
+           ? j['status'] as String
+           : throw const FormatException('Work item status required.'),
+       dueDate = j['due_date'] == null ? null : _date(j['due_date']),
+       level = ReminderLevel.parse(j['level']) {
     final allowed = kind == 'finding'
         ? const {'issued', 'remediating'}
         : const {'open'};
     if (!allowed.contains(status)) {
       throw const FormatException('Work item status is not open.');
     }
-    if (assuranceReminderLevel(dueDate, today) != level) {
+    if (assuranceReminderLevel(
+          dueDate,
+          today,
+          dueSoonDays: dueSoonDays,
+          escalateAfterDays: escalateAfterDays,
+        ) !=
+        level) {
       throw const FormatException('Reminder level does not match due date.');
     }
   }
@@ -106,8 +123,21 @@ final class AssuranceWorkItem {
 final class AssuranceOverview {
   factory AssuranceOverview.fromJson(Map<String, Object?> j, String actorId) {
     final asOf = _date(j['as_of']);
-    if (j['response_sla_days'] != assuranceResponseSlaDays) {
+    final sla = j['response_sla_days'];
+    if (sla is! int || sla < 1 || sla > 90) {
       throw const FormatException('Unexpected response SLA.');
+    }
+    // A9 tenant settings; absent before that candidate is installed.
+    final bands = j['reminder_bands'];
+    var dueSoon = 3, escalate = 7;
+    if (bands != null) {
+      if (bands is! Map) throw const FormatException('Invalid reminder bands.');
+      final s = bands['due_soon_days'], e = bands['escalate_after_days'];
+      if (s is! int || s < 1 || s > 30 || e is! int || e < 1 || e > 90) {
+        throw const FormatException('Invalid reminder bands.');
+      }
+      dueSoon = s;
+      escalate = e;
     }
     List<AssuranceWorkItem> list(Object? v) {
       if (v is! List || v.length > 100) {
@@ -117,7 +147,12 @@ final class AssuranceOverview {
       return [
         for (final x in v)
           if (x is Map)
-            AssuranceWorkItem.fromJson(x.cast<String, Object?>(), asOf)
+            AssuranceWorkItem.fromJson(
+              x.cast<String, Object?>(),
+              asOf,
+              dueSoonDays: dueSoon,
+              escalateAfterDays: escalate,
+            )
           else
             throw const FormatException('Invalid work item.'),
       ]..forEach((i) {
@@ -145,12 +180,24 @@ final class AssuranceOverview {
         throw const FormatException('Counts do not match the work items.');
       }
     }
-    return AssuranceOverview._(asOf, mine, team);
+    return AssuranceOverview._(asOf, mine, team, sla, dueSoon, escalate);
   }
 
-  AssuranceOverview._(this.asOf, this.mine, this.team);
+  AssuranceOverview._(
+    this.asOf,
+    this.mine,
+    this.team,
+    this.responseSlaDays,
+    this.dueSoonDays,
+    this.escalateAfterDays,
+  );
 
   final DateTime asOf;
+
+  /// The effective tenant settings the levels were computed with.
+  final int responseSlaDays;
+  final int dueSoonDays;
+  final int escalateAfterDays;
   final List<AssuranceWorkItem> mine;
   final List<AssuranceWorkItem> team;
 
