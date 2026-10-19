@@ -126,7 +126,9 @@ def wave5_runtime():
     names = ['wave4_synthetic_fixture.sql', 'wave5_cash_payment_dates_test.sql', 'wave5_runtime_scope_test.sql']
     parts += [fixture(n) for n in names]
     tail = ['wave5_supabase_runtime_test.sql', 'wave5_supabase_setup_test.sql']
-    parts += [read(FRAGMENTS / n) for n in tail]
+    # Their timestamps must stay equal to the installed defaults written in the
+    # same statement (issued_at default statement_timestamp()), so no pin here.
+    parts += [read(FRAGMENTS / n).replace('statement_timestamp()', KEEP_STATEMENT_TIME) for n in tail]
     query = '\n'.join(parts).replace('set local search_path=extensions,public,pg_catalog;',
                                      'set local search_path=extensions,public,pg_catalog;\nselect no_plan();', 1)
     return query + '\n' + FINISH + '\nrollback;\n', ['wave5_process_metrics_test.sql (seed)'] + names + tail
@@ -247,32 +249,13 @@ def tap_stream(query):
 # 20260924185321_wave3_period_governance makes a fiscal-period state change
 # legal only after a period event by the same actor in the same transaction.
 # Candidate builders installed that migration after the older fixtures had
-# already set up their periods, so those fixtures update the state directly;
-# installed, the same statement raises PERIOD_TRANSITION_COMMAND_REQUIRED. The
-# fixture step becomes the governed path wave3_period_test.sql itself uses (an
-# event, then the update), walking open -> soft_locked -> hard_locked -> open.
-PERIOD_HELPER = """create function pg_temp.ci_fixture_period_state(p_id uuid,p_target text) returns void
-language plpgsql as $fixture_period$
-declare p finance.fiscal_periods%rowtype;next_state text;claims text;
-begin
- claims:=current_setting('request.jwt.claims',true);
- loop
-  select * into p from finance.fiscal_periods where id=p_id;
-  exit when not found or p.state=p_target;
-  if auth.uid() is null then
-   perform set_config('request.jwt.claims',jsonb_build_object('sub',p.created_by)::text,true);
-  end if;
-  next_state:=case p.state when 'open' then 'soft_locked' when 'soft_locked' then 'hard_locked' else 'open' end;
-  insert into finance.period_events(id,tenant_id,legal_entity_id,period_id,action,from_state,to_state,period_version,
-   reason,exceptions,actor_id,transaction_id)
-  values(gen_random_uuid(),p.tenant_id,p.legal_entity_id,p.id,
-   case next_state when 'soft_locked' then 'soft_lock' when 'hard_locked' then 'hard_lock' else 'reopened' end,
-   p.state,next_state,p.version,'Synthetic fixture period state','[]',auth.uid(),txid_current());
-  update finance.fiscal_periods set state=next_state where id=p.id;
- end loop;
- perform set_config('request.jwt.claims',coalesce(claims,''),true);
-end $fixture_period$;
-"""
+# already set their periods up, so those fixtures update the state directly;
+# installed, the same statement raises PERIOD_TRANSITION_COMMAND_REQUIRED.
+# The fixture's own UPDATE stays verbatim and runs with only the lifecycle
+# trigger switched off, which is the state it ran in under the candidate
+# order. It writes no period events of its own (assertions count them), and
+# the whole file still rolls back.
+PERIOD_TRIGGER = 'alter table finance.fiscal_periods {} trigger fiscal_periods_enforce_lifecycle;'
 PERIOD_UPDATE = re.compile(
     r"(?im)^update finance\.fiscal_periods\s+set\s+state\s*=\s*'(\w+)'(?:\s*,\s*updated_by\s*=[^;]*?)?\s+where\s+([^;]+);")
 
@@ -288,15 +271,14 @@ def govern_period_updates(query):
         if previous.startswith('insert into finance.period_events'):
             continue  # already the governed path
         out.append(query[last:m.start()])
-        out.append(f"select pg_temp.ci_fixture_period_state(id,'{m.group(1)}') from finance.fiscal_periods where {m.group(2).strip()};")
+        out.append('\n'.join([PERIOD_TRIGGER.format('disable'), m.group(0), PERIOD_TRIGGER.format('enable')]))
         last = m.end()
         count += 1
-    if not count:
-        return query, 0
     out.append(query[last:])
-    query = ''.join(out)
-    at = re.search(r'(?im)^begin;\n', query).end()
-    return query[:at] + PERIOD_HELPER + query[at:], count
+    return ''.join(out), count
+
+
+KEEP_STATEMENT_TIME = 'statement_timestamp/*per statement*/()'
 
 
 def pin_statement_time(query):
@@ -308,7 +290,8 @@ def pin_statement_time(query):
     Every statement here is fixture code (installed migrations are already
     removed), so its statement_timestamp() reads now() again; the installed
     schema's own functions are untouched."""
-    return re.subn(r'\bstatement_timestamp\(\)', 'now()', query)
+    query, count = re.subn(r'\bstatement_timestamp\(\)', 'now()', query)
+    return query.replace(KEEP_STATEMENT_TIME, 'statement_timestamp()'), count
 
 
 def finalise(stem, query, source, notes):
@@ -338,7 +321,7 @@ def build_all(workdir):
         if sinks:
             notes.append('TAP rows go to output instead of: ' + ', '.join(sinks) + '.')
         if periods:
-            notes.append(f'Fixture period state changes routed through the governed event path: {periods}.')
+            notes.append(f'Fixture period updates run with only the lifecycle trigger off, as in candidate order: {periods}.')
         if pinned:
             notes.append(f'Fixture statement_timestamp() read as now(), as in one execute_sql message: {pinned}.')
         files[stem] = finalise(stem, query, source, notes)
@@ -349,7 +332,7 @@ def build_all(workdir):
         query, pinned = pin_statement_time(query)
         notes = ['Fixtures, in order: ' + ', '.join(names) + '.']
         if periods:
-            notes.append(f'Fixture period state changes routed through the governed event path: {periods}.')
+            notes.append(f'Fixture period updates run with only the lifecycle trigger off, as in candidate order: {periods}.')
         if pinned:
             notes.append(f'Fixture statement_timestamp() read as now(), as in one execute_sql message: {pinned}.')
         files[stem] = finalise(stem, query, source, notes)

@@ -2,30 +2,9 @@
 -- Runs against the schema `supabase start` installs from supabase/migrations.
 -- Installed migrations removed from the composition: 46.
 -- TAP rows go to output instead of: procurement_test_results.
--- Fixture period state changes routed through the governed event path: 1.
+-- Fixture period updates run with only the lifecycle trigger off, as in candidate order: 1.
 -- Fixture statement_timestamp() read as now(), as in one execute_sql message: 12.
 begin;
-create function pg_temp.ci_fixture_period_state(p_id uuid,p_target text) returns void
-language plpgsql as $fixture_period$
-declare p finance.fiscal_periods%rowtype;next_state text;claims text;
-begin
- claims:=current_setting('request.jwt.claims',true);
- loop
-  select * into p from finance.fiscal_periods where id=p_id;
-  exit when not found or p.state=p_target;
-  if auth.uid() is null then
-   perform set_config('request.jwt.claims',jsonb_build_object('sub',p.created_by)::text,true);
-  end if;
-  next_state:=case p.state when 'open' then 'soft_locked' when 'soft_locked' then 'hard_locked' else 'open' end;
-  insert into finance.period_events(id,tenant_id,legal_entity_id,period_id,action,from_state,to_state,period_version,
-   reason,exceptions,actor_id,transaction_id)
-  values(gen_random_uuid(),p.tenant_id,p.legal_entity_id,p.id,
-   case next_state when 'soft_locked' then 'soft_lock' when 'hard_locked' then 'hard_lock' else 'reopened' end,
-   p.state,next_state,p.version,'Synthetic fixture period state','[]',auth.uid(),txid_current());
-  update finance.fiscal_periods set state=next_state where id=p.id;
- end loop;
- perform set_config('request.jwt.claims',coalesce(claims,''),true);
-end $fixture_period$;
 set local jit=on;
 set local lock_timeout='2s';
 set local statement_timeout='30s';
@@ -1501,7 +1480,9 @@ insert into finance.period_events(id,tenant_id,legal_entity_id,period_id,action,
 values(pg_temp.fid('period.fixture.hard'),pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.period_id(),
  'hard_lock','soft_locked','hard_locked',(select version from finance.fiscal_periods where id=pg_temp.period_id()),
  'Synthetic hard state for reopen test','[]',pg_temp.fid('creator'),txid_current());
-select pg_temp.ci_fixture_period_state(id,'hard_locked') from finance.fiscal_periods where id=pg_temp.period_id();
+alter table finance.fiscal_periods disable trigger fiscal_periods_enforce_lifecycle;
+update finance.fiscal_periods set state='hard_locked',updated_by=pg_temp.fid('creator') where id=pg_temp.period_id();
+alter table finance.fiscal_periods enable trigger fiscal_periods_enforce_lifecycle;
 select throws_ok($$select pg_temp.bank_journal('period.hard.post',1)$$,
  '55000','PERIOD_CLOSED','hard lock rejects ordinary posting');
 select throws_ok($$select pg_temp.call('period_governance_command',

@@ -1,27 +1,4 @@
 begin;
--- 20260924185321_wave3_period_governance forbids a direct period state change;
--- fixture steps take the governed event path wave3_period_test.sql uses.
-create function pg_temp.ci_fixture_period_state(p_id uuid,p_target text) returns void
-language plpgsql as $fixture_period$
-declare p finance.fiscal_periods%rowtype;next_state text;claims text;
-begin
- claims:=current_setting('request.jwt.claims',true);
- loop
-  select * into p from finance.fiscal_periods where id=p_id;
-  exit when not found or p.state=p_target;
-  if auth.uid() is null then
-   perform set_config('request.jwt.claims',jsonb_build_object('sub',p.created_by)::text,true);
-  end if;
-  next_state:=case p.state when 'open' then 'soft_locked' when 'soft_locked' then 'hard_locked' else 'open' end;
-  insert into finance.period_events(id,tenant_id,legal_entity_id,period_id,action,from_state,to_state,period_version,
-   reason,exceptions,actor_id,transaction_id)
-  values(gen_random_uuid(),p.tenant_id,p.legal_entity_id,p.id,
-   case next_state when 'soft_locked' then 'soft_lock' when 'hard_locked' then 'hard_lock' else 'reopened' end,
-   p.state,next_state,p.version,'Synthetic fixture period state','[]',auth.uid(),txid_current());
-  update finance.fiscal_periods set state=next_state where id=p.id;
- end loop;
- perform set_config('request.jwt.claims',coalesce(claims,''),true);
-end $fixture_period$;
 
 create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
@@ -422,7 +399,12 @@ insert into finance.fiscal_periods (
     '13000000-0000-0000-0000-000000000001',
     '13000000-0000-0000-0000-000000000001'
   );
-select pg_temp.ci_fixture_period_state(id,'soft_locked') from finance.fiscal_periods where id = '65000000-0000-0000-0000-000000000002';
+-- 20260924185321 period governance came later; this fixture update runs as before it.
+alter table finance.fiscal_periods disable trigger fiscal_periods_enforce_lifecycle;
+update finance.fiscal_periods
+set state = 'soft_locked'
+where id = '65000000-0000-0000-0000-000000000002';
+alter table finance.fiscal_periods enable trigger fiscal_periods_enforce_lifecycle;
 
 select set_config(
   'request.jwt.claims',
