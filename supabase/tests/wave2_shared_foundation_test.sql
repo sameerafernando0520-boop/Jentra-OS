@@ -529,7 +529,7 @@ select throws_ok(
     '64000000-0000-0000-0000-000000000004'
   ),
   '55000',
-  'PERIOD_TRANSITION_INVALID',
+  'A fiscal period must be soft-locked before hard lock.',
   'open fiscal period cannot skip the soft lock'
 );
 -- Put the period in hard lock outside the API (fixture only, rolled back) to
@@ -555,7 +555,7 @@ select throws_ok(
     '64000000-0000-0000-0000-000000000005'
   ),
   '55000',
-  'PERIOD_TRANSITION_COMMAND_REQUIRED',
+  'A hard-locked fiscal period cannot be reopened.',
   'hard-locked fiscal period cannot be reopened'
 );
 

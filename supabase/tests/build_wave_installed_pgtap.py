@@ -112,9 +112,15 @@ def wave5_remaining():
     # stops on CASH_COMPLETE_PROVIDERS_REQUIRED. prepare_runtime_candidate.mjs
     # likewise leaves this legacy v2 cash fixture out, and the v3 basis, save and
     # export are asserted in wave5_cash_payment_dates_test.sql (wave5_runtime).
-    # Its fixture rows stay: realized_mapping reads them.
-    parts[2] = parts[2].split('create temporary table w5_cash as')[0]
-    names[1] += ' (fixture rows only; v2 cash assertions superseded by v3)'
+    # Only that cash/export block goes; the history, integration, classification
+    # and returns sections after it stay, and so does the one permission the
+    # block leaves behind (finance.reports.export), which later sections use.
+    adapters = parts[2]
+    start = adapters.index('create temporary table w5_cash as')
+    end = adapters.index('select is((api.wave5_pipeline_history(', start)
+    parts[2] = (adapters[:start] + "insert into core.role_permissions values(pg_temp.fid('t'),"
+                "pg_temp.fid('owner.role'),'finance.reports.export') on conflict do nothing;\n" + adapters[end:])
+    names[1] += ' (without its v2 cash/export block, superseded by v3)'
     return '\n'.join(parts) + '\n' + FINISH + '\nrollback;\n', names
 
 
