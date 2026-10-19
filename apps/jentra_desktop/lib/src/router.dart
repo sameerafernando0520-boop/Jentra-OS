@@ -14,6 +14,8 @@ import 'features/negative_stock/negative_stock_policy_screen.dart';
 import 'features/manual_journal/manual_journal_screen.dart';
 import 'features/control_reconciliation/control_reconciliation_controller.dart';
 import 'features/control_reconciliation/control_reconciliation_screen.dart';
+import 'features/assurance/assurance_access_controller.dart';
+import 'features/assurance/assurance_access_screen.dart';
 import 'features/assurance/assurance_planning_controller.dart';
 import 'features/assurance/assurance_planning_screen.dart';
 import 'features/assurance/assurance_workspace_controller.dart';
@@ -291,6 +293,15 @@ final routerProvider = Provider<GoRouter>((ref) {
             onExit: (context, state) async =>
                 await ref
                     .read(assuranceWorkspaceControllerProvider)
+                    ?.canLeave() ??
+                true,
+          ),
+          GoRoute(
+            path: '/governance/audit/access',
+            builder: (context, state) => const AssuranceAccessScreen(),
+            onExit: (context, state) async =>
+                await ref
+                    .read(assuranceAccessControllerProvider)
                     ?.canLeave() ??
                 true,
           ),

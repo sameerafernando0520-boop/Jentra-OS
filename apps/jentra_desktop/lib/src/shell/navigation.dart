@@ -222,6 +222,12 @@ const jentraDestinations = <JentraDestination>[
     section: 'GOVERNANCE',
   ),
   JentraDestination(
+    label: 'Audit access',
+    path: '/governance/audit/access',
+    icon: Icons.admin_panel_settings_outlined,
+    section: 'GOVERNANCE',
+  ),
+  JentraDestination(
     label: 'Analytics',
     path: '/analytics',
     icon: Icons.query_stats_outlined,
@@ -334,6 +340,8 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
         (item.path != '/governance/audit/planning' ||
             (capabilities?.contains('assurance.plan.manage') ?? false) ||
             (capabilities?.contains('assurance.evidence.view') ?? false)) &&
+        (item.path != '/governance/audit/access' ||
+            (capabilities?.contains('core.roles.manage') ?? false)) &&
         (item.path != '/finance/dimensions' ||
             const [
               'finance.view',
