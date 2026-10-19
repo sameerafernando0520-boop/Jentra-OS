@@ -1,0 +1,33 @@
+{
+  "kind": "candidate-rollback-pgtap",
+  "slice": "assurance-a7-evidence-storage-verification",
+  "review": "PR #1 thread 4309904782 (manual submit_evidence accepted a digest with no stored object)",
+  "blueprint": "68_CORPORATE_AUDIT_ASSURANCE_SPEC.md",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "tool": "supabase execute_sql (single transaction ending in rollback)",
+  "executed": "reduced suite: the A1 fixture block of supabase/assurance_tests/assurance_core_test.sql (actors, tenants, roles; without its assertions), pg_temp.e2/vv from assurance_testing_test.sql, then the candidate DDL and supabase/assurance_tests/assurance_evidence_storage_test.sql with the builder's assertion rewrite, against the installed A1-A5 schema. Executed text equals those files except SQL comments, blank lines and whitespace inside two parameter lists",
+  "notExecuted": "the full builder output (build_assurance_candidate.ps1 -Slice A7 -Installed, about 217 KB: all A1-A6 suites, the version-guard candidate, then this candidate and its tests) was generated but not sent through execute_sql; the A1-A6 fragments run before this candidate's DDL and use no names it introduces",
+  "installed": false,
+  "rolledBack": true,
+  "observedAt": "2026-10-19",
+  "result": {"assertions": 39, "passed": 39, "failures": null},
+  "sources": {
+    "supabase/candidates/20261019120000_assurance_evidence_storage.sql": "8834c85af68e6551ce172706e8d30214dda1f6637d0582306e6e1edfe7e3f400",
+    "supabase/assurance_tests/assurance_evidence_storage_test.sql": "7426a7557c8af85cda06819be3e998bac339218e999d5942917f5a6c7ac57309",
+    "supabase/functions/assurance-evidence-verify/handler.mjs": "4ec490b94cd2c9122a7f1da3fd5b8194693ad40f89f64eebbf59607b616d0477"
+  },
+  "covered": [
+    "private bucket bounded to 100 MiB; verification tables force RLS with no client or service grants",
+    "only the service role can read a target or record a verification; tickets are authenticated-only",
+    "upload refused before the item exists, for non-owners, for paths with no submitted item, for another owner_id, in another bucket, for malformed paths, for superseded items and after verification",
+    "a second insert at the same path is refused; client updates change nothing; reviewers cannot read the object row",
+    "acceptance refused with no stored object, with an unverified object, after a mismatch and after the verified object is rewritten",
+    "tickets: external reviewers and foreign tenants refused; bound to the requesting human; single use; recorded outcome returned on later requests",
+    "verification outcome immutable; a mismatch is final until the submission is rejected and new evidence is submitted under a new id",
+    "freeze refused while an accepted upload-path item is not byte-verified (covers acceptances from before installation)"
+  ],
+  "notCovered": [
+    "the edge function against real Storage (tested with node --test fakes only); no deployment",
+    "Storage API behaviour for owner_id/RETURNING on a real upload (rows were inserted directly as the authenticated role)"
+  ]
+}

@@ -123,6 +123,24 @@ class FakePlanningGateway implements AssuranceGateway {
   Future<AssuranceOverview> overview(TenantContext s) =>
       throw UnimplementedError();
   @override
+  Future<StoredEvidenceVerification> submitManualEvidence(
+    CommandEnvelope<Map<String, Object?>> c,
+    Uint8List bytes,
+    String mime,
+  ) => throw UnimplementedError();
+  @override
+  Future<StoredEvidenceVerification> verifyEvidence(
+    TenantContext s,
+    String engagementId,
+    String evidenceId,
+  ) => throw UnimplementedError();
+  @override
+  Future<EvidenceVerificationStatus> evidenceVerification(
+    TenantContext s,
+    String engagementId,
+    String evidenceId,
+  ) => throw UnimplementedError();
+  @override
   Future<AssuranceEngagementPage> engagements(
     TenantContext s, {
     String? after,

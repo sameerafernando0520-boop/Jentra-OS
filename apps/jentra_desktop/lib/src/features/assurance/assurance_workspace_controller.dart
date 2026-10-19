@@ -15,6 +15,9 @@ import '../report_export/report_export_controller.dart'
     show reportExportFilesProvider;
 
 final assuranceGatewayProvider = Provider<AssuranceGateway?>((ref) => null);
+final assuranceEvidenceFilesProvider = Provider<AssuranceEvidenceFiles?>(
+  (ref) => const NativeAssuranceEvidenceFiles(),
+);
 final assuranceWorkspaceControllerProvider =
     Provider.autoDispose<AssuranceWorkspaceController?>((ref) {
       final scope = ref.watch(activeTenantContextProvider),
@@ -45,6 +48,7 @@ final assuranceWorkspaceControllerProvider =
             false,
         capabilities: {...?caps.value},
         files: ref.watch(reportExportFilesProvider),
+        evidenceFiles: ref.watch(assuranceEvidenceFilesProvider),
       );
       ref.listen(
         connectivityStateProvider,
@@ -68,6 +72,7 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
     this.canRespond = false,
     this.capabilities = const {},
     this.files,
+    this.evidenceFiles,
     DateTime Function()? clock,
   }) : _clock = clock ?? DateTime.now;
 
@@ -75,6 +80,8 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
   static const commandSlot = 'assurance-auditor-command';
   static const viewCapability = 'assurance.evidence.view';
   static const respondCapability = 'assurance.response.manage';
+  static const submitCapability = 'assurance.evidence.submit';
+  static const evidenceSlot = 'assurance-evidence-upload';
   static const _uuid = Uuid();
 
   /// Ids the client generates for each auditor action, sealed with the draft
@@ -105,12 +112,14 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
   final bool canRespond;
   final Set<String> capabilities;
   final ReportExportFiles? files;
+  final AssuranceEvidenceFiles? evidenceFiles;
   final DateTime Function() _clock;
 
   AuditorEngagementView? view;
   Map<String, Object?> commandForm = {};
   QuotationLocalDraft? command;
   AuditPackVerification? pack;
+  StoredEvidenceVerification? lastVerification;
 
   bool get commandPending => command?.pending != null;
   bool get commanding => commandForm['action'] is String;
@@ -518,6 +527,92 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
     if (!_current(epoch)) return;
     detail = d;
     view = v;
+  });
+
+  /// The request owner uploads a file for an open evidence request. The
+  /// `submit_evidence` command is sealed before anything is sent, so a retry
+  /// with the same file resumes the same submission; the server then hashes
+  /// the stored bytes and only `verified` evidence can be accepted.
+  Future<void> submitEvidence(AssuranceWorkItem item) => _run(() async {
+    final f = evidenceFiles;
+    if (f == null ||
+        !online ||
+        !verified ||
+        !capabilities.contains(submitCapability) ||
+        !item.canSubmitEvidence(scope.actorId)) {
+      return;
+    }
+    final epoch = _epoch;
+    final picked = await f.choose();
+    if (picked == null || !_current(epoch)) return;
+    var request = (await drafts.load(scope, evidenceSlot))?.pending;
+    if (request != null) {
+      final saved = request.envelope.payload;
+      if (saved['request_id'] != item.itemId) {
+        throw const _Held(
+          'Finish the saved evidence upload for another request first.',
+        );
+      }
+      if (saved['sha256'] != picked.sha256 ||
+          saved['byte_size'] != picked.bytes.length) {
+        throw const FormatException(
+          'Choose the same file as the saved submission to finish it.',
+        );
+      }
+    } else {
+      final now = _clock();
+      final evidenceId = _uuid.v4();
+      final payload = manualEvidencePayload(
+        tenantId: scope.tenantId,
+        engagementId: item.engagementId,
+        requestId: item.itemId,
+        evidenceId: evidenceId,
+        fileName: picked.name,
+        sha256: picked.sha256,
+        byteSize: picked.bytes.length,
+        sourceAsOf: now,
+        now: now,
+      );
+      await drafts.save(
+        scope,
+        evidenceSlot,
+        {'request_id': item.itemId, 'evidence_id': evidenceId},
+        expectedVersion: item.engagementVersion,
+        resolveConflict: true,
+      );
+      request = await drafts.prepare(
+        scope,
+        evidenceSlot,
+        verb: 'submit',
+        payload: payload,
+        expectedVersion: item.engagementVersion,
+      );
+    }
+    if (!_current(epoch)) return;
+    final StoredEvidenceVerification v;
+    try {
+      v = await gateway.submitManualEvidence(
+        request.envelope,
+        picked.bytes,
+        picked.mime,
+      );
+      await drafts.complete(scope, evidenceSlot, request.envelope.commandId);
+    } on DomainError catch (e) {
+      await drafts.recordFailure(
+        scope,
+        evidenceSlot,
+        e,
+        commandId: request.envelope.commandId,
+      );
+      rethrow;
+    }
+    if (_disposed) return;
+    lastVerification = v;
+    message = v.verified
+        ? 'Evidence stored and verified (SHA-256 ${v.observedSha256.substring(0, 12)}…).'
+        : 'The stored file does not match the submitted digest. An auditor must reject it before you upload again.';
+    if (!_current(epoch)) return;
+    overview = await gateway.overview(scope);
   });
 
   /// Saves only a pack whose bytes hashed to the recorded digest.

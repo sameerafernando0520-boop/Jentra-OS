@@ -97,6 +97,10 @@ final class AssuranceWorkItem {
   /// Only an issued finding owned by the caller can take a response.
   bool canRespond(String actorId) =>
       kind == 'finding' && status == 'issued' && ownerId == actorId;
+
+  /// Only the owner of an open evidence request can upload its evidence.
+  bool canSubmitEvidence(String actorId) =>
+      kind == 'evidence_request' && status == 'open' && ownerId == actorId;
 }
 
 final class AssuranceOverview {

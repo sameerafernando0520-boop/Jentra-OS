@@ -58,6 +58,22 @@ class FakeFiles implements ReportExportFiles {
   }
 }
 
+class FakeEvidenceFiles implements AssuranceEvidenceFiles {
+  String content = 'Signed bank mandate';
+  bool cancel = false;
+  @override
+  Future<AssurancePickedEvidence?> choose() async {
+    if (cancel) return null;
+    final bytes = Uint8List.fromList(utf8.encode(content));
+    return AssurancePickedEvidence(
+      'mandate.pdf',
+      'application/pdf',
+      bytes,
+      await assuranceSha256(bytes),
+    );
+  }
+}
+
 class FakeAssuranceGateway implements AssuranceGateway {
   String? failure, respondFailure, auditorFailure;
   String status = 'fieldwork';
@@ -244,6 +260,46 @@ class FakeAssuranceGateway implements AssuranceGateway {
     };
   }
 
+  final evidenceUploads = <CommandEnvelope<Map<String, Object?>>>[];
+  String? uploadFailure;
+  String uploadOutcome = 'verified';
+
+  @override
+  Future<StoredEvidenceVerification> submitManualEvidence(
+    CommandEnvelope<Map<String, Object?>> c,
+    Uint8List bytes,
+    String mime,
+  ) async {
+    evidenceUploads.add(c);
+    if (uploadFailure != null) {
+      throw DomainError(code: uploadFailure!, message: 'Upload uncertain');
+    }
+    return StoredEvidenceVerification.fromJson({
+      'evidence_id': c.payload['evidence_id'],
+      'outcome': uploadOutcome,
+      'observed_sha256': uploadOutcome == 'verified'
+          ? c.payload['sha256']
+          : 'f' * 64,
+      'observed_byte_size': bytes.length,
+      'verified_at': '2026-10-18T09:00:00Z',
+      'verifier': 'assurance-evidence-verify/v1',
+    });
+  }
+
+  @override
+  Future<StoredEvidenceVerification> verifyEvidence(
+    TenantContext s,
+    String engagementId,
+    String evidenceId,
+  ) => throw UnimplementedError();
+
+  @override
+  Future<EvidenceVerificationStatus> evidenceVerification(
+    TenantContext s,
+    String engagementId,
+    String evidenceId,
+  ) => throw UnimplementedError();
+
   @override
   Future<AuditPackVerification> auditPack(TenantContext s, String id) async {
     final manifest = {
@@ -343,6 +399,93 @@ void main() {
           .any((d) => d.path == '/governance/audit'),
       isTrue,
     );
+  });
+
+  group('evidence upload', () {
+    late FakeEvidenceFiles picker;
+    AssuranceWorkspaceController owner() => AssuranceWorkspaceController(
+      scope: scope,
+      gateway: gateway,
+      drafts: drafts,
+      online: true,
+      capabilities: const {'assurance.evidence.submit'},
+      evidenceFiles: picker,
+      clock: () => today,
+    );
+    setUp(() {
+      c.dispose();
+      picker = FakeEvidenceFiles();
+      c = owner();
+    });
+    AssuranceWorkItem open() =>
+        c.overview!.mine.firstWhere((i) => i.kind == 'evidence_request');
+
+    test('the owner uploads a file as a sealed manual submission', () async {
+      await c.initialize();
+      await c.submitEvidence(open());
+      expect(c.error, isNull);
+      final sent = gateway.evidenceUploads.single;
+      expect(sent.expectedEntityVersion, 9);
+      expect(sent.payload['request_id'], uid(10));
+      expect(sent.payload['collection_method'], 'manual');
+      expect(sent.payload['source_reference'], 'mandate.pdf');
+      expect(
+        sent.payload['storage_ref'],
+        'assurance/${scope.tenantId}/$eng/${sent.payload['evidence_id']}',
+      );
+      expect(c.lastVerification!.verified, isTrue);
+      expect(c.message, contains('verified'));
+      expect(
+        await drafts.load(scope, AssuranceWorkspaceController.evidenceSlot),
+        isNull,
+      );
+    });
+
+    test('an uncertain upload is retried with the same key and file', () async {
+      await c.initialize();
+      gateway.uploadFailure = 'UNCERTAIN_RESULT';
+      await c.submitEvidence(open());
+      expect(c.error, isNotNull);
+      picker.content = 'A different file';
+      gateway.uploadFailure = null;
+      await c.submitEvidence(open());
+      expect(c.error, contains('same file'));
+      expect(gateway.evidenceUploads, hasLength(1));
+      picker.content = 'Signed bank mandate';
+      await c.submitEvidence(open());
+      expect(c.error, isNull);
+      expect(gateway.evidenceUploads, hasLength(2));
+      expect(
+        gateway.evidenceUploads.last.idempotencyKey,
+        gateway.evidenceUploads.first.idempotencyKey,
+      );
+      expect(
+        gateway.evidenceUploads.last.payload,
+        gateway.evidenceUploads.first.payload,
+      );
+    });
+
+    test('a mismatch is reported, not presented as accepted', () async {
+      await c.initialize();
+      gateway.uploadOutcome = 'mismatch';
+      await c.submitEvidence(open());
+      expect(c.lastVerification!.verified, isFalse);
+      expect(c.message, contains('does not match'));
+    });
+
+    test('no upload without submit authority, ownership or a file', () async {
+      c.dispose();
+      c = make(capabilities: auditor);
+      await c.initialize();
+      await c.submitEvidence(c.overview!.mine.first);
+      c.dispose();
+      c = owner();
+      await c.initialize();
+      await c.submitEvidence(c.overview!.team.single);
+      picker.cancel = true;
+      await c.submitEvidence(open());
+      expect(gateway.evidenceUploads, isEmpty);
+    });
   });
 
   test('initial load verifies access then shows work and register', () async {

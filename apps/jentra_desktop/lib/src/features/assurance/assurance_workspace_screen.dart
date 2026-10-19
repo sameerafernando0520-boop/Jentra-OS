@@ -101,6 +101,17 @@ class AssuranceWorkspace extends StatelessWidget {
                       () => c.startResponse(i),
                       enabled: c.verified && !c.pending,
                     ),
+                  if (mine &&
+                      c.evidenceFiles != null &&
+                      c.capabilities.contains(
+                        AssuranceWorkspaceController.submitCapability,
+                      ) &&
+                      i.canSubmitEvidence(c.scope.actorId))
+                    action(
+                      'Upload evidence',
+                      () => c.submitEvidence(i),
+                      enabled: c.verified && c.online,
+                    ),
                 ],
               ),
             ],
