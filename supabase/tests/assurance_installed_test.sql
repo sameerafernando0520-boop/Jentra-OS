@@ -2339,6 +2339,91 @@ select ok(not has_function_privilege('authenticated','assurance.prepare_command(
   and not has_function_privilege('anon','api.assurance_plan_command(uuid,uuid,uuid,uuid,jsonb,bigint)','EXECUTE'),
   'guard: replaced functions keep their grants');
 
+-- Corporate Audit & Assurance: audit plan register (desktop planning screens).
+-- CANDIDATE ONLY. Not installed. Requires A1-A5.
+--
+-- api.assurance_plan reads one plan by id; nothing listed the plans in a
+-- scope, so the desktop could not find existing plans. This read-only API
+-- pages them (50 per page, ordered by id) under the same authority as
+-- api.assurance_plan: planning managers, or anyone who may view evidence.
+-- It adds no tables and changes no existing function.
+
+create function api.assurance_plans(
+  p_tenant_id uuid,
+  p_legal_entity_id uuid,
+  p_branch_id uuid,
+  p_after uuid
+) returns jsonb
+language plpgsql stable security definer set search_path = '' as $$
+declare
+  v_uid uuid := (select auth.uid());
+  v_items jsonb;
+begin
+  if v_uid is null then
+    perform assurance.deny('Authentication required.');
+  end if;
+  perform assurance.require_scope(p_tenant_id, p_legal_entity_id, p_branch_id);
+  if not core.has_permission(p_tenant_id, 'assurance.plan.manage', p_legal_entity_id, p_branch_id) then
+    perform core.require_permission(p_tenant_id, 'assurance.evidence.view', p_legal_entity_id, p_branch_id);
+  end if;
+  select coalesce(jsonb_agg(s.row order by s.id), '[]'::jsonb) into v_items
+    from (select p.id, jsonb_build_object('id', p.id, 'name', p.name, 'status', p.status,
+            'version', p.version, 'period_start', p.period_start, 'period_end', p.period_end,
+            'created_by', p.created_by, 'submitted_by', p.submitted_by, 'approved_by', p.approved_by,
+            'active_items', (select count(*) from assurance.plan_items i
+                              where i.plan_id = p.id and i.status = 'active')) as row
+            from assurance.plans p
+           where p.tenant_id = p_tenant_id and p.legal_entity_id = p_legal_entity_id
+             and p.branch_id is not distinct from p_branch_id
+             and (p_after is null or p.id > p_after)
+           order by p.id
+           limit 50) s;
+  return jsonb_build_object('items', v_items,
+    'next_cursor', case when jsonb_array_length(v_items) = 50 then v_items->49->'id' else 'null'::jsonb end);
+end $$;
+
+revoke all on function api.assurance_plans(uuid, uuid, uuid, uuid) from public, anon, service_role;
+grant execute on function api.assurance_plans(uuid, uuid, uuid, uuid) to authenticated;
+
+-- Corporate Audit & Assurance plan register candidate tests.
+-- Included only by build_assurance_candidate.ps1 -Slice A6, after the
+-- version-guard tests and the plan register candidate DDL. Reuses plan6.
+create function pg_temp.plans(p_after uuid default null, p_branch text default 'tenant.branch') returns jsonb language sql as $$
+  select api.assurance_plans(pg_temp.aid('tenant'),pg_temp.aid('tenant.entity'),pg_temp.aid(p_branch),p_after) $$;
+reset role;
+select ok(has_function_privilege('authenticated','api.assurance_plans(uuid,uuid,uuid,uuid)','EXECUTE')
+  and not has_function_privilege('anon','api.assurance_plans(uuid,uuid,uuid,uuid)','EXECUTE'),
+  'plan register: authenticated-only');
+select pg_temp.actor('manager');set local role authenticated;
+insert into assurance_samples values('plans.manager',pg_temp.plans());
+reset role;select pg_temp.actor('owner');set local role authenticated;
+insert into assurance_samples values('plans.viewer',pg_temp.plans());
+reset role;
+select ok((select x->>'status'='approved' and (x->>'active_items')::integer=1 and (x->>'version')::integer>1
+  and x->>'approved_by'=pg_temp.aid('reviewer')::text
+  from assurance_samples s, jsonb_array_elements(s.body->'items') x
+  where s.label='plans.manager' and x->>'id'=pg_temp.aid('plan6')::text),
+  'plan register lists the plan with status, version, approver and active items only');
+select is((select body->'next_cursor' from assurance_samples where label='plans.manager'),'null'::jsonb,
+  'a short register has no next page');
+select is((select body from assurance_samples where label='plans.viewer'),
+  (select body from assurance_samples where label='plans.manager'),'evidence viewers read the same register');
+insert into assurance_samples select 'plans.after',to_jsonb(count(*)::integer)
+  from assurance.plans where tenant_id=pg_temp.aid('tenant') and id>pg_temp.aid('plan6');
+select pg_temp.actor('manager');set local role authenticated;
+insert into assurance_samples values('plans.paged',pg_temp.plans(pg_temp.aid('plan6')));
+reset role;
+select is((select jsonb_array_length(body->'items') from assurance_samples where label='plans.paged'),
+  (select body::text::integer from assurance_samples where label='plans.after'),
+  'the register pages after a cursor');
+reset role;select pg_temp.actor('entityviewer');set local role authenticated;
+select is(jsonb_array_length(pg_temp.plans(null,'tenant.branch2')->'items'),0,'a branch register shows only that branch');
+reset role;select pg_temp.actor('external');set local role authenticated;
+select throws_ok($$select pg_temp.plans()$$,'42501',null,'external reviewers cannot list plans');
+reset role;select pg_temp.actor('foreign');set local role authenticated;
+select throws_ok($$select pg_temp.plans()$$,'42501',null,'another tenant cannot list plans');
+reset role;
+
 reset role;
 select * from finish();
 rollback;

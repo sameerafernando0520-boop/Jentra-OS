@@ -312,6 +312,61 @@ void main() {
     },
   );
 
+  test(
+    'plan commands confirm their aggregate and keep creation at 0',
+    () async {
+      CommandEnvelope<Map<String, Object?>> plan(int version) =>
+          CommandEnvelope(
+            commandId: uid(90),
+            idempotencyKey: uid(91),
+            context: scope,
+            expectedEntityVersion: version,
+            payload: {
+              'action': 'create_plan',
+              'plan_id': uid(92),
+              'name': 'FY27 internal audit plan',
+              'period_start': '2026-04-01',
+              'period_end': '2027-03-31',
+            },
+          );
+      response = {
+        'aggregate_type': 'plan',
+        'aggregate_id': uid(92),
+        'version': 1,
+        'status': 'draft',
+        'action': 'create_plan',
+        'to_status': 'draft',
+      };
+      await gateway.planCommand(plan(0));
+      expect(requests.single.url.path, endsWith('/rpc/assurance_plan_command'));
+      requests.clear();
+      await expectLater(gateway.planCommand(plan(3)), throwsFormatException);
+      expect(requests, isEmpty);
+      response = {...response! as Map, 'version': 2};
+      await expectLater(
+        gateway.planCommand(plan(0)),
+        throwsA(
+          isA<DomainError>().having((e) => e.code, 'code', 'UNCERTAIN_RESULT'),
+        ),
+      );
+      status = 400;
+      response = {
+        'code': '42501',
+        'message': 'ASSURANCE_INDEPENDENT_APPROVAL_REQUIRED',
+      };
+      await expectLater(
+        gateway.planCommand(plan(0)),
+        throwsA(
+          isA<DomainError>().having(
+            (e) => e.code,
+            'code',
+            'SEGREGATION_OF_DUTIES_VIOLATION',
+          ),
+        ),
+      );
+    },
+  );
+
   test('an audit pack is read and hashed over its exact text', () async {
     final manifest = {
       'format': 'jentra.assurance.audit_pack.v1',

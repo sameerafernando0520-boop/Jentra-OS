@@ -223,6 +223,21 @@ class FakeAssuranceGateway implements AssuranceGateway {
   Future<List<Object?>> tests(TenantContext s, String engagementId) async =>
       testRows;
 
+  // Planning reads and commands are exercised in assurance_planning_test.dart.
+  @override
+  Future<AssuranceUniverse> universe(TenantContext s) =>
+      throw UnimplementedError();
+  @override
+  Future<AssurancePlanPage> plans(TenantContext s, {String? after}) =>
+      throw UnimplementedError();
+  @override
+  Future<AssurancePlanDetail> plan(TenantContext s, String planId) =>
+      throw UnimplementedError();
+  @override
+  Future<Map<String, Object?>> planCommand(
+    CommandEnvelope<Map<String, Object?>> c,
+  ) => throw UnimplementedError();
+
   @override
   Future<Map<String, Object?>> auditorCommand(
     CommandEnvelope<Map<String, Object?>> c,
