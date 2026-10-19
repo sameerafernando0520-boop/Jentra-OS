@@ -78,7 +78,12 @@ class FakeAssuranceGateway implements AssuranceGateway {
   String? failure, respondFailure, auditorFailure;
   String status = 'fieldwork';
   bool tamperPack = false;
-  List<Map<String, Object?>> requests = [], exceptions = [], reports = [];
+  List<Map<String, Object?>> requests = [],
+      exceptions = [],
+      reports = [],
+      findings = [],
+      testRows = [];
+  bool frozen = false;
   final auditorCommands = <CommandEnvelope<Map<String, Object?>>>[];
   bool responded = false;
   Completer<void>? overviewPause;
@@ -162,7 +167,7 @@ class FakeAssuranceGateway implements AssuranceGateway {
       'period_end': '2027-03-31',
       'scope_summary': 'Treasury and cash controls',
       'lead_auditor_id': lead,
-      'evidence_frozen_at': null,
+      'evidence_frozen_at': frozen ? '2026-10-15T00:00:00Z' : null,
       'evidence_cutoff_digest': null,
     },
     'controls': [
@@ -176,7 +181,7 @@ class FakeAssuranceGateway implements AssuranceGateway {
     ],
     'requests': requests,
     'exceptions': exceptions,
-    'findings': [],
+    'findings': findings,
     'reports': reports,
     'events': [
       {
@@ -213,6 +218,10 @@ class FakeAssuranceGateway implements AssuranceGateway {
       'to_status': 'remediating',
     };
   }
+
+  @override
+  Future<List<Object?>> tests(TenantContext s, String engagementId) async =>
+      testRows;
 
   @override
   Future<Map<String, Object?>> auditorCommand(
@@ -747,6 +756,92 @@ void main() {
     expect(c.message, contains('Do not use it'));
     await c.savePack();
     expect(files.path, isNull);
+  });
+  test(
+    'a test is designed over the test API with whole-number fields',
+    () async {
+      await openEngagement();
+      await c.startCommand('design_test', {
+        'control_id': uid(30),
+        'code': '',
+        'objective': '',
+        'population_size': '',
+        'sample_start': '1',
+      });
+      c.commandField('code', 'TRS-SAMPLE');
+      c.commandField('objective', 'Dual signature on sampled payments');
+      c.commandField('population_size', '400');
+      c.commandField('sample_start', '7');
+      await c.submitCommand();
+      expect(c.error, isNull);
+      final sent = gateway.auditorCommands.single;
+      expect(
+        AuditorAction.of(sent.payload['action']! as String).rpc,
+        AssuranceRpc.test,
+      );
+      expect(sent.payload['population_size'], 400);
+      expect(sent.payload['sample_start'], 7);
+      expect(sent.payload['procedure_id'], matches(RegExp(r'^[0-9a-f-]{36}$')));
+    },
+  );
+
+  test(
+    'a test run must cover the recorded sample before it is sealed',
+    () async {
+      gateway.frozen = true;
+      gateway.testRows = [
+        {
+          'id': uid(70),
+          'control_id': uid(30),
+          'code': 'TRS-SAMPLE',
+          'status': 'designed',
+          'population_size': 400,
+          'sample_size': 25,
+          'runs': <Object?>[],
+        },
+      ];
+      await openEngagement();
+      final t = c.view!.tests.single;
+      expect(c.view!.canExecuteTest(c.capabilities, t), isTrue);
+      await c.startCommand('execute_test', {
+        'procedure_id': t.id,
+        'items_tested': '24',
+        'exceptions_found': '0',
+        'conclusion': 'effective',
+        'workpaper_sha256': 'b' * 64,
+      });
+      await c.submitCommand();
+      expect(gateway.auditorCommands, isEmpty);
+      expect(c.commandPending, isFalse);
+      c.commandField('items_tested', '25');
+      await c.submitCommand();
+      expect(gateway.auditorCommands.single.payload['items_tested'], 25);
+    },
+  );
+
+  test('a risk decision is offered to someone other than the owner', () async {
+    gateway.findings = [
+      {
+        'id': uid(80),
+        'title': 'Payments released by one signatory',
+        'severity': 'high',
+        'status': 'risk_pending',
+        'owner_id': lead,
+      },
+    ];
+    c.dispose();
+    c = make(capabilities: {...auditor, 'assurance.engagement.close'});
+    await openEngagement();
+    final f = c.view!.findings.single;
+    expect(c.view!.canDecideRisk(c.capabilities, f, actor), isTrue);
+    await c.startCommand('decide_risk', {
+      'finding_id': f.id,
+      'decision': 'reject',
+      'reason': 'Too severe to accept',
+    });
+    await c.submitCommand();
+    expect(c.error, isNull);
+    expect(gateway.auditorCommands.single.payload['decision'], 'reject');
   });
   Future<void> render(WidgetTester t, bool dark) async {
     t.view.physicalSize = const Size(1024, 2400);

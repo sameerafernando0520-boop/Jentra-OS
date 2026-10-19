@@ -92,6 +92,18 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
     'record_exception': ['exception_id'],
     'issue_finding': ['finding_id'],
     'export_pack': ['export_id'],
+    'design_test': ['procedure_id'],
+    'execute_test': ['run_id'],
+    'issue_report': ['report_id'],
+    'retest': ['retest_id'],
+  };
+
+  /// Form fields entered as text but sent as whole numbers.
+  static const _wholeNumbers = {
+    'population_size',
+    'sample_start',
+    'items_tested',
+    'exceptions_found',
   };
 
   final TenantContext scope;
@@ -243,14 +255,20 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
   Future<void> open(String engagementId) => _run(() async {
     if (!online || !verified) return;
     final epoch = _epoch;
-    final d = await gateway.engagement(scope, engagementId);
-    final v = AuditorEngagementView.fromJson(d);
+    final (d, v) = await _load(engagementId);
     if (!_current(epoch)) return;
     detail = d;
     view = v;
     if (pack?.pack.engagementId != v.id) pack = null;
     section = 'detail';
   });
+
+  /// Engagement detail and its test procedures, validated together.
+  Future<(Map<String, Object?>, AuditorEngagementView)> _load(String id) async {
+    final d = await gateway.engagement(scope, id);
+    final tests = await gateway.tests(scope, id);
+    return (d, AuditorEngagementView.fromJson(d, tests: tests));
+  }
 
   void closeDetail() {
     detail = null;
@@ -430,6 +448,8 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
     for (final k in a.fields)
       if (commandForm.containsKey(k))
         k: switch (commandForm[k]) {
+          final String s when _wholeNumbers.contains(k) =>
+            int.tryParse(s.trim()) ?? s.trim(),
           final String s => s.trim(),
           final other => other,
         },
@@ -449,7 +469,15 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
     if (request == null) {
       final version = commandForm['engagement_version'] as int;
       final payload = _commandPayload(a);
-      a.validate(payload, now: _clock(), tenantId: scope.tenantId);
+      a.validate(
+        payload,
+        now: _clock(),
+        tenantId: scope.tenantId,
+        sampleSize: view?.tests
+            .where((x) => x.id == payload['procedure_id'])
+            .firstOrNull
+            ?.sampleSize,
+      );
       await drafts.save(
         scope,
         commandSlot,
@@ -495,11 +523,7 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
           ? 'Audit pack exported and verified against its recorded digest.'
           : 'The downloaded audit pack does not match its recorded digest. Do not use it.';
     }
-    final d = await gateway.engagement(
-      scope,
-      payload['engagement_id']! as String,
-    );
-    final v = AuditorEngagementView.fromJson(d);
+    final (d, v) = await _load(payload['engagement_id']! as String);
     if (!_current(epoch)) return;
     detail = d;
     view = v;

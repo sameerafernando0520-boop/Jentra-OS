@@ -18,6 +18,9 @@ abstract interface class AssuranceGateway {
 
   /// Raw detail validated by [EngagementDetail]; titles are read from it.
   Future<Map<String, Object?>> engagement(TenantContext scope, String id);
+
+  /// Test procedures and runs for an engagement (`api.assurance_tests`).
+  Future<List<Object?>> tests(TenantContext scope, String engagementId);
   Future<Map<String, Object?>> respond(
     CommandEnvelope<Map<String, Object?>> command,
   );
@@ -186,6 +189,17 @@ final class SupabaseAssuranceGateway implements AssuranceGateway {
       throw const FormatException('Engagement identity does not match.');
     }
     return r;
+  }
+
+  @override
+  Future<List<Object?>> tests(TenantContext s, String engagementId) async {
+    assuranceId(engagementId);
+    final r = await _call('assurance_tests', s, {
+      'p_engagement_id': engagementId,
+    });
+    return r is List
+        ? r
+        : throw const FormatException('Invalid tests response.');
   }
 
   @override
