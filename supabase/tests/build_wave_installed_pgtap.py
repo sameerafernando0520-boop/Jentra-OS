@@ -120,6 +120,14 @@ def wave5_remaining():
     end = adapters.index('select is((api.wave5_pipeline_history(', start)
     parts[2] = (adapters[:start] + "insert into core.role_permissions values(pg_temp.fid('t'),"
                 "pg_temp.fid('owner.role'),'finance.reports.export') on conflict do nothing;\n" + adapters[end:])
+    # core.outbox_events.created_at defaults to now(), the subscription's to
+    # statement_timestamp(); in one execute_sql message they were equal. Under
+    # psql the synthetic subscription looks newer than every event in this
+    # transaction and the worker claims nothing, so it gets its one-message time.
+    registered = "'{\"url\":\"https://events.jentra.test/hook\",\"keyRef\":\"synthetic/key1\"}') result;\n"
+    assert parts[2].count(registered) == 1
+    parts[2] = parts[2].replace(registered, registered + "update intelligence_control.integration_subscriptions "
+                                "set created_at=now() where id=pg_temp.fid('subscription');\n")
     names[1] += ' (without its v2 cash/export block, superseded by v3)'
     return '\n'.join(parts) + '\n' + FINISH + '\nrollback;\n', names
 

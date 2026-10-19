@@ -161,6 +161,7 @@ insert into core.role_permissions values(pg_temp.fid('t'),pg_temp.fid('owner.rol
 insert into intelligence_control.integration_hosts values('events.jentra.test');
 create temporary table w5_registered as select api.wave5_integration_manage(pg_temp.fid('t'),pg_temp.fid('e'),pg_temp.fid('b'),
  'register',pg_temp.fid('subscription'),0,'{"url":"https://events.jentra.test/hook","keyRef":"synthetic/key1"}') result;
+update intelligence_control.integration_subscriptions set created_at=now() where id=pg_temp.fid('subscription');
 select is((select result->>'version' from w5_registered),'1','Scoped MFA integration registration persists revision');
 select is(api.wave5_integration_manage(pg_temp.fid('t'),pg_temp.fid('e'),pg_temp.fid('b'),
  'register',pg_temp.fid('subscription'),0,'{"url":"https://events.jentra.test/hook","keyRef":"synthetic/key1"}'),
