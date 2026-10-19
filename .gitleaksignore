@@ -1,0 +1,32 @@
+# Individual gitleaks findings reviewed on 2026-10-19 and accepted as non-secrets.
+# Format: commit:file:rule:line (gitleaks fingerprint). Values were classified
+# by shape only and never printed.
+
+# Supabase anon (public client) JWT, role=anon, in a historical client config.
+e63516fbad8129567b1b90e8a18ebdc46ee3e692:lib/core/config/env_config.dart:jwt:21
+
+# RFC 6238 published TOTP test secret (decodes to the RFC test key) in unit tests.
+1c3603f2ef839ef000252f25e2c286ee14ada832:docs/verification/wave5/task3-completion-20261013/load-baseline-115-before/tools/wave5/supabase_provider.test.mjs:generic-api-key:154
+09dd48122af26c44f33a5353b34b0194bd061466:tools/wave5/supabase_provider.test.mjs:generic-api-key:154
+
+# Short synthetic idempotency keys in platform gateway tests.
+15c99298de657bd8cc49d2524dcd04717f69d1ac:packages/jentra_platform/test/wave3_crm_gateway_test.dart:generic-api-key:58
+15c99298de657bd8cc49d2524dcd04717f69d1ac:packages/jentra_platform/test/wave3_lead_to_cash_gateway_test.dart:generic-api-key:37
+15c99298de657bd8cc49d2524dcd04717f69d1ac:packages/jentra_platform/test/wave3_lead_to_cash_gateway_test.dart:generic-api-key:70
+
+# Supabase publishable (client) key set in pgTAP/SQL fixtures and evidence.
+5a5802b0466bc916c05c7b5290e83662ab5c3132:docs/verification/wave5/complete-app-candidate-20261009.sql:generic-api-key:23904
+5a5802b0466bc916c05c7b5290e83662ab5c3132:supabase/tests/wave5_supabase_setup_test.sql:generic-api-key:10
+
+# Auth user IDs (UUIDs) and digests next to key-like names in evidence, tools
+# and test-login notes (the notes state the password is not recorded).
+1b03ad09af331262534f535762148b1beeaf8fa4:dist/Jentra OS Windows Test 20261009 r13/Desktop test login.md:generic-api-key:5
+41b2578da26247fc43af090cb6ae8499c3e67b16:dist/Jentra OS Windows Test 20261010 r3/Desktop test login.md:generic-api-key:5
+09dd48122af26c44f33a5353b34b0194bd061466:dist/Jentra OS Windows Test 20261010 r5/Desktop test login.md:generic-api-key:5
+09dd48122af26c44f33a5353b34b0194bd061466:docs/verification/wave5/approved-installation-20261013-r5-steps/02-result.json:generic-api-key:236
+41b2578da26247fc43af090cb6ae8499c3e67b16:docs/verification/wave5/complete-live-preflight-20261010-r2.sql:generic-api-key:522
+1b03ad09af331262534f535762148b1beeaf8fa4:docs/verification/wave5/continuation-live-refresh-20261010.json:generic-api-key:3
+1b03ad09af331262534f535762148b1beeaf8fa4:docs/verification/wave5/desktop-test-login-20261009.md:generic-api-key:5
+09dd48122af26c44f33a5353b34b0194bd061466:docs/verification/wave5/installed-preservation-fingerprints-20261012-r5.sql:generic-api-key:13
+09dd48122af26c44f33a5353b34b0194bd061466:tools/wave5/bootstrap_management_20261013_r5.mjs:generic-api-key:79
+09dd48122af26c44f33a5353b34b0194bd061466:tools/wave5/prepare_installed_verification_20261012_r5.mjs:generic-api-key:405

@@ -8,7 +8,7 @@ $taskCut=$taskQuery.LastIndexOf('do $$declare failed text;begin')
 if($taskCut -lt 0){throw 'Payroll candidate diagnostic boundary changed.'}
 $taskBase=$taskQuery.Substring(0,$taskCut)
 $taskCandidate=Get-Content -LiteralPath (Join-Path $taskRoot 'migrations/20261001110000_wave4_payroll_corrections.sql') -Raw
-$taskTests=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_payroll_corrections_test.sql') -Raw
+$taskTests=Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_payroll_corrections_test.sql') -Raw
 $taskTests=[regex]::Replace($taskTests,'(?m)^select (is|ok|throws_ok)\(','insert into payroll_assertions select $1(')
 $taskDiagnostic=@'
 do $$declare failed text;begin

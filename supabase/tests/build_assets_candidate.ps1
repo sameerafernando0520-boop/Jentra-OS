@@ -6,8 +6,8 @@ $taskMigrations=@()
 if(-not $Installed){
  $taskMigrations+=Get-Content -LiteralPath (Join-Path $taskRoot 'migrations/20260930071000_wave4_fixed_assets.sql') -Raw
 }
-$taskFixture=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_synthetic_fixture.sql') -Raw
-$taskTests=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_assets_test.sql') -Raw
+$taskFixture=Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_synthetic_fixture.sql') -Raw
+$taskTests=Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_assets_test.sql') -Raw
 $taskTests=[regex]::Replace($taskTests,'(?m)^select (is|ok|throws_ok)\(','insert into asset_assertions select $1(')
 $taskSamples=$(if($ClientSamples){'select jsonb_object_agg(label,body order by label) as asset_client_samples from asset_client_samples;'}else{''})
 $taskDiagnostic=@'

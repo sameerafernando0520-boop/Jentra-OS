@@ -2,12 +2,12 @@
 param()
 $ErrorActionPreference='Stop'
 $taskRoot=Split-Path $PSScriptRoot -Parent
-$fixture=Get-Content (Join-Path $PSScriptRoot 'wave4_synthetic_fixture.sql') -Raw
+$fixture=Get-Content (Join-Path $PSScriptRoot '../wave_tests/wave4_synthetic_fixture.sql') -Raw
 $fixture=$fixture.Replace("(now() at time zone 'Asia/Colombo')::date","((now()-interval '1 day') at time zone 'Asia/Colombo')::date")
 $ddl=@('20260926160000_wave4_calendar_resolution.sql','20260926161000_wave4_organization.sql','20260928082234_wave4_attendance_intervals.sql','20261001090000_wave4_service.sql','20260930071000_wave4_fixed_assets.sql','20261005090000_service_asset_equipment.sql') | ForEach-Object {Get-Content (Join-Path $taskRoot "migrations/$_") -Raw}
 $tests=@()
 foreach($pair in @(@('wave4_service_test.sql','service_assertions'),@('wave4_assets_test.sql','asset_assertions'),@('wave4_asset_equipment_test.sql','link_assertions'))){
- $body=Get-Content (Join-Path $PSScriptRoot $pair[0]) -Raw
+ $body=Get-Content (Join-Path $PSScriptRoot "../wave_tests/$($pair[0])") -Raw
  if($pair[1]-ne 'service_assertions'){$body=$body.Replace('select no_plan();','')}
  $body=[regex]::Replace($body,'(?m)^select (is|ok|throws_ok|lives_ok)\(',"insert into $($pair[1]) select `$1(")
  $tests+=$body

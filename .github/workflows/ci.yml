@@ -58,6 +58,27 @@ jobs:
         working-directory: packages/jentra_platform
         run: flutter test --no-pub -r expanded
 
+  desktop-tests:
+    # The approved goldens are rendered on Windows; Linux font rasterisation
+    # differs, so the desktop suite runs where the goldens were made.
+    name: Desktop tests and goldens (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          pub-cache: true
+
+      - name: Resolve locked dependencies and advisories
+        run: flutter pub get --enforce-lockfile
+
       - name: Test desktop shell and goldens
         working-directory: apps/jentra_desktop
         run: flutter test --no-pub -r expanded
@@ -87,7 +108,8 @@ jobs:
   secret-scan:
     name: Secret scan
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Full-history scan (large build artifacts in early commits) exceeds 10 minutes.
+    timeout-minutes: 30
     steps:
       - name: Check out complete history
         uses: actions/checkout@v6
@@ -115,6 +137,7 @@ jobs:
     name: Windows release build
     needs:
       - flutter-quality
+      - desktop-tests
       - database
       - secret-scan
     runs-on: windows-latest

@@ -5,7 +5,7 @@ $taskBase=& (Join-Path $PSScriptRoot 'build_project_payroll_impacts_candidate.ps
 $taskCut=$taskBase.LastIndexOf('do $$declare failed text;begin')
 if($taskCut -lt 0){throw 'Project impact diagnostic boundary changed.'}
 $taskBase=$taskBase.Substring(0,$taskCut)
-$taskFixture=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_project_billed_payroll_impacts_test.sql') -Raw
+$taskFixture=Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_project_billed_payroll_impacts_test.sql') -Raw
 $taskMarker='-- BILLING_TEST_BODY'
 $taskSplit=$taskFixture.IndexOf($taskMarker)
 if($taskSplit -lt 0){throw 'Billed fixture setup boundary changed.'}

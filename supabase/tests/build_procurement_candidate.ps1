@@ -19,17 +19,17 @@ $migrationNames = @(
 $migrationBodies = foreach ($migrationName in $migrationNames) {
   Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot "../migrations/$migrationName")
 }
-$fixture = Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot 'wave3_procurement_test.sql')
+$fixture = Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave3_procurement_test.sql')
 $beginOffset = $fixture.IndexOf('begin;')
 if ($beginOffset -lt 0) { throw 'Missing fixture transaction boundary.' }
 $fixture = $fixture.Remove($beginOffset, 6)
 $extraTests = [string]::Join("`n", @(
-  (Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot 'wave3_purchase_orders_test.sql'))
-  (Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot 'wave3_product_units_test.sql'))
-  (Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot 'wave3_goods_receipts_test.sql'))
-  (Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot 'wave3_supplier_bills_test.sql'))
-  (Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot 'wave3_supplier_settlement_test.sql'))
-  (Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot 'wave3_purchase_returns_test.sql'))
+  (Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave3_purchase_orders_test.sql'))
+  (Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave3_product_units_test.sql'))
+  (Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave3_goods_receipts_test.sql'))
+  (Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave3_supplier_bills_test.sql'))
+  (Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave3_supplier_settlement_test.sql'))
+  (Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave3_purchase_returns_test.sql'))
 ))
 $marker = "select pg_temp.actor('outsider');"
 $insertOffset = $fixture.IndexOf($marker)

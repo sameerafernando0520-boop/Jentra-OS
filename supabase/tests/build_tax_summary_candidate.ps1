@@ -11,16 +11,16 @@ $query=$query.Insert($at,(Get-Content -Raw (Join-Path $PSScriptRoot '../migratio
  (Get-Content -Raw (Join-Path $PSScriptRoot '../migrations/20260926006000_wave3_tax_control_movements.sql'))+"`n")
 if($Suite -eq 'procurement'){
  $at=$query.LastIndexOf('set constraints all immediate;')
- $query=$query.Insert($at,(Get-Content -Raw (Join-Path $PSScriptRoot 'wave3_tax_summary_test.sql'))+"`n")
+ $query=$query.Insert($at,(Get-Content -Raw (Join-Path $PSScriptRoot '../wave_tests/wave3_tax_summary_test.sql'))+"`n")
  $at=$query.LastIndexOf('set constraints all immediate;')
- $query=$query.Insert($at,(Get-Content -Raw (Join-Path $PSScriptRoot 'wave3_tax_controls_test.sql'))+"`n")
+ $query=$query.Insert($at,(Get-Content -Raw (Join-Path $PSScriptRoot '../wave_tests/wave3_tax_controls_test.sql'))+"`n")
  $at=$query.LastIndexOf('set constraints all immediate;')
- $query=$query.Insert($at,(Get-Content -Raw (Join-Path $PSScriptRoot 'wave3_journal_tax_test.sql'))+"`n")
+ $query=$query.Insert($at,(Get-Content -Raw (Join-Path $PSScriptRoot '../wave_tests/wave3_journal_tax_test.sql'))+"`n")
  $at=$query.LastIndexOf('set constraints all immediate;')
- $query=$query.Insert($at,(Get-Content -Raw (Join-Path $PSScriptRoot 'wave3_tax_movements_test.sql'))+"`n")
+ $query=$query.Insert($at,(Get-Content -Raw (Join-Path $PSScriptRoot '../wave_tests/wave3_tax_movements_test.sql'))+"`n")
 }elseif($Suite -eq 'receivables'){
  $at=$query.LastIndexOf('set constraints all immediate;')
- $query=$query.Insert($at,(Get-Content -Raw (Join-Path $PSScriptRoot 'wave3_tax_sales_test.sql'))+"`n")
+ $query=$query.Insert($at,(Get-Content -Raw (Join-Path $PSScriptRoot '../wave_tests/wave3_tax_sales_test.sql'))+"`n")
 }
 $query=$query.Replace('select * from finish();','select * from finish(true);')
 if($query -match '(?im)^\s*commit\s*;' -or $query.TrimEnd() -notmatch 'rollback;$'){throw 'Rollback required'}

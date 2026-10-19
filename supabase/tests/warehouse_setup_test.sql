@@ -65,5 +65,12 @@ select pg_temp.wcheck((select pg_temp.wcall(jsonb_build_object('id',body#>>'{ent
 select pg_temp.wcheck((select count(*)=2 from core.command_receipts where tenant_id=pg_temp.wid('tenant') and command_name='upsert_warehouse'),'only accepted commands have receipts');
 select pg_temp.wactor('viewer');
 select pg_temp.werror($$select pg_temp.wcall(jsonb_build_object('id',(select body#>>'{entity,id}' from warehouse_response)),2)$$,'42501','viewer cannot update');
+-- pg_prove needs TAP: each check above raises on failure, so every recorded name passed.
+reset role;
+create extension if not exists pgtap with schema extensions;
+set local search_path=extensions,public,pg_catalog;
+select no_plan();
+select pass(name) from warehouse_checks;
+select * from finish();
 select jsonb_build_object('passed',count(*),'checks',jsonb_agg(name),'fixtures','rollback_only') as result from warehouse_checks;
 rollback;

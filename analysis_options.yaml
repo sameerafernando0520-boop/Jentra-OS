@@ -1,0 +1,7 @@
+# Workspace root. Packages and the desktop app keep their own options; this
+# file only governs files outside them.
+analyzer:
+  exclude:
+    # Preserved verification evidence (probes and "before" snapshots of
+    # superseded source). They are records, not buildable code.
+    - docs/**

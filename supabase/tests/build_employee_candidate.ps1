@@ -5,7 +5,7 @@ $root = Split-Path $PSScriptRoot -Parent
 $migration = if ($Installed) { '' } else {
   Get-Content -LiteralPath (Join-Path $root 'migrations/20260925181927_wave4_employee_foundation.sql') -Raw
 }
-$tests = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_employee_test.sql') -Raw
+$tests = Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_employee_test.sql') -Raw
 $tests = [regex]::Replace($tests, '(?m)^select (is|ok|throws_ok)\(', 'insert into employee_assertions select $1(')
 $diagnostic = @'
 do $$

@@ -15,12 +15,12 @@ MIGRATIONS = [
     'supabase/migrations/20261006170000_wave5_synthetic_subscriptions.sql',
 ]
 FIXTURES = [
-    'supabase/tests/wave5_process_metrics_test.sql',
-    'supabase/tests/wave5_pipeline_forecasts_test.sql',
-    'supabase/tests/wave5_trusted_metering_test.sql',
-    'supabase/tests/wave5_operator_isolation_test.sql',
-    'supabase/tests/wave5_human_proposals_test.sql',
-    'supabase/tests/wave5_synthetic_subscriptions_test.sql',
+    'supabase/wave_tests/wave5_process_metrics_test.sql',
+    'supabase/wave_tests/wave5_pipeline_forecasts_test.sql',
+    'supabase/wave_tests/wave5_trusted_metering_test.sql',
+    'supabase/wave_tests/wave5_operator_isolation_test.sql',
+    'supabase/wave_tests/wave5_human_proposals_test.sql',
+    'supabase/wave_tests/wave5_synthetic_subscriptions_test.sql',
 ]
 
 

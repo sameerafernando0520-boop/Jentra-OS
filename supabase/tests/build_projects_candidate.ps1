@@ -9,8 +9,8 @@ if(-not $InstalledPrerequisites -and -not $Installed){
  $taskMigrations+=Get-Content -LiteralPath (Join-Path $taskRoot 'migrations/20260928082234_wave4_attendance_intervals.sql') -Raw
 }
 if(-not $Installed){$taskMigrations+=Get-Content -LiteralPath (Join-Path $taskRoot 'migrations/20261001080000_wave4_projects_time.sql') -Raw}
-$taskFixture=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_synthetic_fixture.sql') -Raw
-$taskTests=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_projects_test.sql') -Raw
+$taskFixture=Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_synthetic_fixture.sql') -Raw
+$taskTests=Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_projects_test.sql') -Raw
 $taskTests=[regex]::Replace($taskTests,'(?m)^select (is|ok|throws_ok)\(','insert into project_assertions select $1(')
 $taskDiagnostic=@'
 do $$declare failed text;begin
