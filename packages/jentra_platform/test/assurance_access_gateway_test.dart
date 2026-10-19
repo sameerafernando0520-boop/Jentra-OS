@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:jentra_domain/jentra_assurance.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_assurance_platform.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
