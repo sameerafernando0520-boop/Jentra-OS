@@ -1,0 +1,43 @@
+# Gitleaks configuration for Jentra OS (used by the CI "Secret scan" job).
+#
+# Keeps every default rule. The allowlists below cover only values whose shape
+# shows they are not credentials, and only in evidence and fixture paths:
+# verification records store SHA-256/SHA-1/MD5 digests (file manifests, APK
+# signer fingerprints) and UUIDs (idempotency keys, Auth IDs, Vault secret IDs)
+# next to key-like names, which the generic rule reports as API keys.
+# Individual findings that fit neither shape are listed by fingerprint in
+# .gitleaksignore with the reason.
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Content digests and UUIDs in verification evidence"
+targetRules = ["generic-api-key"]
+condition = "AND"
+regexTarget = "secret"
+paths = [
+  '''^docs/verification/''',
+  '''^\.agent-harness/[^/]+/reports/''',
+  '''^tools/wave5/''',
+  '''^dist/[^/]+/Desktop test login\.md$''',
+]
+regexes = [
+  '''^[0-9a-f]{64}$''',
+  '''^[0-9a-f]{40}$''',
+  '''^[0-9a-f]{32}$''',
+  '''^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$''',
+]
+
+[[allowlists]]
+description = "Supabase publishable (client-side) keys in evidence and pgTAP fixtures"
+targetRules = ["generic-api-key"]
+condition = "AND"
+regexTarget = "secret"
+paths = [
+  '''^docs/verification/''',
+  '''^supabase/tests/''',
+]
+regexes = [
+  '''^sb_publishable_[A-Za-z0-9_-]+$''',
+]
