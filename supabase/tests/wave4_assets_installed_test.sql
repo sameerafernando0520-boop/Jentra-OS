@@ -4,7 +4,7 @@
 -- TAP rows go to output instead of: asset_assertions.
 -- Fixture period state changes routed through the governed event path: 2.
 begin;
-create function pg_temp.fixture_period_state(p_id uuid,p_target text) returns void
+create function pg_temp.ci_fixture_period_state(p_id uuid,p_target text) returns void
 language plpgsql as $fixture_period$
 declare p finance.fiscal_periods%rowtype;next_state text;claims text;
 begin
@@ -282,11 +282,11 @@ update core.role_assignments set branch_id=null where role_id=pg_temp.wid('creat
 select pg_temp.acmd(pg_temp.areverse(),25,'transfer-reverse','branch2');
 select is(pg_temp.astate()->>'branch_id',pg_temp.wid('branch')::text,'original transfer reversal restores branch and location');
 select is(pg_temp.astate()->>'location_id',pg_temp.wid('asset.location.branch')::text,'original location restored exactly');
-select pg_temp.fixture_period_state(id,'soft_locked') from finance.fiscal_periods where id=pg_temp.wid('asset.period');
+select pg_temp.ci_fixture_period_state(id,'soft_locked') from finance.fiscal_periods where id=pg_temp.wid('asset.period');
 select throws_ok($q$select pg_temp.acmd(pg_temp.adep(),26,'closed-dep')$q$,'55000','PERIOD_CLOSED','closed period denies exact scheduled posting');
 select throws_ok($q$select pg_temp.acmd(pg_temp.areverse(),26,'closed-reverse')$q$,'55000','PERIOD_CLOSED','closed original period denies reversal');
 select is(pg_temp.astate()->>'accumulated','566.670000','closed-period failures preserve all balances');
-select pg_temp.fixture_period_state(id,'open') from finance.fiscal_periods where id=pg_temp.wid('asset.period');
+select pg_temp.ci_fixture_period_state(id,'open') from finance.fiscal_periods where id=pg_temp.wid('asset.period');
 select pg_temp.acmd(pg_temp.adep(),26,'a-dep2');
 select pg_temp.acmd(pg_temp.adep(),27,'a-dep3');
 select is(pg_temp.astate()->>'carrying','100.000000','original full life preserves exact residual after correction chain');

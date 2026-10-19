@@ -1036,7 +1036,7 @@ select api.reserve_sales_order_stock(
   '2026-09-05T09:50:00Z',
   (select jsonb_build_object(
     'sales_order_id', response#>>'{entity,id}',
-    'expires_at', '2026-09-12T12:00:00Z',
+    'expires_at', '2099-09-12T12:00:00Z',
     'lines', jsonb_build_array(jsonb_build_object(
       'sales_order_line_id', response#>>'{entity,lines,0,id}',
       'requested_base_quantity', '2.000000'
@@ -1073,7 +1073,7 @@ select is(
     '2026-09-05T09:50:00Z',
     (select jsonb_build_object(
       'sales_order_id', response#>>'{entity,id}',
-      'expires_at', '2026-09-12T12:00:00Z',
+      'expires_at', '2099-09-12T12:00:00Z',
       'lines', jsonb_build_array(jsonb_build_object(
         'sales_order_line_id', response#>>'{entity,lines,0,id}',
         'requested_base_quantity', '2.000000'
@@ -1101,7 +1101,7 @@ select api.reserve_sales_order_stock(
   '2026-09-05T09:51:00Z',
   (select jsonb_build_object(
     'sales_order_id', response#>>'{entity,id}',
-    'expires_at', '2026-09-12T12:00:00Z',
+    'expires_at', '2099-09-12T12:00:00Z',
     'lines', jsonb_build_array(jsonb_build_object(
       'sales_order_line_id', response#>>'{entity,lines,0,id}',
       'requested_base_quantity', '0.500000'

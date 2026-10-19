@@ -251,7 +251,7 @@ def tap_stream(query):
 # installed, the same statement raises PERIOD_TRANSITION_COMMAND_REQUIRED. The
 # fixture step becomes the governed path wave3_period_test.sql itself uses (an
 # event, then the update), walking open -> soft_locked -> hard_locked -> open.
-PERIOD_HELPER = """create function pg_temp.fixture_period_state(p_id uuid,p_target text) returns void
+PERIOD_HELPER = """create function pg_temp.ci_fixture_period_state(p_id uuid,p_target text) returns void
 language plpgsql as $fixture_period$
 declare p finance.fiscal_periods%rowtype;next_state text;claims text;
 begin
@@ -288,7 +288,7 @@ def govern_period_updates(query):
         if previous.startswith('insert into finance.period_events'):
             continue  # already the governed path
         out.append(query[last:m.start()])
-        out.append(f"select pg_temp.fixture_period_state(id,'{m.group(1)}') from finance.fiscal_periods where {m.group(2).strip()};")
+        out.append(f"select pg_temp.ci_fixture_period_state(id,'{m.group(1)}') from finance.fiscal_periods where {m.group(2).strip()};")
         last = m.end()
         count += 1
     if not count:
@@ -303,20 +303,12 @@ def pin_statement_time(query):
     """The compositions were run as one execute_sql message, where every
     statement shares one statement_timestamp() and it equals now(). psql sends
     each statement on its own, so a basis hashed in one statement no longer
-    matches the same basis recomputed in the next (SOURCE_BASIS_CHANGED).
-    Top-level fixture statements get now() back; function bodies and the
-    installed schema are untouched."""
-    mask = quoted_mask(query)
-    out, last, count = [], 0, 0
-    for m in re.finditer(r'\bstatement_timestamp\(\)', query):
-        if mask[m.start()]:
-            continue
-        out.append(query[last:m.start()])
-        out.append('now()')
-        last = m.end()
-        count += 1
-    out.append(query[last:])
-    return ''.join(out), count
+    matches the same basis recomputed in the next (SOURCE_BASIS_CHANGED), and a
+    retried command no longer matches its first attempt (IDEMPOTENCY_MISMATCH).
+    Every statement here is fixture code (installed migrations are already
+    removed), so its statement_timestamp() reads now() again; the installed
+    schema's own functions are untouched."""
+    return re.subn(r'\bstatement_timestamp\(\)', 'now()', query)
 
 
 def finalise(stem, query, source, notes):
@@ -348,7 +340,7 @@ def build_all(workdir):
         if periods:
             notes.append(f'Fixture period state changes routed through the governed event path: {periods}.')
         if pinned:
-            notes.append(f'Top-level statement_timestamp() read as now(), as in one execute_sql message: {pinned}.')
+            notes.append(f'Fixture statement_timestamp() read as now(), as in one execute_sql message: {pinned}.')
         files[stem] = finalise(stem, query, source, notes)
     for stem, compose, source in WAVE5:
         query, names = compose()
@@ -359,7 +351,7 @@ def build_all(workdir):
         if periods:
             notes.append(f'Fixture period state changes routed through the governed event path: {periods}.')
         if pinned:
-            notes.append(f'Top-level statement_timestamp() read as now(), as in one execute_sql message: {pinned}.')
+            notes.append(f'Fixture statement_timestamp() read as now(), as in one execute_sql message: {pinned}.')
         files[stem] = finalise(stem, query, source, notes)
     return files
 

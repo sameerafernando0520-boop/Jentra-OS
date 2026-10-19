@@ -1,7 +1,7 @@
 begin;
 -- 20260924185321_wave3_period_governance forbids a direct period state change;
 -- fixture steps take the governed event path wave3_period_test.sql uses.
-create function pg_temp.fixture_period_state(p_id uuid,p_target text) returns void
+create function pg_temp.ci_fixture_period_state(p_id uuid,p_target text) returns void
 language plpgsql as $fixture_period$
 declare p finance.fiscal_periods%rowtype;next_state text;claims text;
 begin
@@ -160,9 +160,9 @@ select pg_temp.actor('approver');
 insert into opening_test_results select throws_ok($$select pg_temp.transition('opening','{"decision":"rejected"}')$$,'22023','REASON_REQUIRED','rejection requires note');
 insert into opening_test_results select lives_ok($$select pg_temp.transition('opening','{"decision":"approved"}')$$,'independent approver approves');
 select pg_temp.actor('actor');
-select pg_temp.fixture_period_state(id,'soft_locked') from finance.fiscal_periods where id=pg_temp.fid('period');
+select pg_temp.ci_fixture_period_state(id,'soft_locked') from finance.fiscal_periods where id=pg_temp.fid('period');
 insert into opening_test_results select throws_ok($$select pg_temp.post('opening')$$,'55000','PERIOD_CLOSED','closed period blocks posting');
-select pg_temp.fixture_period_state(id,'open') from finance.fiscal_periods where id=pg_temp.fid('period');
+select pg_temp.ci_fixture_period_state(id,'open') from finance.fiscal_periods where id=pg_temp.fid('period');
 update inventory.products set inventory_account_id=pg_temp.fid('inventory2') where id=pg_temp.fid('stock');
 insert into opening_test_results select throws_ok($$select pg_temp.post('opening')$$,'55000','OPENING_MASTER_CHANGED','changed mapping needs renewed approval');
 update inventory.products set inventory_account_id=pg_temp.fid('inventory') where id=pg_temp.fid('stock');

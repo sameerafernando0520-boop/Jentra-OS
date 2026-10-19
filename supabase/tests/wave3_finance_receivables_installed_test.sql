@@ -3,7 +3,7 @@
 -- Installed migrations removed from the composition: 34.
 -- Fixture period state changes routed through the governed event path: 2.
 begin;
-create function pg_temp.fixture_period_state(p_id uuid,p_target text) returns void
+create function pg_temp.ci_fixture_period_state(p_id uuid,p_target text) returns void
 language plpgsql as $fixture_period$
 declare p finance.fiscal_periods%rowtype;next_state text;claims text;
 begin
@@ -283,9 +283,9 @@ select is((select count(*) from finance.journal_entries where source_id=pg_temp.
 select is((select count(*) from inventory.stock_movements where source_id=pg_temp.fid('late.failure')),0::bigint,'late failure leaves no movement');
 select throws_ok($$select pg_temp.call('post_delivery',jsonb_build_object('document_id',pg_temp.fid('late.failure')),0)$$,
  '40001',null,'stale version is rejected');
-select pg_temp.fixture_period_state(id,'soft_locked') from finance.fiscal_periods where id=pg_temp.fid('period');
+select pg_temp.ci_fixture_period_state(id,'soft_locked') from finance.fiscal_periods where id=pg_temp.fid('period');
 select throws_ok($$select pg_temp.post('delivery','late.failure')$$,'55000',null,'closed period blocks delivery posting');
-select pg_temp.fixture_period_state(id,'open') from finance.fiscal_periods where id=pg_temp.fid('period');
+select pg_temp.ci_fixture_period_state(id,'open') from finance.fiscal_periods where id=pg_temp.fid('period');
 select throws_ok($$select pg_temp.call('upsert_sales_return',pg_temp.header('missing.disposition')||jsonb_build_object('reason','test',
  'lines',jsonb_build_array(jsonb_build_object('line_id',gen_random_uuid(),'sales_invoice_line_id',pg_temp.fid('invoice1.stock'),'base_quantity','1'))))$$,
  '22023','RETURN_REASON_DISPOSITION_REQUIRED','missing return disposition fails closed');

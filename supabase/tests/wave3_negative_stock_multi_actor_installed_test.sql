@@ -3,9 +3,9 @@
 -- Installed migrations removed from the composition: 46.
 -- TAP rows go to output instead of: procurement_test_results.
 -- Fixture period state changes routed through the governed event path: 1.
--- Top-level statement_timestamp() read as now(), as in one execute_sql message: 5.
+-- Fixture statement_timestamp() read as now(), as in one execute_sql message: 12.
 begin;
-create function pg_temp.fixture_period_state(p_id uuid,p_target text) returns void
+create function pg_temp.ci_fixture_period_state(p_id uuid,p_target text) returns void
 language plpgsql as $fixture_period$
 declare p finance.fiscal_periods%rowtype;next_state text;claims text;
 begin
@@ -1501,7 +1501,7 @@ insert into finance.period_events(id,tenant_id,legal_entity_id,period_id,action,
 values(pg_temp.fid('period.fixture.hard'),pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.period_id(),
  'hard_lock','soft_locked','hard_locked',(select version from finance.fiscal_periods where id=pg_temp.period_id()),
  'Synthetic hard state for reopen test','[]',pg_temp.fid('creator'),txid_current());
-select pg_temp.fixture_period_state(id,'hard_locked') from finance.fiscal_periods where id=pg_temp.period_id();
+select pg_temp.ci_fixture_period_state(id,'hard_locked') from finance.fiscal_periods where id=pg_temp.period_id();
 select throws_ok($$select pg_temp.bank_journal('period.hard.post',1)$$,
  '55000','PERIOD_CLOSED','hard lock rejects ordinary posting');
 select throws_ok($$select pg_temp.call('period_governance_command',
@@ -3264,8 +3264,8 @@ select throws_ok($$select api.wave3_document_evidence(pg_temp.fid('tenant'),
  '22023',null,'invalid source line cursor fails closed');
 create function pg_temp.generate_operational(kind text,id text,more jsonb default '{}') returns jsonb language sql as $$
  select api.generate_operational_report(pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),
- pg_temp.fid(id||'.command'),pg_temp.fid(id||'.key'),statement_timestamp(),
- jsonb_build_object('id',pg_temp.fid(id),'kind',kind,'as_of',(statement_timestamp() at time zone 'UTC')::date)||more,0)$$;
+ pg_temp.fid(id||'.command'),pg_temp.fid(id||'.key'),now(),
+ jsonb_build_object('id',pg_temp.fid(id),'kind',kind,'as_of',(now() at time zone 'UTC')::date)||more,0)$$;
 create temp table operational_result as select pg_temp.generate_operational('current_list','operational.bills',
  jsonb_build_object('document_kind','supplier_bill','filters','{}'::jsonb)) body;
 select is((select body#>>'{entity,id}' from operational_result),pg_temp.fid('operational.bills')::text,
@@ -3382,7 +3382,7 @@ create function pg_temp.configure_notice(enabled boolean,version bigint,command_
  language sql as $$
  select api.configure_wave3_notification_subscription(
   pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),
-  pg_temp.fid(command_name||'.command'),pg_temp.fid(command_name||'.key'),statement_timestamp(),
+  pg_temp.fid(command_name||'.command'),pg_temp.fid(command_name||'.key'),now(),
   jsonb_build_object('id',pg_temp.fid('notice.posting'),'recipient_id',pg_temp.fid('creator'),
    'event_class','posting','enabled',enabled),version)$$;
 create temp table wave3_notice_config as select pg_temp.configure_notice(true,0,'notice.enabled') body;
@@ -3396,7 +3396,7 @@ select throws_ok(
 select throws_ok(
  $$select api.configure_wave3_notification_subscription(pg_temp.fid('tenant'),pg_temp.fid('entity'),
   pg_temp.fid('branch'),pg_temp.fid('notice.invalid.command'),pg_temp.fid('notice.invalid.key'),
-  statement_timestamp(),jsonb_build_object('id',pg_temp.fid('notice.invalid'),
+  now(),jsonb_build_object('id',pg_temp.fid('notice.invalid'),
    'recipient_id',pg_temp.fid('creator'),'event_class','unknown','enabled',true),0)$$,
  '22023','NOTIFICATION_SUBSCRIPTION_INVALID','unknown event class is rejected');
 insert into core.outbox_events(tenant_id,topic,aggregate_type,aggregate_id,payload,
@@ -3487,13 +3487,13 @@ update core.memberships set status='suspended' where tenant_id=pg_temp.fid('tena
 select lives_ok(
  $$select api.configure_wave3_notification_subscription(pg_temp.fid('tenant'),pg_temp.fid('entity'),
  pg_temp.fid('branch'),pg_temp.fid('notice.suspended.disable.command'),pg_temp.fid('notice.suspended.disable.key'),
- statement_timestamp(),jsonb_build_object('id',pg_temp.fid('notice.approver'),
+ now(),jsonb_build_object('id',pg_temp.fid('notice.approver'),
  'recipient_id',pg_temp.fid('approver'),'event_class','posting','enabled',false),1)$$,
  'administrator can disable a subscription after recipient suspension');
 select throws_ok(
  $$select api.configure_wave3_notification_subscription(pg_temp.fid('tenant'),pg_temp.fid('entity'),
  pg_temp.fid('branch'),pg_temp.fid('notice.suspended.enable.command'),pg_temp.fid('notice.suspended.enable.key'),
- statement_timestamp(),jsonb_build_object('id',pg_temp.fid('notice.approver'),
+ now(),jsonb_build_object('id',pg_temp.fid('notice.approver'),
  'recipient_id',pg_temp.fid('approver'),'event_class','posting','enabled',true),2)$$,
  '42501','NOTIFICATION_RECIPIENT_UNAVAILABLE','suspended member cannot be enabled');
 update core.memberships set status='active' where tenant_id=pg_temp.fid('tenant') and user_id=pg_temp.fid('approver');
@@ -3504,7 +3504,7 @@ select api.configure_wave3_notification_subscription(pg_temp.fid('tenant'),pg_te
  'recipient_id',pg_temp.fid('creator'),'event_class','due','enabled',true),0);
 create function pg_temp.scan_due(label text,cutoff date default '2026-09-29') returns jsonb
  language sql as $$select api.scan_wave3_due_notifications(pg_temp.fid('tenant'),pg_temp.fid('entity'),
- pg_temp.fid('branch'),pg_temp.fid(label||'.command'),pg_temp.fid(label||'.key'),statement_timestamp(),
+ pg_temp.fid('branch'),pg_temp.fid(label||'.command'),pg_temp.fid(label||'.key'),now(),
  jsonb_build_object('kind','AP','as_of',cutoff),null)$$;
 create temp table wave3_due_scan_result as select pg_temp.scan_due('notice.due.first') body;
 select ok((select (body#>>'{entity,emitted}')::int>0 from wave3_due_scan_result),

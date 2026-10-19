@@ -2,7 +2,7 @@
 -- Runs against the schema `supabase start` installs from supabase/migrations.
 -- Installed migrations removed from the composition: 45.
 -- TAP rows go to output instead of: final_stack_results.
--- Top-level statement_timestamp() read as now(), as in one execute_sql message: 1.
+-- Fixture statement_timestamp() read as now(), as in one execute_sql message: 1.
 begin;
 create temp table final_stack_results(message text);
 grant insert on final_stack_results to authenticated;
