@@ -117,7 +117,7 @@ void main() {
         team: [],
         counts: {'due_soon': 1, 'overdue': 0, 'escalated': 0},
       ),
-      {...overview(), 'response_sla_days': 30},
+      {...overview(), 'response_sla_days': 91},
     ]) {
       expect(
         () => AssuranceOverview.fromJson(bad, me),

@@ -105,9 +105,21 @@ void main() {
     };
     for (final bad in [
       access(members: 'not a list'),
-      access(members: [member({'label': 'someone@example.com'})]),
-      access(members: [member({'version': -1})]),
-      access(members: [member({'membership_id': 'x'})]),
+      access(
+        members: [
+          member({'label': 'someone@example.com'}),
+        ],
+      ),
+      access(
+        members: [
+          member({'version': -1}),
+        ],
+      ),
+      access(
+        members: [
+          member({'membership_id': 'x'}),
+        ],
+      ),
       access(
         members: [
           member({
@@ -152,7 +164,10 @@ void main() {
       {...ok, 'role_code': 'tenant_owner'},
       {...ok}..remove('scope'),
     ]) {
-      expect(() => AssuranceAccessCommands.validate(bad), throwsFormatException);
+      expect(
+        () => AssuranceAccessCommands.validate(bad),
+        throwsFormatException,
+      );
     }
   });
 
@@ -166,7 +181,10 @@ void main() {
     final r = {...p, 'version': 4};
     expect(assuranceAccessReceiptConfirms(r, p, 3), isTrue);
     expect(assuranceAccessReceiptConfirms(r, p, 4), isFalse);
-    expect(assuranceAccessReceiptConfirms({...r, 'granted': true}, p, 3), isFalse);
+    expect(
+      assuranceAccessReceiptConfirms({...r, 'granted': true}, p, 3),
+      isFalse,
+    );
     expect(
       assuranceAccessReceiptConfirms({...r, 'membership_id': unlinked}, p, 3),
       isFalse,
