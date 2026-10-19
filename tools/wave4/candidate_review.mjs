@@ -30,9 +30,9 @@ if(process.argv.includes('--read')){
   sql=sql.replace(/rollback;\s*$/,'reset role;\nset local search_path=pg_catalog;\nselect jsonb_build_object(\'before\',(select catalog from w4_before),\'after\',('+snapshot.replace(/ catalog$/,'')+')) as candidate_catalog,'+
    '(select count(*) from '+assertions+') assertion_count,(select jsonb_object_agg('+key+','+body+' order by '+key+') from '+samples+') client_samples;\nrollback;\n');
   const output=base+name+'-candidate-reviewed-20261002-v3.sql';fs.writeFileSync(output,sql,{flag:'wx'});
-  const sources=['supabase/tests/build_'+name+'_candidate.ps1','supabase/tests/wave4_synthetic_fixture.sql','supabase/tests/wave4_'+name+'_test.sql',...migrations.map(m=>'supabase/migrations/'+m)];
-  if(name==='project_finance')sources.push('supabase/tests/wave4_projects_test.sql');
-  if(name==='payroll_corrections')sources.push('supabase/tests/build_payroll_candidate.ps1','supabase/tests/wave4_payroll_test.sql');
+  const sources=['supabase/tests/build_'+name+'_candidate.ps1','supabase/wave_tests/wave4_synthetic_fixture.sql','supabase/wave_tests/wave4_'+name+'_test.sql',...migrations.map(m=>'supabase/migrations/'+m)];
+  if(name==='project_finance')sources.push('supabase/wave_tests/wave4_projects_test.sql');
+  if(name==='payroll_corrections')sources.push('supabase/tests/build_payroll_candidate.ps1','supabase/wave_tests/wave4_payroll_test.sql');
   result.suites.push({name,query_path:output,query_sha256:hash(sql),query_length:sql.length,assertions:(sql.match(/insert into \w+_assertions select (is|ok|throws_ok|lives_ok)\(/g)||[]).length,
    strict_finish_true:true,final_rollback:true,candidates:migrations.map((m,ordinal)=>({path:'supabase/migrations/'+m,ordinal:ordinal+1,installed:installed.has(m.slice(0,14)),sha256:hash(read('supabase/migrations/'+m))})),
    source_sha256:Object.fromEntries([...new Set(sources)].map(p=>[p,hash(read(p))]))});

@@ -29,5 +29,5 @@ select is((select count(*) from cron.job where jobname='w5-rollback-only-protect
 select ok(not(select enabled from intelligence_control.edge_authorities where runtime_id='${config.runtimeId}'),'Stop disables the authority before key/network access');
 select ok(not intelligence_control.runtime_scope_allowed('${config.runtimeId}','${s.tenantId}','${s.entityId}','${s.branchId}'),'Stop revokes the exact worker scope');
 `;
-await writeFile('supabase/tests/wave5_supabase_setup_test.sql',sql);
+await writeFile('supabase/wave_tests/wave5_supabase_setup_test.sql',sql);
 console.log(JSON.stringify({preparedOnly:true,outerRollbackRequired:true,expectedAssertions:10,httpCalls:0}));

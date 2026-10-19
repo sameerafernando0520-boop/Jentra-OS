@@ -11,18 +11,18 @@ if($Suite -eq 'procurement'){
  $at=$query.LastIndexOf('set constraints all immediate;')
  foreach($name in @('wave3_operational_evidence_test.sql','wave3_notification_test.sql','wave3_dashboard_metrics_test.sql','wave3_landed_extensions_test.sql','wave3_stock_disposition_test.sql','wave3_observability_test.sql')){
   $at=$query.LastIndexOf('set constraints all immediate;')
-  $tests=Join-Path $PSScriptRoot $name
+  $tests=Join-Path $PSScriptRoot "../wave_tests/$name"
   if(Test-Path -LiteralPath $tests){$query=$query.Insert($at,(Get-Content -Raw -LiteralPath $tests)+"`n")}
  }
 } elseif($Suite -eq 'inventory') {
  $at=$query.LastIndexOf('set constraints all immediate;')
- $query=$query.Insert($at,(Get-Content -Raw (Join-Path $PSScriptRoot 'wave3_count_partitions_test.sql'))+"`n")
+ $query=$query.Insert($at,(Get-Content -Raw (Join-Path $PSScriptRoot '../wave_tests/wave3_count_partitions_test.sql'))+"`n")
 } elseif($Suite -eq 'receivables') {
  $at=$query.LastIndexOf('set constraints all immediate;')
- $tests=Join-Path $PSScriptRoot 'wave3_historical_controls_receivables_test.sql'
+ $tests=Join-Path $PSScriptRoot '../wave_tests/wave3_historical_controls_receivables_test.sql'
  $query=$query.Insert($at,(Get-Content -Raw -LiteralPath $tests)+"`n")
  $at=$query.LastIndexOf('set constraints all immediate;')
- $tests=Join-Path $PSScriptRoot 'wave3_reservation_maintenance_test.sql'
+ $tests=Join-Path $PSScriptRoot '../wave_tests/wave3_reservation_maintenance_test.sql'
  $query=$query.Insert($at,(Get-Content -Raw -LiteralPath $tests)+"`n")
 }
 if($query -notmatch 'finish\(true\)' -or $query -match '(?im)^\s*commit\s*;' -or $query.TrimEnd() -notmatch 'rollback;$'){

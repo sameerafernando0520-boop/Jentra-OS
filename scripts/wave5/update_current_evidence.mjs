@@ -98,8 +98,8 @@ const bundles = {
 };
 
 const bundleEvidence = {
-  pipeline: ['supabase/tests/wave5_realized_mapping_test.sql'],
-  cash: ['supabase/tests/wave5_remaining_adapters_test.sql', 'packages/jentra_platform/lib/src/analytics/dated_cash_gateway.dart', 'apps/jentra_desktop/lib/src/features/analytics/cash_scenario_screen.dart'],
+  pipeline: ['supabase/wave_tests/wave5_realized_mapping_test.sql'],
+  cash: ['supabase/wave_tests/wave5_remaining_adapters_test.sql', 'packages/jentra_platform/lib/src/analytics/dated_cash_gateway.dart', 'apps/jentra_desktop/lib/src/features/analytics/cash_scenario_screen.dart'],
   native: ['apps/jentra_desktop/lib/src/features/analytics/cash_scenario_screen.dart', 'packages/jentra_platform/lib/src/analytics/dated_cash_gateway.dart'],
   ownership: ['docs/verification/wave5/live-refresh-confirmed-20261008.json'],
   quality: [strictPath, 'docs/verification/wave5/shared-golden-investigation-20261008.md']

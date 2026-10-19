@@ -13,10 +13,10 @@ if (-not $Installed) {
     $taskMigrations += Get-Content -LiteralPath (Join-Path $taskRoot 'migrations/20260930070500_wave4_clock_batches.sql') -Raw
   }
 }
-$taskFixture = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_synthetic_fixture.sql') -Raw
-$taskTests = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_attendance_test.sql') -Raw
+$taskFixture = Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_synthetic_fixture.sql') -Raw
+$taskTests = Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_attendance_test.sql') -Raw
 if ($IncludeClockBatches) {
-  $taskTests += [Environment]::NewLine + (Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_clock_batch_test.sql') -Raw)
+  $taskTests += [Environment]::NewLine + (Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_clock_batch_test.sql') -Raw)
 }
 $taskTests = [regex]::Replace($taskTests, '(?m)^select (is|ok|throws_ok)\(', 'insert into attendance_assertions select $1(')
 $taskDiagnostic = @'

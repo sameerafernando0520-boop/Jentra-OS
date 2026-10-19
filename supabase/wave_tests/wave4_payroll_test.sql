@@ -1,0 +1,299 @@
+create extension if not exists pgtap with schema extensions;
+set local search_path=extensions,public,pg_catalog;
+select no_plan();
+-- Later Wave 4 migrations add payroll tables, so a fixed count (15) went stale;
+-- every table, however many, must have forced RLS (at least the original 15).
+select ok((select count(*)>=15 and bool_and(c.relrowsecurity and c.relforcerowsecurity)
+ from pg_class c join pg_namespace n on n.oid=c.relnamespace
+ where n.nspname='people_payroll' and c.relkind='r'),
+ 'all payroll tables are forced RLS');
+select ok(not exists(select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
+ where n.nspname='people_payroll' and c.relkind='r' and has_table_privilege('authenticated',c.oid,'SELECT')),
+ 'payroll amounts cannot enter generic authenticated table reads');
+select ok(not exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+ where n.nspname='people_payroll' and has_function_privilege('authenticated',p.oid,'EXECUTE')),
+ 'trusted payroll helpers are denied to clients');
+select is(people_payroll.round_ratio(125000,1,2,'half_even'),120000::numeric,'exact even tie');
+select is(people_payroll.round_ratio(135000,1,2,'half_even'),140000::numeric,'exact odd tie');
+select is(people_payroll.round_ratio(-125000,1,2,'half_away'),-130000::numeric,'signed away tie');
+select is(people_payroll.round_ratio(-121000,1,2,'floor'),-130000::numeric,'signed floor');
+select is(people_payroll.round_ratio(-129999,1,2,'truncate'),-120000::numeric,'signed truncation');
+select is(people_payroll.round_ratio(99999999999999999999999999999999,9007199254740991,6,'half_away'),
+ 11102230246251567::numeric,'large exact rational quotient');
+select throws_ok($q$select people_payroll.round_ratio(1,0,2,'half_even')$q$,'22023','PAYROLL_ROUNDING_INVALID','zero denominator rejected');
+select throws_ok($q$select people_payroll.amount('1.1234567'::jsonb)$q$,'22023','PAYROLL_AMOUNT_INVALID','number and excess precision rejected');
+select throws_ok($q$select people_payroll.amount('"1e3"'::jsonb)$q$,'22023','PAYROLL_AMOUNT_INVALID','exponent rejected');
+create function pg_temp.pi(paid bigint default 5400,planned bigint default 28800) returns jsonb language sql as $$
+ select jsonb_build_object('employee_id',pg_temp.wid('employee'),'start_date',pg_temp.wdate(),
+  'end_date_exclusive',pg_temp.wdate()+1,'period_days',1,'eligible_days',1,'paid_seconds',paid,'planned_seconds',planned)
+$$;
+create function pg_temp.pr(code text,classification text,basis text,amount text,
+ n bigint default 1,d bigint default 1,proration text default 'none',cap text default null)
+returns jsonb language sql as $$
+ select jsonb_build_object('id',pg_temp.wid(code),'code',code,'classification',classification,
+  'currency_code','LKR','start_date',pg_temp.wdate()-10,'end_date_exclusive',pg_temp.wdate()+10,
+  'basis',basis,'amount',amount,'ratio_numerator',n,'ratio_denominator',d,
+  'proration',proration,'rounding','half_away','precision',2,'cap',cap)
+$$;
+create function pg_temp.prules() returns jsonb language sql as $$
+ select jsonb_build_array(pg_temp.pr('BASE','earning','fixed','123.456789'),
+  pg_temp.pr('HOURS','earning','hourly','312.750000'),
+  pg_temp.pr('DEDUCT','deduction','earnings_ratio','0',1,10),
+  pg_temp.pr('EMPLOYER','employer_cost','earnings_ratio','0',3,100))
+$$;
+select is(people_payroll.calculate(pg_temp.pi(),pg_temp.prules(),'LKR')->>'gross','592.590000','Dart parity exact gross');
+select is(people_payroll.calculate(pg_temp.pi(),pg_temp.prules(),'LKR')->>'deductions','59.260000','Dart parity exact deductions');
+select is(people_payroll.calculate(pg_temp.pi(),pg_temp.prules(),'LKR')->>'employer_cost','17.780000','Dart parity employer cost');
+select is(people_payroll.calculate(pg_temp.pi(),pg_temp.prules(),'LKR')->>'net','533.330000','Dart parity net');
+select is(people_payroll.calculate(pg_temp.pi(57600,28800),
+ jsonb_build_array(pg_temp.pr('FIXED','earning','fixed','100',1,1,'paid_seconds')),'LKR')->>'gross',
+ '100.000000','fixed paid-time basis caps at whole-period salary');
+select is(people_payroll.calculate(pg_temp.pi(9007199254740991,1),
+ jsonb_build_array(pg_temp.pr('CAP','earning','hourly','99999999999999.999999',1,1,'none','1.25')),'LKR')->>'gross',
+ '1.250000','configured cap applies before journal bound');
+select throws_ok($q$select people_payroll.calculate(pg_temp.pi(1,0),
+ jsonb_build_array(pg_temp.pr('FIXED','earning','fixed','100',1,1,'paid_seconds')),'LKR')$q$,
+ '55000','PAYROLL_PLANNED_SECONDS_REQUIRED','missing basis explicit');
+select throws_ok($q$select people_payroll.calculate(pg_temp.pi(),
+ jsonb_build_array(pg_temp.pr('BASE','earning','fixed','1'),pg_temp.pr('DEDUCT','deduction','fixed','2')),'LKR')$q$,
+ '55000','PAYROLL_NEGATIVE_NET','negative net explicit');
+select throws_ok($q$select people_payroll.calculate(pg_temp.pi(),pg_temp.prules()||pg_temp.prules(),'LKR')$q$,
+ '22023','PAYROLL_CALCULATION_INVALID','duplicate rules rejected');
+select throws_ok($q$select people_payroll.calculate(pg_temp.pi(),
+ jsonb_build_array(pg_temp.pr('BASE','earning','fixed','1')||'{"currency_code":"USD"}'),'LKR')$q$,
+ '22023','PAYROLL_RULE_INVALID','mixed currency rejected');
+
+-- Full synthetic run against the installed journal provider, all inside rollback.
+insert into finance.accounts(id,tenant_id,legal_entity_id,code,name,account_type,normal_balance,created_by,updated_by)
+select pg_temp.wid('pay.'||x),pg_temp.wid('tenant'),pg_temp.wid('entity'),upper(x),'Synthetic '||x,
+ case when x in('wages','employer') then 'expense' when x='bank' then 'asset' else 'liability' end,
+ case when x in('wages','employer','bank') then 'debit' else 'credit' end,pg_temp.wid('creator'),pg_temp.wid('creator')
+from unnest(array['wages','employer','net','deduct','employer_control','bank']) x;
+insert into finance.fiscal_periods(id,tenant_id,legal_entity_id,name,start_date,end_date,created_by,updated_by)
+values(pg_temp.wid('pay.period'),pg_temp.wid('tenant'),pg_temp.wid('entity'),'Synthetic payroll period',
+ pg_temp.wdate()-10,pg_temp.wdate()+400,pg_temp.wid('creator'),pg_temp.wid('creator'));
+insert into finance.cash_bank_accounts(id,tenant_id,legal_entity_id,branch_id,code,name,account_kind,account_id,currency_code,created_by,updated_by)
+values(pg_temp.wid('pay.bank.record'),pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),'SYNTHETIC-BANK','Synthetic bank',
+ 'bank',pg_temp.wid('pay.bank'),'LKR',pg_temp.wid('creator'),pg_temp.wid('creator'));
+insert into core.document_sequences(tenant_id,legal_entity_id,branch_id,document_type,prefix,created_by,updated_by)
+values(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),'journal_entry','SYNTHETIC-PAY-',pg_temp.wid('creator'),pg_temp.wid('creator'));
+insert into people.departments(id,tenant_id,legal_entity_id,code) values(pg_temp.wid('department'),pg_temp.wid('tenant'),pg_temp.wid('entity'),'W4OPS');
+insert into people.department_revisions(id,tenant_id,legal_entity_id,department_id,name,start_date,end_date_exclusive,reason,recorded_by)
+values(pg_temp.wid('department-r1'),pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('department'),'Synthetic Operations',
+ pg_temp.wdate()-10,pg_temp.wdate()+400,'Synthetic payroll fixture',pg_temp.wid('creator'));
+insert into people.organization_assignments(id,tenant_id,legal_entity_id,branch_id,employee_id,spell_id,department_id,calendar_version_id,
+ role_title,start_date,end_date_exclusive,reason,recorded_by)
+select pg_temp.wid('organization-employee'),pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('employee'),s.id,
+ pg_temp.wid('department'),pg_temp.wid('calendar-version'),'Synthetic worker',pg_temp.wdate()-10,pg_temp.wdate()+400,
+ 'Synthetic payroll fixture',pg_temp.wid('creator') from people.employment_spells s where s.employee_id=pg_temp.wid('employee');
+create function pg_temp.pc(p jsonb,v bigint,k text) returns jsonb language sql as $$
+ select api.people_payroll_configure(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid(k),pg_temp.wid(k),now(),p,v)
+$$;
+create function pg_temp.pcmd(p jsonb,v bigint,k text,b text default 'branch') returns jsonb language sql as $$
+ select api.people_payroll_command(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid(b),pg_temp.wid(k),pg_temp.wid(k),now(),p,v)
+$$;
+create function pg_temp.publish(code text,class text,amount text,expense text,liability text,
+ basis text default 'fixed',n bigint default 1,d bigint default 1) returns jsonb language sql as $$
+ select jsonb_build_object('action','publish','id',pg_temp.wid('rule.'||code),'component_id',pg_temp.wid('component.'||code),
+  'code',code,'name','Synthetic '||code,'classification',class,'start_date',pg_temp.wdate()-10,'end_date_exclusive',pg_temp.wdate()+400,
+  'basis',basis,'proration','none','rounding','half_away','precision',2,'amount',amount,'ratio_numerator',n,'ratio_denominator',d,
+  'cap',null,'expense_account_id',case when expense is not null then pg_temp.wid('pay.'||expense) end,
+  'liability_account_id',case when liability is not null then pg_temp.wid('pay.'||liability) end,'reason','Synthetic rule')
+$$;
+create function pg_temp.run_create(k text default 'run') returns jsonb language sql as $$
+ select jsonb_build_object('action','create','id',pg_temp.wid(k),'name','Synthetic payroll',
+  'start_date',pg_temp.wdate(),'end_date_exclusive',pg_temp.wdate()+1,'posting_date',pg_temp.wdate(),
+  'employee_ids',jsonb_build_array(pg_temp.wid('employee')),'reason','Synthetic run')
+$$;
+create function pg_temp.run_action(action text,k text default 'run') returns jsonb language sql as $$
+ select jsonb_build_object('action',action,'id',pg_temp.wid(k),'revision_id',current_revision_id,
+  'digest',(select digest from people_payroll.run_revisions where id=current_revision_id),'reason','Synthetic transition')
+ from people_payroll.runs where id=pg_temp.wid(k)
+$$;
+create function pg_temp.settle(amount text,evidence text default 'SYNTHETIC-TRANSFER-001') returns jsonb language sql security definer as $$
+ select jsonb_build_object('action','record','id',pg_temp.wid('settlement'),'run_id',pg_temp.wid('run'),
+  'posting_date',pg_temp.wdate(),'bank_id',pg_temp.wid('pay.bank.record'),'bank_version',1,
+  'evidence_reference',evidence,'reason','Synthetic recorded evidence',
+  'allocations',jsonb_build_array(jsonb_build_object('obligation_id',(select id from people_payroll.obligations where kind='net'),'amount',amount)))
+$$;
+create function pg_temp.ps(p jsonb,v bigint,k text) returns jsonb language sql as $$
+ select api.people_payroll_settlement(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid(k),pg_temp.wid(k),now(),p,v)
+$$;
+create temporary table payroll_responses(name text primary key,response jsonb);
+grant select,insert on payroll_responses to authenticated;
+-- Test fixture helpers read headers as their owner; the actual named APIs still
+-- execute using current synthetic JWT claims and the authenticated SQL role.
+alter function pg_temp.run_action(text,text) security definer;
+select pg_temp.wactor('branch-manager');set local role authenticated;
+select throws_ok($q$select api.people_payroll_runs(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch2'))$q$,
+ '42501',null,'wrong branch requires actual role scope');
+reset role;
+-- Entity-wide creator/reviewer grants deliberately authorize both branches.
+select pg_temp.wactor('reader');set local role authenticated;
+select throws_ok($q$select api.people_payroll_rules(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'))$q$,
+ '42501',null,'People directory permission does not read payroll');
+reset role;select pg_temp.wactor('creator');set local role authenticated;
+insert into payroll_responses values('settings',pg_temp.pc(jsonb_build_object('action','settings','id',pg_temp.wid('settings'),
+ 'net_account_id',pg_temp.wid('pay.net'),'reason','Synthetic control'),0,'settings.cmd'));
+insert into payroll_responses values('base',pg_temp.pc(pg_temp.publish('BASE','earning','1000','wages',null),0,'base.cmd'));
+insert into payroll_responses values('deduct',pg_temp.pc(pg_temp.publish('DEDUCT','deduction','0',null,'deduct','earnings_ratio',1,10),0,'deduct.cmd'));
+insert into payroll_responses values('employer',pg_temp.pc(pg_temp.publish('EMPLOYER','employer_cost','0','employer','employer_control','earnings_ratio',3,100),0,'employer.cmd'));
+reset role;
+select ok(not exists(select 1 from audit.events where tenant_id=pg_temp.wid('tenant') and event_type like 'people.payroll.%'
+ and (after_context::text like '%1000%' or after_context ? 'amount')),'pay configuration never leaks amount to generic audit');
+select pg_temp.wactor('creator');set local role authenticated;
+select api.people_attendance_command(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('pay.clock.create'),pg_temp.wid('pay.clock.create'),now(),
+ jsonb_build_object('action','create','id',pg_temp.wid('pay.attendance'),'employee_id',pg_temp.wid('employee'),'calendar_version_id',pg_temp.wid('calendar-version'),
+ 'start_local',to_char(pg_temp.wdate()::timestamp+interval '9 hours','YYYY-MM-DD"T"HH24:MI:SS'),'end_local',to_char(pg_temp.wdate()::timestamp+interval '10 hours','YYYY-MM-DD"T"HH24:MI:SS'),
+ 'start_offset_seconds',19800,'end_offset_seconds',19800,'breaks','[]'::jsonb,'reason','Synthetic payroll time'),0);
+select api.people_attendance_command(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('pay.clock.submit'),pg_temp.wid('pay.clock.submit'),now(),
+ jsonb_build_object('action','submit','id',pg_temp.wid('pay.attendance'),'employee_id',pg_temp.wid('employee'),'reason','Synthetic payroll time'),1);
+reset role;select pg_temp.wactor('reviewer');set local role authenticated;
+select api.people_attendance_command(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('pay.clock.approve'),pg_temp.wid('pay.clock.approve'),now(),
+ jsonb_build_object('action','approve','id',pg_temp.wid('pay.attendance'),'employee_id',pg_temp.wid('employee'),'reason','Synthetic payroll time'),2);
+reset role;
+select pg_temp.wactor('creator');set local role authenticated;
+select pg_temp.pc(jsonb_build_object('action','assign','id',pg_temp.wid('assign.'||x),'employee_id',pg_temp.wid('employee'),
+ 'component_id',pg_temp.wid('component.'||x),'start_date',pg_temp.wdate()-10,'end_date_exclusive',pg_temp.wdate()+400,'reason','Synthetic assignment'),0,'assign.'||x)
+from unnest(array['BASE','DEDUCT','EMPLOYER']) x;
+insert into payroll_responses values('create',pg_temp.pcmd(pg_temp.run_create(),0,'run.create'));
+insert into payroll_responses values('prepare',pg_temp.pcmd(jsonb_build_object('action','prepare','id',pg_temp.wid('run'),'reason','Synthetic prepare'),1,'run.prepare'));
+select is((api.people_payroll_run_detail(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('run'))->'calculations'->0->>'net'),
+ '900.000000','frozen employee exact net');
+insert into payroll_responses values('submit',pg_temp.pcmd(pg_temp.run_action('submit'),2,'run.submit'));
+select throws_ok($q$select pg_temp.pcmd(pg_temp.run_action('approve'),3,'run.selfapprove')$q$,
+ '42501','PAYROLL_INDEPENDENT_APPROVAL_REQUIRED','preparer cannot approve');
+reset role;select pg_temp.wactor('reviewer');set local role authenticated;
+insert into payroll_responses values('approve',pg_temp.pcmd(pg_temp.run_action('approve'),3,'run.approve'));
+reset role;
+-- A source identity change after approval invalidates the freeze.
+update people.employees set version=version+1 where id=pg_temp.wid('employee');
+select pg_temp.wactor('creator');set local role authenticated;
+select throws_ok($q$select pg_temp.pcmd(pg_temp.run_action('post'),4,'run.stale.post')$q$,
+ '40001','PAYROLL_INPUTS_CHANGED','source change blocks posting');
+insert into payroll_responses values('reprepare',pg_temp.pcmd(jsonb_build_object('action','prepare','id',pg_temp.wid('run'),'reason','Synthetic reprepare'),4,'run.reprepare'));
+select is((select response->'entity'->>'approved_by' from payroll_responses where name='reprepare'),null::text,'repreparation clears approval');
+insert into payroll_responses values('resubmit',pg_temp.pcmd(pg_temp.run_action('submit'),5,'run.resubmit'));
+reset role;select pg_temp.wactor('reviewer');set local role authenticated;
+insert into payroll_responses values('reapprove',pg_temp.pcmd(pg_temp.run_action('approve'),6,'run.reapprove'));
+reset role;
+create function pg_temp.payroll_fail_late() returns trigger language plpgsql as $$begin
+ if new.command_id=pg_temp.wid('run.fail.post') then raise exception using errcode='P0001',message='SYNTHETIC_PAYROLL_LATE_FAILURE';end if;return new;
+end $$;
+create trigger synthetic_payroll_fail_late before insert on core.outbox_events for each row execute function pg_temp.payroll_fail_late();
+select pg_temp.wactor('creator');set local role authenticated;
+select throws_ok($q$select pg_temp.pcmd(pg_temp.run_action('post'),7,'run.fail.post')$q$,
+ 'P0001','SYNTHETIC_PAYROLL_LATE_FAILURE','late outbox failure rolls back the whole posting');
+reset role;
+select is((select count(*)::integer from people_payroll.obligations),0,'failed posting has no obligations');
+select is((select count(*)::integer from people_payroll.payslips),0,'failed posting has no payslips');
+select is((select count(*)::integer from finance.journal_entries where tenant_id=pg_temp.wid('tenant')),0,'failed posting has no journal');
+select is((select count(*)::integer from people.work_input_seals),0,'failed posting has no input seals');
+select is((select next_value from core.document_sequences where tenant_id=pg_temp.wid('tenant') and document_type='journal_entry'),1::bigint,'failed posting restores document number');
+select pg_temp.wactor('creator');set local role authenticated;
+insert into payroll_responses values('post',pg_temp.pcmd(pg_temp.run_action('post'),7,'run.post'));
+select is(pg_temp.pcmd(pg_temp.run_action('post'),7,'run.post'),(select response from payroll_responses where name='post'),'exact posting replay');
+select throws_ok($q$select pg_temp.pcmd(pg_temp.run_action('post')||'{"reason":"changed"}',7,'run.post')$q$,'22023','IDEMPOTENCY_MISMATCH','changed body cannot reuse posting key');
+reset role;
+select is((select count(*)::integer from people_payroll.obligations),3,'net deduction employer obligations have separate attribution');
+select is((select count(*)::integer from people_payroll.payslips),1,'one immutable payslip');
+select is((select count(*)::integer from people.work_input_seals),1,'posting seals exact approved attendance revision');
+select is((select sum(base_debit-base_credit) from finance.journal_lines where tenant_id=pg_temp.wid('tenant')),0::numeric,'posted journal balanced');
+select is((select sum(amount) from people_payroll.obligations),1030::numeric,'obligation control total equals net deduction employer cost');
+select ok(not exists(select 1 from finance.journal_lines l join finance.journal_entries j on j.id=l.journal_entry_id
+ where j.source_type='payroll' and l.base_credit>0 and not exists(select 1 from people_payroll.obligations o where o.id=l.source_line_id and o.account_id=l.account_id)),
+ 'every payroll control credit names exact obligation source');
+select throws_ok($q$update people_payroll.payslips set issued_at=now()$q$,'55000','PAYROLL_HISTORY_IMMUTABLE','payslip immutable');
+select pg_temp.wactor('creator');set local role authenticated;
+select throws_ok($q$select api.people_attendance_command(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('sealed.cancel'),pg_temp.wid('sealed.cancel'),now(),
+ jsonb_build_object('action','cancel','id',pg_temp.wid('pay.attendance'),'employee_id',pg_temp.wid('employee'),'reason','Synthetic correction'),3)$q$,
+ '55000','PAYROLL_INPUT_SEALED','payroll-consumed attendance cannot be silently cancelled');
+select is(api.people_payroll_own_receipt(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('run.post'),'people.payroll.post'),
+ (select response from payroll_responses where name='post'),'minimal own receipt restores uncertain posting');
+select throws_ok($q$select api.people_payroll_own_receipt(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('run.post'),'people.payroll.view')$q$,
+ '42501','PAYROLL_RECEIPT_SCOPE_DENIED','receipt read cannot substitute another capability');
+select throws_ok($q$select pg_temp.ps(pg_temp.settle('900.01'),0,'settle.overpay')$q$,'55000','PAYROLL_SETTLEMENT_EXCEEDS_DUE','no overpayment');
+insert into payroll_responses values('settlement',pg_temp.ps(pg_temp.settle('200.00'),0,'settle.record'));
+select is(pg_temp.ps(pg_temp.settle('200.00'),0,'settle.record'),(select response from payroll_responses where name='settlement'),'settlement retry is exact');
+select throws_ok($q$select pg_temp.pcmd(pg_temp.run_action('reverse'),8,'run.settled.reverse')$q$,
+ '55000','PAYROLL_ACTIVE_SETTLEMENT_BLOCKS_REVERSAL','active settlement prevents run reversal');
+select is((api.people_payroll_payslips(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('employee'))->'items'->0->>'net'),
+ '900.000000','payslip separately authorized');
+reset role;
+select is((select sum(amount) from people_payroll.obligation_effects where obligation_id=(select id from people_payroll.obligations where kind='net')),700::numeric,
+ 'recorded settlement lowers own payroll obligation only');
+select pg_temp.wactor('creator');set local role authenticated;
+insert into payroll_responses values('settlement.reverse',pg_temp.ps(jsonb_build_object('action','reverse','id',pg_temp.wid('settlement'),
+ 'run_id',pg_temp.wid('run'),'posting_date',pg_temp.wdate(),'reason','Synthetic reversal'),1,'settle.reverse'));
+select throws_ok($q$select pg_temp.ps(jsonb_build_object('action','reverse','id',pg_temp.wid('settlement'),'run_id',pg_temp.wid('run'),
+ 'posting_date',pg_temp.wdate(),'reason','Synthetic reversal'),2,'settle.reverse.again')$q$,
+ '55000','PAYROLL_SETTLEMENT_ALREADY_REVERSED','settlement original only once');
+reset role;
+select is((select sum(amount) from people_payroll.obligation_effects where obligation_id=(select id from people_payroll.obligations where kind='net')),900::numeric,'settlement reversal restores original amount');
+create function pg_temp.export_payload() returns jsonb language sql security definer as $$
+ select jsonb_build_object('action','prepare','id',pg_temp.wid('export'),'payslip_id',(select id from people_payroll.payslips limit 1))
+$$;
+select pg_temp.wactor('creator');set local role authenticated;
+insert into payroll_responses values('export',api.people_payroll_export(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),
+ pg_temp.wid('export.cmd'),pg_temp.wid('export.cmd'),now(),pg_temp.export_payload(),0));
+select is(api.people_payroll_export_content(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('export'))->'payslip'->>'net',
+ '900.000000','export freezes and verifies exact payslip');
+reset role;select pg_temp.wactor('reviewer');set local role authenticated;
+select throws_ok($q$select api.people_payroll_export_content(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('export'))$q$,
+ 'P0002','PAYROLL_EXPORT_NOT_FOUND','export content bound to original actor');
+reset role;
+select pg_temp.wactor('creator');set local role authenticated;
+insert into payroll_responses values('reverse',pg_temp.pcmd(pg_temp.run_action('reverse'),8,'run.reverse'));
+select throws_ok($q$select pg_temp.pcmd(pg_temp.run_action('reverse'),9,'run.reverse.again')$q$,'55000','PAYROLL_RUN_STATE_INVALID','second original reversal denied');
+reset role;
+select is((select sum(amount) from people_payroll.obligation_effects),0::numeric,'original obligation effects reverse exactly');
+select is((select sum(base_debit-base_credit) from finance.journal_lines where tenant_id=pg_temp.wid('tenant')),0::numeric,'reversed journals conserve');
+select is((select count(*)::integer from people_payroll.payslips),1,'original payslip retained after reversal');
+select pg_temp.wactor('creator','aal1');set local role authenticated;
+select throws_ok($q$select pg_temp.pcmd(pg_temp.run_action('post'),7,'run.post')$q$,'42501',null,'MFA checked before posting replay');
+reset role;
+select pg_temp.wactor('creator');set local role authenticated;
+select throws_ok($q$select api.people_payroll_self_payslips(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'))$q$,
+ '42501','HR_ACTIVE_LINK_REQUIRED','self payslips require an exact accepted account link');
+select api.people_hr_command(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('pay.policy.cmd'),pg_temp.wid('pay.policy.cmd'),now(),
+ jsonb_build_object('action','policy_create','id',pg_temp.wid('pay.policy'),'purpose','Synthetic payroll account-link fixture'),0);
+select api.people_hr_command(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('pay.link.cmd'),pg_temp.wid('pay.link.cmd'),now(),
+ jsonb_build_object('action','link_initiate','id',pg_temp.wid('pay.link'),'employee_id',pg_temp.wid('employee'),
+ 'membership_id',pg_temp.wid('reader.membership'),'user_id',pg_temp.wid('reader')),0);
+reset role;select pg_temp.wactor('reader');set local role authenticated;
+select api.people_hr_command(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('pay.link.accept'),pg_temp.wid('pay.link.accept'),now(),
+ jsonb_build_object('action','link_accept','id',pg_temp.wid('pay.link'),'employee_id',pg_temp.wid('employee')),1);
+select throws_ok($q$select api.people_payroll_self_payslips(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'))$q$,
+ '42501',null,'accepted account link grants no payroll capability');
+reset role;
+insert into core.role_permissions(tenant_id,role_id,permission_code) values(pg_temp.wid('tenant'),pg_temp.wid('reader.role'),'people.payroll.payslip.self');
+select pg_temp.wactor('reader');set local role authenticated;
+select is(api.people_payroll_self_payslips(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'))->'items'->0->>'net',
+ '900.000000','self-only permission reads only the accepted employee payslip');
+select throws_ok($q$select api.people_payroll_runs(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'))$q$,
+ '42501',null,'self-only permission cannot read payroll runs');
+reset role;
+update core.memberships set status='suspended' where id=pg_temp.wid('reader.membership');
+select pg_temp.wactor('reader');set local role authenticated;
+select throws_ok($q$select api.people_payroll_self_payslips(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'))$q$,
+ '42501',null,'membership revocation denies self payslip immediately');
+reset role;
+create function pg_temp.payroll_calculation_id() returns uuid language sql security definer as $$
+ select id from people_payroll.employee_calculations order by id limit 1
+$$;
+select pg_temp.wactor('creator');set local role authenticated;
+select is(jsonb_array_length(api.people_payroll_assignments(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('employee'))->'items'),
+ 3,'named scoped employee component assignments are inspectable');
+select is(jsonb_array_length(api.people_payroll_snapshot(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.payroll_calculation_id(),'rules')->'items'),
+ 3,'original frozen rules remain inspectable after reversal');
+select ok(jsonb_array_length(api.people_payroll_snapshot(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.payroll_calculation_id(),'planned_slots')->'items')>0,
+ 'original calendar slot evidence is paged');
+select throws_ok($q$select api.people_payroll_snapshot(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.payroll_calculation_id(),'rules',2001)$q$,
+ '22023','PAYROLL_SNAPSHOT_CURSOR_INVALID','frozen evidence cursor has an explicit bound');
+reset role;
+delete from core.role_permissions where role_id=pg_temp.wid('creator.role') and permission_code='people.payroll.post';
+select pg_temp.wactor('creator');set local role authenticated;
+select throws_ok($q$select pg_temp.pcmd(pg_temp.run_action('post'),7,'run.post')$q$,'42501',null,'revoked posting permission blocks replay');
+select throws_ok($q$select api.people_payroll_own_receipt(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('run.post'),'people.payroll.post')$q$,
+ '42501',null,'revoked posting permission blocks own receipt');
+reset role;

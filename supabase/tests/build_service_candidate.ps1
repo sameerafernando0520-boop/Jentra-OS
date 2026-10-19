@@ -8,11 +8,11 @@ if (-not $Installed) {
     $taskDdl+=Get-Content -LiteralPath (Join-Path $taskRoot "migrations/$taskName") -Raw
   }
 }
-$taskFixture=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_synthetic_fixture.sql') -Raw
+$taskFixture=Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_synthetic_fixture.sql') -Raw
 # This suite performs same-day 09:00-14:00 historical work. Use the previous
 # Colombo civil day so overnight runs do not submit future observed instants.
 $taskFixture=$taskFixture.Replace("(now() at time zone 'Asia/Colombo')::date","((now()-interval '1 day') at time zone 'Asia/Colombo')::date")
-$taskTests=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_service_test.sql') -Raw
+$taskTests=Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_service_test.sql') -Raw
 $taskTests=[regex]::Replace($taskTests,'(?m)^select (is|ok|throws_ok)\(','insert into service_assertions select $1(')
 $taskSql=(@('begin;',"set local lock_timeout='3s';","set local statement_timeout='60s';")+$taskDdl+@(
  'create temporary table service_assertions(message text);','grant insert on service_assertions to authenticated;',

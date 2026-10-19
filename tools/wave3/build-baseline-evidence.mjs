@@ -28,7 +28,7 @@ function collectStatements(sql) {
   return out;
 }
 for (const name of ['operational_foundation','crm_pipeline','quotation_workspace','order_workspace']) {
-  const source = 'supabase/tests/wave3_' + name + '_test.sql';
+  const source = 'supabase/wave_tests/wave3_' + name + '_test.sql';
   let body = fs.readFileSync(source,'utf8').replace(/^begin;\s*/,'').replace(/select \* from finish\((?:true)?\);[\s\S]*?rollback;\s*$/,'');
   if (name === 'operational_foundation') {
     // The legacy fixture predates governed period transitions. Supply its

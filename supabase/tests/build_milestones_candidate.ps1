@@ -6,7 +6,7 @@ $milestoneCut=$milestoneBase.LastIndexOf('do $$declare failed text;begin')
 if($milestoneCut -lt 0){throw 'Finance diagnostic boundary changed.'}
 $milestoneBase=$milestoneBase.Substring(0,$milestoneCut)
 $milestoneDdl=Get-Content (Join-Path (Split-Path $PSScriptRoot -Parent) 'migrations/20261004090000_project_milestones.sql') -Raw
-$milestoneTests=Get-Content (Join-Path $PSScriptRoot 'wave4_milestones_test.sql') -Raw
+$milestoneTests=Get-Content (Join-Path $PSScriptRoot '../wave_tests/wave4_milestones_test.sql') -Raw
 $milestoneTests=[regex]::Replace($milestoneTests,'(?m)^select (is|ok|throws_ok|lives_ok)\(','insert into project_assertions select $1(')
 $milestoneDiagnostic=@'
 do $$declare failed text;begin

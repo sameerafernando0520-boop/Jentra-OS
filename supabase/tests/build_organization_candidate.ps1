@@ -5,8 +5,8 @@ $taskRoot = Split-Path $PSScriptRoot -Parent
 $taskMigration = if ($Installed) { '' } else {
   Get-Content -LiteralPath (Join-Path $taskRoot 'migrations/20260926161000_wave4_organization.sql') -Raw
 }
-$taskFixture = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_synthetic_fixture.sql') -Raw
-$taskTests = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_organization_test.sql') -Raw
+$taskFixture = Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_synthetic_fixture.sql') -Raw
+$taskTests = Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_organization_test.sql') -Raw
 $taskTests = [regex]::Replace($taskTests, '(?m)^select (is|ok|throws_ok)\(', 'insert into organization_assertions select $1(')
 $taskDiagnostic = @'
 do $$declare v_failed text; begin

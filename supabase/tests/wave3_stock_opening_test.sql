@@ -137,9 +137,15 @@ select pg_temp.actor('approver');
 insert into opening_test_results select throws_ok($$select pg_temp.transition('opening','{"decision":"rejected"}')$$,'22023','REASON_REQUIRED','rejection requires note');
 insert into opening_test_results select lives_ok($$select pg_temp.transition('opening','{"decision":"approved"}')$$,'independent approver approves');
 select pg_temp.actor('actor');
+-- 20260924185321 period governance came later; this fixture update runs as before it.
+alter table finance.fiscal_periods disable trigger fiscal_periods_enforce_lifecycle;
 update finance.fiscal_periods set state='soft_locked' where id=pg_temp.fid('period');
+alter table finance.fiscal_periods enable trigger fiscal_periods_enforce_lifecycle;
 insert into opening_test_results select throws_ok($$select pg_temp.post('opening')$$,'55000','PERIOD_CLOSED','closed period blocks posting');
+-- 20260924185321 period governance came later; this fixture update runs as before it.
+alter table finance.fiscal_periods disable trigger fiscal_periods_enforce_lifecycle;
 update finance.fiscal_periods set state='open' where id=pg_temp.fid('period');
+alter table finance.fiscal_periods enable trigger fiscal_periods_enforce_lifecycle;
 update inventory.products set inventory_account_id=pg_temp.fid('inventory2') where id=pg_temp.fid('stock');
 insert into opening_test_results select throws_ok($$select pg_temp.post('opening')$$,'55000','OPENING_MASTER_CHANGED','changed mapping needs renewed approval');
 update inventory.products set inventory_account_id=pg_temp.fid('inventory') where id=pg_temp.fid('stock');

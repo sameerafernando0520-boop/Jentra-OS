@@ -15,9 +15,9 @@ const migrations = [
   'supabase/migrations/20261008113000_wave5_statement_classifications.sql',
 ];
 const fixtures = [
-  'supabase/tests/wave5_process_metrics_test.sql',
-  'supabase/tests/wave5_remaining_adapters_test.sql',
-  'supabase/tests/wave5_realized_mapping_test.sql',
+  'supabase/wave_tests/wave5_process_metrics_test.sql',
+  'supabase/wave_tests/wave5_remaining_adapters_test.sql',
+  'supabase/wave_tests/wave5_realized_mapping_test.sql',
 ];
 const sha256 = (value) => createHash('sha256').update(value).digest('hex');
 const parts = ['begin;'];
