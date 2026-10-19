@@ -417,6 +417,17 @@ void main() {
     c.field('response', 'Second signatory enforced in the bank portal');
   }
 
+  test('a linked engagement opens once the workspace has loaded', () async {
+    c.openWhenReady(eng);
+    await c.initialize();
+    expect(c.section, 'detail');
+    expect(c.view?.id, eng);
+    c.closeDetail();
+    c.openWhenReady(eng);
+    await pumpEventQueue();
+    expect(c.section, 'engagements', reason: 'the same link opens only once');
+  });
+
   group('reminders', () {
     const lead = {'assurance.evidence.view', 'assurance.engagement.manage'};
     late FakeReminderGateway reminders;

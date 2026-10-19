@@ -7,6 +7,7 @@ import 'package:jentra_platform/jentra_assurance_platform.dart';
 
 import 'src/features/assurance/assurance_access_controller.dart';
 import 'src/features/assurance/assurance_settings_controller.dart';
+import 'src/shell/notification_inbox.dart';
 import 'src/features/assurance/assurance_workspace_controller.dart';
 
 import 'src/features/analytics/process_metric_screen.dart';
@@ -164,6 +165,9 @@ Future<void> main() async {
         ),
         assuranceReminderGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseAssuranceReminderGateway(client),
+        ),
+        notificationInboxGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseNotificationInboxGateway(client),
         ),
         closeReviewGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseCloseReviewGateway(client),

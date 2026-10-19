@@ -269,6 +269,11 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
         await log.lastScan(scopeKey(scope)) != _today()) {
       await _remind(epoch);
     }
+    final link = _pendingLink;
+    if (link != null && _current(epoch)) {
+      _pendingLink = null;
+      await _open(link);
+    }
   });
 
   Future<void> refresh() => initialize();
@@ -325,7 +330,9 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
     _emit();
   }
 
-  Future<void> open(String engagementId) => _run(() async {
+  Future<void> open(String engagementId) => _run(() => _open(engagementId));
+
+  Future<void> _open(String engagementId) async {
     if (!online || !verified) return;
     final epoch = _epoch;
     final (d, v) = await _load(engagementId);
@@ -334,7 +341,21 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
     view = v;
     if (pack?.pack.engagementId != v.id) pack = null;
     section = 'detail';
-  });
+  }
+
+  String? _linked, _pendingLink;
+
+  /// Opens an engagement named in a link (a reminder notice) once access is
+  /// verified; the same link opens only once.
+  void openWhenReady(String engagementId) {
+    if (_linked == engagementId) return;
+    _linked = engagementId;
+    if (verified && !busy) {
+      unawaited(open(engagementId));
+    } else {
+      _pendingLink = engagementId;
+    }
+  }
 
   /// Engagement detail and its test procedures, validated together.
   Future<(Map<String, Object?>, AuditorEngagementView)> _load(String id) async {

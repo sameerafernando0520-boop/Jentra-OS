@@ -7,7 +7,11 @@ import '../../app_providers.dart';
 import 'assurance_workspace_controller.dart';
 
 class AssuranceWorkspaceScreen extends ConsumerWidget {
-  const AssuranceWorkspaceScreen({super.key});
+  const AssuranceWorkspaceScreen({super.key, this.engagementId});
+
+  /// An engagement to open, from a reminder notice link.
+  final String? engagementId;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final caps = ref.watch(businessCapabilitiesProvider);
@@ -21,6 +25,8 @@ class AssuranceWorkspaceScreen extends ConsumerWidget {
       );
     }
     final c = ref.watch(assuranceWorkspaceControllerProvider);
+    final link = engagementId;
+    if (c != null && link != null) c.openWhenReady(link);
     return c == null
         ? const Center(
             child: Text(

@@ -289,7 +289,9 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/governance/audit',
-            builder: (context, state) => const AssuranceWorkspaceScreen(),
+            builder: (context, state) => AssuranceWorkspaceScreen(
+              engagementId: state.uri.queryParameters['engagement'],
+            ),
             onExit: (context, state) async =>
                 await ref
                     .read(assuranceWorkspaceControllerProvider)
