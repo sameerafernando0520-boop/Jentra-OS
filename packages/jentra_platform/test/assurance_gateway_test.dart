@@ -277,6 +277,41 @@ void main() {
     );
   });
 
+  test(
+    'test commands use the test API; tests are read per engagement',
+    () async {
+      final design = auditor({
+        'action': 'design_test',
+        'procedure_id': uid(60),
+        'control_id': uid(61),
+        'code': 'TRS-SAMPLE',
+        'objective': 'Dual signature on sampled payments',
+        'population_size': 400,
+        'sample_start': 7,
+      });
+      response = {
+        'engagement_id': eng,
+        'version': 8,
+        'status': 'fieldwork',
+        'action': 'design_test',
+        'aggregate_type': 'test_procedure',
+        'aggregate_id': uid(60),
+        'to_status': 'designed',
+      };
+      await gateway.auditorCommand(design);
+      expect(requests.single.url.path, endsWith('/rpc/assurance_test_command'));
+      requests.clear();
+      response = [
+        {'id': uid(60), 'status': 'designed'},
+      ];
+      expect(await gateway.tests(scope, eng), hasLength(1));
+      expect(requests.single.url.path, endsWith('/rpc/assurance_tests'));
+      expect((jsonDecode(requests.single.body) as Map)['p_engagement_id'], eng);
+      response = {'not': 'a list'};
+      await expectLater(gateway.tests(scope, eng), throwsFormatException);
+    },
+  );
+
   test('an audit pack is read and hashed over its exact text', () async {
     final manifest = {
       'format': 'jentra.assurance.audit_pack.v1',

@@ -355,6 +355,36 @@ class _EngagementDetailView extends StatelessWidget {
         Text('${e['scope_summary']}'),
         if (e['evidence_cutoff_digest'] != null)
           SelectableText('Evidence cutoff ${e['evidence_cutoff_digest']}'),
+        if (v != null)
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            children: [
+              for (final to in v.transitionTargets(caps))
+                act('Move to ${to.name}', 'transition', {
+                  'to_status': to.name,
+                  'reason': '',
+                  'label': '${e['status']} → ${to.name}',
+                }),
+              if (v.canFreeze(caps, me))
+                act('Freeze evidence', 'freeze_evidence', {
+                  'reason': '',
+                  'label':
+                      'Lock accepted evidence and record its cutoff digest',
+                }),
+              if (v.canIssueReport(caps, me))
+                act('Issue report', 'issue_report', {
+                  'summary': '',
+                  'label':
+                      'Report version ${(v.currentReport?.version ?? 0) + 1}',
+                }),
+              if (v.canReopenReport(caps))
+                act('Reopen report', 'reopen_report', {
+                  'reason': '',
+                  'label': 'Reissue as a new report version',
+                }),
+            ],
+          ),
         heading('Controls'),
         if (v != null)
           for (final x in v.controls)
@@ -366,6 +396,15 @@ class _EngagementDetailView extends StatelessWidget {
                   'due_date': _plusDays(c.today, 14),
                   'description': '',
                   'label': '${x.code} · ${x.title}',
+                }),
+              if (v.canDesignTest(caps))
+                act('Design test', 'design_test', {
+                  'control_id': x.id,
+                  'code': '',
+                  'objective': '',
+                  'population_size': '',
+                  'sample_start': '1',
+                  'label': '${x.code} · ${x.title} · ${x.risk.name} risk',
                 }),
               if (v.canRecordException(caps))
                 act('Record exception', 'record_exception', {
@@ -399,6 +438,31 @@ class _EngagementDetailView extends StatelessWidget {
                   }),
               ],
             ),
+        heading('Tests'),
+        if (v != null && v.tests.isEmpty) const Text('No tests designed.'),
+        if (v != null)
+          for (final t in v.tests)
+            row(
+              '${t.code} · ${code(t.controlId)} · ${t.status.name} · sample ${t.sampleSize} of ${t.populationSize}',
+              [
+                if (v.canExecuteTest(caps, t))
+                  act('Record test run', 'execute_test', {
+                    'procedure_id': t.id,
+                    'items_tested': '${t.sampleSize}',
+                    'exceptions_found': '0',
+                    'conclusion': 'effective',
+                    'workpaper_sha256': '',
+                    'label': '${t.code} · sample of ${t.sampleSize}',
+                  }),
+                if (v.canReviewTest(caps, t, me))
+                  act('Review test', 'review_test', {
+                    'procedure_id': t.id,
+                    'decision': 'accept',
+                    'reason': '',
+                    'label': t.code,
+                  }),
+              ],
+            ),
         heading('Exceptions'),
         if (v != null && v.exceptions.isEmpty)
           const Text('No exceptions recorded.'),
@@ -427,8 +491,37 @@ class _EngagementDetailView extends StatelessWidget {
             ),
         heading('Findings'),
         if (rows('findings').isEmpty) const Text('No findings issued.'),
-        for (final x in rows('findings'))
-          Text('${x['title']} · ${x['severity']} · ${x['status']}'),
+        if (v == null)
+          for (final x in rows('findings'))
+            Text('${x['title']} · ${x['severity']} · ${x['status']}'),
+        if (v != null)
+          for (final f in v.findings)
+            row(
+              '${f.title} · ${f.severity.name} · ${f.status.wire.replaceAll('_', ' ')}',
+              [
+                if (v.canDecideRisk(caps, f, me))
+                  act('Decide risk', 'decide_risk', {
+                    'finding_id': f.id,
+                    'decision': 'approve',
+                    'reason': '',
+                    'label': f.title,
+                  }),
+                if (v.canRetest(caps, f, me))
+                  act('Retest', 'retest', {
+                    'finding_id': f.id,
+                    'result': 'pass',
+                    'evidence_sha256': '',
+                    'note': '',
+                    'label': f.title,
+                  }),
+                if (v.canReopenFinding(caps, f, me))
+                  act('Reopen', 'reopen_finding', {
+                    'finding_id': f.id,
+                    'reason': '',
+                    'label': f.title,
+                  }),
+              ],
+            ),
         heading('Reports'),
         if (rows('reports').isEmpty) const Text('No report issued.'),
         for (final x in rows('reports'))
@@ -537,6 +630,71 @@ class _CommandCard extends StatelessWidget {
                   const Text(
                     'The finding goes to the control owner for a management response.',
                   ),
+                ],
+                'transition' => [
+                  text('reason', 'Reason for the stage change', lines: 2),
+                ],
+                'freeze_evidence' => [
+                  text('reason', 'Reason', lines: 2),
+                  const Text(
+                    'After the freeze no evidence can be added or reviewed; tests then run against the frozen set.',
+                  ),
+                ],
+                'issue_report' => [
+                  text('summary', 'Report summary', lines: 4),
+                  const Text(
+                    'The report snapshots the current findings and cannot be changed; the lead auditor cannot issue it.',
+                  ),
+                ],
+                'reopen_report' => [
+                  text('reason', 'Reason', lines: 2),
+                  const Text(
+                    'The issued version is kept; reissuing creates a new version.',
+                  ),
+                ],
+                'decide_risk' => [
+                  choice('decision', const {
+                    'approve': 'Accept the risk',
+                    'reject': 'Require remediation',
+                  }),
+                  text('reason', 'Reason', lines: 2),
+                ],
+                'retest' => [
+                  choice('result', const {
+                    'pass': 'Pass — close the finding',
+                    'fail': 'Fail — back to remediation',
+                  }),
+                  text('evidence_sha256', 'Retest evidence SHA-256'),
+                  text('note', 'Note', lines: 2),
+                ],
+                'reopen_finding' => [text('reason', 'Reason', lines: 2)],
+                'design_test' => [
+                  text('code', 'Test code, e.g. TRS-SAMPLE'),
+                  text('objective', 'Objective', lines: 2),
+                  text('population_size', 'Population size'),
+                  text('sample_start', 'Sample start position'),
+                  const Text(
+                    'The server sets the sample size from the control risk and records the sampled positions.',
+                  ),
+                ],
+                'execute_test' => [
+                  text('items_tested', 'Items tested'),
+                  text('exceptions_found', 'Exceptions found'),
+                  choice('conclusion', const {
+                    'effective': 'Effective',
+                    'ineffective': 'Ineffective',
+                  }),
+                  text('workpaper_sha256', 'Workpaper SHA-256'),
+                  const Text(
+                    'Every sampled item must be tested; exceptions require an ineffective conclusion.',
+                  ),
+                ],
+                'review_test' => [
+                  choice('decision', const {
+                    'accept': 'Accept',
+                    'return': 'Return for rework',
+                  }),
+                  text('reason', 'Reason', lines: 2),
                 ],
                 _ => [
                   const Text(

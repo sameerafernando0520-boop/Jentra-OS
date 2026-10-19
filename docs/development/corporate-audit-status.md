@@ -86,6 +86,15 @@ The candidate was kept in `supabase/candidates/` until installation; it is now a
 | Automated tests | domain 446/446 (8 new); platform assurance gateway 9/9; desktop `assurance_workspace_test.dart` 22/22 including new 200% light/dark goldens `governance_engagement_*_200.png` produced by this work; analyzers clean on changed files |
 | Not covered | test design/execution/review screens, planning screens, freeze/issue report/risk decision/retest screens, non-snapshot evidence sources (need a source picker); reminder delivery; no authenticated Windows walkthrough, genuine MFA or accessibility review |
 
+## Slice A6b — engagement stages, tests, reports and finding decisions (desktop)
+
+| Category | Result |
+|---|---|
+| Source changes | Domain `AuditorAction` gains `transition`, `freeze_evidence`, `issue_report`, `reopen_report`, `decide_risk`, `retest`, `reopen_finding` (engagement API) and `design_test`, `execute_test`, `review_test` (test API); `AuditorEngagementView` reads findings, the lead auditor and test procedures (`api.assurance_tests`) and mirrors the server rules (lead-only freeze once requests are settled; report issued by someone other than the lead after candidate exceptions are resolved; owners never decide, retest or reopen their own findings; tests run only on frozen fieldwork evidence, cover the recorded sample, and are reviewed by someone other than the runner). Platform `tests()` read. Desktop: stage, freeze and report actions on the engagement, a Tests section, finding actions, and the matching sealed command forms (whole-number fields sent as numbers) |
+| Database evidence | none new — no SQL changed; uses the installed A1/A2 APIs |
+| Automated tests | domain 454/454 (7 new A6b tests); platform assurance gateway 10/10; desktop `assurance_workspace_test.dart` 25/25, engagement 200% light/dark goldens regenerated for the new Design test action and Tests section |
+| Not covered | planning screens (universe, risk assessment, plans, templates, instantiation); digests for workpapers and retest evidence are typed, not computed from a chosen file; reminder delivery; no authenticated Windows walkthrough or genuine MFA |
+
 ## PR #1 review and first CI run (19 October 2026)
 
 | Category | Result |
@@ -109,7 +118,7 @@ The candidate was kept in `supabase/candidates/` until installation; it is now a
 | Not established | real users still have no assurance capability (no role grants); no native authenticated use, genuine MFA, contention/load or owner acceptance; production not touched |
 
 ## Next unblocked slices
-1. Remaining desktop screens: test design/execution/review, planning (A3), freeze, report issue, risk decisions and retest (A6a covered evidence, exceptions, findings issue and pack export).
+1. Planning screens (A3: universe, risk assessment, maker-checker plans, templates, recurring engagements); A6a and A6b cover the engagement-level auditor work.
 2. Reminder delivery through the existing Wave 3 notification channel, and scheduled monitoring/occurrence runs.
 3. Tenant-configurable SLA, reminder bands and rule thresholds once as-is discovery is done.
 

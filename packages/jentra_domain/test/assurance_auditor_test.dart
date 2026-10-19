@@ -11,12 +11,15 @@ Map<String, Object?> view({
   String? collectedBy,
   String exceptionStatus = 'candidate',
   List<Map<String, Object?>> reports = const [],
+  List<Map<String, Object?>> findings = const [],
+  String lead = '71000000-0000-0000-0000-000000000005',
 }) => {
   'engagement': {
     'id': eng,
     'name': 'FY27 Treasury',
     'status': status,
     'version': 7,
+    'lead_auditor_id': lead,
     'evidence_frozen_at': frozen ? '2026-10-10T00:00:00Z' : null,
   },
   'controls': [
@@ -50,7 +53,7 @@ Map<String, Object?> view({
       'source': 'continuous_monitoring',
     },
   ],
-  'findings': [],
+  'findings': findings,
   'reports': reports,
   'events': [],
 };
@@ -238,6 +241,186 @@ void main() {
         'findings': [],
         'events': [ev(1, 'drop_everything')],
       }),
+      throwsFormatException,
+    );
+  });
+
+  const closeCaps = {
+    'assurance.engagement.manage',
+    'assurance.engagement.close',
+    'assurance.retest.perform',
+    'assurance.test.perform',
+    'assurance.test.review',
+  };
+  Map<String, Object?> finding(String status, {String? ownerId}) => {
+    'id': uid(40),
+    'title': 'Single signatory releases',
+    'severity': 'high',
+    'status': status,
+    'owner_id': ownerId ?? owner,
+  };
+  Map<String, Object?> testRow(String status, {String? runBy}) => {
+    'id': uid(50),
+    'control_id': ctl,
+    'code': 'TRS-SAMPLE',
+    'status': status,
+    'population_size': 400,
+    'sample_size': 25,
+    'runs': [
+      if (runBy != null) {'id': uid(51), 'performed_by': runBy},
+    ],
+  };
+
+  test('new actions route to the test and engagement APIs', () {
+    expect(AuditorAction.of('design_test').rpc, AssuranceRpc.test);
+    expect(
+      AuditorAction.of('execute_test').capability,
+      'assurance.test.perform',
+    );
+    expect(AuditorAction.of('freeze_evidence').aggregateKey, 'engagement_id');
+    expect(AuditorAction.of('issue_report').requiresRecentMfa, isTrue);
+    expect(AuditorAction.of('retest').aggregateKey, 'finding_id');
+    expect(AuditorAction.of('review_test').requiresRecentMfa, isFalse);
+  });
+
+  test('execute validation enforces the recorded sample size', () {
+    final p = {
+      'action': 'execute_test',
+      'engagement_id': eng,
+      'run_id': uid(52),
+      'procedure_id': uid(50),
+      'items_tested': 24,
+      'exceptions_found': 0,
+      'conclusion': 'effective',
+      'workpaper_sha256': digest,
+    };
+    final a = AuditorAction.of('execute_test');
+    expect(
+      () => a.validate(
+        p,
+        now: DateTime.utc(2026, 10, 19),
+        tenantId: uid(9),
+        sampleSize: 25,
+      ),
+      throwsFormatException,
+    );
+    a.validate(
+      {...p, 'items_tested': 25},
+      now: DateTime.utc(2026, 10, 19),
+      tenantId: uid(9),
+      sampleSize: 25,
+    );
+  });
+
+  test('freeze is the lead auditor\'s, once every request is settled', () {
+    final open = AuditorEngagementView.fromJson(view(lead: me));
+    expect(open.canFreeze(closeCaps, me), isFalse);
+    final settled = view(lead: me);
+    ((settled['requests']! as List)[0] as Map)['status'] = 'accepted';
+    final v = AuditorEngagementView.fromJson(settled);
+    expect(v.canFreeze(closeCaps, me), isTrue);
+    expect(v.canFreeze(closeCaps, owner), isFalse);
+  });
+
+  test('stage moves follow the server rules', () {
+    expect(
+      AuditorEngagementView.fromJson(
+        view(status: 'planning'),
+      ).transitionTargets(closeCaps),
+      [EngagementStatus.fieldwork],
+    );
+    expect(
+      AuditorEngagementView.fromJson(view()).transitionTargets(closeCaps),
+      isEmpty,
+    );
+    expect(
+      AuditorEngagementView.fromJson(
+        view(frozen: true),
+      ).transitionTargets(closeCaps),
+      [EngagementStatus.reporting],
+    );
+    expect(
+      AuditorEngagementView.fromJson(
+        view(status: 'issued', findings: [finding('remediating')]),
+      ).transitionTargets(closeCaps),
+      isEmpty,
+    );
+    expect(
+      AuditorEngagementView.fromJson(
+        view(status: 'issued', findings: [finding('closed')]),
+      ).transitionTargets(closeCaps),
+      [EngagementStatus.archived],
+    );
+    expect(
+      AuditorEngagementView.fromJson(
+        view(status: 'planning'),
+      ).transitionTargets(all),
+      isEmpty,
+    );
+  });
+
+  test(
+    'reports are issued by someone other than the lead, after exceptions',
+    () {
+      final v = AuditorEngagementView.fromJson(
+        view(status: 'reporting', frozen: true, exceptionStatus: 'promoted'),
+      );
+      expect(v.canIssueReport(closeCaps, me), isTrue);
+      expect(v.canIssueReport(closeCaps, uid(5)), isFalse);
+      final pending = AuditorEngagementView.fromJson(
+        view(status: 'reporting', frozen: true),
+      );
+      expect(pending.canIssueReport(closeCaps, me), isFalse);
+      expect(
+        AuditorEngagementView.fromJson(
+          view(status: 'issued'),
+        ).canReopenReport(closeCaps),
+        isTrue,
+      );
+    },
+  );
+
+  test('finding decisions exclude the owner', () {
+    AuditorFinding f(String s) => AuditorEngagementView.fromJson(
+      view(findings: [finding(s)]),
+    ).findings.single;
+    final v = AuditorEngagementView.fromJson(view());
+    expect(v.canDecideRisk(closeCaps, f('risk_pending'), me), isTrue);
+    expect(v.canDecideRisk(closeCaps, f('risk_pending'), owner), isFalse);
+    expect(v.canRetest(closeCaps, f('retest_pending'), me), isTrue);
+    expect(v.canRetest(closeCaps, f('remediating'), me), isFalse);
+    expect(v.canReopenFinding(closeCaps, f('closed'), me), isTrue);
+    expect(v.canReopenFinding(closeCaps, f('issued'), me), isFalse);
+  });
+
+  test('tests run on frozen evidence and are reviewed by someone else', () {
+    final designed = AuditorEngagementView.fromJson(
+      view(frozen: true),
+      tests: [testRow('designed')],
+    );
+    expect(designed.canDesignTest(closeCaps), isTrue);
+    expect(designed.canExecuteTest(closeCaps, designed.tests.single), isTrue);
+    final unfrozen = AuditorEngagementView.fromJson(
+      view(),
+      tests: [testRow('designed')],
+    );
+    expect(unfrozen.canExecuteTest(closeCaps, unfrozen.tests.single), isFalse);
+    final executed = AuditorEngagementView.fromJson(
+      view(frozen: true),
+      tests: [testRow('executed', runBy: me)],
+    );
+    expect(executed.tests.single.sampleSize, 25);
+    expect(
+      executed.canReviewTest(closeCaps, executed.tests.single, me),
+      isFalse,
+    );
+    expect(
+      executed.canReviewTest(closeCaps, executed.tests.single, owner),
+      isTrue,
+    );
+    expect(
+      () =>
+          AuditorEngagementView.fromJson(view(), tests: [testRow('approved')]),
       throwsFormatException,
     );
   });
