@@ -95,7 +95,7 @@ const artifactPaths=[...workerFiles,...deployment.flatMap(d=>d.files.map(f=>f.pa
  ...(native.nativeKeyboardFocusEvidence?[native.nativeKeyboardFocusEvidence,base+`windows-test-preview-keyboard-attempt1-20261009-${revision}.json`,'scripts/wave5/probe_windows_keyboard.ps1']:[]),
  'docs/blueprint/wave5/W5_REVIEWED_MODEL_NATIVE_CONTRACT.md','scripts/wave5/run_windows_test_build.ps1','scripts/wave5/run_flutter_with_capture_env.mjs','scripts/wave5/launch_windows_test.ps1',
  'scripts/wave5/package_windows_test_build.mjs','scripts/wave5/finalize_windows_test_package.ps1','scripts/wave5/prepare_final_windows_evidence.mjs','scripts/wave5/prepare_full_desktop_diagnostic.mjs',
- 'supabase/tests/wave5_supabase_runtime_test.sql','supabase/tests/wave5_supabase_setup_test.sql',
+ 'supabase/wave_tests/wave5_supabase_runtime_test.sql','supabase/wave_tests/wave5_supabase_setup_test.sql',
  ...['preview','connected'].flatMap(m=>[base+`windows-test-${m}-source-20261009-${revision}.json`,base+`windows-test-${m}-package-20261009-${revision}.json`])];
 const artifacts=await Promise.all([...new Set(artifactPaths)].sort().map(async p=>({path:p,sha256:sha(await readFile(p))})));
 const body={...earlierBody,reviewId:'jentra-complete-app-supabase-runtime-20261009',preparedAt:new Date().toISOString(),

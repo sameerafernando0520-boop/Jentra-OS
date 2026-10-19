@@ -20,7 +20,7 @@ $at=$query.IndexOf('create extension if not exists pgtap')
 if($at -lt 0){throw 'Missing synthetic fixture boundary'}
 $tail=$candidate+"`n"
 if($IncludeSchemaCapture){
- $capture=Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot 'capture_wave3_schema.sql')
+ $capture=Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/capture_wave3_schema.sql')
  $capture=$capture.TrimEnd().TrimEnd(';')
  if($capture -notmatch "'schema_version','observed-20260930-45'" -or $capture -notmatch 'as schema_evidence$'){throw 'Original metadata capture contract drift'}
  $before=$capture.Replace("'schema_version','observed-20260930-45'","'schema_version','45-before-negative-stock-tail-20261003'")

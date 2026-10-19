@@ -34,7 +34,7 @@ const rows = requirements.map(r => {
   const number = Number(r.id.split('-')[1]);
   const fr = r.id.startsWith('FR') ? number : r.id.startsWith('AC') ? acFr[number-301] : r.id.startsWith('EC') ? ecFr[number-301] : 301;
   const g = groups.find(g => fr >= g[0] && fr <= g[1]);
-  const evidencePath = `supabase/tests/wave3_${g[2]}_test.sql`;
+  const evidencePath = `supabase/wave_tests/wave3_${g[2]}_test.sql`;
   return { ...r, source_evidence: fs.existsSync(evidencePath) ? evidencePath : 'docs/verification/remaining-wave3/checkpoint.md (historical)',
     implementation: 'present in baseline; requirement-specific gap review pending',
     verification: 'historical evidence only until fresh execution',

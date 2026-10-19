@@ -5,7 +5,7 @@ $root = Split-Path $PSScriptRoot -Parent
 $migration = if ($Installed) { '' } else {
   Get-Content -LiteralPath (Join-Path $root 'migrations/20260926082441_wave4_calendar_versions.sql') -Raw
 }
-$tests = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_calendar_test.sql') -Raw
+$tests = Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_calendar_test.sql') -Raw
 $tests = [regex]::Replace($tests, '(?m)^select (is|ok|throws_ok)\(', 'insert into calendar_assertions select $1(')
 $diagnostic = @'
 do $$

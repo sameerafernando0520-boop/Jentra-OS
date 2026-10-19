@@ -94,5 +94,12 @@ select pg_temp.check((select count(*)=0 from api.list_my_stock_opening_invitatio
 select pg_temp.err($$select api.invite_stock_opening_approver(pg_temp.aid('tenant'),pg_temp.aid('entity'),pg_temp.aid('branch'),'second@opening-access.jentra.test',pg_temp.aid('authdenied'))$$,'42501','authenticated approver cannot issue access');
 reset role;
 set constraints all immediate;
+-- pg_prove needs TAP: each check above raises on failure, so every recorded name passed.
+reset role;
+create extension if not exists pgtap with schema extensions;
+set local search_path=extensions,public,pg_catalog;
+select no_plan();
+select pass(name) from access_checks;
+select * from finish();
 select jsonb_build_object('passed',count(*),'checks',jsonb_agg(name),'fixtures','rollback_only') result from access_checks;
 rollback;

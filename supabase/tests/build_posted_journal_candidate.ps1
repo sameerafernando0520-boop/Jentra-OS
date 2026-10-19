@@ -7,7 +7,7 @@ if($at -lt 0){throw 'Missing synthetic fixture boundary'}
 $query=$query.Insert($at,(Get-Content -Raw (Join-Path $PSScriptRoot '../migrations/20260928001000_wave3_posted_journal_evidence.sql'))+"`n")
 if($Suite -eq 'procurement'){
  $at=$query.LastIndexOf('set constraints all immediate;')
- $query=$query.Insert($at,(Get-Content -Raw (Join-Path $PSScriptRoot 'wave3_posted_journal_test.sql'))+"`n")
+ $query=$query.Insert($at,(Get-Content -Raw (Join-Path $PSScriptRoot '../wave_tests/wave3_posted_journal_test.sql'))+"`n")
 }
 if($query -notmatch 'finish\(true\)' -or $query -match '(?im)^\s*commit\s*;' -or $query.TrimEnd() -notmatch 'rollback;$'){
  throw 'Strict rollback required'
