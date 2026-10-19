@@ -313,8 +313,10 @@ select set_config('request.jwt.claims',jsonb_build_object('sub',auth.uid(),'role
 select throws_ok($$select api.wave5_integration_list(pg_temp.fid('t'),pg_temp.fid('e'),pg_temp.fid('b'))$$,
  '42501','APPROVAL_REQUIRED','Integration storage projection itself requires real MFA assurance');
 select pg_temp.actor('owner');
-select is((select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace
- where n.nspname in('analytics','intelligence_control') and c.relkind='r'),30::bigint,'Composed Wave 5 adds fifteen tables alongside the fifteen installed tables');
+-- Later Wave 5 migrations add more tables to these schemas; the fifteen plus
+-- fifteen must all be there, however many follow.
+select ok((select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace
+ where n.nspname in('analytics','intelligence_control') and c.relkind='r')>=30,'Composed Wave 5 adds fifteen tables alongside the fifteen installed tables');
 select ok(not exists(select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace
  where n.nspname in('analytics','intelligence_control') and c.relkind='r' and (not c.relrowsecurity or not c.relforcerowsecurity)),
  'Every installed and candidate Wave 5 table enables and forces RLS');
