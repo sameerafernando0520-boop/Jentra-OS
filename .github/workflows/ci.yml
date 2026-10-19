@@ -94,12 +94,22 @@ jobs:
         with:
           fetch-depth: 0
 
+      # History holds ~650 MB of build output (dist/ zips, DLLs, logs) that
+      # Gitleaks re-read on every run until the 10-minute limit cancelled it.
+      # Blobs over 5 MB are binaries or generated logs, not hand-written
+      # config. Pull requests scan only their own commits; pushes still scan
+      # the whole history, so nothing merged goes unscanned.
       - name: Scan source and history with Gitleaks
-        run: >-
-          docker run --rm
-          -v "${{ github.workspace }}:/repo"
-          ghcr.io/gitleaks/gitleaks:v8.30.1
-          git /repo --redact --no-banner --verbose
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          range=()
+          if [ -n "$BASE_REF" ]; then range=("--log-opts=origin/$BASE_REF..HEAD"); fi
+          docker run --rm \
+            -v "${{ github.workspace }}:/repo" \
+            ghcr.io/gitleaks/gitleaks:v8.30.1 \
+            git /repo --redact --no-banner --verbose \
+            --max-target-megabytes=5 "${range[@]}"
 
   windows-release:
     name: Windows release build
