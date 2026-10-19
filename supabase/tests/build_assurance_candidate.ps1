@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-  [ValidateSet('A1','A2','A4','A4b','A3','A5','A6','A7','A8')][string]$Slice = 'A1',
+  [ValidateSet('A1','A2','A4','A4b','A3','A5','A6','A7','A8','A9')][string]$Slice = 'A1',
   # Installed variant: runs the same suites against the installed schema
   # (no candidate DDL) and expects the final 24-table schema at every stage.
   [switch]$Installed,
@@ -15,29 +15,29 @@ $root = Split-Path $PSScriptRoot -Parent
 $fragments = Join-Path $root 'assurance_tests'
 $migration = Get-Content -LiteralPath (Join-Path $root 'candidates/20261018090000_assurance_engagement_core.sql') -Raw
 $tests = Get-Content -LiteralPath (Join-Path $fragments 'assurance_core_test.sql') -Raw
-if ($Slice -in 'A2','A4','A4b','A3','A5','A6','A7','A8') {
+if ($Slice -in 'A2','A4','A4b','A3','A5','A6','A7','A8','A9') {
   # A2 is applied on top of A1 after A1's assertions, as a sequential install would be.
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261018120000_assurance_testing_carry_forward.sql') -Raw)
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $fragments 'assurance_testing_test.sql') -Raw)
 }
-if ($Slice -in 'A4','A4b','A3','A5','A6','A7','A8') {
+if ($Slice -in 'A4','A4b','A3','A5','A6','A7','A8','A9') {
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261018150000_assurance_evidence_adapters_export.sql') -Raw)
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $fragments 'assurance_evidence_test.sql') -Raw)
 }
-if ($Slice -in 'A4b','A3','A5','A6','A7','A8') {
+if ($Slice -in 'A4b','A3','A5','A6','A7','A8','A9') {
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261018170000_assurance_adapters_monitoring.sql') -Raw)
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $fragments 'assurance_monitoring_test.sql') -Raw)
 }
-if ($Slice -in 'A3','A5','A6','A7','A8') {
+if ($Slice -in 'A3','A5','A6','A7','A8','A9') {
   # A3 installs after A4b (later timestamp) and reuses the earlier fixtures.
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261018190000_assurance_universe_plans.sql') -Raw)
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $fragments 'assurance_planning_test.sql') -Raw)
 }
-if ($Slice -in 'A5','A6','A7','A8') {
+if ($Slice -in 'A5','A6','A7','A8','A9') {
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261018210000_assurance_workspace.sql') -Raw)
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $fragments 'assurance_workspace_test.sql') -Raw)
 }
-if ($Slice -in 'A6','A7','A8') {
+if ($Slice -in 'A6','A7','A8','A9') {
   # Version-guard candidate (PR #1 review), applied after the installed A1-A5.
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261019090000_assurance_version_guard.sql') -Raw)
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $fragments 'assurance_version_guard_test.sql') -Raw)
@@ -45,15 +45,20 @@ if ($Slice -in 'A6','A7','A8') {
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261019130000_assurance_plan_register.sql') -Raw)
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $fragments 'assurance_plan_register_test.sql') -Raw)
 }
-if ($Slice -in 'A7','A8') {
+if ($Slice -in 'A7','A8','A9') {
   # Evidence storage and byte verification (PR #1 review), after the guard.
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261019120000_assurance_evidence_storage.sql') -Raw)
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $fragments 'assurance_evidence_storage_test.sql') -Raw)
 }
-if ($Slice -eq 'A8') {
+if ($Slice -in 'A8','A9') {
   # Access: owner backfill, seeded assurance roles and the access APIs.
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261020090000_assurance_access.sql') -Raw)
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $fragments 'assurance_access_test.sql') -Raw)
+}
+if ($Slice -eq 'A9') {
+  # Settings and plan revision; replaces the plan, evidence and workspace functions.
+  $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261020120000_assurance_settings.sql') -Raw)
+  $tests += "`n" + (Get-Content -LiteralPath (Join-Path $fragments 'assurance_settings_test.sql') -Raw)
 }
 if ($Installed) {
   $migration = '-- installed variant: schema already installed; no candidate DDL'
