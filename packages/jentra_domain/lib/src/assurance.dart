@@ -894,7 +894,8 @@ Duration? assurancePercentile(List<Duration> samples, int percentile) {
     if (e.aggregateType != 'evidence_request') continue;
     if (e.action == 'request_evidence') {
       opened[e.aggregateId] = e.occurredAt;
-    } else if (e.action == 'submit_evidence') {
+    } else if (e.action == 'submit_evidence' ||
+        e.action == 'collect_system_evidence') {
       final o = opened[e.aggregateId];
       if (o != null && !submitted.containsKey(e.aggregateId)) {
         waiting.add(e.occurredAt.difference(o));

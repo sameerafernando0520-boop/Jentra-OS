@@ -86,6 +86,17 @@ The candidate was kept in `supabase/candidates/` until installation; it is now a
 | Automated tests | domain 446/446 (8 new); platform assurance gateway 9/9; desktop `assurance_workspace_test.dart` 22/22 including new 200% light/dark goldens `governance_engagement_*_200.png` produced by this work; analyzers clean on changed files |
 | Not covered | test design/execution/review screens, planning screens, freeze/issue report/risk decision/retest screens, non-snapshot evidence sources (need a source picker); reminder delivery; no authenticated Windows walkthrough, genuine MFA or accessibility review |
 
+## PR #1 review and first CI run (19 October 2026)
+
+| Category | Result |
+|---|---|
+| Version guard | Review found that a null `p_expected_version` skipped every version check (`version <> null` is null). Candidate `supabase/candidates/20261019090000_assurance_version_guard.sql` replaces `api.assurance_command`, `assurance.prepare_command` and `api.assurance_plan_command` with the installed bodies changed only to reject a null version (creation requires exactly 0). **Not installed**; the development project still has the bypass until an installation is approved |
+| CI pgTAP | `supabase test db` runs each file alone, so the assurance fragments moved to `supabase/assurance_tests/` and the builder generates `supabase/tests/assurance_installed_test.sql` (`-Slice A6 -Pgtap`: installed A1–A5 suites plus the guard candidate and its 8 assertions, 236 in all, ending in rollback). 94 older Wave 3–5 pgTAP files also fail under `supabase test db` (no plan / per-statement transactions); they are not changed here |
+| Formatting | 80 older Dart files reformatted (formatting only) plus braces on two `if` statements the reformat wrapped, so the format and analyze steps pass |
+| Metrics | evidence-stage durations now count system collection as the submission |
+| Export | the desktop offers audit-pack export for issued engagements only; archived engagements stay read-only |
+| Known gap | manual `submit_evidence` records a caller-supplied digest without a stored object; no storage bucket or upload verification exists yet |
+
 ## Installation — development project, 18 October 2026
 
 | Category | Result |

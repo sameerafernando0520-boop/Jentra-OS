@@ -141,6 +141,41 @@ void main() {
     expect(v.canExport(all), isTrue);
     expect(v.currentReport!.id, uid(31));
     expect(v.canExport({'assurance.evidence.view'}), isFalse);
+    final archived = AuditorEngagementView.fromJson(
+      view(
+        status: 'archived',
+        reports: [
+          {'id': uid(30), 'report_version': 1, 'digest': digest},
+        ],
+      ),
+    );
+    expect(archived.canExport(all), isFalse);
+  });
+
+  test('system collection counts as the evidence submission', () {
+    Map<String, Object?> ev(int v, String action, String to, String at) => {
+      'version': v,
+      'action': action,
+      'aggregate_type': 'evidence_request',
+      'aggregate_id': uid(10),
+      'from_status': null,
+      'to_status': to,
+      'actor_id': me,
+      'occurred_at': at,
+    };
+    final s = assuranceEvidenceStages([
+      AssuranceEvent.fromJson(
+        ev(1, 'request_evidence', 'open', '2026-10-01T00:00:00Z'),
+      ),
+      AssuranceEvent.fromJson(
+        ev(2, 'collect_system_evidence', 'submitted', '2026-10-02T00:00:00Z'),
+      ),
+      AssuranceEvent.fromJson(
+        ev(3, 'review_evidence', 'accepted', '2026-10-02T06:00:00Z'),
+      ),
+    ]);
+    expect(s.waiting, [const Duration(days: 1)]);
+    expect(s.review, [const Duration(hours: 6)]);
   });
 
   test('malformed detail fails closed', () {

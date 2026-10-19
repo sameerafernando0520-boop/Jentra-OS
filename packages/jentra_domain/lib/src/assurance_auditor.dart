@@ -241,10 +241,12 @@ final class AuditorEngagementView {
       _concluding &&
       x.status == ExceptionStatus.candidate;
 
+  /// Only issued engagements export: an export advances the engagement
+  /// version, and archived engagements are read-only. Packs exported before
+  /// archival stay readable.
   bool canExport(Set<String> caps) =>
       caps.contains('assurance.report.export') &&
-      (status == EngagementStatus.issued ||
-          status == EngagementStatus.archived) &&
+      status == EngagementStatus.issued &&
       currentReport != null;
 }
 
