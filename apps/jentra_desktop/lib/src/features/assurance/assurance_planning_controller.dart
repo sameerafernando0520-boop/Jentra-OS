@@ -72,6 +72,7 @@ final class AssurancePlanningController extends ChangeNotifier {
     'register_item': ['item_id'],
     'assess_risk': ['assessment_id'],
     'create_plan': ['plan_id'],
+    'supersede_plan': ['plan_id'],
     'add_plan_item': ['plan_item_id'],
     'instantiate_engagement': ['engagement_id'],
   };
@@ -339,9 +340,12 @@ final class AssurancePlanningController extends ChangeNotifier {
     final payload = request.envelope.payload;
     local = null;
     form = {};
-    message = action == 'instantiate_engagement'
-        ? 'Engagement created from the plan. Open it from Governance & Audit.'
-        : 'Recorded.';
+    message = switch (action) {
+      'instantiate_engagement' =>
+        'Engagement created from the plan. Open it from Governance & Audit.',
+      'supersede_plan' => 'Revision created as a draft. The approved plan stays in force until the revision is approved.',
+      _ => 'Recorded.',
+    };
     if (!_current(epoch)) return;
     universe = await gateway.universe(scope);
     final page = await gateway.plans(scope);
@@ -349,7 +353,10 @@ final class AssurancePlanningController extends ChangeNotifier {
     plans = page.items;
     cursor = page.nextCursor;
     final id = payload['plan_id'] as String?;
-    if (id != null && (plan?.id == id || action == 'create_plan')) {
+    if (id != null &&
+        (plan?.id == id ||
+            action == 'create_plan' ||
+            action == 'supersede_plan')) {
       final p = await gateway.plan(scope, id);
       if (!_current(epoch)) return;
       plan = p;

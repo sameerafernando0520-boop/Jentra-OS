@@ -6,6 +6,7 @@ import 'package:jentra_platform/analytics_platform.dart';
 import 'package:jentra_platform/jentra_assurance_platform.dart';
 
 import 'src/features/assurance/assurance_access_controller.dart';
+import 'src/features/assurance/assurance_settings_controller.dart';
 import 'src/features/assurance/assurance_workspace_controller.dart';
 
 import 'src/features/analytics/process_metric_screen.dart';
@@ -157,6 +158,9 @@ Future<void> main() async {
         ),
         assuranceAccessGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseAssuranceAccessGateway(client),
+        ),
+        assuranceSettingsGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseAssuranceSettingsGateway(client),
         ),
         closeReviewGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseCloseReviewGateway(client),

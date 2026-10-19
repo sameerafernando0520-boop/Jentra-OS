@@ -321,6 +321,25 @@ void main() {
     expect(c.message, contains('Engagement created'));
   });
 
+  test('an approved plan is revised through a new draft at version 0', () async {
+    gateway.planStatus = 'approved';
+    await c.initialize();
+    await c.openPlan(planId);
+    expect(c.plan!.canRevise(c.capabilities), isTrue);
+    await c.startCommand('supersede_plan', {
+      'supersedes_plan_id': planId,
+      'name': 'FY27 internal audit plan (revised)',
+    });
+    await c.submit();
+    expect(c.error, isNull);
+    final sent = gateway.commands.single;
+    expect(sent.expectedEntityVersion, 0);
+    expect(sent.payload['supersedes_plan_id'], planId);
+    expect(sent.payload['plan_id'], isNot(planId));
+    expect(c.section, 'plan');
+    expect(c.message, contains('Revision created'));
+  });
+
   test('without planning rights nothing can be started', () async {
     c.dispose();
     c = make(caps: {'assurance.evidence.view'});

@@ -119,6 +119,18 @@ void main() {
     expect(d.uncovered.single.code, 'ITGC');
   });
 
+  test('only planners revise approved plans; superseded plans are final', () {
+    final approved = AssurancePlanDetail.fromJson(detail(status: 'approved'));
+    expect(approved.canRevise(manage), isTrue);
+    expect(approved.canRevise({'assurance.evidence.view'}), isFalse);
+    expect(AssurancePlanDetail.fromJson(detail()).canRevise(manage), isFalse);
+    final superseded = AssurancePlanDetail.fromJson(
+      detail(status: 'superseded'),
+    );
+    expect(superseded.canRevise(manage), isFalse);
+    expect(superseded.canInstantiate(manage, superseded.items.single), isFalse);
+  });
+
   test('approved plans instantiate the next missing occurrence', () {
     final d = AssurancePlanDetail.fromJson(detail(status: 'approved'));
     final i = d.items.single;
