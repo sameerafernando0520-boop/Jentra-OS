@@ -2,7 +2,29 @@
 -- Runs against the schema `supabase start` installs from supabase/migrations.
 -- Installed migrations removed from the composition: 0.
 -- TAP rows go to output instead of: asset_assertions.
+-- Fixture period state changes routed through the governed event path: 2.
 begin;
+create function pg_temp.fixture_period_state(p_id uuid,p_target text) returns void
+language plpgsql as $fixture_period$
+declare p finance.fiscal_periods%rowtype;next_state text;claims text;
+begin
+ claims:=current_setting('request.jwt.claims',true);
+ loop
+  select * into p from finance.fiscal_periods where id=p_id;
+  exit when not found or p.state=p_target;
+  if auth.uid() is null then
+   perform set_config('request.jwt.claims',jsonb_build_object('sub',p.created_by)::text,true);
+  end if;
+  next_state:=case p.state when 'open' then 'soft_locked' when 'soft_locked' then 'hard_locked' else 'open' end;
+  insert into finance.period_events(id,tenant_id,legal_entity_id,period_id,action,from_state,to_state,period_version,
+   reason,exceptions,actor_id,transaction_id)
+  values(gen_random_uuid(),p.tenant_id,p.legal_entity_id,p.id,
+   case next_state when 'soft_locked' then 'soft_lock' when 'hard_locked' then 'hard_lock' else 'reopened' end,
+   p.state,next_state,p.version,'Synthetic fixture period state','[]',auth.uid(),txid_current());
+  update finance.fiscal_periods set state=next_state where id=p.id;
+ end loop;
+ perform set_config('request.jwt.claims',coalesce(claims,''),true);
+end $fixture_period$;
 set local lock_timeout='3s';
 set local statement_timeout='90s';
 create temporary table asset_assertions(message text);
@@ -260,11 +282,11 @@ update core.role_assignments set branch_id=null where role_id=pg_temp.wid('creat
 select pg_temp.acmd(pg_temp.areverse(),25,'transfer-reverse','branch2');
 select is(pg_temp.astate()->>'branch_id',pg_temp.wid('branch')::text,'original transfer reversal restores branch and location');
 select is(pg_temp.astate()->>'location_id',pg_temp.wid('asset.location.branch')::text,'original location restored exactly');
-update finance.fiscal_periods set state='soft_locked' where id=pg_temp.wid('asset.period');
+select pg_temp.fixture_period_state(id,'soft_locked') from finance.fiscal_periods where id=pg_temp.wid('asset.period');
 select throws_ok($q$select pg_temp.acmd(pg_temp.adep(),26,'closed-dep')$q$,'55000','PERIOD_CLOSED','closed period denies exact scheduled posting');
 select throws_ok($q$select pg_temp.acmd(pg_temp.areverse(),26,'closed-reverse')$q$,'55000','PERIOD_CLOSED','closed original period denies reversal');
 select is(pg_temp.astate()->>'accumulated','566.670000','closed-period failures preserve all balances');
-update finance.fiscal_periods set state='open' where id=pg_temp.wid('asset.period');
+select pg_temp.fixture_period_state(id,'open') from finance.fiscal_periods where id=pg_temp.wid('asset.period');
 select pg_temp.acmd(pg_temp.adep(),26,'a-dep2');
 select pg_temp.acmd(pg_temp.adep(),27,'a-dep3');
 select is(pg_temp.astate()->>'carrying','100.000000','original full life preserves exact residual after correction chain');

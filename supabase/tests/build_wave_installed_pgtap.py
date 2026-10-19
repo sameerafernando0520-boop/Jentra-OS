@@ -232,7 +232,7 @@ def tap_stream(query):
     if not sinks:
         return query, sinks
     mask = quoted_mask(query)
-    pattern = re.compile(r'insert into (' + '|'.join(sinks) + r') select\b', re.I)
+    pattern = re.compile(r'insert into (' + '|'.join(sinks) + r')\s+select\b', re.I)
     out, last = [], 0
     for m in pattern.finditer(query):
         if mask[m.start()]:
@@ -242,6 +242,81 @@ def tap_stream(query):
         last = m.end()
     out.append(query[last:])
     return ''.join(out), sinks
+
+
+# 20260924185321_wave3_period_governance makes a fiscal-period state change
+# legal only after a period event by the same actor in the same transaction.
+# Candidate builders installed that migration after the older fixtures had
+# already set up their periods, so those fixtures update the state directly;
+# installed, the same statement raises PERIOD_TRANSITION_COMMAND_REQUIRED. The
+# fixture step becomes the governed path wave3_period_test.sql itself uses (an
+# event, then the update), walking open -> soft_locked -> hard_locked -> open.
+PERIOD_HELPER = """create function pg_temp.fixture_period_state(p_id uuid,p_target text) returns void
+language plpgsql as $fixture_period$
+declare p finance.fiscal_periods%rowtype;next_state text;claims text;
+begin
+ claims:=current_setting('request.jwt.claims',true);
+ loop
+  select * into p from finance.fiscal_periods where id=p_id;
+  exit when not found or p.state=p_target;
+  if auth.uid() is null then
+   perform set_config('request.jwt.claims',jsonb_build_object('sub',p.created_by)::text,true);
+  end if;
+  next_state:=case p.state when 'open' then 'soft_locked' when 'soft_locked' then 'hard_locked' else 'open' end;
+  insert into finance.period_events(id,tenant_id,legal_entity_id,period_id,action,from_state,to_state,period_version,
+   reason,exceptions,actor_id,transaction_id)
+  values(gen_random_uuid(),p.tenant_id,p.legal_entity_id,p.id,
+   case next_state when 'soft_locked' then 'soft_lock' when 'hard_locked' then 'hard_lock' else 'reopened' end,
+   p.state,next_state,p.version,'Synthetic fixture period state','[]',auth.uid(),txid_current());
+  update finance.fiscal_periods set state=next_state where id=p.id;
+ end loop;
+ perform set_config('request.jwt.claims',coalesce(claims,''),true);
+end $fixture_period$;
+"""
+PERIOD_UPDATE = re.compile(
+    r"(?im)^update finance\.fiscal_periods\s+set\s+state\s*=\s*'(\w+)'(?:\s*,\s*updated_by\s*=[^;]*?)?\s+where\s+([^;]+);")
+
+
+def govern_period_updates(query):
+    mask = quoted_mask(query)
+    out, last, count = [], 0, 0
+    for m in PERIOD_UPDATE.finditer(query):
+        if mask[m.start()]:
+            continue
+        before = query[:m.start()].rstrip()
+        previous = before[before.rstrip(';').rfind(';') + 1:].strip().lower()
+        if previous.startswith('insert into finance.period_events'):
+            continue  # already the governed path
+        out.append(query[last:m.start()])
+        out.append(f"select pg_temp.fixture_period_state(id,'{m.group(1)}') from finance.fiscal_periods where {m.group(2).strip()};")
+        last = m.end()
+        count += 1
+    if not count:
+        return query, 0
+    out.append(query[last:])
+    query = ''.join(out)
+    at = re.search(r'(?im)^begin;\n', query).end()
+    return query[:at] + PERIOD_HELPER + query[at:], count
+
+
+def pin_statement_time(query):
+    """The compositions were run as one execute_sql message, where every
+    statement shares one statement_timestamp() and it equals now(). psql sends
+    each statement on its own, so a basis hashed in one statement no longer
+    matches the same basis recomputed in the next (SOURCE_BASIS_CHANGED).
+    Top-level fixture statements get now() back; function bodies and the
+    installed schema are untouched."""
+    mask = quoted_mask(query)
+    out, last, count = [], 0, 0
+    for m in re.finditer(r'\bstatement_timestamp\(\)', query):
+        if mask[m.start()]:
+            continue
+        out.append(query[last:m.start()])
+        out.append('now()')
+        last = m.end()
+        count += 1
+    out.append(query[last:])
+    return ''.join(out), count
 
 
 def finalise(stem, query, source, notes):
@@ -264,15 +339,27 @@ def build_all(workdir):
         query = run_builder(builder, args, workdir)
         query, removed = strip_migrations(query)
         query, sinks = tap_stream(query)
+        query, periods = govern_period_updates(query)
+        query, pinned = pin_statement_time(query)
         source = f'supabase/tests/{builder}.ps1 {" ".join(a.lstrip("@") for a in args)}'.strip()
         notes = [f'Installed migrations removed from the composition: {len(removed)}.']
         if sinks:
             notes.append('TAP rows go to output instead of: ' + ', '.join(sinks) + '.')
+        if periods:
+            notes.append(f'Fixture period state changes routed through the governed event path: {periods}.')
+        if pinned:
+            notes.append(f'Top-level statement_timestamp() read as now(), as in one execute_sql message: {pinned}.')
         files[stem] = finalise(stem, query, source, notes)
     for stem, compose, source in WAVE5:
         query, names = compose()
         query, removed = strip_migrations(query)
+        query, periods = govern_period_updates(query)
+        query, pinned = pin_statement_time(query)
         notes = ['Fixtures, in order: ' + ', '.join(names) + '.']
+        if periods:
+            notes.append(f'Fixture period state changes routed through the governed event path: {periods}.')
+        if pinned:
+            notes.append(f'Top-level statement_timestamp() read as now(), as in one execute_sql message: {pinned}.')
         files[stem] = finalise(stem, query, source, notes)
     return files
 

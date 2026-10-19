@@ -2,6 +2,7 @@
 -- Runs against the schema `supabase start` installs from supabase/migrations.
 -- Installed migrations removed from the composition: 45.
 -- TAP rows go to output instead of: final_stack_results.
+-- Top-level statement_timestamp() read as now(), as in one execute_sql message: 1.
 begin;
 create temp table final_stack_results(message text);
 grant insert on final_stack_results to authenticated;
@@ -732,7 +733,7 @@ select is((select count(distinct account_id) from finance.control_account_basis
  2::bigint,'retired and current AR accounts remain in the append-only mapping basis');
 select is((finance.build_control_report(pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),
  jsonb_build_object('id',pg_temp.fid('control.history.report'),'kind','AR',
- 'as_of',(statement_timestamp() at time zone 'UTC')::date))#>>'{summary,basis_coverage,registry_accounts}')::bigint,
+ 'as_of',(now() at time zone 'UTC')::date))#>>'{summary,basis_coverage,registry_accounts}')::bigint,
  2::bigint,'dated AR reconciliation discloses both mapped account identities');
 select ok(exists(select 1 from finance.control_account_basis where tenant_id=pg_temp.fid('tenant')
  and legal_entity_id=pg_temp.fid('entity') and kind='AR' and account_id=pg_temp.fid('receivable_control')

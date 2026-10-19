@@ -2,7 +2,30 @@
 -- Runs against the schema `supabase start` installs from supabase/migrations.
 -- Installed migrations removed from the composition: 46.
 -- TAP rows go to output instead of: procurement_test_results.
+-- Fixture period state changes routed through the governed event path: 1.
+-- Top-level statement_timestamp() read as now(), as in one execute_sql message: 5.
 begin;
+create function pg_temp.fixture_period_state(p_id uuid,p_target text) returns void
+language plpgsql as $fixture_period$
+declare p finance.fiscal_periods%rowtype;next_state text;claims text;
+begin
+ claims:=current_setting('request.jwt.claims',true);
+ loop
+  select * into p from finance.fiscal_periods where id=p_id;
+  exit when not found or p.state=p_target;
+  if auth.uid() is null then
+   perform set_config('request.jwt.claims',jsonb_build_object('sub',p.created_by)::text,true);
+  end if;
+  next_state:=case p.state when 'open' then 'soft_locked' when 'soft_locked' then 'hard_locked' else 'open' end;
+  insert into finance.period_events(id,tenant_id,legal_entity_id,period_id,action,from_state,to_state,period_version,
+   reason,exceptions,actor_id,transaction_id)
+  values(gen_random_uuid(),p.tenant_id,p.legal_entity_id,p.id,
+   case next_state when 'soft_locked' then 'soft_lock' when 'hard_locked' then 'hard_lock' else 'reopened' end,
+   p.state,next_state,p.version,'Synthetic fixture period state','[]',auth.uid(),txid_current());
+  update finance.fiscal_periods set state=next_state where id=p.id;
+ end loop;
+ perform set_config('request.jwt.claims',coalesce(claims,''),true);
+end $fixture_period$;
 set local jit=on;
 set local lock_timeout='2s';
 set local statement_timeout='30s';
@@ -1478,7 +1501,7 @@ insert into finance.period_events(id,tenant_id,legal_entity_id,period_id,action,
 values(pg_temp.fid('period.fixture.hard'),pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.period_id(),
  'hard_lock','soft_locked','hard_locked',(select version from finance.fiscal_periods where id=pg_temp.period_id()),
  'Synthetic hard state for reopen test','[]',pg_temp.fid('creator'),txid_current());
-update finance.fiscal_periods set state='hard_locked',updated_by=pg_temp.fid('creator') where id=pg_temp.period_id();
+select pg_temp.fixture_period_state(id,'hard_locked') from finance.fiscal_periods where id=pg_temp.period_id();
 select throws_ok($$select pg_temp.bank_journal('period.hard.post',1)$$,
  '55000','PERIOD_CLOSED','hard lock rejects ordinary posting');
 select throws_ok($$select pg_temp.call('period_governance_command',
@@ -3458,7 +3481,7 @@ select is(core.wave3_notification_classes('finance.budgets.variance.generated'),
 
 select api.configure_wave3_notification_subscription(pg_temp.fid('tenant'),pg_temp.fid('entity'),
  pg_temp.fid('branch'),pg_temp.fid('notice.approver.command'),pg_temp.fid('notice.approver.key'),
- statement_timestamp(),jsonb_build_object('id',pg_temp.fid('notice.approver'),
+ now(),jsonb_build_object('id',pg_temp.fid('notice.approver'),
  'recipient_id',pg_temp.fid('approver'),'event_class','posting','enabled',true),0);
 update core.memberships set status='suspended' where tenant_id=pg_temp.fid('tenant') and user_id=pg_temp.fid('approver');
 select lives_ok(
@@ -3477,7 +3500,7 @@ update core.memberships set status='active' where tenant_id=pg_temp.fid('tenant'
 
 select api.configure_wave3_notification_subscription(pg_temp.fid('tenant'),pg_temp.fid('entity'),
  pg_temp.fid('branch'),pg_temp.fid('notice.due.config.command'),pg_temp.fid('notice.due.config.key'),
- statement_timestamp(),jsonb_build_object('id',pg_temp.fid('notice.due'),
+ now(),jsonb_build_object('id',pg_temp.fid('notice.due'),
  'recipient_id',pg_temp.fid('creator'),'event_class','due','enabled',true),0);
 create function pg_temp.scan_due(label text,cutoff date default '2026-09-29') returns jsonb
  language sql as $$select api.scan_wave3_due_notifications(pg_temp.fid('tenant'),pg_temp.fid('entity'),
@@ -3549,14 +3572,14 @@ select ok(not exists(select 1 from wave3_dashboard_result,
 select is(
  (select coalesce(sum((r->>'amount')::numeric),0)::text from wave3_dashboard_result,
  jsonb_array_elements(body->'metrics')m,jsonb_array_elements(m#>'{data,buckets}')r where m->>'kind'='ap_aging'),
- (select coalesce(sum((finance.flow_residual(tenant_id,id,(statement_timestamp() at time zone 'UTC')::date)->>'amount')::numeric),0)::text
+ (select coalesce(sum((finance.flow_residual(tenant_id,id,(now() at time zone 'UTC')::date)->>'amount')::numeric),0)::text
   from finance.open_items where tenant_id=pg_temp.fid('tenant') and legal_entity_id=pg_temp.fid('entity')
-   and branch_id=pg_temp.fid('branch') and kind='AP' and posting_date<=(statement_timestamp() at time zone 'UTC')::date),
+   and branch_id=pg_temp.fid('branch') and kind='AP' and posting_date<=(now() at time zone 'UTC')::date),
  'AP dashboard sums exactly to dated immutable residuals including credits');
 select is((select m->'data' from wave3_dashboard_result,
  jsonb_array_elements(body->'metrics')m where m->>'kind'='cash_bank'),
  finance.build_branch_cash_controls(pg_temp.fid('tenant'),pg_temp.fid('entity'),pg_temp.fid('branch'),
- (statement_timestamp() at time zone 'UTC')::date)->'controls',
+ (now() at time zone 'UTC')::date)->'controls',
  'dashboard cash evidence equals authoritative branch reconciliation basis');
 delete from core.role_permissions where tenant_id=pg_temp.fid('tenant')
  and role_id=pg_temp.fid('creator.role') and permission_code='finance.payments.manage';
