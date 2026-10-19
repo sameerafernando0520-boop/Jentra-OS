@@ -355,8 +355,7 @@ final class BusinessSetupController extends AsyncNotifier<BusinessSetupState> {
           'A newer server version exists. Reload it or merge your encrypted draft explicitly.',
           error: DomainError(
             code: error.code,
-            message:
-                'A newer server version exists. Reload it or merge your encrypted draft explicitly.',
+            message: 'A newer server version exists. Reload it or merge your encrypted draft explicitly.',
             fieldDetails: {
               ...error.fieldDetails,
               'local_version': existing.version.toString(),
@@ -1159,8 +1158,7 @@ final class BusinessSetupController extends AsyncNotifier<BusinessSetupState> {
       ],
       BusinessSetupResource.attachments => [
         record('attachment-1', 'ATT-001', 'chart-of-accounts.xlsx', const {
-          'mime_type':
-              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'mime_type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
           'byte_size': 18420,
           'aggregate_type': 'import_job',
         }, status: 'ready'),

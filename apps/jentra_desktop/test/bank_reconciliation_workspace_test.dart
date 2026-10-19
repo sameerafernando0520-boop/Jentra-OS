@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ import 'package:jentra_platform/jentra_finance_platform.dart';
 import 'package:jentra_desktop/src/features/bank_reconciliation/bank_reconciliation_controller.dart';
 import 'package:jentra_desktop/src/features/bank_reconciliation/bank_reconciliation_screen.dart';
 import 'package:jentra_desktop/src/shell/navigation.dart';
+
 import 'support/procurement_fakes.dart' show Keys;
 
 class BankFake implements BankReconciliationGateway {
@@ -132,29 +134,26 @@ void main() {
     c.toggle('journal_lines', 'j1', true);
   }
 
-  test(
-    'matching preserves exact selected totals and sealed request across restart',
-    () async {
-      await ready();
-      expect(
-        c.selectedTotal('statement_lines').toDecimalString(),
-        '9007199254.740993',
-      );
-      gateway.failure = 'UNCERTAIN_RESULT';
-      await c.execute('match');
-      expect(c.pending, true);
-      final first = gateway.commands.single.toJson((v) => v);
-      c.dispose();
-      c = make();
-      await c.initialize();
-      c.field('reason', 'Changed');
-      expect(c.form['reason'], 'Customer deposit');
-      gateway.failure = null;
-      await c.retry();
-      expect(gateway.commands.last.toJson((v) => v), first);
-      expect(c.pending, false);
-    },
-  );
+  test('matching preserves exact selected totals and sealed request across restart', () async {
+    await ready();
+    expect(
+      c.selectedTotal('statement_lines').toDecimalString(),
+      '9007199254.740993',
+    );
+    gateway.failure = 'UNCERTAIN_RESULT';
+    await c.execute('match');
+    expect(c.pending, true);
+    final first = gateway.commands.single.toJson((v) => v);
+    c.dispose();
+    c = make();
+    await c.initialize();
+    c.field('reason', 'Changed');
+    expect(c.form['reason'], 'Customer deposit');
+    gateway.failure = null;
+    await c.retry();
+    expect(gateway.commands.last.toJson((v) => v), first);
+    expect(c.pending, false);
+  });
   test('confirmed mutation cleared before optional refresh failure', () async {
     await ready();
     gateway.failRefresh = true;
@@ -236,9 +235,8 @@ void main() {
       false,
     );
     expect(
-      visibleJentraDestinations({
-        'finance.view',
-      }).any((d) => d.path == '/finance/bank'),
+      visibleJentraDestinations({'finance.view'})
+          .any((d) => d.path == '/finance/bank'),
       true,
     );
   });

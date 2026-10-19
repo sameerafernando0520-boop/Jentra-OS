@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:drift/drift.dart' show CouldNotRollBackException, DriftWrappedException;
+import 'package:drift/drift.dart'
+    show CouldNotRollBackException, DriftWrappedException;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jentra_domain/jentra_domain.dart';
@@ -168,9 +169,14 @@ void main() {
         'private/object/path',
         OSError('private native message', code),
       );
-      expect(localDraftStorageFailure(raw), failure(expected ? 'full' : 'unavailable'));
-      expect(jsonEncode(localDraftStorageFailure(raw).toJson()),
-          isNot(contains('private/object/path')));
+      expect(
+        localDraftStorageFailure(raw),
+        failure(expected ? 'full' : 'unavailable'),
+      );
+      expect(
+        jsonEncode(localDraftStorageFailure(raw).toJson()),
+        isNot(contains('private/object/path')),
+      );
     });
   }
 
@@ -184,36 +190,58 @@ void main() {
     final safe = localDraftStorageFailure(raw);
     expect(safe, failure('full'));
     expect(jsonEncode(safe.toJson()), isNot(contains('private SQL text')));
-    expect(jsonEncode(safe.toJson()), isNot(contains('private source payload')));
+    expect(
+      jsonEncode(safe.toJson()),
+      isNot(contains('private source payload')),
+    );
   });
 
   test('Drift wrapper retains structured FULL without wrapper text', () {
     expect(
-      localDraftStorageFailure(DriftWrappedException(
-        message: 'private credential diagnostic token',
-        cause: SqliteException(extendedResultCode: 13, message: 'private SQL text'),
-      )),
+      localDraftStorageFailure(
+        DriftWrappedException(
+          message: 'private credential diagnostic token',
+          cause: SqliteException(
+            extendedResultCode: 13,
+            message: 'private SQL text',
+          ),
+        ),
+      ),
       failure('full'),
     );
   });
 
   test('automatic rollback wrapper reports FULL without confirmation', () {
     expect(
-      localDraftStorageFailure(CouldNotRollBackException(
-        SqliteException(extendedResultCode: 13, message: 'private source payload'),
-        StackTrace.current,
-        StateError('private credential diagnostic token'),
-      )),
+      localDraftStorageFailure(
+        CouldNotRollBackException(
+          SqliteException(
+            extendedResultCode: 13,
+            message: 'private source payload',
+          ),
+          StackTrace.current,
+          StateError('private credential diagnostic token'),
+        ),
+      ),
       failure('full'),
     );
   });
 
   test('storage classifier preserves distinct domain rejection', () {
-    for (final code in ['VERSION_CONFLICT', 'DRAFT_SCOPE_MISMATCH', 'COMMAND_PENDING']) {
+    for (final code in [
+      'VERSION_CONFLICT',
+      'DRAFT_SCOPE_MISMATCH',
+      'COMMAND_PENDING',
+    ]) {
       final original = DomainError(code: code, message: 'Existing safe error');
       expect(localDraftStorageFailure(original), same(original));
       expect(isLocalDraftStorageFailure(original), isFalse);
     }
-    expect(isLocalDraftStorageFailure(localDraftStorageFailure(StateError('closed'))), isTrue);
+    expect(
+      isLocalDraftStorageFailure(
+        localDraftStorageFailure(StateError('closed')),
+      ),
+      isTrue,
+    );
   });
 }

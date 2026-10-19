@@ -458,9 +458,8 @@ void main() {
       false,
     );
     expect(
-      visibleJentraDestinations({
-        'finance.view',
-      }).any((x) => x.path == '/finance/tax'),
+      visibleJentraDestinations({'finance.view'})
+          .any((x) => x.path == '/finance/tax'),
       true,
     );
   });

@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +9,7 @@ import 'package:jentra_domain/jentra_procurement.dart';
 import 'package:jentra_platform/jentra_procurement_platform.dart';
 import 'package:jentra_desktop/src/features/procurement/goods_receipt_controller.dart';
 import 'package:jentra_desktop/src/features/procurement/goods_receipt_screen.dart';
+
 import 'support/procurement_fakes.dart';
 
 class ReceiptGateway extends Gateway
@@ -116,29 +118,26 @@ void main() {
     c.updateLine(id, 'lot_code', 'PAPER-2026-09');
   }
 
-  test(
-    'uncertain posting survives restart with exact quantities and the same source version',
-    () async {
-      await draft();
-      await c.saveServer();
-      final original = jsonEncode(gateway.commands.single.toJson((p) => p));
-      expect(gateway.commands.single.expectedEntityVersion, 3);
-      expect(
-        (gateway.commands.single.payload['lines'] as List).single,
-        isNot(contains('_tracking_mode')),
-      );
-      c.dispose();
-      c = controller();
-      await c.initialize();
-      c.update('reference', 'changed');
-      expect(c.form!['reference'], 'Delivery note 0042');
-      gateway.uncertain = false;
-      await c.saveServer();
-      expect(jsonEncode(gateway.commands.last.toJson((p) => p)), original);
-      expect(gateway.operations, ['post', 'post']);
-      expect(c.form, isNull);
-    },
-  );
+  test('uncertain posting survives restart with exact quantities and the same source version', () async {
+    await draft();
+    await c.saveServer();
+    final original = jsonEncode(gateway.commands.single.toJson((p) => p));
+    expect(gateway.commands.single.expectedEntityVersion, 3);
+    expect(
+      (gateway.commands.single.payload['lines'] as List).single,
+      isNot(contains('_tracking_mode')),
+    );
+    c.dispose();
+    c = controller();
+    await c.initialize();
+    c.update('reference', 'changed');
+    expect(c.form!['reference'], 'Delivery note 0042');
+    gateway.uncertain = false;
+    await c.saveServer();
+    expect(jsonEncode(gateway.commands.last.toJson((p) => p)), original);
+    expect(gateway.operations, ['post', 'post']);
+    expect(c.form, isNull);
+  });
   test(
     'over receipt and unexplained rejection fail before sealing a command',
     () async {

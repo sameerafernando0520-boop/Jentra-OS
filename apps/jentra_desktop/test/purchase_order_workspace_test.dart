@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +9,7 @@ import 'package:jentra_domain/jentra_procurement.dart';
 import 'package:jentra_platform/jentra_procurement_platform.dart';
 import 'package:jentra_desktop/src/features/procurement/purchase_order_controller.dart';
 import 'package:jentra_desktop/src/features/procurement/purchase_order_screen.dart';
+
 import 'support/procurement_fakes.dart';
 
 class OrderGateway extends Gateway implements PurchaseOrderGateway {
@@ -140,26 +142,23 @@ void main() {
       },
     ],
   };
-  test(
-    'uncertain revision survives restart and retries lifecycle RPC, never draft save',
-    () async {
-      await c.initialize();
-      c.select(order(status: 'approved'));
-      await c.transition('revise', reason: 'Supplier price amendment');
-      final original = jsonEncode(gateway.commands.single.toJson((p) => p));
-      c.dispose();
-      c = controller();
-      await c.initialize();
-      c.update('payment_terms', 'changed');
-      expect(c.form!['payment_terms'], '30 days');
-      gateway.uncertain = false;
-      await c.saveServer();
-      expect(gateway.verbs, ['transition', 'transition']);
-      expect(jsonEncode(gateway.commands.last.toJson((p) => p)), original);
-      expect(c.form, isNull);
-      expect(await drafts.load(scope, PurchaseOrderController.slot), isNull);
-    },
-  );
+  test('uncertain revision survives restart and retries lifecycle RPC, never draft save', () async {
+    await c.initialize();
+    c.select(order(status: 'approved'));
+    await c.transition('revise', reason: 'Supplier price amendment');
+    final original = jsonEncode(gateway.commands.single.toJson((p) => p));
+    c.dispose();
+    c = controller();
+    await c.initialize();
+    c.update('payment_terms', 'changed');
+    expect(c.form!['payment_terms'], '30 days');
+    gateway.uncertain = false;
+    await c.saveServer();
+    expect(gateway.verbs, ['transition', 'transition']);
+    expect(jsonEncode(gateway.commands.last.toJson((p) => p)), original);
+    expect(c.form, isNull);
+    expect(await drafts.load(scope, PurchaseOrderController.slot), isNull);
+  });
   test('conflict retains raw edit and prevents replacing command', () async {
     await c.initialize();
     await c.edit(order());

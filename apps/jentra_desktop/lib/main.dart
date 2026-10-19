@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_platform/jentra_receivables_platform.dart';
 import 'package:jentra_platform/jentra_procurement_platform.dart';
 import 'package:jentra_platform/analytics_platform.dart';
+import 'package:jentra_platform/jentra_assurance_platform.dart';
+
+import 'src/features/assurance/assurance_workspace_controller.dart';
 
 import 'src/features/analytics/process_metric_screen.dart';
 import 'src/features/analytics/pipeline_forecast_screen.dart';
@@ -147,6 +150,9 @@ Future<void> main() async {
         ),
         controlReconciliationGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseControlReconciliationGateway(client),
+        ),
+        assuranceGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseAssuranceGateway(client),
         ),
         closeReviewGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseCloseReviewGateway(client),

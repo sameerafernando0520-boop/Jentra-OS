@@ -309,10 +309,7 @@ Future<void> _precacheBrandAssets(WidgetTester tester) async {
   // frames. Await both PNGs so this fixture does not rely on a previous test.
   await tester.runAsync(() async {
     for (final asset in const [
-      AssetImage(
-        JentraBrandMark.asset,
-        package: JentraBrandMark.assetPackage,
-      ),
+      AssetImage(JentraBrandMark.asset, package: JentraBrandMark.assetPackage),
       AssetImage(
         JentraBrandWordmark.asset,
         package: JentraBrandMark.assetPackage,

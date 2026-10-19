@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -301,9 +302,8 @@ void main() {
         MaterialApp(
           theme: dark ? JentraTheme.dark() : JentraTheme.light(),
           builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(textScaler: const TextScaler.linear(2)),
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(2)),
             child: child!,
           ),
           home: RepaintBoundary(

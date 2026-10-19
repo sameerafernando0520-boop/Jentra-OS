@@ -40,8 +40,8 @@ for (const file of [...w5, ...w4]) {
     end if;
   end $$;`);
 }
-const fixture = 'supabase/tests/wave5_cash_payment_dates_test.sql';
-const w4Fixture = 'supabase/tests/wave4_synthetic_fixture.sql';
+const fixture = 'supabase/wave_tests/wave5_cash_payment_dates_test.sql';
+const w4Fixture = 'supabase/wave_tests/wave4_synthetic_fixture.sql';
 const w4FixtureBytes = await readFile(path.join(root, w4Fixture));
 parts.push(w4FixtureBytes.toString());
 const bytes = await readFile(path.join(root, fixture));

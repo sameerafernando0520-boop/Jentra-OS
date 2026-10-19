@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:async';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +11,7 @@ import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_desktop/src/features/control_reconciliation/control_reconciliation_controller.dart';
 import 'package:jentra_desktop/src/features/control_reconciliation/control_reconciliation_screen.dart';
 import 'package:jentra_desktop/src/shell/navigation.dart';
+
 import 'support/procurement_fakes.dart' show Keys;
 
 Map<String, Object?> report(String id) => {
@@ -231,9 +233,9 @@ void main() {
   }
 
   test('navigation requires finance and reconciliation capabilities', () {
-    bool visible(Set<String> caps) => visibleJentraDestinations(
-      caps,
-    ).any((x) => x.path == '/finance/controls');
+    bool visible(Set<String> caps) =>
+        visibleJentraDestinations(caps)
+            .any((x) => x.path == '/finance/controls');
     expect(visible({'finance.view'}), isFalse);
     expect(visible({'finance.controls.reconcile'}), isFalse);
     expect(visible({'finance.view', 'finance.controls.reconcile'}), isTrue);

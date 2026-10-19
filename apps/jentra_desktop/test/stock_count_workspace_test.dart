@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +9,7 @@ import 'package:jentra_domain/jentra_inventory.dart';
 import 'package:jentra_platform/jentra_inventory_platform.dart';
 import 'package:jentra_desktop/src/features/stock_count/stock_count_controller.dart';
 import 'package:jentra_desktop/src/features/stock_count/stock_count_screen.dart';
+
 import 'support/procurement_fakes.dart' show Keys;
 
 class Counts implements StockCountGateway {

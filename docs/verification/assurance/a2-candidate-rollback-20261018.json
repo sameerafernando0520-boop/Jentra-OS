@@ -1,0 +1,50 @@
+{
+  "kind": "candidate-rollback-pgtap",
+  "slice": "assurance-a2-testing-carry-forward",
+  "blueprint": "68_CORPORATE_AUDIT_ASSURANCE_SPEC.md",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "tool": "supabase execute_sql (single transaction ending in rollback)",
+  "build": "supabase/tests/build_assurance_candidate.ps1 -Slice A2 (A1 DDL, A1 tests, A2 DDL, A2 tests)",
+  "installed": false,
+  "rolledBack": true,
+  "sources": {
+    "supabase/candidates/20261018090000_assurance_engagement_core.sql": "ecce6d8a7f4a68c58820b7772283a43fcea261644fac2627c04060fbacf56a86",
+    "supabase/candidates/20261018120000_assurance_testing_carry_forward.sql": "f3b8b6eee2e79870ce4d44879670e6ca464fb3efcd622943896dbcdce6080071",
+    "supabase/tests/assurance_core_test.sql": "9166eca081d587d4df08e761d83feadea0fcf870aaf1771c208855ebecd0c644",
+    "supabase/tests/assurance_testing_test.sql": "2882c556bfe1feb010b2a9f352dc2080da737beea92e8c81ec8f7b700e9740f2",
+    "supabase/tests/build_assurance_candidate.ps1": "e2a90174939110430d9366c9a92f449ab830a7dc3a281ca5f3851819b1f757d0"
+  },
+  "builtQuerySha256": "159a5599319c3f29d0dbee1db52cd5e54cc4cd8889b69e0d2669a824619ba004",
+  "a1BuilderOutputUnchanged": "51879e0093f065c208c7765fa4beea42dc5d6011331f3200f79d067fc7b7d774",
+  "result": { "assertions": 98, "passed": 98, "failures": null, "a1": 55, "a2": 43 },
+  "priorAttempt": {
+    "outcome": "aborted with 23505 before assertions were reported",
+    "cause": "A2 test reused report id 'rep2' already used by A1 tests; test id renamed to 'eng2.rep1'. No source change."
+  },
+  "postRun": {
+    "observedAt": "2026-10-18 04:08:18.37782+00",
+    "migrations": 115,
+    "apiFunctions": 363,
+    "assuranceSchema": 0,
+    "assurancePermissions": 0,
+    "pgtapExtension": 0,
+    "fixtureUsers": 0
+  },
+  "covers": [
+    "A2 tables force RLS with no direct grants; shared helpers not client-callable",
+    "server-computed risk-based sample size and reproducible systematic positions; client cannot choose sample size",
+    "designed sample and test-run results immutable; run binds the exact sample positions",
+    "execution only in fieldwork on frozen evidence; complete sample; conclusion consistent with exceptions",
+    "independent test review; returned and accepted runs both retained",
+    "team revocation retained not deleted; lead cannot be revoked; request cancellation",
+    "exception dismissal independence; risk decision independence and recent MFA; approve and reject paths",
+    "archive blocked by open findings until carried forward; archived engagement read-only",
+    "carry-forward: recent MFA, same scope, issued source only, open findings only, once only, source history unchanged",
+    "external reviewer cannot run tests but can read test work",
+    "late event failure leaves no procedure, receipt or version change"
+  ],
+  "doesNotEstablish": [
+    "installation", "genuine MFA", "independent-session contention", "target-scale latency",
+    "authenticated native Windows use", "export/download/reopen", "owner acceptance"
+  ]
+}

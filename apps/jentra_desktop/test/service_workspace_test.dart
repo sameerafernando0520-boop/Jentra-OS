@@ -366,7 +366,7 @@ void main() {
       350,
       scrollable: find.byType(Scrollable).first,
     );
-      await tester.pumpAndSettle();
+    await tester.pumpAndSettle();
     await tester.tap(customerChoice);
     await tester.pumpAndSettle();
     expect(find.text('Synthetic customer'), findsOneWidget);

@@ -244,7 +244,10 @@ final class SupabasePrivateHrGateway implements HrRepository {
         HrRecordKind.membership,
       ),
       HrCollection.inbox => ('people_hr_link_inbox', HrRecordKind.inbox),
-      HrCollection.erasure => ('people_hr_erasure_status',HrRecordKind.erasure),
+      HrCollection.erasure => (
+        'people_hr_erasure_status',
+        HrRecordKind.erasure,
+      ),
     };
     final needsEmployee = !{
       HrCollection.memberships,

@@ -360,7 +360,7 @@ void main() {
       expect(() => unit.multiplyRatio(1, 0), throwsArgumentError);
       expect(a.compareTo(unit), greaterThan(0));
       expect(a.hashCode, Money.fromMinorUnits(a.minorUnits, 'LKR').hashCode);
-    expect(a == ('money' as Object), false);
+      expect(a == ('money' as Object), false);
       expect(a == Money.parse('1', 'LKR'), false);
       expect(unit == Money.parse('0.000001', 'USD'), false);
       for (final operation in [

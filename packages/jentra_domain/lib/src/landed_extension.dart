@@ -95,8 +95,9 @@ final class LandedExtensionProtocol {
           throw const FormatException('Receipt allocation is invalid.');
         }
         identity(row['receipt_line_id']);
-        if (!ids.add(row['receipt_line_id']))
-          {throw const FormatException('A receipt can appear once.');}
+        if (!ids.add(row['receipt_line_id'])) {
+          throw const FormatException('A receipt can appear once.');
+        }
         if (input['basis_mode'] == 'manual') {
           decimal(row['weight'], positive: true);
         }
@@ -269,8 +270,11 @@ final class LandedExtensionProtocol {
         if (input['basis_mode'] == 'manual') {
           for (final raw in input['receipts'] as List) {
             final row = raw as Map;
-            if (decimal(row['weight']) != decimal(byId[row['receipt_line_id']]!['weight'])) {
-              throw const FormatException('The requested manual allocation weight changed.');
+            if (decimal(row['weight']) !=
+                decimal(byId[row['receipt_line_id']]!['weight'])) {
+              throw const FormatException(
+                'The requested manual allocation weight changed.',
+              );
             }
           }
         }

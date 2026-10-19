@@ -10,7 +10,7 @@ $ErrorActionPreference='Stop'
 $workspace=Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 if((Get-Location).Path -ne $workspace){throw 'Run this preparation from the repository root'}
 $candidate='supabase/migrations/20261003090000_wave3_negative_stock_policy.sql'
-$assertions='supabase/tests/wave3_negative_stock_policy_20261003_test.sql'
+$assertions='supabase/wave_tests/wave3_negative_stock_policy_20261003_test.sql'
 if((Get-FileHash -LiteralPath $candidate -Algorithm SHA256).Hash.ToLowerInvariant() -ne $CandidateSha256){throw 'Frozen candidate hash drift'}
 if((Get-FileHash -LiteralPath $assertions -Algorithm SHA256).Hash.ToLowerInvariant() -ne $AssertionsSha256){throw 'Frozen assertion hash drift'}
 $prefix='docs/verification/remaining-wave3/'

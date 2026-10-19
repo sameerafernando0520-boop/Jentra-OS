@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ import 'package:jentra_platform/jentra_finance_platform.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_desktop/src/features/report_export/report_export_controller.dart';
 import 'package:jentra_desktop/src/features/report_export/report_export_screen.dart';
+
 import 'support/procurement_fakes.dart' show Keys;
 
 const selection = {
@@ -261,24 +263,21 @@ void main() {
       expect(c.document, isEmpty);
     },
   );
-  test(
-    'disposed route still atomically confirms registration without file delivery',
-    () async {
-      await c.initialize(selection);
-      gateway.registrationPause = Completer<void>();
-      final task = c.deliver();
-      await gateway.registrationEntered.future;
-      c.dispose();
-      disposed = true;
-      gateway.registrationPause!.complete();
-      await task;
-      expect(
-        (await drafts.load(scope, ReportExportController.slot))!.form['status'],
-        'registered',
-      );
-      expect(files.writes, isEmpty);
-    },
-  );
+  test('disposed route still atomically confirms registration without file delivery', () async {
+    await c.initialize(selection);
+    gateway.registrationPause = Completer<void>();
+    final task = c.deliver();
+    await gateway.registrationEntered.future;
+    c.dispose();
+    disposed = true;
+    gateway.registrationPause!.complete();
+    await task;
+    expect(
+      (await drafts.load(scope, ReportExportController.slot))!.form['status'],
+      'registered',
+    );
+    expect(files.writes, isEmpty);
+  });
   test(
     'failed encrypted confirmation preserves sealed command for retry',
     () async {

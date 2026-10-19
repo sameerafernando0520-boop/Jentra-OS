@@ -166,7 +166,14 @@ final class HrRecord {
         'hold_reason',
         'hold_review_date',
       },
-      HrRecordKind.erasure => {'id','status','requested_at','requested_by','completed_at','completion_actor_kind'},
+      HrRecordKind.erasure => {
+        'id',
+        'status',
+        'requested_at',
+        'requested_by',
+        'completed_at',
+        'completion_actor_kind',
+      },
     };
     calendarFields(json, fields);
     calendarUuid(
@@ -301,13 +308,22 @@ final class HrRecord {
           CivilDate.parse(json['hold_review_date'] as String);
         }
       case HrRecordKind.erasure:
-        if(!{'pending','leased','complete'}.contains(json['status'])) {throw const FormatException('Erasure status is invalid.');}
+        if (!{'pending', 'leased', 'complete'}.contains(json['status'])) {
+          throw const FormatException('Erasure status is invalid.');
+        }
         organizationTimestamp(json['requested_at']);
-        if(json['requested_by']!=null)calendarUuid(json['requested_by']);
-        if(json['completed_at']!=null)organizationTimestamp(json['completed_at']);
-        if((json['status']=='complete')!=(json['completed_at']!=null)||
-          (json['status']=='complete'?json['completion_actor_kind']!='system':json['completion_actor_kind']!=null)) {
-          throw const FormatException('Erasure completion evidence is invalid.');}
+        if (json['requested_by'] != null) calendarUuid(json['requested_by']);
+        if (json['completed_at'] != null) {
+          organizationTimestamp(json['completed_at']);
+        }
+        if ((json['status'] == 'complete') != (json['completed_at'] != null) ||
+            (json['status'] == 'complete'
+                ? json['completion_actor_kind'] != 'system'
+                : json['completion_actor_kind'] != null)) {
+          throw const FormatException(
+            'Erasure completion evidence is invalid.',
+          );
+        }
     }
   }
   final HrRecordKind kind;

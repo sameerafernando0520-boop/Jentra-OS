@@ -377,7 +377,12 @@ void main() {
       await tester.pumpAndSettle();
       Future<void> tap(String text) async {
         final button = find.widgetWithText(TextButton, text);
-        await tester.scrollUntilVisible(button, 500, scrollable: find.byType(Scrollable).first, maxScrolls: 50);
+        await tester.scrollUntilVisible(
+          button,
+          500,
+          scrollable: find.byType(Scrollable).first,
+          maxScrolls: 50,
+        );
         await tester.ensureVisible(button);
         await tester.pumpAndSettle();
         await tester.tap(button);

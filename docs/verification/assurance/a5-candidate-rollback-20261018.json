@@ -1,0 +1,75 @@
+{
+  "kind": "candidate-rollback-pgtap",
+  "slice": "assurance-a5-workspace-read-models",
+  "blueprint": "68_CORPORATE_AUDIT_ASSURANCE_SPEC.md",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "tool": "supabase execute_sql (single transaction ending in rollback)",
+  "build": "supabase/tests/build_assurance_candidate.ps1 -Slice A5 (A1, A2, A4, A4b, A3, A5 DDL+tests in install order); executed text is the build output with SQL comment lines removed (comments only; every statement, including the fail-on-any-failure diagnostic block, was identical)",
+  "installed": false,
+  "rolledBack": true,
+  "sources": {
+    "supabase/candidates/20261018090000_assurance_engagement_core.sql": "ecce6d8a7f4a68c58820b7772283a43fcea261644fac2627c04060fbacf56a86",
+    "supabase/candidates/20261018120000_assurance_testing_carry_forward.sql": "f3b8b6eee2e79870ce4d44879670e6ca464fb3efcd622943896dbcdce6080071",
+    "supabase/candidates/20261018150000_assurance_evidence_adapters_export.sql": "c0edcbdc50c7a1543eaa07f19a9a02470c5add77a3929f51e4d05e337fcb555a",
+    "supabase/candidates/20261018170000_assurance_adapters_monitoring.sql": "f822183c95b4ec08b0c4a48043fac21e6dfd5f5c2d7dd507ea74ba0f0d52f251",
+    "supabase/candidates/20261018190000_assurance_universe_plans.sql": "a4857ca80fbe9a4587787a466ffdfb4ff70e1744e147ccf8836f3cb641890db2",
+    "supabase/candidates/20261018210000_assurance_workspace.sql": "2dfa99792ee115bc422e6f5e6f304a3b47b4405d2f469d8630b0c0d958f83e25",
+    "supabase/tests/assurance_workspace_test.sql": "7a9da0560d9232d0ec8f1cfdd7b22b27364b92ce00ae1622a0177ceb47f3360e",
+    "supabase/tests/build_assurance_candidate.ps1": "2f050decd42a4db66c069117d1125c06dbaa2f89762923182610e14ed1dae154"
+  },
+  "builtQuerySha256": "4f8090c8e7d26715e1ca822c98c1a9e68305f2fadfa14d843a1a0a0e2d0f054d",
+  "unchangedEarlierBuilds": {
+    "A1": "51879e0093f065c208c7765fa4beea42dc5d6011331f3200f79d067fc7b7d774",
+    "A2": "159a5599319c3f29d0dbee1db52cd5e54cc4cd8889b69e0d2669a824619ba004",
+    "A4": "fe8abdac3b372772ba315623cee22bbf44bfba27019bb59dd81c1835559c2929",
+    "A4b": "6e37858ccb14f84166aed23603a5b40b2ae6f51bc6107788c85badf6ccd0d54f",
+    "A3": "a8f91eae3ae82e6573a02e9a3a918a70099a151ba200b176e1e105abcf2f3072"
+  },
+  "builderNote": "The builder gained the A5 slice; its earlier slice outputs are byte-identical to the recorded A1-A3 builds.",
+  "result": {
+    "assertions": 228,
+    "passed": 228,
+    "failures": null,
+    "a1": 55,
+    "a2": 43,
+    "a4": 31,
+    "a4b": 24,
+    "a3": 55,
+    "a5": 20
+  },
+  "syntheticSourceData": "one additional synthetic engagement whose request due dates and finding issue time are back-dated inside the transaction to produce overdue and escalated items",
+  "postRun": {
+    "observedAt": "2026-10-18 11:59:35.28769+00",
+    "migrations": 115,
+    "latestMigration": "20261013184757",
+    "apiFunctions": 363,
+    "assuranceSchema": 0,
+    "assurancePermissions": 0,
+    "pgtapExtension": 0,
+    "fixtureUsers": 0,
+    "fixtureTenants": 0
+  },
+  "covers": [
+    "A5 adds no tables; read models authenticated-only; work-item helper not client-callable",
+    "reminder bands: on track, due soon (within 3 days), overdue (1-7 days late), escalated (more than 7 days late)",
+    "owner work queue lists own open requests and findings by due date with levels; unanswered findings fall due 14 days after issue",
+    "counts of due-soon, overdue and escalated work; archived engagements leave the queue",
+    "leads and auditors see overdue and escalated team items only; reviewers are not escalation targets",
+    "engagement register summarises open and overdue work, pages by id and is branch-scoped",
+    "external reviewers and other tenants are refused; a response moves the finding to its remediation due date; reads add no events"
+  ],
+  "notCovered": [
+    "no reminder or escalation is delivered (no notification, e-mail or scheduler); levels are computed when read",
+    "the response SLA (14 days) and reminder bands are fixed defaults",
+    "only the finding-owner response is a desktop write; other assurance commands remain API-only"
+  ],
+  "doesNotEstablish": [
+    "installation",
+    "genuine MFA",
+    "authenticated native Windows use of the workspace",
+    "accessibility review beyond automated 200% light/dark renders",
+    "independent-session contention",
+    "target-scale latency",
+    "owner acceptance"
+  ]
+}

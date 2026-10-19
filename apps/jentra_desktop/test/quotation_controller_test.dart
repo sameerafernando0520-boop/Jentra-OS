@@ -95,119 +95,103 @@ void main() {
     },
   );
 
-  test(
-    'AC-303 exact draft is persisted before transport and cleared only on confirmed success',
-    () async {
-      final controller = await start();
-      await controller.newDraft();
-      await controller.updateForm(form());
-      repository.onCommand = (wire) async {
-        final saved = await store.load(scope, 'new');
-        expect(saved!.pending!.envelope.toJson((x) => x), wire);
-        expect((wire['payload'] as Map)['exchange_rate'], '1.0000000000');
-        expect(
-          ((wire['payload'] as Map)['lines'] as List).first['unit_price'],
-          '90071992547409.123456',
-        );
-        return CommandResult.success(
-          requestId: 'server-request',
-          entity: quotation(),
-        );
-      };
-      await controller.save();
-      expect(repository.commands, hasLength(1));
-      expect(await store.load(scope, 'new'), isNull);
-      expect(value().detail!.quotation.id, quoteId);
-      expect(value().error, isNull);
-    },
-  );
-
-  test(
-    'AC-303 unknown outcome survives restart and retries the identical entire envelope',
-    () async {
-      var controller = await start();
-      await controller.newDraft();
-      await controller.updateForm(form());
-      repository.onCommand = (wire) async =>
-          throw TimeoutException('uncertain');
-      await controller.save();
-      final first = repository.commands.single;
-      expect(value().pending, isNotNull);
-      expect(value().form, form());
-      controller = await start();
-      await controller.newDraft();
-      expect(value().recovered, true);
-      expect(value().pending, isNotNull);
-      await controller.updateForm(form()..['notes'] = 'cannot replace pending');
-      expect(value().form, form());
-      repository.onCommand = (wire) async =>
-          CommandResult.success(requestId: 'confirmed', entity: quotation());
-      await controller.retryPending();
-      expect(repository.commands.last, first);
-      expect(await store.load(scope, 'new'), isNull);
-    },
-  );
-
-  test(
-    'AC-303 confirmed rejection preserves editable raw draft with no pending envelope',
-    () async {
-      final controller = await start();
-      await controller.newDraft();
-      await controller.updateForm(form());
-      repository.onCommand = (wire) async => CommandResult.failure(
-        requestId: 'denied',
-        error: const DomainError(
-          code: 'INVALID_REFERENCE',
-          message: 'Customer inactive.',
-        ),
+  test('AC-303 exact draft is persisted before transport and cleared only on confirmed success', () async {
+    final controller = await start();
+    await controller.newDraft();
+    await controller.updateForm(form());
+    repository.onCommand = (wire) async {
+      final saved = await store.load(scope, 'new');
+      expect(saved!.pending!.envelope.toJson((x) => x), wire);
+      expect((wire['payload'] as Map)['exchange_rate'], '1.0000000000');
+      expect(
+        ((wire['payload'] as Map)['lines'] as List).first['unit_price'],
+        '90071992547409.123456',
       );
-      await controller.save();
-      expect(value().error!.code, 'INVALID_REFERENCE');
-      expect(value().pending, isNull);
-      expect(value().form, form());
-      await controller.updateForm(form()..['notes'] = 'corrected');
-      expect((await store.load(scope, 'new'))!.form['notes'], 'corrected');
-    },
-  );
-
-  test(
-    'AC-303 explicit version conflict keeps edits until server comparison resolution',
-    () async {
-      final controller = await start();
-      await controller.selectQuotation(quoteId);
-      await controller.updateForm({...value().form!, 'notes': 'local changes'});
-      repository.onCommand = (wire) async => CommandResult.failure(
-        requestId: 'stale',
-        error: const DomainError(
-          code: 'VERSION_CONFLICT',
-          message: 'Changed on server.',
-        ),
+      return CommandResult.success(
+        requestId: 'server-request',
+        entity: quotation(),
       );
-      await controller.save();
-      expect(value().conflict, true);
-      expect(value().form!['notes'], 'local changes');
-      repository.detail = detail(version: 8, notes: 'remote changes');
-      await controller.resolveConflict(keepLocal: true);
-      expect(value().conflict, false);
-      expect(value().form!['notes'], 'local changes');
-      expect(value().localDraft!.expectedVersion, 8);
-      expect(value().detail!.quotation.version, 8);
-      expect(repository.commands, hasLength(1));
-    },
-  );
+    };
+    await controller.save();
+    expect(repository.commands, hasLength(1));
+    expect(await store.load(scope, 'new'), isNull);
+    expect(value().detail!.quotation.id, quoteId);
+    expect(value().error, isNull);
+  });
 
-  test(
-    'AC-303 offline editing is durable while writes and double submission are blocked',
-    () async {
-      final controller = await start(connectivity: ConnectivityState.offline);
-      await controller.newDraft();
-      await controller.updateForm(form());
-      await controller.save();
-      expect(repository.commands, isEmpty);
-      expect(value().error!.code, 'OFFLINE_COMMAND_BLOCKED');
-      expect((await store.load(scope, 'new'))!.form, form());
-    },
-  );
+  test('AC-303 unknown outcome survives restart and retries the identical entire envelope', () async {
+    var controller = await start();
+    await controller.newDraft();
+    await controller.updateForm(form());
+    repository.onCommand = (wire) async => throw TimeoutException('uncertain');
+    await controller.save();
+    final first = repository.commands.single;
+    expect(value().pending, isNotNull);
+    expect(value().form, form());
+    controller = await start();
+    await controller.newDraft();
+    expect(value().recovered, true);
+    expect(value().pending, isNotNull);
+    await controller.updateForm(form()..['notes'] = 'cannot replace pending');
+    expect(value().form, form());
+    repository.onCommand = (wire) async =>
+        CommandResult.success(requestId: 'confirmed', entity: quotation());
+    await controller.retryPending();
+    expect(repository.commands.last, first);
+    expect(await store.load(scope, 'new'), isNull);
+  });
+
+  test('AC-303 confirmed rejection preserves editable raw draft with no pending envelope', () async {
+    final controller = await start();
+    await controller.newDraft();
+    await controller.updateForm(form());
+    repository.onCommand = (wire) async => CommandResult.failure(
+      requestId: 'denied',
+      error: const DomainError(
+        code: 'INVALID_REFERENCE',
+        message: 'Customer inactive.',
+      ),
+    );
+    await controller.save();
+    expect(value().error!.code, 'INVALID_REFERENCE');
+    expect(value().pending, isNull);
+    expect(value().form, form());
+    await controller.updateForm(form()..['notes'] = 'corrected');
+    expect((await store.load(scope, 'new'))!.form['notes'], 'corrected');
+  });
+
+  test('AC-303 explicit version conflict keeps edits until server comparison resolution', () async {
+    final controller = await start();
+    await controller.selectQuotation(quoteId);
+    await controller.updateForm({...value().form!, 'notes': 'local changes'});
+    repository.onCommand = (wire) async => CommandResult.failure(
+      requestId: 'stale',
+      error: const DomainError(
+        code: 'VERSION_CONFLICT',
+        message: 'Changed on server.',
+      ),
+    );
+    await controller.save();
+    expect(value().conflict, true);
+    expect(value().form!['notes'], 'local changes');
+    repository.detail = detail(version: 8, notes: 'remote changes');
+    await controller.resolveConflict(keepLocal: true);
+    expect(value().conflict, false);
+    expect(value().form!['notes'], 'local changes');
+    expect(value().localDraft!.expectedVersion, 8);
+    expect(value().detail!.quotation.version, 8);
+    expect(repository.commands, hasLength(1));
+  });
+
+  test('AC-303 offline editing is durable while writes and double submission are blocked', () async {
+    final controller = await start(connectivity: ConnectivityState.offline);
+    await controller.newDraft();
+    await controller.updateForm(form());
+    await controller.save();
+    expect(repository.commands, isEmpty);
+    expect(value().error!.code, 'OFFLINE_COMMAND_BLOCKED');
+    expect((await store.load(scope, 'new'))!.form, form());
+  });
 
   test('AC-303 double save sends only one persisted command', () async {
     final controller = await start();
@@ -225,35 +209,32 @@ void main() {
     await first;
   });
 
-  test(
-    'AC-303 new revision and lifecycle decisions retain expected version and reason',
-    () async {
-      repository.detail = detail(status: 'submitted');
-      final controller = await start();
-      await controller.selectQuotation(quoteId);
-      await controller.startRevision('Revised delivery');
-      expect(value().form!['create_revision'], true);
-      expect(value().form!['revision_reason'], 'Revised delivery');
-      expect(value().canEditForm, true);
-      await controller.save();
-      expect(
-        (repository.commands.single['payload'] as Map)['revision_reason'],
-        'Revised delivery',
-      );
-      expect(repository.commands.single['expected_entity_version'], 7);
-      repository.detail = detail(status: 'pending_approval');
-      await controller.selectQuotation(quoteId);
-      await controller.decide(approve: false, reason: 'Revise delivery terms');
-      expect(
-        (repository.commands.last['payload'] as Map)['decision'],
-        'rejected',
-      );
-      expect(
-        (repository.commands.last['payload'] as Map)['note'],
-        'Revise delivery terms',
-      );
-    },
-  );
+  test('AC-303 new revision and lifecycle decisions retain expected version and reason', () async {
+    repository.detail = detail(status: 'submitted');
+    final controller = await start();
+    await controller.selectQuotation(quoteId);
+    await controller.startRevision('Revised delivery');
+    expect(value().form!['create_revision'], true);
+    expect(value().form!['revision_reason'], 'Revised delivery');
+    expect(value().canEditForm, true);
+    await controller.save();
+    expect(
+      (repository.commands.single['payload'] as Map)['revision_reason'],
+      'Revised delivery',
+    );
+    expect(repository.commands.single['expected_entity_version'], 7);
+    repository.detail = detail(status: 'pending_approval');
+    await controller.selectQuotation(quoteId);
+    await controller.decide(approve: false, reason: 'Revise delivery terms');
+    expect(
+      (repository.commands.last['payload'] as Map)['decision'],
+      'rejected',
+    );
+    expect(
+      (repository.commands.last['payload'] as Map)['note'],
+      'Revise delivery terms',
+    );
+  });
 
   test(
     'AC-303 stale selection read cannot replace a newer selected quotation',
@@ -271,104 +252,91 @@ void main() {
     },
   );
 
-  test(
-    'AC-303 actor and scope switches ignore stale reads and never reveal old local drafts',
-    () async {
-      final controller = await start();
-      final delayed = Completer<QuotationDetail?>();
-      repository.detailRead = (_) => delayed.future;
-      final oldRead = controller.selectQuotation(quoteId);
-      container.updateOverrides([
-        activeTenantContextProvider.overrideWithValue(
-          scope.copyWith(actorId: 'other'),
-        ),
-        businessCapabilitiesProvider.overrideWith((ref) async => permissions),
-        connectivityStateProvider.overrideWith(
-          (ref) => Stream.value(ConnectivityState.online),
-        ),
-        quotationWorkspaceRepositoryProvider.overrideWithValue(repository),
-        leadToCashRepositoryProvider.overrideWithValue(repository),
-        quotationDraftStoreProvider.overrideWithValue(store),
-      ]);
-      await container.read(quotationWorkspaceProvider.future);
-      delayed.complete(detail());
-      await oldRead;
-      expect(value().detail, isNull);
-      expect(value().form, isNull);
-      expect(value().context.actorId, 'other');
-    },
-  );
-  test(
-    'AC-303 confirmed success followed by failed refresh cannot create another new quotation',
-    () async {
-      final controller = await start();
-      await controller.newDraft();
-      await controller.updateForm(form());
-      repository.onCommand = (_) async {
-        repository.detailRead = (_) async =>
-            throw TimeoutException('read failed');
-        return CommandResult.success(requestId: 'saved', entity: quotation());
-      };
-      await controller.save();
-      expect(await store.load(scope, 'new'), isNull);
-      expect(value().form, isNull);
-      expect(value().page.items.single.id, quoteId);
-      await controller.save();
-      expect(repository.commands, hasLength(1));
-    },
-  );
+  test('AC-303 actor and scope switches ignore stale reads and never reveal old local drafts', () async {
+    final controller = await start();
+    final delayed = Completer<QuotationDetail?>();
+    repository.detailRead = (_) => delayed.future;
+    final oldRead = controller.selectQuotation(quoteId);
+    container.updateOverrides([
+      activeTenantContextProvider.overrideWithValue(
+        scope.copyWith(actorId: 'other'),
+      ),
+      businessCapabilitiesProvider.overrideWith((ref) async => permissions),
+      connectivityStateProvider.overrideWith(
+        (ref) => Stream.value(ConnectivityState.online),
+      ),
+      quotationWorkspaceRepositoryProvider.overrideWithValue(repository),
+      leadToCashRepositoryProvider.overrideWithValue(repository),
+      quotationDraftStoreProvider.overrideWithValue(store),
+    ]);
+    await container.read(quotationWorkspaceProvider.future);
+    delayed.complete(detail());
+    await oldRead;
+    expect(value().detail, isNull);
+    expect(value().form, isNull);
+    expect(value().context.actorId, 'other');
+  });
+  test('AC-303 confirmed success followed by failed refresh cannot create another new quotation', () async {
+    final controller = await start();
+    await controller.newDraft();
+    await controller.updateForm(form());
+    repository.onCommand = (_) async {
+      repository.detailRead = (_) async =>
+          throw TimeoutException('read failed');
+      return CommandResult.success(requestId: 'saved', entity: quotation());
+    };
+    await controller.save();
+    expect(await store.load(scope, 'new'), isNull);
+    expect(value().form, isNull);
+    expect(value().page.items.single.id, quoteId);
+    await controller.save();
+    expect(repository.commands, hasLength(1));
+  });
 
-  test(
-    'AC-303 conflict resolution uses the compared version even if remote changes again',
-    () async {
-      final controller = await start();
-      await controller.selectQuotation(quoteId);
-      await controller.updateForm({...value().form!, 'notes': 'local'});
-      repository.onCommand = (_) async => CommandResult.failure(
-        requestId: 'stale',
-        error: const DomainError(code: 'VERSION_CONFLICT', message: 'stale'),
-      );
-      await controller.save();
-      repository.detail = detail(version: 8);
-      await controller.inspectConflict();
-      repository.detail = detail(version: 9);
-      await controller.resolveConflict(keepLocal: true);
-      expect(value().localDraft!.expectedVersion, 8);
-    },
-  );
+  test('AC-303 conflict resolution uses the compared version even if remote changes again', () async {
+    final controller = await start();
+    await controller.selectQuotation(quoteId);
+    await controller.updateForm({...value().form!, 'notes': 'local'});
+    repository.onCommand = (_) async => CommandResult.failure(
+      requestId: 'stale',
+      error: const DomainError(code: 'VERSION_CONFLICT', message: 'stale'),
+    );
+    await controller.save();
+    repository.detail = detail(version: 8);
+    await controller.inspectConflict();
+    repository.detail = detail(version: 9);
+    await controller.resolveConflict(keepLocal: true);
+    expect(value().localDraft!.expectedVersion, 8);
+  });
 
-  test(
-    'AC-303 live capability revocation hides in-flight result and retains exact retry authority',
-    () async {
-      final controller = await start();
-      await controller.newDraft();
-      await controller.updateForm(form());
-      final result = Completer<CommandResult<SalesQuotation>>();
-      repository.onCommand = (_) => result.future;
-      final command = controller.save();
-      await Future<void>.delayed(const Duration(milliseconds: 20));
-      liveCapabilities = <String>{};
-      container.invalidate(businessCapabilitiesProvider);
-      await container.read(businessCapabilitiesProvider.future);
-      expect(
-        container.read(businessCapabilitiesProvider).requireValue,
-        isEmpty,
-        reason:
-            'new capabilities must be visible before awaiting the workspace',
-      );
-      await container.pump();
-      await expectLater(
-        container.read(quotationWorkspaceProvider.future),
-        throwsA(isA<DomainError>()),
-      );
-      result.complete(
-        CommandResult.success(requestId: 'saved', entity: quotation()),
-      );
-      await command;
-      expect(container.read(quotationWorkspaceProvider).hasError, true);
-      expect(await store.load(scope, 'new'), isNull);
-    },
-  );
+  test('AC-303 live capability revocation hides in-flight result and retains exact retry authority', () async {
+    final controller = await start();
+    await controller.newDraft();
+    await controller.updateForm(form());
+    final result = Completer<CommandResult<SalesQuotation>>();
+    repository.onCommand = (_) => result.future;
+    final command = controller.save();
+    await Future<void>.delayed(const Duration(milliseconds: 20));
+    liveCapabilities = <String>{};
+    container.invalidate(businessCapabilitiesProvider);
+    await container.read(businessCapabilitiesProvider.future);
+    expect(
+      container.read(businessCapabilitiesProvider).requireValue,
+      isEmpty,
+      reason: 'new capabilities must be visible before awaiting the workspace',
+    );
+    await container.pump();
+    await expectLater(
+      container.read(quotationWorkspaceProvider.future),
+      throwsA(isA<DomainError>()),
+    );
+    result.complete(
+      CommandResult.success(requestId: 'saved', entity: quotation()),
+    );
+    await command;
+    expect(container.read(quotationWorkspaceProvider).hasError, true);
+    expect(await store.load(scope, 'new'), isNull);
+  });
 
   test(
     'AC-303 pending encryption immediately blocks submission of unsaved edits',
@@ -385,29 +353,26 @@ void main() {
       expect(repository.commands, isEmpty);
     },
   );
-  test(
-    'AC-303 failed encryption cannot lose edits when another quotation is opened',
-    () async {
-      final keys = MemoryKeys()..fail = true;
-      store = QuotationDraftStore(
-        EncryptedDraftRepository(database, DraftCipher(keyStore: keys)),
-      );
-      final controller = await start();
-      await controller.selectQuotation(quoteId);
-      final edit = controller.updateForm({
-        ...value().form!,
-        'notes': 'retain me',
-      });
-      await controller.selectQuotation(nextId);
-      await edit;
-      expect(value().form!['id'], quoteId);
-      expect(value().form!['notes'], 'retain me');
-      expect(value().error!.code, 'DRAFT_SAVE_FAILED');
-      keys.fail = false;
-      await controller.save();
-      expect(repository.commands, hasLength(1));
-    },
-  );
+  test('AC-303 failed encryption cannot lose edits when another quotation is opened', () async {
+    final keys = MemoryKeys()..fail = true;
+    store = QuotationDraftStore(
+      EncryptedDraftRepository(database, DraftCipher(keyStore: keys)),
+    );
+    final controller = await start();
+    await controller.selectQuotation(quoteId);
+    final edit = controller.updateForm({
+      ...value().form!,
+      'notes': 'retain me',
+    });
+    await controller.selectQuotation(nextId);
+    await edit;
+    expect(value().form!['id'], quoteId);
+    expect(value().form!['notes'], 'retain me');
+    expect(value().error!.code, 'DRAFT_SAVE_FAILED');
+    keys.fail = false;
+    await controller.save();
+    expect(repository.commands, hasLength(1));
+  });
 }
 
 class MemoryKeys implements SecretKeyStore {

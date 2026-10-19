@@ -1,8 +1,10 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_inventory.dart';
 import 'package:jentra_platform/jentra_inventory_platform.dart';
+
 import '../../app_providers.dart';
 
 final receiptTraceGatewayProvider = Provider<ReceiptTraceGateway?>(

@@ -75,9 +75,8 @@ class _TenantOnboardingScreenState
               const SizedBox(height: JentraSpacing.x2),
               Text(
                 'This creates the tenant, legal entity, head-office branch, owner membership, scoped role, starter trial and first audit event in one transaction.',
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: context.jentraColors.textSecondary,
-                ),
+                style: Theme.of(context).textTheme.bodyLarge
+                    ?.copyWith(color: context.jentraColors.textSecondary),
               ),
               const SizedBox(height: JentraSpacing.x6),
               JentraPanel(
@@ -122,9 +121,8 @@ class _TenantOnboardingScreenState
                               ),
                               onChanged: (_) => _slugManuallyEdited = true,
                               validator: (value) =>
-                                  RegExp(
-                                    r'^[a-z0-9][a-z0-9-]{2,62}$',
-                                  ).hasMatch(value ?? '')
+                                  RegExp(r'^[a-z0-9][a-z0-9-]{2,62}$')
+                                      .hasMatch(value ?? '')
                                   ? null
                                   : 'Use lowercase letters, numbers and hyphens.',
                             ),
@@ -134,8 +132,7 @@ class _TenantOnboardingScreenState
                       const SizedBox(height: JentraSpacing.x6),
                       const JentraSectionHeader(
                         title: 'Legal entity',
-                        description:
-                            'Accounting rules and LKR defaults are locked before first posting.',
+                        description: 'Accounting rules and LKR defaults are locked before first posting.',
                       ),
                       const SizedBox(height: JentraSpacing.x4),
                       Row(
@@ -199,8 +196,7 @@ class _TenantOnboardingScreenState
                       if (state.hasError) ...[
                         const SizedBox(height: JentraSpacing.x4),
                         const JentraStatusBadge(
-                          label:
-                              'Creation failed. Review the values or try again.',
+                          label: 'Creation failed. Review the values or try again.',
                           tone: JentraStatusTone.danger,
                         ),
                       ],

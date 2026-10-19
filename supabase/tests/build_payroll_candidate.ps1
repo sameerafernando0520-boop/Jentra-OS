@@ -13,8 +13,8 @@ if(-not $InstalledPrerequisites -and -not $Installed){
 if(-not $Installed){
  $taskMigrations+=Get-Content -LiteralPath (Join-Path $taskRoot 'migrations/20260930070000_wave4_synthetic_payroll.sql') -Raw
 }
-$taskFixture=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_synthetic_fixture.sql') -Raw
-$taskTests=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_payroll_test.sql') -Raw
+$taskFixture=Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_synthetic_fixture.sql') -Raw
+$taskTests=Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_payroll_test.sql') -Raw
 $taskTests=[regex]::Replace($taskTests,'(?m)^select (is|ok|throws_ok)\(','insert into payroll_assertions select $1(')
 $taskDiagnostic=@'
 do $$declare failed text;begin

@@ -10,8 +10,8 @@ $serviceDdl=@()
 foreach($serviceName in @('20261001080000_wave4_projects_time.sql','20261001100000_wave4_project_expenses_billing.sql','20261001090000_wave4_service.sql')){
  $serviceDdl+=Get-Content -LiteralPath (Join-Path $serviceRoot "migrations/$serviceName") -Raw
 }
-$serviceTests=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_service_payroll_impacts_test.sql') -Raw
-$serviceTests+=[Environment]::NewLine+(Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_service_billing_impacts_test.sql') -Raw)
+$serviceTests=Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_service_payroll_impacts_test.sql') -Raw
+$serviceTests+=[Environment]::NewLine+(Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_service_billing_impacts_test.sql') -Raw)
 $serviceTests=[regex]::Replace($serviceTests,'(?m)^select (is|ok|throws_ok|lives_ok)\(','insert into payroll_assertions select $1(')
 $serviceDiagnostic=@'
 do $$declare failed text;begin

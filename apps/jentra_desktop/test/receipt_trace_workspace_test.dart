@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -26,8 +27,7 @@ const trace = <String, Object?>{
   'in_transit_quantity': '1.000000',
   'net_issued_quantity': '3.000000',
   'observed_at': '2026-09-19T12:00:00Z',
-  'attribution_rule':
-      'Oldest recorded cohort within each lot or untracked pool; exact serial identity. Weighted-average valuation is unchanged.',
+  'attribution_rule': 'Oldest recorded cohort within each lot or untracked pool; exact serial identity. Weighted-average valuation is unchanged.',
   'holdings': [
     {'warehouse_name': 'Colombo warehouse', 'quantity': '9007199250.740993'},
   ],
@@ -160,9 +160,9 @@ void main() {
     expect(other.detail, isNull);
   });
   test('navigation requires both valuation and cost capabilities', () {
-    bool visible(Set<String> caps) => visibleJentraDestinations(
-      caps,
-    ).any((x) => x.path == '/inventory/receipt-trace');
+    bool visible(Set<String> caps) =>
+        visibleJentraDestinations(caps)
+            .any((x) => x.path == '/inventory/receipt-trace');
     expect(visible({'inventory.valuation.post'}), false);
     expect(visible({'inventory.cost.view'}), false);
     expect(visible({'inventory.valuation.post', 'inventory.cost.view'}), true);

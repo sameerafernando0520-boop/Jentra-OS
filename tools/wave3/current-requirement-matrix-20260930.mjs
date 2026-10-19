@@ -57,7 +57,7 @@ function suites(r){const n=+r.id.split('-')[1];if(!r.id.startsWith('FR-'))return
  if(n<=312)return [e.foundation,e.procurement];if(n<=318)return [e.crm,e.procurement];if(n<=321)return [e.quotation];if(n<=325)return [e.order,e.receivables];
  if(n<=334)return [e.receivables,e.procurement];if(n<=349)return [e.procurement];if(n<=361)return [e.inventory,e.procurement,e.receivables];if(n<=382)return [e.procurement,e.receivables];return [e.desktop,e.recovery,e.visual];}
 const rows=prior.requirements.map(r=>({id:r.id,approved_behavior:r.statement,implementation:'code_or_contract_evidence_present',missing_implementation:null,
- source_evidence:[...new Set([r.source_evidence.split(' (')[0],...(r.id.startsWith('FR-')?source[+r.id.slice(3)]??[]:[]).map(s=>'supabase/tests/'+s+'_test.sql')])].filter(p=>fs.existsSync(p)),
+ source_evidence:[...new Set([r.source_evidence.split(' (')[0],...(r.id.startsWith('FR-')?source[+r.id.slice(3)]??[]:[]).map(s=>'supabase/wave_tests/'+s+'_test.sql')])].filter(p=>fs.existsSync(p)),
  verification_evidence:suites(r),missing_verification:missing[r.id]??'Fresh synthetic evidence covers the referenced scenarios; installed authenticated workflow and owner acceptance remain open.',
  external_acceptance:'45 candidates remain unapplied. Concrete development installation, isolated contention/load environment, native checks and owner signoff require separate approval.'}));
 for(const r of rows) {

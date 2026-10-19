@@ -3,7 +3,7 @@ import {execFileSync} from 'node:child_process';
 import {sourceHash, writeNewJson} from './strict-candidate-evidence.mjs';
 const base='docs/verification/remaining-wave3/';
 const candidate='supabase/migrations/20261003090000_wave3_negative_stock_policy.sql';
-const assertions='supabase/tests/wave3_negative_stock_policy_20261003_test.sql';
+const assertions='supabase/wave_tests/wave3_negative_stock_policy_20261003_test.sql';
 if(sourceHash(candidate)!=='9cc3aaa66c884397dbbc47919f5f758682129e403d7c334eaffdc4bd53736f4a'||sourceHash(assertions)!=='c600ca2eae6c91fda4a1135a71ff59d1b28056292326e4a50f6769c01e1176bb')throw Error('Frozen policy197 sources changed.');
 const check=(kind,tag,passed,failed=0)=>({kind,file:base+tag+'.log',source_capture:base+'client-sources-'+tag+'.json',passed,failed,complete:true,
   boundary:'Actual completed named synthetic local checks; complete source-capture drift remains visible and no native/install/load/owner acceptance is inferred.'});

@@ -10,7 +10,7 @@ $taskDdl=@()
 foreach($taskName in @('20261001080000_wave4_projects_time.sql','20261001100000_wave4_project_expenses_billing.sql','20261002080000_wave4_project_payroll_impacts.sql')){
  $taskDdl+=Get-Content -LiteralPath (Join-Path $taskRoot "migrations/$taskName") -Raw
 }
-$taskTests=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_project_payroll_impacts_test.sql') -Raw
+$taskTests=Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_project_payroll_impacts_test.sql') -Raw
 $taskTests=[regex]::Replace($taskTests,'(?m)^select (is|ok|throws_ok|lives_ok)\(','insert into payroll_assertions select $1(')
 $taskDiagnostic=@'
 do $$declare failed text;begin

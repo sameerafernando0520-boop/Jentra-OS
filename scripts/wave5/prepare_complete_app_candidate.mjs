@@ -16,7 +16,7 @@ const earlier=await readFile(path.join(root,base+'runtime-candidate-20261008.sql
 const start=earlier.indexOf('create extension if not exists pgtap with schema extensions;'),end=earlier.lastIndexOf('select * from finish(true);');
 if(start<0||end<=start)throw Error('EXISTING_FIXTURE_BOUNDARY_CHANGED');
 parts.push(earlier.slice(start,end));
-for(const test of ['supabase/tests/wave5_supabase_runtime_test.sql','supabase/tests/wave5_supabase_setup_test.sql']){
+for(const test of ['supabase/wave_tests/wave5_supabase_runtime_test.sql','supabase/wave_tests/wave5_supabase_setup_test.sql']){
  const fixture=await readFile(path.join(root,test));sources[test]=sha(fixture);
  parts.push(fixture.toString().replace(/^select (is|ok|throws_ok|lives_ok)\(/gm,'insert into w5_runtime_tap select $1('));
 }

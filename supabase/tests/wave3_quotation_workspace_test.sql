@@ -301,7 +301,7 @@ select api.upsert_sales_quotation(
   '{
     "id":"f5000000-0000-0000-0000-000000000001",
     "customer_id":"95000000-0000-0000-0000-000000000001",
-    "quotation_date":"2026-09-05","valid_until":"2026-10-05",
+    "quotation_date":"2026-09-05","valid_until":"2099-10-05",
     "currency_code":"LKR","exchange_rate":"1.0000000000",
     "rate_date":"2026-09-05","payment_terms_days":30,
     "delivery_terms":"Delivered to Colombo",

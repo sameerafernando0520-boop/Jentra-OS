@@ -7,7 +7,7 @@ if($at -lt 0){throw 'Missing fixture boundary'}
 $query=$query.Insert($at,(Get-Content -Raw (Join-Path $PSScriptRoot '../migrations/20260924185321_wave3_period_governance.sql'))+"`n")
 if($Suite -eq 'procurement'){
  $at=$query.LastIndexOf('set constraints all immediate;')
- $test=Join-Path $PSScriptRoot 'wave3_period_test.sql'
+ $test=Join-Path $PSScriptRoot '../wave_tests/wave3_period_test.sql'
  if(Test-Path $test){$query=$query.Insert($at,(Get-Content -Raw $test)+"`n")}
 }
 $query=$query.Replace('select * from finish();','select * from finish(true);')

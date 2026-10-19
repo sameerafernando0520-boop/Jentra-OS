@@ -388,7 +388,7 @@ final class SupabaseServiceGateway implements ServiceRepository {
     final raw = await _rpc('service_own_receipt', scope, {
       'p_idempotency_key': key,
       'p_action': action,
-    },command:true);
+    }, command: true);
     return raw == null ? null : _receipt(raw, scope, null);
   }
 }

@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:jentra_domain/jentra_receivables.dart';
 import 'package:uuid/uuid.dart';
+
 import 'receivables_controller.dart';
 import 'receivable_picker.dart';
 

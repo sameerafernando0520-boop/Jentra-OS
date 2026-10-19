@@ -113,12 +113,12 @@ select is(finance.report_export_document(pg_temp.wid('tenant'),pg_temp.wid('enti
 set local role authenticated;
 select pg_temp.date_prepare('payroll_obligation','date.payroll','pay');
 select throws_ok($$select pg_temp.date_prepare('payroll_obligation','date.payroll','too-early','1',current_date-5)$$,'22023','CASH_DATE_COMMAND_INVALID','payment date cannot precede original recognition');
-select throws_ok($$select pg_temp.date_cmd('prepare',jsonb_build_object('id',pg_temp.wid('date.bad.hash')::text,'sourceKind','payroll_obligation','sourceId',pg_temp.wid('date.payroll')::text,'sourceHash',repeat('e',64),'dueDate',(current_date+2)::text,'reasonCode','payment_terms','expectedVersion','1'),'wrong-source')$$,'40001','CASH_DATE_SOURCE_CHANGED','source fingerprint is rechecked at preparation');
+select throws_ok($$select pg_temp.date_cmd('prepare',jsonb_build_object('id',pg_temp.wid('date.bad.hash')::text,'sourceKind','payroll_obligation','sourceId',pg_temp.wid('date.payroll')::text,'sourceHash',repeat('e',64),'dueDate',(current_date+2)::text,'reasonCode','payment_terms','expectedVersion','1'),'wrong-source')$$,'PT409','CASH_DATE_SOURCE_CHANGED','source fingerprint is rechecked at preparation');
 select throws_ok($$select pg_temp.date_decide('pay')$$,'42501','CASH_DATE_INDEPENDENT_APPROVER_REQUIRED','proposer cannot approve its own date');
 select pg_temp.wactor('creator','aal1');
 select throws_ok($$select pg_temp.date_prepare('payroll_obligation','date.payroll','pay')$$,'42501',null,'MFA checked before command replay');
 select pg_temp.wactor('reviewer');
-select throws_ok($$select pg_temp.date_cmd('approve',jsonb_build_object('id',pg_temp.wid('date.proposal.pay')::text,'proposalHash',repeat('e',64)),'wrong-proposal')$$,'40001','CASH_DATE_PROPOSAL_CHANGED','approver must bind exact prepared digest');
+select throws_ok($$select pg_temp.date_cmd('approve',jsonb_build_object('id',pg_temp.wid('date.proposal.pay')::text,'proposalHash',repeat('e',64)),'wrong-proposal')$$,'PT409','CASH_DATE_PROPOSAL_CHANGED','approver must bind exact prepared digest');
 select pg_temp.date_decide('pay');
 select is(pg_temp.date_decide('pay')->'entity'->>'version','2','uncertain approval retry returns original approved version');
 select pg_temp.wactor('creator');
@@ -129,7 +129,7 @@ select pg_temp.date_prepare('payroll_obligation','date.payroll','revision-b','2'
 select pg_temp.wactor('reviewer');
 select pg_temp.date_decide('recovery');select pg_temp.date_decide('project');
 select pg_temp.date_decide('revision-a');
-select throws_ok($$select pg_temp.date_decide('revision-b')$$,'40001','CASH_DATE_VERSION_CONFLICT','stale concurrent proposal cannot overwrite winning date');
+select throws_ok($$select pg_temp.date_decide('revision-b')$$,'PT409','CASH_DATE_VERSION_CONFLICT','stale concurrent proposal cannot overwrite winning date');
 select pg_temp.wactor('outsider');
 select throws_ok($$select api.wave5_cash_date_get(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid('date.proposal.pay'))$$,'42501',null,'foreign member cannot read proposal');
 reset role;select pg_temp.wactor('creator');

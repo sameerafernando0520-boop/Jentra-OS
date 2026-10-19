@@ -15,8 +15,8 @@ if (-not $InstalledPrerequisites -and -not $Installed) {
 if (-not $Installed) {
   $taskMigrations += Get-Content -LiteralPath (Join-Path $taskRoot 'migrations/20260928083449_wave4_leave_ledger.sql') -Raw
 }
-$taskFixture = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_synthetic_fixture.sql') -Raw
-$taskTests = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_leave_test.sql') -Raw
+$taskFixture = Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_synthetic_fixture.sql') -Raw
+$taskTests = Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_leave_test.sql') -Raw
 $taskTests = [regex]::Replace($taskTests, '(?m)^select (is|ok|throws_ok)\(', 'insert into leave_assertions select $1(')
 $taskDiagnostic = @'
 do $$declare v_failed text;begin

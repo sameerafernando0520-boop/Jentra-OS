@@ -1,0 +1,77 @@
+{
+  "kind": "dev-installation",
+  "scope": "assurance A1, A2, A4, A4b, A3, A5 (blueprint 68)",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "environment": "development project only; not production",
+  "authority": "installation approved by the repository owner in the development session on 2026-10-18",
+  "tool": "supabase apply_migration (one migration per slice, in install order); the tool assigned the ledger versions",
+  "preconditions": {
+    "ledgerMigrations": 115,
+    "latestMigration": "20261013184757",
+    "candidateHashesMatched": true,
+    "candidateRollbackSuite": "228/228 on 2026-10-18 (docs/verification/assurance/a5-candidate-rollback-20261018.json), observed 2026-10-18 11:59 UTC"
+  },
+  "migrations": [
+    {"version": "20261018153931", "name": "assurance_engagement_core", "file": "supabase/migrations/20261018153931_assurance_engagement_core.sql", "candidate": "supabase/candidates/20261018090000_assurance_engagement_core.sql", "sha256": "ecce6d8a7f4a68c58820b7772283a43fcea261644fac2627c04060fbacf56a86"},
+    {"version": "20261018154123", "name": "assurance_testing_carry_forward", "file": "supabase/migrations/20261018154123_assurance_testing_carry_forward.sql", "candidate": "supabase/candidates/20261018120000_assurance_testing_carry_forward.sql", "sha256": "f3b8b6eee2e79870ce4d44879670e6ca464fb3efcd622943896dbcdce6080071"},
+    {"version": "20261018154309", "name": "assurance_evidence_adapters_export", "file": "supabase/migrations/20261018154309_assurance_evidence_adapters_export.sql", "candidate": "supabase/candidates/20261018150000_assurance_evidence_adapters_export.sql", "sha256": "c0edcbdc50c7a1543eaa07f19a9a02470c5add77a3929f51e4d05e337fcb555a"},
+    {"version": "20261018154450", "name": "assurance_adapters_monitoring", "file": "supabase/migrations/20261018154450_assurance_adapters_monitoring.sql", "candidate": "supabase/candidates/20261018170000_assurance_adapters_monitoring.sql", "sha256": "f822183c95b4ec08b0c4a48043fac21e6dfd5f5c2d7dd507ea74ba0f0d52f251"},
+    {"version": "20261018155008", "name": "assurance_universe_plans", "file": "supabase/migrations/20261018155008_assurance_universe_plans.sql", "candidate": "supabase/candidates/20261018190000_assurance_universe_plans.sql", "sha256": "a4857ca80fbe9a4587787a466ffdfb4ff70e1744e147ccf8836f3cb641890db2"},
+    {"version": "20261018155041", "name": "assurance_workspace", "file": "supabase/migrations/20261018155041_assurance_workspace.sql", "candidate": "supabase/candidates/20261018210000_assurance_workspace.sql", "sha256": "2dfa99792ee115bc422e6f5e6f304a3b47b4405d2f469d8630b0c0d958f83e25"}
+  ],
+  "ledgerTextComparison": {
+    "method": "statement text read back from supabase_migrations.schema_migrations and compared with the repository files",
+    "byteIdentical": ["20261018155008", "20261018155041"],
+    "commentsOnlyDifference": {
+      "20261018153931": "7 comment-only lines and the trailing comment on one 'else -- reopen_finding' line are absent from the ledger text",
+      "20261018154123": "9 comment-only lines absent from the ledger text",
+      "20261018154309": "17 comment-only lines absent from the ledger text",
+      "20261018154450": "6 comment-only lines absent from the ledger text"
+    },
+    "executableTextIdentical": true,
+    "note": "The repository files keep the reviewed candidate text, comments included. The installed statements differ from them only in SQL comments."
+  },
+  "postInstall": {
+    "ledgerMigrations": 121,
+    "assuranceTables": 24,
+    "assuranceTablesForcingRls": 24,
+    "assuranceTableGrants": 0,
+    "apiAssuranceFunctions": 12,
+    "apiAssuranceFunctionsAuthenticatedOnly": true,
+    "apiFunctionsTotal": 375,
+    "assurancePermissions": 15,
+    "roleGrantsOfAssurancePermissions": 0,
+    "clientCallableHelpers": 0,
+    "authenticatedAssuranceSchemaUsage": false,
+    "pgtapExtension": 0
+  },
+  "installedSuite": {
+    "build": "supabase/tests/build_assurance_candidate.ps1 -Slice A5 -Installed (all six test files against the installed schema, no candidate DDL, 24-table expectation at each stage)",
+    "builderSha256": "2532b1a5f78936c99381b7dda1cce17690443f65e50471793eefa66cc56bd8f3",
+    "builtQuerySha256": "e4f72771a0aa068f9ab5742eb293c25bfcd093aab73b444bc6fca67255351056",
+    "executedText": "build output with SQL comment lines removed (sha256 bac4112dc5e54ae1d94794dc945bdc8f0fe6d443dafbf19af58342326df86d7b); every statement, including the fail-on-any-failure diagnostic block, identical",
+    "unchangedSliceBuilds": {
+      "A1": "51879e0093f065c208c7765fa4beea42dc5d6011331f3200f79d067fc7b7d774",
+      "A2": "159a5599319c3f29d0dbee1db52cd5e54cc4cd8889b69e0d2669a824619ba004",
+      "A4": "fe8abdac3b372772ba315623cee22bbf44bfba27019bb59dd81c1835559c2929",
+      "A4b": "6e37858ccb14f84166aed23603a5b40b2ae6f51bc6107788c85badf6ccd0d54f",
+      "A3": "a8f91eae3ae82e6573a02e9a3a918a70099a151ba200b176e1e105abcf2f3072",
+      "A5": "4f8090c8e7d26715e1ca822c98c1a9e68305f2fadfa14d843a1a0a0e2d0f054d"
+    },
+    "result": {"assertions": 228, "passed": 228, "failures": null},
+    "rolledBack": true,
+    "afterRun": {"fixtureUsers": 0, "fixtureTenants": 0, "engagements": 0, "commandReceipts": 0, "universeItems": 0, "ledgerMigrations": 121, "pgtapExtension": 0}
+  },
+  "notDone": [
+    "no business role is granted any assurance capability; every assurance API refuses real users until an administrator grants capabilities",
+    "no production project was touched"
+  ],
+  "doesNotEstablish": [
+    "production readiness or deployment approval",
+    "genuine MFA",
+    "authenticated native Windows use of the workspace",
+    "independent-session contention",
+    "target-scale latency",
+    "owner acceptance"
+  ]
+}

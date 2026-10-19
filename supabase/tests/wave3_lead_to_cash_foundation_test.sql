@@ -553,7 +553,7 @@ select api.upsert_sales_quotation(
   '{
     "id":"f5000000-0000-0000-0000-000000000001",
     "customer_id":"95000000-0000-0000-0000-000000000001",
-    "quotation_date":"2026-09-05","valid_until":"2026-10-05",
+    "quotation_date":"2026-09-05","valid_until":"2099-10-05",
     "currency_code":"LKR","exchange_rate":"1.0000000000",
     "rate_date":"2026-09-05","payment_terms_days":30,
     "delivery_terms":"Delivered to Colombo",
@@ -627,7 +627,7 @@ select is(
     '{
       "id":"f5000000-0000-0000-0000-000000000001",
       "customer_id":"95000000-0000-0000-0000-000000000001",
-      "quotation_date":"2026-09-05","valid_until":"2026-10-05",
+      "quotation_date":"2026-09-05","valid_until":"2099-10-05",
       "currency_code":"LKR","exchange_rate":"1.0000000000",
       "rate_date":"2026-09-05","payment_terms_days":30,
       "delivery_terms":"Delivered to Colombo",
@@ -788,7 +788,7 @@ select throws_ok(
     '45000000-0000-0000-0000-000000000001',
     'f1000000-0000-0000-0000-000000000090',
     'f2000000-0000-0000-0000-000000000090',
-    '2026-10-06T09:19:00Z',
+    '2099-10-06T09:19:00Z',
     '{"document_type":"sales_quotation","document_id":"f5000000-0000-0000-0000-000000000001","action":"accept","reason":"Late acceptance"}',
     3
   )$$,
@@ -1036,7 +1036,7 @@ select api.reserve_sales_order_stock(
   '2026-09-05T09:50:00Z',
   (select jsonb_build_object(
     'sales_order_id', response#>>'{entity,id}',
-    'expires_at', '2026-09-12T12:00:00Z',
+    'expires_at', '2099-09-12T12:00:00Z',
     'lines', jsonb_build_array(jsonb_build_object(
       'sales_order_line_id', response#>>'{entity,lines,0,id}',
       'requested_base_quantity', '2.000000'
@@ -1073,7 +1073,7 @@ select is(
     '2026-09-05T09:50:00Z',
     (select jsonb_build_object(
       'sales_order_id', response#>>'{entity,id}',
-      'expires_at', '2026-09-12T12:00:00Z',
+      'expires_at', '2099-09-12T12:00:00Z',
       'lines', jsonb_build_array(jsonb_build_object(
         'sales_order_line_id', response#>>'{entity,lines,0,id}',
         'requested_base_quantity', '2.000000'
@@ -1101,7 +1101,7 @@ select api.reserve_sales_order_stock(
   '2026-09-05T09:51:00Z',
   (select jsonb_build_object(
     'sales_order_id', response#>>'{entity,id}',
-    'expires_at', '2026-09-12T12:00:00Z',
+    'expires_at', '2099-09-12T12:00:00Z',
     'lines', jsonb_build_array(jsonb_build_object(
       'sales_order_line_id', response#>>'{entity,lines,0,id}',
       'requested_base_quantity', '0.500000'
@@ -1176,7 +1176,7 @@ select api.upsert_sales_quotation(
   'f1000000-0000-0000-0000-000000000020',
   'f2000000-0000-0000-0000-000000000020',
   '2026-09-05T10:00:00Z',
-  '{"id":"f5000000-0000-0000-0000-000000000002","customer_id":"95000000-0000-0000-0000-000000000001","quotation_date":"2026-09-05","valid_until":"2026-10-05","currency_code":"LKR","exchange_rate":"1.0000000000","rate_date":"2026-09-05","salesperson_id":"15000000-0000-0000-0000-000000000001","lines":[{"line_id":"f5100000-0000-0000-0000-000000000020","product_id":"b5000000-0000-0000-0000-000000000001","description":"Revision proof","unit_id":"a5000000-0000-0000-0000-000000000001","quantity":"1.000000","base_quantity":"1.000000","conversion_numerator":"1","conversion_denominator":"1","unit_price":"10.000000"}]}',
+  '{"id":"f5000000-0000-0000-0000-000000000002","customer_id":"95000000-0000-0000-0000-000000000001","quotation_date":"2026-09-05","valid_until":"2099-10-05","currency_code":"LKR","exchange_rate":"1.0000000000","rate_date":"2026-09-05","salesperson_id":"15000000-0000-0000-0000-000000000001","lines":[{"line_id":"f5100000-0000-0000-0000-000000000020","product_id":"b5000000-0000-0000-0000-000000000001","description":"Revision proof","unit_id":"a5000000-0000-0000-0000-000000000001","quantity":"1.000000","base_quantity":"1.000000","conversion_numerator":"1","conversion_denominator":"1","unit_price":"10.000000"}]}',
   null
 ) as response;
 create temporary table revision_quote_submit_result as
@@ -1223,7 +1223,7 @@ select api.upsert_sales_quotation(
   'f1000000-0000-0000-0000-000000000023',
   'f2000000-0000-0000-0000-000000000023',
   '2026-09-05T10:03:00Z',
-  '{"id":"f5000000-0000-0000-0000-000000000002","customer_id":"95000000-0000-0000-0000-000000000001","quotation_date":"2026-09-05","valid_until":"2026-11-05","currency_code":"LKR","exchange_rate":"1.0000000000","rate_date":"2026-09-05","salesperson_id":"15000000-0000-0000-0000-000000000001","create_revision":true,"revision_reason":"Validity extended","lines":[{"line_id":"f5100000-0000-0000-0000-000000000023","product_id":"b5000000-0000-0000-0000-000000000001","description":"Revision proof extended","unit_id":"a5000000-0000-0000-0000-000000000001","quantity":"1.000000","base_quantity":"1.000000","conversion_numerator":"1","conversion_denominator":"1","unit_price":"10.000000"}]}',
+  '{"id":"f5000000-0000-0000-0000-000000000002","customer_id":"95000000-0000-0000-0000-000000000001","quotation_date":"2026-09-05","valid_until":"2099-11-05","currency_code":"LKR","exchange_rate":"1.0000000000","rate_date":"2026-09-05","salesperson_id":"15000000-0000-0000-0000-000000000001","create_revision":true,"revision_reason":"Validity extended","lines":[{"line_id":"f5100000-0000-0000-0000-000000000023","product_id":"b5000000-0000-0000-0000-000000000001","description":"Revision proof extended","unit_id":"a5000000-0000-0000-0000-000000000001","quantity":"1.000000","base_quantity":"1.000000","conversion_numerator":"1","conversion_denominator":"1","unit_price":"10.000000"}]}',
   3
 ) as response;
 select ok(
@@ -1232,7 +1232,7 @@ select ok(
   and (select response#>>'{entity,version}' from revision_quote_result) = '4'
   and (select response#>>'{entity,document_number}' from revision_quote_result) = 'QUO-000002'
   and (
-    select count(*) = 1 and bool_and(snapshot->>'valid_until' = '2026-10-05')
+    select count(*) = 1 and bool_and(snapshot->>'valid_until' = '2099-10-05')
     from api.sales_quotation_revisions
     where quotation_id = 'f5000000-0000-0000-0000-000000000002'
   )

@@ -381,9 +381,8 @@ class _CashPositionPanel extends StatelessWidget {
             ),
             Text(
               'Illustrative forecast',
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: context.jentraColors.textSecondary,
-              ),
+              style: Theme.of(context).textTheme.labelMedium
+                  ?.copyWith(color: context.jentraColors.textSecondary),
             ),
           ],
         ),
@@ -581,9 +580,8 @@ class _ApprovalQueue extends StatelessWidget {
         const SizedBox(height: JentraSpacing.x3),
         Text(
           'Preview queue · 4 of 7 example items',
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            color: context.jentraColors.textSecondary,
-          ),
+          style: Theme.of(context).textTheme.labelMedium
+              ?.copyWith(color: context.jentraColors.textSecondary),
         ),
       ],
     ),
@@ -615,9 +613,8 @@ class _ApprovalItem extends StatelessWidget {
         final stackAmount = constraints.maxWidth < 410 * scale;
         final amountLabel = Text(
           amount,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            fontFamily: JentraTypography.monoFamily,
-          ),
+          style: Theme.of(context).textTheme.labelLarge
+              ?.copyWith(fontFamily: JentraTypography.monoFamily),
         );
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -768,9 +765,8 @@ class _FlowTile extends StatelessWidget {
           children: [
             Text(
               time,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontFamily: JentraTypography.monoFamily,
-              ),
+              style: Theme.of(context).textTheme.titleLarge
+                  ?.copyWith(fontFamily: JentraTypography.monoFamily),
             ),
             JentraStatusBadge(label: health, tone: tone),
           ],
@@ -778,9 +774,8 @@ class _FlowTile extends StatelessWidget {
         const SizedBox(height: JentraSpacing.x3),
         Text(
           'Successful handoffs',
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            color: context.jentraColors.textSecondary,
-          ),
+          style: Theme.of(context).textTheme.labelMedium
+              ?.copyWith(color: context.jentraColors.textSecondary),
         ),
         const SizedBox(height: JentraSpacing.x2),
         Semantics(
@@ -956,9 +951,8 @@ class _ActivityRow extends StatelessWidget {
       final amountText = Text(
         value,
         textAlign: compact ? TextAlign.start : TextAlign.right,
-        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-          fontFamily: JentraTypography.monoFamily,
-        ),
+        style: Theme.of(context).textTheme.labelLarge
+            ?.copyWith(fontFamily: JentraTypography.monoFamily),
       );
       final eventText = Row(
         children: [

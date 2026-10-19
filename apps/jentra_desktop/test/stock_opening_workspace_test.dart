@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +13,7 @@ import 'package:jentra_desktop/src/features/stock_opening/stock_opening_screen.d
 import 'package:jentra_domain/jentra_stock_opening.dart';
 import 'package:jentra_platform/jentra_platform.dart';
 import 'package:jentra_platform/jentra_stock_opening_platform.dart';
+
 import 'stock_opening_fixtures.dart';
 
 Future<StockOpeningController> pumpOpening(
@@ -218,15 +220,13 @@ void main() {
     'navigation and direct route fail closed without cost visibility',
     (tester) async {
       expect(
-        visibleJentraDestinations({
-          'inventory.adjustments.post',
-        }).any((d) => d.path == '/inventory'),
+        visibleJentraDestinations({'inventory.adjustments.post'})
+            .any((d) => d.path == '/inventory'),
         false,
       );
       expect(
-        visibleJentraDestinations(
-          openingPermissions,
-        ).any((d) => d.path == '/inventory'),
+        visibleJentraDestinations(openingPermissions)
+            .any((d) => d.path == '/inventory'),
         true,
       );
       await tester.pumpWidget(

@@ -495,10 +495,12 @@ select throws_ok(
     '64000000-0000-0000-0000-000000000006'
   )$$,
   '55000',
-  'A new fiscal period must start open.',
+  'PERIOD_MUST_START_OPEN',
   'new fiscal periods cannot bypass the lifecycle'
 );
-select lives_ok(
+-- 20260924185321_wave3_period_governance: the setup API can no longer change a
+-- period's state; only the period command (with its event) can.
+select throws_ok(
   format(
     'select api.upsert_fiscal_period(%L, %L, %L::jsonb, 1, %L)',
     '21000000-0000-0000-0000-000000000001',
@@ -510,11 +512,13 @@ select lives_ok(
     )::text,
     '64000000-0000-0000-0000-000000000003'
   ),
-  'open fiscal period can be soft locked'
+  '55000',
+  'PERIOD_TRANSITION_COMMAND_REQUIRED',
+  'setup API cannot soft lock an open fiscal period without the period command'
 );
-select lives_ok(
+select throws_ok(
   format(
-    'select api.upsert_fiscal_period(%L, %L, %L::jsonb, 2, %L)',
+    'select api.upsert_fiscal_period(%L, %L, %L::jsonb, 1, %L)',
     '21000000-0000-0000-0000-000000000001',
     '31000000-0000-0000-0000-000000000001',
     jsonb_build_object(
@@ -524,11 +528,21 @@ select lives_ok(
     )::text,
     '64000000-0000-0000-0000-000000000004'
   ),
-  'soft-locked fiscal period can be hard locked'
+  '55000',
+  'A fiscal period must be soft-locked before hard lock.',
+  'open fiscal period cannot skip the soft lock'
 );
+-- Put the period in hard lock outside the API (fixture only, rolled back) to
+-- check the setup API still cannot reopen it.
+reset role;
+alter table finance.fiscal_periods disable trigger fiscal_periods_enforce_lifecycle;
+update finance.fiscal_periods set state = 'hard_locked'
+where id = (select (response->'entity'->>'id')::uuid from wave2_fiscal_result);
+alter table finance.fiscal_periods enable trigger fiscal_periods_enforce_lifecycle;
+set local role authenticated;
 select throws_ok(
   format(
-    'select api.upsert_fiscal_period(%L, %L, %L::jsonb, 3, %L)',
+    'select api.upsert_fiscal_period(%L, %L, %L::jsonb, %s, %L)',
     '21000000-0000-0000-0000-000000000001',
     '31000000-0000-0000-0000-000000000001',
     jsonb_build_object(
@@ -536,6 +550,8 @@ select throws_ok(
       'name', 'January 2026', 'start_date', '2026-01-01',
       'end_date', '2026-01-31', 'state', 'open', 'status', 'active'
     )::text,
+    (select version from finance.fiscal_periods
+     where id = (select (response->'entity'->>'id')::uuid from wave2_fiscal_result)),
     '64000000-0000-0000-0000-000000000005'
   ),
   '55000',

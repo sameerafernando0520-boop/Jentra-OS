@@ -9,7 +9,7 @@ if(-not $InstalledPrerequisites -and -not $Installed){
  }
 }
 if(-not $Installed){$taskMigrations+=Get-Content -LiteralPath (Join-Path $taskRoot 'migrations/20261001100000_wave4_project_expenses_billing.sql') -Raw}
-$taskTests=(Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_projects_test.sql') -Raw)+[Environment]::NewLine+(Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_project_finance_test.sql') -Raw)
+$taskTests=(Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_projects_test.sql') -Raw)+[Environment]::NewLine+(Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_project_finance_test.sql') -Raw)
 $taskTests=[regex]::Replace($taskTests,'(?m)^select (is|ok|throws_ok|lives_ok)\(','insert into project_assertions select $1(')
 $taskDiagnostic=@'
 do $$declare failed text;begin
@@ -19,7 +19,7 @@ end $$;
 '@
 $taskQuery=(@('begin;',"set local lock_timeout='3s';","set local statement_timeout='90s';")+$taskMigrations+@(
  'create temporary table project_assertions(message text);','grant insert on project_assertions to authenticated,service_role;',
- (Get-Content -LiteralPath (Join-Path $PSScriptRoot 'wave4_synthetic_fixture.sql') -Raw),$taskTests,$taskDiagnostic,'set constraints all immediate;','select * from finish(true);',
+ (Get-Content -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave4_synthetic_fixture.sql') -Raw),$taskTests,$taskDiagnostic,'set constraints all immediate;','select * from finish(true);',
  $(if($ClientSamples){'select jsonb_object_agg(label,body) project_finance_client_samples,(select count(*) from project_assertions) assertions from project_finance_client_samples;'}else{"select count(*) assertions from project_assertions;"}),'rollback;'))-join [Environment]::NewLine
 if($taskQuery -match '(?im)^\s*commit\s*;' -or $taskQuery.TrimEnd() -notmatch 'rollback;$'){throw 'Finance verification must end in rollback.'}
 $taskQuery

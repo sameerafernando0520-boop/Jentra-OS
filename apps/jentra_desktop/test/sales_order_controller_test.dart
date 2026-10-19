@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -6,6 +7,7 @@ import 'package:jentra_desktop/src/app_providers.dart';
 import 'package:jentra_desktop/src/features/sales/sales_order_controller.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_platform.dart';
+
 import 'quotation_controller_test.dart' as q;
 
 const permissions = {
@@ -262,21 +264,18 @@ void main() {
       'ship_to',
     });
   });
-  test(
-    'AC-304 confirmation requires credit review and distinct override permission',
-    () async {
-      final c = await start(capabilities: {'sales.orders.manage'});
-      await c.selectOrder(q.quoteId);
-      await c.confirm();
-      expect(repository.commands, isEmpty);
-      await c.reviewCredit();
-      await c.confirm(overrideCredit: true, reason: 'Approved exception');
-      expect(repository.commands, isEmpty);
-      expect(value().error?.code, 'PERMISSION_DENIED');
-      await c.confirm();
-      expect(repository.commands.single.verb, 'confirm');
-    },
-  );
+  test('AC-304 confirmation requires credit review and distinct override permission', () async {
+    final c = await start(capabilities: {'sales.orders.manage'});
+    await c.selectOrder(q.quoteId);
+    await c.confirm();
+    expect(repository.commands, isEmpty);
+    await c.reviewCredit();
+    await c.confirm(overrideCredit: true, reason: 'Approved exception');
+    expect(repository.commands, isEmpty);
+    expect(value().error?.code, 'PERMISSION_DENIED');
+    await c.confirm();
+    expect(repository.commands.single.verb, 'confirm');
+  });
   test(
     'AC-304 privileged override retains its reason and reviewed version',
     () async {
@@ -378,28 +377,25 @@ void main() {
       expect(value().detail?.order.id, q.quoteId);
     },
   );
-  test(
-    'AC-304 conflict retains local edits and resolves against inspected version',
-    () async {
-      final c = await start();
-      await c.selectOrder(q.quoteId);
-      await c.updateForm({...value().form!, 'notes': 'local'});
-      repository.onCommand = (verb, wire) async => CommandResult.failure(
-        requestId: 'conflict',
-        error: const DomainError(code: 'VERSION_CONFLICT', message: 'Changed'),
-      );
-      await c.save();
-      expect(value().conflict, true);
-      expect(value().pending, isNull);
-      repository.detail = orderDetail(version: 8);
-      await c.inspectConflict();
-      repository.detail = orderDetail(version: 9);
-      await c.resolveConflict(keepLocal: true);
-      expect(value().localDraft?.expectedVersion, 8);
-      expect(value().form?['notes'], 'local');
-      expect(value().conflict, false);
-    },
-  );
+  test('AC-304 conflict retains local edits and resolves against inspected version', () async {
+    final c = await start();
+    await c.selectOrder(q.quoteId);
+    await c.updateForm({...value().form!, 'notes': 'local'});
+    repository.onCommand = (verb, wire) async => CommandResult.failure(
+      requestId: 'conflict',
+      error: const DomainError(code: 'VERSION_CONFLICT', message: 'Changed'),
+    );
+    await c.save();
+    expect(value().conflict, true);
+    expect(value().pending, isNull);
+    repository.detail = orderDetail(version: 8);
+    await c.inspectConflict();
+    repository.detail = orderDetail(version: 9);
+    await c.resolveConflict(keepLocal: true);
+    expect(value().localDraft?.expectedVersion, 8);
+    expect(value().form?['notes'], 'local');
+    expect(value().conflict, false);
+  });
   test('AC-304 capability changes discard late reads', () async {
     final c = await start();
     final pending = Completer<SalesOrderDetail?>();

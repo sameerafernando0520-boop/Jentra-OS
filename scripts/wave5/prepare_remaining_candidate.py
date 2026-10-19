@@ -13,8 +13,8 @@ NEW=['supabase/migrations/20260925002000_wave3_financial_statements.sql',
      'supabase/migrations/20261008103000_wave5_dated_cash.sql',
      'supabase/migrations/20261008110000_wave5_governed_export_adapter.sql',
      'supabase/migrations/20261008113000_wave5_statement_classifications.sql']
-FIXTURES=['supabase/tests/wave5_process_metrics_test.sql','supabase/tests/wave5_remaining_adapters_test.sql',
-          'supabase/tests/wave5_realized_mapping_test.sql']
+FIXTURES=['supabase/wave_tests/wave5_process_metrics_test.sql','supabase/wave_tests/wave5_remaining_adapters_test.sql',
+          'supabase/wave_tests/wave5_realized_mapping_test.sql']
 parts=['begin;']
 hashes={}
 for name in NEW+FIXTURES:

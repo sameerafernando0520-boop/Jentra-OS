@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
@@ -75,24 +76,21 @@ void main() {
     ]);
   }
 
-  test(
-    'uncertain quotation survives controller restart with exact envelope and frozen values',
-    () async {
-      await quote();
-      await c.saveServer();
-      final original = jsonEncode(gateway.commands.single.toJson((p) => p));
-      c.dispose();
-      c = controller();
-      await c.initialize();
-      c.update('payment_terms', 'modified');
-      expect(c.form!['payment_terms'], '');
-      gateway.uncertain = false;
-      await c.saveServer();
-      expect(jsonEncode(gateway.commands.last.toJson((p) => p)), original);
-      expect(c.form, isNull);
-      expect(await drafts.load(scope, SourcingController.slot), isNull);
-    },
-  );
+  test('uncertain quotation survives controller restart with exact envelope and frozen values', () async {
+    await quote();
+    await c.saveServer();
+    final original = jsonEncode(gateway.commands.single.toJson((p) => p));
+    c.dispose();
+    c = controller();
+    await c.initialize();
+    c.update('payment_terms', 'modified');
+    expect(c.form!['payment_terms'], '');
+    gateway.uncertain = false;
+    await c.saveServer();
+    expect(jsonEncode(gateway.commands.last.toJson((p) => p)), original);
+    expect(c.form, isNull);
+    expect(await drafts.load(scope, SourcingController.slot), isNull);
+  });
   test('quotation command excludes UI labels at every level', () async {
     await quote();
     await c.saveServer();

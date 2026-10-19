@@ -165,10 +165,8 @@ void main() {
       false,
     );
     expect(
-      visibleJentraDestinations({
-        'finance.view',
-        'finance.cash_flow.configure',
-      }).any((x) => x.path == route),
+      visibleJentraDestinations({'finance.view', 'finance.cash_flow.configure'})
+          .any((x) => x.path == route),
       true,
     );
   });

@@ -11,7 +11,7 @@ async function migration(file){const p=`supabase/migrations/${file}`,bytes=await
  sources[p]=hash(bytes);parts.push(bytes.toString());}
 const fixtureFiles=['wave5_process_metrics_test.sql','wave5_remaining_adapters_test.sql','wave5_realized_mapping_test.sql',
  'wave4_synthetic_fixture.sql','wave5_cash_payment_dates_test.sql','wave5_runtime_scope_test.sql'];
-async function fixture(file){const p=`supabase/tests/${file}`,bytes=await readFile(path.join(root,p));sources[p]=hash(bytes);let sql=bytes.toString();
+async function fixture(file){const p=`supabase/wave_tests/${file}`,bytes=await readFile(path.join(root,p));sources[p]=hash(bytes);let sql=bytes.toString();
  sql=sql.replace(/select \* from finish\(true\);/g,'').replace(/select no_plan\(\);/g,'');
  if(file==='wave5_remaining_adapters_test.sql'){
   const start=sql.indexOf('-- Rollback-only shape shim'),end=sql.indexOf('insert into finance.accounts',start);
@@ -22,8 +22,8 @@ async function fixture(file){const p=`supabase/tests/${file}`,bytes=await readFi
 // them, then exercise the final wrappers over actual Wave 4 sources. This is
 // compatibility composition; no v2 fixture is relabelled as v3 evidence.
 for(const file of migrationFiles)await migration(file);
-const seedBytes=await readFile(path.join(root,'supabase/tests/wave5_process_metrics_test.sql'));
-sources['supabase/tests/wave5_process_metrics_test.sql']=hash(seedBytes);
+const seedBytes=await readFile(path.join(root,'supabase/wave_tests/wave5_process_metrics_test.sql'));
+sources['supabase/wave_tests/wave5_process_metrics_test.sql']=hash(seedBytes);
 parts.push(seedBytes.toString().split('select is(api.analytics_process_authorize')[0].replace('select no_plan();',''));
 parts.push("insert into intelligence_control.integration_hosts values('runtime-fixture.invalid');");
 parts.push("insert into core.outbox_events(tenant_id,topic,aggregate_type,aggregate_id,payload) values(pg_temp.fid('t'),'runtime.scope.fixture','fixture',pg_temp.fid('queue.fixture'),'{}');");

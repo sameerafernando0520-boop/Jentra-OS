@@ -13,7 +13,7 @@ if ($Suite -eq 'procurement') {
  $marker = "select pg_temp.actor('outsider');"
  $at = $fixture.LastIndexOf($marker)
  if ($at -lt 0) { throw 'Missing final security boundary.' }
- $fixture = $fixture.Insert($at,(Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot 'wave3_receipt_provenance_test.sql')) + "`n")
+ $fixture = $fixture.Insert($at,(Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot '../wave_tests/wave3_receipt_provenance_test.sql')) + "`n")
 } elseif ($Suite -eq 'inventory') {
  $inventory = & (Join-Path $PSScriptRoot 'build_inventory_candidate.ps1')
  $fixture = $inventory.Substring($inventory.IndexOf('create extension if not exists pgtap'))
