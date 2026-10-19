@@ -216,6 +216,12 @@ const jentraDestinations = <JentraDestination>[
     section: 'GOVERNANCE',
   ),
   JentraDestination(
+    label: 'Audit planning',
+    path: '/governance/audit/planning',
+    icon: Icons.event_note_outlined,
+    section: 'GOVERNANCE',
+  ),
+  JentraDestination(
     label: 'Analytics',
     path: '/analytics',
     icon: Icons.query_stats_outlined,
@@ -324,6 +330,9 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
               'inventory.cost.view',
             ].every((p) => capabilities?.contains(p) ?? false)) &&
         (item.path != '/governance/audit' ||
+            (capabilities?.contains('assurance.evidence.view') ?? false)) &&
+        (item.path != '/governance/audit/planning' ||
+            (capabilities?.contains('assurance.plan.manage') ?? false) ||
             (capabilities?.contains('assurance.evidence.view') ?? false)) &&
         (item.path != '/finance/dimensions' ||
             const [

@@ -28,6 +28,19 @@ abstract interface class AssuranceGateway {
     CommandEnvelope<Map<String, Object?>> command,
   );
 
+  /// The audit universe and templates in scope (`api.assurance_universe`).
+  Future<AssuranceUniverse> universe(TenantContext scope);
+
+  /// The audit plan register (`api.assurance_plans`, candidate API).
+  Future<AssurancePlanPage> plans(TenantContext scope, {String? after});
+  Future<AssurancePlanDetail> plan(TenantContext scope, String planId);
+
+  /// One `api.assurance_plan_command`, versioned against its aggregate (0 for
+  /// creation); the receipt must confirm the same aggregate one version later.
+  Future<Map<String, Object?>> planCommand(
+    CommandEnvelope<Map<String, Object?>> command,
+  );
+
   /// Reads an export and hashes the exact manifest bytes.
   Future<AuditPackVerification> auditPack(TenantContext scope, String exportId);
 }
@@ -106,6 +119,8 @@ final class SupabaseAssuranceGateway implements AssuranceGateway {
     'ASSURANCE_TEAM_MEMBER_REQUIRED':
         'Only this engagement\'s audit team can do this.',
     'ASSURANCE_EXTERNAL_READ_ONLY': 'External reviewers have read-only access.',
+    'ASSURANCE_INDEPENDENT_APPROVAL_REQUIRED':
+        'Someone other than the maker or submitter must decide this.',
   };
 
   static String _validation(String m) => switch (m) {
@@ -119,6 +134,17 @@ final class SupabaseAssuranceGateway implements AssuranceGateway {
       'A newer report version exists. Refresh and export that one.',
     'ASSURANCE_MEMBER_REQUIRED' =>
       'The owner must be an active member of this organisation.',
+    'ASSURANCE_RISK_ASSESSMENT_REQUIRED' =>
+      'Assess the area\'s risk before planning it.',
+    'ASSURANCE_PLAN_EMPTY' => 'Add at least one area before submitting.',
+    'ASSURANCE_PLAN_NOT_APPROVED' =>
+      'Engagements come only from approved plans.',
+    'ASSURANCE_ITEM_IN_OPEN_PLAN' =>
+      'This area is in an open plan and cannot be retired yet.',
+    'ASSURANCE_ITEM_RETIRED' => 'This area has been retired.',
+    'ASSURANCE_PLAN_ITEM_EXISTS' => 'This area is already in the plan.',
+    'ASSURANCE_OCCURRENCE_EXISTS' =>
+      'That occurrence already has an engagement. Refresh the plan.',
     'IDEMPOTENCY_MISMATCH' =>
       'A different request already used this key. Start a new request.',
     _ => 'Check the entered details and try again.',
@@ -224,6 +250,62 @@ final class SupabaseAssuranceGateway implements AssuranceGateway {
       'p_expected_version': version,
     });
     if (r is! Map || !action.confirms(r.cast(), p, version)) {
+      throw const DomainError(
+        code: 'UNCERTAIN_RESULT',
+        message: 'Confirmation could not be verified. Retry the saved request.',
+      );
+    }
+    return r.cast<String, Object?>();
+  }
+
+  @override
+  Future<AssuranceUniverse> universe(TenantContext s) async =>
+      AssuranceUniverse.fromJson(
+        _map(await _call('assurance_universe', s, const {}), 'universe'),
+      );
+
+  @override
+  Future<AssurancePlanPage> plans(TenantContext s, {String? after}) async {
+    if (after != null) assuranceId(after);
+    return AssurancePlanPage.fromJson(
+      _map(
+        await _call('assurance_plans', s, {'p_after': after}),
+        'plan register',
+      ),
+    );
+  }
+
+  @override
+  Future<AssurancePlanDetail> plan(TenantContext s, String planId) async {
+    assuranceId(planId);
+    final d = AssurancePlanDetail.fromJson(
+      _map(await _call('assurance_plan', s, {'p_plan_id': planId}), 'plan'),
+    );
+    if (d.id != planId) {
+      throw const FormatException('Plan identity does not match.');
+    }
+    return d;
+  }
+
+  @override
+  Future<Map<String, Object?>> planCommand(
+    CommandEnvelope<Map<String, Object?>> c,
+  ) async {
+    final p = c.payload, version = c.expectedEntityVersion;
+    final action = p['action'] as String? ?? '';
+    if (version == null) {
+      throw const FormatException('Plan commands are versioned.');
+    }
+    AssurancePlanCommands.validate(action, p);
+    if (AssurancePlanCommands.creates(action) != (version == 0)) {
+      throw const FormatException('Creation uses version 0, changes do not.');
+    }
+    final r = await _call('assurance_plan_command', c.context, {
+      'p_idempotency_key': c.idempotencyKey,
+      'p_payload': p,
+      'p_expected_version': version,
+    });
+    if (r is! Map || !assurancePlanReceiptConfirms(r.cast(), p, version)) {
       throw const DomainError(
         code: 'UNCERTAIN_RESULT',
         message: 'Confirmation could not be verified. Retry the saved request.',

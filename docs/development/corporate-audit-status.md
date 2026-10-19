@@ -86,6 +86,15 @@ The candidate was kept in `supabase/candidates/` until installation; it is now a
 | Automated tests | domain 446/446 (8 new); platform assurance gateway 9/9; desktop `assurance_workspace_test.dart` 22/22 including new 200% light/dark goldens `governance_engagement_*_200.png` produced by this work; analyzers clean on changed files |
 | Not covered | test design/execution/review screens, planning screens, freeze/issue report/risk decision/retest screens, non-snapshot evidence sources (need a source picker); reminder delivery; no authenticated Windows walkthrough, genuine MFA or accessibility review |
 
+## Slice A7 — audit planning screens (desktop)
+
+| Category | Result |
+|---|---|
+| Source changes | New desktop page **Audit planning** (`/governance/audit/planning`, shown with `assurance.plan.manage` or `assurance.evidence.view`): audit universe with ratings (register area, assess risk with a live rating preview, retire area), current engagement templates, the plan register, and plan detail (add/remove areas, submit, maker-checker decide with MFA, cancel, create the next planned occurrence as an engagement). Every change is an encrypted draft sealed with generated ids and the aggregate's version (0 to create), retried with the same key. Domain `assurance_plan_view.dart` (`AssuranceUniverse`, `AssurancePlanPage`, `AssurancePlanDetail`, availability rules, receipt confirmation); platform `universe`, `plans`, `plan`, `planCommand` |
+| Candidate database evidence | `supabase/candidates/20261019120000_assurance_plan_register.sql` adds read-only `api.assurance_plans` (paged, scope-bound, same authority as `api.assurance_plan`); no table or existing function changes. Its 8 assertions run in CI inside `assurance_installed_test.sql` (`-Slice A6 -Pgtap`, 244 assertions). **Not installed**: until it is, the plan register is empty in the development project |
+| Automated tests | domain 6 new planning-view tests; platform assurance gateway 11/11; desktop `assurance_planning_test.dart` 9/9 including new 200% light/dark goldens `audit_planning_*_200.png` produced by this work |
+| Not covered | template authoring (templates are listed and referenced, not created); owners and lead auditors are entered as user IDs because no member directory API exists; no authenticated Windows walkthrough or genuine MFA |
+
 ## Slice A6b — engagement stages, tests, reports and finding decisions (desktop)
 
 | Category | Result |
@@ -118,7 +127,7 @@ The candidate was kept in `supabase/candidates/` until installation; it is now a
 | Not established | real users still have no assurance capability (no role grants); no native authenticated use, genuine MFA, contention/load or owner acceptance; production not touched |
 
 ## Next unblocked slices
-1. Planning screens (A3: universe, risk assessment, maker-checker plans, templates, recurring engagements); A6a and A6b cover the engagement-level auditor work.
+1. Install the two candidates (version guard, plan register) in the development project once approved, and decide which roles get `assurance.*` capabilities.
 2. Reminder delivery through the existing Wave 3 notification channel, and scheduled monitoring/occurrence runs.
 3. Tenant-configurable SLA, reminder bands and rule thresholds once as-is discovery is done.
 

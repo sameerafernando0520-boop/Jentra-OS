@@ -41,6 +41,9 @@ if ($Slice -eq 'A6') {
   # Version-guard candidate (PR #1 review), applied after the installed A1-A5.
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261019090000_assurance_version_guard.sql') -Raw)
   $tests += "`n" + (Get-Content -LiteralPath (Join-Path $fragments 'assurance_version_guard_test.sql') -Raw)
+  # Plan register candidate (desktop planning screens).
+  $tests += "`n" + (Get-Content -LiteralPath (Join-Path $root 'candidates/20261019120000_assurance_plan_register.sql') -Raw)
+  $tests += "`n" + (Get-Content -LiteralPath (Join-Path $fragments 'assurance_plan_register_test.sql') -Raw)
 }
 if ($Installed) {
   $migration = '-- installed variant: schema already installed; no candidate DDL'
