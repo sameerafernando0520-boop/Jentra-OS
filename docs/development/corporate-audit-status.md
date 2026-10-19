@@ -141,6 +141,19 @@ Design: [completion spec](../superpowers/specs/2026-10-20-assurance-completion-d
 | Observed on development | role `assurance_all_dev` (not a system role, no MFA) grants every privileged assurance permission; the `ACCESS_PRIVILEGED_NO_MFA` monitoring rule would report it. Left untouched |
 | Not done | not installed; no real member has been given a role yet |
 
+## Slice A9 — tenant settings and plan revision (candidate, 20 October 2026)
+
+Plan: [A9 plan](../superpowers/plans/2026-10-20-assurance-a9-settings.md).
+
+| Category | Result |
+|---|---|
+| Problem | Reminder bands (3/7 days), the 14-day finding-response deadline, risk-rating bands (20/10/5) and monitoring triggers (any occurrence) were fixed in source; an approved plan could only be replaced by a new plan |
+| Mechanism | Candidate `supabase/candidates/20261020120000_assurance_settings.sql`. `assurance.settings` per tenant with an optional legal-entity row that replaces it as a whole; no row means today's values. `assurance.effective_settings`, tenant-aware `reminder_level`, `response_days`, `risk_rating_for` and a three-argument `monitoring_rules` (rule on/off and minimum occurrences). `api.assurance_settings` (planners or evidence viewers) and `api.assurance_settings_command` (planners, recent MFA, versioned, immutable `assurance.settings_events`). Replaced with marked `-- A9` edits only: `assurance.work_items`, `api.assurance_overview` (adds `reminder_bands`), `api.assurance_evidence_command` (monitoring thresholds), `api.assurance_plan_command` (version-guard body: settings-aware rating, `supersede_plan`). Risk assessments now record the bands they were rated with (`rating_bands`) and the rating check validates against them. Plans gain `superseded` and `supersedes_plan_id`; one open revision per approved plan; approving the revision supersedes the original in the same transaction |
+| Client | Domain `assurance_settings.dart` (`AssuranceSettings`, `AssuranceSettingsPage`, commands, receipt check), `RatingBands`, settings-aware `assuranceReminderLevel`; the overview parser accepts tenant deadlines (1–90 days) and verifies levels with the reported bands, so a tenant that changes its settings keeps a working workspace; `PlanStatus.superseded`, `supersede_plan`, `AssurancePlanDetail.canRevise`. Platform `AssuranceSettingsGateway`. Desktop: Audit planning **Settings** section (summary with source badge; editor for the organisation or this entity with inline validation and a live reminder/rating preview, sealed in `assurance-settings-command`) and **Revise plan** on approved plans |
+| Candidate database evidence | reduced rollback suite on the development project: first run aborted on the installed fixed-band rating check (fixed as above), second run 44/44; nothing installed ([record](../verification/assurance/a9-settings-rollback-20261020.json)). CI generated from `-Slice A9 -Pgtap` |
+| Automated tests | domain 481/481; platform 1179/1179; desktop assurance 59/59 (new settings goldens at 200% light/dark, keyboard reaches every field); analyzers clean |
+| Not done | not installed; defaults stay until a planner saves settings; as-is discovery may change the defaults themselves |
+
 ## Installation — development project, 18 October 2026
 
 | Category | Result |
