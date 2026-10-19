@@ -129,6 +129,10 @@ final class SupabaseAssuranceGateway implements AssuranceGateway {
           'Audit access is required in this entity and branch.',
         'VERSION_CONFLICT' =>
           'The engagement changed. Refresh it before responding again.',
+        'NOT_FOUND' when message == 'ASSURANCE_ASSIGNMENT_NOT_FOUND' =>
+          'That role is no longer assigned. Refresh access.',
+        'NOT_FOUND' when message == 'ASSURANCE_MEMBER_NOT_FOUND' =>
+          'That person is no longer an active member. Refresh access.',
         'NOT_FOUND' => 'The engagement or finding is no longer available here.',
         'VALIDATION_ERROR' => _validation(message),
         _ => 'The outcome is uncertain. Retry the identical saved request.',
@@ -174,6 +178,7 @@ final class SupabaseAssuranceGateway implements AssuranceGateway {
     'ASSURANCE_PLAN_ITEM_EXISTS' => 'This area is already in the plan.',
     'ASSURANCE_OCCURRENCE_EXISTS' =>
       'That occurrence already has an engagement. Refresh the plan.',
+    'ASSURANCE_ROLE_UNKNOWN' => 'Only assurance roles can be given here.',
     'IDEMPOTENCY_MISMATCH' =>
       'A different request already used this key. Start a new request.',
     _ => 'Check the entered details and try again.',
