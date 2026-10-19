@@ -21,9 +21,13 @@ select is((select body->'next_cursor' from assurance_samples where label='plans.
   'a short register has no next page');
 select is((select body from assurance_samples where label='plans.viewer'),
   (select body from assurance_samples where label='plans.manager'),'evidence viewers read the same register');
+insert into assurance_samples select 'plans.after',to_jsonb(count(*)::integer)
+  from assurance.plans where tenant_id=pg_temp.aid('tenant') and id>pg_temp.aid('plan6');
 select pg_temp.actor('manager');set local role authenticated;
-select is(jsonb_array_length(pg_temp.plans(pg_temp.aid('plan6'))->'items'),
-  (select count(*)::integer from assurance.plans where tenant_id=pg_temp.aid('tenant') and id>pg_temp.aid('plan6')),
+insert into assurance_samples values('plans.paged',pg_temp.plans(pg_temp.aid('plan6')));
+reset role;
+select is((select jsonb_array_length(body->'items') from assurance_samples where label='plans.paged'),
+  (select body::text::integer from assurance_samples where label='plans.after'),
   'the register pages after a cursor');
 reset role;select pg_temp.actor('entityviewer');set local role authenticated;
 select is(jsonb_array_length(pg_temp.plans(null,'tenant.branch2')->'items'),0,'a branch register shows only that branch');
