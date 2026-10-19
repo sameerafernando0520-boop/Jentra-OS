@@ -2523,12 +2523,12 @@ $$;
 -- markers when versioning is on. Read through jsonb so the predicate also
 -- holds on Storage schemas without those columns.
 create function assurance.live_object(p_name text)
-returns setof storage.objects language sql stable security definer set search_path = '' as $
+returns setof storage.objects language sql stable security definer set search_path = '' as $$
   select o.* from storage.objects o
   where o.bucket_id = 'jentra-assurance-evidence' and o.name = p_name
     and to_jsonb(o)->>'archived_at' is null
     and not coalesce((to_jsonb(o)->>'is_delete_marker')::boolean, false)
-$;
+$$;
 
 -- True only when the current stored object is the one a `verified` record
 -- hashed, and that record matches the claimed digest and size.

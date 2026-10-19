@@ -139,6 +139,7 @@ Design: [completion spec](../superpowers/specs/2026-10-20-assurance-completion-d
 | Candidate database evidence | reduced rollback suite on the development project: 40/41, the failure was a test defect (it matched a hand-made development role, see below); corrected assertion re-checked 1/1, so 41/41; nothing installed ([record](../verification/assurance/a8-access-rollback-20261020.json)). The full cumulative suite runs in CI: `assurance_installed_test.sql` is now generated from `-Slice A8 -Pgtap`, which also brings the A7 evidence-storage assertions into CI |
 | Automated tests | domain 472/472 (5 new); platform 1173/1173 + 7 new access gateway tests; desktop assurance 48/48 (10 new, 200% light/dark goldens, keyboard focus); analyzers clean |
 | Observed on development | role `assurance_all_dev` (not a system role, no MFA) grants every privileged assurance permission; the `ACCESS_PRIVILEGED_NO_MFA` monitoring rule would report it. Left untouched |
+| A7 defect found by CI | moving CI to `-Slice A8` ran the A7 evidence-storage candidate in full for the first time: `assurance.live_object` was delimited with `$` instead of `$$` (a syntax error; the candidate's earlier reduced run did not include it as committed). Fixed in the candidate; the corrected definitions were compiled on the development project in a rolled-back transaction. The A7 rollback record's hash refers to the pre-fix file |
 | Not done | not installed; no real member has been given a role yet |
 
 ## Installation — development project, 18 October 2026

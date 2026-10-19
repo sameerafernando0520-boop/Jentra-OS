@@ -300,9 +300,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/governance/audit/access',
             builder: (context, state) => const AssuranceAccessScreen(),
             onExit: (context, state) async =>
-                await ref
-                    .read(assuranceAccessControllerProvider)
-                    ?.canLeave() ??
+                await ref.read(assuranceAccessControllerProvider)?.canLeave() ??
                 true,
           ),
           GoRoute(
