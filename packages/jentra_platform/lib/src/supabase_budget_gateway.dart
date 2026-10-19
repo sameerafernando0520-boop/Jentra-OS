@@ -270,9 +270,12 @@ final class SupabaseBudgetGateway implements BudgetGateway {
       FinancialDimensionEvidence.validate(
         row,
         section == 'journals'
-            ? scope.copyWith(branchId: row['branch_id'] as String? ?? scope.branchId)
+            ? scope.copyWith(
+                branchId: row['branch_id'] as String? ?? scope.branchId,
+              )
             : scope,
-        entityOnly: section == 'lines' && rawSummary['budget_branch_id'] == null,
+        entityOnly:
+            section == 'lines' && rawSummary['budget_branch_id'] == null,
       );
       if (section == 'lines') {
         if (row['account_id'] is! String ||

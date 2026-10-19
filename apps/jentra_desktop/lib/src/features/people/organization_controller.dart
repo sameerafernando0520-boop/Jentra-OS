@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_domain.dart';
@@ -6,6 +7,7 @@ import 'package:jentra_domain/jentra_people.dart';
 import 'package:jentra_platform/jentra_people_platform.dart';
 import 'package:jentra_platform/jentra_platform.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../app_providers.dart';
 import 'employee_controller.dart';
 import 'calendar_controller.dart';
@@ -524,8 +526,7 @@ final class OrganizationController extends ChangeNotifier {
       assignments = state.assignments.items;
       comparedVersion = state.version;
     }
-    message =
-        'Current history loaded. Compare the dates and references before retaining these edits.';
+    message = 'Current history loaded. Compare the dates and references before retaining these edits.';
   });
   Future<void> replaceConflict() => _run(() async {
     if (!canManage ||
@@ -578,8 +579,7 @@ final class OrganizationController extends ChangeNotifier {
     expectedVersion = comparedVersion!;
     local = await drafts.load(scope, form!['id'] as String);
     comparedVersion = null;
-    message =
-        'Edits retained against the compared version. Review before confirming.';
+    message = 'Edits retained against the compared version. Review before confirming.';
   });
   Future<void> submit() => _run(() async {
     _connected();
@@ -614,8 +614,7 @@ final class OrganizationController extends ChangeNotifier {
     try {
       await drafts.complete(scope, id, pending.envelope.commandId);
     } catch (_) {
-      error =
-          'The change is confirmed. Local cleanup needs a retry of the saved request.';
+      error = 'The change is confirmed. Local cleanup needs a retry of the saved request.';
       return;
     }
     if (_disposed) {

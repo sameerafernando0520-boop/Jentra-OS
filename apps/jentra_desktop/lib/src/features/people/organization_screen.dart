@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_people.dart';
+
 import 'organization_controller.dart';
 import '../../app_providers.dart';
 

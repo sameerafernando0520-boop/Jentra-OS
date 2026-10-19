@@ -257,9 +257,8 @@ void main() {
       MaterialApp(
         theme: dark ? JentraTheme.dark() : JentraTheme.light(),
         builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(
-            context,
-          ).copyWith(textScaler: TextScaler.linear(scale)),
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: TextScaler.linear(scale)),
           child: child!,
         ),
         home: Scaffold(body: CalendarWorkspace(controller: controller)),
@@ -305,38 +304,35 @@ void main() {
     expect(controller.message, 'Calendar action confirmed.');
     expect(controller.error, contains('Action confirmed'));
   });
-  test(
-    'revocation clears every visible calendar and draft but preserves encrypted retry',
-    () async {
-      await controller.initialize();
-      await controller.open(repository.entry('2026-09-26'));
-      fill();
-      repository.failure = 'PERMISSION_DENIED';
-      await controller.submit();
-      final id = repository.commands.single.commandId;
-      expect(controller.accessDenied, isTrue);
-      expect(controller.form, isNull);
-      expect(controller.local, isNull);
-      expect(controller.items, isEmpty);
-      expect(controller.selected, isNull);
-      expect(controller.detail, isNull);
-      expect(controller.events, isEmpty);
-      expect(controller.versions, isEmpty);
-      expect(
-        (await drafts.load(
-          _scope,
-          CalendarController.slot,
-        ))!.pending!.envelope.commandId,
-        id,
-      );
-      repository.failure = null;
-      await controller.refresh();
-      expect(controller.local?.pending, isNotNull);
-      await controller.submit();
-      expect(repository.commands.last.commandId, id);
-      expect(controller.local, isNull);
-    },
-  );
+  test('revocation clears every visible calendar and draft but preserves encrypted retry', () async {
+    await controller.initialize();
+    await controller.open(repository.entry('2026-09-26'));
+    fill();
+    repository.failure = 'PERMISSION_DENIED';
+    await controller.submit();
+    final id = repository.commands.single.commandId;
+    expect(controller.accessDenied, isTrue);
+    expect(controller.form, isNull);
+    expect(controller.local, isNull);
+    expect(controller.items, isEmpty);
+    expect(controller.selected, isNull);
+    expect(controller.detail, isNull);
+    expect(controller.events, isEmpty);
+    expect(controller.versions, isEmpty);
+    expect(
+      (await drafts.load(
+        _scope,
+        CalendarController.slot,
+      ))!.pending!.envelope.commandId,
+      id,
+    );
+    repository.failure = null;
+    await controller.refresh();
+    expect(controller.local?.pending, isNotNull);
+    await controller.submit();
+    expect(repository.commands.last.commandId, id);
+    expect(controller.local, isNull);
+  });
   test(
     'permission loss after confirmation hides the confirmed calendar',
     () async {
@@ -350,38 +346,35 @@ void main() {
       expect(await drafts.load(_scope, CalendarController.slot), isNull);
     },
   );
-  test(
-    'stale draft needs explicit comparison and replacement before a new command',
-    () async {
-      await controller.initialize();
-      await controller.open(repository.entry('2026-09-26'));
-      controller.beginAction('rename');
-      controller.edit('name', 'Reviewed name');
-      controller.edit('reason', 'Synthetic rename');
-      repository.failure = 'VERSION_CONFLICT';
-      await controller.submit();
-      expect(controller.conflict, isTrue);
-      expect(controller.local?.pending, isNull);
-      controller.edit('name', 'Silent change');
-      expect(controller.form!['name'], 'Reviewed name');
-      await controller.submit();
-      expect(repository.commands, hasLength(1));
-      repository.current = {...repository.current, 'version': 2};
-      repository.failure = null;
-      await controller.compareConflict();
-      expect(controller.form!['version'], 1);
-      await controller.replaceConflict();
-      expect(controller.form!['version'], 2);
-      expect(controller.conflict, isFalse);
-      await controller.submit();
-      expect(repository.commands.last.expectedEntityVersion, 2);
-      expect(controller.selected?.version, 3);
-      expect(
-        repository.commands.last.commandId,
-        isNot(repository.commands.first.commandId),
-      );
-    },
-  );
+  test('stale draft needs explicit comparison and replacement before a new command', () async {
+    await controller.initialize();
+    await controller.open(repository.entry('2026-09-26'));
+    controller.beginAction('rename');
+    controller.edit('name', 'Reviewed name');
+    controller.edit('reason', 'Synthetic rename');
+    repository.failure = 'VERSION_CONFLICT';
+    await controller.submit();
+    expect(controller.conflict, isTrue);
+    expect(controller.local?.pending, isNull);
+    controller.edit('name', 'Silent change');
+    expect(controller.form!['name'], 'Reviewed name');
+    await controller.submit();
+    expect(repository.commands, hasLength(1));
+    repository.current = {...repository.current, 'version': 2};
+    repository.failure = null;
+    await controller.compareConflict();
+    expect(controller.form!['version'], 1);
+    await controller.replaceConflict();
+    expect(controller.form!['version'], 2);
+    expect(controller.conflict, isFalse);
+    await controller.submit();
+    expect(repository.commands.last.expectedEntityVersion, 2);
+    expect(controller.selected?.version, 3);
+    expect(
+      repository.commands.last.commandId,
+      isNot(repository.commands.first.commandId),
+    );
+  });
   test('offline editing saves locally and cannot publish', () async {
     controller.dispose();
     controller = make(online: false);
@@ -394,29 +387,26 @@ void main() {
     expect(repository.commands, isEmpty);
     expect(await controller.canLeave(), isTrue);
   });
-  test(
-    'invalid local times, overlapping intervals and out-of-range exceptions fail before dispatch',
-    () async {
-      await controller.initialize();
-      fill();
-      controller.editRow('weekly_intervals', 0, 'start_time', '25:00');
-      await controller.submit();
-      expect(repository.commands, isEmpty);
-      expect(controller.error, contains('HH:MM'));
-      controller.editRow('weekly_intervals', 0, 'start_time', '09:00');
-      controller.addRow('weekly_intervals');
-      await controller.submit();
-      expect(repository.commands, isEmpty);
-      expect(controller.error, contains('overlap'));
-      controller.removeRow('weekly_intervals', 5);
-      controller.addRow('date_overrides');
-      controller.editRow('date_overrides', 0, 'date', '2027-01-01');
-      controller.editRow('date_overrides', 0, 'reason', 'Outside');
-      await controller.submit();
-      expect(repository.commands, isEmpty);
-      expect(controller.error, contains('within version'));
-    },
-  );
+  test('invalid local times, overlapping intervals and out-of-range exceptions fail before dispatch', () async {
+    await controller.initialize();
+    fill();
+    controller.editRow('weekly_intervals', 0, 'start_time', '25:00');
+    await controller.submit();
+    expect(repository.commands, isEmpty);
+    expect(controller.error, contains('HH:MM'));
+    controller.editRow('weekly_intervals', 0, 'start_time', '09:00');
+    controller.addRow('weekly_intervals');
+    await controller.submit();
+    expect(repository.commands, isEmpty);
+    expect(controller.error, contains('overlap'));
+    controller.removeRow('weekly_intervals', 5);
+    controller.addRow('date_overrides');
+    controller.editRow('date_overrides', 0, 'date', '2027-01-01');
+    controller.editRow('date_overrides', 0, 'reason', 'Outside');
+    await controller.submit();
+    expect(repository.commands, isEmpty);
+    expect(controller.error, contains('within version'));
+  });
   test('a saved editor is retained until explicitly discarded', () async {
     await controller.initialize();
     fill();
@@ -428,23 +418,17 @@ void main() {
     controller.beginCreate();
     expect(controller.form!['id'], isNot(id));
   });
-  test(
-    'calendar navigation requires its own capability, independent of employee read',
-    () {
-      final paths = visibleJentraDestinations(
-        _permissions,
-      ).map((item) => item.path);
-      expect(paths, contains('/people/calendars'));
-      expect(paths, isNot(contains('/people')));
-      expect(
-        visibleJentraDestinations({
-          'people.view',
-          'people.employees.view',
-        }).map((item) => item.path),
-        isNot(contains('/people/calendars')),
-      );
-    },
-  );
+  test('calendar navigation requires its own capability, independent of employee read', () {
+    final paths = visibleJentraDestinations(_permissions)
+        .map((item) => item.path);
+    expect(paths, contains('/people/calendars'));
+    expect(paths, isNot(contains('/people')));
+    expect(
+      visibleJentraDestinations({'people.view', 'people.employees.view'})
+          .map((item) => item.path),
+      isNot(contains('/people/calendars')),
+    );
+  });
   for (final dark in [false, true]) {
     testWidgets(
       '${dark ? 'dark' : 'light'} calendar workspace renders at 200 percent text',

@@ -102,8 +102,7 @@ class _EmployeeWorkspaceState extends State<EmployeeWorkspace> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                c.error ??
-                    'Employee access changed. Switch to an authorized branch to continue.',
+                c.error ?? 'Employee access changed. Switch to an authorized branch to continue.',
               ),
               if (c.online)
                 TextButton(
@@ -124,8 +123,7 @@ class _EmployeeWorkspaceState extends State<EmployeeWorkspace> {
                 children: [
                   JentraSectionHeader(
                     title: 'Employees',
-                    description:
-                        'Scoped operational identity and dated employment history.',
+                    description: 'Scoped operational identity and dated employment history.',
                     trailing: c.online
                         ? const JentraStatusBadge(
                             label: 'Connected',

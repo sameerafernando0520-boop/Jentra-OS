@@ -320,7 +320,8 @@ void main() {
       );
       server.result = _confirmation(first.envelope.commandId)
         ..['entity'] = {
-          ...(_confirmation(first.envelope.commandId)['entity'] as Map<String, Object?>),
+          ...(_confirmation(first.envelope.commandId)['entity']
+              as Map<String, Object?>),
           'version': 2,
         };
       await expectLater(

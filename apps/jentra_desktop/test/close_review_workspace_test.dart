@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_desktop/src/features/close_review/close_review_controller.dart';
 import 'package:jentra_desktop/src/features/close_review/close_review_screen.dart';
 import 'package:jentra_desktop/src/shell/navigation.dart';
+
 import 'support/procurement_fakes.dart' show Keys;
 
 Map<String, Object?> review(String id) => {
@@ -202,10 +204,8 @@ void main() {
 
   test('navigation requires all four control and cost capabilities', () {
     expect(
-      visibleJentraDestinations({
-        'finance.view',
-        'finance.controls.reconcile',
-      }).any((d) => d.path == '/finance/close-review'),
+      visibleJentraDestinations({'finance.view', 'finance.controls.reconcile'})
+          .any((d) => d.path == '/finance/close-review'),
       isFalse,
     );
     expect(
@@ -215,22 +215,19 @@ void main() {
       isTrue,
     );
   });
-  test(
-    'generation seals entity cutoff and persists confirmed identity before evidence',
-    () async {
-      await ready();
-      await c.generate();
-      expect(c.error, isNull);
-      expect(gateway.commands.single.payload, {
-        'id': 'review-0042',
-        'period_id': 'period',
-        'as_of': '2026-09-25',
-      });
-      final local = await drafts.load(scope, CloseReviewController.slot);
-      expect(local!.pending, isNull);
-      expect(local.form['report_id'], 'review-0042');
-    },
-  );
+  test('generation seals entity cutoff and persists confirmed identity before evidence', () async {
+    await ready();
+    await c.generate();
+    expect(c.error, isNull);
+    expect(gateway.commands.single.payload, {
+      'id': 'review-0042',
+      'period_id': 'period',
+      'as_of': '2026-09-25',
+    });
+    final local = await drafts.load(scope, CloseReviewController.slot);
+    expect(local!.pending, isNull);
+    expect(local.form['report_id'], 'review-0042');
+  });
   test('invalid cutoff cannot create or send authoritative request', () async {
     await ready();
     c.field('as_of', '2026-08-31');

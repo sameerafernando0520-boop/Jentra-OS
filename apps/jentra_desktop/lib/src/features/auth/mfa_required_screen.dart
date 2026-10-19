@@ -118,9 +118,8 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
                   const SizedBox(height: JentraSpacing.x2),
                   Text(
                     'This membership can perform privileged business actions. Jentra keeps every privileged route and RPC locked until this session reaches assurance level 2.',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: context.jentraColors.textSecondary,
-                    ),
+                    style: Theme.of(context).textTheme.bodyLarge
+                        ?.copyWith(color: context.jentraColors.textSecondary),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: JentraSpacing.x6),

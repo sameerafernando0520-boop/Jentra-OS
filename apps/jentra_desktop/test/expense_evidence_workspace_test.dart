@@ -530,7 +530,7 @@ void main() {
     'closing private image preview evicts its decoded framework cache',
     (tester) async {
       server.readBytes = base64Decode(
-      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
       );
       server.rows[document] = ExpenseEvidenceDocument.fromJson({
         ...server.metadata(document),

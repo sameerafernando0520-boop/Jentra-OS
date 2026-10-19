@@ -171,24 +171,21 @@ void main() {
     },
   );
 
-  test(
-    'switching accounts reloads tenant membership instead of reusing the first owner',
-    () async {
-      container.listen(tenantListProvider, (_, _) {});
-      expect(
-        (await container.read(tenantListProvider.future)).single.id,
-        'tenant-owner',
-      );
-      actor = 'approver';
-      await client.auth.signInWithPassword(
-        email: 'approver@example.test',
-        password: 'synthetic-only',
-      );
-      await settle();
-      expect(
-        (await container.read(tenantListProvider.future)).single.id,
-        'tenant-approver',
-      );
-    },
-  );
+  test('switching accounts reloads tenant membership instead of reusing the first owner', () async {
+    container.listen(tenantListProvider, (_, _) {});
+    expect(
+      (await container.read(tenantListProvider.future)).single.id,
+      'tenant-owner',
+    );
+    actor = 'approver';
+    await client.auth.signInWithPassword(
+      email: 'approver@example.test',
+      password: 'synthetic-only',
+    );
+    await settle();
+    expect(
+      (await container.read(tenantListProvider.future)).single.id,
+      'tenant-approver',
+    );
+  });
 }

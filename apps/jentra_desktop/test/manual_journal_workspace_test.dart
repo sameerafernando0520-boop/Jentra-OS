@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_desktop/src/features/manual_journal/manual_journal_controller.dart';
 import 'package:jentra_desktop/src/features/manual_journal/manual_journal_screen.dart';
 import 'package:jentra_desktop/src/shell/navigation.dart';
+
 import 'support/procurement_fakes.dart' show Keys;
 
 Map<String, Object?> journal({
@@ -377,9 +379,8 @@ void main() {
       isFalse,
     );
     expect(
-      visibleJentraDestinations({
-        'finance.view',
-      }).any((d) => d.path == '/finance/journals'),
+      visibleJentraDestinations({'finance.view'})
+          .any((d) => d.path == '/finance/journals'),
       isTrue,
     );
   });

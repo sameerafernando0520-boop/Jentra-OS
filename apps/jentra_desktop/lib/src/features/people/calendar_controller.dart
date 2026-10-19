@@ -446,8 +446,7 @@ final class CalendarController extends ChangeNotifier {
     detail = current.version;
     versions = page.items;
     versionCursor = page.nextCursor;
-    message =
-        'Current calendar loaded for comparison. Replace the stale draft explicitly to retain your edits.';
+    message = 'Current calendar loaded for comparison. Replace the stale draft explicitly to retain your edits.';
   });
   Future<void> replaceConflict() => _run(() async {
     if (!canManage ||
@@ -469,8 +468,7 @@ final class CalendarController extends ChangeNotifier {
       resolveConflict: true,
     );
     await _restore();
-    message =
-        'Draft retained against the compared calendar. Review the dates before confirming.';
+    message = 'Draft retained against the compared calendar. Review the dates before confirming.';
   });
   Future<void> submit() => _run(() async {
     if (!online || accessDenied || !canManage) {
@@ -537,8 +535,7 @@ final class CalendarController extends ChangeNotifier {
     try {
       await drafts.complete(scope, slot, command.envelope.commandId);
     } catch (_) {
-      error =
-          'Action confirmed. Retry the stored request to finish local recovery.';
+      error = 'Action confirmed. Retry the stored request to finish local recovery.';
       return;
     }
     form = null;

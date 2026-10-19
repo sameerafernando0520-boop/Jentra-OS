@@ -40,7 +40,8 @@ class ReservationWorkspace extends StatelessWidget {
     final f = controller.form!;
     final epoch = controller.readAccessEpoch;
     final accepted = await showOperationalReadDialog<bool>(
-      context, controller,
+      context,
+      controller,
       (context) => AlertDialog(
         title: const Text('Release this reservation?'),
         content: SingleChildScrollView(
@@ -60,7 +61,11 @@ class ReservationWorkspace extends StatelessWidget {
         ],
       ),
     );
-    if (accepted == true && controller.currentRead(epoch) && !controller.locked) await controller.release();
+    if (accepted == true &&
+        controller.currentRead(epoch) &&
+        !controller.locked) {
+      await controller.release();
+    }
   }
 
   @override

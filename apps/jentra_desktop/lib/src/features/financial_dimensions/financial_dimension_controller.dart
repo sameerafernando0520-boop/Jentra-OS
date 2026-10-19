@@ -1,9 +1,11 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_finance_platform.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../app_providers.dart';
 
 final financialDimensionGatewayProvider = Provider<FinancialDimensionGateway?>(
@@ -221,9 +223,8 @@ final class FinancialDimensionController extends ChangeNotifier {
       k: form[k],
   };
   void validate() {
-    if (!RegExp(
-          r'^[A-Z0-9][A-Z0-9._-]{0,39}$',
-        ).hasMatch(form['code'] as String? ?? '') ||
+    if (!RegExp(r'^[A-Z0-9][A-Z0-9._-]{0,39}$')
+            .hasMatch(form['code'] as String? ?? '') ||
         (form['name'] as String? ?? '').trim().length < 2 ||
         (form['name'] as String? ?? '').length > 160 ||
         (form['reason'] as String? ?? '').trim().length < 3 ||
@@ -279,8 +280,7 @@ final class FinancialDimensionController extends ChangeNotifier {
     if (_disposed) return;
     form = result;
     if (!current(epoch)) return;
-    message =
-        'Dimension confirmed. Original posted and approved history is preserved.';
+    message = 'Dimension confirmed. Original posted and approved history is preserved.';
     try {
       await read();
     } catch (e) {

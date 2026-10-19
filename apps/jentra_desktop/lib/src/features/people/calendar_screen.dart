@@ -122,8 +122,7 @@ class _CalendarWorkspaceState extends State<CalendarWorkspace> {
           children: [
             JentraSectionHeader(
               title: 'Work calendars',
-              description:
-                  'Published local working hours and dated exceptions for the selected entity.',
+              description: 'Published local working hours and dated exceptions for the selected entity.',
               trailing: JentraStatusBadge(
                 label: c.online ? 'Connected' : 'Offline drafts',
                 tone: c.online
@@ -272,9 +271,7 @@ class _CalendarWorkspaceState extends State<CalendarWorkspace> {
             if (c.items.isEmpty && !c.busy && c.error == null)
               _card(
                 Text(
-                  c.online
-                      ? 'No calendars match this entity and search.'
-                      : 'Connect to browse published calendars. Your encrypted draft can be edited offline.',
+                  c.online ? 'No calendars match this entity and search.' : 'Connect to browse published calendars. Your encrypted draft can be edited offline.',
                 ),
               ),
             LayoutBuilder(

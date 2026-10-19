@@ -31,9 +31,9 @@ void main() {
         );
       }
       expect(
-        visibleJentraDestinations(
-          {},
-        ).firstWhere((d) => d.path == '/procurement').section,
+        visibleJentraDestinations({})
+            .firstWhere((d) => d.path == '/procurement')
+            .section,
         'OPERATIONS',
       );
     },

@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:jentra_domain/jentra_stock_opening.dart';
 import 'package:jentra_platform/jentra_platform.dart';
 

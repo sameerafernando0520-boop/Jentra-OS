@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -360,15 +361,13 @@ void main() {
     'AC-401 navigation requires both organization and People capabilities',
     () {
       expect(
-        visibleJentraDestinations({
-          'people.view',
-        }).any((d) => d.path == '/people/organization'),
+        visibleJentraDestinations({'people.view'})
+            .any((d) => d.path == '/people/organization'),
         isFalse,
       );
       expect(
-        visibleJentraDestinations(
-          permissions,
-        ).any((d) => d.path == '/people/organization'),
+        visibleJentraDestinations(permissions)
+            .any((d) => d.path == '/people/organization'),
         isTrue,
       );
     },

@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +9,7 @@ import 'package:jentra_domain/jentra_procurement.dart';
 import 'package:jentra_platform/jentra_procurement_platform.dart';
 import 'package:jentra_desktop/src/features/procurement/supplier_payment_controller.dart';
 import 'package:jentra_desktop/src/features/procurement/supplier_payment_screen.dart';
+
 import 'support/procurement_fakes.dart';
 
 class PaymentGateway extends Gateway implements SupplierPaymentGateway {

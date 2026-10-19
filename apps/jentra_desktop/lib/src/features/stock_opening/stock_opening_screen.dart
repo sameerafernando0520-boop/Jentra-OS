@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_domain/jentra_stock_opening.dart';
+
 import '../../app_providers.dart';
 import 'stock_opening_controller.dart';
 import 'stock_opening_editor.dart';
@@ -212,9 +213,8 @@ class _WorkspaceState extends State<StockOpeningWorkspace> {
       if (slot != null && c.active) await c.recover(slot);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(e.toString())));
       }
     }
   }

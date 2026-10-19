@@ -39,7 +39,7 @@ class PaymentEvidence extends PaymentGateway {
         {
           'id': after == null ? 'bill' : 'credit',
           'document_number': after == null ? 'SB-EXACT' : 'CR-EXACT',
-            'kind': after == null ? 'bill' : 'credit',
+          'kind': after == null ? 'bill' : 'credit',
           'due_date': '2026-09-30',
           'currency_code': 'USD',
           'residual': {

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_platform/jentra_platform.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../app_providers.dart';
 
 class StockOpeningInviteButton extends ConsumerWidget {
@@ -89,8 +90,7 @@ class _InviteState extends ConsumerState<StockOpeningInviteDialog> {
     } on Object {
       if (mounted) {
         setState(
-          () => _error =
-              'Invitation was not confirmed. Retry this same request. The server may have already accepted it.',
+          () => _error = 'Invitation was not confirmed. Retry this same request. The server may have already accepted it.',
         );
       }
     } finally {
@@ -144,9 +144,8 @@ class _InviteState extends ConsumerState<StockOpeningInviteDialog> {
                       ),
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) =>
-                          RegExp(
-                            r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
-                          ).hasMatch(value?.trim() ?? '')
+                          RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
+                              .hasMatch(value?.trim() ?? '')
                           ? null
                           : 'Enter a valid email address.',
                     ),

@@ -91,8 +91,7 @@ class _ComponentCatalogueScreenState extends State<ComponentCatalogueScreen> {
     _Specimen(
       number: '01',
       title: 'A spectrum with purpose',
-      description:
-          'Navy anchors the workspace. Blue moves work forward. Teal and green connect it to the brand.',
+      description: 'Navy anchors the workspace. Blue moves work forward. Teal and green connect it to the brand.',
       child: LayoutBuilder(
         builder: (context, constraints) {
           final columns = constraints.maxWidth > 900
@@ -238,8 +237,7 @@ class _ComponentCatalogueScreenState extends State<ComponentCatalogueScreen> {
     _Specimen(
       number: '04',
       title: 'The mark leads. The interface supports.',
-      description:
-          'Use the supplied mark in its original proportions. Give it at least one quarter of its visible height in clear space. Reserve the spectrum for identity moments.',
+      description: 'Use the supplied mark in its original proportions. Give it at least one quarter of its visible height in clear space. Reserve the spectrum for identity moments.',
       child: Wrap(
         spacing: 24,
         runSpacing: 20,
@@ -266,8 +264,7 @@ class _ComponentCatalogueScreenState extends State<ComponentCatalogueScreen> {
     _Specimen(
       number: '01',
       title: 'One clear next step',
-      description:
-          'A single blue primary action per task. Secondary actions stay quieter. Try these local specimens.',
+      description: 'A single blue primary action per task. Secondary actions stay quieter. Try these local specimens.',
       child: Wrap(
         spacing: 12,
         runSpacing: 12,
@@ -313,8 +310,7 @@ class _ComponentCatalogueScreenState extends State<ComponentCatalogueScreen> {
     const _Specimen(
       number: '02',
       title: 'Meaning beyond color',
-      description:
-          'Each status has a label, an icon, and a readable foreground in both themes.',
+      description: 'Each status has a label, an icon, and a readable foreground in both themes.',
       child: Wrap(
         spacing: 12,
         runSpacing: 12,
@@ -334,8 +330,7 @@ class _ComponentCatalogueScreenState extends State<ComponentCatalogueScreen> {
     _Specimen(
       number: '03',
       title: 'Forms that guide the work',
-      description:
-          'Persistent labels, explicit validation, and visible keyboard focus. Sample inputs only.',
+      description: 'Persistent labels, explicit validation, and visible keyboard focus. Sample inputs only.',
       child: Form(
         key: _form,
         child: Column(
@@ -367,9 +362,8 @@ class _ComponentCatalogueScreenState extends State<ComponentCatalogueScreen> {
                   decimal: true,
                 ),
                 validator: (value) =>
-                    RegExp(
-                      r'^\d+(,\d{3})*(\.\d{1,2})?$',
-                    ).hasMatch(value?.trim() ?? '')
+                    RegExp(r'^\d+(,\d{3})*(\.\d{1,2})?$')
+                        .hasMatch(value?.trim() ?? '')
                     ? null
                     : 'Use an amount such as 125,000.00.',
               ),
@@ -475,8 +469,7 @@ class _ComponentCatalogueScreenState extends State<ComponentCatalogueScreen> {
     _Specimen(
       number: '01',
       title: 'Precision earns trust',
-      description:
-          'Read-only sample invoices. Text aligns left; money aligns right. Identifiers and financial values use tabular numerals.',
+      description: 'Read-only sample invoices. Text aligns left; money aligns right. Identifiers and financial values use tabular numerals.',
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: DataTable(
@@ -544,12 +537,10 @@ class _ComponentCatalogueScreenState extends State<ComponentCatalogueScreen> {
     _Specimen(
       number: '02',
       title: 'Every state deserves a next step',
-      description:
-          'Empty workspaces explain what belongs here and offer a useful action.',
+      description: 'Empty workspaces explain what belongs here and offer a useful action.',
       child: JentraEmptyState(
         title: 'Your next opportunity starts here',
-        description:
-            'Keep conversations, ownership, and progress connected from the first contact.',
+        description: 'Keep conversations, ownership, and progress connected from the first contact.',
         icon: Icons.handshake_outlined,
         action: JentraPrimaryButton(
           label: 'Try a form',
@@ -722,9 +713,8 @@ class _Specimen extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           description,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: context.jentraColors.textSecondary,
-          ),
+          style: Theme.of(context).textTheme.bodyMedium
+              ?.copyWith(color: context.jentraColors.textSecondary),
         ),
         const SizedBox(height: 24),
         child,
@@ -809,9 +799,8 @@ class _ColorSwatch extends StatelessWidget {
       const SizedBox(height: 4),
       Text(
         role,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: context.jentraColors.textSecondary,
-        ),
+        style: Theme.of(context).textTheme.labelSmall
+            ?.copyWith(color: context.jentraColors.textSecondary),
       ),
     ],
   );

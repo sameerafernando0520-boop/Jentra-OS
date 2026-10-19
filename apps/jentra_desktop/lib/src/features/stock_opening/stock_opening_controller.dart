@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_stock_opening.dart';
 import 'package:jentra_platform/jentra_stock_opening_platform.dart';
 import 'package:uuid/uuid.dart';
+
 import '../../app_providers.dart';
 
 final stockOpeningRepositoryProvider = Provider<StockOpeningRepository?>(
@@ -232,8 +234,7 @@ final class StockOpeningController extends ChangeNotifier {
   Future<bool> canLeave() async {
     await _saveTail;
     if (busy || localSaveFailed) {
-      error =
-          'Keep this opening open until the current save completes successfully.';
+      error = 'Keep this opening open until the current save completes successfully.';
       _emit();
       return false;
     }

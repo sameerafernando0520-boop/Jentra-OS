@@ -1,10 +1,12 @@
 import 'dart:async';
+
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jentra_desktop/src/features/stock_opening/stock_opening_controller.dart';
 import 'package:jentra_domain/jentra_stock_opening.dart';
 import 'package:jentra_platform/jentra_platform.dart';
 import 'package:jentra_platform/jentra_stock_opening_platform.dart';
+
 import 'stock_opening_fixtures.dart';
 
 void main() {
@@ -58,39 +60,36 @@ void main() {
       expect(c.local, isNull);
     },
   );
-  test(
-    'register reopen keeps interrupted and rejected posting snapshots read-only',
-    () async {
-      repo.doc = StockOpeningDocument(openingSnapshot(status: 'approved'));
-      await c.open(repo.doc);
-      repo.failure = TimeoutException('Response lost');
-      await c.action('post');
-      c.dispose();
-      c = StockOpeningController(
-        scope: openingScope,
-        capabilities: openingPermissions,
-        repository: repo,
-        drafts: drafts,
-        online: true,
-      );
-      await c.open(repo.doc);
-      expect(c.pending, true);
-      expect(c.form, isNull);
-      expect(c.canEdit, false);
-      repo.failure = const StockOpeningFailure(
-        'PERIOD_CLOSED',
-        'The opening period is closed.',
-        definite: true,
-      );
-      await c.retry();
-      expect(c.pending, false);
-      await c.closeEditor();
-      await c.open(repo.doc);
-      expect(c.local!.data['operation'], 'post_stock_opening');
-      expect(c.form, isNull);
-      expect(c.canEdit, false);
-    },
-  );
+  test('register reopen keeps interrupted and rejected posting snapshots read-only', () async {
+    repo.doc = StockOpeningDocument(openingSnapshot(status: 'approved'));
+    await c.open(repo.doc);
+    repo.failure = TimeoutException('Response lost');
+    await c.action('post');
+    c.dispose();
+    c = StockOpeningController(
+      scope: openingScope,
+      capabilities: openingPermissions,
+      repository: repo,
+      drafts: drafts,
+      online: true,
+    );
+    await c.open(repo.doc);
+    expect(c.pending, true);
+    expect(c.form, isNull);
+    expect(c.canEdit, false);
+    repo.failure = const StockOpeningFailure(
+      'PERIOD_CLOSED',
+      'The opening period is closed.',
+      definite: true,
+    );
+    await c.retry();
+    expect(c.pending, false);
+    await c.closeEditor();
+    await c.open(repo.doc);
+    expect(c.local!.data['operation'], 'post_stock_opening');
+    expect(c.form, isNull);
+    expect(c.canEdit, false);
+  });
   test(
     'submit and approval use the explicit opening transition command',
     () async {

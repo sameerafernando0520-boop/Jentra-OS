@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:jentra_domain/jentra_stock_opening.dart';
 import 'package:uuid/uuid.dart';
+
 import 'stock_opening_controller.dart';
 import 'stock_opening_picker.dart';
 
@@ -256,9 +258,9 @@ class _EditorState extends State<StockOpeningEditor> {
                                   children: [
                                     Text(
                                       '${line['product_name'] ?? 'Stocked product'}',
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.titleMedium,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium,
                                     ),
                                     Text(
                                       '${line['sku'] ?? ''} · ${line['_unit_label'] ?? 'Base units'} · ${tracking == 'none' ? 'Untracked' : '$tracking tracking'}',

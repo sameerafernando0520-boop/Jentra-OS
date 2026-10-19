@@ -37,8 +37,7 @@ class _AcceptInvitationScreenState
     } on Object {
       if (mounted) {
         setState(() {
-          _error =
-              'This invitation is invalid, expired, or belongs to another email address.';
+          _error = 'This invitation is invalid, expired, or belongs to another email address.';
         });
       }
     } finally {
@@ -75,9 +74,8 @@ class _AcceptInvitationScreenState
             const SizedBox(height: JentraSpacing.x2),
             Text(
               'Jentra will verify the signed-in email, invitation status and expiry before creating your scoped membership.',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: context.jentraColors.textSecondary,
-              ),
+              style: Theme.of(context).textTheme.bodyLarge
+                  ?.copyWith(color: context.jentraColors.textSecondary),
               textAlign: TextAlign.center,
             ),
             if (_error case final error?) ...[

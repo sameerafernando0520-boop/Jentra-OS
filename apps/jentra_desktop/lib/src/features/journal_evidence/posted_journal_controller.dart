@@ -1,8 +1,10 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_finance_platform.dart';
+
 import '../../app_providers.dart';
 
 typedef PostedJournalTarget = ({
@@ -105,8 +107,7 @@ final class PostedJournalController extends ChangeNotifier {
     clear();
     error = null;
     if (!matchingScope) {
-      error =
-          'This destination is unavailable in the selected tenant, entity and branch.';
+      error = 'This destination is unavailable in the selected tenant, entity and branch.';
       emit();
       return;
     }

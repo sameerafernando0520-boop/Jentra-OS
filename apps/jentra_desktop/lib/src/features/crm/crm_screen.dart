@@ -27,8 +27,7 @@ class CrmScreen extends ConsumerWidget {
               child: JentraEmptyState(
                 icon: Icons.lock_outline,
                 title: 'Access is restricted',
-                description:
-                    'Your role does not include permission to view CRM records.',
+                description: 'Your role does not include permission to view CRM records.',
               ),
             ),
           );
@@ -194,9 +193,8 @@ class _PageHeader extends ConsumerWidget {
           const SizedBox(height: JentraSpacing.x1),
           Text(
             'As of ${_formatDate(state.summary.asOfDate)}',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: context.jentraColors.textSecondary,
-            ),
+            style: Theme.of(context).textTheme.bodyLarge
+                ?.copyWith(color: context.jentraColors.textSecondary),
           ),
         ],
       );
@@ -245,9 +243,8 @@ class _PageHeader extends ConsumerWidget {
       builder: (_) => const _CreateLeadDialog(),
     );
     if (saved == true && context.mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Lead saved.')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Lead saved.')));
     }
   }
 }
@@ -338,9 +335,8 @@ class _SummaryMetric extends StatelessWidget {
           helper,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: context.jentraColors.textSecondary,
-          ),
+          style: Theme.of(context).textTheme.bodySmall
+              ?.copyWith(color: context.jentraColors.textSecondary),
         ),
       ],
     ),
@@ -639,9 +635,8 @@ class _DetailRow extends StatelessWidget {
           width: 112,
           child: Text(
             label,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: context.jentraColors.textSecondary,
-            ),
+            style: Theme.of(context).textTheme.bodySmall
+                ?.copyWith(color: context.jentraColors.textSecondary),
           ),
         ),
         const SizedBox(width: JentraSpacing.x3),
@@ -739,9 +734,8 @@ class _ActivityItem extends StatelessWidget {
             const SizedBox(height: JentraSpacing.x1),
             Text(
               '${_formatDate(activity.activityAt)} · ${activity.status}',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: context.jentraColors.textSecondary,
-              ),
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(color: context.jentraColors.textSecondary),
             ),
             if (activity.outcome case final outcome?) ...[
               const SizedBox(height: JentraSpacing.x2),
@@ -801,9 +795,8 @@ class _CreateLeadDialogState extends ConsumerState<_CreateLeadDialog> {
             children: [
               Text(
                 'Start in Draft. Jentra will preserve the same request identity if you retry.',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: context.jentraColors.textSecondary,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium
+                    ?.copyWith(color: context.jentraColors.textSecondary),
               ),
               const SizedBox(height: JentraSpacing.x4),
               TextFormField(
@@ -813,9 +806,8 @@ class _CreateLeadDialogState extends ConsumerState<_CreateLeadDialog> {
                 textCapitalization: TextCapitalization.characters,
                 decoration: const InputDecoration(labelText: 'Lead code'),
                 validator: (value) =>
-                    RegExp(
-                      r'^[A-Za-z0-9][A-Za-z0-9_.-]{1,31}$',
-                    ).hasMatch(value?.trim() ?? '')
+                    RegExp(r'^[A-Za-z0-9][A-Za-z0-9_.-]{1,31}$')
+                        .hasMatch(value?.trim() ?? '')
                     ? null
                     : 'Use 2–32 letters, numbers, dots, dashes, or underscores.',
               ),
@@ -890,9 +882,8 @@ class _CreateLeadDialogState extends ConsumerState<_CreateLeadDialog> {
                 const SizedBox(height: JentraSpacing.x3),
                 Text(
                   error,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(color: JentraColors.danger),
+                  style: Theme.of(context).textTheme.bodyMedium
+                      ?.copyWith(color: JentraColors.danger),
                 ),
               ],
             ],

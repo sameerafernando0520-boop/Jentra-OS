@@ -20,54 +20,56 @@ void main() {
       ('approve', 'CASH_DATE_PROPOSAL_CHANGED'),
       ('approve', 'CASH_DATE_SOURCE_CHANGED'),
     ]) {
-      test('$sqlstate ${conflict.$1} ${conflict.$2} is denied without resend',
-          () async {
-        final payload = conflict.$1 == 'prepare'
-            ? <String, Object?>{
-                'id': fixtureId(4),
-                'sourceKind': 'payroll_obligation',
-                'sourceId': fixtureId(5),
-                'sourceHash': 'a' * 64,
-                'dueDate': '2026-10-14',
-                'reasonCode': 'payment_terms',
-                'expectedVersion': '1',
-              }
-            : <String, Object?>{
-                'id': fixtureId(4),
-                'proposalHash': 'b' * 64,
-              };
-        final envelope = <String, Object?>{
-          'commandId': fixtureId(6),
-          'idempotencyKey': fixtureId(7),
-          'clientTimestamp': '2026-10-13T00:00:00Z',
-          'action': conflict.$1,
-          'payload': payload,
-        };
-        final failure = PostgrestException(
-          message: conflict.$2,
-          code: sqlstate,
-        );
-        var calls = 0;
-        final gateway = CashPaymentDatesGateway((name, parameters) async {
-          calls++;
-          expect(name, 'wave5_cash_date_command');
-          expect(parameters, {
-            'p_tenant_id': scope.tenantId,
-            'p_legal_entity_id': scope.legalEntityId,
-            'p_branch_id': scope.branchId,
-            'p_command_id': envelope['commandId'],
-            'p_idempotency_key': envelope['idempotencyKey'],
-            'p_issued_at': envelope['clientTimestamp'],
-            'p_action': conflict.$1,
-            'p_payload': payload,
+      test(
+        '$sqlstate ${conflict.$1} ${conflict.$2} is denied without resend',
+        () async {
+          final payload = conflict.$1 == 'prepare'
+              ? <String, Object?>{
+                  'id': fixtureId(4),
+                  'sourceKind': 'payroll_obligation',
+                  'sourceId': fixtureId(5),
+                  'sourceHash': 'a' * 64,
+                  'dueDate': '2026-10-14',
+                  'reasonCode': 'payment_terms',
+                  'expectedVersion': '1',
+                }
+              : <String, Object?>{'id': fixtureId(4), 'proposalHash': 'b' * 64};
+          final envelope = <String, Object?>{
+            'commandId': fixtureId(6),
+            'idempotencyKey': fixtureId(7),
+            'clientTimestamp': '2026-10-13T00:00:00Z',
+            'action': conflict.$1,
+            'payload': payload,
+          };
+          final failure = PostgrestException(
+            message: conflict.$2,
+            code: sqlstate,
+          );
+          var calls = 0;
+          final gateway = CashPaymentDatesGateway((name, parameters) async {
+            calls++;
+            expect(name, 'wave5_cash_date_command');
+            expect(parameters, {
+              'p_tenant_id': scope.tenantId,
+              'p_legal_entity_id': scope.legalEntityId,
+              'p_branch_id': scope.branchId,
+              'p_command_id': envelope['commandId'],
+              'p_idempotency_key': envelope['idempotencyKey'],
+              'p_issued_at': envelope['clientTimestamp'],
+              'p_action': conflict.$1,
+              'p_payload': payload,
+            });
+            throw failure;
           });
-          throw failure;
-        });
-        await expectLater(gateway.command(scope, envelope), throwsA(same(failure)));
-        expect(calls, 1);
-        expect(envelope['idempotencyKey'], fixtureId(7));
-        expect(envelope['payload'], same(payload));
-      });
+          await expectLater(
+            gateway.command(scope, envelope),
+            throwsA(same(failure)),
+          );
+          expect(calls, 1);
+          expect(envelope['idempotencyKey'], fixtureId(7));
+          expect(envelope['payload'], same(payload));
+        },
+      );
     }
     test('$sqlstate stale scenario basis is denied without resend', () async {
       final revision = CashScenarioRevision(

@@ -138,9 +138,8 @@ Future<void> _pump(
           ? JentraTheme.dark(density: density)
           : JentraTheme.light(density: density),
       builder: (context, child) => MediaQuery(
-        data: MediaQuery.of(
-          context,
-        ).copyWith(textScaler: TextScaler.linear(scale)),
+        data: MediaQuery.of(context)
+            .copyWith(textScaler: TextScaler.linear(scale)),
         child: child!,
       ),
       home: const Scaffold(body: ComponentCatalogueScreen()),

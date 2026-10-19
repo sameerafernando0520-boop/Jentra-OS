@@ -350,15 +350,13 @@ void main() {
 
   test('financial statement navigation requires finance view', () {
     expect(
-      visibleJentraDestinations(
-        {},
-      ).any((item) => item.path == '/finance/statements'),
+      visibleJentraDestinations({})
+          .any((item) => item.path == '/finance/statements'),
       false,
     );
     expect(
-      visibleJentraDestinations({
-        'finance.view',
-      }).any((item) => item.path == '/finance/statements'),
+      visibleJentraDestinations({'finance.view'})
+          .any((item) => item.path == '/finance/statements'),
       true,
     );
   });

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'stock_opening_controller.dart';
 
 /// Dialogs live on the root navigator, so explicitly hide cached content when

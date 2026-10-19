@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_domain/jentra_domain.dart';
+
 import 'quotation_reference_label.dart';
 
 String quotationLabel(Object? value) => (value ?? '—').toString();
@@ -239,9 +240,8 @@ class QuotationFact extends StatelessWidget {
       children: [
         Text(
           label,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: context.jentraColors.textSecondary,
-          ),
+          style: Theme.of(context).textTheme.bodySmall
+              ?.copyWith(color: context.jentraColors.textSecondary),
         ),
         const SizedBox(height: 4),
         if (valueWidget != null)
