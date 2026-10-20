@@ -5245,10 +5245,17 @@ grant execute on function api.assurance_metrics(uuid, uuid, uuid, date, date) to
 -- Corporate Audit & Assurance A11 process metrics candidate tests.
 -- Included only by build_assurance_candidate.ps1 -Slice A11, after the A11
 -- candidate DDL. Self-contained on the A1 actors, tenant and roles; fixture
--- rows and events are inserted directly with known timestamps.
+-- rows and events are inserted directly with known timestamps. Metrics are
+-- read in a branch of their own so engagements from earlier slices in the
+-- cumulative suite are not counted.
+insert into core.branches(id,tenant_id,legal_entity_id,name,code,created_by)
+values(pg_temp.aid('tenant.branch11'),pg_temp.aid('tenant'),pg_temp.aid('tenant.entity'),'Metrics','TENB11',pg_temp.aid('manager'));
+insert into core.role_assignments(tenant_id,membership_id,role_id,legal_entity_id,branch_id,created_by)
+values(pg_temp.aid('tenant'),pg_temp.aid('manager.m'),pg_temp.aid('manager.r'),pg_temp.aid('tenant.entity'),
+  pg_temp.aid('tenant.branch11'),pg_temp.aid('manager'));
 create function pg_temp.m11(p_from date default '2026-01-01', p_to date default '2026-03-31') returns jsonb
 language sql as $$
-  select api.assurance_metrics(pg_temp.aid('tenant'),pg_temp.aid('tenant.entity'),pg_temp.aid('tenant.branch'),p_from,p_to) $$;
+  select api.assurance_metrics(pg_temp.aid('tenant'),pg_temp.aid('tenant.entity'),pg_temp.aid('tenant.branch11'),p_from,p_to) $$;
 create function pg_temp.m11ev(p_eng text, p_ver integer, p_action text, p_type text, p_agg text, p_from text, p_to text,
   p_at timestamptz) returns void language sql as $$
   insert into assurance.events(tenant_id,engagement_id,engagement_version,action,aggregate_type,aggregate_id,
@@ -5257,11 +5264,11 @@ create function pg_temp.m11ev(p_eng text, p_ver integer, p_action text, p_type t
 
 insert into assurance.engagements(id,tenant_id,legal_entity_id,branch_id,name,period_start,period_end,scope_summary,
   lead_auditor_id,status,created_by)
-values(pg_temp.aid('m11'),pg_temp.aid('tenant'),pg_temp.aid('tenant.entity'),pg_temp.aid('tenant.branch'),'Metrics review',
+values(pg_temp.aid('m11'),pg_temp.aid('tenant'),pg_temp.aid('tenant.entity'),pg_temp.aid('tenant.branch11'),'Metrics review',
   '2026-01-01','2026-03-31','Metrics coverage',pg_temp.aid('lead'),'issued',pg_temp.aid('manager')),
-      (pg_temp.aid('m11b'),pg_temp.aid('tenant'),pg_temp.aid('tenant.entity'),pg_temp.aid('tenant.branch'),'Second review',
+      (pg_temp.aid('m11b'),pg_temp.aid('tenant'),pg_temp.aid('tenant.entity'),pg_temp.aid('tenant.branch11'),'Second review',
   '2026-02-01','2026-02-28','Still in fieldwork',pg_temp.aid('lead'),'fieldwork',pg_temp.aid('manager')),
-      (pg_temp.aid('m11x'),pg_temp.aid('tenant'),pg_temp.aid('tenant.entity'),pg_temp.aid('tenant.branch'),'Last year review',
+      (pg_temp.aid('m11x'),pg_temp.aid('tenant'),pg_temp.aid('tenant.entity'),pg_temp.aid('tenant.branch11'),'Last year review',
   '2025-01-01','2025-03-31','Outside the range',pg_temp.aid('lead'),'fieldwork',pg_temp.aid('manager'));
 insert into assurance.engagement_controls(id,engagement_id,control_code,title,owner_id,risk,mapped_by)
 values(pg_temp.aid('c11a'),pg_temp.aid('m11'),'MET-A','Metrics control A',pg_temp.aid('owner'),'high',pg_temp.aid('lead')),
