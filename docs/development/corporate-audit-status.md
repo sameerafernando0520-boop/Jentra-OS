@@ -181,6 +181,19 @@ Plan: [A11 plan](../superpowers/plans/2026-10-20-assurance-a11-metrics.md).
 | Automated tests | domain 4/4, platform gateway 4/4, desktop metrics 11/11 (period dates, stale answers discarded, access loss, offline, unmeasured values, empty period, keyboard reach, 200% light/dark goldens); analyzers clean |
 | Not done | not installed; metrics are computed on request (no snapshots or trend lines); engagement-level drill-down is left for later |
 
+## Slice A12 — reviewer evidence (candidate, 20 October 2026)
+
+Plan: [A12 plan](../superpowers/plans/2026-10-20-assurance-a12-reviewer-evidence.md).
+
+| Category | Result |
+|---|---|
+| Problem | Reviewers could see an uploaded file's digest but never the file, and the desktop had no way to ask the server to re-hash a submission before accepting it |
+| Mechanism | Candidate `supabase/candidates/20261020210000_assurance_evidence_download.sql`: `api.assurance_evidence_download_ticket` (evidence viewers, or a current external team member through the A1 time-bound path; authority before lookup) issues a five-minute, one-use ticket only for an uploaded item whose stored object is still the `verified` version. Edge function `assurance-evidence-download` redeems it with the service key through `api.assurance_evidence_service_download`, which re-checks the ticket, membership and verification, and signs a 60-second URL for the generated path. Tickets are the download log (consume-only, never deleted) |
+| Client | Domain `EvidenceDownloadTicket` (https only, at most five minutes, size bounded) and `assuranceEvidenceFileName` (last path segment, Windows-safe). Platform `AssuranceEvidenceDownloadGateway` fetches the signed URL without the session header, reads at most one byte past the recorded size, hashes on the device and returns the bytes only on an exact SHA-256 and size match, also against the digest the reviewer saw. Desktop engagement view: uploaded evidence rows show the file name, **Verify file** (owner or reviewer, while submitted) and **Download** (viewers); a mismatch saves nothing and says so |
+| Candidate database evidence | reduced rollback suite on the development project: 59/59 (39 A7 storage, 20 A12) after a test-ordering fix; nothing installed ([record](../verification/assurance/a12-reviewer-evidence-rollback-20261020.json)). CI generated from `-Slice A12 -Pgtap` |
+| Automated tests | edge functions `node --test` 12/12; domain download 3/3 and auditor view (upload fields, verify/download rules); platform download 4/4; desktop workspace 39/39; full desktop suite 2115/2115; analyzers clean |
+| Not done | not installed; the edge function is not deployed and has no `config.toml` entry yet (installation step); external reviewers cannot open the desktop workspace, so their download path is server-side only |
+
 ## Installation — development project, 18 October 2026
 
 | Category | Result |
