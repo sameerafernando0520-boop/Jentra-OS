@@ -168,6 +168,19 @@ Plan: [A10 plan](../superpowers/plans/2026-10-20-assurance-a10-reminders.md).
 | Automated tests | domain and platform inbox/scan tests; desktop workspace 35/35 (reminders, deep link) and inbox 9/9 with 200% light/dark goldens; workspace goldens refreshed for the summary cards; analyzers clean |
 | Not done | not installed; no scheduler — reminders go out when a lead opens the workspace or presses Send reminders; e-mail delivery is out of scope |
 
+## Slice A11 — process metrics (candidate, 20 October 2026)
+
+Plan: [A11 plan](../superpowers/plans/2026-10-20-assurance-a11-metrics.md).
+
+| Category | Result |
+|---|---|
+| Problem | Nothing measured how audits run: time in each stage, how long evidence waits, how much work is finished, how findings age, or who holds the open work (blueprint §9, FR-6825) |
+| Mechanism | Candidate `supabase/candidates/20261020180000_assurance_metrics.sql`: `api.assurance_metrics(tenant, entity, branch, from, to)` (`assurance.evidence.view`; a range of at most 366 days, else `ASSURANCE_RANGE_INVALID`) over the engagements whose period overlaps the range, from immutable events and current state. Stage, issuance, evidence waiting and review times as nearest-rank median and 90th percentile; first-time-right, test completion, control coverage, retest pass rate and recurrence as rates; open-request ageing bands; finding age by severity; overdue remediation and open high-risk counts; workload for up to ten owners labelled by name or "Unlinked member ····1234", never an e-mail. Every value carries its sample count, and no samples means null ("not measured"), never zero |
+| Client | Domain `AssuranceMetrics` (fails closed on a value without samples, percentiles out of order, a rate out of range, ageing that does not add up, or an e-mail label). Platform `AssuranceMetricsGateway` (checks the range before sending and that the answer is for the period asked). Desktop **Audit metrics** (`/governance/audit/metrics`, evidence viewers): 30-day / 90-day / 12-month periods ending today, sections for stages, evidence, testing, findings and workload; each card shows the value with its unit, the samples behind it and a one-line definition; columns narrow as text grows so nothing truncates at 200% |
+| Candidate database evidence | reduced rollback suite on the development project: 24/24 at the first GREEN run; nothing installed ([record](../verification/assurance/a11-metrics-rollback-20261020.json)). CI generated from `-Slice A11 -Pgtap` |
+| Automated tests | domain 4/4, platform gateway 4/4, desktop metrics 11/11 (period dates, stale answers discarded, access loss, offline, unmeasured values, empty period, keyboard reach, 200% light/dark goldens); analyzers clean |
+| Not done | not installed; metrics are computed on request (no snapshots or trend lines); engagement-level drill-down is left for later |
+
 ## Installation — development project, 18 October 2026
 
 | Category | Result |
