@@ -23,6 +23,33 @@ String auditLabel(String code) {
   return s.isEmpty ? s : s[0].toUpperCase() + s.substring(1);
 }
 
+/// Asks before an encrypted local draft is deleted, saying what is lost.
+Future<bool> confirmDiscardDraft(BuildContext context) async =>
+    await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Discard this draft?'),
+        content: const Text(
+          'The text saved on this device is deleted. Nothing has been sent.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Keep draft'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+              foregroundColor: Theme.of(context).colorScheme.onError,
+            ),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Discard'),
+          ),
+        ],
+      ),
+    ) ??
+    false;
+
 String shortDigest(String sha) =>
     sha.length > 12 ? '${sha.substring(0, 12)}…' : sha;
 

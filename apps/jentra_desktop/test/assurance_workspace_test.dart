@@ -1101,6 +1101,56 @@ void main() {
     expect(find.textContaining('Signed bank letter.pdf'), findsOneWidget);
   });
 
+  testWidgets('the engagement view reads in words, not codes', (t) async {
+    gateway.requests = [uploadedRequest(status: 'accepted')];
+    c.dispose();
+    c = make(capabilities: {...auditor, 'assurance.evidence.view'});
+    await t.runAsync(openEngagement);
+    await render(t, false);
+    expect(find.text('SHA-256 aaaaaaaaaaaa…'), findsOneWidget);
+    expect(find.textContaining('a' * 64), findsNothing);
+    expect(find.bySemanticsLabel('SHA-256 starting aaaaaaaa'), findsOneWidget);
+    expect(find.textContaining('FY27 Treasury · Fieldwork'), findsOneWidget);
+    expect(
+      find.textContaining(
+        'Create engagement → Planning · 1 Oct 2026 09:00 UTC',
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.byWidgetPredicate(
+        (w) => w is Semantics && (w.properties.header ?? false),
+      ),
+      findsAtLeastNWidgets(7),
+    );
+  });
+
+  testWidgets('reminder levels use the summary card tones', (t) async {
+    await t.runAsync(c.initialize);
+    await render(t, false);
+    JentraStatusTone tone(String label) => t
+        .widget<JentraStatusBadge>(
+          find.widgetWithText(JentraStatusBadge, label).first,
+        )
+        .tone;
+    expect(tone('Escalated'), JentraStatusTone.danger);
+    expect(tone('Overdue'), JentraStatusTone.warning);
+    expect(tone('Due soon'), JentraStatusTone.info);
+  });
+
+  testWidgets('discarding a draft asks first and says what is lost', (t) async {
+    await t.runAsync(startResponse);
+    await render(t, false);
+    await t.ensureVisible(find.text('Discard draft'));
+    await t.tap(find.text('Discard draft'));
+    await t.pumpAndSettle();
+    expect(find.text('Discard this draft?'), findsOneWidget);
+    expect(find.textContaining('Nothing has been sent'), findsOneWidget);
+    await t.tap(find.text('Keep draft'));
+    await t.pumpAndSettle();
+    expect(c.responding, isTrue);
+  });
+
   for (final dark in [false, true]) {
     testWidgets(
       'governance workspace ${dark ? 'dark' : 'light'} 200 percent work queue and response',
