@@ -161,6 +161,11 @@ Future<void> main() async {
         assuranceAccessGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseAssuranceAccessGateway(client),
         ),
+        assuranceEvidenceDownloadGatewayProvider.overrideWithValue(
+          client == null
+              ? null
+              : SupabaseAssuranceEvidenceDownloadGateway(client),
+        ),
         assuranceMetricsGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseAssuranceMetricsGateway(client),
         ),

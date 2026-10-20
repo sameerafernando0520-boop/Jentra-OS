@@ -21,6 +21,8 @@ final assuranceGatewayProvider = Provider<AssuranceGateway?>((ref) => null);
 final assuranceReminderGatewayProvider = Provider<AssuranceReminderGateway?>(
   (ref) => null,
 );
+final assuranceEvidenceDownloadGatewayProvider =
+    Provider<AssuranceEvidenceDownloadGateway?>((ref) => null);
 final assuranceEvidenceFilesProvider = Provider<AssuranceEvidenceFiles?>(
   (ref) => const NativeAssuranceEvidenceFiles(),
 );
@@ -55,6 +57,7 @@ final assuranceWorkspaceControllerProvider =
         capabilities: {...?caps.value},
         files: ref.watch(reportExportFilesProvider),
         evidenceFiles: ref.watch(assuranceEvidenceFilesProvider),
+        downloads: ref.watch(assuranceEvidenceDownloadGatewayProvider),
         reminders: ref.watch(assuranceReminderGatewayProvider),
         scanLog: ref.watch(reminderScanLogProvider),
       );
@@ -81,6 +84,7 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
     this.capabilities = const {},
     this.files,
     this.evidenceFiles,
+    this.downloads,
     this.reminders,
     this.scanLog,
     DateTime Function()? clock,
@@ -132,6 +136,7 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
   final Set<String> capabilities;
   final ReportExportFiles? files;
   final AssuranceEvidenceFiles? evidenceFiles;
+  final AssuranceEvidenceDownloadGateway? downloads;
   final AssuranceReminderGateway? reminders;
   final ReminderScanLog? scanLog;
   final DateTime Function() _clock;
@@ -707,6 +712,43 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
         : 'The stored file does not match the submitted digest. An auditor must reject it before you upload again.';
     if (!_current(epoch)) return;
     overview = await gateway.overview(scope);
+  });
+
+  /// Asks the server to hash a submitted upload again (request owner or
+  /// audit team) and reports what the stored bytes contain.
+  Future<void> verifyStoredEvidence(AuditorRequest r) => _run(() async {
+    final v = view, id = r.evidenceId;
+    if (!online || !verified || v == null || id == null) return;
+    if (!v.canVerifyStored(capabilities, r, scope.actorId)) return;
+    final epoch = _epoch;
+    final result = await gateway.verifyEvidence(scope, v.id, id);
+    if (!_current(epoch)) return;
+    lastVerification = result;
+    message = result.verified
+        ? 'Stored file verified (SHA-256 ${result.observedSha256.substring(0, 12)}…). It can now be accepted.'
+        : 'The stored file does not match its submitted digest. Return it for rework so the owner can upload it again.';
+  });
+
+  /// Downloads verified evidence and saves it only when its bytes hash, on
+  /// this device, to the recorded digest the reviewer saw.
+  Future<void> downloadEvidence(AuditorRequest r) => _run(() async {
+    final d = downloads, f = files, v = view, id = r.evidenceId;
+    if (d == null || f == null || !online || !verified || v == null) return;
+    if (id == null || !v.canDownload(capabilities, r)) return;
+    final epoch = _epoch;
+    final name = assuranceEvidenceFileName(r.fileName ?? '', id);
+    final path = await f.choose(name);
+    if (path == null || !_current(epoch)) return;
+    final file = await d.download(
+      scope,
+      v.id,
+      id,
+      expectedSha256: r.evidenceSha256,
+    );
+    if (!_current(epoch)) return;
+    await f.write(path, file.bytes, 'application/octet-stream');
+    message =
+        'Saved $name. It matches the recorded SHA-256 ${file.sha256.substring(0, 12)}….';
   });
 
   /// Saves only a pack whose bytes hashed to the recorded digest.

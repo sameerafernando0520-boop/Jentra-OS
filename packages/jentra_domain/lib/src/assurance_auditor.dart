@@ -208,6 +208,10 @@ typedef AuditorRequest = ({
   String dueDate,
   String? evidenceSha256,
   String? collectedBy,
+  // Uploaded (manual) evidence has stored bytes to verify and download.
+  String? evidenceId,
+  bool uploaded,
+  String? fileName,
 });
 typedef AuditorException = ({
   String id,
@@ -283,6 +287,18 @@ final class AuditorEngagementView {
              collectedBy: _m(r)['evidence'] == null
                  ? null
                  : assuranceId(_m(_m(r)['evidence'])['collected_by']),
+             evidenceId: _m(r)['evidence'] == null
+                 ? null
+                 : assuranceId(_m(_m(r)['evidence'])['id']),
+             uploaded:
+                 _m(r)['evidence'] != null &&
+                 _m(_m(r)['evidence'])['collection_method'] == 'manual',
+             fileName: _m(r)['evidence'] == null
+                 ? null
+                 : switch (_m(_m(r)['evidence'])['source_reference']) {
+                     final String name => name,
+                     _ => null,
+                   },
            ),
        ],
        exceptions = [
@@ -369,6 +385,24 @@ final class AuditorEngagementView {
       !evidenceFrozen &&
       r.status == EvidenceRequestStatus.submitted &&
       r.collectedBy != actorId;
+
+  /// Viewers download uploaded evidence; the server refuses it until the
+  /// stored bytes are verified.
+  bool canDownload(Set<String> caps, AuditorRequest r) =>
+      caps.contains('assurance.evidence.view') &&
+      r.uploaded &&
+      r.evidenceId != null &&
+      (r.status == EvidenceRequestStatus.submitted ||
+          r.status == EvidenceRequestStatus.accepted);
+
+  /// The request owner or a reviewer asks the server to hash a submitted
+  /// upload.
+  bool canVerifyStored(Set<String> caps, AuditorRequest r, String actorId) =>
+      r.uploaded &&
+      r.evidenceId != null &&
+      r.status == EvidenceRequestStatus.submitted &&
+      (caps.contains('assurance.test.review') ||
+          (r.ownerId == actorId && caps.contains('assurance.evidence.submit')));
 
   bool canRecordException(Set<String> caps) =>
       caps.contains('assurance.test.perform') && _concluding;
