@@ -82,10 +82,13 @@ if ($Slice -eq 'A14') {
 }
 if ($Installed) {
   $migration = '-- installed variant: schema already installed; no candidate DDL'
-  foreach ($candidate in Get-ChildItem -LiteralPath (Join-Path $root 'candidates') -Filter '20261018*_assurance_*.sql') {
+  # Every candidate through A14 is installed (A15, 20 October 2026), so none
+  # of their DDL runs again; the schema has its final 31 tables throughout.
+  foreach ($candidate in Get-ChildItem -LiteralPath (Join-Path $root 'candidates') -Filter '2026*_assurance_*.sql') {
     $tests = $tests.Replace((Get-Content -LiteralPath $candidate.FullName -Raw), '')
   }
-  $tests = [regex]::Replace($tests, 'count\(\*\)=(12|14|16|17) and bool_and', 'count(*)=24 and bool_and')
+  $tests = [regex]::Replace($tests, 'count\(\*\)=(12|14|16|17|24) and bool_and', 'count(*)=31 and bool_and')
+  $tests = $tests.Replace("count(*)=24 from pg_class c join pg_namespace n on n.oid=c.relnamespace", "count(*)=31 from pg_class c join pg_namespace n on n.oid=c.relnamespace")
 }
 if ($Pgtap) {
   # A fresh database has no synthetic People plan; create it inside the

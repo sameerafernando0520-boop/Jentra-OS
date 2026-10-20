@@ -447,3 +447,18 @@ enabled = true
 verify_jwt = false
 import_map = "./functions/expense-private-purge/deno.json"
 entrypoint = "./functions/expense-private-purge/index.ts"
+
+# Corporate Audit & Assurance evidence functions (deployed to the development
+# project 20 October 2026). withSupabase({ auth: "user" }) verifies the caller's
+# session inside the function, as for the deployed people-private functions.
+[functions.assurance-evidence-verify]
+enabled = true
+verify_jwt = false
+import_map = "./functions/assurance-evidence-verify/deno.json"
+entrypoint = "./functions/assurance-evidence-verify/index.ts"
+
+[functions.assurance-evidence-download]
+enabled = true
+verify_jwt = false
+import_map = "./functions/assurance-evidence-download/deno.json"
+entrypoint = "./functions/assurance-evidence-download/index.ts"

@@ -218,6 +218,19 @@ Plan and findings: [A14 plan](../superpowers/plans/2026-10-20-assurance-a14-ux.m
 | Automated tests | domain people 2/2 (500 in total); platform people 2/2; desktop format 3/3, workspace 42/42, planning 12/12; goldens refreshed only for the intentional changes (governance work and engagement, audit planning; light and dark) |
 | Not done | contrast was checked from tokens, not on a device; no screen-reader walkthrough (NVDA/Narrator) yet |
 
+## Installation — development project, 20 October 2026 (A15)
+
+Plan: [A15 plan](../superpowers/plans/2026-10-20-assurance-a15-install.md).
+
+| Category | Result |
+|---|---|
+| Authority | owner decision in this session: development project `xpdoufauvrbdmxgngetv` only, after each slice's rollback suite; production not touched |
+| Installed | nine migrations through `apply_migration`, in candidate order: `20261020072622` version guard, `20261020072800` evidence storage, `20261020072901` plan register, `20261020073016` access (A8), `20261020073524` settings (A9), `20261020093705` reminders (A10), `20261020093743` metrics (A11), `20261020093817` evidence download (A12), `20261020093822` people (A14). Ledger text equals each candidate byte for byte (plan register: except the final newline); repository copies in `supabase/migrations/` |
+| Edge functions | `assurance-evidence-verify` and `assurance-evidence-download` deployed (version 1). Authentication happens inside the function (`withSupabase({ auth: "user" })`), as for the deployed people-private functions; an unauthenticated call returns 401. `config.toml` entries added |
+| Post-install check | 130 migrations; 31 assurance tables, all forcing RLS, no client table grants; 26 `api.assurance*` functions, none executable by `anon`, the three service steps service-only; no assurance helper callable by clients; assurance roles seeded in all 501 trial or active tenants and the new-tenant trigger present; private 100 MiB evidence bucket with its six storage policies; security advisor: only the informational "RLS enabled, no policy" on assurance tables (by design) ([record](../verification/assurance/installation-dev-20261020.json)) |
+| Installed suite | `build_assurance_candidate.ps1 -Installed` now strips every installed candidate and expects 31 tables; CI runs it against the migrations |
+| Not established | no member holds an assurance role yet (seeded, not granted); no native authenticated walkthrough, genuine MFA, real upload through the functions, contention/load or owner acceptance |
+
 ## Installation — development project, 18 October 2026
 
 | Category | Result |
@@ -230,13 +243,13 @@ Plan and findings: [A14 plan](../superpowers/plans/2026-10-20-assurance-a14-ux.m
 | Not established | real users still have no assurance capability (no role grants); no native authenticated use, genuine MFA, contention/load or owner acceptance; production not touched |
 
 ## Next unblocked slices
-1. Install the two candidates (version guard, plan register) in the development project once approved, and decide which roles get `assurance.*` capabilities.
-2. Reminder delivery through the existing Wave 3 notification channel, and scheduled monitoring/occurrence runs.
-3. Tenant-configurable SLA, reminder bands and rule thresholds once as-is discovery is done.
+1. Give real members assurance roles in the development project (Audit access, or the seeded roles directly) and walk through plan → engagement → evidence upload → verify → accept → freeze → report → export natively.
+2. Scheduled reminders and monitoring runs (reminders go out today when a lead opens the workspace or presses Send reminders).
+3. Report-digest check on screen (A13 gives the client the digest; the engagement view would need the issued findings snapshot).
 
 ## Blockers needing you
-- **Role grants**: which tenant roles receive which `assurance.*` capabilities in the development project (none are granted, so the installed APIs refuse every real user). Production installation needs separate approval.
-- **As-is process discovery**: prior PBC lists, audit calendar, report templates, the risk scale you use and the people/roles involved (blueprint §2). A3 uses a 5×5 likelihood × impact scale and once/semiannual/quarterly/monthly cadences as defaults until then.
+- **Production installation** needs its own approval and window.
+- **As-is process discovery**: prior PBC lists, audit calendar, report templates, the risk scale you use and the people/roles involved (blueprint §2). Defaults are configurable per tenant and entity (A9) until then.
 - Genuine MFA, native Windows walkthrough and owner sign-off remain private-interaction gates.
 
 Related: [readiness matrix](corporate-audit-readiness-matrix.md) ·
