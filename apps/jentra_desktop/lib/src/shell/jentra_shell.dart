@@ -10,6 +10,7 @@ import '../features/auth/mfa_required_screen.dart';
 import '../features/operations/operational_link.dart';
 import 'navigation.dart';
 import 'quick_create_dialog.dart';
+import 'notification_inbox.dart';
 
 class JentraShell extends ConsumerWidget {
   const JentraShell({required this.child, super.key});
@@ -523,28 +524,9 @@ class _CommandBar extends ConsumerWidget {
                     size: 19,
                   ),
                 ),
-                if (!tight)
-                  const Badge(
-                    smallSize: 7,
-                    child: IconButton(
-                      tooltip: 'Notifications',
-                      onPressed: null,
-                      icon: Icon(Icons.notifications_none, size: 20),
-                    ),
-                  ),
+                if (!tight) const NotificationBell(),
                 const SizedBox(width: JentraSpacing.x2),
-                const CircleAvatar(
-                  radius: 16,
-                  backgroundColor: JentraColors.navy800,
-                  child: Text(
-                    'SA',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
+                const _UserAvatar(),
               ],
             ),
           );
@@ -825,4 +807,37 @@ class _ContextRow extends StatelessWidget {
       ],
     ),
   );
+}
+
+/// The signed-in person's initials; their name and e-mail on hover.
+class _UserAvatar extends ConsumerWidget {
+  const _UserAvatar();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(signedInUserProvider);
+    return Tooltip(
+      message: user == null || user.tooltip.isEmpty
+          ? 'Signed-in account'
+          : user.tooltip,
+      child: Semantics(
+        label: user == null ? 'Signed-in account' : 'Account ${user.tooltip}',
+        excludeSemantics: true,
+        child: CircleAvatar(
+          radius: 16,
+          backgroundColor: JentraColors.navy800,
+          child: user == null
+              ? const Icon(Icons.person_outline, size: 18, color: Colors.white)
+              : Text(
+                  user.initials,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+        ),
+      ),
+    );
+  }
 }

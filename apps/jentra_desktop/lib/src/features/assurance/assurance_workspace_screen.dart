@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_domain/jentra_assurance.dart';
 
 import '../../app_providers.dart';
 import 'assurance_workspace_controller.dart';
 
 class AssuranceWorkspaceScreen extends ConsumerWidget {
-  const AssuranceWorkspaceScreen({super.key});
+  const AssuranceWorkspaceScreen({super.key, this.engagementId});
+
+  /// An engagement to open, from a reminder notice link.
+  final String? engagementId;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final caps = ref.watch(businessCapabilitiesProvider);
@@ -20,6 +25,8 @@ class AssuranceWorkspaceScreen extends ConsumerWidget {
       );
     }
     final c = ref.watch(assuranceWorkspaceControllerProvider);
+    final link = engagementId;
+    if (c != null && link != null) c.openWhenReady(link);
     return c == null
         ? const Center(
             child: Text(
@@ -125,7 +132,7 @@ class AssuranceWorkspace extends StatelessWidget {
           Text('Governance & Audit', style: theme.textTheme.headlineMedium),
           const SizedBox(height: 8),
           const Text(
-            'Your audit requests and findings, overdue team work and the engagement register. Reminder levels are derived from due dates when the page loads; no notifications are sent.',
+            'Your audit requests and findings, overdue team work and the engagement register. Reminder levels come from due dates; engagement leads can send reminders to the people responsible.',
           ),
           if (c.busy) const LinearProgressIndicator(),
           if (!c.online)
@@ -158,6 +165,10 @@ class AssuranceWorkspace extends StatelessWidget {
                 ),
             ],
           ),
+          if (o != null) ...[
+            const SizedBox(height: 16),
+            _OverdueSummary(controller: c, overview: o),
+          ],
           if (c.responding) ...[
             const SizedBox(height: 16),
             Card(
@@ -254,17 +265,7 @@ class AssuranceWorkspace extends StatelessWidget {
             if (o == null && !c.busy)
               const Text('Refresh access to load your audit work.')
             else if (o != null) ...[
-              Wrap(
-                spacing: 8,
-                children: [
-                  for (final l in const [
-                    ReminderLevel.dueSoon,
-                    ReminderLevel.overdue,
-                    ReminderLevel.escalated,
-                  ])
-                    Chip(label: Text('${_levelLabel(l)}: ${o.count(l)}')),
-                ],
-              ),
+              const SizedBox(height: 16),
               Text('Assigned to me', style: theme.textTheme.titleLarge),
               if (o.mine.isEmpty)
                 const Text('Nothing is assigned to you in this branch.'),
@@ -799,6 +800,112 @@ class _PackCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Counts by reminder level for the work in view, and the lead's reminder
+/// action.
+class _OverdueSummary extends StatelessWidget {
+  const _OverdueSummary({required this.controller, required this.overview});
+  final AssuranceWorkspaceController controller;
+  final AssuranceOverview overview;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = controller, o = overview;
+    Widget card(
+      String label,
+      ReminderLevel level,
+      IconData icon,
+      JentraStatusTone tone,
+      String helper,
+    ) => SizedBox(
+      width: 220,
+      child: JentraKpiCard(
+        label: label,
+        value: '${o.count(level)}',
+        helper: o.count(level) == 0 ? 'None' : helper,
+        icon: icon,
+        tone: o.count(level) == 0 ? JentraStatusTone.success : tone,
+      ),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: [
+            card(
+              'Due soon',
+              ReminderLevel.dueSoon,
+              Icons.schedule,
+              JentraStatusTone.info,
+              '≤ ${o.dueSoonDays} days',
+            ),
+            card(
+              'Overdue',
+              ReminderLevel.overdue,
+              Icons.timer_off_outlined,
+              JentraStatusTone.warning,
+              'Past due',
+            ),
+            card(
+              'Escalated',
+              ReminderLevel.escalated,
+              Icons.priority_high,
+              JentraStatusTone.danger,
+              '> ${o.escalateAfterDays} days late',
+            ),
+          ],
+        ),
+        if (c.canSendReminders) ...[
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 12,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              OutlinedButton.icon(
+                onPressed: c.sendingReminders || c.busy || !c.online
+                    ? null
+                    : c.sendReminders,
+                icon: const Icon(Icons.notifications_active_outlined, size: 18),
+                label: Text(
+                  c.sendingReminders ? 'Sending reminders…' : 'Send reminders',
+                ),
+              ),
+              Text(
+                'Owners of due and late items get an in-app notice; escalations also go to the engagement lead.',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ),
+        ],
+        if (c.reminderMessage != null)
+          Semantics(
+            liveRegion: true,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: JentraStatusBadge(
+                label: c.reminderMessage!,
+                tone: JentraStatusTone.success,
+              ),
+            ),
+          ),
+        if (c.reminderError != null)
+          Semantics(
+            liveRegion: true,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                c.reminderError!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

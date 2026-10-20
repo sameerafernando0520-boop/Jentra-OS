@@ -155,6 +155,19 @@ Plan: [A9 plan](../superpowers/plans/2026-10-20-assurance-a9-settings.md).
 | Automated tests | domain 481/481; platform 1179/1179; desktop assurance 59/59 (new settings goldens at 200% light/dark, keyboard reaches every field); analyzers clean |
 | Not done | not installed; defaults stay until a planner saves settings; as-is discovery may change the defaults themselves |
 
+## Slice A10 — reminders and the notification inbox (candidate, 20 October 2026)
+
+Plan: [A10 plan](../superpowers/plans/2026-10-20-assurance-a10-reminders.md).
+
+| Category | Result |
+|---|---|
+| Problem | Reminder levels were only shown on the workspace; nothing reached the people responsible, and the shell's notification bell was a placeholder (always showing a dot, never clickable) with a hard-coded "SA" avatar |
+| Mechanism | Candidate `supabase/candidates/20261020150000_assurance_reminders.sql`: `api.assurance_scan_reminders` (engagement managers in scope) pages the scope's due-soon, overdue and escalated work (A9 `work_items`, 100 per call) into `workflow.notifications` of type `assurance.reminder`, one per item, level and recipient (partial unique index `assurance_reminder_identity`): the owner always, the engagement lead too for escalations; titles and bodies name the engagement and item kind only and link to the engagement (`aggregate_type = 'assurance_engagement'`); idempotent receipts |
+| Client | Domain `InboxNotice`, `ReminderScan`. Platform `NotificationInboxGateway` (`api.my_notifications`, `api.mark_notification_read`) and `AssuranceReminderGateway`. Desktop: shell **inbox** (unread badge, newest-first list, mark read / mark all read, reminders open their engagement via `/governance/audit?engagement=…`), avatar with the signed-in person's initials and name/e-mail tooltip; Governance & Audit **Overdue** summary cards (replacing the duplicate count chips), **Send reminders** for engagement leads, and an automatic scan on the first visit of the day per scope (device-local log) |
+| Candidate database evidence | reduced rollback suite on the development project: 15/15 after a test-precedence fix; nothing installed ([record](../verification/assurance/a10-reminders-rollback-20261020.json)). CI generated from `-Slice A10 -Pgtap` |
+| Automated tests | domain and platform inbox/scan tests; desktop workspace 35/35 (reminders, deep link) and inbox 9/9 with 200% light/dark goldens; workspace goldens refreshed for the summary cards; analyzers clean |
+| Not done | not installed; no scheduler — reminders go out when a lead opens the workspace or presses Send reminders; e-mail delivery is out of scope |
+
 ## Installation — development project, 18 October 2026
 
 | Category | Result |

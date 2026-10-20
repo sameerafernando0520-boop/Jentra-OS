@@ -322,6 +322,31 @@ class FakeAssuranceGateway implements AssuranceGateway {
   }
 }
 
+class FakeReminderGateway implements AssuranceReminderGateway {
+  final scans = <({String key, String? after})>[];
+  bool fail = false;
+  int pages = 1;
+
+  @override
+  Future<ReminderScan> scan(
+    TenantContext s,
+    String key, {
+    String? after,
+  }) async {
+    scans.add((key: key, after: after));
+    if (fail) {
+      throw const DomainError(code: 'PERMISSION_DENIED', message: 'No');
+    }
+    final more = scans.length < pages;
+    return (
+      examined: more ? 100 : 3,
+      emitted: more ? 4 : 1,
+      hasMore: more,
+      nextAfter: more ? uid(70 + scans.length) : null,
+    );
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final scope = TenantContext(
@@ -365,6 +390,10 @@ void main() {
           ..addFont(rootBundle.load('${base}Manrope-Regular.ttf'))
           ..addFont(rootBundle.load('${base}Manrope-SemiBold.ttf')))
         .load();
+    await (FontLoader(JentraTypography.monoFamily)
+          ..addFont(rootBundle.load('${base}IBMPlexMono-Regular.ttf'))
+          ..addFont(rootBundle.load('${base}IBMPlexMono-SemiBold.ttf')))
+        .load();
   });
   setUp(() {
     disposed = false;
@@ -387,6 +416,98 @@ void main() {
     await c.startResponse(issued());
     c.field('response', 'Second signatory enforced in the bank portal');
   }
+
+  test('a linked engagement opens once the workspace has loaded', () async {
+    c.openWhenReady(eng);
+    await c.initialize();
+    expect(c.section, 'detail');
+    expect(c.view?.id, eng);
+    c.closeDetail();
+    c.openWhenReady(eng);
+    await pumpEventQueue();
+    expect(c.section, 'engagements', reason: 'the same link opens only once');
+  });
+
+  group('reminders', () {
+    const lead = {'assurance.evidence.view', 'assurance.engagement.manage'};
+    late FakeReminderGateway reminders;
+    late MemoryReminderScanLog log;
+    AssuranceWorkspaceController withReminders(Set<String> caps) =>
+        AssuranceWorkspaceController(
+          scope: scope,
+          gateway: gateway,
+          drafts: drafts,
+          online: true,
+          capabilities: caps,
+          clock: () => today,
+          reminders: reminders,
+          scanLog: log,
+        );
+    setUp(() {
+      reminders = FakeReminderGateway();
+      log = MemoryReminderScanLog();
+    });
+
+    test('send reminders pages until the scope is done', () async {
+      c.dispose();
+      c = withReminders(lead);
+      reminders.pages = 2;
+      await c.initialize();
+      reminders.scans.clear();
+      await c.sendReminders();
+      expect(reminders.scans.map((s) => s.after), [null, uid(71)]);
+      expect(reminders.scans.first.key, isNot(reminders.scans.last.key));
+      expect(c.reminderMessage, 'Sent 5 reminders.');
+    });
+
+    test('a lead opening the workspace reminds once a day per scope', () async {
+      c.dispose();
+      c = withReminders(lead);
+      await c.initialize();
+      expect(reminders.scans, hasLength(1));
+      final again = withReminders(lead);
+      await again.initialize();
+      again.dispose();
+      expect(reminders.scans, hasLength(1));
+      expect(
+        await log.lastScan(AssuranceWorkspaceController.scopeKey(scope)),
+        '2026-10-18',
+      );
+    });
+
+    test('viewers never send reminders', () async {
+      c.dispose();
+      c = withReminders({'assurance.evidence.view'});
+      await c.initialize();
+      expect(c.canSendReminders, isFalse);
+      await c.sendReminders();
+      expect(reminders.scans, isEmpty);
+    });
+
+    test('a failed scan is reported and the work queue stays', () async {
+      c.dispose();
+      reminders.fail = true;
+      c = withReminders(lead);
+      await c.initialize();
+      expect(c.overview, isNotNull);
+      expect(c.accessDenied, isFalse);
+      expect(c.reminderError, isNotNull);
+      expect(
+        await log.lastScan(AssuranceWorkspaceController.scopeKey(scope)),
+        isNull,
+      );
+    });
+
+    test('nothing is sent when everyone is already reminded', () async {
+      c.dispose();
+      c = withReminders(lead);
+      await c.initialize();
+      reminders.scans.clear();
+      reminders.pages = 0;
+      await c.sendReminders();
+      expect(c.reminderMessage, 'Sent 1 reminder.');
+    });
+  });
 
   test('navigation requires audit evidence access', () {
     expect(
@@ -882,7 +1003,13 @@ void main() {
         await t.runAsync(c.initialize);
         await render(t, dark);
         expect(t.takeException(), isNull);
-        expect(find.text('Escalated: 1'), findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.widgetWithText(JentraKpiCard, 'Escalated'),
+            matching: find.text('1'),
+          ),
+          findsOneWidget,
+        );
         await expectLater(
           find.byType(Scaffold),
           matchesGoldenFile(
