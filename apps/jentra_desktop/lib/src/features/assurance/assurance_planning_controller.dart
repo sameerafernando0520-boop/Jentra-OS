@@ -11,6 +11,10 @@ import 'package:uuid/uuid.dart';
 import '../../app_providers.dart';
 import 'assurance_workspace_controller.dart' show assuranceGatewayProvider;
 
+final assurancePeopleGatewayProvider = Provider<AssurancePeopleGateway?>(
+  (ref) => null,
+);
+
 final assurancePlanningControllerProvider =
     Provider.autoDispose<AssurancePlanningController?>((ref) {
       final scope = ref.watch(activeTenantContextProvider),
@@ -34,6 +38,7 @@ final assurancePlanningControllerProvider =
             ref.read(connectivityStateProvider).value ==
             ConnectivityState.online,
         capabilities: {...?caps.value},
+        people: ref.watch(assurancePeopleGatewayProvider),
       );
       ref.listen(
         connectivityStateProvider,
@@ -56,8 +61,16 @@ final class AssurancePlanningController extends ChangeNotifier {
     required this.drafts,
     required this.online,
     this.capabilities = const {},
+    AssurancePeopleGateway? people,
     DateTime Function()? clock,
-  }) : _clock = clock ?? DateTime.now;
+  }) : _peopleGateway = people,
+       _clock = clock ?? DateTime.now;
+
+  final AssurancePeopleGateway? _peopleGateway;
+
+  /// People to choose an area owner or lead auditor from; null when the
+  /// list is unavailable, and the form then falls back to a typed id.
+  AssurancePeople? people;
 
   static const slot = 'assurance-plan-command';
   static const _uuid = Uuid();
@@ -178,6 +191,17 @@ final class AssurancePlanningController extends ChangeNotifier {
     if (!_current(epoch)) return;
     plans = page.items;
     cursor = page.nextCursor;
+    final pg = _peopleGateway;
+    if (pg != null && capabilities.contains('assurance.plan.manage')) {
+      try {
+        final found = await pg.people(scope);
+        if (!_current(epoch)) return;
+        people = found;
+      } catch (_) {
+        // The picker is a convenience; planning still works with typed ids.
+        people = null;
+      }
+    }
     final open = plan;
     if (open != null) {
       final p = await gateway.plan(scope, open.id);

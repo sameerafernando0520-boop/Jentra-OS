@@ -205,6 +205,19 @@ Plan: [A13 plan](../superpowers/plans/2026-10-20-assurance-a13-digests.md).
 | Evidence | expected texts and digests produced by the server's own SQL over literal fixtures (quotes, backslashes, tabs, newlines, a control character, non-ASCII), read-only on the development project ([record](../verification/assurance/a13-digests-20261020.json)); domain 4/4 equal texts, platform 2/2 equal digests |
 | Not done | the desktop does not yet recompute a report digest on screen (the engagement view carries current findings, not the issued snapshot) |
 
+## Slice A14 — UI/UX and accessibility pass (20 October 2026)
+
+Plan and findings: [A14 plan](../superpowers/plans/2026-10-20-assurance-a14-ux.md) (design critique and WCAG 2.1 AA review of the Governance workspace, engagement detail, Audit planning, Audit access, Audit metrics and the inbox).
+
+| Category | Result |
+|---|---|
+| Problem | Planning asked for raw user IDs; engagement detail printed full 64-character digests, raw status codes and ISO timestamps; reminder chips used colours unlike the summary cards; an uncovered high-risk area was shown by red text only; section titles were not announced as headings; discarding an encrypted draft did not ask |
+| Mechanism | Candidate `supabase/candidates/20261020230000_assurance_people.sql`: `api.assurance_people` (planners, engagement managers or role managers) lists the tenant's active members as `{user_id, label}`, labels being employee names or "Unlinked member ····1234", never e-mails, at most 500 |
+| Client | Domain `AssurancePeople`; platform `AssurancePeopleGateway`. Desktop: area owner and lead auditor are chosen by name (typed id only if the list cannot be read); `assurance_format.dart` gives one date style ("8 Oct 2026"), UTC-labelled event times, sentence-case labels and `DigestText` (short digest, full value in a tooltip and selectable, announced as "SHA-256 starting …"); reminder badges use the summary card tones; "Not covered" warning badge; "Approve or return"; section headings carry header semantics; "Discard draft" confirms what is lost |
+| Candidate database evidence | reduced rollback suite on the development project: 9/9; nothing installed ([record](../verification/assurance/a14-people-rollback-20261020.json)). CI generated from `-Slice A14 -Pgtap` |
+| Automated tests | domain people 2/2 (500 in total); platform people 2/2; desktop format 3/3, workspace 42/42, planning 12/12; goldens refreshed only for the intentional changes (governance work and engagement, audit planning; light and dark) |
+| Not done | contrast was checked from tokens, not on a device; no screen-reader walkthrough (NVDA/Narrator) yet |
+
 ## Installation — development project, 18 October 2026
 
 | Category | Result |

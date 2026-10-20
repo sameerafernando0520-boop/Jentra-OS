@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_domain/jentra_assurance.dart';
 
 import '../../app_providers.dart';
+import 'assurance_format.dart';
 import 'assurance_planning_controller.dart';
 import 'assurance_settings_controller.dart';
 import 'assurance_settings_panel.dart';
@@ -71,7 +73,10 @@ class AssurancePlanning extends StatelessWidget {
       );
       Widget heading(String t) => Padding(
         padding: const EdgeInsets.only(top: 16, bottom: 4),
-        child: Text(t, style: theme.textTheme.titleMedium),
+        child: Semantics(
+          header: true,
+          child: Text(t, style: theme.textTheme.titleMedium),
+        ),
       );
       if (c.accessDenied) {
         return Center(
@@ -150,7 +155,7 @@ class AssurancePlanning extends StatelessWidget {
             if (u.items.isEmpty) const Text('No audit areas registered.'),
             for (final i in u.items)
               row(
-                '${i.code} · ${i.name} · ${_categories[i.category]} · ${i.rating == null ? 'not assessed' : '${i.rating!.name} (${i.score})'}${i.active ? '' : ' · retired'}',
+                '${i.code} · ${i.name} · ${_categories[i.category]} · ${i.rating == null ? 'Not assessed' : '${auditLabel(i.rating!.name)} risk (${i.score})'}${i.active ? '' : ' · retired'}',
                 [
                   if (u.canAssess(caps, i, c.actorId))
                     act('Assess risk', 'assess_risk', {
@@ -187,9 +192,9 @@ class AssurancePlanning extends StatelessWidget {
             for (final s in c.plans)
               Card(
                 child: ListTile(
-                  title: Text('${s.name} · ${s.status.name}'),
+                  title: Text('${s.name} · ${auditLabel(s.status.name)}'),
                   subtitle: Text(
-                    '${s.periodStart} → ${s.periodEnd} · ${s.activeItems} areas · version ${s.version}',
+                    '${auditDate(s.periodStart)} → ${auditDate(s.periodEnd)} · ${s.activeItems} areas · version ${s.version}',
                   ),
                   onTap: c.busy || !c.verified ? null : () => c.openPlan(s.id),
                 ),
@@ -205,7 +210,7 @@ class AssurancePlanning extends StatelessWidget {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Text(
-                  '${p.name} · ${p.status.name}',
+                  '${p.name} · ${auditLabel(p.status.name)}',
                   style: theme.textTheme.titleLarge,
                 ),
                 TextButton(
@@ -214,9 +219,18 @@ class AssurancePlanning extends StatelessWidget {
                 ),
               ],
             ),
-            Text('${p.periodStart} → ${p.periodEnd} · version ${p.version}'),
+            Text(
+              '${auditDate(p.periodStart)} → ${auditDate(p.periodEnd)} · version ${p.version}',
+            ),
             if (p.approvedDigest != null)
-              SelectableText('Approved digest ${p.approvedDigest}'),
+              Wrap(
+                spacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  const Text('Approved'),
+                  DigestText(p.approvedDigest!),
+                ],
+              ),
             Wrap(
               spacing: 8,
               runSpacing: 4,
@@ -232,7 +246,7 @@ class AssurancePlanning extends StatelessWidget {
                 if (p.canSubmit(caps))
                   act('Submit for approval', 'submit_plan', {}),
                 if (p.canDecide(caps, c.actorId))
-                  act('Decide', 'decide_plan', {
+                  act('Approve or return', 'decide_plan', {
                     'decision': 'approve',
                     'reason': '',
                   }),
@@ -248,17 +262,25 @@ class AssurancePlanning extends StatelessWidget {
             ),
             if (p.uncovered.isNotEmpty) ...[
               heading('High-risk areas not covered'),
+              // Not signalled by colour alone (WCAG 1.4.1).
               for (final x in p.uncovered)
-                Text(
-                  '${x.code} · ${x.rating.name}',
-                  style: TextStyle(color: theme.colorScheme.error),
+                Wrap(
+                  spacing: 8,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    const JentraStatusBadge(
+                      label: 'Not covered',
+                      tone: JentraStatusTone.warning,
+                    ),
+                    Text('${x.code} · ${auditLabel(x.rating.name)} risk'),
+                  ],
                 ),
             ],
             heading('Planned areas'),
             if (p.activeItems.isEmpty) const Text('No areas planned yet.'),
             for (final i in p.items)
               row(
-                '${i.code} · ${i.name} · ${i.rating.name} · ${i.frequency.name} · ${i.occurrences.length} of ${i.frequency.occurrences} created${i.active ? '' : ' · removed'}',
+                '${i.code} · ${i.name} · ${auditLabel(i.rating.name)} risk · ${i.frequency.name} · ${i.occurrences.length} of ${i.frequency.occurrences} created${i.active ? '' : ' · removed'}',
                 [
                   if (p.canEdit(caps) && i.active)
                     act('Remove', 'remove_plan_item', {
@@ -299,7 +321,7 @@ class _PlanCommandCard extends StatelessWidget {
     'add_plan_item': 'Add area to plan',
     'remove_plan_item': 'Remove area from plan',
     'submit_plan': 'Submit plan for approval',
-    'decide_plan': 'Decide plan',
+    'decide_plan': 'Approve or return plan',
     'cancel_plan': 'Cancel plan',
     'instantiate_engagement': 'Create engagement',
     'supersede_plan': 'Revise approved plan',
@@ -331,6 +353,32 @@ class _PlanCommandCard extends StatelessWidget {
           ),
       ],
     );
+    // People are chosen by name; a typed id is the fallback when the list
+    // cannot be read.
+    Widget person(String k, String label) {
+      final known = c.people?.members ?? const <AssurancePerson>[];
+      if (known.isEmpty) return text(k, '$label user ID');
+      final current = f[k] as String?;
+      return DropdownButtonFormField<String>(
+        key: ValueKey('person-$k'),
+        initialValue: known.any((m) => m.userId == current) ? current : null,
+        isExpanded: true,
+        decoration: InputDecoration(labelText: label),
+        items: [
+          for (final m in known)
+            DropdownMenuItem(
+              value: m.userId,
+              child: Text(m.label, overflow: TextOverflow.ellipsis),
+            ),
+        ],
+        onChanged: c.pending || c.busy
+            ? null
+            : (v) {
+                if (v != null) c.field(k, v);
+              },
+      );
+    }
+
     final scale = {for (var n = 1; n <= 5; n++) '$n': '$n'};
     final u = c.universe, p = c.plan;
     String? rating() {
@@ -359,7 +407,7 @@ class _PlanCommandCard extends StatelessWidget {
                   text('code', 'Code, e.g. P2P'),
                   text('name', 'Name'),
                   choice('category', _categories),
-                  text('owner_id', 'Area owner user ID'),
+                  person('owner_id', 'Area owner'),
                 ],
                 'assess_risk' => [
                   const Text('Likelihood'),
@@ -393,7 +441,7 @@ class _PlanCommandCard extends StatelessWidget {
                       for (final t in u.currentTemplates)
                         t.id: '${t.code} v${t.version}',
                     }),
-                  text('lead_auditor_id', 'Lead auditor user ID'),
+                  person('lead_auditor_id', 'Lead auditor'),
                   text('scope_summary', 'Scope summary', lines: 2),
                   const Text('The lead auditor must not own the area.'),
                 ],
@@ -445,7 +493,13 @@ class _PlanCommandCard extends StatelessWidget {
                     child: const Text('Save draft locally'),
                   ),
                   OutlinedButton(
-                    onPressed: c.busy || c.pending ? null : c.discardDraft,
+                    onPressed: c.busy || c.pending
+                        ? null
+                        : () async {
+                            if (await confirmDiscardDraft(context)) {
+                              await c.discardDraft();
+                            }
+                          },
                     child: const Text('Discard draft'),
                   ),
                 ],

@@ -16,6 +16,21 @@ import 'support/procurement_fakes.dart' show Keys;
 String uid(int n) => '93000000-0000-0000-0000-${n.toString().padLeft(12, '0')}';
 final actor = uid(1), maker = uid(2), owner = uid(3), planId = uid(10);
 
+class FakePeople implements AssurancePeopleGateway {
+  int calls = 0;
+  @override
+  Future<AssurancePeople> people(TenantContext scope) async {
+    calls++;
+    return AssurancePeople.fromJson({
+      'members': [
+        {'user_id': owner, 'label': 'Nadeesha Perera'},
+        {'user_id': actor, 'label': 'Unlinked member ····0001'},
+      ],
+      'truncated': false,
+    });
+  }
+}
+
 class FakePlanningGateway implements AssuranceGateway {
   String planStatus = 'draft';
   String? submittedBy, failure;
@@ -181,6 +196,7 @@ void main() {
   late QuotationDraftStore drafts;
   late FakePlanningGateway gateway;
   late AssurancePlanningController c;
+  late FakePeople people;
   AssurancePlanningController make({Set<String> caps = planner}) =>
       AssurancePlanningController(
         scope: scope,
@@ -188,6 +204,7 @@ void main() {
         drafts: drafts,
         online: true,
         capabilities: caps,
+        people: people,
         clock: () => DateTime.utc(2026, 10, 19),
       );
   setUpAll(() async {
@@ -206,6 +223,7 @@ void main() {
       EncryptedDraftRepository(db, DraftCipher(keyStore: Keys())),
     );
     gateway = FakePlanningGateway();
+    people = FakePeople();
     c = make();
   });
   tearDown(() async {
@@ -368,6 +386,33 @@ void main() {
     await t.pumpAndSettle();
   }
 
+  test('planners load people to choose from; viewers do not', () async {
+    await c.initialize();
+    expect(c.people!.members.map((p) => p.label), [
+      'Nadeesha Perera',
+      'Unlinked member ····0001',
+    ]);
+    c.dispose();
+    c = make(caps: {'assurance.evidence.view'});
+    await c.initialize();
+    expect(c.people, isNull);
+    expect(people.calls, 1);
+  });
+
+  testWidgets('the area owner is chosen by name, not typed as an id', (
+    t,
+  ) async {
+    await t.runAsync(c.initialize);
+    await t.runAsync(() => c.startCommand('register_item', {}));
+    await render(t, false);
+    expect(find.textContaining('user ID'), findsNothing);
+    await t.tap(find.byKey(const ValueKey('person-owner_id')));
+    await t.pumpAndSettle();
+    await t.tap(find.text('Nadeesha Perera').last);
+    await t.pumpAndSettle();
+    expect(c.form['owner_id'], owner);
+  });
+
   for (final dark in [false, true]) {
     testWidgets(
       'audit planning ${dark ? 'dark' : 'light'} 200 percent plan detail',
@@ -379,8 +424,12 @@ void main() {
         await t.runAsync(() => c.openPlan(planId));
         await render(t, dark);
         expect(t.takeException(), isNull);
-        expect(find.text('Decide'), findsOneWidget);
+        expect(find.text('Approve or return'), findsOneWidget);
         expect(find.text('High-risk areas not covered'), findsOneWidget);
+        expect(
+          find.widgetWithText(JentraStatusBadge, 'Not covered'),
+          findsWidgets,
+        );
         await expectLater(
           find.byType(Scaffold),
           matchesGoldenFile(

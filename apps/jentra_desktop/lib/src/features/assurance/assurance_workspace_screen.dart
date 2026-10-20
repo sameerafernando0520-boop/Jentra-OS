@@ -4,6 +4,7 @@ import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_domain/jentra_assurance.dart';
 
 import '../../app_providers.dart';
+import 'assurance_format.dart';
 import 'assurance_workspace_controller.dart';
 
 class AssuranceWorkspaceScreen extends ConsumerWidget {
@@ -44,8 +45,7 @@ String _levelLabel(ReminderLevel l) => switch (l) {
   ReminderLevel.escalated => 'Escalated',
 };
 
-String _date(DateTime? d) =>
-    d == null ? 'no due date' : d.toIso8601String().substring(0, 10);
+String _date(DateTime? d) => d == null ? 'no due date' : auditDate(d);
 
 class AssuranceWorkspace extends StatelessWidget {
   const AssuranceWorkspace({super.key, required this.controller});
@@ -73,13 +73,15 @@ class AssuranceWorkspace extends StatelessWidget {
           ),
         );
       }
-      Widget levelChip(ReminderLevel l) => Chip(
-        label: Text(_levelLabel(l)),
-        backgroundColor: l == ReminderLevel.escalated
-            ? theme.colorScheme.errorContainer
-            : l == ReminderLevel.overdue
-            ? theme.colorScheme.tertiaryContainer
-            : null,
+      // The same tones as the summary cards above the queue.
+      Widget levelChip(ReminderLevel l) => JentraStatusBadge(
+        label: _levelLabel(l),
+        tone: switch (l) {
+          ReminderLevel.onTrack => JentraStatusTone.success,
+          ReminderLevel.dueSoon => JentraStatusTone.info,
+          ReminderLevel.overdue => JentraStatusTone.warning,
+          ReminderLevel.escalated => JentraStatusTone.danger,
+        },
       );
       Widget workItem(AssuranceWorkItem i, {required bool mine}) => Card(
         child: Padding(
@@ -89,7 +91,7 @@ class AssuranceWorkspace extends StatelessWidget {
             children: [
               Text(i.title, style: theme.textTheme.titleMedium),
               Text(
-                '${i.kind == 'finding' ? 'Finding' : 'Evidence request'} · ${i.engagementName} · ${i.status} · due ${_date(i.dueDate)}',
+                '${i.kind == 'finding' ? 'Finding' : 'Evidence request'} · ${i.engagementName} · ${auditLabel(i.status)} · due ${_date(i.dueDate)}',
               ),
               Wrap(
                 spacing: 8,
@@ -248,7 +250,11 @@ class AssuranceWorkspace extends StatelessWidget {
                         OutlinedButton(
                           onPressed: c.busy || c.pending
                               ? null
-                              : c.discardResponse,
+                              : () async {
+                                  if (await confirmDiscardDraft(context)) {
+                                    await c.discardResponse();
+                                  }
+                                },
                           child: const Text('Discard draft'),
                         ),
                       ],
@@ -284,7 +290,7 @@ class AssuranceWorkspace extends StatelessWidget {
             for (final e in c.engagements)
               Card(
                 child: ListTile(
-                  title: Text('${e.name} · ${e.status.name}'),
+                  title: Text('${e.name} · ${auditLabel(e.status.name)}'),
                   subtitle: Text(
                     '${_date(e.periodStart)} → ${_date(e.periodEnd)} · ${e.openRequests} open requests (${e.overdueRequests} overdue) · ${e.openFindings} open findings (${e.overdueFindings} overdue) · ${e.candidateExceptions} candidate exceptions${e.evidenceFrozen ? ' · evidence frozen' : ''}',
                   ),
@@ -331,12 +337,19 @@ class _EngagementDetailView extends StatelessWidget {
         );
     Widget heading(String t) => Padding(
       padding: const EdgeInsets.only(top: 16, bottom: 4),
-      child: Text(t, style: theme.textTheme.titleMedium),
+      child: Semantics(
+        header: true,
+        child: Text(t, style: theme.textTheme.titleMedium),
+      ),
     );
-    Widget row(String text, List<Widget> actions) => Wrap(
+    Widget row(String text, List<Widget> actions, {String? digest}) => Wrap(
       spacing: 8,
       crossAxisAlignment: WrapCrossAlignment.center,
-      children: [Text(text), ...actions],
+      children: [
+        Text(text),
+        if (digest != null) DigestText(digest),
+        ...actions,
+      ],
     );
     String code(String controlId) => v?.control(controlId)?.code ?? 'control';
     final report = v?.currentReport;
@@ -348,7 +361,7 @@ class _EngagementDetailView extends StatelessWidget {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             Text(
-              '${e['name']} · ${e['status']}',
+              '${e['name']} · ${auditLabel('${e['status']}')}',
               style: theme.textTheme.titleLarge,
             ),
             TextButton(
@@ -362,21 +375,29 @@ class _EngagementDetailView extends StatelessWidget {
           ],
         ),
         Text(
-          '${e['period_start']} → ${e['period_end']} · version ${e['version']}',
+          '${auditDate(e['period_start'])} → ${auditDate(e['period_end'])} · version ${e['version']}',
         ),
         Text('${e['scope_summary']}'),
         if (e['evidence_cutoff_digest'] != null)
-          SelectableText('Evidence cutoff ${e['evidence_cutoff_digest']}'),
+          Wrap(
+            spacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              const Text('Evidence cutoff'),
+              DigestText('${e['evidence_cutoff_digest']}'),
+            ],
+          ),
         if (v != null)
           Wrap(
             spacing: 8,
             runSpacing: 4,
             children: [
               for (final to in v.transitionTargets(caps))
-                act('Move to ${to.name}', 'transition', {
+                act('Move to ${auditLabel(to.name)}', 'transition', {
                   'to_status': to.name,
                   'reason': '',
-                  'label': '${e['status']} → ${to.name}',
+                  'label':
+                      '${auditLabel('${e['status']}')} → ${auditLabel(to.name)}',
                 }),
               if (v.canFreeze(caps, me))
                 act('Freeze evidence', 'freeze_evidence', {
@@ -400,7 +421,7 @@ class _EngagementDetailView extends StatelessWidget {
         heading('Controls'),
         if (v != null)
           for (final x in v.controls)
-            row('${x.code} · ${x.title} · ${x.risk.name}', [
+            row('${x.code} · ${x.title} · ${auditLabel(x.risk.name)} risk', [
               if (v.canRequestEvidence(caps))
                 act('Request evidence', 'request_evidence', {
                   'control_id': x.id,
@@ -432,9 +453,9 @@ class _EngagementDetailView extends StatelessWidget {
         if (v != null)
           for (final r in v.requests)
             row(
-              '${code(r.controlId)} · ${r.status.name} · due ${r.dueDate}'
-              '${r.uploaded && r.evidenceId != null ? ' · ${assuranceEvidenceFileName(r.fileName ?? '', r.evidenceId!)}' : ''}'
-              '${r.evidenceSha256 == null ? '' : ' · ${r.evidenceSha256}'}',
+              '${code(r.controlId)} · ${auditLabel(r.status.name)} · due ${auditDate(r.dueDate)}'
+              '${r.uploaded && r.evidenceId != null ? ' · ${assuranceEvidenceFileName(r.fileName ?? '', r.evidenceId!)}' : ''}',
+              digest: r.evidenceSha256,
               [
                 if (v.canVerifyStored(caps, r, me))
                   TextButton(
@@ -461,7 +482,8 @@ class _EngagementDetailView extends StatelessWidget {
                     'request_id': r.id,
                     'decision': 'accept',
                     'reason': '',
-                    'label': '${code(r.controlId)} · ${r.evidenceSha256}',
+                    'label':
+                        '${code(r.controlId)} · SHA-256 ${shortDigest(r.evidenceSha256 ?? '')}',
                   }),
               ],
             ),
@@ -470,7 +492,7 @@ class _EngagementDetailView extends StatelessWidget {
         if (v != null)
           for (final t in v.tests)
             row(
-              '${t.code} · ${code(t.controlId)} · ${t.status.name} · sample ${t.sampleSize} of ${t.populationSize}',
+              '${t.code} · ${code(t.controlId)} · ${auditLabel(t.status.name)} · sample ${t.sampleSize} of ${t.populationSize}',
               [
                 if (v.canExecuteTest(caps, t))
                   act('Record test run', 'execute_test', {
@@ -496,7 +518,7 @@ class _EngagementDetailView extends StatelessWidget {
         if (v != null)
           for (final x in v.exceptions)
             row(
-              '${code(x.controlId)} · ${x.severity.name} · ${x.status.name} · ${x.source.replaceAll('_', ' ')}',
+              '${code(x.controlId)} · ${auditLabel(x.severity.name)} · ${auditLabel(x.status.name)} · ${x.source.replaceAll('_', ' ')}',
               [
                 if (v.canIssueFinding(caps, x))
                   act('Issue finding', 'issue_finding', {
@@ -520,11 +542,13 @@ class _EngagementDetailView extends StatelessWidget {
         if (rows('findings').isEmpty) const Text('No findings issued.'),
         if (v == null)
           for (final x in rows('findings'))
-            Text('${x['title']} · ${x['severity']} · ${x['status']}'),
+            Text(
+              '${x['title']} · ${auditLabel('${x['severity']}')} · ${auditLabel('${x['status']}')}',
+            ),
         if (v != null)
           for (final f in v.findings)
             row(
-              '${f.title} · ${f.severity.name} · ${f.status.wire.replaceAll('_', ' ')}',
+              '${f.title} · ${auditLabel(f.severity.name)} · ${auditLabel(f.status.wire)}',
               [
                 if (v.canDecideRisk(caps, f, me))
                   act('Decide risk', 'decide_risk', {
@@ -552,7 +576,14 @@ class _EngagementDetailView extends StatelessWidget {
         heading('Reports'),
         if (rows('reports').isEmpty) const Text('No report issued.'),
         for (final x in rows('reports'))
-          SelectableText('Version ${x['report_version']} · ${x['digest']}'),
+          Wrap(
+            spacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Text('Version ${x['report_version']}'),
+              DigestText('${x['digest']}'),
+            ],
+          ),
         if (v != null && report != null && v.canExport(caps))
           act('Export audit pack', 'export_pack', {
             'report_id': report.id,
@@ -561,7 +592,7 @@ class _EngagementDetailView extends StatelessWidget {
         heading('History'),
         for (final x in rows('events'))
           Text(
-            '${x['version']} · ${x['action']}${x['to_status'] == null ? '' : ' → ${x['to_status']}'} · ${x['occurred_at']}',
+            '${x['version']} · ${auditLabel('${x['action']}')}${x['to_status'] == null ? '' : ' → ${auditLabel('${x['to_status']}')}'} · ${auditDateTime('${x['occurred_at']}')}',
           ),
       ],
     );
@@ -763,7 +794,11 @@ class _CommandCard extends StatelessWidget {
                   OutlinedButton(
                     onPressed: c.busy || c.commandPending
                         ? null
-                        : c.discardCommand,
+                        : () async {
+                            if (await confirmDiscardDraft(context)) {
+                              await c.discardCommand();
+                            }
+                          },
                     child: const Text('Discard draft'),
                   ),
                 ],

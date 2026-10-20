@@ -7,6 +7,8 @@ import 'package:jentra_platform/jentra_assurance_platform.dart';
 
 import 'src/features/assurance/assurance_access_controller.dart';
 import 'src/features/assurance/assurance_metrics_controller.dart';
+import 'src/features/assurance/assurance_planning_controller.dart'
+    show assurancePeopleGatewayProvider;
 import 'src/features/assurance/assurance_settings_controller.dart';
 import 'src/shell/notification_inbox.dart';
 import 'src/features/assurance/assurance_workspace_controller.dart';
@@ -165,6 +167,9 @@ Future<void> main() async {
           client == null
               ? null
               : SupabaseAssuranceEvidenceDownloadGateway(client),
+        ),
+        assurancePeopleGatewayProvider.overrideWithValue(
+          client == null ? null : SupabaseAssurancePeopleGateway(client),
         ),
         assuranceMetricsGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseAssuranceMetricsGateway(client),
