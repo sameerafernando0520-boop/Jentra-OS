@@ -89,6 +89,19 @@ if ($Installed) {
   }
   $tests = [regex]::Replace($tests, 'count\(\*\)=(12|14|16|17|24) and bool_and', 'count(*)=31 and bool_and')
   $tests = $tests.Replace("count(*)=24 from pg_class c join pg_namespace n on n.oid=c.relnamespace", "count(*)=31 from pg_class c join pg_namespace n on n.oid=c.relnamespace")
+  # A8 grants assurance capabilities to its seeded roles and to tenant owners
+  # by design; A1's check that no migration grants any is narrowed to that.
+  $tests = $tests.Replace("and tenant_id not in (pg_temp.aid('tenant'),pg_temp.aid('other'))),'migration grants no business role any assurance capability');",
+    "and tenant_id not in (pg_temp.aid('tenant'),pg_temp.aid('other'))`n  and role_id not in (select r.id from core.roles r where r.is_system and (r.code like 'assurance\_%' or r.code = 'tenant_owner'))),`n  'migrations grant assurance capabilities only to the seeded assurance roles and tenant owners');")
+  # The A1-A6 fragments predate byte verification (A7): they run with its
+  # acceptance and freeze gates off, as before A7 was installed, and the gates
+  # are on again from the A7 fragment onwards.
+  $gateOff = "alter table assurance.evidence_requests disable trigger evidence_requests_verified_acceptance;`nalter table assurance.engagements disable trigger engagements_verified_freeze;`n"
+  $gateOn = "reset role;`nalter table assurance.evidence_requests enable trigger evidence_requests_verified_acceptance;`nalter table assurance.engagements enable trigger engagements_verified_freeze;`n"
+  $storageTests = Get-Content -LiteralPath (Join-Path $fragments 'assurance_evidence_storage_test.sql') -Raw
+  if ($tests.Contains($storageTests)) {
+    $tests = $gateOff + $tests.Replace($storageTests, $gateOn + $storageTests)
+  }
 }
 if ($Pgtap) {
   # A fresh database has no synthetic People plan; create it inside the

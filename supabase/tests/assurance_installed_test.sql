@@ -5,6 +5,8 @@ insert into billing.plans(code,name) select 'w4_employee_synthetic','Internal W4
 insert into billing.plan_entitlements(plan_code,entitlement_code,enabled)
   select 'w4_employee_synthetic','module.people',true where not exists (select 1 from billing.plan_entitlements
     where plan_code='w4_employee_synthetic' and entitlement_code='module.people');
+alter table assurance.evidence_requests disable trigger evidence_requests_verified_acceptance;
+alter table assurance.engagements disable trigger engagements_verified_freeze;
 -- Corporate Audit & Assurance A1 candidate tests (blueprint 68).
 -- Included only by build_assurance_candidate.ps1 inside a begin ... rollback block.
 create extension if not exists pgtap with schema extensions;
@@ -103,7 +105,9 @@ select ok(has_function_privilege('authenticated','api.assurance_command(uuid,uui
   and not has_function_privilege('anon','api.assurance_command(uuid,uuid,uuid,uuid,jsonb,bigint)','EXECUTE'),'command API is authenticated-only');
 select is((select count(*)::integer from core.permissions where code like 'assurance.%'),15,'fifteen narrow assurance capabilities');
 select ok(not exists(select 1 from core.role_permissions where permission_code like 'assurance.%'
-  and tenant_id not in (pg_temp.aid('tenant'),pg_temp.aid('other'))),'migration grants no business role any assurance capability');
+  and tenant_id not in (pg_temp.aid('tenant'),pg_temp.aid('other'))
+  and role_id not in (select r.id from core.roles r where r.is_system and (r.code like 'assurance\_%' or r.code = 'tenant_owner'))),
+  'migrations grant assurance capabilities only to the seeded assurance roles and tenant owners');
 
 -- Engagement creation, idempotency and version control.
 create temporary table assurance_samples(label text primary key,body jsonb);
@@ -1327,6 +1331,9 @@ select throws_ok($$select pg_temp.plans()$$,'42501',null,'another tenant cannot 
 reset role;
 
 
+reset role;
+alter table assurance.evidence_requests enable trigger evidence_requests_verified_acceptance;
+alter table assurance.engagements enable trigger engagements_verified_freeze;
 -- Corporate Audit & Assurance evidence-storage candidate tests (PR #1 review,
 -- thread 4309904782). Included only by build_assurance_candidate.ps1 -Slice A7,
 -- after the A6 tests and the storage candidate DDL. Reuses the A1 actors and
