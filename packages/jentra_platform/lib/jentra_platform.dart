@@ -1,6 +1,7 @@
 library;
 
 export 'src/connectivity_service.dart';
+export 'src/supabase_notification_inbox_gateway.dart';
 export 'src/draft_cipher.dart';
 export 'src/draft_repository.dart';
 export 'src/local_database.dart';

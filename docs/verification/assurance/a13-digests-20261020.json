@@ -1,0 +1,19 @@
+{
+  "kind": "sql-reference-values",
+  "slice": "assurance-a13-digests",
+  "spec": "docs/superpowers/specs/2026-10-20-assurance-completion-design.md#a13--digest-domain-tests",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "tool": "supabase execute_sql (read-only SELECT over literal values; nothing created)",
+  "executed": "the freeze_evidence digest expression (string_agg of id:sha256:byte_size ordered by id) and the issue_report digest document (jsonb_build_object ... ::text) from 20261019090000_assurance_version_guard.sql, over literal fixtures with quotes, backslashes, tabs, newlines, a control character and non-ASCII text",
+  "values": {
+    "freeze": "c8d6239fd88c2a43e10923c17c4e90b38cbb6b0641861d670852dd9b1ed75731",
+    "report": "afa410adb0485cd6d31281827d1c9ed75e00e99b6c5de2980e264ab88e404145",
+    "reportWithoutFindingsOrCutoff": "ef189204184960ffcb4f7d7cb2eea548aeed5423af43bf0161ecda0db53841e6",
+    "reportTextBytes": 660
+  },
+  "result": "Dart texts equal the SQL texts (jentra_domain 4/4) and Dart digests equal the SQL digests (jentra_platform 2/2)",
+  "sha256": {
+    "packages/jentra_domain/lib/src/assurance_digest.dart": "380b2157b0349aa77ed88480cb57b48f17e92ce8d4e026a648b85bf0eb2e21da",
+    "packages/jentra_platform/lib/src/assurance_digests.dart": "d2ea8e11b63021b188268f9bf68a39e18ac0fb3402704ad6c2d5794479a44163"
+  }
+}

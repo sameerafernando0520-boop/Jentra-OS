@@ -77,7 +77,7 @@ class FakeEvidenceFiles implements AssuranceEvidenceFiles {
 class FakeAssuranceGateway implements AssuranceGateway {
   String? failure, respondFailure, auditorFailure;
   String status = 'fieldwork';
-  bool tamperPack = false;
+  bool tamperPack = false, noEngagements = false;
   List<Map<String, Object?>> requests = [],
       exceptions = [],
       reports = [],
@@ -136,21 +136,22 @@ class FakeAssuranceGateway implements AssuranceGateway {
     }
     return AssuranceEngagementPage.fromJson({
       'items': [
-        {
-          'id': eng,
-          'name': 'FY27 Treasury',
-          'status': 'fieldwork',
-          'version': 9,
-          'period_start': '2026-04-01',
-          'period_end': '2027-03-31',
-          'lead_auditor_id': lead,
-          'evidence_frozen': false,
-          'open_requests': 3,
-          'overdue_requests': 2,
-          'open_findings': 1,
-          'overdue_findings': 1,
-          'candidate_exceptions': 0,
-        },
+        if (!noEngagements)
+          {
+            'id': eng,
+            'name': 'FY27 Treasury',
+            'status': 'fieldwork',
+            'version': 9,
+            'period_start': '2026-04-01',
+            'period_end': '2027-03-31',
+            'lead_auditor_id': lead,
+            'evidence_frozen': false,
+            'open_requests': 3,
+            'overdue_requests': 2,
+            'open_findings': 1,
+            'overdue_findings': 1,
+            'candidate_exceptions': 0,
+          },
       ],
       'next_cursor': null,
     });
@@ -286,12 +287,25 @@ class FakeAssuranceGateway implements AssuranceGateway {
     });
   }
 
+  final verifications = <String>[];
+  String storedOutcome = 'verified';
+
   @override
   Future<StoredEvidenceVerification> verifyEvidence(
     TenantContext s,
     String engagementId,
     String evidenceId,
-  ) => throw UnimplementedError();
+  ) async {
+    verifications.add(evidenceId);
+    return StoredEvidenceVerification.fromJson({
+      'evidence_id': evidenceId,
+      'outcome': storedOutcome,
+      'observed_sha256': storedOutcome == 'verified' ? 'a' * 64 : 'f' * 64,
+      'observed_byte_size': 21,
+      'verified_at': '2026-10-20T09:00:00Z',
+      'verifier': 'assurance-evidence-verify/v1',
+    });
+  }
 
   @override
   Future<EvidenceVerificationStatus> evidenceVerification(
@@ -322,6 +336,55 @@ class FakeAssuranceGateway implements AssuranceGateway {
   }
 }
 
+class FakeDownloads implements AssuranceEvidenceDownloadGateway {
+  final asked = <(String, String, String?)>[];
+  bool mismatch = false;
+  @override
+  Future<DownloadedEvidence> download(
+    TenantContext scope,
+    String engagementId,
+    String evidenceId, {
+    String? expectedSha256,
+  }) async {
+    asked.add((engagementId, evidenceId, expectedSha256));
+    if (mismatch) {
+      throw const DomainError(
+        code: 'EVIDENCE_MISMATCH',
+        message: 'The downloaded file does not match its recorded digest. Nothing was saved.',
+      );
+    }
+    return DownloadedEvidence(
+      Uint8List.fromList(utf8.encode('signed bank letter v2')),
+      'a' * 64,
+    );
+  }
+}
+
+class FakeReminderGateway implements AssuranceReminderGateway {
+  final scans = <({String key, String? after})>[];
+  bool fail = false;
+  int pages = 1;
+
+  @override
+  Future<ReminderScan> scan(
+    TenantContext s,
+    String key, {
+    String? after,
+  }) async {
+    scans.add((key: key, after: after));
+    if (fail) {
+      throw const DomainError(code: 'PERMISSION_DENIED', message: 'No');
+    }
+    final more = scans.length < pages;
+    return (
+      examined: more ? 100 : 3,
+      emitted: more ? 4 : 1,
+      hasMore: more,
+      nextAfter: more ? uid(70 + scans.length) : null,
+    );
+  }
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final scope = TenantContext(
@@ -336,6 +399,7 @@ void main() {
   late AssuranceWorkspaceController c;
   var disposed = false;
   late FakeFiles files;
+  late FakeDownloads downloads;
   const auditor = {
     'assurance.evidence.request',
     'assurance.test.review',
@@ -354,6 +418,7 @@ void main() {
     canRespond: canRespond,
     capabilities: capabilities,
     files: files,
+    downloads: downloads,
     clock: () => today,
   );
   setUpAll(() async {
@@ -365,6 +430,10 @@ void main() {
           ..addFont(rootBundle.load('${base}Manrope-Regular.ttf'))
           ..addFont(rootBundle.load('${base}Manrope-SemiBold.ttf')))
         .load();
+    await (FontLoader(JentraTypography.monoFamily)
+          ..addFont(rootBundle.load('${base}IBMPlexMono-Regular.ttf'))
+          ..addFont(rootBundle.load('${base}IBMPlexMono-SemiBold.ttf')))
+        .load();
   });
   setUp(() {
     disposed = false;
@@ -374,6 +443,7 @@ void main() {
     );
     gateway = FakeAssuranceGateway();
     files = FakeFiles();
+    downloads = FakeDownloads();
     c = make();
   });
   tearDown(() async {
@@ -387,6 +457,98 @@ void main() {
     await c.startResponse(issued());
     c.field('response', 'Second signatory enforced in the bank portal');
   }
+
+  test('a linked engagement opens once the workspace has loaded', () async {
+    c.openWhenReady(eng);
+    await c.initialize();
+    expect(c.section, 'detail');
+    expect(c.view?.id, eng);
+    c.closeDetail();
+    c.openWhenReady(eng);
+    await pumpEventQueue();
+    expect(c.section, 'engagements', reason: 'the same link opens only once');
+  });
+
+  group('reminders', () {
+    const lead = {'assurance.evidence.view', 'assurance.engagement.manage'};
+    late FakeReminderGateway reminders;
+    late MemoryReminderScanLog log;
+    AssuranceWorkspaceController withReminders(Set<String> caps) =>
+        AssuranceWorkspaceController(
+          scope: scope,
+          gateway: gateway,
+          drafts: drafts,
+          online: true,
+          capabilities: caps,
+          clock: () => today,
+          reminders: reminders,
+          scanLog: log,
+        );
+    setUp(() {
+      reminders = FakeReminderGateway();
+      log = MemoryReminderScanLog();
+    });
+
+    test('send reminders pages until the scope is done', () async {
+      c.dispose();
+      c = withReminders(lead);
+      reminders.pages = 2;
+      await c.initialize();
+      reminders.scans.clear();
+      await c.sendReminders();
+      expect(reminders.scans.map((s) => s.after), [null, uid(71)]);
+      expect(reminders.scans.first.key, isNot(reminders.scans.last.key));
+      expect(c.reminderMessage, 'Sent 5 reminders.');
+    });
+
+    test('a lead opening the workspace reminds once a day per scope', () async {
+      c.dispose();
+      c = withReminders(lead);
+      await c.initialize();
+      expect(reminders.scans, hasLength(1));
+      final again = withReminders(lead);
+      await again.initialize();
+      again.dispose();
+      expect(reminders.scans, hasLength(1));
+      expect(
+        await log.lastScan(AssuranceWorkspaceController.scopeKey(scope)),
+        '2026-10-18',
+      );
+    });
+
+    test('viewers never send reminders', () async {
+      c.dispose();
+      c = withReminders({'assurance.evidence.view'});
+      await c.initialize();
+      expect(c.canSendReminders, isFalse);
+      await c.sendReminders();
+      expect(reminders.scans, isEmpty);
+    });
+
+    test('a failed scan is reported and the work queue stays', () async {
+      c.dispose();
+      reminders.fail = true;
+      c = withReminders(lead);
+      await c.initialize();
+      expect(c.overview, isNotNull);
+      expect(c.accessDenied, isFalse);
+      expect(c.reminderError, isNotNull);
+      expect(
+        await log.lastScan(AssuranceWorkspaceController.scopeKey(scope)),
+        isNull,
+      );
+    });
+
+    test('nothing is sent when everyone is already reminded', () async {
+      c.dispose();
+      c = withReminders(lead);
+      await c.initialize();
+      reminders.scans.clear();
+      reminders.pages = 0;
+      await c.sendReminders();
+      expect(c.reminderMessage, 'Sent 1 reminder.');
+    });
+  });
 
   test('navigation requires audit evidence access', () {
     expect(
@@ -858,6 +1020,60 @@ void main() {
     expect(c.error, isNull);
     expect(gateway.auditorCommands.single.payload['decision'], 'reject');
   });
+  Map<String, Object?> uploadedRequest({String status = 'submitted'}) => {
+    'id': uid(60),
+    'control_id': uid(30),
+    'owner_id': lead,
+    'due_date': '2026-10-25',
+    'status': status,
+    'rework_count': 0,
+    'evidence': {
+      'id': uid(61),
+      'sha256': 'a' * 64,
+      'collected_by': lead,
+      'collection_method': 'manual',
+      'source_reference': r'C:\scans\Signed bank letter.pdf',
+    },
+  };
+
+  test('a reviewer asks the server to hash a submitted upload', () async {
+    gateway.requests = [uploadedRequest()];
+    await openEngagement();
+    final r = c.view!.requests.single;
+    expect(c.view!.canVerifyStored(c.capabilities, r, actor), isTrue);
+    await c.verifyStoredEvidence(r);
+    expect(gateway.verifications, [uid(61)]);
+    expect(c.message, contains('verified'));
+    gateway.storedOutcome = 'mismatch';
+    await c.verifyStoredEvidence(r);
+    expect(c.message, contains('does not match'));
+  });
+
+  test('a matching download is saved under its recorded name', () async {
+    gateway.requests = [uploadedRequest(status: 'accepted')];
+    c.dispose();
+    c = make(capabilities: {...auditor, 'assurance.evidence.view'});
+    await openEngagement();
+    await c.downloadEvidence(c.view!.requests.single);
+    expect(c.error, isNull);
+    expect(downloads.asked.single, (eng, uid(61), 'a' * 64));
+    expect(files.path, 'C:/audit/Signed bank letter.pdf');
+    expect(utf8.decode(files.bytes!), 'signed bank letter v2');
+    expect(c.message, contains('matches the recorded SHA-256'));
+  });
+
+  test('a mismatched download saves nothing and says why', () async {
+    gateway.requests = [uploadedRequest(status: 'accepted')];
+    c.dispose();
+    c = make(capabilities: {...auditor, 'assurance.evidence.view'});
+    downloads.mismatch = true;
+    await openEngagement();
+    await c.downloadEvidence(c.view!.requests.single);
+    expect(files.path, isNull);
+    expect(c.error, contains('Nothing was saved'));
+    expect(c.accessDenied, isFalse);
+  });
+
   Future<void> render(WidgetTester t, bool dark) async {
     t.view.physicalSize = const Size(1024, 2400);
     t.view.devicePixelRatio = 1;
@@ -875,6 +1091,166 @@ void main() {
     await t.pumpAndSettle();
   }
 
+  testWidgets('uploaded evidence rows offer verify and download', (t) async {
+    gateway.requests = [uploadedRequest()];
+    c.dispose();
+    c = make(capabilities: {...auditor, 'assurance.evidence.view'});
+    await t.runAsync(openEngagement);
+    await render(t, false);
+    expect(find.text('Verify file'), findsOneWidget);
+    expect(find.text('Download'), findsOneWidget);
+    expect(find.textContaining('Signed bank letter.pdf'), findsOneWidget);
+  });
+
+  testWidgets('the engagement view reads in words, not codes', (t) async {
+    gateway.requests = [uploadedRequest(status: 'accepted')];
+    c.dispose();
+    c = make(capabilities: {...auditor, 'assurance.evidence.view'});
+    await t.runAsync(openEngagement);
+    await render(t, false);
+    expect(find.text('SHA-256 aaaaaaaaaaaa…'), findsOneWidget);
+    expect(find.textContaining('a' * 64), findsNothing);
+    expect(find.bySemanticsLabel('SHA-256 starting aaaaaaaa'), findsOneWidget);
+    expect(find.text('FY27 Treasury'), findsOneWidget);
+    expect(find.widgetWithText(JentraStatusBadge, 'Fieldwork'), findsOneWidget);
+    expect(
+      find.textContaining(
+        'Create engagement → Planning · 1 Oct 2026 09:00 UTC',
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.byWidgetPredicate(
+        (w) => w is Semantics && (w.properties.header ?? false),
+      ),
+      findsAtLeastNWidgets(7),
+    );
+  });
+
+  testWidgets('reminder levels use the summary card tones', (t) async {
+    await t.runAsync(c.initialize);
+    await render(t, false);
+    JentraStatusTone tone(String label) => t
+        .widget<JentraStatusBadge>(
+          find.widgetWithText(JentraStatusBadge, label).first,
+        )
+        .tone;
+    expect(tone('Escalated'), JentraStatusTone.danger);
+    expect(tone('Overdue'), JentraStatusTone.warning);
+    expect(tone('Due soon'), JentraStatusTone.info);
+  });
+
+  testWidgets('discarding a draft asks first and says what is lost', (t) async {
+    await t.runAsync(startResponse);
+    await render(t, false);
+    await t.ensureVisible(find.text('Discard draft'));
+    await t.tap(find.text('Discard draft'));
+    await t.pumpAndSettle();
+    expect(find.text('Discard this draft?'), findsOneWidget);
+    expect(find.textContaining('Nothing has been sent'), findsOneWidget);
+    await t.tap(find.text('Keep draft'));
+    await t.pumpAndSettle();
+    expect(c.responding, isTrue);
+  });
+
+  Finder inPicker(String text) => find.descendant(
+    of: find.byType(DatePickerDialog),
+    matching: find.text(text),
+  );
+
+  testWidgets('the remediation date is picked from a calendar', (t) async {
+    await t.runAsync(startResponse);
+    await render(t, false);
+    expect(find.textContaining('YYYY'), findsNothing);
+    expect(c.form['due_date'], '2026-11-17');
+    expect(
+      find.bySemanticsLabel('Remediation due, 17 Nov 2026'),
+      findsOneWidget,
+    );
+    await t.ensureVisible(find.text('17 Nov 2026'));
+    await t.tap(find.text('17 Nov 2026'));
+    await t.pumpAndSettle();
+    await t.tap(inPicker('20'));
+    await t.tap(inPicker('OK'));
+    await t.pumpAndSettle();
+    expect(c.form['due_date'], '2026-11-20');
+    expect(find.text('20 Nov 2026'), findsOneWidget);
+  });
+
+  testWidgets('an evidence due date is picked, not typed', (t) async {
+    await t.runAsync(openEngagement);
+    await render(t, false);
+    await t.ensureVisible(find.text('Request evidence').first);
+    await t.tap(find.text('Request evidence').first);
+    await t.runAsync(() async {
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+    });
+    await t.pumpAndSettle();
+    expect(c.commandForm['due_date'], '2026-11-01');
+    expect(find.bySemanticsLabel('Due, 1 Nov 2026'), findsOneWidget);
+    expect(find.textContaining('YYYY'), findsNothing);
+  });
+
+  testWidgets('every audit screen shares the header and its sections', (
+    t,
+  ) async {
+    await t.runAsync(c.initialize);
+    await render(t, false);
+    expect(find.byTooltip('Refresh'), findsOneWidget);
+    expect(find.widgetWithText(ChoiceChip, 'My work'), findsOneWidget);
+    await t.tap(find.widgetWithText(ChoiceChip, 'Engagements'));
+    await t.pumpAndSettle();
+    expect(c.section, 'engagements');
+    expect(find.text('Engagement register'), findsOneWidget);
+    expect(
+      find.bySemanticsLabel(RegExp('^Open FY27 Treasury')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('an empty register says how engagements are created', (t) async {
+    gateway.noEngagements = true;
+    await t.runAsync(c.initialize);
+    c.select('engagements');
+    await render(t, false);
+    expect(
+      find.widgetWithText(JentraEmptyState, 'No engagements in this branch'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('approved plans'), findsOneWidget);
+  });
+
+  testWidgets('lost access says what happened and how to recheck', (t) async {
+    await t.runAsync(c.initialize);
+    gateway.failure = 'MFA_REQUIRED';
+    await t.runAsync(c.refresh);
+    await render(t, false);
+    expect(
+      find.widgetWithText(JentraEmptyState, 'Access changed'),
+      findsOneWidget,
+    );
+    expect(find.text('Recheck access'), findsOneWidget);
+  });
+
+  testWidgets('offline says what is kept and what to do next', (t) async {
+    c.setOnline(false);
+    await render(t, false);
+    expect(
+      find.widgetWithText(JentraEmptyState, 'You are offline'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('Saved drafts stay on this device'),
+      findsOneWidget,
+    );
+    expect(
+      t
+          .widget<IconButton>(find.widgetWithIcon(IconButton, Icons.refresh))
+          .onPressed,
+      isNull,
+    );
+  });
+
   for (final dark in [false, true]) {
     testWidgets(
       'governance workspace ${dark ? 'dark' : 'light'} 200 percent work queue and response',
@@ -882,7 +1258,13 @@ void main() {
         await t.runAsync(c.initialize);
         await render(t, dark);
         expect(t.takeException(), isNull);
-        expect(find.text('Escalated: 1'), findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.widgetWithText(JentraKpiCard, 'Escalated'),
+            matching: find.text('1'),
+          ),
+          findsOneWidget,
+        );
         await expectLater(
           find.byType(Scaffold),
           matchesGoldenFile(

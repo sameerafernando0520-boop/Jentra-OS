@@ -11,10 +11,18 @@ import 'package:jentra_platform/jentra_platform.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../app_providers.dart';
+import 'reminder_scan_log.dart';
+
+export 'reminder_scan_log.dart';
 import '../report_export/report_export_controller.dart'
     show reportExportFilesProvider;
 
 final assuranceGatewayProvider = Provider<AssuranceGateway?>((ref) => null);
+final assuranceReminderGatewayProvider = Provider<AssuranceReminderGateway?>(
+  (ref) => null,
+);
+final assuranceEvidenceDownloadGatewayProvider =
+    Provider<AssuranceEvidenceDownloadGateway?>((ref) => null);
 final assuranceEvidenceFilesProvider = Provider<AssuranceEvidenceFiles?>(
   (ref) => const NativeAssuranceEvidenceFiles(),
 );
@@ -49,6 +57,9 @@ final assuranceWorkspaceControllerProvider =
         capabilities: {...?caps.value},
         files: ref.watch(reportExportFilesProvider),
         evidenceFiles: ref.watch(assuranceEvidenceFilesProvider),
+        downloads: ref.watch(assuranceEvidenceDownloadGatewayProvider),
+        reminders: ref.watch(assuranceReminderGatewayProvider),
+        scanLog: ref.watch(reminderScanLogProvider),
       );
       ref.listen(
         connectivityStateProvider,
@@ -73,8 +84,20 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
     this.capabilities = const {},
     this.files,
     this.evidenceFiles,
+    this.downloads,
+    this.reminders,
+    this.scanLog,
     DateTime Function()? clock,
   }) : _clock = clock ?? DateTime.now;
+
+  /// Reminder delivery is for engagement managers (A10).
+  static const remindCapability = 'assurance.engagement.manage';
+
+  /// Pages of 100 items; a scope larger than this is finished next time.
+  static const _maxReminderPages = 20;
+
+  static String scopeKey(TenantContext s) =>
+      '${s.tenantId}:${s.legalEntityId}:${s.branchId}';
 
   static const slot = 'assurance-finding-response';
   static const commandSlot = 'assurance-auditor-command';
@@ -113,7 +136,16 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
   final Set<String> capabilities;
   final ReportExportFiles? files;
   final AssuranceEvidenceFiles? evidenceFiles;
+  final AssuranceEvidenceDownloadGateway? downloads;
+  final AssuranceReminderGateway? reminders;
+  final ReminderScanLog? scanLog;
   final DateTime Function() _clock;
+
+  bool sendingReminders = false;
+  String? reminderMessage, reminderError;
+
+  bool get canSendReminders =>
+      reminders != null && capabilities.contains(remindCapability);
 
   AuditorEngagementView? view;
   Map<String, Object?> commandForm = {};
@@ -234,9 +266,60 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
     if (!_current(epoch)) return;
     engagements = page.items;
     cursor = page.nextCursor;
+    // A lead's first visit of the day reminds the scope; it never blocks the
+    // queue and a failure is shown, not retried.
+    final log = scanLog;
+    if (canSendReminders &&
+        log != null &&
+        await log.lastScan(scopeKey(scope)) != _today()) {
+      await _remind(epoch);
+    }
+    final link = _pendingLink;
+    if (link != null && _current(epoch)) {
+      _pendingLink = null;
+      await _open(link);
+    }
   });
 
   Future<void> refresh() => initialize();
+
+  /// Sends reminders for every due-soon, overdue and escalated item in scope.
+  Future<void> sendReminders() async {
+    if (!canSendReminders || sendingReminders || !online || !verified) return;
+    await _remind(_epoch);
+    _emit();
+  }
+
+  Future<void> _remind(int epoch) async {
+    final gateway = reminders;
+    if (gateway == null || _disposed) return;
+    sendingReminders = true;
+    reminderError = null;
+    _emit();
+    try {
+      var sent = 0;
+      String? after;
+      for (var page = 0; page < _maxReminderPages; page++) {
+        final r = await gateway.scan(scope, _uuid.v4(), after: after);
+        if (!_current(epoch)) return;
+        sent += r.emitted;
+        if (!r.hasMore) break;
+        after = r.nextAfter;
+      }
+      reminderMessage = switch (sent) {
+        0 => 'Everyone is already reminded.',
+        1 => 'Sent 1 reminder.',
+        _ => 'Sent $sent reminders.',
+      };
+      await scanLog?.record(scopeKey(scope), _today());
+    } catch (e) {
+      reminderError = e is DomainError
+          ? 'Reminders were not sent: ${e.message}'
+          : 'Reminders were not sent. Try again from the workspace.';
+    } finally {
+      sendingReminders = false;
+    }
+  }
 
   Future<void> moreEngagements() => _run(() async {
     if (!online || !verified || cursor == null) return;
@@ -252,7 +335,9 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
     _emit();
   }
 
-  Future<void> open(String engagementId) => _run(() async {
+  Future<void> open(String engagementId) => _run(() => _open(engagementId));
+
+  Future<void> _open(String engagementId) async {
     if (!online || !verified) return;
     final epoch = _epoch;
     final (d, v) = await _load(engagementId);
@@ -261,7 +346,21 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
     view = v;
     if (pack?.pack.engagementId != v.id) pack = null;
     section = 'detail';
-  });
+  }
+
+  String? _linked, _pendingLink;
+
+  /// Opens an engagement named in a link (a reminder notice) once access is
+  /// verified; the same link opens only once.
+  void openWhenReady(String engagementId) {
+    if (_linked == engagementId) return;
+    _linked = engagementId;
+    if (verified && !busy) {
+      unawaited(open(engagementId));
+    } else {
+      _pendingLink = engagementId;
+    }
+  }
 
   /// Engagement detail and its test procedures, validated together.
   Future<(Map<String, Object?>, AuditorEngagementView)> _load(String id) async {
@@ -613,6 +712,43 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
         : 'The stored file does not match the submitted digest. An auditor must reject it before you upload again.';
     if (!_current(epoch)) return;
     overview = await gateway.overview(scope);
+  });
+
+  /// Asks the server to hash a submitted upload again (request owner or
+  /// audit team) and reports what the stored bytes contain.
+  Future<void> verifyStoredEvidence(AuditorRequest r) => _run(() async {
+    final v = view, id = r.evidenceId;
+    if (!online || !verified || v == null || id == null) return;
+    if (!v.canVerifyStored(capabilities, r, scope.actorId)) return;
+    final epoch = _epoch;
+    final result = await gateway.verifyEvidence(scope, v.id, id);
+    if (!_current(epoch)) return;
+    lastVerification = result;
+    message = result.verified
+        ? 'Stored file verified (SHA-256 ${result.observedSha256.substring(0, 12)}…). It can now be accepted.'
+        : 'The stored file does not match its submitted digest. Return it for rework so the owner can upload it again.';
+  });
+
+  /// Downloads verified evidence and saves it only when its bytes hash, on
+  /// this device, to the recorded digest the reviewer saw.
+  Future<void> downloadEvidence(AuditorRequest r) => _run(() async {
+    final d = downloads, f = files, v = view, id = r.evidenceId;
+    if (d == null || f == null || !online || !verified || v == null) return;
+    if (id == null || !v.canDownload(capabilities, r)) return;
+    final epoch = _epoch;
+    final name = assuranceEvidenceFileName(r.fileName ?? '', id);
+    final path = await f.choose(name);
+    if (path == null || !_current(epoch)) return;
+    final file = await d.download(
+      scope,
+      v.id,
+      id,
+      expectedSha256: r.evidenceSha256,
+    );
+    if (!_current(epoch)) return;
+    await f.write(path, file.bytes, 'application/octet-stream');
+    message =
+        'Saved $name. It matches the recorded SHA-256 ${file.sha256.substring(0, 12)}….';
   });
 
   /// Saves only a pack whose bytes hashed to the recorded digest.
