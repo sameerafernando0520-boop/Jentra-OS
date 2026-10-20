@@ -149,6 +149,46 @@ bool assuranceAccessReceiptConfirms(
     r['scope'] == p['scope'] &&
     r['version'] == expectedVersion + 1;
 
+typedef AssurancePerson = ({String userId, String label});
+
+/// `api.assurance_people` (A14): active members to choose an area owner or
+/// a lead auditor from, by name. Labels are never e-mails.
+final class AssurancePeople {
+  AssurancePeople.fromJson(Map<String, Object?> j)
+    : members = [
+        for (final m in _list(j['members']))
+          (
+            userId: assuranceId(_map(m)['user_id']),
+            label: _personLabel(_map(m)['label']),
+          ),
+      ],
+      truncated = _bool(j['truncated']) {
+    if (members.map((m) => m.userId).toSet().length != members.length) {
+      throw const FormatException('A person is listed twice.');
+    }
+  }
+
+  final List<AssurancePerson> members;
+
+  /// More active members exist than were listed.
+  final bool truncated;
+
+  String? labelOf(String userId) {
+    for (final m in members) {
+      if (m.userId == userId) return m.label;
+    }
+    return null;
+  }
+
+  static String _personLabel(Object? v) {
+    final s = assuranceText(v, 1, 160);
+    if (s.contains('@')) {
+      throw const FormatException('People are labelled by name, not e-mail.');
+    }
+    return s;
+  }
+}
+
 Map<String, Object?> _map(Object? v) {
   if (v is Map<String, Object?>) return v;
   if (v is Map) return v.cast<String, Object?>();
