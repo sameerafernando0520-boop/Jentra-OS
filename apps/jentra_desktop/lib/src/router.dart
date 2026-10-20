@@ -16,6 +16,7 @@ import 'features/control_reconciliation/control_reconciliation_controller.dart';
 import 'features/control_reconciliation/control_reconciliation_screen.dart';
 import 'features/assurance/assurance_access_controller.dart';
 import 'features/assurance/assurance_access_screen.dart';
+import 'features/assurance/assurance_metrics_screen.dart';
 import 'features/assurance/assurance_planning_controller.dart';
 import 'features/assurance/assurance_planning_screen.dart';
 import 'features/assurance/assurance_workspace_controller.dart';
@@ -297,6 +298,10 @@ final routerProvider = Provider<GoRouter>((ref) {
                     .read(assuranceWorkspaceControllerProvider)
                     ?.canLeave() ??
                 true,
+          ),
+          GoRoute(
+            path: '/governance/audit/metrics',
+            builder: (context, state) => const AssuranceMetricsScreen(),
           ),
           GoRoute(
             path: '/governance/audit/access',
