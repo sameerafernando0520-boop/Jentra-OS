@@ -1,0 +1,42 @@
+{
+  "kind": "installation",
+  "target": "development project xpdoufauvrbdmxgngetv (never production)",
+  "authority": "owner decision in the session of 20 October 2026: install to the development project after each slice's rollback suite passes",
+  "preconditions": {
+    "ledgerBefore": "121 migrations, latest assurance 20261018155041 (A1-A5)",
+    "rollbackEvidence": "per-slice reduced suites on the development project (a7-evidence-storage, a8-access, a9-settings, a10-reminders, a11-metrics, a12-reviewer-evidence, a14-people records) and the cumulative candidate suite green in CI on PRs #9-#11 (through A12)"
+  },
+  "installed": [
+    {"version": "20261020072622", "name": "assurance_version_guard", "candidate": "20261019090000_assurance_version_guard.sql", "ledgerMd5": "d9b4faf999b1af930a08d5f7bdb041f1", "identical": true},
+    {"version": "20261020072800", "name": "assurance_evidence_storage", "candidate": "20261019120000_assurance_evidence_storage.sql", "ledgerMd5": "a585015a3bd28735d27b52359ad613dd", "identical": true},
+    {"version": "20261020072901", "name": "assurance_plan_register", "candidate": "20261019130000_assurance_plan_register.sql", "ledgerMd5": "dbd1f672a9eda478e984b65f484a639e", "identical": "except the final newline"},
+    {"version": "20261020073016", "name": "assurance_access", "candidate": "20261020090000_assurance_access.sql", "ledgerMd5": "d1d12de89ecbebeb4767f4ff46d596d8", "identical": true},
+    {"version": "20261020073524", "name": "assurance_settings", "candidate": "20261020120000_assurance_settings.sql", "ledgerMd5": "708862a644cd51b812f92c22074349e6", "identical": true},
+    {"version": "20261020093705", "name": "assurance_reminders", "candidate": "20261020150000_assurance_reminders.sql", "ledgerMd5": "9d1f97e8419def60d67a0419a980cbf8", "identical": true},
+    {"version": "20261020093743", "name": "assurance_metrics", "candidate": "20261020180000_assurance_metrics.sql", "ledgerMd5": "75615810dc3ba65d19b5b07922c00581", "identical": true},
+    {"version": "20261020093817", "name": "assurance_evidence_download", "candidate": "20261020210000_assurance_evidence_download.sql", "ledgerMd5": "aaae41ca6d20ec5c979eb408f10be608", "identical": true},
+    {"version": "20261020093822", "name": "assurance_people", "candidate": "20261020230000_assurance_people.sql", "ledgerMd5": "0583ab392046db69eaa3eaee4411e246", "identical": true}
+  ],
+  "repositoryCopies": "supabase/migrations/<version>_<name>.sql, copied from the candidates",
+  "edgeFunctions": [
+    {"slug": "assurance-evidence-verify", "version": 1, "verifyJwt": false, "auth": "withSupabase({ auth: 'user' }) inside the function", "unauthenticatedPost": 401},
+    {"slug": "assurance-evidence-download", "version": 1, "verifyJwt": false, "auth": "withSupabase({ auth: 'user' }) inside the function", "unauthenticatedPost": 401}
+  ],
+  "postInstall": {
+    "migrations": 130,
+    "assuranceTables": 31,
+    "tablesForcingRls": 31,
+    "clientTableGrants": 0,
+    "apiAssuranceFunctions": 26,
+    "anonExecutable": 0,
+    "serviceOnly": ["assurance_evidence_service_download", "assurance_evidence_service_target", "assurance_evidence_service_verify"],
+    "clientExecutableHelpers": 0,
+    "tenantsWithSeededRoles": "501 of 501 trial or active tenants",
+    "bucket": "jentra-assurance-evidence private, 100 MiB",
+    "storagePolicies": 6,
+    "seedTrigger": "assurance_seed_roles_on_tenant present",
+    "securityAdvisor": "assurance: INFO rls_enabled_no_policy on the 31 tables only (by design: API access through security-definer functions, no table grants); no new WARN or ERROR"
+  },
+  "installedSuite": "supabase/tests/assurance_installed_test.sql (-Slice A14 -Pgtap, every installed candidate's DDL stripped, 31 tables) runs in CI against the migrations",
+  "notEstablished": "no member has an assurance role assigned yet (roles are seeded, not granted); no native authenticated walkthrough, genuine MFA, real file upload through the functions, contention/load or owner acceptance; production not touched"
+}
