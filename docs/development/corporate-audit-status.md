@@ -194,6 +194,17 @@ Plan: [A12 plan](../superpowers/plans/2026-10-20-assurance-a12-reviewer-evidence
 | Automated tests | edge functions `node --test` 12/12; domain download 3/3 and auditor view (upload fields, verify/download rules); platform download 4/4; desktop workspace 39/39; full desktop suite 2115/2115; analyzers clean |
 | Not done | not installed; the edge function is not deployed and has no `config.toml` entry yet (installation step); external reviewers cannot open the desktop workspace, so their download path is server-side only |
 
+## Slice A13 — digest domain tests (20 October 2026)
+
+Plan: [A13 plan](../superpowers/plans/2026-10-20-assurance-a13-digests.md).
+
+| Category | Result |
+|---|---|
+| Problem | The evidence cutoff digest (FR-6809) and the issued report digest (FR-6818) existed only in SQL; no client could recompute them |
+| Mechanism | `jentra_domain` builds the exact texts the server hashes: `assuranceFreezeDigestText` (`id:sha256:byte_size`, ordered by id, comma-joined; refuses an empty set as the server does) and `assuranceReportDigestText` (the `jsonb::text` of the report document through `assuranceJsonbText`, which follows PostgreSQL's key order and string escaping). `jentra_platform` hashes them: `assuranceFreezeDigest`, `assuranceReportDigest` |
+| Evidence | expected texts and digests produced by the server's own SQL over literal fixtures (quotes, backslashes, tabs, newlines, a control character, non-ASCII), read-only on the development project ([record](../verification/assurance/a13-digests-20261020.json)); domain 4/4 equal texts, platform 2/2 equal digests |
+| Not done | the desktop does not yet recompute a report digest on screen (the engagement view carries current findings, not the issued snapshot) |
+
 ## Installation — development project, 18 October 2026
 
 | Category | Result |
