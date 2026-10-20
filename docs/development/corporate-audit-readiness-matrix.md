@@ -27,7 +27,7 @@ Legend: **D** domain test · **R** candidate rollback pgTAP · **I** installed (
 | FR-6821 | Evidence adapters | ✓ | ✓ (8 of 8 kinds exercised) | ✓ dev | – | – | – |
 | FR-6822 | Governed export | ✓ (+ platform verifier) | ✓ | ✓ dev | – | – | – |
 | FR-6823 | Templates/reminders/dashboards | ✓ (templates, recurrence, tenant reminder bands, reminder scan, inbox) | ✓ | ✓ dev | – | – | – |
-| FR-6824 | Desktop workspace | ✓ (workspace, planning, access, settings, metrics, inbox; 200% goldens; A14 UI/UX and accessibility pass) | ✓ (read models) | ✓ dev (+ two evidence edge functions) | – | – | – |
+| FR-6824 | Desktop workspace | ✓ (workspace, planning, access, settings, metrics, inbox; 200% goldens; A14 UI/UX and accessibility pass; A16 date pickers, panels with status badges, empty and error states, one header on every audit screen) | ✓ (read models) | ✓ dev (+ two evidence edge functions) | – | – | – |
 | FR-6825 | Process metrics | ✓ (calc + parser) | ✓ (A11) | ✓ dev | – | – | – |
 
 25 of 25 requirements are installed in the development project. None is native-verified, load-tested or owner-accepted; no member holds an assurance role yet; nothing is in production.

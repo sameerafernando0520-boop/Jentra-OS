@@ -231,6 +231,18 @@ Plan: [A15 plan](../superpowers/plans/2026-10-20-assurance-a15-install.md).
 | Installed suite | `build_assurance_candidate.ps1 -Installed` now strips every installed candidate and expects 31 tables; CI runs it against the migrations |
 | Not established | no member holds an assurance role yet (seeded, not granted); no native authenticated walkthrough, genuine MFA, real upload through the functions, contention/load or owner acceptance |
 
+## Slice A16 — UI/UX polish (20 October 2026)
+
+Plan: [A16 plan](../superpowers/plans/2026-10-20-assurance-a16-ux-polish.md). Owner's review of the built product chose four changes (date pickers, card layouts, empty and error states, header consistency); roles, settings, reminders and metrics stay as built.
+
+| Category | Result |
+|---|---|
+| Problem | Dates were typed as `YYYY-MM-DD`; the work queue, engagement register, engagement detail and planning lists were plain text rows; access loss, no data, offline and failed loads were single lines of text; the workspace and planning headers differed from Audit access and Audit metrics |
+| Client | `assurance_widgets.dart`: `AuditDateField` (calendar picker shown as "8 Oct 2026", stores the same civil date, opens from the keyboard, an end date never before its start), `AuditScreenHeader` (title, description, refresh icon button with tooltip, section chips) now used by all four audit screens, `AuditItemPanel` (design-system panel with status badges, details, digest and actions; openable items are one keyboard-reachable button), `auditTone`/`auditBadge` (one tone per status), `AuditNotice` (wrapping offline, error and confirmation lines) and `AuditNotLoaded`. Workspace and planning use `JentraEmptyState` for no access, access changed, nothing assigned, no overdue team work, no engagements, no audit areas, no plans, offline and failed loads, each with a next step. `JentraSectionHeader` titles now carry header semantics |
+| Behaviour | unchanged: the same commands, payloads, drafts and dates (`YYYY-MM-DD`) |
+| Automated tests | desktop widgets 11/11, workspace 48/48, planning 17/17; goldens refreshed only for the intentional changes (governance work and engagement, audit planning; light and dark) |
+| Not done | no screen-reader walkthrough (NVDA/Narrator) yet; not checked on a native Windows build |
+
 ## Installation — development project, 18 October 2026
 
 | Category | Result |

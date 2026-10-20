@@ -35,38 +35,43 @@ class FakePlanningGateway implements AssuranceGateway {
   String planStatus = 'draft';
   String? submittedBy, failure;
   int planVersion = 3, itemVersion = 2;
-  bool planned = true;
+  bool planned = true, noPlans = false, noAreas = false;
+  String? readFailure;
   final commands = <CommandEnvelope<Map<String, Object?>>>[];
 
   @override
   Future<AssuranceUniverse> universe(TenantContext s) async =>
-      AssuranceUniverse.fromJson({
-        'items': [
-          {
-            'id': uid(20),
-            'code': 'P2P',
-            'name': 'Procure to pay',
-            'category': 'process',
-            'owner_id': owner,
-            'status': 'active',
-            'version': itemVersion,
-            'assessment': {'rating': 'critical', 'score': 20},
-          },
-          {
-            'id': uid(21),
-            'code': 'ITGC',
-            'name': 'IT general controls',
-            'category': 'system',
-            'owner_id': owner,
-            'status': 'active',
-            'version': 1,
-            'assessment': {'rating': 'high', 'score': 12},
-          },
-        ],
-        'templates': [
-          {'id': uid(30), 'code': 'P2P-STD', 'version': 2, 'name': 'P2P'},
-        ],
-      });
+      readFailure != null
+      ? throw DomainError(code: readFailure!, message: 'Refused: $readFailure')
+      : AssuranceUniverse.fromJson({
+          'items': noAreas
+              ? const <Object?>[]
+              : [
+                  {
+                    'id': uid(20),
+                    'code': 'P2P',
+                    'name': 'Procure to pay',
+                    'category': 'process',
+                    'owner_id': owner,
+                    'status': 'active',
+                    'version': itemVersion,
+                    'assessment': {'rating': 'critical', 'score': 20},
+                  },
+                  {
+                    'id': uid(21),
+                    'code': 'ITGC',
+                    'name': 'IT general controls',
+                    'category': 'system',
+                    'owner_id': owner,
+                    'status': 'active',
+                    'version': 1,
+                    'assessment': {'rating': 'high', 'score': 12},
+                  },
+                ],
+          'templates': [
+            {'id': uid(30), 'code': 'P2P-STD', 'version': 2, 'name': 'P2P'},
+          ],
+        });
 
   Map<String, Object?> _summary() => {
     'id': planId,
@@ -81,7 +86,7 @@ class FakePlanningGateway implements AssuranceGateway {
   @override
   Future<AssurancePlanPage> plans(TenantContext s, {String? after}) async =>
       AssurancePlanPage.fromJson({
-        'items': [_summary()],
+        'items': [if (!noPlans) _summary()],
         'next_cursor': null,
       });
 
@@ -411,6 +416,93 @@ void main() {
     await t.tap(find.text('Nadeesha Perera').last);
     await t.pumpAndSettle();
     expect(c.form['owner_id'], owner);
+  });
+
+  Finder inPicker(String text) => find.descendant(
+    of: find.byType(DatePickerDialog),
+    matching: find.text(text),
+  );
+
+  testWidgets('a plan period is picked and cannot end before it starts', (
+    t,
+  ) async {
+    await t.runAsync(c.initialize);
+    await t.runAsync(
+      () => c.startCommand('create_plan', {
+        'name': '',
+        'period_start': c.today,
+        'period_end': '',
+      }),
+    );
+    await render(t, false);
+    expect(find.textContaining('YYYY'), findsNothing);
+    expect(find.bySemanticsLabel('Period start, 19 Oct 2026'), findsOneWidget);
+    expect(find.bySemanticsLabel('Period end, Not set'), findsOneWidget);
+    await t.tap(find.text('Not set'));
+    await t.pumpAndSettle();
+    expect(
+      t.widget<DatePickerDialog>(find.byType(DatePickerDialog)).firstDate,
+      DateTime(2026, 10, 19),
+    );
+    await t.tap(inPicker('31'));
+    await t.tap(inPicker('OK'));
+    await t.pumpAndSettle();
+    expect(c.form['period_end'], '2026-10-31');
+    expect(find.bySemanticsLabel('Period end, 31 Oct 2026'), findsOneWidget);
+  });
+
+  testWidgets('an empty universe says what to do first', (t) async {
+    gateway.noAreas = true;
+    await t.runAsync(c.initialize);
+    await render(t, false);
+    expect(
+      find.widgetWithText(JentraEmptyState, 'No audit areas yet'),
+      findsOneWidget,
+    );
+    expect(
+      find.widgetWithText(JentraPrimaryButton, 'Register area'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('an empty plan register offers to create a plan', (t) async {
+    gateway.noPlans = true;
+    await t.runAsync(c.initialize);
+    c.select('plans');
+    await render(t, false);
+    expect(
+      find.widgetWithText(JentraEmptyState, 'No plans in this branch'),
+      findsOneWidget,
+    );
+    expect(
+      find.widgetWithText(JentraPrimaryButton, 'Create plan'),
+      findsOneWidget,
+    );
+    expect(find.byTooltip('Refresh'), findsOneWidget);
+  });
+
+  testWidgets('plans are panels with a status, opened as one button', (
+    t,
+  ) async {
+    await t.runAsync(c.initialize);
+    c.select('plans');
+    await render(t, false);
+    expect(find.widgetWithText(JentraStatusBadge, 'Draft'), findsOneWidget);
+    expect(
+      find.bySemanticsLabel(RegExp('^Open FY27 internal audit plan')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('lost access says what happened and how to recheck', (t) async {
+    await t.runAsync(c.initialize);
+    gateway.readFailure = 'PERMISSION_DENIED';
+    await t.runAsync(c.refresh);
+    await render(t, false);
+    expect(
+      find.widgetWithText(JentraEmptyState, 'Access changed'),
+      findsOneWidget,
+    );
   });
 
   for (final dark in [false, true]) {

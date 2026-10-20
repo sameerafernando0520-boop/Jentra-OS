@@ -11,6 +11,9 @@ String auditDate(Object? v) {
   return d == null ? 'no date' : DateFormat('d MMM y').format(d);
 }
 
+/// The civil date the server takes: `2026-10-08`.
+String auditIsoDate(DateTime d) => DateFormat('yyyy-MM-dd').format(d);
+
 /// Event times in UTC, labelled, so every reviewer reads the same instant.
 String auditDateTime(String iso) {
   final d = DateTime.tryParse(iso)?.toUtc();

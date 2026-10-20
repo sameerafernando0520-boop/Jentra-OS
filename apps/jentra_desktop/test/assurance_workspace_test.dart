@@ -77,7 +77,7 @@ class FakeEvidenceFiles implements AssuranceEvidenceFiles {
 class FakeAssuranceGateway implements AssuranceGateway {
   String? failure, respondFailure, auditorFailure;
   String status = 'fieldwork';
-  bool tamperPack = false;
+  bool tamperPack = false, noEngagements = false;
   List<Map<String, Object?>> requests = [],
       exceptions = [],
       reports = [],
@@ -136,21 +136,22 @@ class FakeAssuranceGateway implements AssuranceGateway {
     }
     return AssuranceEngagementPage.fromJson({
       'items': [
-        {
-          'id': eng,
-          'name': 'FY27 Treasury',
-          'status': 'fieldwork',
-          'version': 9,
-          'period_start': '2026-04-01',
-          'period_end': '2027-03-31',
-          'lead_auditor_id': lead,
-          'evidence_frozen': false,
-          'open_requests': 3,
-          'overdue_requests': 2,
-          'open_findings': 1,
-          'overdue_findings': 1,
-          'candidate_exceptions': 0,
-        },
+        if (!noEngagements)
+          {
+            'id': eng,
+            'name': 'FY27 Treasury',
+            'status': 'fieldwork',
+            'version': 9,
+            'period_start': '2026-04-01',
+            'period_end': '2027-03-31',
+            'lead_auditor_id': lead,
+            'evidence_frozen': false,
+            'open_requests': 3,
+            'overdue_requests': 2,
+            'open_findings': 1,
+            'overdue_findings': 1,
+            'candidate_exceptions': 0,
+          },
       ],
       'next_cursor': null,
     });
@@ -1110,7 +1111,8 @@ void main() {
     expect(find.text('SHA-256 aaaaaaaaaaaa…'), findsOneWidget);
     expect(find.textContaining('a' * 64), findsNothing);
     expect(find.bySemanticsLabel('SHA-256 starting aaaaaaaa'), findsOneWidget);
-    expect(find.textContaining('FY27 Treasury · Fieldwork'), findsOneWidget);
+    expect(find.text('FY27 Treasury'), findsOneWidget);
+    expect(find.widgetWithText(JentraStatusBadge, 'Fieldwork'), findsOneWidget);
     expect(
       find.textContaining(
         'Create engagement → Planning · 1 Oct 2026 09:00 UTC',
@@ -1149,6 +1151,104 @@ void main() {
     await t.tap(find.text('Keep draft'));
     await t.pumpAndSettle();
     expect(c.responding, isTrue);
+  });
+
+  Finder inPicker(String text) => find.descendant(
+    of: find.byType(DatePickerDialog),
+    matching: find.text(text),
+  );
+
+  testWidgets('the remediation date is picked from a calendar', (t) async {
+    await t.runAsync(startResponse);
+    await render(t, false);
+    expect(find.textContaining('YYYY'), findsNothing);
+    expect(c.form['due_date'], '2026-11-17');
+    expect(
+      find.bySemanticsLabel('Remediation due, 17 Nov 2026'),
+      findsOneWidget,
+    );
+    await t.ensureVisible(find.text('17 Nov 2026'));
+    await t.tap(find.text('17 Nov 2026'));
+    await t.pumpAndSettle();
+    await t.tap(inPicker('20'));
+    await t.tap(inPicker('OK'));
+    await t.pumpAndSettle();
+    expect(c.form['due_date'], '2026-11-20');
+    expect(find.text('20 Nov 2026'), findsOneWidget);
+  });
+
+  testWidgets('an evidence due date is picked, not typed', (t) async {
+    await t.runAsync(openEngagement);
+    await render(t, false);
+    await t.ensureVisible(find.text('Request evidence').first);
+    await t.tap(find.text('Request evidence').first);
+    await t.runAsync(() async {
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+    });
+    await t.pumpAndSettle();
+    expect(c.commandForm['due_date'], '2026-11-01');
+    expect(find.bySemanticsLabel('Due, 1 Nov 2026'), findsOneWidget);
+    expect(find.textContaining('YYYY'), findsNothing);
+  });
+
+  testWidgets('every audit screen shares the header and its sections', (
+    t,
+  ) async {
+    await t.runAsync(c.initialize);
+    await render(t, false);
+    expect(find.byTooltip('Refresh'), findsOneWidget);
+    expect(find.widgetWithText(ChoiceChip, 'My work'), findsOneWidget);
+    await t.tap(find.widgetWithText(ChoiceChip, 'Engagements'));
+    await t.pumpAndSettle();
+    expect(c.section, 'engagements');
+    expect(find.text('Engagement register'), findsOneWidget);
+    expect(
+      find.bySemanticsLabel(RegExp('^Open FY27 Treasury')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('an empty register says how engagements are created', (t) async {
+    gateway.noEngagements = true;
+    await t.runAsync(c.initialize);
+    c.select('engagements');
+    await render(t, false);
+    expect(
+      find.widgetWithText(JentraEmptyState, 'No engagements in this branch'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('approved plans'), findsOneWidget);
+  });
+
+  testWidgets('lost access says what happened and how to recheck', (t) async {
+    await t.runAsync(c.initialize);
+    gateway.failure = 'MFA_REQUIRED';
+    await t.runAsync(c.refresh);
+    await render(t, false);
+    expect(
+      find.widgetWithText(JentraEmptyState, 'Access changed'),
+      findsOneWidget,
+    );
+    expect(find.text('Recheck access'), findsOneWidget);
+  });
+
+  testWidgets('offline says what is kept and what to do next', (t) async {
+    c.setOnline(false);
+    await render(t, false);
+    expect(
+      find.widgetWithText(JentraEmptyState, 'You are offline'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('Saved drafts stay on this device'),
+      findsOneWidget,
+    );
+    expect(
+      t
+          .widget<IconButton>(find.widgetWithIcon(IconButton, Icons.refresh))
+          .onPressed,
+      isNull,
+    );
   });
 
   for (final dark in [false, true]) {

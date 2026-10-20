@@ -5,6 +5,7 @@ import 'package:jentra_domain/jentra_assurance.dart';
 
 import '../../app_providers.dart';
 import 'assurance_access_controller.dart';
+import 'assurance_widgets.dart';
 
 class AssuranceAccessScreen extends ConsumerWidget {
   const AssuranceAccessScreen({super.key});
@@ -66,17 +67,13 @@ class AssuranceAccessView extends StatelessWidget {
       return ListView(
         padding: const EdgeInsets.all(JentraSpacing.x6),
         children: [
-          JentraSectionHeader(
+          AuditScreenHeader(
             title: 'Audit access',
             description:
                 'Choose who can plan, run, review and respond to audits. '
                 'Each change needs multi-factor authentication from the last '
                 '15 minutes and is recorded with who made it.',
-            trailing: IconButton(
-              tooltip: 'Refresh',
-              onPressed: c.busy || !c.online ? null : c.refresh,
-              icon: const Icon(Icons.refresh),
-            ),
+            onRefresh: c.busy || !c.online ? null : c.refresh,
           ),
           const SizedBox(height: JentraSpacing.x3),
           if (c.busy) const LinearProgressIndicator(),

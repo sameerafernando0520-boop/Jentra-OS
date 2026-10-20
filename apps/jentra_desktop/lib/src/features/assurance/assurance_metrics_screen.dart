@@ -6,6 +6,7 @@ import 'package:jentra_domain/jentra_assurance.dart';
 
 import '../../app_providers.dart';
 import 'assurance_metrics_controller.dart';
+import 'assurance_widgets.dart';
 
 class AssuranceMetricsScreen extends ConsumerWidget {
   const AssuranceMetricsScreen({super.key});
@@ -74,18 +75,14 @@ class AssuranceMetricsView extends StatelessWidget {
       return ListView(
         padding: const EdgeInsets.all(JentraSpacing.x6),
         children: [
-          JentraSectionHeader(
+          AuditScreenHeader(
             title: 'Audit metrics',
             description:
                 'How audits move from planning to report, measured from '
                 'recorded events. Times show the median, with the 90th '
                 'percentile beneath. A metric with no samples shows as not '
                 'measured, never as zero.',
-            trailing: IconButton(
-              tooltip: 'Refresh',
-              onPressed: c.busy || !c.online ? null : c.load,
-              icon: const Icon(Icons.refresh),
-            ),
+            onRefresh: c.busy || !c.online ? null : c.load,
           ),
           const SizedBox(height: JentraSpacing.x4),
           Semantics(

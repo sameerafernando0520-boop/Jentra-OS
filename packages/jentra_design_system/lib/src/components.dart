@@ -250,7 +250,10 @@ class JentraSectionHeader extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: Theme.of(context).textTheme.titleLarge),
+            Semantics(
+              header: true,
+              child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+            ),
             if (description case final description?) ...[
               const SizedBox(height: JentraSpacing.x1),
               Text(
