@@ -286,12 +286,25 @@ class FakeAssuranceGateway implements AssuranceGateway {
     });
   }
 
+  final verifications = <String>[];
+  String storedOutcome = 'verified';
+
   @override
   Future<StoredEvidenceVerification> verifyEvidence(
     TenantContext s,
     String engagementId,
     String evidenceId,
-  ) => throw UnimplementedError();
+  ) async {
+    verifications.add(evidenceId);
+    return StoredEvidenceVerification.fromJson({
+      'evidence_id': evidenceId,
+      'outcome': storedOutcome,
+      'observed_sha256': storedOutcome == 'verified' ? 'a' * 64 : 'f' * 64,
+      'observed_byte_size': 21,
+      'verified_at': '2026-10-20T09:00:00Z',
+      'verifier': 'assurance-evidence-verify/v1',
+    });
+  }
 
   @override
   Future<EvidenceVerificationStatus> evidenceVerification(
@@ -319,6 +332,30 @@ class FakeAssuranceGateway implements AssuranceGateway {
       'manifest_sha256': tamperPack ? 'f' * 64 : sha,
       'manifest_bytes': bytes.length,
     });
+  }
+}
+
+class FakeDownloads implements AssuranceEvidenceDownloadGateway {
+  final asked = <(String, String, String?)>[];
+  bool mismatch = false;
+  @override
+  Future<DownloadedEvidence> download(
+    TenantContext scope,
+    String engagementId,
+    String evidenceId, {
+    String? expectedSha256,
+  }) async {
+    asked.add((engagementId, evidenceId, expectedSha256));
+    if (mismatch) {
+      throw const DomainError(
+        code: 'EVIDENCE_MISMATCH',
+        message: 'The downloaded file does not match its recorded digest. Nothing was saved.',
+      );
+    }
+    return DownloadedEvidence(
+      Uint8List.fromList(utf8.encode('signed bank letter v2')),
+      'a' * 64,
+    );
   }
 }
 
@@ -361,6 +398,7 @@ void main() {
   late AssuranceWorkspaceController c;
   var disposed = false;
   late FakeFiles files;
+  late FakeDownloads downloads;
   const auditor = {
     'assurance.evidence.request',
     'assurance.test.review',
@@ -379,6 +417,7 @@ void main() {
     canRespond: canRespond,
     capabilities: capabilities,
     files: files,
+    downloads: downloads,
     clock: () => today,
   );
   setUpAll(() async {
@@ -403,6 +442,7 @@ void main() {
     );
     gateway = FakeAssuranceGateway();
     files = FakeFiles();
+    downloads = FakeDownloads();
     c = make();
   });
   tearDown(() async {
@@ -979,6 +1019,60 @@ void main() {
     expect(c.error, isNull);
     expect(gateway.auditorCommands.single.payload['decision'], 'reject');
   });
+  Map<String, Object?> uploadedRequest({String status = 'submitted'}) => {
+    'id': uid(60),
+    'control_id': uid(30),
+    'owner_id': lead,
+    'due_date': '2026-10-25',
+    'status': status,
+    'rework_count': 0,
+    'evidence': {
+      'id': uid(61),
+      'sha256': 'a' * 64,
+      'collected_by': lead,
+      'collection_method': 'manual',
+      'source_reference': r'C:\scans\Signed bank letter.pdf',
+    },
+  };
+
+  test('a reviewer asks the server to hash a submitted upload', () async {
+    gateway.requests = [uploadedRequest()];
+    await openEngagement();
+    final r = c.view!.requests.single;
+    expect(c.view!.canVerifyStored(c.capabilities, r, actor), isTrue);
+    await c.verifyStoredEvidence(r);
+    expect(gateway.verifications, [uid(61)]);
+    expect(c.message, contains('verified'));
+    gateway.storedOutcome = 'mismatch';
+    await c.verifyStoredEvidence(r);
+    expect(c.message, contains('does not match'));
+  });
+
+  test('a matching download is saved under its recorded name', () async {
+    gateway.requests = [uploadedRequest(status: 'accepted')];
+    c.dispose();
+    c = make(capabilities: {...auditor, 'assurance.evidence.view'});
+    await openEngagement();
+    await c.downloadEvidence(c.view!.requests.single);
+    expect(c.error, isNull);
+    expect(downloads.asked.single, (eng, uid(61), 'a' * 64));
+    expect(files.path, 'C:/audit/Signed bank letter.pdf');
+    expect(utf8.decode(files.bytes!), 'signed bank letter v2');
+    expect(c.message, contains('matches the recorded SHA-256'));
+  });
+
+  test('a mismatched download saves nothing and says why', () async {
+    gateway.requests = [uploadedRequest(status: 'accepted')];
+    c.dispose();
+    c = make(capabilities: {...auditor, 'assurance.evidence.view'});
+    downloads.mismatch = true;
+    await openEngagement();
+    await c.downloadEvidence(c.view!.requests.single);
+    expect(files.path, isNull);
+    expect(c.error, contains('Nothing was saved'));
+    expect(c.accessDenied, isFalse);
+  });
+
   Future<void> render(WidgetTester t, bool dark) async {
     t.view.physicalSize = const Size(1024, 2400);
     t.view.devicePixelRatio = 1;
@@ -995,6 +1089,17 @@ void main() {
     );
     await t.pumpAndSettle();
   }
+
+  testWidgets('uploaded evidence rows offer verify and download', (t) async {
+    gateway.requests = [uploadedRequest()];
+    c.dispose();
+    c = make(capabilities: {...auditor, 'assurance.evidence.view'});
+    await t.runAsync(openEngagement);
+    await render(t, false);
+    expect(find.text('Verify file'), findsOneWidget);
+    expect(find.text('Download'), findsOneWidget);
+    expect(find.textContaining('Signed bank letter.pdf'), findsOneWidget);
+  });
 
   for (final dark in [false, true]) {
     testWidgets(

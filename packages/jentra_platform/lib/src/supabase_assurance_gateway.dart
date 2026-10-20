@@ -181,6 +181,7 @@ final class SupabaseAssuranceGateway implements AssuranceGateway {
     'ASSURANCE_ROLE_UNKNOWN' => 'Only assurance roles can be given here.',
     'ASSURANCE_SETTINGS_INVALID' => 'Check the highlighted settings.',
     'ASSURANCE_PLAN_REVISION_OPEN' => 'This plan already has an open revision.',
+    'ASSURANCE_RANGE_INVALID' => 'Choose a period of at most a year.',
     'IDEMPOTENCY_MISMATCH' =>
       'A different request already used this key. Start a new request.',
     _ => 'Check the entered details and try again.',

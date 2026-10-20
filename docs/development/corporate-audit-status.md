@@ -168,6 +168,43 @@ Plan: [A10 plan](../superpowers/plans/2026-10-20-assurance-a10-reminders.md).
 | Automated tests | domain and platform inbox/scan tests; desktop workspace 35/35 (reminders, deep link) and inbox 9/9 with 200% light/dark goldens; workspace goldens refreshed for the summary cards; analyzers clean |
 | Not done | not installed; no scheduler — reminders go out when a lead opens the workspace or presses Send reminders; e-mail delivery is out of scope |
 
+## Slice A11 — process metrics (candidate, 20 October 2026)
+
+Plan: [A11 plan](../superpowers/plans/2026-10-20-assurance-a11-metrics.md).
+
+| Category | Result |
+|---|---|
+| Problem | Nothing measured how audits run: time in each stage, how long evidence waits, how much work is finished, how findings age, or who holds the open work (blueprint §9, FR-6825) |
+| Mechanism | Candidate `supabase/candidates/20261020180000_assurance_metrics.sql`: `api.assurance_metrics(tenant, entity, branch, from, to)` (`assurance.evidence.view`; a range of at most 366 days, else `ASSURANCE_RANGE_INVALID`) over the engagements whose period overlaps the range, from immutable events and current state. Stage, issuance, evidence waiting and review times as nearest-rank median and 90th percentile; first-time-right, test completion, control coverage, retest pass rate and recurrence as rates; open-request ageing bands; finding age by severity; overdue remediation and open high-risk counts; workload for up to ten owners labelled by name or "Unlinked member ····1234", never an e-mail. Every value carries its sample count, and no samples means null ("not measured"), never zero |
+| Client | Domain `AssuranceMetrics` (fails closed on a value without samples, percentiles out of order, a rate out of range, ageing that does not add up, or an e-mail label). Platform `AssuranceMetricsGateway` (checks the range before sending and that the answer is for the period asked). Desktop **Audit metrics** (`/governance/audit/metrics`, evidence viewers): 30-day / 90-day / 12-month periods ending today, sections for stages, evidence, testing, findings and workload; each card shows the value with its unit, the samples behind it and a one-line definition; columns narrow as text grows so nothing truncates at 200% |
+| Candidate database evidence | reduced rollback suite on the development project: 24/24 at the first GREEN run; nothing installed ([record](../verification/assurance/a11-metrics-rollback-20261020.json)). CI generated from `-Slice A11 -Pgtap` |
+| Automated tests | domain 4/4, platform gateway 4/4, desktop metrics 11/11 (period dates, stale answers discarded, access loss, offline, unmeasured values, empty period, keyboard reach, 200% light/dark goldens); analyzers clean |
+| Not done | not installed; metrics are computed on request (no snapshots or trend lines); engagement-level drill-down is left for later |
+
+## Slice A12 — reviewer evidence (candidate, 20 October 2026)
+
+Plan: [A12 plan](../superpowers/plans/2026-10-20-assurance-a12-reviewer-evidence.md).
+
+| Category | Result |
+|---|---|
+| Problem | Reviewers could see an uploaded file's digest but never the file, and the desktop had no way to ask the server to re-hash a submission before accepting it |
+| Mechanism | Candidate `supabase/candidates/20261020210000_assurance_evidence_download.sql`: `api.assurance_evidence_download_ticket` (evidence viewers, or a current external team member through the A1 time-bound path; authority before lookup) issues a five-minute, one-use ticket only for an uploaded item whose stored object is still the `verified` version. Edge function `assurance-evidence-download` redeems it with the service key through `api.assurance_evidence_service_download`, which re-checks the ticket, membership and verification, and signs a 60-second URL for the generated path. Tickets are the download log (consume-only, never deleted) |
+| Client | Domain `EvidenceDownloadTicket` (https only, at most five minutes, size bounded) and `assuranceEvidenceFileName` (last path segment, Windows-safe). Platform `AssuranceEvidenceDownloadGateway` fetches the signed URL without the session header, reads at most one byte past the recorded size, hashes on the device and returns the bytes only on an exact SHA-256 and size match, also against the digest the reviewer saw. Desktop engagement view: uploaded evidence rows show the file name, **Verify file** (owner or reviewer, while submitted) and **Download** (viewers); a mismatch saves nothing and says so |
+| Candidate database evidence | reduced rollback suite on the development project: 59/59 (39 A7 storage, 20 A12) after a test-ordering fix; nothing installed ([record](../verification/assurance/a12-reviewer-evidence-rollback-20261020.json)). CI generated from `-Slice A12 -Pgtap` |
+| Automated tests | edge functions `node --test` 12/12; domain download 3/3 and auditor view (upload fields, verify/download rules); platform download 4/4; desktop workspace 39/39; full desktop suite 2115/2115; analyzers clean |
+| Not done | not installed; the edge function is not deployed and has no `config.toml` entry yet (installation step); external reviewers cannot open the desktop workspace, so their download path is server-side only |
+
+## Slice A13 — digest domain tests (20 October 2026)
+
+Plan: [A13 plan](../superpowers/plans/2026-10-20-assurance-a13-digests.md).
+
+| Category | Result |
+|---|---|
+| Problem | The evidence cutoff digest (FR-6809) and the issued report digest (FR-6818) existed only in SQL; no client could recompute them |
+| Mechanism | `jentra_domain` builds the exact texts the server hashes: `assuranceFreezeDigestText` (`id:sha256:byte_size`, ordered by id, comma-joined; refuses an empty set as the server does) and `assuranceReportDigestText` (the `jsonb::text` of the report document through `assuranceJsonbText`, which follows PostgreSQL's key order and string escaping). `jentra_platform` hashes them: `assuranceFreezeDigest`, `assuranceReportDigest` |
+| Evidence | expected texts and digests produced by the server's own SQL over literal fixtures (quotes, backslashes, tabs, newlines, a control character, non-ASCII), read-only on the development project ([record](../verification/assurance/a13-digests-20261020.json)); domain 4/4 equal texts, platform 2/2 equal digests |
+| Not done | the desktop does not yet recompute a report digest on screen (the engagement view carries current findings, not the issued snapshot) |
+
 ## Installation — development project, 18 October 2026
 
 | Category | Result |
