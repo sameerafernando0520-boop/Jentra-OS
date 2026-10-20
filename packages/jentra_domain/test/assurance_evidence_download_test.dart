@@ -53,6 +53,10 @@ void main() {
       assuranceEvidenceFileName(r'..\..\C:/Windows/evil?.pdf', uid(5)),
       'evil_.pdf',
     );
+    expect(
+      assuranceEvidenceFileName(r'C:\scans\Bank letter.pdf', uid(5)),
+      'Bank letter.pdf',
+    );
     expect(assuranceEvidenceFileName(' ... ', uid(5)), 'evidence-96000000.bin');
   });
 }

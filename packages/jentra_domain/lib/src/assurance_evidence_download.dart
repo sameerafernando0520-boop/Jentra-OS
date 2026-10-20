@@ -44,7 +44,7 @@ final class EvidenceDownloadTicket {
 /// The name to save evidence under: the last segment of its recorded source
 /// reference, with characters Windows refuses replaced.
 String assuranceEvidenceFileName(String sourceReference, String evidenceId) {
-  final last = sourceReference.split(RegExp(r'[\/]')).last;
+  final last = sourceReference.split(RegExp(r'[\\/]')).last;
   final safe = last
       .replaceAll(RegExp(r'[<>:"|?*\x00-\x1f]'), '_')
       .replaceAll(RegExp(r'^[\s.]+|[\s.]+$'), '');

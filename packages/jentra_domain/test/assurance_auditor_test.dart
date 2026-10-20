@@ -119,6 +119,30 @@ void main() {
     expect(theirs.canReview(const {}, theirs.requests.single, me), isFalse);
   });
 
+  test('uploaded evidence can be verified and downloaded', () {
+    final j = view(collectedBy: owner);
+    final r = ((j['requests']! as List)[0] as Map);
+    r['evidence'] = {
+      ...(r['evidence']! as Map),
+      'collection_method': 'manual',
+      'source_reference': 'Signed bank letter.pdf',
+    };
+    final v = AuditorEngagementView.fromJson(j);
+    final up = v.requests.single;
+    expect(up.evidenceId, uid(11));
+    expect(up.uploaded, isTrue);
+    expect(up.fileName, 'Signed bank letter.pdf');
+    expect(v.canDownload({'assurance.evidence.view'}, up), isTrue);
+    expect(v.canDownload(const {}, up), isFalse);
+    expect(v.canVerifyStored({'assurance.test.review'}, up, me), isTrue);
+    expect(v.canVerifyStored({'assurance.evidence.submit'}, up, owner), isTrue);
+    expect(v.canVerifyStored({'assurance.evidence.submit'}, up, me), isFalse);
+    final system = AuditorEngagementView.fromJson(view(collectedBy: owner));
+    expect(system.requests.single.uploaded, isFalse);
+    expect(system.canDownload(all, system.requests.single), isFalse);
+    expect(system.canVerifyStored(all, system.requests.single, me), isFalse);
+  });
+
   test('freeze, promotion and missing capability withdraw actions', () {
     final frozen = AuditorEngagementView.fromJson(view(frozen: true));
     expect(frozen.canRequestEvidence(all), isFalse);

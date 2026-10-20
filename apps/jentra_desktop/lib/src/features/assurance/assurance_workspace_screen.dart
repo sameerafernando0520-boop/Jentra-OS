@@ -432,8 +432,23 @@ class _EngagementDetailView extends StatelessWidget {
         if (v != null)
           for (final r in v.requests)
             row(
-              '${code(r.controlId)} · ${r.status.name} · due ${r.dueDate}${r.evidenceSha256 == null ? '' : ' · ${r.evidenceSha256}'}',
+              '${code(r.controlId)} · ${r.status.name} · due ${r.dueDate}'
+              '${r.uploaded && r.evidenceId != null ? ' · ${assuranceEvidenceFileName(r.fileName ?? '', r.evidenceId!)}' : ''}'
+              '${r.evidenceSha256 == null ? '' : ' · ${r.evidenceSha256}'}',
               [
+                if (v.canVerifyStored(caps, r, me))
+                  TextButton(
+                    onPressed: ready ? () => c.verifyStoredEvidence(r) : null,
+                    child: const Text('Verify file'),
+                  ),
+                if (v.canDownload(caps, r) && c.downloads != null)
+                  TextButton.icon(
+                    onPressed: ready && c.files != null
+                        ? () => c.downloadEvidence(r)
+                        : null,
+                    icon: const Icon(Icons.download_outlined, size: 18),
+                    label: const Text('Download'),
+                  ),
                 if (v.canCollect(caps, r))
                   act('Collect system snapshot', 'collect_system_evidence', {
                     'request_id': r.id,
