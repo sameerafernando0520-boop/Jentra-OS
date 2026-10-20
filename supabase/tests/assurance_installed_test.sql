@@ -1625,7 +1625,7 @@ select is((select m->>'label' from assurance_samples s, jsonb_array_elements(s.b
   'a linked member shows the employee name');
 select is((select m->>'label' from assurance_samples s, jsonb_array_elements(s.body->'members') m
   where s.label='acc.manager' and m->>'membership_id'=pg_temp.aid('auditor.m')::text),
-  'Unlinked member Â·Â·Â·Â·'||right(pg_temp.aid('auditor.m')::text,4),'an unlinked member shows a short id');
+  'Unlinked member ····'||right(pg_temp.aid('auditor.m')::text,4),'an unlinked member shows a short id');
 select pg_temp.actor('outsider');set local role authenticated;
 select throws_ok($$select pg_temp.acc()$$,'42501',null,'non-members cannot read access');
 reset role;select pg_temp.actor('foreign');set local role authenticated;
