@@ -1,4 +1,4 @@
-# Corporate Audit & Assurance — readiness matrix (20 Oct 2026, after A15 dev installation)
+# Corporate Audit & Assurance — readiness matrix (21 Oct 2026)
 
 Legend: **D** domain test · **R** candidate rollback pgTAP · **I** installed (dev = development project `xpdoufauvrbdmxgngetv`; A1–A5 on 18 Oct, version guard to A14 on 20 Oct; installed suite in CI) · **N** native authenticated · **C** contention/load · **O** owner accepted. "–" = not yet.
 
@@ -30,4 +30,16 @@ Legend: **D** domain test · **R** candidate rollback pgTAP · **I** installed (
 | FR-6824 | Desktop workspace | ✓ (workspace, planning, access, settings, metrics, inbox; 200% goldens; A14 UI/UX and accessibility pass; A16 date pickers, panels with status badges, empty and error states, one header on every audit screen) | ✓ (read models) | ✓ dev (+ two evidence edge functions) | – | – | – |
 | FR-6825 | Process metrics | ✓ (calc + parser) | ✓ (A11) | ✓ dev | – | – | – |
 
-25 of 25 requirements are installed in the development project. None is native-verified, load-tested or owner-accepted; no member holds an assurance role yet; nothing is in production.
+Installation records show all 25 requirements in development. No requirement has
+native, load or owner acceptance. The recorded member-role state has not been
+refreshed: administration access is currently unavailable. The owner authorized
+isolated development test accounts on 21 October; creation is pending reconnection.
+No production change was made in this completion run.
+
+Fresh verification: domain 500/500, platform 1,198/1,198, desktop 2,145/2,145
+including goldens (focused assurance UI 98 tests), Windows release built,
+ZIP runtime hashes 35/35, deployed development
+unauthorized-function checks 4/4, and desktop/domain/platform analysis clean.
+These results do not change N/C/O. See
+[status](corporate-audit-status.md), [screen references](../verification/assurance/screen-review-20261021.html)
+and the [production packet](../verification/assurance/production-promotion-20261021.md).

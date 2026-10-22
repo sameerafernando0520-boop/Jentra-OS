@@ -16,9 +16,15 @@ void main() {
   setUpAll(_loadTestFonts);
 
   test('CRM gating preserves the Operations navigation group — FR-383', () {
-    final visible = visibleJentraDestinations(const {});
+    final visible = visibleJentraDestinations(const {'procurement.orders.view'});
 
     expect(visible.any((item) => item.path == '/crm'), isFalse);
+    expect(
+      visibleJentraDestinations(const {}).any(
+        (item) => item.path == '/procurement',
+      ),
+      isFalse,
+    );
     expect(
       visible.firstWhere((item) => item.path == '/procurement').section,
       'OPERATIONS',
@@ -91,6 +97,21 @@ void main() {
       );
       expect(find.text('No pipeline records'), findsOneWidget);
       expect(find.text('New lead'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'CRM shows the configured production workspace label',
+    (tester) async {
+      await _pumpCrm(
+        tester,
+        repository: _FakeCrmRepository(populated: true),
+        capabilities: _viewCapabilities,
+        environment: 'production',
+      );
+      expect(find.text('Production workspace'), findsOneWidget);
+      expect(find.text('Live development data'), findsNothing);
+      expect(tester.takeException(), isNull);
     },
   );
 
@@ -240,6 +261,7 @@ Future<void> _pumpCrm(
   bool settle = true,
   Size size = const Size(1440, 900),
   JentraDensity density = JentraDensity.comfortable,
+  String environment = 'development',
 }) async {
   await tester.binding.setSurfaceSize(size);
   addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -249,8 +271,8 @@ Future<void> _pumpCrm(
       key: UniqueKey(),
       overrides: [
         runtimeConfigProvider.overrideWithValue(
-          const RuntimeConfig(
-            environment: 'development',
+          RuntimeConfig(
+            environment: environment,
             supabaseUrl: 'https://development.invalid',
             supabasePublishableKey: 'test-publishable-key',
           ),

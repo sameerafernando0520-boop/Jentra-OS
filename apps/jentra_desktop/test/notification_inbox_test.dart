@@ -127,6 +127,13 @@ void main() {
     expect(userInitials(name: null, email: null), '?');
   });
 
+  test('initials preserve complete Unicode graphemes', () {
+    expect(userInitials(name: '👩🏽‍💻 Silva'), '👩🏽‍💻S');
+    expect(userInitials(name: 'A\u0301 Silva'), 'A\u0301S');
+    expect(userInitials(name: '👩🏽‍💻'), '👩🏽‍💻');
+    expect(userInitials(email: '👩🏽‍💻.silva@example.test'), '👩🏽‍💻S');
+  });
+
   Future<void> pump(WidgetTester t, Widget child, {bool dark = false}) async {
     t.view.physicalSize = const Size(1024, 1400);
     t.view.devicePixelRatio = 1;

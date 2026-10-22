@@ -9,6 +9,59 @@ import 'package:jentra_platform/src/auth/pkce_exchange_http_client.dart';
 import 'package:jentra_platform/src/wave3_observability.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+const _stalledDeadline = Duration(seconds: 30);
+const _ioWatchdog = Duration(seconds: 10);
+
+/// Controls only the first timer with the configured PKCE deadline. The actual
+/// loopback I/O still runs normally, with bounded server-arrival watchdogs.
+/// Expiring after arrival proves the intended stalled phase without requiring
+/// the OS to establish a connection before a 120 ms wall-clock deadline.
+final class _DeadlineControl {
+  _ControlledTimer? _timer;
+
+  Future<T> run<T>(Future<T> Function() action) => runZoned(
+    action,
+    zoneSpecification: ZoneSpecification(
+      createTimer: (self, parent, zone, duration, callback) {
+        if (duration == _stalledDeadline && _timer == null) {
+          return _timer = _ControlledTimer(callback);
+        }
+        return parent.createTimer(zone, duration, callback);
+      },
+    ),
+  );
+
+  void expire() {
+    expect(_timer, isNotNull, reason: 'PKCE must schedule its deadline');
+    expect(_timer!.isActive, isTrue);
+    _timer!.fire();
+  }
+}
+
+final class _ControlledTimer implements Timer {
+  _ControlledTimer(this._callback);
+
+  final void Function() _callback;
+  bool _active = true;
+  int _tick = 0;
+
+  @override
+  bool get isActive => _active;
+
+  @override
+  int get tick => _tick;
+
+  @override
+  void cancel() => _active = false;
+
+  void fire() {
+    if (!_active) return;
+    _active = false;
+    _tick = 1;
+    _callback();
+  }
+}
+
 final class _Storage implements GotrueAsyncStorage {
   final values = <String, String>{};
   @override
@@ -86,7 +139,8 @@ void main() {
       () async {
         final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
         final base = 'http://127.0.0.1:${server.port}';
-        final client = _client(base);
+        final client = _client(base, deadline: _stalledDeadline);
+        final deadline = _DeadlineControl();
         final arrived = Completer<void>(),
             release = Completer<void>(),
             sent = Completer<void>();
@@ -98,13 +152,14 @@ void main() {
           try {
             await request.drain<void>();
             request.response.headers.contentType = ContentType.json;
+            final session = _session();
             if (bodyStall) {
-              request.response.write('{"access_token":');
+              request.response.write(session.substring(0, 1));
               await request.response.flush();
             }
             arrived.complete();
             await release.future;
-            request.response.write(_session());
+            request.response.write(bodyStall ? session.substring(1) : session);
             await request.response.close();
           } on Object {
             // Expected disconnect from the aborted local synthetic transport.
@@ -114,11 +169,11 @@ void main() {
         });
         try {
           await _verifier(client);
-          final exchange = client.auth.exchangeCodeForSession(
-            'synthetic-code-only',
+          final exchange = deadline.run(
+            () => client.auth.exchangeCodeForSession('synthetic-code-only'),
           );
           final rejected = expectLater(
-            exchange.timeout(const Duration(seconds: 3)),
+            exchange.timeout(_ioWatchdog),
             throwsA(
               isA<AuthException>().having(
                 (e) => e.message,
@@ -127,10 +182,11 @@ void main() {
               ),
             ),
           );
-          await arrived.future.timeout(const Duration(seconds: 2));
+          await arrived.future.timeout(_ioWatchdog);
+          deadline.expire();
           await rejected;
           release.complete();
-          await sent.future.timeout(const Duration(seconds: 2));
+          await sent.future.timeout(_ioWatchdog);
           expect(client.auth.currentSession, isNull);
           expect(events, isNot(contains(AuthChangeEvent.signedIn)));
         } finally {
@@ -154,16 +210,29 @@ void main() {
         socket.listen((_) {}, onError: (_) {});
         if (!connected.isCompleted) connected.complete();
       });
-      final client = _client('https://127.0.0.1:${server.port}');
+      final client = _client(
+        'https://127.0.0.1:${server.port}',
+        deadline: _stalledDeadline,
+      );
+      final deadline = _DeadlineControl();
       try {
         await _verifier(client);
         final rejected = expectLater(
-          client.auth
-              .exchangeCodeForSession('synthetic-code-only')
-              .timeout(const Duration(seconds: 3)),
-          throwsA(isA<AuthException>()),
+          deadline
+              .run(
+                () => client.auth.exchangeCodeForSession('synthetic-code-only'),
+              )
+              .timeout(_ioWatchdog),
+          throwsA(
+            isA<AuthException>().having(
+              (e) => e.message,
+              'safe error',
+              contains('PKCE_EXCHANGE_DEADLINE_EXCEEDED'),
+            ),
+          ),
         );
-        await connected.future.timeout(const Duration(seconds: 2));
+        await connected.future.timeout(_ioWatchdog);
+        deadline.expire();
         await rejected;
         expect(client.auth.currentSession, isNull);
       } finally {

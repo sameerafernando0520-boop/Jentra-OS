@@ -1,7 +1,47 @@
-# Corporate Audit & Assurance — status, 18 October 2026
+# Corporate Audit & Assurance — status, 21 October 2026
 
-**Jentra OS remains incomplete. Corporate Audit & Assurance (A1–A5) is installed in the development project only (2026-10-18); nothing is in production.** The per-slice "Installed behaviour" rows below record the state at the time of each candidate run; the installation section near the end supersedes them.
+**Assurance installation is recorded through A14 on development project `xpdoufauvrbdmxgngetv`; A16 presentation changes are built. Production deployment and acceptance remain open.** The per-slice rows below are historical; the installation sections supersede their original candidate-only state. No production change was made in the 21 October completion work.
 Spec: [blueprint 68](../blueprint/68_CORPORATE_AUDIT_ASSURANCE_SPEC.md).
+
+## Completion verification, 21 October 2026
+
+- The intermittent PKCE test now controls deadline expiry after the real local
+  connection reaches the stalled phase. Exact error, no-session and no-late-sign-in
+  assertions remain; production authentication code is unchanged. Focused tests
+  passed twice (6/6 each), the full platform suite passed 1,198/1,198 and domain
+  tests passed 500/500. The complete desktop suite passed 2,145/2,145 including
+  goldens; all 460 pre-existing failure images match their before-run hashes.
+  Analysis of all source and tests in the desktop, domain and platform packages
+  returned no issues (exit 0).
+- A fresh development Windows release was built and [packaged](../../build/assurance-release-20261021/Jentra-OS-Assurance-development-Windows.zip).
+  All 35 runtime files in the ZIP matched the build hashes. This is build evidence;
+  authenticated native use remains pending.
+- [Live development endpoint checks](../verification/assurance/dev-endpoints-20261021.json)
+  passed 4/4: both evidence functions returned 401 for missing and invalid bearer
+  tokens. These checks do not establish successful authenticated storage operations.
+- The Firebase admin key is ignored by `*firebase-adminsdk*.json`, and is untracked.
+  No credentials were read, staged or included in the package. Applied migration
+  text and ledger history were preserved; the recorded final-newline difference is
+  documented as nonfunctional.
+- [Screen references for review](../verification/assurance/screen-review-20261021.html)
+  contain 12 offline widget-test images. A focused assurance UI run passed 98 tests.
+  Screen-reader, authenticated native and owner acceptance remain separate.
+- The [production review packet](../verification/assurance/production-promotion-20261021.md)
+  includes ordered hashes for 15 migrations and the function bundles. Production
+  target, approval and acceptance are pending.
+
+The owner authorized creating development test accounts on 21 October. The
+provisioning attempt could not complete: the token environment override is invalid;
+with that override temporarily omitted, the saved login receives HTTP 403 for the
+explicit development project. No Supabase database tools are exposed in this chat,
+and the browser dashboard connection timed out. Public
+Auth settings were checked: email confirmation is required and anonymous sign-in
+is disabled. Restore the administration connection before provisioning confirmed
+accounts in a dedicated synthetic tenant. Do not alter existing business members
+or weaken Auth settings. A resumable [fixture script](../../tools/assurance/create_dev_test_account.ps1)
+retains a Windows-DPAPI-protected checkpoint under ignored `build/assurance-private/`;
+it was syntax-checked and stops when project administration is unavailable. The
+role/catalogue counts below were not refreshed today.
 
 ## Current-state inventory (read-only, dev project `xpdoufauvrbdmxgngetv`)
 

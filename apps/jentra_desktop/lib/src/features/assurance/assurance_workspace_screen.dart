@@ -135,6 +135,16 @@ class AssuranceWorkspace extends StatelessWidget {
                   enabled: c.verified && !c.pending,
                 ),
               if (mine &&
+                  i.kind == 'finding' &&
+                  i.status == 'remediating' &&
+                  i.ownerId == c.scope.actorId &&
+                  c.capabilities.contains('assurance.remediation.manage'))
+                action(
+                  'Submit remediation',
+                  () => c.startRemediation(i),
+                  enabled: c.verified && c.online && !c.commandPending,
+                ),
+              if (mine &&
                   c.evidenceFiles != null &&
                   c.capabilities.contains(
                     AssuranceWorkspaceController.submitCapability,
@@ -501,12 +511,35 @@ class _EngagementDetailView extends StatelessWidget {
           ),
         ),
         heading('Controls'),
+        if (v != null && v.canMapControl(caps))
+          Align(
+            alignment: Alignment.centerLeft,
+            child: OutlinedButton.icon(
+              onPressed: ready && c.setupChoices('map_control').isNotEmpty
+                  ? () => c.startCommand('map_control', {
+                      'control_code': '',
+                      'title': '',
+                      'owner_id': '',
+                      'risk': 'medium',
+                    })
+                  : null,
+              icon: const Icon(Icons.add),
+              label: const Text('Add control'),
+            ),
+          ),
+        if (v != null && v.controls.isEmpty)
+          none(
+            'Add a control and choose its independent owner before starting fieldwork.',
+          ),
         if (v != null)
           for (final x in v.controls)
             AuditItemPanel(
               title: '${x.code} · ${x.title}',
               badges: [
                 auditBadge(x.risk, label: '${auditLabel(x.risk.name)} risk'),
+              ],
+              details: [
+                if (c.people != null) 'Owner: ${c.personLabel(x.ownerId)}',
               ],
               actions: [
                 if (v.canRequestEvidence(caps))
@@ -535,6 +568,66 @@ class _EngagementDetailView extends StatelessWidget {
                   }),
               ],
             ),
+        if (v != null &&
+            (v.canAddTeamMember(caps) || v.canRevokeTeamMember(caps))) ...[
+          heading('Engagement team'),
+          Text('Lead auditor: ${c.personLabel(v.leadAuditorId)}'),
+          const SizedBox(height: JentraSpacing.x2),
+          const Text(
+            'Auditors and reviewers must be independent of control and evidence owners. External reviewers receive read-only access with an expiry date.',
+          ),
+          if (c.peopleError != null)
+            AuditNotice(c.peopleError!, tone: JentraStatusTone.warning),
+          if (c.people?.truncated == true)
+            const AuditNotice(
+              'The member list is limited to 500 people. Ask an administrator if the person you need is missing.',
+              tone: JentraStatusTone.info,
+            ),
+          Wrap(
+            spacing: JentraSpacing.x2,
+            runSpacing: JentraSpacing.x2,
+            children: [
+              if (v.canAddTeamMember(caps))
+                OutlinedButton.icon(
+                  onPressed:
+                      ready && c.setupChoices('add_team_member').isNotEmpty
+                      ? () => c.startCommand('add_team_member', {
+                          'user_id': '',
+                          'role': 'auditor',
+                        })
+                      : null,
+                  icon: const Icon(Icons.person_add_outlined),
+                  label: const Text('Add team member'),
+                ),
+              if (v.canRevokeTeamMember(caps))
+                OutlinedButton.icon(
+                  onPressed:
+                      ready && c.setupChoices('revoke_team_member').isNotEmpty
+                      ? () => c.startCommand('revoke_team_member', {
+                          'user_id': '',
+                          'reason': '',
+                        })
+                      : null,
+                  icon: const Icon(Icons.person_remove_outlined),
+                  label: const Text('Remove team member'),
+                ),
+            ],
+          ),
+          if (c.membershipEvents.isNotEmpty) ...[
+            const SizedBox(height: JentraSpacing.x2),
+            const Text('Membership history'),
+            for (final event in c.membershipEvents)
+              AuditItemPanel(
+                title: c.personLabel(event.aggregateId),
+                details: [
+                  event.action == 'add_team_member'
+                      ? 'Added to engagement'
+                      : 'Removed from engagement',
+                  auditDateTime(event.occurredAt.toIso8601String()),
+                ],
+              ),
+          ],
+        ],
         heading('Evidence requests'),
         if (v != null && v.requests.isEmpty) none('No evidence requested.'),
         if (v != null)
@@ -549,6 +642,18 @@ class _EngagementDetailView extends StatelessWidget {
               ],
               digest: r.evidenceSha256,
               actions: [
+                if (v.canCancelRequest(caps, r))
+                  act('Cancel request', 'cancel_request', {
+                    'request_id': r.id,
+                    'reason': '',
+                    'label': code(r.controlId),
+                  }),
+                if (v.canRunMonitoring(caps, r))
+                  act('Run monitoring checks', 'run_monitoring', {
+                    'evidence_id': r.evidenceId,
+                    'control_id': r.controlId,
+                    'label': '${code(r.controlId)} · ${r.sourceKind}',
+                  }),
                 if (v.canVerifyStored(caps, r, me))
                   TextButton(
                     onPressed: ready ? () => c.verifyStoredEvidence(r) : null,
@@ -637,6 +742,20 @@ class _EngagementDetailView extends StatelessWidget {
               ],
             ),
         heading('Findings'),
+        if (v != null && v.canCarryForward(caps))
+          Align(
+            alignment: Alignment.centerLeft,
+            child: OutlinedButton.icon(
+              onPressed: ready
+                  ? () => c.startCommand('carry_forward', {
+                      'source_finding_id': '',
+                      'control_id': v.controls.first.id,
+                    })
+                  : null,
+              icon: const Icon(Icons.forward_to_inbox_outlined),
+              label: const Text('Carry forward finding'),
+            ),
+          ),
         if (rows('findings').isEmpty) none('No findings issued.'),
         if (v == null)
           for (final x in rows('findings'))
@@ -653,6 +772,13 @@ class _EngagementDetailView extends StatelessWidget {
               title: f.title,
               badges: [auditBadge(f.severity), auditBadge(f.status)],
               actions: [
+                if (v.canSubmitRemediation(caps, f, me))
+                  act('Submit remediation', 'submit_remediation', {
+                    'finding_id': f.id,
+                    'evidence_sha256': '',
+                    'note': '',
+                    'label': f.title,
+                  }),
                 if (v.canDecideRisk(caps, f, me))
                   act('Decide risk', 'decide_risk', {
                     'finding_id': f.id,
@@ -691,6 +817,41 @@ class _EngagementDetailView extends StatelessWidget {
               'label': 'Report version ${report.version}',
             }),
           ),
+        if (caps.contains('assurance.retention.manage')) ...[
+          heading('Retention holds'),
+          const Text(
+            'A hold protects this engagement from disposal. Releasing it needs recent multi-factor authentication and a different reviewer from the person who placed it.',
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: act('Place retention hold', 'place_hold', {'reason': ''}),
+          ),
+          if (c.activeHolds.isEmpty) none('No active retention holds.'),
+          for (final hold in c.activeHolds)
+            AuditItemPanel(
+              title:
+                  'Hold placed ${auditDateTime(hold.occurredAt.toIso8601String())}',
+              badges: const [
+                JentraStatusBadge(
+                  label: 'Held',
+                  tone: JentraStatusTone.warning,
+                ),
+              ],
+              details: [
+                hold.actorId == me
+                    ? 'Placed by you · another reviewer must release it'
+                    : 'Independent release available',
+              ],
+              actions: [
+                if (hold.actorId != me)
+                  act('Release hold', 'release_hold', {
+                    'hold_id': hold.aggregateId,
+                    'reason': '',
+                    'label': 'Hold placed ${auditDate(hold.occurredAt)}',
+                  }),
+              ],
+            ),
+        ],
         heading('History'),
         JentraPanel(
           padding: const EdgeInsets.all(JentraSpacing.x4),
@@ -730,8 +891,9 @@ class _CommandCard extends StatelessWidget {
     final c = controller, theme = Theme.of(context), a = c.commandAction!;
     final f = c.commandForm, locked = c.commandPending || c.busy;
     final id = f[a.aggregateKey];
+    final target = c.view?.id == f['engagement_id'] ? c.view : null;
     Widget text(String key, String label, {int lines = 1}) => TextFormField(
-      key: ValueKey('$key-$id'),
+      key: ValueKey('$key-$id-${f['${key}_editor_revision'] ?? ''}'),
       initialValue: f[key] as String?,
       enabled: !c.commandPending && !c.busy,
       maxLines: lines,
@@ -758,6 +920,52 @@ class _CommandCard extends StatelessWidget {
       'high': 'High',
       'critical': 'Critical',
     };
+    Widget person(String key, String label) {
+      final people = c.setupChoices(a.action);
+      final current = f[key] as String?;
+      return DropdownButtonFormField<String>(
+        key: ValueKey('setup-person-$key'),
+        initialValue: people.any((p) => p.userId == current) ? current : null,
+        isExpanded: true,
+        decoration: InputDecoration(
+          labelText: label,
+          helperText: people.isEmpty
+              ? 'No eligible person is available. Refresh the member list.'
+              : null,
+        ),
+        items: [
+          for (final p in people)
+            DropdownMenuItem(
+              value: p.userId,
+              child: Text(p.label, overflow: TextOverflow.ellipsis),
+            ),
+        ],
+        onChanged: locked || people.isEmpty
+            ? null
+            : (value) {
+                if (value != null) c.commandField(key, value);
+              },
+      );
+    }
+
+    Widget workpaper(String field, String label) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        text(field, label),
+        if (c.evidenceFiles != null)
+          TextButton.icon(
+            onPressed: locked ? null : () => c.chooseCommandWorkpaper(field),
+            icon: const Icon(Icons.attach_file),
+            label: const Text('Choose file to calculate its SHA-256'),
+          ),
+        if (f['${field}_file_name'] != null)
+          Text('Selected: ${f['${field}_file_name']}'),
+        const Text(
+          'Only the file fingerprint is recorded here. Keep the workpaper with your protected audit records.',
+        ),
+      ],
+    );
+
     return Padding(
       padding: const EdgeInsets.only(top: JentraSpacing.x4),
       child: JentraPanel(
@@ -771,6 +979,218 @@ class _CommandCard extends StatelessWidget {
             Text('${f['label'] ?? ''}'),
             const SizedBox(height: 8),
             ...switch (a.action) {
+              'submit_remediation' => [
+                workpaper('evidence_sha256', 'Remediation evidence SHA-256'),
+                text(
+                  'note',
+                  'What was remediated and where the evidence is held',
+                  lines: 3,
+                ),
+                const Text(
+                  'Sends the finding for an independent retest. You cannot retest your own remediation.',
+                ),
+              ],
+              'cancel_request' => [
+                text(
+                  'reason',
+                  'Why this evidence is no longer needed',
+                  lines: 2,
+                ),
+                const Text(
+                  'Cancels this open request and keeps its history. Submitted or frozen evidence cannot be cancelled.',
+                ),
+              ],
+              'place_hold' => [
+                text('reason', 'Reason for the retention hold', lines: 3),
+                const Text(
+                  'Protects this engagement from disposal until a different authorised reviewer releases the hold.',
+                ),
+              ],
+              'release_hold' => [
+                text('reason', 'Reason for releasing the hold', lines: 3),
+                const Text(
+                  'Releases this hold. The hold and release remain in the audit history.',
+                ),
+              ],
+              'run_monitoring' => [
+                const Text(
+                  'Runs the configured checks over this immutable system snapshot. New matches become candidate exceptions for independent review; they are never issued as findings automatically.',
+                ),
+              ],
+              'carry_forward' => [
+                DropdownButtonFormField<String>(
+                  key: ValueKey('carry-source-${f['source_engagement_id']}'),
+                  initialValue:
+                      (c.carrySource?.id == f['source_engagement_id'] ||
+                          c.carrySources.any(
+                            (source) => source.id == f['source_engagement_id'],
+                          ))
+                      ? f['source_engagement_id'] as String
+                      : null,
+                  isExpanded: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Source engagement',
+                  ),
+                  items: [
+                    if (c.carrySource != null &&
+                        !c.carrySources.any(
+                          (source) => source.id == c.carrySource!.id,
+                        ))
+                      DropdownMenuItem(
+                        value: c.carrySource!.id,
+                        child: Text(
+                          c.carrySourceName ?? 'Saved source engagement',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    for (final source in c.carrySources)
+                      DropdownMenuItem(
+                        value: source.id,
+                        child: Text(
+                          source.name,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                  ],
+                  onChanged: locked
+                      ? null
+                      : (value) {
+                          if (value != null) c.loadCarrySource(value);
+                        },
+                ),
+                if (c.cursor != null)
+                  TextButton(
+                    onPressed: locked ? null : c.moreEngagements,
+                    child: const Text('Load more source engagements'),
+                  ),
+                if (c.carrySources.isEmpty && c.carrySource == null)
+                  const Text(
+                    'No issued or archived engagements are loaded in this branch.',
+                  ),
+                if (c.carrySource != null) ...[
+                  const SizedBox(height: JentraSpacing.x2),
+                  DropdownButtonFormField<String>(
+                    key: ValueKey('carry-finding-${c.carrySource!.id}'),
+                    initialValue:
+                        c.carryFindings.any(
+                          (finding) => finding.id == f['source_finding_id'],
+                        )
+                        ? f['source_finding_id'] as String
+                        : null,
+                    isExpanded: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Open finding',
+                    ),
+                    items: [
+                      for (final finding in c.carryFindings)
+                        DropdownMenuItem(
+                          value: finding.id,
+                          child: Text(
+                            finding.title,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                    ],
+                    onChanged: locked
+                        ? null
+                        : (value) {
+                            if (value != null) {
+                              c.commandField('source_finding_id', value);
+                            }
+                          },
+                  ),
+                  if (c.carryFindings.isEmpty)
+                    const Text(
+                      'This engagement has no open findings eligible for carry-forward.',
+                    ),
+                ],
+                const SizedBox(height: JentraSpacing.x2),
+                DropdownButtonFormField<String>(
+                  key: ValueKey('carry-control-${f['engagement_id']}'),
+                  initialValue:
+                      (target?.controls ?? const <AuditorControl>[]).any(
+                        (control) => control.id == f['control_id'],
+                      )
+                      ? f['control_id'] as String
+                      : null,
+                  isExpanded: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Control in this engagement',
+                  ),
+                  items: [
+                    for (final control
+                        in target?.controls ?? const <AuditorControl>[])
+                      DropdownMenuItem(
+                        value: control.id,
+                        child: Text(
+                          '${control.code} · ${control.title}',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                  ],
+                  onChanged: locked
+                      ? null
+                      : (value) {
+                          if (value != null) {
+                            c.commandField('control_id', value);
+                          }
+                        },
+                ),
+                const Text(
+                  'Creates a linked finding with its original owner and severity. The source history stays intact. A finding can be carried forward once.',
+                ),
+                if (target == null)
+                  const AuditNotice(
+                    'Refresh to load the saved engagement before editing this draft.',
+                    tone: JentraStatusTone.warning,
+                  ),
+              ],
+              'map_control' => [
+                text('control_code', 'Control code, e.g. TRS-SIGN'),
+                text('title', 'Control title'),
+                person('owner_id', 'Control owner'),
+                const SizedBox(height: JentraSpacing.x2),
+                const Text('Control risk'),
+                choice('risk', severities),
+                const Text(
+                  'The control owner is responsible for its evidence and cannot be part of this engagement’s audit team.',
+                ),
+              ],
+              'add_team_member' => [
+                person('user_id', 'Team member'),
+                const SizedBox(height: JentraSpacing.x2),
+                const Text('Engagement role'),
+                choice('role', const {
+                  'auditor': 'Auditor',
+                  'reviewer': 'Reviewer',
+                  'external': 'External reviewer',
+                }),
+                if (f['role'] == 'external') ...[
+                  const SizedBox(height: JentraSpacing.x3),
+                  AuditDateField(
+                    key: ValueKey('expires_at-$id'),
+                    label: 'Access ends on (UTC)',
+                    value: f['expires_at'] as String?,
+                    firstDate: _plusDays(c.today, 1),
+                    lastDate: _plusDays(c.today, 90),
+                    enabled: !locked,
+                    onChanged: (value) => c.commandField('expires_at', value),
+                  ),
+                  const Text(
+                    'Read-only access ends at 00:00 UTC on this date, within 90 days. The person also needs the external reviewer role in Audit access.',
+                  ),
+                ] else
+                  const Text(
+                    'Adds this person to the engagement. Their organisation role controls which audit actions they may perform.',
+                  ),
+              ],
+              'revoke_team_member' => [
+                person('user_id', 'Team member to remove'),
+                text('reason', 'Reason for removing access', lines: 2),
+                const Text(
+                  'Removes this person’s engagement membership immediately. Their previous work remains in history. The lead auditor cannot be removed.',
+                ),
+              ],
               'request_evidence' => [
                 AuditDateField(
                   key: ValueKey('due_date-$id'),
@@ -845,7 +1265,7 @@ class _CommandCard extends StatelessWidget {
                   'pass': 'Pass — close the finding',
                   'fail': 'Fail — back to remediation',
                 }),
-                text('evidence_sha256', 'Retest evidence SHA-256'),
+                workpaper('evidence_sha256', 'Retest evidence SHA-256'),
                 text('note', 'Note', lines: 2),
               ],
               'reopen_finding' => [text('reason', 'Reason', lines: 2)],
@@ -865,7 +1285,7 @@ class _CommandCard extends StatelessWidget {
                   'effective': 'Effective',
                   'ineffective': 'Ineffective',
                 }),
-                text('workpaper_sha256', 'Workpaper SHA-256'),
+                workpaper('workpaper_sha256', 'Workpaper SHA-256'),
                 const Text(
                   'Every sampled item must be tested; exceptions require an ineffective conclusion.',
                 ),
@@ -904,7 +1324,13 @@ class _CommandCard extends StatelessWidget {
               children: [
                 FilledButton(
                   onPressed:
-                      c.busy || !c.online || !c.verified || c.commandConflicted
+                      c.busy ||
+                          !c.online ||
+                          !c.verified ||
+                          c.commandConflicted ||
+                          (a.action == 'carry_forward' &&
+                              target == null &&
+                              !c.commandPending)
                       ? null
                       : c.submitCommand,
                   child: Text(

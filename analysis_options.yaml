@@ -5,3 +5,6 @@ analyzer:
     # Preserved verification evidence (probes and "before" snapshots of
     # superseded source). They are records, not buildable code.
     - docs/**
+    # Generated release snapshots and packaged evidence are not workspace source.
+    - build/**
+    - dist/**

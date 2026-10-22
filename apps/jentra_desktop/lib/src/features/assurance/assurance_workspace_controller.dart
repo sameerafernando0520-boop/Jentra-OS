@@ -11,6 +11,7 @@ import 'package:jentra_platform/jentra_platform.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../app_providers.dart';
+import 'assurance_people_provider.dart';
 import 'reminder_scan_log.dart';
 
 export 'reminder_scan_log.dart';
@@ -60,6 +61,7 @@ final assuranceWorkspaceControllerProvider =
         downloads: ref.watch(assuranceEvidenceDownloadGatewayProvider),
         reminders: ref.watch(assuranceReminderGatewayProvider),
         scanLog: ref.watch(reminderScanLogProvider),
+        people: ref.watch(assurancePeopleGatewayProvider),
       );
       ref.listen(
         connectivityStateProvider,
@@ -87,8 +89,10 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
     this.downloads,
     this.reminders,
     this.scanLog,
+    AssurancePeopleGateway? people,
     DateTime Function()? clock,
-  }) : _clock = clock ?? DateTime.now;
+  }) : _peopleGateway = people,
+       _clock = clock ?? DateTime.now;
 
   /// Reminder delivery is for engagement managers (A10).
   static const remindCapability = 'assurance.engagement.manage';
@@ -119,6 +123,9 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
     'execute_test': ['run_id'],
     'issue_report': ['report_id'],
     'retest': ['retest_id'],
+    'map_control': ['control_id'],
+    'place_hold': ['hold_id'],
+    'carry_forward': ['finding_id', 'exception_id'],
   };
 
   /// Form fields entered as text but sent as whole numbers.
@@ -139,9 +146,180 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
   final AssuranceEvidenceDownloadGateway? downloads;
   final AssuranceReminderGateway? reminders;
   final ReminderScanLog? scanLog;
+  final AssurancePeopleGateway? _peopleGateway;
   final DateTime Function() _clock;
 
+  AssurancePeople? people;
+  String? peopleError;
+
+  String personLabel(String userId) =>
+      people?.labelOf(userId) ??
+      'Member ····${userId.substring(userId.length - 4)}';
+
+  /// The installed detail API exposes membership events, not a team roster.
+  /// Keep this labelled as history; roles and expiry are not inferred.
+  List<AssuranceEvent> get membershipEvents => [
+    for (final row in detail?['events'] as List? ?? const [])
+      if (row is Map &&
+          const {
+            'add_team_member',
+            'revoke_team_member',
+          }.contains(row['action']))
+        AssuranceEvent.fromJson(row.cast<String, Object?>()),
+  ];
+
+  Set<String> get _everTeamIds => {
+    ?view?.leadAuditorId,
+    for (final event in membershipEvents) event.aggregateId,
+  };
+
+  List<AssurancePerson> setupChoices(String action) {
+    final members = people?.members ?? const <AssurancePerson>[];
+    final v = view;
+    if (v == null) return const [];
+    final owners = {
+      for (final control in v.controls) control.ownerId,
+      for (final request in v.requests) request.ownerId,
+    };
+    if (action == 'map_control') {
+      return members.where((p) => !_everTeamIds.contains(p.userId)).toList();
+    }
+    if (action == 'add_team_member') {
+      return members
+          .where(
+            (p) =>
+                !owners.contains(p.userId) && !_everTeamIds.contains(p.userId),
+          )
+          .toList();
+    }
+    final membership = <String, bool>{};
+    for (final event in membershipEvents) {
+      membership[event.aggregateId] = event.action == 'add_team_member';
+    }
+    return members
+        .where(
+          (p) => p.userId != v.leadAuditorId && membership[p.userId] == true,
+        )
+        .toList();
+  }
+
   bool sendingReminders = false;
+  List<AssuranceEvent> get activeHolds {
+    final holds = <String, AssuranceEvent>{};
+    for (final row in detail?['events'] as List? ?? const []) {
+      if (row is! Map) continue;
+      if (row['action'] == 'place_hold') {
+        final event = AssuranceEvent.fromJson(row.cast<String, Object?>());
+        holds[event.aggregateId] = event;
+      } else if (row['action'] == 'release_hold') {
+        holds.remove(row['aggregate_id']);
+      }
+    }
+    return holds.values.toList();
+  }
+
+  AuditorEngagementView? carrySource;
+  String? carrySourceName;
+
+  List<AssuranceEngagementSummary> get carrySources => engagements
+      .where(
+        (e) =>
+            e.id != view?.id &&
+            const {
+              EngagementStatus.issued,
+              EngagementStatus.archived,
+            }.contains(e.status),
+      )
+      .toList();
+
+  List<AuditorFinding> get carryFindings =>
+      (carrySource?.findings ?? const <AuditorFinding>[])
+          .where(
+            (f) =>
+                f.status != FindingStatus.closed &&
+                f.status != FindingStatus.riskAccepted &&
+                !_everTeamIds.contains(f.ownerId),
+          )
+          .toList();
+
+  Future<void> loadCarrySource(String id) => _run(() async {
+    if (!verified ||
+        !online ||
+        commandPending ||
+        commandForm['action'] != 'carry_forward' ||
+        !carrySources.any((e) => e.id == id)) {
+      return;
+    }
+    final epoch = _epoch;
+    final data = await gateway.engagement(scope, id);
+    final source = AuditorEngagementView.fromJson(data);
+    if (!_current(epoch) || commandForm['action'] != 'carry_forward') return;
+    if (!const {
+      EngagementStatus.issued,
+      EngagementStatus.archived,
+    }.contains(source.status)) {
+      throw const FormatException(
+        'Choose an issued or archived source engagement.',
+      );
+    }
+    carrySource = source;
+    carrySourceName = (data['engagement'] as Map)['name'] as String;
+    commandForm = {
+      ...commandForm,
+      'source_engagement_id': id,
+      'source_finding_id': '',
+    };
+  });
+
+  Future<void> startRemediation(AssuranceWorkItem item) async {
+    if (busy ||
+        !verified ||
+        !online ||
+        item.kind != 'finding' ||
+        item.status != 'remediating' ||
+        item.ownerId != scope.actorId ||
+        !capabilities.contains('assurance.remediation.manage')) {
+      return;
+    }
+    await open(item.engagementId);
+    if (!verified || view?.id != item.engagementId) return;
+    final finding = view!.findings
+        .where((f) => f.id == item.itemId)
+        .firstOrNull;
+    if (finding == null ||
+        !view!.canSubmitRemediation(capabilities, finding, scope.actorId)) {
+      return;
+    }
+    await startCommand('submit_remediation', {
+      'finding_id': finding.id,
+      'evidence_sha256': '',
+      'note': '',
+      'label': finding.title,
+    });
+  }
+
+  Future<void> chooseCommandWorkpaper(String digestField) => _run(() async {
+    if (!verified ||
+        !online ||
+        commandPending ||
+        !commanding ||
+        evidenceFiles == null ||
+        !const {'evidence_sha256', 'workpaper_sha256'}.contains(digestField) ||
+        !commandAction!.fields.contains(digestField)) {
+      return;
+    }
+    final epoch = _epoch;
+    final picked = await evidenceFiles!.choose();
+    if (picked == null || !_current(epoch)) return;
+    commandForm = {
+      ...commandForm,
+      digestField: picked.sha256,
+      '${digestField}_file_name': picked.name,
+      // Recreate only the field changed by the picker. Manual typing keeps
+      // its editor and selection while this programmatic value is displayed.
+      '${digestField}_editor_revision': _uuid.v4(),
+    };
+  });
   String? reminderMessage, reminderError;
 
   bool get canSendReminders =>
@@ -194,6 +372,10 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
     detail = null;
     view = null;
     pack = null;
+    people = null;
+    peopleError = null;
+    carrySource = null;
+    carrySourceName = null;
   }
 
   void setOnline(bool value) {
@@ -266,6 +448,23 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
     if (!_current(epoch)) return;
     engagements = page.items;
     cursor = page.nextCursor;
+    await _restoreCarryForward(epoch);
+    if (!_current(epoch)) return;
+    if (capabilities.contains('assurance.engagement.manage')) {
+      final directory = _peopleGateway;
+      try {
+        final found = await directory?.people(scope);
+        if (!_current(epoch)) return;
+        people = found;
+        peopleError = found == null
+            ? 'The member list is unavailable. Refresh before changing controls or team access.'
+            : null;
+      } catch (_) {
+        if (!_current(epoch)) return;
+        people = null;
+        peopleError = 'The member list could not be loaded. Refresh to choose people by name.';
+      }
+    }
     // A lead's first visit of the day reminds the scope; it never blocks the
     // queue and a failure is shown, not retried.
     final log = scanLog;
@@ -282,6 +481,38 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
   });
 
   Future<void> refresh() => initialize();
+
+  /// A saved carry-forward draft needs its verified target controls and source
+  /// findings before it can be edited again. Loading this context must never
+  /// rewrite the saved form or the payload of an uncertain command.
+  Future<void> _restoreCarryForward(int epoch) async {
+    if (commandForm['action'] != 'carry_forward') return;
+    carrySource = null;
+    carrySourceName = null;
+    final targetId = commandForm['engagement_id'];
+    if (targetId is! String) return;
+    final (targetDetail, targetView) = await _load(targetId);
+    if (!_current(epoch) || commandForm['engagement_id'] != targetId) return;
+    detail = targetDetail;
+    view = targetView;
+    final sourceId = commandForm['source_engagement_id'];
+    if (sourceId is! String || sourceId.isEmpty || sourceId == targetId) return;
+    final sourceDetail = await gateway.engagement(scope, sourceId);
+    final source = AuditorEngagementView.fromJson(sourceDetail);
+    if (!_current(epoch) || commandForm['source_engagement_id'] != sourceId) {
+      return;
+    }
+    if (!const {
+      EngagementStatus.issued,
+      EngagementStatus.archived,
+    }.contains(source.status)) {
+      throw const FormatException(
+        'The saved source engagement is no longer issued or archived. Choose another source.',
+      );
+    }
+    carrySource = source;
+    carrySourceName = (sourceDetail['engagement'] as Map)['name'] as String;
+  }
 
   /// Sends reminders for every due-soon, overdue and escalated item in scope.
   Future<void> sendReminders() async {
@@ -491,36 +722,89 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
 
   /// Starts an auditor command on the open engagement. [prefill] carries the
   /// target ids and defaults; generated ids are sealed with the draft.
-  Future<void> startCommand(String action, Map<String, Object?> prefill) =>
-      _run(() async {
-        final v = view, a = AuditorAction.of(action);
-        if (v == null ||
-            !verified ||
-            commandPending ||
-            !capabilities.contains(a.capability)) {
-          return;
-        }
-        commandForm = {
-          'action': action,
-          'engagement_id': v.id,
-          'engagement_version': v.version,
-          for (final k in _generated[action] ?? const <String>[]) k: _uuid.v4(),
-          ...prefill,
-        };
-        message = null;
-        await drafts.save(
-          scope,
-          commandSlot,
-          commandForm,
-          expectedVersion: v.version,
-          resolveConflict: true,
-        );
-        command = await drafts.load(scope, commandSlot);
-      });
+  Future<void> startCommand(
+    String action,
+    Map<String, Object?> prefill,
+  ) => _run(() async {
+    final v = view, a = AuditorAction.of(action);
+    if (v == null ||
+        !verified ||
+        commandPending ||
+        !capabilities.contains(a.capability)) {
+      return;
+    }
+    if ((action == 'map_control' && !v.canMapControl(capabilities)) ||
+        (action == 'add_team_member' && !v.canAddTeamMember(capabilities)) ||
+        (action == 'revoke_team_member' &&
+            !v.canRevokeTeamMember(capabilities))) {
+      return;
+    }
+    if (action == 'submit_remediation') {
+      final finding = v.findings
+          .where((f) => f.id == prefill['finding_id'])
+          .firstOrNull;
+      if (finding == null ||
+          !v.canSubmitRemediation(capabilities, finding, scope.actorId)) {
+        return;
+      }
+    }
+    if (action == 'cancel_request' || action == 'run_monitoring') {
+      final request = v.requests
+          .where(
+            (r) => action == 'cancel_request'
+                ? r.id == prefill['request_id']
+                : r.evidenceId == prefill['evidence_id'] &&
+                      r.controlId == prefill['control_id'],
+          )
+          .firstOrNull;
+      if (request == null ||
+          (action == 'cancel_request'
+              ? !v.canCancelRequest(capabilities, request)
+              : !v.canRunMonitoring(capabilities, request))) {
+        return;
+      }
+    }
+    if (action == 'carry_forward' && !v.canCarryForward(capabilities)) return;
+    if (action == 'release_hold' &&
+        !activeHolds.any(
+          (h) =>
+              h.aggregateId == prefill['hold_id'] && h.actorId != scope.actorId,
+        )) {
+      return;
+    }
+    commandForm = {
+      'action': action,
+      'engagement_id': v.id,
+      'engagement_version': v.version,
+      for (final k in _generated[action] ?? const <String>[]) k: _uuid.v4(),
+      ...prefill,
+    };
+    carrySource = null;
+    carrySourceName = null;
+    message = null;
+    await drafts.save(
+      scope,
+      commandSlot,
+      commandForm,
+      expectedVersion: v.version,
+      resolveConflict: true,
+    );
+    command = await drafts.load(scope, commandSlot);
+  });
 
   void commandField(String key, Object value) {
     if (commandPending || busy || !commanding) return;
     commandForm = {...commandForm, key: value};
+    if (commandForm['action'] == 'add_team_member' && key == 'role') {
+      commandForm.remove('expires_at');
+      if (value == 'external') {
+        commandForm['expires_at'] = _clock()
+            .toUtc()
+            .add(const Duration(days: 30))
+            .toIso8601String()
+            .substring(0, 10);
+      }
+    }
     _emit();
   }
 
@@ -549,6 +833,9 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
         k: switch (commandForm[k]) {
           final String s when _wholeNumbers.contains(k) =>
             int.tryParse(s.trim()) ?? s.trim(),
+          final String s
+              when a.action == 'add_team_member' && k == 'expires_at' =>
+            '${s.trim()}T00:00:00Z',
           final String s => s.trim(),
           final other => other,
         },
@@ -568,6 +855,36 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
     if (request == null) {
       final version = commandForm['engagement_version'] as int;
       final payload = _commandPayload(a);
+      if (a.action == 'carry_forward' &&
+          !carryFindings.any(
+            (finding) => finding.id == payload['source_finding_id'],
+          )) {
+        throw const FormatException(
+          'Choose an open finding from the selected source engagement.',
+        );
+      }
+      if (a.action == 'release_hold' &&
+          !activeHolds.any(
+            (hold) =>
+                hold.aggregateId == payload['hold_id'] &&
+                hold.actorId != scope.actorId,
+          )) {
+        throw const FormatException(
+          'A retention hold must be released by someone other than the person who placed it.',
+        );
+      }
+      if (const {
+        'map_control',
+        'add_team_member',
+        'revoke_team_member',
+      }.contains(a.action)) {
+        final key = a.action == 'map_control' ? 'owner_id' : 'user_id';
+        if (!setupChoices(a.action).any((p) => p.userId == payload[key])) {
+          throw const FormatException(
+            'Choose an eligible person from the current member list. Refresh if membership has changed.',
+          );
+        }
+      }
       a.validate(
         payload,
         now: _clock(),
@@ -626,6 +943,11 @@ final class AssuranceWorkspaceController extends ChangeNotifier {
     if (!_current(epoch)) return;
     detail = d;
     view = v;
+    if (const {'submit_remediation', 'cancel_request'}.contains(a.action)) {
+      final updated = await gateway.overview(scope);
+      if (!_current(epoch)) return;
+      overview = updated;
+    }
   });
 
   /// The request owner uploads a file for an open evidence request. The

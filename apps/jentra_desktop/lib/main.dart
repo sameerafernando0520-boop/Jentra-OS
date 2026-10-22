@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_platform/jentra_receivables_platform.dart';
 import 'package:jentra_platform/jentra_procurement_platform.dart';
@@ -82,218 +83,245 @@ import 'package:jentra_platform/jentra_stock_opening_platform.dart';
 
 import 'src/features/stock_opening/stock_opening_controller.dart';
 import 'src/app.dart';
+import 'src/startup_error_app.dart';
 import 'src/app_providers.dart';
 import 'src/features/receivables/receivables_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final config = RuntimeConfig.fromEnvironment();
-  final client = await SupabasePlatform.initialize(config);
-  final foundationGateway = client == null
-      ? null
-      : SupabaseFoundationGateway(client);
-  final businessSetupGateway = client == null
-      ? null
-      : SupabaseBusinessSetupGateway(client);
-  final crmRepository = client == null ? null : SupabaseCrmGateway(client);
-  final quotations = client == null ? null : SupabaseLeadToCashGateway(client);
+  await launchJentra();
+}
 
-  runApp(
-    ProviderScope(
-      overrides: [
-        runtimeConfigProvider.overrideWithValue(config),
-        foundationGatewayProvider.overrideWithValue(foundationGateway),
-        stockOpeningAccessGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseStockOpeningAccessGateway(client),
-        ),
-        businessSetupGatewayProvider.overrideWithValue(businessSetupGateway),
-        crmRepositoryProvider.overrideWithValue(crmRepository),
-        leadToCashRepositoryProvider.overrideWithValue(quotations),
-        quotationWorkspaceRepositoryProvider.overrideWithValue(quotations),
-        salesOrderRepositoryProvider.overrideWithValue(quotations),
-        quotationReferenceRepositoryProvider.overrideWithValue(quotations),
-        stockOpeningRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabaseStockOpeningGateway(client),
-        ),
-        receivablesRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabaseReceivablesGateway(client),
-        ),
-        procurementGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseProcurementGateway(client),
-        ),
-        inventoryTransferGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseInventoryTransferGateway(client),
-        ),
-        stockCountGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseStockCountGateway(client),
-        ),
-        countPartitionGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseCountPartitionGateway(client),
-        ),
-        landedExtensionGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseLandedExtensionGateway(client),
-        ),
-        dispositionGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseDispositionGateway(client),
-        ),
-        reservationGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseReservationGateway(client),
-        ),
-        negativeStockPolicyRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabaseNegativeStockPolicyGateway(client),
-        ),
-        receiptTraceGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseReceiptTraceGateway(client),
-        ),
-        landedValueGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseLandedValueGateway(client),
-        ),
-        inventoryValuationGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseInventoryValuationGateway(client),
-        ),
-        manualJournalGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseManualJournalGateway(client),
-        ),
-        controlReconciliationGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseControlReconciliationGateway(client),
-        ),
-        assuranceGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseAssuranceGateway(client),
-        ),
-        assuranceAccessGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseAssuranceAccessGateway(client),
-        ),
-        assuranceEvidenceDownloadGatewayProvider.overrideWithValue(
-          client == null
-              ? null
-              : SupabaseAssuranceEvidenceDownloadGateway(client),
-        ),
-        assurancePeopleGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseAssurancePeopleGateway(client),
-        ),
-        assuranceMetricsGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseAssuranceMetricsGateway(client),
-        ),
-        assuranceSettingsGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseAssuranceSettingsGateway(client),
-        ),
-        assuranceReminderGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseAssuranceReminderGateway(client),
-        ),
-        notificationInboxGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseNotificationInboxGateway(client),
-        ),
-        closeReviewGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseCloseReviewGateway(client),
-        ),
-        reportExportGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseReportExportGateway(client),
-        ),
-        financialDimensionGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseFinancialDimensionGateway(client),
-        ),
-        postedJournalGatewayProvider.overrideWithValue(
-          client == null ? null : SupabasePostedJournalGateway(client),
-        ),
-        operationalGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseOperationalGateway(client),
-        ),
-        wave3NotificationGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseWave3NotificationGateway(client),
-        ),
-        bankReconciliationGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseBankReconciliationGateway(client),
-        ),
-        periodFxGatewayProvider.overrideWithValue(
-          client == null ? null : SupabasePeriodFxGateway(client),
-        ),
-        financialStatementGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseFinancialStatementGateway(client),
-        ),
-        taxSummaryGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseTaxSummaryGateway(client),
-        ),
-        cashFlowMappingGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseCashFlowMappingGateway(client),
-        ),
-        budgetGatewayProvider.overrideWithValue(
-          client == null ? null : SupabaseBudgetGateway(client),
-        ),
-        employeeRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabaseEmployeeGateway(client),
-        ),
-        processMetricRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabaseProcessMetricGateway(client),
-        ),
-        pipelineForecastRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabasePipelineForecastGateway(client),
-        ),
-        historicalPipelineGatewayProvider.overrideWithValue(
-          client == null
-              ? null
-              : HistoricalPipelineGateway(
-                  (name, params) =>
+Future<void> launchJentra({
+  RuntimeConfig? configuration,
+  bool isRelease = kReleaseMode,
+}) async {
+  final config = configuration ?? RuntimeConfig.fromEnvironment();
+  try {
+    final client = await SupabasePlatform.initialize(
+      config,
+      isRelease: isRelease,
+    );
+    final foundationGateway = client == null
+        ? null
+        : SupabaseFoundationGateway(client);
+    final businessSetupGateway = client == null
+        ? null
+        : SupabaseBusinessSetupGateway(client);
+    final crmRepository = client == null ? null : SupabaseCrmGateway(client);
+    final quotations = client == null
+        ? null
+        : SupabaseLeadToCashGateway(client);
+
+    runApp(
+      ProviderScope(
+        overrides: [
+          runtimeConfigProvider.overrideWithValue(config),
+          foundationGatewayProvider.overrideWithValue(foundationGateway),
+          stockOpeningAccessGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseStockOpeningAccessGateway(client),
+          ),
+          businessSetupGatewayProvider.overrideWithValue(businessSetupGateway),
+          crmRepositoryProvider.overrideWithValue(crmRepository),
+          leadToCashRepositoryProvider.overrideWithValue(quotations),
+          quotationWorkspaceRepositoryProvider.overrideWithValue(quotations),
+          salesOrderRepositoryProvider.overrideWithValue(quotations),
+          quotationReferenceRepositoryProvider.overrideWithValue(quotations),
+          stockOpeningRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabaseStockOpeningGateway(client),
+          ),
+          receivablesRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabaseReceivablesGateway(client),
+          ),
+          procurementGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseProcurementGateway(client),
+          ),
+          inventoryTransferGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseInventoryTransferGateway(client),
+          ),
+          stockCountGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseStockCountGateway(client),
+          ),
+          countPartitionGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseCountPartitionGateway(client),
+          ),
+          landedExtensionGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseLandedExtensionGateway(client),
+          ),
+          dispositionGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseDispositionGateway(client),
+          ),
+          reservationGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseReservationGateway(client),
+          ),
+          negativeStockPolicyRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabaseNegativeStockPolicyGateway(client),
+          ),
+          receiptTraceGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseReceiptTraceGateway(client),
+          ),
+          landedValueGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseLandedValueGateway(client),
+          ),
+          inventoryValuationGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseInventoryValuationGateway(client),
+          ),
+          manualJournalGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseManualJournalGateway(client),
+          ),
+          controlReconciliationGatewayProvider.overrideWithValue(
+            client == null
+                ? null
+                : SupabaseControlReconciliationGateway(client),
+          ),
+          assuranceGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseAssuranceGateway(client),
+          ),
+          assuranceAccessGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseAssuranceAccessGateway(client),
+          ),
+          assuranceEvidenceDownloadGatewayProvider.overrideWithValue(
+            client == null
+                ? null
+                : SupabaseAssuranceEvidenceDownloadGateway(client),
+          ),
+          assurancePeopleGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseAssurancePeopleGateway(client),
+          ),
+          assuranceMetricsGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseAssuranceMetricsGateway(client),
+          ),
+          assuranceSettingsGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseAssuranceSettingsGateway(client),
+          ),
+          assuranceReminderGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseAssuranceReminderGateway(client),
+          ),
+          notificationInboxGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseNotificationInboxGateway(client),
+          ),
+          closeReviewGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseCloseReviewGateway(client),
+          ),
+          reportExportGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseReportExportGateway(client),
+          ),
+          financialDimensionGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseFinancialDimensionGateway(client),
+          ),
+          postedJournalGatewayProvider.overrideWithValue(
+            client == null ? null : SupabasePostedJournalGateway(client),
+          ),
+          operationalGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseOperationalGateway(client),
+          ),
+          wave3NotificationGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseWave3NotificationGateway(client),
+          ),
+          bankReconciliationGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseBankReconciliationGateway(client),
+          ),
+          periodFxGatewayProvider.overrideWithValue(
+            client == null ? null : SupabasePeriodFxGateway(client),
+          ),
+          financialStatementGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseFinancialStatementGateway(client),
+          ),
+          taxSummaryGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseTaxSummaryGateway(client),
+          ),
+          cashFlowMappingGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseCashFlowMappingGateway(client),
+          ),
+          budgetGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseBudgetGateway(client),
+          ),
+          employeeRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabaseEmployeeGateway(client),
+          ),
+          processMetricRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabaseProcessMetricGateway(client),
+          ),
+          pipelineForecastRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabasePipelineForecastGateway(client),
+          ),
+          historicalPipelineGatewayProvider.overrideWithValue(
+            client == null
+                ? null
+                : HistoricalPipelineGateway(
+                    (name, params) =>
+                        client.schema('api').rpc(name, params: params),
+                  ),
+          ),
+          integrationRpcProvider.overrideWithValue(
+            client == null
+                ? null
+                : (name, params) =>
                       client.schema('api').rpc(name, params: params),
-                ),
-        ),
-        integrationRpcProvider.overrideWithValue(
-          client == null
-              ? null
-              : (name, params) =>
-                    client.schema('api').rpc(name, params: params),
-        ),
-        datedCashGatewayProvider.overrideWithValue(
-          client == null
-              ? null
-              : DatedCashGateway(
-                  (name, params) =>
-                      client.schema('api').rpc(name, params: params),
-                ),
-        ),
-        wave5ControlRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabaseWave5ControlGateway(client),
-        ),
-        reviewedModelRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabaseReviewedModelGateway(client),
-        ),
-        calendarRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabaseCalendarGateway(client),
-        ),
-        organizationRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabaseOrganizationGateway(client),
-        ),
-        privateHrRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabasePrivateHrGateway(client),
-        ),
-        workforceRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabaseWorkforceGateway(client),
-        ),
-        payrollRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabasePayrollGateway(client),
-        ),
-        assetsRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabaseAssetGateway(client),
-        ),
-        projectsRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabaseProjectGateway(client),
-        ),
-        projectFinanceRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabaseProjectFinanceGateway(client),
-        ),
-        projectExpenseEvidenceRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabaseExpenseEvidenceGateway(client),
-        ),
-        milestoneRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabaseMilestoneGateway(client),
-        ),
-        serviceRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabaseServiceGateway(client),
-        ),
-        assetEquipmentRepositoryProvider.overrideWithValue(
-          client == null ? null : SupabaseAssetEquipmentGateway(client),
-        ),
-      ],
-      child: const JentraApp(),
-    ),
-  );
+          ),
+          datedCashGatewayProvider.overrideWithValue(
+            client == null
+                ? null
+                : DatedCashGateway(
+                    (name, params) =>
+                        client.schema('api').rpc(name, params: params),
+                  ),
+          ),
+          wave5ControlRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabaseWave5ControlGateway(client),
+          ),
+          reviewedModelRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabaseReviewedModelGateway(client),
+          ),
+          calendarRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabaseCalendarGateway(client),
+          ),
+          organizationRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabaseOrganizationGateway(client),
+          ),
+          privateHrRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabasePrivateHrGateway(client),
+          ),
+          workforceRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabaseWorkforceGateway(client),
+          ),
+          payrollRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabasePayrollGateway(client),
+          ),
+          assetsRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabaseAssetGateway(client),
+          ),
+          projectsRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabaseProjectGateway(client),
+          ),
+          projectFinanceRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabaseProjectFinanceGateway(client),
+          ),
+          projectExpenseEvidenceRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabaseExpenseEvidenceGateway(client),
+          ),
+          milestoneRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabaseMilestoneGateway(client),
+          ),
+          serviceRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabaseServiceGateway(client),
+          ),
+          assetEquipmentRepositoryProvider.overrideWithValue(
+            client == null ? null : SupabaseAssetEquipmentGateway(client),
+          ),
+        ],
+        child: const JentraApp(),
+      ),
+    );
+  } on Object catch (error) {
+    runApp(
+      JentraStartupErrorApp(
+        failure: error is RuntimeStartupException
+            ? error.failure
+            : RuntimeStartupFailure.initializationFailed,
+        onRetry: () =>
+            launchJentra(configuration: config, isRelease: isRelease),
+      ),
+    );
+  }
 }

@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-21",
+  "timezone": "Asia/Colombo",
+  "sourceRevision": "f57f754f0f11efa91b1a9f456d2a19f725fde9c7",
+  "status": "Updated development Windows app packaged; hosted Google setup and real consent remain pending",
+  "changes": [
+    "Preflight checks Google availability before PKCE verifier mutation",
+    "Specific safe provider/browser/callback/cancellation/exchange recovery",
+    "Waiting cancellation and exchange progress without abandoning accepted authentication",
+    "Jentra branded Windows icon and product/window name"
+  ],
+  "verification": {
+    "platformTests": 1210,
+    "loginWidgetTests": 21,
+    "focusedGoogleTests": "23 (included in platform total)",
+    "analysis": "platform and desktop: no issues, exit 0",
+    "windowsBuild": "release succeeded",
+    "packagedRuntimeHashesVerified": 35,
+    "icon": {
+      "executable": "apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\jentra_desktop.exe",
+      "exeSha256": "7959cbb5ce9723eef21f076cf64781c69e950ed7d1c1a0f467f031dc3bce36dd",
+      "iconSha256": "ea03d2e51d25a701ac1d1e88aeb7dbc3a8fa00d450bcde4191a61cc96ca5c42c",
+      "groupResourceId": 101,
+      "embeddedFramesVerified": [
+        16,
+        20,
+        24,
+        32,
+        40,
+        48,
+        64,
+        128,
+        256
+      ],
+      "matchesSourceIcon": true
+    },
+    "originalLogoSha256": "9670c0a23c40185a2a067648253d1eb94d380b5a30ddb6441ed1449d6f05ee0e"
+  },
+  "delivery": {
+    "path": "build/jentra-windows-20261021/Jentra-OS-Windows-development.zip",
+    "bytes": 23908026,
+    "sha256": "14256e83cbe079401790bb6b97c86bed19998008a930189638755f332bd5f49f",
+    "instructions": "Extract every file into a new folder, then run jentra_desktop.exe."
+  },
+  "google": {
+    "existingClientSelected": true,
+    "publicSettings": {
+      "checkedAtUtc": "2026-10-21T09:42:27.6276866Z",
+      "project": "xpdoufauvrbdmxgngetv",
+      "environment": "development",
+      "googleEnabled": false,
+      "googleClientRedirectUri": "https://xpdoufauvrbdmxgngetv.supabase.co/auth/v1/callback",
+      "supabaseWindowsRedirectPattern": "http://127.0.0.1:56327/auth/callback/*",
+      "providerSettings": "https://supabase.com/dashboard/project/xpdoufauvrbdmxgngetv/auth/providers",
+      "urlSettings": "https://supabase.com/dashboard/project/xpdoufauvrbdmxgngetv/auth/url-configuration",
+      "changesMade": false,
+      "notVerified": [
+        "Google OAuth client ID/secret correctness",
+        "hosted Windows redirect allowlist",
+        "real Google consent and native session"
+      ]
+    },
+    "setupGuide": "docs/development/google-sign-in-setup.md",
+    "adminConnection": "Saved CLI login receives HTTP 403 for the Jentra development project",
+    "nativeGoogleConsent": "Not verified"
+  },
+  "boundaries": [
+    "No production configuration changed",
+    "No OAuth client secret or Firebase key included",
+    "Business invitations, membership and MFA requirements preserved",
+    "Changes remain local and uncommitted"
+  ]
+}

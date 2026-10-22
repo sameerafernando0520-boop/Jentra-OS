@@ -1,0 +1,80 @@
+{
+  "kind": "assurance-completion-verification",
+  "date": "2026-10-21",
+  "timezone": "Asia/Colombo",
+  "sourceRevision": "f57f754f0f11efa91b1a9f456d2a19f725fde9c7",
+  "sourceControl": "Local changes remain uncommitted; pre-existing changes preserved.",
+  "status": "development build verified; live acceptance and production pending",
+  "automated": {
+    "domain": 500,
+    "platform": 1198,
+    "desktopIncludingGoldens": 2145,
+    "total": 3843,
+    "focusedPkce": "6/6 twice; also included in full platform pass",
+    "assuranceUi": "98 focused tests; also included in full desktop pass",
+    "evidenceHandlers": "12/12",
+    "analysis": "Desktop, domain and platform source and tests: no issues, exit 0",
+    "priorFailureImagesPreserved": 460
+  },
+  "developmentFunctions": {
+    "project": "xpdoufauvrbdmxgngetv",
+    "unauthorizedChecksPassed": 4,
+    "record": "docs/verification/assurance/dev-endpoints-20261021.json"
+  },
+  "windowsPackage": {
+    "path": "build/assurance-release-20261021/Jentra-OS-Assurance-development-Windows.zip",
+    "sha256": "d69936227fe27857f95ebf34b49869f81b3742658c64317f373d86c90950c752",
+    "bytes": 23836210,
+    "runtimeFileHashesVerified": 35,
+    "configuration": "development public app configuration only"
+  },
+  "fixture": {
+    "authorized": true,
+    "remoteAccountsCreated": false,
+    "stage": "management_key_lookup",
+    "blocker": "Token environment override invalid; saved CLI login receives HTTP 403 for the explicit Jentra development project. Fixture stopped before Auth requests.",
+    "checkpoint": "Windows DPAPI under ignored build/assurance-private; prepared for retry",
+    "resume": "tools/assurance/create_dev_test_account.ps1 -BootstrapSyntheticTenant after authenticated project admin access is restored"
+  },
+  "preservation": {
+    "firebaseAdminKey": "Ignored by *firebase-adminsdk*.json; untracked; not read or packaged",
+    "appliedMigrations": "Unchanged; final-newline difference documented as nonfunctional",
+    "production": "No writes, migrations or deployments performed"
+  },
+  "artifacts": {
+    "screenReview": "docs/verification/assurance/screen-review-20261021.html",
+    "productionPacket": "docs/verification/assurance/production-promotion-20261021.md",
+    "productionManifest": "docs/verification/assurance/production-promotion-20261021.manifest.json"
+  },
+  "pending": [
+    "confirmed development test account and isolated tenant",
+    "assurance member-role and authenticated file workflow",
+    "genuine MFA and native Windows walkthrough",
+    "Narrator or NVDA walkthrough",
+    "owner screen sign-off",
+    "contention/load acceptance",
+    "identified production target and separate approval"
+  ],
+  "logs": [
+    {
+      "path": "build/assurance-domain-verified-20261021.log",
+      "sha256": "84206dd014d0afc516f756478aa0c0e62fbe22d09b702a30394ea82cf59c34c8"
+    },
+    {
+      "path": "build/assurance-platform-20261021.log",
+      "sha256": "f50eff1d55b4780948c8724e0cc63cd3fb6c06ba30262da129a569a62c0e5315"
+    },
+    {
+      "path": "build/assurance-desktop-full-20261021.log",
+      "sha256": "f9669b35ef59fee3cd1abe2121ccd2be57b9bd0d627de7a61d5c4fe3462c8d3a"
+    },
+    {
+      "path": "build/assurance-scoped-analyze-20261021.log",
+      "sha256": "0edee8f13c874aca0a126f7379682c776262ece41773d2610f246c644914e42e"
+    },
+    {
+      "path": "build/assurance-windows-release-20261021.log",
+      "sha256": "8c013ab371dab926f9172dd7d986669d9b297adab75c0aa785f8db8d60dc9701"
+    }
+  ]
+}

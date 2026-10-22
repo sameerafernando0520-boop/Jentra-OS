@@ -7,6 +7,7 @@ import 'package:jentra_domain/jentra_receivables.dart';
 import 'package:jentra_domain/jentra_projects.dart';
 
 import 'app_providers.dart';
+import 'developer_tools.dart';
 import 'features/analytics/analytics_screen.dart';
 import 'features/analytics/wave5_control_screen.dart';
 import 'features/manual_journal/manual_journal_controller.dart';
@@ -108,7 +109,7 @@ import 'features/sales/sales_order_screen.dart';
 import 'features/dashboard/dashboard_screen.dart';
 import 'features/setup/business_setup_screen.dart';
 import 'features/tenant/accept_invitation_screen.dart';
-import 'features/shared/module_placeholder_screen.dart';
+import 'features/finance/finance_screen.dart';
 import 'shell/jentra_shell.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -120,10 +121,14 @@ final routerProvider = Provider<GoRouter>((ref) {
     refresh.dispose();
   });
 
+  final developerTools = ref.watch(developerToolsEnabledProvider);
   return GoRouter(
     initialLocation: '/dashboard',
     refreshListenable: refresh,
     redirect: (context, state) {
+      if (!developerTools && state.uri.path == '/catalogue') {
+        return '/dashboard';
+      }
       final configured = gateway != null;
       final authenticated = gateway?.currentUser != null;
       final atLogin = state.matchedLocation == '/login';
@@ -591,28 +596,19 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/analytics',
             builder: (context, state) => const AnalyticsScreen(),
           ),
-          for (final module in const [
-            (
-              'finance',
-              'Finance',
-              'Ledger, AR/AP, cash, tax and financial reporting.',
-            ),
-          ])
-            GoRoute(
-              path: '/${module.$1}',
-              builder: (context, state) => ModulePlaceholderScreen(
-                title: module.$2,
-                description: module.$3,
-              ),
-            ),
+          GoRoute(
+            path: '/finance',
+            builder: (context, state) => const FinanceScreen(),
+          ),
           GoRoute(
             path: '/control',
             builder: (context, state) => const Wave5ControlScreen(),
           ),
-          GoRoute(
-            path: '/catalogue',
-            builder: (context, state) => const ComponentCatalogueScreen(),
-          ),
+          if (developerTools)
+            GoRoute(
+              path: '/catalogue',
+              builder: (context, state) => const ComponentCatalogueScreen(),
+            ),
           GoRoute(
             path: '/invitation/:token',
             builder: (context, state) =>

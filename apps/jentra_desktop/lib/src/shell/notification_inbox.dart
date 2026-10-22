@@ -40,18 +40,24 @@ String userInitials({String? name, String? email}) {
       .where((w) => w.isNotEmpty)
       .toList();
   if (words.length >= 2) {
-    return (words.first[0] + words.last[0]).toUpperCase();
+    return (words.first.characters.first + words.last.characters.first)
+        .toUpperCase();
   }
-  if (words.length == 1 && words.first.length >= 2) {
-    return words.first.substring(0, 2).toUpperCase();
+  if (words.length == 1) {
+    return words.first.characters.take(2).toString().toUpperCase();
   }
   final local = (email ?? '').split('@').first;
   final parts = local
       .split(RegExp(r'[._\-+]'))
       .where((p) => p.isNotEmpty)
       .toList();
-  if (parts.length >= 2) return (parts.first[0] + parts[1][0]).toUpperCase();
-  if (local.length >= 2) return local.substring(0, 2).toUpperCase();
+  if (parts.length >= 2) {
+    return (parts.first.characters.first + parts[1].characters.first)
+        .toUpperCase();
+  }
+  if (local.isNotEmpty) {
+    return local.characters.take(2).toString().toUpperCase();
+  }
   return '?';
 }
 
@@ -63,7 +69,8 @@ final signedInUserProvider = Provider<({String initials, String tooltip})?>((
   final user = ref.watch(foundationGatewayProvider)?.currentUser;
   if (user == null) return null;
   final meta = user.userMetadata ?? const <String, dynamic>{};
-  final name = (meta['full_name'] ?? meta['name']) as String?;
+  final candidate = meta['full_name'] ?? meta['name'];
+  final name = candidate is String ? candidate : null;
   final email = user.email;
   return (
     initials: userInitials(name: name, email: email),

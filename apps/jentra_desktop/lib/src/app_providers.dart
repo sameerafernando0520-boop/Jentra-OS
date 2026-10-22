@@ -7,6 +7,8 @@ import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_platform.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'features/tenant/workspace_creation.dart';
+
 final runtimeConfigProvider = Provider<RuntimeConfig>(
   (ref) => RuntimeConfig.fromEnvironment(),
 );
@@ -218,33 +220,109 @@ final class TenantListController extends AsyncNotifier<List<TenantSummary>> {
         ),
       ];
     }
-    final actorId = await ref.watch(authenticatedActorProvider.future);
+    // Observe current stream data as well as initial readiness. A later account
+    // must rebuild membership even when an earlier stream future has settled.
+    final actor = ref.watch(authenticatedActorProvider);
+    final actorId = actor.isLoading
+        ? await ref.watch(authenticatedActorProvider.future)
+        : actor.value;
     if (actorId == null) return const [];
     return gateway.listMyTenants();
   }
 
-  Future<void> createTenant({
-    required String name,
-    required String slug,
-    required String legalEntityName,
-    required String legalEntityCode,
-    required String branchName,
-    required String branchCode,
-  }) async {
+  Future<void> createTenant(WorkspaceCreationRequest request) async {
     final gateway = ref.read(foundationGatewayProvider);
-    if (gateway == null) return;
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      await gateway.bootstrapTenant(
-        name: name,
-        slug: slug,
-        legalEntityName: legalEntityName,
-        legalEntityCode: legalEntityCode,
-        branchName: branchName,
-        branchCode: branchCode,
+    if (gateway == null) {
+      throw const WorkspaceCreationException(
+        WorkspaceCreationFailure.unavailable,
       );
-      return gateway.listMyTenants();
-    });
+    }
+    void requireActor() {
+      if (!ref.mounted ||
+          !identical(ref.read(foundationGatewayProvider), gateway) ||
+          gateway.currentUser?.id != request.actorId) {
+        throw const WorkspaceCreationException(
+          WorkspaceCreationFailure.sessionChanged,
+        );
+      }
+    }
+
+    Future<List<TenantSummary>> loadMemberships() async {
+      requireActor();
+      try {
+        final tenants = await gateway.listMyTenants();
+        requireActor();
+        return tenants;
+      } on WorkspaceCreationException {
+        rethrow;
+      } on Object {
+        throw const WorkspaceCreationException(
+          WorkspaceCreationFailure.unconfirmed,
+        );
+      }
+    }
+
+    void publish(List<TenantSummary> tenants) {
+      requireActor();
+      state = AsyncData(tenants);
+    }
+
+    requireActor();
+    Map<String, Object?> receipt;
+    try {
+      receipt = await gateway.bootstrapTenant(
+        name: request.name,
+        slug: request.slug,
+        legalEntityName: request.legalEntityName,
+        legalEntityCode: request.legalEntityCode,
+        branchName: request.branchName,
+        branchCode: request.branchCode,
+        idempotencyKey: request.idempotencyKey,
+      );
+    } on TenantBootstrapException catch (error) {
+      requireActor();
+      if (error.failure == TenantBootstrapFailure.duplicate) {
+        // A prior timed-out creation can commit while the same request retries.
+        // Resolve its owner membership before allowing a new intent or key.
+        final tenants = await loadMemberships();
+        if (tenants.any(
+          (tenant) =>
+              tenant.slug == request.slug &&
+              tenant.membershipStatus == 'active',
+        )) {
+          publish(tenants);
+          return;
+        }
+        throw const WorkspaceCreationException(
+          WorkspaceCreationFailure.duplicateSlug,
+        );
+      }
+      throw WorkspaceCreationException(switch (error.failure) {
+        TenantBootstrapFailure.invalidValues =>
+          WorkspaceCreationFailure.invalidValues,
+        TenantBootstrapFailure.accessDenied =>
+          WorkspaceCreationFailure.accessDenied,
+        _ => WorkspaceCreationFailure.unconfirmed,
+      });
+    } on Object {
+      requireActor();
+      throw const WorkspaceCreationException(
+        WorkspaceCreationFailure.unconfirmed,
+      );
+    }
+    final tenants = await loadMemberships();
+    if (receipt['tenant_id'] is! String ||
+        !tenants.any(
+          (tenant) =>
+              tenant.id == receipt['tenant_id'] &&
+              tenant.slug == request.slug &&
+              tenant.membershipStatus == 'active',
+        )) {
+      throw const WorkspaceCreationException(
+        WorkspaceCreationFailure.unconfirmed,
+      );
+    }
+    publish(tenants);
   }
 }
 
@@ -289,28 +367,101 @@ final businessScopeProvider =
     );
 
 final class BusinessScopeController extends AsyncNotifier<BusinessScopeState> {
+  BusinessScopeState? _lastScope;
+  SupabaseFoundationGateway? _lastGateway;
+  String? _lastActor;
+  int _selectionRevision = 0;
+
+  String? _actor(SupabaseFoundationGateway? gateway) =>
+      gateway == null ? 'preview-actor' : gateway.currentUser?.id;
+
+  bool _isCurrent(
+    SupabaseFoundationGateway? gateway,
+    String? actor,
+    int revision,
+  ) =>
+      ref.mounted &&
+      identical(ref.read(foundationGatewayProvider), gateway) &&
+      actor != null &&
+      _actor(gateway) == actor &&
+      revision == _selectionRevision;
+
+  void _remember(
+    BusinessScopeState scope,
+    SupabaseFoundationGateway? gateway,
+    String? actor,
+  ) {
+    _lastScope = scope;
+    _lastGateway = gateway;
+    _lastActor = actor;
+  }
+
   @override
   Future<BusinessScopeState> build() async {
+    final gateway = ref.watch(foundationGatewayProvider);
+    ref.watch(authenticatedActorProvider);
+    final actor = _actor(gateway);
+    final revision = ++_selectionRevision;
+    final previous = identical(_lastGateway, gateway) && _lastActor == actor
+        ? _lastScope
+        : null;
     final tenants = await ref.watch(tenantListProvider.future);
     if (tenants.isEmpty) {
       throw StateError('Create or join a business before selecting a scope.');
     }
-    return _load(tenants, tenants.first.id);
+    final tenantId = tenants.any((item) => item.id == previous?.tenantId)
+        ? previous!.tenantId
+        : tenants.first.id;
+    final scope = await _load(
+      tenants,
+      tenantId,
+      gateway: gateway,
+      preferredEntityId: tenantId == previous?.tenantId
+          ? previous?.legalEntityId
+          : null,
+      preferredBranchId: tenantId == previous?.tenantId
+          ? previous?.branchId
+          : null,
+    );
+    if (_isCurrent(gateway, actor, revision)) {
+      _remember(scope, gateway, actor);
+    }
+    return scope;
   }
 
   Future<void> selectTenant(String tenantId) async {
     final current = state.value;
-    if (current == null || current.tenantId == tenantId) return;
+    if (current == null ||
+        current.tenantId == tenantId ||
+        !current.tenants.any((item) => item.id == tenantId)) {
+      return;
+    }
+    final gateway = ref.read(foundationGatewayProvider);
+    final actor = _actor(gateway);
+    final revision = ++_selectionRevision;
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => _load(current.tenants, tenantId));
+    final result = await AsyncValue.guard(
+      () => _load(current.tenants, tenantId, gateway: gateway),
+    );
+    if (!_isCurrent(gateway, actor, revision)) return;
+    if (result case AsyncData(:final value)) {
+      _remember(value, gateway, actor);
+    }
+    state = result;
   }
 
   Future<void> selectLegalEntity(String legalEntityId) async {
     final current = state.value;
-    if (current == null || current.legalEntityId == legalEntityId) return;
+    if (current == null ||
+        current.legalEntityId == legalEntityId ||
+        !current.legalEntities.any((item) => item.id == legalEntityId)) {
+      return;
+    }
+    final gateway = ref.read(foundationGatewayProvider);
+    final actor = _actor(gateway);
+    final revision = ++_selectionRevision;
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      final gateway = ref.read(foundationGatewayProvider);
+    final result = await AsyncValue.guard(() async {
       final branches = gateway == null
           ? _previewBranches(current.tenantId, legalEntityId)
           : await gateway.listBranches(
@@ -326,21 +477,35 @@ final class BusinessScopeController extends AsyncNotifier<BusinessScopeState> {
         branchId: branches.firstOrNull?.id,
       );
     });
+    if (!_isCurrent(gateway, actor, revision)) return;
+    if (result case AsyncData(:final value)) {
+      _remember(value, gateway, actor);
+    }
+    state = result;
   }
 
   void selectBranch(String branchId) {
     final current = state.value;
-    if (current == null || current.branchId == branchId) return;
-    state = AsyncData(
-      BusinessScopeState(
-        tenants: current.tenants,
-        legalEntities: current.legalEntities,
-        branches: current.branches,
-        tenantId: current.tenantId,
-        legalEntityId: current.legalEntityId,
-        branchId: branchId,
-      ),
+    if (current == null ||
+        current.branchId == branchId ||
+        !current.branches.any((item) => item.id == branchId)) {
+      return;
+    }
+    final next = BusinessScopeState(
+      tenants: current.tenants,
+      legalEntities: current.legalEntities,
+      branches: current.branches,
+      tenantId: current.tenantId,
+      legalEntityId: current.legalEntityId,
+      branchId: branchId,
     );
+    ++_selectionRevision;
+    _remember(
+      next,
+      ref.read(foundationGatewayProvider),
+      _actor(ref.read(foundationGatewayProvider)),
+    );
+    state = AsyncData(next);
   }
 
   Future<bool> selectPermittedContext({
@@ -361,6 +526,8 @@ final class BusinessScopeController extends AsyncNotifier<BusinessScopeState> {
       return true;
     }
     final gateway = ref.read(foundationGatewayProvider);
+    final actor = _actor(gateway);
+    final revision = _selectionRevision;
     final entities = current.tenantId == tenantId
         ? current.legalEntities
         : gateway == null
@@ -368,6 +535,7 @@ final class BusinessScopeController extends AsyncNotifier<BusinessScopeState> {
         : await gateway.listLegalEntities(tenantId);
     if (!entities.any((item) => item.id == legalEntityId) ||
         isCurrent?.call() == false ||
+        !_isCurrent(gateway, actor, revision) ||
         !identical(state.value, current)) {
       return false;
     }
@@ -382,31 +550,37 @@ final class BusinessScopeController extends AsyncNotifier<BusinessScopeState> {
           );
     if (!branches.any((item) => item.id == branchId) ||
         isCurrent?.call() == false ||
+        !_isCurrent(gateway, actor, revision) ||
         !identical(state.value, current)) {
       return false;
     }
-    state = AsyncData(
-      BusinessScopeState(
-        tenants: current.tenants,
-        legalEntities: entities,
-        branches: branches,
-        tenantId: tenantId,
-        legalEntityId: legalEntityId,
-        branchId: branchId,
-      ),
+    final next = BusinessScopeState(
+      tenants: current.tenants,
+      legalEntities: entities,
+      branches: branches,
+      tenantId: tenantId,
+      legalEntityId: legalEntityId,
+      branchId: branchId,
     );
+    ++_selectionRevision;
+    _remember(next, gateway, actor);
+    state = AsyncData(next);
     return true;
   }
 
   Future<BusinessScopeState> _load(
     List<TenantSummary> tenants,
-    String tenantId,
-  ) async {
-    final gateway = ref.read(foundationGatewayProvider);
+    String tenantId, {
+    required SupabaseFoundationGateway? gateway,
+    String? preferredEntityId,
+    String? preferredBranchId,
+  }) async {
     final entities = gateway == null
         ? _previewEntities(tenantId)
         : await gateway.listLegalEntities(tenantId);
-    final legalEntityId = entities.firstOrNull?.id;
+    final legalEntityId = entities.any((item) => item.id == preferredEntityId)
+        ? preferredEntityId
+        : entities.firstOrNull?.id;
     final branches = legalEntityId == null
         ? const <BranchSummary>[]
         : gateway == null
@@ -421,7 +595,9 @@ final class BusinessScopeController extends AsyncNotifier<BusinessScopeState> {
       branches: branches,
       tenantId: tenantId,
       legalEntityId: legalEntityId,
-      branchId: branches.firstOrNull?.id,
+      branchId: branches.any((item) => item.id == preferredBranchId)
+          ? preferredBranchId
+          : branches.firstOrNull?.id,
     );
   }
 
@@ -463,9 +639,13 @@ final class BusinessScopeController extends AsyncNotifier<BusinessScopeState> {
 }
 
 final activeTenantContextProvider = Provider<TenantContext?>((ref) {
-  final scope = ref.watch(businessScopeProvider).value;
+  final scopeState = ref.watch(businessScopeProvider);
+  if (scopeState.isLoading || scopeState.hasError) return null;
+  final scope = scopeState.value;
   if (scope == null) return null;
-  final actorId = ref.watch(authenticatedActorProvider).value;
+  final actorState = ref.watch(authenticatedActorProvider);
+  if (actorState.isLoading || actorState.hasError) return null;
+  final actorId = actorState.value;
   if (actorId == null) return null;
   return scope.toContext(actorId);
 });
