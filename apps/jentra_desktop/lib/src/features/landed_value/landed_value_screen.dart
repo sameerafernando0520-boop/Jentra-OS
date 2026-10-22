@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jentra_design_system/jentra_design_system.dart';
 
 import '../../app_providers.dart';
 import '../operations/operational_read_access.dart';
@@ -180,6 +181,24 @@ class LandedValueWorkspace extends StatelessWidget {
                 ),
               ],
             ),
+            if (c.online &&
+                !c.busy &&
+                c.error == null &&
+                (c.options['posted'] ?? []).isEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: JentraPanel(
+                  child: JentraEmptyState(
+                    icon: Icons.inventory_2_outlined,
+                    title: c.options.containsKey('posted')
+                        ? 'No posted landed adjustments'
+                        : 'Posted adjustments not loaded',
+                    description: c.options.containsKey('posted')
+                        ? 'Create a landed adjustment after recording the receipt and freight expense. Posted adjustments for this scope will appear here.'
+                        : 'Select Refresh posted to review landed adjustments for this scope. Create a new adjustment after recording the receipt and freight expense.',
+                  ),
+                ),
+              ),
             for (final r in c.options['posted'] ?? [])
               Card(
                 child: Padding(

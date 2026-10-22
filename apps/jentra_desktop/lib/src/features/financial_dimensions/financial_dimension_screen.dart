@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_finance_platform.dart';
 
@@ -198,6 +199,22 @@ class FinancialDimensionWorkspace extends StatelessWidget {
               ),
           ],
           const Divider(height: 40),
+          if (c.online &&
+              !c.busy &&
+              c.error == null &&
+              f.isEmpty &&
+              c.items.isEmpty)
+            JentraPanel(
+              child: JentraEmptyState(
+                icon: Icons.account_tree_outlined,
+                title: c.kind == 'cost_centre'
+                    ? 'No cost centres yet'
+                    : 'No project tags yet',
+                description: c.kind == 'cost_centre'
+                    ? 'Choose New dimension to create a cost centre for journals and budgets in this scope.'
+                    : 'Choose New dimension to create a project tag for journals and budgets in this scope.',
+              ),
+            ),
           for (final row in c.items)
             Card(
               child: ListTile(

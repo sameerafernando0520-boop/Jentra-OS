@@ -89,11 +89,17 @@ final class InboxController extends ChangeNotifier {
   final String tenantId;
   final NotificationInboxGateway gateway;
   bool online;
-  bool busy = false;
+  bool _refreshBusy = false;
+  bool _mutationBusy = false;
   bool _disposed = false;
+  int _refreshGeneration = 0;
+  int _mutationGeneration = 0;
   List<InboxNotice> notices = [];
   int unread = 0;
   String? error;
+
+  bool get busy => _refreshBusy || _mutationBusy;
+  bool get canMarkRead => !_disposed && online && !busy;
 
   String? get status =>
       online ? null : 'Notifications are unavailable offline.';
@@ -105,11 +111,18 @@ final class InboxController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _refreshGeneration++;
+    _mutationGeneration++;
     super.dispose();
   }
 
   void setOnline(bool value) {
+    if (online == value) return;
     online = value;
+    _refreshGeneration++;
+    _mutationGeneration++;
+    _refreshBusy = false;
+    error = null;
     if (!value) {
       notices = [];
       unread = 0;
@@ -118,31 +131,44 @@ final class InboxController extends ChangeNotifier {
     if (value) unawaited(refresh());
   }
 
+  bool _currentRefresh(int generation) =>
+      !_disposed && online && generation == _refreshGeneration;
+
   Future<void> refresh() async {
+    if (_disposed) return;
+    final generation = ++_refreshGeneration;
     if (!online) {
       notices = [];
       unread = 0;
+      _refreshBusy = false;
       _emit();
       return;
     }
-    busy = true;
+    _refreshBusy = true;
     error = null;
     _emit();
     try {
       final list = await gateway.latest(tenantId);
+      if (!_currentRefresh(generation)) return;
       final count = await gateway.unreadCount(tenantId);
-      if (_disposed) return;
+      if (!_currentRefresh(generation)) return;
       notices = list;
       unread = count;
     } on DomainError catch (e) {
-      error = e.message;
+      if (_currentRefresh(generation)) error = e.message;
     } on FormatException {
-      error = 'Notifications could not be read.';
+      if (_currentRefresh(generation)) {
+        error = 'Notifications could not be read.';
+      }
     } catch (_) {
-      error = 'Notifications could not be loaded. Try again.';
+      if (_currentRefresh(generation)) {
+        error = 'Notifications could not be loaded. Try again.';
+      }
     } finally {
-      busy = false;
-      _emit();
+      if (_currentRefresh(generation)) {
+        _refreshBusy = false;
+        _emit();
+      }
     }
   }
 
@@ -159,23 +185,37 @@ final class InboxController extends ChangeNotifier {
   }
 
   Future<void> markRead(InboxNotice n) async {
-    if (!n.unread || !online) return;
-    final failure = await _mark(n);
-    await refresh();
-    error = failure ?? error;
-    _emit();
+    if (n.unread) await _markNotices([n]);
   }
 
-  Future<void> markAllRead() async {
-    if (!online) return;
-    String? failure;
-    for (final n in notices.where((n) => n.unread).toList()) {
-      failure = await _mark(n);
-      if (failure != null) break;
-    }
-    await refresh();
-    error = failure ?? error;
+  Future<void> markLoadedRead() =>
+      _markNotices(notices.where((n) => n.unread).toList());
+
+  bool _currentMutation(int generation) =>
+      !_disposed && online && generation == _mutationGeneration;
+
+  Future<void> _markNotices(List<InboxNotice> loaded) async {
+    if (_disposed || !online || busy || loaded.isEmpty) return;
+    final generation = ++_mutationGeneration;
+    _mutationBusy = true;
+    error = null;
     _emit();
+    String? failure;
+    try {
+      for (final n in loaded) {
+        if (!_currentMutation(generation)) return;
+        failure = await _mark(n);
+        if (!_currentMutation(generation)) return;
+        if (failure != null) break;
+      }
+      if (!_currentMutation(generation)) return;
+      await refresh();
+      if (!_currentMutation(generation)) return;
+      error = failure ?? error;
+    } finally {
+      _mutationBusy = false;
+      _emit();
+    }
   }
 }
 
@@ -314,11 +354,17 @@ class InboxPanel extends StatelessWidget {
               spacing: JentraSpacing.x2,
               children: [
                 Text('Notifications', style: theme.textTheme.titleLarge),
-                TextButton(
-                  onPressed: c.unread == 0 || c.busy || !c.online
-                      ? null
-                      : c.markAllRead,
-                  child: const Text('Mark all read'),
+                Tooltip(
+                  message: 'Mark unread notices in this list as read.',
+                  child: TextButton(
+                    onPressed:
+                        !c.notices.any((notice) => notice.unread) ||
+                            c.busy ||
+                            !c.online
+                        ? null
+                        : c.markLoadedRead,
+                    child: const Text('Mark loaded read'),
+                  ),
                 ),
               ],
             ),
@@ -351,6 +397,7 @@ class InboxPanel extends StatelessWidget {
                   for (final n in c.notices)
                     Semantics(
                       button: true,
+                      enabled: c.canMarkRead,
                       label:
                           '${n.unread ? 'Unread notice' : 'Notice'}: ${n.title}',
                       excludeSemantics: true,
@@ -358,11 +405,14 @@ class InboxPanel extends StatelessWidget {
                         borderRadius: BorderRadius.circular(
                           JentraRadii.control,
                         ),
-                        onTap: () async {
-                          await c.markRead(n);
-                          final id = n.engagementId;
-                          if (id != null) onOpenEngagement(id);
-                        },
+                        onTap: c.canMarkRead
+                            ? () async {
+                                await c.markRead(n);
+                                if (!context.mounted || !c.canMarkRead) return;
+                                final id = n.engagementId;
+                                if (id != null) onOpenEngagement(id);
+                              }
+                            : null,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                             vertical: JentraSpacing.x2,

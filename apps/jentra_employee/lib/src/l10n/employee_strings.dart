@@ -181,7 +181,7 @@ class EmployeeStrings {
     'discard': 'Discard',
     'keepEditing': 'Keep editing',
     'payUnavailable': 'Your payslips are not available here yet',
-    'payCopy': 'Your company needs to enable private employee payroll access. Contact your payroll team for a payslip or pay question.',
+    'payCopy': 'Payslips are not connected in this app version. Contact your payroll team for a payslip or pay question.',
     'payPrivacy': 'Your pay is personal',
     'payPrivacyCopy': 'Payslips will require current employee access and identity verification.',
     'profile': 'My profile',

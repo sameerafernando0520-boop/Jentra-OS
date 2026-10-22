@@ -259,6 +259,64 @@ void main() {
     return c.form!['id'] as String;
   }
 
+  testWidgets('unavailable assets explains module availability', (
+    tester,
+  ) async {
+    repository.authorizationFailure = 'FEATURE_NOT_ENTITLED';
+    final c = create();
+    await c.initialize();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: AssetsWorkspace(controller: c)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.text(
+        'Assets is not enabled for this business. Ask your administrator to review module availability.',
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.text('Asset access changed. Select an authorized scope.'),
+      findsNothing,
+    );
+    expect(c.accessDenied, isTrue);
+    expect(repository.commands, isEmpty);
+    expect(tester.takeException(), isNull);
+    c.dispose();
+  });
+
+  test(
+    'asset entitlement loss clears plaintext and retains the sealed request',
+    () async {
+      final c = create();
+      await c.initialize();
+      final localId = await location(c);
+      repository.failure = const DomainError(
+        code: 'UNCERTAIN_RESULT',
+        message: 'Synthetic timeout',
+        retryable: true,
+      );
+      await c.send();
+      final original = c.pending!.toJson();
+      repository.authorizationFailure = 'FEATURE_NOT_ENTITLED';
+      await c.checkAccess();
+      expect(c.error, startsWith('Assets is not enabled for this business.'));
+      expect(c.current, isFalse);
+      expect(c.records, isEmpty);
+      expect(c.form, isNull);
+      expect(c.local, isNull);
+      expect(c.recovery, isEmpty);
+      expect(
+        (await c.drafts['location']!.load(scope, localId))!.pending!.toJson(),
+        original,
+      );
+      expect(repository.commands, hasLength(1));
+      c.dispose();
+    },
+  );
+
   test(
     'late confirmation survives disposal without another dispatch',
     () async {
@@ -727,6 +785,10 @@ void main() {
       expect(revoked.records, isNotEmpty);
       repository.deny = true;
       await revoked.checkAccess();
+      expect(
+        revoked.error,
+        'Asset access changed. Select an authorized scope.',
+      );
       expect(revoked.records, isEmpty);
       expect(revoked.current, isFalse);
       revoked.dispose();

@@ -1,11 +1,27 @@
 # Jentra OS desktop delivery — 22 October 2026
 
+Follow-up fixes and the `0.2.0+2202` candidate are recorded in the
+[HR and desktop correction pass](../../hr-completion-20261022/README.md).
+The build hashes and suite totals below belong to the earlier `2201` snapshot.
+
 Version **0.2.0+2201** is built for the owner's selected project,
 `xpdoufauvrbdmxgngetv`, using the production app configuration. It is an
 **unsigned release candidate**. Build, automated verification, native inspection,
 backend rollout and owner acceptance are separate states.
 
 ## Install this version
+
+At 12:16 UTC on 22 October, after explicit owner approval, this exact Setup.exe
+installed successfully for the Windows user at
+`%LOCALAPPDATA%\Programs\Jentra OS`. Windows app registration and the
+**Jentra OS** Start-menu shortcut now point to version `0.2.0+2201`.
+The installed launcher verified all 44 runtime files and the recorded source
+hash. The installer stopped no processes and changed no application user data.
+The first subsequent native launch used the installed executable under this exact
+versioned directory and displayed sign-in. After private user authentication,
+later restarts restored the signed-in QA workspace; the profile editor confirmed
+MFA for that session. The sanitized installation receipt is in
+`build/desktop-completion-20261022/real-user-install.json`.
 
 The installer is
 `build/desktop-release/0.2.0-2201-production-20261022-055822-3f88/Jentra-OS-0.2.0-2201-production-8a4eb8fd5d1a-Setup.exe`.
@@ -24,7 +40,8 @@ Portable ZIP SHA-256:
 Source snapshot SHA-256:
 `8a4eb8fd5d1a416a7d5f918d43353bc7fc3f88348fe4ecf43f12d19b9d116b4a`.
 This covers 480 recorded build inputs, including the intended uncommitted work.
-The final comparison found no drift between those inputs and current source.
+The comparison at the time of that build found no drift. Later correction-pass
+changes have a separate snapshot and verification record.
 
 ## Desktop changes
 
@@ -60,7 +77,7 @@ The final comparison found no drift between those inputs and current source.
 
 ## Verification
 
-All current suites passed:
+The `2201` source suites passed:
 
 | Suite | Passing tests |
 |---|---:|
@@ -97,6 +114,32 @@ were inspected. These observations establish pre-sign-in behavior only. A
 permitted private sign-in was requested for authenticated navigation/profile
 acceptance; no password, MFA code or email token was requested in chat.
 
+Subsequent authenticated inspection confirmed that the account menu opens,
+the profile editor displays the saved profile picture after an app restart,
+and **Choose picture** opens the native file picker. Cancelling that picker
+preserved the saved picture. No profile name, photo, email or preference was
+changed during this check. The release sidebar has no Design System entry.
+
+After the owner's separate approval, **Create workspace** was submitted once
+for `jentra-qa-221022`, legal entity `QA`/`QA`, and first branch
+`Head Office`/`HQ`. The app subsequently selected that workspace and displayed
+**Multi-factor verification required**. This is an actual test tenant in the
+owner-selected hosted project. It creates owner membership and a starter trial;
+it is not a local fixture. No existing-company business transaction was posted.
+The native result verified workspace creation and the MFA access gate. The user
+subsequently completed setup privately and the installed profile screen confirmed
+MFA; the correction-pass record lists the inspected business destinations.
+No QR code, setup key or verification code was requested, read or recorded.
+
+After the user reported authenticator setup complete, the former walkthrough
+window was no longer open. Computer Use launched the installed executable and
+verified the real installed sign-in screen, app title and icon. A private sign-in
+was handed back to the user before inspecting authenticated business screens.
+The source restores cached Supabase sessions before rendering and uses Windows
+application-support identity rather than the executable directory. This source
+review does not establish why the earlier session was unavailable; no user
+session store or authentication contents were read.
+
 ## Open release gates
 
 - The latest public Auth check on 22 October still reports **Google disabled**,
@@ -106,10 +149,15 @@ acceptance; no password, MFA code or email token was requested in chat.
   delivery/confirmation with a permitted account remain acceptance checks.
 - The connected management account previously returned project access **403**.
   No test identity or assurance role was created through an administrative bypass.
-  Current role assignment and genuine MFA need authorized account access.
-- Authenticated native workflows, a real screen-reader walkthrough and owner
-  sign-off remain open until performed. Unit/widget accessibility checks are not
-  a Narrator walkthrough.
+  Normal authenticated onboarding created only the explicitly approved test
+  workspace and its owner access. Assurance-specific reviewer/auditor grants and
+  role acceptance still requires its normal authorized flow. Current-session MFA
+  verification and signed-in restart restoration were observed subsequently.
+- Native empty-workspace navigation is recorded in the correction pass. People,
+  Assets, Projects and Service reached denied module states; populated HR and
+  business transaction acceptance remain open. A real screen-reader walkthrough
+  and owner sign-off remain open. Unit/widget accessibility checks are not a
+  Narrator walkthrough.
 - The installer/app are unsigned. A trusted signing certificate and signing
   process remain a release requirement for a signed distribution.
 - This work did not install migrations, deploy functions or change hosted Auth
@@ -117,4 +165,7 @@ acceptance; no password, MFA code or email token was requested in chat.
   synthetic do not become verified production operations by changing the app
   channel. Their release gates remain in the respective module records.
 
-No commit, push, secret-file inclusion or production backend mutation was made.
+No commit, push or secret-file inclusion was made by this verification run.
+The only hosted mutation in this acceptance step was the separately approved
+test-workspace creation through the app's normal onboarding flow. No schema,
+function, hosted Auth setting or existing-company data was changed.

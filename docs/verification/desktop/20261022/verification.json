@@ -1,6 +1,6 @@
 {
   "date": "2026-10-22",
-  "result": "Production-configured Windows release candidate; native authenticated acceptance and owner sign-off remain open",
+  "result": "Installed production-configured Windows release candidate; native profile and approved workspace creation checked; private MFA, business workflow acceptance and owner sign-off remain open",
   "delivery": {
     "identity": {
       "version": "0.2.0+2201",
@@ -28,7 +28,7 @@
     },
     "verifiedRuntimeFiles": 44,
     "backendChanged": false,
-    "userProfileInstalled": false,
+    "userProfileInstalled": true,
     "nativeAcceptance": false,
     "ownerAccepted": false
   },
@@ -82,7 +82,7 @@
     "priorFailureImages": 460,
     "priorEvidenceChanged": 0,
     "vcRuntimeDlls": 10,
-    "nativeWalkthrough": "Approved native pre-sign-in checks completed; private sign-in, authenticated workflows and screen-reader acceptance remain open"
+    "nativeWalkthrough": "Pre-sign-in, authenticated profile and approved workspace creation inspected; MFA handoff pending; business screens and screen-reader acceptance remain open"
   },
   "actualSetupStaging": {
     "stageRoot": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\desktop-install-stage-9a080057",
@@ -137,7 +137,7 @@
   "reviewedGoldenChanges": 18,
   "native": {
     "started": true,
-    "reason": "Approved staged native pre-sign-in walkthrough completed; awaiting private permitted sign-in for authenticated workflows",
+    "reason": "User reported authenticator setup complete. Staged window was closed. Installed executable launched successfully but displayed sign-in; private sign-in handoff pending before business workflow inspection.",
     "authenticatedWorkflows": false,
     "screenReader": false,
     "ownerSignOff": false,
@@ -149,15 +149,36 @@
       "Escape dismisses About",
       "Confirmation-help and original-link recovery navigation",
       "Recovery controls and About reachable by scrolling"
-    ]
+    ],
+    "authenticatedProfileChecks": [
+      "Account menu opens",
+      "Saved profile picture visible after process restart",
+      "Profile editor opens",
+      "Native picture picker opens",
+      "Cancel picture picker preserves saved photo",
+      "Release sidebar excludes Design System"
+    ],
+    "installedAppReopened": true,
+    "installedSessionRestored": false,
+    "installedLaunch": {
+      "checkedAtUtc": "2026-10-22T12:36:11.1540379Z",
+      "version": "0.2.0+2201",
+      "path": "C:\\Users\\sheha\\AppData\\Local\\Programs\\Jentra OS\\versions\\0.2.0-2201-production-8a4eb8fd5d1a\\jentra_desktop.exe",
+      "observedScreen": "Sign in",
+      "privateSignInRequested": true,
+      "credentialsRead": false,
+      "sessionStoreRead": false,
+      "causeOfEarlierSessionAbsence": "Not established"
+    }
   },
   "preservation": {
     "priorFailureImages": 460,
     "changed": 0,
     "committed": false,
     "pushed": false,
-    "backendChanged": false,
-    "secretsIncluded": false
+    "backendChanged": true,
+    "secretsIncluded": false,
+    "backendChangeScope": "Only owner-approved normal onboarding for jentra-qa-221022; no schema, function, auth-setting or existing-company data change"
   },
   "testAccountHandoff": {
     "userReported": "No test account available",
@@ -179,8 +200,68 @@
     },
     "nativeForm": "Create your account opened in verified staged build",
     "accountCreated": false,
-    "nextStep": "User enters email/password privately, keeps app open and confirms the newest email",
+    "nextStep": "User privately signs in to installed app and completes any MFA prompt; then verify all main module routes in QA workspace",
     "secretsRequestedInChat": false,
-    "backendChanged": false
+    "backendChanged": false,
+    "signedInAccountObserved": true
+  },
+  "realUserInstallation": {
+    "checkedAtUtc": "2026-10-22T12:16:59.8519375Z",
+    "installerExitCode": 0,
+    "installerSha256": "ea9bcf9fb43865f6f9c5b07347e489ff4b2be51f71d98334ad4fbdd9b6fab194",
+    "installRoot": "C:\\Users\\sheha\\AppData\\Local\\Programs\\Jentra OS",
+    "current": {
+      "releaseId": "0.2.0-2201-production-8a4eb8fd5d1a",
+      "channel": "production",
+      "version": "0.2.0+2201",
+      "buildNumber": 2201,
+      "sourceSha256": "8a4eb8fd5d1a416a7d5f918d43353bc7fc3f88348fe4ecf43f12d19b9d116b4a",
+      "installedAtUtc": "2026-10-22T12:16:59.013002Z"
+    },
+    "receipt": {
+      "releaseId": "0.2.0-2201-production-8a4eb8fd5d1a",
+      "version": "0.2.0+2201",
+      "channel": "production",
+      "installRoot": "C:\\Users\\sheha\\AppData\\Local\\Programs\\Jentra OS",
+      "executable": "C:\\Users\\sheha\\AppData\\Local\\Programs\\Jentra OS\\versions\\0.2.0-2201-production-8a4eb8fd5d1a\\jentra_desktop.exe",
+      "verifiedFiles": 44,
+      "previousReleaseRetained": false,
+      "shortcutsCreated": true,
+      "registered": true,
+      "processesStopped": 0,
+      "userDataChanged": false
+    },
+    "launchVerification": "{\r\n  \"releaseId\": \"0.2.0-2201-production-8a4eb8fd5d1a\",\r\n  \"version\": \"0.2.0+2201\",\r\n  \"channel\": \"production\",\r\n  \"executable\": \"C:\\\\Users\\\\sheha\\\\AppData\\\\Local\\\\Programs\\\\Jentra OS\\\\versions\\\\0.2.0-2201-production-8a4eb8fd5d1a\\\\jentra_desktop.exe\",\r\n  \"sourceSha256\": \"8a4eb8fd5d1a416a7d5f918d43353bc7fc3f88348fe4ecf43f12d19b9d116b4a\"\r\n}",
+    "registration": {
+      "displayName": "Jentra OS",
+      "displayVersion": "0.2.0+2201",
+      "installLocation": "C:\\Users\\sheha\\AppData\\Local\\Programs\\Jentra OS"
+    },
+    "startShortcutExists": true,
+    "userDataRemoved": false,
+    "previousBundlesRemoved": false,
+    "source": "Explicit user approval: Install the current version"
+  },
+  "approvedTestWorkspace": {
+    "checkedAtUtc": "2026-10-22T12:18:45.0447837Z",
+    "projectRef": "xpdoufauvrbdmxgngetv",
+    "workspace": "jentra-qa-221022",
+    "legalEntity": {
+      "name": "QA",
+      "code": "QA"
+    },
+    "branch": {
+      "name": "Head Office",
+      "code": "HQ"
+    },
+    "authorization": "Explicit user approval: Create the test workspace",
+    "submittedOnce": true,
+    "observedOutcome": "Workspace selected; Multi-factor verification required",
+    "created": true,
+    "ownerMfaRequired": true,
+    "authenticatorSetup": "User reported ready; native AAL2 confirmation awaits private installed-app sign-in",
+    "existingCompanyTransactionsPosted": false,
+    "secretsRecorded": false,
+    "userReportedAuthenticatorComplete": true
   }
 }

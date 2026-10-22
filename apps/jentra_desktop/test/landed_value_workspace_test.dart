@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:drift/native.dart';
@@ -37,6 +38,8 @@ class LandedGateway implements LandedValueGateway {
   String? failure;
   bool readFailure = false;
   bool readDenied = false;
+  Completer<Map<String, Object?>>? pendingPosted;
+  List<Map<String, Object?>> posted = [];
   final commands = <CommandEnvelope<Map<String, Object?>>>[];
   @override
   Future<Map<String, Object?>> options(
@@ -51,6 +54,9 @@ class LandedGateway implements LandedValueGateway {
       );
     }
     if (readFailure) throw StateError('offline');
+    if (resource == 'posted' && pendingPosted != null) {
+      return pendingPosted!.future;
+    }
     return {
       'items': switch (resource) {
         'receipts' => [
@@ -63,6 +69,7 @@ class LandedGateway implements LandedValueGateway {
         'accounts' => [
           {'id': 'expense', 'code': '5300', 'name': 'Freight expense'},
         ],
+        'posted' => posted,
         _ => [],
       },
     };
@@ -242,6 +249,7 @@ void main() {
     WidgetTester tester, {
     bool dark = false,
     double height = 1800,
+    bool settle = true,
   }) async {
     tester.view.physicalSize = Size(1024, height);
     tester.view.devicePixelRatio = 1;
@@ -256,8 +264,90 @@ void main() {
         ),
       ),
     );
-    await tester.pumpAndSettle();
+    if (settle) {
+      await tester.pumpAndSettle();
+    } else {
+      await tester.pump();
+    }
   }
+
+  testWidgets('unloaded posted register explains how to load its records', (
+    tester,
+  ) async {
+    await render(tester);
+    expect(find.text('Posted adjustments not loaded'), findsOneWidget);
+    expect(find.text('No posted landed adjustments'), findsNothing);
+    await tester.tap(find.text('Refresh posted'));
+    await tester.pumpAndSettle();
+    expect(find.text('Posted adjustments not loaded'), findsNothing);
+    expect(find.text('No posted landed adjustments'), findsOneWidget);
+    expect(gateway.commands, isEmpty);
+  });
+
+  testWidgets('empty posted register explains how to start an adjustment', (
+    tester,
+  ) async {
+    await c.initialize();
+    await render(tester);
+    expect(find.text('No posted landed adjustments'), findsOneWidget);
+    expect(
+      find.textContaining('recording the receipt and freight expense'),
+      findsOneWidget,
+    );
+    await tester.tap(find.text('New landed adjustment'));
+    await tester.pumpAndSettle();
+    expect(find.text('No posted landed adjustments'), findsNothing);
+    expect(find.text('Local adjustment'), findsOneWidget);
+    expect(gateway.commands, isEmpty);
+  });
+
+  testWidgets('loading and offline reads never claim the register is empty', (
+    tester,
+  ) async {
+    await c.initialize();
+    gateway.pendingPosted = Completer<Map<String, Object?>>();
+    final refresh = c.refresh('posted');
+    await render(tester, settle: false);
+    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    expect(find.text('No posted landed adjustments'), findsNothing);
+    gateway.pendingPosted!.complete({'items': []});
+    await refresh;
+    await tester.pumpAndSettle();
+    expect(find.text('No posted landed adjustments'), findsOneWidget);
+    c.setOnline(false);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Offline'), findsOneWidget);
+    expect(find.text('No posted landed adjustments'), findsNothing);
+    expect(find.text('Posted adjustments not loaded'), findsNothing);
+  });
+
+  testWidgets('read failure and existing postings replace the empty state', (
+    tester,
+  ) async {
+    gateway.readFailure = true;
+    await c.initialize();
+    await render(tester);
+    expect(
+      find.textContaining('Unable to complete this action'),
+      findsOneWidget,
+    );
+    expect(find.text('No posted landed adjustments'), findsNothing);
+    gateway.readFailure = false;
+    gateway.posted = [
+      {
+        'reference': 'FREIGHT-42',
+        'receipt_number': 'GR-0042',
+        'document_date': '2026-10-22',
+        'currency_code': 'LKR',
+        'amount': '10.000001',
+      },
+    ];
+    await c.refresh('posted');
+    await tester.pumpAndSettle();
+    expect(find.text('FREIGHT-42 · GR-0042'), findsOneWidget);
+    expect(find.text('No posted landed adjustments'), findsNothing);
+    expect(gateway.commands, isEmpty);
+  });
 
   testWidgets(
     'revoked cross-branch access hides costs and retains encrypted work',

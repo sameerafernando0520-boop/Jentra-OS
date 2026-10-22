@@ -17,8 +17,14 @@ import 'employee_photo_test.dart' show fixturePhoto;
 
 // These are current-source layout renders with labeled test fixtures. They are
 // review artifacts, not golden comparisons or authenticated device acceptance.
+// Keep each run separate from historical review images and open image viewers.
+final _previewDirectory = Directory(
+  'build/preview-runs/${DateTime.now().toUtc().microsecondsSinceEpoch}-$pid',
+);
+
 void main() {
   setUpAll(() async {
+    debugPrint('Employee fixture previews: ${_previewDirectory.absolute.path}');
     for (final entry in {
       'Manrope': 'Manrope-Regular.ttf',
       'IBM Plex Mono': 'IBMPlexMono-Regular.ttf',
@@ -371,9 +377,7 @@ Future<void> _capture(WidgetTester tester, Key key, String name) async {
     try {
       final bytes = await pixels.toByteData(format: ui.ImageByteFormat.png);
       expect(bytes, isNotNull);
-      final file = File(
-        '../../docs/verification/employee-app/profile-ui-20261009/previews/$name.png',
-      );
+      final file = File('${_previewDirectory.path}/$name.png');
       await file.parent.create(recursive: true);
       await file.writeAsBytes(bytes!.buffer.asUint8List());
     } finally {

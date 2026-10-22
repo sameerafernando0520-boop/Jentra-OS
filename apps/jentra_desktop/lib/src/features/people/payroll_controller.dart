@@ -860,14 +860,18 @@ final class PayrollController extends ChangeNotifier {
 
   Future<void> saveLocal() => _run(() => _save());
   Future<bool> canLeave() async {
-    if (_sending) return false;
-    if (busy && form == null || _disposed) return !_disposed;
+    if (_sending || _disposed) return false;
+    // Access loss clears visible fields and keeps encrypted recovery intact.
+    // It must not trap the user on a workspace they can no longer use.
+    if (accessDenied || busy && form == null) return true;
     try {
       await _save();
-      return current;
+      return !_disposed;
     } catch (_) {
-      message = 'Save or resolve the payroll draft before leaving.';
-      _notify();
+      if (!_disposed) {
+        message = 'Save or resolve the payroll draft before leaving.';
+        _notify();
+      }
       return false;
     }
   }

@@ -131,7 +131,7 @@ final class ServiceController extends ChangeNotifier {
   }
 
   bool _live(int epoch) => current && online && epoch == _epoch;
-  void _deny() {
+  void _deny(DomainError cause) {
     _epoch++;
     _formEpoch++;
     denied = true;
@@ -144,7 +144,9 @@ final class ServiceController extends ChangeNotifier {
     authority = null;
     labels.clear();
     recovery = [];
-    error = 'Current service access is required. Select an authorized scope.';
+    error = cause.code == 'FEATURE_NOT_ENTITLED'
+        ? 'Service is not enabled for this business. Ask your administrator to review module availability.'
+        : 'Current service access is required. Select an authorized scope.';
     _notify();
   }
 
@@ -157,7 +159,7 @@ final class ServiceController extends ChangeNotifier {
           'MFA_REQUIRED',
           'FEATURE_NOT_ENTITLED',
         }.contains(cause.code)) {
-      _deny();
+      _deny(cause);
       return;
     }
     error = cause is DomainError
@@ -689,19 +691,23 @@ final class ServiceController extends ChangeNotifier {
   }
 
   Future<bool> canLeave() async {
-    if (busy || _sending) {
+    if (_disposed || busy || _sending) {
+      return false;
+    }
+    if (form == null || pending != null || conflicted || confirmed != null) {
+      return true;
+    }
+    if (!current || !online) {
       return false;
     }
     final epoch = _epoch;
-    if (form != null && pending == null && !conflicted && confirmed == null) {
-      try {
-        await save();
-      } catch (e) {
-        if (_live(epoch)) {
-          _failure(e);
-        }
-        return false;
+    try {
+      await save();
+    } catch (e) {
+      if (_live(epoch)) {
+        _failure(e);
       }
+      return false;
     }
     return _live(epoch);
   }

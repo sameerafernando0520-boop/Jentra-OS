@@ -91,6 +91,9 @@ class _Repository implements PayrollRepository {
   bool failEmployeeReads = false;
   Completer<void>? gate;
   Completer<void>? settingsGate;
+  Completer<void>? authorizationGate;
+  String? authorizationFailure;
+  int authorizationCalls = 0;
   final settlementPages = <String?, WorkforcePage<Map<String, Object?>>>{};
   final settlementCursors = <String?>[];
   final sent = <CommandEnvelope<Map<String, Object?>>>[];
@@ -99,10 +102,18 @@ class _Repository implements PayrollRepository {
   @override
   Future<void> authorize(TenantContext s, String cap) async {
     authorized.add(cap);
+    authorizationCalls++;
+    await authorizationGate?.future;
     if (denied) {
       throw const DomainError(
         code: 'PERMISSION_DENIED',
         message: 'Payroll access changed',
+      );
+    }
+    if (authorizationFailure != null) {
+      throw DomainError(
+        code: authorizationFailure!,
+        message: 'Payroll access check unavailable',
       );
     }
   }
@@ -359,8 +370,88 @@ void main() {
     expect(c.current, isFalse);
     expect(c.form, isNull);
     expect(c.runs, isEmpty);
+    expect(await c.canLeave(), isTrue);
     expect((await db.select(db.encryptedDrafts).get()).length, 2);
   });
+  test(
+    'denied payroll workspace can be left without saving or authorizing',
+    () async {
+      repo.denied = true;
+      await c.checkAccess();
+      expect(c.accessDenied, isTrue);
+      expect(c.form, isNull);
+      final accessChecks = repo.authorizationCalls;
+      expect(await c.canLeave(), isTrue);
+      expect(repo.authorizationCalls, accessChecks);
+      expect(await db.select(db.encryptedDrafts).get(), isEmpty);
+    },
+  );
+  test(
+    'leaving payroll saves unsent private edits before allowing navigation',
+    () async {
+      await create();
+      final runId = c.form!['id'] as String;
+      c.update('reason', 'Retain these private edits');
+      expect(await c.canLeave(), isTrue);
+      final saved = await store.load(scope, PayrollCommandKind.run, runId);
+      expect(saved?.form['reason'], 'Retain these private edits');
+      expect(saved?.pending, isNull);
+      expect(repo.sent, isEmpty);
+    },
+  );
+  test(
+    'failed private draft save continues to block leaving payroll',
+    () async {
+      await create();
+      final runId = c.form!['id'] as String;
+      c.update('reason', 'Keep unsaved private edits visible');
+      repo.authorizationFailure = 'NETWORK_ERROR';
+      expect(await c.canLeave(), isFalse);
+      expect(c.form?['reason'], 'Keep unsaved private edits visible');
+      expect(c.message, 'Save or resolve the payroll draft before leaving.');
+      repo.authorizationFailure = null;
+      expect(await c.canLeave(), isTrue);
+      expect(
+        (await store.load(
+          scope,
+          PayrollCommandKind.run,
+          runId,
+        ))?.form['reason'],
+        'Keep unsaved private edits visible',
+      );
+    },
+  );
+  test('payroll cannot be left while its command is being sent', () async {
+    await create();
+    repo.gate = Completer<void>();
+    final request = c.submit();
+    while (repo.sent.isEmpty) {
+      await Future<void>.delayed(Duration.zero);
+    }
+    expect(await c.canLeave(), isFalse);
+    repo.gate!.complete();
+    await request;
+    expect(await c.canLeave(), isTrue);
+  });
+  test(
+    'late payroll draft save cannot allow navigation after scope disposal',
+    () async {
+      await create();
+      repo.authorizationGate = Completer<void>();
+      final priorAccessChecks = repo.authorizationCalls;
+      final leave = c.canLeave();
+      while (repo.authorizationCalls == priorAccessChecks) {
+        await Future<void>.delayed(Duration.zero);
+      }
+      c.dispose();
+      repo.authorizationGate!.complete();
+      expect(await leave, isFalse);
+      expect(c.form, isNull);
+      expect(c.local, isNull);
+      expect(c.message, isNot('Encrypted payroll draft saved.'));
+      expect(await c.canLeave(), isFalse);
+    },
+  );
   test(
     'late response after scope disposal cannot clear original receipt',
     () async {

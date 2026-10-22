@@ -146,10 +146,12 @@ class MilestoneFake implements MilestoneRepository {
   Completer<void>? commandGate, authorizationGate;
   DomainError? failure, authFailure;
   bool failRead = false;
+  int authorizationCalls = 0;
   final commands = <CommandEnvelope<Map<String, Object?>>>[];
   Map<String, Object?>? receipt;
   @override
   Future<void> authorize(TenantContext s, String cap) async {
+    authorizationCalls++;
     await authorizationGate?.future;
     if (authFailure != null) throw authFailure!;
   }
@@ -315,8 +317,107 @@ void main() {
     expect(c.form, isNull);
     expect(c.project, isNull);
     expect(c.records, isEmpty);
+    final accessChecks = repo.authorizationCalls;
+    expect(await c.canLeave(), isTrue);
+    expect(repo.authorizationCalls, accessChecks);
     c.dispose();
   });
+  test(
+    'offline milestones without an editor can be left without authorizing',
+    () async {
+      final c = create();
+      c.setOnline(false);
+      final accessChecks = repo.authorizationCalls;
+      expect(await c.canLeave(), isTrue);
+      expect(repo.authorizationCalls, accessChecks);
+      c.dispose();
+    },
+  );
+  test(
+    'leaving milestones saves unsent edits before allowing navigation',
+    () async {
+      final c = create();
+      await ready(c);
+      expect(await c.canLeave(), isTrue);
+      final saved = await c.drafts['create']!.load(scope, id);
+      expect(saved?.form['name'], 'Customer acceptance');
+      expect(saved?.pending, isNull);
+      expect(repo.commands, isEmpty);
+      c.dispose();
+    },
+  );
+  test(
+    'failed milestone draft save blocks navigation and retains edits',
+    () async {
+      final c = create();
+      await ready(c);
+      repo.authFailure = const DomainError(
+        code: 'NETWORK_ERROR',
+        message: 'Access check unavailable',
+      );
+      expect(await c.canLeave(), isFalse);
+      expect(c.form?['name'], 'Customer acceptance');
+      repo.authFailure = null;
+      expect(await c.canLeave(), isTrue);
+      c.dispose();
+    },
+  );
+  test('milestones cannot be left while a command is being sent', () async {
+    final c = create();
+    await ready(c);
+    repo.commandGate = Completer<void>();
+    final send = c.send();
+    await until(() => repo.commands.isNotEmpty);
+    expect(await c.canLeave(), isFalse);
+    repo.commandGate!.complete();
+    await send;
+    expect(await c.canLeave(), isTrue);
+    c.dispose();
+  });
+  test(
+    'late milestone draft save cannot allow navigation after disposal',
+    () async {
+      final c = create();
+      await ready(c);
+      repo.authorizationGate = Completer<void>();
+      final priorAccessChecks = repo.authorizationCalls;
+      final leave = c.canLeave();
+      await until(() => repo.authorizationCalls > priorAccessChecks);
+      c.dispose();
+      repo.authorizationGate!.complete();
+      expect(await leave, isFalse);
+      expect(c.form, isNull);
+      expect(c.local, isNull);
+      expect(await c.canLeave(), isFalse);
+    },
+  );
+  test(
+    'denied milestones can be left while encrypted uncertainty remains intact',
+    () async {
+      final c = create();
+      await ready(c);
+      repo.failure = const DomainError(
+        code: 'UNCERTAIN_RESULT',
+        message: 'No reply',
+        retryable: true,
+      );
+      await c.send();
+      final original = c.pending!.toJson();
+      repo.authFailure = const DomainError(
+        code: 'PERMISSION_DENIED',
+        message: 'Project access changed',
+      );
+      await c.checkAccess();
+      expect(c.denied, isTrue);
+      expect(c.form, isNull);
+      expect(await c.canLeave(), isTrue);
+      expect(
+        (await c.drafts['create']!.load(scope, id))?.pending?.toJson(),
+        original,
+      );
+      c.dispose();
+    },
+  );
   test(
     'fresh save revocation clears plaintext before surfacing storage failure',
     () async {

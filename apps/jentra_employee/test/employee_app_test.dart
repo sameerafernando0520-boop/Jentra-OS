@@ -45,6 +45,12 @@ void main() {
       find.text('Your payslips are not available here yet'),
       findsOneWidget,
     );
+    expect(
+      find.text(
+        'Payslips are not connected in this app version. Contact your payroll team for a payslip or pay question.',
+      ),
+      findsOneWidget,
+    );
     expect(find.text('0.00'), findsNothing);
     controller.lock();
   });

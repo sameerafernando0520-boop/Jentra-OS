@@ -147,9 +147,10 @@ class _ServiceWorkspaceState extends State<ServiceWorkspace> {
   @override
   Widget build(BuildContext context) {
     if (c.denied) {
-      return const Center(
+      return Center(
         child: Text(
-          'Current service access is required. Select an authorized scope.',
+          c.error ??
+              'Current service access is required. Select an authorized scope.',
         ),
       );
     }

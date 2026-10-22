@@ -41,6 +41,7 @@ Map<String, Object?> dimension(
 
 class DimensionFake implements FinancialDimensionGateway {
   String? failure, readFailure;
+  bool empty = false;
   Completer<void>? pause, readPause;
   final entered = Completer<void>(), readEntered = Completer<void>();
   final commands = <CommandEnvelope<Map<String, Object?>>>[];
@@ -58,7 +59,7 @@ class DimensionFake implements FinancialDimensionGateway {
       throw DomainError(code: readFailure!, message: 'Access needs rechecking');
     }
     return {
-      'items': [dimension(s, kind: kind)],
+      'items': empty ? [] : [dimension(s, kind: kind)],
       'next_cursor': null,
     };
   }
@@ -136,6 +137,82 @@ void main() {
     c.field('name', 'Warehouse and distribution');
     c.field('reason', 'Approved master configuration');
   }
+
+  Future<void> renderCatalog(WidgetTester tester, {bool settle = true}) async {
+    tester.view.physicalSize = const Size(1024, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: JentraTheme.light(),
+        home: Scaffold(body: FinancialDimensionWorkspace(controller: c)),
+      ),
+    );
+    if (settle) {
+      await tester.pumpAndSettle();
+    } else {
+      await tester.pump();
+    }
+  }
+
+  testWidgets('empty cost centres and project tags explain the create path', (
+    tester,
+  ) async {
+    gateway.empty = true;
+    await c.initialize();
+    await renderCatalog(tester);
+    expect(find.text('No cost centres yet'), findsOneWidget);
+    await tester.tap(find.text('Project tags'));
+    await tester.pumpAndSettle();
+    expect(find.text('No cost centres yet'), findsNothing);
+    expect(find.text('No project tags yet'), findsOneWidget);
+    await tester.tap(find.text('New dimension'));
+    await tester.pumpAndSettle();
+    expect(find.text('No project tags yet'), findsNothing);
+    expect(find.text('Selected project tag · version 0'), findsOneWidget);
+    expect(gateway.commands, isEmpty);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('loading and offline catalogs never claim no dimensions exist', (
+    tester,
+  ) async {
+    gateway.empty = true;
+    await c.initialize();
+    gateway.readPause = Completer<void>();
+    final refresh = c.refresh();
+    await renderCatalog(tester, settle: false);
+    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    expect(find.text('No cost centres yet'), findsNothing);
+    gateway.readPause!.complete();
+    await refresh;
+    await tester.pumpAndSettle();
+    expect(find.text('No cost centres yet'), findsOneWidget);
+    c.setOnline(false);
+    await tester.pumpAndSettle();
+    expect(find.text('Recheck access'), findsOneWidget);
+    expect(find.text('No cost centres yet'), findsNothing);
+  });
+
+  testWidgets('unverified and failed catalogs do not claim empty results', (
+    tester,
+  ) async {
+    await renderCatalog(tester);
+    expect(find.text('Recheck access'), findsOneWidget);
+    expect(find.text('No cost centres yet'), findsNothing);
+    gateway.readFailure = 'UNCERTAIN_RESULT';
+    await c.initialize();
+    await tester.pumpAndSettle();
+    expect(find.text('Access needs rechecking'), findsOneWidget);
+    expect(find.text('No cost centres yet'), findsNothing);
+    gateway.readFailure = null;
+    await c.refresh();
+    await tester.pumpAndSettle();
+    expect(find.text('CC-1 · Distribution and logistics'), findsOneWidget);
+    expect(find.text('No cost centres yet'), findsNothing);
+    expect(gateway.commands, isEmpty);
+  });
 
   test('navigation requires both current finance and management access', () {
     expect(

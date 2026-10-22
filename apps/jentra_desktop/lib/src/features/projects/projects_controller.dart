@@ -186,7 +186,7 @@ final class ProjectsController extends ChangeNotifier {
     labels.clear();
   }
 
-  void _deny() {
+  void _deny(DomainError cause) {
     denied = true;
     _clearForm();
     records = [];
@@ -198,7 +198,9 @@ final class ProjectsController extends ChangeNotifier {
     next = null;
     parentId = null;
     recoveryCursors.clear();
-    error = 'Project access changed. Select an authorized scope.';
+    error = cause.code == 'FEATURE_NOT_ENTITLED'
+        ? 'Projects is not enabled for this business. Ask your administrator to review module availability.'
+        : 'Project access changed. Select an authorized scope.';
     message = null;
     _notify();
   }
@@ -247,7 +249,7 @@ final class ProjectsController extends ChangeNotifier {
         );
       }
       if (_revoked(e) && current) {
-        _deny();
+        _deny(e);
       }
       rethrow;
     }
@@ -277,7 +279,7 @@ final class ProjectsController extends ChangeNotifier {
       await f();
     } on DomainError catch (e) {
       if (_revoked(e)) {
-        _deny();
+        _deny(e);
       } else if (current) {
         error = e.message;
       }
@@ -318,7 +320,7 @@ final class ProjectsController extends ChangeNotifier {
       }
     } on DomainError catch (e) {
       if (_revoked(e)) {
-        _deny();
+        _deny(e);
       }
     } catch (_) {
       /* Failed reads provide no new authority. */
@@ -1013,7 +1015,7 @@ final class ProjectsController extends ChangeNotifier {
         await _detail(id, ProjectSection.plans);
       } on DomainError catch (e) {
         if (_revoked(e)) {
-          _deny();
+          _deny(e);
         } else if (current) {
           message = 'The exact saved request remains ready for reconciliation. Its optional project view is unavailable.';
         }
@@ -1173,7 +1175,7 @@ final class ProjectsController extends ChangeNotifier {
       }
     } on DomainError catch (e) {
       if (_revoked(e)) {
-        _deny();
+        _deny(e);
       } else if (current) {
         message = 'Confirmed. Refresh the project view when the service is available.';
       }
@@ -1259,7 +1261,7 @@ final class ProjectsController extends ChangeNotifier {
         _cache(a, local!);
       }
       if (_revoked(e)) {
-        _deny();
+        _deny(e);
       } else if (current) {
         error = e.message;
       }

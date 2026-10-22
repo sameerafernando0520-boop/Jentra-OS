@@ -106,25 +106,35 @@ class _EmployeeAppState extends State<EmployeeApp> with WidgetsBindingObserver {
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         builder: (context, child) {
           final s = EmployeeStrings.of(context);
-          return Column(
-            children: [
-              if (controller.notice != null)
-                Material(
-                  child: SafeArea(
-                    bottom: false,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Semantics(
-                        liveRegion: true,
-                        child: EmployeeMessage(
-                          title: s.notice(controller.notice!),
+          return LayoutBuilder(
+            builder: (context, constraints) => Column(
+              children: [
+                if (controller.notice != null)
+                  ConstrainedBox(
+                    // Long translated notices must not consume the private
+                    // navigator on a short screen or with enlarged text.
+                    // Keep the complete message available by scrolling it.
+                    constraints: BoxConstraints(
+                      maxHeight: constraints.maxHeight * .3,
+                    ),
+                    child: Material(
+                      child: SafeArea(
+                        bottom: false,
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(8),
+                          child: Semantics(
+                            liveRegion: true,
+                            child: EmployeeMessage(
+                              title: s.notice(controller.notice!),
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              Expanded(child: child ?? const SizedBox.shrink()),
-            ],
+                Expanded(child: child ?? const SizedBox.shrink()),
+              ],
+            ),
           );
         },
         home: Builder(

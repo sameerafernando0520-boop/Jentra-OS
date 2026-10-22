@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:drift/native.dart';
@@ -16,13 +17,23 @@ import 'support/procurement_fakes.dart' show Keys;
 
 class Landed implements LandedExtensionGateway {
   bool uncertain = true;
+  bool readFailure = false;
+  Completer<Map<String, Object?>>? pendingPosted;
+  List<Map<String, Object?>> posted = [];
   final commands = <CommandEnvelope<Map<String, Object?>>>[];
   @override
   Future<Map<String, Object?>> options(
     TenantContext scope,
     String resource, {
     String? after,
-  }) async => {'items': []};
+  }) async {
+    if (readFailure) throw StateError('read failed');
+    if (resource == 'posted' && pendingPosted != null) {
+      return pendingPosted!.future;
+    }
+    return {'items': resource == 'posted' ? posted : []};
+  }
+
   @override
   Future<Map<String, Object?>> preview(
     TenantContext scope,
@@ -90,6 +101,98 @@ void main() {
   tearDown(() async {
     c.dispose();
     await database.close();
+  });
+  Future<void> render(WidgetTester tester, {bool settle = true}) async {
+    tester.view.physicalSize = const Size(1024, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: JentraTheme.light(),
+        home: Scaffold(body: LandedExtensionWorkspace(controller: c)),
+      ),
+    );
+    if (settle) {
+      await tester.pumpAndSettle();
+    } else {
+      await tester.pump();
+    }
+  }
+
+  testWidgets('unloaded allocations explain how to load posted records', (
+    tester,
+  ) async {
+    await render(tester);
+    expect(find.text('Posted allocations not loaded'), findsOneWidget);
+    expect(find.text('No posted landed allocations'), findsNothing);
+    await tester.tap(find.text('Refresh posted allocations'));
+    await tester.pumpAndSettle();
+    expect(find.text('Posted allocations not loaded'), findsNothing);
+    expect(find.text('No posted landed allocations'), findsOneWidget);
+    expect(gateway.commands, isEmpty);
+  });
+
+  testWidgets('empty posted register explains how to start an allocation', (
+    tester,
+  ) async {
+    await c.initialize();
+    await render(tester);
+    expect(find.text('No posted landed allocations'), findsOneWidget);
+    expect(
+      find.textContaining('recording eligible receipts and freight expense'),
+      findsOneWidget,
+    );
+    await tester.tap(find.text('New allocation'));
+    await tester.pumpAndSettle();
+    expect(find.text('No posted landed allocations'), findsNothing);
+    expect(find.text('Reference'), findsOneWidget);
+    expect(gateway.commands, isEmpty);
+  });
+
+  testWidgets('loading and offline reads never claim allocations are empty', (
+    tester,
+  ) async {
+    await c.initialize();
+    gateway.pendingPosted = Completer<Map<String, Object?>>();
+    final refresh = c.refresh('posted');
+    await render(tester, settle: false);
+    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    expect(find.text('No posted landed allocations'), findsNothing);
+    gateway.pendingPosted!.complete({'items': []});
+    await refresh;
+    await tester.pumpAndSettle();
+    expect(find.text('No posted landed allocations'), findsOneWidget);
+    c.setOnline(false);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Offline'), findsOneWidget);
+    expect(find.text('No posted landed allocations'), findsNothing);
+    expect(find.text('Posted allocations not loaded'), findsNothing);
+  });
+
+  testWidgets('read failures and posted allocations replace the empty state', (
+    tester,
+  ) async {
+    gateway.readFailure = true;
+    await c.initialize();
+    await render(tester);
+    expect(c.error, isNotNull);
+    expect(find.text(c.error!), findsOneWidget);
+    expect(find.text('No posted landed allocations'), findsNothing);
+    gateway.readFailure = false;
+    gateway.posted = [
+      {
+        'reference': 'FREIGHT-01',
+        'currency_code': 'LKR',
+        'total_amount': '10.000001',
+        'amount': '10.000001',
+      },
+    ];
+    await c.refresh('posted');
+    await tester.pumpAndSettle();
+    expect(find.text('FREIGHT-01'), findsOneWidget);
+    expect(find.text('No posted landed allocations'), findsNothing);
+    expect(gateway.commands, isEmpty);
   });
   test('uncertain allocation restores exact original envelope and locks manual weights', () async {
     await c.initialize();

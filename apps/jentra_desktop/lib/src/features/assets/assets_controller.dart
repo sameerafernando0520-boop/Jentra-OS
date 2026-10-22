@@ -185,10 +185,12 @@ final class AssetsController extends ChangeNotifier {
     recoveryCursors.clear();
   }
 
-  void _deny() {
+  void _deny(DomainError cause) {
     accessDenied = true;
     _clear();
-    error = 'Asset access changed. Select an authorized scope.';
+    error = cause.code == 'FEATURE_NOT_ENTITLED'
+        ? 'Assets is not enabled for this business. Ask your administrator to review module availability.'
+        : 'Asset access changed. Select an authorized scope.';
     message = null;
     _notify();
   }
@@ -221,7 +223,7 @@ final class AssetsController extends ChangeNotifier {
           message: 'Asset access changed during this check. Recheck before continuing.',
         );
       }
-      if (_revoked(cause)) _deny();
+      if (_revoked(cause)) _deny(cause);
       rethrow;
     }
     if (!current || epoch != _epoch || !online) {
@@ -252,7 +254,7 @@ final class AssetsController extends ChangeNotifier {
       await work();
     } on DomainError catch (cause) {
       if (_revoked(cause)) {
-        _deny();
+        _deny(cause);
       } else if (current) {
         error = cause.message;
       }
@@ -285,7 +287,7 @@ final class AssetsController extends ChangeNotifier {
       }
     } on DomainError catch (cause) {
       if (_revoked(cause) && current) {
-        _deny();
+        _deny(cause);
       }
     } catch (_) {
       /* A failed read grants no new authority and displays no new data. */
@@ -704,7 +706,7 @@ final class AssetsController extends ChangeNotifier {
       }
       if (cause.code == 'AUTHENTICATION_REQUIRED' ||
           context.branchId == scope.branchId && _revoked(cause)) {
-        _deny();
+        _deny(cause);
       }
       rethrow;
     }
@@ -833,7 +835,7 @@ final class AssetsController extends ChangeNotifier {
       } on DomainError catch (cause) {
         if (!current || resumedEpoch != _epoch) return;
         if (_revoked(cause)) {
-          _deny();
+          _deny(cause);
         } else if (current) {
           message = 'The saved request is ready for reconciliation. Its optional current proposal review could not be refreshed.';
         }
@@ -954,7 +956,7 @@ final class AssetsController extends ChangeNotifier {
     } on DomainError catch (cause) {
       if (!current || epoch != _epoch) return;
       if (_revoked(cause)) {
-        _deny();
+        _deny(cause);
       } else if (current) {
         message =
             'Confirmed. Refresh the register when the service is available.';
@@ -1029,7 +1031,7 @@ final class AssetsController extends ChangeNotifier {
         if (local != null) AssetSavedDraft(a, local!),
       ];
       if (_revoked(cause)) {
-        _deny();
+        _deny(cause);
       } else {
         error = cause.message;
       }

@@ -12,6 +12,7 @@ import 'support/procurement_fakes.dart' show Keys;
 
 final class PeriodFxFake implements PeriodFxGateway {
   String? failure, readFailure;
+  bool noPeriods = false;
   String state = 'open';
   int version = 1;
   final commands = <CommandEnvelope<Map<String, Object?>>>[];
@@ -28,7 +29,7 @@ final class PeriodFxFake implements PeriodFxGateway {
     }
     return {
       'items': [
-        if (resource == 'periods')
+        if (resource == 'periods' && !noPeriods)
           {
             'id': 'period',
             'name': 'September close',
@@ -233,6 +234,49 @@ void main() {
     await controller.execute('soft_lock');
     await controller.execute('post');
     expect(gateway.commands, isEmpty);
+  });
+
+  testWidgets('empty periods explain setup without posting commands', (
+    tester,
+  ) async {
+    gateway.noPeriods = true;
+    await controller.initialize();
+    var openedSetup = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: JentraTheme.light(),
+        home: Scaffold(
+          body: PeriodFxWorkspace(
+            controller: controller,
+            onOpenBusinessSetup: () => openedSetup = true,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('No fiscal periods available'), findsOneWidget);
+    expect(
+      find.textContaining('Create a fiscal period in Business setup'),
+      findsOneWidget,
+    );
+    await tester.ensureVisible(find.text('Open Business setup'));
+    await tester.tap(find.text('Open Business setup'));
+    expect(openedSetup, isTrue);
+    expect(gateway.commands, isEmpty);
+    controller.error = 'Period evidence could not be loaded.';
+    controller.emit();
+    await tester.pump();
+    expect(find.text('No fiscal periods available'), findsNothing);
+    controller.error = null;
+    controller.busy = true;
+    controller.emit();
+    await tester.pump();
+    expect(find.text('No fiscal periods available'), findsNothing);
+    controller.busy = false;
+    controller.setOnline(false);
+    await tester.pump();
+    expect(find.text('No fiscal periods available'), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('desktop workspace exposes period and FX controls at 200% text', (
