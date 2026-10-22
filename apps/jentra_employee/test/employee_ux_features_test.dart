@@ -249,6 +249,10 @@ void main() {
           ),
         ),
         220,
+        scrollable: find.descendant(
+          of: find.byKey(const ValueKey('employee-page-activity')),
+          matching: find.byType(Scrollable),
+        ),
       );
       expect(find.text('Receipt acknowledged'), findsOneWidget);
       expect(gateway.receipts, isEmpty);

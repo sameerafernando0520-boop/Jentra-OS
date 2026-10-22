@@ -33,7 +33,7 @@ const jentraDestinations = <JentraDestination>[
     shortcut: 'G S',
   ),
   JentraDestination(
-    label: 'Wave 3 notifications',
+    label: 'Notification management',
     path: '/operations/notifications',
     icon: Icons.notifications_outlined,
   ),
@@ -260,11 +260,58 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
         'crm.opportunities.view',
         'crm.opportunities.manage',
       }.any(capabilities.contains);
+  final canOpenProcurement =
+      capabilities != null &&
+      const {
+        'procurement.requisitions.manage',
+        'procurement.rfq.manage',
+        'procurement.orders.view',
+        'procurement.orders.manage',
+        'procurement.receipts.post',
+        'procurement.bills.view',
+        'procurement.bills.manage',
+        'procurement.bills.post',
+        'procurement.returns.post',
+        'finance.payments.manage',
+        'finance.payments.post',
+        'finance.payments.allocate',
+        'finance.payments.reverse',
+        'inventory.catalog.manage',
+      }.any(capabilities.contains);
+  final canOpenFinance =
+      capabilities != null &&
+      const {
+        'finance.view',
+        'finance.receivables.view',
+        'finance.receipts.view',
+        'finance.receipts.manage',
+        'finance.receipts.post',
+        'finance.payments.manage',
+        'finance.payments.post',
+        'finance.payments.allocate',
+        'finance.payments.reverse',
+        'procurement.bills.view',
+        'procurement.bills.manage',
+        'procurement.bills.post',
+      }.any(capabilities.contains);
+  final canOpenControl =
+      capabilities != null &&
+      const {
+        'ai.proposals.view',
+        'ai.proposals.manage',
+        'ai.proposals.approve',
+        'ai.proposals.execute',
+        'billing.read',
+        'billing.synthetic.manage',
+      }.any(capabilities.contains);
   final visible = <JentraDestination>[];
   String? pendingSection;
   for (final item in jentraDestinations) {
     pendingSection = item.section ?? pendingSection;
     final permitted =
+        (item.path != '/procurement' || canOpenProcurement) &&
+        (item.path != '/finance' || canOpenFinance) &&
+        (item.path != '/control' || canOpenControl) &&
         (item.path != '/analytics' ||
             ({'analytics.view'}
                     .every((p) => capabilities?.contains(p) ?? false) &&

@@ -9,6 +9,7 @@ import 'assurance_planning_controller.dart';
 import 'assurance_settings_controller.dart';
 import 'assurance_settings_panel.dart';
 import 'assurance_widgets.dart';
+import 'assurance_template_editor.dart';
 
 class AssurancePlanningScreen extends ConsumerWidget {
   const AssurancePlanningScreen({super.key});
@@ -222,6 +223,18 @@ class AssurancePlanning extends StatelessWidget {
                 ],
               ),
             heading('Engagement templates'),
+            if (manage)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: primary('Create template', 'create_template', {
+                  'code': '',
+                  'name': '',
+                  'controls': [
+                    {'control_code': '', 'title': '', 'risk': 'medium'},
+                  ],
+                  'requests': <Map<String, Object?>>[],
+                }),
+              ),
             if (u.currentTemplates.isEmpty)
               none('No templates. Plan items can be added without one.'),
             for (final t in u.currentTemplates)
@@ -232,6 +245,25 @@ class AssurancePlanning extends StatelessWidget {
                     label: 'Version ${t.version}',
                     tone: JentraStatusTone.neutral,
                   ),
+                ],
+                details: [
+                  if (u.definitions[t.id] case final definition?)
+                    '${definition.controls.length} controls · ${definition.requests.length} evidence requests',
+                ],
+                actions: [
+                  if (manage && u.definitions[t.id] != null)
+                    act('Create new version', 'create_template', {
+                      'code': t.code,
+                      'name': t.name,
+                      'controls': [
+                        for (final row in u.definitions[t.id]!.controls)
+                          {...row},
+                      ],
+                      'requests': [
+                        for (final row in u.definitions[t.id]!.requests)
+                          {...row},
+                      ],
+                    }),
                 ],
               ),
           ] else if (c.section == 'settings' && settings != null) ...[
@@ -426,6 +458,7 @@ class _PlanCommandCard extends StatelessWidget {
     'assess_risk': 'Assess risk',
     'retire_item': 'Retire area',
     'create_plan': 'Create plan',
+    'create_template': 'Create engagement template',
     'add_plan_item': 'Add area to plan',
     'remove_plan_item': 'Remove area from plan',
     'submit_plan': 'Submit plan for approval',
@@ -520,6 +553,11 @@ class _PlanCommandCard extends StatelessWidget {
             if (f['label'] != null) Text('${f['label']}'),
             const SizedBox(height: 8),
             ...switch (action) {
+              'create_template' => [
+                text('code', 'Template code, e.g. TREASURY'),
+                text('name', 'Template name'),
+                AssuranceTemplateEditor(controller: c),
+              ],
               'register_item' => [
                 text('code', 'Code, e.g. P2P'),
                 text('name', 'Name'),

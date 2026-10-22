@@ -1,6 +1,13 @@
 library;
 
 export 'src/connectivity_service.dart';
+export 'src/auth/google_sign_in.dart';
+export 'src/auth/email_confirmation.dart'
+    show
+        EmailConfirmationCancellation,
+        EmailConfirmationException,
+        EmailConfirmationFailure,
+        emailConfirmationFailure;
 export 'src/supabase_notification_inbox_gateway.dart';
 export 'src/draft_cipher.dart';
 export 'src/draft_repository.dart';

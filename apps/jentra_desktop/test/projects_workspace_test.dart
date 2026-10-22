@@ -323,6 +323,68 @@ void main() {
     c.edit('reason', 'Synthetic governed creation');
   }
 
+  testWidgets('unavailable projects explains module availability', (
+    tester,
+  ) async {
+    repository.authorityFailure = const DomainError(
+      code: 'FEATURE_NOT_ENTITLED',
+      message: 'Untrusted server details',
+    );
+    final c = create();
+    await c.initialize();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: ProjectsWorkspace(controller: c)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.text(
+        'Projects is not enabled for this business. Ask your administrator to review module availability.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Untrusted server details'), findsNothing);
+    expect(c.denied, isTrue);
+    expect(repository.commands, isEmpty);
+    expect(tester.takeException(), isNull);
+    c.dispose();
+  });
+
+  test(
+    'project entitlement loss clears plaintext and retains the sealed request',
+    () async {
+      final c = create();
+      await creation(c);
+      repository.failure = const DomainError(
+        code: 'UNCERTAIN_RESULT',
+        message: 'Synthetic timeout',
+        retryable: true,
+      );
+      await c.send();
+      final draftId = c.form!['id'] as String;
+      final original = c.pending!.toJson();
+      repository.authorityFailure = const DomainError(
+        code: 'FEATURE_NOT_ENTITLED',
+        message: 'Untrusted server details',
+      );
+      await c.checkAccess();
+      expect(c.error, startsWith('Projects is not enabled for this business.'));
+      expect(c.current, isFalse);
+      expect(c.records, isEmpty);
+      expect(c.rows, isEmpty);
+      expect(c.form, isNull);
+      expect(c.local, isNull);
+      expect(c.recovery, isEmpty);
+      expect(
+        (await c.drafts['create']!.load(scope, draftId))!.pending!.toJson(),
+        original,
+      );
+      expect(repository.commands, hasLength(1));
+      c.dispose();
+    },
+  );
+
   test('project navigation requires current project view authority', () {
     final without = visibleJentraDestinations({});
     final withView = visibleJentraDestinations({'projects.view'});
@@ -470,6 +532,7 @@ void main() {
       expect(c.rows, isNotEmpty);
       repository.deny = true;
       await c.checkAccess();
+      expect(c.error, 'Project access changed. Select an authorized scope.');
       expect(c.current, isFalse);
       expect(c.records, isEmpty);
       expect(c.rows, isEmpty);

@@ -1,0 +1,114 @@
+{
+  "checkedAtUtc": "2026-10-21T10:29:43.0556132Z",
+  "project": "xpdoufauvrbdmxgngetv",
+  "environment": "development",
+  "status": "Updated Windows confirmation flow packaged; real email and native session acceptance remain pending",
+  "sourceRevision": "f57f754f0f11efa91b1a9f456d2a19f725fde9c7",
+  "sourceFiles": [
+    {
+      "path": "apps/jentra_desktop/lib/src/features/auth/login_screen.dart",
+      "sha256": "8192c27e076921d9775fd1a8f60dcf6d196b8d06d128e1c2c9f2880a783fa971"
+    },
+    {
+      "path": "apps/jentra_desktop/test/login_account_screen_test.dart",
+      "sha256": "3592e4ff0832189be6eac94c92bef69a8c7f1d01b41088a14f5ef52f705f7281"
+    },
+    {
+      "path": "packages/jentra_platform/lib/jentra_platform.dart",
+      "sha256": "c694e51fc4987ee670cfe23c863afd05104490d2e2a332cf4587a959dffeb387"
+    },
+    {
+      "path": "packages/jentra_platform/lib/src/supabase_foundation_gateway.dart",
+      "sha256": "b79625171f9b299eb15ffcb5a08f1b0157824327599ff3a7dfa0e55c8bae64b2"
+    },
+    {
+      "path": "packages/jentra_platform/lib/src/auth/email_confirmation.dart",
+      "sha256": "4c9f4aa6d8e528dd395e60e494b8e7f2451fed75f75fa489775c62dbfb1a3634"
+    },
+    {
+      "path": "packages/jentra_platform/lib/src/auth/email_confirmation_io.dart",
+      "sha256": "6840e53b6730585669eef8b4f4b7a007a5e5cff33fbc55d5e21d488f39ddd16f"
+    },
+    {
+      "path": "packages/jentra_platform/lib/src/auth/email_confirmation_stub.dart",
+      "sha256": "89400be35e0aa8e7c122a918f6e64ad51d0cfa16a5b6af074c5330df75c9ebbf"
+    },
+    {
+      "path": "packages/jentra_platform/lib/src/auth/google_loopback.dart",
+      "sha256": "28441fa97d77d5629f3b866f41ef69f69978fcc64fdc9017c9ae67511b16fdc2"
+    },
+    {
+      "path": "packages/jentra_platform/test/auth/email_confirmation_test.dart",
+      "sha256": "2a43040558e8a3664b4b64c9b022ae27dd9a971be1bc80c7d817e09757e4e7de"
+    }
+  ],
+  "changes": [
+    "Bind private per-attempt Windows PKCE callback before signup or resend; pass explicit emailRedirectTo",
+    "Wait for accepted exchanges and pending SDK writes before allowing retry",
+    "Keep confirmed session if email is opened before signup response arrives",
+    "Add resend with cooldown, cancellation, existing-account sign-in guidance and safe error categories",
+    "Verify only original same-project signup email links directly through Supabase without navigating pasted URLs",
+    "Retain Jentra Windows icon and existing membership/MFA gates"
+  ],
+  "verification": {
+    "platformTests": 1227,
+    "focusedAuthenticationTests": "40 (17 email + 23 Google, included in platform total)",
+    "loginWidgetTests": 31,
+    "layoutRerun": 1,
+    "analysis": "platform lib/test and desktop login source/test: no issues",
+    "windowsRelease": "succeeded in 281.8 seconds",
+    "archiveRuntimeHashesVerified": 35,
+    "priorFailureImagesUnchanged": 460,
+    "icon": {
+      "executable": "apps\\jentra_desktop\\build\\windows\\x64\\runner\\Release\\jentra_desktop.exe",
+      "exeSha256": "7959cbb5ce9723eef21f076cf64781c69e950ed7d1c1a0f467f031dc3bce36dd",
+      "iconSha256": "ea03d2e51d25a701ac1d1e88aeb7dbc3a8fa00d450bcde4191a61cc96ca5c42c",
+      "groupResourceId": 101,
+      "embeddedFramesVerified": [
+        16,
+        20,
+        24,
+        32,
+        40,
+        48,
+        64,
+        128,
+        256
+      ],
+      "matchesSourceIcon": true
+    },
+    "platformCompletionRecord": "packages/jentra_platform/.dart_tool/email-confirmation-platform-verification.log",
+    "desktopAnalysis": "build/auth-email-frames/desktop-auth-analyze.log",
+    "previews": [
+      "build/auth-email-frames/auth-email-confirmation-overview-1024-720-light-200.png",
+      "build/auth-email-frames/auth-email-confirmation-1024-720-light-200.png"
+    ]
+  },
+  "delivery": {
+    "path": "build/jentra-email-confirmation-20261021/Jentra-OS-Windows-development.zip",
+    "bytes": 23921488,
+    "sha256": "8a28276c5544638837eba4fe550452ef2a91d993d76c8db0660885c08ebe629e",
+    "instructions": "Extract all files into a new folder, then run jentra_desktop.exe. For an existing registration, first try email/password sign-in. If confirmation is required, choose Need to confirm your email?, resend, and keep this app open while opening the newest email on this computer."
+  },
+  "hostedProbe": "docs/verification/auth/email-confirmation-redirect-20261021.json",
+  "hostedFindings": [
+    "Deliberately invalid-token no-redirect probe selects literal /auth/callback/* default destination",
+    "Exact requested per-attempt Windows callback preserved by error-redirect probe",
+    "Private Site URL, allowlist and email template were not readable; public probe is not valid-token acceptance"
+  ],
+  "notVerified": [
+    "Real confirmation email consumption and Windows authenticated session",
+    "Private deployed confirmation template and intended concrete Site URL",
+    "Native screen-reader and owner acceptance"
+  ],
+  "limitations": [
+    "Hosted default fallback needs administrator review per setup guide",
+    "Expired browser-return errors can display generic stopped-waiting recovery; sign-in/resend remains available"
+  ],
+  "boundaries": [
+    "No production changes",
+    "No hosted Auth settings changed, accounts created or real emails sent",
+    "No credentials or original confirmation links recorded",
+    "Local changes remain uncommitted"
+  ]
+}

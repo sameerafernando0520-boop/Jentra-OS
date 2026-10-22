@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jentra_design_system/jentra_design_system.dart';
 
 import '../../app_providers.dart';
 import 'cash_flow_mapping_controller.dart';
@@ -62,6 +63,10 @@ class CashFlowMappingWorkspace extends StatelessWidget {
       }
       final width =
           280.0 * MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 1.7);
+      final selectedAccount = c.selectedAccount;
+      final activeSelection = selectedAccount?['status'] == 'active'
+          ? selectedAccount
+          : null;
       return SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -95,6 +100,19 @@ class CashFlowMappingWorkspace extends StatelessWidget {
               'Configure account',
               style: Theme.of(context).textTheme.titleLarge,
             ),
+            if (c.online &&
+                !c.busy &&
+                c.error == null &&
+                c.accounts.isNotEmpty &&
+                !c.accounts.any((row) => row['status'] == 'active'))
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Text(
+                  c.cursor != null
+                      ? 'No active posting accounts are loaded. Select More accounts to continue loading the available accounts.'
+                      : 'No active posting accounts are available. Create or activate a posting account in Business setup, then select Refresh accounts.',
+                ),
+              ),
             const SizedBox(height: 12),
             Wrap(
               spacing: 16,
@@ -105,7 +123,7 @@ class CashFlowMappingWorkspace extends StatelessWidget {
                   width: width,
                   child: DropdownButtonFormField<String>(
                     key: ValueKey('account-${c.form['id']}'),
-                    initialValue: c.selectedAccount?['id'] as String?,
+                    initialValue: activeSelection?['id'] as String?,
                     isExpanded: true,
                     decoration: const InputDecoration(
                       labelText: 'Posting account',
@@ -177,7 +195,7 @@ class CashFlowMappingWorkspace extends StatelessWidget {
               spacing: 8,
               children: [
                 FilledButton(
-                  onPressed: c.online && !c.locked && c.selectedAccount != null
+                  onPressed: c.online && !c.locked && activeSelection != null
                       ? c.configure
                       : null,
                   child: const Text('Record classification'),
@@ -204,6 +222,17 @@ class CashFlowMappingWorkspace extends StatelessWidget {
               'Account mappings as of ${c.today}',
               style: Theme.of(context).textTheme.titleLarge,
             ),
+            if (c.online && !c.busy && c.error == null && c.accounts.isEmpty)
+              const Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: JentraPanel(
+                  child: JentraEmptyState(
+                    icon: Icons.account_balance_outlined,
+                    title: 'No posting accounts to classify',
+                    description: 'Create or activate a posting account in Business setup, then select Refresh accounts. Dated classifications will appear here.',
+                  ),
+                ),
+              ),
             for (final row in c.accounts)
               ListTile(
                 title: Text('${row['code']} · ${row['name']}'),

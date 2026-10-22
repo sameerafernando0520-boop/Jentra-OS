@@ -504,7 +504,9 @@ final class MilestonesController extends ChangeNotifier {
   }
 
   Future<bool> canLeave() async {
-    if (busy || _sending) return false;
+    if (_disposed || busy || _sending) return false;
+    if (form == null || pending != null || conflicted || confirmed) return true;
+    if (!current || !online) return false;
     final n = _epoch;
     try {
       await save();

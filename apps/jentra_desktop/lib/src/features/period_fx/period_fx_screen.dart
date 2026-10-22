@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jentra_design_system/jentra_design_system.dart';
+import 'package:jentra_domain/jentra_domain.dart';
 
 import '../../app_providers.dart';
 import 'period_fx_controller.dart';
@@ -25,13 +28,28 @@ class PeriodFxScreen extends ConsumerWidget {
     final controller = ref.watch(periodFxControllerProvider);
     return controller == null
         ? const Center(child: Text('Choose a branch with finance access.'))
-        : PeriodFxWorkspace(key: ValueKey(controller), controller: controller);
+        : PeriodFxWorkspace(
+            key: ValueKey(controller),
+            controller: controller,
+            onOpenBusinessSetup:
+                capabilities.value?.contains(
+                      BusinessSetupResource.fiscalPeriods.viewPermission,
+                    ) ==
+                    true
+                ? () => context.go('/setup')
+                : null,
+          );
   }
 }
 
 class PeriodFxWorkspace extends StatefulWidget {
-  const PeriodFxWorkspace({super.key, required this.controller});
+  const PeriodFxWorkspace({
+    super.key,
+    required this.controller,
+    this.onOpenBusinessSetup,
+  });
   final PeriodFxController controller;
+  final VoidCallback? onOpenBusinessSetup;
 
   @override
   State<PeriodFxWorkspace> createState() => _PeriodFxWorkspaceState();
@@ -221,6 +239,28 @@ class _PeriodFxWorkspaceState extends State<PeriodFxWorkspace> {
               ],
             ),
             next('periods'),
+            if (c.online &&
+                !c.busy &&
+                !c.pending &&
+                c.error == null &&
+                c.pages.containsKey('periods') &&
+                c.rows('periods').isEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: JentraPanel(
+                  child: JentraEmptyState(
+                    icon: Icons.calendar_month_outlined,
+                    title: 'No fiscal periods available',
+                    description: 'No fiscal periods were returned for this legal entity. Create a fiscal period in Business setup, or ask your finance administrator, then refresh this screen.',
+                    action: widget.onOpenBusinessSetup == null
+                        ? null
+                        : OutlinedButton(
+                            onPressed: widget.onOpenBusinessSetup,
+                            child: const Text('Open Business setup'),
+                          ),
+                  ),
+                ),
+              ),
             if (c.period != null) ...[
               const SizedBox(height: 20),
               Text(

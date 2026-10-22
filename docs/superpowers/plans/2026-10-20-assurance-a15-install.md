@@ -14,7 +14,7 @@
 - Each is applied with `apply_migration` using the candidate text unchanged; the repository copy in `supabase/migrations/` is named with the version the ledger assigns and is byte-identical to the candidate.
 - Prerequisite evidence: each slice's reduced rollback suite on the development project (records in `docs/verification/assurance/`) and the cumulative rollback suite in CI (PRs #9–#12 green).
 - The installed CI variant (`build_assurance_candidate.ps1 -Installed`) strips every installed candidate's DDL from the suite and expects the final table count; fragments that assert migration-time behaviour (backfills that ran at install) are adjusted for the installed order.
-- Edge functions `assurance-evidence-verify` and `assurance-evidence-download` are deployed with JWT verification on, and get `config.toml` entries.
+- Edge functions `assurance-evidence-verify` and `assurance-evidence-download` use `verify_jwt = false` at the gateway and `withSupabase({ auth: "user" })` to verify login inside each function, matching the development deployment and `config.toml`. Unauthenticated requests must return 401. The [installation record](../../verification/assurance/installation-dev-20261020.json) records the deployment; production requires separate approval.
 
 ## Tasks
 

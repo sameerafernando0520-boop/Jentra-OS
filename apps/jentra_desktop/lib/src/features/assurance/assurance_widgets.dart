@@ -114,6 +114,7 @@ class AuditDateField extends StatelessWidget {
     required this.onChanged,
     this.enabled = true,
     this.firstDate,
+    this.lastDate,
   });
 
   final String label;
@@ -125,6 +126,7 @@ class AuditDateField extends StatelessWidget {
 
   /// The earliest date offered, e.g. a period end no earlier than its start.
   final String? firstDate;
+  final String? lastDate;
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +135,7 @@ class AuditDateField extends StatelessWidget {
     Future<void> pick() async {
       final earliest = DateTime.tryParse(firstDate ?? '');
       final first = earliest ?? DateTime(2000);
-      final last = DateTime(2100, 12, 31);
+      final last = DateTime.tryParse(lastDate ?? '') ?? DateTime(2100, 12, 31);
       final now = DateTime.now();
       // An unset end date opens at its start, e.g. the period start.
       var initial =

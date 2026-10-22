@@ -307,6 +307,8 @@ final class EmployeeController extends ChangeNotifier {
   });
 
   Future<bool> canLeave() async {
+    if (_disposed) return false;
+    if (accessDenied) return true;
     if (local?.pending != null) return false;
     if (form != null) {
       try {
@@ -315,7 +317,7 @@ final class EmployeeController extends ChangeNotifier {
         return false;
       }
     }
-    return true;
+    return !_disposed;
   }
 
   Future<void> submit() => _run(() async {

@@ -359,6 +359,7 @@ final class EmployeeController extends ChangeNotifier {
   Future<void> signIn(String email, String password) async {
     if (_disposed || busy || !_foreground || _gateway == null) return;
     final lifecycle = _lifecycleGeneration;
+    final generation = _generation;
     if (email.trim().isEmpty || password.isEmpty) {
       error = const EmployeeFailure(
         'VALIDATION_ERROR',
@@ -374,9 +375,11 @@ final class EmployeeController extends ChangeNotifier {
     try {
       await _gateway.signIn(email, password);
     } on Object catch (e) {
-      if (!_disposed) error = employeeFailure(e);
+      if (!_disposed && generation == _generation) error = employeeFailure(e);
     } finally {
-      if (!_disposed) {
+      // A synchronous auth event can already have started workspace loading.
+      // Only the operation that still owns this generation may release busy.
+      if (!_disposed && generation == _generation) {
         busy = false;
         _emit();
       }
@@ -384,6 +387,7 @@ final class EmployeeController extends ChangeNotifier {
     if (!_disposed &&
         _foreground &&
         lifecycle == _lifecycleGeneration &&
+        generation == _generation &&
         _gateway.actorId != null) {
       await start();
     }

@@ -94,7 +94,12 @@ void main() {
 
     expect(find.text('Good morning, Shehan'), findsOneWidget);
     expect(find.text('Command centre'), findsWidgets);
-    expect(find.text('Finance'), findsOneWidget);
+    expect(
+      find.text('Finance'),
+      findsNothing,
+      reason: 'Preview setup permissions do not grant the Finance workspace.',
+    );
+    expect(find.text('Business setup'), findsOneWidget);
     expect(find.text('Preview metrics'), findsOneWidget);
 
     await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
@@ -595,7 +600,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Finance landing explains unavailable posting and reports', (
+  testWidgets('Finance landing explains its required workspace connection', (
     tester,
   ) async {
     await _pumpJentra(
@@ -611,12 +616,12 @@ void main() {
     );
     container.read(routerProvider).go('/finance');
     await tester.pumpAndSettle();
-    expect(find.text('Finance overview'), findsOneWidget);
+    expect(find.text('Connect your workspace'), findsOneWidget);
     expect(
-      find.textContaining('Posting and financial reports are not available'),
+      find.textContaining('Finance needs a connected workspace.'),
       findsOneWidget,
     );
-    expect(find.text('Posting unavailable here'), findsOneWidget);
+    expect(find.text('Finance overview'), findsNothing);
     expect(find.text('Finance is mapped and ready'), findsNothing);
     expect(find.text('No legacy module restored'), findsNothing);
     expect(tester.takeException(), isNull);

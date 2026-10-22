@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +15,11 @@ import 'support/procurement_fakes.dart' show Keys;
 
 final class CashFlowMappingFake implements CashFlowMappingGateway {
   String? failure, readFailure;
+  bool empty = false;
+  bool includeOtherActiveAccount = false;
+  String status = 'active';
+  String? nextCursor;
+  Completer<void>? readPause;
   final commands = <CommandEnvelope<Map<String, Object?>>>[];
 
   @override
@@ -21,24 +28,39 @@ final class CashFlowMappingFake implements CashFlowMappingGateway {
     String asOf, {
     String? after,
   }) async {
+    await readPause?.future;
     if (readFailure != null) {
       throw DomainError(code: readFailure!, message: readFailure!);
     }
     return {
-      'items': [
-        {
-          'id': 'cash',
-          'account_id': 'cash',
-          'code': '1000',
-          'name': 'Cash at bank',
-          'account_type': 'asset',
-          'status': 'active',
-          'category': commands.isEmpty ? null : 'cash',
-          'effective_date': commands.isEmpty ? null : asOf,
-          'version': commands.isEmpty ? 0 : 1,
-        },
-      ],
-      'next_cursor': null,
+      'items': empty
+          ? []
+          : [
+              {
+                'id': 'cash',
+                'account_id': 'cash',
+                'code': '1000',
+                'name': 'Cash at bank',
+                'account_type': 'asset',
+                'status': status,
+                'category': commands.isEmpty ? null : 'cash',
+                'effective_date': commands.isEmpty ? null : asOf,
+                'version': commands.isEmpty ? 0 : 1,
+              },
+              if (includeOtherActiveAccount)
+                {
+                  'id': 'other-cash',
+                  'account_id': 'other-cash',
+                  'code': '1001',
+                  'name': 'Operating bank',
+                  'account_type': 'asset',
+                  'status': 'active',
+                  'category': null,
+                  'effective_date': null,
+                  'version': 0,
+                },
+            ],
+      'next_cursor': nextCursor,
     };
   }
 
@@ -93,6 +115,205 @@ void main() {
   tearDown(() async {
     controller.dispose();
     await database.close();
+  });
+
+  Future<void> render(WidgetTester tester, {bool settle = true}) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: JentraTheme.light(),
+        home: Scaffold(body: CashFlowMappingWorkspace(controller: controller)),
+      ),
+    );
+    if (settle) {
+      await tester.pumpAndSettle();
+    } else {
+      await tester.pump();
+    }
+  }
+
+  testWidgets(
+    'empty classifications explain the posting account prerequisite',
+    (tester) async {
+      gateway.empty = true;
+      await controller.initialize();
+      await render(tester);
+      expect(find.text('No posting accounts to classify'), findsOneWidget);
+      expect(
+        find.textContaining(
+          'Create or activate a posting account in Business setup',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        tester
+            .widget<FilledButton>(
+              find.widgetWithText(FilledButton, 'Record classification'),
+            )
+            .onPressed,
+        isNull,
+      );
+      gateway.empty = false;
+      await tester.tap(find.text('Refresh accounts'));
+      await tester.pumpAndSettle();
+      expect(find.text('No posting accounts to classify'), findsNothing);
+      expect(find.text('1000 · Cash at bank'), findsWidgets);
+      expect(gateway.commands, isEmpty);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('retired-only accounts explain why no account can be selected', (
+    tester,
+  ) async {
+    gateway.status = 'retired';
+    await controller.initialize();
+    await render(tester);
+    expect(
+      find.textContaining('No active posting accounts are available'),
+      findsOneWidget,
+    );
+    expect(find.text('1000 · Cash at bank'), findsOneWidget);
+    expect(find.text('No posting accounts to classify'), findsNothing);
+    expect(gateway.commands, isEmpty);
+  });
+
+  testWidgets('a retired first page prompts loading remaining accounts', (
+    tester,
+  ) async {
+    gateway.status = 'retired';
+    gateway.nextCursor = 'cash';
+    await controller.initialize();
+    await render(tester);
+    expect(
+      find.textContaining('No active posting accounts are loaded.'),
+      findsOneWidget,
+    );
+    expect(
+      find.textContaining('No active posting accounts are available.'),
+      findsNothing,
+    );
+    gateway.empty = true;
+    gateway.nextCursor = null;
+    await tester.ensureVisible(find.text('More accounts'));
+    await tester.tap(find.text('More accounts'));
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining('No active posting accounts are available.'),
+      findsOneWidget,
+    );
+    expect(find.text('More accounts'), findsNothing);
+    expect(gateway.commands, isEmpty);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'restored draft with a retired account stays readable without posting',
+    (tester) async {
+      await controller.initialize();
+      await controller.select('cash');
+      controller.field('reason', 'Retain the classification draft');
+      await controller.save();
+      controller.dispose();
+      gateway.status = 'retired';
+      gateway.includeOtherActiveAccount = true;
+      controller = make();
+      await controller.initialize();
+      await render(tester);
+      expect(controller.form['account_id'], 'cash');
+      expect(
+        tester
+            .widget<FilledButton>(
+              find.widgetWithText(FilledButton, 'Record classification'),
+            )
+            .onPressed,
+        isNull,
+      );
+      expect(tester.takeException(), isNull);
+      await tester.tap(find.byType(DropdownButtonFormField<String>).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('1001 · Operating bank').last);
+      await tester.pumpAndSettle();
+      expect(controller.form['account_id'], 'other-cash');
+      expect(tester.takeException(), isNull);
+      expect(gateway.commands, isEmpty);
+    },
+  );
+
+  testWidgets(
+    'refresh retires the displayed account without losing encrypted inputs',
+    (tester) async {
+      await controller.initialize();
+      await controller.select('cash');
+      controller.field('category', 'cash');
+      controller.field('reason', 'Retain the classification draft');
+      await controller.save();
+      await render(tester);
+      gateway.status = 'retired';
+      gateway.includeOtherActiveAccount = true;
+      await tester.tap(find.text('Refresh accounts'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(controller.form['account_id'], 'cash');
+      expect(controller.form['category'], 'cash');
+      expect(controller.form['reason'], 'Retain the classification draft');
+      expect(
+        tester
+            .widget<FilledButton>(
+              find.widgetWithText(FilledButton, 'Record classification'),
+            )
+            .onPressed,
+        isNull,
+      );
+      await tester.tap(find.byType(DropdownButtonFormField<String>).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('1001 · Operating bank').last);
+      await tester.pumpAndSettle();
+      expect(controller.form['account_id'], 'other-cash');
+      expect(tester.takeException(), isNull);
+      expect(gateway.commands, isEmpty);
+    },
+  );
+
+  testWidgets('loading and offline classification reads never claim empty', (
+    tester,
+  ) async {
+    gateway.empty = true;
+    await controller.initialize();
+    gateway.readPause = Completer<void>();
+    final refresh = controller.refresh();
+    await render(tester, settle: false);
+    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    expect(find.text('No posting accounts to classify'), findsNothing);
+    gateway.readPause!.complete();
+    await refresh;
+    await tester.pumpAndSettle();
+    expect(find.text('No posting accounts to classify'), findsOneWidget);
+    controller.setOnline(false);
+    await tester.pumpAndSettle();
+    expect(find.text('Verify access'), findsOneWidget);
+    expect(find.text('No posting accounts to classify'), findsNothing);
+  });
+
+  testWidgets('unverified or failed account reads never claim empty', (
+    tester,
+  ) async {
+    await render(tester);
+    expect(find.text('Verify access'), findsOneWidget);
+    expect(find.text('No posting accounts to classify'), findsNothing);
+    gateway.empty = true;
+    await controller.initialize();
+    await tester.pumpAndSettle();
+    expect(find.text('No posting accounts to classify'), findsOneWidget);
+    gateway.readFailure = 'UNCERTAIN_RESULT';
+    await controller.refresh();
+    await tester.pumpAndSettle();
+    expect(find.text('UNCERTAIN_RESULT'), findsOneWidget);
+    expect(find.text('No posting accounts to classify'), findsNothing);
+    expect(gateway.commands, isEmpty);
   });
 
   test(

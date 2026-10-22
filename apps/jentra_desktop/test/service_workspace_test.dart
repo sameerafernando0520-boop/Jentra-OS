@@ -50,17 +50,23 @@ class Repository implements ServiceRepository {
   bool denied = false, failRefresh = false;
   DomainError? failure;
   Completer<void>? gate;
+  Completer<void>? authorizationGate, executeGate;
+  DomainError? authorizationFailure;
+  int authorizationCalls = 0;
   int version = 1;
   final commands = <CommandEnvelope<Map<String, Object?>>>[];
   Map<String, Object?>? receipt;
   @override
   Future<ServiceAuthority> authorize(TenantContext scope, String cap) async {
+    authorizationCalls++;
+    await authorizationGate?.future;
     if (denied) {
       throw const DomainError(
         code: 'PERMISSION_DENIED',
         message: 'Current service access denied.',
       );
     }
+    if (authorizationFailure != null) throw authorizationFailure!;
     return const ServiceAuthority(
       'LKR',
       2,
@@ -122,6 +128,7 @@ class Repository implements ServiceRepository {
     CommandEnvelope<Map<String, Object?>> command,
   ) async {
     commands.add(command);
+    await executeGate?.future;
     if (failure != null) {
       throw failure!;
     }
@@ -196,6 +203,67 @@ void main() {
     c.edit('reason', 'Synthetic test');
   }
 
+  testWidgets('unavailable service explains module availability', (
+    tester,
+  ) async {
+    repo.authorizationFailure = const DomainError(
+      code: 'FEATURE_NOT_ENTITLED',
+      message: 'Untrusted server details',
+    );
+    final c = create();
+    await c.initialize();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(body: ServiceWorkspace(controller: c)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.text(
+        'Service is not enabled for this business. Ask your administrator to review module availability.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Untrusted server details'), findsNothing);
+    expect(c.denied, isTrue);
+    expect(repo.commands, isEmpty);
+    expect(tester.takeException(), isNull);
+    c.dispose();
+  });
+
+  test(
+    'service entitlement loss clears plaintext and retains the sealed request',
+    () async {
+      final c = create();
+      await fill(c);
+      repo.failure = const DomainError(
+        code: 'UNCERTAIN_RESULT',
+        message: 'Synthetic timeout',
+        retryable: true,
+      );
+      await c.send();
+      final draftId = c.form!['id'] as String;
+      final original = c.pending!.toJson();
+      repo.authorizationFailure = const DomainError(
+        code: 'FEATURE_NOT_ENTITLED',
+        message: 'Untrusted server details',
+      );
+      await c.checkAccess();
+      expect(c.error, startsWith('Service is not enabled for this business.'));
+      expect(c.current, isFalse);
+      expect(c.records, isEmpty);
+      expect(c.form, isNull);
+      expect(c.local, isNull);
+      expect(c.recovery, isEmpty);
+      expect(
+        (await c.drafts['equipment']!.load(scope, draftId))!.pending!.toJson(),
+        original,
+      );
+      expect(repo.commands, hasLength(1));
+      c.dispose();
+    },
+  );
+
   test(
     'uncertain result freezes exact request across controller restart',
     () async {
@@ -265,16 +333,110 @@ void main() {
       );
       await c.send();
       final draftId = c.form!['id'] as String;
+      final original = c.pending!.toJson();
       repo.denied = true;
       await c.checkAccess();
+      expect(
+        c.error,
+        'Current service access is required. Select an authorized scope.',
+      );
       expect(c.current, false);
       expect(c.form, isNull);
       expect(c.records, isEmpty);
+      expect(await c.canLeave(), isTrue);
       expect(
-        (await c.drafts['equipment']!.load(scope, draftId))!.pending,
-        isNotNull,
+        (await c.drafts['equipment']!.load(scope, draftId))!.pending!.toJson(),
+        original,
       );
       c.dispose();
+    },
+  );
+  test(
+    'denied service without an editor can be left without authorizing',
+    () async {
+      final c = create();
+      repo.denied = true;
+      await c.checkAccess();
+      expect(c.denied, isTrue);
+      final accessChecks = repo.authorizationCalls;
+      expect(await c.canLeave(), isTrue);
+      expect(repo.authorizationCalls, accessChecks);
+      expect(await db.select(db.encryptedDrafts).get(), isEmpty);
+      c.dispose();
+    },
+  );
+  test(
+    'offline service without an editor can be left without authorizing',
+    () async {
+      final c = create();
+      c.setOnline(false);
+      final accessChecks = repo.authorizationCalls;
+      expect(await c.canLeave(), isTrue);
+      expect(repo.authorizationCalls, accessChecks);
+      c.dispose();
+    },
+  );
+  test(
+    'leaving service saves unsent edits before allowing navigation',
+    () async {
+      final c = create();
+      await fill(c);
+      final draftId = c.form!['id'] as String;
+      expect(await c.canLeave(), isTrue);
+      final saved = await c.drafts['equipment']!.load(scope, draftId);
+      expect(saved?.form['name'], 'Synthetic equipment');
+      expect(saved?.pending, isNull);
+      expect(repo.commands, isEmpty);
+      c.dispose();
+    },
+  );
+  test(
+    'a failed service draft save blocks navigation and retains edits',
+    () async {
+      final c = create();
+      await fill(c);
+      repo.authorizationFailure = const DomainError(
+        code: 'NETWORK_ERROR',
+        message: 'Access check unavailable',
+      );
+      expect(await c.canLeave(), isFalse);
+      expect(c.form?['name'], 'Synthetic equipment');
+      repo.authorizationFailure = null;
+      expect(await c.canLeave(), isTrue);
+      c.dispose();
+    },
+  );
+  test('service cannot be left while a command is being sent', () async {
+    final c = create();
+    await fill(c);
+    repo.executeGate = Completer<void>();
+    final send = c.send();
+    while (repo.commands.isEmpty) {
+      await Future<void>.delayed(Duration.zero);
+    }
+    expect(await c.canLeave(), isFalse);
+    repo.executeGate!.complete();
+    await send;
+    expect(await c.canLeave(), isTrue);
+    c.dispose();
+  });
+  test(
+    'late service draft save cannot allow navigation after disposal',
+    () async {
+      final c = create();
+      await fill(c);
+      repo.authorizationGate = Completer<void>();
+      final priorAccessChecks = repo.authorizationCalls;
+      final leave = c.canLeave();
+      while (repo.authorizationCalls == priorAccessChecks) {
+        await Future<void>.delayed(Duration.zero);
+      }
+      c.dispose();
+      repo.authorizationGate!.complete();
+      expect(await leave, isFalse);
+      expect(c.form, isNull);
+      expect(c.local, isNull);
+      expect(await c.canLeave(), isFalse);
     },
   );
   test('disposed scope discards late directory response', () async {

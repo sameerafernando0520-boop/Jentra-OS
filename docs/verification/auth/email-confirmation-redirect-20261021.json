@@ -1,0 +1,41 @@
+{
+  "checkedAtUtc": "2026-10-21T10:17:35.5340534Z",
+  "project": "xpdoufauvrbdmxgngetv",
+  "environment": "development",
+  "publicAuthSettings": {
+    "emailEnabled": true,
+    "emailAutoconfirm": false,
+    "signupDisabled": false
+  },
+  "method": "GET /auth/v1/verify with a deliberately invalid synthetic token, type=signup; redirects disabled",
+  "defaultErrorRedirect": {
+    "httpStatus": 303,
+    "observedRedirectOrigin": "http://127.0.0.1:56327",
+    "observedRedirectPath": "/auth/callback/*",
+    "requestedWindowsCallbackPreserved": null
+  },
+  "requestedWindowsErrorRedirect": {
+    "httpStatus": 303,
+    "observedRedirectOrigin": "http://127.0.0.1:56327",
+    "observedRedirectPath": "/auth/callback/[synthetic-probe-nonce]",
+    "requestedWindowsCallbackPreserved": true
+  },
+  "expectedWindowsRedirectPattern": "http://127.0.0.1:56327/auth/callback/*",
+  "changesMade": false,
+  "emailsSent": false,
+  "accountsCreated": false,
+  "realConfirmationTokensUsed": false,
+  "redirectsFollowed": false,
+  "inferenceLimit": "An invalid-token error redirect reveals effective redirect selection only. It does not read private Site URL/allowlist/template configuration or prove a valid email confirmation, PKCE exchange or native session.",
+  "notVerified": [
+    "private Site URL and redirect allowlist",
+    "deployed email template",
+    "real confirmation delivery and consumption",
+    "native confirmation/session acceptance"
+  ],
+  "sources": [
+    "https://supabase.com/docs/guides/auth/auth-email-templates",
+    "https://supabase.com/docs/guides/auth/redirect-urls",
+    "https://github.com/supabase/auth/blob/master/internal/api/verify.go"
+  ]
+}

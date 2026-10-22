@@ -17,6 +17,10 @@ typedef UniverseItem = ({
   int? score,
 });
 typedef PlanTemplate = ({String id, String code, int version, String name});
+typedef PlanTemplateDefinition = ({
+  List<Map<String, Object?>> controls,
+  List<Map<String, Object?>> requests,
+});
 
 /// The audit universe and engagement templates in a scope.
 final class AssuranceUniverse {
@@ -39,6 +43,7 @@ final class AssuranceUniverse {
                 : _positive(_m(_m(x)['assessment'])['score']),
           ),
       ],
+      definitions = _templateDefinitions(j['templates']),
       templates = [
         for (final t in _l(j['templates']))
           (
@@ -51,6 +56,7 @@ final class AssuranceUniverse {
 
   final List<UniverseItem> items;
   final List<PlanTemplate> templates;
+  final Map<String, PlanTemplateDefinition> definitions;
 
   /// The newest version of each template code; older versions stay readable
   /// but new plan items should reference the current one.
@@ -74,6 +80,32 @@ final class AssuranceUniverse {
   /// Retiring an area in an open plan is refused server-side.
   bool canRetire(Set<String> caps, UniverseItem i) =>
       caps.contains('assurance.plan.manage') && i.active;
+}
+
+Map<String, PlanTemplateDefinition> _templateDefinitions(Object? value) {
+  final definitions = <String, PlanTemplateDefinition>{};
+  for (final entry in _l(value)) {
+    final template = _m(entry);
+    // Older recorded read fixtures contain only the template summary.
+    if (!template.containsKey('controls') &&
+        !template.containsKey('requests')) {
+      continue;
+    }
+    if (!assuranceTemplateValid(template['controls'], template['requests'])) {
+      throw const FormatException('Invalid engagement template definition.');
+    }
+    definitions[assuranceId(template['id'])] = (
+      controls: List.unmodifiable([
+        for (final control in _l(template['controls']))
+          Map<String, Object?>.unmodifiable(_m(control)),
+      ]),
+      requests: List.unmodifiable([
+        for (final request in _l(template['requests']))
+          Map<String, Object?>.unmodifiable(_m(request)),
+      ]),
+    );
+  }
+  return Map.unmodifiable(definitions);
 }
 
 typedef PlanSummary = ({

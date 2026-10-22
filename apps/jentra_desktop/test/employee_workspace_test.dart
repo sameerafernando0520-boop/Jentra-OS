@@ -345,10 +345,19 @@ void main() {
     repository.failure = 'UNCERTAIN_RESULT';
     await controller.submit();
     final originalId = controller.local!.pending!.envelope.commandId;
+    expect(await controller.canLeave(), isFalse);
     repository.failure = 'FEATURE_NOT_ENTITLED';
     await controller.submit();
     expect(controller.accessDenied, isTrue);
     expect(controller.local!.pending!.envelope.commandId, originalId);
+    expect(await controller.canLeave(), isTrue);
+    expect(
+      (await drafts.load(
+        scope,
+        EmployeeController.slot,
+      ))?.pending?.envelope.commandId,
+      originalId,
+    );
     repository.failure = null;
     await controller.refresh();
     await controller.submit();

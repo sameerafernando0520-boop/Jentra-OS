@@ -183,7 +183,9 @@ class _PageHeader extends ConsumerWidget {
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               JentraStatusBadge(
-                label: state.isOnline ? 'Live development data' : 'Offline',
+                label: state.isOnline
+                    ? ref.watch(runtimeConfigProvider).workspaceLabel
+                    : 'Offline',
                 tone: state.isOnline
                     ? JentraStatusTone.success
                     : JentraStatusTone.warning,

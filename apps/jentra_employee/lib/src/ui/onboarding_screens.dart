@@ -48,7 +48,7 @@ class EmployeeWorkspaceScreen extends StatelessWidget {
                 child: Text(s('retry')),
               ),
             ),
-          if (controller.workspaces.isEmpty)
+          if (controller.error == null && controller.workspaces.isEmpty)
             EmployeeMessage(
               title: s('noWorkspaces'),
               message: s('askHrAccess'),

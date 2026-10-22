@@ -37,6 +37,60 @@ final class AuditorAction {
   static const _v = AssuranceRpc.evidence;
 
   static const all = <String, AuditorAction>{
+    'submit_remediation': AuditorAction._(
+      'submit_remediation',
+      _e,
+      'finding_id',
+      'Submit remediation',
+    ),
+    'cancel_request': AuditorAction._(
+      'cancel_request',
+      _e,
+      'request_id',
+      'Cancel evidence request',
+    ),
+    'place_hold': AuditorAction._(
+      'place_hold',
+      _e,
+      'hold_id',
+      'Place retention hold',
+    ),
+    'release_hold': AuditorAction._(
+      'release_hold',
+      _e,
+      'hold_id',
+      'Release retention hold',
+    ),
+    'carry_forward': AuditorAction._(
+      'carry_forward',
+      _t,
+      'finding_id',
+      'Carry forward finding',
+    ),
+    'run_monitoring': AuditorAction._(
+      'run_monitoring',
+      _v,
+      'evidence_id',
+      'Run monitoring checks',
+    ),
+    'map_control': AuditorAction._(
+      'map_control',
+      _e,
+      'control_id',
+      'Add control',
+    ),
+    'add_team_member': AuditorAction._(
+      'add_team_member',
+      _e,
+      'user_id',
+      'Add team member',
+    ),
+    'revoke_team_member': AuditorAction._(
+      'revoke_team_member',
+      _e,
+      'user_id',
+      'Remove team member',
+    ),
     'request_evidence': AuditorAction._(
       'request_evidence',
       _e,
@@ -212,6 +266,7 @@ typedef AuditorRequest = ({
   String? evidenceId,
   bool uploaded,
   String? fileName,
+  String? sourceKind,
 });
 typedef AuditorException = ({
   String id,
@@ -299,6 +354,7 @@ final class AuditorEngagementView {
                      final String name => name,
                      _ => null,
                    },
+             sourceKind: _evidenceSourceKind(_m(r)['evidence']),
            ),
        ],
        exceptions = [
@@ -368,6 +424,21 @@ final class AuditorEngagementView {
       status == EngagementStatus.fieldwork ||
       status == EngagementStatus.reporting;
 
+  bool canMapControl(Set<String> caps) =>
+      caps.contains('assurance.engagement.manage') &&
+      !evidenceFrozen &&
+      (status == EngagementStatus.planning ||
+          status == EngagementStatus.fieldwork);
+
+  bool canAddTeamMember(Set<String> caps) =>
+      caps.contains('assurance.engagement.manage') &&
+      (status == EngagementStatus.planning ||
+          status == EngagementStatus.fieldwork ||
+          status == EngagementStatus.reporting);
+
+  bool canRevokeTeamMember(Set<String> caps) =>
+      caps.contains('assurance.engagement.manage') && !status.closed;
+
   bool canRequestEvidence(Set<String> caps) =>
       caps.contains('assurance.evidence.request') &&
       (status == EngagementStatus.planning ||
@@ -378,6 +449,34 @@ final class AuditorEngagementView {
       caps.contains('assurance.evidence.request') &&
       _collecting &&
       r.status == EvidenceRequestStatus.open;
+
+  bool canCancelRequest(Set<String> caps, AuditorRequest request) =>
+      caps.contains('assurance.evidence.request') &&
+      !status.closed &&
+      !evidenceFrozen &&
+      request.status == EvidenceRequestStatus.open;
+
+  bool canSubmitRemediation(
+    Set<String> caps,
+    AuditorFinding finding,
+    String actorId,
+  ) =>
+      caps.contains('assurance.remediation.manage') &&
+      !status.closed &&
+      finding.status == FindingStatus.remediating &&
+      finding.ownerId == actorId;
+
+  bool canCarryForward(Set<String> caps) =>
+      caps.contains('assurance.finding.issue') &&
+      controls.isNotEmpty &&
+      (status == EngagementStatus.planning ||
+          status == EngagementStatus.fieldwork);
+
+  bool canRunMonitoring(Set<String> caps, AuditorRequest request) =>
+      caps.contains('assurance.test.perform') &&
+      _concluding &&
+      request.evidenceId != null &&
+      assuranceSnapshotKinds.contains(request.sourceKind);
 
   /// Collectors never review evidence they collected.
   bool canReview(Set<String> caps, AuditorRequest r, String actorId) =>
@@ -530,4 +629,13 @@ String _source(Object? v) =>
 String? _lastRunBy(Object? runs) {
   final list = _l(runs ?? const []);
   return list.isEmpty ? null : assuranceId(_m(list.last)['performed_by']);
+}
+
+String? _evidenceSourceKind(Object? evidence) {
+  if (evidence == null) return null;
+  final queryVersion = _m(evidence)['query_version'];
+  for (final entry in assuranceSourceKinds.entries) {
+    if (entry.value.queryVersion == queryVersion) return entry.key;
+  }
+  return null;
 }

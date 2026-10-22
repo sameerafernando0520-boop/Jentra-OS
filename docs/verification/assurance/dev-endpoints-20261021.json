@@ -1,0 +1,50 @@
+{
+  "checkedAtUtc": "2026-10-21T08:51:58.6043095Z",
+  "project": "xpdoufauvrbdmxgngetv",
+  "environment": "development",
+  "checks": [
+    {
+      "function": "assurance-evidence-verify",
+      "credential": "no bearer",
+      "expectedStatus": 401,
+      "actualStatus": 401,
+      "passed": true
+    },
+    {
+      "function": "assurance-evidence-verify",
+      "credential": "invalid synthetic bearer",
+      "expectedStatus": 401,
+      "actualStatus": 401,
+      "passed": true
+    },
+    {
+      "function": "assurance-evidence-download",
+      "credential": "no bearer",
+      "expectedStatus": 401,
+      "actualStatus": 401,
+      "passed": true
+    },
+    {
+      "function": "assurance-evidence-download",
+      "credential": "invalid synthetic bearer",
+      "expectedStatus": 401,
+      "actualStatus": 401,
+      "passed": true
+    }
+  ],
+  "auth": {
+    "signupDisabled": false,
+    "emailEnabled": true,
+    "emailAutoconfirm": false,
+    "anonymousUsersEnabled": false
+  },
+  "testAccountsCreated": false,
+  "accountProvisioning": "This public-key check does not provision accounts. Use an authenticated admin connection or a confirmation mailbox; never weaken Auth settings to create fixtures.",
+  "notEstablished": [
+    "authenticated function/storage behavior",
+    "member role grants",
+    "native Windows walkthrough",
+    "screen-reader walkthrough",
+    "production state"
+  ]
+}

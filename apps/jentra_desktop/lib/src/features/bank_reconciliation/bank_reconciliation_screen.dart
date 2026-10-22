@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jentra_design_system/jentra_design_system.dart';
+import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_platform.dart';
 
 import '../../app_providers.dart';
+import '../../shell/navigation.dart';
 import 'bank_reconciliation_controller.dart';
 import '../operations/operational_report_export.dart';
 import '../operations/operational_read_access.dart';
@@ -28,6 +32,20 @@ class BankReconciliationScreen extends ConsumerWidget {
             key: ValueKey(c),
             controller: c,
             showOperationalReports: true,
+            onOpenBankSetup:
+                caps.value?.contains('finance.setup.manage') == true &&
+                    visibleJentraDestinations(
+                      caps.value,
+                    ).any((destination) => destination.path == '/receivables')
+                ? () => context.go('/receivables')
+                : null,
+            onOpenBusinessSetup:
+                caps.value?.contains(
+                      BusinessSetupResource.accounts.viewPermission,
+                    ) ==
+                    true
+                ? () => context.go('/setup')
+                : null,
           );
   }
 }
@@ -37,9 +55,13 @@ class BankReconciliationWorkspace extends StatefulWidget {
     super.key,
     required this.controller,
     this.showOperationalReports = false,
+    this.onOpenBusinessSetup,
+    this.onOpenBankSetup,
   });
   final BankReconciliationController controller;
   final bool showOperationalReports;
+  final VoidCallback? onOpenBusinessSetup;
+  final VoidCallback? onOpenBankSetup;
   @override
   State<BankReconciliationWorkspace> createState() => _BankWorkspaceState();
 }
@@ -330,6 +352,43 @@ class _BankWorkspaceState extends State<BankReconciliationWorkspace> {
               ),
             ],
           ),
+          if (c.online &&
+              !c.busy &&
+              !c.pending &&
+              c.error == null &&
+              c.pages.containsKey('accounts') &&
+              c.rows('accounts').isEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: JentraPanel(
+                child: JentraEmptyState(
+                  icon: Icons.account_balance_outlined,
+                  title: 'No bank accounts available',
+                  description: 'No active bank accounts were returned for this legal entity and branch. To configure one, use Fulfillment & receivables → Posting setup → Cash / bank account, or ask your finance administrator. Review ledger accounts in Business setup.',
+                  action:
+                      widget.onOpenBusinessSetup == null &&
+                          widget.onOpenBankSetup == null
+                      ? null
+                      : Wrap(
+                          spacing: 12,
+                          runSpacing: 12,
+                          alignment: WrapAlignment.center,
+                          children: [
+                            if (widget.onOpenBankSetup != null)
+                              OutlinedButton(
+                                onPressed: widget.onOpenBankSetup,
+                                child: const Text('Open receivables'),
+                              ),
+                            if (widget.onOpenBusinessSetup != null)
+                              OutlinedButton(
+                                onPressed: widget.onOpenBusinessSetup,
+                                child: const Text('Open Business setup'),
+                              ),
+                          ],
+                        ),
+                ),
+              ),
+            ),
           if (c.bankId != null) ...[
             if (c.can('rules')) ...[
               const SizedBox(height: 24),

@@ -15,7 +15,7 @@ import 'support/procurement_fakes.dart' show Keys;
 
 class BankFake implements BankReconciliationGateway {
   String? failure, readFailure;
-  bool failRefresh = false;
+  bool failRefresh = false, noAccounts = false;
   final commands = <CommandEnvelope<Map<String, Object?>>>[];
   @override
   Future<Map<String, Object?>> options(
@@ -29,7 +29,7 @@ class BankFake implements BankReconciliationGateway {
     }
     return {
       'items': [
-        if (resource == 'accounts')
+        if (resource == 'accounts' && !noAccounts)
           {
             'id': 'bank',
             'code': 'MAIN',
@@ -239,6 +239,54 @@ void main() {
           .any((d) => d.path == '/finance/bank'),
       true,
     );
+  });
+  testWidgets('empty bank accounts explain setup without posting commands', (
+    tester,
+  ) async {
+    gateway.noAccounts = true;
+    await c.initialize();
+    var openedSetup = false;
+    var openedBankSetup = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: JentraTheme.light(),
+        home: Scaffold(
+          body: BankReconciliationWorkspace(
+            controller: c,
+            onOpenBusinessSetup: () => openedSetup = true,
+            onOpenBankSetup: () => openedBankSetup = true,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('No bank accounts available'), findsOneWidget);
+    expect(find.textContaining('this legal entity and branch'), findsOneWidget);
+    expect(
+      find.textContaining('Posting setup → Cash / bank account'),
+      findsOneWidget,
+    );
+    await tester.ensureVisible(find.text('Open receivables'));
+    await tester.tap(find.text('Open receivables'));
+    expect(openedBankSetup, isTrue);
+    await tester.ensureVisible(find.text('Open Business setup'));
+    await tester.tap(find.text('Open Business setup'));
+    expect(openedSetup, isTrue);
+    expect(gateway.commands, isEmpty);
+    c.error = 'Bank evidence could not be loaded.';
+    c.emit();
+    await tester.pump();
+    expect(find.text('No bank accounts available'), findsNothing);
+    c.error = null;
+    c.busy = true;
+    c.emit();
+    await tester.pump();
+    expect(find.text('No bank accounts available'), findsNothing);
+    c.busy = false;
+    c.setOnline(false);
+    await tester.pump();
+    expect(find.text('No bank accounts available'), findsNothing);
+    expect(tester.takeException(), isNull);
   });
   testWidgets(
     '200 percent text keeps reversal confirmation reachable and cancellable',

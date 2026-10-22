@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jentra_design_system/jentra_design_system.dart';
 
 import '../../app_providers.dart';
 import 'landed_extension_controller.dart';
@@ -216,6 +217,24 @@ class LandedExtensionWorkspace extends StatelessWidget {
                   TextButton(
                     onPressed: c.busy ? null : c.moreRecovery,
                     child: const Text('More saved inputs'),
+                  ),
+                if (c.online &&
+                    !c.busy &&
+                    c.error == null &&
+                    (c.options['posted'] ?? []).isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: JentraPanel(
+                      child: JentraEmptyState(
+                        icon: Icons.inventory_2_outlined,
+                        title: c.options.containsKey('posted')
+                            ? 'No posted landed allocations'
+                            : 'Posted allocations not loaded',
+                        description: c.options.containsKey('posted')
+                            ? 'Create an allocation after recording eligible receipts and freight expense. Posted allocations for this scope will appear here.'
+                            : 'Select Refresh posted allocations to review this scope. Create a new allocation after recording eligible receipts and freight expense.',
+                      ),
+                    ),
                   ),
                 for (final row in c.options['posted'] ?? [])
                   ListTile(

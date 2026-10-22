@@ -9,11 +9,10 @@ import 'package:jentra_platform/jentra_platform.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../app_providers.dart';
+import 'assurance_people_provider.dart';
 import 'assurance_workspace_controller.dart' show assuranceGatewayProvider;
 
-final assurancePeopleGatewayProvider = Provider<AssurancePeopleGateway?>(
-  (ref) => null,
-);
+export 'assurance_people_provider.dart' show assurancePeopleGatewayProvider;
 
 final assurancePlanningControllerProvider =
     Provider.autoDispose<AssurancePlanningController?>((ref) {
@@ -88,6 +87,7 @@ final class AssurancePlanningController extends ChangeNotifier {
     'supersede_plan': ['plan_id'],
     'add_plan_item': ['plan_item_id'],
     'instantiate_engagement': ['engagement_id'],
+    'create_template': ['template_id'],
   };
   static const _wholeNumbers = {'likelihood', 'impact', 'occurrence'};
 
@@ -288,6 +288,87 @@ final class AssurancePlanningController extends ChangeNotifier {
     _emit();
   }
 
+  List<Map<String, Object?>> get templateControls => [
+    for (final row in form['controls'] as List? ?? const [])
+      (row as Map).cast<String, Object?>(),
+  ];
+  List<Map<String, Object?>> get templateRequests => [
+    for (final row in form['requests'] as List? ?? const [])
+      (row as Map).cast<String, Object?>(),
+  ];
+
+  void templateControlField(int index, String key, Object? value) {
+    if (pending || busy || form['action'] != 'create_template') return;
+    final controls = templateControls;
+    if (index < 0 || index >= controls.length) return;
+    final oldCode = controls[index]['control_code'];
+    controls[index] = {...controls[index], key: value};
+    form = {
+      ...form,
+      'controls': controls,
+      if (key == 'control_code' && oldCode != value)
+        'requests': [
+          for (final request in templateRequests)
+            request['control_code'] == oldCode
+                ? {...request, 'control_code': value}
+                : request,
+        ],
+    };
+    _emit();
+  }
+
+  void addTemplateControl() {
+    if (pending || busy || templateControls.length >= 50) return;
+    field('controls', [
+      ...templateControls,
+      {'control_code': '', 'title': '', 'risk': 'medium'},
+    ]);
+  }
+
+  void removeTemplateControl(int index) {
+    if (pending || busy) return;
+    final controls = templateControls;
+    if (index < 0 || index >= controls.length) return;
+    final code = controls.removeAt(index)['control_code'];
+    form = {
+      ...form,
+      'controls': controls,
+      'requests': templateRequests
+          .where((r) => r['control_code'] != code)
+          .toList(),
+    };
+    _emit();
+  }
+
+  void templateRequestField(int index, String key, Object? value) {
+    if (pending || busy || form['action'] != 'create_template') return;
+    final requests = templateRequests;
+    if (index < 0 || index >= requests.length) return;
+    requests[index] = {...requests[index], key: value};
+    field('requests', requests);
+  }
+
+  void addTemplateRequest() {
+    if (pending || busy || templateRequests.length >= 100) return;
+    final code = templateControls
+        .map((c) => '${c['control_code']}')
+        .where((code) => code.trim().isNotEmpty)
+        .firstOrNull;
+    if (code == null) return;
+    field('requests', [
+      ...templateRequests,
+      {'control_code': code, 'description': '', 'due_offset_days': '14'},
+    ]);
+  }
+
+  void removeTemplateRequest(int index) {
+    if (pending || busy) return;
+    final requests = templateRequests;
+    if (index < 0 || index >= requests.length) return;
+    requests.removeAt(index);
+    field('requests', requests);
+  }
+
   Future<void> saveDraft() => _run(() async {
     if (pending || !commanding) return;
     await drafts.save(
@@ -314,6 +395,24 @@ final class AssurancePlanningController extends ChangeNotifier {
           final String s when _wholeNumbers.contains(k) =>
             int.tryParse(s.trim()) ?? s.trim(),
           final String s when k == 'template_id' && s.trim().isEmpty => null,
+          final List _ when action == 'create_template' && k == 'controls' => [
+            for (final control in templateControls)
+              {
+                'control_code': '${control['control_code'] ?? ''}'.trim(),
+                'title': '${control['title'] ?? ''}'.trim(),
+                'risk': control['risk'],
+              },
+          ],
+          final List _ when action == 'create_template' && k == 'requests' => [
+            for (final request in templateRequests)
+              {
+                'control_code': '${request['control_code'] ?? ''}'.trim(),
+                'description': '${request['description'] ?? ''}'.trim(),
+                'due_offset_days':
+                    int.tryParse('${request['due_offset_days']}'.trim()) ??
+                    request['due_offset_days'],
+              },
+          ],
           final String s => s.trim(),
           final other => other,
         },

@@ -31,10 +31,14 @@ void main() {
         );
       }
       expect(
-        visibleJentraDestinations({})
+        visibleJentraDestinations({'procurement.orders.view'})
             .firstWhere((d) => d.path == '/procurement')
             .section,
         'OPERATIONS',
+      );
+      expect(
+        visibleJentraDestinations({}).any((d) => d.path == '/procurement'),
+        isFalse,
       );
     },
   );
