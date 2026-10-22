@@ -16,13 +16,14 @@ void main() {
   setUpAll(_loadTestFonts);
 
   test('CRM gating preserves the Operations navigation group — FR-383', () {
-    final visible = visibleJentraDestinations(const {'procurement.orders.view'});
+    final visible = visibleJentraDestinations(const {
+      'procurement.orders.view',
+    });
 
     expect(visible.any((item) => item.path == '/crm'), isFalse);
     expect(
-      visibleJentraDestinations(const {}).any(
-        (item) => item.path == '/procurement',
-      ),
+      visibleJentraDestinations(const {})
+          .any((item) => item.path == '/procurement'),
       isFalse,
     );
     expect(
@@ -100,20 +101,19 @@ void main() {
     },
   );
 
-  testWidgets(
-    'CRM shows the configured production workspace label',
-    (tester) async {
-      await _pumpCrm(
-        tester,
-        repository: _FakeCrmRepository(populated: true),
-        capabilities: _viewCapabilities,
-        environment: 'production',
-      );
-      expect(find.text('Production workspace'), findsOneWidget);
-      expect(find.text('Live development data'), findsNothing);
-      expect(tester.takeException(), isNull);
-    },
-  );
+  testWidgets('CRM shows the configured production workspace label', (
+    tester,
+  ) async {
+    await _pumpCrm(
+      tester,
+      repository: _FakeCrmRepository(populated: true),
+      capabilities: _viewCapabilities,
+      environment: 'production',
+    );
+    expect(find.text('Production workspace'), findsOneWidget);
+    expect(find.text('Live development data'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets(
     'CRM renders currency-separated pipeline, detail, and timeline — AC-302 / AC-321',

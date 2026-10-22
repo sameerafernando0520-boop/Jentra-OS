@@ -25,9 +25,7 @@ abstract interface class AccountPhotoStore {
 /// Uses the existing Windows protected store, partitioned by project and actor.
 /// Photos are deliberately device-local, like employee companion portraits.
 final class SecureAccountPhotoStore implements AccountPhotoStore {
-  const SecureAccountPhotoStore({
-    this._storage = const FlutterSecureStorage(),
-  });
+  const SecureAccountPhotoStore({this._storage = const FlutterSecureStorage()});
   final FlutterSecureStorage _storage;
   static const maximumBytes = 64 * 1024;
 
