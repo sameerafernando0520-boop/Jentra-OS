@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-import { assertPublicContent, inspectBuild, stageBuild, verifyStage } from './prepare.mjs';
+import { assertPublicContent, inspectBuild, stageBuild, verifyStage, reviewedApplicationLoad } from './prepare.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 async function fixture(t) {
@@ -20,7 +20,7 @@ async function fixture(t) {
   for (const [name, content] of Object.entries({
     'index.html': '<base href="/">',
     'main.dart.js': 'const api = "https://xpdoufauvrbdmxgngetv.supabase.co";',
-    'flutter_bootstrap.js': "_flutter.loader.load({config:{canvasKitBaseUrl: 'canvaskit/'}});",
+    'flutter_bootstrap.js': reviewedApplicationLoad,
     'manifest.json': '{}',
     '404.html': '<title>Unavailable</title>',
     'canvaskit/canvaskit.js': '// engine fixture',
@@ -85,6 +85,26 @@ test('rejects unrendered bootstrap templates and caching worker registration', a
     await writeFile(path.join(build, 'flutter_bootstrap.js'), bootstrap);
     await assert.rejects(inspectBuild(build), /reviewed local-engine, noncaching bootstrap/);
   }
+});
+
+test('accepts bundled SDK worker-option definitions without enabling an application worker', async t => {
+  const { build } = await fixture(t);
+  await writeFile(path.join(build, 'flutter_bootstrap.js'), `const internalSdkOptions = {serviceWorkerSettings: null};\n${reviewedApplicationLoad}\n`);
+  assert.equal((await inspectBuild(build)).files.length, 7);
+});
+
+test('rejects actual application worker settings and duplicate loader invocations', async t => {
+  const { build } = await fixture(t);
+  const configuredWorker = reviewedApplicationLoad.replace('  config:', '  serviceWorkerSettings: {serviceWorkerVersion: 1},\n  config:');
+  for (const bootstrap of [configuredWorker, `${reviewedApplicationLoad}\n${reviewedApplicationLoad}`, `${reviewedApplicationLoad}\n_flutter.loader.load({serviceWorkerSettings: {}});`]) {
+    await writeFile(path.join(build, 'flutter_bootstrap.js'), bootstrap);
+    await assert.rejects(inspectBuild(build), /reviewed local-engine, noncaching bootstrap/);
+  }
+});
+
+test('reviewed application invocation matches the checked-in web bootstrap tail', async () => {
+  const template = await readFile(path.join(here, '../../apps/jentra_employee/web/flutter_bootstrap.js'), 'utf8');
+  assert.equal(template.replaceAll('\r\n', '\n').trimEnd().endsWith(reviewedApplicationLoad), true);
 });
 
 test('detects mutation of a staged compiled app before preview deployment', async t => {

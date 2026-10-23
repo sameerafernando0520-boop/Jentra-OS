@@ -7,6 +7,12 @@ const toolDirectory = path.dirname(fileURLToPath(import.meta.url));
 const allowedOrigin = 'https://xpdoufauvrbdmxgngetv.supabase.co';
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 const forbiddenName = /(^|\/)(\.[^/]+|node_modules)(\/|$)|firebase-adminsdk|service[-_]?account|google-services\.json|\.(?:map|pem|pfx|p12|key|env)$/i;
+export const reviewedApplicationLoad = `_flutter.loader.load({
+  config: {
+    canvasKitBaseUrl: 'canvaskit/',
+    forceSingleThreadedSkwasm: true,
+  },
+});`;
 
 export function assertPublicContent(bytes, relativeName) {
   if (forbiddenName.test(relativeName)) throw new Error(`Private or debug file rejected: ${relativeName}`);
@@ -56,7 +62,11 @@ export async function inspectBuild(buildDirectory) {
     if (!names.has(required)) throw new Error(`Incomplete Flutter web build: ${required}`);
   }
   const bootstrap = await readFile(path.join(root, 'flutter_bootstrap.js'), 'utf8');
-  if (bootstrap.includes('{{') || !bootstrap.includes("canvasKitBaseUrl: 'canvaskit/'") || /serviceWorkerSettings\s*:/.test(bootstrap)) {
+  // The bundled Flutter SDK itself defines serviceWorkerSettings. Only the
+  // reviewed, final application call determines whether one is configured.
+  const applicationLoads = [...bootstrap.matchAll(/_flutter\.loader\.load\s*\(/g)];
+  if (bootstrap.includes('{{') || applicationLoads.length !== 1 ||
+      !bootstrap.replaceAll('\r\n', '\n').trimEnd().endsWith(reviewedApplicationLoad)) {
     throw new Error('Build must use the reviewed local-engine, noncaching bootstrap.');
   }
   const index = await readFile(path.join(root, 'index.html'), 'utf8');
