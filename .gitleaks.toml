@@ -16,7 +16,7 @@ useDefault = true
 # client-key rule and this one reviewed Google Services configuration file.
 [[allowlists]]
 description = "Firebase Android public client configuration"
-targetRules = ["google-api-key"]
+targetRules = ["gcp-api-key"]
 condition = "AND"
 regexTarget = "secret"
 paths = ['''^apps/jentra_employee/android/app/google-services\.json$''']

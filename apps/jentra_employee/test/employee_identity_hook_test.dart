@@ -74,11 +74,12 @@ void main() {
         gateway: gateway,
         draftStore: EmployeeDraftStore(FixtureStore()),
         beforeIdentityChange: () async {
-          if (rejectHook)
+          if (rejectHook) {
             throw const EmployeeFailure(
               'PUSH_DISCONNECT_INCOMPLETE',
               'Synthetic disconnect failure',
             );
+          }
         },
       );
       addTearDown(controller.dispose);
