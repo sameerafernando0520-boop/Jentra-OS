@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter/foundation.dart';
 
 import '../data/employee_gateway.dart';
 import 'employee_feature_strings.dart';
@@ -11,14 +12,43 @@ class EmployeeStrings {
   static EmployeeStrings of(BuildContext context) =>
       EmployeeStrings(Localizations.localeOf(context).languageCode);
 
-  String call(String key) =>
-      employeeFeatureStrings[language]?[key] ??
-      employeeFeatureStrings['en']?[key] ??
-      switch (language) {
-        'si' => _sinhala[key] ?? _english[key] ?? key,
-        'ta' => _tamil[key] ?? _english[key] ?? key,
-        _ => _english[key] ?? key,
-      };
+  String call(String key) {
+    final resolved = kIsWeb
+        ? switch (key) {
+            'storageCopy' => 'browserStorageCopy',
+            'failureStorage' => 'browserStorageFailed',
+            'photoDeviceCopy' => 'browserPhotoCopy',
+            'photoSaved' => 'browserPhotoSaved',
+            'photoRemoved' => 'browserPhotoRemoved',
+            _ => key,
+          }
+        : key;
+    return employeeFeatureStrings[language]?[resolved] ??
+        employeeFeatureStrings['en']?[resolved] ??
+        switch (language) {
+          'si' => _sinhala[resolved] ?? _english[resolved] ?? resolved,
+          'ta' => _tamil[resolved] ?? _english[resolved] ?? resolved,
+          _ => _english[resolved] ?? resolved,
+        };
+  }
+
+  String mfaMessage(String value) => call(switch (value) {
+    'Authenticator access could not be checked. Try again.' => 'mfaReadFailed',
+    'Private setup details expired. Check authenticators again.' =>
+      'mfaSetupExpired',
+    'Authenticator setup could not start. Try again or ask your administrator.' =>
+      'mfaSetupFailed',
+    'The unfinished setup could not be cancelled. Check authenticators again before retrying.' =>
+      'mfaCancelFailed',
+    'Enter the six-digit code from your authenticator.' => 'mfaCodeRequired',
+    'A verified session could not be confirmed. Check authenticators again.' =>
+      'mfaSessionFailed',
+    'The code could not be verified. Use a fresh code and try again.' =>
+      'mfaCodeFailed',
+    'Verification succeeded. Refresh employee access again to continue.' =>
+      'mfaContinueFailed',
+    _ => 'mfaReadFailed',
+  });
 
   String failure(EmployeeFailure failure) => call(switch (failure.code) {
     'PHOTO_INVALID' => 'photoInvalid',
@@ -31,6 +61,7 @@ class EmployeeStrings {
     'SIGN_IN_FAILED' => 'failureSession',
     'DURABLE_LOGOUT_INCOMPLETE' => 'failureLogout',
     'STORAGE_UNAVAILABLE' || 'APP_SETUP_UNAVAILABLE' => 'failureStorage',
+    'BROWSER_STORAGE_IN_USE' => 'browserStorageInUse',
     'AUTHORIZATION_EXPIRED' => 'failureLease',
     'MFA_REQUIRED' => 'failureMfa',
     'VERSION_CONFLICT' ||

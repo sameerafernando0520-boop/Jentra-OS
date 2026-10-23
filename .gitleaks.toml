@@ -11,6 +11,17 @@
 [extend]
 useDefault = true
 
+# Firebase-provisioned Android client identifiers are public app configuration,
+# not Admin SDK/service credentials. Keep this exception limited to the Google
+# client-key rule and this one reviewed Google Services configuration file.
+[[allowlists]]
+description = "Firebase Android public client configuration"
+targetRules = ["google-api-key"]
+condition = "AND"
+regexTarget = "secret"
+paths = ['''^apps/jentra_employee/android/app/google-services\.json$''']
+regexes = ['''^AIza[0-9A-Za-z_-]{35}$''']
+
 [[allowlists]]
 description = "Content digests and UUIDs in verification evidence"
 targetRules = ["generic-api-key"]
