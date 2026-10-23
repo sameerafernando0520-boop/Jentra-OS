@@ -24,6 +24,7 @@ final class EmployeeController extends ChangeNotifier {
     Duration authorizationLease = const Duration(hours: 24),
     EmployeePhotoPicker? photoPicker,
     Future<Uint8List> Function(Uint8List)? photoNormalizer,
+    this.beforeIdentityChange,
   }) : _gateway = gateway,
        // Keep the injected store private while retaining the public argument.
        // ignore: prefer_initializing_formals
@@ -47,6 +48,7 @@ final class EmployeeController extends ChangeNotifier {
     _authSubscription = gateway?.actorChanges.listen(_authChanged);
   }
   final EmployeeGateway? _gateway;
+  final Future<void> Function()? beforeIdentityChange;
   final EmployeeDraftStore _draftStore;
   final EmployeePhotoStore _photoStore;
   final EmployeePhotoPicker _photoPicker;
@@ -407,6 +409,7 @@ final class EmployeeController extends ChangeNotifier {
     phase = EmployeePhase.locked;
     _emit();
     try {
+      await beforeIdentityChange?.call();
       await _gateway.signOut();
       if (!_disposed) {
         _durableLogoutIncomplete = false;
@@ -470,6 +473,8 @@ final class EmployeeController extends ChangeNotifier {
     phase = EmployeePhase.loading;
     _emit();
     try {
+      await beforeIdentityChange?.call();
+      if (!_valid(generation)) return;
       await _open(authorized, generation);
     } on Object catch (e) {
       if (_valid(generation)) {

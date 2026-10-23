@@ -9,11 +9,13 @@ class EmployeeSettingsScreen extends StatelessWidget {
     required this.themeMode,
     required this.locale,
     required this.onChanged,
+    this.notifications,
     super.key,
   });
   final ThemeMode themeMode;
   final Locale locale;
   final void Function(ThemeMode theme, Locale locale) onChanged;
+  final Widget? notifications;
   @override
   Widget build(BuildContext context) {
     final s = EmployeeStrings.of(context);
@@ -68,6 +70,7 @@ class EmployeeSettingsScreen extends StatelessWidget {
               ),
             ),
           ),
+          ?notifications,
           EmployeeMessage(
             title: s('security'),
             message: s('securityCopy'),

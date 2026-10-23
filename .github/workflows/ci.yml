@@ -19,6 +19,7 @@ concurrency:
 env:
   FLUTTER_VERSION: 3.47.5
   SUPABASE_CLI_VERSION: 2.114.0
+  NODE_VERSION: 24
 
 jobs:
   flutter-quality:
@@ -58,6 +59,30 @@ jobs:
         working-directory: packages/jentra_platform
         run: flutter test --no-pub -r expanded
 
+      - name: Test employee app on VM
+        working-directory: apps/jentra_employee
+        run: flutter test --no-pub -r expanded
+
+      - name: Test encrypted employee browser storage in Chrome
+        working-directory: apps/jentra_employee
+        run: flutter test --no-pub --platform chrome test/employee_storage_browser_test.dart -r expanded
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          package-manager-cache: false
+
+      - name: Test employee push sender, contracts, and isolated runner
+        run: >-
+          node --test
+          supabase/functions/tests/employee_push_dispatch.test.mjs
+          supabase/functions/tests/employee_push_contract.test.mjs
+          supabase/functions/tests/employee_push_runner.test.mjs
+
+      - name: Test employee Hosting preparation
+        run: node --test tools/employee-web/prepare.test.mjs
+
   desktop-tests:
     # The approved goldens are rendered on Windows; Linux font rasterisation
     # differs, so the desktop suite runs where the goldens were made.
@@ -96,6 +121,12 @@ jobs:
         with:
           version: ${{ env.SUPABASE_CLI_VERSION }}
 
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          package-manager-cache: false
+
       - name: Start isolated Supabase stack
         run: supabase start
 
@@ -104,6 +135,11 @@ jobs:
 
       - name: Run pgTAP security suite
         run: supabase test db
+
+      - name: Test employee push candidate with local rollback only
+        # The runner forces --local and mounts only its temporary candidate
+        # suite, outside default test discovery. No hosted database is used.
+        run: node supabase/candidates/run-employee-push-test.mjs --run-local
 
   secret-scan:
     name: Secret scan
