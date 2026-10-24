@@ -17,8 +17,9 @@ $buildTools = Get-ChildItem -LiteralPath (Join-Path $AndroidSdk 'build-tools') -
     Sort-Object { [version]$_.Name } -Descending | Select-Object -First 1
 if ($null -eq $buildTools) { throw 'Android build tools are required for package verification.' }
 $aaptExecutable = Join-Path $buildTools.FullName 'aapt2.exe'
+$zipAlignExecutable = Join-Path $buildTools.FullName 'zipalign.exe'
 $apkSignerJar = Join-Path $buildTools.FullName 'lib/apksigner.jar'
-foreach ($requiredFile in @($dartExecutable, $flutterSnapshot, $configurationPath, $JavaExecutable, $aaptExecutable, $apkSignerJar)) {
+foreach ($requiredFile in @($dartExecutable, $flutterSnapshot, $configurationPath, $JavaExecutable, $aaptExecutable, $zipAlignExecutable, $apkSignerJar)) {
     if (!(Test-Path -LiteralPath $requiredFile -PathType Leaf)) {
         throw "Required build input not found: $requiredFile"
     }
@@ -65,6 +66,9 @@ $artifacts = foreach ($abi in $abiNames) {
     $signatureLog = Join-Path $checkDir "signature-$abi.log"
     & $JavaExecutable -jar $apkSignerJar verify --verbose --print-certs $builtApk *> $signatureLog
     if ($LASTEXITCODE -ne 0) { throw "APK signature is invalid: $abi" }
+    $alignmentLog = Join-Path $checkDir "alignment-16k-$abi.log"
+    & $zipAlignExecutable -c -P 16 -v 4 $builtApk *> $alignmentLog
+    if ($LASTEXITCODE -ne 0) { throw "APK native page alignment verification failed: $abi" }
     $signature = Get-Content -LiteralPath $signatureLog -Raw
     $cert = [regex]::Match($signature, 'certificate SHA-256 digest: ([a-f0-9]+)').Groups[1].Value
     if (!$cert -or ($baselineCert -and $cert -ne $baselineCert)) { throw "Unexpected development signer: $abi" }
@@ -88,7 +92,7 @@ $artifacts = foreach ($abi in $abiNames) {
     if ($apkFile.Length -gt 40MB) { throw "Employee APK exceeds the 40 MiB development size budget: $abi." }
     $destination = Join-Path $deliveryDir "Jentra-Employee-$appVersion-$abi-optimized-development.apk"
     Copy-Item -LiteralPath $builtApk -Destination $destination
-    [ordered]@{path=$destination;abi=$abi;bytes=$apkFile.Length;mib=[Math]::Round($apkFile.Length/1MB,2);sha256=(Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash.ToLowerInvariant();certificate_sha256=$cert;signature_verified=$true;package_identity_verified=$true}
+    [ordered]@{path=$destination;abi=$abi;bytes=$apkFile.Length;mib=[Math]::Round($apkFile.Length/1MB,2);sha256=(Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash.ToLowerInvariant();certificate_sha256=$cert;signature_verified=$true;alignment_16k_verified=$true;package_identity_verified=$true}
 }
 $manifest = [ordered]@{
     built_at_utc=[DateTime]::UtcNow.ToString('o')

@@ -9,7 +9,8 @@ The [candidate SQL](../../supabase/candidates/20261023090000_employee_push.sql)
 adds a private schema, own-device RPCs and a recipient-bound delivery outbox.
 It changes no plan entitlement, employee/staff role assignment or existing HR
 function. Installation requires independent database review and explicit approval.
-Current hosted `module.people=false` remains an independent gate.
+The last read-only hosted check on 23 October observed `module.people=false`;
+an approved HR-enabled workspace and a fresh acceptance check remain separate gates.
 
 Client contract:
 
@@ -104,10 +105,10 @@ node --test supabase/functions/tests/employee_push_dispatch.test.mjs supabase/fu
 The sender tests use synthetic keys and mocked HTTP/RPCs; they cover generic FID
 payloads, scheduler authorization, recipient/session revocation, stale leases,
 bounded requests, OAuth signing/cache, invalid targets and uncertain completion.
-SQL tests are static security-contract checks. PostgreSQL compilation, actual
-concurrent registration/lease isolation, rollback fixtures, hosted deployment,
-FCM permission validation and physical Android delivery are not established by
-those tests and remain required before activation.
+The Node SQL checks are static security-contract checks; PostgreSQL execution
+is recorded separately below. Neither those Node tests nor the single-connection
+rollback suite establish true concurrent registration/worker isolation, hosted
+deployment, FCM permission validation or physical Android delivery.
 
 The [runtime candidate suite](../../supabase/candidates/tests/employee_push_candidate_test.sql)
 stays outside default `supabase/tests` discovery. Supabase CLI 2.114.0 mounts only
@@ -133,6 +134,21 @@ rolls everything back. It covers own registration/idempotency, foreign
 scope/installation/removal, reactivation at the device cap, recipient outbox
 separation, lease exclusion/retry/stale finish, link/module/MFA revocation,
 retained expired sessions, session deletion and private-target erasure. Never run
-it against a hosted project. Preparing the suite and passing mocked runner tests
-are not successful PostgreSQL runs; compilation, true multi-connection concurrency
-and physical FCM delivery remain separate checks.
+it against a hosted project.
+
+On **23 October 2026**, the isolated PostgreSQL run **passed all 47 assertions**
+for exact commit `448220ed88253fa3f86636632df42c4276140fce` in
+[PR #16 CI run 39946877445](https://github.com/sameerafernando0520-boop/Jentra-OS/actions/runs/39946877445).
+The [database job 120391858703](https://github.com/sameerafernando0520-boop/Jentra-OS/actions/runs/39946877445/job/120391858703)
+used Supabase CLI 2.114.0 and Node 24. Its candidate step connected to the local
+database and reported `Files=1, Tests=47` and `Result: PASS` at
+**2026-10-23 11:39:56.641 UTC**. The preceding existing database suite separately
+passed 7,369 assertions across 42 files. The candidate and synthetic fixtures
+were enclosed in the suite's rollback transaction.
+
+This establishes candidate compilation and those rollback assertions on an
+isolated migrated Supabase stack. It does not establish hosted installation,
+true multi-connection contention, a deployed sender/schedule, an HR event
+producer, physical FCM delivery or production acceptance. See the
+[Firebase verification baseline](../verification/employee-firebase-20261025/README.md)
+for the associated client, artifact and preview evidence and remaining gates.

@@ -107,7 +107,7 @@ class _EmployeeSignInScreenState extends State<EmployeeSignInScreen> {
                           ?.copyWith(color: context.jentraColors.textSecondary),
                     ),
                     const SizedBox(height: 24),
-                    if (!widget.connected) ...[
+                    if (!widget.connected && widget.error == null) ...[
                       EmployeeMessage(
                         title: s('connectionNotReady'),
                         message: s('connectionCopy'),

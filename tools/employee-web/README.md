@@ -27,7 +27,7 @@ Deploy that exact directory only after its contents are reviewed:
 ./tools/employee-web/preview.ps1 -ReleaseDirectory '<printed releaseDirectory>' -Channel employee-qa-20261023
 ```
 
-The wrapper revalidates public hashes and the exact Hosting configuration before calling `firebase hosting:channel:deploy` for project/site `jentra-os`, with a seven-day expiry. Use an existing private Firebase CLI login; never use or package the untracked Firebase admin key. The Firebase CLI command must be available on PATH, or supplied with `-FirebaseCommand`. No npm dependency installation is required by these scripts.
+The wrapper revalidates public hashes and the exact Hosting configuration before calling `firebase hosting:channel:deploy` for project/site `jentra-os`, with a seven-day expiry. It passes `--no-authorized-domains` because this app uses Supabase sign-in and does not need Firebase Auth domain changes. Use an existing private Firebase CLI login; never use or package the untracked Firebase admin key. The Firebase CLI command must be available on PATH, or supplied with `-FirebaseCommand`. No npm dependency installation is required by these scripts.
 
 ## Hosting policy
 

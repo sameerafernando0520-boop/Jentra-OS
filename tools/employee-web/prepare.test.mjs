@@ -138,6 +138,7 @@ test('hosting limits active origins, prevents framing and avoids cached callback
 test('deployment wrapper has only a bounded named preview channel path', async () => {
   const script = await readFile(path.join(here, 'preview.ps1'), 'utf8');
   assert.match(script, /hosting:channel:deploy/);
+  assert.match(script, /--no-authorized-domains/);
   assert.match(script, /employee-\(qa\|preview\)/);
   assert.match(script, /--project jentra-os --config firebase.json/);
   assert.doesNotMatch(script, /hosting:clone|\bdeploy --only hosting|--only functions/);
