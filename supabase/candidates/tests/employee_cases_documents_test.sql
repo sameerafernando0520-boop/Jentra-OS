@@ -282,6 +282,63 @@ select throws_ok($$select api.people_hr_service_document((select (value->>'ticke
  '42501','HR_DOCUMENT_DENIED','published document capability revocation is checked again on consume');
 reset role;
 insert into core.role_permissions(tenant_id,role_id,permission_code) values(pg_temp.pid('tenant'),pg_temp.pid('employee-role'),'people.hr.documents.self.view');
+
+-- Ownership recovery is based on durable scoped authorization, never whether
+-- the original owner happens to be signed in. Case managers need no unrelated
+-- account-link permission to select another eligible case owner.
+select pg_temp.push_actor('employee-a','aal2');set local role authenticated;
+select throws_ok($$select api.employee_hr_case_owners(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'))$$,
+ '42501',null,'employee self access cannot enumerate HR case owners');
+select pg_temp.create_case('orphan-case','orphan-create');
+reset role;select pg_temp.push_actor('hr-owner','aal2');set local role authenticated;
+select is(jsonb_array_length(api.employee_hr_case_owners(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'))->'items'),2,
+ 'case manager can select eligible staff without account-link management');
+select ok(not (api.employee_hr_case_owners(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'))->'items'->0 ? 'email'),
+ 'owner picker excludes login email and private personnel fields');
+select throws_ok($$select api.employee_hr_case_owners(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('other-branch'))$$,
+ '42501',null,'owner picker cannot enumerate a foreign branch');
+select throws_ok($$select api.employee_hr_case_owners(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('employee-a.membership'))$$,
+ '22023','EMPLOYEE_CURSOR_INVALID','owner cursor must itself be an eligible scoped owner');
+select api.employee_hr_case_command(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('orphan-case'),
+ pg_temp.pid('orphan-initial-claim'),1,'claim');
+reset role;select pg_temp.push_actor('outsider','aal2');set local role authenticated;
+select is(api.employee_hr_case_detail(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('orphan-case'))->>'owner_available',
+ 'true','active scoped case owner remains protected');
+select throws_ok($$select api.employee_hr_case_command(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('orphan-case'),
+ pg_temp.pid('orphan-active-takeover'),2,'claim')$$,'42501','EMPLOYEE_CASE_OWNER_REQUIRED','another case manager cannot take over an active owner');
+reset role;update auth.sessions set not_after=statement_timestamp()-interval '1 minute' where id=pg_temp.pid('hr-owner.session');
+set local role authenticated;
+select is(api.employee_hr_case_detail(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('orphan-case'))->>'owner_available',
+ 'true','owner session expiry does not make an enquiry orphaned');
+select throws_ok($$select api.employee_hr_case_command(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('orphan-case'),
+ pg_temp.pid('orphan-expired-session-takeover'),2,'claim')$$,'42501','EMPLOYEE_CASE_OWNER_REQUIRED','temporary owner session loss cannot bypass ownership');
+reset role;
+update auth.sessions set not_after=null where id=pg_temp.pid('hr-owner.session');
+delete from core.role_assignments where membership_id=pg_temp.pid('hr-owner.membership') and role_id=pg_temp.pid('hr-role');
+set local role authenticated;
+select is(api.employee_hr_case_detail(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('orphan-case'))->>'owner_available',
+ 'false','permanent scoped role revocation exposes recoverable ownership');
+select is(jsonb_array_length(api.employee_hr_case_owners(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'))->'items'),1,
+ 'revoked owner is no longer offered as an assignee');
+reset role;update core.memberships set status='suspended' where id=pg_temp.pid('outsider.membership');
+set local role authenticated;
+select throws_ok($$select api.employee_hr_case_command(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('orphan-case'),
+ pg_temp.pid('orphan-inactive-claim'),2,'claim')$$,'42501',null,'an inactive claimant cannot recover orphan ownership');
+reset role;update core.memberships set status='active' where id=pg_temp.pid('outsider.membership');
+set local role authenticated;
+insert into push_results values('orphan-reclaimed',api.employee_hr_case_command(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('orphan-case'),
+ pg_temp.pid('orphan-reclaim'),2,'claim'));
+select is(api.employee_hr_case_detail(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('orphan-case'))->>'owner_user_id',
+ pg_temp.pid('outsider')::text,'eligible replacement takes accountable ownership');
+select is(api.employee_hr_case_command(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('orphan-case'),
+ pg_temp.pid('orphan-reclaim'),2,'claim'),(select value from push_results where name='orphan-reclaimed'),'recovery retry returns the original receipt');
+select throws_ok($$select api.employee_hr_case_command(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('orphan-case'),
+ pg_temp.pid('orphan-reclaim'),2,'claim','changed')$$,'22023','EMPLOYEE_COMMAND_REUSED','recovery receipt cannot be reused with altered input');
+reset role;
+select is((select count(*) from employee_self.case_history where case_id=pg_temp.pid('orphan-case')),3::bigint,
+ 'recovery adds one immutable owner transition without repeating on retry');
+insert into core.role_assignments(tenant_id,membership_id,role_id,legal_entity_id,branch_id,created_by)
+values(pg_temp.pid('tenant'),pg_temp.pid('hr-owner.membership'),pg_temp.pid('hr-role'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('hr-owner'));
 delete from core.role_permissions where role_id=pg_temp.pid('employee-role') and permission_code='people.hr.cases.self.manage';
 select pg_temp.push_actor('employee-a','aal2');set local role authenticated;
 select throws_ok($$select pg_temp.create_case('case-cap-missing','case-cap-missing')$$,'42501',null,'generic employee self view does not grant case creation');

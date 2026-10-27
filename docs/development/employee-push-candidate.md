@@ -5,6 +5,12 @@ active schedule or demonstrated device delivery. Supabase remains the identity,
 authorization and HR data authority. Firebase Cloud Messaging supplies transport.
 Browser Hosting does not require web push, so this slice accepts Android only.
 
+Additive [HR event producers prepared on 27 October](employee-hr-event-producers-candidate.md)
+reuse the later self-service/cases notification authority for attendance outcomes,
+employee request decisions and payroll corrections. They are a separate,
+uninstalled candidate; this original push candidate remains unchanged. The
+historical verification below applies to the original push slice only.
+
 The [candidate SQL](../../supabase/candidates/20261023090000_employee_push.sql)
 adds a private schema, own-device RPCs and a recipient-bound delivery outbox.
 It changes no plan entitlement, employee/staff role assignment or existing HR

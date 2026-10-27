@@ -156,6 +156,14 @@ create function employee_self.case_content(p_case uuid) returns jsonb language s
  'id',h.id,'status',h.status,'owner_user_id',h.owner_user_id,'created_at',h.created_at) order by h.version)
  from employee_self.case_history h where h.case_id=c.id),'[]'::jsonb)) from employee_self.cases c where c.id=p_case
 $$;
+-- Ownership survives sign-out, token expiry and an absent browser session. Only
+-- current durable membership/role scope determines whether another manager may
+-- recover an otherwise orphaned enquiry.
+create function employee_self.case_owner_available(c employee_self.cases) returns boolean
+language sql stable security definer set search_path='' as $$
+ select (c).owner_user_id is not null and people_private.user_has((c).tenant_id,(c).legal_entity_id,
+  (c).branch_id,(c).owner_user_id,'people.cases.manage','aal2')
+$$;
 create function employee_self.require_hr_staff(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_permission text)
 returns void language plpgsql stable security definer set search_path='' as $$declare s uuid;begin
  if auth.uid() is null or coalesce(auth.jwt()->>'session_id','') !~*
@@ -280,7 +288,8 @@ create function api.employee_hr_cases_list(p_tenant_id uuid,p_legal_entity_id uu
 returns jsonb language plpgsql security definer set search_path='' as $$declare items jsonb;begin
  perform employee_self.require_hr_staff(p_tenant_id,p_legal_entity_id,p_branch_id,'people.cases.manage');
  select coalesce(jsonb_agg(c.summary order by c.id),'[]') into items
- from(select x.id,employee_self.case_summary(x)||jsonb_build_object('employee_id',x.employee_id) as summary from employee_self.cases x where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and branch_id=p_branch_id
+ from(select x.id,employee_self.case_summary(x)||jsonb_build_object('employee_id',x.employee_id,
+ 'owner_available',employee_self.case_owner_available(x)) as summary from employee_self.cases x where tenant_id=p_tenant_id and legal_entity_id=p_legal_entity_id and branch_id=p_branch_id
  and erased_at is null and (p_after is null or id>p_after)
  and exists(select 1 from people_private.policies p where p.tenant_id=x.tenant_id and p.legal_entity_id=x.legal_entity_id
  and (p.closed_at is null or p.closed_at+interval '30 days'>now()))
@@ -295,7 +304,26 @@ returns jsonb language plpgsql security definer set search_path='' as $$declare 
  and branch_id=p_branch_id and erased_at is null;
  if not found then raise exception using errcode='42501',message='EMPLOYEE_CASE_DENIED';end if;
  perform people_private.content_available(p_tenant_id,p_legal_entity_id,c.employee_id);
- return employee_self.case_content(c.id)||jsonb_build_object('employee_id',c.employee_id);
+ return employee_self.case_content(c.id)||jsonb_build_object('employee_id',c.employee_id,
+ 'owner_available',employee_self.case_owner_available(c));
+end $$;
+create function api.employee_hr_case_owners(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_after uuid default null)
+returns jsonb language plpgsql stable security definer set search_path='' as $$declare items jsonb;begin
+ perform employee_self.require_hr_staff(p_tenant_id,p_legal_entity_id,p_branch_id,'people.cases.manage');
+ if p_after is not null and not exists(select 1 from core.memberships m where m.id=p_after and m.tenant_id=p_tenant_id
+  and m.status='active' and people_private.user_has(p_tenant_id,p_legal_entity_id,p_branch_id,m.user_id,'people.cases.manage','aal2')) then
+  raise exception using errcode='22023',message='EMPLOYEE_CURSOR_INVALID';end if;
+ -- The same public account name used by the profile screen labels an exact
+ -- eligible user ID. No email, credential or private personnel profile is read.
+ select coalesce(jsonb_agg(q.item order by q.id),'[]') into items from(
+  select m.id,jsonb_build_object('id',m.id,'user_id',m.user_id,'label',coalesce(
+   nullif(left(btrim(u.raw_user_meta_data->>'full_name'),160),''),'Member '||left(m.id::text,8))) item
+  from core.memberships m join auth.users u on u.id=m.user_id
+  where m.tenant_id=p_tenant_id and m.status='active' and (p_after is null or m.id>p_after)
+  and people_private.user_has(p_tenant_id,p_legal_entity_id,p_branch_id,m.user_id,'people.cases.manage','aal2')
+  order by m.id limit 51) q;
+ return jsonb_build_object('tenant_id',p_tenant_id,'legal_entity_id',p_legal_entity_id,'branch_id',p_branch_id,
+  'items',items-50,'next_cursor',case when jsonb_array_length(items)>50 then items->49->>'id' end);
 end $$;
 create function api.employee_hr_case_command(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_case_id uuid,
  p_command_id uuid,p_expected_version bigint,p_action text,p_body text default null,p_owner_user_id uuid default null) returns jsonb
@@ -313,7 +341,7 @@ language plpgsql security definer set search_path='' as $$declare c employee_sel
  if cached.command_id is not null then if cached.request_hash<>h then raise exception using errcode='22023',message='EMPLOYEE_COMMAND_REUSED';end if;return cached.response;end if;
  if c.version is distinct from p_expected_version then raise exception using errcode='40001',message='VERSION_CONFLICT';end if;
  if (select count(*) from employee_self.case_history where case_id=c.id)>=1000 then raise exception using errcode='54000',message='EMPLOYEE_CASE_HISTORY_LIMIT';end if;
- if c.status='closed' or (p_action='claim' and c.owner_user_id is not null) or (p_action<>'claim' and c.owner_user_id is distinct from auth.uid()) then
+ if c.status='closed' or (p_action='claim' and employee_self.case_owner_available(c)) or (p_action<>'claim' and c.owner_user_id is distinct from auth.uid()) then
   raise exception using errcode='42501',message='EMPLOYEE_CASE_OWNER_REQUIRED';end if;
  if p_action='assign' and (p_owner_user_id is null or not people_private.user_has(p_tenant_id,p_legal_entity_id,p_branch_id,p_owner_user_id,'people.cases.manage','aal2')) then
   raise exception using errcode='42501',message='EMPLOYEE_CASE_OWNER_REQUIRED';end if;
@@ -326,7 +354,8 @@ language plpgsql security definer set search_path='' as $$declare c employee_sel
   raise exception using errcode='22023',message='EMPLOYEE_CASE_TRANSITION_INVALID';end if;
  update employee_self.cases set version=version+1,updated_at=clock_timestamp(),
   owner_user_id=case p_action when 'claim' then auth.uid() when 'assign' then p_owner_user_id else owner_user_id end,
-  status=case p_action when 'claim' then 'in_progress' when 'resolve' then 'resolved' when 'close' then 'closed' else status end
+  status=case when p_action='claim' and status='open' then 'in_progress' when p_action='resolve' then 'resolved'
+   when p_action='close' then 'closed' else status end
  where id=c.id returning * into c;
  insert into employee_self.case_history(case_id,version,status,owner_user_id,actor_id) values(c.id,c.version,c.status,c.owner_user_id,auth.uid());
  if p_action in ('reply','resolve','close') then perform employee_self.notify_employee(c.tenant_id,c.legal_entity_id,c.branch_id,c.employee_id,'cases',c.id,c.version);end if;
@@ -492,12 +521,13 @@ create trigger employee_private_erasure after insert on people_private.erasure_e
 
 -- Only the explicit public surface is granted; no employee role/plan is changed.
 revoke all on function employee_self.recipient_current(uuid,bigint,text,text),employee_self.notify_employee(uuid,uuid,uuid,uuid,text,uuid,bigint),
- employee_self.case_summary(employee_self.cases),employee_self.case_content(uuid),employee_self.require_hr_staff(uuid,uuid,uuid,text),employee_self.hr_source_notification(),
+ employee_self.case_summary(employee_self.cases),employee_self.case_content(uuid),employee_self.case_owner_available(employee_self.cases),
+ employee_self.require_hr_staff(uuid,uuid,uuid,text),employee_self.hr_source_notification(),
  employee_self.revoke_recipient_notices(),employee_self.erase_case_content(),employee_self.guard_case_history() from public,anon,authenticated,service_role;
 do $$declare f record;begin
  for f in select p.oid::regprocedure as signature from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='api'
  and p.proname in ('employee_cases_list','employee_case_detail','employee_case_command','employee_case_receipt','employee_hr_cases_list','employee_hr_case_detail',
- 'employee_hr_case_command','employee_hr_document_publication','employee_hr_document_publish','employee_documents_list','employee_document_access_ticket') loop
+ 'employee_hr_case_command','employee_hr_case_owners','employee_hr_document_publication','employee_hr_document_publish','employee_documents_list','employee_document_access_ticket') loop
  execute format('revoke all on function %s from public,anon,authenticated,service_role',f.signature);
  execute format('grant execute on function %s to authenticated',f.signature);
  end loop;

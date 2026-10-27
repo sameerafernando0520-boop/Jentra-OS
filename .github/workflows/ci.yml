@@ -82,6 +82,7 @@ jobs:
           supabase/functions/tests/employee_private_documents.test.mjs
           supabase/candidates/tests/employee_self_service_runner.test.mjs
           supabase/candidates/tests/employee_cases_runner.test.mjs
+          supabase/candidates/tests/employee_hr_events_runner.test.mjs
 
       - name: Test employee Hosting preparation
         run: node --test tools/employee-web/prepare.test.mjs
@@ -149,6 +150,9 @@ jobs:
 
       - name: Test employee cases, publication and notification candidates locally
         run: node supabase/candidates/run-employee-cases-test.mjs --run-local
+
+      - name: Test employee HR event producers with local rollback only
+        run: node supabase/candidates/run-employee-hr-events-test.mjs --run-local
 
   secret-scan:
     name: Secret scan
