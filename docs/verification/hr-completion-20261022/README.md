@@ -1,5 +1,10 @@
 # HR and desktop correction pass — 22 October 2026
 
+**23 October follow-up:** [Hosted HR metadata review](../hr-completion-20261023/README.md)
+confirms management access is restored and records the current People/Auth gates.
+It supersedes this document's historical access-unavailable finding; the installed
+2201 observations below remain version-specific.
+
 This pass fixes reproduced app errors. It does not certify the entire project as
 production ready. The separate [HR capability matrix](hr-capability-matrix.md)
 identifies existing repository APIs, missing mobile wiring, missing employee-safe

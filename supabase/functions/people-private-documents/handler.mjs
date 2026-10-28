@@ -36,11 +36,16 @@ function requestMetadata(request) {
     const encoded = Uint8Array.from(atob(header), (c) => c.charCodeAt(0));
     metadata = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(encoded));
   } catch { fail("HR_REQUEST_INVALID"); }
-  fields(metadata, ["tenant_id", "legal_entity_id", "branch_id", "employee_id", "document_id", "operation", "completion"]);
-  for (const field of ["tenant_id", "legal_entity_id", "branch_id", "employee_id", "document_id"]) {
+  const employee = metadata?.operation === "employee_download";
+  fields(metadata, employee
+    ? ["tenant_id", "legal_entity_id", "branch_id", "document_id", "document_version", "publication_version", "operation"]
+    : ["tenant_id", "legal_entity_id", "branch_id", "employee_id", "document_id", "operation", "completion"]);
+  for (const field of ["tenant_id", "legal_entity_id", "branch_id", "document_id", ...(employee ? [] : ["employee_id"])]) {
     if (!uuid.test(metadata[field] ?? "")) fail("HR_REQUEST_INVALID");
   }
-  if (!["upload", "download", "export"].includes(metadata.operation)) fail("HR_REQUEST_INVALID");
+  if (!["upload", "download", "export", "employee_download"].includes(metadata.operation)) fail("HR_REQUEST_INVALID");
+  if (employee && (!Number.isSafeInteger(metadata.document_version) || metadata.document_version < 1 ||
+    !Number.isSafeInteger(metadata.publication_version) || metadata.publication_version < 1)) fail("HR_REQUEST_INVALID");
   if (metadata.operation === "upload") {
     fields(metadata.completion, ["command_id", "idempotency_key", "client_timestamp", "expected_version"]);
     for (const field of ["command_id", "idempotency_key"]) if (!uuid.test(metadata.completion[field] ?? "")) fail("HR_REQUEST_INVALID");
@@ -53,6 +58,13 @@ function requestMetadata(request) {
 function scope(m) {
   return { p_tenant_id: m.tenant_id, p_legal_entity_id: m.legal_entity_id, p_branch_id: m.branch_id,
     p_employee_id: m.employee_id, p_document_id: m.document_id, p_operation: m.operation };
+}
+function documentTicket(m, d) {
+  return m.operation === "employee_download"
+    ? d.userRpc("employee_document_access_ticket", { p_tenant_id: m.tenant_id, p_legal_entity_id: m.legal_entity_id,
+      p_branch_id: m.branch_id, p_document_id: m.document_id, p_document_version: m.document_version,
+      p_publication_version: m.publication_version })
+    : d.userRpc("people_hr_document_ticket", scope(m));
 }
 async function download(storage, path) {
   const { data, error } = await storage.download(path);
@@ -74,13 +86,18 @@ export async function handleDocument(request, d) {
     if (request.method !== "POST") fail("HR_METHOD_INVALID", 405);
     if (!uuid.test(d.userId ?? "")) fail("AUTHENTICATION_REQUIRED", 401);
     const m = requestMetadata(request);
-    const ticket = await d.userRpc("people_hr_document_ticket", scope(m));
-    const doc = await d.adminRpc("people_hr_service_document", { p_ticket_id: ticket.ticket_id, p_user_id: d.userId });
+    const ticket = await documentTicket(m, d);
+    const doc = { ...await d.adminRpc("people_hr_service_document", { p_ticket_id: ticket.ticket_id, p_user_id: d.userId }) };
     for (const [field, value] of Object.entries({
       tenant_id: m.tenant_id, legal_entity_id: m.legal_entity_id, branch_id: m.branch_id,
-      employee_id: m.employee_id, document_id: m.document_id, operation: m.operation,
+      ...(m.operation === "employee_download" ? { document_version: m.document_version, publication_version: m.publication_version } : { employee_id: m.employee_id }),
+      document_id: m.document_id, operation: m.operation === "employee_download" ? "download" : m.operation,
     })) if (doc[field] !== value) fail("HR_DOCUMENT_DENIED", 403);
-    const expectedPath = [m.tenant_id, m.legal_entity_id, m.employee_id, m.document_id].join("/");
+    if (!uuid.test(doc.employee_id ?? "")) fail("HR_DOCUMENT_DENIED", 403);
+    if (m.operation === "employee_download" && (!Number.isSafeInteger(doc.publication_version) || doc.publication_version < 1)) {
+      fail("HR_DOCUMENT_DENIED", 403);
+    }
+    const expectedPath = [m.tenant_id, m.legal_entity_id, doc.employee_id, m.document_id].join("/");
     if (doc.object_path !== expectedPath || !mime.has(doc.mime) || !Number.isSafeInteger(doc.byte_size) ||
       doc.byte_size < 1 || doc.byte_size > maxBytes || !/^[a-f0-9]{64}$/.test(doc.checksum)) fail("HR_DOCUMENT_DENIED", 403);
     if (m.operation === "upload") {
@@ -109,13 +126,21 @@ export async function handleDocument(request, d) {
     }
     const bytes = await download(d.storage, doc.object_path);
     if (bytes.length !== doc.byte_size || await sha256(bytes) !== doc.checksum) fail("HR_DOCUMENT_BYTES_MISMATCH", 409);
-    // Recheck current user authority after the potentially slow storage read.
-    await d.userRpc("people_hr_document_ticket", scope(m));
+    // Recheck both current user and service authority after the storage read.
+    // Consume this second ticket as well, then compare its exact descriptor so
+    // publication withdrawal/republication or document replacement discards
+    // previously read bytes instead of leaving an unused authorization ticket.
+    const freshTicket = await documentTicket(m, d);
+    const fresh = await d.adminRpc("people_hr_service_document", { p_ticket_id: freshTicket.ticket_id, p_user_id: d.userId });
+    for (const field of ["tenant_id", "legal_entity_id", "branch_id", "employee_id", "document_id", "operation", "object_path", "mime", "byte_size", "checksum",
+      ...(m.operation === "employee_download" ? ["document_version", "publication_version"] : [])]) {
+      if (fresh[field] !== doc[field]) fail("HR_DOCUMENT_DENIED", 403);
+    }
     const extension = ({ "text/plain": "txt", "image/png": "png", "image/jpeg": "jpg", "application/pdf": "pdf" })[doc.mime];
     return new Response(bytes, { headers: {
       ...privateHeaders, "content-type": "application/octet-stream", "x-jentra-hr-mime": doc.mime,
       "content-length": String(bytes.length),
-      "content-disposition": (m.operation === "export" ? "attachment" : "inline") + '; filename="hr-document.' + extension + '"',
+      "content-disposition": (["export", "employee_download"].includes(m.operation) ? "attachment" : "inline") + '; filename="hr-document.' + extension + '"',
     } });
   } catch (error) {
     const [code, status] = safeError(error);

@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
 
 import 'data/employee_gateway.dart';
+import 'data/employee_push.dart';
 import 'employee_controller.dart';
 import 'l10n/employee_strings.dart';
 import 'ui/employee_components.dart';
@@ -12,6 +13,7 @@ import 'ui/employee_shell.dart';
 import 'ui/employee_theme.dart';
 import 'ui/onboarding_screens.dart';
 import 'ui/settings_screen.dart';
+import 'ui/employee_push_settings.dart';
 import 'ui/sign_in_screen.dart';
 
 class EmployeeApp extends StatefulWidget {
@@ -21,9 +23,13 @@ class EmployeeApp extends StatefulWidget {
     this.initialLocale = const Locale('en'),
     this.observeLifecycle = true,
     this.onPreferencesChanged,
+    this.push,
+    this.mfaPanel,
     super.key,
   });
   final EmployeeController controller;
+  final EmployeePushCoordinator? push;
+  final Widget? mfaPanel;
   final ThemeMode initialThemeMode;
   final Locale initialLocale;
   final bool observeLifecycle;
@@ -79,6 +85,13 @@ class _EmployeeAppState extends State<EmployeeApp> with WidgetsBindingObserver {
         themeMode: _theme,
         locale: _locale,
         onChanged: _preferences,
+        notifications: EmployeePushSettings(
+          coordinator: widget.push,
+          authorized: () =>
+              widget.controller.phase == EmployeePhase.ready &&
+              widget.controller.identity != null,
+          onRefresh: widget.controller.refresh,
+        ),
       ),
     ),
   );
@@ -109,6 +122,14 @@ class _EmployeeAppState extends State<EmployeeApp> with WidgetsBindingObserver {
           return LayoutBuilder(
             builder: (context, constraints) => Column(
               children: [
+                if (controller.error?.code == 'MFA_REQUIRED' &&
+                    widget.mfaPanel != null)
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: constraints.maxHeight * .6,
+                    ),
+                    child: SingleChildScrollView(child: widget.mfaPanel!),
+                  ),
                 if (controller.notice != null)
                   ConstrainedBox(
                     // Long translated notices must not consume the private

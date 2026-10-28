@@ -2,6 +2,8 @@ package com.jentra.jentra_employee
 
 import android.os.Bundle
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Intent
 import android.os.Build
 import android.provider.MediaStore
@@ -89,5 +91,11 @@ class MainActivity : FlutterActivity() {
         // Protect employee information from screenshots and app-switcher previews.
         window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getSystemService(NotificationManager::class.java).createNotificationChannel(
+                NotificationChannel("jentra_employee_updates", "Jentra Employee updates",
+                    NotificationManager.IMPORTANCE_DEFAULT)
+            )
+        }
     }
 }
