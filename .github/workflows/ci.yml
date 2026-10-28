@@ -73,19 +73,32 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           package-manager-cache: false
 
-      - name: Test employee push sender, contracts, and isolated runner
+      - name: Test Edge handlers, intelligence workers, and isolated candidate runners
         run: >-
           node --test
-          supabase/functions/tests/employee_push_dispatch.test.mjs
-          supabase/functions/tests/employee_push_contract.test.mjs
-          supabase/functions/tests/employee_push_runner.test.mjs
-          supabase/functions/tests/employee_private_documents.test.mjs
-          supabase/candidates/tests/employee_self_service_runner.test.mjs
-          supabase/candidates/tests/employee_cases_runner.test.mjs
-          supabase/candidates/tests/employee_hr_events_runner.test.mjs
+          supabase/functions/tests/*.test.mjs
+          supabase/candidates/tests/*runner.test.mjs
+          workers/wave5/*.test.mjs
 
       - name: Test employee Hosting preparation
         run: node --test tools/employee-web/prepare.test.mjs
+
+      - name: Install Deno for changed assurance endpoints
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.1.13
+
+      - name: Check assurance download endpoint
+        run: >-
+          deno check --node-modules-dir=none
+          --config supabase/functions/assurance-evidence-download/deno.json
+          supabase/functions/assurance-evidence-download/index.ts
+
+      - name: Check assurance verification endpoint
+        run: >-
+          deno check --node-modules-dir=none
+          --config supabase/functions/assurance-evidence-verify/deno.json
+          supabase/functions/assurance-evidence-verify/index.ts
 
   desktop-tests:
     # The approved goldens are rendered on Windows; Linux font rasterisation
@@ -111,6 +124,59 @@ jobs:
       - name: Test desktop shell and goldens
         working-directory: apps/jentra_desktop
         run: flutter test --no-pub -r expanded
+
+      - name: Verify installer updates, corruption refusal, and rollback
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools/desktop-release/verify_installation.ps1
+
+      - name: Verify immutable employee release provenance with synthetic files
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/employee/tests/release_artifact_provenance_test.ps1
+
+  employee-android:
+    name: Employee Android release compilation (development identity)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Install Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install required Android platform
+        run: sdkmanager 'platforms;android-37'
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+          pub-cache: true
+
+      - name: Resolve locked dependencies and advisories
+        run: flutter pub get --enforce-lockfile
+
+      - name: Compile employee ARM64 release with development signing
+        working-directory: apps/jentra_employee
+        run: >-
+          flutter build apk --release --no-pub
+          --target-platform=android-arm64
+          --android-project-arg=jentraDevelopmentRelease=true
+          --dart-define=JENTRA_EMPLOYEE_DEVELOPMENT=true
+
+      - name: Upload development validation APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: jentra-employee-android-development-validation
+          path: apps/jentra_employee/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 7
 
   database:
     name: Migrations, lint, and pgTAP
@@ -189,6 +255,7 @@ jobs:
       - desktop-tests
       - database
       - secret-scan
+      - employee-android
     runs-on: windows-latest
     timeout-minutes: 40
     steps:

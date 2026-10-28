@@ -8,6 +8,7 @@ import 'package:pdfrx/pdfrx.dart';
 
 import '../../app_providers.dart';
 import 'private_hr_controller.dart';
+import 'employee_case_screen.dart';
 import 'organization_screen.dart' show organizationPicker, OrganizationChoice;
 
 String hrViewLabel(PrivateHrView view) => switch (view) {
@@ -179,6 +180,31 @@ class _PrivateHrWorkspaceState extends State<PrivateHrWorkspace> {
     }
   }
 
+  Future<void> _staffDialog(String title, Widget screen) => showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (dialogContext) => Dialog(
+      child: SizedBox(
+        width: 1000,
+        height: MediaQuery.sizeOf(dialogContext).height * .9,
+        child: Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: Text(title),
+            actions: [
+              IconButton(
+                tooltip: 'Close $title',
+                onPressed: () => Navigator.of(dialogContext).maybePop(),
+                icon: const Icon(Icons.close),
+              ),
+            ],
+          ),
+          body: screen,
+        ),
+      ),
+    ),
+  );
+
   Widget _body(Map<String, Object?> body, {bool contacts = false}) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -279,6 +305,14 @@ class _PrivateHrWorkspaceState extends State<PrivateHrWorkspace> {
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               _button('Reload', c.refresh),
+              if (c.has('people.cases.manage'))
+                _button(
+                  'Employee enquiries',
+                  () => _staffDialog(
+                    'Employee enquiries',
+                    const EmployeeCaseScreen(),
+                  ),
+                ),
               if (!c.online)
                 const Chip(
                   label: Text('Offline · connect to verify private access'),
@@ -501,6 +535,18 @@ class _PrivateHrWorkspaceState extends State<PrivateHrWorkspace> {
                     if (row.text('status') == 'active' &&
                         c.has('people.hr.export'))
                       _button('Export document', () => c.exportDocument(row)),
+                    if (row.text('status') == 'active' &&
+                        c.has('people.hr.documents.publish'))
+                      _button(
+                        'Employee access',
+                        () => _staffDialog(
+                          'Employee document access',
+                          EmployeeDocumentPublicationScreen(
+                            documentId: row.id,
+                            documentVersion: row.version,
+                          ),
+                        ),
+                      ),
                     if (row.text('status') != 'active' && c.canUpload)
                       _button(
                         'Choose reserved file & upload',

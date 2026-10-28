@@ -3,13 +3,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:jentra_employee/src/employee_app.dart';
 
 import 'support/employee_fixture.dart';
+import 'support/employee_self_fixture.dart';
 
 void main() {
-  testWidgets('employee navigation reaches honest work leave and pay states', (
+  testWidgets('employee navigation reaches own work leave and pay records', (
     tester,
   ) async {
     final gateway = FixtureGateway();
-    final controller = await fixtureController(gateway: gateway);
+    final controller = await fixtureController(
+      gateway: gateway,
+      selfServiceGateway: SelfGateway(),
+    );
     addTearDown(controller.dispose);
     addTearDown(gateway.close);
     await tester.pumpWidget(
@@ -25,13 +29,17 @@ void main() {
     );
     await tester.tap(find.byKey(const Key('employee-more-work')));
     await tester.pumpAndSettle();
-    expect(
-      find.text('Work records are not available here yet'),
-      findsOneWidget,
-    );
+    expect(find.text('My attendance'), findsOneWidget);
+    expect(find.text('Approved'), findsOneWidget);
     await tester.tap(find.byKey(const Key('employee-nav-leave')));
     await tester.pumpAndSettle();
-    expect(find.text('Leave balances are not available yet'), findsOneWidget);
+    expect(find.text('My leave requests'), findsOneWidget);
+    expect(find.text('Submitted'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Prepare a leave draft'),
+      180,
+      scrollable: find.byType(Scrollable).last,
+    );
     expect(find.text('Prepare a leave draft'), findsOneWidget);
     await tester.tap(find.byKey(const Key('employee-nav-more')));
     await tester.pumpAndSettle();
@@ -41,17 +49,16 @@ void main() {
     );
     await tester.tap(find.byKey(const Key('employee-more-pay')));
     await tester.pumpAndSettle();
+    expect(find.text('My payslips'), findsOneWidget);
     expect(
-      find.text('Your payslips are not available here yet'),
-      findsOneWidget,
-    );
-    expect(
-      find.text(
-        'Payslips are not connected in this app version. Contact your payroll team for a payslip or pay question.',
-      ),
+      find.text('Synthetic payroll record — not proof of salary payment'),
       findsOneWidget,
     );
     expect(find.text('0.00'), findsNothing);
+    expect(
+      find.byKey(const Key('employee-payslip-$selfRecordId')),
+      findsOneWidget,
+    );
     controller.lock();
   });
 
@@ -191,8 +198,22 @@ void main() {
       );
       await tester.tap(find.byKey(const Key('employee-more-pay')));
       await tester.pumpAndSettle();
+      expect(find.text('My payslips'), findsOneWidget);
+      // At 200% text the pay publication notice precedes the setup feedback.
+      // Verify the employee can scroll to that feedback on the narrow phone.
+      await tester.scrollUntilVisible(
+        find
+            .text(
+              'This service is not enabled in this workplace yet. Ask HR to finish setup.',
+            )
+            .hitTestable(),
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
       expect(
-        find.text('Your payslips are not available here yet'),
+        find.text(
+          'This service is not enabled in this workplace yet. Ask HR to finish setup.',
+        ),
         findsOneWidget,
       );
       expect(tester.takeException(), isNull);

@@ -114,6 +114,34 @@ SQL execution requires a running isolated local Supabase stack with a compatible
 CLI. Source assembly and Node tests alone do not establish PostgreSQL execution,
 hosted installation, FCM delivery, concurrent worker behavior or employee acceptance.
 
+## 28 October CI preservation correction
+
+The subsequent [CI run for `b842954`](https://github.com/sameerafernando0520-boop/Jentra-OS/actions/runs/40453773904)
+executed the original 75-assertion HR suite: 74 passed and assertion 8, existing
+function preservation, failed. In the same run, the existing database suite
+(42 files / 7,369 assertions), push (47), self service (121) and cases (91)
+passed. These are historical CI results for that committed source, not a passing
+result for the current workspace.
+
+The preservation comparison called `pg_get_functiondef` under different caller
+search paths before and after candidate creation. PostgreSQL can qualify names
+differently when deparsing an unchanged SQL function. The harness now uses a
+temporary helper with a fixed empty search path for both snapshots. Function
+body and execution-grant comparisons remain mandatory. Two focused assertions
+verify stable deparsing and detection of a real body change; the suite now plans
+**77 assertions**. This changes only the verification harness; the HR producer
+candidate and original push candidate remain unchanged.
+
+The [local preservation probe](../verification/launch-readiness-20261028/verify-function-preservation.mjs)
+uses the exact helper from the harness in an isolated, in-memory PostgreSQL
+engine (PGlite 0.5.12 / PostgreSQL 18.6). It reproduced the original false
+difference and passed 5 checks: stable helper output, detection of real body
+changes, detection of real ACL changes, and rollback of its own fixtures.
+The [result](../verification/launch-readiness-20261028/function-preservation-result.json)
+does not execute the full 77-assertion Supabase suite or establish PostgreSQL 17
+compatibility. That full suite remains a required CI gate. No migration was
+installed, no company deleted, and no sender deployed.
+
 ## Removal if later approved and installed
 
 No persistent rollback is needed for the test suite: its transaction rolls back

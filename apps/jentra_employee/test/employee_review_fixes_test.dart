@@ -116,9 +116,10 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('employee-nav-leave')));
     await tester.pumpAndSettle();
-    await Scrollable.ensureVisible(
-      tester.element(find.text('Edit draft')),
-      alignment: 0.5,
+    await tester.scrollUntilVisible(
+      find.text('Edit draft'),
+      180,
+      scrollable: find.byType(Scrollable).last,
     );
     await tester.pumpAndSettle();
     await tester.tap(find.text('Edit draft'));

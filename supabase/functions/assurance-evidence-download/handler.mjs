@@ -14,10 +14,44 @@ function fail(code, status = 400) {
   const error = new Error(code); error.safeCode = code; error.status = status; throw error;
 }
 
+async function requestText(request) {
+  if (!request.body) fail("ASSURANCE_REQUEST_INVALID");
+  const reader = request.body.getReader();
+  const signal = AbortSignal.any([request.signal, AbortSignal.timeout(5000)]);
+  const chunks = []; let size = 0, rejectAbort;
+  const aborted = new Promise((_, reject) => { rejectAbort = reject; });
+  // A declared-length refusal can precede the first raced read.
+  aborted.catch(() => {});
+  const cancel = () => {
+    // An untrusted stream cancellation must not keep the request slot occupied.
+    reader.cancel().catch(() => {}); rejectAbort(Error("ASSURANCE_REQUEST_INVALID"));
+  };
+  signal.addEventListener("abort", cancel, { once: true });
+  if (signal.aborted) cancel();
+  try {
+    const declared = request.headers.get("content-length");
+    if (declared !== null && (!/^\d+$/.test(declared) || Number(declared) > 1024)) fail("ASSURANCE_REQUEST_INVALID");
+    while (true) {
+      const { value, done } = await Promise.race([reader.read(), aborted]);
+      if (signal.aborted) fail("ASSURANCE_REQUEST_INVALID");
+      if (done) break;
+      size += value.byteLength;
+      if (size > 1024) fail("ASSURANCE_REQUEST_INVALID");
+      chunks.push(value);
+    }
+    const bytes = new Uint8Array(size); let offset = 0;
+    for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+    return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  } catch {
+    reader.cancel().catch(() => {}); fail("ASSURANCE_REQUEST_INVALID");
+  } finally {
+    signal.removeEventListener("abort", cancel); reader.releaseLock();
+  }
+}
+
 async function requestScope(request) {
   if ((request.headers.get("content-type") ?? "").split(";")[0] !== "application/json") fail("ASSURANCE_REQUEST_INVALID");
-  const text = await request.text();
-  if (text.length > 1024) fail("ASSURANCE_REQUEST_INVALID");
+  const text = await requestText(request);
   let body;
   try { body = JSON.parse(text); } catch { fail("ASSURANCE_REQUEST_INVALID"); }
   if (!body || Array.isArray(body) || typeof body !== "object" ||

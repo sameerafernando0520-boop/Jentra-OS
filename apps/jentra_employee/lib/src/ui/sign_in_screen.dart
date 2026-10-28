@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
 
 import '../l10n/employee_strings.dart';
+import '../l10n/employee_account_strings.dart';
 import 'employee_components.dart';
 import 'employee_help_screen.dart';
 import 'employee_surfaces.dart';
@@ -12,12 +13,18 @@ class EmployeeSignInScreen extends StatefulWidget {
     required this.busy,
     required this.onSignIn,
     this.error,
+    this.notice,
+    this.onGoogle,
+    this.onResendConfirmation,
     super.key,
   });
 
   final bool connected;
   final bool busy;
   final String? error;
+  final String? notice;
+  final Future<void> Function()? onGoogle;
+  final Future<void> Function(String email)? onResendConfirmation;
   final Future<void> Function(String email, String password) onSignIn;
 
   @override
@@ -112,6 +119,10 @@ class _EmployeeSignInScreenState extends State<EmployeeSignInScreen> {
                         title: s('connectionNotReady'),
                         message: s('connectionCopy'),
                       ),
+                      const SizedBox(height: 20),
+                    ],
+                    if (widget.notice != null) ...[
+                      EmployeeMessage(title: widget.notice!),
                       const SizedBox(height: 20),
                     ],
                     EmployeeSurface(
@@ -233,6 +244,44 @@ class _EmployeeSignInScreenState extends State<EmployeeSignInScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
+                    if (widget.onGoogle != null) ...[
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          key: const Key('employee-google-sign-in'),
+                          onPressed: !widget.connected || widget.busy
+                              ? null
+                              : () async {
+                                  _password.clear();
+                                  await widget.onGoogle!();
+                                },
+                          icon: const Icon(Icons.public),
+                          label: Text(
+                            EmployeeAccountStrings(context).google,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                    if (widget.onResendConfirmation != null)
+                      Center(
+                        child: TextButton(
+                          key: const Key('employee-resend-confirmation'),
+                          onPressed: !widget.connected || widget.busy
+                              ? null
+                              : () async {
+                                  _password.clear();
+                                  await widget.onResendConfirmation!(
+                                    _email.text,
+                                  );
+                                },
+                          child: Text(
+                            EmployeeAccountStrings(context).resend,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
                     Center(
                       child: TextButton(
                         key: const Key('employee-account-help'),

@@ -12,6 +12,7 @@ import 'package:jentra_employee/src/ui/employee_theme.dart';
 import 'package:jentra_employee/src/ui/sign_in_screen.dart';
 
 import 'support/employee_fixture.dart';
+import 'support/employee_self_fixture.dart';
 import 'employee_ux_features_test.dart' show ReviewSearchGateway;
 import 'employee_photo_test.dart' show fixturePhoto;
 
@@ -118,12 +119,44 @@ void main() {
       page: 'draft',
     ),
     (
-      name: 'pay-availability',
+      name: 'synthetic-payslip-records',
       width: 360.0,
       locale: 'en',
       dark: false,
       scale: 1.0,
       page: 'pay',
+    ),
+    (
+      name: 'synthetic-attendance',
+      width: 390.0,
+      locale: 'en',
+      dark: false,
+      scale: 1.0,
+      page: 'work',
+    ),
+    (
+      name: 'synthetic-leave-requests',
+      width: 390.0,
+      locale: 'en',
+      dark: false,
+      scale: 1.0,
+      page: 'leave',
+    ),
+    (
+      name: 'synthetic-hr-cases',
+      width: 390.0,
+      locale: 'en',
+      dark: true,
+      scale: 1.0,
+      page: 'cases',
+    ),
+    (
+      name: 'synthetic-private-documents',
+      width: 390.0,
+      locale: 'en',
+      dark: false,
+      scale: 1.0,
+      page: 'documents',
     ),
     (
       name: 'activity',
@@ -180,6 +213,7 @@ void main() {
       final controller = await fixtureController(
         gateway: gateway,
         store: store,
+        selfServiceGateway: SelfGateway(),
       );
       if (sample.page == 'photo') {
         await EmployeePhotoStore(store)
@@ -234,11 +268,28 @@ void main() {
         );
         await tester.tap(find.byKey(const Key('employee-more-pay')));
         await tester.pumpAndSettle();
-        expect(
-          find.text('Your payslips are not available here yet'),
-          findsOneWidget,
-        );
+        expect(find.text('My payslips'), findsOneWidget);
         expect(find.text('0.00'), findsNothing);
+      } else if (sample.page == 'work' || sample.page == 'leave') {
+        if (sample.page == 'work') {
+          await tester.tap(find.byKey(const Key('employee-nav-more')));
+          await tester.pumpAndSettle();
+          await tester.scrollUntilVisible(
+            find.byKey(const Key('employee-more-work')),
+            180,
+          );
+          await tester.tap(find.byKey(const Key('employee-more-work')));
+        } else {
+          await tester.tap(find.byKey(const Key('employee-nav-leave')));
+        }
+        await tester.pumpAndSettle();
+      } else if (sample.page == 'cases' || sample.page == 'documents') {
+        await tester.tap(find.byKey(const Key('employee-nav-more')));
+        await tester.pumpAndSettle();
+        final target = find.byKey(Key('employee-more-${sample.page}'));
+        await tester.scrollUntilVisible(target, 180);
+        await tester.tap(target);
+        await tester.pumpAndSettle();
       } else if (sample.page == 'activity' || sample.page == 'more') {
         await tester.tap(find.byKey(Key('employee-nav-${sample.page}')));
         await tester.pumpAndSettle();

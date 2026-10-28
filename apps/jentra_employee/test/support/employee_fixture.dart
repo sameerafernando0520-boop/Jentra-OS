@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:jentra_employee/src/data/employee_gateway.dart';
+import 'package:jentra_employee/src/data/employee_self_service.dart';
 import 'package:jentra_employee/src/data/employee_storage.dart';
 import 'package:jentra_employee/src/employee_controller.dart';
 
@@ -126,10 +127,12 @@ class FixtureGateway implements EmployeeGateway {
 Future<EmployeeController> fixtureController({
   FixtureGateway? gateway,
   FixtureStore? store,
+  EmployeeSelfServiceGateway? selfServiceGateway,
 }) async {
   final controller = EmployeeController(
     gateway: gateway ?? FixtureGateway(),
     draftStore: EmployeeDraftStore(store ?? FixtureStore()),
+    selfServiceGateway: selfServiceGateway,
   );
   await controller.start();
   return controller;
