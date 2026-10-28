@@ -6,6 +6,10 @@ set local statement_timeout='90s';
 \ir ../20261023090000_employee_push.sql
 \ir ../20261025090000_employee_self_service.sql
 \ir ../20261025100000_employee_cases_documents_notifications.sql
+-- pg_get_functiondef deparses type/default names according to search_path.
+-- Compare under one fixed path even when the TAP harness changes its own path.
+create function pg_temp.hr_function_definition(p_function oid) returns text
+language sql stable set search_path='' as $$select pg_catalog.pg_get_functiondef(p_function)$$;
 create temporary table hr_event_preservation as select
  (select md5(coalesce(jsonb_agg(to_jsonb(p) order by to_jsonb(p)::text),'[]'::jsonb)::text) from core.permissions p) permissions,
  (select md5(coalesce(jsonb_agg(to_jsonb(p) order by to_jsonb(p)::text),'[]'::jsonb)::text) from core.role_assignments p) assignments,
@@ -14,7 +18,7 @@ create temporary table hr_event_preservation as select
  (select md5(coalesce(jsonb_agg(to_jsonb(p) order by to_jsonb(p)::text),'[]'::jsonb)::text) from supabase_migrations.schema_migrations p) ledger,
  (select count(*) from workflow.notifications) notices,
  (select count(*) from employee_push.deliveries) deliveries;
-create temporary table hr_existing_functions as select p.oid,pg_get_functiondef(p.oid) definition,p.proacl
+create temporary table hr_existing_functions as select p.oid,pg_temp.hr_function_definition(p.oid) definition,p.proacl
  from pg_proc p join pg_namespace n on n.oid=p.pronamespace
  where n.nspname in ('api','employee_self','employee_push','people','people_private','people_payroll') and p.prokind='f';
 \ir ../20261027100000_employee_hr_event_producers.sql
@@ -34,8 +38,22 @@ select is((select md5(coalesce(jsonb_agg(to_jsonb(p) order by to_jsonb(p)::text)
 select is((select count(*) from workflow.notifications),(select notices from hr_event_preservation),'candidate performs no inbox backfill');
 select is((select count(*) from employee_push.deliveries),(select deliveries from hr_event_preservation),'candidate performs no outbox backfill');
 select ok(not exists(select 1 from hr_existing_functions f left join pg_proc p on p.oid=f.oid
- where p.oid is null or pg_get_functiondef(p.oid) is distinct from f.definition or p.proacl is distinct from f.proacl),
+ where p.oid is null or pg_temp.hr_function_definition(p.oid) is distinct from f.definition or p.proacl is distinct from f.proacl),
  'all existing API, HR, notification and push function definitions/grants are preserved');
+-- A scoped return/argument type reproduces the path-sensitive deparse without
+-- editing a real API. Actual definition changes must still fail preservation.
+create function pg_temp.hr_preservation_probe(c employee_self.cases) returns integer
+language sql as $$select 1$$;
+create temporary table hr_definition_probe as select
+ pg_temp.hr_function_definition('pg_temp.hr_preservation_probe(employee_self.cases)'::regprocedure) definition;
+set local search_path=employee_self,extensions,public,pg_catalog;
+select is(pg_temp.hr_function_definition('pg_temp.hr_preservation_probe(employee_self.cases)'::regprocedure),
+ (select definition from hr_definition_probe),'function preservation is independent of caller search path');
+create or replace function pg_temp.hr_preservation_probe(c employee_self.cases) returns integer
+language sql as $$select 2$$;
+select isnt(pg_temp.hr_function_definition('pg_temp.hr_preservation_probe(employee_self.cases)'::regprocedure),
+ (select definition from hr_definition_probe),'function preservation still detects a changed body');
+set local search_path=extensions,public,pg_catalog;
 select ok((select bool_and(p.prosecdef and p.proconfig @> array['search_path=""']
  and not has_function_privilege('anon',p.oid,'EXECUTE')
  and not has_function_privilege('authenticated',p.oid,'EXECUTE')
