@@ -1,3 +1,4 @@
+import {serviceProviderHeaders} from './provider_credentials_20261014_r5_v7.mjs';
 import {createHash} from 'node:crypto';
 import {Buffer} from 'node:buffer';
 import {readBoundedJson} from './bounded_json.mjs';
@@ -8,9 +9,10 @@ export function createWorkerRpc({url,serviceKey,fetchImpl=fetch}) {
  const target=new URL(url);
  if(target.protocol!=='https:' || target.username || target.password || target.pathname!=='/' ||
     !target.hostname.endsWith('.supabase.co') || typeof serviceKey!=='string' || serviceKey.length<32) throw Error('WORKER_CONFIGURATION_INVALID');
+ const providerHeaders=serviceProviderHeaders(serviceKey);
  return async(name,params)=>{
   const response=await fetchImpl(new URL(`/rest/v1/rpc/${name}`,target),{method:'POST',
-   headers:{'apikey':serviceKey,'authorization':`Bearer ${serviceKey}`,'content-profile':'api','accept-profile':'api','content-type':'application/json'},
+   headers:{...providerHeaders,'content-profile':'api','accept-profile':'api','content-type':'application/json'},
    body:JSON.stringify(params),redirect:'error',signal:AbortSignal.timeout(15000)});
   if(!response.ok) throw Error(response.status===401||response.status===403?'WORKER_ACCESS_DENIED':'WORKER_PROVIDER_UNAVAILABLE');
   return readBoundedJson(response);

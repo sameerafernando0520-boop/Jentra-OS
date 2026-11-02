@@ -7,7 +7,8 @@ import 'package:jentra_platform/jentra_platform.dart';
 import '../../app_providers.dart';
 
 class MfaRequiredScreen extends ConsumerStatefulWidget {
-  const MfaRequiredScreen({super.key});
+  const MfaRequiredScreen({super.key, this.onVerified});
+  final VoidCallback? onVerified;
 
   @override
   ConsumerState<MfaRequiredScreen> createState() => _MfaRequiredScreenState();
@@ -65,6 +66,7 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
           .read(foundationGatewayProvider)!
           .verifyTotp(factorId: factorId, code: _code.text.trim());
       ref.invalidate(tenantListProvider);
+      if (mounted) widget.onVerified?.call();
     } on Object {
       if (mounted) {
         setState(() => _error = 'The code was not accepted. Try a new code.');

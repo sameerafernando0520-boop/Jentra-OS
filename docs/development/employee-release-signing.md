@@ -18,6 +18,23 @@ a persistent Gradle daemon, and checks signatures, certificate identity, package
 version and APK alignment before writing a delivery manifest. A production package
 identity does not activate a hosted feature, deploy the database or publish to Play.
 
+The helper defaults to `-GradleHeapMb 1024` for this 8 GiB Windows machine, one
+Gradle worker and in-process Kotlin compilation. It records the requested Java
+runtime and pins Gradle to that runtime, then restores the caller's environment.
+Release names are reserved exclusively so competing builds cannot share an
+output directory. Each build saves `release-inputs.json` before compilation;
+only the final `release-manifest.json` confirms verified artifacts. Generated
+Kotlin/Gradle caches and JVM crash logs are excluded from source tracking, while
+actual source, dependency, public configuration and tool changes still block
+publication. Keep failed-build diagnostics for investigation.
+
+The [30 October rollout record](../verification/company-employee-20261030/README.md)
+tracks the current signed build separately from hosted installation and device
+acceptance. Its full employee suite passed 224 tests and the employee analyzer
+reported no issues; these checks do not establish store publication or delivery.
+The signed 0.5.0+9 APK and AAB are available from that record, with independent
+artifact hashes, the production certificate and successful APK alignment checks.
+
 Before store distribution, the owner should create a portable encrypted backup
 on a private backup drive and keep its password in their password manager:
 

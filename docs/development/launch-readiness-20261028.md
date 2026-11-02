@@ -2,17 +2,46 @@
 
 **The OS is not yet certified for general company launch.** The current workspace includes all 43 advertised desktop navigation routes, the major business modules, reviewed intelligence workflows and Jentra Employee. The [capability review](../user-guide/feature-completeness.md) identifies functional gaps and the separate [route inventory](../user-guide/feature-inventory.csv) records source inclusion. A route or passing test does not establish installed production behavior.
 
+**Sales continuation, 30 October:** the separate adaptive Jentra Sales client now
+implements an explicit sample-data preview for phone, tablet and desktop browser
+workflows. The reviewed source passes 19 tests and clean analysis. See the
+[Sales release record](jentra-sales-release-20261030.md) for exact artifact and
+Hosting evidence. This does not install portfolio authorization, governed live
+order commands or customer email confirmation, or award full S1 acceptance.
+
+**Administration continuation, 28 October:** the Company & access candidate now
+implements extra company/branch creation and permitted edits, custom roles,
+scoped staff assignments, suspension/revocation/restore and verified-email
+invitation acceptance. See [the candidate runbook](company-access-administration-candidate.md)
+and [administrator instructions](../user-guide/company-access-administration.md).
+The real PostgreSQL probe passed 73 rollback-safe checks, and the exact pgTAP
+harness passed 31 assertions in that engine with pinned upstream pgTAP SQL and
+simulated Auth/ledger support. The full Supabase step is prepared but has not run
+locally or on GitHub. The final desktop suite passed 2,343 tests after dialog and
+invitation recovery hardening. Original goldens and all 460 existing diagnostic
+artifacts were preserved. The
+[source-matched verification record](../verification/company-access-20261028/README.md)
+states the limits and exact evidence. Additive core-table guards close legacy
+invitation bypasses while preserving original function bodies and grants.
+
+The separately requested PR 16 CI repair was committed/pushed as `451168e` in
+its isolated worktree. All ten PR/push checks passed, including the 77-assertion
+HR candidate suite. That result applies to the narrow repaired PR, not the
+unpublished administration work or the earlier broad workspace commit `6785840`.
+The historical audit below remains a dated checkpoint. This continuation makes
+no hosted installation, deployment, cleanup or production acceptance claim.
+
 The owner and staff instructions are available as a [Word manual](<../user-guide/Jentra OS Company Setup and Operating Guide.docx>) and [editable operating guide](../user-guide/README.md). The ten-page Word manual was rendered with native Microsoft Word and visually reviewed. It covers real company setup, individual access, opening records, business workflows, employee services, analytics/AI, troubleshooting and the pilot checklist. It contains no real company identity or private credentials.
 
 ## Current functional gaps
 
 | Priority | Gap | Required next outcome |
 | --- | --- | --- |
-| Company pilot | General extra legal entity/branch administration UI | Complete the scoped administration workflow or prepare reviewed provisioning for the actual company structure |
-| Company pilot | General staff invitation creation and role administration UI | Individual accounts, branch-scoped roles and independent approvers can be provisioned and revoked through reviewed workflows |
+| Company pilot | General company/branch administration candidate now implemented | Complete the full isolated database gate, reviewed installation and native acceptance against the actual company structure |
+| Company pilot | General staff invitation, role and membership administration candidate now implemented | Review rollout; verify individual accounts, branch-scoped roles, independent approvers and uncertain-result recovery |
 | Employee pilot | Candidate self service, HR cases/documents and notification producers | Complete the isolated database regression gate and reviewed backend rollout; activate push separately only when authorized |
 | AI pilot | Hosted model readiness and actual trusted usage are not freshly verified | Prove a reviewed provider response, source authorization, quota accounting, separate human approval/execution and recovery |
-| Mobile sales | Standalone Jentra Sales app is not implemented | Approve and implement its separate blueprint and customer/company/delivery confirmation journeys |
+| Mobile sales | Standalone Jentra Sales preview now implemented; live governed selling and verified confirmations remain open | Complete portfolio authorization, canonical commercial commands and independent customer/company/delivery evidence under the separate blueprint; no sending activated |
 | Real payroll or payments | Synthetic payroll and payment evidence do not establish statutory payroll or real payment integration | Qualified finance/payroll review, configuration and end-to-end acceptance |
 | General release | Production target, restore drill, monitoring, signed distribution, independent load, native accessibility and business signoff | Complete Wave 6 evidence against the exact release and selected staging/production projects |
 
@@ -25,6 +54,18 @@ Shared setup includes job registers for imports/exports. Actual import, export, 
 The reviewed model client calls `wave5-runtime/model/suggestion`. The optional server adapter uses OpenAI only with an explicitly reviewed provider/model configuration. The current retrieval contract is a redacted numeric pipeline projection. The versioned proposal policy permits `analytics.freeze_pipeline.v1`; a model suggestion does not grant authority to execute it. Separate human approval with MFA and execution-time source/scope/expiry/quota checks remain required. General AI chat and arbitrary autonomous financial/HR commands are not implemented features.
 
 Current worker tests use controlled transports and providers. Their results do not prove actual hosted delivery, model quality, billable usage or live operator authority. Older Wave 5 deployment/acceptance records remain dated historical evidence and were not relabeled as current.
+
+**31 October AI/integrations continuation:** canonical worker routing and
+server-key handling now retain the reviewed V6/V7 fixes; public hosted probes
+and a read-only accounting reconciler are implemented. The worker suite passes
+287 tests and the exact accounting query passes nine isolated PostgreSQL checks.
+Actual hosted requests returned the expected unsigned schedule/external/receiver
+denials, while the model returned `503 MODEL_PROVIDER_UNAVAILABLE`. CLI/browser
+authentication is now restored. Actual read-only accounting shows no model/quota
+records, one unresolved retry delivery and expired runtime authority. The model
+key is absent. Positive model/usage/delivery gates remain open; no worker was
+deployed or authority renewed.
+See the [current runbook](ai-integrations-hosted-verification-20261031.md).
 
 ## Issues corrected in this workspace
 

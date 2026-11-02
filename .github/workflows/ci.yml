@@ -220,6 +220,9 @@ jobs:
       - name: Test employee HR event producers with local rollback only
         run: node supabase/candidates/run-employee-hr-events-test.mjs --run-local
 
+      - name: Test company and staff administration with local rollback only
+        run: node supabase/candidates/run-company-access-test.mjs --run-local
+
   secret-scan:
     name: Secret scan
     runs-on: ubuntu-latest

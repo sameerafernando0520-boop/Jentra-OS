@@ -27,6 +27,9 @@ foreach ($name in @('pubspec.yaml','pubspec.lock','apps/jentra_employee/pubspec.
 foreach ($name in @('apps/jentra_employee/android/.env.private','apps/jentra_employee/android/key.properties',
     'apps/jentra_employee/android/release.p12','apps/jentra_employee/android/local.properties',
     'apps/jentra_employee/android/.gradle/generated.txt','apps/jentra_employee/android/app/build/generated.txt',
+    'apps/jentra_employee/android/.kotlin/sessions/compiler.salive',
+    'apps/jentra_employee/android/hs_err_pid42.log','apps/jentra_employee/android/replay_pid42.log',
+    'apps/jentra_employee/android/java_pid42.hprof',
     'apps/jentra_employee/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java')) { Put $name 'SYNTHETIC_EXCLUDED_VALUE' }
 $config = Join-Path $testRoot 'public-config.json'
 [IO.File]::WriteAllText($config,'SYNTHETIC_CONFIG_VALUE')
@@ -38,6 +41,7 @@ $paths = @($provenance.sourceFiles | ForEach-Object { $_.path })
 Check 'actual employee, Android, shared assets and dependency-lock inputs are hashed' ($paths -contains 'apps/jentra_employee/lib/main.dart' -and $paths -contains 'apps/jentra_employee/android/app/build.gradle.kts' -and $paths -contains 'packages/example/assets/icon.txt' -and $paths -contains 'pubspec.lock' -and $paths -contains '.dart_tool/package_config.json')
 Check 'generated output and local signing/configuration files are excluded' (@($paths | Where-Object { $_ -match 'private|properties|release\.p12|generated|GeneratedPluginRegistrant' }).Count -eq 0)
 Check 'manifest stores hashes, not source, tool or configuration contents' (($provenance | ConvertTo-Json -Depth 10) -notmatch 'SYNTHETIC_')
+Check 'JVM crash diagnostics stay outside release provenance' (@($paths | Where-Object { $_ -match 'hs_err_pid|replay_pid|java_pid' }).Count -eq 0)
 $again = New-EmployeeReleaseProvenance $fixture $config $tools
 Check 'unchanged input bytes produce stable provenance' ($again.sourceSha256 -eq $provenance.sourceSha256 -and $again.configurationSha256 -eq $provenance.configurationSha256 -and $again.toolchainSha256 -eq $provenance.toolchainSha256)
 Assert-EmployeeReleaseInputsUnchanged $provenance $fixture $config $tools

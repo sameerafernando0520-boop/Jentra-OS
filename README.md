@@ -7,6 +7,7 @@ legacy application code and visual assets are not part of the product.
 ## Workspace
 
 - `apps/jentra_desktop` — Flutter desktop application.
+- `apps/jentra_sales` — adaptive Sales companion for Android, tablets and desktop browsers; initial preview, live portfolio rollout pending.
 - `packages/jentra_design_system` — semantic tokens and enterprise UI kit.
 - `packages/jentra_domain` — framework-free contracts and business primitives.
 - `packages/jentra_platform` — Supabase, local storage, connectivity, and OS adapters.

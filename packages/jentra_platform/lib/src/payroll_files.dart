@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:file_selector/file_selector.dart';
+import 'save_location.dart';
 
 abstract interface class PayrollFiles {
   Future<String?> chooseExport();
@@ -9,7 +10,7 @@ abstract interface class PayrollFiles {
 final class NativePayrollFiles implements PayrollFiles {
   const NativePayrollFiles();
   @override
-  Future<String?> chooseExport() async => (await getSaveLocation(
+  Future<String?> chooseExport() async => (await jentraSaveLocation(
     suggestedName: 'synthetic-payslip.json',
     acceptedTypeGroups: const [
       XTypeGroup(label: 'Synthetic payslip', extensions: ['json']),

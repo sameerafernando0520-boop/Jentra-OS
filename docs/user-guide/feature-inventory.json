@@ -308,20 +308,36 @@
     }
   ],
   "known_incomplete": [
-    "general extra legal entity and branch administration UI",
-    "general staff invitation and role administration UI",
+    "company and staff administration candidate rollout and native company acceptance",
     "production target backup restore monitoring and company pilot acceptance",
     "reviewed employee HR candidate rollout and push activation",
     "freshly verified hosted AI model provider and trusted usage",
-    "standalone Jentra Sales app is not implemented",
+    "Jentra Sales preview implemented; live portfolio authorization, governed commands, verified confirmations and full S1 acceptance remain open",
     "employee physical-device and platform distribution acceptance",
     "statutory payroll and real payment certification"
   ],
   "sources": {
-    "apps/jentra_desktop/lib/src/shell/navigation.dart": "28f1032801f56d0d677292b1ad2960b042e2c77c7b8004b568e614c87151b26f",
-    "apps/jentra_desktop/lib/src/router.dart": "6a86fa8c8dcad725b050cf3f9df50d29102cf164986960aab3b2e2b29547f96f",
-    "apps/jentra_desktop/lib/main.dart": "b8ce59e3bd251600088435d6ee37a28dc472a3c1166059e9ec29dae081c33e82",
+    "apps/jentra_desktop/lib/src/shell/navigation.dart": "ac7428b175a23c01bbf2024981a3bad6da41af0b0bbddf3956ed3f8e8cb90484",
+    "apps/jentra_desktop/lib/src/router.dart": "262e7ad2c024fa8c2f6742810b9321e0a63809fdcf5502daf3aeeaa9143b709d",
+    "apps/jentra_desktop/lib/main.dart": "b9d2b4b4bd91e8cd880a24e1e093b4e2a6f0fae12aedfeb90c7531f063b1239f",
     "packages/jentra_platform/lib/src/analytics/reviewed_model_gateway.dart": "41a0cede27e0cd6a9726fc44822e30072829f87047021fafb03fa8dcb2e75640",
     "workers/wave5/openai_model_adapter.mjs": "557fc6af5dba58910ac46c2d1ac661a0389355ccef7efddb9a3cad94a03201d3"
+  },
+  "sales_preview": {
+    "implemented": true,
+    "version": "0.1.0+1",
+    "mode": "interactive sample-data preview",
+    "live_field_sales_enabled": false,
+    "full_s1_acceptance": false,
+    "release_record": "../development/jentra-sales-release-20261030.md"
+  },
+  "administration_candidate": {
+    "implemented": true,
+    "installed": false,
+    "routes": [
+      "/setup/company-access",
+      "/workspace/invitations"
+    ],
+    "verification": "../verification/company-access-20261028/README.md"
   }
 }

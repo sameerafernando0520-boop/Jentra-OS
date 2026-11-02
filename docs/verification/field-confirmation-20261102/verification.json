@@ -1,0 +1,402 @@
+{
+  "verifiedOn": "2026-11-02",
+  "timezone": "Asia/Colombo",
+  "recordedAtUtc": "2026-11-01T19:59:04.292Z",
+  "claim": "Prepared source, isolated composed database candidates, automated app checks and local compilation only.",
+  "boundaries": {
+    "performedMigrationInstallation": false,
+    "performedDeployment": false,
+    "hostedDatabaseAccess": false,
+    "emailSent": false,
+    "workerActivated": false,
+    "liveAcceptance": false,
+    "companyAcceptance": false,
+    "fullSupabaseStack": false,
+    "physicalDeviceAcceptance": false,
+    "employeeAppCodeEdited": false,
+    "featureFlagsDefault": false
+  },
+  "database": {
+    "command": {
+      "executable": "node",
+      "args": [
+        "supabase/candidates/run-field-confirmation-test.mjs",
+        "--run-isolated"
+      ]
+    },
+    "cwd": ".",
+    "exitCode": 0,
+    "engine": "PGlite 0.5.12 / PostgreSQL 18",
+    "passed": 134,
+    "governanceRegressionPassed": 88,
+    "confirmationPassed": 46,
+    "report": "docs/verification/field-confirmation-20261102/postgres-result.json",
+    "matchedSourceHashes": 38,
+    "rollback": {
+      "candidate_removed": true,
+      "fixtures_removed": true,
+      "tenants_removed": true,
+      "auth_sessions_removed": true,
+      "receipts_removed": true,
+      "employee_fixtures_removed": true,
+      "employee_links_removed": true,
+      "original_permissions_restored": true,
+      "original_entitlements_restored": true,
+      "policies_removed": true,
+      "original_functions_and_acls_restored": true,
+      "email_extension_removed": true,
+      "governance_functions_and_acls_restored": true,
+      "api_schema_acl_restored": true,
+      "private_schema_acl_restored": true,
+      "baseline_removed": true
+    },
+    "baseline": {
+      "prefixThrough": "20260910135507_harden_receivables_reference_indexes.sql",
+      "additionalMigrations": [
+        "20260925181927_wave4_employee_foundation.sql",
+        "20260929224939_wave4_private_hr.sql"
+      ],
+      "executionNormalization": "CRLF to LF in baseline migrations only; SHA-256 hashes bind the original unmodified source bytes.",
+      "rollbackFunctions": [
+        "core.has_permission(uuid,text,uuid,uuid)",
+        "core.list_capabilities(uuid)",
+        "core.wave2_replay(uuid,text,uuid,text)",
+        "core.wave3_replay(uuid,text,uuid,uuid,text)",
+        "core.bootstrap_tenant_impl(text,text,text,text,text,text,text,text,uuid)",
+        "people.require_access(uuid,uuid,uuid,text)"
+      ]
+    },
+    "simulation": "Exact repository migration prefix through 20260910135507 plus workforce foundation 20260925181927 and private HR 20260929224939, then governance and email-confirmation candidates, in an isolated PGlite transaction. Auth/Storage and provider acknowledgements are simulated. No email transport, hosted Supabase session, device acceptance, delivery acknowledgement or canonical progression is established. Candidate schema, functions, ACLs, permission/entitlement changes and all fixtures/receipts roll back; outer rollback removes the baseline."
+  },
+  "checks": [
+    {
+      "id": "runner-safety",
+      "command": {
+        "executable": "node",
+        "args": [
+          "--test",
+          "supabase/candidates/tests/field_confirmation_runner.test.mjs"
+        ]
+      },
+      "cwd": ".",
+      "exitCode": 0,
+      "passed": 2,
+      "log": "docs/verification/field-confirmation-20261102/runner-tests.log"
+    },
+    {
+      "id": "sales-app",
+      "command": {
+        "executable": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+        "args": [
+          "C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot",
+          "--suppress-analytics",
+          "--no-version-check",
+          "test",
+          "--no-pub",
+          "--concurrency=1"
+        ]
+      },
+      "cwd": "apps/jentra_sales",
+      "exitCode": 0,
+      "passed": 55,
+      "log": "docs/verification/field-confirmation-20261102/sales-tests.log"
+    },
+    {
+      "id": "confirmation-and-governance-platform",
+      "command": {
+        "executable": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+        "args": [
+          "C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot",
+          "--suppress-analytics",
+          "--no-version-check",
+          "test",
+          "--no-pub",
+          "--concurrency=1",
+          "test/field_confirmation_test.dart",
+          "test/field_sales_gateway_test.dart",
+          "test/field_sales_decision_store_test.dart"
+        ]
+      },
+      "cwd": "packages/jentra_platform",
+      "exitCode": 0,
+      "passed": 12,
+      "log": "docs/verification/field-confirmation-20261102/platform-tests.log"
+    },
+    {
+      "id": "company-review",
+      "command": {
+        "executable": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+        "args": [
+          "C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot",
+          "--suppress-analytics",
+          "--no-version-check",
+          "test",
+          "--no-pub",
+          "--concurrency=1",
+          "test/field_company_review_test.dart"
+        ]
+      },
+      "cwd": "apps/jentra_desktop",
+      "exitCode": 0,
+      "passed": 9,
+      "log": "docs/verification/field-confirmation-20261102/company-tests.log"
+    },
+    {
+      "id": "scoped-analyzer",
+      "command": {
+        "executable": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+        "args": [
+          "--suppress-analytics",
+          "analyze",
+          "--fatal-infos",
+          "apps/jentra_sales/lib",
+          "apps/jentra_sales/test",
+          "packages/jentra_platform/lib/field_confirmation.dart",
+          "packages/jentra_platform/lib/src/field_confirmation_link.dart",
+          "packages/jentra_platform/lib/src/field_confirmation_link_capture.dart",
+          "packages/jentra_platform/lib/src/field_confirmation_link_stub.dart",
+          "packages/jentra_platform/lib/src/field_confirmation_link_web.dart",
+          "packages/jentra_platform/test/field_confirmation_test.dart",
+          "apps/jentra_desktop/lib/src/features/sales/field_company_review.dart"
+        ]
+      },
+      "cwd": ".",
+      "exitCode": 0,
+      "result": "No issues found",
+      "log": "docs/verification/field-confirmation-20261102/analyzer.log"
+    },
+    {
+      "id": "format",
+      "command": {
+        "executable": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+        "args": [
+          "--suppress-analytics",
+          "format",
+          "--output=none",
+          "--set-exit-if-changed",
+          "apps/jentra_sales/lib/main.dart",
+          "apps/jentra_sales/lib/src/confirmation_controller.dart",
+          "apps/jentra_sales/lib/src/ui/customer_confirmation.dart",
+          "apps/jentra_sales/lib/src/ui/field_sales_workspace.dart",
+          "apps/jentra_sales/test/confirmation_controller_test.dart",
+          "apps/jentra_sales/test/customer_confirmation_test.dart",
+          "packages/jentra_platform/lib/field_confirmation.dart",
+          "packages/jentra_platform/lib/src/field_confirmation_link.dart",
+          "packages/jentra_platform/lib/src/field_confirmation_link_capture.dart",
+          "packages/jentra_platform/lib/src/field_confirmation_link_stub.dart",
+          "packages/jentra_platform/lib/src/field_confirmation_link_web.dart",
+          "packages/jentra_platform/test/field_confirmation_test.dart",
+          "apps/jentra_desktop/lib/src/features/sales/field_company_review.dart"
+        ]
+      },
+      "cwd": ".",
+      "exitCode": 0,
+      "files": 13,
+      "changed": 0,
+      "log": "docs/verification/field-confirmation-20261102/format.log"
+    },
+    {
+      "id": "local-sales-web-build",
+      "command": {
+        "executable": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+        "args": [
+          "C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot",
+          "--suppress-analytics",
+          "--no-version-check",
+          "build",
+          "web",
+          "--no-pub",
+          "--release",
+          "--dart-define=FIELD_SALES_CANDIDATE_ENABLED=true",
+          "--dart-define=FIELD_SALES_EMAIL_CONFIRMATION_ENABLED=true",
+          "--output=build/field-order-email-confirmation-candidate"
+        ]
+      },
+      "cwd": "apps/jentra_sales",
+      "exitCode": 0,
+      "log": "docs/verification/field-confirmation-20261102/web-build.log",
+      "artifact": "apps/jentra_sales/build/field-order-email-confirmation-candidate",
+      "publicKeyConfigured": false,
+      "artifactSha256": {
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/.last_build_id": "265d3d1f1535a8453d5d10c6743636de73cb0a81c639d8a938799b906a4c0eba",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/AssetManifest.bin": "5f7871ef6d64e399a36c3d7acc54bbda3c3d7750a7db3d8f6c1742d7402f1e27",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/AssetManifest.bin.json": "d1522f0c262d8afaaf4ef883a510cb64d709a86e8984f939ec91ddd78c9f8565",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/FontManifest.json": "e25eb5b09aa2613c26bc8a849691ac6c556058cbb530ca65930fc51bb2a6cbf7",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/NOTICES": "19fa809dc8dcc8c812678b615d07a76f563f4fdf21260b8c17abd083a0bf7d22",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/fonts/MaterialIcons-Regular.otf": "e878787a8b4c3c1028444d9c4e115d307d7f90d9f9787dccfa2c047518c3974b",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "3d90c370aa4cf00dc57ee2b902f6652147c0f81e03e483df584a9c08b1687c9d",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/packages/jentra_design_system/assets/brand/jentra-logo-board.png": "bcb444dafed12cfbca2e2077e50dd4fc8f0ce7c5e212a91fddd08dafecba1ba6",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/packages/jentra_design_system/assets/brand/jentra-mark.png": "9670c0a23c40185a2a067648253d1eb94d380b5a30ddb6441ed1449d6f05ee0e",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/IBMPlexMono-Regular.ttf": "6a3412f058c7d8dfd9170c41e85ade48e5156ecb89356110ca57a0a27734af46",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/IBMPlexMono-SemiBold.ttf": "d3c38e55c78f5b0f28009fddba4834ec503278936a5986032424c9bd2d23aa46",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/Manrope-Bold.ttf": "ec45a353e86a9988decd9d33b2e126f9bb672f5a14e816a5440b49e208aa45df",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/Manrope-Medium.ttf": "84f74f48c092b4b8b757c833e9de475a1e7ea946763d59754451c61a6a056f91",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/Manrope-Regular.ttf": "b746e7de1dacdb2bcbfd3b45bf8a30a5c0de02f47604b101bbde461070b624ce",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/Manrope-SemiBold.ttf": "50edc86b3a47f41facf9726a086ed00bdd8c7846c66caecdfb582b8a144d022b",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansSinhala-Medium.ttf": "839df9dc62fa9bcab9b02e638c3b7e2ea59cc49fd79bf99055f4d9c23f0e2b3d",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansSinhala-Regular.ttf": "c5504cbd3ee50feac33ff7737b588c7a3eefee4faaa07d379fb392e4586b6858",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansSinhala-SemiBold.ttf": "685e86b1b629ae5bed68a4dc07613b994018edbcf9d085b63642e4d033f8d67d",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansTamil-Medium.ttf": "1d1ff88260e6ea6928be2e2b1d19a054807ca91c1d7ac2cb18c9538bc10e36c7",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansTamil-Regular.ttf": "038cff72449bf6dcb6b47aa53a7f9b2bf93c8defc056890bb778291b263418ad",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansTamil-SemiBold.ttf": "8b8729103b51f5775b4309e07dd6fcb937747548ca595e4edebb17d936142de6",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/packages/jentra_platform/assets/web/drift_worker.js": "191fc9db018d2bbecb1723e81118fcf2c5c094df8644c2fcba2ed51df061e90a",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/packages/jentra_platform/assets/web/sqlite3.wasm": "fbcd2e8214f9231ea961e1b7706a22dd1194cfbfe6f26f13841b5aa7a0be1a1f",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/shaders/ink_sparkle.frag": "2dca5ab93d4ec29e963f996f3916320ba60825e9537dfb149a68008c7a16b026",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/assets/shaders/stretch_effect.frag": "ab412f07a5b9b50b67a885b24dbe16929738ae28630407d6490c924caf0a3220",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/canvaskit/canvaskit.js": "bb559f6080c7d312ac2a912b4abec9f68ff3d3022d4a603c7796b9b31460642b",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/canvaskit/canvaskit.js.symbols": "384f80b392972c83fd4f262527e3d06215a297d33ed59732c726721e9d9311bd",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/canvaskit/canvaskit.wasm": "fbed517a43e82452404446683f00f2e876d835aed84410695759e67b6bb01cd3",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/canvaskit/chromium/canvaskit.js": "6018b12bd8ed37e6952eee72d59c1cf7ad707ccdb74a0a45190010f77edd9068",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/canvaskit/chromium/canvaskit.js.symbols": "31c86fac6042dd8b756150832c1d15495d0d07742e2718f75dbdde5a5a91455e",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/canvaskit/chromium/canvaskit.wasm": "ae8ff1d858140f7b1300ced3fa89fb8c9dce0a400a0f4f1e11f6dcfb3315fdcf",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/canvaskit/skwasm.js": "71d7d3e34bf71b52bdba3b588b103bba8148ba28de5754083e01b3398e7a6e1c",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/canvaskit/skwasm.js.symbols": "9137f1a3ae744dea575043abfc6e063a047e910e6dab1ee53e496c975d1c033e",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/canvaskit/skwasm.wasm": "e540fd5e8303b7b68ec2718cb49e9c421f8ade3075b15e02a7059a62654df9a1",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/canvaskit/skwasm_heavy.js": "cec554b46ddcf4c0e63d799e0556d546f42d2c3f69316fb4f67ed776f6104558",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/canvaskit/skwasm_heavy.js.symbols": "b6b79ed497e11d4cd13cc46724f9e289eacc744d2d185e31c72d595cdf62772b",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/canvaskit/skwasm_heavy.wasm": "565f5cc1cca6ab120f11934b105f01fec4b58b480c82e0889dca93af8e6f8635",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/canvaskit/webparagraph/canvaskit.js": "3110e3e4d9b7b5657d336f253aaca8acca5777cde9319fb69ac302d6ff5a8b23",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/canvaskit/webparagraph/canvaskit.js.symbols": "44d6c47919106235cf32252252490cdf798d907ee874ba343ab53dc94bc2a9dc",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/canvaskit/webparagraph/canvaskit.wasm": "0ce1b05082efdc8529550e8a01f6ff0593972d55525035010e26f5600aa9f254",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/canvaskit/wimp.js": "8fd8a47480c6eb0a374d159912d0b3fb15661b41f5c113ecdd39c2f01f2bee46",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/canvaskit/wimp.js.symbols": "b4907ebd33131302a8cd99f7c55f52357bdfde04f421b605a616ba8764ae1de4",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/canvaskit/wimp.wasm": "e924eaafd801d41e017d178f3fd5cf8a417f641fe35c9ed34a4e1d7582283e0c",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/favicon.png": "7ab2525f4b86b65d3e4c70358a17e5a1aaf6f437f99cbcc046dad73d59bb9015",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/flutter.js": "2beb1ce6b159c71540aa66030af1d7964b6a92377cc78473745e02f97b74effe",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/flutter_bootstrap.js": "a92cfb6a204057f184cba91566eb027bba3974e4f75054ce7ce95a179f13cfec",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/flutter_service_worker.js": "dbfbe64ae5be5b462abb97338eb9af783ed4ed57a8c73a53c2a44488a26f6416",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/icon.png": "9670c0a23c40185a2a067648253d1eb94d380b5a30ddb6441ed1449d6f05ee0e",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/icons/Icon-192.png": "3dce99077602f70421c1c6b2a240bc9b83d64d86681d45f2154143310c980be3",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/icons/Icon-512.png": "baccb205ae45f0b421be1657259b4943ac40c95094ab877f3bcbe12cd544dcbe",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/icons/Icon-maskable-192.png": "d2c842e22a9f4ec9d996b23373a905c88d9a203b220c5c151885ad621f974b5c",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/icons/Icon-maskable-512.png": "6aee06cdcab6b2aef74b1734c4778f4421d2da100b0ff9e52b21b55240202929",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/index.html": "953ce070fbfe1b1de98b7402b4a53454b9201c96c74f216a39eba6ea69a9100f",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/main.dart.js": "11f88ae04befe09b2c60143826dfb8392e2d3237f8e3533292282ae987799e79",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/manifest.json": "cb9d7f6d0b8321df80fd5898cee55d2f1ceb2fece6708a5e0543951a6823d148",
+        "apps/jentra_sales/build/field-order-email-confirmation-candidate/version.json": "360f990e0625bb47849e9c3298f0471654ac406b2ed13c5465c6688949ce7dc0"
+      }
+    }
+  ],
+  "review": {
+    "workflow": "Engineering Advanced Skills focused-fix with scoped dependency tracing, diagnosed regressions and consumer verification; Build Spec/Standards source review informed fixes.",
+    "note": "Source review and automated regression results do not establish independent hosted, mailbox, device or company acceptance."
+  },
+  "gates": {
+    "emailActivation": {
+      "status": "pending",
+      "remaining": [
+        "Staff issuance UI and protected pending-command workflow",
+        "Real worker/provider and reviewed sender/domain",
+        "Mailbox receipts and forwarded-link checks",
+        "Hosted HTTP/cache/scanner behavior, deployment-origin log redaction and service abuse controls"
+      ]
+    },
+    "deliveryAcknowledgement": {
+      "status": "pending",
+      "remaining": [
+        "Exact posted partial-delivery/version and received/refused/short quantities",
+        "Separate verified recipient response per delivery"
+      ]
+    },
+    "companyProgression": {
+      "status": "not enabled",
+      "remaining": [
+        "Reviewed canonical order, credit and stock progression after required customer/company evidence"
+      ]
+    },
+    "companyAcceptance": {
+      "status": "pending",
+      "remaining": [
+        "Full current Supabase/PostgreSQL 17 schema rehearsal",
+        "Genuine independent sessions/MFA, contention and revocation",
+        "Ordinary company/Employee compatibility and credit freshness",
+        "Device privacy/accessibility and representative/approver/customer pilot signoff"
+      ]
+    },
+    "installationAndDistribution": {
+      "status": "excluded from this task",
+      "remaining": [
+        "Separately authorized migration installation, sender/worker activation, signing/distribution, deployment and live verification"
+      ]
+    }
+  },
+  "snapshotNote": "Candidate source and relevant existing workspace inputs only; not full hermetic build provenance or an ownership claim over unrelated dirty changes. Prior evidence remains tied to its earlier snapshot.",
+  "candidateSourceSha256": {
+    "apps/jentra_desktop/lib/main.dart": "2017d8f5ea5da5574d51ae9ab190e477c33abc473d447dc689aadcee5e7d18c4",
+    "apps/jentra_desktop/lib/src/features/sales/field_company_review.dart": "ec41d3c987b2128989cba48c24a570a5ba71f408f67a65d6adf86bcca64903b6",
+    "apps/jentra_desktop/lib/src/features/sales/sales_order_screen.dart": "b251625daab25e4a59034c7ba1eb98415ed733601bae98029c8e19fdbc77576d",
+    "apps/jentra_desktop/test/field_company_review_test.dart": "c30d64f3979bffae1a1e955be145b4c15542e89e18463b80db229a2670a25dc4",
+    "apps/jentra_sales/README.md": "38dc935f5911db70b700eacc344075fb0ef289bc2c4ae0a72348a56e44419f0b",
+    "apps/jentra_sales/lib/main.dart": "b288bce555771c59477cd372b2fa4bf7390d2461a955d9a7572a6526c685abbc",
+    "apps/jentra_sales/lib/src/confirmation_controller.dart": "e69c8299ee8057b2422bfecd50e6f143be26d9f9dd39435ffd44e22d81eb5b3e",
+    "apps/jentra_sales/lib/src/data/sales_gateway.dart": "8d6375c5890c8c8d30ccd3a5456d32d032c4282d18dc68a3cea653e769987a5f",
+    "apps/jentra_sales/lib/src/data/sales_store.dart": "72d14fe7983eedec97df355035d3a197938afdcc01f8f64a5086d38467836e9f",
+    "apps/jentra_sales/lib/src/data/sales_store_factory.dart": "dd68150d661adea1853c4ca8403e4ab7e0123f9fb54815878d839207669c84ef",
+    "apps/jentra_sales/lib/src/data/sales_store_native.dart": "406e31bccda60cd96c85de604e85fe96cf9692454ab8719d0f3ed0b0fbc66794",
+    "apps/jentra_sales/lib/src/data/sales_store_web.dart": "1955630e8f6036d70d4e0c5e03741cc7ac1211a1bf8b30dcb6ec3158930f1a0d",
+    "apps/jentra_sales/lib/src/demo_data.dart": "94876c06cf7b58554bd89882dbf181550e28b1f226524c4e2d17a7a5422d8a88",
+    "apps/jentra_sales/lib/src/field_sales_controller.dart": "35dd6ce7cb93d22401d4add9dca53818589dd4a45c5e05e98ec2388679444251",
+    "apps/jentra_sales/lib/src/models.dart": "ff4462df581a1588bd3190c84593e85aabe44ad8606e0faee2cb8ceea81ae546",
+    "apps/jentra_sales/lib/src/sales_app.dart": "0e210cff31c6873023b240944cd346ec3ddaede4a70607e0f8e049607f6aa65b",
+    "apps/jentra_sales/lib/src/sales_controller.dart": "eb1751d8c21b98500a61a0bca8e1570d2a7fc99f2460c8e85d0a7c1eb073d820",
+    "apps/jentra_sales/lib/src/ui/catalogue.dart": "6b75c5f7e95abf4a9e0f082f166a18851b5b60e397d09f4d9abc00a0a1a4afae",
+    "apps/jentra_sales/lib/src/ui/components.dart": "d1d1f885cde3b3e07c0570057a9ba884fc538f05019f90e107f7dc6c841b148b",
+    "apps/jentra_sales/lib/src/ui/customer_confirmation.dart": "c68cf5f6734eb54798aa9f56181dd373e1a8e062f32a6c0238de9820c0897c85",
+    "apps/jentra_sales/lib/src/ui/customers.dart": "98803cab36bffdad727c5f771a0ef1ee5ee87d3246a81dc233d45e5440d2e669",
+    "apps/jentra_sales/lib/src/ui/field_sales_workspace.dart": "f91baa605870c4716ba02a4416d63b8a9a8f5b06aa4da5212e9b859eb602421a",
+    "apps/jentra_sales/lib/src/ui/login.dart": "822981b0385f2e4ea00266b6083e0225e8643ff173f44e001ba57bf7416d8447",
+    "apps/jentra_sales/lib/src/ui/order_editor.dart": "d52ce36e6eaf8c348f140033b92daf98a56e15896758744a82ef92c749202010",
+    "apps/jentra_sales/lib/src/ui/orders.dart": "6a7331a7e27a76c331a6f4f1ff099aa254693f2641da75794150e1a3d91331a9",
+    "apps/jentra_sales/lib/src/ui/today.dart": "8c51fcfae0b3777327bbe664cd9b357463bc649b312d751ff94765b12c7afc79",
+    "apps/jentra_sales/lib/src/ui/visits.dart": "56e7de9bb4046bd97b518de155014623b477de9021f995de5b0a7e7492b6d546",
+    "apps/jentra_sales/lib/src/ui/workspace.dart": "0bb06e6c3ae3f7f34797625c8289f3ac1938bd92035631045452f2f7023383e1",
+    "apps/jentra_sales/test/confirmation_controller_test.dart": "73965bb980b78e309a4cc4b7252d592629f2e484af233e7b7ded02c633fdfeda",
+    "apps/jentra_sales/test/customer_confirmation_test.dart": "b56492b3d1ced4e44be2ed770eaeca223f7000f26422287b68cc1fa236bd2626",
+    "apps/jentra_sales/test/field_sales_auth_test.dart": "911aa5a6ea592f3a523a02e23b834b20e8b038f67c18389399e48ab1b98367e1",
+    "apps/jentra_sales/test/field_sales_controller_test.dart": "14aadb54d688cf9b2d7286682b9ad43c720de182c50e78e8ea51ef8a10957f13",
+    "apps/jentra_sales/test/field_sales_widget_test.dart": "cbff72fa16f72527138a60b4e88dc4c5b88cc6d9c764232c944fc7194c3ce23f",
+    "apps/jentra_sales/test/sales_drafts_test.dart": "820b2c35bca80cf0c9486cb09feb753a056c6931d834fc3019313ae4e2970314",
+    "apps/jentra_sales/test/support/field_sales_fixture.dart": "8702547f1593c9da8f1264f4cb96c0c7da9fe2b17c03646cc76fbd3c036335eb",
+    "apps/jentra_sales/test/widget_test.dart": "aa8dec621b4679b1e5a24ae0068cb47068f3156f0648cdb641e4f25d6078b143",
+    "docs/blueprint/mobile-apps/SALESMAN_APP_BLUEPRINT.md": "1e3694f62fd7c553a1f30a222be4808babc5629939f1b947f55407dcb6b8cd91",
+    "docs/blueprint/mobile-apps/SALES_OWNER_DECISIONS_20261028.md": "290ab58aa255631a1292d2574bb51b5366b9c40c9e66c7eab43b781962324720",
+    "docs/development/field-order-email-confirmation-candidate-20261102.md": "6dec4725d3536b1c9762034988847875bb506d22fb72f56a2515f40739266a73",
+    "docs/development/field-sales-governance-candidate-20261031.md": "877afd8f932bb8890b8113ed3bc0150a2cc00ca303ce4415404f0d0b27d0fcac",
+    "docs/verification/field-confirmation-20261102/README.md": "6f7b75e3fc2ccc078fabc1d0db290d2edbde4e4006ec25c5bcaddb4bf9808ead",
+    "packages/jentra_domain/lib/jentra_field_sales.dart": "5cab7e5f67bf40a82450d6fd7d96c09cc1c76b9f57223f75945e239b0e34f684",
+    "packages/jentra_platform/lib/field_confirmation.dart": "3793833044f5947350856c0ef7ed46bf30699cf57520e3484817c5e7c6b8854b",
+    "packages/jentra_platform/lib/jentra_field_sales_platform.dart": "03762bc51f0e3107aba8a4dc6c44d849e4c794b0a309e1e29586387995ba0653",
+    "packages/jentra_platform/lib/src/field_confirmation_link.dart": "fefc66c95ec3848a971ad8e24d9cfda2ab3a3380d8974ba45a882e854a87cec6",
+    "packages/jentra_platform/lib/src/field_confirmation_link_capture.dart": "f2308d37066a2e1909d754c7f619ab931e013ae1bb8a08ec99b3b862330628d0",
+    "packages/jentra_platform/lib/src/field_confirmation_link_stub.dart": "3c09525daee2433c385e70d430af58c8b24516fad9392710772efe1dfcca3a5a",
+    "packages/jentra_platform/lib/src/field_confirmation_link_web.dart": "4bbb1b7802eedbb4b7ec19dc071deb4f23e9e5e1c6231fa9392f3542f8d23bd6",
+    "packages/jentra_platform/lib/src/field_sales_decision_store.dart": "a864dd1b311622828bee7c812add774861b3dc6ce7da6627903ff98679fbc456",
+    "packages/jentra_platform/test/field_confirmation_test.dart": "55082e466f12417b2adb63f3e83b6b5d7744b49828ca158085827a52bd4fcd78",
+    "packages/jentra_platform/test/field_sales_decision_store_test.dart": "9de276fa3538dbd00308d80ed7d084dbdb08bd9ddc9db9ee8af49aafae15c0a6",
+    "packages/jentra_platform/test/field_sales_gateway_test.dart": "03744e05f14d50b5d62104ede1d5326417b4d7cca3d06ca688be815a3b089474",
+    "supabase/candidates/20261031090000_field_sales_governance.sql": "46fb83fb4bae57059c483cdb1f06f9021d12d34525194321611e70170a2a71b1",
+    "supabase/candidates/20261102090000_field_order_email_confirmation.sql": "49f4e7747d68b32fd8f950ddda3cc2ae830a003215724f9ff0e7af2cfd34052a",
+    "supabase/candidates/run-field-confirmation-test.mjs": "39d0d8634f8f3114c8bf8d87c78e47aafc8dc25876a7739c8b50371b35c37bd1",
+    "supabase/candidates/tests/field_confirmation.test.mjs": "d52db1bb51e237fd5e4dd22402105a6fb7410a13d938aa2c6760265c1a8e3a28",
+    "supabase/candidates/tests/field_confirmation_runner.test.mjs": "a89b89b747d7caeb60de18bdb7a85ce4d8274903ea5b05ebc6fb84d45c2d8b28",
+    "supabase/candidates/tests/field_sales_governance.test.mjs": "019c0741367cfb1dc64e87c0abfc6fc3706f46d1234199ecf622d4037143edfd"
+  },
+  "workspaceInputSha256": {
+    "pubspec.yaml": "7d39efe5d97b30153b7ed92d15a4818435ce092381c02de40884d468d5e7bc7b",
+    "pubspec.lock": "6bdaa3d10c2d49176f2176eb4707302611d85ae8effd80ea3fbbb0cd8c9298fe",
+    "apps/jentra_sales/pubspec.yaml": "7845cba70d4a184b9397dca4dc0c830bf43f1c15d59fdeed3f7827446dfc56b8",
+    "apps/jentra_desktop/pubspec.yaml": "230f2a356eb1ee952c786367170309194c17d29443091044475e57135b6d7e31",
+    "packages/jentra_platform/pubspec.yaml": "b1a2fb0bcd17427dcf8bdf53334aaf7a5ec59fdf1ada7b3a19cf7235bf895538"
+  },
+  "evidenceSha256": {
+    "docs/verification/field-confirmation-20261102/postgres-result.json": "9de3c06b50017db5e8aa9b1c308a6349d77df9b3b026f602a7aac8bdc1b2b0d4",
+    "docs/verification/field-confirmation-20261102/postgres.log": "ac42b47e1bf5a009adc742b9e410a710d3efc0f659cd36f39e2670142ca34667",
+    "docs/verification/field-confirmation-20261102/runner-tests.log": "fdfb65da2d0bb800ad97bba978954a6646aba8fe8169906f75bd2f13262f13f2",
+    "docs/verification/field-confirmation-20261102/sales-tests.log": "dead721117389218bb7760b6e5729728a4f41ae5ec875b1f6c65f334070802ae",
+    "docs/verification/field-confirmation-20261102/platform-tests.log": "1e67af351abbf5a957ea1eb4cc8cd778a6bdbd8caf9cc762aa414f9ac6e8a741",
+    "docs/verification/field-confirmation-20261102/company-tests.log": "0dbddacfc89c398ecb6c351f6a5c33fb09c40bc1b308b5dca6cfdf5246e6c117",
+    "docs/verification/field-confirmation-20261102/analyzer.log": "01762afb7995adaf19c1619e2780fdfb9f12e410e22662ba40c6d104d53952f7",
+    "docs/verification/field-confirmation-20261102/format.log": "319c6afbcec08866a20e11659370c43be1f50a39fc6bf97ca7c8d0c25b20158a",
+    "docs/verification/field-confirmation-20261102/web-build.log": "047662661dcf37b32521d4bd2a90a386ef416622ee7389a3a1c36aa712994031"
+  }
+}

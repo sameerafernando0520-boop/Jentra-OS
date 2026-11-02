@@ -28,6 +28,17 @@ Thumbs.db
 *.cer
 *firebase-adminsdk*.json
 
+# Employee release JVM diagnostics can contain private process memory.
+/apps/jentra_employee/android/hs_err_pid*.log
+/apps/jentra_employee/android/replay_pid*.log
+/apps/jentra_employee/android/java_pid*.hprof
+
+# Firebase Hosting cache, diagnostic logs and generated release deliveries
+.firebase/
+firebase-debug.log*
+/dist/Jentra-OS-*/
+/dist/Jentra-Sales-*/
+
 # Generated Windows output
 apps/jentra_desktop/windows/flutter/ephemeral/
 apps/jentra_desktop/windows/flutter/generated_plugin_registrant.cc

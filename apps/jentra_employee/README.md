@@ -1,6 +1,12 @@
 # Jentra Employee
 
-Android/iPhone companion for Jentra OS. This first build implements employee account access, exact account-link onboarding, shared reviews and protected local leave drafts. The complete product blueprint remains in [EMPLOYEE_APP_BLUEPRINT.md](../../docs/blueprint/mobile-apps/EMPLOYEE_APP_BLUEPRINT.md).
+Android/iPhone companion for Jentra OS. Current source is **0.5.0+9** and includes employee account access, exact account-link onboarding, attendance and leave requests, own payslips, published documents, HR cases, reviews and an employee inbox. The complete product blueprint remains in [EMPLOYEE_APP_BLUEPRINT.md](../../docs/blueprint/mobile-apps/EMPLOYEE_APP_BLUEPRINT.md).
+
+**Hosted rollout is pending.** The authenticated 30 October check of project
+`xpdoufauvrbdmxgngetv` found the employee self-service and push schemas absent.
+The client fails closed when those APIs are unavailable. Source implementation,
+automated tests and a signed Android package do not install the backend or prove
+physical-device delivery. See the [current rollout record](../../docs/verification/company-employee-20261030/README.md).
 
 The app reuses Jentra's supplied artwork, bundled fonts and semantic colors. Version 0.3.2 keeps long notices scrollable on short screens so enlarged text cannot squeeze the navigation away, prevents successful sign-in from duplicating its workspace request, and distinguishes an unavailable service from a successful read with no workplaces. Version 0.3.1 introduced optimized Android packaging and removed unused photo codecs from the reachable app code. The personal navy identity header, grouped service rows, selected navigation capsules and Profile page introduced in 0.3.0 remain. At enlarged text or in Sinhala/Tamil, the dock becomes Home/Activity/More; Leave, Work and Pay remain reachable through the service screens.
 
@@ -18,7 +24,21 @@ Version 0.3.0 adds real native profile photo selection while retaining the outli
 - Guided HR help provides next steps for account access, leave, pay, reviews and documents. It does not create a support case or send a message.
 - Light/dark appearance, English/Sinhala/Tamil and 200% text remain supported. New language copy requires the same owner language review as the first build.
 
-## Supported first slice
+## Current employee services
+
+- Read own attendance and submit attendance evidence for staff resolution.
+- Read leave policies, balances and requests; submit leave or request cancellation
+  through the authoritative backend. A protected local draft is separate from a
+  confirmed submission and does not change balances.
+- Read own issued payslips and correction records with the required MFA. A
+  synthetic payroll result is not evidence of salary payment.
+- Open and follow HR cases, and read explicitly published employee documents.
+  Document export rechecks current access before writing the selected local copy.
+- Read the recipient-scoped inbox. Android push opt-in is available in the client,
+  but requires the separately installed backend, sender identity, secrets,
+  deployed worker and scheduler before actual FCM delivery can be verified.
+
+The foundation flows remain:
 
 - Sign in with an existing company Jentra account.
 - Select an active company/entity/branch, resolve the accepted employee link, or review an exact HR-proposed link before accepting/rejecting it.
@@ -28,9 +48,13 @@ Version 0.3.0 adds real native profile photo selection while retaining the outli
 - Hide private routes in the background; revalidate access on return. Sign out or lock the app.
 - Persist a sealed command before sending; check its own receipt after an uncertain outcome and retry only the original request.
 
-Attendance, leave balances/submission, employee payslips, employee document access, HR cases and recipient notifications remain unavailable in this mobile build. Repository source already defines the own-payslip summary API `api.people_payroll_self_payslips` with accepted employee-link, self permission and MFA checks, and recipient notification APIs `api.my_notifications` / `api.mark_notification_read`; this mobile gateway and its screens do not expose them yet. Their current hosted availability was not verified by the 2026-10-22 mobile source audit. The earlier read-only database check on 2026-10-09 is historical evidence. These capabilities still require scoped contract review, mobile implementation and authenticated acceptance. The current screens explain availability and the next useful step; they do not use staff payroll/document permissions or show invented amounts.
+The employee gateways use the candidate `api.employee_self_*`, case, document
+and inbox projections. They derive the employee from the accepted account link;
+the client does not select another employee or acquire staff-wide payroll or
+document permissions. Missing installed contracts are reported as unavailable.
 
-Accounts also holding staff review permission are still limited by the app to their resolved employee and published review states. A dedicated server projection remains a subsequent hardening step; this first version uses the existing own-link and HR APIs with app-side state filtering.
+Reviews use the dedicated `api.employee_self_reviews` projection and remain
+limited to the resolved employee and employee-visible publication states.
 
 ## Configure and run
 
@@ -54,15 +78,33 @@ flutter analyze --no-pub
 
 Use the optimized ARM64 APK for an ARM64 phone, or the ARMv7 APK for a 32-bit ARM phone. Each APK is a standalone installation containing one processor architecture. The build script uses release compilation, R8 code/resource shrinking, icon-font tree shaking and a separate directory for compiler debug symbols. English, Sinhala, Tamil, the supplied artwork and profile-photo support are retained. `-IncludeEmulator` also builds an x86_64 APK.
 
-Outputs are under `build/deliverables/0.3.2-optimized-development/`, with exact sizes and SHA-256 values in `apk-manifest.json`. The script rejects debug runtime content, multiple architectures in one APK and files above a 40 MiB budget. See the [size reduction verification](../../docs/verification/employee-app/apk-size-20261013/result.md).
+Development outputs use `build/deliverables/<version>-optimized-development/`,
+with exact sizes and SHA-256 values in `apk-manifest.json`. The script rejects
+debug runtime content, multiple architectures in one APK and files above a
+40 MiB budget. See the [historical size reduction verification](../../docs/verification/employee-app/apk-size-20261013/result.md).
 
 These optimized development builds use `com.jentra.employee.dev` and the existing local Android debug signer, preserving the development app's identity while disabling the debug runtime. Store releases still require a separate distribution signer. The script passes `--android-project-arg=jentraDevelopmentRelease=true` explicitly to this build and verifies the actual package identity and signature before copying an APK to deliverables. If the previous 0.3.0 APK exists, its signing certificate must also match.
 
 The old universal debug APK is intended for developer debugging and remains a historical artifact. Its three engine architectures, unoptimized Dart kernel and validation libraries made it 169.53 MiB. [Flutter's Android build guidance](https://docs.flutter.dev/deployment/android#build-an-apk) describes per-architecture release APKs; [Flutter's app size guide](https://docs.flutter.dev/perf/app-size) explains debug overhead.
 
-Native secure storage is required for authenticated operation. The development web host is an unconfigured visual review surface; it never substitutes plaintext browser storage for native employee storage. Representative phone renders use fixtures under `test/`, which the production entrypoint never imports.
+Native authenticated operation uses protected device storage. The browser uses
+encrypted IndexedDB with a nonextractable Web Crypto key and an exclusive Web
+Lock for the selected origin/project; unsupported browser capabilities fail
+closed. Representative renders use fixtures under `test/`, which the production
+entrypoint never imports. Hosted browser acceptance remains a separate check.
 
-Android debug application ID: `com.jentra.employee.dev`; the future release uses `com.jentra.employee` and requires separate signing. iOS Debug/Profile use `com.jentra.employee.dev`. Android uses a secure window, disables backup and cleartext traffic. iOS source includes a native app-switcher cover; compiling/signing and validating it require macOS/Xcode. Store distribution signing and physical-device acceptance are separate work.
+Android debug application ID: `com.jentra.employee.dev`; production signing uses
+`com.jentra.employee` and the existing owner-approved release key. Run
+`scripts/employee/build_production_release.ps1` from the repository root to build
+and verify the AAB and ARM64 APK. Its final release manifest binds artifacts to
+source/configuration/tool hashes and retains separate store/device acceptance
+flags. See the [signing guide](../../docs/development/employee-release-signing.md).
+The helper's smaller Gradle memory budget does not change app behavior.
+
+iOS Debug/Profile use `com.jentra.employee.dev`. Android uses a secure window,
+disables backup and cleartext traffic. iOS source includes a native app-switcher
+cover; compiling/signing and validating it require macOS/Xcode. Store publication
+and physical-device acceptance remain separate work.
 
 HR must link an existing active account to the correct employee and provide the needed existing permissions. This app never creates an employee, grants a role or infers a match from an email address. The legacy pending-link API requires `people.view`; missing access is reported to HR rather than silently broadening the role.
 

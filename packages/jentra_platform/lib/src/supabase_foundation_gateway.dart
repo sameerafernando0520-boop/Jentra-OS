@@ -7,6 +7,7 @@ import 'auth/google_sign_in.dart';
 import 'auth/email_confirmation.dart';
 import 'auth/email_confirmation_stub.dart'
     if (dart.library.io) 'auth/email_confirmation_io.dart'
+    if (dart.library.js_interop) 'auth/email_confirmation_web.dart'
     as email_confirmation;
 import 'auth/google_oauth_stub.dart'
     if (dart.library.io) 'auth/google_oauth_io.dart'

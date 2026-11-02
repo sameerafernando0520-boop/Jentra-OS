@@ -1,8 +1,8 @@
-import 'dart:io';
-
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart' show SqliteException;
 import 'package:jentra_domain/jentra_domain.dart';
+
+import 'local_storage_failure_native.dart'
+    if (dart.library.js_interop) 'local_storage_failure_web.dart';
 
 /// Only call at a local encrypted persistence boundary, never for server errors.
 DomainError localDraftStorageFailure(Object error) {
@@ -26,13 +26,7 @@ bool isLocalDraftStorageFailure(Object error) =>
     error is DomainError && error.code == 'LOCAL_STORAGE_FULL';
 
 bool _full(Object error) {
-  if (error is SqliteException) return error.resultCode == 13;
-  if (error is FileSystemException) {
-    // Windows ERROR_DISK_FULL / ERROR_HANDLE_DISK_FULL and POSIX ENOSPC.
-    return Platform.isWindows
-        ? const {112, 39}.contains(error.osError?.errorCode)
-        : error.osError?.errorCode == 28;
-  }
+  if (platformStorageIsFull(error)) return true;
   if (error is DriftWrappedException && error.cause != null) {
     return _full(error.cause!);
   }

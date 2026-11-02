@@ -4,7 +4,9 @@ param(
     [string]$ConfigurationFile = '.env.employee-development.json',
     [string]$FlutterSdk = 'C:/src/flutter',
     [string]$AndroidSdk = "$env:LOCALAPPDATA/Android/Sdk",
-    [string]$JavaExecutable = 'C:/Program Files/Android/Android Studio/jbr/bin/java.exe'
+    [string]$JavaExecutable = 'C:/Program Files/Android/Android Studio/jbr/bin/java.exe',
+    [ValidateSet(1024,1536,2048)]
+    [int]$GradleHeapMb = 1024
 )
 $ErrorActionPreference = 'Stop'
 $repoRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
@@ -56,21 +58,29 @@ $version = $Matches[1]
 $buildNumber = [int]$Matches[2]
 Assert-EmployeeReleaseInputsUnchanged $provenance $repoRoot $configurationPath $provenanceTools
 $output = New-EmployeeReleaseDirectory (Join-Path $appRoot 'build/deliverables') $version $buildNumber
+Write-EmployeeReleaseManifest (Join-Path $output 'release-inputs.json') ([ordered]@{
+    recordedAtUtc=[DateTime]::UtcNow.ToString('o');status='build inputs only; not a verified release';
+    gradleHeapMb=$GradleHeapMb;provenance=$provenance
+})
 $securePassword = Get-Content -LiteralPath $passwordPath -Raw | ConvertTo-SecureString
 $passwordPointer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($securePassword)
 $oldKey = $env:JENTRA_EMPLOYEE_KEYSTORE
 $oldPassword = $env:JENTRA_EMPLOYEE_SIGNING_PASSWORD
 $oldGradleOpts = $env:GRADLE_OPTS
+$oldJavaHome = $env:JAVA_HOME
 try {
     $env:JENTRA_EMPLOYEE_KEYSTORE = $keyPath
     $env:JENTRA_EMPLOYEE_SIGNING_PASSWORD = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($passwordPointer)
-    # Do not retain signing credentials in a reusable Gradle daemon.
-    $env:GRADLE_OPTS = '-Dorg.gradle.daemon=false'
+    # Use the same recorded Java runtime for compilation and signature checks.
+    $env:JAVA_HOME = [IO.Path]::GetDirectoryName([IO.Path]::GetDirectoryName($JavaExecutable))
+    # Bound native/JIT pressure on the 8 GiB build host. The one-shot Gradle
+    # process must not retain signing credentials after the build.
+    $env:GRADLE_OPTS = '-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=1 "-Dorg.gradle.java.home=' + $env:JAVA_HOME + '" -Dorg.gradle.jvmargs="-Xmx' + $GradleHeapMb + 'm -XX:MaxMetaspaceSize=384m -XX:ReservedCodeCacheSize=96m -XX:ActiveProcessorCount=2 -XX:+HeapDumpOnOutOfMemoryError"'
     Push-Location -LiteralPath $appRoot
     try {
-        & $dart $flutter build appbundle --release --no-pub --android-project-arg=jentraProductionSigning=true --target-platform=android-arm,android-arm64 "--dart-define-from-file=$configurationPath"
+        & $dart $flutter build appbundle --release --no-pub --android-project-arg=jentraProductionSigning=true --android-project-arg=kotlin.compiler.execution.strategy=in-process --target-platform=android-arm,android-arm64 "--dart-define-from-file=$configurationPath"
         if ($LASTEXITCODE -ne 0) { throw 'Signed Android bundle build failed.' }
-        & $dart $flutter build apk --release --no-pub --android-project-arg=jentraProductionSigning=true --target-platform=android-arm64 "--dart-define-from-file=$configurationPath"
+        & $dart $flutter build apk --release --no-pub --android-project-arg=jentraProductionSigning=true --android-project-arg=kotlin.compiler.execution.strategy=in-process --target-platform=android-arm64 "--dart-define-from-file=$configurationPath"
         if ($LASTEXITCODE -ne 0) { throw 'Signed ARM64 APK build failed.' }
     } finally { Pop-Location }
     Assert-EmployeeReleaseInputsUnchanged $provenance $repoRoot $configurationPath $provenanceTools
@@ -100,13 +110,14 @@ try {
         Copy-EmployeeReleaseArtifact $item[0] $destination
     }
     Assert-EmployeeReleaseInputsUnchanged $provenance $repoRoot $configurationPath $provenanceTools
-    $report = [ordered]@{builtAtUtc=[DateTime]::UtcNow.ToString('o');version=$version;buildNumber=$buildNumber;applicationId='com.jentra.employee';certificateSha256=$fingerprint;configuration='owner-approved Supabase project; hosted activation and acceptance remain separate';provenance=$provenance;artifacts=@($artifacts);storePublication=$false;actualDeviceAcceptance=$false;portableKeyBackupVerified=$metadata.portableBackupVerified}
+    $report = [ordered]@{builtAtUtc=[DateTime]::UtcNow.ToString('o');version=$version;buildNumber=$buildNumber;applicationId='com.jentra.employee';certificateSha256=$fingerprint;configuration='owner-approved Supabase project; hosted activation and acceptance remain separate';gradleHeapMb=$GradleHeapMb;provenance=$provenance;artifacts=@($artifacts);storePublication=$false;actualDeviceAcceptance=$false;portableKeyBackupVerified=$metadata.portableBackupVerified}
     Write-EmployeeReleaseManifest (Join-Path $output 'release-manifest.json') $report
     $report | ConvertTo-Json -Depth 10
 } finally {
     $env:JENTRA_EMPLOYEE_KEYSTORE = $oldKey
     $env:JENTRA_EMPLOYEE_SIGNING_PASSWORD = $oldPassword
     $env:GRADLE_OPTS = $oldGradleOpts
+    $env:JAVA_HOME = $oldJavaHome
     [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($passwordPointer)
     $securePassword.Dispose()
 }

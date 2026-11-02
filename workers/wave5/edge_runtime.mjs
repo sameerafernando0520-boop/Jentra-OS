@@ -1,3 +1,5 @@
+import {serviceCredentialKind} from './provider_credentials_20261014_r5_v7.mjs';
+import {edgeRoute} from './edge_route_20261014_r5_v6.mjs';
 import {lookup} from 'node:dns/promises';
 import {createHash,randomUUID} from 'node:crypto';
 import {Buffer} from 'node:buffer';
@@ -5,10 +7,10 @@ import {PersistentInvocationControl,createWorkerRpc,runDeliveryBatch} from './pe
 import {createScopedWorkerRpc} from './scoped_runtime.mjs';
 import {createExternalCommandHandler,createReviewedModelHandler} from './worker_endpoints.mjs';
 import {runSyntheticSubscriptionBatch} from './subscription_schedule.mjs';
-import {OpenAIResponsesProvider} from './openai_model_adapter.mjs';
+import {CloudflareFreeProvider} from './cloudflare_model_adapter.mjs';
 import {pinnedHttpsPost} from './integration_policy.mjs';
 import {readBoundedJson} from './bounded_json.mjs';
-import {edgeConfiguration} from './edge_configuration.mjs';
+import {freeAiConfiguration as edgeConfiguration} from './free_ai_configuration.mjs';
 
 const uuid=/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/;
 const hex=/^[a-f0-9]{64}$/;
@@ -35,16 +37,14 @@ export function createEdgeRuntime({env,config=edgeConfiguration,fetchImpl=fetch,
   active++;
   const keys=[];
   try{
-   const url=new URL(req.url),base=new URL(config.workerUrl);
-   if(url.origin!==base.origin||req.method!=='POST')return reply(404,{code:'NOT_FOUND'});
-   const route=url.pathname.slice(base.pathname.length);
-   if(!url.pathname.startsWith(base.pathname+'/')||url.search||!['/schedule','/external/forecast','/model/suggestion'].includes(route))return reply(404,{code:'NOT_FOUND'});
+   const route=edgeRoute(req.url,config.workerUrl,['/schedule','/external/forecast','/model/suggestion']);
+   if(req.method!=='POST'||route===null)return reply(404,{code:'NOT_FOUND'});
    if(Number(req.headers.get('content-length'))>config.maxRequestBytes)return reply(413,{code:'VALIDATION_ERROR'});
    // These are injected platform variables. No desktop or other-chat credential
    // is discovered, returned or logged.
    if(envValue(env,'SUPABASE_URL')!==config.url)throw Error('WORKER_PROVIDER_UNAVAILABLE');
    const serviceKey=required(envValue(env,'SUPABASE_SERVICE_ROLE_KEY'));
-   if(!/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(serviceKey))throw Error('WORKER_PROVIDER_UNAVAILABLE');
+   if(serviceCredentialKind(serviceKey)===null)throw Error('WORKER_PROVIDER_UNAVAILABLE');
    const budget=AbortSignal.any([req.signal,AbortSignal.timeout(requestTimeoutMs)]);
    // Endpoint readers consume this request signal, including an unfinished
    // caller body. The same deadline reaches every downstream fetch.
@@ -84,10 +84,13 @@ export function createEdgeRuntime({env,config=edgeConfiguration,fetchImpl=fetch,
     }
    }
    if(route==='/external/forecast')return await createExternalCommandHandler({control})(boundedRequest);
-   const apiKey=envValue(env,'W5_OPENAI_API_KEY');
-   if(typeof apiKey!=='string'||apiKey.length<32)return reply(503,{code:'MODEL_PROVIDER_UNAVAILABLE'});
+   const accountId=envValue(env,'W5_CLOUDFLARE_ACCOUNT_ID'),apiToken=envValue(env,'W5_CLOUDFLARE_API_TOKEN');
+   if(config.model?.provider!=='cloudflare.workers-ai.free.v1'||config.model.freeOnly!==true||config.model.paidFallback!==false||config.model.bindProviderIdentity!==true||
+    typeof accountId!=='string'||!/^[a-f0-9]{32}$/.test(accountId)||typeof apiToken!=='string'||!/^[A-Za-z0-9_-]{40,256}$/.test(apiToken))
+    return reply(503,{code:'MODEL_PROVIDER_UNAVAILABLE'});
    const publishableKey=required(envValue(env,'SUPABASE_ANON_KEY'));
-   const provider=providerFactory?providerFactory({apiKey,review:config.model,fetchImpl:boundedFetch}):new OpenAIResponsesProvider({apiKey,review:config.model,fetchImpl:boundedFetch});
+   const provider=providerFactory?providerFactory({accountId,apiToken,review:config.model,fetchImpl:boundedFetch})
+    :new CloudflareFreeProvider({accountId,apiToken,review:config.model,fetchImpl:boundedFetch});
    return await createReviewedModelHandler({control,provider,policy:config.model,url:config.url,publishableKey,fetchImpl:boundedFetch})(boundedRequest);
   }catch(error){
    if(error.message==='WORKER_REQUEST_TIMEOUT')return reply(408,{code:'REQUEST_TIMEOUT'});

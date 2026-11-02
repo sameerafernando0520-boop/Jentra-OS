@@ -1,0 +1,22 @@
+{
+  "kind": "isolated-hosted-accounting-query-verification",
+  "observedAt": "2026-10-31T04:54:18.341Z",
+  "engine": "PostgreSQL 18.6 (PGlite 0.5.12) on wasm32-unknown-emscripten, compiled by emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 3.1.74 (1092ec30a3fb1d46b1782ff1b4db5094d3d06ae5), 32-bit",
+  "passed": 9,
+  "checks": [
+    "Exact read-only SQL executes in PostgreSQL and reconciles settled model and rotated-key delivery",
+    "Independent worked quota example remains exactly 150 tokens and one webhook",
+    "Ten-unit correction reconciles to 140 with no multiplication across joins",
+    "Unsettled reservation keeps exactly 2000 units in the quota balance",
+    "Unknown persisted model outcome remains unresolved with its reservation retained",
+    "Corrupted receiver payload hash cannot pass ledger reconciliation",
+    "Expired runtime remains blocked even with historically matching ledger",
+    "One-token counter drift is detected against independent reservation/event/correction totals",
+    "Foreign tenant counter mismatch is excluded by exact runtime scope"
+  ],
+  "sqlSha256": "5b6e2ce6abd5dbe7adfc13309b6248ad4e83962c6c51fcc1166d340d0ab62449",
+  "hostedDatabaseQueried": false,
+  "hostedModelResponseVerified": false,
+  "externalDeliveryVerified": false,
+  "boundary": "Contract-shaped synthetic tables in isolated PGlite. Actual installed schemas, RLS, grants, Auth and hosted model/delivery remain unverified."
+}

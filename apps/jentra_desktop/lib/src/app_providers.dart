@@ -94,7 +94,7 @@ final localDatabaseProvider = Provider<JentraLocalDatabase>((ref) {
 });
 
 final draftCipherProvider = Provider<DraftCipher>(
-  (ref) => DraftCipher(keyStore: WindowsCredentialKeyStore()),
+  (ref) => DraftCipher(keyStore: createPlatformDraftKeyStore()),
 );
 
 final encryptedDraftRepositoryProvider = Provider<EncryptedDraftRepository>(
@@ -427,6 +427,27 @@ final class BusinessScopeController extends AsyncNotifier<BusinessScopeState> {
       _remember(scope, gateway, actor);
     }
     return scope;
+  }
+
+  Future<void> refresh() async {
+    final current = state.value;
+    if (current == null) return;
+    final gateway = ref.read(foundationGatewayProvider),
+        actor = _actor(ref.read(foundationGatewayProvider));
+    final revision = ++_selectionRevision;
+    state = const AsyncLoading();
+    final result = await AsyncValue.guard(
+      () => _load(
+        current.tenants,
+        current.tenantId,
+        gateway: gateway,
+        preferredEntityId: current.legalEntityId,
+        preferredBranchId: current.branchId,
+      ),
+    );
+    if (!_isCurrent(gateway, actor, revision)) return;
+    if (result case AsyncData(:final value)) _remember(value, gateway, actor);
+    state = result;
   }
 
   Future<void> selectTenant(String tenantId) async {

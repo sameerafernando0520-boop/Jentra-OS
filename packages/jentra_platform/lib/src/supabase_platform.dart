@@ -5,6 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'runtime_config.dart';
 import 'wave3_observability.dart';
 import 'auth/pkce_exchange_http_client.dart';
+import 'auth/browser_auth_return.dart';
+import 'auth/browser_auth_return_native.dart'
+    if (dart.library.js_interop) 'auth/browser_auth_return_web.dart';
 
 final class SupabasePlatform {
   const SupabasePlatform._();
@@ -18,6 +21,7 @@ final class SupabasePlatform {
       return null;
     }
     try {
+      final pending = captureBrowserAuthReturn();
       await Supabase.initialize(
         url: config.supabaseOrigin,
         publishableKey: config.supabasePublishableKey,
@@ -29,8 +33,12 @@ final class SupabasePlatform {
         ),
         authOptions: const FlutterAuthClientOptions(
           authFlowType: AuthFlowType.pkce,
+          detectSessionInUri: !kIsWeb,
         ),
       );
+      if (kIsWeb) {
+        await completeBrowserAuthReturn(Supabase.instance.client, pending);
+      }
       return Supabase.instance.client;
     } on Object {
       throw const RuntimeStartupException(

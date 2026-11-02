@@ -2,6 +2,28 @@
 
 Owner and team manual for setting up a real company group and running daily business operations. Prepared on 28 October 2026 from the current Jentra OS workspace.
 
+**Client delivery, 29 October:** Windows installer and browser packages are now
+built as **0.3.1+2302 Development**. Read the
+[desktop and web installation guide](install-desktop-and-web.md). The unsigned
+installer and web client use the existing Development backend; company launch
+gates remain pending. The Firebase update below supplies the hosted web client.
+
+**Firebase web update, 29 October:** the updated browser client **0.3.1+2303**
+is hosted at [Jentra OS](https://jentra-os-desktop.web.app). The employee site is
+preserved. Password visibility controls and the 12-character new-account form
+rule are included. This advances web delivery; the Development backend and
+remaining company-launch gates still apply.
+
+**Administration update, 28 October:** the new Company & access screen and
+additive backend candidate now implement extra companies/branches, custom roles,
+staff assignments, suspension/restore and verified-email invitation acceptance.
+Read the [step-by-step administration addendum](company-access-administration.md)
+or its [downloadable Word version](<Jentra OS Company Access Administration Addendum.docx>).
+Hosted installation and pilot acceptance remain pending. The Word manual retains
+the earlier checkpoint; use this addendum for the new administration workflow.
+The [Sales owner decision record](../blueprint/mobile-apps/SALES_OWNER_DECISIONS_20261028.md)
+records approved discount requests and verified email links without activating sending.
+
 ### Start here
 
 Use the Windows application for administration and business operations. Use Jentra Employee for the employee's own records and requests. First establish the correct company structure, access and opening balances; then test complete business journeys before wider use.
@@ -18,7 +40,7 @@ Use the Windows application for administration and business operations. Use Jent
 
 ### Current launch position
 
-The main business modules, analytics and reviewed AI workflows are implemented in source. Source availability does not establish that every module is enabled or installed in your selected database. The current desktop test suite passed 2322 tests. Production configuration and real company acceptance remain separate checks.
+The main business modules, analytics and reviewed AI workflows are implemented in source. Source availability does not establish that every module is enabled or installed in your selected database. The latest desktop test suite passed 2343 tests, including the new administration/privacy checks. Production configuration and real company acceptance remain separate checks.
 
 | Item | Current position |
 | --- | --- |
@@ -53,13 +75,23 @@ A business group is the workspace boundary. A legal entity is a registered compa
 5. Submit once. If the result is unconfirmed, retry the same request rather than creating another workspace.
 6. After confirmation, select the new group, legal entity and branch and verify the scope shown in the application.
 
-The current setup wizard creates the first entity and branch. A complete general administration screen for adding every extra entity, branch and staff role was not found in the current application. Arrange reviewed administrator provisioning for the rest of your group before testing cross company workflows. Do not represent a second legal company as a warehouse or department of the first.
+The setup wizard creates the first entity and branch. After the reviewed
+administration candidate is installed, use **Business setup → Company & access**
+for extra companies and branches, following the addendum above. Verify the
+subscription limit and actual company structure before testing cross-company
+workflows. Do not represent a second legal company as a warehouse or department
+of the first.
 
 ## Configure access and business foundations
 
 ### Give each person an individual account
 
-The workspace creator becomes the owner. Assign access by job, legal entity and branch. Sharing an owner account prevents reliable attribution and independent approval. Staff invitation support exists in the backend; the general invitation and role administration interface still needs completion or reviewed administrator provisioning.
+The workspace creator becomes the owner. Assign access by job, legal entity and
+branch. Sharing an owner account prevents reliable attribution and independent
+approval. The new Company & access workflow supports custom roles, scoped staff
+invitations and access changes after its reviewed backend rollout. Staff sign in
+with their verified account email and accept their own invitation. The candidate
+does not send invitation email.
 
 | Person | Typical responsibility |
 | --- | --- |

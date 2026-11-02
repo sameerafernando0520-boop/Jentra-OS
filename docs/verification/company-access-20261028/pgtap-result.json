@@ -1,0 +1,28 @@
+{
+  "atUtc": "2026-10-28T10:04:51.704Z",
+  "engine": "PGlite 0.5.12 / PostgreSQL 18",
+  "framework": "Official pgTAP 1.3.4 source",
+  "passed": 31,
+  "failed": 0,
+  "rollback": {
+    "candidate_removed": true,
+    "users_removed": true,
+    "companies_removed": true,
+    "receipts_removed": true
+  },
+  "sources": {
+    "supabase/migrations/20260831193714_create_greenfield_foundation.sql": "d104871a777c31b9562fac2e5200d9801b24c0ebd28a9b0e75a43bdc13171f8a",
+    "supabase/migrations/20260831193857_harden_foundation_rls_and_indexes.sql": "26facfcaded77f66f100b26dfb63d82f2d20ecac5f475261924b161389c23786",
+    "supabase/migrations/20260901090317_create_wave2_shared_foundation_schema.sql": "82886b14daf554e33dbe81d05827850b5fd7b3322a5f2bebe3e6958cbc608d86",
+    "supabase/migrations/20260901090331_create_wave2_command_helpers.sql": "2adbc4a022708bc936a9b89ce21f194e03d9d8305ac1708965145b37ae8e5a60",
+    "supabase/candidates/20261028130000_company_access_administration.sql": "13cf3e562a1dcb1767b5f2c9eabff936c9b2a76d1687ef5ceb531b6e4f356c11",
+    "supabase/candidates/tests/company_access_administration_test.sql": "9a81a0250d9f9df22eb4dce7adfa2008e90919bf75f6149fc376672e06443c25"
+  },
+  "pgtapSource": "https://github.com/theory/pgtap/releases/tag/v1.3.4",
+  "pgtapArchiveSha256": "5de16455e3e29898813f05cc9f396a31f878309a94d8adb34e80f423a5841736",
+  "pgtapTemplateSha256": "383ecd73edfd1c7ed5f3b835134ee1fe74e201ee31599346c92ea029b65dcdce",
+  "hostedAccess": false,
+  "supabaseStackExecuted": false,
+  "installedMigration": false,
+  "fixtureBoundary": "Auth users/JWT and an empty migration-ledger table are simulated. Actual foundation/Wave 2 business schema prefix, command helpers, candidate and pgTAP assertions execute. Only CREATE EXTENSION pgtap is replaced by the pinned upstream SQL already loaded. No harness assertions are substituted."
+}

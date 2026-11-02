@@ -7,9 +7,16 @@ function New-EmployeeReleaseDirectory {
     $root = [IO.Path]::GetFullPath($DeliverablesRoot)
     if (!(Test-Path -LiteralPath $root -PathType Container)) { New-Item -ItemType Directory -Path $root -ErrorAction Stop | Out-Null }
     $target = Join-Path $root "$Version-$BuildNumber-signed-production-identity-$Stamp"
-    # No -Force: directory creation refuses a competing caller's existing path.
-    New-Item -ItemType Directory -Path $target -ErrorAction Stop | Out-Null
-    return $target
+    # Directory.CreateDirectory (also used by New-Item) can report success to
+    # two concurrent callers. Reserve the name with an exclusive file first.
+    $reservation = [IO.FileStream]::new($target + '.reserve',
+        [IO.FileMode]::CreateNew,[IO.FileAccess]::ReadWrite,[IO.FileShare]::None,
+        1,[IO.FileOptions]::DeleteOnClose)
+    try {
+        if (Test-Path -LiteralPath $target) { throw 'Release directory already exists.' }
+        New-Item -ItemType Directory -Path $target -ErrorAction Stop | Out-Null
+        return $target
+    } finally { $reservation.Dispose() }
 }
 
 function Get-EmployeeReleaseSourceFiles {
@@ -43,7 +50,8 @@ function Get-EmployeeReleaseSourceFiles {
         if ($directory.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Release source links are forbidden.' }
         foreach ($item in @(Get-ChildItem -LiteralPath $directory.FullName -Force -ErrorAction Stop)) {
             $relative = $item.FullName.Substring($root.Length + 1).Replace('\','/')
-            if ($relative -match '(^|/)(build|\.gradle|\.dart_tool|\.cxx)(/|$)' -or
+            if ($relative -match '(^|/)(build|\.gradle|\.kotlin|\.dart_tool|\.cxx)(/|$)' -or
+                $relative -match '(^|/)(hs_err_pid[0-9]+\.log|replay_pid[0-9]+\.log|java_pid[0-9]+\.hprof)$' -or
                 $relative -match '(^|/)(local\.properties|key\.properties|\.env[^/]*|[^/]*firebase-adminsdk[^/]*|[^/]*service[_-]?account[^/]*|[^/]*private[_-]?key[^/]*)$' -or
                 $relative -match '\.(jks|keystore|p12|pfx|pem|key)$' -or
                 $relative -match '/io/flutter/plugins/GeneratedPluginRegistrant\.java$') { continue }

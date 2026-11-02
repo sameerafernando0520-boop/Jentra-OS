@@ -15,10 +15,11 @@ import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_desktop/src/app_providers.dart';
 import 'package:jentra_desktop/src/features/auth/login_screen.dart';
 import 'package:jentra_platform/jentra_platform.dart';
+import 'package:jentra_platform/src/auth/browser_auth_return.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 const email = 'new-member@example.test';
-const password = 'synthetic-password-only';
+const password = 'Synthetic-password-only7!';
 const actor = '10000000-0000-0000-0000-000000000001';
 
 // The production Flutter client provides PKCE storage. A raw SupabaseClient
@@ -246,6 +247,124 @@ void main() {
     if (creating) await tester.enterText(field('confirmation'), password);
   }
 
+  bool obscured(WidgetTester tester, String name) => tester
+      .widget<TextField>(
+        find.descendant(of: field(name), matching: find.byType(TextField)),
+      )
+      .obscureText;
+
+  testWidgets(
+    'password eyes reveal independently and mode changes conceal and clear',
+    (tester) async {
+      await mount(tester);
+      await tap(tester, 'change-mode');
+      await fill(tester, creating: true);
+      expect(obscured(tester, 'password'), isTrue);
+      expect(obscured(tester, 'confirmation'), isTrue);
+      await tap(tester, 'password-visibility');
+      expect(obscured(tester, 'password'), isFalse);
+      expect(obscured(tester, 'confirmation'), isTrue);
+      expect(find.byTooltip('Hide password'), findsOneWidget);
+      expect(
+        tester.widget<TextFormField>(field('password')).controller!.text,
+        password,
+      );
+      await tap(tester, 'confirmation-visibility');
+      expect(obscured(tester, 'confirmation'), isFalse);
+      await tap(tester, 'password-visibility');
+      expect(obscured(tester, 'password'), isTrue);
+      await tap(tester, 'change-mode');
+      expect(obscured(tester, 'password'), isTrue);
+      expect(
+        tester.widget<TextFormField>(field('password')).controller!.text,
+        isEmpty,
+      );
+      expect(requests, isEmpty);
+    },
+  );
+
+  testWidgets(
+    'backgrounding conceals revealed passwords without changing the input',
+    (tester) async {
+      await mount(tester);
+      await tap(tester, 'change-mode');
+      await fill(tester, creating: true);
+      await tap(tester, 'password-visibility');
+      await tap(tester, 'confirmation-visibility');
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      await tester.pump();
+      expect(obscured(tester, 'password'), isTrue);
+      expect(obscured(tester, 'confirmation'), isTrue);
+      expect(
+        tester.widget<TextFormField>(field('password')).controller!.text,
+        password,
+      );
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      expect(requests, isEmpty);
+    },
+  );
+
+  testWidgets('signup requires letters digits and symbols before any request', (
+    tester,
+  ) async {
+    await mount(tester);
+    await tap(tester, 'change-mode');
+    await tester.enterText(field('email'), email);
+    for (final candidate in [
+      '12345678901!',
+      'letters-only!!!',
+      'Letters123456',
+      'Letters12345 ',
+    ]) {
+      await tester.enterText(field('password'), candidate);
+      await tester.enterText(field('confirmation'), candidate);
+      await tap(tester, 'submit');
+      expect(
+        find.text('Include letters, numbers and symbols.'),
+        findsOneWidget,
+      );
+      expect(requests, isEmpty);
+    }
+    final validator = tester
+        .widget<TextFormField>(field('password'))
+        .validator!;
+    expect(validator('Valid12345!x'), isNull);
+    expect(validator('தமிழ்1234567!'), isNull);
+    expect(validator('Valid1234!x'), 'Use at least 12 characters.');
+  });
+
+  testWidgets(
+    'existing password sign-in is not blocked by new signup complexity',
+    (tester) async {
+      await mount(tester);
+      await tester.enterText(field('email'), email);
+      await tester.enterText(field('password'), 'legacy123');
+      await tap(tester, 'submit');
+      await tester.pumpAndSettle();
+      expect(find.text('Destination workspace'), findsOneWidget);
+      expect(jsonDecode(requests.single.body)['password'], 'legacy123');
+    },
+  );
+
+  testWidgets(
+    'failed browser callback shows safe email recovery before sign-in',
+    (tester) async {
+      await completeBrowserAuthReturn(
+        client,
+        const BrowserAuthReturn.failure(EmailConfirmationFailure.expired),
+      );
+      await mount(tester);
+      expect(
+        find.textContaining('This confirmation link has expired'),
+        findsOneWidget,
+      );
+      expect(find.text('Confirm your email'), findsOneWidget);
+      expect(takeBrowserAuthReturnFailure(), isNull);
+      expect(requests, isEmpty);
+      expect(client.auth.currentSession, isNull);
+    },
+  );
+
   testWidgets(
     'login branding follows production environment without invented region',
     (tester) async {
@@ -276,7 +395,7 @@ void main() {
       await tap(tester, 'submit');
       expect(find.text('Enter a valid email address.'), findsOneWidget);
       expect(find.text('The passwords must match.'), findsOneWidget);
-      expect(find.text('Use at least 8 characters.'), findsWidgets);
+      expect(find.text('Use at least 12 characters.'), findsWidgets);
       expect(requests, isEmpty);
       expect(client.auth.currentUser, isNull);
     },
@@ -421,7 +540,7 @@ void main() {
           }) {
             calls++;
             expect(email, 'new-member@example.test');
-            expect(password, 'synthetic-password-only');
+            expect(password, 'Synthetic-password-only7!');
             expect(resend, isFalse);
             emailSent = onEmailSent;
             return release.future;

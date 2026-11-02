@@ -51,7 +51,17 @@ export async function invokeReviewedModel({reader,control,provider,request,polic
  requireValue(request && uuid.test(request.invocationId) && uuid.test(request.usageEventId) &&
   typeof request.maxTokens==='string' && /^[1-9][0-9]{0,6}$/.test(request.maxTokens),'VALIDATION_ERROR');
  const evidence=redactForecastEvidence(await reader.forecast(request));
- const manifest=JSON.stringify(evidence),digest=createHash('sha256').update(manifest,'utf8').digest('hex');
+ // A local no-I/O budget failure must not consume an invocation or reservation.
+ if(typeof provider.preflight==='function')await provider.preflight({evidence,maxTokens:request.maxTokens});
+ let manifest=JSON.stringify(evidence);
+ if(policy.bindProviderIdentity===true||provider.invocationIdentity!==undefined){
+  const identity=provider.invocationIdentity;
+  requireValue(policy.bindProviderIdentity===true&&identity&&Object.keys(identity).length===3&&
+   identity.provider===policy.provider&&identity.model===policy.model&&/^[a-f0-9]{32}$/.test(identity.accountId??''));
+  manifest=JSON.stringify({evidence,providerIdentity:{provider:identity.provider,model:identity.model,accountId:identity.accountId}});
+ }
+ // Legacy policies retain their original manifest bytes for safe recovery.
+ const digest=createHash('sha256').update(manifest,'utf8').digest('hex');
  const invocation=await control.beginModelInvocation({...request,tenantId:evidence.scope.tenantId,sourceId:evidence.sourceId,sourceHash:evidence.sourceHash,
   manifestHash:digest,policyRevision:1});
  // Persisted settled output can reopen; pending/unknown never issues a new send.

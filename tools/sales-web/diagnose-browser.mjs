@@ -1,0 +1,33 @@
+import { createRequire } from 'node:module';
+import { mkdir, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+const require=createRequire(import.meta.url);
+const { chromium }=require('playwright');
+const [baseUrl,output,transport]=process.argv.slice(2);
+const out=path.resolve(output);
+await mkdir(out,{recursive:true});
+const args=['--disable-gpu',...(transport==='tcp'?['--disable-quic']:[])];
+const browser=await chromium.launch({channel:'chrome',headless:true,args});
+const context=await browser.newContext({viewport:{width:1440,height:1000}});
+const page=await context.newPage();
+const pending=new Set(),responses=[],errors=[],failed=[];
+const safe=url=>{const u=new URL(url);return u.origin+u.pathname;};
+page.on('request',r=>pending.add(r));
+page.on('requestfinished',r=>pending.delete(r));
+page.on('requestfailed',r=>{pending.delete(r);failed.push({url:safe(r.url()),error:r.failure()?.errorText});});
+page.on('response',r=>responses.push({url:safe(r.url()),status:r.status()}));
+page.on('pageerror',e=>errors.push(e.message));
+page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
+let rendered=false,error;
+try {
+  await page.goto(baseUrl,{waitUntil:'domcontentloaded',timeout:45000});
+  await page.getByText('Explore the preview',{exact:true}).waitFor({timeout:45000});
+  rendered=true;
+} catch(e) { error=e.message; }
+await page.screenshot({path:path.join(out,'page.png')});
+await writeFile(path.join(out,'page.aria.txt'),await page.locator('body').ariaSnapshot());
+const result={baseUrl,args,rendered,error,responses,errors,failed,pending:[...pending].map(r=>safe(r.url()))};
+await writeFile(path.join(out,'diagnostic.json'),JSON.stringify(result,null,2)+'\n',{flag:'wx'});
+console.log(JSON.stringify(result,null,2));
+await context.close();await browser.close();
+if(!rendered)process.exitCode=1;

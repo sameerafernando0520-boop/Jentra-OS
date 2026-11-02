@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "origin": "https://jentra-os-desktop--desktop-qa-20261029-2305-dgyd4ul3.web.app",
+  "label": "preview",
+  "scenarios": [
+    {
+      "scenario": "signup-resend-PKCE-and-session-preservation",
+      "passed": true,
+      "events": [
+        {
+          "kind": "signup",
+          "redirectCorrect": true,
+          "pkce": true
+        },
+        {
+          "kind": "resend",
+          "redirectCorrect": true,
+          "pkce": true
+        },
+        {
+          "kind": "pkce",
+          "verifierMatched": true
+        }
+      ]
+    },
+    {
+      "scenario": "password-sign-in",
+      "passed": true
+    },
+    {
+      "scenario": "expired-callback-cleanup",
+      "passed": true
+    },
+    {
+      "scenario": "implicit-token-rejected",
+      "passed": true
+    }
+  ],
+  "transport": "Supabase fully mocked; WebSocket connections blocked",
+  "realEmailSent": false,
+  "realAccountCreated": false,
+  "backendChanged": false
+}

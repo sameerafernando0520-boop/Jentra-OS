@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../app_providers.dart';
 
@@ -44,6 +45,15 @@ class WorkspaceContextDialog extends ConsumerWidget {
               children: [
                 const Text(
                   'Choose the business, legal entity and branch you want to work in.',
+                ),
+                TextButton.icon(
+                  onPressed: () {
+                    final router = GoRouter.of(context);
+                    Navigator.pop(context);
+                    router.go('/workspace/invitations');
+                  },
+                  icon: const Icon(Icons.mark_email_unread_outlined),
+                  label: const Text('Company invitations'),
                 ),
                 const SizedBox(height: 20),
                 DropdownButtonFormField<String>(

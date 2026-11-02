@@ -7,6 +7,7 @@ import '../../app_providers.dart';
 import 'organization_screen.dart';
 import 'payroll_controller.dart';
 import 'payroll_correction_screen.dart';
+import 'payroll_readiness_screen.dart';
 
 class PayrollScreen extends ConsumerWidget {
   const PayrollScreen({super.key});
@@ -425,6 +426,17 @@ class PayrollWorkspace extends StatelessWidget {
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               const Chip(label: Text('Synthetic development')),
+              if (c.has('people.payroll.configure') ||
+                  c.has('people.payroll.settle'))
+                OutlinedButton(
+                  onPressed: c.busy
+                      ? null
+                      : () => showDialog<void>(
+                          context: context,
+                          builder: (_) => PayrollReadinessDialog(controller: c),
+                        ),
+                  child: const Text('Statutory & bank review'),
+                ),
               if (c.has('people.payroll.view'))
                 OutlinedButton(
                   onPressed: c.busy

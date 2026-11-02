@@ -1,0 +1,78 @@
+✔ free provider sends only proposal references to its fixed account and settles exact provider tokens (132.0286ms)
+✔ constructed free provider cannot be retargeted to another model or account (3.0134ms)
+✔ unapproved providers, paid options and malformed credentials are rejected before transport (0.7772ms)
+✔ invalid input or insufficient reserved tokens cannot issue a provider call (4.6232ms)
+✔ quota exhaustion, provider errors and redirects never retry or select another origin (15.0589ms)
+✔ missing, inconsistent, unsafe and out-of-budget provider token counts cannot settle (5.9893ms)
+✔ malformed envelopes, tools and changed proposal references are rejected (12.2907ms)
+✔ oversized provider bodies are cancelled while streaming (2.2204ms)
+✔ canonical worker never falls back to a configured paid OpenAI key (16.167ms)
+✔ configured free worker still requires the requesting user before evidence or provider access (3.1301ms)
+✖ free hosted entrypoint reserves before inference, settles exact tokens and reopens without another model call (17.2686ms)
+✖ free quota rejection retains the unknown invocation and cannot cause a resend or paid fallback (22.0572ms)
+✖ changed source authority after settlement cannot return a suggestion (14.978ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 10
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 440.2433
+
+✖ failing tests:
+
+test at workers\wave5\free_ai_runtime.test.mjs:60:1
+✖ free hosted entrypoint reserves before inference, settles exact tokens and reopens without another model call (17.2686ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  503 !== 200
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/free_ai_runtime.test.mjs:62:9)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 200,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\free_ai_runtime.test.mjs:72:1
+✖ free quota rejection retains the unknown invocation and cannot cause a resend or paid fallback (22.0572ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+  +   code: 'WORKER_PROVIDER_UNAVAILABLE'
+  -   code: 'MODEL_OUTCOME_UNKNOWN'
+    }
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/free_ai_runtime.test.mjs:74:41)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Object],
+    expected: [Object],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\free_ai_runtime.test.mjs:83:1
+✖ changed source authority after settlement cannot return a suggestion (14.978ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  503 !== 403
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/free_ai_runtime.test.mjs:85:9)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 403,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
