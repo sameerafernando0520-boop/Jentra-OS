@@ -206,8 +206,9 @@ class _PayrollReadinessWorkspaceState extends State<PayrollReadinessWorkspace> {
       validator: (text) {
         try {
           if (name == 'month') {
-            if (CivilDate.parse(text ?? '').utc.day != 1)
+            if (CivilDate.parse(text ?? '').utc.day != 1) {
               return 'Use the first day of the month.';
+            }
           } else {
             payrollAmount(text ?? '', 'LKR');
           }
