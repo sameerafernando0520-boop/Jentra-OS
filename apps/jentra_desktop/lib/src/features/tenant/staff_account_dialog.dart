@@ -28,7 +28,8 @@ class StaffAccountDialog extends ConsumerStatefulWidget {
   ConsumerState<StaffAccountDialog> createState() => _StaffAccountDialogState();
 }
 
-class _StaffAccountDialogState extends ConsumerState<StaffAccountDialog> {
+class _StaffAccountDialogState extends ConsumerState<StaffAccountDialog>
+    with WidgetsBindingObserver {
   final _form = GlobalKey<FormState>();
   final _name = TextEditingController();
   final _username = TextEditingController();
@@ -46,7 +47,15 @@ class _StaffAccountDialogState extends ConsumerState<StaffAccountDialog> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     unawaited(_restore());
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed && _visible) {
+      setState(() => _visible = false);
+    }
   }
 
   Future<void> _restore() async {
@@ -73,6 +82,7 @@ class _StaffAccountDialogState extends ConsumerState<StaffAccountDialog> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _name.dispose();
     _username.dispose();
     _password.dispose();
@@ -101,6 +111,7 @@ class _StaffAccountDialogState extends ConsumerState<StaffAccountDialog> {
         _requestId = const Uuid().v4();
         _submitted = false;
         _passwordRetry = false;
+        _visible = false;
         _error = null;
       });
     } on Object {
@@ -134,6 +145,7 @@ class _StaffAccountDialogState extends ConsumerState<StaffAccountDialog> {
       _busy = true;
       _submitted = true;
       _passwordRetry = false;
+      _visible = false;
       _error = null;
     });
     try {
