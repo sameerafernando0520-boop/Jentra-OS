@@ -48,10 +48,13 @@ class _SalesLoginState extends State<SalesLogin> with WidgetsBindingObserver {
   Widget build(BuildContext context) => Scaffold(
     body: LayoutBuilder(
       builder: (context, box) {
+        final textScale = MediaQuery.textScalerOf(context)
+            .scale(1)
+            .clamp(1.0, double.infinity);
         final wide =
-            box.maxWidth >= 1050 &&
-            box.maxHeight >= 800 &&
-            MediaQuery.textScalerOf(context).scale(1) < 1.5;
+            box.maxWidth >= 1050 * textScale &&
+            box.maxHeight >= 800 * textScale &&
+            textScale < 1.5;
         final form = Center(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(box.maxWidth < 600 ? 24 : 48),
@@ -64,7 +67,11 @@ class _SalesLoginState extends State<SalesLogin> with WidgetsBindingObserver {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (!wide) ...[
-                        const JentraBrandLockup(size: 38),
+                        JentraBrandLockup(
+                          size: 38,
+                          inverse:
+                              Theme.of(context).brightness == Brightness.dark,
+                        ),
                         const SizedBox(height: 40),
                       ],
                       const Text(
@@ -92,7 +99,7 @@ class _SalesLoginState extends State<SalesLogin> with WidgetsBindingObserver {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'One workspace for your customers, orders and everything that follows.',
+                        'Use your Jentra OS work account. Your company controls access to customers and orders.',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
@@ -193,7 +200,7 @@ class _SalesLoginState extends State<SalesLogin> with WidgetsBindingObserver {
                       const SizedBox(height: 36),
                       Center(
                         child: Text(
-                          'Operate. Connect. Grow.  ·  v0.1.0 Development',
+                          'Operate. Connect. Grow.  ·  v0.1.1 Development',
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ),

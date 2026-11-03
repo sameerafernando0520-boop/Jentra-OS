@@ -127,6 +127,7 @@ class _FieldSalesWorkspaceState extends State<FieldSalesWorkspace>
                 children: [
                   if (wide)
                     NavigationRail(
+                      scrollable: true,
                       extended:
                           box.maxWidth >= 1180 &&
                           MediaQuery.textScalerOf(context).scale(1) < 1.6,
