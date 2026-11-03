@@ -141,7 +141,7 @@ class _TenantOnboardingScreenState
               ),
               const SizedBox(height: JentraSpacing.x2),
               Text(
-                'Create your business workspace with its first legal entity and branch. You will become its owner and can invite your team after setup.',
+                'Create your business workspace with its first legal entity and branch. You will become its Admin (owner) and can create staff accounts or invite your team after setup.',
                 style: Theme.of(context).textTheme.bodyLarge
                     ?.copyWith(color: context.jentraColors.textSecondary),
               ),

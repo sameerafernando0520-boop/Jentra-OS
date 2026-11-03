@@ -327,7 +327,7 @@ class _Editor extends StatelessWidget {
             ),
           const SizedBox(height: JentraSpacing.x2),
           Text(
-            'Saving needs multi-factor authentication from the last 15 minutes. '
+            'Saving needs a sign-in verified with your authenticator. '
             'Existing risk assessments keep the rating they were given.',
             style: theme.textTheme.bodySmall,
           ),

@@ -624,7 +624,7 @@ class _PlanCommandCard extends StatelessWidget {
                 }),
                 text('reason', 'Reason', lines: 2),
                 const Text(
-                  'Requires multi-factor authentication completed in the last 15 minutes. The maker and submitter cannot decide.',
+                  'Requires a sign-in verified with your authenticator. The maker and submitter cannot decide.',
                 ),
               ],
               _ => [

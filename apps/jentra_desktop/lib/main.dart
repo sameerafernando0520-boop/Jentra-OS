@@ -5,6 +5,10 @@ import 'package:jentra_platform/jentra_receivables_platform.dart';
 import 'package:jentra_platform/jentra_procurement_platform.dart';
 import 'package:jentra_platform/analytics_platform.dart';
 import 'package:jentra_platform/jentra_assurance_platform.dart';
+import 'package:jentra_platform/jentra_workspace_admin_platform.dart';
+
+import 'src/features/tenant/workspace_admin_controller.dart';
+import 'src/features/tenant/staff_account_dialog.dart';
 
 import 'src/features/assurance/assurance_access_controller.dart';
 import 'src/features/assurance/assurance_metrics_controller.dart';
@@ -122,6 +126,12 @@ Future<void> launchJentra({
             client == null ? null : SupabaseStockOpeningAccessGateway(client),
           ),
           businessSetupGatewayProvider.overrideWithValue(businessSetupGateway),
+          workspaceAdminGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseWorkspaceAdminGateway(client),
+          ),
+          workspaceStaffGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseWorkspaceStaffGateway(client),
+          ),
           crmRepositoryProvider.overrideWithValue(crmRepository),
           leadToCashRepositoryProvider.overrideWithValue(quotations),
           quotationWorkspaceRepositoryProvider.overrideWithValue(quotations),

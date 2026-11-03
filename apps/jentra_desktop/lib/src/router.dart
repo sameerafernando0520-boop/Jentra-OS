@@ -109,6 +109,8 @@ import 'features/sales/sales_order_screen.dart';
 import 'features/dashboard/dashboard_screen.dart';
 import 'features/setup/business_setup_screen.dart';
 import 'features/tenant/accept_invitation_screen.dart';
+import 'features/tenant/workspace_admin_screen.dart';
+import 'features/tenant/workspace_invitations_screen.dart';
 import 'features/finance/finance_screen.dart';
 import 'shell/jentra_shell.dart';
 
@@ -187,6 +189,14 @@ final routerProvider = Provider<GoRouter>((ref) {
                   .where((r) => r.name == state.uri.queryParameters['resource'])
                   .firstOrNull,
             ),
+          ),
+          GoRoute(
+            path: '/setup/company-access',
+            builder: (context, state) => const WorkspaceAdminScreen(),
+          ),
+          GoRoute(
+            path: '/workspace/invitations',
+            builder: (context, state) => const WorkspaceInvitationsScreen(),
           ),
           GoRoute(path: '/crm', builder: (context, state) => const CrmScreen()),
           GoRoute(

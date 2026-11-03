@@ -249,9 +249,14 @@ const jentraDestinations = <JentraDestination>[
 List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
   final canOpenSetup =
       capabilities != null &&
-      BusinessSetupResource.values.any(
-        (resource) => capabilities.contains(resource.viewPermission),
-      );
+      (BusinessSetupResource.values.any(
+            (resource) => capabilities.contains(resource.viewPermission),
+          ) ||
+          {
+            'core.tenant.manage',
+            'core.roles.manage',
+            'core.members.invite',
+          }.any(capabilities.contains));
   final canOpenCrm =
       capabilities != null &&
       const {

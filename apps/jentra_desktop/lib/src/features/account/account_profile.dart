@@ -264,8 +264,16 @@ class _AccountProfileDialogState extends ConsumerState<AccountProfileDialog> {
                 ),
                 const SizedBox(height: 12),
                 InputDecorator(
-                  decoration: const InputDecoration(labelText: 'Sign-in email'),
-                  child: SelectableText(user.email ?? 'No email is available'),
+                  decoration: InputDecoration(
+                    labelText: user.appMetadata['jentra_username'] is String
+                        ? 'Username'
+                        : 'Sign-in email',
+                  ),
+                  child: SelectableText(
+                    user.appMetadata['jentra_username'] as String? ??
+                        user.email ??
+                        'No email is available',
+                  ),
                 ),
                 const SizedBox(height: 20),
                 const Text('App preferences'),

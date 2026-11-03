@@ -123,7 +123,7 @@ final class SupabaseAssuranceGateway implements AssuranceGateway {
       code: code,
       message: switch (code) {
         'MFA_REQUIRED' =>
-          'Complete recent MFA in account security, then retry the saved request.',
+          'Verify your sign-in with your authenticator, then retry the saved request.',
         'SEGREGATION_OF_DUTIES_VIOLATION' => _segregation[message]!,
         'PERMISSION_DENIED' =>
           'Audit access is required in this entity and branch.',

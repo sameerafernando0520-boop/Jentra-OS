@@ -104,6 +104,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       ? null
       : 'Enter a valid email address.';
 
+  String? _validateLogin(String? value) {
+    final login = value?.trim() ?? '';
+    if (login.contains('@')) return _validateEmail(value);
+    return RegExp(r'^[a-z0-9][a-z0-9_-]{2,39}$').hasMatch(login.toLowerCase())
+        ? null
+        : 'Enter your username or work email.';
+  }
+
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) return 'Enter your password.';
     if (_creatingAccount && value.length < 8) {
@@ -135,8 +143,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _message = null;
     });
     try {
-      await gateway.signInWithPassword(
-        email: _email.text.trim(),
+      await gateway.signInWithLogin(
+        login: _email.text.trim(),
         password: _password.text,
       );
       if (mounted) _goToWorkspace();
@@ -473,16 +481,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         key: const ValueKey('login-email'),
                         controller: _email,
                         enabled: !_busy,
-                        autofillHints: const [AutofillHints.email],
+                        autofillHints: [
+                          _creatingAccount
+                              ? AutofillHints.email
+                              : AutofillHints.username,
+                        ],
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
-                        validator: _validateEmail,
+                        validator: _creatingAccount
+                            ? _validateEmail
+                            : _validateLogin,
                         onFieldSubmitted: (_) {
                           if (!_busy) _passwordFocus.requestFocus();
                         },
-                        decoration: const InputDecoration(
-                          labelText: 'Work email',
-                          prefixIcon: Icon(Icons.alternate_email),
+                        decoration: InputDecoration(
+                          labelText: _creatingAccount
+                              ? 'Work email'
+                              : 'Username or work email',
+                          prefixIcon: const Icon(Icons.alternate_email),
                         ),
                       ),
                       const SizedBox(height: JentraSpacing.x4),

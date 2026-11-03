@@ -41,6 +41,18 @@ final class TotpEnrollment {
   final String uri;
 }
 
+final class TotpFactorSummary {
+  const TotpFactorSummary({
+    required this.id,
+    required this.verified,
+    required this.recoverable,
+  });
+
+  final String id;
+  final bool verified;
+  final bool recoverable;
+}
+
 final class TenantSummary {
   const TenantSummary({
     required this.id,
@@ -153,6 +165,40 @@ final class SupabaseFoundationGateway {
     required String password,
   }) => _client.auth.signInWithPassword(email: email, password: password);
 
+  Future<AuthResponse> signInWithLogin({
+    required String login,
+    required String password,
+  }) async {
+    final value = login.trim();
+    if (value.contains('@')) {
+      return signInWithPassword(email: value, password: password);
+    }
+    if (!RegExp(r'^[a-z0-9][a-z0-9_-]{2,39}$').hasMatch(value.toLowerCase())) {
+      throw const AuthException('Invalid sign-in details.');
+    }
+    try {
+      final response = await _client.functions.invoke(
+        'workspace-staff',
+        body: {
+          'operation': 'login',
+          'username': value.toLowerCase(),
+          'password': password,
+        },
+      );
+      final data = response.data;
+      if (response.status != 200 ||
+          data is! Map ||
+          data['refresh_token'] is! String) {
+        throw const AuthException('Invalid sign-in details.');
+      }
+      return await _client.auth.setSession(data['refresh_token'] as String);
+    } on FunctionException {
+      throw const AuthException(
+        'Sign-in failed. Check your details and try again.',
+      );
+    }
+  }
+
   Future<AuthResponse> createAccount({
     required String email,
     required String password,
@@ -219,18 +265,60 @@ final class SupabaseFoundationGateway {
   }
 
   Future<List<String>> listVerifiedTotpFactorIds() async {
+    final factors = await listTotpFactors();
+    return factors
+        .where((factor) => factor.verified)
+        .map((factor) => factor.id)
+        .toList(growable: false);
+  }
+
+  Future<List<TotpFactorSummary>> listTotpFactors() async {
+    final actor = currentUser?.id;
     final factors = await _client.auth.mfa.listFactors();
-    return factors.totp.map((factor) => factor.id).toList(growable: false);
+    if (actor == null || currentUser?.id != actor) {
+      throw StateError('The signed-in account changed.');
+    }
+    return [
+      for (final factor in factors.all)
+        if (factor.factorType == FactorType.totp)
+          TotpFactorSummary(
+            id: factor.id,
+            verified: factor.status == FactorStatus.verified,
+            recoverable:
+                factor.status == FactorStatus.unverified &&
+                (factor.friendlyName == 'Jentra desktop' ||
+                    (factor.friendlyName?.startsWith('Jentra desktop ') ??
+                        false)),
+          ),
+    ];
+  }
+
+  Future<void> cancelTotpEnrollment(String factorId) async {
+    final actor = currentUser?.id;
+    final factors = await listTotpFactors();
+    if (actor == null || currentUser?.id != actor) {
+      throw StateError('The signed-in account changed.');
+    }
+    final factor = factors.where((factor) => factor.id == factorId).firstOrNull;
+    if (factor == null) return;
+    if (factor.verified || !factor.recoverable) {
+      throw StateError(
+        'Only an unfinished Jentra desktop setup can be removed.',
+      );
+    }
+    await _client.auth.mfa.unenroll(factorId);
   }
 
   Future<TotpEnrollment> enrollTotp() async {
     final response = await _client.auth.mfa.enroll(
       factorType: FactorType.totp,
       issuer: 'Jentra OS',
-      friendlyName: 'Jentra desktop',
+      friendlyName: 'Jentra desktop ${const Uuid().v4()}',
     );
     final totp = response.totp;
-    if (totp == null) throw StateError('TOTP enrollment details are missing.');
+    if (totp == null || totp.secret.isEmpty) {
+      throw StateError('TOTP enrollment details are missing.');
+    }
     return TotpEnrollment(
       factorId: response.id,
       secret: totp.secret,
