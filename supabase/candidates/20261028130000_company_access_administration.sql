@@ -154,9 +154,10 @@ declare actor uuid:=auth.uid(); id uuid; entity_id uuid; branch_id uuid; role_id
  name text; code text; zone text; currency text; permissions text[]; mfa boolean; granted boolean;
  before_value jsonb; result jsonb; replay jsonb; request_hash text; command_name text;
  member core.memberships%rowtype; role_record core.roles%rowtype; subscription billing.tenant_subscriptions%rowtype;
- invitation core.invitations%rowtype; counter integer;begin
- perform workspace_admin.require_admin(p_tenant_id,case when p_action in('create_entity','update_entity','create_branch','update_branch')
-  then 'core.tenant.manage' when p_action in('create_invitation','revoke_invitation') then 'core.members.invite' else 'core.roles.manage' end);
+ invitation core.invitations%rowtype; counter integer; required_permission text;begin
+ required_permission:=case when p_action in('create_entity','update_entity','create_branch','update_branch')
+  then 'core.tenant.manage' when p_action in('create_invitation','revoke_invitation') then 'core.members.invite' else 'core.roles.manage' end;
+ perform workspace_admin.require_admin(p_tenant_id,required_permission);
  if p_command_id is null or p_client_timestamp is null or p_client_timestamp>now()+interval '5 minutes'
   or p_action is null or p_action not in('create_entity','update_entity','create_branch','update_branch',
    'create_role','update_role','set_assignment','set_member_status','create_invitation','revoke_invitation') then
@@ -164,6 +165,8 @@ declare actor uuid:=auth.uid(); id uuid; entity_id uuid; branch_id uuid; role_id
  perform workspace_admin.fields(p_payload,array(select jsonb_object_keys(p_payload)),array[]::text[]);
  -- One tenant lock serializes role edits, assignments, invitations and status changes.
  perform 1 from core.tenants t where t.id=p_tenant_id for update;
+ -- Access may have been revoked or the tenant suspended while this request waited.
+ perform workspace_admin.require_admin(p_tenant_id,required_permission);
  command_name:='workspace_admin.'||p_action;
  request_hash:=core.wave2_request_hash(command_name,p_tenant_id,null,
   jsonb_build_object('command_id',p_command_id,'client_timestamp',p_client_timestamp,'payload',p_payload),p_expected_version);
