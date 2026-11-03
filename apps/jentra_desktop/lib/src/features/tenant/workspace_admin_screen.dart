@@ -6,6 +6,7 @@ import 'package:jentra_domain/jentra_workspace_admin.dart';
 import '../../app_providers.dart';
 import '../auth/mfa_required_screen.dart';
 import 'workspace_admin_controller.dart';
+import 'staff_account_dialog.dart';
 
 class WorkspaceAdminScreen extends ConsumerStatefulWidget {
   const WorkspaceAdminScreen({super.key});
@@ -16,6 +17,41 @@ class WorkspaceAdminScreen extends ConsumerStatefulWidget {
 
 class _WorkspaceAdminScreenState extends ConsumerState<WorkspaceAdminScreen> {
   bool opening = false;
+  Future<void> createStaff(WorkspaceAdminController c) async {
+    if (opening || c.locked) return;
+    setState(() => opening = true);
+    try {
+      await c.loadChoices(WorkspaceAdminResource.roles);
+      if (!mounted ||
+          ref.read(workspaceAdminControllerProvider) != c ||
+          c.locked) {
+        return;
+      }
+      final created = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => StaffAccountDialog(controller: c),
+      );
+      if (created == true &&
+          mounted &&
+          ref.read(workspaceAdminControllerProvider) == c) {
+        await c.load(WorkspaceAdminResource.members);
+      }
+    } on Object {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Staff roles could not be loaded. Recheck your access and connection.',
+            ),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => opening = false);
+    }
+  }
+
   Future<void> open(
     WorkspaceAdminController c,
     WorkspaceAdminAction action, [
@@ -216,6 +252,20 @@ class _WorkspaceAdminScreenState extends ConsumerState<WorkspaceAdminScreen> {
                   icon: const Icon(Icons.refresh),
                   label: const Text('Reload'),
                 ),
+                if (c.resource == WorkspaceAdminResource.members &&
+                    c.capabilities.contains('core.members.invite') &&
+                    c.capabilities.contains('core.roles.manage'))
+                  FilledButton.icon(
+                    key: const ValueKey('create-staff-account'),
+                    onPressed:
+                        c.locked ||
+                            opening ||
+                            ref.watch(workspaceStaffGatewayProvider) == null
+                        ? null
+                        : () => createStaff(c),
+                    icon: const Icon(Icons.person_add_outlined),
+                    label: const Text('Create staff account'),
+                  ),
                 if (create != null &&
                     c.capabilities.contains(create.resource.permission))
                   FilledButton.icon(
@@ -323,6 +373,7 @@ class _WorkspaceAdminScreenState extends ConsumerState<WorkspaceAdminScreen> {
                         Text(
                           [
                             row.data['code'],
+                            row.data['username'],
                             row.data['email'] != row.name
                                 ? row.data['email']
                                 : null,

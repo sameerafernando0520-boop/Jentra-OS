@@ -1490,10 +1490,13 @@ select throws_ok($$select pg_temp.call('period_governance_command',
  (select version from finance.fiscal_periods where id=pg_temp.period_id()))$$,
  '42501','RECENT_MFA_REQUIRED','AAL2 without recent second-factor evidence is insufficient');
 select pg_temp.period_actor('creator',901);
-select throws_ok($$select pg_temp.call('period_governance_command',
- pg_temp.period_payload('request_reopen','period.reopen.request'),
- (select version from finance.fiscal_periods where id=pg_temp.period_id()))$$,
- '42501','RECENT_MFA_REQUIRED','stale MFA cannot request reopen');
+select case when to_regprocedure('core.session_has_mfa()') is null then
+ throws_ok($$select pg_temp.call('period_governance_command',
+  pg_temp.period_payload('request_reopen','period.reopen.request'),
+  (select version from finance.fiscal_periods where id=pg_temp.period_id()))$$,
+  '42501','RECENT_MFA_REQUIRED','legacy policy rejects stale MFA')
+ else lives_ok($$select finance.period_require_recent_mfa()$$,
+  'verified sign-in remains valid beyond 15 minutes') end;
 select pg_temp.period_actor('creator');
 insert into procurement_responses values('period.reopen.request',pg_temp.call('period_governance_command',
  pg_temp.period_payload('request_reopen','period.reopen.request'),

@@ -212,13 +212,16 @@ select is((select count(*)::integer from assurance.evidence_items where request_
 select throws_ok($$update assurance.evidence_items set sha256=repeat('0',64) where id=pg_temp.aid('ev1')$$,'55000','ASSURANCE_HISTORY_IMMUTABLE','evidence provenance immutable');
 select throws_ok($$delete from assurance.evidence_items where id=pg_temp.aid('ev1')$$,'55000','ASSURANCE_HISTORY_IMMUTABLE','evidence cannot be deleted');
 
--- Freeze requires recent MFA and the lead auditor.
+-- Freeze requires MFA and the lead auditor. The shared helper marks backends
+-- with the session-lifetime policy; historical candidates retain their window.
 select pg_temp.actor('lead',false);set local role authenticated;
 select throws_ok($$select pg_temp.cmd(pg_temp.e('freeze_evidence')||'{"reason":"Fieldwork cutoff"}',pg_temp.ver(),'freeze.nomfa')$$,
   '42501','ASSURANCE_RECENT_MFA_REQUIRED','freeze requires MFA');
 reset role;select pg_temp.actor('lead',true,3600);set local role authenticated;
-select throws_ok($$select pg_temp.cmd(pg_temp.e('freeze_evidence')||'{"reason":"Fieldwork cutoff"}',pg_temp.ver(),'freeze.stale')$$,
-  '42501','ASSURANCE_RECENT_MFA_REQUIRED','stale MFA (older than 15 minutes) rejected');
+select case when to_regprocedure('core.session_has_mfa()') is null then
+  throws_ok($$select pg_temp.cmd(pg_temp.e('freeze_evidence')||'{"reason":"Fieldwork cutoff"}',pg_temp.ver(),'freeze.stale')$$,
+    '42501','ASSURANCE_RECENT_MFA_REQUIRED','legacy policy rejects stale MFA')
+  else ok(assurance.recent_mfa(), 'verified sign-in remains valid beyond 15 minutes') end;
 reset role;select pg_temp.actor('auditor');set local role authenticated;
 select throws_ok($$select pg_temp.cmd(pg_temp.e('freeze_evidence')||'{"reason":"Fieldwork cutoff"}',pg_temp.ver(),'freeze.notlead')$$,
   '42501',null,'non-lead cannot freeze');

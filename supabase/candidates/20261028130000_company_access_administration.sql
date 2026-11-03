@@ -116,7 +116,9 @@ declare rows jsonb; more boolean;begin
    from core.branches b where p_resource='branches' and b.tenant_id=p_tenant_id
   union all select m.id::text,jsonb_build_object('id',m.id,'tenant_id',m.tenant_id,'user_id',m.user_id,
    'name',left(coalesce(nullif(u.raw_user_meta_data->>'full_name',''),u.email,m.id::text),100),
-   'email',u.email,'status',m.status,'version',m.version,
+   'username',u.raw_app_meta_data->>'jentra_username',
+   'email',case when u.raw_app_meta_data->>'jentra_username' is null then u.email else null end,
+   'status',m.status,'version',m.version,
    'owner',exists(select 1 from core.role_assignments a join core.roles r on r.tenant_id=a.tenant_id and r.id=a.role_id
     where a.tenant_id=m.tenant_id and a.membership_id=m.id and r.code='tenant_owner'),
    'assignments',coalesce((select jsonb_agg(jsonb_build_object('id',a.id,'role_id',a.role_id,

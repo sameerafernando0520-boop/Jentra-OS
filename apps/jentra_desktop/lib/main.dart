@@ -22,6 +22,7 @@ import 'src/features/assurance/assurance_planning_controller.dart'
 import 'src/features/assurance/assurance_settings_controller.dart';
 import 'src/shell/notification_inbox.dart';
 import 'src/features/assurance/assurance_workspace_controller.dart';
+import 'src/features/tenant/staff_account_dialog.dart';
 
 import 'src/features/analytics/process_metric_screen.dart';
 import 'src/features/analytics/pipeline_forecast_screen.dart';
@@ -167,6 +168,9 @@ Future<void> launchJentra({
           businessSetupGatewayProvider.overrideWithValue(businessSetupGateway),
           workspaceAdminGatewayProvider.overrideWithValue(
             client == null ? null : SupabaseWorkspaceAdminGateway(client),
+          ),
+          workspaceStaffGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseWorkspaceStaffGateway(client),
           ),
           crmRepositoryProvider.overrideWithValue(crmRepository),
           leadToCashRepositoryProvider.overrideWithValue(quotations),

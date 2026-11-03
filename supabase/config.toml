@@ -462,3 +462,11 @@ enabled = true
 verify_jwt = false
 import_map = "./functions/assurance-evidence-download/deno.json"
 entrypoint = "./functions/assurance-evidence-download/index.ts"
+
+# Username sign-in is public; creation validates the caller and scoped MFA RPCs.
+# Candidate only. Deployment requires the matching staff-account SQL first.
+[functions.workspace-staff]
+enabled = true
+verify_jwt = false
+import_map = "./functions/workspace-staff/deno.json"
+entrypoint = "./functions/workspace-staff/index.ts"

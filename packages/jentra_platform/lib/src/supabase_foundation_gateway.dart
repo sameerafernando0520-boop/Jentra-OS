@@ -154,6 +154,40 @@ final class SupabaseFoundationGateway {
     required String password,
   }) => _client.auth.signInWithPassword(email: email, password: password);
 
+  Future<AuthResponse> signInWithLogin({
+    required String login,
+    required String password,
+  }) async {
+    final value = login.trim();
+    if (value.contains('@')) {
+      return signInWithPassword(email: value, password: password);
+    }
+    if (!RegExp(r'^[a-z0-9][a-z0-9_-]{2,39}$').hasMatch(value.toLowerCase())) {
+      throw const AuthException('Invalid sign-in details.');
+    }
+    try {
+      final response = await _client.functions.invoke(
+        'workspace-staff',
+        body: {
+          'operation': 'login',
+          'username': value.toLowerCase(),
+          'password': password,
+        },
+      );
+      final data = response.data;
+      if (response.status != 200 ||
+          data is! Map ||
+          data['refresh_token'] is! String) {
+        throw const AuthException('Invalid sign-in details.');
+      }
+      return await _client.auth.setSession(data['refresh_token'] as String);
+    } on FunctionException {
+      throw const AuthException(
+        'Sign-in failed. Check your details and try again.',
+      );
+    }
+  }
+
   Future<AuthResponse> createAccount({
     required String email,
     required String password,

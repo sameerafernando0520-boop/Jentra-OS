@@ -3,14 +3,14 @@
 3 November 2026. This assessment describes the checked-out source. The hosted
 database and installed applications were not changed by this task.
 
-## How organization access currently works
+## How organization access worked before this change
 
 | Requirement | Current implementation |
 | --- | --- |
 | First person becomes Admin | A signed-in person who **creates a business workspace** becomes its `tenant_owner` with the full permission set. Registering an account alone does not create an organization or grant access to someone else's organization. The visible role is called **Tenant owner**. |
 | Admin controls the sections | The owner has the business permission set. Company & access supports companies, branches, custom roles, selected permissions and scoped assignments. Roles can combine tasks from existing application areas. Creating arbitrary new application modules is a development change. Plan limits and independent approval rules still apply. |
 | Delegate to several people | Staff invitations and role assignments support several individuals with company/branch scopes. Each person has their own authenticated account. A staff/employee profile alone is not a login account. |
-| Admin gives a username and password | **Different today:** sign-in uses an email address and password (or Google). The administrator invites a verified email and assigns access; the invitee uses their own account and accepts the invitation. There is no administrator-created custom username/password flow in the checked source. |
+| Admin gives a username and password | Previously sign-in used an email address and password (or Google). Administrators invited a verified email and assigned access. The custom username/password flow described below is now implemented in source. |
 
 Company & access administration is supplied by the existing uninstalled candidate
 `supabase/candidates/20261028130000_company_access_administration.sql`. Its UI and
@@ -25,6 +25,47 @@ Source references:
 - `apps/jentra_desktop/lib/src/features/tenant/tenant_onboarding_screen.dart`.
 - `apps/jentra_desktop/lib/src/features/tenant/workspace_admin_screen.dart`.
 - `packages/jentra_platform/lib/src/supabase_foundation_gateway.dart`.
+
+## Admin-created staff accounts
+
+The confirmed requirement uses existing app areas (Sales, Finance, Inventory and
+others) as sections. It is implemented through the existing permission catalogue
+and custom roles. A role can combine permissions from several sections; one
+person can receive several roles. The workspace creator is its Admin/owner.
+
+The Admin uses **Company & access -> Roles** to define the sections and tasks,
+then **Staff -> Create staff account** to enter a full name, username, password
+and one or more roles. Staff can then use **Username or work email** on the
+sign-in screen and complete their own authenticator setup. Existing invitation,
+role editing, suspension and revocation flows remain available.
+
+Usernames are case-insensitive, globally unique, and use 3–40 letters, numbers,
+underscores or hyphens. A business prefix helps avoid collisions. Profiles and
+the staff register show the username rather than an internal Auth address.
+
+`supabase/candidates/20261103130000_admin_staff_accounts.sql` provides private
+reservation, identity-binding and atomic membership/role completion APIs. The
+`workspace-staff` Edge function uses Supabase's server-only Auth Admin API for
+creation. No service key is shipped in the app. Passwords never enter SQL,
+audit receipts, command recovery, saved drafts or error messages.
+
+Both reservation and completion check current administrator permissions and MFA
+again after taking the organization lock. Every delegated role must belong to
+the organization and remain within the Admin's authority; owner transfer is not
+permitted through staff creation. Existing or suspended identities are not
+silently adopted or restored. Completed retries reject changed role assignments.
+
+An interrupted request saves only its scoped request identity and access choices
+in the existing encrypted draft store. Reopening restores those choices and
+requires password re-entry. Retries check an existing account's original password
+and never reset it. Pending requests count toward seat limits and have a
+per-Admin budget. Reservations older than 24 hours can be reclaimed only when
+Auth never created an identity; existing Auth accounts are never deleted.
+
+Username resolution is service-only. Invalid, missing and suspended usernames
+use generic sign-in failures, with bounded per-name attempt counters covering
+unknown names too. There is no global counter that a few requests can use to
+disable every organization's login.
 
 ## Requested authenticator behavior
 
@@ -80,10 +121,40 @@ ask for a code verified within 15 minutes.
   future timestamps, missing permission and suspended organizations are refused.
   Candidate DDL is rolled back. Company administration installed before or after
   the policy is covered, as is the company schema being absent.
+- `tools/auth/test_staff_accounts_sql.mjs`: 34 isolated PostgreSQL assertions,
+  including multiple roles, MFA, cross-actor and owner-role denials, trusted Auth
+  identity binding, immutable retries, revocation, pending budgets, expiry and
+  login attempt limits. It runs the actual foundation permission helpers and
+  candidate functions with synthetic schema/Auth fixtures.
+- `supabase/functions/tests/workspace_staff.test.mjs`: 14 handler tests for
+  authentication, reservation binding, credential handling, lost responses,
+  retries and generic login failures. The Edge entry point passes Deno checking.
+- Staff form tests cover multiple sections, uncertain retries, reopening without
+  stored passwords, and wiping passwords after an authority change. Platform
+  tests cover username/email sign-in, returned-token exchange with Auth, scoped
+  creation and encrypted request recovery.
 - The PostgreSQL runner supplies synthetic auth-claim adapters and a permission
   fixture. It tests the real SQL guards, not hosted JWT signing, actual session
   revocation or end-to-end RLS. Flutter tests use synthetic Auth HTTP responses.
-- Broader analyzer and regression-suite results are recorded below when complete.
+- The final focused staff/session run passes all 10 tests, including starting
+  another account after a completed request's delegation changes. The broader
+  account/onboarding/access/profile run passes 82 tests. Audit access/settings
+  passes 20 tests, with four snapshots updated for the revised MFA wording.
+- Changed Dart files were analyzed; the remaining staff-dialog style finding was
+  corrected and its final analyzer rerun reports no issues. The initial full
+  workspace analysis also reported an unrelated existing style hint in
+  `payroll_readiness_screen.dart:210`.
+- The full platform run passes 1,309 tests and finds a constant-expression error
+  in the new recovery test fixture. That fixture is corrected; both encrypted
+  recovery tests pass on rerun. Username/Finance gateway coverage also passes
+  all 11 focused tests.
+- The full desktop run passes 2,388 tests and reports two payroll screenshot
+  mismatches plus a warehouse test timeout. These are outside the edited account
+  and MFA paths. The warehouse test passes alone in nine seconds; payroll
+  snapshots are preserved. The complete desktop suite is therefore **not green**.
+- SQL verification totals 95 isolated assertions (34 staff + 61 MFA), all passed.
+  Handler and company-candidate runner verification passes all 19 Node tests.
+  Deno checks the Edge entry point successfully. `git diff --check` is clean.
 
 To repeat the isolated PostgreSQL test with an existing local PGlite install:
 
@@ -94,17 +165,20 @@ node tools/auth/test_session_mfa_policy.mjs
 
 ## Installation and remaining scope
 
-The SQL is a reviewable **candidate**, not an applied migration. Existing applied
+The SQL files are reviewable **candidates**, not applied migrations. Existing applied
 migrations were preserved. No accounts, credentials, roles, memberships or
 entitlements were changed; no application was deployed.
 
-For the coordinated backend installation, use a unique returned migration version
-and apply this policy **after** the installed Finance/Audit schemas and any
-company administration candidate when available. The updated company candidate
-also supports being installed later. Publish the matching desktop build
-after that backend installation, then verify with an actual signed-in account:
-login -> code -> navigate -> refresh -> reopen -> sign out -> login -> code.
+For the coordinated backend installation, obtain the approved target and use the
+returned migration versions. Install company administration, then the session
+MFA policy, then staff accounts. The updated company candidate also honors the
+session policy when installed later. Deploy `workspace-staff` with the server's
+standard Supabase environment secrets, then publish the matching desktop build.
+No extra user-created secret or credential is needed in the client.
 
-Administrator-created custom usernames/passwords would be a separate change to
-account provisioning, sign-in and recovery. This task preserves email invitation
-delegation while clarifying the difference.
+Verify with real, distinct Admin and staff accounts: create the workspace ->
+confirm Admin access -> define section roles -> create staff credentials ->
+staff login -> authenticator -> assigned sections only -> refresh/reopen without
+another code -> logout/login with a new code -> suspend/revoke and confirm denial.
+Hosted installation, deployed-function behavior and authenticated native
+acceptance are separate from the isolated evidence above and remain pending.
