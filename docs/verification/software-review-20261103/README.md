@@ -1,8 +1,9 @@
 # Jentra OS local software review — 3–4 November 2026
 
 Reviewed the clean checkout at `91c2237c` and repaired seven confirmed issues in
-desktop authentication, company administration, Employee configuration, and the Sales interface. Changes
-remain local and uncommitted. This review did not deploy an app, install a
+desktop authentication, company administration, Employee configuration, and the Sales interface.
+The original repairs are now recorded in commits `0d36fd95`, `6d9c0b9d`,
+`68ae7f0d`, and `c98d1626` in the shared checkout. This review did not deploy an app, install a
 database candidate, or change hosted accounts or business data.
 
 Completion continued on 4 November in the supplied
@@ -20,7 +21,7 @@ project/key mismatch and was addressed without removing the supplied test.
 | P1 | Open live Sales at 768×360 or 1024×360 with 200% text. Its four-destination rail overflows vertically by 24 pixels. | The existing navigation rail scrolls; every destination remains reachable. |
 | P2 | Open Sales sign-in at 1050×800 with 140% or 149% text. The welcome panel overflows vertically by 606–874 pixels and horizontally by 26–47 pixels. | Split-view eligibility accounts for text scaling. Constrained windows use the existing scrollable single-column form. The split view remains available at 1600×1200 with 140% text. |
 | P2 | Open single-column Sales sign-in in dark mode. The default dark wordmark is almost invisible against the dark canvas. | The sign-in page selects the existing inverse brand asset in dark mode. |
-| P2 | Configure Employee with a hosted Supabase URL and a legacy anonymous key naming a different project. Validation incorrectly accepts the pair. | The validator compares a supplied legacy project reference with the hosted URL, following the desktop's existing policy. Publishable keys and legacy keys without a reference retain their existing behavior. |
+| P2 | Configure Employee with a hosted Supabase URL and a legacy anonymous key naming a different project. Validation incorrectly accepts the pair. | The validator reuses the desktop startup policy to compare a supplied legacy project reference with the hosted URL. Valid publishable keys and legacy anonymous keys without a reference remain supported. |
 
 The MFA changes are in the [desktop screen](../../../apps/jentra_desktop/lib/src/features/auth/mfa_required_screen.dart)
 and [platform gateway](../../../packages/jentra_platform/lib/src/supabase_foundation_gateway.dart).
@@ -29,6 +30,8 @@ Sales changes are limited to its [sign-in layout](../../../apps/jentra_sales/lib
 and [navigation rail](../../../apps/jentra_sales/lib/src/ui/field_sales_workspace.dart).
 The additional configuration repair is in the
 [Employee validator](../../../apps/jentra_employee/lib/src/employee_configuration.dart).
+Its shared validation API is exposed by
+[runtime_configuration.dart](../../../packages/jentra_platform/lib/runtime_configuration.dart).
 
 Supabase enrollment creates an unverified factor; the interrupted setup must be
 handled separately from verified authenticators. See the official
@@ -131,10 +134,19 @@ the mismatched key incorrectly returned `true`. It now uses the same hosted
 project-reference rule as desktop startup. This is configuration validation;
 Supabase still performs authoritative key verification.
 
+The shared checkout received the original review commits and a concurrent Sales
+release continuation during these checks. Those release changes were preserved.
+Employee's final shared-validator refactor retained the public-key format guard;
+its remaining missing-braces diagnostic was corrected. The focused configuration
+tests and analysis were repeated for that final form.
+
 | Completion check | Result | Evidence |
 | --- | --- | --- |
 | Supplied configuration regression, before fix | Failed as expected | [Log](logs/configuration-red-20261104.log) |
 | Employee, full VM suite after configuration repair | 225 passed | [Log](logs/employee-completion-20261104.log) |
+| Final shared Employee validator | 4 configuration tests passed | [Log](logs/employee-config-final-20261104.log) |
 | Payroll and MFA, current worktree | 42 passed | [Log](logs/desktop-completion-20261104.log) |
 | Sales widget and layout regressions, current worktree | 17 passed | [Log](logs/sales-completion-20261104.log) |
 | Company reauthorization, current worktree | 14 assertions passed | [Log](logs/company-reauthorization-completion-20261104.log) |
+| Final Employee configuration analysis | No issues after correcting the remaining diagnostic | [Log](logs/employee-config-analysis-final-20261104.log) |
+| Final changed-file formatting | 9 files, zero changes | [Log](logs/format-completion-final-20261104.log) |
