@@ -25,16 +25,22 @@ async function copy(directory='') {
   }
 }
 await copy();
-const downloadRoot = path.join(root,'dist/Jentra-Sales-0.1.0-1-Development');
+const downloadRoot = path.resolve(root,process.argv[4] || 'dist/Jentra-Sales-0.1.0-1-Development');
+if(!downloadRoot.startsWith(path.join(root,'dist')+path.sep)) throw Error('EXPECTED_DIST_RELEASE');
+const metadata=process.argv[4]?JSON.parse((await readFile(path.join(downloadRoot,'release.json'),'utf8')).replace(/^\uFEFF/,'')):
+ {name:'Jentra Sales',version:'0.1.0+1',channel:'development',mode:'interactive-preview',liveSalesEnabled:false,
+ apkFilename:'Jentra-Sales-0.1.0-1-Development.apk',archiveFilename:'Jentra-Sales-0.1.0-1-Development-APK.zip'};
+if(metadata.name!=='Jentra Sales'||!/^\d+\.\d+\.\d+\+\d+$/.test(metadata.version)||metadata.liveSalesEnabled!==false) throw Error('REVIEWED_RELEASE_METADATA_REQUIRED');
+for(const name of [metadata.apkFilename,metadata.archiveFilename]) if(typeof name!=='string'||path.basename(name)!==name) throw Error('INVALID_DOWNLOAD_PATH');
 await mkdir(path.join(out,'public','downloads'));
-for (const name of ['Jentra-Sales-0.1.0-1-Development-APK.zip','checksums.sha256','READ-ME.txt']) {
+for (const name of [metadata.apkFilename,metadata.archiveFilename,'checksums.sha256','READ-ME.txt']) {
   const bytes=await readFile(path.join(downloadRoot,name));
   const relative=`downloads/${name}`;
   await copyFile(path.join(downloadRoot,name),path.join(out,'public',relative));
   files.push({path:relative,size:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')});
 }
 for (const config of ['firebase.json','.firebaserc']) await copyFile(path.join(root,'tools/sales-web',config),path.join(out,config));
-await writeFile(path.join(out,'public','version.json'),JSON.stringify({name:'Jentra Sales',version:'0.1.0+1',channel:'development',mode:'interactive-preview',liveSalesEnabled:false})+'\n');
+await writeFile(path.join(out,'public','version.json'),JSON.stringify(metadata)+'\n');
 const versionIndex = files.findIndex(file=>file.path==='version.json');
 if(versionIndex>=0) files.splice(versionIndex,1);
 const version=await readFile(path.join(out,'public','version.json'));

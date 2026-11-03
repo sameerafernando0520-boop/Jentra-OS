@@ -451,7 +451,7 @@ class _SalesMore extends StatelessWidget {
               'Customer acceptance, company approval and delivery acknowledgement are tracked separately. A local draft is never a confirmed order. Your discount request is reviewed by your company.',
             ),
             SizedBox(height: 20),
-            Text('Jentra Sales · 0.1.0+1 Development'),
+            Text('Jentra Sales · 0.1.1+2 Development'),
             SizedBox(height: 8),
             Text(
               'English interface · Sinhala and Tamil are planned. Collections and return requests follow in a later release.',

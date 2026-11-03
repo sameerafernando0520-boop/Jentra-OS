@@ -36,6 +36,7 @@ for(const file of ['assets/missing.png','main.dart.missing.js','.env','private-f
 const deep=await fetch(`${baseUrl}/sales/orders`,{signal:AbortSignal.timeout(30000)});
 assert.equal(deep.status,200);assert.match(await deep.text(),/<title>Jentra Sales<\/title>/);
 const version=await (await fetch(`${baseUrl}/version.json`)).json();
-assert.equal(version.version,'0.1.0+1');assert.equal(version.liveSalesEnabled,false);
+const stagedVersion=JSON.parse(await readFile(path.join(release,'public','version.json'),'utf8'));
+assert.deepEqual(version,stagedVersion);assert.equal(version.liveSalesEnabled,false);
 await writeFile(output,JSON.stringify({baseUrl,project:manifest.project,site:manifest.site,passed:true,version,headers,missing,spa:true,files:checks},null,2)+'\n',{flag:'wx'});
 console.log(JSON.stringify({baseUrl,files:checks.length,headers:true,missing404:missing.length,spa:true,output}));
