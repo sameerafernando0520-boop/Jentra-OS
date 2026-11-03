@@ -1,8 +1,13 @@
 /// Transient link input. Never persist or format the bearer token in diagnostics.
 final class FieldConfirmationLink {
-  const FieldConfirmationLink.none() : present = false, token = null;
-  const FieldConfirmationLink(this.token) : present = true;
+  const FieldConfirmationLink.none()
+    : present = false,
+      token = null,
+      delivery = false;
+  const FieldConfirmationLink(this.token, {this.delivery = false})
+    : present = true;
   final bool present;
+  final bool delivery;
   final String? token;
 }
 
@@ -21,19 +26,26 @@ FieldConfirmationLink parseFieldConfirmationLink(String rawLocation) {
       value.split(RegExp(r'[&?#]')).any((part) {
         final key = part.split('=').first;
         try {
-          return Uri.decodeComponent(key).toLowerCase() == 'confirm';
+          return const {
+            'confirm',
+            'delivery',
+          }.contains(Uri.decodeComponent(key).toLowerCase());
         } on Object {
-          return key.toLowerCase().startsWith('confirm');
+          return key.toLowerCase().startsWith('confirm') ||
+              key.toLowerCase().startsWith('delivery');
         }
       });
   final suspected =
       fragment.toLowerCase().startsWith('confirm') ||
+      fragment.toLowerCase().startsWith('delivery') ||
       containsConfirmation(fragment) ||
       containsConfirmation(location.query);
   if (!suspected) return const FieldConfirmationLink.none();
   try {
     final parts = Uri(query: fragment).queryParametersAll;
-    final tokens = parts['confirm'];
+    final delivery = parts.containsKey('delivery');
+    final key = delivery ? 'delivery' : 'confirm';
+    final tokens = parts[key];
     final local = const {
       'localhost',
       '127.0.0.1',
@@ -48,10 +60,10 @@ FieldConfirmationLink parseFieldConfirmationLink(String rawLocation) {
         parts.length != 1 ||
         tokens?.length != 1 ||
         !RegExp(r'^[0-9a-f]{64}$').hasMatch(tokens!.single) ||
-        fragment != 'confirm=${tokens.single}') {
-      return const FieldConfirmationLink(null);
+        fragment != '$key=${tokens.single}') {
+      return FieldConfirmationLink(null, delivery: delivery);
     }
-    return FieldConfirmationLink(tokens.single);
+    return FieldConfirmationLink(tokens.single, delivery: delivery);
   } on Object {
     return const FieldConfirmationLink(null);
   }

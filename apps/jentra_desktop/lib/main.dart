@@ -144,6 +144,23 @@ Future<void> launchJentra({
                 ? SupabaseFieldConfirmationCompanyGateway(client)
                 : null,
           ),
+          fieldDeliveryCompanyGatewayProvider.overrideWithValue(
+            client != null &&
+                    const bool.fromEnvironment(
+                      'FIELD_SALES_CANDIDATE_ENABLED',
+                    ) &&
+                    const bool.fromEnvironment(
+                      'FIELD_SALES_EMAIL_CONFIRMATION_ENABLED',
+                    ) &&
+                    const bool.fromEnvironment(
+                      'FIELD_SALES_DELIVERY_CONFIRMATION_ENABLED',
+                    )
+                ? SupabaseFieldConfirmationCompanyGateway(
+                    client,
+                    delivery: true,
+                  )
+                : null,
+          ),
           stockOpeningAccessGatewayProvider.overrideWithValue(
             client == null ? null : SupabaseStockOpeningAccessGateway(client),
           ),

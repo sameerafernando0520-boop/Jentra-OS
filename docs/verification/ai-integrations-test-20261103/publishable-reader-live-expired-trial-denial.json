@@ -1,0 +1,55 @@
+{
+  "kind": "actual-read-only-publishable-key-transport-expired-trial-denial",
+  "observedAt": "2026-11-03T05:13:35.682Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "genuineCaller": {
+    "userId": "89f63c7a-dc28-4f33-859e-eae277193522",
+    "factorId": "750e795f-8416-453a-826a-f7e9a6e1d99b",
+    "sessionId": "8d864885-a427-4be8-a2c5-0f182576f067",
+    "aal": "aal2",
+    "realChallengeAndVerification": true,
+    "constructedClaims": false,
+    "observedAt": "2026-11-03T05:13:33.815Z"
+  },
+  "trace": [
+    {
+      "keyKind": "opaque_publishable",
+      "status": 403,
+      "code": "42501",
+      "guard": "ENTITLEMENT_REQUIRED"
+    },
+    {
+      "keyKind": "legacy_jwt",
+      "status": 403,
+      "code": "42501",
+      "guard": "ENTITLEMENT_REQUIRED"
+    }
+  ],
+  "publishableKeyConstructorAndHttpPassed": true,
+  "expiredTrialGuardPreserved": true,
+  "forecastDataRead": false,
+  "positiveReadPendingNewApprovedWindow": true,
+  "deno": {
+    "kind": "local-deno-runtime-with-live-read-only-forecast",
+    "observedAt": "2026-11-03T05:13:35.657Z",
+    "trace": [
+      {
+        "stage": "forecast-http",
+        "status": 403
+      }
+    ],
+    "reachedIntentionalStopBeforeInvocationWrite": false,
+    "httpStatus": 403,
+    "providerRequests": 0,
+    "invocationWrites": 0,
+    "hostedModelEndpointRequests": 0,
+    "hostedAcceptance": false
+  },
+  "localServiceCredentialFixture": "existing-legacy-service-role",
+  "hostedModelEndpointRequests": 0,
+  "providerRequests": 0,
+  "invocationWrites": 0,
+  "businessWrites": 0,
+  "keyValuesPrinted": false,
+  "deployedFix": false
+}

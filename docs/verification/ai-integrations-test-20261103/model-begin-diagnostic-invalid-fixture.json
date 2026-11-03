@@ -1,0 +1,15 @@
+{
+  "kind": "rollback-only-model-begin-diagnostic",
+  "result": {
+    "detail": "Failing row contains (bf887435-88db-4a1f-9df9-2e9ec326f9b4, babe6c86-a764-4d3a-80a3-952a7c096c2c, 38742ecf-91fe-4cd3-93c5-9d6f726a59e5, 0e9255bd3871c3ee8130ec94af09d1e21c4ec73191d8ade81f23923f21ca1e47, rollback-diagnostic-no-provider-send, {\"scope\": {\"branchId\": \"3813692c-f0de-4c69-8e34-d56cf54695b1\", \"..., 2026-11-02 20:30:58.80467+00).",
+    "context": "SQL statement \"insert into intelligence_control.model_invocations values((p_payload->>'invocationId')::uuid,(p_payload->>'tenantId')::uuid,\n (p_payload->>'sourceId')::uuid,p_payload->>'sourceHash',p_payload->>'manifestHash',p_payload,statement_timestamp())\"\nPL/pgSQL function api.wave5_model_worker(text,jsonb) line 17 at SQL statement\nPL/pgSQL function api.wave5_runtime_worker(uuid,text,jsonb) line 53 at RETURN\nPL/pgSQL function inline_code_block line 8 at assignment",
+    "message": "new row for relation \"model_invocations\" violates check constraint \"model_invocations_manifest_hash_check\"",
+    "sqlState": "23514",
+    "succeeded": false
+  },
+  "observedAt": "2026-11-02T20:30:58.80467+00:00",
+  "willRollback": true,
+  "providerRequests": 0,
+  "simulatedServiceRole": true,
+  "genuineAuthAcceptance": false
+}

@@ -57,6 +57,29 @@ final authorizedContact = <String, dynamic>{
   'valid_until': '2026-12-01T00:00:00Z',
   'active': true,
 };
+final postedDelivery = <String, dynamic>{
+  'id': 'delivery',
+  'delivery_id': 'delivery',
+  'version': '9007199254740993',
+  'delivery_version': '9007199254740993',
+  'delivery_digest': 'e' * 64,
+  'customer_id': 'customer',
+  'customer_name': 'Authorized Customer',
+  'company_state': 'posted',
+  'customer_state': 'accepted',
+  'delivery_state': 'not_requested',
+  'offer': {
+    'document_number': 'DL-SYNTHETIC',
+    'lines': [
+      {
+        'id': 'line',
+        'description': 'Synthetic posted item',
+        'posted_base_quantity': '0.500000',
+        'base_unit': 'ea',
+      },
+    ],
+  },
+};
 
 class CompanyKeys implements SecretKeyStore {
   final values = <String, String>{};
@@ -79,6 +102,7 @@ class FakeConfirmationCompanyGateway
   Completer<FieldConfirmationPage>? delayedSubjects;
   final commands = <FieldSalesJson>[];
   FieldSalesJson? committed;
+  FieldSalesJson? subject;
   @override
   Future<FieldConfirmationPage> subjects(FieldSalesScope s, {String? after}) =>
       delayedSubjects?.future ??
@@ -86,7 +110,7 @@ class FakeConfirmationCompanyGateway
         FieldConfirmationPage(
           List.of([
             after == null
-                ? approvedRequest
+                ? subject ?? approvedRequest
                 : {...approvedRequest, 'id': 'request2'},
           ], growable: false),
           paged && after == null ? 'next' : null,
@@ -146,8 +170,10 @@ class FakeConfirmationCompanyGateway
           : (BigInt.parse(p['p_expected_entity_version'] as String) +
                     BigInt.one)
                 .toString(),
-      if (p['p_action'] == 'issue_order') 'state': 'queued_link',
-      if (p['p_action'] == 'revoke_challenge') 'state': 'revoked',
+      if (const {'issue_order', 'issue_delivery'}.contains(p['p_action']))
+        'state': 'queued_link',
+      if (const {'revoke_challenge', 'revoke_delivery'}.contains(p['p_action']))
+        'state': 'revoked',
       if (p['p_action'] == 'authorize_contact') ...{
         'authorized_by': 'manager',
         'active': true,
@@ -191,6 +217,50 @@ void main() {
   tearDown(() async {
     c.dispose();
     await db.close();
+  });
+  test('delivery requests bind posted quantities independently of accepted order terms', () async {
+    gateway.provider = 'configured';
+    gateway.subject = postedDelivery;
+    final delivery = FieldConfirmationCompanyController(
+      actor: 'manager',
+      scope: companyScope,
+      gateway: gateway,
+      store: FieldConfirmationCompanyStore(repo, delivery: true),
+      isAuthorized: () => authorized,
+      delivery: true,
+    );
+    addTearDown(delivery.dispose);
+    await delivery.open();
+    await delivery.select(postedDelivery);
+    expect(delivery.canIssue, isTrue);
+    await delivery.issue(authorizedContact);
+    expect(gateway.commands.single['p_action'], 'issue_delivery');
+    expect(
+      gateway.commands.single['p_payload']['delivery_version'],
+      '9007199254740993',
+    );
+    expect(
+      gateway.commands.single['p_payload'].containsKey('request_version'),
+      isFalse,
+    );
+    expect(delivery.pending, isNull);
+  });
+  test('a recorded delivery exception cannot be silently replaced by another request', () async {
+    gateway.provider = 'configured';
+    final delivery = FieldConfirmationCompanyController(
+      actor: 'manager',
+      scope: companyScope,
+      gateway: gateway,
+      store: FieldConfirmationCompanyStore(repo, delivery: true),
+      isAuthorized: () => authorized,
+      delivery: true,
+    );
+    addTearDown(delivery.dispose);
+    await delivery.open();
+    await delivery.select({...postedDelivery, 'delivery_state': 'exception'});
+    expect(delivery.canIssue, isFalse);
+    await delivery.issue(authorizedContact);
+    expect(gateway.commands, isEmpty);
   });
   test('provider unavailable permits contact administration but never issues a request', () async {
     await c.open();

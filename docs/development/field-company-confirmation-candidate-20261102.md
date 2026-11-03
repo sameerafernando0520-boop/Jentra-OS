@@ -118,6 +118,10 @@ Exact final results, source hashes and local compilation are recorded in the
 
 ## Separate remaining gates
 
+This is the November 2 verification boundary. The [November 3 continuation](field-sales-rollout-candidate-20261103.md)
+now supplies candidate worker, company progression and separate delivery flows;
+its own record distinguishes implementation from hosted activation and acceptance.
+
 - **Email-link activation:** real worker/provider, reviewed sender/domain,
   mailbox receipt and forwarded-link behavior, hosted HTTP/cache/scanner checks,
   origin/log redaction and service-level abuse controls. Staff source and local

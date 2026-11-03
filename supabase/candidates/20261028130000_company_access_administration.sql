@@ -8,6 +8,13 @@ language plpgsql security definer set search_path='' as $$begin
  perform core.require_permission(t,permission);
  if not exists(select 1 from core.tenants where id=t and status in('active','trial')) then
   raise exception using errcode='42501',message='ADMIN_ACCESS_DENIED';end if;
+ -- Respect the session policy even when company administration is installed
+ -- after that policy. Keep the original behavior on older backends.
+ if to_regprocedure('core.session_has_mfa()') is not null then
+  if not core.session_has_mfa() then
+   raise exception using errcode='42501',message='ADMIN_RECENT_MFA_REQUIRED';end if;
+  return;
+ end if;
  if coalesce(auth.jwt()->>'aal','aal1')<>'aal2' or not exists(
   select 1 from jsonb_array_elements(case when jsonb_typeof(auth.jwt()->'amr')='array'
    then auth.jwt()->'amr' else '[]'::jsonb end) a

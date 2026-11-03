@@ -26,10 +26,10 @@ export async function resolvePublicAddresses(host,resolver=lookup){
  * @param {{env: {get(name: string): string | undefined} | Record<string, string | undefined>,
  * config?: typeof edgeConfiguration, fetchImpl?: typeof fetch, resolve?: Function,
  * post?: Function, controlFactory?: Function, edgeRpcFactory?: Function,
- * providerFactory?: Function, requestTimeoutMs?: number}} options
+ * providerFactory?: Function, reportFailure?: Function, requestTimeoutMs?: number}} options
  */
 export function createEdgeRuntime({env,config=edgeConfiguration,fetchImpl=fetch,resolve=resolvePublicAddresses,post=pinnedHttpsPost,requestTimeoutMs=65000,
- controlFactory,edgeRpcFactory,providerFactory}){
+ controlFactory,edgeRpcFactory,providerFactory,reportFailure}){
  if(!Number.isSafeInteger(requestTimeoutMs)||requestTimeoutMs<1||requestTimeoutMs>65000)throw Error('WORKER_CONFIGURATION_INVALID');
  let active=0;
  return async req=>{
@@ -91,8 +91,16 @@ export function createEdgeRuntime({env,config=edgeConfiguration,fetchImpl=fetch,
    const publishableKey=required(envValue(env,'SUPABASE_ANON_KEY'));
    const provider=providerFactory?providerFactory({accountId,apiToken,review:config.model,fetchImpl:boundedFetch})
     :new CloudflareFreeProvider({accountId,apiToken,review:config.model,fetchImpl:boundedFetch});
-   return await createReviewedModelHandler({control,provider,policy:config.model,url:config.url,publishableKey,fetchImpl:boundedFetch})(boundedRequest);
+   return await createReviewedModelHandler({control,provider,policy:config.model,url:config.url,publishableKey,fetchImpl:boundedFetch,reportFailure})(boundedRequest);
   }catch(error){
+   if(typeof reportFailure==='function')try{
+    const callerKey=envValue(env,'SUPABASE_ANON_KEY');
+    reportFailure({event:'wave5_edge_failure',stage:'edge.initialize',urlMatchesConfigured:envValue(env,'SUPABASE_URL')===config.url,
+     serviceKeyKind:serviceCredentialKind(envValue(env,'SUPABASE_SERVICE_ROLE_KEY'))??'unsupported',
+     callerKeyKind:typeof callerKey!=='string'?'missing':/^sb_publishable_[A-Za-z0-9_-]+$/.test(callerKey)?'opaque_publishable':/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(callerKey)?'legacy_jwt':'unsupported',
+     code:['WORKER_CONFIGURATION_INVALID','WORKER_PROVIDER_UNAVAILABLE','WORKER_REQUEST_TIMEOUT'].includes(error.message)?error.message:'OTHER',
+     errorKind:['Error','TypeError','SyntaxError','RangeError'].includes(error.name)?error.name:'Error'});
+   }catch{}
    if(error.message==='WORKER_REQUEST_TIMEOUT')return reply(408,{code:'REQUEST_TIMEOUT'});
    if(error instanceof SyntaxError||/VALIDATION_ERROR|WORKER_OUTPUT_LIMIT/.test(error.message))return reply(400,{code:'VALIDATION_ERROR'});
    return reply(/ACCESS_DENIED|SCOPE_DENIED/.test(error.message)?403:503,{code:/ACCESS_DENIED|SCOPE_DENIED/.test(error.message)?'WORKER_ACCESS_DENIED':'WORKER_PROVIDER_UNAVAILABLE'});

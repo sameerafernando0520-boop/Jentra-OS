@@ -11,6 +11,8 @@ import 'src/sales_controller.dart';
 import 'src/field_sales_controller.dart';
 import 'src/confirmation_controller.dart';
 import 'src/ui/customer_confirmation.dart';
+import 'src/delivery_confirmation_controller.dart';
+import 'src/ui/delivery_confirmation.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +32,10 @@ void main() {
     final recipientClient =
         enableCandidate &&
             enableConfirmation &&
+            (!confirmationLink.delivery ||
+                const bool.fromEnvironment(
+                  'FIELD_SALES_DELIVERY_CONFIRMATION_ENABLED',
+                )) &&
             key.isNotEmpty &&
             Uri.tryParse(url)?.scheme == 'https'
         ? SupabaseClient(
@@ -38,6 +44,19 @@ void main() {
             authOptions: const AuthClientOptions(autoRefreshToken: false),
           )
         : null;
+    if (confirmationLink.delivery) {
+      runApp(
+        CustomerDeliveryApp(
+          DeliveryConfirmationController(
+            token: confirmationLink.token,
+            gateway: recipientClient == null
+                ? null
+                : SupabaseFieldDeliveryGateway(recipientClient),
+          ),
+        ),
+      );
+      return;
+    }
     runApp(
       CustomerConfirmationApp(
         ConfirmationController(

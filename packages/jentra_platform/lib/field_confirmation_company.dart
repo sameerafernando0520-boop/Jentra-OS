@@ -37,16 +37,20 @@ abstract interface class FieldConfirmationCompanyGateway {
 /// service-only dispatch helper and transport configuration are never exposed.
 final class SupabaseFieldConfirmationCompanyGateway
     implements FieldConfirmationCompanyGateway {
-  SupabaseFieldConfirmationCompanyGateway(SupabaseClient client)
-    : _transport = SupabaseFieldSalesGateway(client);
+  SupabaseFieldConfirmationCompanyGateway(
+    SupabaseClient client, {
+    this.delivery = false,
+  }) : _transport = SupabaseFieldSalesGateway(client);
   SupabaseFieldConfirmationCompanyGateway.withRpc(
     Future<Object?> Function(String, FieldSalesJson) rpc, {
     required String? Function() currentActor,
+    this.delivery = false,
   }) : _transport = SupabaseFieldSalesGateway.withRpc(
          rpc,
          currentActor: currentActor,
        );
   final SupabaseFieldSalesGateway _transport;
+  final bool delivery;
   @override
   String? get actorId => _transport.actorId;
   Future<FieldConfirmationPage> _page(
@@ -83,7 +87,13 @@ final class SupabaseFieldConfirmationCompanyGateway
   Future<FieldConfirmationPage> subjects(
     FieldSalesScope scope, {
     String? after,
-  }) => _page('field_sales_confirmation_subjects', scope.params, after: after);
+  }) => _page(
+    delivery
+        ? 'field_sales_delivery_subjects'
+        : 'field_sales_confirmation_subjects',
+    scope.params,
+    after: after,
+  );
   @override
   Future<FieldConfirmationPage> contacts(
     FieldSalesScope scope,
@@ -98,17 +108,26 @@ final class SupabaseFieldConfirmationCompanyGateway
     FieldSalesScope scope,
     String request, {
     String? after,
-  }) => _page('field_sales_confirmation_challenges', {
-    ...scope.params,
-    'p_request_id': request,
-  }, after: after);
+  }) => _page(
+    delivery
+        ? 'field_sales_delivery_challenges'
+        : 'field_sales_confirmation_challenges',
+    {...scope.params, 'p_request_id': request},
+    after: after,
+  );
   @override
-  Future<FieldSalesJson> command(FieldSalesJson params) =>
-      _transport.call('field_sales_confirmation_company_command', params);
+  Future<FieldSalesJson> command(FieldSalesJson params) => _transport.call(
+    delivery
+        ? 'field_sales_delivery_command'
+        : 'field_sales_confirmation_company_command',
+    params,
+  );
   @override
   Future<FieldSalesJson> receipt(FieldSalesScope scope, String key) =>
-      _transport.call('field_sales_confirmation_receipt', {
-        ...scope.params,
-        'p_idempotency_key': key,
-      });
+      _transport.call(
+        delivery
+            ? 'field_sales_delivery_receipt'
+            : 'field_sales_confirmation_receipt',
+        {...scope.params, 'p_idempotency_key': key},
+      );
 }

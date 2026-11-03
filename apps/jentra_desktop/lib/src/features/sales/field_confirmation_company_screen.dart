@@ -12,30 +12,42 @@ import 'field_confirmation_company_controller.dart';
 
 final fieldConfirmationCompanyGatewayProvider =
     Provider<FieldConfirmationCompanyGateway?>((ref) => null);
+final fieldDeliveryCompanyGatewayProvider =
+    Provider<FieldConfirmationCompanyGateway?>((ref) => null);
 Future<void> openFieldCompanyConfirmations(
   BuildContext context,
-  TenantContext scope,
-) => showDialog<void>(
+  TenantContext scope, {
+  bool delivery = false,
+}) => showDialog<void>(
   context: context,
   barrierDismissible: false,
   builder: (_) => Dialog(
     child: SizedBox(
       width: 960,
       height: 800,
-      child: FieldCompanyConfirmations(scope),
+      child: FieldCompanyConfirmations(scope, delivery: delivery),
     ),
   ),
 );
 
 class FieldCompanyConfirmations extends ConsumerWidget {
-  const FieldCompanyConfirmations(this.scope, {super.key});
+  const FieldCompanyConfirmations(
+    this.scope, {
+    this.delivery = false,
+    super.key,
+  });
   final TenantContext scope;
+  final bool delivery;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final actor = ref.watch(authenticatedActorProvider),
         revision = ref.watch(authSessionRevisionProvider),
         caps = ref.watch(businessCapabilitiesProvider);
-    final gateway = ref.watch(fieldConfirmationCompanyGatewayProvider);
+    final gateway = ref.watch(
+      delivery
+          ? fieldDeliveryCompanyGatewayProvider
+          : fieldConfirmationCompanyGatewayProvider,
+    );
     if (ref.watch(activeTenantContextProvider) != scope ||
         !scope.hasOperationalScope ||
         actor.isLoading ||
@@ -52,11 +64,12 @@ class FieldCompanyConfirmations extends ConsumerWidget {
       return const _AccessChanged();
     }
     return _ConfirmationBody(
-      key: ValueKey((scope, scope.actorId, revision.value, gateway)),
+      key: ValueKey((scope, scope.actorId, revision.value, gateway, delivery)),
       scope: scope,
       revision: revision.value!,
       caps: caps.value!,
       gateway: gateway,
+      delivery: delivery,
     );
   }
 }
@@ -89,11 +102,13 @@ class _ConfirmationBody extends StatefulWidget {
     required this.revision,
     required this.caps,
     required this.gateway,
+    required this.delivery,
   });
   final TenantContext scope;
   final int revision;
   final Set<String> caps;
   final FieldConfirmationCompanyGateway gateway;
+  final bool delivery;
   @override
   State<_ConfirmationBody> createState() => _ConfirmationBodyState();
 }
@@ -118,6 +133,9 @@ class _ConfirmationBodyState extends State<_ConfirmationBody>
       revision: widget.revision,
       capabilities: widget.caps,
       gateway: widget.gateway,
+      gatewayProvider: widget.delivery
+          ? fieldDeliveryCompanyGatewayProvider
+          : fieldConfirmationCompanyGatewayProvider,
     );
     c = FieldConfirmationCompanyController(
       actor: widget.scope.actorId,
@@ -129,8 +147,10 @@ class _ConfirmationBodyState extends State<_ConfirmationBody>
       gateway: widget.gateway,
       store: FieldConfirmationCompanyStore(
         container.read(encryptedDraftRepositoryProvider),
+        delivery: widget.delivery,
       ),
       isAuthorized: () => _authority.current,
+      delivery: widget.delivery,
     );
     _authority.addListener(_observe);
     c.addListener(_observeMessage);
@@ -254,7 +274,9 @@ class _ConfirmationBodyState extends State<_ConfirmationBody>
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Text(
-                    'Customer email requests',
+                    widget.delivery
+                        ? 'Delivery response requests'
+                        : 'Customer email requests',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   OutlinedButton(
@@ -292,8 +314,10 @@ class _ConfirmationBodyState extends State<_ConfirmationBody>
                     ),
                   if (c.notice != null)
                     Semantics(liveRegion: true, child: Text(c.notice!)),
-                  const Text(
-                    'Authorize a company contact and request a response to the exact approved order. A queued request is not evidence of email delivery or customer acceptance.',
+                  Text(
+                    widget.delivery
+                        ? 'Request received, refused and short quantities for an exact posted delivery. A queued request is not evidence of email delivery or goods receipt.'
+                        : 'Authorize a company contact and request a response to the exact approved order. A queued request is not evidence of email delivery or customer acceptance.',
                   ),
                   const SizedBox(height: 12),
                   if (c.providerState != 'configured')
@@ -346,12 +370,16 @@ class _ConfirmationBodyState extends State<_ConfirmationBody>
                   const SizedBox(height: 16),
                   if (c.selected == null) ...[
                     Text(
-                      'Approved requests',
+                      widget.delivery
+                          ? 'Posted deliveries'
+                          : 'Approved requests',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     if (c.subjects.isEmpty && !c.busy)
-                      const Text(
-                        'No approved field orders are available in this company and branch.',
+                      Text(
+                        widget.delivery
+                            ? 'No posted field deliveries are available in this company and branch.'
+                            : 'No approved field orders are available in this company and branch.',
                       ),
                     for (final row in c.subjects)
                       Card(
@@ -359,7 +387,9 @@ class _ConfirmationBodyState extends State<_ConfirmationBody>
                           isThreeLine: true,
                           title: Text('${row['customer_name']}'),
                           subtitle: Text(
-                            'Request ${row['id']} · revision ${row['version']}\n${row['preview']['currency_code']} ${row['preview']['pricing']['grand_total']} · Customer: ${row['customer_state']}',
+                            widget.delivery
+                                ? 'Delivery ${row['offer']['document_number']} · revision ${row['delivery_version']}\nResponse: ${row['delivery_state']}'
+                                : 'Request ${row['id']} · revision ${row['version']}\n${row['preview']['currency_code']} ${row['preview']['pricing']['grand_total']} · Customer: ${row['customer_state']}',
                           ),
                           onTap: c.busy ? null : () => _select(row),
                         ),
@@ -367,7 +397,11 @@ class _ConfirmationBodyState extends State<_ConfirmationBody>
                     if (c.subjectCursor != null)
                       OutlinedButton(
                         onPressed: c.busy ? null : c.moreSubjects,
-                        child: const Text('More approved requests'),
+                        child: Text(
+                          widget.delivery
+                              ? 'More posted deliveries'
+                              : 'More approved requests',
+                        ),
                       ),
                   ] else
                     ..._detail(),
@@ -383,24 +417,47 @@ class _ConfirmationBodyState extends State<_ConfirmationBody>
     final row = c.selected!;
     return [
       Text(
-        '${row['customer_name']} · approved revision ${row['version']}',
+        '${row['customer_name']} · ${widget.delivery ? 'posted delivery' : 'approved'} revision ${row['version']}',
         style: Theme.of(context).textTheme.titleLarge,
       ),
       Text(
-        'Company: ${row['company_state']} · Customer: ${row['customer_state']} · Delivery: ${row['delivery_state']}',
+        widget.delivery
+            ? 'Company: posted · Delivery response: ${row['delivery_state']}'
+            : 'Company: ${row['company_state']} · Customer: ${row['customer_state']} · Delivery: ${row['delivery_state']}',
       ),
-      Text('Request: ${row['id']}'),
+      Text('${widget.delivery ? 'Delivery' : 'Request'}: ${row['id']}'),
       const SizedBox(height: 12),
-      Text(
-        'Approved terms: ${row['preview']['currency_code']} ${row['preview']['pricing']['grand_total']}',
-      ),
-      ..._commercialTerms(row['preview'] as Map),
-      if (row['customer_state'] == 'accepted')
+      if (!widget.delivery)
+        Text(
+          'Approved terms: ${row['preview']['currency_code']} ${row['preview']['pricing']['grand_total']}',
+        ),
+      if (!widget.delivery) ..._commercialTerms(row['preview'] as Map),
+      if (widget.delivery) ...[
+        Text('Posted delivery ${row['offer']['document_number']}'),
+        for (final line in row['offer']['lines'] as List)
+          Text(
+            '${line['description']} · ${line['posted_base_quantity']} ${line['base_unit']}',
+          ),
+        const Text(
+          'The customer reports received, refused and short quantities. Recipient evidence does not amend this posted delivery or correct stock.',
+        ),
+        if (const {
+          'received',
+          'refused',
+          'exception',
+        }.contains(row['delivery_state']))
+          const Text(
+            'A response is already recorded for this posted delivery. Corrections use separate company workflows.',
+          ),
+      ],
+      if (!widget.delivery && row['customer_state'] == 'accepted')
         const Text(
           'These terms already have current customer acceptance. Review an explicit revocation before requesting another response.',
         ),
-      const Text(
-        'A new response request replaces any outstanding request for these terms. Delivery acknowledgement remains separate.',
+      Text(
+        widget.delivery
+            ? 'A new request replaces outstanding access to this posted delivery; it never overwrites recorded quantities.'
+            : 'A new response request replaces any outstanding request for these terms. Delivery acknowledgement remains separate.',
       ),
       const SizedBox(height: 16),
       Text(
@@ -524,8 +581,10 @@ class _ConfirmationBodyState extends State<_ConfirmationBody>
         CheckboxListTile(
           value: _reviewed,
           contentPadding: EdgeInsets.zero,
-          title: const Text(
-            'I reviewed these approved terms and this authorized contact revision.',
+          title: Text(
+            widget.delivery
+                ? 'I reviewed this posted delivery revision and this authorized contact revision.'
+                : 'I reviewed these approved terms and this authorized contact revision.',
           ),
           onChanged: !c.canIssue
               ? null
@@ -533,7 +592,11 @@ class _ConfirmationBodyState extends State<_ConfirmationBody>
         ),
         FilledButton(
           onPressed: !c.canIssue || !_reviewed ? null : _issue,
-          child: const Text('Queue verified email request'),
+          child: Text(
+            widget.delivery
+                ? 'Queue delivery response request'
+                : 'Queue verified email request',
+          ),
         ),
       ],
       if (_revoking != null && c.pending == null)
@@ -614,9 +677,7 @@ class _ConfirmationBodyState extends State<_ConfirmationBody>
                 Text('${ch['recipient_name']} · ${ch['effective_state']}'),
                 Text('Challenge ${ch['id']} · revision ${ch['version']}'),
                 Text('Link expires: ${ch['expires_at']}'),
-                Text(
-                  'Commercial response valid until: ${ch['acceptance_valid_until']}',
-                ),
+                Text('Response valid until: ${ch['acceptance_valid_until']}'),
                 if (ch['state'] != 'revoked')
                   TextButton(
                     onPressed: !c.canWrite
@@ -864,6 +925,7 @@ final class _CompanyConfirmationAuthority extends ChangeNotifier {
     required this.revision,
     required Set<String> capabilities,
     required this.gateway,
+    required this.gatewayProvider,
   }) : capabilities = Set.unmodifiable(capabilities) {
     _active = _matches();
     _close.addAll([
@@ -873,9 +935,7 @@ final class _CompanyConfirmationAuthority extends ChangeNotifier {
       container
           .listen(businessCapabilitiesProvider, (_, _) => _observe())
           .close,
-      container
-          .listen(fieldConfirmationCompanyGatewayProvider, (_, _) => _observe())
-          .close,
+      container.listen(gatewayProvider, (_, _) => _observe()).close,
     ]);
   }
   final ProviderContainer container;
@@ -883,6 +943,7 @@ final class _CompanyConfirmationAuthority extends ChangeNotifier {
   final int revision;
   final Set<String> capabilities;
   final FieldConfirmationCompanyGateway gateway;
+  final Provider<FieldConfirmationCompanyGateway?> gatewayProvider;
   final _close = <VoidCallback>[];
   bool _active = false, _disposed = false;
   bool _matches() {
@@ -903,10 +964,7 @@ final class _CompanyConfirmationAuthority extends ChangeNotifier {
         caps.value!.length == capabilities.length &&
         caps.value!.containsAll(capabilities) &&
         caps.value!.contains('sales.field.confirmations.manage') &&
-        identical(
-          container.read(fieldConfirmationCompanyGatewayProvider),
-          gateway,
-        ) &&
+        identical(container.read(gatewayProvider), gateway) &&
         gateway.actorId == scope.actorId;
   }
 

@@ -1,0 +1,72 @@
+{
+  "kind": "prepared-publishable-reader-repair-and-free-acceptance-plan",
+  "accountingObservedAt": "2026-11-03T05:19:16Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "ownerApproved": false,
+  "candidateManifestSha256": "afd9d294ab0ac298f222d1aa16e00a61455583a75357bd02c7716b2396f6741e",
+  "deployment": {
+    "function": "wave5-runtime",
+    "expectedBeforeVersion": 11,
+    "expectedAfterVersion": 12,
+    "sourceInputs": 18,
+    "executableModulesToVerify": 17,
+    "receiverChanged": false,
+    "gatewayPolicyChanged": false
+  },
+  "syntheticTarget": {
+    "tenantId": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+    "legalEntityId": "caa2bb06-219a-47e9-8132-66d1271b0ffd",
+    "branchId": "3813692c-f0de-4c69-8e34-d56cf54695b1"
+  },
+  "trial": {
+    "scheduleRpc": "api.schedule_synthetic_subscription",
+    "applyRpc": "api.apply_synthetic_subscription",
+    "genuineBillingMfaRequired": true,
+    "expectedBeforeVersion": "4",
+    "expectedAfterVersion": "5",
+    "plan": "w5_runtime_20261008",
+    "seats": 5,
+    "durationSeconds": 1800,
+    "start": "Fresh trusted server Date at execution",
+    "scheduleAttempts": 1,
+    "activationAttempts": 1
+  },
+  "runtimeWindow": {
+    "runtimeId": "778237e3-3d4e-4871-8cc9-e08b07b989c7",
+    "durationSeconds": 1800,
+    "sql": "renew-publishable-repair-runtime.sql",
+    "compareAndSetExistingScope": true,
+    "scheduleAuthorityRenewed": false,
+    "otherBranchesChanged": false,
+    "sqlSha256": "0bdb922bc5858acfdb271220176da45431ed3f7b0fcf9efb1c67f7e935cdaa2b"
+  },
+  "model": {
+    "genuineMfaCallerId": "89f63c7a-dc28-4f33-859e-eae277193522",
+    "invocationId": "bf887435-88db-4a1f-9df9-2e9ec326f9b4",
+    "usageEventId": "287f1f6a-fe5d-4cfe-aec0-bbe710eb8e9d",
+    "sourceId": "38742ecf-91fe-4cd3-93c5-9d6f726a59e5",
+    "sourceHash": "0e9255bd3871c3ee8130ec94af09d1e21c4ec73191d8ade81f23923f21ca1e47",
+    "maxTokens": "2000",
+    "controlledAttempts": 1,
+    "preserveOriginalIntent": true,
+    "amendOnlyPeriodStartAndEndToApprovedTrial": true,
+    "requiresFreshFourAbsentLedgerRecords": true,
+    "stopIfPendingUnknownOrOtherRecordsExist": true,
+    "uiManagementPermissionAdded": false,
+    "automaticRetry": false
+  },
+  "preserved": {
+    "freeProvider": "Cloudflare Workers Free",
+    "paymentMethodAdded": false,
+    "paidFallback": false,
+    "usageCapsChanged": false,
+    "readerPermissions": [
+      "ai.proposals.view",
+      "analytics.view",
+      "crm.opportunities.view"
+    ],
+    "deliveryResent": false,
+    "newSecretsCreated": false,
+    "passwordOrFactorChanged": false
+  }
+}

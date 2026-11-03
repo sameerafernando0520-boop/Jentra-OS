@@ -10,6 +10,13 @@ void main() {
         bool.fromEnvironment('FIELD_SALES_CANDIDATE_ENABLED') &&
         bool.fromEnvironment('FIELD_SALES_EMAIL_CONFIRMATION_ENABLED');
     expect(routes.contains('/sales/customer-email-requests'), enabled);
+    expect(
+      routes.contains('/sales/delivery-responses'),
+      enabled &&
+          const bool.fromEnvironment(
+            'FIELD_SALES_DELIVERY_CONFIRMATION_ENABLED',
+          ),
+    );
     expect(routes.contains('/sales'), isFalse);
     expect(
       visibleJentraDestinations({})

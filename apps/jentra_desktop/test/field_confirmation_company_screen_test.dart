@@ -10,7 +10,7 @@ import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_platform/jentra_platform.dart';
 
 import 'field_confirmation_company_controller_test.dart'
-    show FakeConfirmationCompanyGateway, CompanyKeys;
+    show FakeConfirmationCompanyGateway, CompanyKeys, postedDelivery;
 
 const staffScope = TenantContext(
   tenantId: 'tenant',
@@ -21,6 +21,8 @@ const staffScope = TenantContext(
 const staffCaps = {'sales.field.confirmations.manage'};
 
 class _Harness {
+  _Harness({this.delivery = false});
+  final bool delivery;
   TenantContext scope = staffScope;
   String? actor = 'manager';
   int revision = 1;
@@ -40,6 +42,7 @@ class _Harness {
       businessCapabilitiesProvider.overrideWith((_) => caps),
       encryptedDraftRepositoryProvider.overrideWithValue(repo),
       fieldConfirmationCompanyGatewayProvider.overrideWithValue(gateway),
+      fieldDeliveryCompanyGatewayProvider.overrideWithValue(gateway),
     ],
   );
   Future<void> pump(WidgetTester tester, {double scale = 1}) async {
@@ -65,8 +68,11 @@ class _Harness {
           home: Scaffold(
             body: Builder(
               builder: (context) => FilledButton(
-                onPressed: () =>
-                    openFieldCompanyConfirmations(context, staffScope),
+                onPressed: () => openFieldCompanyConfirmations(
+                  context,
+                  staffScope,
+                  delivery: delivery,
+                ),
                 child: const Text('Open confirmations'),
               ),
             ),
@@ -122,6 +128,58 @@ Future<void> scrollTo(WidgetTester tester, Finder finder) async {
 }
 
 void main() {
+  for (final width in [360.0, 1280.0]) {
+    testWidgets(
+      'company delivery request at $width reviews posted quantities and a separate purpose',
+      (tester) async {
+        tester.view.physicalSize = Size(width, 1100);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        final h = _Harness(delivery: true);
+        h.gateway.provider = 'configured';
+        h.gateway.subject = postedDelivery;
+        await h.pump(tester, scale: 2);
+        await scrollTo(tester, find.text('Use this contact'));
+        await tester.tap(find.text('Use this contact'));
+        await tester.pumpAndSettle();
+        await scrollTo(tester, find.byType(Checkbox));
+        await tester.tap(find.byType(Checkbox));
+        await tester.pumpAndSettle();
+        await scrollTo(tester, find.text('Queue delivery response request'));
+        expect(h.gateway.commands, isEmpty);
+        await tester.tap(find.text('Queue delivery response request'));
+        await tester.pumpAndSettle();
+        expect(h.gateway.commands, hasLength(1));
+        expect(h.gateway.commands.single['p_action'], 'issue_delivery');
+        expect(
+          h.gateway.commands.single['p_payload']['delivery_version'],
+          '9007199254740993',
+        );
+        expect(
+          find.textContaining('goods receipt are not established'),
+          findsOneWidget,
+        );
+        expect(tester.takeException(), isNull);
+        await h.end(tester);
+      },
+    );
+  }
+  testWidgets('delivery recipient details clear when company scope changes', (
+    tester,
+  ) async {
+    final h = _Harness(delivery: true);
+    h.gateway.subject = postedDelivery;
+    await h.pump(tester);
+    await scrollTo(tester, find.text('Use this contact'));
+    expect(find.textContaining('buyer@example.invalid'), findsWidgets);
+    h.scope = staffScope.copyWith(branchId: 'other');
+    h.refresh('scope');
+    await tester.pumpAndSettle();
+    expect(find.textContaining('buyer@example.invalid'), findsNothing);
+    expect(h.gateway.commands, isEmpty);
+    await h.end(tester);
+  });
   testWidgets(
     'disabled provider cannot issue and contact edits require an explicit save',
     (tester) async {

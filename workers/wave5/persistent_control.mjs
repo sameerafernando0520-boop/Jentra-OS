@@ -19,6 +19,26 @@ export function createWorkerRpc({url,serviceKey,fetchImpl=fetch}) {
  };
 }
 
+/** Caller-scoped reads use a public project key and the caller's own bearer.
+ * A publishable key never goes through privileged credential validation and
+ * never becomes the Authorization value. The API still verifies the caller. */
+export function createCallerRpc({url,publishableKey,accessToken,fetchImpl=fetch}) {
+ if(typeof accessToken!=='string'||!/^[A-Za-z0-9._-]{32,4096}$/.test(accessToken))throw Error('AUTH_REQUIRED');
+ const target=new URL(url);
+ if(target.protocol!=='https:'||target.username||target.password||target.pathname!=='/'||!target.hostname.endsWith('.supabase.co')||
+  typeof publishableKey!=='string'||publishableKey.length<32||publishableKey.length>4096||
+  !(/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(publishableKey)||/^sb_publishable_[A-Za-z0-9_-]+$/.test(publishableKey)))
+  throw Error('WORKER_CONFIGURATION_INVALID');
+ const headers=Object.freeze({apikey:publishableKey,authorization:`Bearer ${accessToken}`,
+  'content-profile':'api','accept-profile':'api','content-type':'application/json'});
+ return async(name,params)=>{
+  const response=await fetchImpl(new URL(`/rest/v1/rpc/${name}`,target),{method:'POST',headers,
+   body:JSON.stringify(params),redirect:'error',signal:AbortSignal.timeout(15000)});
+  if(!response.ok)throw Error(response.status===401||response.status===403?'WORKER_ACCESS_DENIED':'WORKER_PROVIDER_UNAVAILABLE');
+  return readBoundedJson(response);
+ };
+}
+
 export class PersistentDeliveryControl {
  constructor(rpc){this.rpc=rpc;}
  worker(action,payload={}){return this.rpc('wave5_delivery_worker',{p_action:action,p_payload:payload});}

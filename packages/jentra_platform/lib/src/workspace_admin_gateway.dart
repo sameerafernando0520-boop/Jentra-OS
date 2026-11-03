@@ -65,7 +65,7 @@ final class SupabaseWorkspaceAdminGateway implements WorkspaceAdminRepository {
         '42501' => DomainError(
           code: 'PERMISSION_DENIED',
           message: e.message == 'ADMIN_RECENT_MFA_REQUIRED'
-              ? 'Complete recent MFA before administering company access.'
+              ? 'Verify your sign-in with your authenticator before administering company access.'
               : 'Your current account or scope cannot perform this administration action.',
         ),
         '40001' => const DomainError(

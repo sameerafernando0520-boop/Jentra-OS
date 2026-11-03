@@ -73,6 +73,14 @@ final class FieldConfirmationCompanyCommand {
               e['source_digest'] == p['source_digest'] &&
               e['state'] == 'queued_link',
         'revoke_challenge' => e['state'] == 'revoked',
+        'issue_delivery' =>
+          e['delivery_id'] == p['delivery_id'] &&
+              e['delivery_version'] == p['delivery_version'] &&
+              e['delivery_digest'] == p['delivery_digest'] &&
+              e['contact_id'] == p['contact_id'] &&
+              e['contact_version'] == p['contact_version'] &&
+              e['state'] == 'queued_link',
+        'revoke_delivery' => e['state'] == 'revoked',
         _ => false,
       };
     }
@@ -88,14 +96,19 @@ final class FieldConfirmationCompanyCommand {
 /// Distinct encrypted entity and actor/scope key. No automatic replay. Expiry
 /// strips contact details/reasons but preserves enough identity to check receipts.
 final class FieldConfirmationCompanyStore {
-  FieldConfirmationCompanyStore(this.repository, {DateTime Function()? now})
-    : now = now ?? DateTime.now;
+  FieldConfirmationCompanyStore(
+    this.repository, {
+    DateTime Function()? now,
+    this.delivery = false,
+  }) : now = now ?? DateTime.now;
   final EncryptedDraftRepository repository;
   final DateTime Function() now;
+  final bool delivery;
+  String get _entityType => delivery ? '$entityType.delivery' : entityType;
   static const entityType = 'sales.field.confirmation_company';
   static final _queues = <String, Future<void>>{};
   String _id(String actor, FieldSalesScope scope) =>
-      'field-confirmation:$actor:${scope.key}';
+      'field-confirmation:$actor:${scope.key}${delivery ? ':delivery' : ''}';
   Future<T> _locked<T>(String id, Future<T> Function() work) async {
     final result = (_queues[id] ?? Future<void>.value()).then((_) => work());
     final tail = result.then<void>(
@@ -123,7 +136,7 @@ final class FieldConfirmationCompanyStore {
     var command = FieldConfirmationCompanyCommand(
       Map<String, dynamic>.from(row.payload),
     );
-    if (row.entityType != entityType ||
+    if (row.entityType != _entityType ||
         row.tenantId != scope.tenantId ||
         command.actor != actor ||
         command.scope.key != scope.key ||
@@ -132,7 +145,19 @@ final class FieldConfirmationCompanyStore {
           'revoke_contact',
           'issue_order',
           'revoke_challenge',
-        }.contains(command.action)) {
+          'issue_delivery',
+          'revoke_delivery',
+        }.contains(command.action) ||
+        delivery &&
+            const {
+              'issue_order',
+              'revoke_challenge',
+            }.contains(command.action) ||
+        !delivery &&
+            const {
+              'issue_delivery',
+              'revoke_delivery',
+            }.contains(command.action)) {
       throw const FieldSalesFailure(
         'RECOVERY_SCOPE_INVALID',
         'The saved company request belongs to another actor or scope.',
@@ -153,6 +178,9 @@ final class FieldConfirmationCompanyStore {
           'source_digest',
           'contact_id',
           'contact_version',
+          'delivery_id',
+          'delivery_version',
+          'delivery_digest',
         ])
           if (p.containsKey(key)) key: p[key],
       };
@@ -160,7 +188,7 @@ final class FieldConfirmationCompanyStore {
       await repository.save(
         id: row.id,
         tenantId: scope.tenantId,
-        entityType: entityType,
+        entityType: _entityType,
         payload: body,
         localVersion: row.localVersion + 1,
       );
@@ -188,13 +216,24 @@ final class FieldConfirmationCompanyStore {
           'revoke_contact',
           'issue_order',
           'revoke_challenge',
+          'issue_delivery',
+          'revoke_delivery',
         }.contains(action) ||
         p['id'] is! String ||
         expectedVersion != null &&
             !RegExp(r'^[1-9]\d*$').hasMatch(expectedVersion) ||
-        const {'revoke_contact', 'revoke_challenge'}.contains(action) &&
+        const {
+              'revoke_contact',
+              'revoke_challenge',
+              'revoke_delivery',
+            }.contains(action) &&
             expectedVersion == null ||
-        action == 'issue_order' && expectedVersion != null) {
+        const {'issue_order', 'issue_delivery'}.contains(action) &&
+            expectedVersion != null ||
+        delivery &&
+            const {'issue_order', 'revoke_challenge'}.contains(action) ||
+        !delivery &&
+            const {'issue_delivery', 'revoke_delivery'}.contains(action)) {
       throw const FieldSalesFailure(
         'VALIDATION_ERROR',
         'Review the original company action and version.',
@@ -245,7 +284,25 @@ final class FieldConfirmationCompanyStore {
           'Refresh the request and authorized contact versions.',
         );
       }
-    } else if (action == 'revoke_challenge') {
+    } else if (action == 'issue_delivery') {
+      if ([
+            'delivery_id',
+            'delivery_version',
+            'delivery_digest',
+            'contact_id',
+            'contact_version',
+          ].any((key) => p[key] is! String) ||
+          !RegExp(r'^[0-9a-f]{64}$').hasMatch(p['delivery_digest'] as String) ||
+          [
+            'delivery_version',
+            'contact_version',
+          ].any((key) => !RegExp(r'^[1-9]\d*$').hasMatch(p[key] as String))) {
+        throw const FieldSalesFailure(
+          'VALIDATION_ERROR',
+          'Refresh the posted delivery and reviewed contact versions.',
+        );
+      }
+    } else if (const {'revoke_challenge', 'revoke_delivery'}.contains(action)) {
       if (p['reason'] is! String ||
           (p['reason'] as String).trim().isEmpty ||
           (p['reason'] as String).length > 500) {
@@ -269,7 +326,7 @@ final class FieldConfirmationCompanyStore {
     await repository.save(
       id: _id(actor, scope),
       tenantId: scope.tenantId,
-      entityType: entityType,
+      entityType: _entityType,
       payload: command.json,
       localVersion: 1,
     );

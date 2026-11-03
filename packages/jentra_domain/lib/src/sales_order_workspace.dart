@@ -156,7 +156,21 @@ final class SalesOrderCreditPreview {
       asOf = json['credit_as_of_at'] == null
           ? null
           : DateTime.parse(json['credit_as_of_at']! as String),
-      reason = json['reason'] as String? {
+      reason = json['reason'] as String?,
+      fieldRequestId = json['field_sales_request_id'] as String?,
+      fieldCustomerState = json['field_customer_state'] as String?,
+      fieldCreditReview = json['field_credit_review'] as String? {
+    if ((fieldRequestId != null ||
+            fieldCustomerState != null ||
+            fieldCreditReview != null) &&
+        (fieldRequestId == null ||
+            fieldCustomerState == null ||
+            fieldCreditReview == null ||
+            !RegExp(r'^[0-9a-f]{64}$').hasMatch(fieldCreditReview!))) {
+      throw const FormatException(
+        'Review the current field-order credit evidence.',
+      );
+    }
     if (totalExposure !=
         dueExposure + existingOrderExposure + currentOrderExposure) {
       throw const FormatException(
@@ -176,6 +190,7 @@ final class SalesOrderCreditPreview {
   final DateTime checkedAt;
   final DateTime? asOf;
   final String? reason;
+  final String? fieldRequestId, fieldCustomerState, fieldCreditReview;
   static Money _money(Map<String, Object?> json, String key, String currency) {
     final value = json[key];
     if (value is! String ||

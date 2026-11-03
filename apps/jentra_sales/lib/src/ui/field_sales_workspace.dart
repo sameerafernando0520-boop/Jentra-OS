@@ -327,11 +327,11 @@ class _FieldSalesWorkspaceState extends State<FieldSalesWorkspace>
                                       'Customer: ${order['customer_state'] ?? 'email_link_pending'}',
                                     ),
                                     Text(
-                                      'Delivery: acknowledgement not requested',
+                                      'Delivery: ${order['delivery_state'] ?? 'not_requested'}',
                                     ),
                                     if (order['canonical_order_id'] != null)
-                                      const Text(
-                                        'Canonical order: draft · company progression not enabled',
+                                      Text(
+                                        'Canonical order: ${order['canonical_state'] ?? 'draft'}',
                                       ),
                                     const SizedBox(height: 12),
                                     Text(

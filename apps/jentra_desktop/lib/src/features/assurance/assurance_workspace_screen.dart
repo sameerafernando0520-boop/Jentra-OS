@@ -820,7 +820,7 @@ class _EngagementDetailView extends StatelessWidget {
         if (caps.contains('assurance.retention.manage')) ...[
           heading('Retention holds'),
           const Text(
-            'A hold protects this engagement from disposal. Releasing it needs recent multi-factor authentication and a different reviewer from the person who placed it.',
+            'A hold protects this engagement from disposal. Releasing it needs a sign-in verified with your authenticator and a different reviewer from the person who placed it.',
           ),
           Align(
             alignment: Alignment.centerLeft,
@@ -1305,7 +1305,7 @@ class _CommandCard extends StatelessWidget {
             },
             if (a.requiresRecentMfa)
               const Text(
-                'Requires multi-factor authentication completed in the last 15 minutes.',
+                'Requires a sign-in verified with your authenticator.',
               ),
             if (c.commandPending)
               const AuditNotice(

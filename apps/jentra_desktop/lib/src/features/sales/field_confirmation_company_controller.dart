@@ -14,12 +14,14 @@ final class FieldConfirmationCompanyController extends ChangeNotifier {
     required this.gateway,
     required this.store,
     required this.isAuthorized,
+    this.delivery = false,
   });
   final String actor;
   final FieldSalesScope scope;
   final FieldConfirmationCompanyGateway gateway;
   final FieldConfirmationCompanyStore store;
   final bool Function() isAuthorized;
+  final bool delivery;
   List<FieldSalesJson> subjects = [], contacts = [], challenges = [];
   FieldSalesJson? selected;
   FieldConfirmationCompanyCommand? pending;
@@ -34,7 +36,13 @@ final class FieldConfirmationCompanyController extends ChangeNotifier {
       canWrite &&
       providerState == 'configured' &&
       selected != null &&
-      selected!['customer_state'] != 'accepted';
+      (delivery
+          ? !const {
+              'received',
+              'refused',
+              'exception',
+            }.contains(selected!['delivery_state'])
+          : selected!['customer_state'] != 'accepted');
   Future<void> _run(Future<void> Function(int) work) async {
     if (busy || !_current) {
       if (!_current) lock();
@@ -167,11 +175,17 @@ final class FieldConfirmationCompanyController extends ChangeNotifier {
   Future<void> issue(FieldSalesJson contact) async {
     if (!canIssue) return;
     final row = selected!;
-    await _prepare('issue_order', {
+    await _prepare(delivery ? 'issue_delivery' : 'issue_order', {
       'id': const Uuid().v4(),
-      'request_id': row['id'],
-      'request_version': row['version'],
-      'source_digest': row['source_digest'],
+      if (delivery) ...{
+        'delivery_id': row['delivery_id'],
+        'delivery_version': row['delivery_version'],
+        'delivery_digest': row['delivery_digest'],
+      } else ...{
+        'request_id': row['id'],
+        'request_version': row['version'],
+        'source_digest': row['source_digest'],
+      },
       'contact_id': contact['id'],
       'contact_version': contact['version'],
     }, null);
@@ -179,7 +193,7 @@ final class FieldConfirmationCompanyController extends ChangeNotifier {
 
   Future<void> revokeChallenge(FieldSalesJson challenge, String reason) async {
     if (!canWrite) return;
-    await _prepare('revoke_challenge', {
+    await _prepare(delivery ? 'revoke_delivery' : 'revoke_challenge', {
       'id': challenge['id'],
       'reason': reason,
     }, challenge['version'] as String);
@@ -229,7 +243,9 @@ final class FieldConfirmationCompanyController extends ChangeNotifier {
     pending = null;
     await _reload(epoch);
     if (!_valid(epoch)) return;
-    notice = command.action == 'issue_order'
+    notice = command.action == 'issue_delivery'
+        ? 'Delivery response request queued. Email delivery and goods receipt are not established.'
+        : command.action == 'issue_order'
         ? 'Response request queued. Email delivery is not established.'
         : 'Company change recorded. Customer identity and order progression remain separate.';
   }

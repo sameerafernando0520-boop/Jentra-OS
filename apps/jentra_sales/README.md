@@ -41,7 +41,13 @@ requires `FIELD_SALES_EMAIL_CONFIRMATION_ENABLED=true` (default false). Contact
 authority, transport and receipt RPCs are candidate-only. The subsequent
 [company workspace candidate](../../docs/development/field-company-confirmation-candidate-20261102.md)
 prepares staff contact/issuance and protected recovery in the separate desktop
-app. The sender, delivery acknowledgement and company acceptance remain gated.
+app. The [November 3 continuation](../../docs/development/field-sales-rollout-candidate-20261103.md)
+adds a default-disabled organization-scoped Resend worker, explicit company order
+progression and a separate posted-delivery quantity response flow. Delivery also
+requires `FIELD_SALES_DELIVERY_CONFIRMATION_ENABLED=true` (default false).
+The separately approved six-candidate full-schema hosted rehearsal passed and
+rolled back completely. Sender domain/mailbox, installation, deployment,
+genuine sessions/MFA, device checks and company acceptance remain separate gates.
 
 From the workspace root, resolve the existing workspace and then:
 

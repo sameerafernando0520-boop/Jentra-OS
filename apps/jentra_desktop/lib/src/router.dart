@@ -237,6 +237,17 @@ final routerProvider = Provider<GoRouter>((ref) {
             ),
           ),
           GoRoute(
+            path: '/sales/delivery-responses',
+            builder: (context, state) => Consumer(
+              builder: (context, ref, _) {
+                final scope = ref.watch(activeTenantContextProvider);
+                return scope == null
+                    ? const Center(child: Text('Select a company and branch.'))
+                    : FieldCompanyConfirmations(scope, delivery: true);
+              },
+            ),
+          ),
+          GoRoute(
             path: '/inventory',
             builder: (context, state) => const StockOpeningScreen(),
             onExit: (context, state) async =>

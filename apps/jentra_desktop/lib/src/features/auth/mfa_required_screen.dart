@@ -51,6 +51,7 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
   }
 
   Future<void> _verify(String factorId) async {
+    if (_busy) return;
     if (!RegExp(r'^\d{6}$').hasMatch(_code.text.trim())) {
       setState(
         () => _error = 'Enter the 6-digit code from your authenticator.',
@@ -65,6 +66,8 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
       await ref
           .read(foundationGatewayProvider)!
           .verifyTotp(factorId: factorId, code: _code.text.trim());
+      if (!mounted) return;
+      _code.clear();
       ref.invalidate(tenantListProvider);
       if (mounted) widget.onVerified?.call();
     } on Object {
@@ -113,13 +116,16 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
                   ),
                   const SizedBox(height: JentraSpacing.x5),
                   Text(
-                    'Multi-factor verification required',
+                    'Verify your sign-in',
                     style: Theme.of(context).textTheme.headlineMedium,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: JentraSpacing.x2),
                   Text(
-                    'This membership can perform privileged business actions. Jentra keeps every privileged route and RPC locked until this session reaches assurance level 2.',
+                    'Enter a code from your authenticator once after signing in. '
+                    'You stay verified while signed in, including when you '
+                    'reopen Jentra. After signing out, your next sign-in '
+                    'requires a new code.',
                     style: Theme.of(context).textTheme.bodyLarge
                         ?.copyWith(color: context.jentraColors.textSecondary),
                     textAlign: TextAlign.center,
@@ -176,8 +182,10 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
                       const SizedBox(height: JentraSpacing.x4),
                     ],
                     TextField(
+                      key: const ValueKey('mfa-authenticator-code'),
                       controller: _code,
                       autofocus: true,
+                      enabled: !_busy,
                       maxLength: 6,
                       keyboardType: TextInputType.number,
                       textAlign: TextAlign.center,

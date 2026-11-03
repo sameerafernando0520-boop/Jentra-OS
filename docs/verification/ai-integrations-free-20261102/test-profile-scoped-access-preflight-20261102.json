@@ -1,0 +1,212 @@
+{
+  "roles": [
+    {
+      "id": "31973c4b-1d88-47f2-8a3f-46f3c766938a",
+      "code": "assurance_auditor",
+      "name": "Auditor",
+      "is_system": true,
+      "permissions": [
+        "assurance.evidence.request",
+        "assurance.evidence.view",
+        "assurance.finding.issue",
+        "assurance.test.perform"
+      ],
+      "requires_mfa": true
+    },
+    {
+      "id": "986480aa-dfd6-436c-ae56-08f1ea7d1587",
+      "code": "assurance_external",
+      "name": "External reviewer",
+      "is_system": true,
+      "permissions": [
+        "assurance.external_review"
+      ],
+      "requires_mfa": false
+    },
+    {
+      "id": "9ea5c2ee-e972-4686-a918-69bac4c9dfbb",
+      "code": "assurance_lead",
+      "name": "Audit lead",
+      "is_system": true,
+      "permissions": [
+        "assurance.engagement.close",
+        "assurance.engagement.manage",
+        "assurance.evidence.request",
+        "assurance.evidence.view",
+        "assurance.finding.issue",
+        "assurance.plan.manage",
+        "assurance.report.export",
+        "assurance.retention.manage",
+        "assurance.test.perform",
+        "assurance.test.review"
+      ],
+      "requires_mfa": true
+    },
+    {
+      "id": "d94b4265-f2f3-4daa-aee0-f5ea882404b0",
+      "code": "assurance_process_owner",
+      "name": "Process owner",
+      "is_system": true,
+      "permissions": [
+        "assurance.evidence.submit",
+        "assurance.evidence.view",
+        "assurance.remediation.manage",
+        "assurance.response.manage"
+      ],
+      "requires_mfa": false
+    },
+    {
+      "id": "a7599211-c082-4f0e-ab55-e9b0b7d26ba6",
+      "code": "assurance_reviewer",
+      "name": "Reviewer",
+      "is_system": true,
+      "permissions": [
+        "assurance.engagement.close",
+        "assurance.evidence.view",
+        "assurance.retest.perform",
+        "assurance.test.review"
+      ],
+      "requires_mfa": true
+    },
+    {
+      "id": "d57947df-f429-419a-89f8-3d8f5db5fe2b",
+      "code": "w5_approver",
+      "name": "Synthetic Wave 5 approver",
+      "is_system": false,
+      "permissions": [
+        "ai.proposals.approve",
+        "analytics.cash_dates.approve",
+        "finance.classifications.approve",
+        "people.payroll.approve",
+        "people.payroll.correction.approve",
+        "projects.expenses.approve"
+      ],
+      "requires_mfa": true
+    },
+    {
+      "id": "a7030e01-7d49-4db9-8f87-00ffe3fe58b9",
+      "code": "w5_billing",
+      "name": "Synthetic Wave 5 billing",
+      "is_system": false,
+      "permissions": [
+        "billing.read",
+        "billing.synthetic.manage",
+        "core.members.invite"
+      ],
+      "requires_mfa": true
+    },
+    {
+      "id": "d8ecedb2-0e98-4fbf-8416-d908b0ec039c",
+      "code": "w5_executor",
+      "name": "Synthetic Wave 5 executor",
+      "is_system": false,
+      "permissions": [
+        "ai.proposals.execute"
+      ],
+      "requires_mfa": true
+    },
+    {
+      "id": "09ae67a2-4015-4e78-8c25-100a8a26129a",
+      "code": "w5_financeanchor",
+      "name": "Synthetic Wave 5 financeAnchor",
+      "is_system": false,
+      "permissions": [
+        "finance.reports.export",
+        "finance.view"
+      ],
+      "requires_mfa": false
+    },
+    {
+      "id": "cc9c035c-74d4-46ac-8fdb-879f9d95aebf",
+      "code": "w5_proposer",
+      "name": "Synthetic Wave 5 proposer",
+      "is_system": false,
+      "permissions": [
+        "ai.proposals.manage",
+        "analytics.cash_dates.prepare",
+        "analytics.reports.manage",
+        "finance.reports.export",
+        "integrations.manage",
+        "people.payroll.settle",
+        "projects.expenses.settle"
+      ],
+      "requires_mfa": false
+    },
+    {
+      "id": "a6caca89-dca5-4f8e-8671-f49bf029bed4",
+      "code": "w5_reader",
+      "name": "Synthetic Wave 5 reader",
+      "is_system": false,
+      "permissions": [
+        "ai.proposals.view",
+        "analytics.reports.view",
+        "analytics.view",
+        "crm.opportunities.view",
+        "finance.receivables.view",
+        "finance.view",
+        "people.payroll.view",
+        "people.view",
+        "procurement.bills.view",
+        "projects.cost.view",
+        "projects.view",
+        "sales.returns.view",
+        "workflow.process.view"
+      ],
+      "requires_mfa": false
+    }
+  ],
+  "branch": {
+    "id": "3813692c-f0de-4c69-8e34-d56cf54695b1",
+    "status": "active",
+    "legalEntityId": "caa2bb06-219a-47e9-8132-66d1271b0ffd"
+  },
+  "tenant": {
+    "id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+    "name": "Synthetic Wave 5 runtime",
+    "status": "trial",
+    "createdBy": "c6aa32c0-d91f-4555-8687-e77fdf878e0c",
+    "syntheticAllowed": true
+  },
+  "testUser": {
+    "id": "89f63c7a-dc28-4f33-859e-eae277193522",
+    "name": "Jentra Temporary Tester",
+    "email": "jentra-test-4dd40f8b1f69@fldubai.com",
+    "confirmed": true
+  },
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "observedAt": "2026-11-02T13:22:31.616506+00:00",
+  "runtimeScope": {
+    "enabled": true,
+    "branch_id": "3813692c-f0de-4c69-8e34-d56cf54695b1",
+    "issued_at": "2026-10-13T08:13:04.144135+00:00",
+    "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+    "expires_at": "2026-10-14T08:13:04.144135+00:00",
+    "runtime_id": "778237e3-3d4e-4871-8cc9-e08b07b989c7",
+    "legal_entity_id": "caa2bb06-219a-47e9-8132-66d1271b0ffd"
+  },
+  "membershipCount": 0,
+  "scheduleAuthority": {
+    "enabled": true,
+    "issuedAt": "2026-10-13T09:57:07.481942+00:00",
+    "expiresAt": "2026-10-14T09:57:07.481942+00:00"
+  },
+  "requestedPermissions": [
+    {
+      "code": "ai.proposals.view",
+      "module": "ai",
+      "privileged": false
+    },
+    {
+      "code": "analytics.view",
+      "module": "analytics",
+      "privileged": false
+    },
+    {
+      "code": "crm.opportunities.view",
+      "module": "crm",
+      "privileged": false
+    }
+  ],
+  "businessListAnonymousAllowed": false,
+  "businessListAuthenticatedAllowed": true
+}

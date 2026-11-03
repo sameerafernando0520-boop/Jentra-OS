@@ -1,0 +1,49 @@
+{
+  "kind": "prepared-rpc-diagnostics-candidate",
+  "observedAt": "2026-11-02T20:55:45.729Z",
+  "candidate": "build/wave5-rpc-diagnostics-20261103/candidate",
+  "manifestSha256": "ac569ac07bf537c47163fdbee531bb25e16aecaca0df3769bc5d3e877a03afd6",
+  "sourceInputs": 18,
+  "executableModules": 17,
+  "workerTests": {
+    "passed": 309,
+    "failed": 0
+  },
+  "denoCheckPassed": true,
+  "diagnostics": {
+    "fields": [
+      "event",
+      "rpc",
+      "stage",
+      "status",
+      "code",
+      "errorKind"
+    ],
+    "rpcNames": [
+      "get_ai_forecast_evidence",
+      "wave5_runtime_worker",
+      "wave5_edge_control"
+    ],
+    "logsCredentials": false,
+    "logsPayloads": false,
+    "automaticRetries": false
+  },
+  "approvalRequiredForReopeningTest": true,
+  "deployed": false,
+  "trialRenewedAgain": false,
+  "requestResent": false,
+  "artifacts": [
+    {
+      "path": "workers/wave5/rpc_failure_diagnostics.test.mjs",
+      "sha256": "0def04e317ca3ff0074e6ef8d3f195eec5c0f302bd41c5ff9205df66cbbac3b6"
+    },
+    {
+      "path": "docs/verification/ai-integrations-test-20261103/worker-tests.log",
+      "sha256": "7dca82b8e677e43410909d399b040058a950942dece579ff657c9ce5afb3f013"
+    },
+    {
+      "path": "docs/verification/ai-integrations-test-20261103/deno-check-corrected.log",
+      "sha256": "116bea03f6431ca57130e10a23db23f7d7ec06b9a28a70dfafa354aadc5bea3f"
+    }
+  ]
+}

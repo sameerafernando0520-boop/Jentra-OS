@@ -1,0 +1,141 @@
+{
+  "schema_before": "{\n  \"scope\": \"Isolated repository baseline: column projection only; function semantics, ACLs, RLS and rollout behavior require the separate review register.\",\n  \"tables\": {\n    \"api.accounts\": {\n      \"columns\": {\n        \"id\": {\n          \"type\": \"uuid\",\n          \"default\": null,\n          \"nullable\": true\n        },\n        \"code\": {\n          \"type\": \"text\",\n          \"default\": null,\n          \"nullable\": true\n        },\n        \"name\": {\n          \"type\": \"text\",\n          \"default\": null,...",
+  "schema_after": "{\n  \"scope\": \"Isolated repository baseline: column projection only; function semantics, ACLs, RLS and rollout behavior require the separate review register.\",\n  \"tables\": {\n    \"api.accounts\": {\n      \"columns\": {\n        \"id\": {\n          \"type\": \"uuid\",\n          \"default\": null,\n          \"nullable\": true\n        },\n        \"code\": {\n          \"type\": \"text\",\n          \"default\": null,\n          \"nullable\": true\n        },\n        \"name\": {\n          \"type\": \"text\",\n          \"default\": null,...",
+  "analysis_date": "2026-11-03T12:10:31.452897",
+  "overall_compatibility": "fully_compatible",
+  "breaking_changes_count": 0,
+  "potentially_breaking_count": 0,
+  "non_breaking_changes_count": 0,
+  "additive_changes_count": 0,
+  "issues": [],
+  "migration_scripts": [
+    {
+      "script_type": "sql",
+      "description": "Create new table field_sales.assignments",
+      "script_content": "CREATE TABLE field_sales.assignments (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  rep_id uuid NOT NULL,\n  ship_to jsonb NOT NULL,\n  version int8 NOT NULL DEFAULT 1,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  valid_from timestamptz NOT NULL,\n  customer_id uuid NOT NULL,\n  valid_until timestamptz NOT NULL,\n  delivery_terms text NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  payment_terms_days int4 NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS field_sales.assignments;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'field_sales.assignments';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table field_sales.confirmation_challenges",
+      "script_content": "CREATE TABLE field_sales.confirmation_challenges (\n  id uuid NOT NULL,\n  state text NOT NULL DEFAULT 'queued_link'::text,\n  version int8 NOT NULL DEFAULT 1,\n  failures int4 NOT NULL DEFAULT 0,\n  branch_id uuid NOT NULL,\n  code_hash text,\n  issued_at timestamptz NOT NULL DEFAULT clock_timestamp(),\n  issued_by uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  contact_id uuid NOT NULL,\n  expires_at timestamptz NOT NULL,\n  offer_hash text,\n  proof_hash text,\n  request_id uuid NOT NULL,\n  token_hash text,\n  order_digest text NOT NULL,\n  recipient_tag text NOT NULL,\n  source_digest text NOT NULL,\n  policy_version int8 NOT NULL,\n  contact_version int8 NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  request_version int8 NOT NULL,\n  acceptance_valid_until timestamptz NOT NULL,\n  provider_code_reference text,\n  provider_link_reference text\n);",
+      "rollback_script": "DROP TABLE IF EXISTS field_sales.confirmation_challenges;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'field_sales.confirmation_challenges';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table field_sales.confirmation_contacts",
+      "script_content": "CREATE TABLE field_sales.confirmation_contacts (\n  id uuid NOT NULL,\n  name text NOT NULL,\n  email text NOT NULL,\n  active bool NOT NULL DEFAULT true,\n  version int8 NOT NULL DEFAULT 1,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  customer_id uuid NOT NULL,\n  valid_until timestamptz NOT NULL,\n  authorized_at timestamptz NOT NULL DEFAULT now(),\n  authorized_by uuid NOT NULL,\n  authority_note text NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS field_sales.confirmation_contacts;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'field_sales.confirmation_contacts';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table field_sales.confirmation_transport",
+      "script_content": "CREATE TABLE field_sales.confirmation_transport (\n  enabled bool NOT NULL DEFAULT false,\n  version int8 NOT NULL DEFAULT 1,\n  tenant_id uuid NOT NULL,\n  acceptance_minutes int4 NOT NULL DEFAULT 1440,\n  verification_secret bytea NOT NULL DEFAULT extensions.gen_random_bytes(32)\n);",
+      "rollback_script": "DROP TABLE IF EXISTS field_sales.confirmation_transport;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'field_sales.confirmation_transport';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table field_sales.delivery_challenges",
+      "script_content": "CREATE TABLE field_sales.delivery_challenges (\n  id uuid NOT NULL,\n  state text NOT NULL DEFAULT 'queued_link'::text,\n  version int8 NOT NULL DEFAULT 1,\n  failures int4 NOT NULL DEFAULT 0,\n  branch_id uuid NOT NULL,\n  code_hash text,\n  issued_at timestamptz NOT NULL DEFAULT clock_timestamp(),\n  issued_by uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  contact_id uuid NOT NULL,\n  expires_at timestamptz NOT NULL,\n  offer_hash text,\n  proof_hash text,\n  request_id uuid NOT NULL,\n  token_hash text,\n  delivery_id uuid NOT NULL,\n  recipient_tag text NOT NULL,\n  source_digest text NOT NULL,\n  policy_version int8 NOT NULL,\n  contact_version int8 NOT NULL,\n  delivery_digest text NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  request_version int8 NOT NULL,\n  delivery_version int8 NOT NULL,\n  acceptance_valid_until timestamptz NOT NULL,\n  provider_code_reference text,\n  provider_link_reference text\n);",
+      "rollback_script": "DROP TABLE IF EXISTS field_sales.delivery_challenges;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'field_sales.delivery_challenges';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table field_sales.delivery_responses",
+      "script_content": "CREATE TABLE field_sales.delivery_responses (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  method text NOT NULL DEFAULT 'delivery_email_and_code'::text,\n  reason text NOT NULL,\n  response text NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  quantities jsonb NOT NULL,\n  request_id uuid NOT NULL,\n  delivery_id uuid NOT NULL,\n  challenge_id uuid NOT NULL,\n  responded_at timestamptz NOT NULL DEFAULT clock_timestamp(),\n  offer_snapshot jsonb NOT NULL,\n  delivery_digest text NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  contact_snapshot jsonb NOT NULL,\n  delivery_version int8 NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS field_sales.delivery_responses;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'field_sales.delivery_responses';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table field_sales.mail_jobs",
+      "script_content": "CREATE TABLE field_sales.mail_jobs (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  kind text NOT NULL,\n  state text NOT NULL DEFAULT 'ready'::text,\n  attempts int4 NOT NULL DEFAULT 0,\n  lease_id uuid,\n  snapshot jsonb NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamptz NOT NULL DEFAULT clock_timestamp(),\n  accepted_at timestamptz,\n  lease_until timestamptz,\n  challenge_id uuid NOT NULL,\n  provider_reference text\n);",
+      "rollback_script": "DROP TABLE IF EXISTS field_sales.mail_jobs;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'field_sales.mail_jobs';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table field_sales.mail_policies",
+      "script_content": "CREATE TABLE field_sales.mail_policies (\n  enabled bool NOT NULL DEFAULT false,\n  version int8 NOT NULL DEFAULT 1,\n  provider text NOT NULL,\n  tenant_id uuid NOT NULL,\n  key_version text NOT NULL,\n  reviewed_at timestamptz NOT NULL DEFAULT clock_timestamp(),\n  reviewed_by uuid NOT NULL,\n  sender_email text NOT NULL,\n  credential_alias text NOT NULL,\n  secret_key_sha256 text NOT NULL,\n  confirmation_origin text NOT NULL,\n  domain_evidence_sha256 text NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS field_sales.mail_policies;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'field_sales.mail_policies';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table field_sales.order_progressions",
+      "script_content": "CREATE TABLE field_sales.order_progressions (\n  order_id uuid NOT NULL,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  applied_at timestamptz NOT NULL DEFAULT clock_timestamp(),\n  command_id uuid NOT NULL,\n  request_id uuid NOT NULL,\n  response_id uuid NOT NULL,\n  confirmed_by uuid NOT NULL,\n  legal_entity_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS field_sales.order_progressions;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'field_sales.order_progressions';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table field_sales.order_requests",
+      "script_content": "CREATE TABLE field_sales.order_requests (\n  id uuid NOT NULL,\n  input jsonb NOT NULL,\n  state text NOT NULL DEFAULT 'submitted'::text,\n  rep_id uuid NOT NULL,\n  preview jsonb NOT NULL,\n  version int8 NOT NULL DEFAULT 1,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  created_at timestamptz NOT NULL DEFAULT now(),\n  decided_at timestamptz,\n  customer_id uuid NOT NULL,\n  decision_by uuid,\n  source_digest text NOT NULL,\n  decision_reason text,\n  legal_entity_id uuid NOT NULL,\n  canonical_order_id uuid\n);",
+      "rollback_script": "DROP TABLE IF EXISTS field_sales.order_requests;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'field_sales.order_requests';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table field_sales.order_responses",
+      "script_content": "CREATE TABLE field_sales.order_responses (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  method text NOT NULL,\n  reason text NOT NULL,\n  response text NOT NULL,\n  contact_id uuid NOT NULL,\n  request_id uuid NOT NULL,\n  valid_until timestamptz NOT NULL,\n  challenge_id uuid NOT NULL,\n  order_digest text NOT NULL,\n  responded_at timestamptz NOT NULL DEFAULT clock_timestamp(),\n  source_digest text NOT NULL,\n  offer_snapshot jsonb NOT NULL,\n  contact_version int8 NOT NULL,\n  request_version int8 NOT NULL,\n  contact_snapshot jsonb NOT NULL,\n  authority_attested bool NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS field_sales.order_responses;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'field_sales.order_responses';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table field_sales.price_policies",
+      "script_content": "CREATE TABLE field_sales.price_policies (\n  id uuid NOT NULL DEFAULT gen_random_uuid(),\n  unit_id uuid NOT NULL,\n  version int8 NOT NULL DEFAULT 1,\n  branch_id uuid NOT NULL,\n  tenant_id uuid NOT NULL,\n  product_id uuid NOT NULL,\n  unit_price numeric NOT NULL,\n  valid_from date NOT NULL,\n  customer_id uuid NOT NULL,\n  valid_until date NOT NULL,\n  currency_code text NOT NULL,\n  legal_entity_id uuid NOT NULL,\n  tax_definition_id uuid,\n  max_discount_percent numeric NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS field_sales.price_policies;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'field_sales.price_policies';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table field_sales.principals",
+      "script_content": "CREATE TABLE field_sales.principals (\n  user_id uuid NOT NULL,\n  tenant_id uuid NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS field_sales.principals;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'field_sales.principals';"
+    },
+    {
+      "script_type": "sql",
+      "description": "Create new table field_sales.progression_permits",
+      "script_content": "CREATE TABLE field_sales.progression_permits (\n  actor_id uuid NOT NULL,\n  order_id uuid NOT NULL,\n  transaction_id int8 NOT NULL\n);",
+      "rollback_script": "DROP TABLE IF EXISTS field_sales.progression_permits;",
+      "dependencies": [],
+      "validation_query": "SELECT COUNT(*) FROM information_schema.tables WHERE table_name = 'field_sales.progression_permits';"
+    }
+  ],
+  "risk_assessment": {
+    "overall_risk": "low",
+    "deployment_risk": "safe_independent_deployment",
+    "rollback_complexity": "low",
+    "testing_requirements": [
+      "integration_testing",
+      "regression_testing",
+      "data_migration_testing"
+    ]
+  },
+  "recommendations": [
+    "Test all migration scripts in staging environment",
+    "Implement migration progress monitoring",
+    "Create detailed communication plan for stakeholders",
+    "Implement feature flags for gradual rollout"
+  ]
+}

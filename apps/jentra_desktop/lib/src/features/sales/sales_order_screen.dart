@@ -183,6 +183,19 @@ class _OrderWorkspaceState extends ConsumerState<_OrderWorkspace> {
                   icon: const Icon(Icons.mark_email_read_outlined),
                   label: const Text('Customer email requests'),
                 ),
+              if (s.capabilities.contains('sales.field.confirmations.manage') &&
+                  ref.watch(fieldDeliveryCompanyGatewayProvider) != null)
+                OutlinedButton.icon(
+                  onPressed: s.busy || s.loading || !s.isOnline
+                      ? null
+                      : () => openFieldCompanyConfirmations(
+                          context,
+                          s.context,
+                          delivery: true,
+                        ),
+                  icon: const Icon(Icons.fact_check_outlined),
+                  label: const Text('Delivery responses'),
+                ),
               if (s.canManage || s.canReserve)
                 OutlinedButton.icon(
                   onPressed: s.busy

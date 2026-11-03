@@ -15,6 +15,54 @@ abstract interface class FieldConfirmationGateway {
   );
 }
 
+abstract interface class FieldDeliveryGateway {
+  Future<FieldSalesJson> requestCode(String token);
+  Future<FieldSalesJson> verify(String token, String code);
+  Future<FieldSalesJson> respond(
+    String token,
+    String proof,
+    List<FieldSalesJson> quantities,
+    String reason,
+    bool authorized,
+  );
+}
+
+/// Separate purpose and RPC names; uses the same anonymous session fencing.
+final class SupabaseFieldDeliveryGateway implements FieldDeliveryGateway {
+  SupabaseFieldDeliveryGateway(SupabaseClient client)
+    : _transport = SupabaseFieldConfirmationGateway(client);
+  SupabaseFieldDeliveryGateway.withRpc(
+    Future<Object?> Function(String, FieldSalesJson) rpc, {
+    String? Function()? currentActor,
+  }) : _transport = SupabaseFieldConfirmationGateway.withRpc(
+         rpc,
+         currentActor: currentActor,
+       );
+  final SupabaseFieldConfirmationGateway _transport;
+  @override
+  Future<FieldSalesJson> requestCode(String token) =>
+      _transport._call('field_sales_delivery_request_code', {'p_token': token});
+  @override
+  Future<FieldSalesJson> verify(String token, String code) => _transport._call(
+    'field_sales_delivery_verify',
+    {'p_token': token, 'p_code': code},
+  );
+  @override
+  Future<FieldSalesJson> respond(
+    String token,
+    String proof,
+    List<FieldSalesJson> quantities,
+    String reason,
+    bool authorized,
+  ) => _transport._call('field_sales_delivery_respond', {
+    'p_token': token,
+    'p_proof': proof,
+    'p_quantities': quantities,
+    'p_reason': reason,
+    'p_authorized': authorized,
+  });
+}
+
 /// A dedicated anonymous client. No signed-in Sales/Employee session or broad
 /// commerce API is accepted. No token, code, proof or offer enters diagnostics.
 final class SupabaseFieldConfirmationGateway
