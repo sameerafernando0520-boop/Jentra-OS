@@ -7,6 +7,7 @@ import 'package:jentra_platform/field_confirmation.dart';
 import 'src/data/sales_gateway.dart';
 import 'src/data/sales_store_factory.dart';
 import 'src/sales_app.dart';
+import 'src/sales_configuration.dart';
 import 'src/sales_controller.dart';
 import 'src/field_sales_controller.dart';
 import 'src/confirmation_controller.dart';
@@ -18,11 +19,9 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   // Keep the browser semantics tree available for keyboards and assistive tools.
   SemanticsBinding.instance.ensureSemantics();
-  const url = String.fromEnvironment(
-    'SUPABASE_URL',
-    defaultValue: 'https://xpdoufauvrbdmxgngetv.supabase.co',
-  );
-  const key = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
+  const configuration = SalesConfiguration.fromEnvironment();
+  final url = configuration.url;
+  final key = configuration.publishableKey;
   const enableCandidate = bool.fromEnvironment('FIELD_SALES_CANDIDATE_ENABLED');
   final confirmationLink = captureFieldConfirmationLink();
   if (confirmationLink.present) {
@@ -36,8 +35,7 @@ void main() {
                 const bool.fromEnvironment(
                   'FIELD_SALES_DELIVERY_CONFIRMATION_ENABLED',
                 )) &&
-            key.isNotEmpty &&
-            Uri.tryParse(url)?.scheme == 'https'
+            configuration.isValid
         ? SupabaseClient(
             url,
             key,
@@ -69,8 +67,8 @@ void main() {
     );
     return;
   }
-  final store = createSalesStore(projectUrl: url);
-  final client = key.isNotEmpty && Uri.tryParse(url)?.scheme == 'https'
+  final store = createSalesStore(projectUrl: configuration.storageProjectUrl);
+  final client = configuration.isValid
       ? SupabaseClient(
           url,
           key,
