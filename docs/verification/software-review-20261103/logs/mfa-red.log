@@ -1,0 +1,118 @@
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/auth_session_policy_test.dart
+00:00 +0: new password sign-in needs an authenticator code
+00:00 +1: verified sign-in survives repeated reads and token refresh
+00:00 +2: reopening with a saved verified session needs no new code
+00:00 +3: sign-out clears assurance and the next sign-in needs a new code
+00:00 +4: authenticator prompt explains the policy and clears its code
+00:01 +5: failed authenticator lookup offers retry without enrollment
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Retry loading authenticators": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/auth_session_policy_test.dart:294:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/auth_session_policy_test.dart line 294
+The test description was:
+  failed authenticator lookup offers retry without enrollment
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +5 -1: failed authenticator lookup offers retry without enrollment [E]
+  Test failed. See exception logs above.
+  The test description was: failed authenticator lookup offers retry without enrollment
+  
+00:02 +5 -1: reopened unfinished setup can verify the original authenticator
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Finish your earlier authenticator setup":
+[]>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/auth_session_policy_test.dart:309:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/auth_session_policy_test.dart line 309
+The test description was:
+  reopened unfinished setup can verify the original authenticator
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +5 -2: reopened unfinished setup can verify the original authenticator [E]
+  Test failed. See exception logs above.
+  The test description was: reopened unfinished setup can verify the original authenticator
+  
+00:02 +5 -2: unfinished setup can be removed before a new setup is created
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:694:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#2      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2389:32)
+#3      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/auth_session_policy_test.dart:328:18)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  unfinished setup can be removed before a new setup is created
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +5 -3: unfinished setup can be removed before a new setup is created [E]
+  Test failed. See exception logs above.
+  The test description was: unfinished setup can be removed before a new setup is created
+  
+00:02 +5 -3: lost enrollment response reloads the unfinished setup before retry
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Finish your earlier authenticator setup":
+[]>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/auth_session_policy_test.dart:347:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_desktop/test/auth_session_policy_test.dart line 347
+The test description was:
+  lost enrollment response reloads the unfinished setup before retry
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +5 -4: lost enrollment response reloads the unfinished setup before retry [E]
+  Test failed. See exception logs above.
+  The test description was: lost enrollment response reloads the unfinished setup before retry
+  
+00:02 +5 -4: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/auth_session_policy_test.dart: failed authenticator lookup offers retry without enrollment
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/auth_session_policy_test.dart: lost enrollment response reloads the unfinished setup before retry
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/auth_session_policy_test.dart: reopened unfinished setup can verify the original authenticator
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_desktop/test/auth_session_policy_test.dart: unfinished setup can be removed before a new setup is created
