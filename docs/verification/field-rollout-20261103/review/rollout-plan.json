@@ -1,0 +1,74 @@
+{
+  "project": "xpdoufauvrbdmxgngetv",
+  "mode": "prepare-only",
+  "preparedAtUtc": "2026-11-03T06:40:30.867Z",
+  "candidates": {
+    "supabase/candidates/20261031090000_field_sales_governance.sql": "46fb83fb4bae57059c483cdb1f06f9021d12d34525194321611e70170a2a71b1",
+    "supabase/candidates/20261102090000_field_order_email_confirmation.sql": "49f4e7747d68b32fd8f950ddda3cc2ae830a003215724f9ff0e7af2cfd34052a",
+    "supabase/candidates/20261102120000_field_confirmation_company_workspace.sql": "072aeeba82df5e75c0c51b8083a67568a40f73994879880023888df743d85b8c",
+    "supabase/candidates/20261103090000_field_sales_mail_worker.sql": "0cfb9cbd8bb00dd8b5b24b588a9b4929ae625842ae199f5deb3abf55d27c3e32",
+    "supabase/candidates/20261103100000_field_sales_company_progression.sql": "98798644a43e797ceb8854b1c568f8c83631111074ef3285d71168c4abb19ee3",
+    "supabase/candidates/20261103110000_field_sales_delivery_acknowledgement.sql": "e94a4ca358b4fc7846c36a4cfb64adcfc60fe8ad37b9ecba46483872ec19f2a1"
+  },
+  "sqlSha256": "cca874a3461a73933e4081b228f9ce97d8a714ac655d87318c8d183df74fd3db",
+  "expectedMigrationVersionsMd5": "6ace1fe895a4615fa01746eb2632ae65",
+  "originalFunctionSignatures": [
+    "core.has_permission(uuid,text,uuid,uuid)",
+    "core.list_capabilities(uuid)",
+    "core.wave2_replay(uuid,text,uuid,text)",
+    "core.wave3_replay(uuid,text,uuid,uuid,text)",
+    "core.bootstrap_tenant_impl(text,text,text,text,text,text,text,text,uuid)",
+    "people.require_access(uuid,uuid,uuid,text)",
+    "api.get_sales_order_credit_preview(uuid,uuid,uuid,uuid)",
+    "api.transition_operational_document(uuid,uuid,uuid,uuid,uuid,timestamptz,jsonb,bigint)",
+    "api.reserve_sales_order_stock(uuid,uuid,uuid,uuid,uuid,timestamptz,jsonb,bigint)",
+    "sales.flow_upsert(text,uuid,uuid,uuid,uuid,uuid,timestamptz,jsonb,bigint)",
+    "sales.flow_post(text,uuid,uuid,uuid,uuid,uuid,timestamptz,jsonb,bigint)"
+  ],
+  "providerChoice": "verified-domain-resend",
+  "providerChoiceSource": "Explicit user reply, 2026-11-03",
+  "installationAuthorized": false,
+  "deploymentAuthorized": false,
+  "sixCandidateHostedRehearsalAuthorized": false,
+  "threeCandidateHostedEvidence": "../hosted-rehearsal.json",
+  "compatibilityItems": [
+    {
+      "id": "FS-COMPAT-01",
+      "severity": "breaking_for_restricted_principals",
+      "change": "Restricted representatives lose broad legacy CRM, commerce, export and file paths.",
+      "requirement": "Inventory affected integrations and dated portfolios; coordinated Sales client and capability rollout.",
+      "ownerAccepted": false
+    },
+    {
+      "id": "FS-COMPAT-02",
+      "severity": "breaking_for_governed_confirmation",
+      "change": "Governed order confirmation requires independent current MFA company authority, accepted exact customer response and a reviewed fresh credit digest.",
+      "requirement": "Enable the new company client and allocate sales.field.orders.progress explicitly; older clients fail closed for governed orders.",
+      "ownerAccepted": false
+    },
+    {
+      "id": "FS-COMPAT-03",
+      "severity": "potentially_breaking_for_hosted_schema",
+      "change": "Canonical API/private commerce functions are wrapped/renamed; private aliases lose client EXECUTE grants.",
+      "requirement": "Rehearse all six against the current complete hosted schema and inspect any installed function dependencies before persistent installation.",
+      "ownerAccepted": false
+    },
+    {
+      "id": "FS-COMPAT-04",
+      "severity": "potentially_breaking_for_operations",
+      "change": "Mail delivery needs a live worker, verified Resend sender, secret versions and per-organization allowlist/policy; all default off.",
+      "requirement": "Complete sender/mailbox/HTTP pilot and monitoring before enabling a company.",
+      "ownerAccepted": false
+    }
+  ],
+  "pending": [
+    "sender domain and address",
+    "approved pilot mailbox",
+    "server-side Resend and HMAC secrets",
+    "six-candidate hosted rollback authorization/result",
+    "installation and deployment authorization",
+    "genuine Auth/MFA sessions and device checks",
+    "named company pilot signoff"
+  ],
+  "boundary": "Prepared review artifact only. Does not expand the prior three-candidate approval or execute any SQL."
+}

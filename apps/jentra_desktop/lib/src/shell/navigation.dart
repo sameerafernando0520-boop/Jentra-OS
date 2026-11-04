@@ -49,6 +49,16 @@ const jentraDestinations = <JentraDestination>[
     icon: Icons.receipt_long_outlined,
   ),
   JentraDestination(
+    label: 'Customer email requests',
+    path: '/sales/customer-email-requests',
+    icon: Icons.mark_email_read_outlined,
+  ),
+  JentraDestination(
+    label: 'Delivery responses',
+    path: '/sales/delivery-responses',
+    icon: Icons.fact_check_outlined,
+  ),
+  JentraDestination(
     label: 'Procurement',
     path: '/procurement',
     icon: Icons.shopping_bag_outlined,
@@ -466,6 +476,23 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
                   'finance.receivables.view',
                   'workflow.approvals.decide',
                 }.any(capabilities.contains))) &&
+        (item.path != '/sales/customer-email-requests' ||
+            const bool.fromEnvironment('FIELD_SALES_CANDIDATE_ENABLED') &&
+                const bool.fromEnvironment(
+                  'FIELD_SALES_EMAIL_CONFIRMATION_ENABLED',
+                ) &&
+                (capabilities?.contains('sales.field.confirmations.manage') ??
+                    false)) &&
+        (item.path != '/sales/delivery-responses' ||
+            const bool.fromEnvironment('FIELD_SALES_CANDIDATE_ENABLED') &&
+                const bool.fromEnvironment(
+                  'FIELD_SALES_EMAIL_CONFIRMATION_ENABLED',
+                ) &&
+                const bool.fromEnvironment(
+                  'FIELD_SALES_DELIVERY_CONFIRMATION_ENABLED',
+                ) &&
+                (capabilities?.contains('sales.field.confirmations.manage') ??
+                    false)) &&
         (item.path != '/sales' ||
             (capabilities != null &&
                 const {

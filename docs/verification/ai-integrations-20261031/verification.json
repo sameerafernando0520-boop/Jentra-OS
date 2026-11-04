@@ -1,0 +1,556 @@
+{
+  "kind": "jentra-ai-integrations-development-verification",
+  "recordedAt": "2026-10-30T23:25:51.272Z",
+  "clientDate": "2026-10-31",
+  "clientTimezone": "Asia/Colombo",
+  "baselineCommit": "678584047d7f4a5fd0e50192b2d3ea576f33b1c7",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "workerTests": {
+    "passed": 287,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "normalProcessIsolation": true
+  },
+  "isolatedPostgres": {
+    "passed": 9,
+    "hostedDatabaseQueried": false
+  },
+  "accountingCliSynthetic": {
+    "passed": 3,
+    "expectedExit": 2
+  },
+  "denoEntrypoints": {
+    "checked": 2,
+    "exitCode": 0
+  },
+  "backendAccess": {
+    "kind": "jentra-ai-integrations-backend-access",
+    "observedAt": "2026-10-30T23:19:22.8585822Z",
+    "projectId": "xpdoufauvrbdmxgngetv",
+    "operation": "read-only projects list",
+    "cliExit": 1,
+    "targetVisible": false,
+    "state": "renewed-authentication-required",
+    "credentialsPrinted": false
+  },
+  "hostedObservation": {
+    "path": "docs/verification/ai-integrations/2026-10-30T23-21-56-155Z-e73f5427-94b5-4fd7-9999-d4c953e1bb07/report.json",
+    "startedAt": "2026-10-30T23:21:56.221Z",
+    "finishedAt": "2026-10-30T23:22:02.018Z",
+    "observations": [
+      {
+        "endpoint": "schedule",
+        "status": 403,
+        "code": "WORKER_ACCESS_DENIED",
+        "state": "denial-verified"
+      },
+      {
+        "endpoint": "external-forecast",
+        "status": 403,
+        "code": "AUTH_REQUIRED",
+        "state": "denial-verified"
+      },
+      {
+        "endpoint": "model-suggestion",
+        "status": 503,
+        "code": "MODEL_PROVIDER_UNAVAILABLE",
+        "state": "provider-unavailable"
+      },
+      {
+        "endpoint": "receiver",
+        "status": 403,
+        "code": "INTEGRATION_ACCESS_DENIED",
+        "state": "denial-verified"
+      }
+    ]
+  },
+  "review": {
+    "standards": {
+      "rootReviewCompleted": true,
+      "rootFindings": 0,
+      "independentVerdictComplete": false,
+      "reason": "Review agent hit usage limit after focused checks and before a final verdict."
+    },
+    "spec": {
+      "rootReviewCompleted": true,
+      "rootFindings": 0,
+      "independentVerdictComplete": false,
+      "reason": "No completed independent Spec verdict was available at this publication."
+    }
+  },
+  "gates": {
+    "hostedModelResponseVerified": false,
+    "hostedUsageAccountingVerified": false,
+    "externalDeliveryVerified": false,
+    "runtimeAuthorityVerified": false,
+    "installedSourceVerified": false,
+    "authenticatedHumanMfaVerified": false,
+    "ownerAcceptanceAwarded": false
+  },
+  "operations": {
+    "workerDeployed": false,
+    "migrationInstalled": false,
+    "authorityRenewed": false,
+    "modelCalls": 0,
+    "signedDeliveries": 0,
+    "secretValuesPrinted": false,
+    "committed": false,
+    "pushed": false
+  },
+  "currentSourceHashes": [
+    {
+      "path": "supabase/functions/wave5-receiver/deno.json",
+      "bytes": 62,
+      "sha256": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf"
+    },
+    {
+      "path": "supabase/functions/wave5-receiver/index.ts",
+      "bytes": 206,
+      "sha256": "1016066ee9bc98436ebc2b0afe5d4bb6b290d8786a10d038ddac0b5fad3e57f5"
+    },
+    {
+      "path": "supabase/functions/wave5-runtime/deno.json",
+      "bytes": 62,
+      "sha256": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf"
+    },
+    {
+      "path": "supabase/functions/wave5-runtime/index.ts",
+      "bytes": 345,
+      "sha256": "e76dbfa9f25c09b29646c1f3470fb4e5a3ce5fb237ff212fee40d095f07c3cf8"
+    },
+    {
+      "path": "tools/wave5/check_hosted_accounting.mjs",
+      "bytes": 996,
+      "sha256": "91a41509e87fd3e715ad9556b1163d6e14ef282c21da915ee9bcc62d2aec9a83"
+    },
+    {
+      "path": "tools/wave5/hosted_accounting.mjs",
+      "bytes": 3558,
+      "sha256": "033f620489861d950ef5465100cd14fc3b307ba720d773c95ec8d2165d0b6f52"
+    },
+    {
+      "path": "tools/wave5/hosted_accounting_readonly.sql",
+      "bytes": 5910,
+      "sha256": "22e1688c3b77a6c0077ad45eff53361240f1a6a170f0fc3cf4772da76dabcd26"
+    },
+    {
+      "path": "tools/wave5/hosted_probe.mjs",
+      "bytes": 4137,
+      "sha256": "cda278038fb8d8fc84a417976525b85651576d3e7327d0eeed0c2a2e33569bab"
+    },
+    {
+      "path": "tools/wave5/verify_hosted.mjs",
+      "bytes": 2247,
+      "sha256": "0fb9c50b78432ec9960deb5d680da4a26164e7dd2be9a964f8f47b632638e086"
+    },
+    {
+      "path": "workers/wave5/bounded_json.mjs",
+      "bytes": 2310,
+      "sha256": "2c9ba6bc68101501970a41abaf02443d4f977bb1ba6bb7457f45bdc226096c05"
+    },
+    {
+      "path": "workers/wave5/delivery_schedule.mjs",
+      "bytes": 1120,
+      "sha256": "29a412b79b5b7e41e37a77d82659a79ee6f90a1960d8573b3aeb7990acee60fa"
+    },
+    {
+      "path": "workers/wave5/edge_configuration.mjs",
+      "bytes": 1072,
+      "sha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13"
+    },
+    {
+      "path": "workers/wave5/edge_factory_project_http_20261014_r5_v5.test.mjs",
+      "bytes": 2839,
+      "sha256": "57da93ce0b3e10b1ccdeeebd03cd3dcdd7897f90bed85d05141c92e68e471a36"
+    },
+    {
+      "path": "workers/wave5/edge_receiver.mjs",
+      "bytes": 5707,
+      "sha256": "a4b5da308fac5ee47b4dd54d55de6d06a9bd8bf40f333f21d8a12ddde0b9b140"
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261013_r5.mjs",
+      "bytes": 5655,
+      "sha256": "e3a10721ac1298977b0e2a38459aa91644c125852c484b546e41a68b56c1ca7b"
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261013_r5_v3.mjs",
+      "bytes": 5658,
+      "sha256": "e954d4b74faef8182abd49fc6a43c8e7fb212b6eec34c4b5944dcb255d50c07b"
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261014_r5_v4.mjs",
+      "bytes": 5658,
+      "sha256": "2b138496f7879cdef9231e8c315ba62103bdd29e9383be321ef157b708fd60b9"
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261014_r5_v5.mjs",
+      "bytes": 5658,
+      "sha256": "4d6f2f20b363ab8cd26e9b6bfb4121ad927532dc4e7b458cc95b5c607e74c26f"
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261014_r5_v6.mjs",
+      "bytes": 5658,
+      "sha256": "e4a0df9a150b7524762ba8d6ea13c5c4e24c5fe6abe2d27fafdb6bb5ffa1f948"
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261014_r5_v7.mjs",
+      "bytes": 5722,
+      "sha256": "f62c297ca4ae3fae9cb9c8a21e4247b67f37b4fd5d8f29dad88fa01621f837e8"
+    },
+    {
+      "path": "workers/wave5/edge_route_20261013_r5.mjs",
+      "bytes": 855,
+      "sha256": "224619e51cbd5ac50799eb7e8dd7e4b7ad8410c78156641017aaacaf2edc8a7f"
+    },
+    {
+      "path": "workers/wave5/edge_route_20261013_r5.test.mjs",
+      "bytes": 2066,
+      "sha256": "f9611b6bcfa3a8d98fdb0a445f9ebaab1b26b992c01b2e6abf6c4ed6dcc4d104"
+    },
+    {
+      "path": "workers/wave5/edge_route_20261013_r5_v3.mjs",
+      "bytes": 3750,
+      "sha256": "e9f173d3e1330ac08854c2803aea95c8cffa0f20f343173bde0c3696d7996531"
+    },
+    {
+      "path": "workers/wave5/edge_route_20261014_r5_v4.mjs",
+      "bytes": 4177,
+      "sha256": "ea01c16c75905e431131f0128d9ec9972a77e1b1e58b0a90f2e9b75dd0cfc3b0"
+    },
+    {
+      "path": "workers/wave5/edge_route_20261014_r5_v5.mjs",
+      "bytes": 4539,
+      "sha256": "ee309ad07a804a8cd029988756665fef60a5293ad71162d4efca3b88cee4e95a"
+    },
+    {
+      "path": "workers/wave5/edge_route_20261014_r5_v6.mjs",
+      "bytes": 7360,
+      "sha256": "37b7f363c7243ce5126908f982865dec2ddcdc59307965b649f9f39d102701d4"
+    },
+    {
+      "path": "workers/wave5/edge_route_finite_http_diagnostic_20261014_r5_v4.test.mjs",
+      "bytes": 4124,
+      "sha256": "d21ccf689f60000b5bad55271a6357d1295919c6498e79c983c4fe05031fab67"
+    },
+    {
+      "path": "workers/wave5/edge_route_platform_origin_20261013_r5_v3.test.mjs",
+      "bytes": 16398,
+      "sha256": "b263c2ade31fee56f26bab92cadc4e8d2c90d9cabe4a25694ecb9e6ed9b239b6"
+    },
+    {
+      "path": "workers/wave5/edge_route_project_http_20261014_r5_v5.test.mjs",
+      "bytes": 4231,
+      "sha256": "220c184fee4057c6730e4901100f91b8a5357b9c2ac57cc746b2c62d0748f798"
+    },
+    {
+      "path": "workers/wave5/edge_runtime.mjs",
+      "bytes": 6974,
+      "sha256": "e457d40bf42efdc7bf679e2aabe8336bcf2d364b89b3bf5305e9eb450fd6ee45"
+    },
+    {
+      "path": "workers/wave5/edge_runtime.test.mjs",
+      "bytes": 10556,
+      "sha256": "3621bd9ca2fba6a4a27323673d9789096b9e71ef51ad2d80c4f0099a39eeb54b"
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261013_r5.mjs",
+      "bytes": 6918,
+      "sha256": "7f99655115780e81e9b57f7724fbb0e3a93e34d3d86854a892a6abf94e2c8fd5"
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261013_r5_v3.mjs",
+      "bytes": 6921,
+      "sha256": "363fea0ed54c3edb2896882e153f3ef7eeeba5e7b56ef3847ff68ed5e7af24cb"
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261014_r5_v4.mjs",
+      "bytes": 6921,
+      "sha256": "4ce1af5886dd0fe9f20a0ae33ef89b53ac492dc1fea4c42e099c0c4ebb23cb0c"
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261014_r5_v5.mjs",
+      "bytes": 6921,
+      "sha256": "2b4e03939314c30b9908ed1b2313eed6a13db5f8708b35d80f309108b673800e"
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261014_r5_v6.mjs",
+      "bytes": 6921,
+      "sha256": "b5be66b51e3f3c46050bbeda8dcab930dc4ed80d102fc2959360ef3487a54776"
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261014_r5_v7.mjs",
+      "bytes": 7004,
+      "sha256": "bf772c3a77f5f050c98dfb0e4e61de63235aa42b4618451f9dc69a5e24697cd8"
+    },
+    {
+      "path": "workers/wave5/edge_runtime_platform_20261013_r5.test.mjs",
+      "bytes": 10640,
+      "sha256": "5032f09babd8b958d26e29ff4c8ae8491d8143a5f7e6066626605cc7ca669b2b"
+    },
+    {
+      "path": "workers/wave5/entries/receiver_20261014_r5_v7.ts",
+      "bytes": 602,
+      "sha256": "bb034262915109c34492fb6fe31fbbdc5c9c0b9508804e209aea9b8fa0664a98"
+    },
+    {
+      "path": "workers/wave5/entries/runtime_20261014_r5_v7.ts",
+      "bytes": 598,
+      "sha256": "28a562cc40ba9c17921ed8018936eeb9fc8328171ca2e78f327b393769263c80"
+    },
+    {
+      "path": "workers/wave5/hosted_accounting.test.mjs",
+      "bytes": 4363,
+      "sha256": "0775111fddccb629fccf52c9e2c30f52c14e9313c8dc3cd51b6acb63e477ad50"
+    },
+    {
+      "path": "workers/wave5/hosted_contract.test.mjs",
+      "bytes": 5767,
+      "sha256": "f29d77d6b722503a67e278afb90703e79496ab2287ae4f8e180e1cddf3855114"
+    },
+    {
+      "path": "workers/wave5/hosted_probe.test.mjs",
+      "bytes": 4432,
+      "sha256": "4dbbdbdf4fae0e5c2cd680a65a36e3e19d7b01fdf4258b0086970ccecdc15cfc"
+    },
+    {
+      "path": "workers/wave5/integration_policy.mjs",
+      "bytes": 10120,
+      "sha256": "f83e76cd5bdaf7997bf001edf6101537db9c34995019e9f7b5c196546a875cea"
+    },
+    {
+      "path": "workers/wave5/integration_policy.test.mjs",
+      "bytes": 5902,
+      "sha256": "b8ca6381cb7425e08d4ea97c95a5f0b5b91304ff91617e3562e8f17c0cf20d82"
+    },
+    {
+      "path": "workers/wave5/model_reader.mjs",
+      "bytes": 1247,
+      "sha256": "9be9ac552738041fb14a1cea2f9fd5e8dda415399512692f11b7430cf634a0a9"
+    },
+    {
+      "path": "workers/wave5/model_runtime.mjs",
+      "bytes": 5939,
+      "sha256": "7776efd148c1257c4cd78eba3345b13fe19406012cd4b58f7b0a6769ef77a72e"
+    },
+    {
+      "path": "workers/wave5/model_runtime.test.mjs",
+      "bytes": 4671,
+      "sha256": "18269e047c204243dc0e6a18659f655350ec0a99d2f0879796144c18e849a018"
+    },
+    {
+      "path": "workers/wave5/openai_model_adapter.mjs",
+      "bytes": 3194,
+      "sha256": "557fc6af5dba58910ac46c2d1ac661a0389355ccef7efddb9a3cad94a03201d3"
+    },
+    {
+      "path": "workers/wave5/openai_model_adapter.test.mjs",
+      "bytes": 2949,
+      "sha256": "fbfe0bad596cace689d7e3d063e3d84eb6e256f76f3e4a5df3f2daa8b9e33942"
+    },
+    {
+      "path": "workers/wave5/persistent_control.mjs",
+      "bytes": 5208,
+      "sha256": "6f65d9d46efea233289c7f143c2da3e0d8911406c1bc15c7b8a1bedf7eff27c6"
+    },
+    {
+      "path": "workers/wave5/persistent_control.test.mjs",
+      "bytes": 2545,
+      "sha256": "cbb8520978c4d6134bee3d7946f03f570e2030ea2a0133b6b509da94abc0d6ff"
+    },
+    {
+      "path": "workers/wave5/persistent_control_20261014_r5_v7.mjs",
+      "bytes": 5208,
+      "sha256": "6f65d9d46efea233289c7f143c2da3e0d8911406c1bc15c7b8a1bedf7eff27c6"
+    },
+    {
+      "path": "workers/wave5/provider_credentials_20261014_r5_v7.mjs",
+      "bytes": 907,
+      "sha256": "d539a06939b45fe2b981fa6d7ee59cd8da9cbdecea0fc9bea8632913dbb62bc5"
+    },
+    {
+      "path": "workers/wave5/request_deadline.test.mjs",
+      "bytes": 7937,
+      "sha256": "1943313a7a29b6440be1189fb70d8d5ab2b1fbe0d668bbaf9291a3251e0c8435"
+    },
+    {
+      "path": "workers/wave5/request_deadline_platform_20261013_r5.test.mjs",
+      "bytes": 8111,
+      "sha256": "e0eb03d6174b9873e6a1786f370ec1f98b97ea67d39f9a04a293ce87b04f4d08"
+    },
+    {
+      "path": "workers/wave5/runtime_launcher.mjs",
+      "bytes": 7360,
+      "sha256": "003dbd624ca5120f267f8434981c356c266bb2e68776ced6459799b707b58d90"
+    },
+    {
+      "path": "workers/wave5/runtime_launcher.test.mjs",
+      "bytes": 3522,
+      "sha256": "0980cb334232597802eac83282cfdb684ba7eea9700b3f3744ff2f20b0e3e64a"
+    },
+    {
+      "path": "workers/wave5/scoped_runtime.mjs",
+      "bytes": 1788,
+      "sha256": "70a8edbb7e8a0bac3fa1856ebb1134ff14413ad5b81f63bc568ae7750d3b2489"
+    },
+    {
+      "path": "workers/wave5/scoped_runtime.test.mjs",
+      "bytes": 2589,
+      "sha256": "cd6b1005f4fa30c1fdc607e669aa3b556c0901ed44c39a4a2ca5da37c2b924bf"
+    },
+    {
+      "path": "workers/wave5/scoped_runtime_20261014_r5_v7.mjs",
+      "bytes": 1803,
+      "sha256": "2f987b41e70db5aedefc1a84f0e6f41b022820c5594371ea470d04ce18eb0f5e"
+    },
+    {
+      "path": "workers/wave5/subscription_schedule.mjs",
+      "bytes": 1292,
+      "sha256": "7699ebd9798620a9514584472b4e147e9b3d148754c72190498fe5406df7d047"
+    },
+    {
+      "path": "workers/wave5/validate_runtime_review.mjs",
+      "bytes": 540,
+      "sha256": "ced6e61655eec7586afd968f8d518c52be6539348c12e0f8228e30e3bf78e473"
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.mjs",
+      "bytes": 3210,
+      "sha256": "a57cceb2ca5dc2bccc29861cdccb34bac7468a82a7fd402ecc5bd1810b6b0f5f"
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.test.mjs",
+      "bytes": 2803,
+      "sha256": "73e8222fc9bb038a30005ee16a7dcdc194800a104566d4680ef03e4ca1e0fecd"
+    },
+    {
+      "path": "workers/wave5/worker_runtime.mjs",
+      "bytes": 5230,
+      "sha256": "4935409210e61efc168d8604acff9b13f5a3b757cb27f4aee2ed1f2504dc8dc6"
+    },
+    {
+      "path": "workers/wave5/worker_runtime.test.mjs",
+      "bytes": 4960,
+      "sha256": "7fd6bb8bb8ac2f6bfbe45f3874662da21c391346d6a78ef5e7bfc901f1d46c2d"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "docs/verification/ai-integrations-20261031/README.md",
+      "bytes": 2825,
+      "sha256": "7bcac04fb95645e95404f69b16e099cf50bd250a38e8c6c067075093f70ec77d"
+    },
+    {
+      "path": "docs/verification/ai-integrations-20261031/accounting-before.log",
+      "bytes": 1266,
+      "sha256": "a023ea93bd8332b98fe7c3f629f1926ee9da5c89d53373f06a1377f52ec87505"
+    },
+    {
+      "path": "docs/verification/ai-integrations-20261031/accounting-cli-check.json",
+      "bytes": 674,
+      "sha256": "46635a3d724ebfd2b81a3fc3ad64e22d7e6f12f760d530ecb5681134fb6ce0b9"
+    },
+    {
+      "path": "docs/verification/ai-integrations-20261031/accounting-postgres-final.log",
+      "bytes": 258,
+      "sha256": "2ce53e16be611a03124e63cb34a57882f36379b2f9575d64c3be8ea5e11a9a8e"
+    },
+    {
+      "path": "docs/verification/ai-integrations-20261031/accounting-postgres-result.json",
+      "bytes": 1465,
+      "sha256": "a13f195d5b6e4018b7d24e1a91a0d10561cb10c3404e437c8d013f1ad62b06c8"
+    },
+    {
+      "path": "docs/verification/ai-integrations-20261031/accounting-postgres.log",
+      "bytes": 21545,
+      "sha256": "ea1c60c2d4907adc8effd2db56d30fc415fb2cbe7cf538c133018ce036533a05"
+    },
+    {
+      "path": "docs/verification/ai-integrations-20261031/backend-access.json",
+      "bytes": 312,
+      "sha256": "e5980992b6b3f007f030013269726417be20cd2812258c3565dd958b217a6d3a"
+    },
+    {
+      "path": "docs/verification/ai-integrations-20261031/cli-empty-synthetic.json",
+      "bytes": 229,
+      "sha256": "853bb86f8fa564880d5efc14659636488bdd0668fbbf91c44254dd8fd567123d"
+    },
+    {
+      "path": "docs/verification/ai-integrations-20261031/deno-check-final.log",
+      "bytes": 99,
+      "sha256": "265adbc50150a78980107ef1392257fe5c2795268f8e296103b5f11d492d1342"
+    },
+    {
+      "path": "docs/verification/ai-integrations-20261031/deno-check.log",
+      "bytes": 99,
+      "sha256": "265adbc50150a78980107ef1392257fe5c2795268f8e296103b5f11d492d1342"
+    },
+    {
+      "path": "docs/verification/ai-integrations-20261031/probe-before.log",
+      "bytes": 1236,
+      "sha256": "b665635085f047863d7f38d77b42411d1a6f4a4ece175277758267cfa3040f24"
+    },
+    {
+      "path": "docs/verification/ai-integrations-20261031/record-verification.mjs",
+      "bytes": 5643,
+      "sha256": "f145e89d1db825182a6e0d2b4053e030643cceda636f4e4fcc3563e4dca78ad0"
+    },
+    {
+      "path": "docs/verification/ai-integrations-20261031/regression-before.log",
+      "bytes": 8553,
+      "sha256": "4855b8d51791eb8d8be8133044ec53959581fc4b9423a7b95a4ff1bf55148dce"
+    },
+    {
+      "path": "docs/verification/ai-integrations-20261031/verify-accounting-postgres.mjs",
+      "bytes": 10304,
+      "sha256": "d31e5f23aa2d08efc12a6bb29665ee3209395abcc996587b9375733e98f0101f"
+    },
+    {
+      "path": "docs/verification/ai-integrations-20261031/worker-suite-final.log",
+      "bytes": 23263,
+      "sha256": "2250c8679c37d4ddc70997dc9124609c2477bb33abd2ab5208431d3960417a68"
+    },
+    {
+      "path": "docs/verification/ai-integrations-20261031/worker-suite-in-process.log",
+      "bytes": 23343,
+      "sha256": "4197a02380434396e8ea5fc9f0bd94862ebbba4916b08f09f5219cfff9fd81e2"
+    },
+    {
+      "path": "docs/verification/ai-integrations-20261031/worker-suite-isolated-final.log",
+      "bytes": 23376,
+      "sha256": "45d2b00a79a65d29cba033dffed553fda721086a30467f2b78ecd8261555a497"
+    },
+    {
+      "path": "docs/verification/ai-integrations-20261031/worker-suite-reviewed.log",
+      "bytes": 17068,
+      "sha256": "bc36ffa7af11e111d8851f741aafaa990cae29113247cc0136015447422deac2"
+    },
+    {
+      "path": "docs/verification/ai-integrations-20261031/worker-suite.log",
+      "bytes": 26822,
+      "sha256": "6614de0b5f963b18681956423bf9cdbe85f358a680095e87b914bf8faf43ebb5"
+    },
+    {
+      "path": "docs/verification/ai-integrations/2026-10-30T23-21-56-155Z-e73f5427-94b5-4fd7-9999-d4c953e1bb07/report.json",
+      "bytes": 3398,
+      "sha256": "e530732ab06cf6a43866d5560b4ff9d19ed865bb54daa5599ba0819d71e4c4fd"
+    },
+    {
+      "path": "docs/verification/ai-integrations/2026-10-30T23-21-56-155Z-e73f5427-94b5-4fd7-9999-d4c953e1bb07/report.sha256",
+      "bytes": 65,
+      "sha256": "d06dddae06938049eccdc9e4a152239cadb52a6cca45a634885610a7f4014394"
+    },
+    {
+      "path": "docs/verification/ai-integrations/2026-10-30T23-21-56-155Z-e73f5427-94b5-4fd7-9999-d4c953e1bb07/requests.jsonl",
+      "bytes": 3343,
+      "sha256": "feac336dcb052bf684ee1a7830dc6215ce6cc062ad00b0a9d6449de9eeb2da68"
+    },
+    {
+      "path": "docs/verification/ai-integrations/2026-10-30T23-21-56-155Z-e73f5427-94b5-4fd7-9999-d4c953e1bb07/source.json",
+      "bytes": 684,
+      "sha256": "d584a0fcaef562b1eaddaad12410cd7a4fdf4c3ca9ac7a7a6561b03143b920d8"
+    }
+  ],
+  "boundary": "Current local source hashes, controlled tests and four actual unsigned hosted responses. No authenticated model, hosted ledger, signed delivery, installed-source readback or current runtime authority is certified."
+}

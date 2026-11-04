@@ -24,8 +24,9 @@ key, with one Web Lock per origin/project to protect pending commands from
 competing tabs. This protects stored records against casual plaintext inspection;
 it does not protect against malicious JavaScript executing in that origin.
 Browser data eviction removes local recovery. Unsupported capabilities fail
-closed. Password sign-in uses the current tab. A future OAuth flow must also
-respect the single-tab store owner; an independent popup cannot take its lock.
+closed. Password sign-in and the employee Google PKCE flow use the current tab,
+respecting the single-tab store owner. Confirmation resend supplies the exact
+browser or Android callback; implicit bearer-token callbacks are rejected.
 
 ## Required before real Android notifications
 
@@ -42,9 +43,11 @@ respect the single-tab store owner; an independent popup cannot take its lock.
    approved Supabase Edge Function secrets interface. They include the sender
    service account email/private key and a random scheduler secret. Do not
    paste them into chat, source, SQL, Flutter configuration or the hosted bundle.
-4. Add an authoritative, recipient-scoped HR event producer. The candidate
-   mirrors existing `people.*` workflow notifications; it does not manufacture
-   absent leave/payroll/attendance events or complete their employee screens.
+4. Review and install the separately approved employee self-service,
+   cases/documents, and [HR event producer](employee-hr-event-producers-candidate.md)
+   candidates in dependency order. The source now supplies recipient-scoped
+   leave, review, payslip, attendance, case and document events and employee
+   screens. Isolated tests do not install them in the hosted project.
 5. Test on an Android device with Google Play services using a permitted
    employee account: opt in, deny permission, background/foreground receipt,
    generic lock-screen content, sign-out, switch employee, expired session,
@@ -59,7 +62,7 @@ languages at enlarged text. Confirm the served bundle hash and response headers
 against the immutable staging manifest. Inspect the existing live origin for a
 legacy Flutter service worker and prepare targeted cleanup if present.
 
-Hosted Auth metadata currently has a Windows loopback Site URL and an empty
+Hosted Auth metadata checked on 27 October 2026 has a Windows loopback Site URL and an empty
 redirect allowlist. Prepare exact browser/live callbacks and retain the approved
 Windows callback for desktop use; change these settings only with separate
 production approval. Enabling Google requires the existing Google OAuth client
@@ -73,8 +76,10 @@ properly scoped HR-enabled test workspace and employee link are required.
 ## Production distribution
 
 The local `.dev` APK is for testing and retains the existing development signer.
-Store distribution needs the owner's chosen application/store identity and
-release signing configuration, supplied privately. No keystore, signing password,
+The owner authorized a new release key for `com.jentra.employee`, stored outside
+Git with a DPAPI-protected password. See the [signing and backup guide](employee-release-signing.md).
+A signed package still requires store setup, portable-key backup and device acceptance.
+No keystore, signing password,
 Supabase management token, MFA code or server credential should be sent in chat.
 
 References: [Firebase HTTP v1 authorization](https://firebase.google.com/docs/cloud-messaging/send/v1-api),

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:cryptography/cryptography.dart';
 import 'package:file_selector/file_selector.dart';
+import 'save_location.dart';
 
 final class ExpensePickedDocument {
   const ExpensePickedDocument(this.mime, this.bytes, this.checksum);
@@ -80,15 +81,16 @@ final class NativeExpenseEvidenceFiles implements ExpenseEvidenceFiles {
   }
 
   @override
-  Future<String?> chooseExport(String fileName) async => (await getSaveLocation(
-    suggestedName: fileName,
-    acceptedTypeGroups: [
-      XTypeGroup(
-        label: 'Expense evidence export',
-        extensions: [fileName.split('.').last],
-      ),
-    ],
-  ))?.path;
+  Future<String?> chooseExport(String fileName) async =>
+      (await jentraSaveLocation(
+        suggestedName: fileName,
+        acceptedTypeGroups: [
+          XTypeGroup(
+            label: 'Expense evidence export',
+            extensions: [fileName.split('.').last],
+          ),
+        ],
+      ))?.path;
   @override
   Future<void> write(String path, Uint8List bytes, String mime) =>
       XFile.fromData(bytes, mimeType: mime).saveTo(path);

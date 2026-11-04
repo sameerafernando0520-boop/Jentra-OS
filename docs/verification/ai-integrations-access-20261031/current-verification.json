@@ -1,0 +1,812 @@
+{
+  "kind": "jentra-hosted-ai-integrations-current-checkpoint",
+  "recordedAt": "2026-10-31T13:12:08.611Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "clientDate": "2026-10-31",
+  "clientTimezone": "Asia/Colombo",
+  "access": {
+    "savedCliLoginRestored": true,
+    "authenticatedBrowser": true,
+    "staleProcessOverrideOmitted": true,
+    "globalEnvironmentChanged": false,
+    "secretValuesRecorded": false
+  },
+  "catalogCheckpoint": {
+    "observedAt": "2026-10-31T04:49:05.616955+00:00",
+    "migrations": 130,
+    "apiFunctions": 389
+  },
+  "databaseObservation": {
+    "observedAt": "2026-10-31T12:59:44.847078+00:00",
+    "readOnlyQueryExecuted": true,
+    "models": 0,
+    "quotaPeriods": 0,
+    "retryDeliveries": 1,
+    "acknowledgedDeliveries": 0,
+    "runtimeAuthorityActive": false,
+    "ledgerReconciled": false,
+    "failures": [
+      "RUNTIME_AUTHORITY_INACTIVE",
+      "DELIVERY_OUTCOME_UNRESOLVED",
+      "NONEMPTY_MODEL_USAGE_REQUIRED",
+      "NONEMPTY_QUOTA_REQUIRED"
+    ]
+  },
+  "deployedSource": {
+    "downloadedModules": 25,
+    "exactCurrentSourceMatches": 23,
+    "mismatches": [
+      "workers/wave5/model_runtime.mjs",
+      "workers/wave5/persistent_control.mjs"
+    ],
+    "currentSourceFullyInstalled": false
+  },
+  "localVerification": {
+    "workerTestsUnchangedSince287Pass": true,
+    "accountingChecks": 9,
+    "transactionRegressions": 4,
+    "denoEntrypointsUnchangedSince2Pass": true,
+    "sqlSha256": "5b6e2ce6abd5dbe7adfc13309b6248ad4e83962c6c51fcc1166d340d0ab62449"
+  },
+  "latestHttpProbe": {
+    "path": "docs/verification/ai-integrations/2026-10-31T13-07-56-047Z-e55d0468-989e-4b0f-a576-185b2d558dbf/report.json",
+    "observedAt": "2026-10-31T13:07:58.809Z",
+    "observations": [
+      {
+        "endpoint": "schedule",
+        "status": 403,
+        "code": "WORKER_ACCESS_DENIED",
+        "state": "denial-verified"
+      },
+      {
+        "endpoint": "external-forecast",
+        "status": 403,
+        "code": "AUTH_REQUIRED",
+        "state": "denial-verified"
+      },
+      {
+        "endpoint": "model-suggestion",
+        "status": 503,
+        "code": "MODEL_PROVIDER_UNAVAILABLE",
+        "state": "provider-unavailable"
+      },
+      {
+        "endpoint": "receiver",
+        "status": 403,
+        "code": "INTEGRATION_ACCESS_DENIED",
+        "state": "denial-verified"
+      }
+    ]
+  },
+  "blockingInput": {
+    "requiredSecret": "W5_OPENAI_API_KEY",
+    "missingAt": "2026-10-31T13:01:30.753Z",
+    "preparedPage": "https://supabase.com/dashboard/project/xpdoufauvrbdmxgngetv/functions/secrets",
+    "secretSavedByAgent": false
+  },
+  "operations": {
+    "cliAuthenticationRefreshed": true,
+    "migrationInstalled": false,
+    "workerDeployed": false,
+    "runtimeAuthorityRenewed": false,
+    "modelCalls": 0,
+    "signedDeliveries": 0,
+    "deliveryReplayed": false,
+    "committed": false,
+    "pushed": false
+  },
+  "gates": {
+    "actualHostedModelResponse": false,
+    "actualTrustedModelUsage": false,
+    "externalDelivery": false,
+    "businessUserMfaAcceptance": false,
+    "ownerSignoff": false
+  },
+  "currentSourceHashes": [
+    {
+      "path": "supabase/functions/wave5-receiver/deno.json",
+      "bytes": 62,
+      "sha256": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "supabase/functions/wave5-receiver/index.ts",
+      "bytes": 206,
+      "sha256": "1016066ee9bc98436ebc2b0afe5d4bb6b290d8786a10d038ddac0b5fad3e57f5",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "supabase/functions/wave5-runtime/deno.json",
+      "bytes": 62,
+      "sha256": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "supabase/functions/wave5-runtime/index.ts",
+      "bytes": 345,
+      "sha256": "e76dbfa9f25c09b29646c1f3470fb4e5a3ce5fb237ff212fee40d095f07c3cf8",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "tools/wave5/check_hosted_accounting.mjs",
+      "bytes": 996,
+      "sha256": "91a41509e87fd3e715ad9556b1163d6e14ef282c21da915ee9bcc62d2aec9a83",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "tools/wave5/hosted_accounting.mjs",
+      "bytes": 3558,
+      "sha256": "033f620489861d950ef5465100cd14fc3b307ba720d773c95ec8d2165d0b6f52",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "tools/wave5/hosted_accounting_readonly.sql",
+      "bytes": 6070,
+      "sha256": "5b6e2ce6abd5dbe7adfc13309b6248ad4e83962c6c51fcc1166d340d0ab62449",
+      "changedSinceInitialCheck": true
+    },
+    {
+      "path": "tools/wave5/hosted_probe.mjs",
+      "bytes": 4137,
+      "sha256": "cda278038fb8d8fc84a417976525b85651576d3e7327d0eeed0c2a2e33569bab",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "tools/wave5/verify_hosted.mjs",
+      "bytes": 2247,
+      "sha256": "0fb9c50b78432ec9960deb5d680da4a26164e7dd2be9a964f8f47b632638e086",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/bounded_json.mjs",
+      "bytes": 2310,
+      "sha256": "2c9ba6bc68101501970a41abaf02443d4f977bb1ba6bb7457f45bdc226096c05",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/delivery_schedule.mjs",
+      "bytes": 1120,
+      "sha256": "29a412b79b5b7e41e37a77d82659a79ee6f90a1960d8573b3aeb7990acee60fa",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_configuration.mjs",
+      "bytes": 1072,
+      "sha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_factory_project_http_20261014_r5_v5.test.mjs",
+      "bytes": 2839,
+      "sha256": "57da93ce0b3e10b1ccdeeebd03cd3dcdd7897f90bed85d05141c92e68e471a36",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_receiver.mjs",
+      "bytes": 5707,
+      "sha256": "a4b5da308fac5ee47b4dd54d55de6d06a9bd8bf40f333f21d8a12ddde0b9b140",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261013_r5.mjs",
+      "bytes": 5655,
+      "sha256": "e3a10721ac1298977b0e2a38459aa91644c125852c484b546e41a68b56c1ca7b",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261013_r5_v3.mjs",
+      "bytes": 5658,
+      "sha256": "e954d4b74faef8182abd49fc6a43c8e7fb212b6eec34c4b5944dcb255d50c07b",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261014_r5_v4.mjs",
+      "bytes": 5658,
+      "sha256": "2b138496f7879cdef9231e8c315ba62103bdd29e9383be321ef157b708fd60b9",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261014_r5_v5.mjs",
+      "bytes": 5658,
+      "sha256": "4d6f2f20b363ab8cd26e9b6bfb4121ad927532dc4e7b458cc95b5c607e74c26f",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261014_r5_v6.mjs",
+      "bytes": 5658,
+      "sha256": "e4a0df9a150b7524762ba8d6ea13c5c4e24c5fe6abe2d27fafdb6bb5ffa1f948",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_receiver_20261014_r5_v7.mjs",
+      "bytes": 5722,
+      "sha256": "f62c297ca4ae3fae9cb9c8a21e4247b67f37b4fd5d8f29dad88fa01621f837e8",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_route_20261013_r5.mjs",
+      "bytes": 855,
+      "sha256": "224619e51cbd5ac50799eb7e8dd7e4b7ad8410c78156641017aaacaf2edc8a7f",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_route_20261013_r5.test.mjs",
+      "bytes": 2066,
+      "sha256": "f9611b6bcfa3a8d98fdb0a445f9ebaab1b26b992c01b2e6abf6c4ed6dcc4d104",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_route_20261013_r5_v3.mjs",
+      "bytes": 3750,
+      "sha256": "e9f173d3e1330ac08854c2803aea95c8cffa0f20f343173bde0c3696d7996531",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_route_20261014_r5_v4.mjs",
+      "bytes": 4177,
+      "sha256": "ea01c16c75905e431131f0128d9ec9972a77e1b1e58b0a90f2e9b75dd0cfc3b0",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_route_20261014_r5_v5.mjs",
+      "bytes": 4539,
+      "sha256": "ee309ad07a804a8cd029988756665fef60a5293ad71162d4efca3b88cee4e95a",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_route_20261014_r5_v6.mjs",
+      "bytes": 7360,
+      "sha256": "37b7f363c7243ce5126908f982865dec2ddcdc59307965b649f9f39d102701d4",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_route_finite_http_diagnostic_20261014_r5_v4.test.mjs",
+      "bytes": 4124,
+      "sha256": "d21ccf689f60000b5bad55271a6357d1295919c6498e79c983c4fe05031fab67",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_route_platform_origin_20261013_r5_v3.test.mjs",
+      "bytes": 16398,
+      "sha256": "b263c2ade31fee56f26bab92cadc4e8d2c90d9cabe4a25694ecb9e6ed9b239b6",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_route_project_http_20261014_r5_v5.test.mjs",
+      "bytes": 4231,
+      "sha256": "220c184fee4057c6730e4901100f91b8a5357b9c2ac57cc746b2c62d0748f798",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_runtime.mjs",
+      "bytes": 6974,
+      "sha256": "e457d40bf42efdc7bf679e2aabe8336bcf2d364b89b3bf5305e9eb450fd6ee45",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_runtime.test.mjs",
+      "bytes": 10556,
+      "sha256": "3621bd9ca2fba6a4a27323673d9789096b9e71ef51ad2d80c4f0099a39eeb54b",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261013_r5.mjs",
+      "bytes": 6918,
+      "sha256": "7f99655115780e81e9b57f7724fbb0e3a93e34d3d86854a892a6abf94e2c8fd5",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261013_r5_v3.mjs",
+      "bytes": 6921,
+      "sha256": "363fea0ed54c3edb2896882e153f3ef7eeeba5e7b56ef3847ff68ed5e7af24cb",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261014_r5_v4.mjs",
+      "bytes": 6921,
+      "sha256": "4ce1af5886dd0fe9f20a0ae33ef89b53ac492dc1fea4c42e099c0c4ebb23cb0c",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261014_r5_v5.mjs",
+      "bytes": 6921,
+      "sha256": "2b4e03939314c30b9908ed1b2313eed6a13db5f8708b35d80f309108b673800e",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261014_r5_v6.mjs",
+      "bytes": 6921,
+      "sha256": "b5be66b51e3f3c46050bbeda8dcab930dc4ed80d102fc2959360ef3487a54776",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_runtime_20261014_r5_v7.mjs",
+      "bytes": 7004,
+      "sha256": "bf772c3a77f5f050c98dfb0e4e61de63235aa42b4618451f9dc69a5e24697cd8",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/edge_runtime_platform_20261013_r5.test.mjs",
+      "bytes": 10640,
+      "sha256": "5032f09babd8b958d26e29ff4c8ae8491d8143a5f7e6066626605cc7ca669b2b",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/entries/receiver_20261014_r5_v7.ts",
+      "bytes": 602,
+      "sha256": "bb034262915109c34492fb6fe31fbbdc5c9c0b9508804e209aea9b8fa0664a98",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/entries/runtime_20261014_r5_v7.ts",
+      "bytes": 598,
+      "sha256": "28a562cc40ba9c17921ed8018936eeb9fc8328171ca2e78f327b393769263c80",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/hosted_accounting.test.mjs",
+      "bytes": 4363,
+      "sha256": "0775111fddccb629fccf52c9e2c30f52c14e9313c8dc3cd51b6acb63e477ad50",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/hosted_contract.test.mjs",
+      "bytes": 5767,
+      "sha256": "f29d77d6b722503a67e278afb90703e79496ab2287ae4f8e180e1cddf3855114",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/hosted_probe.test.mjs",
+      "bytes": 4432,
+      "sha256": "4dbbdbdf4fae0e5c2cd680a65a36e3e19d7b01fdf4258b0086970ccecdc15cfc",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/integration_policy.mjs",
+      "bytes": 10120,
+      "sha256": "f83e76cd5bdaf7997bf001edf6101537db9c34995019e9f7b5c196546a875cea",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/integration_policy.test.mjs",
+      "bytes": 5902,
+      "sha256": "b8ca6381cb7425e08d4ea97c95a5f0b5b91304ff91617e3562e8f17c0cf20d82",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/model_reader.mjs",
+      "bytes": 1247,
+      "sha256": "9be9ac552738041fb14a1cea2f9fd5e8dda415399512692f11b7430cf634a0a9",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/model_runtime.mjs",
+      "bytes": 5939,
+      "sha256": "7776efd148c1257c4cd78eba3345b13fe19406012cd4b58f7b0a6769ef77a72e",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/model_runtime.test.mjs",
+      "bytes": 4671,
+      "sha256": "18269e047c204243dc0e6a18659f655350ec0a99d2f0879796144c18e849a018",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/openai_model_adapter.mjs",
+      "bytes": 3194,
+      "sha256": "557fc6af5dba58910ac46c2d1ac661a0389355ccef7efddb9a3cad94a03201d3",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/openai_model_adapter.test.mjs",
+      "bytes": 2949,
+      "sha256": "fbfe0bad596cace689d7e3d063e3d84eb6e256f76f3e4a5df3f2daa8b9e33942",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/persistent_control.mjs",
+      "bytes": 5208,
+      "sha256": "6f65d9d46efea233289c7f143c2da3e0d8911406c1bc15c7b8a1bedf7eff27c6",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/persistent_control.test.mjs",
+      "bytes": 2545,
+      "sha256": "cbb8520978c4d6134bee3d7946f03f570e2030ea2a0133b6b509da94abc0d6ff",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/persistent_control_20261014_r5_v7.mjs",
+      "bytes": 5208,
+      "sha256": "6f65d9d46efea233289c7f143c2da3e0d8911406c1bc15c7b8a1bedf7eff27c6",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/provider_credentials_20261014_r5_v7.mjs",
+      "bytes": 907,
+      "sha256": "d539a06939b45fe2b981fa6d7ee59cd8da9cbdecea0fc9bea8632913dbb62bc5",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/request_deadline.test.mjs",
+      "bytes": 7937,
+      "sha256": "1943313a7a29b6440be1189fb70d8d5ab2b1fbe0d668bbaf9291a3251e0c8435",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/request_deadline_platform_20261013_r5.test.mjs",
+      "bytes": 8111,
+      "sha256": "e0eb03d6174b9873e6a1786f370ec1f98b97ea67d39f9a04a293ce87b04f4d08",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/runtime_launcher.mjs",
+      "bytes": 7360,
+      "sha256": "003dbd624ca5120f267f8434981c356c266bb2e68776ced6459799b707b58d90",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/runtime_launcher.test.mjs",
+      "bytes": 3522,
+      "sha256": "0980cb334232597802eac83282cfdb684ba7eea9700b3f3744ff2f20b0e3e64a",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/scoped_runtime.mjs",
+      "bytes": 1788,
+      "sha256": "70a8edbb7e8a0bac3fa1856ebb1134ff14413ad5b81f63bc568ae7750d3b2489",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/scoped_runtime.test.mjs",
+      "bytes": 2589,
+      "sha256": "cd6b1005f4fa30c1fdc607e669aa3b556c0901ed44c39a4a2ca5da37c2b924bf",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/scoped_runtime_20261014_r5_v7.mjs",
+      "bytes": 1803,
+      "sha256": "2f987b41e70db5aedefc1a84f0e6f41b022820c5594371ea470d04ce18eb0f5e",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/subscription_schedule.mjs",
+      "bytes": 1292,
+      "sha256": "7699ebd9798620a9514584472b4e147e9b3d148754c72190498fe5406df7d047",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/validate_runtime_review.mjs",
+      "bytes": 540,
+      "sha256": "ced6e61655eec7586afd968f8d518c52be6539348c12e0f8228e30e3bf78e473",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.mjs",
+      "bytes": 3210,
+      "sha256": "a57cceb2ca5dc2bccc29861cdccb34bac7468a82a7fd402ecc5bd1810b6b0f5f",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/worker_endpoints.test.mjs",
+      "bytes": 2803,
+      "sha256": "73e8222fc9bb038a30005ee16a7dcdc194800a104566d4680ef03e4ca1e0fecd",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/worker_runtime.mjs",
+      "bytes": 5230,
+      "sha256": "4935409210e61efc168d8604acff9b13f5a3b757cb27f4aee2ed1f2504dc8dc6",
+      "changedSinceInitialCheck": false
+    },
+    {
+      "path": "workers/wave5/worker_runtime.test.mjs",
+      "bytes": 4960,
+      "sha256": "7fd6bb8bb8ac2f6bfbe45f3874662da21c391346d6a78ef5e7bfc901f1d46c2d",
+      "changedSinceInitialCheck": false
+    }
+  ],
+  "evidence": [
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/README.md",
+      "bytes": 5850,
+      "sha256": "bbb5a5035818f657c4558a14af1119784365607d54392844da60683217578c29"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/accounting-first-hosted-failure.json",
+      "bytes": 273,
+      "sha256": "833a8bd6c6c07c540748e25e62f35bb5ccf58de7fcfe166e6310a784ed2788c5"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/accounting-postgres-after-wrapper-fix.json",
+      "bytes": 1465,
+      "sha256": "d14174699ac2035ce671dfc2ef500b6e16bb377ff3c1e529bb84b1dd34ce0111"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/accounting-postgres-after-wrapper-fix.log",
+      "bytes": 258,
+      "sha256": "2ce53e16be611a03124e63cb34a57882f36379b2f9575d64c3be8ea5e11a9a8e"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/deployed-baseline-comparison.json",
+      "bytes": 628,
+      "sha256": "7e7612f582a7b4065c5fdad13b967bdf6d1eed372f0831a9d02d7c5bed72f9a8"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/deployed-source-comparison.json",
+      "bytes": 12075,
+      "sha256": "5c90d2c0928f3424297aa70c5ad3ec1e516b4c3f15a43aede26a4ef855348079"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-receiver/supabase/.temp/cli-latest",
+      "bytes": 8,
+      "sha256": "e259ceef24c76934bc3c6884c465e636c7f058e1b275e46de8d1e51a5dc8c4c4"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-receiver/supabase/functions/bounded_json.mjs",
+      "bytes": 2310,
+      "sha256": "2c9ba6bc68101501970a41abaf02443d4f977bb1ba6bb7457f45bdc226096c05"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-receiver/supabase/functions/edge_configuration.mjs",
+      "bytes": 1072,
+      "sha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-receiver/supabase/functions/edge_receiver_20261014_r5_v7.mjs",
+      "bytes": 5722,
+      "sha256": "f62c297ca4ae3fae9cb9c8a21e4247b67f37b4fd5d8f29dad88fa01621f837e8"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-receiver/supabase/functions/edge_route_20261014_r5_v6.mjs",
+      "bytes": 7360,
+      "sha256": "37b7f363c7243ce5126908f982865dec2ddcdc59307965b649f9f39d102701d4"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-receiver/supabase/functions/integration_policy.mjs",
+      "bytes": 10120,
+      "sha256": "f83e76cd5bdaf7997bf001edf6101537db9c34995019e9f7b5c196546a875cea"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-receiver/supabase/functions/persistent_control_20261014_r5_v7.mjs",
+      "bytes": 5208,
+      "sha256": "6f65d9d46efea233289c7f143c2da3e0d8911406c1bc15c7b8a1bedf7eff27c6"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-receiver/supabase/functions/provider_credentials_20261014_r5_v7.mjs",
+      "bytes": 907,
+      "sha256": "d539a06939b45fe2b981fa6d7ee59cd8da9cbdecea0fc9bea8632913dbb62bc5"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-receiver/supabase/functions/wave5-receiver/receiver_20261014_r5_v7.ts",
+      "bytes": 602,
+      "sha256": "bb034262915109c34492fb6fe31fbbdc5c9c0b9508804e209aea9b8fa0664a98"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-receiver/supabase/functions/worker_runtime.mjs",
+      "bytes": 5230,
+      "sha256": "4935409210e61efc168d8604acff9b13f5a3b757cb27f4aee2ed1f2504dc8dc6"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-runtime/supabase/.temp/cli-latest",
+      "bytes": 8,
+      "sha256": "e259ceef24c76934bc3c6884c465e636c7f058e1b275e46de8d1e51a5dc8c4c4"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-runtime/supabase/functions/bounded_json.mjs",
+      "bytes": 2310,
+      "sha256": "2c9ba6bc68101501970a41abaf02443d4f977bb1ba6bb7457f45bdc226096c05"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-runtime/supabase/functions/edge_configuration.mjs",
+      "bytes": 1072,
+      "sha256": "ad66ec954725d61a8da740ce931734240d84eefaa1b0e615a03d3190a5161f13"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-runtime/supabase/functions/edge_route_20261014_r5_v6.mjs",
+      "bytes": 7360,
+      "sha256": "37b7f363c7243ce5126908f982865dec2ddcdc59307965b649f9f39d102701d4"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-runtime/supabase/functions/edge_runtime_20261014_r5_v7.mjs",
+      "bytes": 7004,
+      "sha256": "bf772c3a77f5f050c98dfb0e4e61de63235aa42b4618451f9dc69a5e24697cd8"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-runtime/supabase/functions/integration_policy.mjs",
+      "bytes": 10120,
+      "sha256": "f83e76cd5bdaf7997bf001edf6101537db9c34995019e9f7b5c196546a875cea"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-runtime/supabase/functions/model_reader.mjs",
+      "bytes": 1247,
+      "sha256": "9be9ac552738041fb14a1cea2f9fd5e8dda415399512692f11b7430cf634a0a9"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-runtime/supabase/functions/model_runtime.mjs",
+      "bytes": 5465,
+      "sha256": "fce748e511a81bdae957ff76275641142a738d8391132953d4d3c7eec03cfb99"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-runtime/supabase/functions/openai_model_adapter.mjs",
+      "bytes": 3194,
+      "sha256": "557fc6af5dba58910ac46c2d1ac661a0389355ccef7efddb9a3cad94a03201d3"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-runtime/supabase/functions/persistent_control.mjs",
+      "bytes": 5107,
+      "sha256": "81b5aa332971235cca8830c3d5894977d04baa5d0f3b6f1391db346ca9abc4fd"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-runtime/supabase/functions/persistent_control_20261014_r5_v7.mjs",
+      "bytes": 5208,
+      "sha256": "6f65d9d46efea233289c7f143c2da3e0d8911406c1bc15c7b8a1bedf7eff27c6"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-runtime/supabase/functions/provider_credentials_20261014_r5_v7.mjs",
+      "bytes": 907,
+      "sha256": "d539a06939b45fe2b981fa6d7ee59cd8da9cbdecea0fc9bea8632913dbb62bc5"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-runtime/supabase/functions/scoped_runtime_20261014_r5_v7.mjs",
+      "bytes": 1803,
+      "sha256": "2f987b41e70db5aedefc1a84f0e6f41b022820c5594371ea470d04ce18eb0f5e"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-runtime/supabase/functions/subscription_schedule.mjs",
+      "bytes": 1292,
+      "sha256": "7699ebd9798620a9514584472b4e147e9b3d148754c72190498fe5406df7d047"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-runtime/supabase/functions/wave5-runtime/runtime_20261014_r5_v7.ts",
+      "bytes": 598,
+      "sha256": "28a562cc40ba9c17921ed8018936eeb9fc8328171ca2e78f327b393769263c80"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-runtime/supabase/functions/worker_endpoints.mjs",
+      "bytes": 3210,
+      "sha256": "a57cceb2ca5dc2bccc29861cdccb34bac7468a82a7fd402ecc5bd1810b6b0f5f"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-wave5-runtime/supabase/functions/worker_runtime.mjs",
+      "bytes": 5230,
+      "sha256": "4935409210e61efc168d8604acff9b13f5a3b757cb27f4aee2ed1f2504dc8dc6"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/download-workers.mjs",
+      "bytes": 1298,
+      "sha256": "4c516f2da64d0b8b3ee50e16b4f7e71c8ffc6fa21744529b7978cc3597fbd98b"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/editor-transaction-before.log",
+      "bytes": 28036,
+      "sha256": "d0ae30471330f0e9ba20480a858b782c2fb050fbb2217c545dc7d459971d54ce"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/editor-transaction-final.log",
+      "bytes": 44,
+      "sha256": "8c94d25e91257d900f8cd7fd2be5dc48c17dd954653fb201210548f50de79e45"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/editor-transaction-result.json",
+      "bytes": 641,
+      "sha256": "f6f0d060e5d858283ca63624d4f4406b1324f2d348a649ece5e06049b81a36d0"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/finalize-verification.mjs",
+      "bytes": 6205,
+      "sha256": "6dda3a64ccdd3998ccb586851f8c80f774ed809431fb2575bef703f313f209da"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/hosted-accounting-assessment.json",
+      "bytes": 612,
+      "sha256": "e4d59ad062706074e19977874e2d14943c873cb97ba019f2faa0defc83db5245"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/hosted-accounting-before-editor-fix.sql",
+      "bytes": 5910,
+      "sha256": "22e1688c3b77a6c0077ad45eff53361240f1a6a170f0fc3cf4772da76dabcd26"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/hosted-accounting-provenance.json",
+      "bytes": 335,
+      "sha256": "f0bdf7bef7733aaab1ce682d138b2dbb81c9fc384cb14ea6eb27489d09a82585"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/hosted-accounting-snapshot.json",
+      "bytes": 582,
+      "sha256": "e466742cb1d0e976f4dbe4a6391591c5db8dbb656055634c3c91f054d8a9bb1f"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/hosted-accounting.png",
+      "bytes": 38929,
+      "sha256": "8cd356236a57caef2ef0dbca4f9cafa3eaf6ee032432d9d9b1ca82c87514cfb1"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/hosted-preflight.json",
+      "bytes": 601,
+      "sha256": "232119bd760494ccd1e7b1f6aa3472f1f0fa28c2c89852dbc39051c3a308e611"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/hosted-preflight.png",
+      "bytes": 115449,
+      "sha256": "1ff8890ddfff19c5bf9500d8cab51786ec4def121b0abd8c8f4a77a48cb5dfea"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/hosted-project-metadata-refresh.json",
+      "bytes": 2983,
+      "sha256": "04d8c9cd7f2cbc0fd0769175370e574294d0cb59b433a9ce72328738eab9a543"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/hosted-project-metadata.json",
+      "bytes": 2983,
+      "sha256": "0aa10d8c2f0d4227bf79878766692d4ce5b96d8f8f0eeb8f437f12e53d3bfebd"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/inspect-project-refresh.mjs",
+      "bytes": 2359,
+      "sha256": "de9947e6d46f923e4f586bf9bed800db4aa9fc002aef75eddb7b135c04169e0e"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/inspect-project.mjs",
+      "bytes": 2351,
+      "sha256": "2f5d1effcf13f2f259b2757a267c358e37e0da3f6ee02f8f842773864d0b1da2"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/model-secret-handoff.png",
+      "bytes": 47242,
+      "sha256": "bc626f8977eda3c692b39b79546244a46cc54ed79c87d8ced5f431ce9a8195ab"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/renewed-login-check.json",
+      "bytes": 259,
+      "sha256": "a1ea092c8169387f5792bf8fe72ead37f41623c86a72306dbc05dd139c6694d8"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/renewed-project-confirmation.json",
+      "bytes": 262,
+      "sha256": "a07b72f89ba594a033ca5be20d57781fbf41d4da33d37c1279ab44baffe4889d"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/saved-login-check.json",
+      "bytes": 359,
+      "sha256": "9268b70c9989c8ae28b8dc58be1582a8740fd51d746f90d022bfe117a3f9f6f0"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/verify-accounting-postgres.mjs",
+      "bytes": 10315,
+      "sha256": "7509d85842d02c7dcad319f1f9d80e709d754e9b2838db2fe0109ee5d5d31160"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/verify-editor-transaction.mjs",
+      "bytes": 3116,
+      "sha256": "4157075300ead5ecaef048d8e8ef2b45b089d52ed7e6e7a5cc58c12bc3064a5d"
+    },
+    {
+      "path": "docs/verification/ai-integrations-access-20261031/worker-download-result.json",
+      "bytes": 777,
+      "sha256": "247d40cdd4bb532ee0a618dffa0c64da3c7a326746a21646dd9ab7a54180947b"
+    },
+    {
+      "path": "docs/verification/ai-integrations/2026-10-31T13-07-56-047Z-e55d0468-989e-4b0f-a576-185b2d558dbf/report.json",
+      "bytes": 3398,
+      "sha256": "c9db9ce5cd1eaeb3dd585bde3d94a682bb5e4c5c73221c991c8c6260248292f2"
+    },
+    {
+      "path": "docs/verification/ai-integrations/2026-10-31T13-07-56-047Z-e55d0468-989e-4b0f-a576-185b2d558dbf/report.sha256",
+      "bytes": 65,
+      "sha256": "3b559370bac64000f35c9b78832d808591f2d36aaae907dd10b2635078a165ad"
+    },
+    {
+      "path": "docs/verification/ai-integrations/2026-10-31T13-07-56-047Z-e55d0468-989e-4b0f-a576-185b2d558dbf/requests.jsonl",
+      "bytes": 3343,
+      "sha256": "5a3f490e6a76ec9ed825e04e767204a720d740b1eb1cd5afbc1bfec597023c7d"
+    },
+    {
+      "path": "docs/verification/ai-integrations/2026-10-31T13-07-56-047Z-e55d0468-989e-4b0f-a576-185b2d558dbf/source.json",
+      "bytes": 684,
+      "sha256": "d584a0fcaef562b1eaddaad12410cd7a4fdf4c3ca9ac7a7a6561b03143b920d8"
+    }
+  ],
+  "boundary": "Actual CLI metadata, deployed source downloads and read-only SQL Editor observations. Missing provider configuration, inactive runtime and unresolved original delivery prevent positive model/usage/delivery acceptance."
+}

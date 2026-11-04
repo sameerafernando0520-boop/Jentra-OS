@@ -1,0 +1,599 @@
+{
+  "verifiedOn": "2026-11-02",
+  "timezone": "Asia/Colombo",
+  "recordedAtUtc": "2026-11-02T08:36:11.233Z",
+  "claim": "Candidate source, isolated composed SQL verification, automated app tests and local compilation only.",
+  "boundaries": {
+    "performedMigrationInstallation": false,
+    "performedDeployment": false,
+    "hostedDatabaseAccess": false,
+    "emailSent": false,
+    "workerActivated": false,
+    "liveAcceptance": false,
+    "companyAcceptance": false,
+    "fullSupabaseStack": false,
+    "physicalDeviceAcceptance": false,
+    "employeeAppCodeEdited": false,
+    "featureFlagsDefault": false
+  },
+  "database": {
+    "command": {
+      "executable": "node",
+      "args": [
+        "supabase/candidates/run-field-company-test.mjs",
+        "--run-isolated"
+      ]
+    },
+    "cwd": ".",
+    "exitCode": 0,
+    "engine": "PGlite 0.5.12 / PostgreSQL 18",
+    "passed": 150,
+    "governanceRegressionPassed": 88,
+    "confirmationPassed": 46,
+    "companyPassed": 16,
+    "rollbackAssertions": 18,
+    "rollback": {
+      "candidate_removed": true,
+      "fixtures_removed": true,
+      "tenants_removed": true,
+      "auth_sessions_removed": true,
+      "receipts_removed": true,
+      "employee_fixtures_removed": true,
+      "employee_links_removed": true,
+      "original_permissions_restored": true,
+      "original_entitlements_restored": true,
+      "policies_removed": true,
+      "original_functions_and_acls_restored": true,
+      "email_extension_removed": true,
+      "governance_functions_and_acls_restored": true,
+      "api_schema_acl_restored": true,
+      "private_schema_acl_restored": true,
+      "company_workspace_removed": true,
+      "original_confirmation_command_acl_restored": true,
+      "baseline_removed": true
+    },
+    "baseline": {
+      "prefixThrough": "20260910135507_harden_receivables_reference_indexes.sql",
+      "additionalMigrations": [
+        "20260925181927_wave4_employee_foundation.sql",
+        "20260929224939_wave4_private_hr.sql"
+      ],
+      "executionNormalization": "CRLF to LF in baseline migrations only; SHA-256 hashes bind the original unmodified source bytes.",
+      "rollbackFunctions": [
+        "core.has_permission(uuid,text,uuid,uuid)",
+        "core.list_capabilities(uuid)",
+        "core.wave2_replay(uuid,text,uuid,text)",
+        "core.wave3_replay(uuid,text,uuid,uuid,text)",
+        "core.bootstrap_tenant_impl(text,text,text,text,text,text,text,text,uuid)",
+        "people.require_access(uuid,uuid,uuid,text)"
+      ]
+    },
+    "simulation": "Exact repository migration prefix through 20260910135507 plus workforce foundation 20260925181927 and private HR 20260929224939, then governance, email-confirmation and company-workspace candidates, in an isolated PGlite transaction. Auth/Storage and provider acknowledgements are simulated. No email transport, hosted Supabase session, device acceptance, delivery acknowledgement or canonical progression is established. The company workspace rolls back independently and restores the original command body and ACL. Candidate schema, functions, ACLs, permission/entitlement changes and all fixtures/receipts roll back; outer rollback removes the baseline.",
+    "report": "docs/verification/field-company-20261102/postgres-result.json",
+    "matchedSourceHashes": 40
+  },
+  "checks": [
+    {
+      "id": "desktop-company-order-discount-navigation",
+      "cwd": "apps/jentra_desktop",
+      "command": {
+        "executable": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+        "args": [
+          "C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot",
+          "--suppress-analytics",
+          "--no-version-check",
+          "test",
+          "--no-pub",
+          "--concurrency=1",
+          "--dart-define=FIELD_SALES_CANDIDATE_ENABLED=true",
+          "--dart-define=FIELD_SALES_EMAIL_CONFIRMATION_ENABLED=true",
+          "test/field_confirmation_company_screen_test.dart",
+          "test/field_confirmation_company_controller_test.dart",
+          "test/field_confirmation_navigation_test.dart",
+          "test/field_company_review_test.dart",
+          "test/sales_order_controller_test.dart",
+          "test/sales_order_workspace_test.dart",
+          "test/quotation_navigation_test.dart"
+        ]
+      },
+      "exitCode": 0,
+      "passed": 58,
+      "log": "docs/verification/field-company-20261102/desktop-tests.log"
+    },
+    {
+      "id": "company-email-governance-platform",
+      "cwd": "packages/jentra_platform",
+      "command": {
+        "executable": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+        "args": [
+          "C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot",
+          "--suppress-analytics",
+          "--no-version-check",
+          "test",
+          "--no-pub",
+          "--concurrency=1",
+          "test/field_confirmation_company_test.dart",
+          "test/field_confirmation_test.dart",
+          "test/field_sales_gateway_test.dart",
+          "test/field_sales_decision_store_test.dart"
+        ]
+      },
+      "exitCode": 0,
+      "passed": 18,
+      "log": "docs/verification/field-company-20261102/platform-tests.log"
+    },
+    {
+      "id": "default-disabled-navigation",
+      "cwd": "apps/jentra_desktop",
+      "command": {
+        "executable": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+        "args": [
+          "C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot",
+          "--suppress-analytics",
+          "--no-version-check",
+          "test",
+          "--no-pub",
+          "--concurrency=1",
+          "test/field_confirmation_navigation_test.dart"
+        ]
+      },
+      "exitCode": 0,
+      "passed": 1,
+      "log": "docs/verification/field-company-20261102/default-navigation-tests.log"
+    },
+    {
+      "id": "runner-safety",
+      "cwd": ".",
+      "command": {
+        "executable": "node",
+        "args": [
+          "--test",
+          "supabase/candidates/tests/field_company_runner.test.mjs"
+        ]
+      },
+      "exitCode": 0,
+      "passed": 2,
+      "log": "docs/verification/field-company-20261102/runner-safety.log"
+    },
+    {
+      "id": "scoped-analyzer",
+      "cwd": ".",
+      "command": {
+        "executable": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+        "args": [
+          "--suppress-analytics",
+          "analyze",
+          "--fatal-infos",
+          "packages/jentra_platform/lib/field_confirmation_company.dart",
+          "packages/jentra_platform/lib/src/field_confirmation_company_store.dart",
+          "packages/jentra_platform/test/field_confirmation_company_test.dart",
+          "apps/jentra_desktop/lib/src/features/sales/field_confirmation_company_controller.dart",
+          "apps/jentra_desktop/lib/src/features/sales/field_confirmation_company_screen.dart",
+          "apps/jentra_desktop/test/field_confirmation_company_controller_test.dart",
+          "apps/jentra_desktop/test/field_confirmation_company_screen_test.dart",
+          "apps/jentra_desktop/test/field_confirmation_navigation_test.dart",
+          "apps/jentra_desktop/lib/main.dart",
+          "apps/jentra_desktop/lib/src/router.dart",
+          "apps/jentra_desktop/lib/src/shell/navigation.dart",
+          "apps/jentra_desktop/lib/src/features/sales/sales_order_screen.dart"
+        ]
+      },
+      "exitCode": 0,
+      "result": "No issues found",
+      "log": "docs/verification/field-company-20261102/analyze.log"
+    },
+    {
+      "id": "format",
+      "cwd": ".",
+      "command": {
+        "executable": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+        "args": [
+          "--suppress-analytics",
+          "format",
+          "packages/jentra_platform/lib/field_confirmation_company.dart",
+          "packages/jentra_platform/lib/src/field_confirmation_company_store.dart",
+          "packages/jentra_platform/test/field_confirmation_company_test.dart",
+          "apps/jentra_desktop/lib/src/features/sales/field_confirmation_company_controller.dart",
+          "apps/jentra_desktop/lib/src/features/sales/field_confirmation_company_screen.dart",
+          "apps/jentra_desktop/test/field_confirmation_company_controller_test.dart",
+          "apps/jentra_desktop/test/field_confirmation_company_screen_test.dart",
+          "apps/jentra_desktop/test/field_confirmation_navigation_test.dart",
+          "apps/jentra_desktop/lib/main.dart",
+          "apps/jentra_desktop/lib/src/router.dart",
+          "apps/jentra_desktop/lib/src/shell/navigation.dart",
+          "apps/jentra_desktop/lib/src/features/sales/sales_order_screen.dart"
+        ]
+      },
+      "exitCode": 0,
+      "files": 12,
+      "changed": 0,
+      "log": "docs/verification/field-company-20261102/format.log"
+    },
+    {
+      "id": "desktop-release-web-local-compilation",
+      "cwd": "apps/jentra_desktop",
+      "command": {
+        "executable": "C:\\src\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe",
+        "args": [
+          "C:\\src\\flutter\\bin\\cache\\flutter_tools.snapshot",
+          "--suppress-analytics",
+          "--no-version-check",
+          "build",
+          "web",
+          "--no-pub",
+          "--release",
+          "--dart-define=FIELD_SALES_CANDIDATE_ENABLED=true",
+          "--dart-define=FIELD_SALES_EMAIL_CONFIRMATION_ENABLED=true",
+          "--output=build/field-company-confirmation-candidate"
+        ]
+      },
+      "exitCode": 0,
+      "output": "apps/jentra_desktop/build/field-company-confirmation-candidate",
+      "compilation": "JavaScript release web bundle",
+      "wasmDryRun": true,
+      "wasmRuntimeAcceptance": false,
+      "publicClientConfigurationProvided": false,
+      "log": "docs/verification/field-company-20261102/web-build.log",
+      "artifacts": {
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/.last_build_id": {
+          "bytes": 32,
+          "sha256": "7dd6cbda83589d334857eefae913108ef717775ab83d09baaf2d19ee8c88e8b6"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/AssetManifest.bin": {
+          "bytes": 2751,
+          "sha256": "50c60bed4e0cc33f80621ea33a422e6108a76b823a7c23c79509a64049297fa4"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/AssetManifest.bin.json": {
+          "bytes": 3670,
+          "sha256": "8786ddbfc1a5be88c83e9dd2f9b3881bb44d4650d152f0801059e4fd2a6560e5"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/FontManifest.json": {
+          "bytes": 1580,
+          "sha256": "e25eb5b09aa2613c26bc8a849691ac6c556058cbb530ca65930fc51bb2a6cbf7"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/fonts/MaterialIcons-Regular.otf": {
+          "bytes": 26492,
+          "sha256": "f7956ac251c643380cb0aa31ade33ea83ba175a4e97e5a9ec11078b337ba1f22"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/NOTICES": {
+          "bytes": 1463138,
+          "sha256": "19fa809dc8dcc8c812678b615d07a76f563f4fdf21260b8c17abd083a0bf7d22"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": {
+          "bytes": 1472,
+          "sha256": "3d90c370aa4cf00dc57ee2b902f6652147c0f81e03e483df584a9c08b1687c9d"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/jentra_design_system/assets/brand/jentra-logo-board.png": {
+          "bytes": 1477131,
+          "sha256": "bcb444dafed12cfbca2e2077e50dd4fc8f0ce7c5e212a91fddd08dafecba1ba6"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/jentra_design_system/assets/brand/jentra-mark.png": {
+          "bytes": 406813,
+          "sha256": "9670c0a23c40185a2a067648253d1eb94d380b5a30ddb6441ed1449d6f05ee0e"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/IBMPlexMono-Regular.ttf": {
+          "bytes": 135580,
+          "sha256": "6a3412f058c7d8dfd9170c41e85ade48e5156ecb89356110ca57a0a27734af46"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/IBMPlexMono-SemiBold.ttf": {
+          "bytes": 140216,
+          "sha256": "d3c38e55c78f5b0f28009fddba4834ec503278936a5986032424c9bd2d23aa46"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/Manrope-Bold.ttf": {
+          "bytes": 96492,
+          "sha256": "ec45a353e86a9988decd9d33b2e126f9bb672f5a14e816a5440b49e208aa45df"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/Manrope-Medium.ttf": {
+          "bytes": 96624,
+          "sha256": "84f74f48c092b4b8b757c833e9de475a1e7ea946763d59754451c61a6a056f91"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/Manrope-Regular.ttf": {
+          "bytes": 96544,
+          "sha256": "b746e7de1dacdb2bcbfd3b45bf8a30a5c0de02f47604b101bbde461070b624ce"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/Manrope-SemiBold.ttf": {
+          "bytes": 96664,
+          "sha256": "50edc86b3a47f41facf9726a086ed00bdd8c7846c66caecdfb582b8a144d022b"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansSinhala-Medium.ttf": {
+          "bytes": 89716,
+          "sha256": "839df9dc62fa9bcab9b02e638c3b7e2ea59cc49fd79bf99055f4d9c23f0e2b3d"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansSinhala-Regular.ttf": {
+          "bytes": 90296,
+          "sha256": "c5504cbd3ee50feac33ff7737b588c7a3eefee4faaa07d379fb392e4586b6858"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansSinhala-SemiBold.ttf": {
+          "bytes": 89084,
+          "sha256": "685e86b1b629ae5bed68a4dc07613b994018edbcf9d085b63642e4d033f8d67d"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansTamil-Medium.ttf": {
+          "bytes": 46480,
+          "sha256": "1d1ff88260e6ea6928be2e2b1d19a054807ca91c1d7ac2cb18c9538bc10e36c7"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansTamil-Regular.ttf": {
+          "bytes": 46600,
+          "sha256": "038cff72449bf6dcb6b47aa53a7f9b2bf93c8defc056890bb778291b263418ad"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansTamil-SemiBold.ttf": {
+          "bytes": 46400,
+          "sha256": "8b8729103b51f5775b4309e07dd6fcb937747548ca595e4edebb17d936142de6"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/jentra_platform/assets/web/drift_worker.js": {
+          "bytes": 360104,
+          "sha256": "191fc9db018d2bbecb1723e81118fcf2c5c094df8644c2fcba2ed51df061e90a"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/jentra_platform/assets/web/sqlite3.wasm": {
+          "bytes": 750007,
+          "sha256": "fbcd2e8214f9231ea961e1b7706a22dd1194cfbfe6f26f13841b5aa7a0be1a1f"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/material_ui/shaders/ink_sparkle.frag": {
+          "bytes": 8890,
+          "sha256": "2dca5ab93d4ec29e963f996f3916320ba60825e9537dfb149a68008c7a16b026"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/pdfrx/assets/pdfium.wasm": {
+          "bytes": 5231809,
+          "sha256": "5b2cbb18e9dc361dae375e971c7e75f7306d39b7749ad4fced475579e6a549df"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/pdfrx/assets/pdfium_client.js": {
+          "bytes": 1856,
+          "sha256": "1ac8729c01dd67d03008f410fda7e2f9928d695c0a81e65ebd65bdf622ae5e65"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/packages/pdfrx/assets/pdfium_worker.js": {
+          "bytes": 106518,
+          "sha256": "fce9b77e7b1f45b45237d9b4a8cdca47a5007d70d342024ed4d730adc54f5f96"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/shaders/ink_sparkle.frag": {
+          "bytes": 8890,
+          "sha256": "2dca5ab93d4ec29e963f996f3916320ba60825e9537dfb149a68008c7a16b026"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/assets/shaders/stretch_effect.frag": {
+          "bytes": 6737,
+          "sha256": "ab412f07a5b9b50b67a885b24dbe16929738ae28630407d6490c924caf0a3220"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/canvaskit/canvaskit.js": {
+          "bytes": 86987,
+          "sha256": "bb559f6080c7d312ac2a912b4abec9f68ff3d3022d4a603c7796b9b31460642b"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/canvaskit/canvaskit.js.symbols": {
+          "bytes": 1356926,
+          "sha256": "384f80b392972c83fd4f262527e3d06215a297d33ed59732c726721e9d9311bd"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/canvaskit/canvaskit.wasm": {
+          "bytes": 7284602,
+          "sha256": "fbed517a43e82452404446683f00f2e876d835aed84410695759e67b6bb01cd3"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/canvaskit/chromium/canvaskit.js": {
+          "bytes": 86226,
+          "sha256": "6018b12bd8ed37e6952eee72d59c1cf7ad707ccdb74a0a45190010f77edd9068"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/canvaskit/chromium/canvaskit.js.symbols": {
+          "bytes": 1235870,
+          "sha256": "31c86fac6042dd8b756150832c1d15495d0d07742e2718f75dbdde5a5a91455e"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/canvaskit/chromium/canvaskit.wasm": {
+          "bytes": 5428806,
+          "sha256": "ae8ff1d858140f7b1300ced3fa89fb8c9dce0a400a0f4f1e11f6dcfb3315fdcf"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/canvaskit/skwasm.js": {
+          "bytes": 63537,
+          "sha256": "71d7d3e34bf71b52bdba3b588b103bba8148ba28de5754083e01b3398e7a6e1c"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/canvaskit/skwasm.js.symbols": {
+          "bytes": 1540006,
+          "sha256": "9137f1a3ae744dea575043abfc6e063a047e910e6dab1ee53e496c975d1c033e"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/canvaskit/skwasm.wasm": {
+          "bytes": 3593715,
+          "sha256": "e540fd5e8303b7b68ec2718cb49e9c421f8ade3075b15e02a7059a62654df9a1"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/canvaskit/skwasm_heavy.js": {
+          "bytes": 63650,
+          "sha256": "cec554b46ddcf4c0e63d799e0556d546f42d2c3f69316fb4f67ed776f6104558"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/canvaskit/skwasm_heavy.js.symbols": {
+          "bytes": 1672152,
+          "sha256": "b6b79ed497e11d4cd13cc46724f9e289eacc744d2d185e31c72d595cdf62772b"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/canvaskit/skwasm_heavy.wasm": {
+          "bytes": 5216217,
+          "sha256": "565f5cc1cca6ab120f11934b105f01fec4b58b480c82e0889dca93af8e6f8635"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/canvaskit/webparagraph/canvaskit.js": {
+          "bytes": 76114,
+          "sha256": "3110e3e4d9b7b5657d336f253aaca8acca5777cde9319fb69ac302d6ff5a8b23"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/canvaskit/webparagraph/canvaskit.js.symbols": {
+          "bytes": 963641,
+          "sha256": "44d6c47919106235cf32252252490cdf798d907ee874ba343ab53dc94bc2a9dc"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/canvaskit/webparagraph/canvaskit.wasm": {
+          "bytes": 3729129,
+          "sha256": "0ce1b05082efdc8529550e8a01f6ff0593972d55525035010e26f5600aa9f254"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/canvaskit/wimp.js": {
+          "bytes": 59127,
+          "sha256": "8fd8a47480c6eb0a374d159912d0b3fb15661b41f5c113ecdd39c2f01f2bee46"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/canvaskit/wimp.js.symbols": {
+          "bytes": 1813030,
+          "sha256": "b4907ebd33131302a8cd99f7c55f52357bdfde04f421b605a616ba8764ae1de4"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/canvaskit/wimp.wasm": {
+          "bytes": 3581677,
+          "sha256": "e924eaafd801d41e017d178f3fd5cf8a417f641fe35c9ed34a4e1d7582283e0c"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/flutter.js": {
+          "bytes": 12136,
+          "sha256": "2beb1ce6b159c71540aa66030af1d7964b6a92377cc78473745e02f97b74effe"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/flutter_bootstrap.js": {
+          "bytes": 13094,
+          "sha256": "a036f27d05640fcc8f6b7b1cda7d5cce7a812f2bcf5dd89bfe83ef249e18b3c3"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/flutter_service_worker.js": {
+          "bytes": 815,
+          "sha256": "dbfbe64ae5be5b462abb97338eb9af783ed4ed57a8c73a53c2a44488a26f6416"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/icon.png": {
+          "bytes": 406813,
+          "sha256": "9670c0a23c40185a2a067648253d1eb94d380b5a30ddb6441ed1449d6f05ee0e"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/index.html": {
+          "bytes": 805,
+          "sha256": "d76e396b4d066f53f7216b3d45129387af055b308b3e5ecbfe660fa5387486fd"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/main.dart.js": {
+          "bytes": 8324749,
+          "sha256": "94c44e7fb77e4153d9a9ea876c97a2607f034b8f3ac245b2d6c1a906d657b48d"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/manifest.json": {
+          "bytes": 429,
+          "sha256": "7b1cb20f2716284b25fe293c18b4c1a7a41fe0e84fa7e9df9a84024cab71f586"
+        },
+        "apps/jentra_desktop/build/field-company-confirmation-candidate/version.json": {
+          "bytes": 101,
+          "sha256": "85e11a805b34ec582cf0bdfefc6505b2189f8746f15ef5a6dda1507ca8117439"
+        }
+      }
+    }
+  ],
+  "priorSalesSource": {
+    "record": "docs/verification/field-confirmation-20261102/verification.json",
+    "recordSha256": "4c449a2ed89db265ec8d67200b3305e8db07c3daca9406344f74c86f29e5a1e5",
+    "matchedDartFiles": 31,
+    "sha256": {
+      "apps/jentra_sales/lib/main.dart": "b288bce555771c59477cd372b2fa4bf7390d2461a955d9a7572a6526c685abbc",
+      "apps/jentra_sales/lib/src/confirmation_controller.dart": "e69c8299ee8057b2422bfecd50e6f143be26d9f9dd39435ffd44e22d81eb5b3e",
+      "apps/jentra_sales/lib/src/data/sales_gateway.dart": "8d6375c5890c8c8d30ccd3a5456d32d032c4282d18dc68a3cea653e769987a5f",
+      "apps/jentra_sales/lib/src/data/sales_store.dart": "72d14fe7983eedec97df355035d3a197938afdcc01f8f64a5086d38467836e9f",
+      "apps/jentra_sales/lib/src/data/sales_store_factory.dart": "dd68150d661adea1853c4ca8403e4ab7e0123f9fb54815878d839207669c84ef",
+      "apps/jentra_sales/lib/src/data/sales_store_native.dart": "406e31bccda60cd96c85de604e85fe96cf9692454ab8719d0f3ed0b0fbc66794",
+      "apps/jentra_sales/lib/src/data/sales_store_web.dart": "1955630e8f6036d70d4e0c5e03741cc7ac1211a1bf8b30dcb6ec3158930f1a0d",
+      "apps/jentra_sales/lib/src/demo_data.dart": "94876c06cf7b58554bd89882dbf181550e28b1f226524c4e2d17a7a5422d8a88",
+      "apps/jentra_sales/lib/src/field_sales_controller.dart": "35dd6ce7cb93d22401d4add9dca53818589dd4a45c5e05e98ec2388679444251",
+      "apps/jentra_sales/lib/src/models.dart": "ff4462df581a1588bd3190c84593e85aabe44ad8606e0faee2cb8ceea81ae546",
+      "apps/jentra_sales/lib/src/sales_app.dart": "0e210cff31c6873023b240944cd346ec3ddaede4a70607e0f8e049607f6aa65b",
+      "apps/jentra_sales/lib/src/sales_controller.dart": "eb1751d8c21b98500a61a0bca8e1570d2a7fc99f2460c8e85d0a7c1eb073d820",
+      "apps/jentra_sales/lib/src/ui/catalogue.dart": "6b75c5f7e95abf4a9e0f082f166a18851b5b60e397d09f4d9abc00a0a1a4afae",
+      "apps/jentra_sales/lib/src/ui/components.dart": "d1d1f885cde3b3e07c0570057a9ba884fc538f05019f90e107f7dc6c841b148b",
+      "apps/jentra_sales/lib/src/ui/customer_confirmation.dart": "c68cf5f6734eb54798aa9f56181dd373e1a8e062f32a6c0238de9820c0897c85",
+      "apps/jentra_sales/lib/src/ui/customers.dart": "98803cab36bffdad727c5f771a0ef1ee5ee87d3246a81dc233d45e5440d2e669",
+      "apps/jentra_sales/lib/src/ui/field_sales_workspace.dart": "f91baa605870c4716ba02a4416d63b8a9a8f5b06aa4da5212e9b859eb602421a",
+      "apps/jentra_sales/lib/src/ui/login.dart": "822981b0385f2e4ea00266b6083e0225e8643ff173f44e001ba57bf7416d8447",
+      "apps/jentra_sales/lib/src/ui/order_editor.dart": "d52ce36e6eaf8c348f140033b92daf98a56e15896758744a82ef92c749202010",
+      "apps/jentra_sales/lib/src/ui/orders.dart": "6a7331a7e27a76c331a6f4f1ff099aa254693f2641da75794150e1a3d91331a9",
+      "apps/jentra_sales/lib/src/ui/today.dart": "8c51fcfae0b3777327bbe664cd9b357463bc649b312d751ff94765b12c7afc79",
+      "apps/jentra_sales/lib/src/ui/visits.dart": "56e7de9bb4046bd97b518de155014623b477de9021f995de5b0a7e7492b6d546",
+      "apps/jentra_sales/lib/src/ui/workspace.dart": "0bb06e6c3ae3f7f34797625c8289f3ac1938bd92035631045452f2f7023383e1",
+      "apps/jentra_sales/test/confirmation_controller_test.dart": "73965bb980b78e309a4cc4b7252d592629f2e484af233e7b7ded02c633fdfeda",
+      "apps/jentra_sales/test/customer_confirmation_test.dart": "b56492b3d1ced4e44be2ed770eaeca223f7000f26422287b68cc1fa236bd2626",
+      "apps/jentra_sales/test/field_sales_auth_test.dart": "911aa5a6ea592f3a523a02e23b834b20e8b038f67c18389399e48ab1b98367e1",
+      "apps/jentra_sales/test/field_sales_controller_test.dart": "14aadb54d688cf9b2d7286682b9ad43c720de182c50e78e8ea51ef8a10957f13",
+      "apps/jentra_sales/test/field_sales_widget_test.dart": "cbff72fa16f72527138a60b4e88dc4c5b88cc6d9c764232c944fc7194c3ce23f",
+      "apps/jentra_sales/test/sales_drafts_test.dart": "820b2c35bca80cf0c9486cb09feb753a056c6931d834fc3019313ae4e2970314",
+      "apps/jentra_sales/test/support/field_sales_fixture.dart": "8702547f1593c9da8f1264f4cb96c0c7da9fe2b17c03646cc76fbd3c036335eb",
+      "apps/jentra_sales/test/widget_test.dart": "aa8dec621b4679b1e5a24ae0068cb47068f3156f0648cdb641e4f25d6078b143"
+    },
+    "note": "No Sales library/test Dart source changed from the prior full-suite record. The prior 55-test Sales result and bundle are historical evidence, not a rerun in this staff continuation."
+  },
+  "review": {
+    "specification": "Company-only routing, contact-version replay binding, accepted-response protection and fixed-length paging review findings repaired and covered by regressions.",
+    "standards": "Scoped API, current actor/session/scope fences, encrypted immutable command recovery and narrow-width/large-text behavior verified. No unresolved source-review finding is claimed as a live acceptance gate."
+  },
+  "gates": {
+    "emailLinkActivation": "Real worker/provider and sender/domain; hosted mailbox receipt and forwarding; HTTP/cache/scanner behavior; origin/log redaction and service abuse controls.",
+    "deliveryAcknowledgement": "Verified recipient responses bound to posted partial-delivery versions and exact received/refused/short quantities.",
+    "companyProgression": "Separately reviewed credit/stock/order advancement.",
+    "companyAcceptance": "Full current schema and existing-data rehearsal; genuine independent sessions/MFA; contention/revocation and ordinary company/Employee compatibility; device privacy/accessibility and representative/approver/customer pilot signoff.",
+    "installationAndDistribution": "Separately authorized migration installation, sender activation, signing/distribution, deployment and live verification."
+  },
+  "snapshotNote": "The shared workspace already contains unrelated uncommitted work. Hashes bind the listed source and dependency inputs; they do not attribute those existing changes to this continuation. Historical verification records are preserved.",
+  "verifiedSourceSha256": {
+    "apps/jentra_desktop/lib/main.dart": "8495faf60931c8a5eb09291a47277d61cddec8a68f55a6c0fae039de3b82ba95",
+    "apps/jentra_desktop/lib/src/features/sales/field_confirmation_company_controller.dart": "3b95cc8cdb6f2ad5c575d6ec244d474c1118e743c6057ac7ad3b6c7d0645acc7",
+    "apps/jentra_desktop/lib/src/features/sales/field_confirmation_company_screen.dart": "51a8552e8f7b81ef256c48b9edbf5934e359857979222c1892c396f836c0c78c",
+    "apps/jentra_desktop/lib/src/features/sales/sales_order_screen.dart": "57bdafb40879f2feaf55d8b64b8c5a9b5554604075318bd72c51d9bc308d2c80",
+    "apps/jentra_desktop/lib/src/router.dart": "4bd88f922aab959bc4d98c667d77a54bc1745cf3a634f5b75284794f209bd94f",
+    "apps/jentra_desktop/lib/src/shell/navigation.dart": "286f6ae4ea74cc6cc7467198a2b1bb55175d7e17e1d2afdd79dfbe8bbd1feeac",
+    "apps/jentra_desktop/test/field_confirmation_company_controller_test.dart": "b8ef7d8a7002afd3946d1641a8451948a3a9aa739727738f17a07e6f8e90afce",
+    "apps/jentra_desktop/test/field_confirmation_company_screen_test.dart": "f7d5ad94babc0d2e0bef6d41a14734dd6ab6025632b30d8dfd9e311933bd17dc",
+    "apps/jentra_desktop/test/field_confirmation_navigation_test.dart": "30dc5c98d217e02741ab23282806956bb73108be0715dd1a500bc312bfadf515",
+    "apps/jentra_sales/README.md": "9bef0a8ef8e22858e0c13a974d1ebb19b08b1d3f3d891e0ded31dfe81b2232ac",
+    "docs/blueprint/mobile-apps/SALESMAN_APP_BLUEPRINT.md": "5620a9d45505ede55f0d67d67434433e8859065f0ce0d46052db7df41fa15520",
+    "docs/development/field-company-confirmation-candidate-20261102.md": "101208fffbe8e6990f68bbef8b3345cd6c9020ebddf6d929ce1211cb9e4ec42b",
+    "docs/development/field-order-email-confirmation-candidate-20261102.md": "accbcb2c9dbc73f705693605c67a9974b505c7505ac3b9814d0c683f2edcafce",
+    "docs/verification/field-company-20261102/README.md": "fce549cbe34158a2a29225dacf64db770fa0240994ab5bf8c86526e393669f34",
+    "packages/jentra_platform/lib/field_confirmation_company.dart": "26c96d1cf8768b530cc50acb0dcfd05f3798e78a19bf2b399a1f276213fa5f5f",
+    "packages/jentra_platform/lib/src/field_confirmation_company_store.dart": "0cc053e517bb9949437ab03e91f821304c9ca4bb694d6e4c39a048ed333342d9",
+    "packages/jentra_platform/test/field_confirmation_company_test.dart": "5ae44704f8851a662a4cb7a3c8237fc2f6b474ac38bcb4f229ab7d609c52f8d1",
+    "supabase/candidates/20261031090000_field_sales_governance.sql": "46fb83fb4bae57059c483cdb1f06f9021d12d34525194321611e70170a2a71b1",
+    "supabase/candidates/20261102090000_field_order_email_confirmation.sql": "49f4e7747d68b32fd8f950ddda3cc2ae830a003215724f9ff0e7af2cfd34052a",
+    "supabase/candidates/20261102120000_field_confirmation_company_workspace.sql": "072aeeba82df5e75c0c51b8083a67568a40f73994879880023888df743d85b8c",
+    "supabase/candidates/run-field-company-test.mjs": "eae4f0cf31ae327e237da25e5e78d1e9128a10f51c62f7e7f9ee80cebf48493a",
+    "supabase/candidates/tests/field_company.test.mjs": "bd60b915c4d81f91b4a13ff3a85489aa19d99d82be0997e2491d4fa18f534ed5",
+    "supabase/candidates/tests/field_company_runner.test.mjs": "2540f7d8365398007b4337b7eb7dbaee7646359bdc74fd9be82e716b661ab93e",
+    "supabase/candidates/tests/field_confirmation.test.mjs": "d52db1bb51e237fd5e4dd22402105a6fb7410a13d938aa2c6760265c1a8e3a28",
+    "supabase/candidates/tests/field_sales_governance.test.mjs": "019c0741367cfb1dc64e87c0abfc6fc3706f46d1234199ecf622d4037143edfd",
+    "supabase/migrations/20260831193714_create_greenfield_foundation.sql": "d104871a777c31b9562fac2e5200d9801b24c0ebd28a9b0e75a43bdc13171f8a",
+    "supabase/migrations/20260831193857_harden_foundation_rls_and_indexes.sql": "26facfcaded77f66f100b26dfb63d82f2d20ecac5f475261924b161389c23786",
+    "supabase/migrations/20260831194005_simplify_invitation_read_policy.sql": "65a266f8d0b2c1f87d8204af726a943ea6eb7d6ceb4a59d50ef3cccca4bb1858",
+    "supabase/migrations/20260901005825_optimize_invitation_auth_initplan.sql": "c4d6231405b9e6bcc13eab3c3f252cd3a652438fe598772bc4d4bb661b1d5b68",
+    "supabase/migrations/20260901090317_create_wave2_shared_foundation_schema.sql": "82886b14daf554e33dbe81d05827850b5fd7b3322a5f2bebe3e6958cbc608d86",
+    "supabase/migrations/20260901090331_create_wave2_command_helpers.sql": "2adbc4a022708bc936a9b89ce21f194e03d9d8305ac1708965145b37ae8e5a60",
+    "supabase/migrations/20260901090354_create_wave2_setup_upsert_command.sql": "d4e464dc4df03503b221db44647f1015fe033e6fe2ecda13fefdb7331666c11a",
+    "supabase/migrations/20260901090406_create_wave2_special_commands.sql": "e0f86f487e293ac7c0c3f24444f5f00890908bd4f9e58846d3de234578893741",
+    "supabase/migrations/20260901090420_expose_wave2_versioned_api.sql": "e6e3b773f1443ccfbaa3ffbf592ccc29a88ea95816bf05adccb113035641d572",
+    "supabase/migrations/20260901090642_cover_wave2_foreign_keys.sql": "f161a722cff8392a19b06aa4cb6ebe470a7356ef3d2c4773c07b9ed381da1e77",
+    "supabase/migrations/20260901091132_validate_wave2_attachment_aggregates.sql": "628c3752d1ded327d795b72b30f0531033c6009ef9ec0ca969b3bbf11afb28b4",
+    "supabase/migrations/20260903045702_enforce_wave2_fiscal_period_lifecycle.sql": "9abdfa38ae52b5e3ccc8f28c4c0d5e6df70379654e579fe0ffc5151a70f962e0",
+    "supabase/migrations/20260903051423_enforce_wave2_workflow_lifecycle.sql": "67d5aeeb00f11c489c260231ffd741edd64e7352dcc421b7c5b15d7892ba490e",
+    "supabase/migrations/20260903110103_align_wave2_setup_contracts.sql": "3ce448a8247fe8e7b28bd1a779b7e7bf1bab705152ba9abf37da7fd94cfac6c9",
+    "supabase/migrations/20260903110716_bound_wave2_report_rows.sql": "91071c38289fdcc91afdf7f6effd3890385e5ffbaa4cbe9aa4351a387b13fe4c",
+    "supabase/migrations/20260904121647_wave3_operational_foundation.sql": "b7a840b31a2d8a89d0a1539151769130c352fe7ace0ea2d76f4057aab5b2d737",
+    "supabase/migrations/20260904122313_cover_wave3_foreign_keys.sql": "f4dd8af6815a79cef0c7771068566ffcb1229e11500dfd9988a418f76078e97d",
+    "supabase/migrations/20260904125910_create_wave3_crm_pipeline_schema.sql": "04723457b9866dbc82d9578556becc16e2797838ea08abc8621ec6dceba634e5",
+    "supabase/migrations/20260904130000_create_wave3_crm_pipeline_commands.sql": "578a76489f991eca9cb739644477f7eb6652dbdb114d7af3960baffc2fa46b14",
+    "supabase/migrations/20260904135959_add_crm_pipeline_aging_summary.sql": "94d60619d58a98cb12d9c31dec275fd5c6a31787fb9b677e0f550a222395b4c7",
+    "supabase/migrations/20260905050419_create_wave3_quotation_schema.sql": "66c90b3522efffd247ecc893cf9e8c6a0b856b13cfd911e135d94dec15c45172",
+    "supabase/migrations/20260905050428_create_wave3_quotation_commands.sql": "2649d0463042008820805be4aa98c979c89dc9327ed9fdf17e4b723c9df06a4c",
+    "supabase/migrations/20260905050436_create_wave3_order_credit_reservation_schema.sql": "1b35dc10e7243affbb33411e9a3a123d61ff5c0899110706984d526098eaa34b",
+    "supabase/migrations/20260905050444_create_wave3_order_credit_reservation_commands.sql": "79755392ba2c4cd6dd49d2bf7f0e47bb24a39f92a82e72833c4da84c0724e7d6",
+    "supabase/migrations/20260905050839_cover_wave3_lead_to_cash_foreign_keys.sql": "25b1562ec93364f4fe58de40babcf7f03ada43e8ff4cc0f3bdd73ea6263f3134",
+    "supabase/migrations/20260905054457_stabilize_wave3_discount_allocation.sql": "6517331166f6c3b061150133e8e086437a89047eb2a9181ee09853bff56374a9",
+    "supabase/migrations/20260905123934_harden_crm_pipeline_ac302.sql": "5590226512366a671fc2e9c2e3a529ab1f28ad78bcc9d04f135ca3ddbd7828a2",
+    "supabase/migrations/20260906153036_complete_quotation_workspace_contracts.sql": "db1f04f4b8bad254cbb1ab113e623c9b7372314cb320d242ea369a74f55eb527",
+    "supabase/migrations/20260907044241_complete_sales_order_workspace.sql": "f79cf9dd480a0f0b6a82ef0e49cca041087de86d9cd6f327e7b89ab8bfceed8e",
+    "supabase/migrations/20260910135010_complete_delivery_receivables.sql": "5e52d4ef7e7bd194c09484fd3c1f605a93a0d861cb6c078c69c26d269f1706eb",
+    "supabase/migrations/20260910135507_harden_receivables_reference_indexes.sql": "0aceb7ab9340e77e66d48b0b3f8ced0d056f58fe62b2b9d1e153f3ab47d142ef",
+    "supabase/migrations/20260925181927_wave4_employee_foundation.sql": "cf87ff4fef5041394d28faaf265d98762d90fcc14fe1b0de4a6828477d695bfc",
+    "supabase/migrations/20260929224939_wave4_private_hr.sql": "37e14c5a789b9d73bc7b5738cc087c4e5a59d4bf74f2e075cd2baf70cf87c6c3"
+  },
+  "workspaceInputSha256": {
+    "apps/jentra_desktop/lib/src/app_providers.dart": "8f616bf97f0fbaa3df54b51c95fcdd07b1a48f71f8dabb102f23a789e83f2590",
+    "apps/jentra_desktop/lib/src/features/sales/field_company_review.dart": "ec41d3c987b2128989cba48c24a570a5ba71f408f67a65d6adf86bcca64903b6",
+    "apps/jentra_desktop/pubspec.yaml": "230f2a356eb1ee952c786367170309194c17d29443091044475e57135b6d7e31",
+    "apps/jentra_sales/pubspec.yaml": "7845cba70d4a184b9397dca4dc0c830bf43f1c15d59fdeed3f7827446dfc56b8",
+    "packages/jentra_domain/lib/jentra_field_sales.dart": "5cab7e5f67bf40a82450d6fd7d96c09cc1c76b9f57223f75945e239b0e34f684",
+    "packages/jentra_domain/pubspec.yaml": "45978b5ab1fca951a4b930f8687ac18d5ed97f98e01471a89d70bed8f07c04e7",
+    "packages/jentra_platform/lib/field_confirmation.dart": "3793833044f5947350856c0ef7ed46bf30699cf57520e3484817c5e7c6b8854b",
+    "packages/jentra_platform/lib/jentra_field_sales_platform.dart": "03762bc51f0e3107aba8a4dc6c44d849e4c794b0a309e1e29586387995ba0653",
+    "packages/jentra_platform/lib/src/draft_cipher.dart": "7487958ec72c210cc5a983bb37c8dd9112c93114443e681649c5bb268f6dee63",
+    "packages/jentra_platform/lib/src/draft_repository.dart": "e666cb1e70cb998b05096d4eefaa724217827f2cbe428efe98658d7a4c359872",
+    "packages/jentra_platform/lib/src/runtime_config.dart": "5b95bd2bd2214b3d87f2001f0b573ea0cffe94853f8615652959f54d813ee2b7",
+    "packages/jentra_platform/pubspec.yaml": "b1a2fb0bcd17427dcf8bdf53334aaf7a5ec59fdf1ada7b3a19cf7235bf895538",
+    "pubspec.lock": "6bdaa3d10c2d49176f2176eb4707302611d85ae8effd80ea3fbbb0cd8c9298fe",
+    "pubspec.yaml": "7d39efe5d97b30153b7ed92d15a4818435ce092381c02de40884d468d5e7bc7b"
+  },
+  "evidenceSha256": {
+    "docs/verification/field-company-20261102/analyze.log": "4dc2b6f3963df7fc8a4e6ed203fea1984fb7a6623bb6528f51a1a7f46c1d2275",
+    "docs/verification/field-company-20261102/database.log": "20b32005f56790192443fa0ac05bfdc7b760f88258b49a185b03ecc0a461fdff",
+    "docs/verification/field-company-20261102/default-navigation-tests.log": "cdee555fa9bbd058b82ca87fca6a7da4337fe36cf78f6afd97608534a3f18807",
+    "docs/verification/field-company-20261102/desktop-tests.log": "6c23928fe0f81bbb7292507ff7a601b3c6421698d5d43a3f0233986ca610b662",
+    "docs/verification/field-company-20261102/format.log": "123c2bd6e6fafd886e764d54b138ed83d5722bd06ea9c6d19d67721da702fb43",
+    "docs/verification/field-company-20261102/platform-tests.log": "fc6741f7d3c7b3e429a475ac216e3c500132d58f00aeb09d5c3c5d9ae9ed3344",
+    "docs/verification/field-company-20261102/postgres-result.json": "4d77f5fa1f28dd0e0b0f19dbad3c97c649a3feb44fa3816461f60dd309f84361",
+    "docs/verification/field-company-20261102/runner-safety.log": "ace307c7e175e99842e0b59f442abd76b4b8334823cbd412c4b46a2e2724b3da",
+    "docs/verification/field-company-20261102/web-build.log": "5e69b9ac02ca2c2ca1e2acf2ff587bda452a1d13062c8c52da84cc5e0718af00"
+  }
+}

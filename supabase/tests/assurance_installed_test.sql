@@ -29,8 +29,6 @@ create function pg_temp.e(a text) returns jsonb language sql as $$
   select jsonb_build_object('action',a,'engagement_id',pg_temp.aid('eng')) $$;
 create function pg_temp.ver() returns bigint language sql security definer set search_path='' as $$
   select version from assurance.engagements where id=pg_temp.aid('eng') $$;
--- This fixture-only probe retains the caller's JWT claims while evaluating a
--- private helper as the test owner. Never grant clients access to assurance.
 create function pg_temp.assurance_session_mfa() returns boolean
 language sql security definer set search_path='' as $$
   select assurance.recent_mfa() $$;

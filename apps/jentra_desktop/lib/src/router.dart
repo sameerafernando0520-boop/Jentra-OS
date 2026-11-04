@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jentra_platform/jentra_platform.dart'
+    show browserAuthReturnWasCaptured;
 import 'package:jentra_domain/jentra_receivables.dart';
 import 'package:jentra_domain/jentra_projects.dart';
 
@@ -106,6 +108,7 @@ import 'features/stock_opening/stock_opening_screen.dart';
 import 'features/stock_opening/stock_opening_controller.dart';
 import 'features/sales/quotation_screen.dart';
 import 'features/sales/sales_order_screen.dart';
+import 'features/sales/field_confirmation_company_screen.dart';
 import 'features/dashboard/dashboard_screen.dart';
 import 'features/setup/business_setup_screen.dart';
 import 'features/tenant/accept_invitation_screen.dart';
@@ -126,6 +129,9 @@ final routerProvider = Provider<GoRouter>((ref) {
   final developerTools = ref.watch(developerToolsEnabledProvider);
   return GoRouter(
     initialLocation: '/dashboard',
+    // Flutter may have captured the original URL before main(). Never restore
+    // its callback code after the bootstrap has stripped it from history.
+    overridePlatformDefaultLocation: browserAuthReturnWasCaptured,
     refreshListenable: refresh,
     redirect: (context, state) {
       if (!developerTools && state.uri.path == '/catalogue') {
@@ -217,6 +223,28 @@ final routerProvider = Provider<GoRouter>((ref) {
               orderId: state.uri.queryParameters['order'],
               quotationId: state.uri.queryParameters['quotation'],
               sourceQuotationId: state.uri.queryParameters['source'],
+            ),
+          ),
+          GoRoute(
+            path: '/sales/customer-email-requests',
+            builder: (context, state) => Consumer(
+              builder: (context, ref, _) {
+                final scope = ref.watch(activeTenantContextProvider);
+                return scope == null
+                    ? const Center(child: Text('Select a company and branch.'))
+                    : FieldCompanyConfirmations(scope);
+              },
+            ),
+          ),
+          GoRoute(
+            path: '/sales/delivery-responses',
+            builder: (context, state) => Consumer(
+              builder: (context, ref, _) {
+                final scope = ref.watch(activeTenantContextProvider);
+                return scope == null
+                    ? const Center(child: Text('Select a company and branch.'))
+                    : FieldCompanyConfirmations(scope, delivery: true);
+              },
             ),
           ),
           GoRoute(

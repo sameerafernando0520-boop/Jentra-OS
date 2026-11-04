@@ -5,6 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'data/employee_gateway.dart';
 import 'data/employee_storage.dart';
 import 'data/employee_photo.dart';
+import 'data/employee_self_service.dart';
+import 'data/employee_document_export.dart';
+import 'employee_self_service_controller.dart';
 
 final class _EmployeePhotoSelection {
   _EmployeePhotoSelection(this.owner);
@@ -23,6 +26,8 @@ final class EmployeeController extends ChangeNotifier {
     DateTime Function()? now,
     Duration authorizationLease = const Duration(hours: 24),
     EmployeePhotoPicker? photoPicker,
+    EmployeeSelfServiceGateway? selfServiceGateway,
+    EmployeeDocumentExporter? documentExporter,
     Future<Uint8List> Function(Uint8List)? photoNormalizer,
     this.beforeIdentityChange,
   }) : _gateway = gateway,
@@ -45,8 +50,21 @@ final class EmployeeController extends ChangeNotifier {
     phase = gateway == null
         ? EmployeePhase.unconfigured
         : EmployeePhase.signedOut;
-    _authSubscription = gateway?.actorChanges.listen(_authChanged);
+    selfService = EmployeeSelfServiceController(
+      gateway: selfServiceGateway,
+      store: draftStore.store,
+      currentIdentity: () =>
+          phase == EmployeePhase.ready && _canUsePrivateState()
+          ? identity
+          : null,
+      documentExporter: documentExporter,
+    );
+    _authSubscription = gateway?.actorChanges.listen(
+      _authChanged,
+      onError: _authFailed,
+    );
   }
+  late final EmployeeSelfServiceController selfService;
   final EmployeeGateway? _gateway;
   final Future<void> Function()? beforeIdentityChange;
   final EmployeeDraftStore _draftStore;
@@ -103,6 +121,7 @@ final class EmployeeController extends ChangeNotifier {
   EmployeeLeaveDraft? leaveDraft;
   bool get hasPendingCommand => _pending != null;
   void _emit() {
+    selfService.synchronize();
     if (!_disposed) notifyListeners();
   }
 
@@ -248,6 +267,8 @@ final class EmployeeController extends ChangeNotifier {
 
   void _authChanged(String? actor) {
     if (_disposed || actor == _actor) return;
+    final pendingProtection = selfService.protectPendingForIdentityChange();
+    selfService.invalidateExports();
     final wasLocked = phase == EmployeePhase.locked;
     final previousActor = _actor;
     _cancelPhotoSelection();
@@ -269,15 +290,53 @@ final class EmployeeController extends ChangeNotifier {
         : EmployeePhase.loading;
     _emit();
     final generation = _generation;
-    unawaited(_afterActorChange(previousActor, actor, generation));
+    unawaited(
+      _afterActorChange(previousActor, actor, generation, pendingProtection),
+    );
+  }
+
+  void _authFailed(Object _, StackTrace _) {
+    if (_disposed) return;
+    // The SDK may include a callback URL or provider response in this error.
+    // Do not display/log it, sign out a still-valid account, or retain private
+    // data while the current session's online authority is uncertain.
+    selfService.invalidateExports();
+    unawaited(
+      selfService.protectPendingForIdentityChange().catchError((Object _) {
+        if (!_disposed) {
+          error = const EmployeeFailure(
+            'STORAGE_UNAVAILABLE',
+            'Saved request privacy could not be confirmed.',
+          );
+          _emit();
+        }
+      }),
+    );
+    _cancelPhotoSelection();
+    _generation++;
+    _mask();
+    workspaces = const [];
+    workspace = null;
+    busy = false;
+    _actor = _gateway?.actorId;
+    phase = _actor == null && _foreground
+        ? EmployeePhase.signedOut
+        : EmployeePhase.locked;
+    error = const EmployeeFailure(
+      'SIGN_IN_FAILED',
+      'Account access could not be confirmed. Sign in or reconnect again.',
+    );
+    _emit();
   }
 
   Future<void> _afterActorChange(
     String? previousActor,
     String? actor,
     int generation,
+    Future<void> pendingProtection,
   ) async {
     try {
+      await pendingProtection;
       if (previousActor != null) {
         try {
           await _draftStore.clearActorDrafts(previousActor);
@@ -397,6 +456,8 @@ final class EmployeeController extends ChangeNotifier {
 
   Future<void> signOut() async {
     if (_disposed || _gateway == null) return;
+    selfService.invalidateExports();
+    final pendingProtection = selfService.protectPendingForIdentityChange();
     _logoutInProgress = true;
     _cancelPhotoSelection();
     final previousActor = _actor ?? _gateway.actorId;
@@ -409,6 +470,7 @@ final class EmployeeController extends ChangeNotifier {
     phase = EmployeePhase.locked;
     _emit();
     try {
+      await pendingProtection;
       await beforeIdentityChange?.call();
       await _gateway.signOut();
       if (!_disposed) {
@@ -466,6 +528,8 @@ final class EmployeeController extends ChangeNotifier {
       _emit();
       return;
     }
+    selfService.invalidateExports();
+    final pendingProtection = selfService.protectPendingForIdentityChange();
     _cancelPhotoSelection();
     final generation = ++_generation;
     busy = true;
@@ -473,6 +537,7 @@ final class EmployeeController extends ChangeNotifier {
     phase = EmployeePhase.loading;
     _emit();
     try {
+      await pendingProtection;
       await beforeIdentityChange?.call();
       if (!_valid(generation)) return;
       await _open(authorized, generation);
@@ -505,6 +570,8 @@ final class EmployeeController extends ChangeNotifier {
       identity = person;
       phase = EmployeePhase.ready;
       _renewAuthorization(generation);
+      await selfService.restorePending();
+      if (!_valid(generation) || identity?.key != person.key) return;
       // Opening a local draft requires a fresh online accepted-self check.
       final restoredDraft = await _draftStore.loadDraftLease(person);
       if (!_valid(generation)) return;
@@ -591,6 +658,11 @@ final class EmployeeController extends ChangeNotifier {
         _emit();
       }
     }
+  }
+
+  Future<void> refreshReviews() async {
+    if (!_canUsePrivateState() || identity == null || reviewsLoading) return;
+    await _reviews(identity!, _generation);
   }
 
   Future<void> loadMoreReviews() async {
@@ -895,6 +967,7 @@ final class EmployeeController extends ChangeNotifier {
   }
 
   void lock() {
+    selfService.invalidateExports();
     _lock(preservePhotoSelection: false);
   }
 
@@ -1077,6 +1150,7 @@ final class EmployeeController extends ChangeNotifier {
     _generation++;
     _mask();
     unawaited(_authSubscription?.cancel());
+    selfService.dispose();
     super.dispose();
   }
 }

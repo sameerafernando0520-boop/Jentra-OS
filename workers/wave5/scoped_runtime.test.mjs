@@ -4,7 +4,7 @@ import {createScopedWorkerRpc} from './scoped_runtime.mjs';
 import {PersistentInvocationControl} from './persistent_control.mjs';
 const runtime='11111111-1111-4111-8111-111111111111';
 function ports(){const calls=[];const rpc=createScopedWorkerRpc({runtimeId:runtime,url:'https://xpdoufauvrbdmxgngetv.supabase.co',
- serviceKey:'synthetic-worker-test-value-000000000000',fetchImpl:async(url,options)=>{calls.push({url:String(url),body:JSON.parse(options.body)});return new Response('{}');}});
+ serviceKey:'sb_secret_synthetic_worker_test_value_000000000000',fetchImpl:async(url,options)=>{calls.push({url:String(url),body:JSON.parse(options.body)});return new Response('{}');}});
  return {calls,rpc,control:new PersistentInvocationControl(rpc)};}
 test('worker claims, reconciliation and scheduler use the scoped server port',async()=>{
  const {calls,control}=ports();await control.claimCommittedDelivery();await control.reconcileAcknowledged();await control.dueSyntheticSubscriptions();

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
+import 'save_location.dart';
 import 'package:jentra_domain/jentra_domain.dart' show AttachmentFilePolicy;
 
 final class SelectedSetupFile {
@@ -104,7 +105,7 @@ final class SetupFileService {
     required String mimeType,
   }) async {
     final extension = suggestedName.split('.').last.toLowerCase();
-    final location = await getSaveLocation(
+    final location = await jentraSaveLocation(
       suggestedName: suggestedName,
       acceptedTypeGroups: <XTypeGroup>[
         XTypeGroup(

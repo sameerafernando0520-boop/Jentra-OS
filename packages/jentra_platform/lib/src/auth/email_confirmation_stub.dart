@@ -10,11 +10,16 @@ Future<AuthResponse> createAccountAndConfirm(
   EmailConfirmationCancellation? cancellation,
   void Function()? onEmailSent,
   void Function()? onExchangeStarted,
+  String? emailRedirectTo,
 }) => sendEmailConfirmation(
   client,
   cancellation: cancellation,
   onEmailSent: onEmailSent,
-  send: () => client.auth.signUp(email: email, password: password),
+  send: () => client.auth.signUp(
+    email: email,
+    password: password,
+    emailRedirectTo: emailRedirectTo,
+  ),
 );
 
 Future<AuthResponse> resendAndConfirmEmail(
@@ -23,12 +28,17 @@ Future<AuthResponse> resendAndConfirmEmail(
   EmailConfirmationCancellation? cancellation,
   void Function()? onEmailSent,
   void Function()? onExchangeStarted,
+  String? emailRedirectTo,
 }) => sendEmailConfirmation(
   client,
   cancellation: cancellation,
   onEmailSent: onEmailSent,
   send: () async {
-    await client.auth.resend(type: OtpType.signup, email: email);
+    await client.auth.resend(
+      type: OtpType.signup,
+      email: email,
+      emailRedirectTo: emailRedirectTo,
+    );
     return AuthResponse();
   },
 );

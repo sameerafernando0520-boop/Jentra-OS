@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "scenarios": [
+    {
+      "name": "WR-03 protected key is non-extractable and survives reopen",
+      "passed": true
+    },
+    {
+      "name": "WR-04 competing lease cannot replace pending recovery",
+      "passed": true
+    },
+    {
+      "name": "WR-03 missing key never resets encrypted recovery",
+      "passed": true
+    },
+    {
+      "name": "WR-03 SQLite restart restores the exact command envelope",
+      "passed": true
+    }
+  ],
+  "realLoginPerformed": false,
+  "backendMutations": false,
+  "sources": [
+    {
+      "path": "packages/jentra_platform/test/support/browser_storage_scenarios.dart",
+      "sha256": "272ab14166cb02e35ffccad4945b9717f99b61e14b11087bcc8bb26a07f0d0b7"
+    },
+    {
+      "path": "docs/verification/desktop-web-20261029/browser_storage_probe.dart",
+      "sha256": "66524626e355513d949c2d0d8db4b9fc3ad4378bf10d9116379dda56ebeb3fe9"
+    }
+  ],
+  "compiler": "Flutter 3.47.5 release JavaScript, locally bundled renderer",
+  "unitHarness": "SDK browser harness blocked by Windows CanvasKit URL routing; these same four scenarios ran through the compiled probe",
+  "consoleErrors": []
+}

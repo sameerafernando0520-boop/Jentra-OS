@@ -1,0 +1,28 @@
+{
+  "type": "database",
+  "pattern": "schema_change",
+  "source": "Jentra hosted PostgreSQL 17 baseline, 130 migrations",
+  "target": "Six reviewed Sales candidates; default disabled",
+  "description": "Portfolio governance, explicit company order progression and independent delivery quantity evidence with a private Resend worker.",
+  "constraints": {
+    "max_downtime_minutes": 0,
+    "data_volume_gb": 0,
+    "dependencies": [
+      "Sales web/mobile",
+      "desktop Sales",
+      "canonical commerce APIs",
+      "Supabase Auth/MFA",
+      "private mail worker",
+      "Resend verified domain"
+    ],
+    "special_requirements": [
+      "candidate_rollback_first",
+      "no_email_during_rehearsal",
+      "preserve_employee_app",
+      "explicit_per_company_pilot"
+    ]
+  },
+  "tables_to_migrate": [],
+  "schema_changes": [],
+  "note": "No existing-row migration or backfill. Generated generic plan must be read with the concrete phase and rollback runbook in rollout-runbook.md."
+}

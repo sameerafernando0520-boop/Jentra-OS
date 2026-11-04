@@ -72,23 +72,31 @@ SalesOrderDetail orderDetail({
 }) => SalesOrderDetail.fromJson(
   orderSnapshot(version: version, status: status, converted: converted),
 );
-SalesOrderCreditPreview preview({int version = 7}) =>
-    SalesOrderCreditPreview.fromJson({
-      'sales_order_id': q.quoteId,
-      'order_version': version,
-      'currency_code': 'LKR',
-      'credit_currency_code': 'LKR',
-      'credit_limit': '500.000000',
-      'due_exposure': '450.000000',
-      'overdue_exposure': '20.000000',
-      'existing_order_exposure': '0.000000',
-      'current_order_exposure': '100.000000',
-      'total_exposure': '550.000000',
-      'projection_available': true,
-      'credit_as_of_at': '2026-09-07T00:00:00Z',
-      'checked_at': '2026-09-07T01:00:00Z',
-      'reason': 'CREDIT_LIMIT_EXCEEDED',
-    });
+SalesOrderCreditPreview preview({
+  int version = 7,
+  String? fieldState,
+  String? fieldReview,
+}) => SalesOrderCreditPreview.fromJson({
+  'sales_order_id': q.quoteId,
+  'order_version': version,
+  'currency_code': 'LKR',
+  'credit_currency_code': 'LKR',
+  'credit_limit': '500.000000',
+  'due_exposure': '450.000000',
+  'overdue_exposure': '20.000000',
+  'existing_order_exposure': '0.000000',
+  'current_order_exposure': '100.000000',
+  'total_exposure': '550.000000',
+  'projection_available': true,
+  'credit_as_of_at': '2026-09-07T00:00:00Z',
+  'checked_at': '2026-09-07T01:00:00Z',
+  'reason': 'CREDIT_LIMIT_EXCEEDED',
+  if (fieldState != null || fieldReview != null) ...{
+    'field_sales_request_id': 'field-request',
+    'field_customer_state': fieldState,
+    'field_credit_review': fieldReview,
+  },
+});
 
 class FakeOrders implements SalesOrderWorkspaceRepository {
   SalesOrderDetail detail = orderDetail();
@@ -200,6 +208,32 @@ void main() {
     repository = FakeOrders();
   });
   tearDown(() => database.close());
+  test('field confirmation seals the exact reviewed credit digest in its existing protected command', () async {
+    repository.credit = preview(fieldState: 'accepted', fieldReview: 'a' * 64);
+    final c = await start();
+    await c.selectOrder(q.quoteId);
+    await c.reviewCredit();
+    await c.confirm(overrideCredit: true, reason: 'Reviewed exception');
+    expect(repository.commands, hasLength(1));
+    expect(
+      (repository.commands.single.wire['payload'] as Map)['source_context'],
+      {'source': 'jentra_desktop', 'field_credit_review': 'a' * 64},
+    );
+  });
+  test(
+    'field confirmation cannot dispatch before a verified customer response',
+    () async {
+      repository.credit = preview(
+        fieldState: 'email_link_pending',
+        fieldReview: 'a' * 64,
+      );
+      final c = await start();
+      await c.selectOrder(q.quoteId);
+      await c.reviewCredit();
+      await c.confirm();
+      expect(repository.commands, isEmpty);
+    },
+  );
   test('AC-304 denies order reads without order capability', () async {
     await expectLater(
       start(capabilities: {'sales.quotations.manage'}),

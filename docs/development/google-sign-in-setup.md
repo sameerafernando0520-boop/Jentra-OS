@@ -1,5 +1,60 @@
 # Google sign-in setup for Jentra OS Windows
 
+## Follow-up: 30 October 2026
+
+The owner's Chrome session was verified signed in as `jentra.system1@gmail.com`.
+The owner accepted Google Cloud's first-use Terms privately and explicitly chose
+a separate OAuth project. Chrome then created and selected **Jentra OS Auth**,
+project ID `jentra-os-auth`, under this account. App name **Jentra OS**, support
+and developer contact `jentra.system1@gmail.com`, and an **External** audience
+are saved in the consent configuration; Chrome confirmed its creation. The
+owner accepted the Google API Services User Data Policy acknowledgement.
+
+Earlier, this account could not access project `jentra-os`; Google Cloud listed
+missing `iam.serviceAccounts.list`, `oauthconfig.verification.get` and
+`resourcemanager.projects.get`. This is historical evidence, superseded for the
+chosen OAuth setup by the separate project. No existing project's permissions
+were changed. For any future existing-project access review, Google's
+[OAuthConfig role reference](https://docs.cloud.google.com/iam/docs/roles-permissions/oauthconfig)
+describes **OAuth Config Editor** (`roles/oauthconfig.editor`) read/write
+configuration access; that role does not include `iam.serviceAccounts.list`.
+Being signed in to Gmail alone does not establish working Google sign-in.
+
+The **Web application** client **Jentra OS Supabase Login** was created on
+30 October after the owner's approval. A separate public Clients list verified
+its name, type and creation date without capturing the generated secret. The
+prepared configuration used authorized JavaScript origin
+`https://jentra-os-desktop.web.app` and authorized redirect URI
+`https://xpdoufauvrbdmxgngetv.supabase.co/auth/v1/callback`. Its AI Agent option
+was off. The latter URI returns Google's authorization response to Supabase; the
+separate web/native redirect allowlist controls the return from Supabase to
+Jentra OS. Preserve the approved web origin and nonce-bound Windows callback.
+
+Earlier on 30 October, a fresh Chrome check after a Save report still showed
+the public Client ID filled and Enable Google on in an **unsaved** form, a visibly
+**empty Client Secret** field, and Save enabled. The public provider flag was
+still false. That failed save is historical evidence, superseded by the checks
+below after the owner privately entered and saved the credential. No secret was
+read or recorded.
+
+After the owner's private save, a fresh public Auth settings GET returned HTTP
+**200** with `googleEnabled: true`, `emailEnabled: true`, `signupEnabled: true`
+and `emailConfirmationRequired: true`. A single authorization request using
+**S256 PKCE**, the approved `https://jentra-os-desktop.web.app/` return and
+`prompt=select_account` returned HTTP **302** to `accounts.google.com`. The
+redirect contained the expected public Client ID
+`780284397920-b1ntbbl0mbd670flrjvet3id8hb2gobv.apps.googleusercontent.com`, exact
+Supabase callback `https://xpdoufauvrbdmxgngetv.supabase.co/auth/v1/callback`,
+`email profile` scopes and `select_account` prompt. Redirects were not followed;
+no OAuth state, PKCE challenge, secret or full authorization URL was recorded.
+
+These checks verify provider activation and authorization initiation. Actual
+end-to-end Google sign-in, credential exchange and the return to a signed-in
+Jentra OS session remain pending. Real verification-email receipt also remains
+unverified. Keep Skip nonce checks and Allow users without an email off. Keep all
+client secrets private and out of chat, source, logs and release files. The dated
+evidence and setup history below are retained unchanged.
+
 ## Update: 22 October 2026
 
 The owner selected `xpdoufauvrbdmxgngetv` as the production app's connection

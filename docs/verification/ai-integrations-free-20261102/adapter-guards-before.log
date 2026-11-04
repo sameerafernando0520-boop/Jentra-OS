@@ -1,0 +1,36 @@
+✔ free provider sends only proposal references to its fixed account and settles exact provider tokens (18.9654ms)
+✔ constructed free provider cannot be retargeted to another model or account (1.3198ms)
+✖ unapproved providers, paid options and malformed credentials are rejected before transport (2.1645ms)
+✔ invalid input or insufficient reserved tokens cannot issue a provider call (0.6619ms)
+✔ quota exhaustion, provider errors and redirects never retry or select another origin (3.5051ms)
+✔ missing, inconsistent, unsafe and out-of-budget provider token counts cannot settle (2.0247ms)
+✔ malformed envelopes, tools and changed proposal references are rejected (2.8009ms)
+✔ oversized provider bodies are cancelled while streaming (0.7787ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 7
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 52.7557
+
+✖ failing tests:
+
+test at workers\wave5\cloudflare_model_adapter.test.mjs:46:1
+✖ unapproved providers, paid options and malformed credentials are rejected before transport (2.1645ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/cloudflare_model_adapter.test.mjs:51:10)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /MODEL_PROVIDER_UNAVAILABLE/,
+    operator: 'throws',
+    diff: 'simple'
+  }

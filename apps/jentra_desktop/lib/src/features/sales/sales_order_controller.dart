@@ -1011,7 +1011,22 @@ final class SalesOrderController extends AsyncNotifier<SalesOrderState> {
               current.credit?.orderVersion != current.detail!.order.version) {
             throw const FormatException('Review credit before confirming.');
           }
-          payload = transition.toJson();
+          if (verb == 'confirm' &&
+              current.credit?.fieldRequestId != null &&
+              (current.credit!.fieldCustomerState != 'accepted' ||
+                  !current.credit!.projectionAvailable)) {
+            throw const FormatException(
+              'A verified customer response and current credit projection are required.',
+            );
+          }
+          payload = {
+            ...transition.toJson(),
+            if (verb == 'confirm' && current.credit?.fieldCreditReview != null)
+              'source_context': {
+                'source': 'jentra_desktop',
+                'field_credit_review': current.credit!.fieldCreditReview,
+              },
+          };
         }
         final version =
             current.localDraft?.expectedVersion ??

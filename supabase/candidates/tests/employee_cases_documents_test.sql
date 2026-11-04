@@ -315,11 +315,17 @@ select throws_ok($$select api.employee_hr_case_command(pg_temp.pid('tenant'),pg_
 reset role;
 update auth.sessions set not_after=null where id=pg_temp.pid('hr-owner.session');
 delete from core.role_assignments where membership_id=pg_temp.pid('hr-owner.membership') and role_id=pg_temp.pid('hr-role');
+insert into core.roles(id,tenant_id,code,name,requires_mfa)
+values(pg_temp.pid('cases-only-role'),pg_temp.pid('tenant'),'cases.only','Synthetic case capability without base view',true);
+insert into core.role_permissions(tenant_id,role_id,permission_code)
+values(pg_temp.pid('tenant'),pg_temp.pid('cases-only-role'),'people.cases.manage');
+insert into core.role_assignments(tenant_id,membership_id,role_id,legal_entity_id,branch_id,created_by)
+values(pg_temp.pid('tenant'),pg_temp.pid('hr-owner.membership'),pg_temp.pid('cases-only-role'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('hr-owner'));
 set local role authenticated;
 select is(api.employee_hr_case_detail(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('orphan-case'))->>'owner_available',
- 'false','permanent scoped role revocation exposes recoverable ownership');
+ 'false','base people view revocation exposes recoverable ownership even if cases capability remains');
 select is(jsonb_array_length(api.employee_hr_case_owners(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'))->'items'),1,
- 'revoked owner is no longer offered as an assignee');
+ 'owner missing base people view is not offered as an assignee');
 reset role;update core.memberships set status='suspended' where id=pg_temp.pid('outsider.membership');
 set local role authenticated;
 select throws_ok($$select api.employee_hr_case_command(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('orphan-case'),
@@ -330,6 +336,9 @@ insert into push_results values('orphan-reclaimed',api.employee_hr_case_command(
  pg_temp.pid('orphan-reclaim'),2,'claim'));
 select is(api.employee_hr_case_detail(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('orphan-case'))->>'owner_user_id',
  pg_temp.pid('outsider')::text,'eligible replacement takes accountable ownership');
+select throws_ok($$select api.employee_hr_case_command(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('orphan-case'),
+ pg_temp.pid('orphan-assign-ineligible'),3,'assign',null,pg_temp.pid('hr-owner'))$$,'42501','EMPLOYEE_CASE_OWNER_REQUIRED',
+ 'owner without base people view cannot be assigned private case responsibility');
 select is(api.employee_hr_case_command(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('orphan-case'),
  pg_temp.pid('orphan-reclaim'),2,'claim'),(select value from push_results where name='orphan-reclaimed'),'recovery retry returns the original receipt');
 select throws_ok($$select api.employee_hr_case_command(pg_temp.pid('tenant'),pg_temp.pid('entity'),pg_temp.pid('branch'),pg_temp.pid('orphan-case'),

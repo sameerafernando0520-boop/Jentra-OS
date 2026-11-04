@@ -109,39 +109,7 @@ prevents overlapping verification submissions, clears a successful code and
 handles disposal during verification. Audit and Finance instructions no longer
 ask for a code verified within 15 minutes.
 
-## PR branch verification (4 November 2026)
-
-This PR is isolated from the broader local integration work and is based on
-`7dd6dea6`, the current `assurance/a1-engagement-core` target at preparation.
-It includes the company/role/member administration required by staff provisioning.
-Unrelated Sales, payroll, and AI-runtime changes and temporary test packages are
-preserved outside this branch. The dependency lockfile is unchanged.
-
-Fresh checks on this isolated branch:
-
-- Analysis of all 41 changed Dart files: no issues.
-- Focused desktop account, MFA, company access, invitations, onboarding, profile
-  and Audit tests: 115 passed.
-- Platform staff/admin gateways, encrypted recovery and Finance tests: 24 passed.
-- Role-command domain contracts: 10 passed.
-- Edge-handler and company-candidate runner tests: 19 passed.
-- Isolated PostgreSQL: 61 MFA + 34 staff-account + 14 reauthorization assertions
-  passed using PGlite 0.5.12, with fixture effects rolled back or discarded.
-- Deno checks the staff Edge entry point successfully.
-- Checksum-verified official Gitleaks 8.30.1 reports no leaks in the staged patch.
-- `git diff --check` is clean.
-
-The authenticator gate also handles interrupted setup and failed factor lookups.
-Only unfinished factors belonging to Jentra desktop can be removed by this
-recovery UI; verified factors and other applications' factors are preserved.
-
-These are local source/candidate checks. Hosted installation, deployment,
-independent-session contention and authenticated device acceptance remain pending.
-
-## Verification from the prior integration checkout (3 November 2026)
-
-The following historical full-suite results include other local feature work.
-They are retained for context and are not a full-suite run of this isolated PR.
+## Verification
 
 - `apps/jentra_desktop/test/auth_session_policy_test.dart`: password login,
   repeated refresh, saved-session recovery, sign-out and subsequent login,

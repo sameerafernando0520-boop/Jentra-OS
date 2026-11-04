@@ -1,0 +1,32 @@
+✔ free provider sends only proposal references to its fixed account and settles exact provider tokens (2168.9705ms)
+✔ constructed free provider cannot be retargeted to another model or account (101.7399ms)
+✔ unapproved providers, paid options and malformed credentials are rejected before transport (0.5445ms)
+✔ invalid input or insufficient reserved tokens cannot issue a provider call (1.0357ms)
+✔ quota exhaustion, provider errors and redirects never retry or select another origin (3.1414ms)
+✔ missing, inconsistent, unsafe and out-of-budget provider token counts cannot settle (5.2472ms)
+✔ malformed envelopes, tools and changed proposal references are rejected (3.387ms)
+✔ oversized provider bodies are cancelled while streaming (1.3845ms)
+✔ canonical worker never falls back to a configured paid OpenAI key (11.4744ms)
+✔ configured free worker still requires the requesting user before evidence or provider access (2.5365ms)
+✔ free hosted entrypoint reserves before inference, settles exact tokens and reopens without another model call (11.5517ms)
+✔ free quota rejection retains the unknown invocation and cannot cause a resend or paid fallback (8.3214ms)
+✔ changed source authority after settlement cannot return a suggestion (4.016ms)
+✔ a historical OpenAI outcome cannot be reopened as a Cloudflare outcome (3.8806ms)
+✔ a settled Cloudflare invocation cannot reopen against a different credential account (6.0676ms)
+✔ deterministically insufficient budgets consume no invocation and can be corrected under the same identity (20.1175ms)
+✔ prompt injection and private fields cannot enter the numeric redaction manifest (2.1377ms)
+✔ trusted invocation records outcome before exact settlement, then rechecks current access (3.2853ms)
+✔ unknown outcomes persist without releasing quota or automatically resending (0.6776ms)
+✔ unreviewed providers and untrusted/model-generated usage cannot settle (1.7389ms)
+✔ an adapter without trusted usage cannot read protected evidence or send a provider request (1.1453ms)
+✔ settled replays validate saved usage and suggestion before any settlement write (3.5552ms)
+✔ valid settled replay reauthorizes before and after idempotent usage settlement without a provider send (2.0015ms)
+✔ access lost during settled usage reconciliation prevents output from reopening (0.7925ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2510.5824

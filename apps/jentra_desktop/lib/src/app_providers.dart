@@ -94,7 +94,7 @@ final localDatabaseProvider = Provider<JentraLocalDatabase>((ref) {
 });
 
 final draftCipherProvider = Provider<DraftCipher>(
-  (ref) => DraftCipher(keyStore: WindowsCredentialKeyStore()),
+  (ref) => DraftCipher(keyStore: createPlatformDraftKeyStore()),
 );
 
 final encryptedDraftRepositoryProvider = Provider<EncryptedDraftRepository>(

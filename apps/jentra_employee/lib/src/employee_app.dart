@@ -5,9 +5,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
 
 import 'data/employee_gateway.dart';
+import 'data/employee_account_actions.dart';
 import 'data/employee_push.dart';
 import 'employee_controller.dart';
 import 'l10n/employee_strings.dart';
+import 'l10n/employee_account_strings.dart';
 import 'ui/employee_components.dart';
 import 'ui/employee_shell.dart';
 import 'ui/employee_theme.dart';
@@ -25,11 +27,13 @@ class EmployeeApp extends StatefulWidget {
     this.onPreferencesChanged,
     this.push,
     this.mfaPanel,
+    this.accountActions,
     super.key,
   });
   final EmployeeController controller;
   final EmployeePushCoordinator? push;
   final Widget? mfaPanel;
+  final EmployeeAccountActions? accountActions;
   final ThemeMode initialThemeMode;
   final Locale initialLocale;
   final bool observeLifecycle;
@@ -98,9 +102,19 @@ class _EmployeeAppState extends State<EmployeeApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-    animation: widget.controller,
+    animation: Listenable.merge([
+      widget.controller,
+      widget.controller.selfService,
+      if (widget.accountActions != null) widget.accountActions!,
+    ]),
     builder: (context, _) {
       final controller = widget.controller;
+      final needsMfa =
+          controller.error?.code == 'MFA_REQUIRED' ||
+          controller.selfService.actionError?.code == 'MFA_REQUIRED' ||
+          controller.selfService.errors.values.any(
+            (error) => error.code == 'MFA_REQUIRED',
+          );
       // A private navigator belongs to one currently authorized employee. A lock,
       // account change or scope change destroys all prior private routes/forms.
       final routeOwner =
@@ -122,8 +136,7 @@ class _EmployeeAppState extends State<EmployeeApp> with WidgetsBindingObserver {
           return LayoutBuilder(
             builder: (context, constraints) => Column(
               children: [
-                if (controller.error?.code == 'MFA_REQUIRED' &&
-                    widget.mfaPanel != null)
+                if (needsMfa && widget.mfaPanel != null)
                   ConstrainedBox(
                     constraints: BoxConstraints(
                       maxHeight: constraints.maxHeight * .6,
@@ -243,11 +256,22 @@ class _EmployeeAppState extends State<EmployeeApp> with WidgetsBindingObserver {
                 children: [
                   EmployeeSignInScreen(
                     connected: controller.phase != EmployeePhase.unconfigured,
-                    busy: controller.busy,
-                    error: controller.error == null
+                    busy:
+                        controller.busy ||
+                        (widget.accountActions?.busy ?? false),
+                    error: controller.error != null
+                        ? s.failure(controller.error!)
+                        : widget.accountActions?.failure == null
                         ? null
-                        : s.failure(controller.error!),
+                        : EmployeeAccountStrings(context)
+                              .failure(widget.accountActions!.failure!),
+                    notice: widget.accountActions?.notice == null
+                        ? null
+                        : EmployeeAccountStrings(context)
+                              .notice(widget.accountActions!.notice!),
                     onSignIn: controller.signIn,
+                    onGoogle: widget.accountActions?.google,
+                    onResendConfirmation: widget.accountActions?.resend,
                   ),
                   SafeArea(
                     child: Align(

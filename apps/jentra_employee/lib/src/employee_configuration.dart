@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'package:jentra_platform/runtime_configuration.dart';
 
 class EmployeeConfiguration {
   const EmployeeConfiguration({
@@ -10,29 +10,19 @@ class EmployeeConfiguration {
       publishableKey = const String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
   final String url, publishableKey;
   bool get isValid {
-    final parsed = Uri.tryParse(url);
-    if (parsed == null ||
-        parsed.scheme != 'https' ||
-        parsed.host.isEmpty ||
-        parsed.userInfo.isNotEmpty ||
-        parsed.hasQuery ||
-        parsed.hasFragment ||
-        (parsed.path.isNotEmpty && parsed.path != '/')) {
+    if (publishableKey.startsWith('sb_publishable_') &&
+        !RegExp(r'^sb_publishable_[A-Za-z0-9_-]{8,}$')
+            .hasMatch(publishableKey)) {
       return false;
     }
-    if (publishableKey.startsWith('sb_publishable_') &&
-        RegExp(r'^sb_publishable_[A-Za-z0-9_-]{8,}$')
-            .hasMatch(publishableKey)) {
-      return true;
-    }
     try {
-      final parts = publishableKey.split('.');
-      if (parts.length != 3 || parts.any((part) => part.isEmpty)) return false;
-      final payload = jsonDecode(
-        utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))),
-      );
-      return payload is Map && payload['role'] == 'anon';
-    } on Object {
+      return RuntimeConfig(
+            environment: 'development',
+            supabaseUrl: url,
+            supabasePublishableKey: publishableKey,
+          ).startupMode(isRelease: true) ==
+          RuntimeStartupMode.connected;
+    } on RuntimeStartupException {
       return false;
     }
   }

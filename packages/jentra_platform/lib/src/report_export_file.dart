@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:cryptography/cryptography.dart';
 import 'package:file_selector/file_selector.dart';
+import 'save_location.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'tabular_codec.dart';
 
@@ -145,7 +146,7 @@ abstract interface class ReportExportFiles {
 final class NativeReportExportFiles implements ReportExportFiles {
   const NativeReportExportFiles();
   @override
-  Future<String?> choose(String fileName) async => (await getSaveLocation(
+  Future<String?> choose(String fileName) async => (await jentraSaveLocation(
     suggestedName: fileName,
     acceptedTypeGroups: [
       XTypeGroup(

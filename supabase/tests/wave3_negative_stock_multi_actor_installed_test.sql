@@ -1295,7 +1295,6 @@ create function pg_temp.period_id() returns uuid language sql stable as $$
 create function pg_temp.period_payload(a text,n text) returns jsonb language sql as $$
  select jsonb_build_object('action',a,'id',pg_temp.fid(n),'period_id',pg_temp.period_id(),
  'reason','Synthetic governed period transition')$$;
--- Fixture-only owner probe; the production finance helper remains private.
 create function pg_temp.period_session_mfa() returns void
 language sql security definer set search_path='' as $$
  select finance.period_require_recent_mfa() $$;

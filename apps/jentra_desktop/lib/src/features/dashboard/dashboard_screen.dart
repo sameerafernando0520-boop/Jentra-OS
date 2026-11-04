@@ -8,6 +8,7 @@ import '../../app_providers.dart';
 import '../operations/operational_dashboard.dart';
 import '../tenant/tenant_onboarding_screen.dart';
 import '../tenant/stock_opening_access.dart';
+import '../tenant/workspace_invitations_screen.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -38,7 +39,12 @@ class DashboardScreen extends ConsumerWidget {
           children: [
             Padding(
               padding: EdgeInsets.all(24),
-              child: StockOpeningInvitationInbox(),
+              child: Column(
+                children: [
+                  StockOpeningInvitationInbox(),
+                  WorkspaceInvitationLink(),
+                ],
+              ),
             ),
             TenantOnboardingScreen(),
           ],

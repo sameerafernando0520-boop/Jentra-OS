@@ -159,10 +159,15 @@ $$;
 -- Ownership survives sign-out, token expiry and an absent browser session. Only
 -- current durable membership/role scope determines whether another manager may
 -- recover an otherwise orphaned enquiry.
+create function employee_self.case_manager_current(t uuid,e uuid,b uuid,u uuid) returns boolean
+language sql stable security definer set search_path='' as $$
+ select people_private.user_has(t,e,b,u,'people.view','aal2')
+  and people_private.user_has(t,e,b,u,'people.cases.manage','aal2')
+$$;
 create function employee_self.case_owner_available(c employee_self.cases) returns boolean
 language sql stable security definer set search_path='' as $$
- select (c).owner_user_id is not null and people_private.user_has((c).tenant_id,(c).legal_entity_id,
-  (c).branch_id,(c).owner_user_id,'people.cases.manage','aal2')
+ select (c).owner_user_id is not null and employee_self.case_manager_current((c).tenant_id,(c).legal_entity_id,
+  (c).branch_id,(c).owner_user_id)
 $$;
 create function employee_self.require_hr_staff(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_permission text)
 returns void language plpgsql stable security definer set search_path='' as $$declare s uuid;begin
@@ -311,7 +316,7 @@ create function api.employee_hr_case_owners(p_tenant_id uuid,p_legal_entity_id u
 returns jsonb language plpgsql stable security definer set search_path='' as $$declare items jsonb;begin
  perform employee_self.require_hr_staff(p_tenant_id,p_legal_entity_id,p_branch_id,'people.cases.manage');
  if p_after is not null and not exists(select 1 from core.memberships m where m.id=p_after and m.tenant_id=p_tenant_id
-  and m.status='active' and people_private.user_has(p_tenant_id,p_legal_entity_id,p_branch_id,m.user_id,'people.cases.manage','aal2')) then
+  and m.status='active' and employee_self.case_manager_current(p_tenant_id,p_legal_entity_id,p_branch_id,m.user_id)) then
   raise exception using errcode='22023',message='EMPLOYEE_CURSOR_INVALID';end if;
  -- The same public account name used by the profile screen labels an exact
  -- eligible user ID. No email, credential or private personnel profile is read.
@@ -320,7 +325,7 @@ returns jsonb language plpgsql stable security definer set search_path='' as $$d
    nullif(left(btrim(u.raw_user_meta_data->>'full_name'),160),''),'Member '||left(m.id::text,8))) item
   from core.memberships m join auth.users u on u.id=m.user_id
   where m.tenant_id=p_tenant_id and m.status='active' and (p_after is null or m.id>p_after)
-  and people_private.user_has(p_tenant_id,p_legal_entity_id,p_branch_id,m.user_id,'people.cases.manage','aal2')
+  and employee_self.case_manager_current(p_tenant_id,p_legal_entity_id,p_branch_id,m.user_id)
   order by m.id limit 51) q;
  return jsonb_build_object('tenant_id',p_tenant_id,'legal_entity_id',p_legal_entity_id,'branch_id',p_branch_id,
   'items',items-50,'next_cursor',case when jsonb_array_length(items)>50 then items->49->>'id' end);
@@ -343,7 +348,7 @@ language plpgsql security definer set search_path='' as $$declare c employee_sel
  if (select count(*) from employee_self.case_history where case_id=c.id)>=1000 then raise exception using errcode='54000',message='EMPLOYEE_CASE_HISTORY_LIMIT';end if;
  if c.status='closed' or (p_action='claim' and employee_self.case_owner_available(c)) or (p_action<>'claim' and c.owner_user_id is distinct from auth.uid()) then
   raise exception using errcode='42501',message='EMPLOYEE_CASE_OWNER_REQUIRED';end if;
- if p_action='assign' and (p_owner_user_id is null or not people_private.user_has(p_tenant_id,p_legal_entity_id,p_branch_id,p_owner_user_id,'people.cases.manage','aal2')) then
+ if p_action='assign' and (p_owner_user_id is null or not employee_self.case_manager_current(p_tenant_id,p_legal_entity_id,p_branch_id,p_owner_user_id)) then
   raise exception using errcode='42501',message='EMPLOYEE_CASE_OWNER_REQUIRED';end if;
  if p_action='reply' then
   if p_body is null or length(btrim(p_body)) not between 1 and 4000 then raise exception using errcode='22023',message='EMPLOYEE_CASE_INVALID';end if;
@@ -521,7 +526,8 @@ create trigger employee_private_erasure after insert on people_private.erasure_e
 
 -- Only the explicit public surface is granted; no employee role/plan is changed.
 revoke all on function employee_self.recipient_current(uuid,bigint,text,text),employee_self.notify_employee(uuid,uuid,uuid,uuid,text,uuid,bigint),
- employee_self.case_summary(employee_self.cases),employee_self.case_content(uuid),employee_self.case_owner_available(employee_self.cases),
+ employee_self.case_summary(employee_self.cases),employee_self.case_content(uuid),employee_self.case_manager_current(uuid,uuid,uuid,uuid),
+ employee_self.case_owner_available(employee_self.cases),
  employee_self.require_hr_staff(uuid,uuid,uuid,text),employee_self.hr_source_notification(),
  employee_self.revoke_recipient_notices(),employee_self.erase_case_content(),employee_self.guard_case_history() from public,anon,authenticated,service_role;
 do $$declare f record;begin

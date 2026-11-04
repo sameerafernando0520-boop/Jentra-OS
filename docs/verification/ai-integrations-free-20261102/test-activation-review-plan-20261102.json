@@ -1,0 +1,92 @@
+{
+  "kind": "prepared-free-test-activation-review",
+  "recordedAt": "2026-11-02T16:08:10.972Z",
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "ownerApprovalRequested": true,
+  "ownerApprovalReceived": false,
+  "testEmail": "jentra-test-4dd40f8b1f69@fldubai.com",
+  "testUserId": "89f63c7a-dc28-4f33-859e-eae277193522",
+  "scope": {
+    "tenantId": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+    "legalEntityId": "caa2bb06-219a-47e9-8132-66d1271b0ffd",
+    "branchId": "3813692c-f0de-4c69-8e34-d56cf54695b1"
+  },
+  "readerRole": {
+    "id": "28d81f05-27c5-4673-85d5-eeb51a515f27",
+    "code": "w5_temp_ai_reader_20261102",
+    "permissions": [
+      "ai.proposals.view",
+      "analytics.view",
+      "crm.opportunities.view"
+    ],
+    "sql": "docs/verification/ai-integrations-free-20261102/test-profile-reader-role-candidate.sql",
+    "sha256": "c585654d9db3c4941c2bf7e631f8fbaa0997616ab86e60d323b04432cde6cc93",
+    "hostedRollbackVerified": true,
+    "applied": false
+  },
+  "billingActorRecovery": {
+    "userId": "c6aa32c0-d91f-4555-8687-e77fdf878e0c",
+    "email": "w5-billing-admin@jentra.invalid",
+    "verifiedFactorToReplace": "d10fef03-d6e1-44fd-b15c-f4eff2d9210c",
+    "rotatePassword": true,
+    "replaceUnavailableTotp": true,
+    "genuineMfaRequired": true,
+    "invalidatesThisTestActorsSessions": true,
+    "privateCredentialStorageRequired": true,
+    "applied": false
+  },
+  "subscription": {
+    "baseline": {
+      "id": "20a052ad-862e-564e-82a9-af57a0708365",
+      "seats": 5,
+      "status": "trialing",
+      "planCode": "w5_runtime_20261008",
+      "activeNow": false,
+      "createdAt": "2026-10-13T08:13:04.144135+00:00",
+      "trialEndsAt": "2026-10-20T08:13:04.144135+00:00",
+      "periodEndsAt": null,
+      "trialStartedAt": "2026-10-13T09:45:55.922+00:00",
+      "requiredEntitlements": [
+        {
+          "code": "analytics",
+          "enabled": true
+        },
+        {
+          "code": "module.ai",
+          "enabled": true
+        }
+      ]
+    },
+    "renewThrough": "api.schedule_synthetic_subscription + api.apply_synthetic_subscription",
+    "minutesFromExecution": 30,
+    "planAndSeatsUnchanged": true,
+    "requiresGenuineMfa": true,
+    "requiresFreshBaselineAndVersion": true,
+    "applied": false
+  },
+  "runtimeScope": {
+    "sql": "docs/verification/ai-integrations-free-20261102/runtime-scope-renewal-30m-candidate.sql",
+    "sha256": "e4b8ccd7de5a3747af595f6fd52285ccaa4d2cca6b7dbced973e11b0c995f430",
+    "minutesFromExecution": 30,
+    "scheduleAuthorityRenewed": false,
+    "applied": false
+  },
+  "membership": {
+    "grantThrough": "api.create_invitation + api.accept_invitation",
+    "exactEntityAndBranchRequired": true,
+    "automaticallyExpires": false,
+    "granted": false
+  },
+  "modelVerification": {
+    "requests": 1,
+    "maxTokens": "2000",
+    "cumulativeLogicalInvocationCap": 4,
+    "provider": "Cloudflare Workers AI Free",
+    "ordinaryAppSessionRequired": true,
+    "completed": false
+  },
+  "externalDeliveryReplayAuthorized": false,
+  "noFabricatedAuthOrMfa": true,
+  "noPaidProviderFallback": true,
+  "reviewDocument": "docs/development/ai-integrations-test-activation-review-20261102.md"
+}

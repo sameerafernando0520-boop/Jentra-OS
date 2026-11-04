@@ -1,0 +1,32 @@
+✖ canonical worker never falls back to a configured paid OpenAI key (45.2704ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 124.8769
+
+✖ failing tests:
+
+test at workers\wave5\free_ai_runtime.test.mjs:11:1
+✖ canonical worker never falls back to a configured paid OpenAI key (45.2704ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+  +   code: 'WORKER_PROVIDER_UNAVAILABLE'
+  -   code: 'MODEL_PROVIDER_UNAVAILABLE'
+    }
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/free_ai_runtime.test.mjs:16:41)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Object],
+    expected: [Object],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
