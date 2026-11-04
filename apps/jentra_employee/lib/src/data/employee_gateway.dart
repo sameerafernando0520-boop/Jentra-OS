@@ -435,33 +435,61 @@ final class SupabaseEmployeeGateway implements EmployeeGateway {
         'The requested employee does not match your accepted account link.',
       );
     }
-    final page = await _hr.page(
-      identity.workspace.context(identity.actorId),
-      HrCollection.reviews,
-      employee: identity.employeeId,
-      after: after,
+    final json = hrMap(
+      await client
+          .schema('api')
+          .rpc(
+            'employee_self_reviews',
+            params: {
+              'p_tenant_id': identity.workspace.tenantId,
+              'p_legal_entity_id': identity.workspace.legalEntityId,
+              'p_branch_id': identity.workspace.branchId,
+              'p_after': after,
+            },
+          ),
     );
     _check(identity.actorId);
-    final items = page.items
-        .where(
-          (r) =>
-              {'reviewed', 'acknowledged', 'closed'}.contains(r.text('status')),
-        )
-        .map(
-          (r) => EmployeeReview(
-            id: r.id,
-            status: r.text('status')!,
-            version: r.version,
-            startDate: DateTime.parse(r.text('start_date')!),
-            endDateExclusive: DateTime.parse(r.text('end_date_exclusive')!),
-            objectives: List.unmodifiable(
-              (r.body!['objectives'] as List).cast<String>(),
-            ),
-            comments: r.body!['comments'] as String?,
+    if (json['tenant_id'] != identity.workspace.tenantId ||
+        json['legal_entity_id'] != identity.workspace.legalEntityId ||
+        json['branch_id'] != identity.workspace.branchId ||
+        json['employee_id'] != identity.employeeId ||
+        json['items'] is! List ||
+        (json['items'] as List).length > 50) {
+      throw const FormatException('Own-review scope mismatch.');
+    }
+    final items = <EmployeeReview>[];
+    for (final value in json['items']! as List) {
+      final row = hrMap(value);
+      if (row['employee_id'] != null &&
+              row['employee_id'] != identity.employeeId ||
+          !{'reviewed', 'acknowledged', 'closed'}.contains(row['status'])) {
+        throw const FormatException('Unpublished or foreign review.');
+      }
+      final body = hrMap(row['body']);
+      final objectives = body['objectives'];
+      if (objectives is! List ||
+          objectives.length > 100 ||
+          objectives.any((item) => item is! String || item.length > 1000)) {
+        throw const FormatException('Invalid review objectives.');
+      }
+      items.add(
+        EmployeeReview(
+          id: calendarUuid(row['id']),
+          status: row['status']! as String,
+          version: organizationVersion(row['version']),
+          startDate: DateTime.parse(row['start_date']! as String),
+          endDateExclusive: DateTime.parse(
+            row['end_date_exclusive']! as String,
           ),
-        )
-        .toList(growable: false);
-    return EmployeeReviewPage(List.unmodifiable(items), page.nextCursor);
+          objectives: List.unmodifiable(objectives.cast<String>()),
+          comments: body['comments'] as String?,
+        ),
+      );
+    }
+    final cursor = json['next_cursor'] == null
+        ? null
+        : calendarUuid(json['next_cursor']);
+    return EmployeeReviewPage(List.unmodifiable(items), cursor);
   });
   void _confirmation(EmployeePendingCommand command, HrConfirmation receipt) {
     final c = command.envelope;

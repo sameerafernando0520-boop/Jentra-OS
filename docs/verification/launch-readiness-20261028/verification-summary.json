@@ -1,0 +1,179 @@
+{
+  "kind": "local-launch-readiness-evidence",
+  "recordedAtUtc": "2026-10-28T05:48:13.465117+00:00",
+  "baseCommit": "b8429547074e38250944117d1ac1c81af61b2498",
+  "sourceState": "dirty shared workspace preserved; hashes recorded at publication",
+  "productionCertified": false,
+  "flutterSuites": [
+    {
+      "suite": "desktop Windows widgets and strict goldens",
+      "passed": 2322,
+      "log": "desktop-tests.log"
+    },
+    {
+      "suite": "employee VM tests",
+      "passed": 224,
+      "log": "employee-tests-final.log"
+    },
+    {
+      "suite": "domain",
+      "passed": 500,
+      "log": "domain-tests.log"
+    },
+    {
+      "suite": "platform adapters",
+      "passed": 1251,
+      "log": "platform-tests.log"
+    },
+    {
+      "suite": "design system",
+      "passed": 10,
+      "log": "design-system-tests.log"
+    }
+  ],
+  "flutterPassed": 4307,
+  "nodeSuites": [
+    {
+      "suite": "Edge handlers, candidate runners and Hosting preparation",
+      "passed": 98,
+      "log": "node-verification.log"
+    },
+    {
+      "suite": "intelligence workers with controlled providers",
+      "passed": 260,
+      "log": "intelligence-worker-tests.log"
+    }
+  ],
+  "nodePassed": 358,
+  "analyzer": "No issues found",
+  "formattedFiles": 867,
+  "denoEntrypointsChecked": 2,
+  "syntheticInstallerPassed": 14,
+  "syntheticReleaseProvenancePassed": 17,
+  "inMemoryPostgresqlProbe": {
+    "atUtc": "2026-10-28T05:08:59.730Z",
+    "kind": "in-memory-postgresql-preservation-regression",
+    "version": "PostgreSQL 18.6 (PGlite 0.5.12) on wasm32-unknown-emscripten, compiled by emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 3.1.74 (1092ec30a3fb1d46b1782ff1b4db5094d3d06ae5), 32-bit",
+    "runtime": "@electric-sql/pglite@0.5.12",
+    "checks": [
+      "Reproduced false difference from caller search_path",
+      "Actual harness helper preserves equality across search_path changes",
+      "Actual body changes remain detectable",
+      "Actual execution-grant changes remain detectable",
+      "Probe schema and fixtures roll back"
+    ],
+    "passed": 5,
+    "fullSupabaseSuiteExecuted": false,
+    "hostedConnection": false,
+    "migrationsInstalled": false
+  },
+  "workflowYaml": {
+    "kind": "workflow-yaml-parse",
+    "parser": "yaml@2.8.1",
+    "passed": true,
+    "jobs": [
+      "flutter-quality",
+      "desktop-tests",
+      "employee-android",
+      "database",
+      "secret-scan",
+      "windows-release"
+    ],
+    "hostedWorkflowExecuted": false
+  },
+  "advertisedDesktopRoutes": 43,
+  "manualPages": 10,
+  "manualVisualReview": "All ten pages inspected during authoring; changed final pages 8-10 reinspected",
+  "notPerformed": [
+    "hosted company discovery/deletion",
+    "migration installation",
+    "sender deployment",
+    "full 77-assertion Supabase suite",
+    "hosted workflow for current source",
+    "current production release compilation",
+    "authenticated native acceptance",
+    "actual model usage and delivery",
+    "target-scale load",
+    "company signoff"
+  ],
+  "companyCleanupBlocker": "Invalid management access token and no exposed Supabase SQL tools",
+  "publicationSourceHashes": {
+    ".github/workflows/ci.yml": "6988b92ede50e3731ea5fb103f3265bc6c2d22158507729f08c91ac7a405afac",
+    "README.md": "fe50cf6537716c454f321b760e725bff6cb2a15c62f7d9f8550843f1074c206a",
+    "pubspec.yaml": "66108918f6614be40fb66725270bc4b0977e2bee99059dbded9d9ac1adb22310",
+    "pubspec.lock": "951fee62b5192969f22d265c1044501b974c1cda60c65a650962d52d2d356888",
+    "apps/jentra_desktop/lib/main.dart": "b8ce59e3bd251600088435d6ee37a28dc472a3c1166059e9ec29dae081c33e82",
+    "apps/jentra_desktop/lib/src/shell/navigation.dart": "28f1032801f56d0d677292b1ad2960b042e2c77c7b8004b568e614c87151b26f",
+    "apps/jentra_desktop/lib/src/router.dart": "6a86fa8c8dcad725b050cf3f9df50d29102cf164986960aab3b2e2b29547f96f",
+    "apps/jentra_desktop/lib/src/features/people/employee_requests_controller.dart": "af3e9130859518eaa71aca5b93686d834b0229e4c51928970a0348549fc42e34",
+    "apps/jentra_desktop/test/employee_requests_workspace_test.dart": "4bb8c1723280b71f4e176387faf13d4ff2772b81ae59f4ae79aadc8dddf5331b",
+    "apps/jentra_employee/lib/src/data/employee_account_actions.dart": "12741e8ffd3cf2de0d0b4c917b9df890b4c26d2f81ea645fd04d31164be9d56a",
+    "apps/jentra_employee/test/employee_document_export_test.dart": "142c48cc7724ac00b44856f1ebad78ec455bdd169c4e3420e956dc7f7c3f7009",
+    "apps/jentra_employee/test/employee_app_test.dart": "83fd8fdb0d202733297c336f581fe578ba791e7db3b71094d09206d4a2a6926e",
+    "packages/jentra_platform/lib/src/analytics/reviewed_model_gateway.dart": "41a0cede27e0cd6a9726fc44822e30072829f87047021fafb03fa8dcb2e75640",
+    "workers/wave5/openai_model_adapter.mjs": "557fc6af5dba58910ac46c2d1ac661a0389355ccef7efddb9a3cad94a03201d3",
+    "supabase/functions/assurance-evidence-download/handler.mjs": "bfdb249b817d3c0956750a8b336cd1ae05921f5543b912a9ca7c0733bcf9e41f",
+    "supabase/functions/assurance-evidence-verify/handler.mjs": "c3553fbffafa84cc70a7d8bcdc1c775feddd87a62bdedba5a75616eecf2fb1f6",
+    "supabase/functions/tests/assurance_evidence_download.test.mjs": "b7f133a4828bbc3aabaedcaa89597ac82a0d03ebb463848d25e9de650d6450ed",
+    "supabase/functions/tests/assurance_evidence_verify.test.mjs": "0599422f2600bb3931a0bf50818cced78d1104bc8483c91a8b33356020287d18",
+    "supabase/candidates/20261023090000_employee_push.sql": "d0a92d80c7baa2e0012230716a2237feff31a4d0fc90e5da80f5d18c8f9a1d31",
+    "supabase/candidates/20261025090000_employee_self_service.sql": "045fe601efe36694c59099971725a61f4c52fdecfee78a9e24d806cdebbfb458",
+    "supabase/candidates/20261025100000_employee_cases_documents_notifications.sql": "f7f362a5816ca82df0ddf70370a4f253c9d7dafbca091581dce92eb0b7adb934",
+    "supabase/candidates/20261027100000_employee_hr_event_producers.sql": "3820b41ac2e014ed8b859b91f4627593362ad74df1b5e2c738708e7b7320fe73",
+    "supabase/candidates/tests/employee_hr_event_producers_test.sql": "099b4e08dbf04bbd0ac76b97c0be3ad6a62cbe75cd9a7aead580af4b986b0550",
+    "scripts/employee/build_production_release.ps1": "99dae81adadf9a22d20c245f2b8c8cb5c4d38956a797f128a2b85229fb47db1c",
+    "scripts/employee/release_artifact_provenance.ps1": "18ecd6f646d201684f7a8b4fbba876aa60de6a697c42656e856f5cc085649dba",
+    "scripts/employee/tests/release_artifact_provenance_test.ps1": "fd7f328cf5a0ecb842fb4e3eaf893d6764d5c603e0b42be0a4612dbdf775b785",
+    "docs/development/launch-readiness-20261028.md": "eeb5daa90055669ccc372eb0f776232aceea39fadb5680d9ba6251001983beeb",
+    "docs/development/employee-hr-event-producers-candidate.md": "8564f36cfbceea825d679f8db55148df83fb3c650ab294a801ee88a8e04ce9f3",
+    "docs/user-guide/README.md": "b90567450b07491b55ea8a4b7c88c7044ce188bfcd5bcf442a3103985df7a448",
+    "docs/user-guide/feature-completeness.md": "2d77bb0ee934e17e09ba5be7c0aa7d1bfe53f0e8d39076258dd397399b636fb1",
+    "docs/user-guide/feature-inventory.csv": "21274f884b20383d865890065c435abaf4c02482a42ad5adfa9aca8c546168df",
+    "docs/user-guide/feature-inventory.json": "1f5e145471fdd4b507eb72b0d287eb230022fda941889ae41edf256dca40576b",
+    "docs/user-guide/Jentra OS Company Setup and Operating Guide.docx": "28a4adf4f5edff766ed5c5d1bfa87ed22b91a1e2de2f2b741f120892679cf4e2",
+    "docs/verification/launch-readiness-20261028/build_operating_guide.py": "69a27f96b71e1dade2485a92424ee8b93333d8b05bb38f5ba95b2d87b0888e6f",
+    "docs/verification/launch-readiness-20261028/verify-function-preservation.mjs": "c783f393c2ad7ed494ee14fcf9dd7aa7eb61035d14f7696b951a12fe469305ff",
+    "docs/verification/launch-readiness-20261028/company-inventory-readonly.sql": "6573bb4b886173428c6fc878d5c0a616924479a9e1392afcc6a0b0b51d3d0752",
+    "docs/verification/launch-readiness-20261028/write_verification_summary.py": "89dec35d4fdf6aa743ace1ee1c7a812ad3085306d5d647ece1ab477830b9e6e8"
+  },
+  "evidenceHashes": {
+    "app-quality-analyze-direct.log": "a71012db324399a8a47a34ccc17a738a7b992457ece60220c8f9f669673438b4",
+    "app-quality-analyze.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "app-quality-dart-analyze.log": "c7e0e2d2a5330b7956cb9c45400d7408919e3f2be579d33df8c40fb635c63e60",
+    "assurance-deno-check-cached.log": "0fb68ff423cbb236ba64e958b56f4ff36565fc90c7a76eb37fcac496170f4339",
+    "assurance-deno-check.log": "5965266ef16d13e1d9da19f136876d6cf3b3e2de7fe53c3364cd7fa4fb9dec7a",
+    "assurance-download-deno.log": "bed0568becb4065dcad1e434bad877bf644457df640e495d8a393c1839d9e2f7",
+    "assurance-verify-deno.log": "dba21b0a2e05a499c9e828c2b2cc41cebfa8d1d7596a7f68261a42908ccf5172",
+    "current-scoped-analysis.log": "66b3308defdc76fac190938a0ff7151696bb5627243bc321cda0cfd72e2667d1",
+    "design-system-tests.log": "0fc7f242c502e2d6b3fc491bf4875b27bd6c4c8fe38c6fd5b88e71cf104eaa69",
+    "desktop-tests.log": "2a2deee6db849ac838b037458253b4465b6ffcaad78f97a9be833019a821ea1c",
+    "domain-tests.log": "c2fcc91480c8c08c8f9e02546f24b9cee8b5fa4f01764419278547a5c5c955a3",
+    "employee-app-regression.log": "b6bd707fb7b43c652b72c8201b8b5c50bd7b0730217c3579a7d37bed81c7012c",
+    "employee-release-provenance.log": "34d55572db077e6a24795218b52426cf97f4f31345ef703c8e7f0350e7e136b3",
+    "employee-tests-final.log": "4db1fd4c7f19247c27e8f92ad3609071b76fd61a78d2c7a6309441161e13a6a5",
+    "employee-tests.log": "c0c8863ba2d358458a8821a019b028bfafbba2153e093c899b98b1649eb8e5c5",
+    "format-check-final.log": "1145922ebde02c2a7ddd7c6d77411fa173739f34cd77067121605213c3106316",
+    "format-check.log": "657233b64892d915dbeba84f1680eef1db62560e5ca540078981b514baaeab21",
+    "function-preservation-result.json": "018ac76f6ebf77b1baca7c84a1d5203aae0f5991a9d3a71135d499cfcae64684",
+    "guide-render-qa.log": "cd3539bde422b7d08beed90b6e335811546a3736646dcdc1c1777b99a50ee027",
+    "guide-renderer-diagnostic.log": "b61afc1b10122cd147a4d26ebb4c00adbee6185695b19820c12fc42ce6b68bd5",
+    "installer-verification-result.json": "b81d64db49ed5a9a80ef0197d9a9e0f64410505a7386f9ad6c8c3afaa7bfc6c9",
+    "intelligence-worker-tests.log": "d728a94881f926b117e363a3c99a34a756e9db8e90267fbb5a9fb5acce254d29",
+    "node-verification.log": "2b49cc4eb8ed3c845d71dc36095e285587c9ff8e094eeb844d1ec2294f126d1c",
+    "platform-tests.log": "8ef6ed97e3551ac317d7f588a240f3f1346caf7f1181de84e33f3d0b4cee90c4",
+    "workflow-yaml-result.json": "d743f67797d0ee4f8826592e007705670aa12d5f62d12f3b12cd42e04eb27ae4",
+    "workspace-analysis-final.log": "d240a2b0abf139267c5d32395ddad637cf23f704a696d9664fec3096bafa01b5"
+  },
+  "guideRenderPageHashes": {
+    "page-1.png": "01c1a97dc1ca6647bbf772919790e76149bdaf662b01ef1530fd7dd203d6240c",
+    "page-10.png": "e11721e8343a5320c5566ac526583cd4036f3e1076b871a7615f2b4c2cf341bd",
+    "page-2.png": "ff04668f7e25922ffea79c3d5b6f0deb5bca7f2aeb7116a811b5b81bdb68b6b0",
+    "page-3.png": "ef8e912739d023fdbfc71ff5aafd9b6c89c087bcb44de5d1f4ad436b108ea724",
+    "page-4.png": "bdb01f6bbee49cfe112f0ab55574f623c1d5c69fa585a6d5c11548435acca8c3",
+    "page-5.png": "0630aa889efbd66e7d81bf8a5e947a423c6a32c58adc3c7fc3ce5f6ea8fe1290",
+    "page-6.png": "c84a76c99e826c91de5e11ebccbc520d3bc6de93b992dde393ef2ab0da493764",
+    "page-7.png": "edf74a9eda398f1865127bf6699204fffd2ae2f3dbdf254a02ae3d39185d1824",
+    "page-8.png": "c60b7cddb0536f3cc974904002b06735929255fb5e130e94b089515715859646",
+    "page-9.png": "e655b7c1b1a7d0258a4c4d7386d80a8fe9b9b3444708f1f77fa14df0de1f7fd7"
+  }
+}

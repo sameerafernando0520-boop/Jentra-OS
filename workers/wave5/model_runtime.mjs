@@ -43,19 +43,36 @@ function validateTrustedOutcome(response,maxTokens,evidence) {
  return validateModelSuggestion(response.suggestion,evidence);
 }
 
-export async function invokeReviewedModel({reader,control,provider,request,policy}) {
+export async function invokeReviewedModel({reader,control,provider,request,policy,observeStage}) {
+ const stage=value=>{if(typeof observeStage==='function')try{observeStage(value);}catch{}};
+ stage('policy.validate');
  requireValue(policy?.revision===1 && policy?.approved===true && provider?.policyRevision===1,'MODEL_PROVIDER_UNAVAILABLE');
  // A provider without the reviewed usage contract must not receive evidence,
  // reserve quota, or send a request before its adapter is rejected.
  requireValue(provider.trustedUsage===true,'TRUSTED_USAGE_MISMATCH');
  requireValue(request && uuid.test(request.invocationId) && uuid.test(request.usageEventId) &&
   typeof request.maxTokens==='string' && /^[1-9][0-9]{0,6}$/.test(request.maxTokens),'VALIDATION_ERROR');
+ stage('forecast.read');
  const evidence=redactForecastEvidence(await reader.forecast(request));
- const manifest=JSON.stringify(evidence),digest=createHash('sha256').update(manifest,'utf8').digest('hex');
+ // A local no-I/O budget failure must not consume an invocation or reservation.
+ stage('provider.preflight');
+ if(typeof provider.preflight==='function')await provider.preflight({evidence,maxTokens:request.maxTokens});
+ stage('manifest.digest');
+ let manifest=JSON.stringify(evidence);
+ if(policy.bindProviderIdentity===true||provider.invocationIdentity!==undefined){
+  const identity=provider.invocationIdentity;
+  requireValue(policy.bindProviderIdentity===true&&identity&&Object.keys(identity).length===3&&
+   identity.provider===policy.provider&&identity.model===policy.model&&/^[a-f0-9]{32}$/.test(identity.accountId??''));
+  manifest=JSON.stringify({evidence,providerIdentity:{provider:identity.provider,model:identity.model,accountId:identity.accountId}});
+ }
+ // Legacy policies retain their original manifest bytes for safe recovery.
+ const digest=createHash('sha256').update(manifest,'utf8').digest('hex');
+ stage('invocation.begin');
  const invocation=await control.beginModelInvocation({...request,tenantId:evidence.scope.tenantId,sourceId:evidence.sourceId,sourceHash:evidence.sourceHash,
   manifestHash:digest,policyRevision:1});
  // Persisted settled output can reopen; pending/unknown never issues a new send.
  if(invocation.state==='settled') {
+  stage('stored-outcome.reopen');
   const suggestion=validateTrustedOutcome(invocation,request.maxTokens,evidence);
   await reader.authorize(request,evidence);
   await control.settleUsage({tenantId:evidence.scope.tenantId,invocationId:request.invocationId,eventId:request.usageEventId,quantity:invocation.tokens});
@@ -63,10 +80,13 @@ export async function invokeReviewedModel({reader,control,provider,request,polic
   return suggestion;
  }
  requireValue(invocation.state==='new','MODEL_OUTCOME_REQUIRES_REVIEW');
+ stage('usage.reserve');
  await control.reserveUsage({tenantId:evidence.scope.tenantId,invocationId:request.invocationId,metric:'ai.tokens',
   periodStart:request.periodStart,periodEnd:request.periodEnd,quantity:request.maxTokens});
+ stage('source.reauthorize');
  await reader.authorize(request,evidence);
  let response;
+ stage('provider.generate');
  try{response=await provider.generate({evidence,maxTokens:request.maxTokens,invocationId:request.invocationId});}
  catch{
   await control.recordModelOutcome(request.invocationId,{state:'unknown'});
@@ -74,13 +94,17 @@ export async function invokeReviewedModel({reader,control,provider,request,polic
  }
  // Token counts come only from a reviewed provider adapter; a desktop report
  // or generated JSON usage field cannot settle the trusted reservation.
+ stage('provider-output.validate');
  let suggestion;
  try {
   requireValue(provider.trustedUsage===true,'TRUSTED_USAGE_MISMATCH');
   suggestion=validateTrustedOutcome(response,request.maxTokens,evidence);
  } catch(error) {await control.recordModelOutcome(request.invocationId,{state:'unknown'});throw error;}
+ stage('outcome.persist');
  await control.recordModelOutcome(request.invocationId,{state:'settled',tokens:response.tokens,suggestion});
+ stage('usage.settle');
  await control.settleUsage({tenantId:evidence.scope.tenantId,invocationId:request.invocationId,eventId:request.usageEventId,quantity:response.tokens});
+ stage('source.reauthorize');
  await reader.authorize(request,evidence);
  return suggestion;
 }

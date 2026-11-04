@@ -27,6 +27,18 @@ The current repository has one app, `apps/jentra_desktop`, and shared domain, pl
 
 The latest recorded [Wave 3 status](../../development/remaining-wave3-status.md) and [Wave 4 status](../../development/wave4-status.md) are dated October 6. They retain installation and authenticated/native/load/visual/owner gates. In particular, attendance, leave and payroll include unapplied candidates. These blueprints use source and recorded evidence; this authoring task did not refresh the live migration ledger or certify production readiness.
 
+## Implementation continuation — November 3
+
+The original authoring snapshot above predates the separate Employee and Sales
+apps now in the repository. The [Sales continuation](../../development/field-sales-rollout-candidate-20261103.md)
+implements candidate portfolio governance, company-approved discount requests,
+verified order-response source, explicit company progression and separate posted
+delivery quantity responses. A reusable Resend worker is default disabled. The
+[current verification record](../../verification/field-rollout-20261103/README.md)
+separates isolated checks and the approved six-candidate hosted full-schema
+rollback from email activation and genuine company/device acceptance. It does not
+change the blueprint's independent product, authority or acceptance boundaries.
+
 ## Product decisions
 
 | Decision | Basis and trade-off |

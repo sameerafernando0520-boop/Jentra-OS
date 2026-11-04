@@ -6,6 +6,26 @@
 **Reviewers:** Product owner, sales manager, finance owner, warehouse owner, engineering and design.  
 **Dependencies:** [Shared foundation](SHARED_MOBILE_FOUNDATION.md), reviewed commerce/credit/stock contracts and [mobile design brief](MOBILE_DESIGN_BRIEF.md).
 
+**Owner decisions, 28 October 2026:** allow discount requests with company
+approval; use verified email links for customer order acceptance and delivery
+acknowledgement. These selections do not activate sending. The
+[decision record](SALES_OWNER_DECISIONS_20261028.md) preserves the separate
+customer, company and delivery states and the secure implementation order.
+
+**Candidate implementation, 31 October 2026:** portfolio restriction across
+legacy paths and governed order/discount requests now have matching app source
+and isolated rollback verification. This does not install the candidate or award
+S1/live acceptance. See the [implementation and separate email/company gates](../../development/field-sales-governance-candidate-20261031.md).
+
+**Candidate continuation, 2 November 2026:** order email link/code verification
+and explicit recipient responses now have candidate database and app source.
+Transport and the recipient flag remain disabled. The
+[company workspace continuation](../../development/field-company-confirmation-candidate-20261102.md)
+adds staff contact/issuance source and protected pending-command recovery in the
+desktop app. Quantity-bound delivery responses, company progression and live
+acceptance retain separate gates.
+See the [order email-confirmation contract](../../development/field-order-email-confirmation-candidate-20261102.md).
+
 ## Context
 
 A salesman needs assigned customers, product and price information, quick quotations/orders, reliable confirmation and visibility into delivery and outstanding invoices while visiting customers. Jentra already has quotation/order lifecycles, exact amounts, credit evaluation, reservations, delivery, invoices and receivables. Reuse those authoritative business facts rather than creating a second sales ledger in the phone.

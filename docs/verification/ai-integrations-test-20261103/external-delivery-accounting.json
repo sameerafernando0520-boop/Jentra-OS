@@ -1,0 +1,406 @@
+{
+  "jobs": [
+    {
+      "id": 4,
+      "name": "jentra-w5-20261009-delivery",
+      "active": false,
+      "schedule": "* * * * *"
+    },
+    {
+      "id": 5,
+      "name": "jentra-w5-20261009-subscription",
+      "active": false,
+      "schedule": "* * * * *"
+    },
+    {
+      "id": 6,
+      "name": "jentra-w5-20261009-health",
+      "active": false,
+      "schedule": "* * * * *"
+    }
+  ],
+  "usage": {
+    "event_id": "ebc3757e-6a2c-4458-b7a2-1db39d473bef",
+    "quantity": 1,
+    "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+    "recorded_at": "2026-11-03T07:40:29.105803+00:00",
+    "invocation_id": "257b49a7-0be2-4319-b6bd-a574ae9bb59f"
+  },
+  "reviews": [
+    {
+      "id": "8e1d3f19-26e0-42c7-9f60-469acb0dadf8",
+      "action": "not_sent",
+      "reason": "The bounded lease-only test invoked no reservation or network send; exact SQL, TLS requests and committed attempts are retained.",
+      "actor_id": "8b740ab8-24f7-4455-a78b-aea0d99d20f6",
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "delivery_id": "091e0c08-5038-4169-8e28-ffde9e0d51c8",
+      "recorded_at": "2026-10-13T10:06:43.1039+00:00"
+    }
+  ],
+  "allHeads": [
+    {
+      "id": "091e0c08-5038-4169-8e28-ffde9e0d51c8",
+      "state": "acknowledged",
+      "attempt": 2,
+      "event_id": "a10d0346-b9c6-474a-a3fc-d643602b8b5e",
+      "lease_id": "63c84075-c6b6-4270-8581-52d3780b9ccc",
+      "replay_of": null,
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "generation": 0,
+      "period_end": "2026-11-03T08:08:04+00:00",
+      "lease_until": "2026-11-03T07:41:15.266196+00:00",
+      "available_at": "2026-11-03T07:40:58.76851+00:00",
+      "period_start": "2026-11-03T07:38:04+00:00",
+      "invocation_id": "257b49a7-0be2-4319-b6bd-a574ae9bb59f",
+      "usage_event_id": "ebc3757e-6a2c-4458-b7a2-1db39d473bef",
+      "subscription_id": "58699e8a-28fd-4356-8cad-87ce46e17ddd"
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "lease_id": "ff3defa8-2682-4b2c-a05e-fd049331bb2c",
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "claimed_at": "2026-10-13T10:05:36.819424+00:00",
+      "delivery_id": "091e0c08-5038-4169-8e28-ffde9e0d51c8",
+      "key_version": 1,
+      "subscription_version": 1
+    },
+    {
+      "attempt": 2,
+      "lease_id": "63c84075-c6b6-4270-8581-52d3780b9ccc",
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "claimed_at": "2026-11-03T07:40:15.266196+00:00",
+      "delivery_id": "091e0c08-5038-4169-8e28-ffde9e0d51c8",
+      "key_version": 1,
+      "subscription_version": 1
+    }
+  ],
+  "delivery": {
+    "id": "091e0c08-5038-4169-8e28-ffde9e0d51c8",
+    "state": "acknowledged",
+    "attempt": 2,
+    "event_id": "a10d0346-b9c6-474a-a3fc-d643602b8b5e",
+    "lease_id": "63c84075-c6b6-4270-8581-52d3780b9ccc",
+    "replay_of": null,
+    "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+    "generation": 0,
+    "period_end": "2026-11-03T08:08:04+00:00",
+    "lease_until": "2026-11-03T07:41:15.266196+00:00",
+    "available_at": "2026-11-03T07:40:58.76851+00:00",
+    "period_start": "2026-11-03T07:38:04+00:00",
+    "invocation_id": "257b49a7-0be2-4319-b6bd-a574ae9bb59f",
+    "usage_event_id": "ebc3757e-6a2c-4458-b7a2-1db39d473bef",
+    "subscription_id": "58699e8a-28fd-4356-8cad-87ce46e17ddd"
+  },
+  "outcomes": [
+    {
+      "state": "acknowledged",
+      "attempt": 2,
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "delivery_id": "091e0c08-5038-4169-8e28-ffde9e0d51c8",
+      "http_status": 200,
+      "recorded_at": "2026-11-03T07:40:28.76851+00:00"
+    }
+  ],
+  "aiOutcome": {
+    "state": "settled",
+    "tokens": "247"
+  },
+  "functions": [
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "args": "p_runtime_id uuid, p_action text, p_payload jsonb",
+      "name": "wave5_edge_control",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "api",
+      "bodyMd5": "dc1fd16bf7550a5433beeb6342796f98",
+      "securityDefiner": true
+    },
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "args": "p_tenant_id uuid, p_invocation_id uuid, p_metric_code text, p_period_start timestamp with time zone, p_period_end timestamp with time zone, p_quantity text",
+      "name": "wave5_reserve_usage",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "api",
+      "bodyMd5": "cc1a6556e9f98af0a4a8a455cd6ce654",
+      "securityDefiner": true
+    },
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "args": "p_runtime_id uuid, p_action text, p_payload jsonb",
+      "name": "wave5_runtime_delivery_worker",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "api",
+      "bodyMd5": "7789c14af9ebb614b41196347efa0fa5",
+      "securityDefiner": true
+    },
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "args": "p_runtime_id uuid, p_action text, p_payload jsonb",
+      "name": "wave5_runtime_worker",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "api",
+      "bodyMd5": "d5022b1d2f9b372342ebc38cbb7b5c86",
+      "securityDefiner": true
+    },
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "args": "p_tenant_id uuid, p_invocation_id uuid, p_event_id uuid, p_quantity text",
+      "name": "wave5_settle_usage",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "api",
+      "bodyMd5": "cb912dd4696886f1ce530f2086a02526",
+      "securityDefiner": true
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "args": "p_delivery_id uuid, p_lease_id uuid",
+      "name": "delivery_authorize",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "intelligence_control",
+      "bodyMd5": "d48824a8805860d20ad8311e84b0de35",
+      "securityDefiner": true
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "args": "t uuid, metric text",
+      "name": "quota_limit",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "intelligence_control",
+      "bodyMd5": "a16366c289db5abca346ed340e9f28fa",
+      "securityDefiner": true
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "args": "r uuid, t uuid, e uuid, b uuid",
+      "name": "runtime_scope_allowed",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "intelligence_control",
+      "bodyMd5": "bfda776ab7e33dfc3fd10865e7f15e8f",
+      "securityDefiner": true
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "args": "r uuid",
+      "name": "runtime_worker_required",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "intelligence_control",
+      "bodyMd5": "94f35a015459cddfa25d322b93b01463",
+      "securityDefiner": true
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "args": "",
+      "name": "worker_required",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "intelligence_control",
+      "bodyMd5": "3b63a6322cd49824047de84c084939e0",
+      "securityDefiner": false
+    }
+  ],
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "tickCount": 0,
+  "observedAt": "2026-11-03T07:42:15.299583+00:00",
+  "edgeKeyRefs": [
+    {
+      "ref": "w5/runtime/20261008/delivery/v1",
+      "vaultRecordExists": true
+    },
+    {
+      "ref": "w5/runtime/20261008/delivery/v2",
+      "vaultRecordExists": true
+    }
+  ],
+  "reservation": {
+    "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+    "created_at": "2026-11-03T07:40:26.290731+00:00",
+    "metric_code": "webhook.deliveries",
+    "period_start": "2026-11-03T07:38:04+00:00",
+    "invocation_id": "257b49a7-0be2-4319-b6bd-a574ae9bb59f",
+    "reserved_units": 1
+  },
+  "quotaPeriods": [
+    {
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "period_end": "2026-11-03T06:33:38+00:00",
+      "metric_code": "ai.tokens",
+      "period_start": "2026-11-03T06:03:38+00:00",
+      "settled_units": 247,
+      "reserved_units": 0
+    },
+    {
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "period_end": "2026-11-03T08:08:04+00:00",
+      "metric_code": "webhook.deliveries",
+      "period_start": "2026-11-03T07:38:04+00:00",
+      "settled_units": 1,
+      "reserved_units": 0
+    }
+  ],
+  "subscription": {
+    "plan": "w5_runtime_20261008",
+    "seats": 5,
+    "status": "trialing",
+    "version": "6",
+    "trialEnd": "2026-11-03T08:08:04+00:00",
+    "trialStart": "2026-11-03T07:38:04+00:00",
+    "windowActive": true
+  },
+  "edgeAuthority": {
+    "jobIds": [
+      4,
+      5,
+      6
+    ],
+    "enabled": true,
+    "issuedAt": "2026-11-03T07:38:37.401934+00:00",
+    "expiresAt": "2026-11-03T08:08:37.401934+00:00",
+    "windowActive": true
+  },
+  "runtimeScopes": [
+    {
+      "enabled": true,
+      "branchId": "3813692c-f0de-4c69-8e34-d56cf54695b1",
+      "entityId": "caa2bb06-219a-47e9-8132-66d1271b0ffd",
+      "issuedAt": "2026-11-03T07:38:37.401934+00:00",
+      "tenantId": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "expiresAt": "2026-11-03T08:08:37.401934+00:00",
+      "windowActive": true
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": "0961e194-dc0b-4632-8c2d-65686fc9f111",
+      "url": "https://xpdoufauvrbdmxgngetv.supabase.co/functions/v1/wave5-receiver/timeout",
+      "enabled": true,
+      "key_ref": "w5/runtime/20261008/delivery/v1",
+      "version": 1,
+      "hostname": "xpdoufauvrbdmxgngetv.supabase.co",
+      "branch_id": "3813692c-f0de-4c69-8e34-d56cf54695b1",
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "created_at": "2026-10-13T10:10:11.044061+00:00",
+      "created_by": "8b740ab8-24f7-4455-a78b-aea0d99d20f6",
+      "key_version": 1,
+      "legal_entity_id": "caa2bb06-219a-47e9-8132-66d1271b0ffd"
+    },
+    {
+      "id": "2bdbd842-5b94-464b-85fc-22d722498831",
+      "url": "https://xpdoufauvrbdmxgngetv.supabase.co/functions/v1/wave5-receiver/redirect",
+      "enabled": true,
+      "key_ref": "w5/runtime/20261008/delivery/v1",
+      "version": 1,
+      "hostname": "xpdoufauvrbdmxgngetv.supabase.co",
+      "branch_id": "3813692c-f0de-4c69-8e34-d56cf54695b1",
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "created_at": "2026-10-13T10:10:10.70288+00:00",
+      "created_by": "8b740ab8-24f7-4455-a78b-aea0d99d20f6",
+      "key_version": 1,
+      "legal_entity_id": "caa2bb06-219a-47e9-8132-66d1271b0ffd"
+    },
+    {
+      "id": "360e7a9d-08a5-4349-854f-c2343ce2ff5d",
+      "url": "https://xpdoufauvrbdmxgngetv.supabase.co/functions/v1/wave5-receiver/reject",
+      "enabled": true,
+      "key_ref": "w5/runtime/20261008/delivery/v1",
+      "version": 1,
+      "hostname": "xpdoufauvrbdmxgngetv.supabase.co",
+      "branch_id": "3813692c-f0de-4c69-8e34-d56cf54695b1",
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "created_at": "2026-10-13T10:10:11.393915+00:00",
+      "created_by": "8b740ab8-24f7-4455-a78b-aea0d99d20f6",
+      "key_version": 1,
+      "legal_entity_id": "caa2bb06-219a-47e9-8132-66d1271b0ffd"
+    },
+    {
+      "id": "58699e8a-28fd-4356-8cad-87ce46e17ddd",
+      "url": "https://xpdoufauvrbdmxgngetv.supabase.co/functions/v1/wave5-receiver/accept",
+      "enabled": true,
+      "key_ref": "w5/runtime/20261008/delivery/v1",
+      "version": 1,
+      "hostname": "xpdoufauvrbdmxgngetv.supabase.co",
+      "branch_id": "3813692c-f0de-4c69-8e34-d56cf54695b1",
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "created_at": "2026-10-13T10:05:34.187043+00:00",
+      "created_by": "8b740ab8-24f7-4455-a78b-aea0d99d20f6",
+      "key_version": 1,
+      "legal_entity_id": "caa2bb06-219a-47e9-8132-66d1271b0ffd"
+    }
+  ],
+  "receiverReceipts": [
+    {
+      "sha256": "18cdd33ad12eafa9927d8e1717e2f4e1aeb06729e440556143ebf0a3890fdf4a",
+      "eventId": "a10d0346-b9c6-474a-a3fc-d643602b8b5e",
+      "branchId": "3813692c-f0de-4c69-8e34-d56cf54695b1",
+      "entityId": "caa2bb06-219a-47e9-8132-66d1271b0ffd",
+      "tenantId": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "runtimeId": "778237e3-3d4e-4871-8cc9-e08b07b989c7",
+      "keyVersion": 1,
+      "receivedAt": "2026-11-03T07:40:28.547049+00:00",
+      "payloadBytes": 397,
+      "payloadBase64": "eyJldmVudElkIjoiYTEwZDAzNDYtYjljNi00NzRhLWEzZmMtZDY0MzYwMmI4YjVlIiwidHlwZSI6\nImFuYWx5dGljcy5mb3JlY2FzdC5mcm96ZW4udjEiLCJ0ZW5hbnRJZCI6ImJhYmU2Yzg2LWE3NjQt\nNGQzYS04MGEzLTk1MmE3YzA5NmMyYyIsImxlZ2FsRW50aXR5SWQiOiJjYWEyYmIwNi0yMTlhLTQ3\nZTktODEzMi02NmQxMjcxYjBmZmQiLCJicmFuY2hJZCI6IjM4MTM2OTJjLWYwZGUtNGM2OS04ZTM0\nLWQ1NmNmNTQ2OTViMSIsImZvcmVjYXN0SWQiOiI1NzE5YjIzZi03NTdiLTRkYTgtOGNmNy00N2Q4\nMjEwMzQxNWMiLCJkZWZpbml0aW9uVmVyc2lvbiI6MSwic291cmNlSGFzaCI6Ijg5ZGU2OWE3ZWM2\nN2M0OGMxMTBiNDQxNjA0MjIzOWYxNzRhN2Y3YTk1YmZmNGM1YjBmMmUwMjNkMmRjMTk0YTcifQ==",
+      "computedSha256": "18cdd33ad12eafa9927d8e1717e2f4e1aeb06729e440556143ebf0a3890fdf4a",
+      "subscriptionId": "58699e8a-28fd-4356-8cad-87ce46e17ddd",
+      "signedTimestamp": 1793691624
+    }
+  ],
+  "syntheticAllowed": true,
+  "webhookPlanQuota": {
+    "limit": "100.000000",
+    "enabled": true
+  },
+  "activeMemberCount": 5,
+  "readerPermissions": [
+    "ai.proposals.view",
+    "analytics.view",
+    "crm.opportunities.view"
+  ],
+  "modelInvocationCount": 1,
+  "unmaterializedDeliveries": [
+    {
+      "eventId": "b5fc8c3f-d209-49e2-827e-337a7a378f7f",
+      "forecastId": "e8e582b2-6ce0-4b2d-beca-8ad3203abbfc",
+      "eventCreatedAt": "2026-10-13T10:10:12.197712+00:00",
+      "subscriptionId": "0961e194-dc0b-4632-8c2d-65686fc9f111"
+    },
+    {
+      "eventId": "b5fc8c3f-d209-49e2-827e-337a7a378f7f",
+      "forecastId": "e8e582b2-6ce0-4b2d-beca-8ad3203abbfc",
+      "eventCreatedAt": "2026-10-13T10:10:12.197712+00:00",
+      "subscriptionId": "2bdbd842-5b94-464b-85fc-22d722498831"
+    },
+    {
+      "eventId": "b5fc8c3f-d209-49e2-827e-337a7a378f7f",
+      "forecastId": "e8e582b2-6ce0-4b2d-beca-8ad3203abbfc",
+      "eventCreatedAt": "2026-10-13T10:10:12.197712+00:00",
+      "subscriptionId": "360e7a9d-08a5-4349-854f-c2343ce2ff5d"
+    },
+    {
+      "eventId": "b5fc8c3f-d209-49e2-827e-337a7a378f7f",
+      "forecastId": "e8e582b2-6ce0-4b2d-beca-8ad3203abbfc",
+      "eventCreatedAt": "2026-10-13T10:10:12.197712+00:00",
+      "subscriptionId": "58699e8a-28fd-4356-8cad-87ce46e17ddd"
+    }
+  ],
+  "nonFixtureBillingMemberships": 0
+}

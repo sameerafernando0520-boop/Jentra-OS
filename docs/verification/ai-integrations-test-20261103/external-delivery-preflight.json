@@ -1,0 +1,312 @@
+{
+  "jobs": [
+    {
+      "id": 4,
+      "name": "jentra-w5-20261009-delivery",
+      "active": false,
+      "schedule": "* * * * *"
+    },
+    {
+      "id": 5,
+      "name": "jentra-w5-20261009-subscription",
+      "active": false,
+      "schedule": "* * * * *"
+    },
+    {
+      "id": 6,
+      "name": "jentra-w5-20261009-health",
+      "active": false,
+      "schedule": "* * * * *"
+    }
+  ],
+  "usage": null,
+  "reviews": [
+    {
+      "id": "8e1d3f19-26e0-42c7-9f60-469acb0dadf8",
+      "action": "not_sent",
+      "reason": "The bounded lease-only test invoked no reservation or network send; exact SQL, TLS requests and committed attempts are retained.",
+      "actor_id": "8b740ab8-24f7-4455-a78b-aea0d99d20f6",
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "delivery_id": "091e0c08-5038-4169-8e28-ffde9e0d51c8",
+      "recorded_at": "2026-10-13T10:06:43.1039+00:00"
+    }
+  ],
+  "allHeads": [
+    {
+      "id": "091e0c08-5038-4169-8e28-ffde9e0d51c8",
+      "state": "retry",
+      "attempt": 1,
+      "event_id": "a10d0346-b9c6-474a-a3fc-d643602b8b5e",
+      "lease_id": "ff3defa8-2682-4b2c-a05e-fd049331bb2c",
+      "replay_of": null,
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "generation": 0,
+      "period_end": "2026-10-20T08:13:04.144135+00:00",
+      "lease_until": "2026-10-13T10:06:36.819424+00:00",
+      "available_at": "2026-10-13T10:06:43.1039+00:00",
+      "period_start": "2026-10-13T09:45:55.922+00:00",
+      "invocation_id": "257b49a7-0be2-4319-b6bd-a574ae9bb59f",
+      "usage_event_id": "ebc3757e-6a2c-4458-b7a2-1db39d473bef",
+      "subscription_id": "58699e8a-28fd-4356-8cad-87ce46e17ddd"
+    }
+  ],
+  "attempts": [
+    {
+      "attempt": 1,
+      "lease_id": "ff3defa8-2682-4b2c-a05e-fd049331bb2c",
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "claimed_at": "2026-10-13T10:05:36.819424+00:00",
+      "delivery_id": "091e0c08-5038-4169-8e28-ffde9e0d51c8",
+      "key_version": 1,
+      "subscription_version": 1
+    }
+  ],
+  "delivery": {
+    "id": "091e0c08-5038-4169-8e28-ffde9e0d51c8",
+    "state": "retry",
+    "attempt": 1,
+    "event_id": "a10d0346-b9c6-474a-a3fc-d643602b8b5e",
+    "lease_id": "ff3defa8-2682-4b2c-a05e-fd049331bb2c",
+    "replay_of": null,
+    "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+    "generation": 0,
+    "period_end": "2026-10-20T08:13:04.144135+00:00",
+    "lease_until": "2026-10-13T10:06:36.819424+00:00",
+    "available_at": "2026-10-13T10:06:43.1039+00:00",
+    "period_start": "2026-10-13T09:45:55.922+00:00",
+    "invocation_id": "257b49a7-0be2-4319-b6bd-a574ae9bb59f",
+    "usage_event_id": "ebc3757e-6a2c-4458-b7a2-1db39d473bef",
+    "subscription_id": "58699e8a-28fd-4356-8cad-87ce46e17ddd"
+  },
+  "outcomes": [],
+  "functions": [
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "args": "p_runtime_id uuid, p_action text, p_payload jsonb",
+      "body": "\ndeclare a intelligence_control.edge_authorities%rowtype;t intelligence_control.edge_ticks%rowtype;\n s intelligence_control.integration_subscriptions%rowtype;f analytics.pipeline_forecasts%rowtype;\n existing intelligence_control.edge_receiver_receipts%rowtype;v jsonb;b bytea;secret_value text;secret_id uuid;\n saved_claims text;source_tenant uuid;tick_id uuid;begin\n perform intelligence_control.runtime_worker_required(p_runtime_id);\n if p_payload is null or jsonb_typeof(p_payload)<>'object' then raise exception using errcode='22023',message='VALIDATION_ERROR';end if;\n select * into a from intelligence_control.edge_authorities where runtime_id=p_runtime_id and enabled\n and issued_at<=statement_timestamp() and expires_at>statement_timestamp() for update;\n if not found then raise exception using errcode='42501',message='RUNTIME_SCOPE_DENIED';end if;\n if p_action='begin_tick' then\n if (p_payload-array['tickId','kind','secretHash'])<>'{}' or not(p_payload ?& array['tickId','kind','secretHash'])\n or p_payload->>'kind' not in('delivery','subscription','health') or p_payload->>'secretHash' is distinct from a.schedule_secret_hash then\n raise exception using errcode='42501',message='WORKER_ACCESS_DENIED';end if;\n tick_id:=(p_payload->>'tickId')::uuid;\n if tick_id is null then raise exception using errcode='22023',message='VALIDATION_ERROR';end if;\n if exists(select 1 from intelligence_control.edge_ticks where runtime_id=p_runtime_id and id=tick_id) then\n return jsonb_build_object('permitted',false);end if;\n update intelligence_control.edge_ticks set state='unknown' where runtime_id=p_runtime_id and kind=p_payload->>'kind' and state='running' and lease_until<=statement_timestamp();\n if exists(select 1 from intelligence_control.edge_ticks where runtime_id=p_runtime_id and kind=p_payload->>'kind' and state='running') then\n return jsonb_build_object('permitted',false);end if;\n select tenant_id into source_tenant from intelligence_control.runtime_worker_scopes\n where runtime_id=p_runtime_id and intelligence_control.runtime_scope_allowed(p_runtime_id,tenant_id,legal_entity_id,branch_id) limit 1;\n insert into intelligence_control.edge_ticks(runtime_id,id,kind,state,lease_until)\n values(p_runtime_id,tick_id,p_payload->>'kind','running',statement_timestamp()+interval '90 seconds');\n return jsonb_build_object('permitted',true,'tenantId',source_tenant);\n elsif p_action='finish_tick' then\n if (p_payload-array['tickId','success','summary'])<>'{}' or not(p_payload ?& array['tickId','success','summary'])\n or jsonb_typeof(p_payload->'success')<>'boolean' or jsonb_typeof(p_payload->'summary')<>'object'\n or octet_length((p_payload->'summary')::text)>2048 then raise exception using errcode='22023',message='VALIDATION_ERROR';end if;\n select * into t from intelligence_control.edge_ticks where runtime_id=p_runtime_id and id=(p_payload->>'tickId')::uuid for update;\n if t.id is null or t.state<>'running' or t.lease_until<=statement_timestamp() then raise exception using errcode='42501',message='LEASE_UNAVAILABLE';end if;\n insert into intelligence_control.edge_tick_outcomes values(p_runtime_id,t.id,(p_payload->>'success')::boolean,p_payload->'summary',statement_timestamp());\n update intelligence_control.edge_ticks set state=case when (p_payload->>'success')::boolean then 'completed' else 'failed' end where runtime_id=p_runtime_id and id=t.id;\n return jsonb_build_object('recorded',true);\n elsif p_action='key' then\n if (p_payload-'ref')<>'{}' or not(p_payload ? 'ref') then raise exception using errcode='22023',message='VALIDATION_ERROR';end if;\n select k.secret_id into secret_id from intelligence_control.edge_key_refs k where k.runtime_id=p_runtime_id and k.ref=p_payload->>'ref';\n if secret_id is null then raise exception using errcode='42501',message='DELIVERY_KEY_UNAVAILABLE';end if;\n -- Only this runtime's two explicitly provisioned Vault IDs can be read. No\n -- caller-provided Vault ID/name and no existing project secret are discoverable.\n select decrypted_secret into secret_value from vault.decrypted_secrets where id=secret_id;\n if secret_value is null or secret_value !~ '^[a-f0-9]{64}$' then raise exception using errcode='55000',message='DELIVERY_KEY_UNAVAILABLE';end if;\n return jsonb_build_object('value',secret_value);\n elsif p_action in('receive','receive_probe') then\n if (p_payload-array['event','keyVersion','payloadBase64','sha256','timestamp','mode'])<>'{}'\n or not(p_payload ?& array['event','keyVersion','payloadBase64','sha256','timestamp','mode'])\n or p_payload->>'mode' not in('accept','redirect','timeout','reject')\n or (p_action='receive') is distinct from (p_payload->>'mode' in('accept','timeout')) then\n raise exception using errcode='22023',message='VALIDATION_ERROR';end if;\n v:=p_payload->'event';b:=decode(p_payload->>'payloadBase64','base64');\n if octet_length(b)>8192 or convert_from(b,'UTF8')::jsonb is distinct from v\n or encode(extensions.digest(b,'sha256'),'hex') is distinct from p_payload->>'sha256'\n or (p_payload->>'timestamp')::bigint<extract(epoch from statement_timestamp())-300\n or (p_payload->>'timestamp')::bigint>extract(epoch from statement_timestamp())+30 then\n raise exception using errcode='22023',message='EVENT_CONTRACT_MISMATCH';end if;\n select s0.* into s from intelligence_control.integration_subscriptions s0\n where s0.id=case p_payload->>'mode'\n when 'accept' then '58699e8a-28fd-4356-8cad-87ce46e17ddd'::uuid\n when 'redirect' then '2bdbd842-5b94-464b-85fc-22d722498831'::uuid\n when 'timeout' then '0961e194-dc0b-4632-8c2d-65686fc9f111'::uuid\n when 'reject' then '360e7a9d-08a5-4349-854f-c2343ce2ff5d'::uuid end\n and s0.enabled and s0.key_version=(p_payload->>'keyVersion')::integer\n and s0.key_ref='w5/runtime/20261008/delivery/v'||(p_payload->>'keyVersion')\n and s0.url='https://xpdoufauvrbdmxgngetv.supabase.co/functions/v1/wave5-receiver/'||(p_payload->>'mode')\n and intelligence_control.runtime_scope_allowed(p_runtime_id,s0.tenant_id,s0.legal_entity_id,s0.branch_id);\n if not found then raise exception using errcode='42501',message='INTEGRATION_ACCESS_DENIED';end if;\n select f0.* into f from core.outbox_events o join analytics.pipeline_forecasts f0 on f0.tenant_id=o.tenant_id and f0.id=o.aggregate_id\n where o.id=(v->>'eventId')::uuid and o.tenant_id=s.tenant_id and o.topic='analytics.freeze_pipeline' and o.aggregate_type='pipeline_forecast'\n and f0.legal_entity_id=s.legal_entity_id and f0.branch_id=s.branch_id;\n if f.id is null or v is distinct from jsonb_build_object('eventId',(v->>'eventId')::uuid,'type','analytics.forecast.frozen.v1',\n 'tenantId',s.tenant_id,'legalEntityId',s.legal_entity_id,'branchId',s.branch_id,'forecastId',f.id,'definitionVersion',1,'sourceHash',f.source_hash) then\n raise exception using errcode='42501',message='EVENT_CONTRACT_MISMATCH';end if;\n perform intelligence_control.quota_limit(s.tenant_id,'webhook.deliveries');\n saved_claims:=current_setting('request.jwt.claims',true);\n perform set_config('request.jwt.claims',jsonb_build_object('sub',s.created_by,'role','authenticated','aal','aal1')::text,true);\n perform core.wave3_require_scope(s.tenant_id,'integrations.manage',s.legal_entity_id,s.branch_id);\n perform api.get_pipeline_forecast(s.tenant_id,s.legal_entity_id,s.branch_id,f.id);\n perform set_config('request.jwt.claims',coalesce(saved_claims,''),true);\n if p_action='receive_probe' then return jsonb_build_object('permitted',true);end if;\n select * into existing from intelligence_control.edge_receiver_receipts where runtime_id=p_runtime_id and subscription_id=s.id and event_id=(v->>'eventId')::uuid;\n if found then\n if existing.payload<>b or existing.sha256<>p_payload->>'sha256' then raise exception using errcode='23505',message='RECEIVER_DIGEST_CONFLICT';end if;\n return jsonb_build_object('acknowledged',true,'duplicate',true,'sha256',existing.sha256);end if;\n if not exists(select 1 from intelligence_control.delivery_heads d join intelligence_control.delivery_attempts da\n on da.tenant_id=d.tenant_id and da.delivery_id=d.id and da.attempt=d.attempt and da.lease_id=d.lease_id\n where d.tenant_id=s.tenant_id and d.subscription_id=s.id and d.event_id=(v->>'eventId')::uuid\n and d.state='leased' and d.lease_until>statement_timestamp() and da.key_version=s.key_version and da.subscription_version=s.version) then\n raise exception using errcode='42501',message='LEASE_UNAVAILABLE';end if;\n insert into intelligence_control.edge_receiver_receipts values(p_runtime_id,(v->>'eventId')::uuid,s.tenant_id,s.legal_entity_id,s.branch_id,s.id,\n (p_payload->>'keyVersion')::integer,b,p_payload->>'sha256',(p_payload->>'timestamp')::bigint,statement_timestamp());\n return jsonb_build_object('acknowledged',true,'duplicate',false,'sha256',p_payload->>'sha256');\n end if;\n raise exception using errcode='22023',message='WORKER_ACTION_INVALID';\nend",
+      "name": "wave5_edge_control",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "api",
+      "securityDefiner": true
+    },
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "args": "p_tenant_id uuid, p_invocation_id uuid, p_metric_code text, p_period_start timestamp with time zone, p_period_end timestamp with time zone, p_quantity text",
+      "body": "declare q numeric;cap numeric;bucket intelligence_control.quota_periods%rowtype;r intelligence_control.usage_reservations%rowtype;begin\r\n perform intelligence_control.worker_required();\r\n if p_tenant_id is null or p_invocation_id is null or p_metric_code is null or p_metric_code not in('ai.tokens','webhook.deliveries') or p_quantity is null\r\n or p_quantity !~ '^[1-9][0-9]{0,19}$' or p_period_start is null or p_period_end is null\r\n or not isfinite(p_period_start) or not isfinite(p_period_end) or p_period_start>=p_period_end\r\n or p_period_end-p_period_start>interval '366 days' or statement_timestamp()<p_period_start or statement_timestamp()>=p_period_end then\r\n raise exception using errcode='22023',message='VALIDATION_ERROR';end if;\r\n -- Share the billing lock with synthetic plan activation and seat admission.\r\n perform 1 from billing.tenant_subscriptions where tenant_id=p_tenant_id for update;\r\n q:=p_quantity::numeric;cap:=intelligence_control.quota_limit(p_tenant_id,p_metric_code);\r\n if not exists(select 1 from billing.tenant_subscriptions s where s.tenant_id=p_tenant_id and\r\n ((s.status='trialing' and p_period_start=coalesce(s.trial_started_at,s.created_at) and p_period_end=s.trial_ends_at)\r\n or (s.status='active' and p_period_end=s.current_period_ends_at))) then\r\n raise exception using errcode='22023',message='PERIOD_CONFLICT';end if;\r\n -- Serialize the tenant/metric before choosing the period: overlapping caller-\r\n -- supplied windows cannot split one allowance into multiple hard-cap buckets.\r\n perform pg_advisory_xact_lock(hashtextextended(p_tenant_id::text||':'||p_metric_code,5));\r\n if exists(select 1 from intelligence_control.quota_periods where tenant_id=p_tenant_id and metric_code=p_metric_code\r\n and period_start<>p_period_start and period_start<p_period_end and period_end>p_period_start) then\r\n raise exception using errcode='22023',message='PERIOD_CONFLICT';end if;\r\n insert into intelligence_control.quota_periods(tenant_id,metric_code,period_start,period_end)\r\n values(p_tenant_id,p_metric_code,p_period_start,p_period_end) on conflict do nothing;\r\n select * into bucket from intelligence_control.quota_periods where tenant_id=p_tenant_id and metric_code=p_metric_code\r\n and period_start=p_period_start for update;\r\n if bucket.period_end<>p_period_end then raise exception using errcode='22023',message='PERIOD_CONFLICT';end if;\r\n select * into r from intelligence_control.usage_reservations where tenant_id=p_tenant_id and invocation_id=p_invocation_id;\r\n if found then\r\n if r.metric_code<>p_metric_code or r.period_start<>p_period_start or r.reserved_units<>q then\r\n raise exception using errcode='22023',message='IDEMPOTENCY_MISMATCH';end if;\r\n return jsonb_build_object('invocationId',r.invocation_id,'reservedUnits',r.reserved_units::text);\r\n end if;\r\n if bucket.settled_units+bucket.reserved_units+q>cap then raise exception using errcode='54000',message='QUOTA_EXCEEDED';end if;\r\n insert into intelligence_control.usage_reservations values(p_tenant_id,p_invocation_id,p_metric_code,p_period_start,q,statement_timestamp());\r\n update intelligence_control.quota_periods set reserved_units=reserved_units+q where tenant_id=p_tenant_id and metric_code=p_metric_code and period_start=p_period_start;\r\n return jsonb_build_object('invocationId',p_invocation_id,'reservedUnits',q::text);\r\nend ",
+      "name": "wave5_reserve_usage",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "api",
+      "securityDefiner": true
+    },
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "args": "p_runtime_id uuid, p_action text, p_payload jsonb",
+      "body": "\ndeclare d intelligence_control.delivery_heads%rowtype;s intelligence_control.integration_subscriptions%rowtype;\n o intelligence_control.delivery_outcomes%rowtype;subscription billing.tenant_subscriptions%rowtype;v_state text;status integer;begin\n perform intelligence_control.runtime_worker_required(p_runtime_id);\n if p_action not in('readiness','claim','settle_acknowledged') and not exists(\n select 1 from intelligence_control.delivery_heads h join intelligence_control.integration_subscriptions s0\n on s0.tenant_id=h.tenant_id and s0.id=h.subscription_id\n where h.id=(p_payload->>'deliveryId')::uuid\n and intelligence_control.runtime_scope_allowed(p_runtime_id,s0.tenant_id,s0.legal_entity_id,s0.branch_id)) then\n raise exception using errcode='42501',message='RUNTIME_SCOPE_DENIED';end if;\n if p_action='readiness' then return jsonb_build_object('contractRevision',1,'ready',true,'providers',jsonb_build_object('committed_webhook.v1',1,'synthetic_subscription.v1',1));end if;\n if p_action='claim' then\n -- A lease lost after send cannot be auto-retried. ACK rows can be reconciled\n -- separately; expired attempts with no outcome retain uncertain reservations.\n update intelligence_control.delivery_heads set state='unknown' where state='leased' and lease_until<=statement_timestamp()\n and exists(select 1 from intelligence_control.integration_subscriptions s0\n where s0.id=subscription_id and s0.tenant_id=delivery_heads.tenant_id\n and intelligence_control.runtime_scope_allowed(p_runtime_id,s0.tenant_id,s0.legal_entity_id,s0.branch_id));\n insert into intelligence_control.delivery_heads(tenant_id,subscription_id,event_id)\n select s0.tenant_id,s0.id,e.id from intelligence_control.integration_subscriptions s0\n join analytics.pipeline_forecasts f on f.tenant_id=s0.tenant_id and f.legal_entity_id=s0.legal_entity_id and f.branch_id is not distinct from s0.branch_id\n join core.outbox_events e on e.tenant_id=f.tenant_id and e.aggregate_id=f.id and e.aggregate_type='pipeline_forecast' and e.topic='analytics.freeze_pipeline'\n where s0.enabled and intelligence_control.runtime_scope_allowed(p_runtime_id,s0.tenant_id,s0.legal_entity_id,s0.branch_id)\n and e.created_at>=s0.created_at and not exists(select 1 from intelligence_control.delivery_heads h\n where h.tenant_id=s0.tenant_id and h.subscription_id=s0.id and h.event_id=e.id and h.generation=0)\n order by e.created_at,e.id limit 1000 on conflict do nothing;\n select h.* into d from intelligence_control.delivery_heads h where\n exists(select 1 from intelligence_control.integration_subscriptions s0 where s0.tenant_id=h.tenant_id and s0.id=h.subscription_id\n and intelligence_control.runtime_scope_allowed(p_runtime_id,s0.tenant_id,s0.legal_entity_id,s0.branch_id))\n and state in('pending','retry') and available_at<=statement_timestamp()\n and attempt<8 order by available_at,id for update skip locked limit 1;\n if not found then return null;end if;\n select * into s from intelligence_control.integration_subscriptions where tenant_id=d.tenant_id and id=d.subscription_id and enabled;\n if not found then update intelligence_control.delivery_heads set state='dead_letter' where id=d.id;return null;end if;\n select * into subscription from billing.tenant_subscriptions where tenant_id=d.tenant_id;\n if d.period_start is null then\n d.period_start:=case when subscription.status='trialing' then coalesce(subscription.trial_started_at,subscription.created_at)\n else coalesce((select period_start from intelligence_control.quota_periods where tenant_id=d.tenant_id and metric_code='webhook.deliveries'\n and period_end=subscription.current_period_ends_at limit 1),date_trunc('month',statement_timestamp())) end;\n d.period_end:=case when subscription.status='trialing' then subscription.trial_ends_at else subscription.current_period_ends_at end;\n end if;\n if d.period_end is null then raise exception using errcode='55000',message='BILLING_PERIOD_UNAVAILABLE';end if;\n update intelligence_control.delivery_heads set attempt=attempt+1,state='leased',lease_id=gen_random_uuid(),lease_until=statement_timestamp()+interval '60 seconds',\n period_start=d.period_start,period_end=d.period_end where id=d.id returning * into d;\n insert into intelligence_control.delivery_attempts values(d.tenant_id,d.id,d.attempt,d.lease_id,s.key_version,s.version,statement_timestamp());\n begin\n return intelligence_control.delivery_authorize(d.id,d.lease_id);\n exception when insufficient_privilege then\n -- No send occurred. Keep this denied item from starving another tenant's\n -- queue; replay still requires a reasoned MFA review after access is fixed.\n update intelligence_control.delivery_heads set state='dead_letter' where id=d.id;\n return null;\n end;\n end if;\n if p_action='authorize' then return intelligence_control.delivery_authorize((p_payload->>'deliveryId')::uuid,(p_payload->>'leaseId')::uuid);end if;\n if p_action='key_ref' then\n perform intelligence_control.delivery_authorize((p_payload->>'deliveryId')::uuid,(p_payload->>'leaseId')::uuid);\n return to_jsonb((select s0.key_ref from intelligence_control.delivery_heads d0 join intelligence_control.integration_subscriptions s0 on s0.tenant_id=d0.tenant_id and s0.id=d0.subscription_id where d0.id=(p_payload->>'deliveryId')::uuid));\n end if;\n if p_action='outcome' then\n select * into d from intelligence_control.delivery_heads where id=(p_payload->>'deliveryId')::uuid and lease_id=(p_payload->>'leaseId')::uuid for update;\n if not found then raise exception using errcode='42501',message='LEASE_UNAVAILABLE';end if;\n v_state:=p_payload->>'state';status:=(p_payload->>'httpStatus')::integer;\n if v_state not in('acknowledged','retry','unknown','dead_letter') or v_state is null\n or (v_state='acknowledged' and (status is null or status not between 200 and 299))\n or (v_state='unknown' and status is not null) or (v_state in('retry','dead_letter') and (status is null or status between 200 and 299))\n or (v_state='retry' and d.attempt>=8) or (v_state='dead_letter' and d.attempt<>8) then\n raise exception using errcode='22023',message='OUTCOME_MISMATCH';end if;\n select * into o from intelligence_control.delivery_outcomes where tenant_id=d.tenant_id and delivery_id=d.id and attempt=d.attempt;\n if found then\n if o.state<>v_state or o.http_status is distinct from status then raise exception using errcode='22023',message='IDEMPOTENCY_MISMATCH';end if;return '{}'::jsonb;\n end if;\n insert into intelligence_control.delivery_outcomes values(d.tenant_id,d.id,d.attempt,v_state,status,statement_timestamp());\n update intelligence_control.delivery_heads set state=v_state,available_at=statement_timestamp()+make_interval(secs=>least(3600,15*power(2,d.attempt-1)::integer)) where id=d.id;\n return '{}'::jsonb;\n end if;\n if p_action='settle_acknowledged' then\n for d in select * from intelligence_control.delivery_heads h where h.state='acknowledged' and exists(\n select 1 from intelligence_control.integration_subscriptions s0 where s0.tenant_id=h.tenant_id and s0.id=h.subscription_id\n and intelligence_control.runtime_scope_allowed(p_runtime_id,s0.tenant_id,s0.legal_entity_id,s0.branch_id))\n and not exists(select 1 from intelligence_control.usage_events u where u.tenant_id=h.tenant_id and u.invocation_id=h.invocation_id)\n order by h.id for update skip locked limit 100 loop\n perform api.wave5_settle_usage(d.tenant_id,d.invocation_id,d.usage_event_id,'1');\n end loop;return '{}'::jsonb;\n end if;\n raise exception using errcode='22023',message='VALIDATION_ERROR';\nend ",
+      "name": "wave5_runtime_delivery_worker",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "api",
+      "securityDefiner": true
+    },
+    {
+      "acl": "{postgres=X/postgres,service_role=X/postgres}",
+      "args": "p_tenant_id uuid, p_invocation_id uuid, p_event_id uuid, p_quantity text",
+      "body": "declare q numeric;r intelligence_control.usage_reservations%rowtype;u intelligence_control.usage_events%rowtype;begin\r\n perform intelligence_control.worker_required();\r\n if p_quantity is null or p_quantity !~ '^(0|[1-9][0-9]{0,19})$' or p_event_id is null then raise exception using errcode='22023',message='VALIDATION_ERROR';end if;\r\n q:=p_quantity::numeric;\r\n select * into r from intelligence_control.usage_reservations where tenant_id=p_tenant_id and invocation_id=p_invocation_id;\r\n if not found then raise exception using errcode='42501',message='PERMISSION_DENIED';end if;\r\n perform pg_advisory_xact_lock(hashtextextended(p_tenant_id::text||':'||r.metric_code,5));\r\n perform 1 from intelligence_control.quota_periods where tenant_id=r.tenant_id and metric_code=r.metric_code and period_start=r.period_start for update;\r\n select * into u from intelligence_control.usage_events where tenant_id=p_tenant_id and invocation_id=p_invocation_id;\r\n if found then\r\n if u.event_id<>p_event_id or u.quantity<>q then raise exception using errcode='22023',message='IDEMPOTENCY_MISMATCH';end if;\r\n return jsonb_build_object('eventId',u.event_id,'quantity',u.quantity::text);\r\n end if;\r\n if q>r.reserved_units then raise exception using errcode='54000',message='RESERVATION_EXCEEDED';end if;\r\n insert into intelligence_control.usage_events values(p_tenant_id,p_invocation_id,p_event_id,q,statement_timestamp());\r\n update intelligence_control.quota_periods set reserved_units=reserved_units-r.reserved_units,settled_units=settled_units+q\r\n where tenant_id=r.tenant_id and metric_code=r.metric_code and period_start=r.period_start;\r\n return jsonb_build_object('eventId',p_event_id,'quantity',q::text);\r\nend ",
+      "name": "wave5_settle_usage",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "api",
+      "securityDefiner": true
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "args": "p_delivery_id uuid, p_lease_id uuid",
+      "body": "\ndeclare d intelligence_control.delivery_heads%rowtype;s intelligence_control.integration_subscriptions%rowtype;\n f analytics.pipeline_forecasts%rowtype;a intelligence_control.delivery_attempts%rowtype;saved_claims text;begin\n select * into d from intelligence_control.delivery_heads where id=p_delivery_id and lease_id=p_lease_id and state='leased' and lease_until>statement_timestamp();\n if not found then raise exception using errcode='42501',message='LEASE_UNAVAILABLE';end if;\n select * into s from intelligence_control.integration_subscriptions where tenant_id=d.tenant_id and id=d.subscription_id and enabled;\n select * into a from intelligence_control.delivery_attempts where tenant_id=d.tenant_id and delivery_id=d.id and attempt=d.attempt;\n if s.id is null or a.lease_id is null or s.version<>a.subscription_version or s.key_version<>a.key_version then\n raise exception using errcode='42501',message='PERMISSION_DENIED';end if;\n perform intelligence_control.quota_limit(d.tenant_id,'webhook.deliveries');\n select f0.* into f from core.outbox_events o join analytics.pipeline_forecasts f0 on f0.tenant_id=o.tenant_id and f0.id=o.aggregate_id\n where o.id=d.event_id and o.tenant_id=s.tenant_id and o.topic='analytics.freeze_pipeline' and o.aggregate_type='pipeline_forecast'\n and f0.legal_entity_id=s.legal_entity_id and f0.branch_id is not distinct from s.branch_id;\n if not found then raise exception using errcode='42501',message='PERMISSION_DENIED';end if;\n -- Explicit subscription delegation uses AAL1. It never fabricates human MFA;\n -- the installed scope, role, entitlement and every captured-branch check run.\n saved_claims:=current_setting('request.jwt.claims',true);\n perform set_config('request.jwt.claims',jsonb_build_object('sub',s.created_by,'role','authenticated','aal','aal1')::text,true);\n perform core.wave3_require_scope(s.tenant_id,'integrations.manage',s.legal_entity_id,s.branch_id);\n perform api.get_pipeline_forecast(s.tenant_id,s.legal_entity_id,s.branch_id,f.id);\n perform set_config('request.jwt.claims',coalesce(saved_claims,''),true);\n return jsonb_build_object('event',jsonb_build_object('eventId',d.event_id,'type','analytics.forecast.frozen.v1',\n 'tenantId',s.tenant_id,'legalEntityId',s.legal_entity_id,'branchId',s.branch_id,'forecastId',f.id,'definitionVersion',1,'sourceHash',f.source_hash),\n 'subscription',jsonb_build_object('id',s.id,'scope',jsonb_build_object('tenantId',s.tenant_id,'legalEntityId',s.legal_entity_id,'branchId',s.branch_id),\n 'enabled',true,'url',s.url,'allowedHosts',jsonb_build_array(s.hostname),'keyVersion',s.key_version),\n 'deliveryId',d.id,'leaseId',d.lease_id,'invocationId',d.invocation_id,'usageEventId',d.usage_event_id,\n 'periodStart',analytics.process_utc(d.period_start),'periodEnd',analytics.process_utc(d.period_end),'attempt',d.attempt);\nend ",
+      "name": "delivery_authorize",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "intelligence_control",
+      "securityDefiner": true
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "args": "t uuid, metric text",
+      "body": "\r\ndeclare result numeric;begin\r\n select p.numeric_limit into result from billing.tenant_subscriptions s join billing.plan_entitlements p on p.plan_code=s.plan_code\r\n where s.tenant_id=t and p.entitlement_code='quota.'||metric and p.enabled\r\n and ((s.status='trialing' and coalesce(s.trial_started_at,s.created_at)<=statement_timestamp() and s.trial_ends_at>statement_timestamp()) or (s.status='active'\r\n and (s.current_period_ends_at is null or s.current_period_ends_at>statement_timestamp())));\r\n if result is null or result<0 or result<>trunc(result) or result>=100000000000000000000 then\r\n raise exception using errcode='42501',message='ENTITLEMENT_REQUIRED';end if;\r\n return result;\r\nend ",
+      "name": "quota_limit",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "intelligence_control",
+      "securityDefiner": true
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "args": "r uuid, t uuid, e uuid, b uuid",
+      "body": "\n select exists(select 1 from intelligence_control.runtime_worker_scopes s join core.branches br\n on br.tenant_id=s.tenant_id and br.legal_entity_id=s.legal_entity_id and br.id=s.branch_id\n where s.runtime_id=r and s.tenant_id=t and s.legal_entity_id=e and s.branch_id=b\n and s.enabled and s.issued_at<=statement_timestamp() and s.expires_at>statement_timestamp() and br.status='active')",
+      "name": "runtime_scope_allowed",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "intelligence_control",
+      "securityDefiner": true
+    },
+    {
+      "acl": "{postgres=X/postgres}",
+      "args": "r uuid",
+      "body": "begin\n perform intelligence_control.worker_required();\n if not exists(select 1 from intelligence_control.runtime_worker_scopes s\n where s.runtime_id=r and intelligence_control.runtime_scope_allowed(r,s.tenant_id,s.legal_entity_id,s.branch_id)) then\n raise exception using errcode='42501',message='RUNTIME_SCOPE_DENIED';end if;end",
+      "name": "runtime_worker_required",
+      "config": [
+        "search_path=\"\""
+      ],
+      "schema": "intelligence_control",
+      "securityDefiner": true
+    }
+  ],
+  "projectId": "xpdoufauvrbdmxgngetv",
+  "tickCount": 0,
+  "observedAt": "2026-11-03T07:06:32.55312+00:00",
+  "edgeKeyRefs": [
+    {
+      "ref": "w5/runtime/20261008/delivery/v1",
+      "vaultRecordExists": true
+    },
+    {
+      "ref": "w5/runtime/20261008/delivery/v2",
+      "vaultRecordExists": true
+    }
+  ],
+  "reservation": null,
+  "quotaPeriods": [
+    {
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "period_end": "2026-11-03T06:33:38+00:00",
+      "metric_code": "ai.tokens",
+      "period_start": "2026-11-03T06:03:38+00:00",
+      "settled_units": 247,
+      "reserved_units": 0
+    }
+  ],
+  "subscription": {
+    "plan": "w5_runtime_20261008",
+    "seats": 5,
+    "status": "trialing",
+    "version": "5",
+    "trialEnd": "2026-11-03T06:33:38+00:00",
+    "trialStart": "2026-11-03T06:03:38+00:00",
+    "windowActive": false
+  },
+  "edgeAuthority": {
+    "jobIds": [
+      4,
+      5,
+      6
+    ],
+    "enabled": true,
+    "issuedAt": "2026-10-13T09:57:07.481942+00:00",
+    "expiresAt": "2026-10-14T09:57:07.481942+00:00",
+    "windowActive": false
+  },
+  "runtimeScopes": [
+    {
+      "enabled": true,
+      "branchId": "3813692c-f0de-4c69-8e34-d56cf54695b1",
+      "entityId": "caa2bb06-219a-47e9-8132-66d1271b0ffd",
+      "issuedAt": "2026-11-03T06:04:17.758656+00:00",
+      "tenantId": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "expiresAt": "2026-11-03T06:34:17.758656+00:00",
+      "windowActive": false
+    }
+  ],
+  "subscriptions": [
+    {
+      "id": "0961e194-dc0b-4632-8c2d-65686fc9f111",
+      "url": "https://xpdoufauvrbdmxgngetv.supabase.co/functions/v1/wave5-receiver/timeout",
+      "enabled": true,
+      "key_ref": "w5/runtime/20261008/delivery/v1",
+      "version": 1,
+      "hostname": "xpdoufauvrbdmxgngetv.supabase.co",
+      "branch_id": "3813692c-f0de-4c69-8e34-d56cf54695b1",
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "created_at": "2026-10-13T10:10:11.044061+00:00",
+      "created_by": "8b740ab8-24f7-4455-a78b-aea0d99d20f6",
+      "key_version": 1,
+      "legal_entity_id": "caa2bb06-219a-47e9-8132-66d1271b0ffd"
+    },
+    {
+      "id": "2bdbd842-5b94-464b-85fc-22d722498831",
+      "url": "https://xpdoufauvrbdmxgngetv.supabase.co/functions/v1/wave5-receiver/redirect",
+      "enabled": true,
+      "key_ref": "w5/runtime/20261008/delivery/v1",
+      "version": 1,
+      "hostname": "xpdoufauvrbdmxgngetv.supabase.co",
+      "branch_id": "3813692c-f0de-4c69-8e34-d56cf54695b1",
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "created_at": "2026-10-13T10:10:10.70288+00:00",
+      "created_by": "8b740ab8-24f7-4455-a78b-aea0d99d20f6",
+      "key_version": 1,
+      "legal_entity_id": "caa2bb06-219a-47e9-8132-66d1271b0ffd"
+    },
+    {
+      "id": "360e7a9d-08a5-4349-854f-c2343ce2ff5d",
+      "url": "https://xpdoufauvrbdmxgngetv.supabase.co/functions/v1/wave5-receiver/reject",
+      "enabled": true,
+      "key_ref": "w5/runtime/20261008/delivery/v1",
+      "version": 1,
+      "hostname": "xpdoufauvrbdmxgngetv.supabase.co",
+      "branch_id": "3813692c-f0de-4c69-8e34-d56cf54695b1",
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "created_at": "2026-10-13T10:10:11.393915+00:00",
+      "created_by": "8b740ab8-24f7-4455-a78b-aea0d99d20f6",
+      "key_version": 1,
+      "legal_entity_id": "caa2bb06-219a-47e9-8132-66d1271b0ffd"
+    },
+    {
+      "id": "58699e8a-28fd-4356-8cad-87ce46e17ddd",
+      "url": "https://xpdoufauvrbdmxgngetv.supabase.co/functions/v1/wave5-receiver/accept",
+      "enabled": true,
+      "key_ref": "w5/runtime/20261008/delivery/v1",
+      "version": 1,
+      "hostname": "xpdoufauvrbdmxgngetv.supabase.co",
+      "branch_id": "3813692c-f0de-4c69-8e34-d56cf54695b1",
+      "tenant_id": "babe6c86-a764-4d3a-80a3-952a7c096c2c",
+      "created_at": "2026-10-13T10:05:34.187043+00:00",
+      "created_by": "8b740ab8-24f7-4455-a78b-aea0d99d20f6",
+      "key_version": 1,
+      "legal_entity_id": "caa2bb06-219a-47e9-8132-66d1271b0ffd"
+    }
+  ],
+  "receiverReceipts": [],
+  "unmaterializedDeliveries": [
+    {
+      "eventId": "b5fc8c3f-d209-49e2-827e-337a7a378f7f",
+      "forecastId": "e8e582b2-6ce0-4b2d-beca-8ad3203abbfc",
+      "eventCreatedAt": "2026-10-13T10:10:12.197712+00:00",
+      "subscriptionId": "0961e194-dc0b-4632-8c2d-65686fc9f111"
+    },
+    {
+      "eventId": "b5fc8c3f-d209-49e2-827e-337a7a378f7f",
+      "forecastId": "e8e582b2-6ce0-4b2d-beca-8ad3203abbfc",
+      "eventCreatedAt": "2026-10-13T10:10:12.197712+00:00",
+      "subscriptionId": "2bdbd842-5b94-464b-85fc-22d722498831"
+    },
+    {
+      "eventId": "b5fc8c3f-d209-49e2-827e-337a7a378f7f",
+      "forecastId": "e8e582b2-6ce0-4b2d-beca-8ad3203abbfc",
+      "eventCreatedAt": "2026-10-13T10:10:12.197712+00:00",
+      "subscriptionId": "360e7a9d-08a5-4349-854f-c2343ce2ff5d"
+    },
+    {
+      "eventId": "b5fc8c3f-d209-49e2-827e-337a7a378f7f",
+      "forecastId": "e8e582b2-6ce0-4b2d-beca-8ad3203abbfc",
+      "eventCreatedAt": "2026-10-13T10:10:12.197712+00:00",
+      "subscriptionId": "58699e8a-28fd-4356-8cad-87ce46e17ddd"
+    }
+  ]
+}

@@ -53,12 +53,17 @@ $manifest = [ordered]@{schemaVersion=1;product='Jentra OS';releaseId=$identity.r
 [IO.File]::WriteAllText((Join-Path $payload 'release-manifest.json'), ($manifest | ConvertTo-Json -Depth 10) + "`n", (New-Object Text.UTF8Encoding($false)))
 foreach ($name in @('Install.ps1','Launch.ps1','Rollback.ps1','Uninstall.ps1')) { Copy-Item -LiteralPath (Join-Path $installerSourceRoot $name) -Destination (Join-Path $package $name) }
 [IO.File]::WriteAllText((Join-Path $package 'Install.cmd'), '@echo off' + "`r`n" + 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0Install.ps1"' + "`r`n" + 'pause' + "`r`n", (New-Object Text.ASCIIEncoding))
+[IO.File]::WriteAllText((Join-Path $package 'Launch.cmd'), '@echo off' + "`r`n" + 'pushd "%~dp0Payload"' + "`r`n" + 'if errorlevel 1 exit /b 1' + "`r`n" + 'start "" "%~dp0Payload\jentra_desktop.exe"' + "`r`n" + 'popd' + "`r`n", (New-Object Text.ASCIIEncoding))
 $guide = @'
 Jentra OS Windows release candidate
 
-Install: double-click the Setup.exe beside this ZIP, or extract this ZIP and run Install.cmd.
-Then open Jentra OS (Development), or Jentra OS for a production-channel package, in Start.
-The installer verifies every runtime hash, keeps older versions and switches the launcher to this bundle.
+Install: double-click the native Setup.exe beside this ZIP on Windows 10/11 x64.
+It shows a standard installation wizard and needs no .NET or PowerShell on the destination PC.
+Open Jentra OS Desktop (Development), or Jentra OS Desktop for a production-channel package, in Start.
+The native installation uses a separate Jentra OS Desktop folder and retains older release directories.
+Each installed runtime file is checked against its recorded SHA-256.
+Portable alternative: extract this whole ZIP and run Launch.cmd. Keep Payload and all its files together.
+Install.cmd is the preserved legacy PowerShell installation option for advanced/local verification.
 It never kills a running app, changes a backend, copies credentials or removes user data.
 Close any old app yourself and open the Start shortcut to see the updated release.
 Check About Jentra OS for version, channel, project, revision and source SHA-256.
@@ -68,19 +73,20 @@ Development has a separate installation name/ProductName. Existing sessions/draf
 You may need to sign in again. A database login is not bundled.
 The package includes the Microsoft Visual C++ x64 CRT redistributable from the build's installed Visual Studio. Microsoft retains its copyright in those DLLs.
 
-Rollback: powershell.exe -NoProfile -ExecutionPolicy Bypass -File "<install folder>\Rollback.ps1" -ConfirmRollback
-This selects the previous desktop bundle only. It does not roll back backend changes or user data.
-Uninstall removes shortcut/registration and retains installed versions and user data for recovery.
+Native recovery: retain the previous installer/ZIP and run its executable from its retained releases directory.
+Legacy PowerShell recovery still uses Rollback.ps1 -ConfirmRollback in the legacy install folder.
+Neither path rolls back a backend schema or changes company records.
+The native uninstaller removes files it installed; account/draft data outside that folder is not included.
 '@
 [IO.File]::WriteAllText((Join-Path $package 'README.txt'), $guide + "`n", (New-Object Text.UTF8Encoding($false)))
 $zipPath = Join-Path $OutputDirectory ('Jentra-OS-' + $identity.releaseId + '-Windows.zip')
 Add-Type -AssemblyName System.IO.Compression.FileSystem
-[IO.Compression.ZipFile]::CreateFromDirectory($package, $zipPath, [IO.Compression.CompressionLevel]::Optimal, $false)
+. (Join-Path $installerSourceRoot 'archive.ps1')
+New-JentraReleaseArchive -SourceDirectory $package -DestinationPath $zipPath
 $setupPath = Join-Path $OutputDirectory ('Jentra-OS-' + $identity.releaseId + '-Setup.exe')
-$csc = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
 $icon = Join-Path $sourceManifest.snapshot 'apps\jentra_desktop\windows\runner\resources\app_icon.ico'
-& $csc /nologo /target:winexe /platform:anycpu /reference:System.Windows.Forms.dll /reference:System.IO.Compression.dll /reference:System.IO.Compression.FileSystem.dll ('/win32icon:' + $icon) ('/resource:' + $zipPath + ',JentraPackage') ('/out:' + $setupPath) (Join-Path $installerSourceRoot 'Setup.cs')
-if ($LASTEXITCODE -ne 0) { throw 'SETUP_COMPILATION_FAILED' }
+. (Join-Path $installerSourceRoot 'native-installer.ps1')
+$setupPath = New-JentraNativeInstaller -OutputDirectory $OutputDirectory -InstallerSourceRoot $installerSourceRoot -IconPath $icon
 $archive = [IO.Compression.ZipFile]::OpenRead($zipPath)
 $verified = 0
 try {
@@ -92,6 +98,6 @@ try {
     finally { $stream.Dispose(); $hasher.Dispose() }
   }
 } finally { $archive.Dispose() }
-$delivery = [ordered]@{identity=$identity;unsigned=$true;installer=[ordered]@{path=$setupPath;bytes=(Get-Item -LiteralPath $setupPath).Length;sha256=(Get-FileHash -LiteralPath $setupPath -Algorithm SHA256).Hash.ToLowerInvariant()};portableZip=[ordered]@{path=$zipPath;bytes=(Get-Item -LiteralPath $zipPath).Length;sha256=(Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash.ToLowerInvariant()};verifiedRuntimeFiles=$verified;backendChanged=$false;userProfileInstalled=$false;nativeAcceptance=$false;ownerAccepted=$false}
+$delivery = [ordered]@{identity=$identity;unsigned=$true;installerKind='native-inno';requiresDotNet=$false;requiresPowerShell=$false;installer=[ordered]@{path=$setupPath;bytes=(Get-Item -LiteralPath $setupPath).Length;sha256=(Get-FileHash -LiteralPath $setupPath -Algorithm SHA256).Hash.ToLowerInvariant()};portableZip=[ordered]@{path=$zipPath;bytes=(Get-Item -LiteralPath $zipPath).Length;sha256=(Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash.ToLowerInvariant()};verifiedRuntimeFiles=$verified;backendChanged=$false;userProfileInstalled=$false;nativeAcceptance=$false;ownerAccepted=$false}
 [IO.File]::WriteAllText((Join-Path $OutputDirectory 'delivery.json'), ($delivery | ConvertTo-Json -Depth 10) + "`n", (New-Object Text.UTF8Encoding($false)))
 $delivery | ConvertTo-Json -Depth 10

@@ -1,0 +1,69 @@
+✔ canonical worker never falls back to a configured paid OpenAI key (304.226ms)
+✔ configured free worker still requires the requesting user before evidence or provider access (3.5336ms)
+✔ free hosted entrypoint reserves before inference, settles exact tokens and reopens without another model call (62.4203ms)
+✔ free quota rejection retains the unknown invocation and cannot cause a resend or paid fallback (6.4926ms)
+✔ changed source authority after settlement cannot return a suggestion (8.9769ms)
+✖ a historical OpenAI outcome cannot be reopened as a Cloudflare outcome (3.6458ms)
+✖ a settled Cloudflare invocation cannot reopen against a different credential account (4.7917ms)
+✖ deterministically insufficient budgets consume no invocation and can be corrected under the same identity (6.8195ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 5
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 952.6233
+
+✖ failing tests:
+
+test at workers\wave5\free_ai_runtime.test.mjs:97:1
+✖ a historical OpenAI outcome cannot be reopened as a Cloudflare outcome (3.6458ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  200 !== 400
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/free_ai_runtime.test.mjs:100:9)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\free_ai_runtime.test.mjs:104:1
+✖ a settled Cloudflare invocation cannot reopen against a different credential account (4.7917ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  200 !== 400
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/free_ai_runtime.test.mjs:107:9)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\free_ai_runtime.test.mjs:112:1
+✖ deterministically insufficient budgets consume no invocation and can be corrected under the same identity (6.8195ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  503 !== 400
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/free_ai_runtime.test.mjs:115:10)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

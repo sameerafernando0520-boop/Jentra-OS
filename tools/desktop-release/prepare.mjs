@@ -35,9 +35,9 @@ const git = args => execFileSync('git', args, { cwd: root, encoding: 'utf8', max
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const selected = relative => ['pubspec.yaml', 'pubspec.lock', 'analysis_options.yaml'].includes(relative) ||
   /^apps\/[^/]+\/pubspec.yaml$/.test(relative) ||
-  /^apps\/jentra_desktop\/(pubspec.yaml|lib\/|windows\/)/.test(relative) ||
+  /^apps\/jentra_desktop\/(pubspec.yaml|lib\/|windows\/|web\/)/.test(relative) ||
   /^packages\/(jentra_domain|jentra_platform|jentra_design_system)\/(pubspec.yaml|lib\/|assets\/|fonts\/)/.test(relative) ||
-  relative.startsWith('tools/desktop-release/');
+  relative.startsWith('tools/desktop-release/') || relative.startsWith('tools/web-release/');
 const forbidden = relative => /(^|\/)(build|\.dart_tool|ephemeral|\.plugin_symlinks|test|failures)(\/|$)/.test(relative) ||
   /(^|\/)(\.env[^/]*|[^/]*firebase-adminsdk[^/]*|[^/]*service[_-]?account[^/]*|[^/]*private[_-]?key[^/]*)$/i.test(relative) ||
   /generated_plugin_registrant\.(cc|h)$|generated_plugins\.cmake$/.test(relative);

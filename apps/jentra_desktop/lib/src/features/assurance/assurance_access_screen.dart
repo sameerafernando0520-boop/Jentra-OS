@@ -71,8 +71,8 @@ class AssuranceAccessView extends StatelessWidget {
             title: 'Audit access',
             description:
                 'Choose who can plan, run, review and respond to audits. '
-                'Each change needs multi-factor authentication from the last '
-                '15 minutes and is recorded with who made it.',
+                'Each change needs a sign-in verified with your authenticator '
+                'and is recorded with who made it.',
             onRefresh: c.busy || !c.online ? null : c.refresh,
           ),
           const SizedBox(height: JentraSpacing.x3),

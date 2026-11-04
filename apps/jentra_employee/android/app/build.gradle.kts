@@ -8,6 +8,10 @@ plugins {
 // Explicit opt-in for a small, locally signed development APK. Ordinary release
 // builds retain their separate application identity and signing requirement.
 val developmentRelease = providers.gradleProperty("jentraDevelopmentRelease").orNull == "true"
+val productionSigning = providers.gradleProperty("jentraProductionSigning").orNull == "true"
+if (developmentRelease && productionSigning) error("Choose one employee signing identity.")
+fun signingValue(name: String): String = providers.environmentVariable(name).orNull
+    ?.takeIf { it.isNotBlank() } ?: error("Employee release signing is not configured: $name")
 
 android {
     namespace = "com.jentra.employee"
@@ -34,6 +38,15 @@ android {
         versionName = flutter.versionName
     }
 
+    if (productionSigning) {
+        signingConfigs.create("employeeProduction") {
+            storeFile = file(signingValue("JENTRA_EMPLOYEE_KEYSTORE"))
+            storeType = "PKCS12"
+            storePassword = signingValue("JENTRA_EMPLOYEE_SIGNING_PASSWORD")
+            keyAlias = "jentra-employee"
+            keyPassword = signingValue("JENTRA_EMPLOYEE_SIGNING_PASSWORD")
+        }
+    }
     buildTypes {
         debug {
             applicationIdSuffix = ".dev"
@@ -44,6 +57,8 @@ android {
             if (developmentRelease) {
                 applicationIdSuffix = ".dev"
                 signingConfig = signingConfigs.getByName("debug")
+            } else if (productionSigning) {
+                signingConfig = signingConfigs.getByName("employeeProduction")
             } else {
                 // Store distribution requires a separately configured release keystore.
                 signingConfig = null

@@ -1,0 +1,30 @@
+✔ free provider sends only proposal references to its fixed account and settles exact provider tokens (52.3345ms)
+✖ constructed free provider cannot be retargeted to another model or account (5.0557ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 104.0816
+
+✖ failing tests:
+
+test at workers\wave5\cloudflare_model_adapter.test.mjs:35:1
+✖ constructed free provider cannot be retargeted to another model or account (5.0557ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception (TypeError).
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/cloudflare_model_adapter.test.mjs:39:9)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: [Function: TypeError],
+    operator: 'throws',
+    diff: 'simple'
+  }

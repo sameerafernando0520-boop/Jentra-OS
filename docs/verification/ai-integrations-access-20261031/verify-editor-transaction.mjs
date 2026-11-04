@@ -1,0 +1,40 @@
+import assert from 'node:assert/strict';
+import {readFile,writeFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {PGlite} from '../../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/index.js';
+import {pgcrypto} from '../../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/contrib/pgcrypto.js';
+const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
+const previous=JSON.parse(await readFile(new URL('../ai-integrations-20261031/verification.json',import.meta.url),'utf8'));
+const fixtureBytes=await readFile(new URL('../ai-integrations-20261031/verify-accounting-postgres.mjs',import.meta.url));
+const binding=previous.evidence.find(row=>row.path.endsWith('/verify-accounting-postgres.mjs'));
+assert.equal(sha(fixtureBytes),binding.sha256);
+const fixture=fixtureBytes.toString('utf8').match(/await db\.exec\(`(create schema intelligence_control;[\s\S]*?)`\);/);
+assert(fixture&&!fixture[1].includes('${'),'Exact existing synthetic schema required');
+const oldSql=await readFile(new URL('hosted-accounting-before-editor-fix.sql',import.meta.url),'utf8');
+const sql=await readFile(new URL('../../../tools/wave5/hosted_accounting_readonly.sql',import.meta.url),'utf8');
+const db=new PGlite({extensions:{pgcrypto}}),checks=[];
+try{
+ await db.exec(fixture[1]);
+ await db.exec('begin;select 1;');
+ await assert.rejects(db.exec(oldSql),error=>error.code==='25001');
+ await db.exec('rollback;');checks.push('Original query reproduces SQL Editor 25001 after a preceding query');
+ await db.exec('begin;select 1;');
+ const results=await db.exec(sql);
+ const rows=results.flatMap(result=>result.rows??[]);
+ assert.equal(rows.length,1);assert.equal(rows[0].hosted_accounting_snapshot.authorityActive,false);
+ assert.deepEqual(rows[0].hosted_accounting_snapshot.models,[]);
+ checks.push('Corrected single-statement reconciliation runs in caller-managed transaction');
+ await db.exec('begin;select 1;');
+ const prefix=sql.slice(0,sql.indexOf('with bindings as ('));
+ assert(prefix.includes('set local transaction_read_only = on;'));
+ await db.exec(prefix);
+ await assert.rejects(db.exec("insert into core.branches values('00000000-0000-4000-8000-000000000001',null,null,'active');"),error=>error.code==='25006');
+ await db.exec('rollback;');checks.push('Read-only mode rejects a write inside the caller transaction');
+ assert.equal((await db.query('select count(*)::int count from core.branches')).rows[0].count,0);
+ assert.equal((await db.query('show transaction_read_only')).rows[0].transaction_read_only,'off');
+ checks.push('Rollback preserves records and restores the connection read-only setting');
+ const report={kind:'sql-editor-transaction-regression',observedAt:new Date().toISOString(),passed:checks.length,checks,
+  sqlSha256:sha(sql),originalSqlSha256:sha(oldSql),hostedDatabaseQueried:false};
+ await writeFile(new URL('editor-transaction-result.json',import.meta.url),JSON.stringify(report,null,2)+'\n',{flag:'wx'});
+ console.log(JSON.stringify({passed:checks.length,hostedDatabaseQueried:false}));
+}finally{await db.close();}

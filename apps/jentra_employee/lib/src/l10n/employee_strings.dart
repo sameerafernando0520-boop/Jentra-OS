@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 
 import '../data/employee_gateway.dart';
 import 'employee_feature_strings.dart';
+import 'employee_service_strings.dart';
 
 /// Employee interface copy; employer-authored review content stays in its source language.
 class EmployeeStrings {
@@ -23,7 +24,9 @@ class EmployeeStrings {
             _ => key,
           }
         : key;
-    return employeeFeatureStrings[language]?[resolved] ??
+    return employeeServiceStrings[language]?[resolved] ??
+        employeeServiceStrings['en']?[resolved] ??
+        employeeFeatureStrings[language]?[resolved] ??
         employeeFeatureStrings['en']?[resolved] ??
         switch (language) {
           'si' => _sinhala[resolved] ?? _english[resolved] ?? resolved,

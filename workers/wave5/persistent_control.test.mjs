@@ -1,10 +1,11 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {PersistentDeliveryControl,createWorkerRpc,runDeliveryBatch} from './persistent_control.mjs';
+const testServiceKey='test'.repeat(10)+'.'+'fixture'.repeat(6)+'.'+'signature'.repeat(5);
 
 test('real RPC adapter binds service authorization and API schema without logging a key',async()=>{
  let observed;
- const rpc=createWorkerRpc({url:'https://xpdoufauvrbdmxgngetv.supabase.co',serviceKey:'test-only-key-'.repeat(4),
+ const rpc=createWorkerRpc({url:'https://xpdoufauvrbdmxgngetv.supabase.co',serviceKey:testServiceKey,
   fetchImpl:async(url,options)=>{observed={url,options};return {ok:true,text:async()=>'{"ready":true}'};}});
  assert.deepEqual(await rpc('wave5_delivery_worker',{p_action:'readiness',p_payload:{}}),{ready:true});
  assert.equal(observed.options.headers['content-profile'],'api');
@@ -29,7 +30,7 @@ test('worker transport rejects unsafe URLs and bounds provider output/errors',as
  for(const url of ['http://x.supabase.co','https://secret@x.supabase.co','https://x.supabase.co/private','https://localhost']) {
   assert.throws(()=>createWorkerRpc({url,serviceKey:'x'.repeat(40)}),/CONFIGURATION/);
  }
- const rpc=createWorkerRpc({url:'https://x.supabase.co',serviceKey:'x'.repeat(40),
+ const rpc=createWorkerRpc({url:'https://x.supabase.co',serviceKey:testServiceKey,
   fetchImpl:async()=>({ok:false,status:403,text:async()=>{throw Error('private');}})});
  await assert.rejects(rpc('wave5_delivery_worker',{}),/WORKER_ACCESS_DENIED/);
 });

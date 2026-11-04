@@ -42,7 +42,7 @@ $abiNames = if ($IncludeEmulator) { @('arm64-v8a', 'armeabi-v7a', 'x86_64') } el
 Push-Location $employeeApp
 try {
     Write-Output "Building optimized development APKs for $targetPlatforms"
-    & $dartExecutable $flutterSnapshot build apk --release --no-pub --split-per-abi --android-project-arg=jentraDevelopmentRelease=true "--target-platform=$targetPlatforms" "--split-debug-info=$symbolsDir" "--dart-define-from-file=$configurationPath"
+    & $dartExecutable $flutterSnapshot build apk --release --no-pub --split-per-abi --android-project-arg=jentraDevelopmentRelease=true --dart-define=JENTRA_EMPLOYEE_DEVELOPMENT=true "--target-platform=$targetPlatforms" "--split-debug-info=$symbolsDir" "--dart-define-from-file=$configurationPath"
     if ($LASTEXITCODE -ne 0) { throw "Employee APK build failed with exit code $LASTEXITCODE." }
 } finally {
     Pop-Location

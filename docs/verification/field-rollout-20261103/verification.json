@@ -1,0 +1,929 @@
+{
+  "verifiedOn": "2026-11-03",
+  "timezone": "Asia/Colombo",
+  "recordedAtUtc": "2026-11-03T07:18:40.572Z",
+  "scope": "Shared dirty checkout snapshot; only selected Sales source/tests and existing domain contracts were verified. No commit, push or Employee app edit.",
+  "implementation": {
+    "perOrganizationResendWorker": true,
+    "companyOrderProgression": true,
+    "separatePostedDeliveryAcknowledgement": true,
+    "employeeAndSalesRemainSeparate": true
+  },
+  "database": {
+    "engine": "PGlite 0.5.12 / PostgreSQL 18",
+    "passed": 222,
+    "rollbackAssertions": 24,
+    "rollbackPassed": true,
+    "fullHostedSchema": false,
+    "simulatedAuthAndMfa": true,
+    "simulatedResend": true,
+    "fixtureBoundary": "Non-stocked canonical confirmation and two partial-delivery postings; no real stocked-company acceptance or contention/load proof."
+  },
+  "tests": {
+    "sales-tests.log": {
+      "passed": 67,
+      "exitCode": 0
+    },
+    "desktop-tests.log": {
+      "passed": 65,
+      "exitCode": 0
+    },
+    "platform-tests.log": {
+      "passed": 24,
+      "exitCode": 0
+    },
+    "default-navigation.log": {
+      "passed": 1,
+      "exitCode": 0
+    },
+    "domain-tests.log": {
+      "passed": 10,
+      "exitCode": 0
+    },
+    "node-tests.log": {
+      "passed": 14,
+      "exitCode": 0
+    }
+  },
+  "analysis": {
+    "files": 24,
+    "issues": 0,
+    "formatChanges": 0
+  },
+  "edgeCheck": {
+    "exitCode": 0,
+    "checkJs": false,
+    "behaviorCoveredByNodeTests": true
+  },
+  "builds": {
+    "jentra_sales": {
+      "directory": "apps/jentra_sales/build/field-rollout-candidate",
+      "release": true,
+      "optimizationLevel": 1,
+      "csp": true,
+      "externalWebResources": false,
+      "wasmBuilt": false,
+      "defines": [
+        "FIELD_SALES_CANDIDATE_ENABLED=true",
+        "FIELD_SALES_EMAIL_CONFIRMATION_ENABLED=true",
+        "FIELD_SALES_DELIVERY_CONFIRMATION_ENABLED=true"
+      ],
+      "publicConfiguration": "Jentra URL and publishable client key only",
+      "files": [
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/.last_build_id",
+          "size": 32,
+          "sha256": "d3a187e2ff4d60797f95f1618a28532bf508006041dcf7f4cb987a3ad23e43bc"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/AssetManifest.bin",
+          "size": 2383,
+          "sha256": "5f7871ef6d64e399a36c3d7acc54bbda3c3d7750a7db3d8f6c1742d7402f1e27"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/AssetManifest.bin.json",
+          "size": 3182,
+          "sha256": "d1522f0c262d8afaaf4ef883a510cb64d709a86e8984f939ec91ddd78c9f8565"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/FontManifest.json",
+          "size": 1656,
+          "sha256": "70b7da1f8847204fca8a857da37cee3946f329b30f0add8dfed34873159fb5d6"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/fonts/fallback/Roboto-Regular.ttf",
+          "size": 171676,
+          "sha256": "79e851404657dac2106b3d22ad256d47824a9a5765458edb72c9102a45816d95"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/fonts/MaterialIcons-Regular.otf",
+          "size": 14356,
+          "sha256": "e878787a8b4c3c1028444d9c4e115d307d7f90d9f9787dccfa2c047518c3974b"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/NOTICES",
+          "size": 1463138,
+          "sha256": "19fa809dc8dcc8c812678b615d07a76f563f4fdf21260b8c17abd083a0bf7d22"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/packages/cupertino_icons/assets/CupertinoIcons.ttf",
+          "size": 1472,
+          "sha256": "3d90c370aa4cf00dc57ee2b902f6652147c0f81e03e483df584a9c08b1687c9d"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/brand/jentra-logo-board.png",
+          "size": 1477131,
+          "sha256": "bcb444dafed12cfbca2e2077e50dd4fc8f0ce7c5e212a91fddd08dafecba1ba6"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/brand/jentra-mark.png",
+          "size": 406813,
+          "sha256": "9670c0a23c40185a2a067648253d1eb94d380b5a30ddb6441ed1449d6f05ee0e"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/IBMPlexMono-Regular.ttf",
+          "size": 135580,
+          "sha256": "6a3412f058c7d8dfd9170c41e85ade48e5156ecb89356110ca57a0a27734af46"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/IBMPlexMono-SemiBold.ttf",
+          "size": 140216,
+          "sha256": "d3c38e55c78f5b0f28009fddba4834ec503278936a5986032424c9bd2d23aa46"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/Manrope-Bold.ttf",
+          "size": 96492,
+          "sha256": "ec45a353e86a9988decd9d33b2e126f9bb672f5a14e816a5440b49e208aa45df"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/Manrope-Medium.ttf",
+          "size": 96624,
+          "sha256": "84f74f48c092b4b8b757c833e9de475a1e7ea946763d59754451c61a6a056f91"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/Manrope-Regular.ttf",
+          "size": 96544,
+          "sha256": "b746e7de1dacdb2bcbfd3b45bf8a30a5c0de02f47604b101bbde461070b624ce"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/Manrope-SemiBold.ttf",
+          "size": 96664,
+          "sha256": "50edc86b3a47f41facf9726a086ed00bdd8c7846c66caecdfb582b8a144d022b"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansSinhala-Medium.ttf",
+          "size": 89716,
+          "sha256": "839df9dc62fa9bcab9b02e638c3b7e2ea59cc49fd79bf99055f4d9c23f0e2b3d"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansSinhala-Regular.ttf",
+          "size": 90296,
+          "sha256": "c5504cbd3ee50feac33ff7737b588c7a3eefee4faaa07d379fb392e4586b6858"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansSinhala-SemiBold.ttf",
+          "size": 89084,
+          "sha256": "685e86b1b629ae5bed68a4dc07613b994018edbcf9d085b63642e4d033f8d67d"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansTamil-Medium.ttf",
+          "size": 46480,
+          "sha256": "1d1ff88260e6ea6928be2e2b1d19a054807ca91c1d7ac2cb18c9538bc10e36c7"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansTamil-Regular.ttf",
+          "size": 46600,
+          "sha256": "038cff72449bf6dcb6b47aa53a7f9b2bf93c8defc056890bb778291b263418ad"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansTamil-SemiBold.ttf",
+          "size": 46400,
+          "sha256": "8b8729103b51f5775b4309e07dd6fcb937747548ca595e4edebb17d936142de6"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/packages/jentra_platform/assets/web/drift_worker.js",
+          "size": 360104,
+          "sha256": "191fc9db018d2bbecb1723e81118fcf2c5c094df8644c2fcba2ed51df061e90a"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/packages/jentra_platform/assets/web/sqlite3.wasm",
+          "size": 750007,
+          "sha256": "fbcd2e8214f9231ea961e1b7706a22dd1194cfbfe6f26f13841b5aa7a0be1a1f"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/shaders/ink_sparkle.frag",
+          "size": 8890,
+          "sha256": "2dca5ab93d4ec29e963f996f3916320ba60825e9537dfb149a68008c7a16b026"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/assets/shaders/stretch_effect.frag",
+          "size": 6737,
+          "sha256": "ab412f07a5b9b50b67a885b24dbe16929738ae28630407d6490c924caf0a3220"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/canvaskit/canvaskit.js",
+          "size": 86987,
+          "sha256": "bb559f6080c7d312ac2a912b4abec9f68ff3d3022d4a603c7796b9b31460642b"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/canvaskit/canvaskit.js.symbols",
+          "size": 1356926,
+          "sha256": "384f80b392972c83fd4f262527e3d06215a297d33ed59732c726721e9d9311bd"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/canvaskit/canvaskit.wasm",
+          "size": 7284602,
+          "sha256": "fbed517a43e82452404446683f00f2e876d835aed84410695759e67b6bb01cd3"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/canvaskit/chromium/canvaskit.js",
+          "size": 86226,
+          "sha256": "6018b12bd8ed37e6952eee72d59c1cf7ad707ccdb74a0a45190010f77edd9068"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/canvaskit/chromium/canvaskit.js.symbols",
+          "size": 1235870,
+          "sha256": "31c86fac6042dd8b756150832c1d15495d0d07742e2718f75dbdde5a5a91455e"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/canvaskit/chromium/canvaskit.wasm",
+          "size": 5428806,
+          "sha256": "ae8ff1d858140f7b1300ced3fa89fb8c9dce0a400a0f4f1e11f6dcfb3315fdcf"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/canvaskit/skwasm_heavy.js",
+          "size": 63650,
+          "sha256": "cec554b46ddcf4c0e63d799e0556d546f42d2c3f69316fb4f67ed776f6104558"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/canvaskit/skwasm_heavy.js.symbols",
+          "size": 1672152,
+          "sha256": "b6b79ed497e11d4cd13cc46724f9e289eacc744d2d185e31c72d595cdf62772b"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/canvaskit/skwasm_heavy.wasm",
+          "size": 5216217,
+          "sha256": "565f5cc1cca6ab120f11934b105f01fec4b58b480c82e0889dca93af8e6f8635"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/canvaskit/skwasm.js",
+          "size": 63537,
+          "sha256": "71d7d3e34bf71b52bdba3b588b103bba8148ba28de5754083e01b3398e7a6e1c"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/canvaskit/skwasm.js.symbols",
+          "size": 1540006,
+          "sha256": "9137f1a3ae744dea575043abfc6e063a047e910e6dab1ee53e496c975d1c033e"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/canvaskit/skwasm.wasm",
+          "size": 3593715,
+          "sha256": "e540fd5e8303b7b68ec2718cb49e9c421f8ade3075b15e02a7059a62654df9a1"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/canvaskit/webparagraph/canvaskit.js",
+          "size": 76114,
+          "sha256": "3110e3e4d9b7b5657d336f253aaca8acca5777cde9319fb69ac302d6ff5a8b23"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/canvaskit/webparagraph/canvaskit.js.symbols",
+          "size": 963641,
+          "sha256": "44d6c47919106235cf32252252490cdf798d907ee874ba343ab53dc94bc2a9dc"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/canvaskit/webparagraph/canvaskit.wasm",
+          "size": 3729129,
+          "sha256": "0ce1b05082efdc8529550e8a01f6ff0593972d55525035010e26f5600aa9f254"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/canvaskit/wimp.js",
+          "size": 59127,
+          "sha256": "8fd8a47480c6eb0a374d159912d0b3fb15661b41f5c113ecdd39c2f01f2bee46"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/canvaskit/wimp.js.symbols",
+          "size": 1813030,
+          "sha256": "b4907ebd33131302a8cd99f7c55f52357bdfde04f421b605a616ba8764ae1de4"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/canvaskit/wimp.wasm",
+          "size": 3581677,
+          "sha256": "e924eaafd801d41e017d178f3fd5cf8a417f641fe35c9ed34a4e1d7582283e0c"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/favicon.png",
+          "size": 917,
+          "sha256": "7ab2525f4b86b65d3e4c70358a17e5a1aaf6f437f99cbcc046dad73d59bb9015"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/flutter_bootstrap.js",
+          "size": 13263,
+          "sha256": "0538e968f31908a27b4b45edf132f043b87a8299f0cef85991007d0a3ff9c639"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/flutter_service_worker.js",
+          "size": 815,
+          "sha256": "dbfbe64ae5be5b462abb97338eb9af783ed4ed57a8c73a53c2a44488a26f6416"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/flutter.js",
+          "size": 12136,
+          "sha256": "2beb1ce6b159c71540aa66030af1d7964b6a92377cc78473745e02f97b74effe"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/icon.png",
+          "size": 406813,
+          "sha256": "9670c0a23c40185a2a067648253d1eb94d380b5a30ddb6441ed1449d6f05ee0e"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/icons/Icon-192.png",
+          "size": 5292,
+          "sha256": "3dce99077602f70421c1c6b2a240bc9b83d64d86681d45f2154143310c980be3"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/icons/Icon-512.png",
+          "size": 8252,
+          "sha256": "baccb205ae45f0b421be1657259b4943ac40c95094ab877f3bcbe12cd544dcbe"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/icons/Icon-maskable-192.png",
+          "size": 5594,
+          "sha256": "d2c842e22a9f4ec9d996b23373a905c88d9a203b220c5c151885ad621f974b5c"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/icons/Icon-maskable-512.png",
+          "size": 20998,
+          "sha256": "6aee06cdcab6b2aef74b1734c4778f4421d2da100b0ff9e52b21b55240202929"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/index.html",
+          "size": 795,
+          "sha256": "953ce070fbfe1b1de98b7402b4a53454b9201c96c74f216a39eba6ea69a9100f"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/main.dart.js",
+          "size": 3925539,
+          "sha256": "aaa748becbba4268be24d219ce3fe993afec2d2decd7ee92fdfa4d63c475872d"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/manifest.json",
+          "size": 334,
+          "sha256": "cb9d7f6d0b8321df80fd5898cee55d2f1ceb2fece6708a5e0543951a6823d148"
+        },
+        {
+          "path": "apps/jentra_sales/build/field-rollout-candidate/version.json",
+          "size": 94,
+          "sha256": "360f990e0625bb47849e9c3298f0471654ac406b2ed13c5465c6688949ce7dc0"
+        }
+      ],
+      "deployed": false
+    },
+    "jentra_desktop": {
+      "directory": "apps/jentra_desktop/build/field-rollout-candidate",
+      "release": true,
+      "optimizationLevel": 1,
+      "csp": true,
+      "externalWebResources": false,
+      "wasmBuilt": false,
+      "defines": [
+        "FIELD_SALES_CANDIDATE_ENABLED=true",
+        "FIELD_SALES_EMAIL_CONFIRMATION_ENABLED=true",
+        "FIELD_SALES_DELIVERY_CONFIRMATION_ENABLED=true"
+      ],
+      "publicConfiguration": "Jentra URL and publishable client key only",
+      "files": [
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/.last_build_id",
+          "size": 32,
+          "sha256": "811bb11f481a6e1c155e1bf2b9c21ab275c7871068e7966f0bc4d2bbe4c5f0bd"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/AssetManifest.bin",
+          "size": 2751,
+          "sha256": "50c60bed4e0cc33f80621ea33a422e6108a76b823a7c23c79509a64049297fa4"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/AssetManifest.bin.json",
+          "size": 3670,
+          "sha256": "8786ddbfc1a5be88c83e9dd2f9b3881bb44d4650d152f0801059e4fd2a6560e5"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/FontManifest.json",
+          "size": 1656,
+          "sha256": "70b7da1f8847204fca8a857da37cee3946f329b30f0add8dfed34873159fb5d6"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/fonts/fallback/Roboto-Regular.ttf",
+          "size": 171676,
+          "sha256": "79e851404657dac2106b3d22ad256d47824a9a5765458edb72c9102a45816d95"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/fonts/MaterialIcons-Regular.otf",
+          "size": 26492,
+          "sha256": "f7956ac251c643380cb0aa31ade33ea83ba175a4e97e5a9ec11078b337ba1f22"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/NOTICES",
+          "size": 1463138,
+          "sha256": "19fa809dc8dcc8c812678b615d07a76f563f4fdf21260b8c17abd083a0bf7d22"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/cupertino_icons/assets/CupertinoIcons.ttf",
+          "size": 1472,
+          "sha256": "3d90c370aa4cf00dc57ee2b902f6652147c0f81e03e483df584a9c08b1687c9d"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/brand/jentra-logo-board.png",
+          "size": 1477131,
+          "sha256": "bcb444dafed12cfbca2e2077e50dd4fc8f0ce7c5e212a91fddd08dafecba1ba6"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/brand/jentra-mark.png",
+          "size": 406813,
+          "sha256": "9670c0a23c40185a2a067648253d1eb94d380b5a30ddb6441ed1449d6f05ee0e"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/IBMPlexMono-Regular.ttf",
+          "size": 135580,
+          "sha256": "6a3412f058c7d8dfd9170c41e85ade48e5156ecb89356110ca57a0a27734af46"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/IBMPlexMono-SemiBold.ttf",
+          "size": 140216,
+          "sha256": "d3c38e55c78f5b0f28009fddba4834ec503278936a5986032424c9bd2d23aa46"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/Manrope-Bold.ttf",
+          "size": 96492,
+          "sha256": "ec45a353e86a9988decd9d33b2e126f9bb672f5a14e816a5440b49e208aa45df"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/Manrope-Medium.ttf",
+          "size": 96624,
+          "sha256": "84f74f48c092b4b8b757c833e9de475a1e7ea946763d59754451c61a6a056f91"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/Manrope-Regular.ttf",
+          "size": 96544,
+          "sha256": "b746e7de1dacdb2bcbfd3b45bf8a30a5c0de02f47604b101bbde461070b624ce"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/Manrope-SemiBold.ttf",
+          "size": 96664,
+          "sha256": "50edc86b3a47f41facf9726a086ed00bdd8c7846c66caecdfb582b8a144d022b"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansSinhala-Medium.ttf",
+          "size": 89716,
+          "sha256": "839df9dc62fa9bcab9b02e638c3b7e2ea59cc49fd79bf99055f4d9c23f0e2b3d"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansSinhala-Regular.ttf",
+          "size": 90296,
+          "sha256": "c5504cbd3ee50feac33ff7737b588c7a3eefee4faaa07d379fb392e4586b6858"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansSinhala-SemiBold.ttf",
+          "size": 89084,
+          "sha256": "685e86b1b629ae5bed68a4dc07613b994018edbcf9d085b63642e4d033f8d67d"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansTamil-Medium.ttf",
+          "size": 46480,
+          "sha256": "1d1ff88260e6ea6928be2e2b1d19a054807ca91c1d7ac2cb18c9538bc10e36c7"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansTamil-Regular.ttf",
+          "size": 46600,
+          "sha256": "038cff72449bf6dcb6b47aa53a7f9b2bf93c8defc056890bb778291b263418ad"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/jentra_design_system/assets/fonts/NotoSansTamil-SemiBold.ttf",
+          "size": 46400,
+          "sha256": "8b8729103b51f5775b4309e07dd6fcb937747548ca595e4edebb17d936142de6"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/jentra_platform/assets/web/drift_worker.js",
+          "size": 360104,
+          "sha256": "191fc9db018d2bbecb1723e81118fcf2c5c094df8644c2fcba2ed51df061e90a"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/jentra_platform/assets/web/sqlite3.wasm",
+          "size": 750007,
+          "sha256": "fbcd2e8214f9231ea961e1b7706a22dd1194cfbfe6f26f13841b5aa7a0be1a1f"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/material_ui/shaders/ink_sparkle.frag",
+          "size": 8890,
+          "sha256": "2dca5ab93d4ec29e963f996f3916320ba60825e9537dfb149a68008c7a16b026"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/pdfrx/assets/pdfium_client.js",
+          "size": 1856,
+          "sha256": "1ac8729c01dd67d03008f410fda7e2f9928d695c0a81e65ebd65bdf622ae5e65"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/pdfrx/assets/pdfium_worker.js",
+          "size": 106518,
+          "sha256": "fce9b77e7b1f45b45237d9b4a8cdca47a5007d70d342024ed4d730adc54f5f96"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/packages/pdfrx/assets/pdfium.wasm",
+          "size": 5231809,
+          "sha256": "5b2cbb18e9dc361dae375e971c7e75f7306d39b7749ad4fced475579e6a549df"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/shaders/ink_sparkle.frag",
+          "size": 8890,
+          "sha256": "2dca5ab93d4ec29e963f996f3916320ba60825e9537dfb149a68008c7a16b026"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/assets/shaders/stretch_effect.frag",
+          "size": 6737,
+          "sha256": "ab412f07a5b9b50b67a885b24dbe16929738ae28630407d6490c924caf0a3220"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/canvaskit/canvaskit.js",
+          "size": 86987,
+          "sha256": "bb559f6080c7d312ac2a912b4abec9f68ff3d3022d4a603c7796b9b31460642b"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/canvaskit/canvaskit.js.symbols",
+          "size": 1356926,
+          "sha256": "384f80b392972c83fd4f262527e3d06215a297d33ed59732c726721e9d9311bd"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/canvaskit/canvaskit.wasm",
+          "size": 7284602,
+          "sha256": "fbed517a43e82452404446683f00f2e876d835aed84410695759e67b6bb01cd3"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/canvaskit/chromium/canvaskit.js",
+          "size": 86226,
+          "sha256": "6018b12bd8ed37e6952eee72d59c1cf7ad707ccdb74a0a45190010f77edd9068"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/canvaskit/chromium/canvaskit.js.symbols",
+          "size": 1235870,
+          "sha256": "31c86fac6042dd8b756150832c1d15495d0d07742e2718f75dbdde5a5a91455e"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/canvaskit/chromium/canvaskit.wasm",
+          "size": 5428806,
+          "sha256": "ae8ff1d858140f7b1300ced3fa89fb8c9dce0a400a0f4f1e11f6dcfb3315fdcf"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/canvaskit/skwasm_heavy.js",
+          "size": 63650,
+          "sha256": "cec554b46ddcf4c0e63d799e0556d546f42d2c3f69316fb4f67ed776f6104558"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/canvaskit/skwasm_heavy.js.symbols",
+          "size": 1672152,
+          "sha256": "b6b79ed497e11d4cd13cc46724f9e289eacc744d2d185e31c72d595cdf62772b"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/canvaskit/skwasm_heavy.wasm",
+          "size": 5216217,
+          "sha256": "565f5cc1cca6ab120f11934b105f01fec4b58b480c82e0889dca93af8e6f8635"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/canvaskit/skwasm.js",
+          "size": 63537,
+          "sha256": "71d7d3e34bf71b52bdba3b588b103bba8148ba28de5754083e01b3398e7a6e1c"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/canvaskit/skwasm.js.symbols",
+          "size": 1540006,
+          "sha256": "9137f1a3ae744dea575043abfc6e063a047e910e6dab1ee53e496c975d1c033e"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/canvaskit/skwasm.wasm",
+          "size": 3593715,
+          "sha256": "e540fd5e8303b7b68ec2718cb49e9c421f8ade3075b15e02a7059a62654df9a1"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/canvaskit/webparagraph/canvaskit.js",
+          "size": 76114,
+          "sha256": "3110e3e4d9b7b5657d336f253aaca8acca5777cde9319fb69ac302d6ff5a8b23"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/canvaskit/webparagraph/canvaskit.js.symbols",
+          "size": 963641,
+          "sha256": "44d6c47919106235cf32252252490cdf798d907ee874ba343ab53dc94bc2a9dc"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/canvaskit/webparagraph/canvaskit.wasm",
+          "size": 3729129,
+          "sha256": "0ce1b05082efdc8529550e8a01f6ff0593972d55525035010e26f5600aa9f254"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/canvaskit/wimp.js",
+          "size": 59127,
+          "sha256": "8fd8a47480c6eb0a374d159912d0b3fb15661b41f5c113ecdd39c2f01f2bee46"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/canvaskit/wimp.js.symbols",
+          "size": 1813030,
+          "sha256": "b4907ebd33131302a8cd99f7c55f52357bdfde04f421b605a616ba8764ae1de4"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/canvaskit/wimp.wasm",
+          "size": 3581677,
+          "sha256": "e924eaafd801d41e017d178f3fd5cf8a417f641fe35c9ed34a4e1d7582283e0c"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/flutter_bootstrap.js",
+          "size": 13116,
+          "sha256": "2fb3cce611eabb06ed170c6f7c996461ba5adcd8bba338f435d6976a88527dad"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/flutter_service_worker.js",
+          "size": 815,
+          "sha256": "dbfbe64ae5be5b462abb97338eb9af783ed4ed57a8c73a53c2a44488a26f6416"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/flutter.js",
+          "size": 12136,
+          "sha256": "2beb1ce6b159c71540aa66030af1d7964b6a92377cc78473745e02f97b74effe"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/icon.png",
+          "size": 406813,
+          "sha256": "9670c0a23c40185a2a067648253d1eb94d380b5a30ddb6441ed1449d6f05ee0e"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/index.html",
+          "size": 805,
+          "sha256": "d76e396b4d066f53f7216b3d45129387af055b308b3e5ecbfe660fa5387486fd"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/main.dart.js",
+          "size": 8672819,
+          "sha256": "23568710280228d9db97eb5f44dc635cdb1abf472f1ae1372573bbfbbfbda351"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/manifest.json",
+          "size": 429,
+          "sha256": "7b1cb20f2716284b25fe293c18b4c1a7a41fe0e84fa7e9df9a84024cab71f586"
+        },
+        {
+          "path": "apps/jentra_desktop/build/field-rollout-candidate/version.json",
+          "size": 101,
+          "sha256": "85e11a805b34ec582cf0bdfefc6505b2189f8746f15ef5a6dda1507ca8117439"
+        }
+      ],
+      "deployed": false
+    }
+  },
+  "compatibility": {
+    "columnProjection": "review/schema-compatibility.json",
+    "addedCatalogRelations": [
+      "field_sales.assignments",
+      "field_sales.confirmation_challenges",
+      "field_sales.confirmation_contacts",
+      "field_sales.confirmation_transport",
+      "field_sales.delivery_challenges",
+      "field_sales.delivery_responses",
+      "field_sales.mail_jobs",
+      "field_sales.mail_policies",
+      "field_sales.order_progressions",
+      "field_sales.order_requests",
+      "field_sales.order_responses",
+      "field_sales.price_policies",
+      "field_sales.principals",
+      "field_sales.progression_permits"
+    ],
+    "manualReview": "review/rollout-plan.json",
+    "manualItemsOwnerAccepted": false
+  },
+  "hosted": {
+    "threeCandidateRollback": {
+      "source": "hosted-rehearsal.json",
+      "postgres": "17.6",
+      "sqlSha256": "06953135b63b9ea19ae9d5ff482a65509ed4908a62cadb327296118d2d4b8e71",
+      "passed": true,
+      "migrationInstalled": false
+    },
+    "sixCandidateRehearsal": {
+      "source": "hosted-six-rehearsal.json",
+      "preparedSqlSha256": "cca874a3461a73933e4081b228f9ce97d8a714ac655d87318c8d183df74fd3db",
+      "authorized": true,
+      "executed": true,
+      "passed": true,
+      "fullHostedSchema": true,
+      "postgresMajor": 17,
+      "observedAt": "2026-11-03T07:16:13.615493+00:00"
+    },
+    "publicHttp": {
+      "source": "hosted-http.json",
+      "salesStatus": 200,
+      "requiredHeadersPresent": true,
+      "recipientRpcStatus": 404,
+      "workerGetStatus": 404,
+      "preview": true
+    }
+  },
+  "localBrowser": {
+    "attempted": true,
+    "passed": false,
+    "reason": "Connected in-app browser could not reach the Windows loopback preview (ERR_CONNECTION_TIMED_OUT). No UI or fragment-scrubbing browser result claimed; temporary server stopped."
+  },
+  "gates": {
+    "senderDomainVerified": false,
+    "approvedMailboxSupplied": false,
+    "providerCredentialsConfigured": false,
+    "emailActuallySent": false,
+    "mailboxLinkAndCodeReceived": false,
+    "hostedRecipientPostAccepted": false,
+    "sixCandidateHostedRehearsalPassed": true,
+    "migrationsInstalled": false,
+    "workerDeployed": false,
+    "clientsDeployed": false,
+    "mailEnabled": false,
+    "genuineSessionsAndMfaAccepted": false,
+    "physicalDevicesAccepted": false,
+    "companyPilotSignedOff": false
+  },
+  "sources": {
+    "supabase/candidates/20261031090000_field_sales_governance.sql": "46fb83fb4bae57059c483cdb1f06f9021d12d34525194321611e70170a2a71b1",
+    "supabase/candidates/20261102090000_field_order_email_confirmation.sql": "49f4e7747d68b32fd8f950ddda3cc2ae830a003215724f9ff0e7af2cfd34052a",
+    "supabase/candidates/20261102120000_field_confirmation_company_workspace.sql": "072aeeba82df5e75c0c51b8083a67568a40f73994879880023888df743d85b8c",
+    "supabase/candidates/20261103090000_field_sales_mail_worker.sql": "0cfb9cbd8bb00dd8b5b24b588a9b4929ae625842ae199f5deb3abf55d27c3e32",
+    "supabase/candidates/20261103100000_field_sales_company_progression.sql": "98798644a43e797ceb8854b1c568f8c83631111074ef3285d71168c4abb19ee3",
+    "supabase/candidates/20261103110000_field_sales_delivery_acknowledgement.sql": "e94a4ca358b4fc7846c36a4cfb64adcfc60fe8ad37b9ecba46483872ec19f2a1",
+    "workers/field-sales/mail_worker.mjs": "ff9c90084b4dcf5a4ce80d3eebbd21bdbb6321f8359e0d3a0e66460fd7f8b74d",
+    "workers/field-sales/mail_worker.test.mjs": "e871f7afc39467453b28a2d427031e5499a1174c3a4b0784bb08a3d61c377dd4",
+    "workers/field-sales/.env.example": "98ce3902d5da735944f87abfb31fc70a2c67980264a9ae9f007001dc97af6164",
+    "supabase/functions/field-sales-mail/index.ts": "3d2859f1c0f68ad57826398de7b6279e64c783bd13abd2f5293bc858154450ea",
+    "supabase/functions/field-sales-mail/deno.json": "8eaa0138a1098b0c404f6cbb3637e293299b3c7be87c31eb20260dce50c780bf",
+    "supabase/candidates/run-field-rollout-test.mjs": "444987733dcb3370ce5be16a8905d053acd9f76ad6404ce869c11addf6187aa0",
+    "supabase/candidates/tests/field_mail.test.mjs": "10ccc8e953571a1a5be2ddca5842486dab11a4079baff9e689aa4e9d009496ae",
+    "supabase/candidates/tests/field_progression.test.mjs": "f5f2e1a3c6861a93d32fff9c4c9ab260826119be2df3f692b28b19d385bcdacb",
+    "supabase/candidates/tests/field_delivery.test.mjs": "7e72cf56e49734dd8b517c8a7fcdde99c1cc949ec17bedc251a1fc69c8f456dc",
+    "supabase/candidates/tests/field_rollout_runner.test.mjs": "04108f57950b889ef0b8eb6c26455ee770da0da3045acef19f271404b85ef099",
+    "tools/field-sales/prepare-rehearsal.mjs": "a3def109244319bab678353c659622a936969e93bffbf4a6286e139382f048e9",
+    "tools/field-sales/prepare-rollout-review.mjs": "5e9de558ba2099f6389523219a55425de1c830bd6abdb3caaafc909b3b1aeaa9",
+    "tools/field-sales/check-hosted-readiness.mjs": "463879fad71d3967dbfaaafe996703c7b6eb1bad3dbc69162cfc1c4b02f77bff",
+    "tools/field-sales/record-verification.mjs": "f4c27ef83e0a37197674451ce80f75716ef41c36021fa62979b32eb0d21a0479",
+    "apps/jentra_sales/lib/main.dart": "c17ca7e57038d005913a51053f2b7106cbe6505ddc439578385aba6ac7207dae",
+    "apps/jentra_sales/lib/src/delivery_confirmation_controller.dart": "15f0a30ca6c3537b144f47906f1e1997f2a5f440c4dbe6014ce3455af4fd0e11",
+    "apps/jentra_sales/lib/src/ui/delivery_confirmation.dart": "6aa2b5b745a4a2d2e141897610cf5815f43c0609e7c3186da5a0cd49ccb5138d",
+    "apps/jentra_sales/lib/src/ui/field_sales_workspace.dart": "788c964f9afa08318e6a0dfb9ceaf93d9e218c775482f5d0937208bed111b90b",
+    "apps/jentra_sales/test/delivery_confirmation_test.dart": "70971190d27999671dfe34efe1d5f40c901063ce751ac669fc5b889c90b7bb2f",
+    "apps/jentra_sales/README.md": "8506983ffe630633d4cd4c75d57b1ae0eacf091536b8037c6ffb405766ef4623",
+    "packages/jentra_platform/lib/field_confirmation.dart": "357467251052a45fae6f7ac9b5eb2598682e923090f93f55ab711f8347d00120",
+    "packages/jentra_platform/lib/src/field_confirmation_link.dart": "5611ff937822de2e1b4308328151b75b439b54ccfe4d2e362cfcfb658b61caf3",
+    "packages/jentra_platform/lib/field_confirmation_company.dart": "018e7be6fe3e1fab258e3cf5e86462fa98aad3aec7e9ba5524ad8812079a85db",
+    "packages/jentra_platform/lib/src/field_confirmation_company_store.dart": "4d830ce753c83ec0cfd79680a3a82f6a4f939612f2d5fed686ca750f57513548",
+    "packages/jentra_platform/test/field_delivery_gateway_test.dart": "e219ffcde24b2fd7bc4d82b075fed6b448c15d29d196904be8af60c0ff31f3cc",
+    "packages/jentra_platform/test/field_delivery_company_test.dart": "afa5493e44b198e63a267a3fa54096d2d5591bc63dea51ab855b4c204cfbc580",
+    "packages/jentra_domain/lib/src/sales_order_workspace.dart": "74621d34d09c158f2e9283579a6a3afaf7440fe76edb6faa86dfd8c0314cd101",
+    "apps/jentra_desktop/lib/main.dart": "04d9396c9257ad0d4041d6f4cde042c561c0d15c55acdf76e618003604d692cc",
+    "apps/jentra_desktop/lib/src/router.dart": "83056328ba8b3e2570ea15d54f211d879334dd816fa7027448b85877e2f832a8",
+    "apps/jentra_desktop/lib/src/shell/navigation.dart": "b6cbb7fa9c317d8ae9c0791dce6d3af125dad6fce6885073d333d9c65b09524c",
+    "apps/jentra_desktop/lib/src/features/sales/sales_order_controller.dart": "6e5783d12e109708f21dcdfcaa699a9e4e51c8edc58c6c6b0a663af6021f2fe2",
+    "apps/jentra_desktop/lib/src/features/sales/sales_order_dialogs.dart": "6f0b968868f25d1477077cdc9fe0f5f94fe1ff4781d973f969e9fee517df1745",
+    "apps/jentra_desktop/lib/src/features/sales/sales_order_screen.dart": "8a87b6680fc6006a9feb7abda1f00961ff3cccbd938219f78bda57c1e118eba2",
+    "apps/jentra_desktop/lib/src/features/sales/field_confirmation_company_controller.dart": "a0fef9d0d5ef15fc87a27f10ed99f3aafbbc5f8f59e0283e7d2b85645665e40f",
+    "apps/jentra_desktop/lib/src/features/sales/field_confirmation_company_screen.dart": "603eebc764f7210058877a3862b83fbc6f0ed80cca0dc68a75d63f6e20ce94b5",
+    "apps/jentra_desktop/test/sales_order_controller_test.dart": "b650bfb7ed97f0a51b79956aa0e0fd9777619b3ed3a8bc2d90bb639cdcd35a2f",
+    "apps/jentra_desktop/test/field_confirmation_company_controller_test.dart": "8a3be15e6660715f56b13a9bcfa4e11397f341d799e3cf33f13f40983ffc6f00",
+    "apps/jentra_desktop/test/field_confirmation_company_screen_test.dart": "f5120800f15e001bcc8c988e4461cd3bf54ee321c4c9df81c7e8b858e55e9367",
+    "apps/jentra_desktop/test/field_confirmation_navigation_test.dart": "80254d1332d3d41c99775c27d1e897ec6e5c43a346faec0ef87b16f500a65fde",
+    "docs/development/field-sales-rollout-candidate-20261103.md": "159223ec7e15bd31c9dbce29fc38091db7ecbfe7e55cc2abda507fbd9660e360",
+    "docs/development/field-company-confirmation-candidate-20261102.md": "c7eb35865e0c26f3a294cd2cee90b1a125fd5b2147a8bb11fbffdc9077bbe1a4",
+    "docs/blueprint/mobile-apps/README.md": "f4a60abe1a5984ba992dd3ca746779d8653273679101f6d239216ce4339f20e7"
+  },
+  "artifacts": {
+    "docs/verification/field-rollout-20261103/analyze-initial.log": {
+      "size": 3552,
+      "sha256": "68abfb14149b758bb48ca6b041a0728847e60c636a23f3318969c48727e800bc"
+    },
+    "docs/verification/field-rollout-20261103/analyze.log": {
+      "size": 767,
+      "sha256": "38c526957068418b26654d259ff46418a4c2f9673735040111011b129e4a331d"
+    },
+    "docs/verification/field-rollout-20261103/default-navigation.log": {
+      "size": 234,
+      "sha256": "cdee555fa9bbd058b82ca87fca6a7da4337fe36cf78f6afd97608534a3f18807"
+    },
+    "docs/verification/field-rollout-20261103/delivery-tests-initial.log": {
+      "size": 1042,
+      "sha256": "52a77e0cc3375861de3a03dd8d6f35797284d357f258729cbc866916c33d4751"
+    },
+    "docs/verification/field-rollout-20261103/deno-check.log": {
+      "size": 52,
+      "sha256": "4b70b211f72a82fb51f465893cfd3dc750cf0703be843bddc861cb06d612a4d0"
+    },
+    "docs/verification/field-rollout-20261103/desktop-tests.log": {
+      "size": 12330,
+      "sha256": "74f528c3cc32a6addc45153f9f6511a73af87d89900f36091696843e09ee13b8"
+    },
+    "docs/verification/field-rollout-20261103/desktop-web-build.log": {
+      "size": 598,
+      "sha256": "6acafdfb26deb9e42ae42f9e7d55562c738e2819ac5d6fd6e5e1ea6537814a57"
+    },
+    "docs/verification/field-rollout-20261103/domain-tests.log": {
+      "size": 1360,
+      "sha256": "4255c5db803c4be742caac7ee7e72f724afccd48d1924e90f55d31c621b12dae"
+    },
+    "docs/verification/field-rollout-20261103/format-initial.log": {
+      "size": 1248,
+      "sha256": "9290e687eb2bffa203761732768e350dc9d64c4fb0b81d5ed3d64dfb243f68fa"
+    },
+    "docs/verification/field-rollout-20261103/format-tests-initial.log": {
+      "size": 799,
+      "sha256": "849b8370f2a527d4f7a87651ae5a5fc13e7567af4fb6d55923e360f3bbc9874d"
+    },
+    "docs/verification/field-rollout-20261103/format.log": {
+      "size": 49,
+      "sha256": "6101db440dc311225f9a14213762eada5a1df64888fe793914c1d7fa8094c079"
+    },
+    "docs/verification/field-rollout-20261103/full-schema-rollback.sql": {
+      "size": 97198,
+      "sha256": "06953135b63b9ea19ae9d5ff482a65509ed4908a62cadb327296118d2d4b8e71"
+    },
+    "docs/verification/field-rollout-20261103/hosted-http.json": {
+      "size": 3414,
+      "sha256": "5f9011469f282c20a593a9fe9e951a4dcc0d2921a799885a60d2232727a97149"
+    },
+    "docs/verification/field-rollout-20261103/hosted-preflight.sql": {
+      "size": 998,
+      "sha256": "e5bf904cb50eb330850f6c294ae19febb07396e8b61112e3a95c2b0cd7ef794b"
+    },
+    "docs/verification/field-rollout-20261103/hosted-rehearsal.json": {
+      "size": 1521,
+      "sha256": "242292e4f13a8718f5454c58a52b5e2e0d011353ae023f3f18561a9fb7d2d645"
+    },
+    "docs/verification/field-rollout-20261103/hosted-rehearsal.png": {
+      "size": 43240,
+      "sha256": "8fed91465d21ae76fecc9d7a983a9f2e04fe8a51aa21e18840af5213e548f26f"
+    },
+    "docs/verification/field-rollout-20261103/hosted-six-rehearsal.json": {
+      "size": 2192,
+      "sha256": "c53e1b3fe960de2b509dc17935e2e362117d56d47ec725ea3581ab2673d41f33"
+    },
+    "docs/verification/field-rollout-20261103/hosted-six-rehearsal.png": {
+      "size": 30229,
+      "sha256": "6f3316e9db90f140c33a03a607b59122a42002ef4ca4db068223a0da4a4b44de"
+    },
+    "docs/verification/field-rollout-20261103/node-tests.log": {
+      "size": 1479,
+      "sha256": "336c8ebf51e58c752ef87673935816e6dda29b4085545c71399a3cd4f23171d4"
+    },
+    "docs/verification/field-rollout-20261103/platform-tests.log": {
+      "size": 5141,
+      "sha256": "39d7d37486833fd20333c6cf7418847d21b10d6bff263cad50baac4767ac323d"
+    },
+    "docs/verification/field-rollout-20261103/postgres-result.json": {
+      "size": 24536,
+      "sha256": "bbf52a07c40492543ad7d8fac949392616692ca0eaf4e8f201bab0eca477846c"
+    },
+    "docs/verification/field-rollout-20261103/postgres.log": {
+      "size": 863,
+      "sha256": "6129fde8835eff5fddd4e9b3a612ffa3c2929b5f58180c71d96634f59b3eff02"
+    },
+    "docs/verification/field-rollout-20261103/README.md": {
+      "size": 7689,
+      "sha256": "85a7d72003b8a3eb4ca8c89dfb4020af466eb763e5beb54f385e376e74db8c28"
+    },
+    "docs/verification/field-rollout-20261103/rehearsal-plan.json": {
+      "size": 1222,
+      "sha256": "4cafb3976d0183176de6da3d85450a2b5939b182e713ffc1c93af02621d9a1bb"
+    },
+    "docs/verification/field-rollout-20261103/review/generated-migration-plan.json": {
+      "size": 9430,
+      "sha256": "b17175d8e5ab5a81b0891745e6497f88706e2a85d9999d4e8df5fbd2bc81750a"
+    },
+    "docs/verification/field-rollout-20261103/review/generated-rollback-runbook.json": {
+      "size": 24289,
+      "sha256": "7d8077b658b659386cf5addf12370f12fe6ff2e1746df8ecf061c2548d19c403"
+    },
+    "docs/verification/field-rollout-20261103/review/generated-rollback-runbook.txt": {
+      "size": 11231,
+      "sha256": "67f54a9e6d12110f6fe148d79fb3403136e203fe9a747d0f594cf01b0894a297"
+    },
+    "docs/verification/field-rollout-20261103/review/migration-spec.json": {
+      "size": 992,
+      "sha256": "456ccb9e94e6293fe3c902eecf46c888dbbb40a1a45e3f0b89d1104ad9bd958f"
+    },
+    "docs/verification/field-rollout-20261103/review/organization-acceptance-template.json": {
+      "size": 1710,
+      "sha256": "63975ec83f80ab1548a591f61c741366e6f53e36c1a080d3ad0397038f2cc3de"
+    },
+    "docs/verification/field-rollout-20261103/review/rollout-plan.json": {
+      "size": 4264,
+      "sha256": "d468bcee7f1e83c35e980ae1c4a9acf77e62129116e8c86e6daaa83cb4b79781"
+    },
+    "docs/verification/field-rollout-20261103/review/rollout-runbook.md": {
+      "size": 12930,
+      "sha256": "b6ce53f4ed89808639e7a80a16e516c6c4f8d9566ca69365344339e74bdd863c"
+    },
+    "docs/verification/field-rollout-20261103/review/schema-compatibility.json": {
+      "size": 13992,
+      "sha256": "e508d57ff3f1c151db77a26571e3226ff4b37be8d2f33fcf24b00f5caa6f4b0d"
+    },
+    "docs/verification/field-rollout-20261103/review/six-candidate-rollback.sql": {
+      "size": 155469,
+      "sha256": "cca874a3461a73933e4081b228f9ce97d8a714ac655d87318c8d183df74fd3db"
+    },
+    "docs/verification/field-rollout-20261103/sales-tests.log": {
+      "size": 11434,
+      "sha256": "492098bb6054c71001d694444fbea4423b7d70cc21c8056221d4bcb56968d138"
+    },
+    "docs/verification/field-rollout-20261103/sales-web-build.log": {
+      "size": 598,
+      "sha256": "6242fa00a7752dd4266ff84205b9e908143f4e1cf3dabba140706c6b1756c119"
+    },
+    "docs/verification/field-rollout-20261103/schema-after.json": {
+      "size": 341595,
+      "sha256": "e3c627322764226d44d665b21f86f32308dbdf6312df4f50c6eedf9c208aeaef"
+    },
+    "docs/verification/field-rollout-20261103/schema-before.json": {
+      "size": 318906,
+      "sha256": "639b6a680c2c9dbb1b0f1f521404a41da739eea3752bfda367d2054f53b978d7"
+    }
+  },
+  "boundary": "Candidate implementation and bounded evidence only. The exact hosted rollback record determines rehearsal status. Sender/domain/mailbox, installation/deployment and each organization acceptance remain separate gates."
+}

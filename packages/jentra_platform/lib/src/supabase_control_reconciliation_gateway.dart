@@ -68,7 +68,7 @@ final class SupabaseControlReconciliationGateway
         code: code,
         message: switch (code) {
           'MFA_REQUIRED' =>
-            'Complete recent MFA in account security, then retry the saved request.',
+            'Verify your sign-in with your authenticator, then retry the saved request.',
           'PERMISSION_DENIED' =>
             'Current finance, reconciliation or reversal access is required.',
           'VERSION_CONFLICT' =>

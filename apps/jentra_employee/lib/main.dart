@@ -11,6 +11,9 @@ import 'src/data/employee_storage_factory.dart';
 import 'src/data/employee_photo_factory.dart';
 import 'src/data/employee_push.dart';
 import 'src/data/employee_mfa.dart';
+import 'src/data/employee_account_actions.dart';
+import 'src/data/employee_document_export.dart';
+import 'src/data/employee_self_service.dart';
 import 'src/ui/employee_mfa_panel.dart';
 import 'src/employee_app.dart';
 import 'src/employee_configuration.dart';
@@ -24,10 +27,18 @@ Future<void> main() async {
       : NativeEmployeeKeyValueStore();
   final authStorage = EmployeeAuthStorage(secureStore);
   EmployeeGateway? gateway;
+  EmployeeAccountActions? accountActions;
   EmployeeFailure? setupError;
   if (config.isValid) {
     try {
       await secureStore.read('jentra.employee.storage.check.v1');
+      final callbacks = kIsWeb
+          ? EmployeeAuthCallbackPolicy.browser(Uri.base)
+          : EmployeeAuthCallbackPolicy.native(
+              development:
+                  !kReleaseMode ||
+                  const bool.fromEnvironment('JENTRA_EMPLOYEE_DEVELOPMENT'),
+            );
       await Supabase.initialize(
         url: config.url,
         publishableKey: config.publishableKey,
@@ -35,12 +46,21 @@ Future<void> main() async {
           authFlowType: AuthFlowType.pkce,
           localStorage: authStorage,
           pkceAsyncStorage: EmployeePkceStorage(secureStore),
-          detectSessionInUri: kIsWeb,
+          detectSessionInUri: true,
+          detectSessionInUriPredicate: callbacks.allows,
         ),
       );
       gateway = SupabaseEmployeeGateway(
         Supabase.instance.client,
         authStorage: authStorage,
+      );
+      accountActions = EmployeeAccountActions(
+        gateway: SupabaseEmployeeAccountGateway(
+          Supabase.instance.client,
+          authStorage,
+        ),
+        policy: callbacks,
+        authEvents: Supabase.instance.client.auth.onAuthStateChange,
       );
     } on EmployeeFailure catch (failure) {
       setupError = failure;
@@ -71,6 +91,10 @@ Future<void> main() async {
     gateway: gateway,
     draftStore: EmployeeDraftStore(secureStore),
     photoPicker: createEmployeePhotoPicker(),
+    selfServiceGateway: gateway is SupabaseEmployeeGateway
+        ? SupabaseEmployeeSelfServiceGateway(gateway.client)
+        : null,
+    documentExporter: createEmployeeDocumentExporter(),
     beforeIdentityChange: () async {
       await push?.disconnect();
     },
@@ -107,6 +131,7 @@ Future<void> main() async {
     EmployeeApp(
       controller: controller,
       push: push,
+      accountActions: accountActions,
       mfaPanel: gateway is SupabaseEmployeeGateway
           ? EmployeeMfaPanel(
               gateway: SupabaseEmployeeMfaGateway(gateway.client),

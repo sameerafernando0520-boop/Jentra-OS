@@ -1,0 +1,196 @@
+✔ current runtime reaches authentication through public without a backend call (25.3748ms)
+✔ current receiver rejects unsigned public input before private configuration (1.6166ms)
+✖ current runtime reaches authentication through project namespace without a backend call (1.1928ms)
+✖ current receiver rejects unsigned project namespace input before private configuration (1.8062ms)
+✖ current runtime reaches authentication through managed HTTPS without a backend call (1.9645ms)
+✖ current receiver rejects unsigned managed HTTPS input before private configuration (1.2805ms)
+✖ current runtime reaches authentication through managed project HTTP without a backend call (0.6286ms)
+✖ current receiver rejects unsigned managed project HTTP input before private configuration (1.067ms)
+✖ current runtime accepts platform-supplied opaque service keys and still requires schedule authority (1.2257ms)
+✖ current RPC transport uses the correct opaque credential headers (3.1578ms)
+✔ current RPC transport uses the correct legacy credential headers (1.0378ms)
+✖ publishable and malformed keys never reach a privileged RPC (1.0172ms)
+✖ routing cannot be widened with a different project, platform HTTP, query or foreign path (1.3265ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 3
+ℹ fail 10
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 244.6453
+
+✖ failing tests:
+
+test at workers\wave5\hosted_contract.test.mjs:20:2
+✖ current runtime reaches authentication through project namespace without a backend call (1.1928ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  404 !== 403
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/hosted_contract.test.mjs:25:10)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 404,
+    expected: 403,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\hosted_contract.test.mjs:29:2
+✖ current receiver rejects unsigned project namespace input before private configuration (1.8062ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  404 !== 403
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/hosted_contract.test.mjs:32:10)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 404,
+    expected: 403,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\hosted_contract.test.mjs:20:2
+✖ current runtime reaches authentication through managed HTTPS without a backend call (1.9645ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  404 !== 403
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/hosted_contract.test.mjs:25:10)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 404,
+    expected: 403,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\hosted_contract.test.mjs:29:2
+✖ current receiver rejects unsigned managed HTTPS input before private configuration (1.2805ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  404 !== 403
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/hosted_contract.test.mjs:32:10)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 404,
+    expected: 403,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\hosted_contract.test.mjs:20:2
+✖ current runtime reaches authentication through managed project HTTP without a backend call (0.6286ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  404 !== 403
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/hosted_contract.test.mjs:25:10)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 404,
+    expected: 403,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\hosted_contract.test.mjs:29:2
+✖ current receiver rejects unsigned managed project HTTP input before private configuration (1.067ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  404 !== 403
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/hosted_contract.test.mjs:32:10)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 404,
+    expected: 403,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\hosted_contract.test.mjs:37:1
+✖ current runtime accepts platform-supplied opaque service keys and still requires schedule authority (1.2257ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  503 !== 403
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/hosted_contract.test.mjs:47:9)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 403,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\hosted_contract.test.mjs:55:2
+✖ current RPC transport uses the correct opaque credential headers (3.1578ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'Bearer sb_secret_ssssssssssssssssssssssssssssssssssssssss'
+  - undefined
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/hosted_contract.test.mjs:62:10)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Bearer sb_secret_ssssssssssssssssssssssssssssssssssssssss',
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at workers\wave5\hosted_contract.test.mjs:68:1
+✖ publishable and malformed keys never reach a privileged RPC (1.0172ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/hosted_contract.test.mjs:70:10)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /WORKER_CONFIGURATION_INVALID/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at workers\wave5\hosted_contract.test.mjs:74:1
+✖ routing cannot be widened with a different project, platform HTTP, query or foreign path (1.3265ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  503 !== 404
+  
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/hosted_contract.test.mjs:83:11)
+      at async Test.run (node:internal/test_runner/test:1113:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 503,
+    expected: 404,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

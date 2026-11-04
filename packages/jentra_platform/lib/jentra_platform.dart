@@ -2,6 +2,8 @@ library;
 
 export 'src/connectivity_service.dart';
 export 'src/auth/google_sign_in.dart';
+export 'src/auth/browser_auth_return.dart'
+    show takeBrowserAuthReturnFailure, browserAuthReturnWasCaptured;
 export 'src/auth/email_confirmation.dart'
     show
         EmailConfirmationCancellation,
@@ -10,6 +12,7 @@ export 'src/auth/email_confirmation.dart'
         emailConfirmationFailure;
 export 'src/supabase_notification_inbox_gateway.dart';
 export 'src/draft_cipher.dart';
+export 'src/platform_draft_keys.dart';
 export 'src/draft_repository.dart';
 export 'src/local_database.dart';
 export 'src/local_draft_storage_failure.dart';

@@ -228,37 +228,40 @@ void main() {
     expect((await gateway.revalue(command))['status'], 'posted');
   });
 
-  test('recent MFA rejection points to the user-managed factor flow', () async {
-    status = 403;
-    response = {
-      'code': '42501',
-      'message': 'RECENT_MFA_REQUIRED',
-      'details': null,
-      'hint': null,
-    };
-    final command = CommandEnvelope<Map<String, Object?>>(
-      commandId: 'command',
-      idempotencyKey: 'key',
-      context: scope,
-      payload: {
-        'action': 'request_reopen',
-        'id': 'request',
-        'period_id': 'period',
-        'reason': 'Review correction',
-      },
-      expectedEntityVersion: 2,
-    );
-    await expectLater(
-      gateway.govern(command),
-      throwsA(
-        isA<DomainError>()
-            .having((error) => error.code, 'code', 'MFA_REQUIRED')
-            .having(
-              (error) => error.message,
-              'message',
-              contains('account security'),
-            ),
-      ),
-    );
-  });
+  test(
+    'legacy MFA rejection points to the authenticator sign-in flow',
+    () async {
+      status = 403;
+      response = {
+        'code': '42501',
+        'message': 'RECENT_MFA_REQUIRED',
+        'details': null,
+        'hint': null,
+      };
+      final command = CommandEnvelope<Map<String, Object?>>(
+        commandId: 'command',
+        idempotencyKey: 'key',
+        context: scope,
+        payload: {
+          'action': 'request_reopen',
+          'id': 'request',
+          'period_id': 'period',
+          'reason': 'Review correction',
+        },
+        expectedEntityVersion: 2,
+      );
+      await expectLater(
+        gateway.govern(command),
+        throwsA(
+          isA<DomainError>()
+              .having((error) => error.code, 'code', 'MFA_REQUIRED')
+              .having(
+                (error) => error.message,
+                'message',
+                contains('authenticator'),
+              ),
+        ),
+      );
+    },
+  );
 }

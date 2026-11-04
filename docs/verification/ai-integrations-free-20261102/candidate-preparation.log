@@ -1,0 +1,16 @@
+node:internal/child_process:421
+    throw new ErrnoException(err, 'spawn');
+          ^
+
+Error: spawn EPERM
+    at ChildProcess.spawn (node:internal/child_process:421:11)
+    at spawn (node:child_process:796:9)
+    at execFile (node:child_process:349:17)
+    at execFile (node:child_process:245:21)
+    at file:///C:/Users/sheha/Desktop/Jentra%20OS/tools/wave5/prepare_free_runtime.mjs:12:22 {
+  errno: -4048,
+  code: 'EPERM',
+  syscall: 'spawn'
+}
+
+Node.js v24.11.0

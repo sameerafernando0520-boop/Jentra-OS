@@ -1,0 +1,46 @@
+{
+  "templateVersion": 1,
+  "status": "unexecuted",
+  "tenantId": null,
+  "legalEntityId": null,
+  "branchId": null,
+  "releaseOwner": null,
+  "sender": {
+    "provider": "resend",
+    "domain": null,
+    "address": null,
+    "verifiedAtUtc": null,
+    "evidenceSha256": null,
+    "trackingDisabled": null,
+    "credentialAlias": null,
+    "secretKeyVersion": null
+  },
+  "approvedPilotMailbox": null,
+  "exactRelease": {
+    "migrationVersion": null,
+    "candidateManifestSha256": null,
+    "salesHostingVersion": null,
+    "desktopHostingVersion": null,
+    "workerVersion": null
+  },
+  "gates": {
+    "sixCandidateHostedRollback": {"passed": false, "evidence": null},
+    "genuineIndependentSessionsAndMfa": {"passed": false, "evidence": null},
+    "mailboxLinkAndCode": {"passed": false, "evidence": null},
+    "hostedHttpPrivacyAndAbuse": {"passed": false, "evidence": null},
+    "companyOrderProgression": {"passed": false, "evidence": null},
+    "postedPartialDeliveryAcknowledgement": {"passed": false, "evidence": null},
+    "ordinaryCompanyAndEmployeeCompatibility": {"passed": false, "evidence": null},
+    "stockedFulfillmentAndContention": {"passed": false, "evidence": null},
+    "physicalDevicePrivacyAndAccessibility": {"passed": false, "evidence": null}
+  },
+  "signoff": {
+    "salesApprover": null,
+    "warehouseOwner": null,
+    "financeOwner": null,
+    "customerRecipient": null,
+    "companyReleaseOwner": null,
+    "acceptedAtUtc": null
+  },
+  "evidenceRule": "Store redacted references and exact release hashes only. Never record passwords, session tokens, TOTP seeds, bearer links, codes, provider credentials or HMAC keys. Each organization requires its own genuine acceptance."
+}

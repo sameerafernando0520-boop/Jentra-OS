@@ -196,13 +196,13 @@ void main() {
     },
   );
 
-  test('reviews filter unpublished rows through real private HR adapter', () async {
+  test('reviews use the own-subject projection and reject unpublished rows', () async {
     var n = 1;
     response = {
       ...scope(),
       'employee_id': employee,
       'next_cursor': null,
-      'items': ['draft', 'submitted', 'reviewed', 'acknowledged', 'closed']
+      'items': ['reviewed', 'acknowledged', 'closed']
           .map(
             (state) => {
               'id':
@@ -229,10 +229,27 @@ void main() {
       'acknowledged',
       'closed',
     ]);
-    expect(requests.last.url.path, endsWith('/rpc/people_hr_reviews'));
+    expect(requests.last.url.path, endsWith('/rpc/employee_self_reviews'));
     final body = jsonDecode(requests.last.body) as Map;
-    expect(body['p_employee_id'], employee);
+    expect(body.containsKey('p_employee_id'), isFalse);
+    expect(body['p_tenant_id'], tenant);
+    expect(body['p_legal_entity_id'], entity);
+    expect(body['p_branch_id'], branch);
     expect(requests.any((r) => r.url.path.contains('history')), isFalse);
+    final unpublished = Map<String, Object?>.from(response! as Map);
+    unpublished['items'] = [
+      {
+        ...Map<String, Object?>.from(
+          (unpublished['items']! as List).first as Map,
+        ),
+        'status': 'draft',
+      },
+    ];
+    response = unpublished;
+    await expectLater(
+      gateway.listReviews(person),
+      throwsA(isA<EmployeeFailure>()),
+    );
   });
 
   test(
@@ -292,7 +309,7 @@ void main() {
         throwsA(isA<EmployeeFailure>()),
       );
       expect(
-        requests.any((r) => r.url.path.endsWith('/rpc/people_hr_reviews')),
+        requests.any((r) => r.url.path.endsWith('/rpc/employee_self_reviews')),
         isFalse,
       );
     },

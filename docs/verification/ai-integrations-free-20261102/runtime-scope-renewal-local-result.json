@@ -1,0 +1,18 @@
+{
+  "kind": "jentra-runtime-scope-renewal-isolated-proof",
+  "recordedAt": "2026-11-02T12:11:17.073Z",
+  "passed": 5,
+  "checks": [
+    "rollback proof restores the exact scope and edge-authority preimage",
+    "isolated commit grants exactly 30 minutes without renewing schedule authority",
+    "concurrent preimage change is rejected without overwrite",
+    "unapproved synthetic tenant receives no renewed access",
+    "inactive branch rolls back the attempted scope update"
+  ],
+  "candidateSha256": "e4b8ccd7de5a3747af595f6fd52285ccaa4d2cca6b7dbced973e11b0c995f430",
+  "trialSha256": "281f159a1c63c3f0075b3b0bf6c8fb774be60397f1c24685656ed4c1c328cd39",
+  "hostedDatabaseQueried": false,
+  "hostedPermissionRenewed": false,
+  "authSessionFabricated": false,
+  "boundary": "In-memory PGlite tables and the repository scope predicate only. Actual hosted allow/deny proof and explicit owner approval are still required."
+}

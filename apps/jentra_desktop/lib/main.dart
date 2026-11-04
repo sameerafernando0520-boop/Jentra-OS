@@ -5,6 +5,15 @@ import 'package:jentra_platform/jentra_receivables_platform.dart';
 import 'package:jentra_platform/jentra_procurement_platform.dart';
 import 'package:jentra_platform/analytics_platform.dart';
 import 'package:jentra_platform/jentra_assurance_platform.dart';
+import 'package:jentra_platform/jentra_workspace_admin_platform.dart';
+import 'package:jentra_platform/jentra_field_sales_platform.dart';
+
+import 'src/features/sales/field_company_review.dart';
+import 'src/features/sales/field_confirmation_company_screen.dart';
+
+import 'package:jentra_platform/field_confirmation_company.dart';
+
+import 'src/features/tenant/workspace_admin_controller.dart';
 
 import 'src/features/assurance/assurance_access_controller.dart';
 import 'src/features/assurance/assurance_metrics_controller.dart';
@@ -13,6 +22,7 @@ import 'src/features/assurance/assurance_planning_controller.dart'
 import 'src/features/assurance/assurance_settings_controller.dart';
 import 'src/shell/notification_inbox.dart';
 import 'src/features/assurance/assurance_workspace_controller.dart';
+import 'src/features/tenant/staff_account_dialog.dart';
 
 import 'src/features/analytics/process_metric_screen.dart';
 import 'src/features/analytics/pipeline_forecast_screen.dart';
@@ -118,10 +128,50 @@ Future<void> launchJentra({
         overrides: [
           runtimeConfigProvider.overrideWithValue(config),
           foundationGatewayProvider.overrideWithValue(foundationGateway),
+          fieldSalesCompanyGatewayProvider.overrideWithValue(
+            client != null &&
+                    const bool.fromEnvironment('FIELD_SALES_CANDIDATE_ENABLED')
+                ? SupabaseFieldSalesGateway(client)
+                : null,
+          ),
+          fieldConfirmationCompanyGatewayProvider.overrideWithValue(
+            client != null &&
+                    const bool.fromEnvironment(
+                      'FIELD_SALES_CANDIDATE_ENABLED',
+                    ) &&
+                    const bool.fromEnvironment(
+                      'FIELD_SALES_EMAIL_CONFIRMATION_ENABLED',
+                    )
+                ? SupabaseFieldConfirmationCompanyGateway(client)
+                : null,
+          ),
+          fieldDeliveryCompanyGatewayProvider.overrideWithValue(
+            client != null &&
+                    const bool.fromEnvironment(
+                      'FIELD_SALES_CANDIDATE_ENABLED',
+                    ) &&
+                    const bool.fromEnvironment(
+                      'FIELD_SALES_EMAIL_CONFIRMATION_ENABLED',
+                    ) &&
+                    const bool.fromEnvironment(
+                      'FIELD_SALES_DELIVERY_CONFIRMATION_ENABLED',
+                    )
+                ? SupabaseFieldConfirmationCompanyGateway(
+                    client,
+                    delivery: true,
+                  )
+                : null,
+          ),
           stockOpeningAccessGatewayProvider.overrideWithValue(
             client == null ? null : SupabaseStockOpeningAccessGateway(client),
           ),
           businessSetupGatewayProvider.overrideWithValue(businessSetupGateway),
+          workspaceAdminGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseWorkspaceAdminGateway(client),
+          ),
+          workspaceStaffGatewayProvider.overrideWithValue(
+            client == null ? null : SupabaseWorkspaceStaffGateway(client),
+          ),
           crmRepositoryProvider.overrideWithValue(crmRepository),
           leadToCashRepositoryProvider.overrideWithValue(quotations),
           quotationWorkspaceRepositoryProvider.overrideWithValue(quotations),

@@ -1,0 +1,21 @@
+✔ free provider sends only proposal references to its fixed account and settles exact provider tokens (373.5633ms)
+✔ constructed free provider cannot be retargeted to another model or account (21.4033ms)
+✔ unapproved providers, paid options and malformed credentials are rejected before transport (27.9232ms)
+✔ invalid input or insufficient reserved tokens cannot issue a provider call (5.4303ms)
+✔ quota exhaustion, provider errors and redirects never retry or select another origin (4.1805ms)
+✔ missing, inconsistent, unsafe and out-of-budget provider token counts cannot settle (34.3308ms)
+✔ malformed envelopes, tools and changed proposal references are rejected (5.4369ms)
+✔ oversized provider bodies are cancelled while streaming (1.7908ms)
+✔ canonical worker never falls back to a configured paid OpenAI key (137.1788ms)
+✔ configured free worker still requires the requesting user before evidence or provider access (11.1443ms)
+✔ free hosted entrypoint reserves before inference, settles exact tokens and reopens without another model call (45.7112ms)
+✔ free quota rejection retains the unknown invocation and cannot cause a resend or paid fallback (5.7737ms)
+✔ changed source authority after settlement cannot return a suggestion (9.0973ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1881.9718

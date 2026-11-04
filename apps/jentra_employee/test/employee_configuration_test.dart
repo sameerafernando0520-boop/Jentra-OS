@@ -23,6 +23,24 @@ void main() {
       isTrue,
     );
   });
+  test('legacy public key must belong to the configured Jentra project', () {
+    String keyFor(String ref) =>
+        '${base64Url.encode(utf8.encode('{"alg":"HS256"}'))}.${base64Url.encode(utf8.encode(jsonEncode({'role': 'anon', 'ref': ref})))}.signature';
+    expect(
+      EmployeeConfiguration(
+        url: 'https://company.supabase.co',
+        publishableKey: keyFor('other-company'),
+      ).isValid,
+      isFalse,
+    );
+    expect(
+      EmployeeConfiguration(
+        url: 'https://company.supabase.co',
+        publishableKey: keyFor('company'),
+      ).isValid,
+      isTrue,
+    );
+  });
   test('server keys cannot enter the employee client', () {
     for (final key in [
       'sb_secret_server_key',

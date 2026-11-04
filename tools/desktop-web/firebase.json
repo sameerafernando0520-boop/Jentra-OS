@@ -1,0 +1,30 @@
+{
+  "hosting": {
+    "target": "desktop",
+    "public": "public",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**", "**/*.map", "**/*.env", "**/*firebase-adminsdk*", "_headers", "_redirects"],
+    "headers": [
+      {
+        "source": "**",
+        "headers": [
+          {"key": "Cache-Control", "value": "no-store, max-age=0"},
+          {"key": "X-Content-Type-Options", "value": "nosniff"},
+          {"key": "Referrer-Policy", "value": "no-referrer"},
+          {"key": "X-Frame-Options", "value": "DENY"},
+          {"key": "Strict-Transport-Security", "value": "max-age=31536000"},
+          {"key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=()"},
+          {"key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://xpdoufauvrbdmxgngetv.supabase.co; font-src 'self' data:; connect-src 'self' https://xpdoufauvrbdmxgngetv.supabase.co wss://xpdoufauvrbdmxgngetv.supabase.co; worker-src 'self' blob:; frame-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests"}
+        ]
+      },
+      {"source": "**/*.wasm", "headers": [{"key": "Content-Type", "value": "application/wasm"}]},
+      {"source": "/downloads/*.zip", "headers": [{"key": "Content-Disposition", "value": "attachment"}, {"key": "Content-Type", "value": "application/zip"}]},
+      {"source": "/downloads/checksums.sha256", "headers": [{"key": "Content-Type", "value": "text/plain; charset=utf-8"}]}
+    ],
+    "rewrites": [
+      {
+        "source": "!(/assets/**|/canvaskit/**|/icons/**|/downloads/**|/main.dart.*|/*.js|/*.json|/*.png|/*.css|/*.wasm|/404.html|/robots.txt|/.env*|/*firebase-adminsdk*)",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

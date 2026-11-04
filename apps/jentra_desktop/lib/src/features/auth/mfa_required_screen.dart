@@ -7,14 +7,15 @@ import 'package:jentra_platform/jentra_platform.dart';
 import '../../app_providers.dart';
 
 class MfaRequiredScreen extends ConsumerStatefulWidget {
-  const MfaRequiredScreen({super.key});
+  const MfaRequiredScreen({super.key, this.onVerified});
+  final VoidCallback? onVerified;
 
   @override
   ConsumerState<MfaRequiredScreen> createState() => _MfaRequiredScreenState();
 }
 
 class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
-  late Future<List<String>> _factors;
+  late Future<List<TotpFactorSummary>> _factors;
   final _code = TextEditingController();
   TotpEnrollment? _enrollment;
   bool _busy = false;
@@ -23,7 +24,14 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
   @override
   void initState() {
     super.initState();
-    _factors = ref.read(foundationGatewayProvider)!.listVerifiedTotpFactorIds();
+    _factors = _loadFactors();
+  }
+
+  Future<List<TotpFactorSummary>> _loadFactors() {
+    final future = ref.read(foundationGatewayProvider)!.listTotpFactors();
+    // A retry can fail before FutureBuilder subscribes on the next frame.
+    future.ignore();
+    return future;
   }
 
   @override
@@ -33,6 +41,7 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
   }
 
   Future<void> _enroll() async {
+    if (_busy) return;
     setState(() {
       _busy = true;
       _error = null;
@@ -43,13 +52,52 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
           .enrollTotp();
       if (mounted) setState(() => _enrollment = enrollment);
     } on Object {
-      if (mounted) setState(() => _error = 'Could not begin MFA enrollment.');
+      if (mounted) {
+        setState(() {
+          _error = 'Could not confirm authenticator setup. Check your authenticators before trying again.';
+          _factors = _loadFactors();
+        });
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
   }
 
+  void _reloadFactors() {
+    _code.clear();
+    setState(() {
+      _error = null;
+      _factors = _loadFactors();
+    });
+  }
+
+  Future<void> _removeUnfinishedSetup(String factorId) async {
+    if (_busy) return;
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      await ref.read(foundationGatewayProvider)!.cancelTotpEnrollment(factorId);
+      if (!mounted) return;
+      _code.clear();
+      _enrollment = null;
+    } on Object {
+      if (mounted) {
+        _error = 'Could not remove the unfinished setup. Check your authenticators and try again.';
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _busy = false;
+          _factors = _loadFactors();
+        });
+      }
+    }
+  }
+
   Future<void> _verify(String factorId) async {
+    if (_busy) return;
     if (!RegExp(r'^\d{6}$').hasMatch(_code.text.trim())) {
       setState(
         () => _error = 'Enter the 6-digit code from your authenticator.',
@@ -64,7 +112,10 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
       await ref
           .read(foundationGatewayProvider)!
           .verifyTotp(factorId: factorId, code: _code.text.trim());
+      if (!mounted) return;
+      _code.clear();
       ref.invalidate(tenantListProvider);
+      if (mounted) widget.onVerified?.call();
     } on Object {
       if (mounted) {
         setState(() => _error = 'The code was not accepted. Try a new code.');
@@ -82,17 +133,43 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
         constraints: const BoxConstraints(maxWidth: 620),
         child: JentraPanel(
           padding: const EdgeInsets.all(JentraSpacing.x8),
-          child: FutureBuilder<List<String>>(
+          child: FutureBuilder<List<TotpFactorSummary>>(
             future: _factors,
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
                 return const Center(child: CircularProgressIndicator());
               }
+              if (snapshot.hasError) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Semantics(
+                      liveRegion: true,
+                      child: Text(
+                        'Your authenticators could not be loaded. Check your connection and retry.',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                    ),
+                    const SizedBox(height: JentraSpacing.x4),
+                    JentraPrimaryButton(
+                      label: 'Retry loading authenticators',
+                      icon: Icons.refresh,
+                      onPressed: _reloadFactors,
+                    ),
+                  ],
+                );
+              }
+              final verified = snapshot.data!
+                  .where((factor) => factor.verified)
+                  .firstOrNull;
+              final unfinished = snapshot.data!
+                  .where((factor) => factor.recoverable)
+                  .firstOrNull;
+              final recovering =
+                  _enrollment == null && verified == null && unfinished != null;
               final factorId =
-                  _enrollment?.factorId ??
-                  (snapshot.data?.isNotEmpty == true
-                      ? snapshot.data!.first
-                      : null);
+                  _enrollment?.factorId ?? verified?.id ?? unfinished?.id;
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -103,21 +180,24 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
                       color: context.jentraColors.successSurface,
                       borderRadius: BorderRadius.circular(JentraRadii.dialog),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.verified_user_outlined,
-                      color: JentraColors.green700,
+                      color: context.jentraColors.success,
                       size: 28,
                     ),
                   ),
                   const SizedBox(height: JentraSpacing.x5),
                   Text(
-                    'Multi-factor verification required',
+                    'Verify your sign-in',
                     style: Theme.of(context).textTheme.headlineMedium,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: JentraSpacing.x2),
                   Text(
-                    'This membership can perform privileged business actions. Jentra keeps every privileged route and RPC locked until this session reaches assurance level 2.',
+                    'Enter a code from your authenticator once after signing in. '
+                    'You stay verified while signed in, including when you '
+                    'reopen Jentra. After signing out, your next sign-in '
+                    'requires a new code.',
                     style: Theme.of(context).textTheme.bodyLarge
                         ?.copyWith(color: context.jentraColors.textSecondary),
                     textAlign: TextAlign.center,
@@ -131,6 +211,19 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
                       onPressed: _busy ? null : _enroll,
                     )
                   else ...[
+                    if (recovering) ...[
+                      Text(
+                        'Finish your earlier authenticator setup',
+                        style: Theme.of(context).textTheme.titleMedium,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: JentraSpacing.x2),
+                      const Text(
+                        'If you already added it to your authenticator, enter its code. Otherwise, remove this unfinished setup and start again.',
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: JentraSpacing.x4),
+                    ],
                     if (_enrollment case final enrollment?) ...[
                       Align(
                         alignment: Alignment.centerLeft,
@@ -174,8 +267,10 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
                       const SizedBox(height: JentraSpacing.x4),
                     ],
                     TextField(
+                      key: const ValueKey('mfa-authenticator-code'),
                       controller: _code,
                       autofocus: true,
+                      enabled: !_busy,
                       maxLength: 6,
                       keyboardType: TextInputType.number,
                       textAlign: TextAlign.center,
@@ -198,6 +293,15 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
                       loading: _busy,
                       onPressed: _busy ? null : () => _verify(factorId),
                     ),
+                    if (recovering) ...[
+                      const SizedBox(height: JentraSpacing.x2),
+                      TextButton(
+                        onPressed: _busy
+                            ? null
+                            : () => _removeUnfinishedSetup(factorId),
+                        child: const Text('Remove unfinished setup'),
+                      ),
+                    ],
                   ],
                   if (_error case final error?) ...[
                     const SizedBox(height: JentraSpacing.x4),

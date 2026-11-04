@@ -52,10 +52,10 @@ class _CreditState extends ConsumerState<OrderCreditDialog> {
   @override
   Widget build(BuildContext context) {
     final p = widget.preview;
-    final blocked = {
-      'CUSTOMER_INACTIVE',
-      'CREDIT_CURRENCY_MISMATCH',
-    }.contains(p.reason);
+    final blocked =
+        {'CUSTOMER_INACTIVE', 'CREDIT_CURRENCY_MISMATCH'}.contains(p.reason) ||
+        (p.fieldRequestId != null &&
+            (p.fieldCustomerState != 'accepted' || !p.projectionAvailable));
     final connection = ref.watch(connectivityStateProvider);
     final online =
         !connection.isLoading &&
@@ -89,6 +89,12 @@ class _CreditState extends ConsumerState<OrderCreditDialog> {
                 'Order version ${p.orderVersion}',
                 style: Theme.of(context).textTheme.titleSmall,
               ),
+              if (p.fieldRequestId != null)
+                Text(
+                  'Governed field order · customer response: ${p.fieldCustomerState}. '
+                  'Confirmation requires current company authority and the reviewed credit evidence. '
+                  'Stock, delivery acknowledgement, invoices and payments remain separate actions.',
+                ),
               for (final (label, amount) in [
                 ('Credit limit', p.creditLimit),
                 ('Due exposure (includes overdue)', p.dueExposure),
@@ -103,9 +109,13 @@ class _CreditState extends ConsumerState<OrderCreditDialog> {
                     '$label\n${amount.currencyCode} ${amount.toDecimalString()}',
                   ),
                 ),
-              if (!p.projectionAvailable)
+              if (!p.projectionAvailable && p.fieldRequestId == null)
                 const Text(
                   'No receivables projection is available. The server currently treats due and overdue exposure as zero.',
+                ),
+              if (!p.projectionAvailable && p.fieldRequestId != null)
+                const Text(
+                  'A current receivables projection is required before this field order can be confirmed.',
                 ),
               if (p.asOf != null)
                 Text('Receivables as of ${p.asOf!.toUtc().toIso8601String()}'),
@@ -121,7 +131,10 @@ class _CreditState extends ConsumerState<OrderCreditDialog> {
                     'CUSTOMER_INACTIVE' =>
                       'The customer is inactive. Confirmation is unavailable.',
                     'CREDIT_CURRENCY_MISMATCH' => 'Customer credit currency differs from this order. Correct the governed credit configuration before confirmation.',
-                    _ => 'The limit would be exceeded. Confirmation records a credit hold unless an authorized override is applied.',
+                    _ =>
+                      p.fieldRequestId == null
+                          ? 'The limit would be exceeded. Confirmation records a credit hold unless an authorized override is applied.'
+                          : 'The limit would be exceeded. This field order stays in draft until credit is reviewed or an authorized override is applied.',
                   }),
                 ),
               if (widget.canOverride &&
@@ -156,7 +169,12 @@ class _CreditState extends ConsumerState<OrderCreditDialog> {
         ),
         FilledButton(
           onPressed:
-              !online || blocked || (_override && _reason.text.trim().isEmpty)
+              !online ||
+                  blocked ||
+                  (p.fieldRequestId != null &&
+                      p.reason == 'CREDIT_LIMIT_EXCEEDED' &&
+                      !_override) ||
+                  (_override && _reason.text.trim().isEmpty)
               ? null
               : () => Navigator.pop(context, (
                   overrideCredit: _override,
@@ -165,6 +183,9 @@ class _CreditState extends ConsumerState<OrderCreditDialog> {
           child: Text(
             _override
                 ? 'Override & confirm'
+                : p.fieldRequestId != null &&
+                      p.reason == 'CREDIT_LIMIT_EXCEEDED'
+                ? 'Credit review required'
                 : p.reason == 'CREDIT_LIMIT_EXCEEDED'
                 ? 'Record credit hold'
                 : 'Confirm order',

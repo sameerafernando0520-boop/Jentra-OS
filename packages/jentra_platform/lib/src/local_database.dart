@@ -1,9 +1,7 @@
-import 'dart:io';
-
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
+
+import 'local_database_native.dart'
+    if (dart.library.js_interop) 'local_database_web.dart';
 
 part 'local_database.g.dart';
 
@@ -40,14 +38,8 @@ class ReferenceCacheEntries extends Table {
 class JentraLocalDatabase extends _$JentraLocalDatabase {
   JentraLocalDatabase(super.executor);
 
-  factory JentraLocalDatabase.open() => JentraLocalDatabase(
-    LazyDatabase(() async {
-      final directory = await getApplicationSupportDirectory();
-      final file = File(p.join(directory.path, 'jentra', 'drafts.sqlite'));
-      await file.parent.create(recursive: true);
-      return NativeDatabase.createInBackground(file);
-    }),
-  );
+  factory JentraLocalDatabase.open() =>
+      JentraLocalDatabase(openLocalDatabase());
 
   @override
   int get schemaVersion => 2;

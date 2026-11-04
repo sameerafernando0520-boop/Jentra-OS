@@ -1,0 +1,14 @@
+{
+  "kind": "sql-editor-transaction-regression",
+  "observedAt": "2026-10-31T04:54:18.123Z",
+  "passed": 4,
+  "checks": [
+    "Original query reproduces SQL Editor 25001 after a preceding query",
+    "Corrected single-statement reconciliation runs in caller-managed transaction",
+    "Read-only mode rejects a write inside the caller transaction",
+    "Rollback preserves records and restores the connection read-only setting"
+  ],
+  "sqlSha256": "5b6e2ce6abd5dbe7adfc13309b6248ad4e83962c6c51fcc1166d340d0ab62449",
+  "originalSqlSha256": "22e1688c3b77a6c0077ad45eff53361240f1a6a170f0fc3cf4772da76dabcd26",
+  "hostedDatabaseQueried": false
+}

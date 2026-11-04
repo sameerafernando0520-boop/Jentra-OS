@@ -1,0 +1,65 @@
+✖ publishable-key forecast reads and reauthorizes with only the caller bearer (0.8901ms)
+✔ legacy anon format retains the same caller-scoped forecast behavior (16.1381ms)
+✔ publishable credentials remain rejected by the privileged worker transport (0.3608ms)
+✖ caller transport rejects opaque secret keys and malformed public keys before I/O (1.0944ms)
+✖ caller transport rejects missing or header-injection tokens before I/O (0.7295ms)
+✔ backend denials stay denials and do not expose response content (1.4811ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 3
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 121.7467
+
+✖ failing tests:
+
+test at workers\wave5\model_reader_publishable.test.mjs:15:1
+✖ publishable-key forecast reads and reauthorizes with only the caller bearer (0.8901ms)
+  Error: WORKER_CONFIGURATION_INVALID
+      at serviceProviderHeaders (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/provider_credentials_20261014_r5_v7.mjs:14:23)
+      at createWorkerRpc (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/persistent_control.mjs:12:24)
+      at new AuthenticatedForecastReader (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/model_reader.mjs:9:12)
+      at fixture (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/model_reader_publishable.test.mjs:12:15)
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/model_reader_publishable.test.mjs:16:23)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.start (node:internal/test_runner/test:1003:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17)
+
+test at workers\wave5\model_reader_publishable.test.mjs:32:1
+✖ caller transport rejects opaque secret keys and malformed public keys before I/O (1.0944ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/model_reader_publishable.test.mjs:35:10)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /WORKER_CONFIGURATION_INVALID/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at workers\wave5\model_reader_publishable.test.mjs:39:1
+✖ caller transport rejects missing or header-injection tokens before I/O (0.7295ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (file:///C:/Users/sheha/Desktop/Jentra%20OS/workers/wave5/model_reader_publishable.test.mjs:41:67)
+      at Test.runInAsyncScope (node:async_hooks:214:14)
+      at Test.run (node:internal/test_runner/test:1106:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:788:18)
+      at Test.postRun (node:internal/test_runner/test:1235:19)
+      at Test.run (node:internal/test_runner/test:1163:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:788:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /AUTH_REQUIRED/,
+    operator: 'throws',
+    diff: 'simple'
+  }

@@ -1,0 +1,21 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: membership after preflight must refuse update_entity before mutation or replay; got success
++ actual - expected
+
++ undefined
+- '42501'
+
+    at rejectsAfterPreflight (file:///C:/Users/sheha/Desktop/Jentra%20OS/tools/auth/test_company_access_reauthorization_sql.mjs:48:10)
+    at async file:///C:/Users/sheha/Desktop/Jentra%20OS/tools/auth/test_company_access_reauthorization_sql.mjs:120:5 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: undefined,
+  expected: '42501',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.11.0

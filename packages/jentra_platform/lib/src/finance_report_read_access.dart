@@ -46,7 +46,7 @@ DomainError? financeReportReadDenial(String rpc, PostgrestException failure) {
     code: code,
     message: switch (code) {
       'MFA_REQUIRED' =>
-        'Complete recent MFA in account security, then verify report access.',
+        'Verify your sign-in with your authenticator, then verify report access.',
       'AUTHENTICATION_REQUIRED' =>
         'Restore your authenticated session, then verify report access.',
       _ => 'Current report access is required in the selected scope.',

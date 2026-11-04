@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
 
 import '../data/employee_gateway.dart';
+import '../data/employee_self_service.dart';
 import '../employee_controller.dart';
 import '../l10n/employee_strings.dart';
 import 'employee_components.dart';
@@ -13,6 +14,9 @@ import 'employee_reviews.dart';
 import 'employee_surfaces.dart';
 import 'leave_draft_screen.dart';
 import 'onboarding_screens.dart';
+import 'employee_attendance.dart';
+import 'employee_leave.dart';
+import 'employee_private_services.dart';
 
 class EmployeeShell extends StatefulWidget {
   const EmployeeShell({
@@ -36,6 +40,13 @@ class _EmployeeShellState extends State<EmployeeShell> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && controller.consumePhotoProfileReturn()) {
         _open(EmployeeProfileScreen(controller: controller));
+      } else if (mounted && controller.selfService.consumeDocumentReturn()) {
+        _open(
+          EmployeePrivateServiceScreen(
+            controller: controller.selfService,
+            service: EmployeeService.documents,
+          ),
+        );
       }
     });
   }
@@ -46,6 +57,37 @@ class _EmployeeShellState extends State<EmployeeShell> {
     EmployeeReviewsScreen(controller: controller, actionsOnly: actionsOnly),
   );
   void _help() => _open(EmployeeHelpScreen(onPrepareLeaveDraft: _draft));
+  void _inbox() => _open(
+    EmployeeInboxScreen(
+      controller: controller.selfService,
+      onOpenDestination: _noticeDestination,
+    ),
+  );
+  Future<void> _noticeDestination(String destination) async {
+    Navigator.of(context).pop();
+    if (destination == 'reviews') {
+      await controller.refreshReviews();
+      if (mounted && controller.phase == EmployeePhase.ready) _reviews();
+    } else if (destination == 'documents' || destination == 'cases') {
+      _open(
+        EmployeePrivateServiceScreen(
+          controller: controller.selfService,
+          service: destination == 'documents'
+              ? EmployeeService.documents
+              : EmployeeService.cases,
+        ),
+      );
+    } else {
+      setState(
+        () => _destination = switch (destination) {
+          'attendance' => 'work',
+          'leave' => 'leave',
+          'pay' => 'pay',
+          _ => 'home',
+        },
+      );
+    }
+  }
 
   Future<void> _draft() async {
     final routeVersion = controller.privateRouteVersion;
@@ -87,7 +129,7 @@ class _EmployeeShellState extends State<EmployeeShell> {
           IconButton(
             key: const Key('employee-inbox'),
             tooltip: s('inbox'),
-            onPressed: () => _reviews(actionsOnly: true),
+            onPressed: _inbox,
             icon: const Icon(Icons.inbox_outlined),
           ),
         ],
@@ -95,9 +137,12 @@ class _EmployeeShellState extends State<EmployeeShell> {
       body: KeyedSubtree(
         key: ValueKey('employee-page-$_destination'),
         child: switch (_destination) {
-          'work' => _work(s),
-          'leave' => _leave(s),
-          'pay' => _pay(s),
+          'work' => EmployeeAttendanceBody(controller: controller.selfService),
+          'leave' => EmployeeLeaveBody(employee: controller, onDraft: _draft),
+          'pay' => EmployeePrivateServiceBody(
+            controller: controller.selfService,
+            service: EmployeeService.payslips,
+          ),
           'activity' => _activity(s),
           'more' => _more(s, person),
           _ => _home(s, person),
@@ -285,137 +330,6 @@ class _EmployeeShellState extends State<EmployeeShell> {
     );
   }
 
-  Widget _work(EmployeeStrings s) => EmployeePageBody(
-    children: [
-      EmployeeHeading(s('work'), large: true),
-      EmployeeMessage(
-        title: s('workUnavailable'),
-        message: s('workCopy'),
-        icon: Icons.calendar_month_outlined,
-      ),
-      EmployeeActionTile(
-        title: s('hrHelp'),
-        icon: Icons.contact_support_outlined,
-        onTap: _help,
-      ),
-    ],
-  );
-
-  Widget _leave(EmployeeStrings s) {
-    final draft = controller.leaveDraft;
-    return EmployeePageBody(
-      children: [
-        EmployeeHeading(s('leave'), large: true),
-        EmployeeMessage(
-          title: s('leaveUnavailable'),
-          message: s('leaveCopy'),
-          icon: Icons.event_note_outlined,
-        ),
-        if (controller.error != null)
-          EmployeeMessage(title: s.failure(controller.error!), error: true),
-        if (draft != null)
-          JentraPanel(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                EmployeeStatus(
-                  s('localDraft'),
-                  warning: true,
-                  icon: Icons.save_outlined,
-                ),
-                const SizedBox(height: 16),
-                EmployeeHeading(draft.leaveType),
-                const SizedBox(height: 8),
-                Text(
-                  '${DateFormat.yMMMd(s.language).format(draft.startDate)} – ${DateFormat.yMMMd(s.language).format(draft.endDate)}',
-                ),
-                const SizedBox(height: 8),
-                Text(draft.reason),
-                const SizedBox(height: 12),
-                Text(
-                  s('notSubmitted'),
-                  style: Theme.of(context).textTheme.bodyMedium
-                      ?.copyWith(fontWeight: FontWeight.w700),
-                ),
-                const SizedBox(height: 16),
-                FilledButton(
-                  onPressed: controller.busy ? null : _draft,
-                  child: Text(s('editDraft')),
-                ),
-                const SizedBox(height: 8),
-                TextButton(
-                  onPressed: controller.busy
-                      ? null
-                      : () async {
-                          final remove = await showDialog<bool>(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text(s('deleteDraftCopy')),
-                              actions: [
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.pop(context, false),
-                                  child: Text(s('cancel')),
-                                ),
-                                FilledButton(
-                                  onPressed: () => Navigator.pop(context, true),
-                                  child: Text(s('deleteDraft')),
-                                ),
-                              ],
-                            ),
-                          );
-                          if (remove == true) {
-                            await controller.discardLeaveDraft();
-                          }
-                        },
-                  child: Text(s('deleteDraft')),
-                ),
-              ],
-            ),
-          ),
-        if (draft == null)
-          FilledButton(
-            key: const Key('employee-create-draft'),
-            onPressed: controller.busy ? null : _draft,
-            child: Text(s('createDraft')),
-          ),
-        Text(
-          s('draftExpires'),
-          style: Theme.of(context).textTheme.bodySmall
-              ?.copyWith(color: context.jentraColors.textSecondary),
-        ),
-      ],
-    );
-  }
-
-  Widget _pay(EmployeeStrings s) => EmployeePageBody(
-    children: [
-      EmployeeHeading(s('pay'), large: true),
-      EmployeeMessage(
-        title: s('payUnavailable'),
-        message: s('payCopy'),
-        icon: Icons.receipt_long_outlined,
-      ),
-      JentraPanel(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Icon(Icons.lock_outline, size: 28),
-            const SizedBox(height: 16),
-            EmployeeHeading(s('payPrivacy')),
-            const SizedBox(height: 8),
-            Text(s('payPrivacyCopy')),
-          ],
-        ),
-      ),
-      EmployeeActionTile(
-        title: s('hrHelp'),
-        icon: Icons.contact_support_outlined,
-        onTap: _help,
-      ),
-    ],
-  );
-
   Widget _more(EmployeeStrings s, EmployeeIdentity person) => EmployeePageBody(
     children: [
       EmployeeHeading(s('more'), large: true),
@@ -449,15 +363,31 @@ class _EmployeeShellState extends State<EmployeeShell> {
         onTap: () => setState(() => _destination = 'pay'),
       ),
       EmployeeActionTile(
+        key: const Key('employee-more-documents'),
         title: s('documents'),
         icon: Icons.folder_outlined,
         onTap: () => _open(
-          EmployeeInfoScreen(
-            title: s('documents'),
-            message: s('documentsUnavailable'),
-            icon: Icons.folder_outlined,
+          EmployeePrivateServiceScreen(
+            controller: controller.selfService,
+            service: EmployeeService.documents,
           ),
         ),
+      ),
+      EmployeeActionTile(
+        key: const Key('employee-more-cases'),
+        title: s('casesTitle'),
+        icon: Icons.forum_outlined,
+        onTap: () => _open(
+          EmployeePrivateServiceScreen(
+            controller: controller.selfService,
+            service: EmployeeService.cases,
+          ),
+        ),
+      ),
+      EmployeeActionTile(
+        title: s('inboxTitle'),
+        icon: Icons.inbox_outlined,
+        onTap: _inbox,
       ),
       EmployeeActionTile(
         title: s('hrHelp'),

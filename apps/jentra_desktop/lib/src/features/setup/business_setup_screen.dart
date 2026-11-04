@@ -196,6 +196,16 @@ class _PageHeader extends ConsumerWidget {
         ),
       ),
       const StockOpeningInviteButton(),
+      if ({
+        'core.tenant.manage',
+        'core.roles.manage',
+        'core.members.invite',
+      }.any(state.capabilities.contains))
+        TextButton.icon(
+          onPressed: () => context.go('/setup/company-access'),
+          icon: const Icon(Icons.admin_panel_settings_outlined),
+          label: const Text('Company & access'),
+        ),
       IconButton(
         tooltip: 'Refresh setup data',
         onPressed: state.loading

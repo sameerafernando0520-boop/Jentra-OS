@@ -15,6 +15,8 @@ import 'quotation_recovery_dialog.dart';
 import 'quotation_scope_guard.dart';
 import 'sales_order_controller.dart';
 import 'sales_order_dialogs.dart';
+import 'field_company_review.dart';
+import 'field_confirmation_company_screen.dart';
 
 class SalesOrderScreen extends ConsumerStatefulWidget {
   const SalesOrderScreen({
@@ -163,6 +165,37 @@ class _OrderWorkspaceState extends ConsumerState<_OrderWorkspace> {
                     : controller.refresh,
                 icon: const Icon(Icons.refresh),
               ),
+              if (s.capabilities.contains('sales.field.discounts.decide') &&
+                  ref.watch(fieldSalesCompanyGatewayProvider) != null)
+                OutlinedButton.icon(
+                  onPressed: s.busy
+                      ? null
+                      : () => openFieldCompanyReview(context, s.context),
+                  icon: const Icon(Icons.rule),
+                  label: const Text('Field company review'),
+                ),
+              if (s.capabilities.contains('sales.field.confirmations.manage') &&
+                  ref.watch(fieldConfirmationCompanyGatewayProvider) != null)
+                OutlinedButton.icon(
+                  onPressed: s.busy || s.loading || !s.isOnline
+                      ? null
+                      : () => openFieldCompanyConfirmations(context, s.context),
+                  icon: const Icon(Icons.mark_email_read_outlined),
+                  label: const Text('Customer email requests'),
+                ),
+              if (s.capabilities.contains('sales.field.confirmations.manage') &&
+                  ref.watch(fieldDeliveryCompanyGatewayProvider) != null)
+                OutlinedButton.icon(
+                  onPressed: s.busy || s.loading || !s.isOnline
+                      ? null
+                      : () => openFieldCompanyConfirmations(
+                          context,
+                          s.context,
+                          delivery: true,
+                        ),
+                  icon: const Icon(Icons.fact_check_outlined),
+                  label: const Text('Delivery responses'),
+                ),
               if (s.canManage || s.canReserve)
                 OutlinedButton.icon(
                   onPressed: s.busy

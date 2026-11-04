@@ -1,0 +1,52 @@
+{
+  "kind": "publishable-reader-repair-candidate",
+  "observedAt": "2026-11-03T05:16:58.670Z",
+  "candidate": "build/wave5-publishable-reader-20261103/candidate/",
+  "manifestSha256": "afd9d294ab0ac298f222d1aa16e00a61455583a75357bd02c7716b2396f6741e",
+  "sourceInputs": 18,
+  "executableModules": 17,
+  "changedPaths": [
+    "workers/wave5/model_reader.mjs",
+    "workers/wave5/persistent_control.mjs"
+  ],
+  "workerTests": {
+    "passed": 319,
+    "failed": 0
+  },
+  "normalDenoCheckPassed": true,
+  "deployed": false,
+  "rootCause": "Hosted SUPABASE_ANON_KEY is an opaque publishable key; the old reader routed it through privileged credential validation, which rejects that key kind before HTTP.",
+  "behavior": "Use a dedicated caller transport: public key in apikey, genuine caller token in Authorization. Preserve authenticated scope and expired-trial denials; leave privileged worker credential validation unchanged.",
+  "hostedObservation": "v11-hosted-diagnostic-event.json",
+  "liveReadOnlyDenial": "publishable-reader-live-expired-trial-denial.json",
+  "providerChanged": false,
+  "paidFallback": false,
+  "permissionsChanged": false,
+  "databaseChanged": false,
+  "receiverChanged": false,
+  "windowRenewed": false,
+  "realModelRequests": 0,
+  "remainingApproval": "Deploy this exact V12 candidate, renew only Synthetic RT1 trial/runtime for 30 minutes, and make one controlled model attempt using the preserved invocation and usage IDs after fresh four-record absence checks. Keep five seats, plan, caps and read permissions; do not resend delivery.",
+  "artifacts": [
+    {
+      "path": "workers/wave5/model_reader_publishable.test.mjs",
+      "sha256": "b358c04b3bd4fee1df4d58bd85b18c390288ba63eae9cb076f1226e7297b9214"
+    },
+    {
+      "path": "docs/verification/ai-integrations-test-20261103/publishable-reader-worker-tests.log",
+      "sha256": "5d93e6a16175726488586347bd0f57758dc79d4e395a5f7dfcfad0102a2e5117"
+    },
+    {
+      "path": "docs/verification/ai-integrations-test-20261103/publishable-reader-deno.log",
+      "sha256": "116bea03f6431ca57130e10a23db23f7d7ec06b9a28a70dfafa354aadc5bea3f"
+    },
+    {
+      "path": "docs/verification/ai-integrations-test-20261103/publishable-reader-live-expired-trial-denial.json",
+      "sha256": "ee223abc69d2560cb84bce1c92bb7c6b4c98d30b669380c717227bbc54d01c89"
+    },
+    {
+      "path": "docs/verification/ai-integrations-test-20261103/v11-hosted-diagnostic-event.json",
+      "sha256": "86b3fc1e36e70bd6f199fcb81278d436e7a370e3fc65d5b396f11bbdc1631774"
+    }
+  ]
+}

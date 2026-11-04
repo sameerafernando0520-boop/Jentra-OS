@@ -1,0 +1,69 @@
+{
+  "kind": "synthetic-installer-verification",
+  "atUtc": "2026-10-28T05:07:16.8156290Z",
+  "checks": [
+    {
+      "name": "first install selects verified release",
+      "passed": true
+    },
+    {
+      "name": "update selects new release",
+      "passed": true
+    },
+    {
+      "name": "update retains previous release and runtime bytes",
+      "passed": true
+    },
+    {
+      "name": "idempotent reinstall retains rollback pointer",
+      "passed": true
+    },
+    {
+      "name": "launcher resolves current bundle without starting fixture",
+      "passed": true
+    },
+    {
+      "name": "older build refused",
+      "passed": true
+    },
+    {
+      "name": "corrupt runtime refused without switching current",
+      "passed": true
+    },
+    {
+      "name": "unlisted runtime refused",
+      "passed": true
+    },
+    {
+      "name": "cross-channel update refused",
+      "passed": true
+    },
+    {
+      "name": "path traversal refused",
+      "passed": true
+    },
+    {
+      "name": "corrupt retained DLL refuses rollback without changing current pointer",
+      "passed": true
+    },
+    {
+      "name": "rollback refuses an active install lock and preserves its pointer and lock",
+      "passed": true
+    },
+    {
+      "name": "installer and rollback use the same exclusive lock",
+      "passed": true
+    },
+    {
+      "name": "explicit rollback selects retained bundle and verifies hashes",
+      "passed": true
+    }
+  ],
+  "passed": 14,
+  "fixtureDirectory": "C:\\Users\\sheha\\Desktop\\Jentra OS\\build\\desktop-release-installer-check-be986767",
+  "actualApplicationLaunched": false,
+  "userProfileInstalled": false,
+  "shortcutsCreated": false,
+  "registryChanged": false,
+  "backendChanged": false
+}

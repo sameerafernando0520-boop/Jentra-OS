@@ -60,7 +60,7 @@ final class SupabaseReportExportGateway implements ReportExportGateway {
         code: code,
         message: switch (code) {
           'MFA_REQUIRED' =>
-            'Complete recent MFA in account security, then retry.',
+            'Verify your sign-in with your authenticator, then retry.',
           'PERMISSION_DENIED' =>
             'Current source-report and export access is required.',
           'VALIDATION_ERROR' =>

@@ -45,7 +45,8 @@ class LoginScreen extends ConsumerStatefulWidget {
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen>
+    with WidgetsBindingObserver {
   final _form = GlobalKey<FormState>();
   final _email = TextEditingController();
   final _password = TextEditingController();
@@ -54,6 +55,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _passwordFocus = FocusNode();
   final _confirmationFocus = FocusNode();
   bool _creatingAccount = false;
+  bool _passwordVisible = false;
+  bool _confirmationVisible = false;
   bool _busy = false;
   bool _googlePending = false;
   bool _googleFinishing = false;
@@ -71,7 +74,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   String? _message;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    final callbackFailure = takeBrowserAuthReturnFailure();
+    if (callbackFailure != null) {
+      _error = _emailError(EmailConfirmationException(callbackFailure));
+      _showEmailConfirmation = true;
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed &&
+        (_passwordVisible || _confirmationVisible)) {
+      setState(() {
+        _passwordVisible = false;
+        _confirmationVisible = false;
+      });
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _googleCancellation?.cancel();
     _emailCancellation?.cancel();
     _resendCooldown?.cancel();
@@ -92,6 +118,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     _confirmationLink.clear();
     setState(() {
       _creatingAccount = !_creatingAccount;
+      _passwordVisible = false;
+      _confirmationVisible = false;
       _showEmailConfirmation = false;
       _showLinkRecovery = false;
       _error = null;
@@ -104,10 +132,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       ? null
       : 'Enter a valid email address.';
 
+  String? _validateLogin(String? value) {
+    final login = value?.trim() ?? '';
+    if (login.contains('@')) return _validateEmail(value);
+    return RegExp(r'^[a-z0-9][a-z0-9_-]{2,39}$').hasMatch(login.toLowerCase())
+        ? null
+        : 'Enter your username or work email.';
+  }
+
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) return 'Enter your password.';
-    if (_creatingAccount && value.length < 8) {
-      return 'Use at least 8 characters.';
+    if (_creatingAccount) {
+      if (value.runes.length < 12) return 'Use at least 12 characters.';
+      if (!RegExp(r'\p{L}', unicode: true).hasMatch(value) ||
+          !RegExp(r'\p{Nd}', unicode: true).hasMatch(value) ||
+          !RegExp(r'[\p{P}\p{S}]', unicode: true).hasMatch(value)) {
+        return 'Include letters, numbers and symbols.';
+      }
     }
     return null;
   }
@@ -131,12 +172,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
     setState(() {
       _busy = true;
+      _passwordVisible = false;
+      _confirmationVisible = false;
       _error = null;
       _message = null;
     });
     try {
-      await gateway.signInWithPassword(
-        email: _email.text.trim(),
+      await gateway.signInWithLogin(
+        login: _email.text.trim(),
         password: _password.text,
       );
       if (mounted) _goToWorkspace();
@@ -199,6 +242,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       setState(() {
         _email.text = email;
         _creatingAccount = false;
+        _passwordVisible = false;
+        _confirmationVisible = false;
         _showEmailConfirmation = true;
         _resendCoolingDown = true;
         if (!_emailCancelling && !_emailFinishing) {
@@ -218,6 +263,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     setState(() {
       _busy = true;
       _emailPending = true;
+      _passwordVisible = false;
+      _confirmationVisible = false;
       _emailFinishing = false;
       _emailCancelling = false;
       _error = null;
@@ -473,16 +520,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         key: const ValueKey('login-email'),
                         controller: _email,
                         enabled: !_busy,
-                        autofillHints: const [AutofillHints.email],
+                        autofillHints: [
+                          _creatingAccount
+                              ? AutofillHints.email
+                              : AutofillHints.username,
+                        ],
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
-                        validator: _validateEmail,
+                        validator: _creatingAccount
+                            ? _validateEmail
+                            : _validateLogin,
                         onFieldSubmitted: (_) {
                           if (!_busy) _passwordFocus.requestFocus();
                         },
-                        decoration: const InputDecoration(
-                          labelText: 'Work email',
-                          prefixIcon: Icon(Icons.alternate_email),
+                        decoration: InputDecoration(
+                          labelText: _creatingAccount
+                              ? 'Work email'
+                              : 'Username or work email',
+                          prefixIcon: const Icon(Icons.alternate_email),
                         ),
                       ),
                       const SizedBox(height: JentraSpacing.x4),
@@ -496,7 +551,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ? AutofillHints.newPassword
                               : AutofillHints.password,
                         ],
-                        obscureText: true,
+                        obscureText: !_passwordVisible || _busy,
+                        autocorrect: false,
+                        enableSuggestions: false,
                         textInputAction: _creatingAccount
                             ? TextInputAction.next
                             : TextInputAction.done,
@@ -512,9 +569,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         decoration: InputDecoration(
                           labelText: 'Password',
                           helperText: _creatingAccount
-                              ? 'Use at least 8 characters.'
+                              ? 'Use at least 12 characters, including letters, numbers and symbols.'
                               : null,
+                          helperMaxLines: 3,
                           prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: IconButton(
+                            key: const ValueKey('login-password-visibility'),
+                            tooltip: _passwordVisible
+                                ? 'Hide password'
+                                : 'Show password',
+                            onPressed: _busy
+                                ? null
+                                : () => setState(
+                                    () => _passwordVisible = !_passwordVisible,
+                                  ),
+                            icon: Icon(
+                              _passwordVisible
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
+                            ),
+                          ),
                         ),
                       ),
                       if (_creatingAccount) ...[
@@ -525,15 +599,36 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           focusNode: _confirmationFocus,
                           enabled: !_busy,
                           autofillHints: const [AutofillHints.newPassword],
-                          obscureText: true,
+                          obscureText: !_confirmationVisible || _busy,
+                          autocorrect: false,
+                          enableSuggestions: false,
                           textInputAction: TextInputAction.done,
                           validator: (value) => value == _password.text
                               ? null
                               : 'The passwords must match.',
                           onFieldSubmitted: (_) => _submit(),
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Confirm password',
-                            prefixIcon: Icon(Icons.lock_outline),
+                            prefixIcon: const Icon(Icons.lock_outline),
+                            suffixIcon: IconButton(
+                              key: const ValueKey(
+                                'login-confirmation-visibility',
+                              ),
+                              tooltip: _confirmationVisible
+                                  ? 'Hide confirmation password'
+                                  : 'Show confirmation password',
+                              onPressed: _busy
+                                  ? null
+                                  : () => setState(
+                                      () => _confirmationVisible =
+                                          !_confirmationVisible,
+                                    ),
+                              icon: Icon(
+                                _confirmationVisible
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                              ),
+                            ),
                           ),
                         ),
                       ],

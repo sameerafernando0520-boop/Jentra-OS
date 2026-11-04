@@ -1,3 +1,5 @@
+import {serviceCredentialKind} from './provider_credentials_20261014_r5_v7.mjs';
+import {edgeRoute} from './edge_route_20261014_r5_v6.mjs';
 import {createHash,timingSafeEqual} from 'node:crypto';
 import {Buffer} from 'node:buffer';
 import {createWorkerRpc} from './persistent_control.mjs';
@@ -35,9 +37,9 @@ export function createEdgeReceiver({env,config=edgeConfiguration,fetchImpl=fetch
  return async req=>{
   let key;
   try{
-   const url=new URL(req.url),expected=new URL(config.receiverUrl),prefix=expected.pathname.slice(0,-'accept'.length);
-   const mode=url.pathname.slice(prefix.length);
-   if(url.origin!==expected.origin||url.search||!url.pathname.startsWith(prefix)||!['accept','redirect','timeout','reject'].includes(mode))return reply(404,{code:'NOT_FOUND'});
+   const route=edgeRoute(req.url,config.receiverUrl.slice(0,-'/accept'.length),['/accept','/redirect','/timeout','/reject']);
+   if(route===null)return reply(404,{code:'NOT_FOUND'});
+   const mode=route.slice(1);
    const eventId=req.headers.get('x-jentra-event-id'),timestamp=req.headers.get('x-jentra-timestamp'),signature=req.headers.get('x-jentra-signature');
    const match=/^v([12])=([a-f0-9]{64})$/.exec(signature??'');
    if(!uuid.test(eventId??'')||!/^\d{10}$/.test(timestamp??'')||!match||Number(timestamp)>now()+30||Number(timestamp)<now()-300)return reply(403,{code:'INTEGRATION_ACCESS_DENIED'});
@@ -48,7 +50,7 @@ export function createEdgeReceiver({env,config=edgeConfiguration,fetchImpl=fetch
    if(!event||typeof event!=='object'||Array.isArray(event)||event.eventId!==eventId||!forecastEvent(event,event).equals(payload))return reply(400,{code:'EVENT_CONTRACT_MISMATCH'});
    if(value(env,'SUPABASE_URL')!==config.url)throw Error('WORKER_PROVIDER_UNAVAILABLE');
    const serviceKey=value(env,'SUPABASE_SERVICE_ROLE_KEY');
-   if(!/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(serviceKey??''))throw Error('WORKER_PROVIDER_UNAVAILABLE');
+   if(serviceCredentialKind(serviceKey)===null)throw Error('WORKER_PROVIDER_UNAVAILABLE');
    const boundedFetch=(url,options={})=>fetchImpl(url,{...options,signal:options.signal?AbortSignal.any([options.signal,budget]):budget});
    const rpc=rpcFactory?rpcFactory({url:config.url,serviceKey,fetchImpl:boundedFetch}):createWorkerRpc({url:config.url,serviceKey,fetchImpl:boundedFetch});
    const edge=(action,p)=>rpc('wave5_edge_control',{p_runtime_id:config.runtimeId,p_action:action,p_payload:p});

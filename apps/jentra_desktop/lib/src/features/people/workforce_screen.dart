@@ -5,6 +5,8 @@ import 'package:jentra_domain/jentra_people.dart';
 import '../../app_providers.dart';
 import 'organization_screen.dart';
 import 'workforce_controller.dart';
+import 'employee_requests_controller.dart';
+import 'employee_requests_screen.dart';
 
 class WorkforceScreen extends ConsumerWidget {
   const WorkforceScreen({super.key});
@@ -30,7 +32,30 @@ class WorkforceScreen extends ConsumerWidget {
         ),
       );
     }
-    return WorkforceWorkspace(key: ValueKey(c), controller: c);
+    final requests = ref.watch(employeeRequestsControllerProvider);
+    return Column(
+      children: [
+        if (requests != null)
+          Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+              child: OutlinedButton.icon(
+                icon: const Icon(Icons.inbox_outlined),
+                label: const Text('Employee requests'),
+                onPressed: () => Navigator.of(context).push<void>(
+                  MaterialPageRoute(
+                    builder: (_) => const EmployeeRequestsScreen(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        Expanded(
+          child: WorkforceWorkspace(key: ValueKey(c), controller: c),
+        ),
+      ],
+    );
   }
 }
 

@@ -1,0 +1,238 @@
+00:00 +0: loading C:/Users/sheha/Desktop/Jentra OS/apps/jentra_sales/test/sales_layout_regressions_test.dart
+00:00 +0: live Sales navigation remains usable in short windows at 768.0 and 200% text
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<A RenderFlex overflowed by 24 pixels on the bottom.>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_sales/test/sales_layout_regressions_test.dart:36:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_sales/test/sales_layout_regressions_test.dart line 36
+The test description was:
+  live Sales navigation remains usable in short windows at 768.0 and 200% text
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -1: live Sales navigation remains usable in short windows at 768.0 and 200% text [E]
+  Test failed. See exception logs above.
+  The test description was: live Sales navigation remains usable in short windows at 768.0 and 200% text
+  
+00:02 +0 -1: live Sales navigation remains usable in short windows at 1024.0 and 200% text
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: FlutterError:<A RenderFlex overflowed by 24 pixels on the bottom.>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_sales/test/sales_layout_regressions_test.dart:36:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_sales/test/sales_layout_regressions_test.dart line 36
+The test description was:
+  live Sales navigation remains usable in short windows at 1024.0 and 200% text
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +0 -2: live Sales navigation remains usable in short windows at 1024.0 and 200% text [E]
+  Test failed. See exception logs above.
+  The test description was: live Sales navigation remains usable in short windows at 1024.0 and 200% text
+  
+00:02 +0 -2: Sales sign-in remains usable at 1050 by 800 and 140.0% text
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 26 pixels on the right.
+
+The relevant error-causing widget was:
+  Row Row:file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_sales/lib/src/ui/login.dart:256:15
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#9ae65 relayoutBoundary=up10 OVERFLOWING:
+  creator: Row ← Column ← Padding ← DecoratedBox ← Container ← Column ← Padding ← ColoredBox ←
+    Container ← _WelcomePanel ← Expanded ← Row ← ⋯
+  parentData: offset=Offset(0.0, 0.0); flex=null; fit=null (can use size)
+  constraints: BoxConstraints(0.0<=w<=363.0, 0.0<=h<=Infinity)
+  size: Size(363.0, 23.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: max
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 606 pixels on the bottom.
+
+The relevant error-causing widget was:
+  Column
+  Column:file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_sales/lib/src/ui/login.dart:225:12
+
+The overflowing RenderFlex has an orientation of Axis.vertical.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#27558 relayoutBoundary=up6 OVERFLOWING:
+  needs compositing
+  creator: Column ← Padding ← ColoredBox ← Container ← _WelcomePanel ← Expanded ← Row ← MediaQuery ←
+    Padding ← SafeArea ← LayoutBuilder ← KeyedSubtree-[GlobalKey#1d872] ← ⋯
+  parentData: offset=Offset(56.0, 56.0) (can use size)
+  constraints: BoxConstraints(w=413.0, 0.0<=h<=688.0)
+  size: Size(413.0, 688.0)
+  direction: vertical
+  mainAxisAlignment: start
+  mainAxisSize: max
+  crossAxisAlignment: start
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_sales/test/sales_layout_regressions_test.dart:69:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_sales/test/sales_layout_regressions_test.dart line 69
+The test description was:
+  Sales sign-in remains usable at 1050 by 800 and 140.0% text
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +0 -3: Sales sign-in remains usable at 1050 by 800 and 140.0% text [E]
+  Test failed. See exception logs above.
+  The test description was: Sales sign-in remains usable at 1050 by 800 and 140.0% text
+  
+00:03 +0 -3: Sales sign-in remains usable at 1050 by 800 and 149.0% text
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 47 pixels on the right.
+
+The relevant error-causing widget was:
+  Row Row:file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_sales/lib/src/ui/login.dart:256:15
+
+The overflowing RenderFlex has an orientation of Axis.horizontal.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#5a3cc relayoutBoundary=up10 OVERFLOWING:
+  creator: Row ← Column ← Padding ← DecoratedBox ← Container ← Column ← Padding ← ColoredBox ←
+    Container ← _WelcomePanel ← Expanded ← Row ← ⋯
+  parentData: offset=Offset(0.0, 0.0); flex=null; fit=null (can use size)
+  constraints: BoxConstraints(0.0<=w<=363.0, 0.0<=h<=Infinity)
+  size: Size(363.0, 25.0)
+  direction: horizontal
+  mainAxisAlignment: start
+  mainAxisSize: max
+  crossAxisAlignment: center
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 874 pixels on the bottom.
+
+The relevant error-causing widget was:
+  Column
+  Column:file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_sales/lib/src/ui/login.dart:225:12
+
+The overflowing RenderFlex has an orientation of Axis.vertical.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#fc60e relayoutBoundary=up6 OVERFLOWING:
+  needs compositing
+  creator: Column ← Padding ← ColoredBox ← Container ← _WelcomePanel ← Expanded ← Row ← MediaQuery ←
+    Padding ← SafeArea ← LayoutBuilder ← KeyedSubtree-[GlobalKey#c4926] ← ⋯
+  parentData: offset=Offset(56.0, 56.0) (can use size)
+  constraints: BoxConstraints(w=413.0, 0.0<=h<=688.0)
+  size: Size(413.0, 688.0)
+  direction: vertical
+  mainAxisAlignment: start
+  mainAxisSize: max
+  crossAxisAlignment: start
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (2) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_sales/test/sales_layout_regressions_test.dart:69:9)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/sheha/Desktop/Jentra%20OS/apps/jentra_sales/test/sales_layout_regressions_test.dart line 69
+The test description was:
+  Sales sign-in remains usable at 1050 by 800 and 149.0% text
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +0 -4: Sales sign-in remains usable at 1050 by 800 and 149.0% text [E]
+  Test failed. See exception logs above.
+  The test description was: Sales sign-in remains usable at 1050 by 800 and 149.0% text
+  
+00:04 +0 -4: Some tests failed.
+
+Failing tests:
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_sales/test/sales_layout_regressions_test.dart: Sales sign-in remains usable at 1050 by 800 and 140.0% text
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_sales/test/sales_layout_regressions_test.dart: Sales sign-in remains usable at 1050 by 800 and 149.0% text
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_sales/test/sales_layout_regressions_test.dart: live Sales navigation remains usable in short windows at 1024.0 and 200% text
+  C:/Users/sheha/Desktop/Jentra OS/apps/jentra_sales/test/sales_layout_regressions_test.dart: live Sales navigation remains usable in short windows at 768.0 and 200% text
