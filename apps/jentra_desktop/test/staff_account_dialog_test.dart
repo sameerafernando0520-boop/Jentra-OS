@@ -108,7 +108,10 @@ void main() {
     ];
   });
   tearDown(() => controller.dispose());
-  Future<ProviderContainer> mount(WidgetTester tester) async {
+  Future<ProviderContainer> mount(
+    WidgetTester tester, {
+    Brightness brightness = Brightness.light,
+  }) async {
     final container = ProviderContainer(
       overrides: [
         workspaceAdminControllerProvider.overrideWithValue(controller),
@@ -121,7 +124,9 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: MaterialApp(
-          theme: JentraTheme.light(),
+          theme: brightness == Brightness.dark
+              ? JentraTheme.dark()
+              : JentraTheme.light(),
           home: Scaffold(
             body: Builder(
               builder: (context) => TextButton(
@@ -187,6 +192,122 @@ void main() {
     expect(find.byType(StaffAccountDialog), findsNothing);
     expect(tester.takeException(), isNull);
   });
+  testWidgets('revealed staff password is concealed when the app loses focus', (
+    tester,
+  ) async {
+    await mount(tester);
+    await password(tester);
+    final passwordField = find.byKey(const ValueKey('staff-password'));
+    await tester.ensureVisible(find.byTooltip('Show password'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Show password').hitTestable());
+    await tester.pump();
+    expect(
+      tester
+          .widget<TextField>(
+            find.descendant(
+              of: passwordField,
+              matching: find.byType(TextField),
+            ),
+          )
+          .obscureText,
+      isFalse,
+    );
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    await tester.pump();
+    expect(
+      tester
+          .widget<TextField>(
+            find.descendant(
+              of: passwordField,
+              matching: find.byType(TextField),
+            ),
+          )
+          .obscureText,
+      isTrue,
+    );
+    expect(
+      tester.widget<TextFormField>(passwordField).controller!.text,
+      'Synthetic-password-only12!',
+    );
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pump();
+    expect(
+      tester
+          .widget<TextField>(
+            find.descendant(
+              of: passwordField,
+              matching: find.byType(TextField),
+            ),
+          )
+          .obscureText,
+      isTrue,
+    );
+  });
+
+  testWidgets('submitting a staff request conceals its revealed password', (
+    tester,
+  ) async {
+    gateway.uncertain = true;
+    await mount(tester);
+    await fill(tester);
+    final passwordField = find.byKey(const ValueKey('staff-password'));
+    await tester.ensureVisible(find.byTooltip('Show password'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Show password').hitTestable());
+    await tester.pump();
+    expect(
+      tester
+          .widget<TextField>(
+            find.descendant(
+              of: passwordField,
+              matching: find.byType(TextField),
+            ),
+          )
+          .obscureText,
+      isFalse,
+    );
+    await submit(tester);
+    expect(
+      tester
+          .widget<TextField>(
+            find.descendant(
+              of: passwordField,
+              matching: find.byType(TextField),
+            ),
+          )
+          .obscureText,
+      isTrue,
+    );
+  });
+
+  for (final brightness in Brightness.values) {
+    testWidgets(
+      'staff roles and recovery actions remain reachable at 200% in $brightness',
+      (tester) async {
+        tester.view.physicalSize = const Size(1024, 600);
+        tester.view.devicePixelRatio = 1;
+        tester.platformDispatcher.textScaleFactorTestValue = 2;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        gateway.uncertain = true;
+        await mount(tester, brightness: brightness);
+        await fill(tester);
+        expect(tester.takeException(), isNull);
+        await submit(tester);
+        final retry = find.byKey(const ValueKey('staff-create-submit'));
+        final start = find.byKey(const ValueKey('staff-start-different'));
+        await tester.ensureVisible(start);
+        await tester.pumpAndSettle();
+        expect(start.hitTestable(), findsOneWidget);
+        await tester.ensureVisible(retry);
+        await tester.pumpAndSettle();
+        expect(retry.hitTestable(), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
   testWidgets(
     'uncertain creation freezes details and retries the original identity',
     (tester) async {

@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:jentra_sales/src/data/sales_gateway.dart';
 import 'package:jentra_sales/src/data/sales_store.dart';
@@ -42,6 +45,119 @@ class _Account implements SalesAccountGateway {
 }
 
 void main() {
+  group('Admin-created Sales credentials', () {
+    late SupabaseClient client;
+    final requests = <http.Request>[];
+    var functionStatus = 200;
+    setUp(() {
+      requests.clear();
+      functionStatus = 200;
+      client = SupabaseClient(
+        'https://example.test',
+        'synthetic-public',
+        authOptions: const AuthClientOptions(autoRefreshToken: false),
+        httpClient: MockClient((request) async {
+          requests.add(request);
+          final isFunction = request.url.path.endsWith('/workspace-staff');
+          final claims = base64Url
+              .encode(
+                utf8.encode(
+                  jsonEncode({
+                    'sub': '10000000-0000-0000-0000-000000000001',
+                    'exp':
+                        DateTime.now()
+                            .add(const Duration(hours: 1))
+                            .millisecondsSinceEpoch ~/
+                        1000,
+                  }),
+                ),
+              )
+              .replaceAll('=', '');
+          return http.Response(
+            jsonEncode(
+              isFunction
+                  ? functionStatus == 200
+                        ? {'refresh_token': 'synthetic-function-refresh'}
+                        : {'code': 'INVALID_CREDENTIALS'}
+                  : {
+                      'access_token': 'eyJhbGciOiJIUzI1NiJ9.$claims.synthetic',
+                      'refresh_token': 'synthetic-auth-refresh',
+                      'expires_in': 3600,
+                      'token_type': 'bearer',
+                      'user': {
+                        'id': '10000000-0000-0000-0000-000000000001',
+                        'aud': 'authenticated',
+                        'created_at': '2026-11-03T00:00:00Z',
+                        'app_metadata': <String, Object?>{},
+                        'user_metadata': <String, Object?>{},
+                      },
+                    },
+            ),
+            isFunction ? functionStatus : 200,
+            headers: {'content-type': 'application/json'},
+          );
+        }),
+      );
+    });
+    tearDown(() async => client.dispose());
+
+    test('username authenticates through the staff endpoint and installs its session', () async {
+      final account = SupabaseSalesAccountGateway(
+        client,
+        enableCandidate: true,
+      );
+      await account.signIn(' Company_Sales ', 'synthetic-password');
+      expect(requests.map((request) => request.url.path), [
+        '/functions/v1/workspace-staff',
+        '/auth/v1/token',
+      ]);
+      expect(jsonDecode(requests.first.body), {
+        'operation': 'login',
+        'username': 'company_sales',
+        'password': 'synthetic-password',
+      });
+      expect(requests.last.url.queryParameters['grant_type'], 'refresh_token');
+      expect(
+        jsonDecode(requests.last.body)['refresh_token'],
+        'synthetic-function-refresh',
+      );
+      expect(client.auth.currentSession, isNotNull);
+      await account.signOut();
+      expect(client.auth.currentSession, isNull);
+    });
+
+    test('existing work email still signs in directly through Auth', () async {
+      await SupabaseSalesAccountGateway(
+        client,
+        enableCandidate: true,
+      ).signIn(' owner@example.test ', 'synthetic-password');
+      expect(requests, hasLength(1));
+      expect(requests.single.url.path, '/auth/v1/token');
+      expect(requests.single.url.queryParameters['grant_type'], 'password');
+      expect(jsonDecode(requests.single.body)['email'], 'owner@example.test');
+      expect(client.auth.currentSession, isNotNull);
+    });
+
+    test('rejected staff credentials cannot install a session', () async {
+      functionStatus = 401;
+      await expectLater(
+        SupabaseSalesAccountGateway(
+          client,
+          enableCandidate: true,
+        ).signIn('company_sales', 'wrong'),
+        throwsA(
+          isA<SalesFailure>().having(
+            (error) => error.code,
+            'code',
+            'SIGN_IN_FAILED',
+          ),
+        ),
+      );
+      expect(requests, hasLength(1));
+      expect(requests.single.url.path, '/functions/v1/workspace-staff');
+      expect(client.auth.currentSession, isNull);
+    });
+  });
   test(
     'late credential completion is cleaned up and cannot overlap a new attempt',
     () async {

@@ -1,9 +1,10 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:jentra_platform/jentra_platform.dart';
 
 import '../models.dart';
 
 abstract interface class SalesAccountGateway {
-  Future<void> signIn(String email, String password);
+  Future<void> signIn(String login, String password);
   Future<void> signOut();
 }
 
@@ -33,7 +34,7 @@ final class SupabaseSalesAccountGateway implements SalesAccountGateway {
   bool _authInFlight = false;
   Future<void> _logout = Future.value();
   @override
-  Future<void> signIn(String email, String password) async {
+  Future<void> signIn(String login, String password) async {
     if (_authInFlight) {
       throw const SalesFailure(
         'SIGN_IN_PENDING',
@@ -44,10 +45,11 @@ final class SupabaseSalesAccountGateway implements SalesAccountGateway {
     final generation = ++_generation;
     try {
       await _logout;
-      final login = _passwordSignIn != null
-          ? _passwordSignIn(email, password)
-          : client!.auth.signInWithPassword(email: email, password: password);
-      final result = await login
+      final authentication = _passwordSignIn != null
+          ? _passwordSignIn(login, password)
+          : SupabaseFoundationGateway(client!)
+                .signInWithLogin(login: login, password: password);
+      final result = await authentication
           .then((value) async {
             if (!enableCandidate || generation != _generation) await signOut();
             return value;
@@ -73,7 +75,7 @@ final class SupabaseSalesAccountGateway implements SalesAccountGateway {
       await signOut();
       throw const SalesFailure(
         'SIGN_IN_FAILED',
-        'Check your email, password and account verification, then try again.',
+        'Check your username or work email, password and account verification, then try again.',
       );
     } on Object {
       await signOut();

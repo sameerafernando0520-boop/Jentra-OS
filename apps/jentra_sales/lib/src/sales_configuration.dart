@@ -13,7 +13,8 @@ final class SalesConfiguration {
   final String url, publishableKey;
   bool get isValid {
     if (publishableKey.startsWith('sb_publishable_') &&
-        !RegExp(r'^sb_publishable_[A-Za-z0-9_-]{8,}$').hasMatch(publishableKey)) {
+        !RegExp(r'^sb_publishable_[A-Za-z0-9_-]{8,}$')
+            .hasMatch(publishableKey)) {
       return false;
     }
     try {

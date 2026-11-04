@@ -74,13 +74,13 @@ class _SalesLoginState extends State<SalesLogin> with WidgetsBindingObserver {
                         ),
                         const SizedBox(height: 40),
                       ],
-                      const Text(
+                      Text(
                         'JENTRA SALES',
                         style: TextStyle(
                           fontSize: 12,
                           letterSpacing: 2,
                           fontWeight: FontWeight.w800,
-                          color: salesBlue,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -107,20 +107,28 @@ class _SalesLoginState extends State<SalesLogin> with WidgetsBindingObserver {
                       const SizedBox(height: 32),
                       TextFormField(
                         controller: _email,
-                        keyboardType: TextInputType.emailAddress,
+                        keyboardType: TextInputType.text,
+                        autocorrect: false,
+                        enableSuggestions: false,
+                        textCapitalization: TextCapitalization.none,
                         autofillHints: const [AutofillHints.username],
                         textInputAction: TextInputAction.next,
                         decoration: const InputDecoration(
-                          labelText: 'Work email',
-                          hintText: 'you@company.com',
-                          prefixIcon: Icon(Icons.mail_outline),
+                          labelText: 'Username or work email',
+                          hintText: 'company_sales or you@company.com',
+                          prefixIcon: Icon(Icons.alternate_email),
                         ),
-                        validator: (v) =>
-                            v != null &&
-                                RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
-                                    .hasMatch(v.trim())
-                            ? null
-                            : 'Enter your work email.',
+                        validator: (value) {
+                          final login = value?.trim() ?? '';
+                          final valid = login.contains('@')
+                              ? RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
+                                    .hasMatch(login)
+                              : RegExp(r'^[a-z0-9][a-z0-9_-]{2,39}$')
+                                    .hasMatch(login.toLowerCase());
+                          return valid
+                              ? null
+                              : 'Enter your username or work email.';
+                        },
                       ),
                       const SizedBox(height: 20),
                       TextFormField(

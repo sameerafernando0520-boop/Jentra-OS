@@ -147,6 +147,9 @@ jobs:
 
       - name: Install Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # The retired tools package is no longer published by sdkmanager.
+          packages: 'platform-tools'
 
       - name: Install required Android platform
         run: sdkmanager 'platforms;android-37'

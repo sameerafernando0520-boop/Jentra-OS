@@ -11,6 +11,9 @@ create function pg_temp.period_id() returns uuid language sql stable as $$
 create function pg_temp.period_payload(a text,n text) returns jsonb language sql as $$
  select jsonb_build_object('action',a,'id',pg_temp.fid(n),'period_id',pg_temp.period_id(),
  'reason','Synthetic governed period transition')$$;
+create function pg_temp.period_session_mfa() returns void
+language sql security definer set search_path='' as $$
+ select finance.period_require_recent_mfa() $$;
 create function pg_temp.period_actor(p text,age_seconds integer default 0,aal text default 'aal2')
 returns void language plpgsql as $$begin
  perform pg_temp.actor(p,aal);
@@ -205,7 +208,7 @@ insert into procurement_test_results select case when to_regprocedure('core.sess
   pg_temp.period_payload('request_reopen','period.reopen.request'),
   (select version from finance.fiscal_periods where id=pg_temp.period_id()))$$,
   '42501','RECENT_MFA_REQUIRED','legacy policy rejects stale MFA')
- else lives_ok($$select finance.period_require_recent_mfa()$$,
+ else lives_ok($$select pg_temp.period_session_mfa()$$,
   'verified sign-in remains valid beyond 15 minutes') end;
 select pg_temp.period_actor('creator');
 insert into procurement_responses values('period.reopen.request',pg_temp.call('period_governance_command',

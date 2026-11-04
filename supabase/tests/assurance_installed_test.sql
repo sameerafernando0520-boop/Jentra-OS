@@ -29,6 +29,9 @@ create function pg_temp.e(a text) returns jsonb language sql as $$
   select jsonb_build_object('action',a,'engagement_id',pg_temp.aid('eng')) $$;
 create function pg_temp.ver() returns bigint language sql security definer set search_path='' as $$
   select version from assurance.engagements where id=pg_temp.aid('eng') $$;
+create function pg_temp.assurance_session_mfa() returns boolean
+language sql security definer set search_path='' as $$
+  select assurance.recent_mfa() $$;
 create function pg_temp.hex(p text) returns text language sql immutable as
   $$select encode(extensions.digest(p,'sha256'),'hex')$$;
 
@@ -221,7 +224,7 @@ reset role;select pg_temp.actor('lead',true,3600);set local role authenticated;
 select case when to_regprocedure('core.session_has_mfa()') is null then
   throws_ok($$select pg_temp.cmd(pg_temp.e('freeze_evidence')||'{"reason":"Fieldwork cutoff"}',pg_temp.ver(),'freeze.stale')$$,
     '42501','ASSURANCE_RECENT_MFA_REQUIRED','legacy policy rejects stale MFA')
-  else ok(assurance.recent_mfa(), 'verified sign-in remains valid beyond 15 minutes') end;
+  else ok(pg_temp.assurance_session_mfa(), 'verified sign-in remains valid beyond 15 minutes') end;
 reset role;select pg_temp.actor('auditor');set local role authenticated;
 select throws_ok($$select pg_temp.cmd(pg_temp.e('freeze_evidence')||'{"reason":"Fieldwork cutoff"}',pg_temp.ver(),'freeze.notlead')$$,
   '42501',null,'non-lead cannot freeze');
