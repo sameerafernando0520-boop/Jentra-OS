@@ -89,6 +89,11 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
+        await tester.scrollUntilVisible(
+          find.text('Pipeline and forecast'),
+          200,
+        );
+        await tester.pumpAndSettle();
         final pipeline = tester.getTopLeft(find.text('Pipeline and forecast'));
         final bank = tester.getTopLeft(
           find.text('Cash and bank reconciliation'),
