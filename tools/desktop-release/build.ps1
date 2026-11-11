@@ -6,6 +6,7 @@ param(
   [ValidateRange(1,65535)][int]$BuildNumber = 2201,
   [string]$FlutterRoot = 'C:\src\flutter',
   [string]$ApprovedProductionProjectRef,
+  [switch]$EnableFinanceOpeningImport,
   [switch]$PrepareOnly
 )
 $ErrorActionPreference = 'Stop'
@@ -15,7 +16,10 @@ $stamp = [DateTime]::UtcNow.ToString('yyyyMMdd-HHmmss') + '-' + [Guid]::NewGuid(
 # Keep the checkout name short; the output/manifest retain the complete identity.
 $snapshot = Join-Path $repo ('build\b' + [Guid]::NewGuid().ToString('N').Substring(0,6))
 $output = Join-Path $repo ('build\desktop-release\' + $Version + '-' + $BuildNumber + '-' + $Channel + '-' + $stamp)
-& node (Join-Path $PSScriptRoot 'prepare.mjs') $snapshot $output ([IO.Path]::GetFullPath($PublicConfigPath)) $Channel $Version $BuildNumber $ApprovedProductionProjectRef
+$prepareArguments = @($snapshot, $output, ([IO.Path]::GetFullPath($PublicConfigPath)), $Channel, $Version, [string]$BuildNumber)
+if ($ApprovedProductionProjectRef) { $prepareArguments += $ApprovedProductionProjectRef }
+if ($EnableFinanceOpeningImport) { $prepareArguments += '--finance-opening-import' }
+& node (Join-Path $PSScriptRoot 'prepare.mjs') @prepareArguments
 if ($LASTEXITCODE -ne 0) { throw 'SOURCE_PREPARATION_FAILED' }
 if ($PrepareOnly) { Write-Output ('Prepared: ' + $output); exit 0 }
 $dart = Join-Path $FlutterRoot 'bin\cache\dart-sdk\bin\dart.exe'

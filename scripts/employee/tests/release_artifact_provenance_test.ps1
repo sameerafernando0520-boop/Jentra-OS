@@ -22,6 +22,7 @@ function Put([string]$Relative,[string]$Contents) {
 }
 foreach ($name in @('pubspec.yaml','pubspec.lock','apps/jentra_employee/pubspec.yaml','.dart_tool/package_config.json',
     'scripts/employee/build_production_release.ps1','scripts/employee/release_artifact_provenance.ps1',
+    'scripts/android/assert_flutter_apk_abi.ps1',
     'apps/jentra_employee/lib/main.dart','apps/jentra_employee/android/app/build.gradle.kts',
     'packages/example/pubspec.yaml','packages/example/lib/shared.dart','packages/example/assets/icon.txt')) { Put $name ('SYNTHETIC_' + $name) }
 foreach ($name in @('apps/jentra_employee/android/.env.private','apps/jentra_employee/android/key.properties',
@@ -39,6 +40,7 @@ $tools = [ordered]@{mockTool=$tool}
 $provenance = New-EmployeeReleaseProvenance $fixture $config $tools
 $paths = @($provenance.sourceFiles | ForEach-Object { $_.path })
 Check 'actual employee, Android, shared assets and dependency-lock inputs are hashed' ($paths -contains 'apps/jentra_employee/lib/main.dart' -and $paths -contains 'apps/jentra_employee/android/app/build.gradle.kts' -and $paths -contains 'packages/example/assets/icon.txt' -and $paths -contains 'pubspec.lock' -and $paths -contains '.dart_tool/package_config.json')
+Check 'the APK ABI release guard is hashed' ($paths -contains 'scripts/android/assert_flutter_apk_abi.ps1')
 Check 'generated output and local signing/configuration files are excluded' (@($paths | Where-Object { $_ -match 'private|properties|release\.p12|generated|GeneratedPluginRegistrant' }).Count -eq 0)
 Check 'manifest stores hashes, not source, tool or configuration contents' (($provenance | ConvertTo-Json -Depth 10) -notmatch 'SYNTHETIC_')
 Check 'JVM crash diagnostics stay outside release provenance' (@($paths | Where-Object { $_ -match 'hs_err_pid|replay_pid|java_pid' }).Count -eq 0)

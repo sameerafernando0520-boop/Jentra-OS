@@ -55,26 +55,21 @@ final class QuotationRecoveryEntry {
 /// Raw editor fields may be incomplete; only prepare receives validated command
 /// input. No automatic network sync or conflict merge is performed here.
 final class QuotationDraftStore {
-  QuotationDraftStore(this._repository) : _orders = false, _procurement = false;
+  QuotationDraftStore(this._repository)
+    : _prefix = 'quotation:',
+      _entityType = 'sales.quotation';
   QuotationDraftStore.orders(this._repository)
-    : _orders = true,
-      _procurement = false;
+    : _prefix = 'order:',
+      _entityType = 'sales.order';
   QuotationDraftStore.procurement(this._repository)
-    : _orders = false,
-      _procurement = true;
+    : _prefix = 'procurement:',
+      _entityType = 'procurement.requisition';
+  QuotationDraftStore.financeOpenings(this._repository)
+    : _prefix = 'finance-opening:',
+      _entityType = 'finance.opening_batch';
   final EncryptedDraftRepository _repository;
-  final bool _orders;
-  final bool _procurement;
-  String get _prefix => _procurement
-      ? 'procurement:'
-      : _orders
-      ? 'order:'
-      : 'quotation:';
-  String get _entityType => _procurement
-      ? 'procurement.requisition'
-      : _orders
-      ? 'sales.order'
-      : 'sales.quotation';
+  final String _prefix;
+  final String _entityType;
   static const _uuid = Uuid();
   // Serialize store instances sharing a database too. This guards double-clicks
   // and overlapping editor instances in one application process.
@@ -212,26 +207,36 @@ final class QuotationDraftStore {
     required Map<String, Object?> payload,
     int? expectedVersion,
   }) => _locked(_key(context, slot), () async {
-    if (!(_orders
-            ? const {
-                'save',
-                'convert',
-                'fulfillment',
-                'confirm',
-                'cancel',
-                'reserve',
-              }
-            : const {
-                'save',
-                'submit',
-                'recall',
-                'accept',
-                'expire',
-                'cancel',
-                'approve',
-                'reject',
-              })
-        .contains(verb)) {
+    final openingReversal =
+        _entityType == 'finance.opening_batch' &&
+        const {
+          'request_reversal',
+          'approve_reversal',
+          'reject_reversal',
+          'cancel_reversal',
+          'post_reversal',
+        }.contains(verb);
+    if (!openingReversal &&
+        !(_entityType == 'sales.order'
+                ? const {
+                    'save',
+                    'convert',
+                    'fulfillment',
+                    'confirm',
+                    'cancel',
+                    'reserve',
+                  }
+                : const {
+                    'save',
+                    'submit',
+                    'recall',
+                    'accept',
+                    'expire',
+                    'cancel',
+                    'approve',
+                    'reject',
+                  })
+            .contains(verb)) {
       throw const DomainError(
         code: 'VALIDATION_ERROR',
         message: 'Unknown document command.',

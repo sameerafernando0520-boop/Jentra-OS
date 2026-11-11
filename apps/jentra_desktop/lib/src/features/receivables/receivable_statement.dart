@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jentra_domain/jentra_receivables.dart';
 
 import 'receivables_controller.dart';
@@ -111,6 +112,18 @@ class _StatementState extends State<ReceivableStatement> {
   Future<void> source(Map<String, Object?> row) async {
     final access = c.readAccessEpoch;
     if (!c.currentRead(access)) return;
+    if (const {
+      'opening_receivable',
+      'opening_receivable_reversal',
+    }.contains(row['source_type'])) {
+      if (canOpenImportedSource(row)) {
+        final sourceId = row['source_id'] as String;
+        await context.push<void>(
+          '/finance/opening-balances/source/${Uri.encodeComponent(sourceId)}',
+        );
+      }
+      return;
+    }
     try {
       final kind = ReceivableKind.values.firstWhere(
         (k) => k.wire == row['source_type'],
@@ -170,6 +183,12 @@ class _StatementState extends State<ReceivableStatement> {
       if (mounted) setState(() => error = message);
     }
   }
+
+  bool canOpenImportedSource(Map<String, Object?> row) =>
+      const bool.fromEnvironment('FINANCE_OPENING_IMPORT_ENABLED') &&
+      c.capabilities.contains('finance.openings.view') &&
+      row['source_id'] is String &&
+      (row['source_id'] as String).isNotEmpty;
 
   Future<void> allocations(Map<String, Object?> row) async {
     final access = c.readAccessEpoch;
@@ -389,6 +408,15 @@ class _StatementState extends State<ReceivableStatement> {
           Builder(
             builder: (context) {
               final row = receivableMap(raw);
+              final isOpening = const {
+                'opening_receivable',
+                'opening_receivable_reversal',
+              }.contains(row['source_type']);
+              final sourceLabel = isOpening
+                  ? row['source_type'] == 'opening_receivable_reversal'
+                        ? 'Opening customer reversal'
+                        : 'Opening customer document'
+                  : row['source_type'];
               return Card(
                 child: Padding(
                   padding: const EdgeInsets.all(12),
@@ -400,7 +428,7 @@ class _StatementState extends State<ReceivableStatement> {
                       SizedBox(
                         width: 290,
                         child: Text(
-                          '${row['document_number']} · ${row['source_type']}\n${row['posting_date']} · due ${row['due_date']}',
+                          '${row['document_number']} · $sourceLabel\n${row['posting_date']} · due ${row['due_date']}',
                         ),
                       ),
                       SizedBox(
@@ -409,10 +437,11 @@ class _StatementState extends State<ReceivableStatement> {
                           'Original ${row['original_amount']}\nOpen ${row['open_amount']} · base ${row['open_base_amount']}',
                         ),
                       ),
-                      TextButton(
-                        onPressed: () => source(row),
-                        child: const Text('Source'),
-                      ),
+                      if (!isOpening || canOpenImportedSource(row))
+                        TextButton(
+                          onPressed: () => source(row),
+                          child: const Text('Source'),
+                        ),
                       TextButton(
                         onPressed: () => allocations(row),
                         child: const Text('Allocations'),

@@ -22,12 +22,33 @@ function fixture() {
     complete: async args => { calls.push(['complete', args]); return { request_id: requestId,
       tenant_id: tenant, username: reservation.username, user_id: userId, membership_id: member, status: 'active' }; },
     loginTarget: async username => { calls.push(['resolve', username]); return { email: reservation.email, limited: false }; },
-    signIn: async (email, password) => { calls.push(['password', email, password]); return { refresh_token: 'synthetic-refresh' }; },
+    signIn: async (email, password) => { calls.push(['password', email, password]); return { refresh_token: 'synthetic-refresh', user: { id: userId } }; },
   };
   return { calls, reservation, dependencies };
 }
 const request = payload => new Request('https://example.test/workspace-staff', {
   method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload),
+});
+
+test('oversized request cancels the unread body before staff or Auth work', async () => {
+  const f = fixture();
+  let pulls = 0;
+  let cancelled = false;
+  const body = new ReadableStream({
+    pull(controller) {
+      if (++pulls === 1) controller.enqueue(new Uint8Array(8193));
+      else controller.close();
+    },
+    cancel() { cancelled = true; },
+  }, { highWaterMark: 0 });
+  const response = await handleWorkspaceStaff(new Request('https://example.test/workspace-staff', {
+    method: 'POST', body, duplex: 'half',
+  }), f.dependencies);
+  assert.equal(response.status, 413);
+  assert.deepEqual(await response.json(), { code: 'REQUEST_TOO_LARGE' });
+  assert.equal(pulls, 1);
+  assert.equal(cancelled, true);
+  assert.deepEqual(f.calls, []);
 });
 
 test('admin creation binds trusted identity metadata and grants only after reservation', async () => {
@@ -42,6 +63,29 @@ test('admin creation binds trusted identity metadata and grants only after reser
   for (const [name, args] of f.calls) if (name !== 'create') assert(!JSON.stringify(args).includes(body().password));
   assert(!JSON.stringify(await response.json()).includes(body().password));
   assert.equal(response.headers.get('cache-control'), 'no-store');
+});
+
+test('oversized request refusal does not wait for peer cancellation cleanup', async () => {
+  const f = fixture();
+  let cancelled = false;
+  const bodyStream = new ReadableStream({
+    pull(controller) { controller.enqueue(new Uint8Array(8193)); },
+    cancel() { cancelled = true; return new Promise(() => {}); },
+  }, { highWaterMark: 0 });
+  let timer;
+  try {
+    const response = await Promise.race([
+      handleWorkspaceStaff(new Request('https://example.test/workspace-staff', {
+        method: 'POST', body: bodyStream, duplex: 'half',
+      }), f.dependencies),
+      new Promise((_, reject) => { timer = setTimeout(() => reject(Error('cancellation blocked refusal')), 1000); }),
+    ]);
+    assert.equal(response.status, 413);
+    assert.equal(cancelled, true);
+    assert.deepEqual(f.calls, []);
+  } finally {
+    clearTimeout(timer);
+  }
 });
 test('unauthenticated caller cannot reserve or create an account', async () => {
   const f = fixture(); f.dependencies.authenticate = async () => null;
@@ -78,6 +122,50 @@ test('recovery with a different password cannot falsely confirm credentials', as
   assert.equal(response.status,400);
   assert.deepEqual(await response.json(),{code:'STAFF_ORIGINAL_PASSWORD_REQUIRED'});
   assert.deepEqual(f.calls.map(call=>call[0]),['reserve']);
+});
+test('recovery requires a session belonging to the reserved Auth identity', async () => {
+  for (const session of [null, {}, { user: { id: userId } },
+    { user: { id: userId }, refresh_token: '' },
+    { user: { id: actor }, refresh_token: 'synthetic-refresh' }]) {
+    const f = fixture();
+    f.reservation.user_id = userId;
+    f.dependencies.signIn = async () => session;
+    const response = await handleWorkspaceStaff(request(body()), f.dependencies);
+    assert.equal(response.status, 400);
+    assert.deepEqual(await response.json(), { code: 'STAFF_ORIGINAL_PASSWORD_REQUIRED' });
+    assert.deepEqual(f.calls.map(call => call[0]), ['reserve']);
+  }
+});
+
+test('request limit counts UTF-8 bytes rather than characters', async () => {
+  const f = fixture();
+  const response = await handleWorkspaceStaff(request({ ...body(), display_name: 'é'.repeat(4096) }), f.dependencies);
+  assert.equal(response.status, 413);
+  assert.deepEqual(f.calls, []);
+});
+
+test('request stream permits exactly the byte limit and rejects the next chunk', async () => {
+  for (const extra of [0, 1]) {
+    const f = fixture();
+    const json = JSON.stringify(body());
+    const text = json + ' '.repeat(8192 - new TextEncoder().encode(json).length);
+    let chunk = 0;
+    let cancelled = false;
+    const bodyStream = new ReadableStream({
+      pull(controller) {
+        if (chunk++ === 0) controller.enqueue(new TextEncoder().encode(text));
+        else if (extra && chunk === 2) controller.enqueue(new Uint8Array([32]));
+        else controller.close();
+      },
+      cancel() { cancelled = true; },
+    }, { highWaterMark: 0 });
+    const response = await handleWorkspaceStaff(new Request('https://example.test/workspace-staff', {
+      method: 'POST', body: bodyStream, duplex: 'half',
+    }), f.dependencies);
+    assert.equal(response.status, extra ? 413 : 200);
+    assert.equal(cancelled, Boolean(extra));
+    if (extra) assert.deepEqual(f.calls, []);
+  }
 });
 test('unknown fields, weak password and invalid role IDs are rejected', async () => {
   for (const patch of [{ password: 'short' }, { role_ids: [] }, { role_ids: ['owner'] }, { service_role: true }]) {

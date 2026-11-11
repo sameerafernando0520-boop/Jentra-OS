@@ -4,15 +4,13 @@ import {readFile,readdir,writeFile,mkdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {resolve} from 'node:path';
-import {PGlite} from '../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/index.js';
-import {pgcrypto} from '../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/contrib/pgcrypto.js';
-import {btree_gist} from '../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/contrib/btree_gist.js';
 import {exercise} from './tests/field_confirmation.test.mjs';
 import {exercise as governanceRegression} from './tests/field_sales_governance.test.mjs';
 import {exercise as companyExercise} from './tests/field_company.test.mjs';
 import {exercise as mailExercise} from './tests/field_mail.test.mjs';
 import {exercise as progressionExercise} from './tests/field_progression.test.mjs';
 import {exercise as deliveryExercise} from './tests/field_delivery.test.mjs';
+import {diagnosePostingDateBoundary} from './tests/field_posting_date_boundary.mjs';
 
 const prefixThrough='20260910135507_harden_receivables_reference_indexes.sql';
 const employeeMigrations=['20260925181927_wave4_employee_foundation.sql','20260929224939_wave4_private_hr.sql'];
@@ -24,6 +22,9 @@ export function validateCandidate(sql) {
 }
 export async function main(args) {
  assert.deepEqual(args,['--run-isolated'],'Only --run-isolated is supported; no target options.');
+ const {PGlite}=await import('../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/index.js');
+ const {pgcrypto}=await import('../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/contrib/pgcrypto.js');
+ const {btree_gist}=await import('../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/contrib/btree_gist.js');
  const runtime=JSON.parse(await readFile(new URL('../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/package.json',import.meta.url),'utf8'));
  assert.equal(runtime.version,'0.5.12','Use the already-present pinned isolated runtime.');
  const db=new PGlite({extensions:{pgcrypto,btree_gist}}),sources={};
@@ -134,6 +135,9 @@ export async function main(args) {
   await load('supabase/candidates/tests/field_delivery.test.mjs');
   await deliveryExercise(db,checks,progressionContext);
   const deliveryPassed=checks.length-governancePassed-confirmationPassed-companyPassed-mailPassed-progressionPassed;
+  await db.exec('reset role');
+  await load('supabase/candidates/tests/field_posting_date_boundary.mjs');
+  const postingDateBoundary=await diagnosePostingDateBoundary(db);
   await db.exec('reset role');const schemaAfter=await catalog();
   await db.exec('reset role;rollback to savepoint delivery_candidate');
   assert.deepEqual((await deliveryDefinitions()).rows,deliveryBefore);
@@ -197,7 +201,7 @@ export async function main(args) {
   const output=new URL('../../docs/verification/field-rollout-20261103/',import.meta.url);await mkdir(output,{recursive:true});
   await writeFile(new URL('schema-before.json',output),JSON.stringify(schemaBefore,null,2)+'\n');
   await writeFile(new URL('schema-after.json',output),JSON.stringify(schemaAfter,null,2)+'\n');
-  const report={atUtc:new Date().toISOString(),engine:'PGlite 0.5.12 / PostgreSQL 18',passed:checks.length,governanceRegressionPassed:governancePassed,confirmationPassed,companyPassed,mailPassed,progressionPassed,deliveryPassed,checks,rollback,sources,
+  const report={atUtc:new Date().toISOString(),engine:'PGlite 0.5.12 / PostgreSQL 18',passed:checks.length,governanceRegressionPassed:governancePassed,confirmationPassed,companyPassed,mailPassed,progressionPassed,deliveryPassed,postingDateBoundary,checks,rollback,sources,
    baseline:{prefixThrough,additionalMigrations:employeeMigrations,
     executionNormalization:'CRLF to LF in baseline migrations only; SHA-256 hashes bind the original unmodified source bytes.',
     rollbackFunctions:changedFunctions},

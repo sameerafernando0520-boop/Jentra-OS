@@ -15,9 +15,28 @@ export async function handleWorkspaceStaff(request, dependencies) {
   if (request.method !== 'POST') return reply(405, { code: 'METHOD_NOT_ALLOWED' });
   let payload;
   try {
-    const text = await request.text();
-    if (text.length > 8192) return reply(413, { code: 'REQUEST_TOO_LARGE' });
-    payload = JSON.parse(text);
+    const reader = request.body?.getReader();
+    if (!reader) return reply(400, { code: 'INVALID_REQUEST' });
+    // Bound memory and bytes before parsing, including chunked requests without
+    // Content-Length. Stop consuming the stream as soon as it exceeds the cap.
+    const bytes = new Uint8Array(8192);
+    let length = 0;
+    try {
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        if (value.byteLength > bytes.length - length) {
+          // A peer's cancellation cleanup must not delay the refusal.
+          void reader.cancel().catch(() => {});
+          return reply(413, { code: 'REQUEST_TOO_LARGE' });
+        }
+        bytes.set(value, length);
+        length += value.byteLength;
+      }
+      payload = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes.subarray(0, length)));
+    } finally {
+      reader.releaseLock();
+    }
   } catch {
     return reply(400, { code: 'INVALID_REQUEST' });
   }
@@ -99,7 +118,13 @@ export async function handleWorkspaceStaff(request, dependencies) {
       // Recovery preserves the request identity, never the password. Verify a
       // re-entered password, including a parallel/lost-response retry. Never
       // reset an already-created identity's password as a replay side effect.
-      try { await dependencies.signIn(reservation.email, password); }
+      try {
+        const session = await dependencies.signIn(reservation.email, password);
+        if (session?.user?.id !== userId || typeof session.refresh_token !== 'string' ||
+          session.refresh_token.length === 0) {
+          return reply(400, { code: 'STAFF_ORIGINAL_PASSWORD_REQUIRED' });
+        }
+      }
       catch { return reply(400, { code: 'STAFF_ORIGINAL_PASSWORD_REQUIRED' }); }
     }
     if (typeof userId !== 'string' || !id.test(userId)) throw Error('UNCONFIRMED_USER');
