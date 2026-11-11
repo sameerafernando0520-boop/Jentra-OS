@@ -38,7 +38,7 @@ final class SupabasePlatform {
           detectSessionInUri: !operatorSession && !kIsWeb,
         ),
       );
-      if (kIsWeb && !operatorSession) {
+      if (kIsWeb && pending != null) {
         await completeBrowserAuthReturn(Supabase.instance.client, pending);
       }
       return Supabase.instance.client;
