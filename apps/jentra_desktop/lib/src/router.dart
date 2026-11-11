@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jentra_platform/jentra_platform.dart'
-    show browserAuthReturnWasCaptured;
+    show browserAuthReturnWasCaptured, organizationControlCandidateEnabled;
 import 'package:jentra_domain/jentra_receivables.dart';
 import 'package:jentra_domain/jentra_projects.dart';
 
@@ -69,7 +69,13 @@ import 'features/service/service_controller.dart';
 import 'features/service/service_screen.dart';
 import 'features/service/asset_equipment_controller.dart';
 import 'features/service/asset_equipment_screen.dart';
+import 'features/auth/account_security_screen.dart';
+import 'features/auth/department_accounts_screen.dart';
 import 'features/auth/login_screen.dart';
+import 'features/auth/managed_mailbox_screen.dart';
+import 'features/platform_control/platform_organization_screen.dart';
+import 'features/subscriptions/subscription_access.dart';
+import 'features/subscriptions/subscription_checkout_screen.dart';
 import 'features/catalogue/component_catalogue_screen.dart';
 import 'features/crm/crm_screen.dart';
 import 'features/procurement/procurement_screen.dart';
@@ -112,6 +118,7 @@ import 'features/sales/field_confirmation_company_screen.dart';
 import 'features/dashboard/dashboard_screen.dart';
 import 'features/setup/business_setup_screen.dart';
 import 'features/tenant/accept_invitation_screen.dart';
+import 'features/tenant/system_setup_screen.dart';
 import 'features/tenant/workspace_admin_screen.dart';
 import 'features/tenant/workspace_invitations_screen.dart';
 import 'features/finance/finance_screen.dart';
@@ -121,6 +128,22 @@ final routerProvider = Provider<GoRouter>((ref) {
   final gateway = ref.watch(foundationGatewayProvider);
   final refresh = _AuthRefresh();
   final subscription = gateway?.authChanges.listen((_) => refresh.notify());
+  ref.listen(subscriptionAccessProvider, (before, after) {
+    final previous = before?.value;
+    final current = after.value;
+    final oldPaused = previous?.pausedTenantIds ?? const <String>[];
+    final newPaused = current?.pausedTenantIds ?? const <String>[];
+    if (after.hasValue &&
+        (oldPaused.length != newPaused.length ||
+            !oldPaused.toSet().containsAll(newPaused))) {
+      ref.invalidate(tenantListProvider);
+    }
+    if (previous?.requiresCheckout != current?.requiresCheckout ||
+        previous?.workspacePaused != current?.workspacePaused ||
+        previous?.actorId != current?.actorId) {
+      refresh.notify();
+    }
+  });
   ref.onDispose(() {
     unawaited(subscription?.cancel());
     refresh.dispose();
@@ -134,6 +157,11 @@ final routerProvider = Provider<GoRouter>((ref) {
     overridePlatformDefaultLocation: browserAuthReturnWasCaptured,
     refreshListenable: refresh,
     redirect: (context, state) {
+      if (organizationControlCandidateEnabled &&
+          (state.uri.path == '/verify-system-owner' ||
+              state.uri.path == '/verify-staff')) {
+        return null;
+      }
       if (!developerTools && state.uri.path == '/catalogue') {
         return '/dashboard';
       }
@@ -147,15 +175,73 @@ final routerProvider = Provider<GoRouter>((ref) {
         ).toString();
       }
       if ((!configured || authenticated) && atLogin) {
-        return state.uri.queryParameters['redirect'] ?? '/dashboard';
+        return safeLoginRedirect(state.uri.queryParameters['redirect']);
+      }
+      final path = state.uri.path;
+      if (organizationControlCandidateEnabled &&
+          authenticated &&
+          path != '/subscriptions' &&
+          path != '/platform-control' &&
+          !path.startsWith('/account') &&
+          !path.startsWith('/invitation/')) {
+        final access = ref.read(subscriptionAccessProvider).value;
+        if (access != null &&
+            access.actorId == gateway?.currentUser?.id &&
+            (access.requiresCheckout || access.workspacePaused)) {
+          return '/subscriptions';
+        }
       }
       return null;
     },
     routes: [
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+      if (organizationControlCandidateEnabled) ...[
+        GoRoute(
+          path: '/verify-system-owner',
+          builder: (context, state) => ManagedMailboxScreen(
+            verificationId: state.uri.queryParameters['verification_id'],
+          ),
+        ),
+        GoRoute(
+          path: '/verify-staff',
+          builder: (context, state) => ManagedMailboxScreen(
+            verificationId:
+                state.uri.queryParameters['id'] ??
+                state.uri.queryParameters['identity_id'],
+            staff: true,
+          ),
+        ),
+        GoRoute(
+          path: '/subscriptions',
+          builder: (context, state) => const SubscriptionCheckoutScreen(),
+        ),
+        GoRoute(
+          path: '/platform-control',
+          builder: (context, state) => const PlatformOrganizationScreen(),
+        ),
+      ],
       ShellRoute(
         builder: (context, state, child) => JentraShell(child: child),
         routes: [
+          if (organizationControlCandidateEnabled) ...[
+            GoRoute(
+              path: '/account',
+              builder: (context, state) => const AccountSecurityScreen(),
+            ),
+            GoRoute(
+              path: '/system-setup',
+              builder: (context, state) => const SystemSetupScreen(),
+            ),
+            GoRoute(
+              path: '/account/department-accounts',
+              builder: (context, state) => const DepartmentAccountsScreen(),
+            ),
+            GoRoute(
+              path: '/account/verify',
+              builder: (context, state) =>
+                  const RestrictedActionVerificationScreen(),
+            ),
+          ],
           GoRoute(
             path: '/dashboard',
             builder: (context, state) => const DashboardScreen(),

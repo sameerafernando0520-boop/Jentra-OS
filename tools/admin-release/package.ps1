@@ -1,0 +1,93 @@
+[CmdletBinding()]
+param([Parameter(Mandatory=$true)][string]$BundlePath, [Parameter(Mandatory=$true)][string]$OutputDirectory)
+$ErrorActionPreference = 'Stop'
+$BundlePath = [IO.Path]::GetFullPath($BundlePath)
+$OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
+$sourceManifest = Get-Content -LiteralPath (Join-Path $OutputDirectory 'source-manifest.json') -Raw | ConvertFrom-Json
+$identity = $sourceManifest.identity
+if ($identity.sourceSha256 -notmatch '^[a-f0-9]{64}$' -or $identity.releaseId -notmatch '^\d+\.\d+\.\d+-\d+-(development|production)-[a-f0-9]{12}$') { throw 'SOURCE_IDENTITY_REQUIRED' }
+$expectedBundle = [IO.Path]::GetFullPath((Join-Path $sourceManifest.snapshot 'apps\jentra_desktop\build\windows\x64\runner\Release'))
+if ($BundlePath -ne $expectedBundle) { throw 'BUNDLE_MUST_BELONG_TO_RECORDED_SOURCE_SNAPSHOT' }
+foreach ($sourceFile in $sourceManifest.buildFiles) {
+  if ((Get-FileHash -LiteralPath (Join-Path $sourceManifest.snapshot $sourceFile.path) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $sourceFile.sha256) { throw 'BUILD_SOURCE_CHANGED' }
+}
+$installerSourceRoot = Join-Path $sourceManifest.snapshot 'tools\admin-release'
+if ((Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash -ne (Get-FileHash -LiteralPath (Join-Path $installerSourceRoot 'package.ps1') -Algorithm SHA256).Hash) { throw 'PACKAGER_MUST_MATCH_RECORDED_SOURCE_SNAPSHOT' }
+. (Join-Path $installerSourceRoot 'vc-runtime.ps1')
+$cmakeCache = Get-Content -LiteralPath (Join-Path $BundlePath '..\..\CMakeCache.txt')
+$instanceLine = @($cmakeCache | Where-Object { $_ -match '^CMAKE_GENERATOR_INSTANCE:INTERNAL=' })
+if ($instanceLine.Count -ne 1) { throw 'BUILD_VISUAL_STUDIO_INSTANCE_REQUIRED' }
+$vcRuntime = Get-JentraVcRuntimeFiles ($instanceLine[0] -replace '^CMAKE_GENERATOR_INSTANCE:INTERNAL=', '')
+foreach ($required in @('jentra_administrator.exe','flutter_windows.dll','data/app.so','data/icudtl.dat')) { if (!(Test-Path -LiteralPath (Join-Path $BundlePath $required))) { throw 'WINDOWS_BUNDLE_INCOMPLETE' } }
+$executableVersion = [Diagnostics.FileVersionInfo]::GetVersionInfo((Join-Path $BundlePath 'jentra_administrator.exe'))
+if ($executableVersion.ProductVersion -ne $identity.version -or $executableVersion.ProductName -ne $identity.applicationProductName) { throw 'WINDOWS_EXECUTABLE_IDENTITY_MISMATCH' }
+$package = Join-Path $OutputDirectory 'package'
+if (Test-Path -LiteralPath $package) { throw 'NEW_PACKAGE_DIRECTORY_REQUIRED' }
+$payload = Join-Path $package 'Payload'
+New-Item -ItemType Directory -Path $payload -Force | Out-Null
+$files = @()
+foreach ($file in (Get-ChildItem -LiteralPath $BundlePath -File -Recurse | Sort-Object FullName)) {
+  $relative = $file.FullName.Substring($BundlePath.TrimEnd('\').Length + 1).Replace('\','/')
+  if ($relative -match '(?i)(^|/)(\.env[^/]*|[^/]*firebase-adminsdk[^/]*|[^/]*service[_-]?account[^/]*|[^/]*private[_-]?key[^/]*)$' -or $relative -match '\.(pfx|p12|pem|key)$') { throw 'FORBIDDEN_RUNTIME_FILE' }
+  if ($file.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'RUNTIME_REPARSE_POINT' }
+  $target = Join-Path $payload $relative
+  New-Item -ItemType Directory -Path (Split-Path $target) -Force | Out-Null
+  Copy-Item -LiteralPath $file.FullName -Destination $target
+  $files += [ordered]@{path=$relative;bytes=$file.Length;sha256=(Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash.ToLowerInvariant()}
+}
+$vcRuntimeFiles = @()
+foreach ($runtimeFile in $vcRuntime.files) {
+  $target = Join-Path $payload $runtimeFile.Name
+  $sourceHash = (Get-FileHash -LiteralPath $runtimeFile.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+  $existing = @($files | Where-Object { $_.path -eq $runtimeFile.Name })
+  if ($existing.Count -gt 1 -or ($existing.Count -eq 1 -and $existing[0].sha256 -ne $sourceHash)) { throw 'VISUAL_CPP_RUNTIME_COLLISION' }
+  if ($existing.Count -eq 0) {
+    Copy-Item -LiteralPath $runtimeFile.FullName -Destination $target
+    if ((Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash.ToLowerInvariant() -ne $sourceHash) { throw 'VISUAL_CPP_RUNTIME_COPY_CHANGED' }
+    $files += [ordered]@{path=$runtimeFile.Name;bytes=$runtimeFile.Length;sha256=$sourceHash}
+  }
+  $vcRuntimeFiles += [ordered]@{path=$runtimeFile.Name;bytes=$runtimeFile.Length;sha256=$sourceHash;fileVersion=$runtimeFile.VersionInfo.FileVersion}
+}
+$runtimeProvenance = [ordered]@{origin='Visual Studio x64 CRT redistributable';visualStudioInstance=$vcRuntime.visualStudioInstance;version=$vcRuntime.version;redistDirectory=$vcRuntime.redistDirectory;files=$vcRuntimeFiles}
+$manifest = [ordered]@{schemaVersion=1;product=$identity.applicationProductName;releaseId=$identity.releaseId;version=$identity.version;buildNumber=$identity.buildNumber;channel=$identity.channel;projectRef=$identity.projectRef;revision=$identity.revision;sourceSha256=$identity.sourceSha256;sourceDirty=$identity.sourceDirty;preparedAtUtc=$identity.preparedAtUtc;packagedAtUtc=[DateTime]::UtcNow.ToString('o');executable='jentra_administrator.exe';authenticode='unsigned';vcRuntime=$runtimeProvenance;files=$files}
+[IO.File]::WriteAllText((Join-Path $payload 'release-manifest.json'), ($manifest | ConvertTo-Json -Depth 10) + "`n", (New-Object Text.UTF8Encoding($false)))
+[IO.File]::WriteAllText((Join-Path $package 'Launch.cmd'), '@echo off' + "`r`n" + 'pushd "%~dp0Payload"' + "`r`n" + 'if errorlevel 1 exit /b 1' + "`r`n" + 'start "" "%~dp0Payload\jentra_administrator.exe"' + "`r`n" + 'popd' + "`r`n", (New-Object Text.ASCIIEncoding))
+$guide = @'
+J panel for Windows
+
+Install: double-click the native Setup.exe beside this ZIP on Windows 10/11 x64.
+It shows a standard installation wizard and needs no .NET or PowerShell on the destination PC.
+Open J panel from Start.
+The administrator installation uses a separate folder and retains older release directories.
+Each installed runtime file is checked against its recorded SHA-256.
+Portable alternative: extract this whole ZIP and run Launch.cmd. Keep Payload and all its files together.
+This candidate is unsigned. The administrator signs in again after restarting the app.
+Only assigned platform operators can use the panel after authenticator verification.
+A build without a configured development backend opens to a configuration notice.
+The package includes the Microsoft Visual C++ x64 CRT redistributable from the build's installed Visual Studio. Microsoft retains its copyright in those DLLs.
+
+Native recovery: retain the previous installer/ZIP and run its executable from its retained releases directory.
+The native uninstaller removes files it installed; account/draft data outside that folder is not included.
+'@
+[IO.File]::WriteAllText((Join-Path $package 'README.txt'), $guide + "`n", (New-Object Text.UTF8Encoding($false)))
+$zipPath = Join-Path $OutputDirectory ('J-panel-' + $identity.releaseId + '-Windows.zip')
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+. (Join-Path $installerSourceRoot 'archive.ps1')
+New-JentraReleaseArchive -SourceDirectory $package -DestinationPath $zipPath
+$icon = Join-Path $sourceManifest.snapshot 'apps\jentra_desktop\windows\runner\resources\j_panel.ico'
+. (Join-Path $installerSourceRoot 'native-installer.ps1')
+$setupPath = New-JentraNativeInstaller -OutputDirectory $OutputDirectory -InstallerSourceRoot $installerSourceRoot -IconPath $icon
+$archive = [IO.Compression.ZipFile]::OpenRead($zipPath)
+$verified = 0
+try {
+  foreach ($file in $files) {
+    $entry = $archive.GetEntry('Payload/' + $file.path)
+    if (!$entry -or $entry.Length -ne $file.bytes) { throw 'ARCHIVE_FILE_MISSING_OR_SIZE_CHANGED' }
+    $stream = $entry.Open(); $hasher = [Security.Cryptography.SHA256]::Create()
+    try { $hash = ([BitConverter]::ToString($hasher.ComputeHash($stream))).Replace('-','').ToLowerInvariant(); if ($hash -ne $file.sha256) { throw 'ARCHIVE_HASH_MISMATCH' }; $verified++ }
+    finally { $stream.Dispose(); $hasher.Dispose() }
+  }
+} finally { $archive.Dispose() }
+$delivery = [ordered]@{identity=$identity;unsigned=$true;installerKind='native-inno';requiresDotNet=$false;requiresPowerShell=$false;installer=[ordered]@{path=$setupPath;bytes=(Get-Item -LiteralPath $setupPath).Length;sha256=(Get-FileHash -LiteralPath $setupPath -Algorithm SHA256).Hash.ToLowerInvariant()};portableZip=[ordered]@{path=$zipPath;bytes=(Get-Item -LiteralPath $zipPath).Length;sha256=(Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash.ToLowerInvariant()};verifiedRuntimeFiles=$verified;backendChanged=$false;userProfileInstalled=$false;nativeAcceptance=$false;ownerAccepted=$false}
+[IO.File]::WriteAllText((Join-Path $OutputDirectory 'delivery.json'), ($delivery | ConvertTo-Json -Depth 10) + "`n", (New-Object Text.UTF8Encoding($false)))
+$delivery | ConvertTo-Json -Depth 10

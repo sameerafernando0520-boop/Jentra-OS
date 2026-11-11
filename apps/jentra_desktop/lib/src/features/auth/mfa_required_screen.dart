@@ -7,7 +7,8 @@ import 'package:jentra_platform/jentra_platform.dart';
 import '../../app_providers.dart';
 
 class MfaRequiredScreen extends ConsumerStatefulWidget {
-  const MfaRequiredScreen({super.key, this.onVerified});
+  const MfaRequiredScreen({super.key, this.onVerified, this.description});
+  final String? description;
   final VoidCallback? onVerified;
 
   @override
@@ -194,10 +195,11 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
                   ),
                   const SizedBox(height: JentraSpacing.x2),
                   Text(
-                    'Enter a code from your authenticator once after signing in. '
-                    'You stay verified while signed in, including when you '
-                    'reopen Jentra. After signing out, your next sign-in '
-                    'requires a new code.',
+                    widget.description ??
+                        'Enter a code from your authenticator once after signing in. '
+                            'You stay verified while signed in, including when you '
+                            'reopen Jentra. After signing out, your next sign-in '
+                            'requires a new code.',
                     style: Theme.of(context).textTheme.bodyLarge
                         ?.copyWith(color: context.jentraColors.textSecondary),
                     textAlign: TextAlign.center,
