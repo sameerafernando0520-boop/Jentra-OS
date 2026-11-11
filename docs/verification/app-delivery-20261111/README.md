@@ -32,3 +32,16 @@ checked. Live Sales is disabled in the delivered web and APK previews. The
 J Panel opens a configuration notice until an approved operator backend
 with the matching schema and functions is configured. Device acceptance
 and authenticated company workflows remain pending.
+
+## J Panel startup check
+
+The delivered installer completed a staged installation on Windows x64.
+The installed and portable executables both started and remained responsive
+during the local startup check. If setup fails, extract the entire portable
+ZIP to a short local path and open `Launch.cmd` beside the `Payload` folder.
+Keep the launcher and its runtime files together.
+
+The development project returned HTTP 404 for the operator assignment RPC
+and for the `org-identity` and `platform-organization-lifecycle` functions.
+A connected installer needs a project with those services installed and an
+assigned operator account with MFA.
