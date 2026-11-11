@@ -494,8 +494,9 @@ final class EmployeeController extends ChangeNotifier {
     if (_disposed ||
         busy ||
         phase != EmployeePhase.changeTemporaryPassword ||
-        gateway == null)
+        gateway == null) {
       return;
+    }
     final generation = _generation;
     final actor = _actor;
     busy = true;

@@ -401,8 +401,9 @@ final class SupabaseEmployeeGateway
         .schema('api')
         .rpc('managed_employee_workspaces');
     _check(actor);
-    if (response is! List)
+    if (response is! List) {
       throw const FormatException('Invalid workspace list.');
+    }
     return [for (final raw in response) _managedWorkspace(hrMap(raw))];
   });
 
