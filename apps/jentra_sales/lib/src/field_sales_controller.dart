@@ -42,6 +42,7 @@ final class FieldSalesController extends ChangeNotifier {
   }
 
   bool isOpen = false, busy = false;
+  bool catalogueReady = false;
   String? actorId, error, selectedCustomer;
   FieldSalesScope? scope;
   List<FieldSalesJson> scopes = [], customers = [], products = [], orders = [];
@@ -144,6 +145,7 @@ final class FieldSalesController extends ChangeNotifier {
     _reviewInput = null;
     pending = null;
     selectedCustomer = null;
+    catalogueReady = false;
     busy = true;
     error = null;
     notifyListeners();
@@ -215,6 +217,7 @@ final class FieldSalesController extends ChangeNotifier {
     if (busy || pending != null) return;
     final epoch = ++_epoch;
     selectedCustomer = id;
+    catalogueReady = false;
     products = [];
     review = null;
     _reviewInput = null;
@@ -223,7 +226,10 @@ final class FieldSalesController extends ChangeNotifier {
     notifyListeners();
     try {
       final rows = await gateway.catalogue(scope!, id);
-      if (_current(epoch)) products = rows;
+      if (_current(epoch)) {
+        products = rows;
+        catalogueReady = true;
+      }
     } on Object catch (e) {
       if (_current(epoch)) _fail(e);
     }
@@ -487,6 +493,7 @@ final class FieldSalesController extends ChangeNotifier {
     _leaseTimer?.cancel();
     ++_epoch;
     isOpen = false;
+    catalogueReady = false;
     busy = false;
     actorId = null;
     scope = null;
