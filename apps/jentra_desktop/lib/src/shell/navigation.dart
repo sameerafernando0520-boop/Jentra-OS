@@ -33,7 +33,7 @@ const jentraDestinations = <JentraDestination>[
     shortcut: 'G S',
   ),
   JentraDestination(
-    label: 'Wave 3 notifications',
+    label: 'Notifications',
     path: '/operations/notifications',
     icon: Icons.notifications_outlined,
   ),

@@ -74,6 +74,7 @@ import 'package:jentra_platform/jentra_stock_opening_platform.dart';
 import 'src/features/stock_opening/stock_opening_controller.dart';
 import 'src/app.dart';
 import 'src/app_providers.dart';
+import 'src/features/platform_control/platform_organization_screen.dart';
 import 'src/features/receivables/receivables_controller.dart';
 
 Future<void> main() async {
@@ -94,6 +95,9 @@ Future<void> main() async {
       overrides: [
         runtimeConfigProvider.overrideWithValue(config),
         foundationGatewayProvider.overrideWithValue(foundationGateway),
+        platformOrganizationGatewayProvider.overrideWithValue(
+          client == null ? null : PlatformOrganizationGateway(client),
+        ),
         stockOpeningAccessGatewayProvider.overrideWithValue(
           client == null ? null : SupabaseStockOpeningAccessGateway(client),
         ),

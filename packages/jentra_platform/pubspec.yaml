@@ -20,9 +20,11 @@ dependencies:
   jentra_domain: ^0.1.0
   path: ^1.9.1
   path_provider: ^2.1.6
+  sqlite3: ^3.7.0
   sqlite3_flutter_libs: ^0.6.0+eol
   supabase_flutter: ^2.17.2
   uuid: ^4.6.0
+  web: ^1.1.2
   xml: ^7.0.1
 
 dev_dependencies:
@@ -34,3 +36,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/web/sqlite3.wasm
+    - assets/web/drift_worker.js

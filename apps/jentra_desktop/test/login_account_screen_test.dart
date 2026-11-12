@@ -13,12 +13,19 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_desktop/src/app_providers.dart';
+import 'package:jentra_desktop/src/features/auth/account_security_screen.dart';
 import 'package:jentra_desktop/src/features/auth/login_screen.dart';
+import 'package:jentra_desktop/src/shell/jentra_shell.dart';
 import 'package:jentra_platform/jentra_platform.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+// Supabase accepts a custom codec through its constructor. Synchronous JSON
+// keeps the mock requests deterministic inside Flutter's fake time zone.
+// ignore: depend_on_referenced_packages
+import 'package:yet_another_json_isolate/yet_another_json_isolate.dart';
 
 const email = 'new-member@example.test';
 const password = 'synthetic-password-only';
+const replacementPassword = 'Test-replacement-42!';
 const actor = '10000000-0000-0000-0000-000000000001';
 
 // The production Flutter client provides PKCE storage. A raw SupabaseClient
@@ -38,6 +45,14 @@ final class _PkceStorage implements GotrueAsyncStorage {
   Future<void> removeItem({required String key}) async {
     values.remove(key);
   }
+}
+
+final class _TestJsonCodec extends Fake implements YAJsonIsolate {
+  @override
+  Future<dynamic> decode(String json) async => jsonDecode(json);
+
+  @override
+  Future<String> encode(Object? json) async => jsonEncode(json);
 }
 
 Map<String, Object?> user() => {
@@ -113,6 +128,7 @@ void main() {
     client = SupabaseClient(
       'https://example.test',
       'synthetic-public-key',
+      isolate: _TestJsonCodec(),
       authOptions: AuthClientOptions(
         autoRefreshToken: false,
         authFlowType: AuthFlowType.pkce,
@@ -288,6 +304,30 @@ void main() {
     );
   });
 
+  testWidgets('clear password empties, masks and refocuses the editor', (
+    tester,
+  ) async {
+    await mount(tester);
+    final passwordField = field('password');
+    final editor = find.descendant(
+      of: passwordField,
+      matching: find.byType(EditableText),
+    );
+    await tester.enterText(passwordField, password);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Show password'));
+    await tester.pumpAndSettle();
+    expect(tester.widget<EditableText>(editor).obscureText, isFalse);
+    expect(tester.widget<EditableText>(editor).focusNode.hasFocus, isTrue);
+    await tester.tap(find.byTooltip('Clear password'));
+    await tester.pumpAndSettle();
+    final cleared = tester.widget<EditableText>(editor);
+    expect(cleared.controller.text, isEmpty);
+    expect(cleared.obscureText, isTrue);
+    expect(cleared.focusNode.hasFocus, isTrue);
+    expect(requests, isEmpty);
+  });
+
   testWidgets('password sign-in retains the requested route', (tester) async {
     await mount(tester);
     await fill(tester);
@@ -297,6 +337,272 @@ void main() {
     expect(requests, hasLength(1));
     expect(requests.single.url.queryParameters['grant_type'], 'password');
   });
+
+  testWidgets('assigned username signs in through the existing Auth service', (
+    tester,
+  ) async {
+    await mount(tester);
+    await tester.enterText(field('email'), ' Studio.Admin ');
+    await tester.enterText(field('password'), password);
+    await tap(tester, 'submit');
+    await tester.pumpAndSettle();
+    expect(find.text('Destination workspace'), findsOneWidget);
+    expect(requests, hasLength(1));
+    expect(
+      jsonDecode(requests.single.body)['email'],
+      'studio.admin@admin.jentra.invalid',
+    );
+  });
+
+  testWidgets(
+    'Forgot password uses the identifier and can retry a rejected code',
+    (tester) async {
+      respond = (request) async {
+        final body = jsonDecode(request.body) as Map<String, dynamic>;
+        return switch (body['action']) {
+          'request_reset' => jsonResponse({'ok': true}),
+          'reset_password' when body['code'] == '12345678' => jsonResponse({
+            'ok': true,
+          }),
+          'reset_password' => jsonResponse({
+            'error': 'invalid_code',
+          }, status: 400),
+          _ => throw StateError('Unexpected request'),
+        };
+      };
+      await mount(tester);
+      await tester.enterText(field('email'), 'studio.admin');
+      await tap(tester, 'forgot-password');
+      await tester.pumpAndSettle();
+      expect(requests, hasLength(1));
+      expect(requests.single.url.path, '/functions/v1/org-identity');
+      expect(jsonDecode(requests.single.body), {
+        'action': 'request_reset',
+        'login': 'studio.admin',
+      });
+      expect(
+        find.textContaining('If the account has a registered recovery email'),
+        findsOneWidget,
+      );
+
+      final code = find.byKey(const ValueKey('reset-code'));
+      await tester.enterText(code, '87654321');
+      await tester.enterText(
+        find.byKey(const ValueKey('reset-password')),
+        replacementPassword,
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('reset-confirmation')),
+        replacementPassword,
+      );
+      await tester.tap(find.byKey(const ValueKey('reset-submit')));
+      await tester.pumpAndSettle();
+      expect(
+        find.textContaining('The code is invalid or expired.'),
+        findsOneWidget,
+      );
+      await tester.enterText(code, '12345678');
+      await tester.tap(find.byKey(const ValueKey('reset-submit')));
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Password reset. Sign in with your new password.'),
+        findsOneWidget,
+      );
+      expect(requests, hasLength(3));
+      expect(client.auth.currentUser, isNull);
+    },
+  );
+
+  testWidgets('account profile signs out only after confirmation', (
+    tester,
+  ) async {
+    await client.auth.signInWithPassword(email: email, password: password);
+    respond = (request) async {
+      if (request.url.path.endsWith('/logout')) return jsonResponse({});
+      return jsonResponse({
+        'is_administrator': false,
+        'must_change_password': false,
+        'recovery_verified': false,
+      });
+    };
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [foundationGatewayProvider.overrideWithValue(gateway)],
+        child: MaterialApp(
+          theme: JentraTheme.light(),
+          home: const Scaffold(body: AccountSecurityScreen()),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final signOut = find.text('Sign out');
+    await tester.ensureVisible(signOut);
+    await tester.tap(signOut);
+    await tester.pumpAndSettle();
+    expect(find.text('Sign out?'), findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(client.auth.currentUser, isNotNull);
+    expect(requests.where((r) => r.url.path.endsWith('/logout')), isEmpty);
+    await tester.tap(signOut);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Confirm'));
+    await tester.pumpAndSettle();
+    expect(client.auth.currentUser, isNull);
+    expect(requests.where((r) => r.url.path.endsWith('/logout')), hasLength(1));
+  });
+
+  testWidgets(
+    'profile verification preserves the old email until the code is accepted',
+    (tester) async {
+      await client.auth.signInWithPassword(email: email, password: password);
+      var recoveryEmail = 'previous@example.test';
+      const replacement = 'new-recovery@example.test';
+      respond = (request) async {
+        final body = jsonDecode(request.body) as Map<String, dynamic>;
+        switch (body['action']) {
+          case 'profile':
+            return jsonResponse({
+              'is_administrator': false,
+              'must_change_password': false,
+              'recovery_verified': true,
+              'recovery_email': recoveryEmail,
+            });
+          case 'request_recovery_email':
+            expect(body['email'], replacement);
+            expect(body['current_password'], password);
+            return jsonResponse({'ok': true});
+          case 'verify_recovery_email':
+            expect(body['code'], '12345678');
+            recoveryEmail = replacement;
+            return jsonResponse({'ok': true});
+          default:
+            throw StateError('Unexpected request');
+        }
+      };
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [foundationGatewayProvider.overrideWithValue(gateway)],
+          child: MaterialApp(
+            theme: JentraTheme.light(),
+            home: const Scaffold(body: AccountSecurityScreen()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Change password'), findsNothing);
+      expect(find.text(recoveryEmail), findsOneWidget);
+      await tester.tap(find.text('Change recovery email'));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('account-current-password')),
+        password,
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('account-recovery-email')),
+        replacement,
+      );
+      await tester.tap(find.text('Send verification code'));
+      await tester.pumpAndSettle();
+      expect(find.text('Enter the code sent to $replacement.'), findsOneWidget);
+      expect(recoveryEmail, 'previous@example.test');
+      await tester.enterText(
+        find.byKey(const ValueKey('account-verification-code')),
+        '12345678',
+      );
+      await tester.tap(find.text('Verify email'));
+      await tester.pumpAndSettle();
+      expect(find.text(replacement), findsOneWidget);
+      expect(find.text('previous@example.test'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'a managed workspace remains blocked during suspension and initial password rotation',
+    (tester) async {
+      var locked = true;
+      respond = (request) async {
+        if (request.url.path.endsWith('/token')) {
+          return jsonResponse({
+            ...session(),
+            'user': {...user(), 'email': 'studio.admin@admin.jentra.invalid'},
+          });
+        }
+        if (request.url.path.endsWith('/logout')) return jsonResponse({});
+        final body = jsonDecode(request.body) as Map<String, dynamic>;
+        switch (body['action']) {
+          case 'profile':
+            return jsonResponse({
+              'is_administrator': true,
+              'must_change_password': !locked,
+              'organization_locked': locked,
+              'username': 'studio.admin',
+            });
+          case 'change_password':
+            expect(body['current_password'], password);
+            expect(body['new_password'], replacementPassword);
+            return jsonResponse({'ok': true});
+          default:
+            throw StateError('Unexpected request');
+        }
+      };
+      await gateway.signInWithAccountLogin(
+        login: 'studio.admin',
+        password: password,
+      );
+      final router = GoRouter(
+        initialLocation: '/workspace',
+        routes: [
+          ShellRoute(
+            builder: (_, _, child) => JentraShell(child: child),
+            routes: [
+              GoRoute(
+                path: '/workspace',
+                builder: (_, _) => const Text('Workspace content'),
+              ),
+            ],
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [foundationGatewayProvider.overrideWithValue(gateway)],
+          child: MaterialApp.router(
+            theme: JentraTheme.light(),
+            routerConfig: router,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Workspace content'), findsNothing);
+      expect(find.text('Workspace locked'), findsOneWidget);
+      locked = false;
+      await tester.tap(find.text('Check again'));
+      await tester.pumpAndSettle();
+      expect(find.text('Workspace content'), findsNothing);
+      expect(find.text('Workspace locked'), findsNothing);
+      expect(find.text('Change password'), findsOneWidget);
+      await tester.tap(find.text('Change password'));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('account-current-password')),
+        password,
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('account-new-password')),
+        replacementPassword,
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('account-confirmation')),
+        replacementPassword,
+      );
+      await tester.tap(find.text('Save password'));
+      await tester.pumpAndSettle();
+      expect(client.auth.currentUser, isNull);
+      expect(requests.last.url.path, '/auth/v1/logout');
+    },
+  );
 
   testWidgets(
     'pending signup rejects duplicate keyboard submission and Google launch',

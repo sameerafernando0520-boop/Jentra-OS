@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
+import 'package:jentra_platform/jentra_platform.dart';
 
 import '../../app_providers.dart';
+import 'password_reset_dialog.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key, this.googleSignIn});
@@ -26,8 +28,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _passwordFocus = FocusNode();
   final _confirmationFocus = FocusNode();
   bool _creatingAccount = false;
+  bool _showPassword = false;
   bool _busy = false;
   bool _googlePending = false;
+  bool _resetOpen = false;
   String? _error;
   String? _message;
 
@@ -48,6 +52,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     _confirmation.clear();
     setState(() {
       _creatingAccount = !_creatingAccount;
+      _showPassword = false;
       _error = null;
       _message = null;
     });
@@ -106,8 +111,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         // not create business memberships, roles or entitlements.
         if (response.session != null) _goToWorkspace();
       } else {
-        await gateway.signInWithPassword(
-          email: _email.text.trim(),
+        await gateway.signInWithAccountLogin(
+          login: _email.text,
           password: _password.text,
         );
         if (mounted) _goToWorkspace();
@@ -123,6 +128,43 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     } finally {
       if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _forgotPassword() async {
+    final gateway = ref.read(foundationGatewayProvider);
+    if (gateway == null) {
+      setState(() => _error = 'Open the connected build to reset a password.');
+      return;
+    }
+    _password.clear();
+    setState(() {
+      _busy = true;
+      _resetOpen = true;
+      _error = null;
+      _message = null;
+    });
+    try {
+      final login = await showDialog<String>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => PasswordResetDialog(
+          gateway: gateway,
+          initialLogin: _email.text.trim(),
+        ),
+      );
+      if (!mounted || login == null) return;
+      _email.text = login;
+      setState(
+        () => _message = 'Password reset. Sign in with your new password.',
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _busy = false;
+          _resetOpen = false;
+        });
+      }
     }
   }
 
@@ -229,16 +271,28 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         key: const ValueKey('login-email'),
                         controller: _email,
                         enabled: !_busy,
-                        autofillHints: const [AutofillHints.email],
-                        keyboardType: TextInputType.emailAddress,
+                        autofillHints: [
+                          _creatingAccount
+                              ? AutofillHints.email
+                              : AutofillHints.username,
+                        ],
+                        keyboardType: _creatingAccount
+                            ? TextInputType.emailAddress
+                            : TextInputType.text,
                         textInputAction: TextInputAction.next,
-                        validator: _validateEmail,
+                        validator: _creatingAccount
+                            ? _validateEmail
+                            : (value) => isAccountLogin(value ?? '')
+                                  ? null
+                                  : 'Enter your username or email address.',
                         onFieldSubmitted: (_) {
                           if (!_busy) _passwordFocus.requestFocus();
                         },
-                        decoration: const InputDecoration(
-                          labelText: 'Work email',
-                          prefixIcon: Icon(Icons.alternate_email),
+                        decoration: InputDecoration(
+                          labelText: _creatingAccount
+                              ? 'Work email'
+                              : 'Username or email',
+                          prefixIcon: const Icon(Icons.alternate_email),
                         ),
                       ),
                       const SizedBox(height: JentraSpacing.x4),
@@ -252,7 +306,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ? AutofillHints.newPassword
                               : AutofillHints.password,
                         ],
-                        obscureText: true,
+                        obscureText: !_showPassword,
                         textInputAction: _creatingAccount
                             ? TextInputAction.next
                             : TextInputAction.done,
@@ -271,6 +325,48 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ? 'Use at least 8 characters.'
                               : null,
                           prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: ValueListenableBuilder<TextEditingValue>(
+                            valueListenable: _password,
+                            builder: (context, value, child) => Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (value.text.isNotEmpty)
+                                  IconButton(
+                                    tooltip: 'Clear password',
+                                    onPressed: _busy
+                                        ? null
+                                        : () {
+                                            _password.clear();
+                                            setState(() {
+                                              _showPassword = false;
+                                              _error = null;
+                                            });
+                                            _passwordFocus.requestFocus();
+                                          },
+                                    icon: const Icon(Icons.clear),
+                                  ),
+                                child!,
+                              ],
+                            ),
+                            child: IconButton(
+                              tooltip: _showPassword
+                                  ? 'Hide password'
+                                  : 'Show password',
+                              onPressed: _busy
+                                  ? null
+                                  : () {
+                                      setState(
+                                        () => _showPassword = !_showPassword,
+                                      );
+                                      _passwordFocus.requestFocus();
+                                    },
+                              icon: Icon(
+                                _showPassword
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                       if (_creatingAccount) ...[
@@ -308,9 +404,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ? 'Create account'
                             : 'Sign in securely',
                         icon: Icons.arrow_forward,
-                        loading: _busy && !_googlePending,
+                        loading: _busy && !_googlePending && !_resetOpen,
                         onPressed: _busy ? null : _submit,
                       ),
+                      if (!_creatingAccount)
+                        TextButton(
+                          key: const ValueKey('login-forgot-password'),
+                          onPressed: _busy ? null : _forgotPassword,
+                          child: const Text('Forgot password?'),
+                        ),
                       const SizedBox(height: JentraSpacing.x4),
                       OutlinedButton.icon(
                         key: const ValueKey('login-google'),
@@ -346,18 +448,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: context.jentraColors.textSecondary,
                         ),
-                      ),
-                      const SizedBox(height: JentraSpacing.x4),
-                      const Divider(),
-                      const SizedBox(height: JentraSpacing.x4),
-                      const Wrap(
-                        alignment: WrapAlignment.center,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        spacing: JentraSpacing.x2,
-                        children: [
-                          Icon(Icons.verified_user_outlined, size: 16),
-                          Text('Privileged access requires MFA'),
-                        ],
                       ),
                     ],
                   ),

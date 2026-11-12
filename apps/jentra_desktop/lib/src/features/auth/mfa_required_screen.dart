@@ -7,7 +7,12 @@ import 'package:jentra_platform/jentra_platform.dart';
 import '../../app_providers.dart';
 
 class MfaRequiredScreen extends ConsumerStatefulWidget {
-  const MfaRequiredScreen({super.key});
+  const MfaRequiredScreen({
+    this.description = 'Verify your session to continue.',
+    super.key,
+  });
+
+  final String description;
 
   @override
   ConsumerState<MfaRequiredScreen> createState() => _MfaRequiredScreenState();
@@ -50,6 +55,7 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
   }
 
   Future<void> _verify(String factorId) async {
+    if (_busy) return;
     if (!RegExp(r'^\d{6}$').hasMatch(_code.text.trim())) {
       setState(
         () => _error = 'Enter the 6-digit code from your authenticator.',
@@ -64,7 +70,7 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
       await ref
           .read(foundationGatewayProvider)!
           .verifyTotp(factorId: factorId, code: _code.text.trim());
-      ref.invalidate(tenantListProvider);
+      if (mounted) ref.invalidate(tenantListProvider);
     } on Object {
       if (mounted) {
         setState(() => _error = 'The code was not accepted. Try a new code.');
@@ -117,10 +123,9 @@ class _MfaRequiredScreenState extends ConsumerState<MfaRequiredScreen> {
                   ),
                   const SizedBox(height: JentraSpacing.x2),
                   Text(
-                    'This membership can perform privileged business actions. Jentra keeps every privileged route and RPC locked until this session reaches assurance level 2.',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: context.jentraColors.textSecondary,
-                    ),
+                    widget.description,
+                    style: Theme.of(context).textTheme.bodyLarge
+                        ?.copyWith(color: context.jentraColors.textSecondary),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: JentraSpacing.x6),

@@ -59,7 +59,10 @@ import 'features/service/service_controller.dart';
 import 'features/service/service_screen.dart';
 import 'features/service/asset_equipment_controller.dart';
 import 'features/service/asset_equipment_screen.dart';
+import 'features/auth/account_security_screen.dart';
+import 'features/auth/department_accounts_screen.dart';
 import 'features/auth/login_screen.dart';
+import 'features/platform_control/platform_organization_screen.dart';
 import 'features/catalogue/component_catalogue_screen.dart';
 import 'features/crm/crm_screen.dart';
 import 'features/procurement/procurement_screen.dart';
@@ -133,9 +136,26 @@ final routerProvider = Provider<GoRouter>((ref) {
     },
     routes: [
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+      GoRoute(
+        path: '/platform-control',
+        builder: (context, state) => const PlatformOrganizationScreen(),
+      ),
       ShellRoute(
         builder: (context, state, child) => JentraShell(child: child),
         routes: [
+          GoRoute(
+            path: '/account',
+            builder: (context, state) => const AccountSecurityScreen(),
+          ),
+          GoRoute(
+            path: '/account/department-accounts',
+            builder: (context, state) => const DepartmentAccountsScreen(),
+          ),
+          GoRoute(
+            path: '/account/verify',
+            builder: (context, state) =>
+                const RestrictedActionVerificationScreen(),
+          ),
           GoRoute(
             path: '/dashboard',
             builder: (context, state) => const DashboardScreen(),

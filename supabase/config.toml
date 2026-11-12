@@ -447,3 +447,15 @@ enabled = true
 verify_jwt = false
 import_map = "./functions/expense-private-purge/deno.json"
 entrypoint = "./functions/expense-private-purge/index.ts"
+
+[functions.platform-organization-lifecycle]
+enabled = true
+# The Edge wrapper validates the user and the Data API checks operator authority.
+verify_jwt = false
+entrypoint = "./functions/platform-organization-lifecycle/index.ts"
+
+[functions.org-identity]
+enabled = true
+# Reset requests are public. Profile and provisioning verify user JWTs in the function.
+verify_jwt = false
+entrypoint = "./functions/org-identity/index.ts"

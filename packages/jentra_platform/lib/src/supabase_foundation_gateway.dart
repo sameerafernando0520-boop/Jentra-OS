@@ -9,6 +9,60 @@ import 'auth/google_oauth_stub.dart'
 
 enum MfaAssurance { unauthenticated, aal1, aal2 }
 
+const _managedAdminDomain = '@admin.jentra.invalid';
+final _organizationUsername = RegExp(r'^[a-z0-9][a-z0-9._-]{2,47}$');
+final _accountEmail = RegExp(r'^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$');
+final _passwordUppercase = RegExp(r'[A-Z]');
+final _passwordLowercase = RegExp(r'[a-z]');
+final _passwordDigit = RegExp(r'[0-9]');
+final _passwordControl = RegExp(r'[\x00-\x1f\x7f]');
+
+String organizationUsername(String input) =>
+    input.trim().toLowerCase().replaceAll(RegExp(r'\s+'), '-');
+
+bool isAccountLogin(String input) {
+  final value = input.contains('@')
+      ? input.trim().toLowerCase()
+      : organizationUsername(input);
+  return (value.length <= 254 && _accountEmail.hasMatch(value)) ||
+      (_organizationUsername.hasMatch(value) &&
+          !value.endsWith('.') &&
+          !value.contains('..'));
+}
+
+bool isOrganizationPassword(String password) =>
+    password.runes.length >= 12 &&
+    utf8.encode(password).length <= 72 &&
+    !_passwordControl.hasMatch(password) &&
+    _passwordUppercase.hasMatch(password) &&
+    _passwordLowercase.hasMatch(password) &&
+    _passwordDigit.hasMatch(password);
+
+final class AccountSecurityProfile {
+  AccountSecurityProfile.fromJson(Map<String, Object?> json)
+    : isAdministrator = json['is_administrator'] == true,
+      username = json['username'] as String?,
+      recoveryEmail = json['recovery_email'] as String?,
+      pendingRecoveryEmail = json['pending_recovery_email'] as String?,
+      recoveryVerified = json['recovery_verified'] == true,
+      mustChangePassword = json['must_change_password'] == true,
+      organizationLocked = json['organization_locked'] == true;
+
+  final bool isAdministrator;
+  final String? username;
+  final String? recoveryEmail;
+  final String? pendingRecoveryEmail;
+  final bool recoveryVerified;
+  final bool mustChangePassword;
+  final bool organizationLocked;
+}
+
+final class AccountSecurityException implements Exception {
+  const AccountSecurityException(this.code);
+
+  final String code;
+}
+
 final class TotpEnrollment {
   const TotpEnrollment({
     required this.factorId,
@@ -114,11 +168,131 @@ final class SupabaseFoundationGateway {
 
   Stream<AuthState> get authChanges => _client.auth.onAuthStateChange;
   User? get currentUser => _client.auth.currentUser;
+  bool get usesManagedUsername =>
+      currentUser?.appMetadata['managed_org_admin'] == true ||
+      (currentUser?.email?.toLowerCase().endsWith(_managedAdminDomain) ??
+          false);
 
   Future<AuthResponse> signInWithPassword({
     required String email,
     required String password,
   }) => _client.auth.signInWithPassword(email: email, password: password);
+
+  Future<AuthResponse> signInWithAccountLogin({
+    required String login,
+    required String password,
+  }) {
+    final value = login.contains('@')
+        ? login.trim().toLowerCase()
+        : organizationUsername(login);
+    if (!isAccountLogin(value)) {
+      throw const AccountSecurityException('invalid_login');
+    }
+    return signInWithPassword(
+      email: value.contains('@') ? value : '$value$_managedAdminDomain',
+      password: password,
+    );
+  }
+
+  Future<AccountSecurityProfile> accountSecurityProfile() async =>
+      AccountSecurityProfile.fromJson(await _accountSecurity('profile'));
+
+  Future<void> requestPasswordReset(String login) async {
+    await _accountSecurity('request_reset', {'login': login.trim()});
+  }
+
+  Future<void> resetPassword({
+    required String login,
+    required String code,
+    required String newPassword,
+  }) async {
+    await _accountSecurity('reset_password', {
+      'login': login.trim(),
+      'code': code.trim(),
+      'new_password': newPassword,
+    });
+  }
+
+  Future<void> requestRecoveryEmail({
+    required String email,
+    required String currentPassword,
+  }) async {
+    await _accountSecurity('request_recovery_email', {
+      'email': email.trim(),
+      'current_password': currentPassword,
+    });
+  }
+
+  Future<void> verifyRecoveryEmail(String code) async {
+    await _accountSecurity('verify_recovery_email', {'code': code.trim()});
+  }
+
+  Future<void> changeOrganizationPassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    await _accountSecurity('change_password', {
+      'current_password': currentPassword,
+      'new_password': newPassword,
+    });
+  }
+
+  Future<List<Map<String, Object?>>> departmentAccounts(String tenantId) async {
+    final data = await _client
+        .schema('api')
+        .rpc(
+          'organization_department_staff',
+          params: {'p_tenant_id': tenantId},
+        );
+    return (data as List)
+        .map((row) => Map<String, Object?>.from(row as Map))
+        .toList(growable: false);
+  }
+
+  Future<void> createDepartmentAccount({
+    required String tenantId,
+    required String name,
+    required String username,
+    required String department,
+    required String password,
+    required String confirmation,
+    required String currentPassword,
+  }) async {
+    await _accountSecurity('create_department_account', {
+      'tenant_id': tenantId,
+      'name': name,
+      'username': organizationUsername(username),
+      'department': department,
+      'password': password,
+      'confirm_password': confirmation,
+      'current_password': currentPassword,
+    });
+  }
+
+  Future<Map<String, Object?>> _accountSecurity(
+    String action, [
+    Map<String, Object?> fields = const {},
+  ]) async {
+    try {
+      final response = await _client.functions.invoke(
+        'org-identity',
+        body: {'action': action, ...fields},
+      );
+      final data = response.data;
+      if (data is! Map ||
+          (action == 'profile'
+              ? data['is_administrator'] is! bool ||
+                    data['must_change_password'] is! bool
+              : data['ok'] != true)) {
+        throw const AccountSecurityException('unexpected_response');
+      }
+      return Map<String, Object?>.from(data);
+    } on FunctionException catch (error) {
+      final details = error.details;
+      final code = details is Map ? details['error'] : null;
+      throw AccountSecurityException(code is String ? code : 'unavailable');
+    }
+  }
 
   Future<AuthResponse> createAccount({
     required String email,

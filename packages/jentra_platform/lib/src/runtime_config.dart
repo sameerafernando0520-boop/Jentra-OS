@@ -19,6 +19,8 @@ final class RuntimeConfig {
   final String supabaseUrl;
   final String supabasePublishableKey;
 
+  String get supabaseOrigin => Uri.parse(supabaseUrl).origin;
+
   bool get isSupabaseConfigured =>
       Uri.tryParse(supabaseUrl)?.hasScheme == true &&
       supabasePublishableKey.trim().isNotEmpty;

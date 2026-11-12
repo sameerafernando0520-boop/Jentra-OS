@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
-import 'package:jentra_platform/jentra_platform.dart';
 
 import '../app_providers.dart';
-import '../features/auth/mfa_required_screen.dart';
+import '../features/auth/account_security_screen.dart';
 import '../features/operations/operational_link.dart';
+import '../features/platform_control/platform_organization_screen.dart';
 import 'navigation.dart';
 import 'quick_create_dialog.dart';
 
@@ -20,12 +20,19 @@ class JentraShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentPath = GoRouterState.of(context).uri.path;
     final gateway = ref.watch(foundationGatewayProvider);
-    final tenants = ref.watch(tenantListProvider).value;
+    ref.watch(authenticatedActorProvider);
+    final actor = gateway?.currentUser?.id;
+    if (gateway?.usesManagedUsername == true && actor != null) {
+      final profile = ref.watch(accountSecurityProfileProvider(actor));
+      final account = profile.asData?.value;
+      if (profile.isLoading ||
+          account == null ||
+          account.mustChangePassword ||
+          account.organizationLocked) {
+        return const Scaffold(body: AccountSecurityScreen());
+      }
+    }
     final capabilities = ref.watch(businessCapabilitiesProvider).value;
-    final mfaRequired =
-        gateway != null &&
-        (tenants?.isNotEmpty ?? false) &&
-        ref.watch(sessionAssuranceProvider) != MfaAssurance.aal2;
     return LayoutBuilder(
       builder: (context, constraints) {
         final enlargedText = MediaQuery.textScalerOf(context).scale(1) > 1.4;
@@ -50,11 +57,7 @@ class JentraShell extends ConsumerWidget {
                     child: Column(
                       children: [
                         _CommandBar(currentPath: currentPath),
-                        Expanded(
-                          child: mfaRequired
-                              ? const MfaRequiredScreen()
-                              : child,
-                        ),
+                        Expanded(child: child),
                       ],
                     ),
                   ),
@@ -350,11 +353,17 @@ class _CommandBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final destination = jentraDestinations.firstWhere(
       (item) => item.path == currentPath,
-      orElse: () => const JentraDestination(
-        label: 'Component catalogue',
-        path: '/catalogue',
-        icon: Icons.widgets_outlined,
-      ),
+      orElse: () => currentPath.startsWith('/account')
+          ? const JentraDestination(
+              label: 'Account profile',
+              path: '/account',
+              icon: Icons.account_circle_outlined,
+            )
+          : const JentraDestination(
+              label: 'Component catalogue',
+              path: '/catalogue',
+              icon: Icons.widgets_outlined,
+            ),
     );
     final tenants = ref.watch(tenantListProvider).value ?? const <dynamic>[];
     final tenantName = tenants.isEmpty ? 'Create business' : tenants.first.name;
@@ -533,18 +542,7 @@ class _CommandBar extends ConsumerWidget {
                     ),
                   ),
                 const SizedBox(width: JentraSpacing.x2),
-                const CircleAvatar(
-                  radius: 16,
-                  backgroundColor: JentraColors.navy800,
-                  child: Text(
-                    'SA',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
+                const _AccountMenu(),
               ],
             ),
           );
@@ -557,6 +555,33 @@ class _CommandBar extends ConsumerWidget {
     showDialog<void>(
       context: context,
       builder: (_) => const QuickCreateDialog(),
+    );
+  }
+}
+
+class _AccountMenu extends ConsumerWidget {
+  const _AccountMenu();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final gateway = ref.watch(foundationGatewayProvider);
+    if (gateway?.currentUser == null) {
+      return const Icon(Icons.account_circle_outlined);
+    }
+    final platformOperator =
+        ref.watch(platformOrganizationAccessProvider).value == true;
+    return PopupMenuButton<String>(
+      tooltip: 'Account menu',
+      icon: const Icon(Icons.account_circle_outlined),
+      onSelected: (path) => context.go(path),
+      itemBuilder: (_) => [
+        const PopupMenuItem(value: '/account', child: Text('Account profile')),
+        if (platformOperator)
+          const PopupMenuItem(
+            value: '/platform-control',
+            child: Text('Platform control'),
+          ),
+      ],
     );
   }
 }
