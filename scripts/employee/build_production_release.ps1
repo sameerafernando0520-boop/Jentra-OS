@@ -53,6 +53,9 @@ try {
     & $dart $flutter --suppress-analytics pub get --offline --enforce-lockfile
     if ($LASTEXITCODE -ne 0) { throw 'Locked offline release dependencies could not be resolved.' }
 } finally { Pop-Location }
+# Flutter injects these files on the first Android build. Record the files
+# before taking the provenance snapshot so a clean checkout can pass it.
+Initialize-EmployeeGradleWrapper (Join-Path $appRoot 'android') $FlutterSdk
 $provenance = New-EmployeeReleaseProvenance $repoRoot $configurationPath $provenanceTools
 $publicConfiguration = Get-Content -LiteralPath $configurationPath -Raw | ConvertFrom-Json
 if (@($publicConfiguration.PSObject.Properties.Name | Where-Object { $_ -notin @('SUPABASE_URL','SUPABASE_PUBLISHABLE_KEY') }).Count -gt 0 -or

@@ -26,9 +26,13 @@ The development installer is unsigned. If Windows blocks it, share the file and 
 
 ### Jentra Employee
 
+Use `Jentra-Employee-0.5.1-10-Signed-ARM64.apk`.
+
 Open **Jentra Employee** and sign in with the account linked to your employee record. Complete MFA when prompted. Review your own attendance and leave, open payslips made available by payroll, or update your profile from the employee workspace. If you have no employee assignment, contact HR with your account email and company name. Keep passwords and authenticator codes private.
 
 ### Jentra Sales
+
+Use `Jentra-Sales-0.1.5-6-Development-ARM64.apk`.
 
 Open **Jentra Sales** and select **Explore the preview**. Open **Customers** to find a sample account, start an order, add items and review the draft. Save the draft if you want to reopen it on the same device within 24 hours. Visit notes stay in the current session. The preview uses sample data and submits no company orders.
 
