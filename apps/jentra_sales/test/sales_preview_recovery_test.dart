@@ -232,6 +232,41 @@ void main() {
     });
   });
 
+  test('reopening excludes drafts that expire during cleanup', () async {
+    var time = DateTime.utc(2026, 11, 4, 8);
+    final store = _RecoverableStore();
+    final c = SalesController(store: store, now: () => time);
+    addTearDown(c.dispose);
+    await c.enterPreview();
+    await c.saveDraft(_draft(c, 'draft-expired'));
+    time = time.add(const Duration(hours: 1));
+    await c.saveDraft(_draft(c, 'draft-near-expiry'));
+    time = time.add(const Duration(hours: 1));
+    await c.saveDraft(_draft(c, 'draft-still-valid'));
+    await c.leave();
+    time = time.add(const Duration(hours: 22));
+
+    final releaseWrite = Completer<void>();
+    final writeStarted = Completer<void>();
+    store.writeGate = releaseWrite;
+    store.writeStarted = writeStarted;
+    final shown = <String>{};
+    c.addListener(() {
+      if (c.preview && !c.busy) {
+        shown.addAll(c.orders.where((o) => o.local).map((o) => o.id));
+      }
+    });
+    final opening = c.enterPreview();
+    await writeStarted.future;
+    time = time.add(const Duration(hours: 1));
+    releaseWrite.complete();
+    await opening;
+
+    expect(shown, {'draft-still-valid'});
+    final saved = jsonDecode(store.values.values.single) as List;
+    expect(saved.map((o) => (o as Map)['id']), ['draft-still-valid']);
+  });
+
   test('editing a draft does not restart its original 24-hour lease', () async {
     var time = DateTime.utc(2026, 11, 4, 8);
     final c = SalesController(store: MemorySalesStore(), now: () => time);

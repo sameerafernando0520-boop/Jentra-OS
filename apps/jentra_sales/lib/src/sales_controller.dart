@@ -127,17 +127,29 @@ final class SalesController extends ChangeNotifier {
     }
   }
 
+  Future<List<SalesOrder>> _writeUnexpiredDrafts(
+    int epoch,
+    List<SalesOrder> drafts,
+  ) async {
+    // A write can cross another deadline. Recheck the stored snapshot before
+    // returning it, even if the user left while the write was pending.
+    do {
+      drafts = drafts.where((draft) {
+        if (_unexpired(draft)) return true;
+        if (_current(epoch)) _expiredDraftIds.add(draft.id);
+        return false;
+      }).toList();
+      await store.write(
+        _draftKey,
+        jsonEncode(drafts.map((draft) => draft.toJson()).toList()),
+      );
+    } while (drafts.any((draft) => !_unexpired(draft)));
+    return drafts;
+  }
+
   Future<void> _persistDraftCleanup(int epoch, List<SalesOrder> drafts) async {
     try {
-      // A write may finish after a deadline. Filter its committed snapshot again
-      // inside the queue, even if the user left while the write was pending.
-      do {
-        drafts = drafts.where(_unexpired).toList();
-        await store.write(
-          _draftKey,
-          jsonEncode(drafts.map((o) => o.toJson()).toList()),
-        );
-      } while (drafts.any((o) => !_unexpired(o)));
+      await _writeUnexpiredDrafts(epoch, drafts);
     } on Object {
       if (_current(epoch)) {
         _draftsReady = false;
@@ -182,7 +194,7 @@ final class SalesController extends ChangeNotifier {
     // that started before the workspace was reopened.
     await _enqueue(() async {
       if (!_current(epoch)) return;
-      final drafts = <SalesOrder>[];
+      var drafts = <SalesOrder>[];
       try {
         final wire = await store.read(_draftKey);
         if (!_current(epoch)) return;
@@ -198,17 +210,10 @@ final class SalesController extends ChangeNotifier {
             if (!SalesDemo.customers.any((c) => c.id == draft.customerId)) {
               throw const FormatException();
             }
-            if (_unexpired(draft)) {
-              drafts.add(draft);
-            } else {
-              _expiredDraftIds.add(draft.id);
-            }
+            drafts.add(draft);
           }
-          if (drafts.length != raw.length) {
-            await store.write(
-              _draftKey,
-              jsonEncode(drafts.map((o) => o.toJson()).toList()),
-            );
+          if (drafts.any((draft) => !_unexpired(draft))) {
+            drafts = await _writeUnexpiredDrafts(epoch, drafts);
           }
         }
         if (!_current(epoch)) return;
