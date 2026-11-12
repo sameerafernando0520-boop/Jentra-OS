@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:jentra_platform/runtime_configuration.dart';
 
 import 'data/employee_gateway.dart';
 import 'data/employee_storage.dart';
@@ -385,7 +386,28 @@ final class EmployeeController extends ChangeNotifier {
     phase = EmployeePhase.loading;
     _emit();
     try {
-      final choices = await gateway.listWorkspaces();
+      final managed = _managedGateway;
+      final account = await managed?.managedAccount();
+      if (!_valid(generation)) return;
+      if (account case (
+        kind: 'employee',
+        mustChangePassword: true,
+        status: _,
+      )) {
+        phase = EmployeePhase.changeTemporaryPassword;
+        return;
+      }
+      if (account != null &&
+          (account.kind != 'employee' || account.status != 'active')) {
+        phase = EmployeePhase.staffUnavailable;
+        notice = account.kind == 'hr_manager'
+            ? 'staffUseDesktop'
+            : 'staffAccessPending';
+        return;
+      }
+      final choices = account == null
+          ? await gateway.listWorkspaces()
+          : await managed!.listManagedWorkspaces();
       if (!_valid(generation)) return;
       if (choices.map((w) => w.key).toSet().length != choices.length) {
         throw const EmployeeFailure(
@@ -417,14 +439,14 @@ final class EmployeeController extends ChangeNotifier {
     }
   }
 
-  Future<void> signIn(String email, String password) async {
+  Future<void> signIn(String login, String password) async {
     if (_disposed || busy || !_foreground || _gateway == null) return;
     final lifecycle = _lifecycleGeneration;
     final generation = _generation;
-    if (email.trim().isEmpty || password.isEmpty) {
+    if (login.trim().isEmpty || password.isEmpty) {
       error = const EmployeeFailure(
         'VALIDATION_ERROR',
-        'Enter your email and password.',
+        'Enter your username or work email and password.',
       );
       _emit();
       return;
@@ -434,7 +456,7 @@ final class EmployeeController extends ChangeNotifier {
     notice = null;
     _emit();
     try {
-      await _gateway.signIn(email, password);
+      await _gateway.signIn(login, password);
     } on Object catch (e) {
       if (!_disposed && generation == _generation) error = employeeFailure(e);
     } finally {
@@ -451,6 +473,67 @@ final class EmployeeController extends ChangeNotifier {
         generation == _generation &&
         _gateway.actorId != null) {
       await start();
+    }
+  }
+
+  ManagedEmployeeIdentityGateway? get _managedGateway {
+    if (!organizationControlCandidateEnabled) return null;
+    final gateway = _gateway;
+    return gateway is ManagedEmployeeIdentityGateway
+        ? gateway as ManagedEmployeeIdentityGateway
+        : null;
+  }
+
+  bool get canRecoverManagedPassword => _managedGateway != null;
+
+  Future<void> changeTemporaryPassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
+    final gateway = _managedGateway;
+    if (_disposed ||
+        busy ||
+        phase != EmployeePhase.changeTemporaryPassword ||
+        gateway == null) {
+      return;
+    }
+    final generation = _generation;
+    final actor = _actor;
+    busy = true;
+    error = null;
+    _emit();
+    try {
+      await gateway.changeTemporaryPassword(currentPassword, newPassword);
+      if (!_disposed && _gateway?.actorId == actor) await signOut();
+      if (!_disposed && phase == EmployeePhase.signedOut && notice == null) {
+        notice = 'staffPasswordChanged';
+        _emit();
+      }
+    } on Object catch (failure) {
+      if (_valid(generation)) error = employeeFailure(failure);
+    } finally {
+      if (_valid(generation)) {
+        busy = false;
+        _emit();
+      }
+    }
+  }
+
+  Future<void> requestManagedPasswordReset(String login) async {
+    if (phase != EmployeePhase.signedOut || _managedGateway == null) return;
+    await _managedGateway!.requestManagedPasswordReset(login);
+  }
+
+  Future<void> resetManagedPassword(
+    String login,
+    String code,
+    String newPassword,
+  ) async {
+    if (phase != EmployeePhase.signedOut || _managedGateway == null) return;
+    await _managedGateway!.resetManagedPassword(login, code, newPassword);
+    if (!_disposed && phase == EmployeePhase.signedOut) {
+      notice = 'staffPasswordChanged';
+      _emit();
     }
   }
 

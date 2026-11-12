@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
+// ignore: implementation_imports
+import 'package:jentra_platform/src/supabase_foundation_gateway.dart';
 
 import '../l10n/employee_strings.dart';
 import '../l10n/employee_account_strings.dart';
 import 'employee_components.dart';
 import 'employee_help_screen.dart';
+import 'employee_password_screens.dart';
 import 'employee_surfaces.dart';
 
 class EmployeeSignInScreen extends StatefulWidget {
@@ -16,6 +19,8 @@ class EmployeeSignInScreen extends StatefulWidget {
     this.notice,
     this.onGoogle,
     this.onResendConfirmation,
+    this.onRequestRecovery,
+    this.onResetPassword,
     super.key,
   });
 
@@ -26,6 +31,9 @@ class EmployeeSignInScreen extends StatefulWidget {
   final Future<void> Function()? onGoogle;
   final Future<void> Function(String email)? onResendConfirmation;
   final Future<void> Function(String email, String password) onSignIn;
+  final Future<void> Function(String login)? onRequestRecovery;
+  final Future<void> Function(String login, String code, String password)?
+  onResetPassword;
 
   @override
   State<EmployeeSignInScreen> createState() => _EmployeeSignInScreenState();
@@ -49,16 +57,30 @@ class _EmployeeSignInScreenState extends State<EmployeeSignInScreen> {
     if (!widget.connected || widget.busy || !_form.currentState!.validate()) {
       return;
     }
-    final email = _email.text.trim();
+    final login = _email.text.trim();
     final password = _password.text;
     FocusScope.of(context).unfocus();
-    await widget.onSignIn(email, password);
+    await widget.onSignIn(login, password);
     if (mounted) _password.clear();
+  }
+
+  Future<void> _recover() async {
+    _password.clear();
+    await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => EmployeeUsernameRecoveryDialog(
+        initialLogin: _email.text,
+        onRequest: widget.onRequestRecovery!,
+        onReset: widget.onResetPassword!,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final s = EmployeeStrings.of(context);
+    final account = EmployeeAccountStrings(context);
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -133,13 +155,17 @@ class _EmployeeSignInScreenState extends State<EmployeeSignInScreen> {
                             key: const Key('employee-email'),
                             controller: _email,
                             enabled: widget.connected && !widget.busy,
-                            keyboardType: TextInputType.emailAddress,
+                            keyboardType: widget.onRequestRecovery == null
+                                ? TextInputType.emailAddress
+                                : TextInputType.text,
                             textInputAction: TextInputAction.next,
                             autofillHints: const [AutofillHints.username],
                             autocorrect: false,
                             textCapitalization: TextCapitalization.none,
                             decoration: InputDecoration(
-                              labelText: s('email'),
+                              labelText: widget.onRequestRecovery == null
+                                  ? s('email')
+                                  : account.login,
                               prefixIcon: const Icon(
                                 Icons.alternate_email_rounded,
                                 size: 20,
@@ -150,11 +176,17 @@ class _EmployeeSignInScreenState extends State<EmployeeSignInScreen> {
                                 borderRadius: BorderRadius.circular(16),
                               ),
                             ),
-                            validator: (value) =>
-                                RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
-                                    .hasMatch(value?.trim() ?? '')
-                                ? null
-                                : s('emailError'),
+                            validator: (value) {
+                              if (widget.onRequestRecovery != null) {
+                                return isAccountLogin(value ?? '')
+                                    ? null
+                                    : account.loginError;
+                              }
+                              return RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
+                                      .hasMatch((value ?? '').trim())
+                                  ? null
+                                  : s('emailError');
+                            },
                           ),
                           const SizedBox(height: 16),
                           TextFormField(
@@ -244,6 +276,14 @@ class _EmployeeSignInScreenState extends State<EmployeeSignInScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
+                    if (widget.onRequestRecovery != null &&
+                        widget.onResetPassword != null)
+                      TextButton(
+                        onPressed: !widget.connected || widget.busy
+                            ? null
+                            : _recover,
+                        child: Text(account.resetUsernamePassword),
+                      ),
                     if (widget.onGoogle != null) ...[
                       SizedBox(
                         width: double.infinity,

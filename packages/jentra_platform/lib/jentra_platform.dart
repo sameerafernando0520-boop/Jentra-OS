@@ -1,5 +1,7 @@
 library;
 
+export 'src/auth/google_sign_in.dart'
+    show GoogleSignInException, GoogleSignInFailure;
 export 'src/connectivity_service.dart';
 export 'src/auth/google_sign_in.dart';
 export 'src/auth/browser_auth_return.dart'
@@ -16,6 +18,7 @@ export 'src/platform_draft_keys.dart';
 export 'src/draft_repository.dart';
 export 'src/local_database.dart';
 export 'src/local_draft_storage_failure.dart';
+export 'src/platform_organization_gateway.dart';
 export 'src/quotation_draft_store.dart';
 export 'src/reference_cache_repository.dart';
 export 'src/runtime_config.dart';

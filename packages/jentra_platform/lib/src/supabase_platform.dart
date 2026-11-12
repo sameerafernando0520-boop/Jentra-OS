@@ -15,13 +15,14 @@ final class SupabasePlatform {
   static Future<SupabaseClient?> initialize(
     RuntimeConfig config, {
     bool isRelease = kReleaseMode,
+    bool operatorSession = false,
   }) async {
     if (config.startupMode(isRelease: isRelease) ==
         RuntimeStartupMode.preview) {
       return null;
     }
     try {
-      final pending = captureBrowserAuthReturn();
+      final pending = operatorSession ? null : captureBrowserAuthReturn();
       await Supabase.initialize(
         url: config.supabaseOrigin,
         publishableKey: config.supabasePublishableKey,
@@ -31,12 +32,13 @@ final class SupabasePlatform {
             tokenUri: Uri.parse('${config.supabaseOrigin}/auth/v1/token'),
           ),
         ),
-        authOptions: const FlutterAuthClientOptions(
+        authOptions: FlutterAuthClientOptions(
           authFlowType: AuthFlowType.pkce,
-          detectSessionInUri: !kIsWeb,
+          persistSession: !operatorSession,
+          detectSessionInUri: !operatorSession && !kIsWeb,
         ),
       );
-      if (kIsWeb) {
+      if (kIsWeb && pending != null) {
         await completeBrowserAuthReturn(Supabase.instance.client, pending);
       }
       return Supabase.instance.client;
