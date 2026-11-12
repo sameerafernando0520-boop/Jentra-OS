@@ -88,7 +88,9 @@ class _CustomerConfirmationPageState extends State<CustomerConfirmationPage>
                     liveRegion: true,
                     child: Text(
                       c.error!,
-                      style: const TextStyle(color: Colors.red),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
                     ),
                   ),
                 ...switch (c.stage) {
@@ -147,15 +149,17 @@ class _CustomerConfirmationPageState extends State<CustomerConfirmationPage>
                   ConfirmationStage.review => _review(c),
                   ConfirmationStage.complete => [
                     Text(
-                      'Response recorded',
+                      c.recordedResponse == 'already recorded'
+                          ? 'Response already recorded'
+                          : 'Response recorded',
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                     const SizedBox(height: 16),
-                    Text(
-                      c.recordedResponse == 'accepted'
-                          ? 'You accepted the reviewed terms.'
-                          : 'You rejected the reviewed terms.',
-                    ),
+                    Text(switch (c.recordedResponse) {
+                      'accepted' => 'You accepted the reviewed terms.',
+                      'rejected' => 'You rejected the reviewed terms.',
+                      _ => 'A response has already been recorded for this request. Contact the company to confirm the details.',
+                    }),
                     const SizedBox(height: 16),
                     const Text(
                       'The company will follow up about your order. Delivery acknowledgement remains separate.',

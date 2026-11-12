@@ -85,6 +85,12 @@ final class ConfirmationController extends ChangeNotifier {
     await _run((epoch) async {
       final result = await gateway!.verify(_token!, code);
       if (!_current(epoch)) return;
+      if (result['state'] == 'already_recorded') {
+        _clearPrivate();
+        recordedResponse = 'already recorded';
+        stage = ConfirmationStage.complete;
+        return;
+      }
       if (result['state'] != 'review') {
         _unavailable();
         return;

@@ -7,6 +7,45 @@ import 'package:jentra_sales/src/models.dart';
 import 'package:jentra_sales/src/ui/order_editor.dart';
 
 void main() {
+  testWidgets('an expired saved draft closes its open private editor', (
+    tester,
+  ) async {
+    var time = DateTime.utc(2026, 11, 4, 8);
+    final c = SalesController(store: MemorySalesStore(), now: () => time);
+    addTearDown(c.dispose);
+    await c.enterPreview();
+    await c.saveDraft(
+      SalesOrder(
+        id: 'expiring',
+        commandId: 'original-command',
+        customerId: c.customers.first.id,
+        date: time,
+        lines: [SalesLine(c.products.first, '1')],
+        local: true,
+        notes: 'Private expiring customer note',
+        customerState: 'Not requested',
+        companyState: 'Not submitted',
+        deliveryState: 'Not scheduled',
+      ),
+    );
+    await tester.pumpWidget(SalesApp(controller: c));
+    await tester.pumpAndSettle();
+    openOrderEditor(
+      tester.element(find.text('New order').first),
+      c,
+      draft: c.orders.first,
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(OrderEditor), findsOneWidget);
+    time = time.add(const Duration(hours: 24));
+    await tester.pump(const Duration(hours: 24));
+    await tester.pumpAndSettle();
+    expect(find.byType(OrderEditor), findsNothing);
+    expect(find.text('Private expiring customer note'), findsNothing);
+    expect(c.orders.where((o) => o.local), isEmpty);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   for (final width in [320.0, 360.0, 768.0, 1024.0, 1440.0]) {
     testWidgets('preview pages reflow at $width pixels', (tester) async {
       tester.view.physicalSize = Size(width, 1000);
@@ -99,6 +138,8 @@ void main() {
         '1406.25',
       );
       expect(tester.takeException(), isNull);
+      await c.leave();
+      await tester.pumpWidget(const SizedBox.shrink());
     });
   }
   testWidgets('dark tablet workspace has no layout exceptions', (tester) async {
