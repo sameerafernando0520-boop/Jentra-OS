@@ -2,6 +2,8 @@
 
 Owner and team manual for setting up a real company group and running daily business operations. Prepared on 28 October 2026 from the current Jentra OS workspace.
 
+For the 12 November Windows, Android and web packages, see the [app installation and first-use guide](app-handoff.md).
+
 **Client delivery, 29 October:** Windows installer and browser packages are now
 built as **0.3.1+2302 Development**. Read the
 [desktop and web installation guide](install-desktop-and-web.md). The unsigned
