@@ -33,6 +33,7 @@ foreach ($required in @($keyPath,$passwordPath,$metadataPath,$configurationPath,
     if (!(Test-Path -LiteralPath $required -PathType Leaf)) { throw "Release input is unavailable: $required" }
 }
 . (Join-Path $PSScriptRoot 'release_artifact_provenance.ps1')
+. (Join-Path $repoRoot 'scripts/android/assert_flutter_apk_abi.ps1')
 # Resolve exactly the locked dependency graph before signing credentials enter
 # the process. Offline resolution neither upgrades dependencies nor uses network.
 Push-Location -LiteralPath $repoRoot
@@ -86,6 +87,7 @@ try {
     Assert-EmployeeReleaseInputsUnchanged $provenance $repoRoot $configurationPath $provenanceTools
     $apk = Join-Path $appRoot 'build/app/outputs/flutter-apk/app-release.apk'
     $bundle = Join-Path $appRoot 'build/app/outputs/bundle/release/app-release.aab'
+    Assert-FlutterApkAbi -Path $apk -Abi 'arm64-v8a'
     $signatureLog = Join-Path $output 'apk-signature.log'
     & $JavaExecutable -jar $apksigner verify --verbose --print-certs $apk *> $signatureLog
     if ($LASTEXITCODE -ne 0) { throw 'Production-identity APK signature verification failed.' }

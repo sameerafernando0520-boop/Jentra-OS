@@ -8,6 +8,49 @@ import 'package:jentra_sales/src/ui/components.dart';
 import 'support/field_sales_fixture.dart';
 
 void main() {
+  testWidgets('order review rejects an impossible delivery date inline', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(430, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final controller = FieldSalesController(
+      gateway: FakeFieldSalesGateway(),
+      store: MemorySalesStore(),
+    );
+    addTearDown(controller.dispose);
+    await controller.open();
+    await controller.selectCustomer('customer');
+    await tester.pumpWidget(
+      MaterialApp(home: FieldSalesWorkspace(controller, onLeave: () async {})),
+    );
+    await tester.tap(find.text('Customers').last);
+    await tester.pumpAndSettle();
+
+    final date = find.byWidgetPredicate(
+      (widget) =>
+          widget is TextField &&
+          widget.decoration?.labelText == 'Requested delivery date',
+    );
+    await tester.ensureVisible(date);
+    await tester.enterText(date, '2027-02-30');
+    final review = find.text('Review current company terms');
+    await tester.scrollUntilVisible(
+      review,
+      200,
+      scrollable: find.byType(Scrollable).last,
+    );
+    await tester.tap(review);
+    await tester.pumpAndSettle();
+    try {
+      expect(find.text('Use a valid date in YYYY-MM-DD.'), findsOneWidget);
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      controller.clear();
+    }
+  });
+
   testWidgets(
     'dirty navigation preserves edits and saved drafts never auto-submit',
     (tester) async {

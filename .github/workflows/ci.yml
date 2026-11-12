@@ -86,10 +86,33 @@ jobs:
           supabase/candidates/tests/*runner.test.mjs
           workers/wave5/*.test.mjs
 
+      - name: Test finance opening cutover with isolated rollback
+        run: |
+          node supabase/candidates/run-finance-opening-import-test.mjs --run-isolated
+          node supabase/candidates/run-finance-opening-import-test.mjs --run-isolated-with-staff-mfa
+          node supabase/candidates/run-finance-opening-import-test.mjs --run-isolated-with-reversal
+          node supabase/candidates/run-finance-opening-import-test.mjs --run-isolated-with-staff-mfa-and-reversal
+
+      - name: Rehearse accounting backup and isolated restore
+        run: node tools/accounting-cutover/rehearse.mjs
+
+      - name: Test Sales posting dates on both migration baselines
+        run: node supabase/candidates/run-sales-business-date-test.mjs --run-isolated
+
       - name: Test employee Hosting preparation
         run: node --test tools/employee-web/prepare.test.mjs
 
-      - name: Install Deno for changed assurance endpoints
+      - name: Test Windows release feature preparation
+        run: node --test tools/desktop-release/prepare.test.mjs
+
+      - name: Verify independent-session evidence identities
+        run: >-
+          node --test
+          tools/wave3/independent_session_identities.test.mjs
+          tools/wave3/target_review_guards.test.mjs
+          tools/wave3/target-verification-preparation.test.mjs
+
+      - name: Install Deno for Edge endpoint checks
         uses: denoland/setup-deno@v2
         with:
           deno-version: v2.1.13
@@ -105,6 +128,11 @@ jobs:
           deno check --node-modules-dir=none
           --config supabase/functions/assurance-evidence-verify/deno.json
           supabase/functions/assurance-evidence-verify/index.ts
+
+      - name: Check workspace staff endpoint
+        run: >-
+          deno check --no-lock --node-modules-dir=none
+          supabase/functions/workspace-staff/index.ts
 
   desktop-tests:
     # The approved goldens are rendered on Windows; Linux font rasterisation
@@ -130,6 +158,14 @@ jobs:
       - name: Test desktop shell and goldens
         working-directory: apps/jentra_desktop
         run: flutter test --no-pub -r expanded
+
+      - name: Test desktop opening balances with the feature enabled
+        working-directory: apps/jentra_desktop
+        run: >-
+          flutter test --no-pub -r expanded
+          --dart-define=FINANCE_OPENING_IMPORT_ENABLED=true
+          test/finance_opening_workspace_test.dart
+          test/opening_reversal_source_routes_test.dart
 
       - name: Verify installer updates, corruption refusal, and rollback
         run: powershell -NoProfile -ExecutionPolicy Bypass -File tools/desktop-release/verify_installation.ps1
@@ -293,6 +329,27 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: jentra-os-windows-unsigned
+          path: apps/jentra_desktop/build/windows/x64/runner/Release/
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Clean desktop build for the accounting rehearsal bundle
+        working-directory: apps/jentra_desktop
+        run: flutter clean
+
+      - name: Restore locked dependencies after desktop clean
+        run: flutter pub get --enforce-lockfile
+
+      - name: Build unsigned Windows accounting rehearsal bundle
+        working-directory: apps/jentra_desktop
+        run: >-
+          flutter build windows --release --no-pub
+          --dart-define=FINANCE_OPENING_IMPORT_ENABLED=true
+
+      - name: Upload Windows accounting rehearsal bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: jentra-os-windows-opening-rehearsal-unsigned
           path: apps/jentra_desktop/build/windows/x64/runner/Release/
           if-no-files-found: error
           retention-days: 14

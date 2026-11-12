@@ -1,7 +1,12 @@
+import com.flutter.gradle.FlutterPluginConstants.PLATFORM_ARCH_MAP
+
 plugins {
     id("com.android.application")
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+val targetPlatforms = providers.gradleProperty("target-platform").orNull
+val splitPerAbi = providers.gradleProperty("split-per-abi").orNull == "true"
 
 android {
     namespace = "com.jentra.sales"
@@ -18,6 +23,11 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        // Package native plugins only for ABIs with a compiled Flutter engine.
+        if (targetPlatforms != null && !splitPerAbi) {
+            ndk.abiFilters.clear()
+            ndk.abiFilters.addAll(targetPlatforms.split(',').map { PLATFORM_ARCH_MAP.getValue(it) })
+        }
     }
     buildTypes {
         release {

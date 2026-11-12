@@ -4,9 +4,6 @@ import {readFile,readdir,writeFile,mkdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {resolve} from 'node:path';
-import {PGlite} from '../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/index.js';
-import {pgcrypto} from '../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/contrib/pgcrypto.js';
-import {btree_gist} from '../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/contrib/btree_gist.js';
 import {exercise} from './tests/field_sales_governance.test.mjs';
 
 const prefixThrough='20260910135507_harden_receivables_reference_indexes.sql';
@@ -19,6 +16,9 @@ export function validateCandidate(sql) {
 }
 export async function main(args) {
  assert.deepEqual(args,['--run-isolated'],'Only --run-isolated is supported; no target options.');
+ const {PGlite}=await import('../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/index.js');
+ const {pgcrypto}=await import('../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/contrib/pgcrypto.js');
+ const {btree_gist}=await import('../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/contrib/btree_gist.js');
  const db=new PGlite({extensions:{pgcrypto,btree_gist}}),sources={};
  const load=async path=>{
   const sql=await readFile(new URL('../../'+path,import.meta.url),'utf8');

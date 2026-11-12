@@ -556,12 +556,16 @@ class _FieldOrderComposerState extends State<FieldOrderComposer> {
                 labelText: 'Requested delivery date',
                 hintText: 'YYYY-MM-DD',
               ),
-              validator: (v) =>
-                  v == null ||
-                      !RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(v) ||
-                      DateTime.tryParse(v) == null
-                  ? 'Use YYYY-MM-DD.'
-                  : null,
+              validator: (v) {
+                final date = v == null ? null : DateTime.tryParse(v);
+                return v != null &&
+                        RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(v) &&
+                        date != null &&
+                        date.year > 0 &&
+                        date.toIso8601String().substring(0, 10) == v
+                    ? null
+                    : 'Use a valid date in YYYY-MM-DD.';
+              },
             ),
             const SizedBox(height: 16),
             TextFormField(

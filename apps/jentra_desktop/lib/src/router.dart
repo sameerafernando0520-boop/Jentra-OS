@@ -115,6 +115,8 @@ import 'features/tenant/accept_invitation_screen.dart';
 import 'features/tenant/workspace_admin_screen.dart';
 import 'features/tenant/workspace_invitations_screen.dart';
 import 'features/finance/finance_screen.dart';
+import 'features/finance_opening/finance_opening_controller.dart';
+import 'features/finance_opening/finance_opening_screen.dart';
 import 'shell/jentra_shell.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -307,6 +309,20 @@ final routerProvider = Provider<GoRouter>((ref) {
                     .read(inventoryValuationControllerProvider)
                     ?.canLeave() ??
                 true,
+          ),
+          GoRoute(
+            path: '/finance/opening-balances',
+            builder: (context, state) => const FinanceOpeningScreen(),
+            onExit: (context, state) => FinanceOpeningWorkspace.confirmLeave(
+              context,
+              ref.read(financeOpeningControllerProvider),
+            ),
+          ),
+          GoRoute(
+            path: '/finance/opening-balances/source/:sourceId',
+            builder: (context, state) => OpeningSourceScreen(
+              sourceId: state.pathParameters['sourceId']!,
+            ),
           ),
           GoRoute(
             path: '/finance/journals',

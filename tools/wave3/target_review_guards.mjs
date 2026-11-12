@@ -72,3 +72,20 @@ export function assertRacePostflightBindings(config, input) {
     if (!matches) throw Error('Postflight source IDs differ from the concrete race commands: ' + race.kind);
   }
 }
+
+// Competing commands must not share a replay identity. PostgreSQL UUIDs are
+// case insensitive even when their JSON spellings differ. This checks the
+// complete plan; it does not prove absence of prior target command receipts.
+export function assertFreshRaceIdentities(races) {
+  const seen = new Set();
+  if (!Array.isArray(races) || races.length === 0) throw Error('Fresh race identities required');
+  for (const race of races) {
+    if (!Array.isArray(race.commands) || race.commands.length !== 2) throw Error('Fresh race identities required');
+    for (const command of race.commands) for (const field of ['p_command_id', 'p_idempotency_key']) {
+      const value = command.params?.[field];
+      if (typeof value !== 'string' || !uuid.test(value) || seen.has(value.toLowerCase()))
+        throw Error('Fresh command and idempotency identities required across the race plan');
+      seen.add(value.toLowerCase());
+    }
+  }
+}

@@ -6,7 +6,7 @@ The existing live site is `https://jentra-os.web.app`. Use the preview wrapper f
 
 ## Build, inspect and preview
 
-After browser storage, photo selection and sign-in integration are complete, build from `apps/jentra_employee` using a private local file containing only public client configuration:
+Build from `apps/jentra_employee` using a private local file containing only public client configuration:
 
 ```powershell
 flutter build web --release --no-pub --csp --no-web-resources-cdn --base-href=/ --dart-define-from-file=.env.employee-development.json
@@ -19,7 +19,7 @@ node --test tools/employee-web/prepare.test.mjs
 node tools/employee-web/prepare.mjs stage apps/jentra_employee/build/web
 ```
 
-The stage command prints a new immutable `releaseDirectory` under the ignored `.staging` folder. It validates the local rendering engine/bootstrap, expected Supabase origin, complete app bundle and absence of recognized server credentials/debug files. It records every public file's size and SHA-256. Inspection is a bounded credential check, not a substitute for source review. No previous build is removed.
+The stage command prints a new immutable `releaseDirectory` under the ignored `.staging` folder. It validates the local rendering engine/bootstrap, expected Supabase origin, complete app bundle and absence of recognized server credentials/debug files. Public HTML, JavaScript (including modules), JSON, CSS and text filenames are checked regardless of extension case. Each file is limited to 128 MiB before allocation and during reading, including a file that grows after its size check. It records every public file's size and SHA-256. Inspection is a bounded credential check, not a substitute for source review. No previous build is removed.
 
 Deploy that exact directory only after its contents are reviewed:
 
@@ -37,9 +37,9 @@ The custom bootstrap resolves CanvasKit locally. Build with `--csp --no-web-reso
 
 ## Browser integration gates
 
-- The initial source explicitly excluded `kIsWeb` from Supabase setup and rejected browser use in `NativeEmployeeKeyValueStore`. Browser storage must be a deliberate adapter with approved retention; browser storage is not Android Keystore/iOS Keychain. Do not fall back silently to plaintext persistent sessions or drafts.
+- The current entry point selects the encrypted browser storage adapter for a configured browser app. It requires Web Crypto, IndexedDB and an exclusive Web Lock, and fails closed when protected storage is unavailable. Retention, browser data eviction and authenticated isolation still require acceptance against the actual HTTPS preview.
 - The employee RPC gateway already imports narrow foundation/private-HR modules rather than native SQLite barrels. Browser support still needs an actual compile and authenticated preview test; source portability alone is insufficient.
-- `detectSessionInUri: false` means the current native app does not consume browser confirmation/OAuth redirects automatically. Email/password sign-in needs no OAuth callback. Confirmation/recovery/OAuth support must explicitly consume the correct browser URL, preserve PKCE ownership, clear credentials from the address bar, and use exact preview/live redirect allowlist entries in Supabase. Do not use the Windows loopback callback in the browser or add a broad production wildcard for previews.
+- The current entry point enables PKCE callback detection through `EmployeeAuthCallbackPolicy` for the current browser origin or exact native callback. Confirmation/recovery/OAuth acceptance must prove callback consumption, PKCE ownership and credential removal from the address bar, using exact preview/live redirect allowlist entries in Supabase. Do not use the Windows loopback callback in the browser or add a broad production wildcard for previews.
 - `createBrowserEmployeePhotoPicker()` in `lib/src/data/employee_browser_photo.dart` is browser-only and must be imported conditionally with `dart.library.js_interop`. It uses the browser's one-file selector, secure-context checks and an 8 MiB/MIME bound. Existing controller normalization enforces actual JPG/PNG decoding, a 20-megapixel limit and identity before saving. The mobile entry point must continue to use its native picker.
 - Verify refresh, back/forward navigation, a callback reload, lock/background masking, exact account/scope changes, own data isolation, photo selection/cancel, all three languages at 200% text, and browser screen readers before live promotion. CSP/header and auth checks must run against the actual HTTPS preview. A successfully staged bundle does not prove these behaviors or full HR capability completion.
 - Inspect the existing live origin for a legacy Flutter caching worker before promotion. A new preview origin and a noncaching bootstrap do not remove a previously controlling live worker. If present, use targeted cleanup for that legacy Flutter worker and its public asset caches; do not unregister unrelated workers. Hosting cache headers alone cannot override a cached service-worker response.

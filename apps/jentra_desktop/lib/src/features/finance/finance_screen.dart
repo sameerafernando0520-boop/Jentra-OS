@@ -393,6 +393,17 @@ class _FinanceWorkflow {
 }
 
 const _workflows = [
+  if (bool.fromEnvironment('FINANCE_OPENING_IMPORT_ENABLED'))
+    _FinanceWorkflow(
+      id: 'opening_balances',
+      title: 'Opening balances',
+      description:
+          'Import unpaid customer and supplier documents from CSV or Excel.',
+      path: '/finance/opening-balances',
+      icon: Icons.upload_file_outlined,
+      section: 'Reconcile and close',
+      all: ['finance.openings.view'],
+    ),
   _FinanceWorkflow(
     id: 'receivables',
     title: 'Receivables',

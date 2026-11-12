@@ -297,6 +297,8 @@ List<JentraDestination> visibleJentraDestinations(Set<String>? capabilities) {
       capabilities != null &&
       const {
         'finance.view',
+        if (bool.fromEnvironment('FINANCE_OPENING_IMPORT_ENABLED'))
+          'finance.openings.view',
         'finance.receivables.view',
         'finance.receipts.view',
         'finance.receipts.manage',

@@ -1,12 +1,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { amountText, assertTarget, digest, exactPositive, fixturePlan, foundationSql,
-  receiptCall, reviewedSources, stableId, verifySources, workloadConfig, raceConfig } from './prepare-target-verification.mjs';
-import { approvedContext, ledgerSql, preflightSql } from './run-target-fixture-generator.mjs';
+import path from 'node:path';
+import { amountText, assertTarget, digest, exactPositive, foundationSql, receiptCall,
+  reviewedSources, stableId, workloadConfig, raceConfig } from './prepare-target-verification.mjs';
+import { ledgerSql, preflightSql } from './run-target-fixture-generator.mjs';
 import { racePostflightSql } from './prepare-target-race-invariants.mjs';
 import { reviewPlan, targetQueries } from './prepare-target-query-plans.mjs';
 import { countGate, liveRpcSourceSql, verifyCountEvidence } from './run-reviewed-target-verification.mjs';
+import { historicalManifest, historicalReviewFixture, historicalSourceHash } from './target_review_historical_fixture.mjs';
 
 // All IDs and claims below are deliberately fictitious OFFLINE fixtures. No JWT
 // signature, real authentication, installed fixture, race or timing is implied.
@@ -20,7 +22,7 @@ const fixture = { synthetic: true, is_production: false, project_id: 'abcdefghij
     expected_version: 4, receipt_count: 3, quantity_per_receipt: '0.000001',
     reviewed_remaining_quantity: '0.000003', reviewed_value_per_receipt: '1.000000' }] };
 let assertions = 0;
-const check = (name, fn) => test(name, () => { fn(); assertions++; });
+const check = (name, fn) => test(name, async context => { await fn(context); assertions++; });
 check('Exact micro units and values beyond JavaScript safe integer range remain strings', () => {
   assert.equal(exactPositive('90071992547409.123456', 'amount'), 90071992547409123456n);
   assert.equal(amountText('90071992547409.123456'), '90071992547409.123456');
@@ -51,14 +53,32 @@ check('Invalid dates, stale versions, duplicate order lanes and capacity overflo
   assert.throws(() => assertTarget(clone), /version/);
   assert.throws(() => assertTarget({ ...fixture, receipt_lanes: [...fixture.receipt_lanes, ...fixture.receipt_lanes] }), /One lane/);
 });
-check('Source fingerprints include all 45 candidate bodies and reject drift', () => {
-  const sources = reviewedSources(), order = JSON.parse(fs.readFileSync('docs/verification/remaining-wave3/migration-order-final-20260930-45.json', 'utf8'));
-  assert.equal(order.candidates.length, 45);
-  for (const c of order.candidates) assert.equal(sources[c.path], c.sha256);
-  const plan = fixturePlan(fixture); verifySources(plan); assert.equal(plan.executed, false);
+check('Historical source integrity compares the raw bytes of the current checkout', () => {
+  const mismatch = historicalManifest().candidates.find(candidate => {
+    const file = new URL('../../' + candidate.path, import.meta.url);
+    return historicalSourceHash(fs.readFileSync(file)) !== candidate.sha256;
+  });
+  if (mismatch) {
+    assert.throws(() => reviewedSources(), {
+      message: 'Candidate migration differs from the reviewed dependency manifest: ' + mismatch.path,
+    });
+  } else {
+    const sources = reviewedSources();
+    for (const candidate of historicalManifest().candidates) assert.equal(sources[candidate.path], candidate.sha256);
+  }
+});
+check('Exact historical fixture fingerprints include all 45 candidate bodies and reject drift', async context => {
+  const { directory, manifest, preparation } = await historicalReviewFixture(context);
+  const sources = preparation.reviewedSources();
+  for (const candidate of manifest.candidates) assert.equal(sources[candidate.path], candidate.sha256);
+  const plan = preparation.fixturePlan(fixture);
+  preparation.verifySources(plan);
+  assert.equal(plan.executed, false);
   const clone = structuredClone(plan); clone.source_hashes['tools/wave3/run-target-load.mjs'] = '0'.repeat(64);
-  clone.source_bundle_sha256 = digest(clone.source_hashes); assert.throws(() => verifySources(clone), /Source drift/);
+  clone.source_bundle_sha256 = digest(clone.source_hashes); assert.throws(() => preparation.verifySources(clone), /Source drift/);
   assert.equal(digest({ b: 1, a: 2 }), digest({ a: 2, b: 1 }));
+  fs.appendFileSync(path.join(directory, manifest.candidates[0].path), '\n-- Offline drift control\n');
+  assert.throws(() => preparation.verifySources(plan), /Candidate migration differs/);
 });
 check('Foundation generation checks actual candidate columns and always finishes rollback', () => {
   const sql = foundationSql(fixture, { tenants: 2, entities: 2, warehouses: 2, largeProducts: 5 });
@@ -72,12 +92,13 @@ check('Foundation generation checks actual candidate columns and always finishes
   assert.doesNotMatch(sql, /insert into auth\.|insert into core\.(roles|memberships|document_sequences)|disable trigger|session_replication_role|insert into inventory\.stock|insert into finance\.journal/i);
   assert.throws(() => foundationSql(fixture, { tenants: 501, entities: 10, warehouses: 25, largeProducts: 100000 }), /exceed/);
 });
-check('Default target foundation recipe plans the exact per-cohort dimensions, without filling installed counts', () => {
+check('Default target foundation recipe plans the exact per-cohort dimensions, without filling installed counts', async context => {
   const sql = foundationSql(fixture);
   assert.match(sql, /generate_series\(1,500\) t/); assert.match(sql, /generate_series\(1,10\) e/);
   assert.match(sql, /generate_series\(1,25\) w/); assert.match(sql, /'large_products',100000/);
   assert.match(sql, /'warehouses',125000/);
-  const plan = fixturePlan(fixture); assert.equal(plan.fixture_counts, undefined);
+  const { preparation } = await historicalReviewFixture(context);
+  const plan = preparation.fixturePlan(fixture); assert.equal(plan.fixture_counts, undefined);
 });
 check('Fixture preflight verifies real approved sources, exact value/capacity, membership, period and guards', () => {
   const sql = preflightSql(fixture);
@@ -87,8 +108,9 @@ check('Fixture preflight verifies real approved sources, exact value/capacity, m
   assert.match(sql, /^begin read only;/); assert.match(sql, /rollback;$/);
   assert.doesNotMatch(sql + ledgerSql, /\b(insert|update|delete|alter|drop|truncate)\b/i);
 });
-check('Persistent execution rejects silence, absent approval, wrong host and expired sessions', () => {
-  const plan = fixturePlan(fixture); assert.throws(() => approvedContext(plan, {}), /Specific/);
+check('Persistent execution rejects silence, absent approval, wrong host and expired sessions', async context => {
+  const { preparation, generator: { approvedContext } } = await historicalReviewFixture(context);
+  const plan = preparation.fixturePlan(fixture); assert.throws(() => approvedContext(plan, {}), /Specific/);
   Object.assign(plan, { approval_status: 'explicit_user_approval', approval_reference: 'OFFLINE GUARD TEST ONLY',
     approved_source_bundle_sha256: plan.source_bundle_sha256, approved_ledger_sha256: 'a'.repeat(64),
     approved_new_receipts: plan.planned_receipts, evidence_path: 'docs/verification/remaining-wave3/approved-runs/offline-never-executed.ndjson' });

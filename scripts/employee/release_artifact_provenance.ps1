@@ -25,7 +25,7 @@ function Get-EmployeeReleaseSourceFiles {
     $relativeFiles = New-Object 'Collections.Generic.List[string]'
     $required = @('pubspec.yaml','pubspec.lock','apps/jentra_employee/pubspec.yaml',
         '.dart_tool/package_config.json','scripts/employee/build_production_release.ps1',
-        'scripts/employee/release_artifact_provenance.ps1')
+        'scripts/employee/release_artifact_provenance.ps1','scripts/android/assert_flutter_apk_abi.ps1')
     foreach ($relative in $required) {
         if (!(Test-Path -LiteralPath (Join-Path $root $relative) -PathType Leaf)) { throw 'Required release provenance input is unavailable.' }
         $relativeFiles.Add($relative)

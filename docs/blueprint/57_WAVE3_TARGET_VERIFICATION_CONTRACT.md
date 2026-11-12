@@ -32,6 +32,13 @@ Evidence files must be new. Execution reserves each final evidence path exclusiv
 before the first HTTP command; an existing path, including a competing reservation,
 must fail without replacing earlier evidence or dispatching a command. Failed and
 uncertain attempts retain the original command identities and failure evidence.
+Every command ID and idempotency key must be distinct across the entire race
+plan, including the two competing requests. UUID letter case cannot create a
+second identity. Preparation and both runners reject repeated identities before
+execution. This is a plan-level check; approved target preflight and review must
+still establish that these commands have no prior execution receipts. Reusing
+an uncertain attempt is recovery and cannot be relabelled as a fresh contention
+sample. The original identities remain fixed for recovery.
 
 Receipt lanes use exact decimal strings. Every expected purchase-order version,
 including the last receipt ordinal, must remain a safe integer; an oversized version

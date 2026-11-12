@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {sendOne} from '../../../workers/field-sales/mail_worker.mjs';
 
-export async function exercise(db,checks,ctx){
+export async function exercise(db,checks,ctx,{documentDate}={}){
  const value=async(sql,args=[])=>Object.values((await db.query(sql,args)).rows[0])[0];
  const check=(name,ok)=>{assert.ok(ok,name);checks.push(name);};
  const deny=async(name,code,work)=>{await db.exec('savepoint delivery_denial');let error;try{await work();}catch(e){error=e;}
@@ -13,20 +13,22 @@ export async function exercise(db,checks,ctx){
   await db.query("select set_config('request.jwt.claims',$1,true)",[JSON.stringify(user?{sub:user,aal,session_id:session}:{})]);await db.exec('set local role '+(user?'authenticated':'anon'));};
  const order=(await db.query('select * from sales.sales_orders where id=$1',[oid])).rows[0];
  const ol=(await db.query('select * from sales.sales_order_lines where sales_order_id=$1 order by id',[oid])).rows[0];
+ // Canonical deliveries cannot predate the order. The original suite uses UTC.
+ const deliveryDate=documentDate??await value("select greatest((clock_timestamp() at time zone 'UTC')::date,$1::date)::text",[order.order_date]);
  const contact=(await db.query('update field_sales.confirmation_contacts set active=true where tenant_id=$1 returning *',[t])).rows[0];
  await db.query('update field_sales.mail_policies set enabled=true where tenant_id=$1',[t]);
  for(const type of ['delivery','journal_entry'])await db.query(`insert into core.document_sequences(tenant_id,legal_entity_id,branch_id,document_type,prefix,created_by,updated_by)
   values($1,$2,$3,$4,$5,$6,$6) on conflict do nothing`,[t,e,b,type,'SYNTHETIC-'+type+'-',owner]);
  await db.query(`insert into finance.fiscal_periods(id,tenant_id,legal_entity_id,name,start_date,end_date,created_by,updated_by)
-  values($1,$2,$3,'Synthetic delivery period',current_date-1,current_date+30,$4,$4)`,[randomUUID(),t,e,owner]);
+  values($1,$2,$3,'Synthetic delivery period',$5::date-1,$5::date+30,$4,$4)`,[randomUUID(),t,e,owner,deliveryDate]);
  const lifecycle={states:['draft','submitted','approved','rejected','posted','settled','fulfilled','closed','cancelled','reversed'],
   transitions:[['draft','submitted'],['submitted','approved'],['submitted','rejected'],['approved','posted'],['rejected','draft'],['draft','cancelled'],['submitted','cancelled']],
   posting_transitions:[['submitted','posted'],['submitted','draft'],['approved','draft']],requires_approval:false};
  await db.query(`insert into workflow.workflow_definitions(id,tenant_id,legal_entity_id,document_type,name,status,lifecycle,created_by,updated_by)
   values($1,$2,$3,'delivery','Synthetic delivery workflow','active',$4,$5,$5)`,[randomUUID(),t,e,lifecycle,owner]);
  await actor(owner);
- const did=randomUUID(),lineId=randomUUID(),today=new Date().toISOString().slice(0,10);
- const header={id:did,customer_id:order.customer_id,document_date:today,due_date:today,currency_code:order.currency_code,
+ const did=randomUUID(),lineId=randomUUID();
+ const header={id:did,customer_id:order.customer_id,document_date:deliveryDate,due_date:deliveryDate,currency_code:order.currency_code,
   sales_order_id:oid,warehouse_id:order.warehouse_id,lines:[{line_id:lineId,sales_order_line_id:ol.id,base_quantity:'0.500000'}]};
  const draft=await value('select api.upsert_delivery($1,$2,$3,$4,$5,now(),$6,null)',[t,e,b,randomUUID(),randomUUID(),header]);
  const cmd=async(action,payload,version=null,key=randomUUID(),command=randomUUID())=>value('select api.field_sales_delivery_command($1,$2,$3,$4,$5,now(),$6,$7,$8)',[t,e,b,command,key,action,payload,version]);

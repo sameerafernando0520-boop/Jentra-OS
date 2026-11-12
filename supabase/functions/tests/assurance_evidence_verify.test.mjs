@@ -8,9 +8,9 @@ const id = (n) => "00000000-0000-4000-8000-" + String(n).padStart(12, "0");
 const scope = { tenant_id: id(1), legal_entity_id: id(2), branch_id: id(3), engagement_id: id(4), evidence_id: id(5) };
 const path = ["assurance", id(1), id(4), id(5)].join("/");
 const hex = (bytes) => createHash("sha256").update(bytes).digest("hex");
-async function hashStream(stream, limit) {
+async function hashStream(stream, limit, options) {
   const hash = createHash("sha256"); let size = 0;
-  for await (const chunk of boundedChunks(stream, limit)) { size += chunk.byteLength; hash.update(chunk); }
+  for await (const chunk of boundedChunks(stream, limit, options)) { size += chunk.byteLength; hash.update(chunk); }
   return { sha256: hash.digest("hex"), size };
 }
 
@@ -120,6 +120,74 @@ test("missing objects and denials map to safe codes without raw values", async (
 test("the bounded reader refuses objects past the evidence limit", async () => {
   const stream = new Blob([new Uint8Array(8)]).stream();
   await assert.rejects(hashStream(stream, 4), /ASSURANCE_EVIDENCE_LIMIT/);
+});
+
+test("evidence overflow refuses promptly even when cancellation never settles", { timeout: 1000 }, async () => {
+  let pulls = 0, cancelled = false;
+  const stream = new ReadableStream({
+    pull(controller) { pulls++; controller.enqueue(new Uint8Array(5)); },
+    cancel() { cancelled = true; return new Promise(() => {}); },
+  }, { highWaterMark: 0 });
+  await assert.rejects(hashStream(stream, 4), /ASSURANCE_EVIDENCE_LIMIT/);
+  assert.equal(cancelled, true);
+  assert.equal(pulls, 1);
+  assert.equal(stream.locked, false);
+});
+
+test("ending the hash reader early cancels and releases the evidence stream", async () => {
+  let cancelled = false;
+  const stream = new ReadableStream({
+    pull(controller) { controller.enqueue(new Uint8Array(2)); },
+    cancel() { cancelled = true; return new Promise(() => {}); },
+  }, { highWaterMark: 0 });
+  for await (const _ of boundedChunks(stream, 4)) break;
+  assert.equal(cancelled, true);
+  assert.equal(stream.locked, false);
+});
+
+test("a previously aborted hash does not pull evidence bytes", async () => {
+  const abort = new AbortController(); abort.abort(Error("PRIVATE_ABORT_DETAIL"));
+  let pulls = 0, cancelled = false;
+  const stream = new ReadableStream({
+    pull(controller) { pulls++; controller.enqueue(new Uint8Array(2)); },
+    cancel() { cancelled = true; return Promise.reject(Error("PRIVATE_CANCEL_DETAIL")); },
+  }, { highWaterMark: 0 });
+  await assert.rejects(hashStream(stream, 4, { signal: abort.signal }), /ASSURANCE_EVIDENCE_ABORTED/);
+  assert.equal(pulls, 0);
+  assert.equal(cancelled, true);
+  assert.equal(stream.locked, false);
+});
+
+test("an exact-limit complete object hashes every byte without cancelling", async () => {
+  const chunks = [new Uint8Array([1, 2]), new Uint8Array([3, 4])];
+  let cancelled = false;
+  const stream = new ReadableStream({
+    pull(controller) { const chunk = chunks.shift(); if (chunk) controller.enqueue(chunk); else controller.close(); },
+    cancel() { cancelled = true; },
+  }, { highWaterMark: 0 });
+  assert.deepEqual(await hashStream(stream, 4), { sha256: hex(new Uint8Array([1, 2, 3, 4])), size: 4 });
+  assert.equal(cancelled, false);
+  assert.equal(stream.locked, false);
+});
+
+test("request abort interrupts pending evidence reads without recording an outcome", { timeout: 1000 }, async () => {
+  const f = fixture(), abort = new AbortController();
+  let cancelled = false, started;
+  const reading = new Promise(resolve => { started = resolve; });
+  f.objects.set(path, { stream: () => new ReadableStream({
+    pull() { started(); return new Promise(() => {}); },
+    cancel() { cancelled = true; return new Promise(() => {}); },
+  }, { highWaterMark: 0 }) });
+  const original = f.request();
+  const request = new Request(original, { signal: abort.signal });
+  const pending = handleVerify(request, f.deps);
+  await reading;
+  abort.abort(Error("PRIVATE_ABORT_DETAIL"));
+  const response = await pending;
+  assert.equal(response.status, 503);
+  assert.deepEqual(await response.json(), { code: "ASSURANCE_EVIDENCE_UNCERTAIN" });
+  assert.equal(cancelled, true);
+  assert.ok(!f.calls.some(c => c.name === "assurance_evidence_service_verify"));
 });
 
 test("request metadata is bounded in bytes and oversized chunked streams are cancelled", async () => {
