@@ -11,6 +11,7 @@ import { testSubscriptionCheckout } from "./subscription_checkout.assertions.mjs
 import { testSubscriptionHandover } from "./subscription_handover.assertions.mjs";
 import { testPlatformOperatorIdentity } from "./platform_operator_identity.assertions.mjs";
 import { testSystemSerials } from "./system_serials.assertions.mjs";
+import { exercise as fieldSalesGovernance } from "../candidates/tests/field_sales_governance.test.mjs";
 
 const migrations = new URL("../migrations/", import.meta.url);
 const candidates = new URL("../candidates/", import.meta.url);
@@ -46,6 +47,15 @@ try {
   await testSubscriptionHandover(db);
   await testPlatformOperatorIdentity(db);
   await testSystemSerials(db);
+
+  // Field Sales governance still holds below organization control, including
+  // a restricted companion account's own Employee self-service access, which
+  // organization control's people.require_access must keep.
+  const governanceChecks = [];
+  await db.exec("begin");
+  try { await fieldSalesGovernance(db, governanceChecks); }
+  finally { await db.exec("rollback"); }
+  assert.ok(governanceChecks.length >= 88, "Field Sales governance checks ran.");
 
   const owner = randomUUID(), rep = randomUUID(), outsider = randomUUID(), tenant = randomUUID();
   const field = "sales.field.customers.view", office = "core.members.invite";
@@ -90,7 +100,8 @@ try {
     tx.query("update core.memberships set status='active' where id=$1", [membership])), { code: "42501" });
 
   console.log("Combined candidate install verified: all candidates apply in order, organization control passes above " +
-    "company administration, the Field Sales restriction survives, and ordinary memberships remain guarded.");
+    "company administration, Field Sales governance passes below it (" + governanceChecks.length +
+    " checks), and ordinary memberships remain guarded.");
 } finally {
   await db.close();
 }
