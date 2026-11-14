@@ -114,7 +114,17 @@ Local verification commands:
 node --test supabase/functions/tests/platform-organization-lifecycle.test.mjs
 node supabase/tests/organization_identity.test.mjs
 node supabase/tests/organization_lifecycle.test.mjs
+node supabase/tests/combined_candidate_install.test.mjs
 ```
+
+The combined test applies every uninstalled candidate in timestamp order: the
+company, Employee and Sales candidates first, then the organization control
+candidates. Install them in that order. Organization control carries the Field
+Sales permission restriction forward, and
+`20261106106000_managed_login_membership_bridge.sql` lets managed sign-ins and
+cutover rollback pass the company administration membership guard. Installing
+Field Sales or company administration after organization control is not
+supported.
 
 The SQL harness uses the existing local PGlite runtime in
 `build/launch-validation-runtime`, or a compatible PGlite runtime set in
