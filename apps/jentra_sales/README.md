@@ -1,6 +1,6 @@
 # Jentra Sales
 
-Separate Flutter sales companion, version 0.1.0+1 Development. Uses the existing
+Separate Flutter sales companion, version 0.1.5+6 Development. Uses the existing
 Jentra artwork, Manrope and exact decimal domain primitives. Phone navigation is
 Today, Customers, Orders and More. Tablet uses a compact rail; wide browsers use
 an expanded sidebar and customer list/detail panels.

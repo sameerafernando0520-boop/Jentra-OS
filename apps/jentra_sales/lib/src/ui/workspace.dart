@@ -115,183 +115,192 @@ class _SalesNavigation extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     width: extended ? 232 : 84,
     color: salesNavy,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.fromLTRB(extended ? 24 : 20, 32, 16, 28),
-          child: extended
-              ? const JentraBrandLockup(size: 34, inverse: true)
-              : const JentraBrandMark(size: 34, inverse: true),
-        ),
-        if (extended)
-          const Padding(
-            padding: EdgeInsets.fromLTRB(28, 8, 24, 20),
-            child: Text(
-              'SALES WORKSPACE',
-              style: TextStyle(
-                color: Color(0xFFACBECE),
-                letterSpacing: 1.5,
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
+    child: CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(extended ? 24 : 20, 32, 16, 28),
+                child: extended
+                    ? const JentraBrandLockup(size: 34, inverse: true)
+                    : const JentraBrandMark(size: 34, inverse: true),
               ),
-            ),
-          ),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                for (final page in SalesPage.values)
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: extended ? 16 : 12,
-                      vertical: 3,
+              if (extended)
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(28, 8, 24, 20),
+                  child: Text(
+                    'SALES WORKSPACE',
+                    style: TextStyle(
+                      color: Color(0xFFACBECE),
+                      letterSpacing: 1.5,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
                     ),
-                    child: Tooltip(
-                      message: pageLabel(page),
-                      child: Material(
-                        color: c.page == page
-                            ? const Color(0xFF163A5D)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(8),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(8),
-                          onTap: () => c.go(page),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: extended ? 14 : 2,
-                              vertical: 15,
+                  ),
+                ),
+            ],
+          ),
+        ),
+        SliverList.list(
+          children: [
+            for (final page in SalesPage.values)
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: extended ? 16 : 12,
+                  vertical: 3,
+                ),
+                child: Tooltip(
+                  message: pageLabel(page),
+                  child: Material(
+                    color: c.page == page
+                        ? const Color(0xFF163A5D)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(8),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () => c.go(page),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: extended ? 14 : 2,
+                          vertical: 15,
+                        ),
+                        child: Flex(
+                          direction: extended ? Axis.horizontal : Axis.vertical,
+                          children: [
+                            Icon(
+                              pageIcon(page),
+                              size: 22,
+                              color: c.page == page
+                                  ? const Color(0xFF83C4FF)
+                                  : const Color(0xFFACBECE),
                             ),
-                            child: Flex(
-                              direction: extended
-                                  ? Axis.horizontal
-                                  : Axis.vertical,
-                              children: [
-                                Icon(
-                                  pageIcon(page),
-                                  size: 22,
-                                  color: c.page == page
-                                      ? const Color(0xFF83C4FF)
-                                      : const Color(0xFFACBECE),
+                            if (!extended) ...[
+                              const SizedBox(height: 6),
+                              Text(
+                                pageLabel(page),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Color(0xFFACBECE),
+                                  fontSize: 10,
                                 ),
-                                if (!extended) ...[
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    pageLabel(page),
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: Color(0xFFACBECE),
-                                      fontSize: 10,
-                                    ),
+                              ),
+                            ],
+                            if (extended) ...[
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Text(
+                                  pageLabel(page),
+                                  style: TextStyle(
+                                    color: c.page == page
+                                        ? Colors.white
+                                        : const Color(0xFFACBECE),
+                                    fontWeight: c.page == page
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
                                   ),
-                                ],
-                                if (extended) ...[
-                                  const SizedBox(width: 14),
-                                  Expanded(
-                                    child: Text(
-                                      pageLabel(page),
-                                      style: TextStyle(
-                                        color: c.page == page
-                                            ? Colors.white
-                                            : const Color(0xFFACBECE),
-                                        fontWeight: c.page == page
-                                            ? FontWeight.w700
-                                            : FontWeight.w500,
-                                      ),
-                                    ),
+                                ),
+                              ),
+                              if (page == SalesPage.orders)
+                                Text(
+                                  '${c.orders.length}',
+                                  style: const TextStyle(
+                                    color: Color(0xFFACBECE),
+                                    fontSize: 12,
                                   ),
-                                  if (page == SalesPage.orders)
-                                    Text(
-                                      '${c.orders.length}',
-                                      style: const TextStyle(
-                                        color: Color(0xFFACBECE),
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                ],
-                              ],
+                                ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (extended)
+                Container(
+                  margin: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF102E49),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.science_outlined,
+                            color: Color(0xFF83C4FF),
+                            size: 18,
+                          ),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'Preview workspace',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Sample data. Explore every step without creating real orders.',
+                        style: TextStyle(
+                          color: Color(0xFFACBECE),
+                          fontSize: 11,
+                          height: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Tooltip(
+                  message: 'Exit preview',
+                  child: !extended
+                      ? IconButton(
+                          tooltip: 'Exit preview',
+                          onPressed: c.leave,
+                          icon: const Icon(
+                            Icons.logout,
+                            color: Color(0xFFACBECE),
+                            size: 20,
+                          ),
+                        )
+                      : TextButton.icon(
+                          onPressed: c.leave,
+                          icon: const Icon(
+                            Icons.logout,
+                            color: Color(0xFFACBECE),
+                            size: 18,
+                          ),
+                          label: Text(
+                            extended ? 'Exit preview' : '',
+                            style: const TextStyle(
+                              color: Color(0xFFACBECE),
+                              fontSize: 12,
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-        if (extended)
-          Container(
-            margin: const EdgeInsets.all(20),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: const Color(0xFF102E49),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      Icons.science_outlined,
-                      color: Color(0xFF83C4FF),
-                      size: 18,
-                    ),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Preview workspace',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
-                SizedBox(height: 8),
-                Text(
-                  'Sample data. Explore every step without creating real orders.',
-                  style: TextStyle(
-                    color: Color(0xFFACBECE),
-                    fontSize: 11,
-                    height: 1.5,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Tooltip(
-            message: 'Exit preview',
-            child: !extended
-                ? IconButton(
-                    tooltip: 'Exit preview',
-                    onPressed: c.leave,
-                    icon: const Icon(
-                      Icons.logout,
-                      color: Color(0xFFACBECE),
-                      size: 20,
-                    ),
-                  )
-                : TextButton.icon(
-                    onPressed: c.leave,
-                    icon: const Icon(
-                      Icons.logout,
-                      color: Color(0xFFACBECE),
-                      size: 18,
-                    ),
-                    label: Text(
-                      extended ? 'Exit preview' : '',
-                      style: const TextStyle(
-                        color: Color(0xFFACBECE),
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
+              ),
+            ],
           ),
         ),
       ],
@@ -451,7 +460,7 @@ class _SalesMore extends StatelessWidget {
               'Customer acceptance, company approval and delivery acknowledgement are tracked separately. A local draft is never a confirmed order. Your discount request is reviewed by your company.',
             ),
             SizedBox(height: 20),
-            Text('Jentra Sales · 0.1.1+2 Development'),
+            Text('Jentra Sales · 0.1.3+4 Development'),
             SizedBox(height: 8),
             Text(
               'English interface · Sinhala and Tamil are planned. Collections and return requests follow in a later release.',

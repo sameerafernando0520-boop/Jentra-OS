@@ -36,8 +36,17 @@ $config = Join-Path $testRoot 'public-config.json'
 $tool = Join-Path $testRoot 'mock-tool.exe'
 [IO.File]::WriteAllText($tool,'SYNTHETIC_TOOL_BYTES')
 $tools = [ordered]@{mockTool=$tool}
+$android = Join-Path $fixture 'apps/jentra_employee/android'
+$flutterSdk = Join-Path $fixture 'flutter'
+$wrapperPaths = @('gradlew','gradlew.bat','gradle/wrapper/gradle-wrapper.jar')
+foreach ($relative in $wrapperPaths) { Put "flutter/bin/cache/artifacts/gradle_wrapper/$relative" 'SYNTHETIC_CACHED_WRAPPER' }
+Put 'apps/jentra_employee/android/gradlew' 'SYNTHETIC_EXISTING_WRAPPER'
+Initialize-EmployeeGradleWrapper $android $flutterSdk
+Check 'wrapper preparation preserves existing files' ((Get-Content -LiteralPath (Join-Path $android 'gradlew') -Raw) -eq 'SYNTHETIC_EXISTING_WRAPPER')
+Check 'wrapper preparation copies missing files from the Flutter cache' (@($wrapperPaths | Select-Object -Skip 1 | Where-Object { (Get-Content -LiteralPath (Join-Path $android $_) -Raw) -ne 'SYNTHETIC_CACHED_WRAPPER' }).Count -eq 0)
 $provenance = New-EmployeeReleaseProvenance $fixture $config $tools
 $paths = @($provenance.sourceFiles | ForEach-Object { $_.path })
+Check 'prepared wrappers are included in release provenance' (@($wrapperPaths | Where-Object { "apps/jentra_employee/android/$_" -notin $paths }).Count -eq 0)
 Check 'actual employee, Android, shared assets and dependency-lock inputs are hashed' ($paths -contains 'apps/jentra_employee/lib/main.dart' -and $paths -contains 'apps/jentra_employee/android/app/build.gradle.kts' -and $paths -contains 'packages/example/assets/icon.txt' -and $paths -contains 'pubspec.lock' -and $paths -contains '.dart_tool/package_config.json')
 Check 'generated output and local signing/configuration files are excluded' (@($paths | Where-Object { $_ -match 'private|properties|release\.p12|generated|GeneratedPluginRegistrant' }).Count -eq 0)
 Check 'manifest stores hashes, not source, tool or configuration contents' (($provenance | ConvertTo-Json -Depth 10) -notmatch 'SYNTHETIC_')

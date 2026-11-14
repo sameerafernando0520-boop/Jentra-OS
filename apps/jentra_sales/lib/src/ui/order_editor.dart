@@ -46,6 +46,7 @@ class _OrderEditorState extends State<OrderEditor> {
   String? _customer, _error;
   String _requestedDate = '';
   bool _review = false, _saving = false, _allowClose = false, _closing = false;
+  bool _locked = false;
   late final String _initialSignature;
   String get _signature => jsonEncode([
     _customer,
@@ -81,10 +82,34 @@ class _OrderEditorState extends State<OrderEditor> {
       _quantities[widget.product!.id] = TextEditingController(text: '1');
     }
     _initialSignature = _signature;
+    widget.c.addListener(_workspaceChanged);
+  }
+
+  void _workspaceChanged() {
+    if (!mounted || _locked) return;
+    final available =
+        widget.c.preview &&
+        (widget.draft == null ||
+            widget.c.orders.any((o) => o.local && o.id == _id));
+    if (available) return;
+    _locked = true;
+    _reference.clear();
+    _notes.clear();
+    _reason.clear();
+    _discount.clear();
+    for (final quantity in _quantities.values) {
+      quantity.clear();
+    }
+    setState(() => _allowClose = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final route = ModalRoute.of(context);
+      if (route != null) Navigator.of(context).removeRoute(route);
+    });
   }
 
   Future<void> _close() async {
-    if (_saving || _closing) return;
+    if (_saving || _closing || _locked) return;
     _closing = true;
     if (_signature != _initialSignature) {
       final discard = await showDialog<bool>(
@@ -120,6 +145,7 @@ class _OrderEditorState extends State<OrderEditor> {
 
   @override
   void dispose() {
+    widget.c.removeListener(_workspaceChanged);
     for (final t in [
       _reference,
       _notes,
@@ -137,7 +163,7 @@ class _OrderEditorState extends State<OrderEditor> {
   SalesOrder _order() => SalesOrder(
     id: _id,
     customerId: _customer!,
-    date: widget.c.now(),
+    date: widget.draft?.date ?? widget.c.now(),
     lines: List.unmodifiable(_lines),
     customerState: 'Not requested',
     companyState: 'Not submitted',
@@ -222,321 +248,333 @@ class _OrderEditorState extends State<OrderEditor> {
     onPopInvokedWithResult: (didPop, _) {
       if (!didPop) _close();
     },
-    child: Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 16, 12, 16),
-          child: Row(
+    child: _locked
+        ? const SizedBox.shrink()
+        : Column(
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 12, 16),
+                child: Row(
                   children: [
-                    Text(
-                      _review
-                          ? 'Review your order'
-                          : widget.draft == null
-                          ? 'New order'
-                          : 'Continue your draft',
-                      style: Theme.of(context).textTheme.titleLarge
-                          ?.copyWith(fontWeight: FontWeight.w700),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _review
+                                ? 'Review your order'
+                                : widget.draft == null
+                                ? 'New order'
+                                : 'Continue your draft',
+                            style: Theme.of(context).textTheme.titleLarge
+                                ?.copyWith(fontWeight: FontWeight.w700),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            _review
+                                ? '02 / Review & save locally'
+                                : '01 / Customer, products & terms',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      _review
-                          ? '02 / Review & save locally'
-                          : '01 / Customer, products & terms',
-                      style: Theme.of(context).textTheme.bodySmall,
+                    IconButton(
+                      tooltip: 'Close order editor',
+                      onPressed: _saving ? null : _close,
+                      icon: const Icon(Icons.close),
                     ),
                   ],
                 ),
               ),
-              IconButton(
-                tooltip: 'Close order editor',
-                onPressed: _saving ? null : _close,
-                icon: const Icon(Icons.close),
-              ),
-            ],
-          ),
-        ),
-        const Divider(height: 1),
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: _review
-                ? _reviewContent(context)
-                : Form(
-                    key: _form,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SectionTitle('Start with your customer'),
-                        DropdownButtonFormField<String>(
-                          initialValue: _customer,
-                          isExpanded: true,
-                          decoration: const InputDecoration(
-                            labelText: 'Customer',
-                            prefixIcon: Icon(Icons.person_outline),
-                          ),
-                          items: widget.c.customers
-                              .map(
-                                (c) => DropdownMenuItem(
-                                  value: c.id,
-                                  child: Text(
-                                    c.name,
-                                    overflow: TextOverflow.ellipsis,
+              const Divider(height: 1),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: _review
+                      ? _reviewContent(context)
+                      : Form(
+                          key: _form,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SectionTitle('Start with your customer'),
+                              DropdownButtonFormField<String>(
+                                initialValue: _customer,
+                                isExpanded: true,
+                                decoration: const InputDecoration(
+                                  labelText: 'Customer',
+                                  prefixIcon: Icon(Icons.person_outline),
+                                ),
+                                items: widget.c.customers
+                                    .map(
+                                      (c) => DropdownMenuItem(
+                                        value: c.id,
+                                        child: Text(
+                                          c.name,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                                onChanged: (v) => setState(() => _customer = v),
+                                validator: (v) =>
+                                    v == null ? 'Choose a customer.' : null,
+                              ),
+                              const SizedBox(height: 28),
+                              SectionTitle(
+                                'Build the order',
+                                action: TextButton.icon(
+                                  onPressed: _add,
+                                  icon: const Icon(Icons.add, size: 18),
+                                  label: const Text('Add product'),
+                                ),
+                              ),
+                              if (_products.isEmpty)
+                                SalesPanel(
+                                  child: SalesEmpty(
+                                    'Make room for a great order.',
+                                    'Choose products from your sample catalogue.',
+                                    action: OutlinedButton.icon(
+                                      onPressed: _add,
+                                      icon: const Icon(Icons.add),
+                                      label: const Text('Browse products'),
+                                    ),
                                   ),
                                 ),
-                              )
-                              .toList(),
-                          onChanged: (v) => setState(() => _customer = v),
-                          validator: (v) =>
-                              v == null ? 'Choose a customer.' : null,
-                        ),
-                        const SizedBox(height: 28),
-                        SectionTitle(
-                          'Build the order',
-                          action: TextButton.icon(
-                            onPressed: _add,
-                            icon: const Icon(Icons.add, size: 18),
-                            label: const Text('Add product'),
-                          ),
-                        ),
-                        if (_products.isEmpty)
-                          SalesPanel(
-                            child: SalesEmpty(
-                              'Make room for a great order.',
-                              'Choose products from your sample catalogue.',
-                              action: OutlinedButton.icon(
-                                onPressed: _add,
-                                icon: const Icon(Icons.add),
-                                label: const Text('Browse products'),
-                              ),
-                            ),
-                          ),
-                        for (final product in _products)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: SalesPanel(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ProductIcon(product, size: 44),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: Column(
+                              for (final product in _products)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child: SalesPanel(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              product.name,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w700,
+                                            ProductIcon(product, size: 44),
+                                            const SizedBox(width: 12),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    product.name,
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    '${product.code} · ${money(product.price)} / ${product.unit}',
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodySmall,
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              '${product.code} · ${money(product.price)} / ${product.unit}',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall,
+                                            IconButton(
+                                              tooltip: 'Remove ${product.name}',
+                                              onPressed: () {
+                                                setState(() {
+                                                  _products.remove(product);
+                                                  _quantities
+                                                      .remove(product.id)
+                                                      ?.dispose();
+                                                });
+                                              },
+                                              icon: const Icon(
+                                                Icons.close,
+                                                size: 18,
+                                              ),
                                             ),
                                           ],
                                         ),
-                                      ),
-                                      IconButton(
-                                        tooltip: 'Remove ${product.name}',
-                                        onPressed: () {
-                                          setState(() {
-                                            _products.remove(product);
-                                            _quantities
-                                                .remove(product.id)
-                                                ?.dispose();
-                                          });
-                                        },
-                                        icon: const Icon(Icons.close, size: 18),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
-                                  TextFormField(
-                                    key: ValueKey(product.id),
-                                    controller: _quantities[product.id],
-                                    keyboardType:
-                                        const TextInputType.numberWithOptions(
-                                          decimal: true,
+                                        const SizedBox(height: 16),
+                                        TextFormField(
+                                          key: ValueKey(product.id),
+                                          controller: _quantities[product.id],
+                                          keyboardType:
+                                              const TextInputType.numberWithOptions(
+                                                decimal: true,
+                                              ),
+                                          decoration: InputDecoration(
+                                            labelText:
+                                                'Quantity · ${product.unit}',
+                                            helperText: 'Up to 3 decimal places. Example: 12.5',
+                                          ),
+                                          validator: (v) {
+                                            try {
+                                              parseQuantity(v ?? '');
+                                              return null;
+                                            } on FormatException catch (e) {
+                                              return e.message;
+                                            }
+                                          },
                                         ),
-                                    decoration: InputDecoration(
-                                      labelText: 'Quantity · ${product.unit}',
-                                      helperText: 'Up to 3 decimal places. Example: 12.5',
+                                      ],
                                     ),
-                                    validator: (v) {
-                                      try {
-                                        parseQuantity(v ?? '');
-                                        return null;
-                                      } on FormatException catch (e) {
-                                        return e.message;
-                                      }
-                                    },
                                   ),
-                                ],
+                                ),
+                              const SizedBox(height: 12),
+                              const SectionTitle('Delivery & reference'),
+                              TextFormField(
+                                controller: _reference,
+                                maxLength: 120,
+                                decoration: const InputDecoration(
+                                  labelText: 'Customer reference (optional)',
+                                  hintText: 'PO number or visit reference',
+                                ),
                               ),
-                            ),
-                          ),
-                        const SizedBox(height: 12),
-                        const SectionTitle('Delivery & reference'),
-                        TextFormField(
-                          controller: _reference,
-                          maxLength: 120,
-                          decoration: const InputDecoration(
-                            labelText: 'Customer reference (optional)',
-                            hintText: 'PO number or visit reference',
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        OutlinedButton.icon(
-                          onPressed: () async {
-                            final date = await showDatePicker(
-                              context: context,
-                              initialDate: widget.c.now(),
-                              firstDate: DateUtils.dateOnly(widget.c.now()),
-                              lastDate: widget.c.now().add(
-                                const Duration(days: 365),
+                              const SizedBox(height: 16),
+                              OutlinedButton.icon(
+                                onPressed: () async {
+                                  final date = await showDatePicker(
+                                    context: context,
+                                    initialDate: widget.c.now(),
+                                    firstDate: DateUtils.dateOnly(
+                                      widget.c.now(),
+                                    ),
+                                    lastDate: widget.c.now().add(
+                                      const Duration(days: 365),
+                                    ),
+                                  );
+                                  if (date != null && mounted) {
+                                    setState(
+                                      () => _requestedDate = DateFormat(
+                                        'yyyy-MM-dd',
+                                      ).format(date),
+                                    );
+                                  }
+                                },
+                                icon: const Icon(
+                                  Icons.calendar_today_outlined,
+                                  size: 18,
+                                ),
+                                label: Text(
+                                  _requestedDate.isEmpty
+                                      ? 'Choose requested delivery date'
+                                      : 'Requested delivery: $_requestedDate',
+                                ),
                               ),
-                            );
-                            if (date != null && mounted) {
-                              setState(
-                                () =>
-                                    _requestedDate = DateFormat('yyyy-MM-dd')
-                                        .format(date),
-                              );
-                            }
-                          },
-                          icon: const Icon(
-                            Icons.calendar_today_outlined,
-                            size: 18,
-                          ),
-                          label: Text(
-                            _requestedDate.isEmpty
-                                ? 'Choose requested delivery date'
-                                : 'Requested delivery: $_requestedDate',
-                          ),
-                        ),
-                        const SizedBox(height: 28),
-                        const SectionTitle('Request a discount'),
-                        const Text(
-                          'A discount request needs company approval. Your requested percentage does not change the current price.',
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _discount,
-                          keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true,
-                          ),
-                          decoration: const InputDecoration(
-                            labelText: 'Requested discount (%)',
-                          ),
-                          validator: (v) {
-                            try {
-                              parseDiscount(v ?? '');
-                              return null;
-                            } on FormatException catch (e) {
-                              return e.message;
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _reason,
-                          maxLength: 500,
-                          decoration: const InputDecoration(
-                            labelText: 'Discount reason',
-                          ),
-                          validator: (v) {
-                            try {
-                              if (parseDiscount(_discount.text).isPositive &&
-                                  (v == null || v.trim().isEmpty)) {
-                                return 'Add a reason for your discount request.';
-                              }
-                            } on Object {
-                              return null;
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _notes,
-                          minLines: 2,
-                          maxLines: 4,
-                          maxLength: 2000,
-                          decoration: const InputDecoration(
-                            labelText: 'Order notes (optional)',
+                              const SizedBox(height: 28),
+                              const SectionTitle('Request a discount'),
+                              const Text(
+                                'A discount request needs company approval. Your requested percentage does not change the current price.',
+                              ),
+                              const SizedBox(height: 16),
+                              TextFormField(
+                                controller: _discount,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                      decimal: true,
+                                    ),
+                                decoration: const InputDecoration(
+                                  labelText: 'Requested discount (%)',
+                                ),
+                                validator: (v) {
+                                  try {
+                                    parseDiscount(v ?? '');
+                                    return null;
+                                  } on FormatException catch (e) {
+                                    return e.message;
+                                  }
+                                },
+                              ),
+                              const SizedBox(height: 16),
+                              TextFormField(
+                                controller: _reason,
+                                maxLength: 500,
+                                decoration: const InputDecoration(
+                                  labelText: 'Discount reason',
+                                ),
+                                validator: (v) {
+                                  try {
+                                    if (parseDiscount(_discount.text)
+                                            .isPositive &&
+                                        (v == null || v.trim().isEmpty)) {
+                                      return 'Add a reason for your discount request.';
+                                    }
+                                  } on Object {
+                                    return null;
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 16),
+                              TextFormField(
+                                controller: _notes,
+                                minLines: 2,
+                                maxLines: 4,
+                                maxLength: 2000,
+                                decoration: const InputDecoration(
+                                  labelText: 'Order notes (optional)',
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              const SalesNotice(
+                                'Preview prices and availability are illustrative. Online review must confirm current prices, tax, credit and stock before a real order can be submitted.',
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        const SalesNotice(
-                          'Preview prices and availability are illustrative. Online review must confirm current prices, tax, credit and stock before a real order can be submitted.',
-                        ),
-                      ],
-                    ),
-                  ),
-          ),
-        ),
-        if (_error != null)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
-            child: SalesNotice(_error!, icon: Icons.error_outline),
-          ),
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: _saving
-                      ? null
-                      : () {
-                          if (_review) {
-                            setState(() => _review = false);
-                          } else {
-                            _close();
-                          }
-                        },
-                  child: Text(_review ? 'Back to edit' : 'Cancel'),
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: FilledButton.icon(
-                  onPressed: _saving
-                      ? null
-                      : _review
-                      ? _save
-                      : _next,
-                  icon: Icon(
-                    _review ? Icons.save_outlined : Icons.arrow_forward,
-                    size: 18,
-                  ),
-                  label: Text(
-                    _saving
-                        ? 'Saving…'
-                        : _review
-                        ? 'Save local draft'
-                        : 'Review order',
-                  ),
+              if (_error != null)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
+                  child: SalesNotice(_error!, icon: Icons.error_outline),
+                ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: _saving
+                            ? null
+                            : () {
+                                if (_review) {
+                                  setState(() => _review = false);
+                                } else {
+                                  _close();
+                                }
+                              },
+                        child: Text(_review ? 'Back to edit' : 'Cancel'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: _saving
+                            ? null
+                            : _review
+                            ? _save
+                            : _next,
+                        icon: Icon(
+                          _review ? Icons.save_outlined : Icons.arrow_forward,
+                          size: 18,
+                        ),
+                        label: Text(
+                          _saving
+                              ? 'Saving…'
+                              : _review
+                              ? 'Save local draft'
+                              : 'Review order',
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-        ),
-      ],
-    ),
   );
 
   Widget _reviewContent(BuildContext context) {
