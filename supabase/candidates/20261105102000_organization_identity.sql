@@ -142,12 +142,43 @@ returns boolean language sql stable set search_path = '' as $$
     )));
 $$;
 
+-- Field Sales governance, when installed before this candidate, limits a
+-- restricted companion account to its field and self-service permissions. This
+-- candidate replaces core.has_permission and core.list_capabilities afterwards,
+-- so it must carry that limit forward. Keep the permission list identical to
+-- 20261031090000_field_sales_governance.sql. Without Field Sales the helper is
+-- a no-op; installing Field Sales after this candidate is not supported.
+do $scope$
+begin
+  if to_regprocedure('field_sales.restricted(uuid)') is not null then
+    execute $ddl$
+      create function core.organization_permission_in_scope(p_tenant_id uuid, p_permission_code text)
+      returns boolean language sql stable security definer set search_path = '' as $body$
+        select not field_sales.restricted(p_tenant_id) or p_permission_code in (
+          'sales.field.customers.view', 'sales.field.catalogue.view', 'sales.field.orders.submit',
+          'people.self.view', 'people.attendance.self.request', 'people.leave.self.manage',
+          'people.payroll.payslip.self', 'people.hr.cases.self.manage', 'people.hr.documents.self.view'
+        );
+      $body$;
+    $ddl$;
+  else
+    execute $ddl$
+      create function core.organization_permission_in_scope(p_tenant_id uuid, p_permission_code text)
+      returns boolean language sql stable security definer set search_path = '' as $body$
+        select true;
+      $body$;
+    $ddl$;
+  end if;
+end;
+$scope$;
+
 create or replace function core.has_permission(
   p_tenant_id uuid, p_permission_code text,
   p_legal_entity_id uuid default null, p_branch_id uuid default null
 )
 returns boolean language sql stable security definer set search_path = '' as $$
-  select core.is_tenant_member(p_tenant_id) and exists (
+  select core.is_tenant_member(p_tenant_id)
+    and core.organization_permission_in_scope(p_tenant_id, p_permission_code) and exists (
     select 1 from core.memberships as m
     join core.role_assignments as a on (a.tenant_id, a.membership_id) = (m.tenant_id, m.id)
     join core.roles as r on (r.tenant_id, r.id) = (a.tenant_id, a.role_id)
@@ -170,6 +201,7 @@ returns table (permission_code text) language sql stable security definer set se
   join core.permissions as p on p.code = rp.permission_code
   where m.tenant_id = p_tenant_id and m.user_id = (select auth.uid()) and m.status = 'active'
     and core.is_tenant_member(p_tenant_id)
+    and core.organization_permission_in_scope(p_tenant_id, p.code)
     and core.organization_role_permits(r.code, r.requires_mfa, p.code, p.privileged)
   order by p.code;
 $$;
@@ -463,7 +495,8 @@ $$;
 
 revoke all on function core.organization_protect_login_alias(), core.organization_track_password_change(),
   core.organization_identity_session_is_current(uuid,timestamptz), core.organization_account_ready(uuid),
-  core.organization_role_permits(text,boolean,text,boolean), core.organization_check_managed_membership(),
+  core.organization_role_permits(text,boolean,text,boolean), core.organization_permission_in_scope(uuid,text),
+  core.organization_check_managed_membership(),
   core.organization_is_administrator(uuid), core.organization_issue_identity_challenge(uuid,text,text,text),
   core.organization_recovery_target(text), core.organization_consume_identity_challenge(uuid,text,text),
   core.organization_provisioning_recipient(uuid,uuid,text) from public, anon, authenticated;

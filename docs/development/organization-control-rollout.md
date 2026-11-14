@@ -114,7 +114,29 @@ Local verification commands:
 node --test supabase/functions/tests/platform-organization-lifecycle.test.mjs
 node supabase/tests/organization_identity.test.mjs
 node supabase/tests/organization_lifecycle.test.mjs
+node supabase/tests/combined_candidate_install.test.mjs
+node supabase/tests/combined_field_sales_staged.test.mjs
+node supabase/tests/combined_candidate_pgtap.test.mjs
 ```
+
+The combined test applies every uninstalled candidate in timestamp order: the
+company, Employee and Sales candidates first, then the organization control
+candidates. Install them in that order. Organization control carries the Field
+Sales permission restriction forward, and
+`20261106106000_managed_login_membership_bridge.sql` lets managed sign-ins and
+cutover rollback pass the company administration membership guard. Installing
+Field Sales or company administration after organization control is not
+supported.
+
+The staged Field Sales test replays the six Field Sales exercises with
+organization control installed. Each exercise needs the state right after its
+own candidate, so that test applies organization control before the later
+Field Sales candidates; it is a compatibility check, not the install order.
+
+The pgTAP test runs the company access and Employee harnesses on the combined
+install. It needs the official pgTAP 1.3.4 `pgtap.sql.in` at
+`build/pgtap-1.3.4.sql.in`, or at the path in `JENTRA_PGTAP_SOURCE`, and
+checks its SHA-256.
 
 The SQL harness uses the existing local PGlite runtime in
 `build/launch-validation-runtime`, or a compatible PGlite runtime set in

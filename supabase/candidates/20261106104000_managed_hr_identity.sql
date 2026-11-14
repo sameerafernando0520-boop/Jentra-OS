@@ -741,6 +741,36 @@ returns boolean language sql stable security definer set search_path = '' as $$
   ) end;
 $$;
 
+-- Field Sales governance, when installed before this candidate, lets a
+-- restricted companion account use its own Employee self-service capabilities
+-- without the broad people.view gate. This candidate replaces
+-- people.require_access afterwards, so it must carry that exception forward.
+-- Keep the permission list identical to 20261031090000_field_sales_governance.sql.
+-- Without Field Sales the helper never applies.
+do $scope$
+begin
+  if to_regprocedure('field_sales.restricted(uuid)') is not null then
+    execute $ddl$
+      create function people_private.field_self_capability(p_tenant_id uuid, p_permission text)
+      returns boolean language sql stable security definer set search_path = '' as $body$
+        select field_sales.restricted(p_tenant_id) and p_permission in (
+          'people.self.view', 'people.attendance.self.request', 'people.leave.self.manage',
+          'people.payroll.payslip.self', 'people.hr.cases.self.manage', 'people.hr.documents.self.view'
+        );
+      $body$;
+    $ddl$;
+  else
+    execute $ddl$
+      create function people_private.field_self_capability(p_tenant_id uuid, p_permission text)
+      returns boolean language sql stable security definer set search_path = '' as $body$
+        select false;
+      $body$;
+    $ddl$;
+  end if;
+end;
+$scope$;
+revoke all on function people_private.field_self_capability(uuid,text) from public, anon, authenticated;
+
 create or replace function people.require_access(
   p_tenant_id uuid, p_entity_id uuid, p_branch_id uuid, p_permission text
 )
@@ -760,7 +790,9 @@ begin
     end if;
     return;
   end if;
-  perform core.wave3_require_scope(p_tenant_id, 'people.view', p_entity_id, p_branch_id);
+  if not people_private.field_self_capability(p_tenant_id, p_permission) then
+    perform core.wave3_require_scope(p_tenant_id, 'people.view', p_entity_id, p_branch_id);
+  end if;
   perform core.wave3_require_scope(p_tenant_id, p_permission, p_entity_id, p_branch_id);
   if not people_private.managed_staff_hr_plan(p_tenant_id) then
     raise exception using errcode = '42501', message = 'PEOPLE_ENTITLEMENT_REQUIRED';
