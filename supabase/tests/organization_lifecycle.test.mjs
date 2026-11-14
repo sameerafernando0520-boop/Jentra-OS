@@ -3,7 +3,8 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { readFile, readdir } from "node:fs/promises";
-import { openIsolatedDatabase, organizationCandidates } from "./isolated_database.mjs";
+import { allowLegacySelfServiceFixtures, openIsolatedDatabase, organizationCandidates } from "./isolated_database.mjs";
+import { testOrganizationCreationControl } from "./organization_creation_control.assertions.mjs";
 import { testPlatformOrganizationControl } from "./platform_organization_control.assertions.mjs";
 import { testSubscriptionCheckout } from "./subscription_checkout.assertions.mjs";
 import { testSubscriptionHandover } from "./subscription_handover.assertions.mjs";
@@ -58,6 +59,8 @@ try {
         (error.where ? " (" + error.where + ")" : ""), { cause: error });
     }
   }
+  await testOrganizationCreationControl(db);
+  await allowLegacySelfServiceFixtures(db);
   await testPlatformOrganizationControl(db);
   await testSubscriptionCheckout(db);
   await testSubscriptionHandover(db);

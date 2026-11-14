@@ -5,7 +5,8 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { readFile, readdir } from "node:fs/promises";
-import { openIsolatedDatabase, organizationCandidates } from "./isolated_database.mjs";
+import { allowLegacySelfServiceFixtures, enableFieldSalesModule, openIsolatedDatabase, organizationCandidates } from "./isolated_database.mjs";
+import { testOrganizationCreationControl } from "./organization_creation_control.assertions.mjs";
 import { testPlatformOrganizationControl } from "./platform_organization_control.assertions.mjs";
 import { testSubscriptionCheckout } from "./subscription_checkout.assertions.mjs";
 import { testSubscriptionHandover } from "./subscription_handover.assertions.mjs";
@@ -42,6 +43,8 @@ try {
 
   // Organization control still works above company administration: handover,
   // system provisioning and cutover create and restore memberships.
+  await testOrganizationCreationControl(db);
+  await allowLegacySelfServiceFixtures(db);
   await testPlatformOrganizationControl(db);
   await testSubscriptionCheckout(db);
   await testSubscriptionHandover(db);
@@ -51,6 +54,12 @@ try {
   // Field Sales governance still holds below organization control, including
   // a restricted companion account's own Employee self-service access, which
   // organization control's people.require_access must keep.
+  // Field Sales is switched off on every package until an operator turns it
+  // on: the same exercise is refused first, then passes once the module is on.
+  await db.exec("begin");
+  try { await assert.rejects(fieldSalesGovernance(db, []), /FIELD_SALES_ENTITLEMENT_REQUIRED/); }
+  finally { await db.exec("rollback"); }
+  await enableFieldSalesModule(db);
   const governanceChecks = [];
   await db.exec("begin");
   try { await fieldSalesGovernance(db, governanceChecks); }
