@@ -33,7 +33,9 @@ const metadata=process.argv[4]?JSON.parse((await readFile(path.join(downloadRoot
 if(metadata.name!=='Jentra Sales'||!/^\d+\.\d+\.\d+\+\d+$/.test(metadata.version)||metadata.liveSalesEnabled!==false) throw Error('REVIEWED_RELEASE_METADATA_REQUIRED');
 for(const name of [metadata.apkFilename,metadata.archiveFilename]) if(typeof name!=='string'||path.basename(name)!==name) throw Error('INVALID_DOWNLOAD_PATH');
 await mkdir(path.join(out,'public','downloads'));
-for (const name of [metadata.apkFilename,metadata.archiveFilename,'checksums.sha256','READ-ME.txt']) {
+// Spark Hosting excludes direct executable uploads; deliver the verified APK
+// through the existing ZIP handoff. The local APK remains a separate artifact.
+for (const name of [metadata.archiveFilename,'checksums.sha256','READ-ME.txt']) {
   const bytes=await readFile(path.join(downloadRoot,name));
   const relative=`downloads/${name}`;
   await copyFile(path.join(downloadRoot,name),path.join(out,'public',relative));

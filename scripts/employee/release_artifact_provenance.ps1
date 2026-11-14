@@ -1,4 +1,17 @@
 # Pure release-file helpers. No signing material, build command or network access.
+function Initialize-EmployeeGradleWrapper {
+    param([string]$AndroidDirectory,[string]$FlutterSdk)
+    $wrapperCache = Join-Path $FlutterSdk 'bin/cache/artifacts/gradle_wrapper'
+    foreach ($relative in @('gradlew','gradlew.bat','gradle/wrapper/gradle-wrapper.jar')) {
+        $destination = Join-Path $AndroidDirectory $relative
+        if (Test-Path -LiteralPath $destination -PathType Leaf) { continue }
+        $source = Join-Path $wrapperCache $relative
+        if (!(Test-Path -LiteralPath $source -PathType Leaf)) { throw 'Flutter Gradle wrapper cache is unavailable.' }
+        [IO.Directory]::CreateDirectory((Split-Path -Parent $destination)) | Out-Null
+        [IO.File]::Copy($source,$destination,$false)
+    }
+}
+
 function New-EmployeeReleaseDirectory {
     param([string]$DeliverablesRoot,[string]$Version,[int]$BuildNumber,[string]$Stamp)
     if ($Version -notmatch '^\d+\.\d+\.\d+$' -or $BuildNumber -lt 1) { throw 'Explicit release version and build number are required.' }
