@@ -56,3 +56,28 @@ export async function openIsolatedDatabase() {
   `);
   return db;
 }
+
+// Applies SQL files in order. Each entry is [file name, directory URL].
+export async function applySqlFiles(db, entries) {
+  const { readFile } = await import("node:fs/promises");
+  for (const [name, directory] of entries) {
+    try { await db.exec((await readFile(new URL(name, directory), "utf8")).replaceAll("\r\n", "\n")); }
+    catch (error) {
+      throw new Error("Migration " + name + ": " + error.message +
+        (error.where ? " (" + error.where + ")" : ""), { cause: error });
+    }
+  }
+}
+
+// Tracked migrations and every uninstalled candidate, in timestamp order.
+export async function pendingInstall() {
+  const { readdir } = await import("node:fs/promises");
+  const migrations = new URL("../migrations/", import.meta.url);
+  const candidates = new URL("../candidates/", import.meta.url);
+  const tracked = (await readdir(migrations)).filter(name => name.endsWith(".sql") &&
+    // Scheduler installation needs pg_cron and pg_net.
+    name !== "20261009123000_wave5_supabase_schedule.sql").sort();
+  // 20261020 is the last tracked migration date. Later candidates are not installed anywhere yet.
+  const pending = (await readdir(candidates)).filter(name => /^\d{14}_.+\.sql$/.test(name) && name > "20261020999999").sort();
+  return { migrations, candidates, tracked, pending };
+}
