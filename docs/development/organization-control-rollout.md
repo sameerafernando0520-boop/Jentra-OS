@@ -151,6 +151,21 @@ supported.
 - **Trials.** An organization registered as a trial gets a trial end from the
   package's trial days; an expired trial has no modules until it is activated.
 
+## People access
+
+- **Employee App logins.** A company-issued Employee App login carries the six
+  Employee self-service permissions for its own entity and branch, so it can
+  request leave and attendance, read its payslips, open HR cases and read
+  published documents. Every other People permission is refused with
+  `EMPLOYEE_SELF_SCOPE_DENIED`.
+- **Payroll reads.** `20261114100000_people_access_hardening.sql` makes
+  `people.payroll.view` need an MFA session, like payslips and payroll
+  corrections. Without one the read is refused with `PAYROLL_MFA_REQUIRED`.
+- **Own records.** A leave decision (`LEAVE_SELF_DECISION_DENIED`) or an
+  attendance decision or cancellation (`ATTENDANCE_SELF_DECISION_DENIED`) is
+  refused when an accepted account link ties the decider to the employee on
+  the record. Withdrawing your own leave is unaffected.
+
 The older suites create their fixtures through self-service and predate the
 Field Sales switch, so they switch enforcement off and Field Sales on after
 `organization_creation_control.assertions.mjs` has checked the defaults.
