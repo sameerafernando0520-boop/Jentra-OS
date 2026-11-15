@@ -7,6 +7,7 @@ import { randomUUID } from "node:crypto";
 import { readFile, readdir } from "node:fs/promises";
 import { allowLegacySelfServiceFixtures, enableFieldSalesModule, openIsolatedDatabase, organizationCandidates } from "./isolated_database.mjs";
 import { testOrganizationCreationControl } from "./organization_creation_control.assertions.mjs";
+import { testManagedEmployeeSelfService } from "./managed_employee_self_service.assertions.mjs";
 import { testPlatformOrganizationControl } from "./platform_organization_control.assertions.mjs";
 import { testSubscriptionCheckout } from "./subscription_checkout.assertions.mjs";
 import { testSubscriptionHandover } from "./subscription_handover.assertions.mjs";
@@ -50,6 +51,7 @@ try {
   await testSubscriptionHandover(db);
   await testPlatformOperatorIdentity(db);
   await testSystemSerials(db);
+  await testManagedEmployeeSelfService(db);
 
   // Field Sales governance still holds below organization control, including
   // a restricted companion account's own Employee self-service access, which

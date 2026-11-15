@@ -511,6 +511,17 @@ returns void language sql security definer set search_path = '' as $$
 $$;
 
 
+-- What a company-issued Employee App login may do: Employee self-service for
+-- its own record, and nothing else. Keep the list identical to
+-- employee_self.require_subject in 20261025090000_employee_self_service.sql.
+-- Permissions whose candidate is not installed are simply not granted.
+create function people_private.employee_self_permissions()
+returns text[] language sql immutable set search_path = '' as $$
+  select array['people.self.view', 'people.attendance.self.request', 'people.leave.self.manage',
+    'people.payroll.payslip.self', 'people.hr.cases.self.manage', 'people.hr.documents.self.view'];
+$$;
+revoke all on function people_private.employee_self_permissions() from public, anon, authenticated;
+
 create function people_private.activate_managed_staff_identity(p_identity_id uuid, p_actor_id uuid)
 returns jsonb language plpgsql security definer set search_path = '' as $$
 declare
@@ -606,7 +617,7 @@ begin
       'people.employees.history.view','people.employee_credentials.manage'];
   else
     v_role_code := 'people.employee_app';
-    v_permissions := array['people.self.view'];
+    v_permissions := people_private.employee_self_permissions();
   end if;
 
   insert into core.roles (tenant_id,code,name,is_system,requires_mfa) values (
@@ -782,7 +793,7 @@ begin
   end if;
   select * into s from people_private.managed_staff_identities where user_id = auth.uid() and kind = 'employee';
   if found then
-    if p_permission is distinct from 'people.self.view'
+    if p_permission is null or p_permission <> all (people_private.employee_self_permissions())
         or (s.tenant_id,s.legal_entity_id,s.branch_id) is distinct from (p_tenant_id,p_entity_id,p_branch_id)
         or not people_private.managed_staff_access_ready(s)
         or not core.has_permission(p_tenant_id,p_permission,p_entity_id,p_branch_id) then
