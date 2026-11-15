@@ -276,6 +276,29 @@ void main() {
     },
   );
 
+  test(
+    'provider-only creation is reported separately from a permission denial',
+    () async {
+      var message = 'SUBSCRIPTION_CHECKOUT_REQUIRED';
+      respond = (request) async {
+        if (request.url.path.endsWith('/bootstrap_tenant')) {
+          return _json({'code': '42501', 'message': message}, status: 403);
+        }
+        return null;
+      };
+      await expectLater(
+        container.read(tenantListProvider.notifier).createTenant(_request),
+        throwsA(_failure(WorkspaceCreationFailure.checkoutRequired)),
+      );
+      message = 'Permission denied.';
+      await expectLater(
+        container.read(tenantListProvider.notifier).createTenant(_request),
+        throwsA(_failure(WorkspaceCreationFailure.accessDenied)),
+      );
+      expect(container.read(tenantListProvider).requireValue, isEmpty);
+    },
+  );
+
   test('membership read failure preserves pending intent for a later confirmed retry', () async {
     var failedRead = false;
     respond = (request) async {

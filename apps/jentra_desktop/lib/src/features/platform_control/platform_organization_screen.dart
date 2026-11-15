@@ -244,6 +244,45 @@ class _ControlPanelState extends State<_ControlPanel> {
     if (mounted) await _run(_refresh);
   }
 
+  Future<void> _modules(_Row package) async {
+    _Row current;
+    try {
+      final rows = await _gateway.rpc<List<dynamic>>(
+        'platform_package_modules',
+      );
+      current = rows.map(_row).firstWhere((r) => r['code'] == package['code']);
+    } on Object {
+      if (mounted) _notice(context, 'Could not load the package modules.');
+      return;
+    }
+    if (!mounted) return;
+    final modules = _row(current['modules']);
+    final changed = await _edit(
+      context,
+      'Modules for ${package['name']}',
+      'Every organization on this package gets the modules switched on here. To give one organization a different set, move it to another package.',
+      [
+        for (final entry in _moduleLabels.entries)
+          _Field(
+            entry.key,
+            entry.value,
+            initial: modules[entry.key] == true ? 'on' : 'off',
+            choices: const {'on': 'On', 'off': 'Off'},
+          ),
+      ],
+      (values) async {
+        await _gateway.rpc<Object?>('platform_save_package_modules', {
+          'p_code': package['code'],
+          'p_modules': {
+            for (final code in _moduleLabels.keys) code: values[code] == 'on',
+          },
+          'p_expected_revision': current['revision'],
+        });
+      },
+    );
+    if (mounted && changed) await _run(_refresh, 'Package modules saved.');
+  }
+
   Future<void> _publication(_Row package) async {
     final changed = await _edit(
       context,
@@ -582,10 +621,20 @@ class _ControlPanelState extends State<_ControlPanel> {
               '${row['code']} · ${row['status']} · ${_price(row['price_minor'], row['currency_code'])}'
               '${row['published'] == true ? ' · Published' : ''}',
             ),
-            trailing: IconButton(
-              onPressed: _busy ? null : () => _publication(row),
-              tooltip: 'Edit catalog listing',
-              icon: const Icon(Icons.video_library_outlined),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  onPressed: _busy ? null : () => _modules(row),
+                  tooltip: 'Edit modules',
+                  icon: const Icon(Icons.extension_outlined),
+                ),
+                IconButton(
+                  onPressed: _busy ? null : () => _publication(row),
+                  tooltip: 'Edit catalog listing',
+                  icon: const Icon(Icons.video_library_outlined),
+                ),
+              ],
             ),
             onTap: _busy ? null : () => _package(row),
           ),
@@ -864,6 +913,45 @@ class _OrganizationDetailsState extends State<_OrganizationDetails> {
     if (mounted && changed) await _run(_refresh);
   }
 
+  Future<void> _changePackage() async {
+    Map<String, String> choices;
+    try {
+      final rows = await _gateway.rpc<List<dynamic>>('platform_list_packages');
+      choices = _packageChoices(
+        rows
+            .map(_row)
+            .where((r) => r['status'] == 'active' && r['price_minor'] != null),
+      );
+    } on Object {
+      if (mounted) setState(() => _error = 'Could not load the packages.');
+      return;
+    }
+    if (!mounted) return;
+    final current = _organization['plan_code'] as String?;
+    final changed = await _edit(
+      context,
+      'Change package',
+      'The organization gets the modules of the new package at once. Its price, offers and recorded payments are not changed here.',
+      [
+        _Field(
+          'package',
+          'Package',
+          initial: choices.containsKey(current) ? current! : '',
+          choices: choices,
+        ),
+        const _Field('reason', 'Reason for change'),
+      ],
+      (values) async {
+        await _gateway.rpc<Object?>('platform_set_organization_package', {
+          'p_tenant_id': _id,
+          'p_plan_code': values['package'],
+          'p_reason': values['reason'],
+        });
+      },
+    );
+    if (mounted && changed) await _run(_refresh);
+  }
+
   Future<void> _archive() => _run(() async {
     await _gateway.lifecycle('backup', {'tenant_id': _id});
     if (mounted) _notice(context, 'Backup created.');
@@ -962,6 +1050,14 @@ class _OrganizationDetailsState extends State<_OrganizationDetails> {
                 onPressed: _busy || !available ? null : _rename,
                 label: const Text('Edit organization name'),
                 icon: const Icon(Icons.edit_outlined),
+              ),
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: _busy || !available ? null : _changePackage,
+                label: const Text('Change package'),
+                icon: const Icon(Icons.swap_horiz),
               ),
             ),
             const SizedBox(height: 16),
@@ -1305,6 +1401,20 @@ _Row _row(Object? value) => (value as Map).cast<String, Object?>();
 List<_Row> _rows(Object? value) => (value as List).map(_row).toList();
 bool _availablePackage(_Row row) =>
     row['status'] == 'active' && row['price_minor'] != null;
+
+/// Module switches an operator may change, in display order. Keep the codes
+/// identical to billing.platform_module_codes().
+const _moduleLabels = <String, String>{
+  'module.people': 'People (HR)',
+  'module.field_sales': 'Field Sales',
+  'module.finance': 'Finance',
+  'module.assets': 'Assets',
+  'module.projects': 'Projects',
+  'module.service': 'Service',
+  'analytics': 'Analytics',
+  'module.ai': 'AI',
+};
+
 Map<String, String> _packageChoices(Iterable<_Row> rows) => {
   for (final row in rows) row['code'] as String: row['name'] as String,
 };
@@ -1384,6 +1494,11 @@ String _message(Object error) {
     'INVALID_PRICE' =>
       'Enter a valid price using the currency’s allowed decimal places.',
     'INVALID_PACKAGE' => 'Check the package code, name, price and trial days.',
+    'INVALID_PACKAGE_MODULES' =>
+      'The module list is out of date. Close this form and refresh.',
+    'INVALID_PACKAGE_CHANGE' => 'Enter a reason of 5 to 500 characters.',
+    'PACKAGE_UNAVAILABLE' => 'Choose an active package that has a price.',
+    'INVALID_CHECKOUT_ENFORCEMENT' => 'Enter a reason of 5 to 500 characters.',
     'INVALID_SUBSCRIPTION_TERM' => 'Enter the subscription term in whole days.',
     'INVALID_SUBSCRIPTION_PUBLICATION' => 'Publishing requires an active LKR plan, a description, features, an HTTPS demo and a transcript.',
     'SUBSCRIPTION_PAYMENT_NOT_MATCHED' => 'The amount, reference or transfer time does not match this order. Use Reject or record exception to record the transfer.',
