@@ -20,6 +20,7 @@ export const organizationCandidates = [
   "20261106105000_system_username_cutover.sql",
   "20261106106000_managed_login_membership_bridge.sql",
   "20261114090000_organization_creation_control.sql",
+  "20261114100000_people_access_hardening.sql",
 ];
 
 // Organization creation control blocks self-created organizations by default.

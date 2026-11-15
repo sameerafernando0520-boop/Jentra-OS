@@ -137,6 +137,35 @@ void main() {
       ),
     );
   });
+  test(
+    'a decision about your own record is named, not a generic conflict',
+    () async {
+      for (final message in [
+        'LEAVE_SELF_DECISION_DENIED',
+        'ATTENDANCE_SELF_DECISION_DENIED',
+      ]) {
+        h.status = 409;
+        h.response = {'code': '55000', 'message': message};
+        await expectLater(
+          gateway.execute(
+            WorkforceCommandKind.attendance,
+            command(attendanceForm()),
+          ),
+          throwsA(
+            isA<DomainError>()
+                .having((e) => e.code, 'code', 'SELF_DECISION_DENIED')
+                .having(
+                  (e) => e.message,
+                  'message',
+                  'You cannot decide your own record. Ask another approver.',
+                )
+                .having((e) => e.retryable, 'retryable', isFalse),
+          ),
+        );
+      }
+      h.status = 200;
+    },
+  );
   test('invalid payload is rejected without network traffic', () async {
     final input = attendanceForm()..['compensation'] = '100.00';
     await expectLater(
