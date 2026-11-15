@@ -14,6 +14,7 @@ final class FieldSalesController extends ChangeNotifier {
     required this.store,
     Stream<String?>? authChanges,
     DateTime Function()? now,
+    this.lease = const Duration(minutes: 15),
   }) : now = now ?? DateTime.now {
     _authChanges = authChanges?.listen((actor) {
       if (actorId != null && actor != actorId) {
@@ -26,6 +27,13 @@ final class FieldSalesController extends ChangeNotifier {
   final FieldSalesGateway gateway;
   final SalesKeyValueStore store;
   final DateTime Function() now;
+
+  /// How long a portfolio stays open before access must be rechecked.
+  final Duration lease;
+
+  /// The order being typed, or null when nothing is unsaved. The open order
+  /// form sets this so its content is kept as a local draft when access expires.
+  FieldSalesJson? Function()? unsavedOrder;
   StreamSubscription<String?>? _authChanges;
   Timer? _expiryTimer;
   Timer? _leaseTimer;
@@ -48,8 +56,67 @@ final class FieldSalesController extends ChangeNotifier {
   List<FieldSalesJson> scopes = [], customers = [], products = [], orders = [];
   FieldSalesJson? review;
   FieldSalesJson? _reviewInput;
-  FieldSalesJson? savedDraft;
+
+  /// Local drafts by customer: `{saved_at, input}`. One per customer, so a
+  /// draft for one customer never replaces another's.
+  Map<String, FieldSalesJson> _drafts = {};
+  static const _maxDrafts = 20;
+  static const _draftLife = Duration(hours: 24);
+
+  FieldSalesJson? draftFor(String customerId) {
+    final draft = _drafts[customerId];
+    return draft == null ? null : fieldSalesObject(draft['input']);
+  }
+
+  /// The selected customer's draft, or the most recent one before a customer
+  /// is selected.
+  FieldSalesJson? get savedDraft {
+    final selected = selectedCustomer;
+    if (selected != null) return draftFor(selected);
+    if (_drafts.isEmpty) return null;
+    final latest = _drafts.values.reduce(
+      (a, b) =>
+          (a['saved_at'] as String).compareTo(b['saved_at'] as String) >= 0
+          ? a
+          : b,
+    );
+    return fieldSalesObject(latest['input']);
+  }
+
+  Future<void> _writeDrafts(
+    String key,
+    String actor,
+    String scopeKey,
+    Map<String, FieldSalesJson> drafts,
+  ) => _persist(
+    () => drafts.isEmpty
+        ? store.delete(key)
+        : store.write(key, _draftWire(actor, scopeKey, drafts)),
+  );
+
+  static String _draftWire(
+    String actor,
+    String scopeKey,
+    Map<String, FieldSalesJson> drafts,
+  ) => jsonEncode({
+    'schema': 2,
+    'actor_id': actor,
+    'scope': scopeKey,
+    'drafts': drafts.values.toList(),
+  });
+
   FieldSalesCommand? pending;
+
+  /// A submission whose saved body is gone can never be sent again from this
+  /// device. Once it is old enough that no request can still be arriving, it
+  /// may be cleared if the company confirms it holds no record of it.
+  bool get canDiscardPending {
+    final command = pending;
+    if (command == null || !command.bodyExpired) return false;
+    final age = now().toUtc().difference(DateTime.parse(command.at).toUtc());
+    return age.isNegative || age >= const Duration(minutes: 5);
+  }
+
   String get _recoveryKey => 'jentra.sales.command.v1.$actorId.${scope!.key}';
   String get _draftKey => 'jentra.sales.order-draft.v1.$actorId.${scope!.key}';
   bool _current(int epoch) {
@@ -121,7 +188,10 @@ final class FieldSalesController extends ChangeNotifier {
     }
     // A single scope can open directly; multiple companies require explicit choice.
     isOpen = true;
-    _leaseTimer = Timer(const Duration(minutes: 15), () {
+    _leaseTimer = Timer(lease, () async {
+      // Keep what the rep was typing: expiry is routine, not a revocation.
+      final typed = unsavedOrder?.call();
+      if (typed != null) await saveDraft(typed);
       _fail(
         const FieldSalesFailure(
           'ACCESS_REVOKED',
@@ -187,22 +257,40 @@ final class FieldSalesController extends ChangeNotifier {
       _scheduleExpiry();
       final draftWire = await store.read(draftKey);
       if (!_current(epoch)) return;
-      savedDraft = null;
+      _drafts = {};
       if (draftWire != null) {
         if (draftWire.length > 240000) throw const FormatException();
-        final draft = fieldSalesObject(jsonDecode(draftWire));
-        final age = now().toUtc().difference(
-          DateTime.parse(draft['saved_at'] as String).toUtc(),
-        );
-        if (draft['actor_id'] == actor &&
-            draft['scope'] == value.key &&
-            !age.isNegative &&
-            age < const Duration(hours: 24) &&
-            rows.any((c) => c['id'] == draft['input']['customer_id'])) {
-          savedDraft = fieldSalesObject(draft['input']);
-        } else {
-          await _persist(() => store.delete(draftKey));
+        final stored = fieldSalesObject(jsonDecode(draftWire));
+        // Schema 1 held a single draft; schema 2 holds one per customer.
+        final current = stored['schema'] == 2;
+        final entries = current
+            ? (stored['drafts'] as List).map(fieldSalesObject).toList()
+            : [
+                <String, dynamic>{
+                  'saved_at': stored['saved_at'],
+                  'input': stored['input'],
+                },
+              ];
+        final kept = <String, FieldSalesJson>{};
+        if (stored['actor_id'] == actor && stored['scope'] == value.key) {
+          for (final entry in entries) {
+            final age = now().toUtc().difference(
+              DateTime.parse(entry['saved_at'] as String).toUtc(),
+            );
+            final customer = (entry['input'] as Map)['customer_id'];
+            if (customer is String &&
+                !age.isNegative &&
+                age < _draftLife &&
+                rows.any((c) => c['id'] == customer)) {
+              kept[customer] = entry;
+            }
+          }
         }
+        if (!current || kept.length != entries.length) {
+          await _writeDrafts(draftKey, actor!, value.key, kept);
+          if (!_current(epoch)) return;
+        }
+        _drafts = kept;
       }
     } on Object catch (e) {
       if (_current(epoch)) _fail(e);
@@ -301,18 +389,30 @@ final class FieldSalesController extends ChangeNotifier {
     final epoch = _epoch;
     final key = _draftKey;
     final frozen = fieldSalesObject(jsonDecode(jsonEncode(input)));
-    final wire = jsonEncode({
-      'schema': 1,
-      'actor_id': actorId,
-      'scope': scope!.key,
-      'saved_at': now().toUtc().toIso8601String(),
-      'input': frozen,
-    });
-    if (wire.length > 240000) return false;
+    final actor = actorId!;
+    final scopeKey = scope!.key;
+    final drafts = Map<String, FieldSalesJson>.of(_drafts)
+      ..[frozen['customer_id'] as String] = {
+        'saved_at': now().toUtc().toIso8601String(),
+        'input': frozen,
+      };
+    while (drafts.length > _maxDrafts) {
+      final oldest = drafts.entries.reduce(
+        (a, b) =>
+            (a.value['saved_at'] as String).compareTo(
+                  b.value['saved_at'] as String,
+                ) <=
+                0
+            ? a
+            : b,
+      );
+      drafts.remove(oldest.key);
+    }
+    if (_draftWire(actor, scopeKey, drafts).length > 240000) return false;
     try {
-      await _persist(() => store.write(key, wire));
+      await _writeDrafts(key, actor, scopeKey, drafts);
       if (!_current(epoch)) return false;
-      savedDraft = frozen;
+      _drafts = drafts;
       notifyListeners();
       return true;
     } on Object catch (e) {
@@ -393,13 +493,18 @@ final class FieldSalesController extends ChangeNotifier {
   ) async {
     final recoveryKey = _recoveryKey;
     final draftKey = _draftKey;
-    final consumeDraft =
-        savedDraft?['customer_id'] ==
-        (command.payload['input'] as Map)['customer_id'];
-    await _persist(() async {
-      if (consumeDraft) await store.delete(draftKey);
-      await store.delete(recoveryKey);
-    });
+    final customer = (command.payload['input'] as Map)['customer_id'];
+    final consumeDraft = _drafts.containsKey(customer);
+    final remaining = Map<String, FieldSalesJson>.of(_drafts)..remove(customer);
+    if (consumeDraft) {
+      await _writeDrafts(
+        draftKey,
+        command.actorId,
+        command.scope.key,
+        remaining,
+      );
+    }
+    await _persist(() => store.delete(recoveryKey));
     if (!_current(epoch)) return;
     pending = null;
     review = null;
@@ -408,7 +513,46 @@ final class FieldSalesController extends ChangeNotifier {
     products = [];
     _expiryTimer?.cancel();
     orders = currentOrders;
-    if (consumeDraft) savedDraft = null;
+    if (consumeDraft) _drafts = remaining;
+  }
+
+  /// Clears an expired submission after the company confirms it holds no
+  /// record of it. A submission the company did receive is recorded instead,
+  /// and nothing changes when the check cannot be completed.
+  Future<void> discardExpired() async {
+    final command = pending;
+    if (busy || command == null || !canDiscardPending) return;
+    final epoch = _epoch;
+    busy = true;
+    error = null;
+    notifyListeners();
+    try {
+      final result = await gateway.receipt(scope!, command.key);
+      if (!_current(epoch)) return;
+      if (result['state'] == 'committed') {
+        final receipt = fieldSalesObject(result['receipt']);
+        command.validateReceipt(receipt);
+        final currentOrders = await gateway.subjects(command.scope);
+        if (!_current(epoch)) return;
+        await _acknowledge(command, epoch, currentOrders);
+      } else if (result['state'] == 'not_found') {
+        final recoveryKey = _recoveryKey;
+        await _persist(() => store.delete(recoveryKey));
+        if (!_current(epoch)) return;
+        pending = null;
+        _expiryTimer?.cancel();
+        error =
+            'Your company has no record of that submission, so it was cleared. Nothing was ordered. Reference ${command.commandId}.';
+      } else {
+        error = 'The submission could not be checked. Try again shortly.';
+      }
+    } on Object catch (e) {
+      if (_current(epoch)) _fail(e);
+    }
+    if (_current(epoch)) {
+      busy = false;
+      notifyListeners();
+    }
   }
 
   Future<void> reconcile({bool retry = false}) async {
@@ -483,7 +627,7 @@ final class FieldSalesController extends ChangeNotifier {
       scopes = [];
       selectedCustomer = null;
       pending = null;
-      savedDraft = null;
+      _drafts = {};
       notifyListeners();
     }
   }
@@ -504,7 +648,7 @@ final class FieldSalesController extends ChangeNotifier {
     review = null;
     _reviewInput = null;
     pending = null;
-    savedDraft = null;
+    _drafts = {};
     selectedCustomer = null;
     error = null;
     notifyListeners();

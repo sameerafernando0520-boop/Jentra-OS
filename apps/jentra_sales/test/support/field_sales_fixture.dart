@@ -43,7 +43,8 @@ final class FakeFieldSalesGateway implements FieldSalesGateway {
   String? actorId = 'rep';
   Object? failure;
   Object? submitFailure;
-  bool badReceipt = false, multipleScopes = false;
+  Object? receiptFailure;
+  bool badReceipt = false, multipleScopes = false, secondCustomer = false;
   Completer<List<FieldSalesJson>>? catalogueWait;
   Completer<FieldSalesJson>? previewWait;
   final commands = <FieldSalesCommand>[];
@@ -89,6 +90,14 @@ final class FakeFieldSalesGateway implements FieldSalesGateway {
         'delivery_terms': 'Company delivery',
         'ship_to': {'address': 'Company approved address'},
       },
+      if (secondCustomer)
+        {
+          'id': 'customer2',
+          'name': 'Second assigned customer',
+          'payment_terms_days': '30',
+          'delivery_terms': 'Company delivery',
+          'ship_to': {'address': 'Second approved address'},
+        },
     ];
   }
 
@@ -157,8 +166,10 @@ final class FakeFieldSalesGateway implements FieldSalesGateway {
   }
 
   @override
-  Future<FieldSalesJson> receipt(FieldSalesScope s, String key) async =>
-      committed == null
-      ? {'state': 'not_found'}
-      : {'state': 'committed', 'receipt': committed};
+  Future<FieldSalesJson> receipt(FieldSalesScope s, String key) async {
+    if (receiptFailure != null) throw receiptFailure!;
+    return committed == null
+        ? {'state': 'not_found'}
+        : {'state': 'committed', 'receipt': committed};
+  }
 }
