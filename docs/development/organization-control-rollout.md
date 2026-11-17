@@ -128,6 +128,33 @@ cutover rollback pass the company administration membership guard. Installing
 Field Sales or company administration after organization control is not
 supported.
 
+## Organization creation and module control
+
+`20261114090000_organization_creation_control.sql` installs last.
+
+- **Who can create an organization.** Self-created organizations are refused
+  with `SUBSCRIPTION_CHECKOUT_REQUIRED` by default. Organizations come from
+  **Create New System** in the J Panel or from an approved checkout order.
+  Accounts in `billing.subscription_trial_allowlist` are still exempt. An
+  operator can change the rule in the J Panel with a reason; each change is
+  recorded in `billing.platform_control_events`.
+- **Module switches.** People, Assets, Projects, Service, Finance, Field Sales,
+  Analytics and AI are switched per package under **Modules** on a package.
+  Every module starts off. To give one organization a different set, create a
+  package with that set and move the organization to it with **Change
+  package**. The existing module checks read the organization's package, so a
+  switch takes effect on the next request.
+- **Field Sales.** Rep and company access to Field Sales needs
+  `module.field_sales` on the organization's package; otherwise it is refused
+  with `FIELD_SALES_ENTITLEMENT_REQUIRED`. Customer confirmation and delivery
+  links for orders already in progress keep working.
+- **Trials.** An organization registered as a trial gets a trial end from the
+  package's trial days; an expired trial has no modules until it is activated.
+
+The older suites create their fixtures through self-service and predate the
+Field Sales switch, so they switch enforcement off and Field Sales on after
+`organization_creation_control.assertions.mjs` has checked the defaults.
+
 The staged Field Sales test replays the six Field Sales exercises with
 organization control installed. Each exercise needs the state right after its
 own candidate, so that test applies organization control before the later

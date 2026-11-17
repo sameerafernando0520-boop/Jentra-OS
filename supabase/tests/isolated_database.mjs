@@ -19,7 +19,28 @@ export const organizationCandidates = [
   "20261106104000_managed_hr_identity.sql",
   "20261106105000_system_username_cutover.sql",
   "20261106106000_managed_login_membership_bridge.sql",
+  "20261114090000_organization_creation_control.sql",
 ];
+
+// Organization creation control blocks self-created organizations by default.
+// The older suites build their fixtures through api.bootstrap_tenant, so they
+// switch the rule off after organization_creation_control.assertions.mjs has
+// checked the installed default. No-op when that candidate is not installed.
+export async function allowLegacySelfServiceFixtures(db) {
+  await db.exec(`do $$ begin
+    if to_regclass('billing.subscription_checkout_settings') is not null then
+      update billing.subscription_checkout_settings set enforce_checkout = false;
+    end if;
+  end $$;`);
+}
+
+// Field Sales is a module that starts switched off on every package. The
+// Field Sales exercises predate the switch, so they turn it on for all packages.
+export async function enableFieldSalesModule(db) {
+  await db.exec(`insert into billing.plan_entitlements (plan_code, entitlement_code, enabled)
+    select code, 'module.field_sales', true from billing.plans
+    on conflict (plan_code, entitlement_code) do update set enabled = true;`);
+}
 
 export async function openIsolatedDatabase() {
   const runtime = process.env.JENTRA_PGLITE_MODULE ? pathToFileURL(process.env.JENTRA_PGLITE_MODULE) : defaultRuntime;

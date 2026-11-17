@@ -60,6 +60,44 @@ class _SubscriptionControlState extends State<_SubscriptionControl> {
     }
   }
 
+  Future<void> _creationRule() async {
+    bool enforced;
+    try {
+      final settings = await widget.gateway.rpc<Map<String, dynamic>>(
+        'platform_subscription_checkout_settings',
+      );
+      enforced = settings['enforce_checkout'] == true;
+    } on Object {
+      if (mounted) _notice(context, 'Could not load the creation rule.');
+      return;
+    }
+    if (!mounted) return;
+    final changed = await _edit(
+      context,
+      'Who can create an organization',
+      'With provider only, organizations come from Create New System or an approved subscription order. Open self-service lets any signed-up account start its own trial organization.',
+      [
+        _Field(
+          'rule',
+          'Creation rule',
+          initial: enforced ? 'provider' : 'open',
+          choices: const {
+            'provider': 'Provider only',
+            'open': 'Open self-service',
+          },
+        ),
+        const _Field('reason', 'Reason for change'),
+      ],
+      (values) async {
+        await widget.gateway.rpc<Object?>('platform_set_checkout_enforcement', {
+          'p_enforce': values['rule'] == 'provider',
+          'p_reason': values['reason'],
+        });
+      },
+    );
+    if (mounted && changed) _notice(context, 'Creation rule saved.');
+  }
+
   Future<void> _bank() async {
     _Row bank;
     try {
@@ -313,6 +351,11 @@ class _SubscriptionControlState extends State<_SubscriptionControl> {
             onPressed: _bank,
             icon: const Icon(Icons.account_balance_outlined),
             label: const Text('Bank instructions'),
+          ),
+          OutlinedButton.icon(
+            onPressed: _creationRule,
+            icon: const Icon(Icons.domain_add_outlined),
+            label: const Text('Creation rule'),
           ),
           IconButton(
             onPressed: _loading ? null : () => _refresh(),

@@ -15,7 +15,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
-import { applySqlFiles, openIsolatedDatabase, pendingInstall } from "./isolated_database.mjs";
+import { allowLegacySelfServiceFixtures, applySqlFiles, enableFieldSalesModule, openIsolatedDatabase, pendingInstall } from "./isolated_database.mjs";
 
 const harnesses = [
   ["company_access_administration_test", 31],
@@ -45,6 +45,9 @@ try {
     create table supabase_migrations.schema_migrations(version text primary key, statements text[], name text);
   `);
   await applySqlFiles(db, [...tracked.map(name => [name, migrations]), ...pending.map(name => [name, candidates])]);
+  // The harnesses predate organization creation control and the Field Sales module switch.
+  await allowLegacySelfServiceFixtures(db);
+  await enableFieldSalesModule(db);
   await db.exec("begin; set local search_path = extensions, public, pg_catalog; " + pgtap + "; commit;");
 
   const include = /^\\ir \.\.\/\d{14}_[a-z0-9_]+\.sql[\t ]*$/gm;

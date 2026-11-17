@@ -10,7 +10,7 @@
 // the real order with the governance exercise.
 // No hosted database, credentials, files or account are touched.
 import assert from "node:assert/strict";
-import { applySqlFiles, openIsolatedDatabase, organizationCandidates, pendingInstall } from "./isolated_database.mjs";
+import { allowLegacySelfServiceFixtures, applySqlFiles, enableFieldSalesModule, openIsolatedDatabase, organizationCandidates, pendingInstall } from "./isolated_database.mjs";
 
 const { migrations, candidates, tracked, pending } = await pendingInstall();
 const emailConfirmation = "20261102090000_field_order_email_confirmation.sql";
@@ -34,6 +34,10 @@ try {
     ...first.map(name => [name, candidates]),
     ...organizationCandidates.map(name => [name, candidates]),
   ]);
+
+  // The exercises predate organization creation control and the Field Sales module switch.
+  await allowLegacySelfServiceFixtures(db);
+  await enableFieldSalesModule(db);
 
   // The exercises use transaction-local roles and savepoints, and share fixtures.
   await db.exec("begin");

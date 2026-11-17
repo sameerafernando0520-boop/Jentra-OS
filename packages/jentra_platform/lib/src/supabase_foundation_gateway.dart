@@ -77,6 +77,9 @@ enum TenantBootstrapFailure {
   invalidValues,
   duplicate,
   accessDenied,
+
+  /// Organizations are created by the provider or an approved checkout order.
+  checkoutRequired,
   unconfirmed,
 }
 
@@ -592,6 +595,8 @@ final class SupabaseFoundationGateway {
       throw TenantBootstrapException(switch (error.code) {
         '22023' || '23514' => TenantBootstrapFailure.invalidValues,
         '23505' => TenantBootstrapFailure.duplicate,
+        '42501' when error.message == 'SUBSCRIPTION_CHECKOUT_REQUIRED' =>
+          TenantBootstrapFailure.checkoutRequired,
         '42501' => TenantBootstrapFailure.accessDenied,
         _ => TenantBootstrapFailure.unconfirmed,
       });

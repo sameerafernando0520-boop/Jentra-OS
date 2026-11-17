@@ -87,6 +87,7 @@ class _TenantOnboardingScreenState
           'Review your workspace details and try again.',
         WorkspaceCreationFailure.duplicateSlug => 'This workspace address is already in use. Choose another workspace slug.',
         WorkspaceCreationFailure.accessDenied => 'Your account cannot create a workspace. Ask your administrator to check access.',
+        WorkspaceCreationFailure.checkoutRequired => 'New workspaces are set up by your Jentra provider. Ask them to create your organization, or complete a subscription order.',
         _ => 'Workspace creation has not been confirmed. Your details are kept. Retry this same request to check its result.',
       };
       if (failure != WorkspaceCreationFailure.unconfirmed) _request = null;
