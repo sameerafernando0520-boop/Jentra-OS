@@ -61,6 +61,24 @@ Future<void> openReview(
 }
 
 void main() {
+  testWidgets('already recorded is neutral and exposes no response action', (
+    tester,
+  ) async {
+    final gateway = FakeConfirmationGateway()..verification = Completer();
+    final c = ConfirmationController(token: 'ab' * 32, gateway: gateway);
+    addTearDown(c.dispose);
+    await c.requestCode();
+    gateway.verification!.complete({'state': 'already_recorded'});
+    await c.verify('482619');
+    await tester.pumpWidget(CustomerConfirmationApp(c));
+    expect(find.text('Response already recorded'), findsOneWidget);
+    expect(find.text('You rejected the reviewed terms.'), findsNothing);
+    expect(find.text('You accepted the reviewed terms.'), findsNothing);
+    expect(find.text('Accept these terms'), findsNothing);
+    expect(find.text('Reject these terms'), findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets(
     'backgrounding an in-flight verification discards its late terms',
     (tester) async {
