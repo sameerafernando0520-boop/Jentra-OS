@@ -96,8 +96,9 @@ export async function exercise(db,checks){
  seen=await shelf();
  check('unallocated stock is in stock for that warehouse',
   seen.stocked.stock_state==='in_stock'&&seen.stocked.stock_by_warehouse[0].state==='in_stock');
- check('availability never discloses quantities',!/quantity|on_hand|allocated|"5|"3/.test(JSON.stringify(
-  seen.page.items.map(x=>({state:x.stock_state,warehouses:x.stock_by_warehouse,as_of:null})))));
+ check('availability never discloses quantities',seen.page.items.every(x=>
+  !Object.keys(x).some(k=>/quantity|on_hand|allocated|available|balance/.test(k))
+  &&x.stock_by_warehouse.every(w=>JSON.stringify(Object.keys(w).sort())==='["state","warehouse_id"]')));
  await asOwner(async()=>check('reading availability reserves nothing',
   (await one('select count(*)::int n from inventory.stock_reservations where tenant_id=$1',[t])).n===0
   &&(await one('select allocated_quantity::text q from inventory.stock_balances where warehouse_id=$1 and product_id=$2',[ids.warehouse,stock.product])).q==='2.000000'));
