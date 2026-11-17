@@ -90,6 +90,30 @@ void main() {
       });
     });
 
+    test(
+      'a refused location permission records nothing and keeps the portfolio',
+      () async {
+        final c = make(
+          locate: () async => throw const FieldSalesFailure(
+            'LOCATION_PERMISSION_DENIED',
+            'Jentra Sales may not read your location.',
+          ),
+        );
+        addTearDown(c.dispose);
+        await c.open();
+        await c.planVisit(customerId: 'customer', purpose: 'Review');
+        final count = gateway.visitCommands.length;
+        await c.checkInVisit(c.visits.single, withLocation: true);
+        expect(gateway.visitCommands, hasLength(count));
+        expect(c.error, 'Jentra Sales may not read your location.');
+        expect(c.isOpen, isTrue);
+        expect(c.customers, isNotEmpty);
+        expect(c.pendingVisit, isNull);
+        await c.checkInVisit(c.visits.single);
+        expect(c.visits.single['state'], 'checked_in');
+      },
+    );
+
     test('an unreadable location records nothing', () async {
       final c = make(locate: () async => null);
       addTearDown(c.dispose);
