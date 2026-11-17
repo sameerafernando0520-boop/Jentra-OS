@@ -189,7 +189,7 @@ class _Repository implements WorkforceRepository {
     TenantContext scope,
     String employeeId, {
     String? after,
-  }) async => WorkforcePage([if (batch != null) batch!], null);
+  }) async => WorkforcePage([?batch], null);
   @override
   Future<LeaveBatch> decideLeaveBatch(
     CommandEnvelope<Map<String, Object?>> command,
@@ -393,7 +393,7 @@ void main() {
   });
   group(
     'multi-day leave',
-    () => leaveBatchWorkspaceTests(() => c, () => repository),
+    () => _leaveBatchWorkspaceTests(() => c, () => repository),
   );
   test(
     'clock CSV preview retains stable sealed IDs and exact encrypted retry',
@@ -834,7 +834,7 @@ void main() {
   });
 }
 
-void leaveBatchWorkspaceTests(
+void _leaveBatchWorkspaceTests(
   WorkforceController Function() controller,
   _Repository Function() repository,
 ) {
