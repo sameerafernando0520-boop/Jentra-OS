@@ -144,8 +144,67 @@ class _Employees implements EmployeeRepository {
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
+Map<String, Object?> batchRow(String status) => {
+  'id': '50000000-0000-0000-0000-000000000001',
+  'employee_id': id,
+  'policy_id': '50000000-0000-0000-0000-000000000002',
+  'start_date': '2026-10-01',
+  'end_date': '2026-10-05',
+  'origin': 'staff',
+  'created_by': scope.actorId,
+  'status': status,
+  'charge_seconds': 3 * 28800,
+  'unpaid_seconds': 0,
+  'days': [
+    for (final (index, date) in [
+      '2026-10-01',
+      '2026-10-02',
+      '2026-10-05',
+    ].indexed)
+      {
+        'leave_date': date,
+        'request_id': '6000000$index-0000-0000-0000-000000000001',
+        'version': 2,
+        'status': status,
+        'start_utc': '${date}T03:30:00Z',
+        'end_utc': '${date}T11:30:00Z',
+        'charge_seconds': 28800,
+        'unpaid_seconds': 0,
+      },
+  ],
+};
+
 class _Repository implements WorkforceRepository {
   String? failure, readFailure;
+  LeaveBatch? batch;
+  final batchCommands = <Map<String, Object?>>[];
+  @override
+  Future<WorkforcePage<LeaveRequest>> leaveRequests(
+    TenantContext scope,
+    String employeeId, {
+    String? after,
+  }) async => const WorkforcePage([], null);
+  @override
+  Future<WorkforcePage<LeaveBatch>> leaveBatches(
+    TenantContext scope,
+    String employeeId, {
+    String? after,
+  }) async => WorkforcePage([if (batch != null) batch!], null);
+  @override
+  Future<LeaveBatch> decideLeaveBatch(
+    CommandEnvelope<Map<String, Object?>> command,
+  ) async {
+    batchCommands.add(command.payload);
+    final status = switch (command.payload['action']) {
+      'approve' => 'approved',
+      'reject' => 'rejected',
+      'cancel' => 'cancelled',
+      _ => 'submitted',
+    };
+    batch = LeaveBatch.fromJson(batchRow(status));
+    return batch!;
+  }
+
   bool denied = false;
   int recordVersion = 1, authorizations = 0;
   Completer<void>? gate;
@@ -332,6 +391,10 @@ void main() {
     c.dispose();
     await db.close();
   });
+  group(
+    'multi-day leave',
+    () => leaveBatchWorkspaceTests(() => c, () => repository),
+  );
   test(
     'clock CSV preview retains stable sealed IDs and exact encrypted retry',
     () async {
@@ -768,5 +831,72 @@ void main() {
     expect(find.text('Choose employee').hitTestable(), findsOneWidget);
     expect(find.text('Apply date').hitTestable(), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+}
+
+void leaveBatchWorkspaceTests(
+  WorkforceController Function() controller,
+  _Repository Function() repository,
+) {
+  testWidgets('a submitted batch is one card approved for all its days', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1400, 1800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final c = controller();
+    final batch = LeaveBatch.fromJson(batchRow('submitted'));
+    repository().batch = batch;
+    c
+      ..view = WorkforceView.leave
+      ..employeeId = id
+      ..leaveBatches = [batch];
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: JentraTheme.light(),
+        home: Scaffold(body: WorkforceWorkspace(controller: c)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(Key('workforce-batch-${batch.id}')), findsOneWidget);
+    expect(find.text('3 working days · 24h 00m'), findsNothing);
+    expect(find.textContaining('3 working days'), findsOneWidget);
+    final approve = find.byKey(Key('workforce-batch-approve-${batch.id}'));
+    await tester.ensureVisible(approve);
+    await tester.tap(approve);
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const Key('workforce-batch-reason')),
+      'Cover arranged',
+    );
+    await tester.tap(find.byKey(const Key('workforce-batch-confirm')));
+    await tester.pumpAndSettle();
+    expect(repository().batchCommands.single, {
+      'action': 'approve',
+      'batch_id': batch.id,
+      'employee_id': id,
+      'reason': 'Cover arranged',
+    });
+    expect(c.leaveBatches.single.status, 'approved');
+    expect(c.message, contains('approved'));
+  });
+
+  test('days of a batch are not repeated as single requests', () {
+    final c = controller();
+    final batch = LeaveBatch.fromJson(batchRow('draft'));
+    c.leaveBatches = [batch];
+    expect(c.unbatchedLeave, isEmpty);
+    expect(
+      () => LeaveRangeCommands.validateRange({
+        'batch_id': batch.id,
+        'employee_id': id,
+        'policy_version_id': batch.policyId,
+        'calendar_version_id': batch.policyId,
+        'start_date': '2026-10-01',
+        'end_date': '2026-11-01',
+        'reason': 'Too long',
+      }),
+      throwsFormatException,
+    );
   });
 }

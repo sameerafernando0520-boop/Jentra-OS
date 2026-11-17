@@ -269,14 +269,54 @@ do $outer$begin
  alter table employee_self.receipts add constraint receipts_rpc_check check(rpc in (
   'employee_self_attendance_request','employee_self_leave_submit','employee_self_leave_intent',
   'employee_self_leave_range_submit'));
+ alter table employee_self.abandoned_commands drop constraint abandoned_commands_rpc_check;
+ alter table employee_self.abandoned_commands add constraint abandoned_commands_rpc_check check(rpc in (
+  'employee_self_attendance_request','employee_self_leave_submit','employee_self_leave_intent',
+  'employee_case_command','employee_self_leave_range_submit'));
+ -- A saved range request is reconciled like a single one: the batch id is
+ -- its request id. Only the capability lookup gains the new command.
+ execute $fn$
+create or replace function api.employee_self_receipt(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,
+ p_command_id uuid,p_request_id uuid,p_rpc text) returns jsonb
+language plpgsql security definer set search_path='' as $$
+declare employee uuid;cap text;receipt employee_self.receipts%rowtype;closed employee_self.abandoned_commands%rowtype;begin
+ cap:=case p_rpc when 'employee_self_attendance_request' then 'people.attendance.self.request'
+  when 'employee_self_leave_submit' then 'people.leave.self.manage' when 'employee_self_leave_intent' then 'people.leave.self.manage'
+  when 'employee_self_leave_range_submit' then 'people.leave.self.manage' end;
+ if cap is null or p_command_id is null or p_request_id is null then
+  raise exception using errcode='22023',message='EMPLOYEE_RECEIPT_INVALID';end if;
+ employee:=employee_self.lock_subject(p_tenant_id,p_legal_entity_id,p_branch_id,cap);
+ perform pg_advisory_xact_lock(hashtextextended('employee-self-command:'||auth.uid()::text||p_command_id::text,0));
+ perform employee_self.require_subject(p_tenant_id,p_legal_entity_id,p_branch_id,cap,true);
+ select * into receipt from employee_self.receipts r where r.user_id=auth.uid() and r.command_id=p_command_id;
+ if found then
+  if receipt.tenant_id<>p_tenant_id or receipt.legal_entity_id<>p_legal_entity_id or receipt.branch_id<>p_branch_id
+   or receipt.employee_id<>employee or receipt.rpc<>p_rpc or receipt.response->>'request_id' is distinct from p_request_id::text then
+   raise exception using errcode='42501',message='EMPLOYEE_RECEIPT_DENIED';end if;
+  return employee_self.envelope(p_tenant_id,p_legal_entity_id,p_branch_id,employee)||jsonb_build_object('command_id',p_command_id,
+   'request_id',p_request_id,'rpc',p_rpc,'receipt',receipt.response,'abandoned',false);
+ end if;
+ select * into closed from employee_self.abandoned_commands a where a.user_id=auth.uid() and a.command_id=p_command_id;
+ if found then
+  if closed.tenant_id<>p_tenant_id or closed.legal_entity_id<>p_legal_entity_id or closed.branch_id<>p_branch_id
+   or closed.employee_id<>employee or closed.rpc<>p_rpc or closed.request_id<>p_request_id then
+   raise exception using errcode='42501',message='EMPLOYEE_RECEIPT_DENIED';end if;
+ else
+  insert into employee_self.abandoned_commands(user_id,command_id,tenant_id,legal_entity_id,branch_id,employee_id,rpc,request_id)
+  values(auth.uid(),p_command_id,p_tenant_id,p_legal_entity_id,p_branch_id,employee,p_rpc,p_request_id);
+ end if;
+ return employee_self.envelope(p_tenant_id,p_legal_entity_id,p_branch_id,employee)||jsonb_build_object('command_id',p_command_id,
+  'request_id',p_request_id,'rpc',p_rpc,'receipt',null,'abandoned',true);
+end $$
+$fn$;
  execute $fn$
 create function api.employee_self_leave_range_submit(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,
- p_command_id uuid,p_batch_id uuid,p_payload jsonb,p_expected_balance_version bigint) returns jsonb
+ p_command_id uuid,p_request_id uuid,p_payload jsonb,p_expected_balance_version bigint) returns jsonb
 language plpgsql security definer set search_path='' as $$
 declare employee uuid;policy people.leave_policy_versions%rowtype;h text;answer jsonb;v_slot record;v_days integer:=0;begin
  employee:=employee_self.lock_subject(p_tenant_id,p_legal_entity_id,p_branch_id,'people.leave.self.manage');
  perform people_private.fields(p_payload,array['policy_version_id','calendar_version_id','start_date','end_date','reason']);
- if p_batch_id is null or p_expected_balance_version is null or p_expected_balance_version<0
+ if p_request_id is null or p_expected_balance_version is null or p_expected_balance_version<0
   or length(btrim(coalesce(p_payload->>'reason',''))) not between 1 and 1000
   or coalesce(p_payload->>'policy_version_id','') !~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
   or coalesce(p_payload->>'calendar_version_id','') !~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
@@ -284,9 +324,9 @@ declare employee uuid;policy people.leave_policy_versions%rowtype;h text;answer 
   or coalesce(p_payload->>'end_date','') !~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' then
   raise exception using errcode='22023',message='LEAVE_SUBMISSION_INVALID';end if;
  h:=employee_self.request_hash(p_tenant_id,p_legal_entity_id,p_branch_id,employee,'leave_range_submit',
-  jsonb_build_array(p_batch_id,p_payload,p_expected_balance_version));
+  jsonb_build_array(p_request_id,p_payload,p_expected_balance_version));
  answer:=employee_self.replay(p_command_id,h);if answer is not null then return answer;end if;
- if exists(select 1 from people.leave_request_batches b where b.id=p_batch_id) then
+ if exists(select 1 from people.leave_request_batches b where b.id=p_request_id) then
   raise exception using errcode='23505',message='LEAVE_BATCH_EXISTS';end if;
  select * into policy from people.leave_policy_versions v where v.tenant_id=p_tenant_id and v.legal_entity_id=p_legal_entity_id
   and v.id=(p_payload->>'policy_version_id')::uuid;
@@ -296,25 +336,25 @@ declare employee uuid;policy people.leave_policy_versions%rowtype;h text;answer 
   raise exception using errcode='22023',message='LEAVE_RANGE_INVALID';end if;
  insert into people.leave_request_batches(id,tenant_id,legal_entity_id,branch_id,employee_id,policy_id,
   start_date,end_date,origin,created_by)
- values(p_batch_id,p_tenant_id,p_legal_entity_id,p_branch_id,employee,policy.policy_id,
+ values(p_request_id,p_tenant_id,p_legal_entity_id,p_branch_id,employee,policy.policy_id,
   (p_payload->>'start_date')::date,(p_payload->>'end_date')::date,'self',auth.uid());
  for v_slot in select * from people.leave_range_slots(p_tenant_id,p_legal_entity_id,
   (p_payload->>'calendar_version_id')::uuid,(p_payload->>'start_date')::date,(p_payload->>'end_date')::date)
   order by leave_date loop
   perform api.employee_self_leave_submit(p_tenant_id,p_legal_entity_id,p_branch_id,
    people.leave_range_id('self-submit-command',p_command_id,v_slot.leave_date),
-   people.leave_range_id('request',p_batch_id,v_slot.leave_date),
+   people.leave_range_id('request',p_request_id,v_slot.leave_date),
    jsonb_build_object('policy_version_id',policy.id,'calendar_version_id',p_payload->>'calendar_version_id',
     'start_local',to_char(v_slot.start_local,'YYYY-MM-DD"T"HH24:MI:SS'),'start_offset_seconds',v_slot.start_offset_seconds,
     'end_local',to_char(v_slot.end_local,'YYYY-MM-DD"T"HH24:MI:SS'),'end_offset_seconds',v_slot.end_offset_seconds,
     'reason',p_payload->>'reason'),p_expected_balance_version);
   insert into people.leave_request_batch_days(tenant_id,legal_entity_id,employee_id,batch_id,request_id,leave_date)
-  values(p_tenant_id,p_legal_entity_id,employee,p_batch_id,people.leave_range_id('request',p_batch_id,v_slot.leave_date),v_slot.leave_date);
+  values(p_tenant_id,p_legal_entity_id,employee,p_request_id,people.leave_range_id('request',p_request_id,v_slot.leave_date),v_slot.leave_date);
   v_days:=v_days+1;
  end loop;
  if v_days=0 then raise exception using errcode='22023',message='LEAVE_RANGE_NO_WORKING_DAY';end if;
  answer:=employee_self.envelope(p_tenant_id,p_legal_entity_id,p_branch_id,employee)||jsonb_build_object('command_id',p_command_id)
-  ||(people.leave_batch_summary(p_batch_id)-'employee_id'-'created_by')||jsonb_build_object('batch_id',p_batch_id,'approval_required',true);
+  ||(people.leave_batch_summary(p_request_id)-'employee_id'-'created_by')||jsonb_build_object('request_id',p_request_id,'version',1,'approval_required',true);
  return employee_self.finish(p_tenant_id,p_legal_entity_id,p_branch_id,employee,p_command_id,h,answer,'employee_self_leave_range_submit');
 end $$
 $fn$;

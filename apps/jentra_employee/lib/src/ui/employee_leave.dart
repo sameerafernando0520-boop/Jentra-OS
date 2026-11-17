@@ -39,6 +39,7 @@ class _EmployeeLeaveBodyState extends State<EmployeeLeaveBody> {
   Future<void> _reload() async {
     await c.load(EmployeeService.leaveRequests);
     await c.load(EmployeeService.leavePolicies);
+    await c.load(EmployeeService.leaveBatches);
   }
 
   Future<void> _request() async {
@@ -112,6 +113,9 @@ class _EmployeeLeaveBodyState extends State<EmployeeLeaveBody> {
       final policies =
           c.pages[EmployeeService.leavePolicies]?.items ??
           <EmployeeServiceRecord>[];
+      final batches =
+          c.pages[EmployeeService.leaveBatches]?.items ??
+          <EmployeeServiceRecord>[];
       return EmployeePageBody(
         onRefresh: _reload,
         children: [
@@ -138,9 +142,12 @@ class _EmployeeLeaveBodyState extends State<EmployeeLeaveBody> {
             controller: c,
             service: EmployeeService.leaveRequests,
           ),
-          for (final row
-              in c.pages[EmployeeService.leaveRequests]?.items ??
-                  <EmployeeServiceRecord>[])
+          for (final batch in batches) EmployeeLeaveBatchCard(batch: batch),
+          for (final row in employeeUnbatchedLeave(
+            c.pages[EmployeeService.leaveRequests]?.items ??
+                <EmployeeServiceRecord>[],
+            batches,
+          ))
             EmployeeSurface(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -254,6 +261,9 @@ class _EmployeeLeaveRequestScreenState
   String? _policyId;
   EmployeeFailure? _error;
   bool _balanceBusy = false;
+  bool _range = false;
+  late DateTime _firstDay = DateTime(_start.year, _start.month, _start.day);
+  late DateTime _lastDay = _firstDay;
   EmployeeSelfServiceController get c => widget.controller;
   DateTime _initialStart() {
     final now = employeeWorkplaceTime(
@@ -272,8 +282,7 @@ class _EmployeeLeaveRequestScreenState
     return null;
   }
 
-  String get _asOf =>
-      '${_start.year.toString().padLeft(4, '0')}-${_start.month.toString().padLeft(2, '0')}-${_start.day.toString().padLeft(2, '0')}';
+  String get _asOf => employeeCivilDate(_range ? _firstDay : _start);
   @override
   void initState() {
     super.initState();
@@ -312,7 +321,65 @@ class _EmployeeLeaveRequestScreenState
     await _balance();
   }
 
+  Future<void> _day(bool first) async {
+    final current = first ? _firstDay : _lastDay;
+    final result = await showDatePicker(
+      context: context,
+      initialDate: current,
+      firstDate: DateTime(current.year - 1),
+      lastDate: DateTime(current.year + 2),
+    );
+    if (result == null || !mounted) return;
+    setState(() {
+      if (first) {
+        _firstDay = result;
+        if (_lastDay.isBefore(result)) _lastDay = result;
+      } else {
+        _lastDay = result;
+      }
+      _error = null;
+    });
+    await _balance();
+  }
+
+  Future<void> _submitRange() async {
+    if (!_form.currentState!.validate() ||
+        policy == null ||
+        !employeeLeaveRangeValid(_firstDay, _lastDay)) {
+      setState(
+        () => _error = const EmployeeFailure(
+          'VALIDATION_ERROR',
+          'Check the date range.',
+        ),
+      );
+      return;
+    }
+    try {
+      final selected = policy!;
+      setState(() => _balanceBusy = true);
+      final balance = await c.loadBalance(selected.id, _asOf);
+      if (!mounted || balance == null) return;
+      final sent = await c.submit('employee_self_leave_range_submit', {
+        'p_request_id': const Uuid().v4(),
+        'p_expected_balance_version': balance.version,
+        'p_payload': {
+          'policy_version_id': selected.text('policy_version_id', max: 36),
+          'calendar_version_id': selected.text('calendar_version_id', max: 36),
+          'start_date': employeeCivilDate(_firstDay),
+          'end_date': employeeCivilDate(_lastDay),
+          'reason': _reason.text.trim(),
+        },
+      });
+      if (mounted && sent) Navigator.of(context).pop();
+    } on Object catch (error) {
+      if (mounted) setState(() => _error = employeeFailure(error));
+    } finally {
+      if (mounted) setState(() => _balanceBusy = false);
+    }
+  }
+
   Future<void> _submit() async {
+    if (_range) return _submitRange();
     if (!_form.currentState!.validate() ||
         policy == null ||
         !_end.isAfter(_start) ||
@@ -418,23 +485,64 @@ class _EmployeeLeaveRequestScreenState
                     ),
                   ],
                   const SizedBox(height: 16),
-                  OutlinedButton(
-                    onPressed: c.actionBusy || _balanceBusy
+                  SwitchListTile(
+                    key: const Key('employee-leave-range'),
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(s('leaveRangeToggle')),
+                    subtitle: Text(s('leaveRangeCopy')),
+                    value: _range,
+                    onChanged: c.actionBusy || _balanceBusy
                         ? null
-                        : () => _date(true),
-                    child: Text(
-                      '${s('requestStart')}: ${serviceDate(_start.toIso8601String(), s, time: true)}',
-                    ),
+                        : (value) {
+                            setState(() {
+                              _range = value;
+                              _error = null;
+                            });
+                            _balance();
+                          },
                   ),
                   const SizedBox(height: 12),
-                  OutlinedButton(
-                    onPressed: c.actionBusy || _balanceBusy
-                        ? null
-                        : () => _date(false),
-                    child: Text(
-                      '${s('requestEnd')}: ${serviceDate(_end.toIso8601String(), s, time: true)}',
+                  if (_range) ...[
+                    OutlinedButton(
+                      key: const Key('employee-leave-first-day'),
+                      onPressed: c.actionBusy || _balanceBusy
+                          ? null
+                          : () => _day(true),
+                      child: Text(
+                        '${s('leaveRangeFirst')}: ${serviceDate(employeeCivilDate(_firstDay), s)}',
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 12),
+                    OutlinedButton(
+                      key: const Key('employee-leave-last-day'),
+                      onPressed: c.actionBusy || _balanceBusy
+                          ? null
+                          : () => _day(false),
+                      child: Text(
+                        '${s('leaveRangeLast')}: ${serviceDate(employeeCivilDate(_lastDay), s)}',
+                      ),
+                    ),
+                    if (!employeeLeaveRangeValid(_firstDay, _lastDay))
+                      Text(s('leaveRangeInvalid')),
+                  ] else ...[
+                    OutlinedButton(
+                      onPressed: c.actionBusy || _balanceBusy
+                          ? null
+                          : () => _date(true),
+                      child: Text(
+                        '${s('requestStart')}: ${serviceDate(_start.toIso8601String(), s, time: true)}',
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton(
+                      onPressed: c.actionBusy || _balanceBusy
+                          ? null
+                          : () => _date(false),
+                      child: Text(
+                        '${s('requestEnd')}: ${serviceDate(_end.toIso8601String(), s, time: true)}',
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _reason,
@@ -466,4 +574,67 @@ class _EmployeeLeaveRequestScreenState
       );
     },
   );
+}
+
+/// A YYYY-MM-DD civil date for the server; never converted through UTC.
+String employeeCivilDate(DateTime day) =>
+    '${day.year.toString().padLeft(4, '0')}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
+
+/// A day of a multi-day request is shown inside its batch, not alone.
+List<EmployeeServiceRecord> employeeUnbatchedLeave(
+  List<EmployeeServiceRecord> requests,
+  List<EmployeeServiceRecord> batches,
+) {
+  final batched = {
+    for (final batch in batches)
+      for (final day in batch.values['days']! as List)
+        selfMap(day)['request_id'],
+  };
+  return [
+    for (final row in requests)
+      if (!batched.contains(row.id)) row,
+  ];
+}
+
+/// A range covers at most 31 calendar days, first and last included.
+bool employeeLeaveRangeValid(DateTime first, DateTime last) {
+  final days = DateTime.utc(
+    last.year,
+    last.month,
+    last.day,
+  ).difference(DateTime.utc(first.year, first.month, first.day)).inDays;
+  return days >= 0 && days < 31;
+}
+
+/// A multi-day request as one item: its status, dates and each working day.
+class EmployeeLeaveBatchCard extends StatelessWidget {
+  const EmployeeLeaveBatchCard({required this.batch, super.key});
+  final EmployeeServiceRecord batch;
+  @override
+  Widget build(BuildContext context) {
+    final s = EmployeeStrings.of(context);
+    final days = [
+      for (final day in batch.values['days']! as List) selfMap(day),
+    ];
+    return EmployeeSurface(
+      key: Key('employee-leave-batch-${batch.id}'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          EmployeeStatus(s(batch.text('status', max: 80))),
+          const SizedBox(height: 12),
+          Text(
+            '${serviceDate(batch.values['start_date'], s)} – ${serviceDate(batch.values['end_date'], s)}',
+          ),
+          Text(
+            '${days.length} ${s('leaveRangeDays')} · ${(batch.integer('charge_seconds') / 3600).toStringAsFixed(2)} ${s('hoursUnit')}',
+          ),
+          for (final day in days)
+            Text(
+              '${serviceDate(day['leave_date'], s)} · ${s(selfText(day['status'], max: 80))}',
+            ),
+        ],
+      ),
+    );
+  }
 }

@@ -13,6 +13,8 @@ import 'support/employee_fixture.dart';
 import 'support/employee_self_fixture.dart';
 
 void main() {
+  group("multi-day leave", leaveRangeUiTests);
+  group("multi-day leave list", leaveBatchListTests);
   for (final language in ['en', 'si', 'ta']) {
     testWidgets('HR services and forms render at 200 percent in $language', (
       tester,
@@ -157,4 +159,105 @@ void main() {
       expect(c.pending, isNull);
     },
   );
+}
+
+void leaveRangeUiTests() {
+  EmployeeSelfServiceController controller(SelfGateway gateway) {
+    final c = EmployeeSelfServiceController(
+      gateway: gateway,
+      store: FixtureStore(),
+      currentIdentity: () => selfIdentity,
+    );
+    addTearDown(c.dispose);
+    return c;
+  }
+
+  testWidgets('several whole days are sent as one range command', (
+    tester,
+  ) async {
+    final gateway = SelfGateway();
+    final c = controller(gateway);
+    await c.load(EmployeeService.leavePolicies);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: employeeTheme(Brightness.light),
+        supportedLocales: const [Locale('en')],
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        home: EmployeeLeaveRequestScreen(controller: c),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const Key('employee-leave-range')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('employee-leave-range')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('employee-leave-first-day')), findsOneWidget);
+    expect(find.byKey(const Key('employee-leave-last-day')), findsOneWidget);
+    await tester.enterText(find.byType(TextFormField), 'Family travel');
+    final send = find.text(const EmployeeStrings('en')('requestSend'));
+    await tester.ensureVisible(send);
+    await tester.tap(send);
+    await tester.pumpAndSettle();
+    expect(gateway.sentRpc, 'employee_self_leave_range_submit');
+    final payload = selfMap(gateway.sent!['p_payload']);
+    expect(payload.keys.toSet(), {
+      'policy_version_id',
+      'calendar_version_id',
+      'start_date',
+      'end_date',
+      'reason',
+    });
+    expect(payload['start_date'], matches(RegExp(r'^\d{4}-\d{2}-\d{2}$')));
+    expect(payload['end_date'], payload['start_date']);
+    selfUuid(gateway.sent!['p_request_id']);
+    expect(c.confirmed, isTrue);
+  });
+
+  test('a range covers at most 31 days, first and last included', () {
+    expect(
+      employeeLeaveRangeValid(DateTime(2026, 10, 1), DateTime(2026, 10, 31)),
+      isTrue,
+    );
+    expect(
+      employeeLeaveRangeValid(DateTime(2026, 10, 1), DateTime(2026, 11, 1)),
+      isFalse,
+    );
+    expect(
+      employeeLeaveRangeValid(DateTime(2026, 10, 2), DateTime(2026, 10, 1)),
+      isFalse,
+    );
+    expect(employeeCivilDate(DateTime(2026, 3, 5)), '2026-03-05');
+  });
+}
+
+void leaveBatchListTests() {
+  testWidgets('a multi-day request is one item and its days are not repeated', (
+    tester,
+  ) async {
+    final batch = EmployeeServiceRecord(leaveBatchRow());
+    final requests = [
+      EmployeeServiceRecord(serviceRow(EmployeeService.leaveRequests)),
+      EmployeeServiceRecord({
+        ...serviceRow(EmployeeService.leaveRequests),
+        'id': selfBatchDayIds.first,
+      }),
+    ];
+    expect(employeeUnbatchedLeave(requests, [batch]).map((row) => row.id), [
+      selfRecordId,
+    ]);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: employeeTheme(Brightness.light),
+        supportedLocales: const [Locale('en')],
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        home: Scaffold(body: EmployeeLeaveBatchCard(batch: batch)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const Key('employee-leave-batch-$selfRecordId')),
+      findsOneWidget,
+    );
+    expect(find.textContaining('2 working days'), findsOneWidget);
+  });
 }

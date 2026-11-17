@@ -259,6 +259,10 @@ export async function testPeopleLeaveRange(db) {
         const mine = await own("own-range", ownRange("batch-own", D[14], D[18]), version);
         equal(mine.days.map((item) => item.leave_date), [D[14], D[15], D[18]], "the employee's own range skips the weekend");
         equal(mine.status, "submitted", "the employee's own range is submitted for approval");
+        equal([mine.request_id, mine.version, mine.approval_required], [uid("batch-own"), 1, true], "the receipt names the batch as its request");
+        const lookup = await scalar("select api.employee_self_receipt($1,$2,$3,$4,$5,'employee_self_leave_range_submit') as value",
+          [tenant, entity, branch, uid("own-range"), uid("batch-own")]);
+        equal([lookup.abandoned, lookup.receipt], [false, mine], "a saved range request is reconciled from its receipt");
         equal(await own("own-range", ownRange("batch-own", D[14], D[18]), version), mine, "the employee's own range replays exactly");
         await rejects(() => own("own-weekend", ownRange("batch-own-weekend", D[16], D[16]), version), /LEAVE_RANGE_NO_WORKING_DAY/);
         const ownList = await scalar("select api.employee_self_leave_batches($1,$2,$3) as value", [tenant, entity, branch]);

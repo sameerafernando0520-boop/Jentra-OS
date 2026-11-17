@@ -62,6 +62,7 @@ Map<String, Object?> serviceRow(EmployeeService service) => switch (service) {
     'charge_seconds': 28800,
     'reason': 'Family leave',
   },
+  EmployeeService.leaveBatches => leaveBatchRow(),
   EmployeeService.payslips => {
     'id': selfRecordId,
     'run_id': selfSecondId,
@@ -143,6 +144,17 @@ Map<String, Object?> serviceReceipt(
       ? <String, Object?>{}
       : selfMap(parameters['p_payload']);
   final target = parameters['p_request_id'] ?? payload['id'];
+  if (rpc == 'employee_self_leave_range_submit') {
+    return {
+      ...selfEnvelope(identity),
+      'command_id': parameters['p_command_id'],
+      ...(leaveBatchRow()..remove('employee_id')),
+      'id': target,
+      'request_id': target,
+      'version': 1,
+      'approval_required': true,
+    };
+  }
   return {
     ...selfEnvelope(identity),
     'command_id': parameters['p_command_id'],
@@ -297,3 +309,34 @@ class TestDocumentExporter implements EmployeeDocumentExporter {
     return true;
   }
 }
+
+const selfBatchDayIds = [
+  '30000000-0000-4000-8000-000000000011',
+  '30000000-0000-4000-8000-000000000012',
+];
+
+/// A Thursday-to-Monday range: the weekend is not requested.
+Map<String, Object?> leaveBatchRow({String status = 'submitted'}) => {
+  'id': selfRecordId,
+  'employee_id': fixtureEmployee,
+  'policy_id': selfSecondId,
+  'start_date': '2026-10-29',
+  'end_date': '2026-11-02',
+  'origin': 'self',
+  'status': status,
+  'charge_seconds': 57600,
+  'unpaid_seconds': 0,
+  'days': [
+    for (final (index, date) in ['2026-10-29', '2026-11-02'].indexed)
+      {
+        'leave_date': date,
+        'request_id': selfBatchDayIds[index],
+        'version': 1,
+        'status': status,
+        'start_utc': '${date}T03:30:00Z',
+        'end_utc': '${date}T11:30:00Z',
+        'charge_seconds': 28800,
+        'unpaid_seconds': 0,
+      },
+  ],
+};
