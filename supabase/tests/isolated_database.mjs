@@ -24,6 +24,12 @@ export const organizationCandidates = [
   "20261117090000_field_sales_reps.sql",
 ];
 
+// Candidates in the list above that build on Field Sales. Suites that install
+// organization control without Field Sales leave them out.
+export const fieldSalesCandidates = new Set([
+  "20261117090000_field_sales_reps.sql",
+]);
+
 // Organization creation control blocks self-created organizations by default.
 // The older suites build their fixtures through api.bootstrap_tenant, so they
 // switch the rule off after organization_creation_control.assertions.mjs has

@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { readFile, readdir } from "node:fs/promises";
-import { allowLegacySelfServiceFixtures, openIsolatedDatabase, organizationCandidates } from "./isolated_database.mjs";
+import { allowLegacySelfServiceFixtures, fieldSalesCandidates, openIsolatedDatabase, organizationCandidates } from "./isolated_database.mjs";
 import { testOrganizationCreationControl } from "./organization_creation_control.assertions.mjs";
 import { testPlatformOrganizationControl } from "./platform_organization_control.assertions.mjs";
 import { testSubscriptionCheckout } from "./subscription_checkout.assertions.mjs";
@@ -48,7 +48,8 @@ try {
   const migrationsToApply = (await readdir(migrations)).filter(name => name.endsWith(".sql") &&
     // Scheduler installation needs pg_cron and pg_net.
     name !== "20261009123000_wave5_supabase_schedule.sql").sort();
-  const candidateNames = organizationCandidates;
+  // Field Sales is not installed here, so candidates that build on it are left out.
+  const candidateNames = organizationCandidates.filter(name => !fieldSalesCandidates.has(name));
   for (const [name, directory] of [
     ...migrationsToApply.map(name => [name, migrations]),
     ...candidateNames.map(name => [name, candidates]),
