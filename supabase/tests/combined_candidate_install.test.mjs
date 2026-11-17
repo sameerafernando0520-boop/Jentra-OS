@@ -9,6 +9,7 @@ import { allowLegacySelfServiceFixtures, enableFieldSalesModule, openIsolatedDat
 import { testOrganizationCreationControl } from "./organization_creation_control.assertions.mjs";
 import { testManagedEmployeeSelfService } from "./managed_employee_self_service.assertions.mjs";
 import { testPeopleAccessHardening } from "./people_access_hardening.assertions.mjs";
+import { testPeopleLeaveRange } from "./people_leave_range.assertions.mjs";
 import { testPlatformOrganizationControl } from "./platform_organization_control.assertions.mjs";
 import { testSubscriptionCheckout } from "./subscription_checkout.assertions.mjs";
 import { testSubscriptionHandover } from "./subscription_handover.assertions.mjs";
@@ -54,6 +55,7 @@ try {
   await testSystemSerials(db);
   await testManagedEmployeeSelfService(db);
   await testPeopleAccessHardening(db);
+  await testPeopleLeaveRange(db);
 
   // Field Sales governance still holds below organization control, including
   // a restricted companion account's own Employee self-service access, which

@@ -21,6 +21,7 @@ export const organizationCandidates = [
   "20261106106000_managed_login_membership_bridge.sql",
   "20261114090000_organization_creation_control.sql",
   "20261114100000_people_access_hardening.sql",
+  "20261114110000_people_leave_range.sql",
 ];
 
 // Organization creation control blocks self-created organizations by default.
