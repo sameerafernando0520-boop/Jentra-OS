@@ -63,6 +63,11 @@ final class SupabaseWorkforceGateway implements WorkforceRepository {
           'WORK_ALLOCATION_IMPACT_REQUIRED',
         ('55000', 'PAYROLL_INPUT_SEALED') => 'PAYROLL_INPUT_SEALED',
         ('55000', 'CLOCK_SOURCE_CONFLICT') => 'CLOCK_SOURCE_CONFLICT',
+        (
+          '55000',
+          'LEAVE_SELF_DECISION_DENIED' || 'ATTENDANCE_SELF_DECISION_DENIED',
+        ) =>
+          'SELF_DECISION_DENIED',
         ('22023', 'IDEMPOTENCY_MISMATCH') => 'IDEMPOTENCY_MISMATCH',
         ('23505', _) => 'IDENTITY_EXISTS',
         ('22023' || '22007' || '22008' || '22P02' || '23514' || '23503', _) =>
@@ -96,6 +101,8 @@ final class SupabaseWorkforceGateway implements WorkforceRepository {
           'IDEMPOTENCY_MISMATCH' =>
             'This saved request key belongs to different content. Retry the original request.',
           'IDENTITY_EXISTS' => 'This record or source key already exists.',
+          'SELF_DECISION_DENIED' =>
+            'You cannot decide your own record. Ask another approver.',
           'STATE_CONFLICT' =>
             'The record cannot make this transition. Refresh its history.',
           'VALIDATION_ERROR' =>
