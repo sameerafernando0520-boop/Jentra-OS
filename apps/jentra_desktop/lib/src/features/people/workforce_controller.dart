@@ -170,6 +170,7 @@ final class WorkforceController extends ChangeNotifier {
   CalendarDetail? assignedCalendar;
   List<AttendanceEntry> attendance = [];
   List<LeaveRequest> leave = [];
+  List<LeaveBatch> leaveBatches = [];
   List<LeavePolicy> policies = [];
   List<LeavePolicyVersion> policyHistory = [];
   List<RawClockEvent> rawEvents = [];
@@ -249,6 +250,7 @@ final class WorkforceController extends ChangeNotifier {
   void _clearEmployeeRecords() {
     attendance = [];
     leave = [];
+    leaveBatches = [];
     rawEvents = [];
     clockBatches = [];
     clockLineage = [];
@@ -566,6 +568,11 @@ final class WorkforceController extends ChangeNotifier {
           leave = [if (more) ...leave, ...page.items];
           cursor = page.nextCursor;
         }
+        if (!more) {
+          final batches = await repository.leaveBatches(scope, id);
+          if (!current) return;
+          leaveBatches = batches.items;
+        }
       case WorkforceView.rawEvents:
         final page = await repository.rawEvents(
           scope,
@@ -627,6 +634,85 @@ final class WorkforceController extends ChangeNotifier {
     clockLineage = [if (more) ...clockLineage, ...detail.rows];
     clockLineageCursor = detail.nextPosition;
   });
+
+  /// Single-day requests; a day of a multi-day request shows in its batch.
+  List<LeaveRequest> get unbatchedLeave {
+    final batched = {
+      for (final batch in leaveBatches)
+        for (final day in batch.days) day.requestId,
+    };
+    return [
+      for (final row in leave)
+        if (!batched.contains(row.id)) row,
+    ];
+  }
+
+  bool get canRequestRange =>
+      canCreate && selectedPolicyVersion != null && has('people.leave.manage');
+
+  /// Creates draft leave for every working day from [first] to [last],
+  /// inclusive, as one batch. The server skips non-working days.
+  Future<void> requestLeaveRange(
+    String first,
+    String last,
+    String reason,
+  ) => _run(() async {
+    _connected();
+    if (employeeId == null ||
+        assignment == null ||
+        selectedPolicyVersion == null) {
+      throw const FormatException(
+        'Choose an employee and a leave policy covering this date.',
+      );
+    }
+    final payload = <String, Object?>{
+      'batch_id': _uuid.v4(),
+      'employee_id': employeeId,
+      'policy_version_id': selectedPolicyVersion!.id,
+      'calendar_version_id': assignment!.calendarVersionId,
+      'start_date': first,
+      'end_date': last,
+      'reason': reason.trim(),
+    };
+    LeaveRangeCommands.validateRange(payload);
+    final batch = await repository.createLeaveRange(_batchEnvelope(payload));
+    if (!current) return;
+    message =
+        'Drafted leave for ${batch.days.length} working days. Submit them together.';
+    await _refresh();
+  });
+
+  /// Submits, approves, rejects or cancels every day of [batch] together.
+  Future<void> decideLeaveBatch(
+    LeaveBatch batch,
+    String action,
+    String reason,
+  ) => _run(() async {
+    _connected();
+    final payload = <String, Object?>{
+      'action': action,
+      'batch_id': batch.id,
+      'employee_id': batch.employeeId,
+      'reason': reason.trim(),
+    };
+    LeaveRangeCommands.validateAction(payload);
+    final result = await repository.decideLeaveBatch(_batchEnvelope(payload));
+    if (!current) return;
+    message = 'Leave for ${result.days.length} days is now ${result.status}.';
+    await _refresh();
+  });
+
+  CommandEnvelope<Map<String, Object?>> _batchEnvelope(
+    Map<String, Object?> payload,
+  ) => CommandEnvelope(
+    commandId: _uuid.v4(),
+    idempotencyKey: _uuid.v4(),
+    context: scope,
+    payload: Map.unmodifiable(payload),
+    expectedEntityVersion: 0,
+    clientTimestamp: clock().toUtc(),
+  );
+
   Future<void> selectPolicy(LeavePolicy policy) => _run(() async {
     _connected();
     selectedPolicy = policy;

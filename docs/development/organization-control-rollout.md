@@ -165,6 +165,20 @@ supported.
   attendance decision or cancellation (`ATTENDANCE_SELF_DECISION_DENIED`) is
   refused when an accepted account link ties the decider to the employee on
   the record. Withdrawing your own leave is unaffected.
+- **Multi-day leave.** `20261114110000_people_leave_range.sql` installs after
+  the People access candidate. A leave request still covers one work slot; a
+  date range of up to 31 days becomes a batch of those requests, one per
+  working day. `api.people_leave_request_range` creates the drafts, skipping
+  days without a weekly slot and days a calendar override closes, and
+  `api.people_leave_batch_command` submits, approves, rejects or cancels every
+  day together through the existing leave command, so independence, MFA, the
+  balance check and the self-decision rule apply to each day. Either call
+  leaves nothing behind if any day fails. With Employee self-service
+  installed, `api.employee_self_leave_range_submit` submits an employee's own
+  range, and `api.employee_self_receipt` reconciles it like a single request;
+  the candidate replaces that function and widens the two `rpc` checks on
+  `employee_self.receipts` and `employee_self.abandoned_commands`.
+  `supabase/tests/people_leave_range.test.mjs` runs its assertions alone.
 
 The older suites create their fixtures through self-service and predate the
 Field Sales switch, so they switch enforcement off and Field Sales on after

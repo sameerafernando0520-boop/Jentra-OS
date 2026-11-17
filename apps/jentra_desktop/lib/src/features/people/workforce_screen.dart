@@ -143,6 +143,151 @@ class _WorkforceWorkspaceState extends State<WorkforceWorkspace> {
     );
   }
 
+  /// First day, last day and reason for a multi-day request.
+  Future<void> leaveRange() async {
+    final c = widget.controller;
+    final first = TextEditingController(text: c.asOfDate);
+    final last = TextEditingController(text: c.asOfDate);
+    final reason = TextEditingController();
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Request several days'),
+        content: SizedBox(
+          width: 420,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'One draft request is created for every working day from the first to the last day. Weekends and closed days are skipped.',
+              ),
+              TextField(
+                key: const Key('workforce-range-first'),
+                controller: first,
+                decoration: const InputDecoration(
+                  labelText: 'First day (YYYY-MM-DD)',
+                ),
+              ),
+              TextField(
+                key: const Key('workforce-range-last'),
+                controller: last,
+                decoration: const InputDecoration(
+                  labelText: 'Last day, included (YYYY-MM-DD)',
+                ),
+              ),
+              TextField(
+                key: const Key('workforce-range-reason'),
+                controller: reason,
+                maxLength: 1000,
+                decoration: const InputDecoration(labelText: 'Private reason'),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            key: const Key('workforce-range-create'),
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Create drafts'),
+          ),
+        ],
+      ),
+    );
+    final values = (first.text.trim(), last.text.trim(), reason.text);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      first.dispose();
+      last.dispose();
+      reason.dispose();
+    });
+    if (ok == true && mounted) {
+      await c.requestLeaveRange(values.$1, values.$2, values.$3);
+    }
+  }
+
+  /// Reason for a decision applied to every day of a batch.
+  Future<void> decideBatch(LeaveBatch batch, String action) async {
+    final reason = TextEditingController();
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('${_batchLabel(action)}: ${batch.days.length} days'),
+        content: TextField(
+          key: const Key('workforce-batch-reason'),
+          controller: reason,
+          maxLength: 1000,
+          decoration: const InputDecoration(labelText: 'Reason'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            key: const Key('workforce-batch-confirm'),
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(_batchLabel(action)),
+          ),
+        ],
+      ),
+    );
+    final text = reason.text;
+    WidgetsBinding.instance.addPostFrameCallback((_) => reason.dispose());
+    if (ok == true && mounted) {
+      await widget.controller.decideLeaveBatch(batch, action, text);
+    }
+  }
+
+  Widget batchCard(LeaveBatch batch) {
+    final c = widget.controller;
+    Widget decide(String action) => OutlinedButton(
+      key: Key('workforce-batch-$action-${batch.id}'),
+      onPressed: c.busy || !c.online ? null : () => decideBatch(batch, action),
+      child: Text(_batchLabel(action)),
+    );
+    return Card(
+      key: Key('workforce-batch-${batch.id}'),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              '${batch.status} · ${batch.start.value} to ${batch.end.value}',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            Text(
+              '${batch.days.length} working days · ${workforceDuration(batch.chargeSeconds)}',
+            ),
+            for (final day in batch.days)
+              Text('${day.leaveDate.value} · ${day.status}'),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                if (c.has('people.leave.manage') &&
+                    {'draft', 'rejected'}.contains(batch.status))
+                  decide('submit'),
+                if (c.has('people.leave.approve') &&
+                    batch.status == 'submitted') ...[
+                  decide('approve'),
+                  decide('reject'),
+                ],
+                if (c.has('people.leave.approve') && batch.status == 'approved')
+                  decide('cancel'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget card(String title, List<Widget> children) => Card(
     child: Padding(
       padding: const EdgeInsets.all(20),
@@ -403,6 +548,15 @@ class _WorkforceWorkspaceState extends State<WorkforceWorkspace> {
                       'create',
                       enabled: c.canCreate && c.selectedPolicyVersion != null,
                     ),
+                  if (c.view == WorkforceView.leave &&
+                      c.has('people.leave.manage'))
+                    OutlinedButton(
+                      key: const Key('workforce-leave-range'),
+                      onPressed: c.busy || !c.online || !c.canRequestRange
+                          ? null
+                          : leaveRange,
+                      child: const Text('Request several days'),
+                    ),
                   if (c.view == WorkforceView.rawEvents &&
                       c.has('people.attendance.import'))
                     action(
@@ -436,7 +590,8 @@ class _WorkforceWorkspaceState extends State<WorkforceWorkspace> {
                   !c.busy &&
                   switch (c.view) {
                     WorkforceView.attendance => c.attendance.isEmpty,
-                    WorkforceView.leave => c.leave.isEmpty,
+                    WorkforceView.leave =>
+                      c.leave.isEmpty && c.leaveBatches.isEmpty,
                     WorkforceView.rawEvents => c.rawEvents.isEmpty,
                     WorkforceView.workClaims => c.workClaims.isEmpty,
                     _ => false,
@@ -457,7 +612,8 @@ class _WorkforceWorkspaceState extends State<WorkforceWorkspace> {
                   ),
               ],
               if (c.view == WorkforceView.leave) ...[
-                for (final row in c.leave)
+                for (final batch in c.leaveBatches) batchCard(batch),
+                for (final row in c.unbatchedLeave)
                   ListTile(
                     title: Text(
                       '${row.status} · ${workforceDuration(row.chargeSeconds)}',
@@ -1207,3 +1363,11 @@ class WorkforceEditor extends StatelessWidget {
     },
   );
 }
+
+String _batchLabel(String action) => switch (action) {
+  'submit' => 'Submit days',
+  'approve' => 'Approve days',
+  'reject' => 'Reject days',
+  'cancel' => 'Cancel days',
+  _ => action,
+};
