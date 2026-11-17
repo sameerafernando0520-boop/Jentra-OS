@@ -247,7 +247,7 @@ language plpgsql security definer set search_path='' as $$declare items jsonb; b
   where a.tenant_id=p_tenant_id and a.legal_entity_id=p_legal_entity_id and a.branch_id=p_branch_id
    and a.rep_id=auth.uid() and statement_timestamp()>=a.valid_from and statement_timestamp()<a.valid_until
    and p.status='active' and p.kind in('customer','both') and (p_after is null or p.id>p_after)
-   and coalesce(p.display_name,p.legal_name) ilike '%'||coalesce(p_query,'')||'%'
+   and position(lower(coalesce(p_query,'')) in lower(coalesce(p.display_name,p.legal_name)))>0
   order by p.id limit p_limit+1) x;
  return jsonb_build_object('has_more',jsonb_array_length(items)>p_limit,
   'next_cursor',case when jsonb_array_length(items)>p_limit then items->(p_limit-1)->>'id' end,
@@ -256,6 +256,17 @@ language plpgsql security definer set search_path='' as $$declare items jsonb; b
 end $$;
 
 -- One commercial calculator for online review, submission and company review.
+-- The order date is the company's local date, but never later than the UTC
+-- date. Delivery, invoice and stock posting refuse a document dated after the
+-- UTC date, and a delivery may not be dated before its order. East of UTC the
+-- local date runs ahead for part of each day (00:00-05:30 in Asia/Colombo),
+-- and an order dated ahead could not be delivered until UTC caught up.
+create function field_sales.order_date(p_at timestamptz,p_timezone text) returns date
+language sql stable set search_path='' as $$
+ select least((p_at at time zone p_timezone)::date,(p_at at time zone 'UTC')::date);
+$$;
+revoke all on function field_sales.order_date(timestamptz,text) from public,anon,authenticated;
+
 -- Only base units and company base currency are in this first slice. Tax and
 -- rounding reuse the canonical calculator; stock is explicitly unavailable.
 create function field_sales.prepare(t uuid,e uuid,b uuid,rep uuid,input jsonb) returns jsonb
@@ -310,9 +321,9 @@ begin
   sources:=sources||jsonb_build_array(jsonb_build_object('policy',to_jsonb(pp),'product',to_jsonb(p)));
  end loop;
  pricing:=sales.wave3_price_lines(t,e,d,le.currency_code,lines,null,to_jsonb(discount::text));
- canonical:=jsonb_build_object('customer_id',c.id,'warehouse_id',wh.id,'order_date',d,'promised_date',input->>'requested_date',
+ canonical:=jsonb_build_object('customer_id',c.id,'warehouse_id',wh.id,'order_date',field_sales.order_date(statement_timestamp(),le.timezone),'promised_date',input->>'requested_date',
   'ship_to',a.ship_to,'payment_terms_days',a.payment_terms_days,'delivery_terms',a.delivery_terms,
-  'currency_code',le.currency_code,'exchange_rate','1','rate_date',d,
+  'currency_code',le.currency_code,'exchange_rate','1','rate_date',field_sales.order_date(statement_timestamp(),le.timezone),
   'header_discount_percent',discount::text,'lines',lines,'notes',nullif(input->>'notes',''));
  snapshot:=jsonb_build_object('input',input,'assignment',to_jsonb(a),'customer_version',c.version::text,
   'customer_credit_currency',c.credit_currency_code,'customer_credit_limit',c.credit_limit::text,

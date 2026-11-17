@@ -234,6 +234,15 @@ class _FieldSalesWorkspaceState extends State<FieldSalesWorkspace>
                                           'Retry original request',
                                         ),
                                       ),
+                                      if (c.canDiscardPending)
+                                        TextButton(
+                                          onPressed: c.busy
+                                              ? null
+                                              : () => c.discardExpired(),
+                                          child: const Text(
+                                            'Clear if not received',
+                                          ),
+                                        ),
                                     ],
                                   ),
                                 ],
@@ -441,7 +450,11 @@ class _FieldOrderComposerState extends State<FieldOrderComposer> {
       }
     }
     _savedSignature = _signature;
+    // Lets the controller keep this order as a draft if access expires.
+    widget.c.unsavedOrder = _unsaved;
   }
+
+  FieldSalesJson? _unsaved() => mounted && dirty ? _input() : null;
 
   Future<bool> saveLocal() async {
     final signature = _signature;
@@ -459,6 +472,7 @@ class _FieldOrderComposerState extends State<FieldOrderComposer> {
 
   @override
   void dispose() {
+    if (widget.c.unsavedOrder == _unsaved) widget.c.unsavedOrder = null;
     for (final c in [
       _date,
       _discount,

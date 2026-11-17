@@ -42,10 +42,16 @@ export async function exercise(db,checks){
  await db.query(`insert into core.attachments(tenant_id,aggregate_type,aggregate_id,file_name,mime_type,byte_size,object_path,upload_status,created_by,updated_by)
   values($1,'party',$2,'synthetic-private.pdf','application/pdf',12,$3,'ready',$4,$4)`,[t,ids.c2,t+'/foreign-customer/synthetic.pdf',ids.owner]);
  await db.query("insert into storage.objects(bucket_id,name) values('jentra-attachments',$1)",[t+'/foreign-customer/synthetic.pdf']);
+ const orderDate=(at,zone)=>scalar('select field_sales.order_date($1::timestamptz,$2)::text',[at,zone]);
+ check('order date never runs ahead of the UTC posting date east of UTC',
+  await orderDate('2026-11-14 21:00+00','Asia/Colombo')==='2026-11-14'&&await orderDate('2026-11-14 10:00+00','Asia/Colombo')==='2026-11-14');
+ check('order date keeps the local date west of UTC',await orderDate('2026-11-15 02:00+00','America/New_York')==='2026-11-14');
  await actor(ids.rep);
  check('workspace resolves assigned scope without broad CRM', (await scalar('select api.field_sales_workspace()')).scopes.length===1);
  const customers=await scalar('select api.field_sales_customers($1,$2,$3)',[t,e,b]);
  check('portfolio includes customer without transactions and excludes other rep',customers.items.length===2&&customers.items.some(x=>x.id===ids.c3)&&!customers.items.some(x=>x.id===ids.c2));
+ const found=async query=>(await scalar('select api.field_sales_customers($1,$2,$3,$4)',[t,e,b,query])).items.length;
+ check('customer search treats wildcard characters literally',await found('%')===0&&await found('_')===0&&await found('')===2);
  check('accidental broad CRM grant is denied',await scalar("select not core.has_permission($1,'crm.parties.view')",[t]));
  check('legacy party view returns no customers',(await db.query('select * from api.parties')).rows.length===0);
  check('direct base parties return no customers',(await db.query('select * from crm.parties')).rows.length===0);
