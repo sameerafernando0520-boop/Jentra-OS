@@ -166,6 +166,24 @@ supported.
   refused when an accepted account link ties the decider to the employee on
   the record. Withdrawing your own leave is unaffected.
 
+## Field Sales reps
+
+`20261117090000_field_sales_reps.sql` installs after the People access
+candidate and needs Field Sales installed.
+
+- **Rep to employee.** A rep's employee comes from the accepted People account
+  link for its sign-in. Field Sales stores no second link, so linking or
+  revoking in HR changes the rep's label on the next read. A rep without an
+  accepted link shows as `Unlinked member ····1234`, the last four characters
+  of its user id. Labels never show an e-mail address.
+- **Rep list.** `api.field_sales_reps` gives a company and branch reviewer (MFA,
+  `sales.field.portfolios.manage` or `sales.field.discounts.decide`) each rep
+  with a customer assignment or an order request in the branch: its label, its
+  current customer count, and the order requests it submitted in the period by
+  current state, with the approved total in base currency as an exact decimal.
+  The period uses the company's local dates and may be up to a year. A rep
+  cannot read it. Targets and commission are not part of it.
+
 The older suites create their fixtures through self-service and predate the
 Field Sales switch, so they switch enforcement off and Field Sales on after
 `organization_creation_control.assertions.mjs` has checked the defaults.
