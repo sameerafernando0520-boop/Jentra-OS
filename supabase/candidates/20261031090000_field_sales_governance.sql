@@ -568,9 +568,18 @@ language plpgsql security definer set search_path='' as $$declare d date; items 
  select pp.id,jsonb_build_object('id',pp.product_id,'policy_id',pp.id,'policy_version',pp.version::text,
   'name',p.name,'code',p.sku,'unit_id',pp.unit_id,'unit',u.name,'unit_price',pp.unit_price::text,
   'max_discount_percent',pp.max_discount_percent::text,'currency_code',pp.currency_code,
-  'stock_state','unavailable') item from field_sales.price_policies pp
+  -- Advisory availability: a state, never a quantity, and nothing is reserved.
+  'stock_state',case when p.kind<>'stocked' then 'not_tracked' when coalesce(s.any_stock,false) then 'in_stock' else 'out_of_stock' end,
+  'stock_by_warehouse',case when p.kind='stocked' then coalesce(s.by_warehouse,'[]'::jsonb) else '[]'::jsonb end,
+  'stock_as_of',statement_timestamp()) item from field_sales.price_policies pp
  join inventory.products p on p.tenant_id=pp.tenant_id and p.id=pp.product_id
  join inventory.units u on u.tenant_id=pp.tenant_id and u.id=pp.unit_id
+ left join lateral (select bool_or(coalesce(sb.available_quantity,0)>0) any_stock,
+  jsonb_agg(jsonb_build_object('warehouse_id',w.id,'state',
+   case when coalesce(sb.available_quantity,0)>0 then 'in_stock' else 'out_of_stock' end) order by w.id) by_warehouse
+  from core.warehouses w left join inventory.stock_balances sb on sb.tenant_id=w.tenant_id
+   and sb.legal_entity_id=w.legal_entity_id and sb.branch_id=w.branch_id and sb.warehouse_id=w.id and sb.product_id=pp.product_id
+  where w.tenant_id=pp.tenant_id and w.legal_entity_id=pp.legal_entity_id and w.branch_id=pp.branch_id and w.status='active') s on true
  where pp.tenant_id=p_tenant_id and pp.legal_entity_id=p_legal_entity_id and pp.branch_id=p_branch_id
   and pp.customer_id=p_customer_id and d between pp.valid_from and pp.valid_until
   and p.status='active' and p.can_sell and u.status='active' and (p_after is null or pp.id>p_after)
