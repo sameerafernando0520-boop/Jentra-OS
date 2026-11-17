@@ -17,6 +17,7 @@ import 'sales_order_controller.dart';
 import 'sales_order_dialogs.dart';
 import 'field_company_review.dart';
 import 'field_sales_reps_screen.dart';
+import 'field_sales_visits_screen.dart';
 import 'field_confirmation_company_screen.dart';
 
 class SalesOrderScreen extends ConsumerStatefulWidget {
@@ -183,6 +184,15 @@ class _OrderWorkspaceState extends ConsumerState<_OrderWorkspace> {
                       : () => openFieldSalesReps(context, s.context),
                   icon: const Icon(Icons.badge_outlined),
                   label: const Text('Field sales reps'),
+                ),
+              if (s.capabilities.any(fieldSalesRepReaders.contains) &&
+                  ref.watch(fieldSalesCompanyGatewayProvider) != null)
+                OutlinedButton.icon(
+                  onPressed: s.busy || s.loading || !s.isOnline
+                      ? null
+                      : () => openFieldSalesVisits(context, s.context),
+                  icon: const Icon(Icons.event_note_outlined),
+                  label: const Text('Field visits'),
                 ),
               if (s.capabilities.contains('sales.field.confirmations.manage') &&
                   ref.watch(fieldConfirmationCompanyGatewayProvider) != null)

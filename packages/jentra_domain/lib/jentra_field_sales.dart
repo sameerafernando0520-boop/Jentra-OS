@@ -228,3 +228,122 @@ String fieldSalesDate(DateTime date) =>
     '${date.year.toString().padLeft(4, '0')}-'
     '${date.month.toString().padLeft(2, '0')}-'
     '${date.day.toString().padLeft(2, '0')}';
+
+/// The state a visit reaches after each rep visit action.
+const fieldSalesVisitStates = {
+  'plan': 'planned',
+  'check_in': 'checked_in',
+  'complete': 'completed',
+  'cancel': 'cancelled',
+};
+
+/// A position given at a declared visit action. It is never sampled in the
+/// background; the rep chooses to add it when checking in or completing.
+final class FieldSalesLocation {
+  const FieldSalesLocation(this.latitude, this.longitude);
+
+  /// Rounds to six decimal places, the precision the company stores.
+  factory FieldSalesLocation.fromDegrees(double latitude, double longitude) {
+    if (!latitude.isFinite ||
+        !longitude.isFinite ||
+        latitude.abs() > 90 ||
+        longitude.abs() > 180) {
+      throw const FieldSalesFailure(
+        'LOCATION_INVALID',
+        'Your location could not be read. Try again or continue without it.',
+      );
+    }
+    return FieldSalesLocation(
+      latitude.toStringAsFixed(6),
+      longitude.toStringAsFixed(6),
+    );
+  }
+  final String latitude, longitude;
+  FieldSalesJson get payload => {'latitude': latitude, 'longitude': longitude};
+}
+
+/// One rep visit command. Its exact bytes are kept until the company's
+/// receipt is seen, so a lost response is checked or retried, never re-made.
+final class FieldSalesVisitCommand {
+  FieldSalesVisitCommand({
+    required this.actorId,
+    required this.scope,
+    required this.commandId,
+    required this.key,
+    required this.at,
+    required this.action,
+    required FieldSalesJson payload,
+    this.expectedVersion,
+  }) : _payload = jsonEncode(payload) {
+    if (!fieldSalesVisitStates.containsKey(action) ||
+        payload['id'] is! String ||
+        (action == 'plan') != (expectedVersion == null)) {
+      throw const FieldSalesFailure(
+        'VISIT_COMMAND_INVALID',
+        'This visit update could not be prepared.',
+      );
+    }
+  }
+  factory FieldSalesVisitCommand.fromJson(FieldSalesJson json) {
+    if (json['schema'] != 1) {
+      throw const FormatException('Unsupported visit command.');
+    }
+    return FieldSalesVisitCommand(
+      actorId: json['actor_id'] as String,
+      scope: FieldSalesScope.fromJson(json),
+      commandId: json['command_id'] as String,
+      key: json['key'] as String,
+      at: json['at'] as String,
+      action: json['action'] as String,
+      expectedVersion: json['expected_version'] as int?,
+      payload: Map<String, dynamic>.from(json['payload'] as Map),
+    );
+  }
+  final String actorId, commandId, key, at, action, _payload;
+  final int? expectedVersion;
+  final FieldSalesScope scope;
+  FieldSalesJson get payload => jsonDecode(_payload) as FieldSalesJson;
+  String get visitId => payload['id'] as String;
+  FieldSalesJson get params => {
+    ...scope.params,
+    'p_command_id': commandId,
+    'p_idempotency_key': key,
+    'p_client_timestamp': at,
+    'p_action': action,
+    'p_payload': payload,
+    'p_expected_entity_version': expectedVersion,
+  };
+  FieldSalesJson toJson() => {
+    'schema': 1,
+    'actor_id': actorId,
+    'tenant_id': scope.tenantId,
+    'legal_entity_id': scope.entityId,
+    'branch_id': scope.branchId,
+    'command_id': commandId,
+    'key': key,
+    'at': at,
+    'action': action,
+    'expected_version': expectedVersion,
+    'payload': payload,
+  };
+
+  /// The visit in a receipt, once it matches this exact command.
+  FieldSalesJson validateReceipt(FieldSalesJson receipt) {
+    final entity = receipt['entity'];
+    if (receipt['command_id'] != commandId ||
+        entity is! Map ||
+        entity['id'] != visitId ||
+        entity['tenant_id'] != scope.tenantId ||
+        entity['legal_entity_id'] != scope.entityId ||
+        entity['branch_id'] != scope.branchId ||
+        entity['rep_id'] != actorId ||
+        entity['state'] != fieldSalesVisitStates[action] ||
+        entity['version'] != '${(expectedVersion ?? 0) + 1}') {
+      throw const FieldSalesFailure(
+        'RECEIPT_INVALID',
+        'The server confirmation did not match. Check the visit update again.',
+      );
+    }
+    return Map<String, dynamic>.from(entity);
+  }
+}

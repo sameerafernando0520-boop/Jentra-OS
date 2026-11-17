@@ -184,6 +184,34 @@ candidate and needs Field Sales installed.
   The period uses the company's local dates and may be up to a year. A rep
   cannot read it. Targets and commission are not part of it.
 
+## Field Sales visits
+
+`20261117100000_field_sales_visits.sql` installs after the rep list and needs
+Field Sales installed.
+
+- **Visits.** `field_sales.visits` records a rep's visit to a customer it is
+  currently assigned: the purpose, an optional planned date, check-in and
+  completion times, the outcome and the next action. A visit is tied to the
+  assignment it was planned under and is scoped by company and branch.
+- **One command.** `api.field_sales_visit_command` plans, checks in, completes
+  or cancels a visit (`sales.field.visits.record`). Like an order request it
+  takes a command id, an idempotency key and, except when planning, the
+  expected version; an exact retry returns the original receipt, and
+  `api.field_sales_visit_receipt` recovers a command whose response was lost.
+  The assignment is checked first, so a revoked portfolio cannot replay or
+  recover a visit command.
+- **Location.** Optional, and only given at check in or completion, as a
+  latitude and longitude pair of decimal strings. Nothing tracks a rep between
+  those actions.
+- **Reads.** A rep reads only its own visits to customers it is still
+  assigned (`api.field_sales_visits`). A company reviewer reads the branch's
+  visits for a period with each rep's label
+  (`api.field_sales_company_visits`), with the same readers as the rep list.
+- **Field accounts.** `sales.field.visits.record` is on the field account
+  permission list in both `20261031090000_field_sales_governance.sql` and
+  `20261105102000_organization_identity.sql`, and the four visit commands are
+  allowed past Field Sales' legacy receipt guard.
+
 The older suites create their fixtures through self-service and predate the
 Field Sales switch, so they switch enforcement off and Field Sales on after
 `organization_creation_control.assertions.mjs` has checked the defaults.
