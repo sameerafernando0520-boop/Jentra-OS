@@ -9,64 +9,63 @@ import 'package:jentra_platform/jentra_people_platform.dart';
 import 'support/wave4_gateway_harness.dart';
 
 Map<String, Object?> attendanceRow() => {
-      'id': w4Id,
-      'tenant_id': w4Scope.tenantId,
-      'legal_entity_id': w4Scope.legalEntityId,
-      'branch_id': w4Scope.branchId,
-      'employee_id': w4Id,
-      'version': 1,
-      'status': 'draft',
-      'submitted_by': null,
-      'decided_by': null,
-      'active_claim_id': null,
-      'created_by': w4Scope.actorId,
-      'created_at': '2026-09-30T01:00:00.123456+00:00',
-      'revision': {
-        'id': w4Revision,
-        'version': 1,
-        'calendar_version_id': w4Revision,
-        'start_local': '2026-09-30T09:00:00',
-        'start_offset_seconds': 19800,
-        'end_local': '2026-09-30T17:00:00',
-        'end_offset_seconds': 19800,
-        'start_utc': '2026-09-30T03:30:00+00:00',
-        'end_utc': '2026-09-30T11:30:00+00:00',
-        'breaks': [],
-        'gross_seconds': 28800,
-        'break_seconds': 0,
-        'payable_seconds': 28800,
-        'raw_start_id': null,
-        'raw_end_id': null,
-        'reason': 'Synthetic attendance',
-        'supersedes_revision_id': null,
-        'recorded_by': w4Scope.actorId,
-        'recorded_at': '2026-09-30T01:00:00.123456+00:00',
-      },
-    };
+  'id': w4Id,
+  'tenant_id': w4Scope.tenantId,
+  'legal_entity_id': w4Scope.legalEntityId,
+  'branch_id': w4Scope.branchId,
+  'employee_id': w4Id,
+  'version': 1,
+  'status': 'draft',
+  'submitted_by': null,
+  'decided_by': null,
+  'active_claim_id': null,
+  'created_by': w4Scope.actorId,
+  'created_at': '2026-09-30T01:00:00.123456+00:00',
+  'revision': {
+    'id': w4Revision,
+    'version': 1,
+    'calendar_version_id': w4Revision,
+    'start_local': '2026-09-30T09:00:00',
+    'start_offset_seconds': 19800,
+    'end_local': '2026-09-30T17:00:00',
+    'end_offset_seconds': 19800,
+    'start_utc': '2026-09-30T03:30:00+00:00',
+    'end_utc': '2026-09-30T11:30:00+00:00',
+    'breaks': [],
+    'gross_seconds': 28800,
+    'break_seconds': 0,
+    'payable_seconds': 28800,
+    'raw_start_id': null,
+    'raw_end_id': null,
+    'reason': 'Synthetic attendance',
+    'supersedes_revision_id': null,
+    'recorded_by': w4Scope.actorId,
+    'recorded_at': '2026-09-30T01:00:00.123456+00:00',
+  },
+};
 Map<String, Object?> attendanceForm() => {
-      'action': 'create',
-      'id': w4Id,
-      'employee_id': w4Id,
-      'calendar_version_id': w4Revision,
-      'start_local': '2026-09-30T09:00:00',
-      'start_offset_seconds': 19800,
-      'end_local': '2026-09-30T17:00:00',
-      'end_offset_seconds': 19800,
-      'breaks': [],
-      'reason': 'Synthetic attendance',
-    };
+  'action': 'create',
+  'id': w4Id,
+  'employee_id': w4Id,
+  'calendar_version_id': w4Revision,
+  'start_local': '2026-09-30T09:00:00',
+  'start_offset_seconds': 19800,
+  'end_local': '2026-09-30T17:00:00',
+  'end_offset_seconds': 19800,
+  'breaks': [],
+  'reason': 'Synthetic attendance',
+};
 CommandEnvelope<Map<String, Object?>> command(
   Map<String, Object?> payload, [
   int version = 0,
-]) =>
-    CommandEnvelope(
-      commandId: w4Command,
-      idempotencyKey: w4Command,
-      context: w4Scope,
-      payload: payload,
-      expectedEntityVersion: version,
-      clientTimestamp: DateTime.utc(2026, 9, 30),
-    );
+]) => CommandEnvelope(
+  commandId: w4Command,
+  idempotencyKey: w4Command,
+  context: w4Scope,
+  payload: payload,
+  expectedEntityVersion: version,
+  clientTimestamp: DateTime.utc(2026, 9, 30),
+);
 
 void main() {
   group('multi-day leave', leaveRangeTests);
@@ -361,11 +360,7 @@ void main() {
         (await gateway.attendanceDetail(
           w4Scope,
           w4Id,
-        ))
-            .history
-            .items
-            .single
-            .payableSeconds,
+        )).history.items.single.payableSeconds,
         28800,
       );
       h.response = {
@@ -470,10 +465,7 @@ void main() {
           w4Id,
           w4Revision,
           CivilDate.parse('2026-09-30'),
-        ))
-            .grants
-            .single
-            .remainingSeconds,
+        )).grants.single.remainingSeconds,
         25200,
       );
       h.response = {
@@ -498,44 +490,44 @@ void main() {
 const _batchId = '50000000-0000-0000-0000-000000000001';
 
 Map<String, Object?> _batchDay(String date, String status, int version) => {
-      'leave_date': date,
-      'request_id':
-          '6000000$version-0000-0000-0000-00000000000${date.substring(9)}',
-      'version': version,
-      'status': status,
-      'start_utc': '${date}T03:30:00+00:00',
-      'end_utc': '${date}T11:30:00+00:00',
-      'charge_seconds': 28800,
-      'unpaid_seconds': 0,
-    };
+  'leave_date': date,
+  'request_id':
+      '6000000$version-0000-0000-0000-00000000000${date.substring(9)}',
+  'version': version,
+  'status': status,
+  'start_utc': '${date}T03:30:00+00:00',
+  'end_utc': '${date}T11:30:00+00:00',
+  'charge_seconds': 28800,
+  'unpaid_seconds': 0,
+};
 
 Map<String, Object?> _batchRow(String status, {bool creator = true}) => {
-      'id': _batchId,
-      'employee_id': w4Id,
-      'policy_id': w4Revision,
-      'start_date': '2026-11-26',
-      'end_date': '2026-11-30',
-      'origin': 'staff',
-      if (creator) 'created_by': w4Scope.actorId,
-      'status': status,
-      'charge_seconds': 3 * 28800,
-      'unpaid_seconds': 0,
-      'days': [
-        _batchDay('2026-11-26', status, 1),
-        _batchDay('2026-11-27', status, 1),
-        _batchDay('2026-11-30', status, 1),
-      ],
-    };
+  'id': _batchId,
+  'employee_id': w4Id,
+  'policy_id': w4Revision,
+  'start_date': '2026-11-26',
+  'end_date': '2026-11-30',
+  'origin': 'staff',
+  if (creator) 'created_by': w4Scope.actorId,
+  'status': status,
+  'charge_seconds': 3 * 28800,
+  'unpaid_seconds': 0,
+  'days': [
+    _batchDay('2026-11-26', status, 1),
+    _batchDay('2026-11-27', status, 1),
+    _batchDay('2026-11-30', status, 1),
+  ],
+};
 
 Map<String, Object?> _rangeForm() => {
-      'batch_id': _batchId,
-      'employee_id': w4Id,
-      'policy_version_id': w4Revision,
-      'calendar_version_id': w4Revision,
-      'start_date': '2026-11-26',
-      'end_date': '2026-11-30',
-      'reason': 'Family travel',
-    };
+  'batch_id': _batchId,
+  'employee_id': w4Id,
+  'policy_version_id': w4Revision,
+  'calendar_version_id': w4Revision,
+  'start_date': '2026-11-26',
+  'end_date': '2026-11-30',
+  'reason': 'Family travel',
+};
 
 void leaveRangeTests() {
   late Wave4GatewayHarness h;
@@ -563,27 +555,31 @@ void leaveRangeTests() {
     ]);
     expect(batch.chargeSeconds, 3 * 28800);
     expect(
-        h.requests.last.url.path, endsWith('/rpc/people_leave_request_range'));
+      h.requests.last.url.path,
+      endsWith('/rpc/people_leave_request_range'),
+    );
     final body = jsonDecode(h.requests.last.body) as Map;
     expect((body['p_payload'] as Map)['reason'], 'Family travel');
     expect(body.containsKey('p_expected_version'), isFalse);
   });
 
-  test('ranges that cannot be a batch are refused without network traffic',
-      () async {
-    for (final change in <Map<String, Object?>>[
-      {'end_date': '2026-11-25'},
-      {'end_date': '2026-12-27'},
-      {'reason': ' '},
-      {'unpaid': true},
-    ]) {
-      await expectLater(
-        gateway.createLeaveRange(command({..._rangeForm(), ...change})),
-        throwsFormatException,
-      );
-    }
-    expect(h.requests, isEmpty);
-  });
+  test(
+    'ranges that cannot be a batch are refused without network traffic',
+    () async {
+      for (final change in <Map<String, Object?>>[
+        {'end_date': '2026-11-25'},
+        {'end_date': '2026-12-27'},
+        {'reason': ' '},
+        {'unpaid': true},
+      ]) {
+        await expectLater(
+          gateway.createLeaveRange(command({..._rangeForm(), ...change})),
+          throwsFormatException,
+        );
+      }
+      expect(h.requests, isEmpty);
+    },
+  );
 
   test('a batch decision must confirm every day moved together', () async {
     final action = {
@@ -596,7 +592,9 @@ void leaveRangeTests() {
     final approved = await gateway.decideLeaveBatch(command(action));
     expect(approved.status, 'approved');
     expect(
-        h.requests.last.url.path, endsWith('/rpc/people_leave_batch_command'));
+      h.requests.last.url.path,
+      endsWith('/rpc/people_leave_batch_command'),
+    );
 
     final mixed = _batchRow('approved');
     (mixed['days'] as List)[2] = _batchDay('2026-11-30', 'submitted', 2);
@@ -628,6 +626,8 @@ void leaveRangeTests() {
       'next_cursor': null,
     };
     await expectLater(
-        gateway.leaveBatches(w4Scope, w4Id), throwsFormatException);
+      gateway.leaveBatches(w4Scope, w4Id),
+      throwsFormatException,
+    );
   });
 }

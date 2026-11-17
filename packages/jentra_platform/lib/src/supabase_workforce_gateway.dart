@@ -28,15 +28,17 @@ final class SupabaseWorkforceGateway implements WorkforceRepository {
   }) async {
     _require(scope);
     try {
-      final raw = await client.schema('api').rpc(
-        name,
-        params: {
-          'p_tenant_id': scope.tenantId,
-          'p_legal_entity_id': scope.legalEntityId,
-          'p_branch_id': scope.branchId,
-          ...args,
-        },
-      );
+      final raw = await client
+          .schema('api')
+          .rpc(
+            name,
+            params: {
+              'p_tenant_id': scope.tenantId,
+              'p_legal_entity_id': scope.legalEntityId,
+              'p_branch_id': scope.branchId,
+              ...args,
+            },
+          );
       if (client.auth.currentUser?.id != scope.actorId) {
         throw DomainError(
           code: command ? 'UNCERTAIN_RESULT' : 'AUTHENTICATION_REQUIRED',
@@ -117,8 +119,7 @@ final class SupabaseWorkforceGateway implements WorkforceRepository {
     TenantContext scope,
     Map<String, Object?> args, {
     bool command = false,
-  }) async =>
-      workforceMap(await _rpc(name, scope, args, command: command));
+  }) async => workforceMap(await _rpc(name, scope, args, command: command));
 
   void _scope(Map<String, Object?> row, TenantContext scope) {
     if (row['tenant_id'] != scope.tenantId ||
@@ -417,8 +418,7 @@ final class SupabaseWorkforceGateway implements WorkforceRepository {
 
   @override
   Future<WorkforceDetail<AttendanceEntry, AttendanceHistoryEntry>>
-      attendanceDetail(TenantContext scope, String entryId,
-          {String? after}) async {
+  attendanceDetail(TenantContext scope, String entryId, {String? after}) async {
     calendarUuid(entryId);
     if (after != null) calendarUuid(after);
     final row = await _call('people_attendance_detail', scope, {
@@ -655,7 +655,11 @@ final class SupabaseWorkforceGateway implements WorkforceRepository {
     );
     LeaveRangeCommands.validateRange(payload);
     return _batchCommand(
-        'people_leave_request_range', command, payload, 'draft');
+      'people_leave_request_range',
+      command,
+      payload,
+      'draft',
+    );
   }
 
   @override
@@ -683,16 +687,12 @@ final class SupabaseWorkforceGateway implements WorkforceRepository {
     calendarUuid(command.commandId);
     calendarUuid(command.idempotencyKey);
     try {
-      final receipt = await _call(
-          rpc,
-          command.context,
-          {
-            'p_command_id': command.commandId,
-            'p_idempotency_key': command.idempotencyKey,
-            'p_client_timestamp': command.clientTimestamp.toIso8601String(),
-            'p_payload': payload,
-          },
-          command: true);
+      final receipt = await _call(rpc, command.context, {
+        'p_command_id': command.commandId,
+        'p_idempotency_key': command.idempotencyKey,
+        'p_client_timestamp': command.clientTimestamp.toIso8601String(),
+        'p_payload': payload,
+      }, command: true);
       calendarFields(receipt, {
         'request_id',
         'command_id',
@@ -706,7 +706,8 @@ final class SupabaseWorkforceGateway implements WorkforceRepository {
           receipt['warnings'] is! List ||
           (receipt['warnings'] as List).isNotEmpty) {
         throw const FormatException(
-            'Leave batch confirmation envelope changed.');
+          'Leave batch confirmation envelope changed.',
+        );
       }
       final batch = LeaveBatch.fromJson(workforceMap(receipt['entity']));
       if (batch.id != payload['batch_id'] ||
@@ -747,7 +748,8 @@ final class SupabaseWorkforceGateway implements WorkforceRepository {
     calendarUuid(command.commandId);
     calendarUuid(command.idempotencyKey);
     final version = command.expectedEntityVersion;
-    final creating = kind == WorkforceCommandKind.attendance &&
+    final creating =
+        kind == WorkforceCommandKind.attendance &&
             (action == 'create' ||
                 action == 'raw_import' ||
                 action == 'raw_import_batch') ||
@@ -759,8 +761,8 @@ final class SupabaseWorkforceGateway implements WorkforceRepository {
         creating && version != 0) {
       throw const FormatException('Workforce expected version is invalid.');
     }
-    final rpc = action == 'raw_import_batch' &&
-            kind == WorkforceCommandKind.attendance
+    final rpc =
+        action == 'raw_import_batch' && kind == WorkforceCommandKind.attendance
         ? 'people_attendance_clock_batch'
         : switch (kind) {
             WorkforceCommandKind.attendance => 'people_attendance_command',
@@ -769,17 +771,13 @@ final class SupabaseWorkforceGateway implements WorkforceRepository {
             WorkforceCommandKind.leaveRequest => 'people_leave_request_command',
           };
     try {
-      final receipt = await _call(
-          rpc,
-          command.context,
-          {
-            'p_command_id': command.commandId,
-            'p_idempotency_key': command.idempotencyKey,
-            'p_client_timestamp': command.clientTimestamp.toIso8601String(),
-            'p_payload': payload,
-            'p_expected_version': version,
-          },
-          command: true);
+      final receipt = await _call(rpc, command.context, {
+        'p_command_id': command.commandId,
+        'p_idempotency_key': command.idempotencyKey,
+        'p_client_timestamp': command.clientTimestamp.toIso8601String(),
+        'p_payload': payload,
+        'p_expected_version': version,
+      }, command: true);
       calendarFields(receipt, {
         'request_id',
         'command_id',
@@ -961,11 +959,11 @@ final class SupabaseWorkforceGateway implements WorkforceRepository {
   }
 
   String _status(String action) => switch (action) {
-        'create' || 'correct' => 'draft',
-        'submit' => 'submitted',
-        'approve' => 'approved',
-        'reject' => 'rejected',
-        'cancel' => 'cancelled',
-        _ => throw const FormatException('Workforce action changed.'),
-      };
+    'create' || 'correct' => 'draft',
+    'submit' => 'submitted',
+    'approve' => 'approved',
+    'reject' => 'rejected',
+    'cancel' => 'cancelled',
+    _ => throw const FormatException('Workforce action changed.'),
+  };
 }

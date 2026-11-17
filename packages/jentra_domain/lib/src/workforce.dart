@@ -71,17 +71,16 @@ final class WorkforceDetail<T, E> {
 
 final class AttendanceHistoryEntry {
   AttendanceHistoryEntry.fromJson(Map<String, Object?> row)
-      : id = calendarUuid(row['id']),
-        version = workforceInteger(row['version'], positive: true),
-        span = WorkSpan(
-          workforceInstant(row['start_utc']),
-          workforceInstant(row['end_utc']),
-        ),
-        payableSeconds =
-            workforceInteger(row['payable_seconds'], positive: true),
-        reason = workforceText(row['reason'], 1000),
-        actorId = calendarUuid(row['recorded_by']),
-        recordedAt = workforceRecorded(row['recorded_at']) {
+    : id = calendarUuid(row['id']),
+      version = workforceInteger(row['version'], positive: true),
+      span = WorkSpan(
+        workforceInstant(row['start_utc']),
+        workforceInstant(row['end_utc']),
+      ),
+      payableSeconds = workforceInteger(row['payable_seconds'], positive: true),
+      reason = workforceText(row['reason'], 1000),
+      actorId = calendarUuid(row['recorded_by']),
+      recordedAt = workforceRecorded(row['recorded_at']) {
     calendarFields(row, {
       'id',
       'version',
@@ -120,13 +119,13 @@ final class AttendanceHistoryEntry {
 
 final class LeaveHistoryEntry {
   LeaveHistoryEntry.fromJson(Map<String, Object?> row)
-      : id = calendarUuid(row['id']),
-        action = workforceText(row['action'], 20),
-        beforeStatus = row['before_status'] as String?,
-        afterStatus = workforceText(row['after_status'], 20),
-        reason = workforceText(row['reason'], 1000),
-        actorId = calendarUuid(row['actor_id']),
-        recordedAt = workforceRecorded(row['recorded_at']) {
+    : id = calendarUuid(row['id']),
+      action = workforceText(row['action'], 20),
+      beforeStatus = row['before_status'] as String?,
+      afterStatus = workforceText(row['after_status'], 20),
+      reason = workforceText(row['reason'], 1000),
+      actorId = calendarUuid(row['actor_id']),
+      recordedAt = workforceRecorded(row['recorded_at']) {
     calendarFields(row, {
       'id',
       'action',
@@ -154,13 +153,13 @@ final class LeaveHistoryEntry {
 
 final class RawClockEvent {
   RawClockEvent.fromJson(Map<String, Object?> row)
-      : id = calendarUuid(row['id']),
-        sourceSystem = workforceText(row['source_system'], 80),
-        sourceKey = workforceText(row['source_key'], 160),
-        observedUtc = workforceInstant(row['observed_utc']),
-        checksum = workforceText(row['checksum'], 64),
-        importedBy = calendarUuid(row['imported_by']),
-        importedAt = workforceRecorded(row['imported_at']) {
+    : id = calendarUuid(row['id']),
+      sourceSystem = workforceText(row['source_system'], 80),
+      sourceKey = workforceText(row['source_key'], 160),
+      observedUtc = workforceInstant(row['observed_utc']),
+      checksum = workforceText(row['checksum'], 64),
+      importedBy = calendarUuid(row['imported_by']),
+      importedAt = workforceRecorded(row['imported_at']) {
     calendarFields(row, {
       'id',
       'source_system',
@@ -180,19 +179,18 @@ final class RawClockEvent {
 
 final class WorkClaim {
   WorkClaim.fromJson(Map<String, Object?> row)
-      : id = calendarUuid(row['id']),
-        sourceKind = workforceText(row['source_kind'], 20),
-        sourceId = calendarUuid(row['source_id']),
-        span = WorkSpan(
-          workforceInstant(row['start_utc']),
-          workforceInstant(row['end_utc']),
-        ),
-        grossSeconds = workforceInteger(row['gross_seconds'], positive: true),
-        breakSeconds = workforceInteger(row['break_seconds']),
-        payableSeconds =
-            workforceInteger(row['payable_seconds'], positive: true),
-        active = row['active'] as bool,
-        calendarVersionId = calendarUuid(row['calendar_version_id']) {
+    : id = calendarUuid(row['id']),
+      sourceKind = workforceText(row['source_kind'], 20),
+      sourceId = calendarUuid(row['source_id']),
+      span = WorkSpan(
+        workforceInstant(row['start_utc']),
+        workforceInstant(row['end_utc']),
+      ),
+      grossSeconds = workforceInteger(row['gross_seconds'], positive: true),
+      breakSeconds = workforceInteger(row['break_seconds']),
+      payableSeconds = workforceInteger(row['payable_seconds'], positive: true),
+      active = row['active'] as bool,
+      calendarVersionId = calendarUuid(row['calendar_version_id']) {
     calendarFields(row, {
       'id',
       'source_kind',
@@ -224,24 +222,23 @@ final class WorkClaim {
 
 final class AttendanceRevision {
   AttendanceRevision.fromJson(Map<String, Object?> row)
-      : id = calendarUuid(row['id']),
-        version = workforceInteger(row['version'], positive: true),
-        calendarVersionId = calendarUuid(row['calendar_version_id']),
-        startLocal = workforceText(row['start_local'], 32),
-        endLocal = workforceText(row['end_local'], 32),
-        startOffsetSeconds = row['start_offset_seconds'] as int,
-        endOffsetSeconds = row['end_offset_seconds'] as int,
-        span = WorkSpan(
-          workforceInstant(row['start_utc']),
-          workforceInstant(row['end_utc']),
-        ),
-        breaks = row['breaks'] as List,
-        grossSeconds = workforceInteger(row['gross_seconds'], positive: true),
-        breakSeconds = workforceInteger(row['break_seconds']),
-        payableSeconds =
-            workforceInteger(row['payable_seconds'], positive: true),
-        reason = workforceText(row['reason'], 1000),
-        recordedBy = calendarUuid(row['recorded_by']) {
+    : id = calendarUuid(row['id']),
+      version = workforceInteger(row['version'], positive: true),
+      calendarVersionId = calendarUuid(row['calendar_version_id']),
+      startLocal = workforceText(row['start_local'], 32),
+      endLocal = workforceText(row['end_local'], 32),
+      startOffsetSeconds = row['start_offset_seconds'] as int,
+      endOffsetSeconds = row['end_offset_seconds'] as int,
+      span = WorkSpan(
+        workforceInstant(row['start_utc']),
+        workforceInstant(row['end_utc']),
+      ),
+      breaks = row['breaks'] as List,
+      grossSeconds = workforceInteger(row['gross_seconds'], positive: true),
+      breakSeconds = workforceInteger(row['break_seconds']),
+      payableSeconds = workforceInteger(row['payable_seconds'], positive: true),
+      reason = workforceText(row['reason'], 1000),
+      recordedBy = calendarUuid(row['recorded_by']) {
     calendarFields(row, {
       'id',
       'version',
@@ -310,14 +307,14 @@ final class AttendanceRevision {
 
 final class AttendanceEntry {
   AttendanceEntry.fromJson(Map<String, Object?> row)
-      : id = calendarUuid(row['id']),
-        tenantId = calendarUuid(row['tenant_id']),
-        legalEntityId = calendarUuid(row['legal_entity_id']),
-        branchId = calendarUuid(row['branch_id']),
-        employeeId = calendarUuid(row['employee_id']),
-        version = workforceInteger(row['version'], positive: true),
-        status = workforceText(row['status'], 20),
-        revision = AttendanceRevision.fromJson(workforceMap(row['revision'])) {
+    : id = calendarUuid(row['id']),
+      tenantId = calendarUuid(row['tenant_id']),
+      legalEntityId = calendarUuid(row['legal_entity_id']),
+      branchId = calendarUuid(row['branch_id']),
+      employeeId = calendarUuid(row['employee_id']),
+      version = workforceInteger(row['version'], positive: true),
+      status = workforceText(row['status'], 20),
+      revision = AttendanceRevision.fromJson(workforceMap(row['revision'])) {
     calendarFields(row, {
       'id',
       'tenant_id',
@@ -368,23 +365,23 @@ final class AttendanceEntry {
 
 final class LeaveRequest {
   LeaveRequest.fromJson(Map<String, Object?> row)
-      : id = calendarUuid(row['id']),
-        tenantId = calendarUuid(row['tenant_id']),
-        legalEntityId = calendarUuid(row['legal_entity_id']),
-        branchId = calendarUuid(row['branch_id']),
-        employeeId = calendarUuid(row['employee_id']),
-        policyId = calendarUuid(row['policy_id']),
-        policyVersionId = calendarUuid(row['policy_version_id']),
-        calendarVersionId = calendarUuid(row['calendar_version_id']),
-        version = workforceInteger(row['version'], positive: true),
-        status = workforceText(row['status'], 20),
-        span = WorkSpan(
-          workforceInstant(row['start_utc']),
-          workforceInstant(row['end_utc']),
-        ),
-        chargeSeconds = workforceInteger(row['charge_seconds'], positive: true),
-        unpaidSeconds = workforceInteger(row['unpaid_seconds']),
-        reason = workforceText(row['reason'], 1000) {
+    : id = calendarUuid(row['id']),
+      tenantId = calendarUuid(row['tenant_id']),
+      legalEntityId = calendarUuid(row['legal_entity_id']),
+      branchId = calendarUuid(row['branch_id']),
+      employeeId = calendarUuid(row['employee_id']),
+      policyId = calendarUuid(row['policy_id']),
+      policyVersionId = calendarUuid(row['policy_version_id']),
+      calendarVersionId = calendarUuid(row['calendar_version_id']),
+      version = workforceInteger(row['version'], positive: true),
+      status = workforceText(row['status'], 20),
+      span = WorkSpan(
+        workforceInstant(row['start_utc']),
+        workforceInstant(row['end_utc']),
+      ),
+      chargeSeconds = workforceInteger(row['charge_seconds'], positive: true),
+      unpaidSeconds = workforceInteger(row['unpaid_seconds']),
+      reason = workforceText(row['reason'], 1000) {
     calendarFields(row, {
       'id',
       'employee_id',
@@ -473,11 +470,11 @@ final class LeaveRequest {
 
 final class LeaveBalance {
   LeaveBalance.fromJson(Map<String, Object?> row)
-      : employeeId = calendarUuid(row['employee_id']),
-        policyId = calendarUuid(row['policy_id']),
-        asOf = CivilDate.parse(workforceText(row['as_of'], 10)),
-        availableSeconds = workforceInteger(row['available_seconds']),
-        accountVersion = workforceInteger(row['account_version']) {
+    : employeeId = calendarUuid(row['employee_id']),
+      policyId = calendarUuid(row['policy_id']),
+      asOf = CivilDate.parse(workforceText(row['as_of'], 10)),
+      availableSeconds = workforceInteger(row['available_seconds']),
+      accountVersion = workforceInteger(row['account_version']) {
     calendarFields(row, {
       'tenant_id',
       'legal_entity_id',
@@ -499,8 +496,9 @@ final class LeaveBalance {
         (item) => LeaveGrantSource.fromJson(workforceMap(item)),
       ),
     );
-    nextCursor =
-        row['next_cursor'] == null ? null : calendarUuid(row['next_cursor']);
+    nextCursor = row['next_cursor'] == null
+        ? null
+        : calendarUuid(row['next_cursor']);
     if (grants.map((g) => g.id).toSet().length != grants.length ||
         (nextCursor != null &&
             (grants.length != 50 || nextCursor != grants.last.id))) {
@@ -516,15 +514,15 @@ final class LeaveBalance {
 
 final class LeaveGrantSource {
   LeaveGrantSource.fromJson(Map<String, Object?> row)
-      : id = calendarUuid(row['id']),
-        policyVersionId = calendarUuid(row['policy_version_id']),
-        sourceKind = workforceText(row['source_kind'], 20),
-        sourceKey = workforceText(row['source_key'], 160),
-        effective = CivilDate.parse(row['effective_date'] as String),
-        expiry = CivilDate.parse(row['expiry_date'] as String),
-        seconds = workforceInteger(row['seconds'], positive: true),
-        remainingSeconds = workforceInteger(row['remaining_seconds']),
-        recordedAt = workforceRecorded(row['recorded_at']) {
+    : id = calendarUuid(row['id']),
+      policyVersionId = calendarUuid(row['policy_version_id']),
+      sourceKind = workforceText(row['source_kind'], 20),
+      sourceKey = workforceText(row['source_key'], 160),
+      effective = CivilDate.parse(row['effective_date'] as String),
+      expiry = CivilDate.parse(row['expiry_date'] as String),
+      seconds = workforceInteger(row['seconds'], positive: true),
+      remainingSeconds = workforceInteger(row['remaining_seconds']),
+      recordedAt = workforceRecorded(row['recorded_at']) {
     calendarFields(row, {
       'id',
       'source_kind',
@@ -550,24 +548,23 @@ final class LeaveGrantSource {
 
 final class LeavePolicyVersion {
   LeavePolicyVersion.fromJson(Map<String, Object?> row)
-      : id = calendarUuid(row['id']),
-        version = workforceInteger(row['version'], positive: true),
-        start = CivilDate.parse(row['start_date'] as String),
-        endExclusive = CivilDate.parse(row['end_date_exclusive'] as String),
-        unit = row['unit'] as String,
-        daySeconds = workforceInteger(row['day_seconds'], positive: true),
-        accrualFrequency = row['accrual_frequency'] as String,
-        accrualSeconds =
-            workforceInteger(row['accrual_seconds'], positive: true),
-        carryCapSeconds = workforceInteger(row['carry_cap_seconds']),
-        expiryDays = workforceInteger(row['expiry_days'], positive: true),
-        eligibleTypes = List<String>.unmodifiable(
-          (row['eligible_types'] as List).cast<String>(),
-        ),
-        allowUnpaid = row['allow_unpaid'] as bool,
-        reason = workforceText(row['reason'], 1000),
-        publishedBy = calendarUuid(row['published_by']),
-        publishedAt = workforceRecorded(row['published_at']) {
+    : id = calendarUuid(row['id']),
+      version = workforceInteger(row['version'], positive: true),
+      start = CivilDate.parse(row['start_date'] as String),
+      endExclusive = CivilDate.parse(row['end_date_exclusive'] as String),
+      unit = row['unit'] as String,
+      daySeconds = workforceInteger(row['day_seconds'], positive: true),
+      accrualFrequency = row['accrual_frequency'] as String,
+      accrualSeconds = workforceInteger(row['accrual_seconds'], positive: true),
+      carryCapSeconds = workforceInteger(row['carry_cap_seconds']),
+      expiryDays = workforceInteger(row['expiry_days'], positive: true),
+      eligibleTypes = List<String>.unmodifiable(
+        (row['eligible_types'] as List).cast<String>(),
+      ),
+      allowUnpaid = row['allow_unpaid'] as bool,
+      reason = workforceText(row['reason'], 1000),
+      publishedBy = calendarUuid(row['published_by']),
+      publishedAt = workforceRecorded(row['published_at']) {
     calendarFields(row, {
       'id',
       'version',
@@ -589,9 +586,10 @@ final class LeavePolicyVersion {
       'action': 'publish',
       'id': id,
       'version_id': id,
-      for (final key in WorkforceCommands
-          .fields[WorkforceCommandKind.leavePolicy]!['publish']!
-          .difference({'action', 'id', 'version_id'}))
+      for (final key
+          in WorkforceCommands
+              .fields[WorkforceCommandKind.leavePolicy]!['publish']!
+              .difference({'action', 'id', 'version_id'}))
         key: row[key],
     });
   }
@@ -607,11 +605,11 @@ final class LeavePolicyVersion {
 
 final class LeavePolicy {
   LeavePolicy.fromJson(Map<String, Object?> row)
-      : id = calendarUuid(row['id']),
-        code = workforceText(row['code'], 32),
-        name = workforceText(row['name'], 160),
-        version = workforceInteger(row['version'], positive: true),
-        latest = _latest(row['versions']) {
+    : id = calendarUuid(row['id']),
+      code = workforceText(row['code'], 32),
+      name = workforceText(row['name'], 160),
+      version = workforceInteger(row['version'], positive: true),
+      latest = _latest(row['versions']) {
     calendarFields(row, {'id', 'code', 'name', 'version', 'versions'});
     if (latest.version != version ||
         !RegExp(r'^[A-Z0-9][A-Z0-9_-]{0,31}$').hasMatch(code)) {
@@ -644,16 +642,16 @@ const _leaveStatuses = {
 /// One working day of a multi-day leave batch: a one-slot leave request.
 final class LeaveBatchDay {
   LeaveBatchDay.fromJson(Map<String, Object?> row)
-      : leaveDate = CivilDate.parse(workforceText(row['leave_date'], 10)),
-        requestId = calendarUuid(row['request_id']),
-        version = workforceInteger(row['version'], positive: true),
-        status = workforceText(row['status'], 20),
-        span = WorkSpan(
-          workforceInstant(row['start_utc']),
-          workforceInstant(row['end_utc']),
-        ),
-        chargeSeconds = workforceInteger(row['charge_seconds'], positive: true),
-        unpaidSeconds = workforceInteger(row['unpaid_seconds']) {
+    : leaveDate = CivilDate.parse(workforceText(row['leave_date'], 10)),
+      requestId = calendarUuid(row['request_id']),
+      version = workforceInteger(row['version'], positive: true),
+      status = workforceText(row['status'], 20),
+      span = WorkSpan(
+        workforceInstant(row['start_utc']),
+        workforceInstant(row['end_utc']),
+      ),
+      chargeSeconds = workforceInteger(row['charge_seconds'], positive: true),
+      unpaidSeconds = workforceInteger(row['unpaid_seconds']) {
     calendarFields(row, {
       'leave_date',
       'request_id',
@@ -679,21 +677,23 @@ final class LeaveBatchDay {
 /// days disagree.
 final class LeaveBatch {
   LeaveBatch.fromJson(Map<String, Object?> row)
-      : id = calendarUuid(row['id']),
-        employeeId = calendarUuid(row['employee_id']),
-        policyId = calendarUuid(row['policy_id']),
-        start = CivilDate.parse(workforceText(row['start_date'], 10)),
-        end = CivilDate.parse(workforceText(row['end_date'], 10)),
-        origin = workforceText(row['origin'], 10),
-        createdBy =
-            row['created_by'] == null ? null : calendarUuid(row['created_by']),
-        status = workforceText(row['status'], 20),
-        chargeSeconds = workforceInteger(row['charge_seconds'], positive: true),
-        unpaidSeconds = workforceInteger(row['unpaid_seconds']),
-        days = List.unmodifiable(
-          (row['days'] is List ? row['days'] as List : const [])
-              .map((day) => LeaveBatchDay.fromJson(workforceMap(day))),
-        ) {
+    : id = calendarUuid(row['id']),
+      employeeId = calendarUuid(row['employee_id']),
+      policyId = calendarUuid(row['policy_id']),
+      start = CivilDate.parse(workforceText(row['start_date'], 10)),
+      end = CivilDate.parse(workforceText(row['end_date'], 10)),
+      origin = workforceText(row['origin'], 10),
+      createdBy = row['created_by'] == null
+          ? null
+          : calendarUuid(row['created_by']),
+      status = workforceText(row['status'], 20),
+      chargeSeconds = workforceInteger(row['charge_seconds'], positive: true),
+      unpaidSeconds = workforceInteger(row['unpaid_seconds']),
+      days = List.unmodifiable(
+        (row['days'] is List ? row['days'] as List : const []).map(
+          (day) => LeaveBatchDay.fromJson(workforceMap(day)),
+        ),
+      ) {
     final keys = {
       'id',
       'employee_id',
@@ -949,7 +949,8 @@ final class WorkforceCommands {
       validateRawImport(payload);
       return;
     }
-    final optional = kind == WorkforceCommandKind.attendance &&
+    final optional =
+        kind == WorkforceCommandKind.attendance &&
             (action == 'create' || action == 'correct')
         ? {'breaks', 'raw_start_id', 'raw_end_id'}
         : <String>{};
@@ -1123,7 +1124,7 @@ abstract interface class WorkforceRepository {
     String? after,
   });
   Future<WorkforceDetail<AttendanceEntry, AttendanceHistoryEntry>>
-      attendanceDetail(TenantContext scope, String entryId, {String? after});
+  attendanceDetail(TenantContext scope, String entryId, {String? after});
   Future<WorkforcePage<RawClockEvent>> rawEvents(
     TenantContext scope,
     String employeeId, {
