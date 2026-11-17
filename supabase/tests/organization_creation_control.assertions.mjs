@@ -152,11 +152,11 @@ export async function testOrganizationCreationControl(db) {
       await actor(operator, "aal2");
       await setPackage(tenant, "modules-base", "Customer restored modules");
       assert.equal(await enabled(tenant, "module.people"), true);
-      await tx.query("update billing.tenant_subscriptions set trial_ends_at = statement_timestamp() - interval '1 second' where tenant_id=$1", [tenant]);
+      await tx.query("update billing.tenant_subscriptions set trial_ends_at = now() - interval '1 second' where tenant_id=$1", [tenant]);
       assert.equal(await enabled(tenant, "module.people"), false, "an expired trial has no modules");
       await tx.query("update billing.tenant_subscriptions set status='active', current_period_ends_at=null where tenant_id=$1", [tenant]);
       assert.equal(await enabled(tenant, "module.people"), true, "an open-ended active term keeps its modules");
-      await tx.query("update billing.tenant_subscriptions set current_period_ends_at = statement_timestamp() - interval '1 second' where tenant_id=$1", [tenant]);
+      await tx.query("update billing.tenant_subscriptions set current_period_ends_at = now() - interval '1 second' where tenant_id=$1", [tenant]);
       assert.equal(await enabled(tenant, "module.people"), false, "an ended term has no modules");
 
       // 7. The helper and the event table are not reachable by clients.

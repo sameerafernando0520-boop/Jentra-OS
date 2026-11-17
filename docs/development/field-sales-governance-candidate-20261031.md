@@ -52,6 +52,8 @@ leave, HR-document or payroll actions.
    idempotent **order/discount request**, with no canonical order, reservation,
    invoice, receipt or customer acceptance. At this request stage, credit is
    explicitly awaiting company review and stock availability is unavailable.
+   (The catalogue shows advisory stock states since Phase 4b; the request
+   itself still records stock as unavailable and reserves nothing.)
    This does not claim complete S1 quotation/fulfilment or FR-7209 acceptance.
 5. An independent company approver needs current AAL2, the scoped
    `sales.field.discounts.decide` capability and existing
@@ -118,7 +120,7 @@ reopen the workspace after that session is removed.
 | --- | --- |
 | `field_sales_workspace()` | Current representative's authorized company/branch choices and warehouses |
 | `field_sales_customers(t,e,b,query,after,limit)` | Assigned customer page, including zero-transaction customers |
-| `field_sales_catalogue(t,e,b,customer,after,limit)` | Current governed price policies for one assigned customer |
+| `field_sales_catalogue(t,e,b,customer,after,limit)` | Current governed price policies for one assigned customer, each with advisory stock: `stock_state` (`in_stock`, `out_of_stock`, `not_tracked`), `stock_by_warehouse` for the branch's active warehouses and `stock_as_of`. States only, never quantities; nothing is reserved |
 | `field_sales_preview(t,e,b,input)` | Exact requested terms/pricing and reviewed digest |
 | `field_sales_command(t,e,b,command,key,timestamp,payload,expected)` | New order/discount request; expected version is null |
 | `field_sales_subject_page(t,e,b,after,limit)` | Current authorized representative history or scoped company review |

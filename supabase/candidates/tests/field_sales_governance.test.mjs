@@ -60,6 +60,48 @@ export async function exercise(db,checks){
  await reject('legacy export creation denied despite broad analytics grants','42501',()=>scalar("select api.create_export_job($1,'parties','csv','{}','[]',0,'synthetic.csv',0,$2)",[t,randomUUID()]));
  await reject('legacy canonical command denied despite inherited grant','42501',()=>scalar('select api.upsert_sales_order($1,$2,$3,$4,$5,now(),$6,null)',[t,e,b,randomUUID(),randomUUID(),{}]));
  await reject('other portfolio catalogue denied','42501',()=>scalar('select api.field_sales_catalogue($1,$2,$3,$4)',[t,e,b,ids.c2]));
+ // Stock availability: a state per product and per pickable warehouse, an
+ // as-of time, no quantities and no reservation.
+ const stock={product:randomUUID(),policy:randomUUID(),closed:randomUUID()};
+ const asOwner=async work=>{await db.exec('reset role');await work();await actor(ids.rep);};
+ const setStock=(warehouse,onHand,allocated)=>db.query(`insert into inventory.stock_balances(tenant_id,legal_entity_id,branch_id,warehouse_id,product_id,on_hand_quantity,allocated_quantity,created_by,updated_by)
+  values($1,$2,$3,$4,$5,$6,$7,$8,$8) on conflict(tenant_id,legal_entity_id,branch_id,warehouse_id,product_id)
+  do update set on_hand_quantity=excluded.on_hand_quantity,allocated_quantity=excluded.allocated_quantity`,[t,e,b,warehouse,stock.product,onHand,allocated,ids.owner]);
+ await asOwner(async()=>{
+  await db.query("insert into inventory.products(id,tenant_id,legal_entity_id,sku,name,kind,base_unit_id,created_by,updated_by) values($1,$2,$3,'P2','Stocked Product','stocked',$4,$5,$5)",[stock.product,t,e,ids.unit,ids.owner]);
+  await db.query(`insert into field_sales.price_policies(id,tenant_id,legal_entity_id,branch_id,customer_id,product_id,unit_id,currency_code,unit_price,max_discount_percent,valid_from,valid_until)
+   values($1,$2,$3,$4,$5,$6,$7,'LKR',2,0,current_date-1,current_date+1)`,[stock.policy,t,e,b,ids.c1,stock.product,ids.unit]);
+  await db.query("insert into core.warehouses(id,tenant_id,legal_entity_id,branch_id,code,name,status,created_by) values($1,$2,$3,$4,'OLD','Closed Warehouse','inactive',$5)",[stock.closed,t,e,b,ids.owner]);
+ });
+ const shelf=async()=>{
+  const page=await scalar('select api.field_sales_catalogue($1,$2,$3,$4)',[t,e,b,ids.c1]);
+  return {page,stocked:page.items.find(x=>x.id===stock.product),untracked:page.items.find(x=>x.id===ids.product)};
+ };
+ let seen=await shelf();
+ check('a product that is not stocked reports that stock is not tracked',
+  seen.untracked.stock_state==='not_tracked'&&seen.untracked.stock_by_warehouse.length===0);
+ check('a stocked product with no balance is out of stock in every pickable warehouse',
+  seen.stocked.stock_state==='out_of_stock'&&seen.stocked.stock_by_warehouse.length===1
+  &&seen.stocked.stock_by_warehouse[0].warehouse_id===ids.warehouse&&seen.stocked.stock_by_warehouse[0].state==='out_of_stock');
+ check('availability carries the time it was read',
+  seen.page.items.every(x=>x.stock_as_of===seen.page.as_of)&&!Number.isNaN(Date.parse(seen.page.as_of)));
+ await asOwner(()=>setStock(ids.warehouse,5,5));
+ seen=await shelf();
+ check('fully allocated stock is out of stock',seen.stocked.stock_state==='out_of_stock');
+ await asOwner(()=>setStock(stock.closed,9,0));
+ seen=await shelf();
+ check('stock in an inactive warehouse is not offered',
+  seen.stocked.stock_state==='out_of_stock'&&seen.stocked.stock_by_warehouse.every(x=>x.warehouse_id!==stock.closed));
+ await asOwner(()=>setStock(ids.warehouse,5,2));
+ seen=await shelf();
+ check('unallocated stock is in stock for that warehouse',
+  seen.stocked.stock_state==='in_stock'&&seen.stocked.stock_by_warehouse[0].state==='in_stock');
+ check('availability never discloses quantities',seen.page.items.every(x=>
+  !Object.keys(x).some(k=>/quantity|on_hand|allocated|available|balance/.test(k))
+  &&x.stock_by_warehouse.every(w=>JSON.stringify(Object.keys(w).sort())==='["state","warehouse_id"]')));
+ await asOwner(async()=>check('reading availability reserves nothing',
+  (await one('select count(*)::int n from inventory.stock_reservations where tenant_id=$1',[t])).n===0
+  &&(await one('select allocated_quantity::text q from inventory.stock_balances where warehouse_id=$1 and product_id=$2',[ids.warehouse,stock.product])).q==='2.000000'));
  await reject('page cap enforced','22023',()=>scalar('select api.field_sales_customers($1,$2,$3,$4,null,201)',[t,e,b,'']));
  await reject('private helpers denied','42501',()=>scalar('select field_sales.assignment($1,$2,$3,$4,$5)',[t,e,b,ids.c1,ids.rep]));
  const input={customer_id:ids.c1,warehouse_id:ids.warehouse,requested_date:new Date(Date.now()+86400000).toISOString().slice(0,10),discount_percent:'10',discount_reason:'Company discount request',reference:'SYNTHETIC',notes:'',lines:[{policy_id:ids.policy,policy_version:'1',quantity:'1.125'}]};
