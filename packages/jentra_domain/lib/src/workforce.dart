@@ -631,6 +631,164 @@ final class LeavePolicy {
   }
 }
 
+const _leaveStatuses = {
+  'draft',
+  'submitted',
+  'approved',
+  'rejected',
+  'cancelled',
+};
+
+/// One working day of a multi-day leave batch: a one-slot leave request.
+final class LeaveBatchDay {
+  LeaveBatchDay.fromJson(Map<String, Object?> row)
+    : leaveDate = CivilDate.parse(workforceText(row['leave_date'], 10)),
+      requestId = calendarUuid(row['request_id']),
+      version = workforceInteger(row['version'], positive: true),
+      status = workforceText(row['status'], 20),
+      span = WorkSpan(
+        workforceInstant(row['start_utc']),
+        workforceInstant(row['end_utc']),
+      ),
+      chargeSeconds = workforceInteger(row['charge_seconds'], positive: true),
+      unpaidSeconds = workforceInteger(row['unpaid_seconds']) {
+    calendarFields(row, {
+      'leave_date',
+      'request_id',
+      'version',
+      'status',
+      'start_utc',
+      'end_utc',
+      'charge_seconds',
+      'unpaid_seconds',
+    });
+    if (!_leaveStatuses.contains(status) || unpaidSeconds > chargeSeconds) {
+      throw const FormatException('Leave batch day changed.');
+    }
+  }
+  final CivilDate leaveDate;
+  final String requestId, status;
+  final int version, chargeSeconds, unpaidSeconds;
+  final WorkSpan span;
+}
+
+/// A date range of leave, shown and decided as one item. Each day is still a
+/// one-slot leave request on the ledger; [status] is `mixed` only when the
+/// days disagree.
+final class LeaveBatch {
+  LeaveBatch.fromJson(Map<String, Object?> row)
+    : id = calendarUuid(row['id']),
+      employeeId = calendarUuid(row['employee_id']),
+      policyId = calendarUuid(row['policy_id']),
+      start = CivilDate.parse(workforceText(row['start_date'], 10)),
+      end = CivilDate.parse(workforceText(row['end_date'], 10)),
+      origin = workforceText(row['origin'], 10),
+      createdBy = row['created_by'] == null
+          ? null
+          : calendarUuid(row['created_by']),
+      status = workforceText(row['status'], 20),
+      chargeSeconds = workforceInteger(row['charge_seconds'], positive: true),
+      unpaidSeconds = workforceInteger(row['unpaid_seconds']),
+      days = List.unmodifiable(
+        (row['days'] is List ? row['days'] as List : const []).map(
+          (day) => LeaveBatchDay.fromJson(workforceMap(day)),
+        ),
+      ) {
+    final keys = {
+      'id',
+      'employee_id',
+      'policy_id',
+      'start_date',
+      'end_date',
+      'origin',
+      'status',
+      'charge_seconds',
+      'unpaid_seconds',
+      'days',
+    };
+    if (row.containsKey('created_by')) keys.add('created_by');
+    calendarFields(row, keys);
+    if (days.isEmpty ||
+        end.compareTo(start) < 0 ||
+        !{'staff', 'self'}.contains(origin) ||
+        !(_leaveStatuses.contains(status) || status == 'mixed') ||
+        days.fold<int>(0, (sum, day) => sum + day.chargeSeconds) !=
+            chargeSeconds) {
+      throw const FormatException('Leave batch changed.');
+    }
+    CivilDate? previous;
+    for (final day in days) {
+      if (day.leaveDate.compareTo(start) < 0 ||
+          day.leaveDate.compareTo(end) > 0 ||
+          previous != null && day.leaveDate.compareTo(previous) <= 0) {
+        throw const FormatException('Leave batch days changed.');
+      }
+      previous = day.leaveDate;
+    }
+    final statuses = days.map((day) => day.status).toSet();
+    if (status != (statuses.length == 1 ? statuses.single : 'mixed')) {
+      throw const FormatException('Leave batch status changed.');
+    }
+  }
+  final String id, employeeId, policyId, origin, status;
+  final String? createdBy;
+  final CivilDate start, end;
+  final int chargeSeconds, unpaidSeconds;
+  final List<LeaveBatchDay> days;
+}
+
+/// Commands for a multi-day leave batch. A range covers at most
+/// [maxDays] calendar days; non-working days are skipped by the server.
+final class LeaveRangeCommands {
+  static const maxDays = 31;
+  static const rangeFields = {
+    'batch_id',
+    'employee_id',
+    'policy_version_id',
+    'calendar_version_id',
+    'start_date',
+    'end_date',
+    'reason',
+  };
+  static const batchActions = {'submit', 'approve', 'reject', 'cancel'};
+
+  static void validateRange(Map<String, Object?> payload) {
+    if (payload.length != rangeFields.length ||
+        payload.keys.any((key) => !rangeFields.contains(key))) {
+      throw const FormatException('Leave range fields are invalid.');
+    }
+    for (final key in [
+      'batch_id',
+      'employee_id',
+      'policy_version_id',
+      'calendar_version_id',
+    ]) {
+      calendarUuid(payload[key]);
+    }
+    final start = CivilDate.parse(workforceText(payload['start_date'], 10));
+    final end = CivilDate.parse(workforceText(payload['end_date'], 10));
+    final days = end.utc.difference(start.utc).inDays;
+    if (days < 0 || days >= maxDays) {
+      throw FormatException(
+        'Choose an end date on or after the start, within $maxDays days.',
+      );
+    }
+    workforceText(payload['reason'], 1000);
+  }
+
+  static void validateAction(Map<String, Object?> payload) {
+    const keys = {'action', 'batch_id', 'employee_id', 'reason'};
+    if (payload.length != keys.length ||
+        payload.keys.any((key) => !keys.contains(key)) ||
+        !batchActions.contains(payload['action'])) {
+      throw const FormatException('Leave batch action fields are invalid.');
+    }
+    calendarUuid(payload['batch_id']);
+    calendarUuid(payload['employee_id']);
+    workforceText(payload['reason'], 1000);
+  }
+}
+
 enum WorkforceCommandKind { attendance, leavePolicy, leaveGrant, leaveRequest }
 
 final class WorkforceCommands {
@@ -999,6 +1157,25 @@ abstract interface class WorkforceRepository {
     TenantContext scope,
     String commandId,
   );
+
+  /// Multi-day leave batches for one employee, each with its days.
+  Future<WorkforcePage<LeaveBatch>> leaveBatches(
+    TenantContext scope,
+    String employeeId, {
+    String? after,
+  });
+
+  /// Creates the draft one-slot requests for every working day of a range,
+  /// all or none. The payload is checked by [LeaveRangeCommands.validateRange].
+  Future<LeaveBatch> createLeaveRange(
+    CommandEnvelope<Map<String, Object?>> command,
+  );
+
+  /// Submits, approves, rejects or cancels every day of a batch together.
+  Future<LeaveBatch> decideLeaveBatch(
+    CommandEnvelope<Map<String, Object?>> command,
+  );
+
   Future<Map<String, Object?>> execute(
     WorkforceCommandKind kind,
     CommandEnvelope<Map<String, Object?>> command,

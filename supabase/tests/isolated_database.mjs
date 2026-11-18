@@ -21,6 +21,7 @@ export const organizationCandidates = [
   "20261106106000_managed_login_membership_bridge.sql",
   "20261114090000_organization_creation_control.sql",
   "20261114100000_people_access_hardening.sql",
+  "20261114110000_people_leave_range.sql",
   "20261117090000_field_sales_reps.sql",
   "20261117100000_field_sales_visits.sql",
 ];

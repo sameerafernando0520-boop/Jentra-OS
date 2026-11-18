@@ -46,6 +46,7 @@ final class FakeFieldSalesGateway implements FieldSalesGateway {
   Object? receiptFailure;
   bool badReceipt = false, multipleScopes = false, secondCustomer = false;
   Completer<List<FieldSalesJson>>? catalogueWait;
+  FieldSalesJson stock = const {};
   Completer<FieldSalesJson>? previewWait;
   final commands = <FieldSalesCommand>[];
   FieldSalesJson? committed;
@@ -121,6 +122,7 @@ final class FakeFieldSalesGateway implements FieldSalesGateway {
         'unit_price': '1.250000',
         'max_discount_percent': '10',
         'stock_state': 'unavailable',
+        ...stock,
       },
     ];
   }
