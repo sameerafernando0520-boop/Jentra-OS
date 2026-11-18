@@ -114,3 +114,117 @@ FieldSalesJson fieldSalesObject(Object? value) {
   }
   return Map<String, dynamic>.from(value);
 }
+
+final _fieldSalesCount = RegExp(r'^\d{1,12}$');
+final _fieldSalesDecimal = RegExp(r'^\d{1,14}\.\d{6}$');
+
+/// A Field Sales rep as the company sees it. The label is the HR employee
+/// name from the rep's accepted account link, or `Unlinked member ····1234`.
+/// A label that could be an e-mail address is refused as a contract fault.
+final class FieldSalesRep {
+  const FieldSalesRep({
+    required this.userId,
+    required this.label,
+    required this.linked,
+    required this.activeCustomerCount,
+    required this.submittedCount,
+    required this.pendingCount,
+    required this.approvedCount,
+    required this.rejectedCount,
+    required this.approvedTotal,
+  });
+  factory FieldSalesRep.fromJson(Object? value) {
+    final json = fieldSalesObject(value);
+    String text(String key, [RegExp? pattern]) {
+      final v = json[key];
+      if (v is! String ||
+          v.trim().isEmpty ||
+          (pattern != null && !pattern.hasMatch(v))) {
+        throw const FieldSalesFailure(
+          'CONTRACT_INVALID',
+          'The rep list returned an unsupported row.',
+        );
+      }
+      return v;
+    }
+
+    final label = text('label');
+    if (label.contains('@') || json['linked'] is! bool) {
+      throw const FieldSalesFailure(
+        'CONTRACT_INVALID',
+        'The rep list returned an unsupported row.',
+      );
+    }
+    return FieldSalesRep(
+      userId: text('user_id'),
+      label: label,
+      linked: json['linked'] as bool,
+      activeCustomerCount: text('active_customer_count', _fieldSalesCount),
+      submittedCount: text('submitted_count', _fieldSalesCount),
+      pendingCount: text('pending_count', _fieldSalesCount),
+      approvedCount: text('approved_count', _fieldSalesCount),
+      rejectedCount: text('rejected_count', _fieldSalesCount),
+      approvedTotal: text('approved_total', _fieldSalesDecimal),
+    );
+  }
+  final String userId, label;
+  final bool linked;
+
+  /// Counts and the approved total stay exact server strings.
+  final String activeCustomerCount,
+      submittedCount,
+      pendingCount,
+      approvedCount,
+      rejectedCount,
+      approvedTotal;
+}
+
+/// Reps of one company branch for a period of company local dates.
+final class FieldSalesRepList {
+  const FieldSalesRepList({
+    required this.items,
+    required this.currencyCode,
+    required this.from,
+    required this.to,
+  });
+  factory FieldSalesRepList.fromJson(Object? value) {
+    final json = fieldSalesObject(value);
+    final items = json['items'];
+    final currency = json['currency_code'];
+    if (items is! List ||
+        currency is! String ||
+        currency.isEmpty ||
+        json['from'] is! String ||
+        json['to'] is! String) {
+      throw const FieldSalesFailure(
+        'CONTRACT_INVALID',
+        'The rep list could not be opened.',
+      );
+    }
+    return FieldSalesRepList(
+      items: List.unmodifiable(items.map(FieldSalesRep.fromJson)),
+      currencyCode: currency,
+      from: json['from'] as String,
+      to: json['to'] as String,
+    );
+  }
+  final List<FieldSalesRep> items;
+  final String currencyCode, from, to;
+
+  /// The label shown for a request's rep. A rep missing from the list is never
+  /// shown by its raw id.
+  String labelFor(String? userId) {
+    for (final rep in items) {
+      if (rep.userId == userId) {
+        return rep.label;
+      }
+    }
+    return 'not listed';
+  }
+}
+
+/// A company local date as the server expects it.
+String fieldSalesDate(DateTime date) =>
+    '${date.year.toString().padLeft(4, '0')}-'
+    '${date.month.toString().padLeft(2, '0')}-'
+    '${date.day.toString().padLeft(2, '0')}';

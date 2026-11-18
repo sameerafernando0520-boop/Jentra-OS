@@ -98,6 +98,7 @@ class _CompanyReviewBody extends StatefulWidget {
 
 class _CompanyReviewBodyState extends State<_CompanyReviewBody> {
   List<FieldSalesJson> _items = [];
+  FieldSalesRepList? _reps;
   FieldSalesDecision? _pending;
   bool _busy = true;
   String? _error;
@@ -147,11 +148,21 @@ class _CompanyReviewBodyState extends State<_CompanyReviewBody> {
     try {
       final rows = await widget.gateway.subjects(widget.scope);
       final pending = await widget.store.load(widget.actor, widget.scope);
+      // Rep names are a label only. Without them the review still works and
+      // never falls back to showing a raw user id.
+      FieldSalesRepList? reps;
+      try {
+        final today = DateTime.now();
+        reps = await widget.gateway.reps(widget.scope, from: today, to: today);
+      } on Object {
+        reps = null;
+      }
       if (!_current) {
         return;
       }
       setState(() {
         _items = rows;
+        _reps = reps;
         _pending = pending;
         _busy = false;
       });
@@ -380,6 +391,9 @@ class _CompanyReviewBodyState extends State<_CompanyReviewBody> {
                             children: [
                               Text(
                                 'Request ${row['id']} · revision ${row['version']}',
+                              ),
+                              Text(
+                                'Representative: ${_reps?.labelFor(row['rep_id'] as String?) ?? 'name unavailable'}',
                               ),
                               Text(
                                 'Company: ${row['company_state']} · Customer: ${row['customer_state'] ?? 'email_link_pending'}',

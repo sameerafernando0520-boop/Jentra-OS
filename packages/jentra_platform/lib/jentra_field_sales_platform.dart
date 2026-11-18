@@ -21,6 +21,14 @@ abstract interface class FieldSalesCompanyGateway {
   Future<List<FieldSalesJson>> subjects(FieldSalesScope scope);
   Future<FieldSalesJson> receipt(FieldSalesScope scope, String key);
   Future<FieldSalesJson> decide(FieldSalesJson params);
+
+  /// Reps of the branch with HR-derived labels and their order requests
+  /// submitted from [from] to [to], both company local dates.
+  Future<FieldSalesRepList> reps(
+    FieldSalesScope scope, {
+    required DateTime from,
+    required DateTime to,
+  });
 }
 
 /// Named candidate facades only. Missing endpoints fail closed; no table or
@@ -149,6 +157,18 @@ final class SupabaseFieldSalesGateway
   @override
   Future<FieldSalesJson> submit(FieldSalesCommand c) =>
       call('field_sales_command', c.params);
+  @override
+  Future<FieldSalesRepList> reps(
+    FieldSalesScope s, {
+    required DateTime from,
+    required DateTime to,
+  }) async => FieldSalesRepList.fromJson(
+    await call('field_sales_reps', {
+      ...s.params,
+      'p_from': fieldSalesDate(from),
+      'p_to': fieldSalesDate(to),
+    }),
+  );
   @override
   Future<FieldSalesJson> receipt(FieldSalesScope s, String key) => call(
     'field_sales_command_receipt',

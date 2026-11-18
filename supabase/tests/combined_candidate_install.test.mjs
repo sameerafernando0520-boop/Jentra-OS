@@ -16,6 +16,7 @@ import { testSubscriptionHandover } from "./subscription_handover.assertions.mjs
 import { testPlatformOperatorIdentity } from "./platform_operator_identity.assertions.mjs";
 import { testSystemSerials } from "./system_serials.assertions.mjs";
 import { exercise as fieldSalesGovernance } from "../candidates/tests/field_sales_governance.test.mjs";
+import { exercise as fieldSalesReps } from "../candidates/tests/field_sales_reps.test.mjs";
 
 const migrations = new URL("../migrations/", import.meta.url);
 const candidates = new URL("../candidates/", import.meta.url);
@@ -72,6 +73,13 @@ try {
   finally { await db.exec("rollback"); }
   assert.ok(governanceChecks.length >= 88, "Field Sales governance checks ran.");
 
+  // The rep list installs after organization control and reads HR account links.
+  const repChecks = [];
+  await db.exec("begin");
+  try { await fieldSalesReps(db, repChecks); }
+  finally { await db.exec("rollback"); }
+  assert.ok(repChecks.length >= 25, "Field Sales rep list checks ran.");
+
   const owner = randomUUID(), rep = randomUUID(), outsider = randomUUID(), tenant = randomUUID();
   const field = "sales.field.customers.view", office = "core.members.invite";
   await db.query("insert into auth.users(id,email) values ($1,'owner@fixture.invalid'),($2,'rep@fixture.invalid'),($3,'outsider@fixture.invalid')",
@@ -116,7 +124,7 @@ try {
 
   console.log("Combined candidate install verified: all candidates apply in order, organization control passes above " +
     "company administration, Field Sales governance passes below it (" + governanceChecks.length +
-    " checks), and ordinary memberships remain guarded.");
+    " checks), the rep list passes above it (" + repChecks.length + " checks), and ordinary memberships remain guarded.");
 } finally {
   await db.close();
 }
