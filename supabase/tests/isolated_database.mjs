@@ -23,12 +23,14 @@ export const organizationCandidates = [
   "20261114100000_people_access_hardening.sql",
   "20261114110000_people_leave_range.sql",
   "20261117090000_field_sales_reps.sql",
+  "20261117100000_field_sales_visits.sql",
 ];
 
 // Candidates in the list above that build on Field Sales. Suites that install
 // organization control without Field Sales leave them out.
 export const fieldSalesCandidates = new Set([
   "20261117090000_field_sales_reps.sql",
+  "20261117100000_field_sales_visits.sql",
 ]);
 
 // Organization creation control blocks self-created organizations by default.

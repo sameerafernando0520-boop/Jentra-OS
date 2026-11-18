@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:jentra_desktop/src/app_providers.dart';
 import 'package:jentra_desktop/src/features/sales/field_company_review.dart';
 import 'package:jentra_desktop/src/features/sales/field_sales_reps_screen.dart';
+import 'package:jentra_desktop/src/features/sales/field_sales_visits_screen.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_domain/jentra_field_sales.dart';
 import 'package:jentra_platform/jentra_platform.dart';
@@ -60,6 +61,45 @@ final class _Gateway implements FieldSalesCompanyGateway {
       'from': fieldSalesDate(from),
       'to': fieldSalesDate(to),
     });
+  }
+
+  final visitCalls = <(String, String)>[];
+
+  @override
+  Future<List<FieldSalesJson>> companyVisits(
+    FieldSalesScope scope, {
+    required DateTime from,
+    required DateTime to,
+  }) async {
+    expect(scope.key, 'tenant.company.branch');
+    visitCalls.add((fieldSalesDate(from), fieldSalesDate(to)));
+    return [
+      {
+        'id': 'visit-one',
+        'rep_id': _linkedRep,
+        'rep_label': 'Asha Perera',
+        'customer_name': 'Lanka Traders',
+        'state': 'completed',
+        'purpose': 'Quarterly review',
+        'planned_for': '2026-11-17',
+        'checked_in_at': '2026-11-17T04:00:00Z',
+        'check_in_location': {'latitude': '6.927079', 'longitude': '79.861244'},
+        'completed_at': '2026-11-17T05:00:00Z',
+        'complete_location': null,
+        'outcome': 'Met the buyer',
+        'next_action': 'Send prices',
+        'next_action_due': '2026-11-20',
+      },
+      {
+        'id': 'visit-two',
+        'rep_id': _unlinkedRep,
+        'rep_label': 'Unlinked member ····9f3a',
+        'customer_name': 'Colombo Stores',
+        'state': 'cancelled',
+        'purpose': 'Collect feedback',
+        'cancel_reason': 'Shop closed',
+      },
+    ];
   }
 
   @override
@@ -226,5 +266,46 @@ void main() {
     expect(find.text('Representative: name unavailable'), findsOneWidget);
     expect(find.text('Request request-one · revision 1'), findsOneWidget);
     expect(find.textContaining(_linkedRep), findsNothing);
+  });
+
+  testWidgets(
+    'visit list shows reps by label, outcomes and recorded locations',
+    (tester) async {
+      final h = _Harness();
+      await h.pump(tester, const FieldSalesVisits(_scope));
+      expect(h.gateway.visitCalls, [('2026-11-01', '2026-11-17')]);
+      expect(find.text('Lanka Traders · Completed'), findsOneWidget);
+      expect(find.text('Representative: Asha Perera'), findsOneWidget);
+      expect(
+        find.text('Representative: Unlinked member ····9f3a'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Checked in 2026-11-17T04:00:00Z at 6.927079, 79.861244'),
+        findsOneWidget,
+      );
+      expect(find.text('Completed 2026-11-17T05:00:00Z'), findsOneWidget);
+      expect(
+        find.text('Next action: Send prices by 2026-11-20'),
+        findsOneWidget,
+      );
+      expect(find.text('Cancelled: Shop closed'), findsOneWidget);
+      expect(find.textContaining(_linkedRep), findsNothing);
+      await tester.tap(find.text('Last 90 days'));
+      await tester.pumpAndSettle();
+      expect(h.gateway.visitCalls.last, ('2026-08-20', '2026-11-17'));
+    },
+  );
+
+  testWidgets('visit list needs a company Field Sales permission', (
+    tester,
+  ) async {
+    final h = _Harness(caps: {'sales.orders.manage'});
+    await h.pump(tester, const FieldSalesVisits(_scope));
+    expect(
+      find.text('Current company authority is required to list visits.'),
+      findsOneWidget,
+    );
+    expect(h.gateway.visitCalls, isEmpty);
   });
 }

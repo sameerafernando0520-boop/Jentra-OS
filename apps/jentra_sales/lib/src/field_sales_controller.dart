@@ -15,6 +15,7 @@ final class FieldSalesController extends ChangeNotifier {
     Stream<String?>? authChanges,
     DateTime Function()? now,
     this.lease = const Duration(minutes: 15),
+    this.locate,
   }) : now = now ?? DateTime.now {
     _authChanges = authChanges?.listen((actor) {
       if (actorId != null && actor != actorId) {
@@ -30,6 +31,23 @@ final class FieldSalesController extends ChangeNotifier {
 
   /// How long a portfolio stays open before access must be rechecked.
   final Duration lease;
+
+  /// Reads the device position once, when the rep asks to add it to a check in
+  /// or a completion. Null when this device offers no position; nothing calls
+  /// it in the background.
+  final Future<FieldSalesLocation?> Function()? locate;
+  bool get canLocate => locate != null;
+
+  /// The rep's own visits, and whether the company has visits switched on.
+  List<FieldSalesJson> visits = [];
+  bool visitsAvailable = false;
+
+  /// A visit update whose outcome is not yet confirmed. Its exact bytes are
+  /// kept so the receipt can be checked or the same update retried.
+  FieldSalesVisitCommand? pendingVisit;
+  static const _visitRetryLife = Duration(hours: 24);
+  String get _visitKey =>
+      'jentra.sales.visit-command.v1.$actorId.${scope!.key}';
 
   /// The order being typed, or null when nothing is unsaved. The open order
   /// form sets this so its content is kept as a local draft when access expires.
@@ -214,6 +232,9 @@ final class FieldSalesController extends ChangeNotifier {
     review = null;
     _reviewInput = null;
     pending = null;
+    visits = [];
+    visitsAvailable = false;
+    pendingVisit = null;
     selectedCustomer = null;
     catalogueReady = false;
     busy = true;
@@ -221,10 +242,37 @@ final class FieldSalesController extends ChangeNotifier {
     notifyListeners();
     final recoveryKey = _recoveryKey;
     final draftKey = _draftKey;
+    final visitKey = _visitKey;
     final actor = actorId;
     try {
       final rows = await gateway.customers(value);
       final subjects = await gateway.subjects(value);
+      // Visits arrive in their own candidate. Until the company has it, the
+      // rest of the portfolio still opens.
+      List<FieldSalesJson>? visitRows;
+      try {
+        visitRows = await gateway.visits(value);
+      } on FieldSalesFailure catch (e) {
+        if (e.code != 'FIELD_SALES_ROLLOUT_PENDING') rethrow;
+      }
+      await _storageWrites;
+      if (!_current(epoch)) return;
+      final storedVisit = await store.read(visitKey);
+      FieldSalesVisitCommand? recoveredVisit;
+      if (storedVisit != null) {
+        if (storedVisit.length > 240000) throw const FormatException();
+        recoveredVisit = FieldSalesVisitCommand.fromJson(
+          fieldSalesObject(jsonDecode(storedVisit)),
+        );
+        if (recoveredVisit.actorId != actor ||
+            recoveredVisit.scope.key != value.key) {
+          throw const FormatException();
+        }
+      }
+      if (!_current(epoch)) return;
+      visits = visitRows ?? [];
+      visitsAvailable = visitRows != null;
+      pendingVisit = recoveredVisit;
       await _storageWrites;
       if (!_current(epoch)) return;
       final stored = await store.read(recoveryKey);
@@ -607,6 +655,203 @@ final class FieldSalesController extends ChangeNotifier {
     }
   }
 
+  /// A visit update that is old enough that no request can still be arriving
+  /// may be cleared once the company confirms it holds no record of it.
+  bool get canDiscardPendingVisit {
+    final command = pendingVisit;
+    if (command == null) return false;
+    final age = now().toUtc().difference(DateTime.parse(command.at).toUtc());
+    return age.isNegative || age >= const Duration(minutes: 5);
+  }
+
+  Future<void> planVisit({
+    required String customerId,
+    required String purpose,
+    String? plannedFor,
+  }) => _startVisit('plan', null, {
+    'id': const Uuid().v4(),
+    'customer_id': customerId,
+    'purpose': purpose.trim(),
+    'planned_for': ?plannedFor,
+  });
+
+  Future<void> checkInVisit(
+    FieldSalesJson visit, {
+    bool withLocation = false,
+  }) => _startVisit('check_in', visit, {
+    'id': visit['id'],
+  }, withLocation: withLocation);
+
+  Future<void> completeVisit(
+    FieldSalesJson visit, {
+    required String outcome,
+    String? nextAction,
+    String? nextActionDue,
+    bool withLocation = false,
+  }) => _startVisit('complete', visit, {
+    'id': visit['id'],
+    'outcome': outcome.trim(),
+    if (nextAction != null && nextAction.trim().isNotEmpty)
+      'next_action': nextAction.trim(),
+    'next_action_due': ?nextActionDue,
+  }, withLocation: withLocation);
+
+  Future<void> cancelVisit(FieldSalesJson visit, String reason) => _startVisit(
+    'cancel',
+    visit,
+    {'id': visit['id'], 'reason': reason.trim()},
+  );
+
+  Future<void> _startVisit(
+    String action,
+    FieldSalesJson? visit,
+    FieldSalesJson payload, {
+    bool withLocation = false,
+  }) async {
+    if (busy || pendingVisit != null || scope == null || !visitsAvailable) {
+      return;
+    }
+    final epoch = _epoch;
+    busy = true;
+    error = null;
+    notifyListeners();
+    try {
+      if (withLocation) {
+        // One reading, taken because the rep asked for it at this action.
+        final position = await locate?.call();
+        if (!_current(epoch)) return;
+        if (position == null) {
+          throw const FieldSalesFailure(
+            'LOCATION_UNAVAILABLE',
+            'Your location could not be read. Nothing was recorded; try again or continue without it.',
+          );
+        }
+        payload = {...payload, ...position.payload};
+      }
+      final command = FieldSalesVisitCommand(
+        actorId: actorId!,
+        scope: scope!,
+        commandId: const Uuid().v4(),
+        key: const Uuid().v4(),
+        at: now().toUtc().toIso8601String(),
+        action: action,
+        expectedVersion: visit == null
+            ? null
+            : int.parse(visit['version'] as String),
+        payload: payload,
+      );
+      final key = _visitKey;
+      await _persist(() => store.write(key, jsonEncode(command.toJson())));
+      if (!_current(epoch)) return;
+      pendingVisit = command; // Never dispatch before persistence succeeds.
+      await _dispatchVisit(command, epoch);
+    } on Object catch (e) {
+      if (_current(epoch)) _fail(e);
+    }
+    if (_current(epoch)) {
+      busy = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> _dispatchVisit(FieldSalesVisitCommand command, int epoch) async {
+    FieldSalesJson response;
+    try {
+      response = await gateway.visitCommand(command);
+    } on FieldSalesFailure catch (e) {
+      // A refusal means nothing was recorded; the rep starts again from the
+      // current visits.
+      if (['22023', '40001', '55000'].contains(e.code) && _current(epoch)) {
+        await _clearVisit(command, epoch);
+      }
+      rethrow;
+    }
+    command.validateReceipt(response);
+    if (!_current(epoch)) return;
+    await _clearVisit(command, epoch);
+  }
+
+  Future<void> _clearVisit(FieldSalesVisitCommand command, int epoch) async {
+    final key = _visitKey;
+    final rows = await gateway.visits(command.scope);
+    if (!_current(epoch)) return;
+    await _persist(() => store.delete(key));
+    if (!_current(epoch)) return;
+    pendingVisit = null;
+    visits = rows;
+  }
+
+  /// Checks the receipt of the unconfirmed visit update. With [retry], sends
+  /// the same update again when the company has no record of it.
+  Future<void> reconcileVisit({bool retry = false}) async {
+    final command = pendingVisit;
+    if (busy || command == null) return;
+    final epoch = _epoch;
+    busy = true;
+    error = null;
+    notifyListeners();
+    try {
+      final result = await gateway.visitReceipt(scope!, command.key);
+      if (!_current(epoch)) return;
+      if (result['state'] == 'committed') {
+        command.validateReceipt(fieldSalesObject(result['receipt']));
+        await _clearVisit(command, epoch);
+      } else if (result['state'] == 'not_found' && retry) {
+        final age = now().toUtc().difference(
+          DateTime.parse(command.at).toUtc(),
+        );
+        if (age.isNegative || age >= _visitRetryLife) {
+          throw const FieldSalesFailure(
+            'RECOVERY_EXPIRED',
+            'This visit update is too old to send again. Clear it and record the visit again.',
+          );
+        }
+        await _dispatchVisit(command, epoch); // Identical bytes and key only.
+      } else {
+        error = 'No receipt is visible yet. This does not prove the visit update failed. You can retry it explicitly.';
+      }
+    } on Object catch (e) {
+      if (_current(epoch)) _fail(e);
+    }
+    if (_current(epoch)) {
+      busy = false;
+      notifyListeners();
+    }
+  }
+
+  /// Clears an unconfirmed visit update once the company confirms it holds no
+  /// record of it. One it did receive is recorded instead.
+  Future<void> discardVisit() async {
+    final command = pendingVisit;
+    if (busy || command == null || !canDiscardPendingVisit) return;
+    final epoch = _epoch;
+    busy = true;
+    error = null;
+    notifyListeners();
+    try {
+      final result = await gateway.visitReceipt(scope!, command.key);
+      if (!_current(epoch)) return;
+      if (result['state'] == 'committed') {
+        command.validateReceipt(fieldSalesObject(result['receipt']));
+        await _clearVisit(command, epoch);
+      } else if (result['state'] == 'not_found') {
+        await _clearVisit(command, epoch);
+        if (_current(epoch)) {
+          error =
+              'Your company has no record of that visit update, so it was cleared. Reference ${command.commandId}.';
+        }
+      } else {
+        error = 'The visit update could not be checked. Try again shortly.';
+      }
+    } on Object catch (e) {
+      if (_current(epoch)) _fail(e);
+    }
+    if (_current(epoch)) {
+      busy = false;
+      notifyListeners();
+    }
+  }
+
   void _fail(Object e) {
     error = e is FieldSalesFailure
         ? e.message
@@ -617,6 +862,8 @@ final class FieldSalesController extends ChangeNotifier {
       customers = [];
       products = [];
       orders = [];
+      visits = [];
+      visitsAvailable = false;
       review = null;
       _reviewInput = null;
       isOpen = false;
@@ -627,6 +874,7 @@ final class FieldSalesController extends ChangeNotifier {
       scopes = [];
       selectedCustomer = null;
       pending = null;
+      pendingVisit = null;
       _drafts = {};
       notifyListeners();
     }
@@ -648,6 +896,9 @@ final class FieldSalesController extends ChangeNotifier {
     review = null;
     _reviewInput = null;
     pending = null;
+    visits = [];
+    visitsAvailable = false;
+    pendingVisit = null;
     _drafts = {};
     selectedCustomer = null;
     error = null;

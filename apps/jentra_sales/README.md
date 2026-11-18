@@ -49,6 +49,15 @@ The separately approved six-candidate full-schema hosted rehearsal passed and
 rolled back completely. Sender domain/mailbox, installation, deployment,
 genuine sessions/MFA, device checks and company acceptance remain separate gates.
 
+The 17 November visits candidate adds a live **Visits** tab behind the same
+`FIELD_SALES_CANDIDATE_ENABLED` flag: plan, check in, complete and cancel visits
+to assigned customers, with the order flow's protected recovery. A location is
+added only when the rep chooses it at check in or completion: the app reads the
+device position once (`geolocator`, foreground permission only, asked for at
+that moment) and never tracks between visits. If location is off, refused or
+does not arrive within 20 seconds, nothing is recorded and the rep can continue
+without it. In the browser this needs HTTPS and the site's location permission.
+
 From the workspace root, resolve the existing workspace and then:
 
 ```powershell

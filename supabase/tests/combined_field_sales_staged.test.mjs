@@ -23,6 +23,7 @@ const stages = [
   ["20261103110000_field_sales_delivery_acknowledgement.sql", "field_delivery", 35],
   // Installed with organization control; runs on the final staged state.
   [null, "field_sales_reps", 25],
+  [null, "field_sales_visits", 49],
 ];
 const first = pending.filter(name => name <= emailConfirmation);
 for (const name of [emailConfirmation, ...stages.map(([candidate]) => candidate).filter(Boolean)]) {
@@ -64,7 +65,7 @@ try {
     await db.exec("rollback");
   }
   console.log("Field Sales staged sequence verified with organization control installed: " + total +
-    " checks across governance, confirmation, company workspace, mail, progression, delivery and the rep list.");
+    " checks across governance, confirmation, company workspace, mail, progression, delivery, the rep list and visits.");
 } finally {
   await db.close();
 }

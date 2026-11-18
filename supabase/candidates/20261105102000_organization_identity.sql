@@ -156,6 +156,7 @@ begin
       returns boolean language sql stable security definer set search_path = '' as $body$
         select not field_sales.restricted(p_tenant_id) or p_permission_code in (
           'sales.field.customers.view', 'sales.field.catalogue.view', 'sales.field.orders.submit',
+          'sales.field.visits.record',
           'people.self.view', 'people.attendance.self.request', 'people.leave.self.manage',
           'people.payroll.payslip.self', 'people.hr.cases.self.manage', 'people.hr.documents.self.view'
         );

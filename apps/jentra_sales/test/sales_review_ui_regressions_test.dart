@@ -194,4 +194,13 @@ final class _PreviewRecordingGateway implements FieldSalesGateway {
   @override
   Future<FieldSalesJson> receipt(FieldSalesScope scope, String key) =>
       fixture.receipt(scope, key);
+  @override
+  Future<List<FieldSalesJson>> visits(FieldSalesScope scope) =>
+      fixture.visits(scope);
+  @override
+  Future<FieldSalesJson> visitCommand(FieldSalesVisitCommand command) =>
+      fixture.visitCommand(command);
+  @override
+  Future<FieldSalesJson> visitReceipt(FieldSalesScope scope, String key) =>
+      fixture.visitReceipt(scope, key);
 }

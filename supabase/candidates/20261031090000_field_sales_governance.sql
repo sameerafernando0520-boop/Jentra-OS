@@ -89,6 +89,8 @@ language sql stable security definer set search_path='' as $$
  select auth.uid() is not null
  and (not field_sales.restricted(p_tenant_id) or p_permission_code in
   ('sales.field.customers.view','sales.field.catalogue.view','sales.field.orders.submit',
+   -- Visit recording is created by 20261117100000_field_sales_visits.sql.
+   'sales.field.visits.record',
    'people.self.view','people.attendance.self.request','people.leave.self.manage',
    'people.payroll.payslip.self','people.hr.cases.self.manage','people.hr.documents.self.view'))
  and exists(select 1 from core.memberships m
@@ -150,7 +152,8 @@ do $$declare f regprocedure; definition text; marker text; guard text; begin
   if f='core.bootstrap_tenant_impl(text,text,text,text,text,text,text,text,uuid)'::regprocedure then
    guard:=E'\n if exists(select 1 from field_sales.principals where user_id=auth.uid()) then\n  raise exception using errcode=''42501'',message=''FIELD_ACCOUNT_BOOTSTRAP_DENIED''; end if;\n';
   else
-   guard:=E'\n if field_sales.restricted(p_tenant_id) and p_command_name<>''sales.field.order.submit'' then\n  raise exception using errcode=''42501'',message=''FIELD_LEGACY_COMMAND_DENIED''; end if;\n';
+   -- The four visit commands come from 20261117100000_field_sales_visits.sql.
+   guard:=E'\n if field_sales.restricted(p_tenant_id) and p_command_name not in(''sales.field.order.submit'',\n  ''sales.field.visit.plan'',''sales.field.visit.check_in'',''sales.field.visit.complete'',''sales.field.visit.cancel'') then\n  raise exception using errcode=''42501'',message=''FIELD_LEGACY_COMMAND_DENIED''; end if;\n';
   end if;
   definition:=replace(definition,marker,marker||guard);execute definition;
  end loop;

@@ -53,6 +53,13 @@ final class _CompanyGateway implements FieldSalesCompanyGateway {
   });
 
   @override
+  Future<List<FieldSalesJson>> companyVisits(
+    FieldSalesScope scope, {
+    required DateTime from,
+    required DateTime to,
+  }) async => [];
+
+  @override
   Future<FieldSalesJson> decide(FieldSalesJson params) async {
     decisions.add(params);
     throw StateError('The reason dialog must not dispatch a decision.');

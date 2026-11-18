@@ -7,6 +7,7 @@ import '../field_sales_controller.dart';
 import '../field_sales_stock.dart';
 import '../models.dart';
 import 'components.dart';
+import 'field_visits.dart';
 
 class FieldSalesWorkspace extends StatefulWidget {
   const FieldSalesWorkspace(
@@ -104,11 +105,12 @@ class _FieldSalesWorkspaceState extends State<FieldSalesWorkspace>
       return LayoutBuilder(
         builder: (context, box) {
           final wide = box.maxWidth >= 700;
-          final labels = ['Today', 'Customers', 'Orders', 'More'];
+          final labels = ['Today', 'Customers', 'Orders', 'Visits', 'More'];
           final icons = [
             Icons.space_dashboard_outlined,
             Icons.people_outline,
             Icons.receipt_long_outlined,
+            Icons.event_note_outlined,
             Icons.more_horiz,
           ];
           return PopScope<Object?>(
@@ -373,6 +375,8 @@ class _FieldSalesWorkspaceState extends State<FieldSalesWorkspace>
                                   ),
                                 ),
                               ),
+                          ] else if (_page == 3) ...[
+                            FieldVisitsPage(c),
                           ] else ...[
                             const SalesNotice(
                               'Online review is required for each submission. Backgrounding or signing out locks this Sales workspace. Recovery retains the original protected command.',
