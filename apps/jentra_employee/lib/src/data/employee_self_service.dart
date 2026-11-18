@@ -13,6 +13,7 @@ enum EmployeeService {
   attendanceRequests,
   leavePolicies,
   leaveRequests,
+  leaveBatches,
   payslips,
   cases,
   documents,
@@ -233,6 +234,8 @@ void validateEmployeeServiceRecord(
           validateEmployeeResolution(intent['resolution']);
         }
       }
+    case EmployeeService.leaveBatches:
+      validateEmployeeLeaveBatch(row);
     case EmployeeService.payslips:
       if (row['employee_id'] != identity.employeeId ||
           row['synthetic'] != true ||
@@ -563,6 +566,7 @@ final class SupabaseEmployeeSelfServiceGateway
       EmployeeService.attendanceRequests => 'employee_self_attendance_requests',
       EmployeeService.leavePolicies => 'employee_self_leave_policies',
       EmployeeService.leaveRequests => 'employee_self_leave_requests',
+      EmployeeService.leaveBatches => 'employee_self_leave_batches',
       EmployeeService.payslips => 'employee_self_payslips',
       EmployeeService.cases => 'employee_cases_list',
       EmployeeService.documents => 'employee_documents_list',
@@ -786,6 +790,7 @@ final class SupabaseEmployeeSelfServiceGateway
 
 const employeeSelfCommandRpcs = {
   'employee_self_leave_submit',
+  'employee_self_leave_range_submit',
   'employee_self_leave_intent',
   'employee_self_attendance_request',
   'employee_case_command',
@@ -796,7 +801,7 @@ void validateEmployeeCommandParameters(
   Map<String, Object?> parameters,
 ) {
   final allowed = switch (rpc) {
-    'employee_self_leave_submit' => {
+    'employee_self_leave_submit' || 'employee_self_leave_range_submit' => {
       'p_command_id',
       'p_request_id',
       'p_payload',
@@ -857,6 +862,13 @@ Map<String, Object?> validateEmployeeCommandReceipt(
         throw const FormatException('Invalid leave receipt.');
       }
       selfInteger(result['charge_seconds'], minimum: 1);
+    case 'employee_self_leave_range_submit':
+      if (version != 1 ||
+          result['status'] != 'submitted' ||
+          result['approval_required'] != true) {
+        throw const FormatException('Invalid leave range receipt.');
+      }
+      validateEmployeeLeaveBatch(result, receipt: true);
     case 'employee_self_leave_intent':
       final withdraw = parameters['p_action'] == 'withdraw';
       if (version !=
@@ -919,7 +931,8 @@ EmployeeReceiptLookup parseEmployeeReceiptLookup(
   }
   selfInteger(receipt['version'], minimum: 1);
   final allowed = switch (rpc) {
-    'employee_self_leave_submit' => {'submitted'},
+    'employee_self_leave_submit' ||
+    'employee_self_leave_range_submit' => {'submitted'},
     'employee_self_leave_intent' => {'withdrawn', 'cancellation_requested'},
     'employee_self_attendance_request' => {'pending_evidence'},
     'employee_case_command' => {'open', 'in_progress'},
@@ -928,7 +941,10 @@ EmployeeReceiptLookup parseEmployeeReceiptLookup(
   if (!allowed.contains(receipt['status']) ||
       rpc == 'employee_self_attendance_request' &&
           receipt['payable_time_changed'] != false ||
-      rpc == 'employee_self_leave_submit' &&
+      {
+            'employee_self_leave_submit',
+            'employee_self_leave_range_submit',
+          }.contains(rpc) &&
           receipt['approval_required'] != true) {
     throw const FormatException('Invalid receipt outcome.');
   }
@@ -936,4 +952,58 @@ EmployeeReceiptLookup parseEmployeeReceiptLookup(
     receipt: selfImmutableMap(receipt),
     abandoned: false,
   );
+}
+
+const _employeeLeaveStatuses = {
+  'draft',
+  'submitted',
+  'approved',
+  'rejected',
+  'cancelled',
+};
+
+/// A multi-day leave batch: each day is a one-slot request, shown together.
+/// [receipt] accepts the range-submit answer, which also names the command.
+void validateEmployeeLeaveBatch(
+  Map<String, Object?> row, {
+  bool receipt = false,
+}) {
+  selfUuid(row['id']);
+  selfUuid(row['policy_id']);
+  final start = selfDate(row['start_date']);
+  final end = selfDate(row['end_date']);
+  final status = row['status'];
+  final days = row['days'];
+  if (days is! List ||
+      days.isEmpty ||
+      end.compareTo(start) < 0 ||
+      !{'staff', 'self'}.contains(row['origin']) ||
+      !(_employeeLeaveStatuses.contains(status) || status == 'mixed')) {
+    throw const FormatException('Invalid leave batch.');
+  }
+  var charged = 0;
+  String? previous;
+  final statuses = <Object?>{};
+  for (final value in days) {
+    final day = selfMap(value);
+    final date = selfDate(day['leave_date']);
+    selfUuid(day['request_id']);
+    selfInteger(day['version'], minimum: 1);
+    selfTimestamp(day['start_utc']);
+    selfTimestamp(day['end_utc']);
+    charged += selfInteger(day['charge_seconds'], minimum: 1);
+    if (!_employeeLeaveStatuses.contains(day['status']) ||
+        date.compareTo(start) < 0 ||
+        date.compareTo(end) > 0 ||
+        previous != null && date.compareTo(previous) <= 0) {
+      throw const FormatException('Invalid leave batch day.');
+    }
+    statuses.add(day['status']);
+    previous = date;
+  }
+  if (selfInteger(row['charge_seconds'], minimum: 1) != charged ||
+      status != (statuses.length == 1 ? statuses.single : 'mixed') ||
+      !receipt && row.containsKey('created_by')) {
+    throw const FormatException('Invalid leave batch totals.');
+  }
 }

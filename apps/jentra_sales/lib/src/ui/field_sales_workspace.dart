@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:jentra_domain/jentra_field_sales.dart';
 
 import '../field_sales_controller.dart';
+import '../field_sales_stock.dart';
 import '../models.dart';
 import 'components.dart';
 
@@ -555,8 +556,8 @@ class _FieldOrderComposerState extends State<FieldOrderComposer> {
             Text(
               'Payment terms: ${customer['payment_terms_days']} days · ${customer['delivery_terms']}',
             ),
-            const Text(
-              'Prices and discount ceilings come from your company. Stock availability is currently unavailable.',
+            Text(
+              'Prices and discount ceilings come from your company. ${fieldStockNote(c.products)}',
             ),
             const SizedBox(height: 20),
             DropdownButtonFormField<String>(
@@ -618,6 +619,10 @@ class _FieldOrderComposerState extends State<FieldOrderComposer> {
                   Text(
                     '${p['name']} · ${p['currency_code']} ${p['unit_price']} / ${p['unit']}',
                   ),
+                  Text(
+                    fieldStockLabel(fieldStockState(p, _warehouse)),
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
                   if (!_quantities.containsKey(p['policy_id']))
                     OutlinedButton(
                       onPressed: c.busy || _quantities.length >= 100
@@ -665,6 +670,13 @@ class _FieldOrderComposerState extends State<FieldOrderComposer> {
                       icon: const Icon(Icons.remove_circle_outline),
                     ),
                   ],
+                ),
+              if (_quantities.containsKey(p['policy_id']) &&
+                  _warehouse != null &&
+                  fieldStockState(p, _warehouse) == FieldStockState.outOfStock)
+                Text(
+                  'Out of stock in this warehouse. Your company may not be able to supply this line on time.',
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
             ],
             if (c.products.isEmpty && !c.busy)

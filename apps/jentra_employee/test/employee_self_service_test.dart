@@ -41,6 +41,7 @@ class _AuthErrorGateway extends FixtureGateway {
 }
 
 void main() {
+  group('multi-day leave', leaveRangeDataTests);
   TestWidgetsFlutterBinding.ensureInitialized();
   late FixtureStore store;
   late SelfGateway gateway;
@@ -563,5 +564,69 @@ void main() {
     expect(app.phase, EmployeePhase.ready);
     app.dispose();
     await authGateway.close();
+  });
+}
+
+void leaveRangeDataTests() {
+  const rpc = 'employee_self_leave_range_submit';
+  final params = {
+    'p_command_id': selfCommandId,
+    'p_request_id': selfSecondId,
+    'p_expected_balance_version': 1,
+    'p_payload': {
+      'policy_version_id': selfSecondId,
+      'calendar_version_id': selfSecondId,
+      'start_date': '2026-10-29',
+      'end_date': '2026-11-02',
+      'reason': 'Family travel',
+    },
+  };
+  test('a range submit is one saved command confirmed with its days', () {
+    validateEmployeeCommandParameters(rpc, params);
+    final receipt = validateEmployeeCommandReceipt(
+      serviceReceipt(selfIdentity, rpc, params),
+      selfIdentity,
+      rpc,
+      params,
+    );
+    expect((receipt['days']! as List).length, 2);
+    expect(receipt['request_id'], selfSecondId);
+    final pending = EmployeeSelfPending(
+      owner: selfIdentity.key,
+      rpc: rpc,
+      parameters: params,
+      createdAt: DateTime.utc(2026, 10, 25),
+    );
+    expect(pending.redacted().requestId, selfSecondId);
+  });
+  test('a range receipt with altered days or totals is not trusted', () {
+    final good = serviceReceipt(selfIdentity, rpc, params);
+    for (final changed in <Map<String, Object?>>[
+      {...good, 'charge_seconds': 28800},
+      {...good, 'status': 'approved'},
+      {...good, 'days': <Object?>[]},
+      {...good, 'end_date': '2026-10-28'},
+    ]) {
+      expect(
+        () =>
+            validateEmployeeCommandReceipt(changed, selfIdentity, rpc, params),
+        throwsFormatException,
+      );
+    }
+  });
+  test('a listed batch must not name who created it', () {
+    validateEmployeeLeaveBatch(leaveBatchRow());
+    expect(
+      () => validateEmployeeLeaveBatch({
+        ...leaveBatchRow(),
+        'created_by': fixtureActor,
+      }),
+      throwsFormatException,
+    );
+    final days = [...(leaveBatchRow()['days']! as List)];
+    days[1] = {...selfMap(days[1]), 'status': 'approved'};
+    final mixed = {...leaveBatchRow(), 'days': days};
+    expect(() => validateEmployeeLeaveBatch(mixed), throwsFormatException);
+    validateEmployeeLeaveBatch({...mixed, 'status': 'mixed'});
   });
 }
