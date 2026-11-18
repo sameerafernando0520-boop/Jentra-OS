@@ -10,8 +10,11 @@ import '../app_providers.dart';
 import '../build_identity.dart';
 import '../developer_tools.dart';
 import '../features/auth/mfa_required_screen.dart';
+import '../features/auth/account_security_screen.dart';
 import '../features/account/account_profile.dart';
 import '../features/operations/operational_link.dart';
+import '../features/subscriptions/subscription_access.dart';
+import '../features/tenant/system_setup_screen.dart';
 import 'navigation.dart';
 import 'quick_create_dialog.dart';
 import 'notification_inbox.dart';
@@ -28,6 +31,76 @@ class JentraShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentPath = GoRouterState.of(context).uri.path;
     final gateway = ref.watch(foundationGatewayProvider);
+    ref.watch(authenticatedActorProvider);
+    final actor = gateway?.currentUser?.id;
+    if (organizationControlCandidateEnabled &&
+        gateway?.usesManagedUsername == true &&
+        actor != null) {
+      final profile = ref.watch(accountSecurityProfileProvider(actor));
+      final account = profile.asData?.value;
+      if (profile.isLoading ||
+          account == null ||
+          account.mustChangePassword ||
+          account.organizationLocked) {
+        return const Scaffold(body: AccountSecurityScreen());
+      }
+      if (!currentPath.startsWith('/account')) {
+        final setup = ref.watch(systemSetupProvider);
+        if (setup.isLoading && !setup.hasValue) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (setup.hasError ||
+            setup.value?['registration_required'] == true ||
+            setup.value?['replacement_pending'] == true) {
+          return const Scaffold(body: SystemSetupScreen());
+        }
+      }
+    }
+    if (organizationControlCandidateEnabled &&
+        actor != null &&
+        !currentPath.startsWith('/account') &&
+        !currentPath.startsWith('/invitation/')) {
+      final subscription = ref.watch(subscriptionAccessProvider);
+      if (subscription.hasError) {
+        return Scaffold(
+          body: Center(
+            child: JentraEmptyState(
+              icon: Icons.cloud_off_outlined,
+              title: 'Could not verify workspace access',
+              description: 'Check your connection and try again.',
+              action: JentraPrimaryButton(
+                label: 'Try again',
+                onPressed: () => ref.invalidate(subscriptionAccessProvider),
+              ),
+            ),
+          ),
+        );
+      }
+      final access = subscription.value;
+      if ((subscription.isLoading && !subscription.hasValue) ||
+          (access != null && access.actorId != actor)) {
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      }
+      final paused = access?.pausedTenantIds ?? const [];
+      if (paused.isNotEmpty &&
+          paused.contains(ref.watch(businessScopeProvider).value?.tenantId)) {
+        return Scaffold(
+          body: Center(
+            child: JentraEmptyState(
+              icon: Icons.lock_clock,
+              title: 'Workspace access is paused',
+              description: 'Access resumes when renewal is confirmed.',
+              action: JentraPrimaryButton(
+                label: 'View subscriptions',
+                onPressed: () => context.go('/subscriptions'),
+              ),
+            ),
+          ),
+        );
+      }
+    }
     final tenants = ref.watch(tenantListProvider).value;
     final capabilities = ref.watch(businessCapabilitiesProvider).value;
     final mfaRequired =

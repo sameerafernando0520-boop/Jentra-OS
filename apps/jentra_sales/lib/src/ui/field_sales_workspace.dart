@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:jentra_domain/jentra_field_sales.dart';
 
 import '../field_sales_controller.dart';
+import '../field_sales_stock.dart';
 import '../models.dart';
 import 'components.dart';
+import 'field_visits.dart';
 
 class FieldSalesWorkspace extends StatefulWidget {
   const FieldSalesWorkspace(
@@ -103,11 +105,12 @@ class _FieldSalesWorkspaceState extends State<FieldSalesWorkspace>
       return LayoutBuilder(
         builder: (context, box) {
           final wide = box.maxWidth >= 700;
-          final labels = ['Today', 'Customers', 'Orders', 'More'];
+          final labels = ['Today', 'Customers', 'Orders', 'Visits', 'More'];
           final icons = [
             Icons.space_dashboard_outlined,
             Icons.people_outline,
             Icons.receipt_long_outlined,
+            Icons.event_note_outlined,
             Icons.more_horiz,
           ];
           return PopScope<Object?>(
@@ -234,6 +237,15 @@ class _FieldSalesWorkspaceState extends State<FieldSalesWorkspace>
                                           'Retry original request',
                                         ),
                                       ),
+                                      if (c.canDiscardPending)
+                                        TextButton(
+                                          onPressed: c.busy
+                                              ? null
+                                              : () => c.discardExpired(),
+                                          child: const Text(
+                                            'Clear if not received',
+                                          ),
+                                        ),
                                     ],
                                   ),
                                 ],
@@ -363,6 +375,8 @@ class _FieldSalesWorkspaceState extends State<FieldSalesWorkspace>
                                   ),
                                 ),
                               ),
+                          ] else if (_page == 3) ...[
+                            FieldVisitsPage(c),
                           ] else ...[
                             const SalesNotice(
                               'Online review is required for each submission. Backgrounding or signing out locks this Sales workspace. Recovery retains the original protected command.',
@@ -441,7 +455,11 @@ class _FieldOrderComposerState extends State<FieldOrderComposer> {
       }
     }
     _savedSignature = _signature;
+    // Lets the controller keep this order as a draft if access expires.
+    widget.c.unsavedOrder = _unsaved;
   }
+
+  FieldSalesJson? _unsaved() => mounted && dirty ? _input() : null;
 
   Future<bool> saveLocal() async {
     final signature = _signature;
@@ -459,6 +477,7 @@ class _FieldOrderComposerState extends State<FieldOrderComposer> {
 
   @override
   void dispose() {
+    if (widget.c.unsavedOrder == _unsaved) widget.c.unsavedOrder = null;
     for (final c in [
       _date,
       _discount,
@@ -541,8 +560,8 @@ class _FieldOrderComposerState extends State<FieldOrderComposer> {
             Text(
               'Payment terms: ${customer['payment_terms_days']} days · ${customer['delivery_terms']}',
             ),
-            const Text(
-              'Prices and discount ceilings come from your company. Stock availability is currently unavailable.',
+            Text(
+              'Prices and discount ceilings come from your company. ${fieldStockNote(c.products)}',
             ),
             const SizedBox(height: 20),
             DropdownButtonFormField<String>(
@@ -604,6 +623,10 @@ class _FieldOrderComposerState extends State<FieldOrderComposer> {
                   Text(
                     '${p['name']} · ${p['currency_code']} ${p['unit_price']} / ${p['unit']}',
                   ),
+                  Text(
+                    fieldStockLabel(fieldStockState(p, _warehouse)),
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
                   if (!_quantities.containsKey(p['policy_id']))
                     OutlinedButton(
                       onPressed: c.busy || _quantities.length >= 100
@@ -651,6 +674,13 @@ class _FieldOrderComposerState extends State<FieldOrderComposer> {
                       icon: const Icon(Icons.remove_circle_outline),
                     ),
                   ],
+                ),
+              if (_quantities.containsKey(p['policy_id']) &&
+                  _warehouse != null &&
+                  fieldStockState(p, _warehouse) == FieldStockState.outOfStock)
+                Text(
+                  'Out of stock in this warehouse. Your company may not be able to supply this line on time.',
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
             ],
             if (c.products.isEmpty && !c.busy)

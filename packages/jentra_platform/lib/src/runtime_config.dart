@@ -1,5 +1,10 @@
 import 'dart:convert';
 
+/// Explicitly opts a development client into the uninstalled organization APIs.
+const organizationControlCandidateEnabled = bool.fromEnvironment(
+  'JENTRA_ORGANIZATION_CONTROL_CANDIDATE',
+);
+
 enum RuntimeStartupMode { connected, preview }
 
 enum RuntimeStartupFailure {

@@ -95,6 +95,7 @@ import 'src/features/stock_opening/stock_opening_controller.dart';
 import 'src/app.dart';
 import 'src/startup_error_app.dart';
 import 'src/app_providers.dart';
+import 'src/features/platform_control/platform_organization_screen.dart';
 import 'src/features/receivables/receivables_controller.dart';
 
 Future<void> main() async {
@@ -128,6 +129,11 @@ Future<void> launchJentra({
         overrides: [
           runtimeConfigProvider.overrideWithValue(config),
           foundationGatewayProvider.overrideWithValue(foundationGateway),
+          platformOrganizationGatewayProvider.overrideWithValue(
+            organizationControlCandidateEnabled && client != null
+                ? PlatformOrganizationGateway(client)
+                : null,
+          ),
           fieldSalesCompanyGatewayProvider.overrideWithValue(
             client != null &&
                     const bool.fromEnvironment('FIELD_SALES_CANDIDATE_ENABLED')

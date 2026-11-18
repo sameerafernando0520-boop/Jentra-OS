@@ -86,6 +86,25 @@ jobs:
           supabase/candidates/tests/*runner.test.mjs
           workers/wave5/*.test.mjs
 
+      # The combined pgTAP suite runs the candidate harnesses in the isolated
+      # runtime, which has no pgTAP extension. The suite checks this hash too.
+      - name: Fetch pinned pgTAP 1.3.4 source for the isolated runtime
+        run: |
+          curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 \
+            --output build/pgtap-1.3.4.sql.in \
+            https://raw.githubusercontent.com/theory/pgtap/v1.3.4/sql/pgtap.sql.in
+          echo "383ecd73edfd1c7ed5f3b835134ee1fe74e201ee31599346c92ea029b65dcdce  build/pgtap-1.3.4.sql.in" \
+            | sha256sum --check --strict
+
+      - name: Test organization control and combined candidate installs
+        run: >-
+          node --test
+          supabase/tests/organization_identity.test.mjs
+          supabase/tests/organization_lifecycle.test.mjs
+          supabase/tests/combined_candidate_install.test.mjs
+          supabase/tests/combined_field_sales_staged.test.mjs
+          supabase/tests/combined_candidate_pgtap.test.mjs
+
       - name: Test employee Hosting preparation
         run: node --test tools/employee-web/prepare.test.mjs
 

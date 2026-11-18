@@ -39,6 +39,7 @@ String employeeServiceTitle(EmployeeService service) => switch (service) {
   EmployeeService.attendanceRequests => 'attendanceRequests',
   EmployeeService.leavePolicies => 'leavePolicies',
   EmployeeService.leaveRequests => 'leaveHistory',
+  EmployeeService.leaveBatches => 'leaveBatches',
   EmployeeService.payslips => 'payTitle',
   EmployeeService.cases => 'casesTitle',
   EmployeeService.documents => 'documents',
