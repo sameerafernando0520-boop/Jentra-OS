@@ -593,10 +593,15 @@ void main() {
       expect(gateway.scopes.single.tenantId, 'tenant-b');
       expect(gateway.scopes.single.legalEntityId, 'entity-b');
       expect(gateway.scopes.single.branchId, 'branch-b2');
-      await tester.scrollUntilVisible(find.text('9007199254740993'), 250);
-      expect(find.text('9007199254740993'), findsOneWidget);
-      expect(find.text('0'), findsOneWidget);
-      expect(find.text('No records need action'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('9007199254740993 current actionable records'),
+        250,
+      );
+      expect(
+        find.text('9007199254740993 current actionable records'),
+        findsOneWidget,
+      );
+      expect(find.text('0 current actionable records'), findsOneWidget);
       expect(find.text('Updated 22 Oct 2026, 08:30 UTC'), findsOneWidget);
       await tester.scrollUntilVisible(
         find.textContaining('900719925474.099999'),
@@ -628,8 +633,14 @@ void main() {
     ) async {
       final gateway = _DashboardGateway();
       final container = await mount(tester, gateway, shell: false);
-      await tester.scrollUntilVisible(find.text('9007199254740993'), 250);
-      expect(find.text('9007199254740993'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('9007199254740993 current actionable records'),
+        250,
+      );
+      expect(
+        find.text('9007199254740993 current actionable records'),
+        findsOneWidget,
+      );
       switch (transition) {
         case 'offline':
           container.read(_connection.notifier).state =
@@ -650,7 +661,7 @@ void main() {
       }
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 200));
-      expect(find.text('9007199254740993'), findsNothing);
+      expect(find.textContaining('9007199254740993'), findsNothing);
       expect(find.textContaining('900719925474.099999'), findsNothing);
       expect(find.textContaining('private-access-diagnostic'), findsNothing);
       expect(find.textContaining('private-dashboard-diagnostic'), findsNothing);

@@ -10,8 +10,8 @@ import '../../shell/navigation.dart';
 import '../../shell/workspace_context_dialog.dart';
 import 'operational_controller.dart';
 import 'operational_link.dart';
-import 'operational_screen.dart';
 import 'operational_metric_card.dart';
+import 'operational_screen.dart';
 
 final operationalDashboardProvider =
     FutureProvider.autoDispose<Map<String, Object?>>((ref) async {
@@ -227,8 +227,9 @@ class OperationalDashboard extends ConsumerWidget {
               ),
             ),
             data: (data) {
-              final cards = (data['cards'] as List?) ?? [];
-              final metrics = (data['metrics'] as List?) ?? [];
+              final cards = (data['cards'] as List?)?.whereType<Map>() ?? [];
+              final metrics =
+                  (data['metrics'] as List?)?.whereType<Map>() ?? [];
               final generated = DateTime.tryParse('${data['generated_at']}');
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,71 +247,43 @@ class OperationalDashboard extends ConsumerWidget {
                       title: 'Your workspace is ready',
                       description: 'There is no current work to show with your access. Open a business workspace to create or review documents.',
                     ),
-                  if (cards.isNotEmpty) ...[
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        final scale = MediaQuery.textScalerOf(context).scale(1);
-                        final columns = (constraints.maxWidth / (290 * scale))
-                            .floor()
-                            .clamp(1, 3);
-                        final width =
-                            (constraints.maxWidth -
-                                (columns - 1) * JentraSpacing.x4) /
-                            columns;
-                        return Wrap(
-                          spacing: JentraSpacing.x4,
-                          runSpacing: JentraSpacing.x4,
-                          children: [
-                            for (final card in cards)
-                              SizedBox(
-                                width: width,
-                                child: JentraPanel(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        operationalLabel(
-                                          card['kind'] as String,
-                                        ),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium,
-                                      ),
-                                      const SizedBox(height: JentraSpacing.x3),
-                                      Text(
-                                        '${card['count']}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineLarge
-                                            ?.copyWith(
-                                              fontFamily:
-                                                  JentraTypography.monoFamily,
-                                            ),
-                                      ),
-                                      Text(
-                                        card['count'] == '0'
-                                            ? 'No records need action'
-                                            : 'Records ready for review',
-                                      ),
-                                      const SizedBox(height: JentraSpacing.x3),
-                                      OperationalLink(
-                                        scope: scope,
-                                        kind: card['kind'] as String,
-                                        label: 'Open current documents',
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                          ],
-                        );
-                      },
+                  if (metrics.isNotEmpty) ...[
+                    const JentraSectionHeader(title: 'Business snapshot'),
+                    const SizedBox(height: JentraSpacing.x3),
+                    _OverviewGrid(
+                      cards: [
+                        for (final metric in metrics)
+                          OperationalMetricCard(
+                            key: ValueKey((scope, metric['kind'])),
+                            metric: metric,
+                          ),
+                      ],
                     ),
-                    const SizedBox(height: JentraSpacing.x5),
                   ],
-                  for (final metric in metrics)
-                    OperationalMetricCard(metric: metric as Map),
+                  if (cards.isNotEmpty) ...[
+                    if (metrics.isNotEmpty)
+                      const SizedBox(height: JentraSpacing.x6),
+                    const JentraSectionHeader(title: 'Action queues'),
+                    const SizedBox(height: JentraSpacing.x3),
+                    _OverviewGrid(
+                      cards: [
+                        for (final card in cards)
+                          OperationalOverviewCard(
+                            title: operationalLabel(card['kind'] as String),
+                            icon: Icons.inbox_outlined,
+                            accent: JentraColors.blue600,
+                            body: Text(
+                              '${card['count']} current actionable records',
+                            ),
+                            action: OperationalLink(
+                              scope: scope,
+                              kind: card['kind'] as String,
+                              label: 'Open current documents',
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
                 ],
               );
             },
@@ -318,6 +291,50 @@ class OperationalDashboard extends ConsumerWidget {
       ],
     );
   }
+}
+
+class _OverviewGrid extends StatelessWidget {
+  const _OverviewGrid({required this.cards});
+
+  final List<Widget> cards;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
+      final width = constraints.maxWidth;
+      final maxColumns = width >= 1008 * scale
+          ? 3
+          : width >= 650 * scale
+          ? 2
+          : 1;
+      final rows = (cards.length / maxColumns).ceil();
+      var offset = 0;
+      return Column(
+        children: [
+          for (var row = 0; row < rows; row++) ...[
+            if (row > 0) const SizedBox(height: JentraSpacing.x4),
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (
+                    var column = 0,
+                        count = ((cards.length - offset) / (rows - row)).ceil();
+                    column < count;
+                    column++
+                  ) ...[
+                    if (column > 0) const SizedBox(width: JentraSpacing.x4),
+                    Expanded(child: cards[offset++]),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ],
+      );
+    },
+  );
 }
 
 class _DashboardNotice extends StatelessWidget {

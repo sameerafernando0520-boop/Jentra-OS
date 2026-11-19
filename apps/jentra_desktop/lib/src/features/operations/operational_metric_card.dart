@@ -1,24 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jentra_design_system/jentra_design_system.dart';
 
-class OperationalMetricCard extends StatelessWidget {
+class OperationalMetricCard extends StatefulWidget {
   const OperationalMetricCard({super.key, required this.metric});
   final Map metric;
 
   @override
+  State<OperationalMetricCard> createState() => _OperationalMetricCardState();
+}
+
+class _OperationalMetricCardState extends State<OperationalMetricCard> {
+  bool _showDetails = false;
+
+  @override
   Widget build(BuildContext context) {
+    final metric = widget.metric;
     final kind = metric['kind'];
     final data = metric['data'];
-    final title = switch (kind) {
-      'pipeline' => 'Pipeline and forecast',
-      'ar_aging' => 'Receivables aging',
-      'ap_aging' => 'Payables aging',
-      'cash_bank' => 'Cash and bank reconciliation',
-      'periods' => 'Period status',
-      'budgets' => 'Budgets and saved variances',
-      'close_review' => 'Saved close review',
-      'bill_exceptions' => 'Supplier bill exceptions',
-      _ => 'Business state',
+    final (title, icon, accent) = switch (kind) {
+      'pipeline' => (
+        'Pipeline and forecast',
+        Icons.trending_up,
+        JentraColors.blue600,
+      ),
+      'ar_aging' => (
+        'Receivables aging',
+        Icons.payments_outlined,
+        JentraColors.teal600,
+      ),
+      'ap_aging' => (
+        'Payables aging',
+        Icons.receipt_long_outlined,
+        JentraColors.blue600,
+      ),
+      'cash_bank' => (
+        'Cash and bank reconciliation',
+        Icons.account_balance_outlined,
+        JentraColors.teal600,
+      ),
+      'periods' => (
+        'Period status',
+        Icons.calendar_month_outlined,
+        JentraColors.green500,
+      ),
+      'budgets' => (
+        'Budgets and saved variances',
+        Icons.bar_chart_outlined,
+        JentraColors.blue600,
+      ),
+      'close_review' => (
+        'Saved close review',
+        Icons.fact_check_outlined,
+        JentraColors.teal600,
+      ),
+      'bill_exceptions' => (
+        'Supplier bill exceptions',
+        Icons.rule_outlined,
+        JentraColors.green500,
+      ),
+      _ => ('Business state', Icons.insights_outlined, JentraColors.blue600),
     };
     final lines = <String>[];
     switch (kind) {
@@ -42,7 +83,7 @@ class OperationalMetricCard extends StatelessWidget {
           final conversion = data['conversion'] as Map?;
           if (conversion != null) {
             lines.add(
-              'Converted ${conversion['converted_leads']} of ${conversion['total_leads']} leads · ${conversion['conversion_rate']}%',
+              'Converted ${conversion['converted_leads']} of ${conversion['total_leads']} leads · ${_trimDecimal(conversion['conversion_rate'])}%',
             );
           }
           final decisions = data['win_loss'] as Map?;
@@ -52,7 +93,7 @@ class OperationalMetricCard extends StatelessWidget {
           final aging = data['aging'] as Map?;
           if (aging != null) {
             lines.add(
-              'Open ${aging['open_opportunity_count']} · Stale ${aging['stale_opportunity_count']} · Average age ${aging['average_age_days']} days',
+              'Open ${aging['open_opportunity_count']} · Stale ${aging['stale_opportunity_count']} · Average age ${_trimDecimal(aging['average_age_days'])} days',
             );
           }
           final activity = data['activity_recency'] as Map?;
@@ -139,27 +180,146 @@ class OperationalMetricCard extends StatelessWidget {
           lines.add('${data['exception_count']} draft bills need match review');
         }
     }
-    return Card(
+    final cutoff = DateTime.tryParse('${metric['as_of']}');
+    final dateLabel = cutoff == null
+        ? null
+        : MaterialLocalizations.of(context).formatShortDate(cutoff);
+    const previewLines = 4;
+    return OperationalOverviewCard(
+      title: title,
+      icon: icon,
+      accent: accent,
+      detail: dateLabel == null
+          ? null
+          : Tooltip(
+              message: 'Generated ${metric['generated_at']}',
+              child: Text('As of $dateLabel'),
+            ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (lines.isEmpty) const Text('No items in this scope.'),
+          for (final line in _showDetails ? lines : lines.take(previewLines))
+            Padding(
+              padding: const EdgeInsets.only(bottom: JentraSpacing.x1),
+              child: Text(line),
+            ),
+          if (lines.length > previewLines)
+            TextButton(
+              onPressed: () => setState(() => _showDetails = !_showDetails),
+              child: Text(
+                _showDetails
+                    ? 'Show fewer details'
+                    : 'Show more details (${lines.length - previewLines})',
+              ),
+            ),
+        ],
+      ),
+      action: TextButton.icon(
+        onPressed: () => context.push(metric['destination'] as String),
+        icon: const Icon(Icons.arrow_forward, size: 18),
+        label: const Text('Open workspace'),
+      ),
+    );
+  }
+
+  String _trimDecimal(Object? value) => '$value'.replaceFirstMapped(
+    RegExp(r'(\.\d*?[1-9])0+$|\.0+$'),
+    (match) => match[1] ?? '',
+  );
+}
+
+class OperationalOverviewCard extends StatelessWidget {
+  const OperationalOverviewCard({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.accent,
+    required this.body,
+    required this.action,
+    this.detail,
+  });
+
+  final String title;
+  final IconData icon;
+  final Color accent;
+  final Widget? detail;
+  final Widget body;
+  final Widget action;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = context.jentraColors;
+    final isDark = theme.brightness == Brightness.dark;
+    final tint = Color.alphaBlend(accent.withValues(alpha: .08), colors.panel);
+    return Material(
+      color: tint,
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: colors.border),
+        borderRadius: BorderRadius.circular(JentraRadii.card),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(JentraSpacing.x4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title, style: Theme.of(context).textTheme.titleLarge),
-            Text(
-              'As of ${metric['as_of']} · Generated ${metric['generated_at']}',
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(JentraSpacing.x2),
+                      decoration: BoxDecoration(
+                        color: Color.alphaBlend(
+                          accent.withValues(alpha: .16),
+                          colors.panel,
+                        ),
+                        borderRadius: BorderRadius.circular(
+                          JentraRadii.control,
+                        ),
+                      ),
+                      child: Icon(
+                        icon,
+                        size: 20,
+                        color: isDark
+                            ? colors.textPrimary
+                            : JentraColors.navy800,
+                      ),
+                    ),
+                    const SizedBox(width: JentraSpacing.x3),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Semantics(
+                            header: true,
+                            child: Text(
+                              title,
+                              style: theme.textTheme.titleMedium,
+                            ),
+                          ),
+                          if (detail != null)
+                            DefaultTextStyle(
+                              style: theme.textTheme.bodySmall!.copyWith(
+                                color: colors.textSecondary,
+                              ),
+                              child: detail!,
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: JentraSpacing.x4),
+                body,
+              ],
             ),
-            const SizedBox(height: 8),
-            if (lines.isEmpty) const Text('No items in this scope.'),
-            for (final line in lines)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Text(line),
-              ),
-            TextButton.icon(
-              onPressed: () => context.push(metric['destination'] as String),
-              icon: const Icon(Icons.open_in_new),
-              label: const Text('Open workspace'),
+            Padding(
+              padding: const EdgeInsets.only(top: JentraSpacing.x2),
+              child: action,
             ),
           ],
         ),
