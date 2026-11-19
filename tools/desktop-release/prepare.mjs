@@ -16,8 +16,13 @@ for (const target of [snapshot, output]) {
   try { await lstat(target); throw Error('NEW_OUTPUT_DIRECTORY_REQUIRED'); } catch (error) { if (error.code !== 'ENOENT') throw error; }
 }
 const config = JSON.parse(await readFile(path.resolve(configArgument), 'utf8'));
-const allowed = new Set(['JENTRA_ENVIRONMENT', 'SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_PROJECT_REF']);
+// JENTRA_ORGANIZATION_CONTROL_CANDIDATE opts a development build into the
+// organization-control screens once their candidate backend is installed.
+// It is never accepted for production.
+const allowed = new Set(['JENTRA_ENVIRONMENT', 'SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY', 'SUPABASE_PROJECT_REF',
+  ...(channel === 'development' ? ['JENTRA_ORGANIZATION_CONTROL_CANDIDATE'] : [])]);
 if (!config || typeof config !== 'object' || Array.isArray(config) || Object.keys(config).some(key => !allowed.has(key))) throw Error('PUBLIC_CONFIG_FIELDS_INVALID');
+if ('JENTRA_ORGANIZATION_CONTROL_CANDIDATE' in config && !['true', 'false'].includes(config.JENTRA_ORGANIZATION_CONTROL_CANDIDATE)) throw Error('PUBLIC_CONFIG_CANDIDATE_FLAG_INVALID');
 if (config.JENTRA_ENVIRONMENT !== channel || typeof config.SUPABASE_PUBLISHABLE_KEY !== 'string') throw Error('PUBLIC_CONFIG_CHANNEL_OR_KEY_INVALID');
 const url = new URL(config.SUPABASE_URL);
 const projectRef = url.hostname.match(/^([a-z0-9]{20})\.supabase\.co$/)?.[1];

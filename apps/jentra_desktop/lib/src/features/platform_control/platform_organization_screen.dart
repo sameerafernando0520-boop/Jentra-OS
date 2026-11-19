@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:jentra_design_system/jentra_design_system.dart';
 import 'package:jentra_platform/jentra_platform.dart';
 import 'package:uuid/uuid.dart';
 
@@ -20,14 +21,22 @@ typedef _Row = Map<String, Object?>;
 final platformOrganizationGatewayProvider =
     Provider<PlatformOrganizationGateway?>((ref) => null);
 
+// The signed-in actor, recomputed on every auth event but only notifying
+// listeners when the actor itself changes. Token refreshes (which
+// supabase's mfa.listFactors triggers) must not reload the assignment check,
+// or the MFA screen is torn down and rebuilt in an endless refresh loop.
+final _platformActorIdProvider = Provider.autoDispose<String?>((ref) {
+  ref.watch(authSessionRevisionProvider);
+  return ref.watch(foundationGatewayProvider)?.currentUser?.id;
+});
+
 // Assignment alone allows the entry point to be shown before verification.
 // Every organization operation checks both assignment and AAL2 at the server.
 final platformOrganizationAccessProvider = FutureProvider.autoDispose<bool>((
   ref,
 ) async {
-  ref.watch(authSessionRevisionProvider);
+  final user = ref.watch(_platformActorIdProvider);
   final gateway = ref.watch(platformOrganizationGatewayProvider);
-  final user = ref.watch(foundationGatewayProvider)?.currentUser;
   if (gateway == null || user == null) return false;
   try {
     return await gateway.rpc<bool>('platform_organization_assignment');
@@ -48,6 +57,23 @@ class PlatformOrganizationScreen extends ConsumerWidget {
     final gateway = ref.watch(platformOrganizationGatewayProvider);
     final foundation = ref.watch(foundationGatewayProvider);
     final actor = foundation?.currentUser?.id;
+    // The standalone J panel gives a verified operator the full rail layout,
+    // which carries its own brand, account, security and sign-out controls.
+    if (standalone &&
+        access.value == true &&
+        assurance == MfaAssurance.aal2 &&
+        gateway != null &&
+        foundation != null &&
+        actor != null) {
+      return Scaffold(
+        body: _ControlPanel(
+          key: ValueKey(actor),
+          gateway: gateway,
+          foundation: foundation,
+          standalone: true,
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: !standalone,
@@ -116,10 +142,42 @@ class PlatformOrganizationScreen extends ConsumerWidget {
   }
 }
 
+/// The J panel sections shown in the navigation rail, in display order.
+enum _Section {
+  overview('Overview', Icons.dashboard_outlined, Icons.dashboard),
+  organizations('Organizations', Icons.apartment_outlined, Icons.apartment),
+  packages('Packages', Icons.inventory_2_outlined, Icons.inventory_2),
+  subscriptions(
+    'Subscriptions',
+    Icons.receipt_long_outlined,
+    Icons.receipt_long,
+  ),
+  archives('Archives', Icons.archive_outlined, Icons.archive);
+
+  const _Section(this.label, this.icon, this.selectedIcon);
+
+  final String label;
+  final IconData icon;
+  final IconData selectedIcon;
+}
+
+/// Client-side status filter over the organizations on the current page.
+enum _StatusFilter { all, active, trial, other }
+
 class _ControlPanel extends StatefulWidget {
-  const _ControlPanel({required this.gateway, super.key});
+  const _ControlPanel({
+    required this.gateway,
+    this.foundation,
+    this.standalone = false,
+    super.key,
+  });
 
   final PlatformOrganizationGateway gateway;
+
+  /// Signed-in foundation gateway. When [standalone], the rail shows the
+  /// operator account, Account security and Sign out.
+  final SupabaseFoundationGateway? foundation;
+  final bool standalone;
 
   @override
   State<_ControlPanel> createState() => _ControlPanelState();
@@ -134,7 +192,8 @@ class _ControlPanelState extends State<_ControlPanel> {
   List<_Row> _archives = [];
   int _offset = 0;
   bool _busy = false;
-  bool _showOrders = true;
+  _Section _section = _Section.overview;
+  _StatusFilter _filter = _StatusFilter.all;
   String? _error;
 
   PlatformOrganizationGateway get _gateway => widget.gateway;
@@ -443,114 +502,622 @@ class _ControlPanelState extends State<_ControlPanel> {
     if (saved && mounted) _notice(context, 'Verified backup saved.');
   });
 
+  void _go(_Section section) => setState(() => _section = section);
+
+  Future<void> _newSystem(BuildContext context) async {
+    await _createSystem(context, _gateway, _packages);
+    if (mounted) await _run(_refresh);
+  }
+
   @override
-  Widget build(BuildContext context) => Align(
-    alignment: Alignment.topCenter,
-    child: ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 1200),
-      child: Column(
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final extended = constraints.maxWidth >= 1100;
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-            child: SegmentedButton<bool>(
-              segments: const [
-                ButtonSegment(value: true, label: Text('Subscriptions')),
-                ButtonSegment(
-                  value: false,
-                  label: Text('Organizations & plans'),
-                ),
-              ],
-              selected: {_showOrders},
-              onSelectionChanged: (values) =>
-                  setState(() => _showOrders = values.single),
+          SizedBox(
+            width: extended ? 248 : 88,
+            child: Material(
+              color: JentraColors.panel,
+              // Scrolls when the window is short; otherwise the account
+              // block stays pinned to the bottom of the sidebar.
+              child: CustomScrollView(
+                key: const ValueKey('jpanel-navigation'),
+                slivers: [
+                  SliverList.list(children: _sidebar(context, extended)),
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: widget.standalone && widget.foundation != null
+                          ? _account(context, widget.foundation!, extended)
+                          : const SizedBox.shrink(),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
+          const VerticalDivider(width: 1, thickness: 1),
           Expanded(
-            child: _showOrders
-                ? ListView(
-                    padding: const EdgeInsets.all(24),
-                    children: [_SubscriptionControl(gateway: _gateway)],
-                  )
-                : _management(context),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 3,
+                  child: _busy ? const LinearProgressIndicator() : null,
+                ),
+                Expanded(child: _sectionPage(context)),
+              ],
+            ),
           ),
         ],
-      ),
-    ),
+      );
+    },
   );
 
-  Widget _management(BuildContext context) {
-    final title = Theme.of(context).textTheme.titleLarge;
-    return ListView(
-      padding: const EdgeInsets.all(24),
-      children: [
-        if (_busy) const LinearProgressIndicator(),
-        if (_error != null) _Problem(_error!),
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Text('Systems', style: title),
-            FilledButton.icon(
-              onPressed: _busy
-                  ? null
-                  : () async {
-                      await _createSystem(context, _gateway, _packages);
-                      if (mounted) await _run(_refresh);
-                    },
-              icon: const Icon(Icons.add_business_outlined),
-              label: const Text('Create New System'),
+  List<Widget> _sidebar(BuildContext context, bool extended) {
+    final text = Theme.of(context).textTheme;
+    return [
+      Padding(
+        padding: EdgeInsets.fromLTRB(
+          extended ? JentraSpacing.x5 : JentraSpacing.x2,
+          JentraSpacing.x5,
+          JentraSpacing.x4,
+          JentraSpacing.x5,
+        ),
+        child: extended
+            ? Row(
+                children: [
+                  const JentraBrandMark(size: 36),
+                  const SizedBox(width: JentraSpacing.x3),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'J panel',
+                          style: text.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text(
+                          'Jentra OS control panel',
+                          style: text.bodySmall?.copyWith(
+                            color: JentraColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              )
+            : const Center(
+                child: JentraBrandMark(size: 36, semanticsLabel: 'J panel'),
+              ),
+      ),
+      for (final section in _Section.values)
+        _destination(context, section, extended),
+    ];
+  }
+
+  Widget _destination(BuildContext context, _Section section, bool extended) {
+    final selected = section == _section;
+    final color = selected
+        ? JentraColors.actionBlue
+        : JentraColors.textSecondary;
+    final icon = _railIcon(
+      section,
+      selected ? section.selectedIcon : section.icon,
+      color,
+    );
+    final label = Text(
+      section.label,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+        color: selected ? JentraColors.textPrimary : JentraColors.textSecondary,
+        fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+        fontSize: extended ? 14 : 11,
+      ),
+    );
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: JentraSpacing.x2,
+        vertical: 2,
+      ),
+      child: Semantics(
+        selected: selected,
+        button: true,
+        child: Material(
+          color: selected ? JentraColors.infoSurface : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(10),
+            onTap: () => _go(section),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: extended ? JentraSpacing.x3 : JentraSpacing.x1,
+                vertical: extended ? JentraSpacing.x3 : JentraSpacing.x2,
+              ),
+              child: extended
+                  ? Row(
+                      children: [
+                        icon,
+                        const SizedBox(width: JentraSpacing.x3),
+                        Expanded(child: label),
+                      ],
+                    )
+                  : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [icon, const SizedBox(height: 2), label],
+                    ),
             ),
-            OutlinedButton.icon(
-              onPressed: _busy ? null : () => _run(_refresh),
-              icon: const Icon(Icons.refresh),
-              label: const Text('Refresh'),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _railIcon(_Section section, IconData icon, Color color) =>
+      section == _Section.archives && _cleanup.isNotEmpty
+      ? Badge.count(
+          count: _cleanup.length,
+          child: Icon(icon, color: color),
+        )
+      : Icon(icon, color: color);
+
+  Widget _account(
+    BuildContext context,
+    SupabaseFoundationGateway foundation,
+    bool extended,
+  ) {
+    final email = foundation.currentUser?.email ?? 'Platform operator';
+    Future<void> security() => showOperatorSecurityDialog(
+      context,
+      foundation: foundation,
+      gateway: _gateway,
+    );
+    Future<void> signOut() async {
+      try {
+        await foundation.signOut();
+      } on Object {
+        if (context.mounted) _notice(context, 'Could not sign out. Try again.');
+      }
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(JentraSpacing.x3),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Divider(),
+          if (extended) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: JentraSpacing.x2,
+                vertical: JentraSpacing.x2,
+              ),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 16,
+                    backgroundColor: JentraColors.infoSurface,
+                    child: Text(
+                      email.characters.first.toUpperCase(),
+                      style: const TextStyle(color: JentraColors.info),
+                    ),
+                  ),
+                  const SizedBox(width: JentraSpacing.x3),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          email,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        Text(
+                          'Platform operator',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: JentraColors.textSecondary),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Tooltip(
+              message: 'Account security',
+              child: TextButton.icon(
+                style: TextButton.styleFrom(alignment: Alignment.centerLeft),
+                onPressed: security,
+                icon: const Icon(Icons.manage_accounts_outlined),
+                label: const Text('Password & recovery'),
+              ),
+            ),
+            Tooltip(
+              message: 'Sign out',
+              child: TextButton.icon(
+                style: TextButton.styleFrom(alignment: Alignment.centerLeft),
+                onPressed: signOut,
+                icon: const Icon(Icons.logout),
+                label: const Text('Sign out'),
+              ),
+            ),
+          ] else ...[
+            IconButton(
+              tooltip: 'Account security',
+              onPressed: security,
+              icon: const Icon(Icons.manage_accounts_outlined),
+            ),
+            IconButton(
+              tooltip: 'Sign out',
+              onPressed: signOut,
+              icon: const Icon(Icons.logout),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _sectionPage(BuildContext context) {
+    final (title, description, actions, body) = switch (_section) {
+      _Section.overview => (
+        'Overview',
+        'A summary of every Jentra OS system you manage.',
+        <Widget>[_refreshButton()],
+        _overview(context),
+      ),
+      _Section.organizations => (
+        'Organizations',
+        'Customer systems on Jentra OS. Open one to manage its package, administrators, lock and backups.',
+        <Widget>[_newSystemButton(context), _refreshButton()],
+        _organizationsSection(context),
+      ),
+      _Section.packages => (
+        'Packages',
+        'Subscription packages, their modules and how they appear in checkout.',
+        <Widget>[
+          FilledButton.icon(
+            onPressed: _busy || _packages.isEmpty ? null : () => _package(),
+            icon: const Icon(Icons.add),
+            label: const Text('Create package'),
+          ),
+          _refreshButton(),
+        ],
+        _packagesSection(context),
+      ),
+      _Section.subscriptions => (
+        'Subscriptions',
+        'Checkout orders, payment verification and handover of new systems.',
+        const <Widget>[],
+        <Widget>[_SubscriptionControl(gateway: _gateway)],
+      ),
+      _Section.archives => (
+        'Archives',
+        'Account cleanup for purged organizations and their retained encrypted archives.',
+        <Widget>[_refreshButton()],
+        _archivesSection(context),
+      ),
+    };
+    return Align(
+      alignment: Alignment.topCenter,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1120),
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(
+            JentraSpacing.x8,
+            JentraSpacing.x6,
+            JentraSpacing.x8,
+            JentraSpacing.x10,
+          ),
+          children: [
+            JentraSectionHeader(
+              title: title,
+              description: description,
+              trailing: actions.isEmpty
+                  ? null
+                  : Wrap(
+                      spacing: JentraSpacing.x2,
+                      runSpacing: JentraSpacing.x2,
+                      children: actions,
+                    ),
+            ),
+            const SizedBox(height: JentraSpacing.x5),
+            if (_error != null) ...[
+              _Problem(_error!),
+              const SizedBox(height: JentraSpacing.x4),
+            ],
+            ...body,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _refreshButton() => OutlinedButton.icon(
+    onPressed: _busy ? null : () => _run(_refresh),
+    icon: const Icon(Icons.refresh),
+    label: const Text('Refresh'),
+  );
+
+  Widget _newSystemButton(BuildContext context) => FilledButton.icon(
+    onPressed: _busy ? null : () => _newSystem(context),
+    icon: const Icon(Icons.add_business_outlined),
+    label: const Text('Create New System'),
+  );
+
+  List<Widget> _overview(BuildContext context) {
+    final shown = _organizations.take(50).toList();
+    final more = _organizations.length > 50 || _offset > 0;
+    final active = shown.where((row) => row['status'] == 'active').length;
+    final trial = shown.where((row) => row['status'] == 'trial').length;
+    final awaiting = shown
+        .where((row) => _organizationState(row) == 'Awaiting activation')
+        .length;
+    final livePackages = _packages
+        .where((row) => row['status'] == 'active')
+        .length;
+    final published = _packages.where((row) => row['published'] == true).length;
+    Widget kpi(JentraKpiCard card) => SizedBox(width: 248, child: card);
+    return [
+      Wrap(
+        spacing: JentraSpacing.x4,
+        runSpacing: JentraSpacing.x4,
+        children: [
+          kpi(
+            JentraKpiCard(
+              label: 'Organizations',
+              value: '${shown.length}${more ? '+' : ''}',
+              helper: more ? 'Showing the first 50' : 'All customer systems',
+              icon: Icons.apartment_outlined,
+              tone: JentraStatusTone.info,
+            ),
+          ),
+          kpi(
+            JentraKpiCard(
+              label: 'Active',
+              value: '$active',
+              helper: 'Paid or activated systems',
+              icon: Icons.check_circle_outline,
+              tone: JentraStatusTone.success,
+            ),
+          ),
+          kpi(
+            JentraKpiCard(
+              label: 'On trial',
+              value: '$trial',
+              helper: awaiting == 0
+                  ? 'No trials waiting'
+                  : '$awaiting awaiting activation',
+              icon: Icons.hourglass_bottom,
+              tone: awaiting == 0
+                  ? JentraStatusTone.neutral
+                  : JentraStatusTone.warning,
+            ),
+          ),
+          kpi(
+            JentraKpiCard(
+              label: 'Active packages',
+              value: '$livePackages',
+              helper: '$published shown in checkout',
+              icon: Icons.inventory_2_outlined,
+            ),
+          ),
+          if (_cleanup.isNotEmpty)
+            kpi(
+              JentraKpiCard(
+                label: 'Needs attention',
+                value: '${_cleanup.length}',
+                helper: 'Account cleanup to resume',
+                icon: Icons.warning_amber_outlined,
+                tone: JentraStatusTone.warning,
+              ),
+            ),
+        ],
+      ),
+      const SizedBox(height: JentraSpacing.x6),
+      JentraPanel(
+        padding: const EdgeInsets.all(JentraSpacing.x5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Quick actions',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: JentraSpacing.x3),
+            Wrap(
+              spacing: JentraSpacing.x3,
+              runSpacing: JentraSpacing.x3,
+              children: [
+                _newSystemButton(context),
+                OutlinedButton.icon(
+                  onPressed: () => _go(_Section.subscriptions),
+                  icon: const Icon(Icons.receipt_long_outlined),
+                  label: const Text('Review subscription orders'),
+                ),
+                OutlinedButton.icon(
+                  onPressed: () => _go(_Section.packages),
+                  icon: const Icon(Icons.inventory_2_outlined),
+                  label: const Text('Manage packages'),
+                ),
+                OutlinedButton.icon(
+                  onPressed: () => _go(_Section.organizations),
+                  icon: const Icon(Icons.search),
+                  label: const Text('Find an organization'),
+                ),
+              ],
             ),
           ],
         ),
-        const SizedBox(height: 12),
-        TextField(
-          controller: _search,
-          textInputAction: TextInputAction.search,
-          onSubmitted: _busy ? null : (_) => _find(),
-          decoration: InputDecoration(
-            labelText: 'Find by organization name or ID',
-            suffixIcon: IconButton(
-              tooltip: 'Search organizations',
-              onPressed: _busy ? null : _find,
-              icon: const Icon(Icons.search),
+      ),
+      const SizedBox(height: JentraSpacing.x6),
+      Row(
+        children: [
+          Expanded(
+            child: Text(
+              'Recent organizations',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ),
+          if (shown.isNotEmpty)
+            TextButton(
+              onPressed: () => _go(_Section.organizations),
+              child: const Text('View all'),
+            ),
+        ],
+      ),
+      const SizedBox(height: JentraSpacing.x2),
+      if (shown.isEmpty && !_busy)
+        JentraEmptyState(
+          title: 'No organizations yet',
+          description: 'Create the first customer system. Its administrator gets a username and a temporary password.',
+          icon: Icons.apartment_outlined,
+          action: _newSystemButton(context),
+        )
+      else
+        for (final row in shown.take(5))
+          _organizationTile(context, row, selectable: false),
+    ];
+  }
+
+  bool _matchesFilter(_Row row) => switch (_filter) {
+    _StatusFilter.all => true,
+    _StatusFilter.active => row['status'] == 'active',
+    _StatusFilter.trial => row['status'] == 'trial',
+    _StatusFilter.other => !['active', 'trial'].contains(row['status']),
+  };
+
+  List<Widget> _organizationsSection(BuildContext context) {
+    final rows = _organizations.take(50).where(_matchesFilter).toList();
+    return [
+      TextField(
+        controller: _search,
+        textInputAction: TextInputAction.search,
+        onSubmitted: _busy ? null : (_) => _find(),
+        decoration: InputDecoration(
+          labelText: 'Find by organization name or ID',
+          prefixIcon: const Icon(Icons.search),
+          suffixIcon: IconButton(
+            tooltip: 'Search organizations',
+            onPressed: _busy ? null : _find,
+            icon: const Icon(Icons.arrow_forward),
+          ),
+        ),
+      ),
+      const SizedBox(height: JentraSpacing.x3),
+      Wrap(
+        spacing: JentraSpacing.x2,
+        runSpacing: JentraSpacing.x2,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          for (final (filter, label) in const [
+            (_StatusFilter.all, 'All'),
+            (_StatusFilter.active, 'Active'),
+            (_StatusFilter.trial, 'Trial'),
+            (_StatusFilter.other, 'Locked or other'),
+          ])
+            ChoiceChip(
+              label: Text(label),
+              selected: _filter == filter,
+              onSelected: (_) => setState(() => _filter = filter),
+            ),
+        ],
+      ),
+      const SizedBox(height: JentraSpacing.x3),
+      if (_selection.isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.only(bottom: JentraSpacing.x3),
+          child: Material(
+            color: JentraColors.infoSurface,
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: JentraSpacing.x4,
+                vertical: JentraSpacing.x2,
+              ),
+              child: Wrap(
+                spacing: JentraSpacing.x3,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Text(
+                    '${_selection.length} selected',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  TextButton(
+                    onPressed: _busy ? null : () => _offer(withdraw: false),
+                    child: const Text('Apply offer'),
+                  ),
+                  TextButton(
+                    onPressed: _busy ? null : () => _offer(withdraw: true),
+                    child: const Text('Withdraw offer'),
+                  ),
+                  TextButton(
+                    onPressed: _busy ? null : () => setState(_selection.clear),
+                    child: const Text('Clear selection'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-        if (_selection.isNotEmpty)
-          Wrap(
-            spacing: 12,
-            crossAxisAlignment: WrapCrossAlignment.center,
+      if (!_busy && rows.isEmpty && _error == null)
+        JentraEmptyState(
+          title: _organizations.isEmpty
+              ? 'No organizations found'
+              : 'No organizations match this filter',
+          description: _search.text.trim().isNotEmpty
+              ? 'Check the name or ID, or clear the search.'
+              : 'Create a system, or choose another status filter.',
+          icon: Icons.apartment_outlined,
+          action: _organizations.isEmpty ? _newSystemButton(context) : null,
+        ),
+      for (final row in rows) _organizationTile(context, row),
+      if (_offset > 0 || _organizations.length > 50)
+        Padding(
+          padding: const EdgeInsets.only(top: JentraSpacing.x3),
+          child: Wrap(
+            spacing: JentraSpacing.x3,
             children: [
-              Text('${_selection.length} selected'),
-              TextButton(
-                onPressed: _busy ? null : () => _offer(withdraw: false),
-                child: const Text('Apply offer'),
+              OutlinedButton(
+                onPressed: _busy || _offset == 0 ? null : () => _page(-1),
+                child: const Text('Previous 50'),
               ),
-              TextButton(
-                onPressed: _busy ? null : () => _offer(withdraw: true),
-                child: const Text('Withdraw offer'),
-              ),
-              TextButton(
-                onPressed: _busy ? null : () => setState(_selection.clear),
-                child: const Text('Clear selection'),
+              OutlinedButton(
+                onPressed: _busy || _organizations.length <= 50
+                    ? null
+                    : () => _page(1),
+                child: const Text('Next 50'),
               ),
             ],
           ),
-        if (!_busy && _organizations.isEmpty && _error == null)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Text('No organizations found.'),
-          ),
-        for (final row in _organizations.take(50))
-          Card(
-            child: ListTile(
-              leading: Checkbox(
+        ),
+    ];
+  }
+
+  Widget _organizationTile(
+    BuildContext context,
+    _Row row, {
+    bool selectable = true,
+  }) {
+    final state = _organizationState(row);
+    final details = [
+      if (row['system_serial'] != null) row['system_serial'],
+      row['slug'],
+    ].join(' · ');
+    return Card(
+      margin: const EdgeInsets.only(bottom: JentraSpacing.x2),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: JentraSpacing.x4,
+          vertical: JentraSpacing.x1,
+        ),
+        leading: selectable
+            ? Checkbox(
                 semanticLabel: 'Select ${row['name']} for a package offer',
                 value: _selection.containsKey(row['id']),
                 onChanged: _busy || !['active', 'trial'].contains(row['status'])
@@ -563,91 +1130,144 @@ class _ControlPanelState extends State<_ControlPanel> {
                           _selection.remove(id);
                         }
                       }),
+              )
+            : const CircleAvatar(
+                backgroundColor: JentraColors.neutralSurface,
+                child: Icon(Icons.apartment, color: JentraColors.textSecondary),
               ),
-              title: Text(row['name'] as String),
-              subtitle: Text(
-                '${row['system_serial'] == null ? '' : "${row['system_serial']} · "}'
-                '${row['slug']} · ${_organizationState(row)} · ${row['plan_code'] ?? 'No package'}'
-                '${row['offer_minor'] == null ? '' : ' · Offer ${_price(row['offer_minor'], row['offer_currency_code'])}'}',
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: _busy
-                  ? null
-                  : () async {
-                      await showDialog<void>(
-                        context: context,
-                        builder: (_) => _OrganizationDetails(
-                          gateway: _gateway,
-                          organization: row,
-                        ),
-                      );
-                      if (mounted) await _run(_refresh);
-                    },
+        title: Text(
+          row['name'] as String,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(details),
+        trailing: Wrap(
+          spacing: JentraSpacing.x2,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Text(
+              row['plan_code'] as String? ?? 'No package',
+              style: const TextStyle(color: JentraColors.textSecondary),
             ),
-          ),
-        if (_offset > 0 || _organizations.length > 50)
-          Wrap(
-            spacing: 12,
-            children: [
-              TextButton(
-                onPressed: _busy || _offset == 0 ? null : () => _page(-1),
-                child: const Text('Previous 50'),
+            if (row['offer_minor'] != null)
+              JentraStatusBadge(
+                label:
+                    'Offer ${_price(row['offer_minor'], row['offer_currency_code'])}',
+                tone: JentraStatusTone.info,
+                icon: Icons.local_offer_outlined,
               ),
-              TextButton(
-                onPressed: _busy || _organizations.length <= 50
-                    ? null
-                    : () => _page(1),
-                child: const Text('Next 50'),
+            JentraStatusBadge(
+              label: _stateLabel(state),
+              tone: _stateTone(state),
+            ),
+            const Icon(Icons.chevron_right),
+          ],
+        ),
+        onTap: _busy
+            ? null
+            : () async {
+                await showDialog<void>(
+                  context: context,
+                  builder: (_) => _OrganizationDetails(
+                    gateway: _gateway,
+                    organization: row,
+                  ),
+                );
+                if (mounted) await _run(_refresh);
+              },
+      ),
+    );
+  }
+
+  List<Widget> _packagesSection(BuildContext context) => [
+    if (!_busy && _packages.isEmpty && _error == null)
+      const JentraEmptyState(
+        title: 'No packages',
+        description: 'Packages come from the billing setup. Refresh after a package is added.',
+        icon: Icons.inventory_2_outlined,
+      ),
+    for (final row in _packages)
+      Card(
+        margin: const EdgeInsets.only(bottom: JentraSpacing.x2),
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: JentraSpacing.x4,
+            vertical: JentraSpacing.x1,
+          ),
+          leading: const CircleAvatar(
+            backgroundColor: JentraColors.infoSurface,
+            child: Icon(Icons.inventory_2_outlined, color: JentraColors.info),
+          ),
+          title: Text(
+            row['name'] as String,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+          subtitle: Text(
+            '${row['code']} · ${_price(row['price_minor'], row['currency_code'])}'
+            '${row['trial_days'] == null ? '' : ' · ${row['trial_days']}-day trial'}',
+          ),
+          trailing: Wrap(
+            spacing: JentraSpacing.x1,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              JentraStatusBadge(
+                label: row['status'] == 'active' ? 'Active' : 'Retired',
+                tone: row['status'] == 'active'
+                    ? JentraStatusTone.success
+                    : JentraStatusTone.neutral,
+              ),
+              JentraStatusBadge(
+                label: row['published'] == true ? 'In checkout' : 'Hidden',
+                tone: row['published'] == true
+                    ? JentraStatusTone.info
+                    : JentraStatusTone.neutral,
+              ),
+              IconButton(
+                onPressed: _busy ? null : () => _modules(row),
+                tooltip: 'Edit modules',
+                icon: const Icon(Icons.extension_outlined),
+              ),
+              IconButton(
+                onPressed: _busy ? null : () => _publication(row),
+                tooltip: 'Edit catalog listing',
+                icon: const Icon(Icons.storefront_outlined),
+              ),
+              IconButton(
+                onPressed: _busy ? null : () => _package(row),
+                tooltip: 'Edit package',
+                icon: const Icon(Icons.edit_outlined),
               ),
             ],
           ),
-        const SizedBox(height: 24),
-        Wrap(
-          spacing: 12,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Text('Subscription packages', style: title),
-            OutlinedButton.icon(
-              onPressed: _busy || _packages.isEmpty ? null : () => _package(),
-              icon: const Icon(Icons.add),
-              label: const Text('Create package'),
-            ),
-          ],
+          onTap: _busy ? null : () => _package(row),
         ),
-        for (final row in _packages)
-          ListTile(
-            title: Text(row['name'] as String),
-            subtitle: Text(
-              '${row['code']} · ${row['status']} · ${_price(row['price_minor'], row['currency_code'])}'
-              '${row['published'] == true ? ' · Published' : ''}',
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  onPressed: _busy ? null : () => _modules(row),
-                  tooltip: 'Edit modules',
-                  icon: const Icon(Icons.extension_outlined),
-                ),
-                IconButton(
-                  onPressed: _busy ? null : () => _publication(row),
-                  tooltip: 'Edit catalog listing',
-                  icon: const Icon(Icons.video_library_outlined),
-                ),
-              ],
-            ),
-            onTap: _busy ? null : () => _package(row),
-          ),
-        if (_cleanup.isNotEmpty) ...[
-          const SizedBox(height: 24),
-          Text('Pending account cleanup', style: title),
-          for (final row in _cleanup)
-            ListTile(
+      ),
+  ];
+
+  List<Widget> _archivesSection(BuildContext context) {
+    final title = Theme.of(context).textTheme.titleMedium;
+    return [
+      if (_cleanup.isEmpty && _archives.isEmpty && !_busy && _error == null)
+        const JentraEmptyState(
+          title: 'Nothing archived',
+          description: 'When an organization is backed up and purged, its encrypted archive appears here.',
+          icon: Icons.archive_outlined,
+        ),
+      if (_cleanup.isNotEmpty) ...[
+        Text('Pending account cleanup', style: title),
+        const SizedBox(height: JentraSpacing.x2),
+        for (final row in _cleanup)
+          Card(
+            margin: const EdgeInsets.only(bottom: JentraSpacing.x2),
+            child: ListTile(
+              leading: const Icon(
+                Icons.warning_amber_outlined,
+                color: JentraColors.warning,
+              ),
               title: Text('Organization ${row['tenant_id']}'),
               subtitle: const Text(
                 'The organization was purged. Its account cleanup can be resumed.',
               ),
-              trailing: OutlinedButton(
+              trailing: FilledButton.tonal(
                 onPressed: _busy
                     ? null
                     : () => _run(() async {
@@ -660,12 +1280,17 @@ class _ControlPanelState extends State<_ControlPanel> {
                 child: const Text('Resume'),
               ),
             ),
-        ],
-        if (_archives.isNotEmpty) ...[
-          const SizedBox(height: 24),
-          Text('Archives of deleted organizations', style: title),
-          for (final row in _archives)
-            ListTile(
+          ),
+        const SizedBox(height: JentraSpacing.x5),
+      ],
+      if (_archives.isNotEmpty) ...[
+        Text('Archives of deleted organizations', style: title),
+        const SizedBox(height: JentraSpacing.x2),
+        for (final row in _archives)
+          Card(
+            margin: const EdgeInsets.only(bottom: JentraSpacing.x2),
+            child: ListTile(
+              leading: const Icon(Icons.lock_outline),
               title: Text('Organization ${row['tenant_id']}'),
               subtitle: Text(
                 'Deleted ${_date(row['deleted_at'])} · ${row['bytes']} bytes',
@@ -676,11 +1301,22 @@ class _ControlPanelState extends State<_ControlPanel> {
                 onPressed: _busy ? null : () => _downloadDeletedArchive(row),
               ),
             ),
-        ],
+          ),
       ],
-    );
+    ];
   }
 }
+
+String _stateLabel(String state) =>
+    state.isEmpty ? state : state[0].toUpperCase() + state.substring(1);
+
+JentraStatusTone _stateTone(String state) => switch (state) {
+  'active' => JentraStatusTone.success,
+  'trial' => JentraStatusTone.info,
+  'Awaiting activation' => JentraStatusTone.warning,
+  'locked' || 'suspended' || 'deleting' => JentraStatusTone.danger,
+  _ => JentraStatusTone.neutral,
+};
 
 class _OrganizationDetails extends StatefulWidget {
   const _OrganizationDetails({
