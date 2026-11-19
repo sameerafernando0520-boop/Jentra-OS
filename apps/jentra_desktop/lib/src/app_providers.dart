@@ -302,6 +302,8 @@ final class TenantListController extends AsyncNotifier<List<TenantSummary>> {
           WorkspaceCreationFailure.invalidValues,
         TenantBootstrapFailure.accessDenied =>
           WorkspaceCreationFailure.accessDenied,
+        TenantBootstrapFailure.checkoutRequired =>
+          WorkspaceCreationFailure.checkoutRequired,
         _ => WorkspaceCreationFailure.unconfirmed,
       });
     } on Object {

@@ -4,6 +4,8 @@ import 'package:jentra_domain/jentra_people.dart';
 import 'package:jentra_design_system/jentra_design_system.dart';
 
 import '../../app_providers.dart';
+import '../auth/managed_staff_dialog.dart';
+import '../platform_control/platform_organization_screen.dart';
 import 'employee_controller.dart';
 
 class EmployeeScreen extends ConsumerWidget {
@@ -30,13 +32,41 @@ class EmployeeScreen extends ConsumerWidget {
         ),
       );
     }
-    return EmployeeWorkspace(key: ValueKey(controller), controller: controller);
+    final gateway = ref.watch(platformOrganizationGatewayProvider);
+    final scope = controller.scope;
+    final entity = scope.legalEntityId;
+    final branch = scope.branchId;
+    final canIssue =
+        capabilities.value?.contains('people.employee_credentials.manage') ==
+        true;
+    return EmployeeWorkspace(
+      key: ValueKey(controller),
+      controller: controller,
+      onManageAppLogin:
+          gateway != null && entity != null && branch != null && canIssue
+          ? (record) => manageEmployeeCredentials(
+              context,
+              gateway: gateway,
+              tenantId: scope.tenantId,
+              legalEntityId: entity,
+              branchId: branch,
+              employeeId: record['id'] as String,
+              name: record['display_name'] as String,
+              email: record['work_email'] as String?,
+            )
+          : null,
+    );
   }
 }
 
 class EmployeeWorkspace extends StatefulWidget {
-  const EmployeeWorkspace({required this.controller, super.key});
+  const EmployeeWorkspace({
+    required this.controller,
+    this.onManageAppLogin,
+    super.key,
+  });
   final EmployeeController controller;
+  final Future<void> Function(Map<String, Object?>)? onManageAppLogin;
   @override
   State<EmployeeWorkspace> createState() => _EmployeeWorkspaceState();
 }
@@ -307,7 +337,11 @@ class _EmployeeWorkspaceState extends State<EmployeeWorkspace> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.only(top: 24),
-                  child: _EmployeeDetail(controller: c, onAction: _edit),
+                  child: _EmployeeDetail(
+                    controller: c,
+                    onAction: _edit,
+                    onManageAppLogin: widget.onManageAppLogin,
+                  ),
                 ),
               ),
           ],
@@ -318,9 +352,14 @@ class _EmployeeWorkspaceState extends State<EmployeeWorkspace> {
 }
 
 class _EmployeeDetail extends StatelessWidget {
-  const _EmployeeDetail({required this.controller, required this.onAction});
+  const _EmployeeDetail({
+    required this.controller,
+    required this.onAction,
+    required this.onManageAppLogin,
+  });
   final EmployeeController controller;
   final Future<void> Function(String action, {String? eventId}) onAction;
+  final Future<void> Function(Map<String, Object?>)? onManageAppLogin;
   @override
   Widget build(BuildContext context) {
     final c = controller;
@@ -347,6 +386,13 @@ class _EmployeeDetail extends StatelessWidget {
               spacing: 8,
               runSpacing: 8,
               children: [
+                if (onManageAppLogin != null && c.status == 'employed')
+                  OutlinedButton(
+                    onPressed: !c.online || c.locked
+                        ? null
+                        : () => onManageAppLogin!(record),
+                    child: const Text('Issue Employee App Login'),
+                  ),
                 if (c.canCreate)
                   OutlinedButton(
                     onPressed: c.locked ? null : () => onAction('identity'),

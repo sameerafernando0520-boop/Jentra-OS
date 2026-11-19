@@ -4,6 +4,7 @@ enum WorkspaceCreationFailure {
   invalidValues,
   duplicateSlug,
   accessDenied,
+  checkoutRequired,
   unconfirmed,
 }
 

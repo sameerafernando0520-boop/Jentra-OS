@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:jentra_platform/jentra_field_sales_platform.dart';
 import 'package:jentra_platform/field_confirmation.dart';
 
+import 'src/data/device_location.dart';
 import 'src/data/sales_gateway.dart';
 import 'src/data/sales_store_factory.dart';
 import 'src/sales_app.dart';
@@ -90,6 +91,8 @@ void main() {
                 authChanges: client.auth.onAuthStateChange.map(
                   (event) => event.session?.user.id,
                 ),
+                // Read once, only when the rep adds a location to a visit.
+                locate: deviceLocation(),
               )
             : null,
       ),

@@ -8,6 +8,19 @@ import 'package:jentra_platform/jentra_platform.dart';
 
 import '../../app_providers.dart';
 import '../../shell/build_information_dialog.dart';
+import 'password_reset_dialog.dart';
+
+String safeLoginRedirect(String? value) {
+  final uri = value == null ? null : Uri.tryParse(value);
+  if (uri == null ||
+      uri.hasScheme ||
+      uri.hasAuthority ||
+      !uri.path.startsWith('/') ||
+      uri.path == '/login') {
+    return '/dashboard';
+  }
+  return uri.toString();
+}
 
 typedef EmailConfirmationAction = Future<void> Function({
   required String email,
@@ -59,6 +72,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   bool _confirmationVisible = false;
   bool _busy = false;
   bool _googlePending = false;
+  bool _resetOpen = false;
   bool _googleFinishing = false;
   bool _googleCancelling = false;
   GoogleSignInCancellation? _googleCancellation;
@@ -155,7 +169,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
   void _goToWorkspace() {
     final redirect = GoRouterState.of(context).uri.queryParameters['redirect'];
-    context.go(redirect ?? '/dashboard');
+    context.go(safeLoginRedirect(redirect));
   }
 
   Future<void> _submit() async {
@@ -363,6 +377,43 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       }
     } finally {
       if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _forgotPassword() async {
+    final gateway = ref.read(foundationGatewayProvider);
+    if (gateway == null) {
+      setState(() => _error = 'Open the connected build to reset a password.');
+      return;
+    }
+    _password.clear();
+    setState(() {
+      _busy = true;
+      _resetOpen = true;
+      _error = null;
+      _message = null;
+    });
+    try {
+      final login = await showDialog<String>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => PasswordResetDialog(
+          gateway: gateway,
+          initialLogin: _email.text.trim(),
+        ),
+      );
+      if (!mounted || login == null) return;
+      _email.text = login;
+      setState(
+        () => _message = 'Password reset. Sign in with your new password.',
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _busy = false;
+          _resetOpen = false;
+        });
+      }
     }
   }
 
@@ -738,10 +789,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                             ? 'Create account'
                             : 'Sign in securely',
                         icon: Icons.arrow_forward,
-                        loading: _busy && !_googlePending && !_emailPending,
+                        loading:
+                            _busy &&
+                            !_googlePending &&
+                            !_emailPending &&
+                            !_resetOpen,
                         onPressed: _busy ? null : _submit,
                       ),
                       const SizedBox(height: JentraSpacing.x4),
+                      if (organizationControlCandidateEnabled &&
+                          !_creatingAccount)
+                        TextButton(
+                          onPressed: _busy ? null : _forgotPassword,
+                          child: const Text('Forgot password?'),
+                        ),
                       OutlinedButton.icon(
                         key: const ValueKey('login-google'),
                         onPressed: _busy ? null : _signInWithGoogle,

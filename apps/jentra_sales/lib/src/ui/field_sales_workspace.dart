@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:jentra_domain/jentra_field_sales.dart';
 
 import '../field_sales_controller.dart';
+import '../field_sales_stock.dart';
 import '../models.dart';
 import 'components.dart';
+import 'field_visits.dart';
 
 class FieldSalesWorkspace extends StatefulWidget {
   const FieldSalesWorkspace(
@@ -23,6 +25,7 @@ class _FieldSalesWorkspaceState extends State<FieldSalesWorkspace>
     with WidgetsBindingObserver {
   int _page = 0;
   String _query = '';
+  bool _guarding = false;
   var _composerKey = GlobalKey<_FieldOrderComposerState>();
   Future<bool> _confirmLeave() async {
     final composer = _composerKey.currentState;
@@ -55,10 +58,16 @@ class _FieldSalesWorkspaceState extends State<FieldSalesWorkspace>
   }
 
   Future<void> _guarded(Future<void> Function() work) async {
-    if (!await _confirmLeave() || !mounted) return;
-    widget.controller.invalidateReview();
-    setState(() => _composerKey = GlobalKey<_FieldOrderComposerState>());
-    await work();
+    if (_guarding) return;
+    _guarding = true;
+    try {
+      if (!await _confirmLeave() || !mounted) return;
+      widget.controller.invalidateReview();
+      setState(() => _composerKey = GlobalKey<_FieldOrderComposerState>());
+      await work();
+    } finally {
+      _guarding = false;
+    }
   }
 
   Future<void> _navigate(int page) async {
@@ -96,285 +105,308 @@ class _FieldSalesWorkspaceState extends State<FieldSalesWorkspace>
       return LayoutBuilder(
         builder: (context, box) {
           final wide = box.maxWidth >= 700;
-          final labels = ['Today', 'Customers', 'Orders', 'More'];
+          final labels = ['Today', 'Customers', 'Orders', 'Visits', 'More'];
           final icons = [
             Icons.space_dashboard_outlined,
             Icons.people_outline,
             Icons.receipt_long_outlined,
+            Icons.event_note_outlined,
             Icons.more_horiz,
           ];
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Jentra Sales'),
-              actions: [
-                IconButton(
-                  tooltip: 'Refresh portfolio',
-                  onPressed: c.busy || c.scope == null
-                      ? null
-                      : () => _guarded(() => c.selectScope(c.scope!)),
-                  icon: const Icon(Icons.refresh),
-                ),
-                IconButton(
-                  tooltip: 'Sign out of Sales',
-                  onPressed: () => _guarded(widget.onLeave),
-                  icon: const Icon(Icons.logout),
-                ),
-              ],
-            ),
-            body: SafeArea(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (wide)
-                    NavigationRail(
-                      scrollable: true,
-                      extended:
-                          box.maxWidth >= 1180 &&
-                          MediaQuery.textScalerOf(context).scale(1) < 1.6,
-                      selectedIndex: _page,
-                      onDestinationSelected: _navigate,
-                      labelType:
-                          box.maxWidth < 1180 ||
-                              MediaQuery.textScalerOf(context).scale(1) >= 1.6
-                          ? NavigationRailLabelType.all
-                          : null,
-                      destinations: [
-                        for (var i = 0; i < labels.length; i++)
-                          NavigationRailDestination(
-                            icon: Icon(icons[i]),
-                            label: Text(labels[i]),
-                          ),
-                      ],
-                    ),
-                  Expanded(
-                    child: ListView(
-                      padding: EdgeInsets.all(wide ? 32 : 16),
-                      children: [
-                        Text(
-                          labels[_page],
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        ),
-                        const SizedBox(height: 16),
-                        if (c.busy)
-                          const LinearProgressIndicator(
-                            semanticsLabel: 'Checking current Sales authority',
-                          ),
-                        if (c.error != null) SalesNotice(c.error!),
-                        if (c.scopes.length > 1)
-                          DropdownButton<String>(
-                            value: c.scope?.key,
-                            isExpanded: true,
-                            hint: const Text('Company and branch'),
-                            items: [
-                              for (final s in c.scopes)
-                                DropdownMenuItem(
-                                  value: FieldSalesScope.fromJson(s).key,
-                                  child: Text(
-                                    '${s['company_name']} · ${s['branch_name']}',
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                            ],
-                            onChanged: c.busy
-                                ? null
-                                : (key) {
-                                    final row = c.scopes.firstWhere(
-                                      (s) =>
-                                          FieldSalesScope.fromJson(s).key ==
-                                          key,
-                                    );
-                                    _guarded(
-                                      () => c.selectScope(
-                                        FieldSalesScope.fromJson(row),
-                                      ),
-                                    );
-                                  },
-                          ),
-                        if (c.pending != null) ...[
-                          const SizedBox(height: 16),
-                          SalesPanel(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SectionTitle(
-                                  'Check your original submission',
-                                ),
-                                const Text(
-                                  'Its outcome is still unconfirmed. Check the saved command before retrying; a new order will not be created automatically.',
-                                ),
-                                const SizedBox(height: 12),
-                                Wrap(
-                                  spacing: 12,
-                                  runSpacing: 12,
-                                  children: [
-                                    FilledButton(
-                                      onPressed: c.busy
-                                          ? null
-                                          : () => c.reconcile(),
-                                      child: const Text('Check submission'),
-                                    ),
-                                    OutlinedButton(
-                                      onPressed: c.busy
-                                          ? null
-                                          : () => c.reconcile(retry: true),
-                                      child: const Text(
-                                        'Retry original request',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                        const SizedBox(height: 20),
-                        if (c.scope == null)
-                          const SalesEmpty(
-                            'Choose your company',
-                            'Select a company and branch to open your current customer portfolio.',
-                          )
-                        else if (_page == 0) ...[
-                          SalesPanel(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SectionTitle('Your assigned portfolio'),
-                                Text(
-                                  '${c.customers.length} assigned customers · ${c.orders.where((r) => r['company_state'] == 'submitted').length} requests awaiting company review',
-                                ),
-                                const SizedBox(height: 16),
-                                FilledButton.icon(
-                                  onPressed: () => _navigate(1),
-                                  icon: const Icon(Icons.add),
-                                  label: const Text('Prepare an order'),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          const SalesNotice(
-                            'Customer email acceptance, company approval and delivery acknowledgement are separate. Verified email links are pending activation.',
-                          ),
-                        ] else if (_page == 1) ...[
-                          TextField(
-                            decoration: const InputDecoration(
-                              labelText: 'Search assigned customers',
-                              prefixIcon: Icon(Icons.search),
-                            ),
-                            onChanged: (q) => setState(() => _query = q),
-                          ),
-                          const SizedBox(height: 16),
-                          for (final row in c.customers.where(
-                            (r) => (r['name'] as String).toLowerCase().contains(
-                              _query.toLowerCase(),
-                            ),
-                          ))
-                            Card(
-                              child: ListTile(
-                                title: Text(row['name'] as String),
-                                subtitle: Text(
-                                  'Payment terms: ${row['payment_terms_days']} days · ${row['delivery_terms']}',
-                                ),
-                                selected: c.selectedCustomer == row['id'],
-                                onTap: c.busy || c.pending != null
-                                    ? null
-                                    : () => _guarded(
-                                        () => c.selectCustomer(
-                                          row['id'] as String,
-                                        ),
-                                      ),
-                              ),
-                            ),
-                          if (c.customers.isEmpty)
-                            const SalesEmpty(
-                              'No assigned customers',
-                              'Ask your company to review your dated customer assignments.',
-                            ),
-                          if (c.selectedCustomer != null &&
-                              c.pending == null) ...[
-                            const SizedBox(height: 24),
-                            FieldOrderComposer(c, key: _composerKey),
-                          ],
-                        ] else if (_page == 2) ...[
-                          if (c.orders.isEmpty)
-                            const SalesEmpty(
-                              'No submitted requests',
-                              'Prepare an order from your assigned customers.',
-                            ),
-                          for (final order in c.orders)
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 16),
-                              child: SalesPanel(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      c.customers
-                                                  .where(
-                                                    (r) =>
-                                                        r['id'] ==
-                                                        order['customer_id'],
-                                                  )
-                                                  .firstOrNull?['name']
-                                              as String? ??
-                                          'Assigned customer',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleLarge,
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Text('Company: ${order['company_state']}'),
-                                    Text(
-                                      'Customer: ${order['customer_state'] ?? 'email_link_pending'}',
-                                    ),
-                                    Text(
-                                      'Delivery: ${order['delivery_state'] ?? 'not_requested'}',
-                                    ),
-                                    if (order['canonical_order_id'] != null)
-                                      Text(
-                                        'Canonical order: ${order['canonical_state'] ?? 'draft'}',
-                                      ),
-                                    const SizedBox(height: 12),
-                                    Text(
-                                      'Requested total: ${order['preview']['currency_code']} ${order['preview']['pricing']['grand_total']}',
-                                    ),
-                                    if (order['decision_reason'] != null)
-                                      Text(
-                                        'Company reason: ${order['decision_reason']}',
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                        ] else ...[
-                          const SalesNotice(
-                            'Online review is required for each submission. Backgrounding or signing out locks this Sales workspace. Recovery retains the original protected command.',
-                          ),
-                          const SizedBox(height: 16),
-                          OutlinedButton(
-                            onPressed: () => _guarded(widget.onLeave),
-                            child: const Text('Sign out of Sales'),
-                          ),
-                        ],
-                      ],
-                    ),
+          return PopScope<Object?>(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, result) {
+              if (!didPop) _guarded(widget.onLeave);
+            },
+            child: Scaffold(
+              appBar: AppBar(
+                title: const Text('Jentra Sales'),
+                actions: [
+                  IconButton(
+                    tooltip: 'Refresh portfolio',
+                    onPressed: c.busy || c.scope == null
+                        ? null
+                        : () => _guarded(() => c.selectScope(c.scope!)),
+                    icon: const Icon(Icons.refresh),
+                  ),
+                  IconButton(
+                    tooltip: 'Sign out of Sales',
+                    onPressed: () => _guarded(widget.onLeave),
+                    icon: const Icon(Icons.logout),
                   ),
                 ],
               ),
+              body: SafeArea(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (wide)
+                      NavigationRail(
+                        scrollable: true,
+                        extended:
+                            box.maxWidth >= 1180 &&
+                            MediaQuery.textScalerOf(context).scale(1) < 1.6,
+                        selectedIndex: _page,
+                        onDestinationSelected: _navigate,
+                        labelType:
+                            box.maxWidth < 1180 ||
+                                MediaQuery.textScalerOf(context).scale(1) >= 1.6
+                            ? NavigationRailLabelType.all
+                            : null,
+                        destinations: [
+                          for (var i = 0; i < labels.length; i++)
+                            NavigationRailDestination(
+                              icon: Icon(icons[i]),
+                              label: Text(labels[i]),
+                            ),
+                        ],
+                      ),
+                    Expanded(
+                      child: ListView(
+                        padding: EdgeInsets.all(wide ? 32 : 16),
+                        children: [
+                          Text(
+                            labels[_page],
+                            style: Theme.of(context).textTheme.headlineMedium,
+                          ),
+                          const SizedBox(height: 16),
+                          if (c.busy)
+                            const LinearProgressIndicator(
+                              semanticsLabel:
+                                  'Checking current Sales authority',
+                            ),
+                          if (c.error != null) SalesNotice(c.error!),
+                          if (c.scopes.length > 1)
+                            DropdownButton<String>(
+                              value: c.scope?.key,
+                              isExpanded: true,
+                              hint: const Text('Company and branch'),
+                              items: [
+                                for (final s in c.scopes)
+                                  DropdownMenuItem(
+                                    value: FieldSalesScope.fromJson(s).key,
+                                    child: Text(
+                                      '${s['company_name']} · ${s['branch_name']}',
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                              ],
+                              onChanged: c.busy
+                                  ? null
+                                  : (key) {
+                                      final row = c.scopes.firstWhere(
+                                        (s) =>
+                                            FieldSalesScope.fromJson(s).key ==
+                                            key,
+                                      );
+                                      _guarded(
+                                        () => c.selectScope(
+                                          FieldSalesScope.fromJson(row),
+                                        ),
+                                      );
+                                    },
+                            ),
+                          if (c.pending != null) ...[
+                            const SizedBox(height: 16),
+                            SalesPanel(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SectionTitle(
+                                    'Check your original submission',
+                                  ),
+                                  const Text(
+                                    'Its outcome is still unconfirmed. Check the saved command before retrying; a new order will not be created automatically.',
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Wrap(
+                                    spacing: 12,
+                                    runSpacing: 12,
+                                    children: [
+                                      FilledButton(
+                                        onPressed: c.busy
+                                            ? null
+                                            : () => c.reconcile(),
+                                        child: const Text('Check submission'),
+                                      ),
+                                      OutlinedButton(
+                                        onPressed: c.busy
+                                            ? null
+                                            : () => c.reconcile(retry: true),
+                                        child: const Text(
+                                          'Retry original request',
+                                        ),
+                                      ),
+                                      if (c.canDiscardPending)
+                                        TextButton(
+                                          onPressed: c.busy
+                                              ? null
+                                              : () => c.discardExpired(),
+                                          child: const Text(
+                                            'Clear if not received',
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                          const SizedBox(height: 20),
+                          if (c.scope == null)
+                            const SalesEmpty(
+                              'Choose your company',
+                              'Select a company and branch to open your current customer portfolio.',
+                            )
+                          else if (_page == 0) ...[
+                            SalesPanel(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SectionTitle('Your assigned portfolio'),
+                                  Text(
+                                    '${c.customers.length} assigned customers · ${c.orders.where((r) => r['company_state'] == 'submitted').length} requests awaiting company review',
+                                  ),
+                                  const SizedBox(height: 16),
+                                  FilledButton.icon(
+                                    onPressed: () => _navigate(1),
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('Prepare an order'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            const SalesNotice(
+                              'Customer email acceptance, company approval and delivery acknowledgement are separate. Verified email links are pending activation.',
+                            ),
+                          ] else if (_page == 1) ...[
+                            TextField(
+                              decoration: const InputDecoration(
+                                labelText: 'Search assigned customers',
+                                prefixIcon: Icon(Icons.search),
+                              ),
+                              onChanged: (q) => setState(() => _query = q),
+                            ),
+                            const SizedBox(height: 16),
+                            for (final row in c.customers.where(
+                              (r) => (r['name'] as String)
+                                  .toLowerCase()
+                                  .contains(_query.toLowerCase()),
+                            ))
+                              Card(
+                                child: ListTile(
+                                  title: Text(row['name'] as String),
+                                  subtitle: Text(
+                                    'Payment terms: ${row['payment_terms_days']} days · ${row['delivery_terms']}',
+                                  ),
+                                  selected: c.selectedCustomer == row['id'],
+                                  onTap: c.busy || c.pending != null
+                                      ? null
+                                      : () => _guarded(
+                                          () => c.selectCustomer(
+                                            row['id'] as String,
+                                          ),
+                                        ),
+                                ),
+                              ),
+                            if (c.customers.isEmpty)
+                              const SalesEmpty(
+                                'No assigned customers',
+                                'Ask your company to review your dated customer assignments.',
+                              ),
+                            if (c.selectedCustomer != null &&
+                                c.catalogueReady &&
+                                c.pending == null) ...[
+                              const SizedBox(height: 24),
+                              FieldOrderComposer(c, key: _composerKey),
+                            ],
+                          ] else if (_page == 2) ...[
+                            if (c.orders.isEmpty)
+                              const SalesEmpty(
+                                'No submitted requests',
+                                'Prepare an order from your assigned customers.',
+                              ),
+                            for (final order in c.orders)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 16),
+                                child: SalesPanel(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        c.customers
+                                                    .where(
+                                                      (r) =>
+                                                          r['id'] ==
+                                                          order['customer_id'],
+                                                    )
+                                                    .firstOrNull?['name']
+                                                as String? ??
+                                            'Assigned customer',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge,
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        'Company: ${order['company_state']}',
+                                      ),
+                                      Text(
+                                        'Customer: ${order['customer_state'] ?? 'email_link_pending'}',
+                                      ),
+                                      Text(
+                                        'Delivery: ${order['delivery_state'] ?? 'not_requested'}',
+                                      ),
+                                      if (order['canonical_order_id'] != null)
+                                        Text(
+                                          'Canonical order: ${order['canonical_state'] ?? 'draft'}',
+                                        ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        'Requested total: ${order['preview']['currency_code']} ${order['preview']['pricing']['grand_total']}',
+                                      ),
+                                      if (order['decision_reason'] != null)
+                                        Text(
+                                          'Company reason: ${order['decision_reason']}',
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                          ] else if (_page == 3) ...[
+                            FieldVisitsPage(c),
+                          ] else ...[
+                            const SalesNotice(
+                              'Online review is required for each submission. Backgrounding or signing out locks this Sales workspace. Recovery retains the original protected command.',
+                            ),
+                            const SizedBox(height: 16),
+                            OutlinedButton(
+                              onPressed: () => _guarded(widget.onLeave),
+                              child: const Text('Sign out of Sales'),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              bottomNavigationBar: wide
+                  ? null
+                  : NavigationBar(
+                      selectedIndex: _page,
+                      onDestinationSelected: _navigate,
+                      destinations: [
+                        for (var i = 0; i < labels.length; i++)
+                          NavigationDestination(
+                            icon: Icon(icons[i]),
+                            label: labels[i],
+                          ),
+                      ],
+                    ),
             ),
-            bottomNavigationBar: wide
-                ? null
-                : NavigationBar(
-                    selectedIndex: _page,
-                    onDestinationSelected: _navigate,
-                    destinations: [
-                      for (var i = 0; i < labels.length; i++)
-                        NavigationDestination(
-                          icon: Icon(icons[i]),
-                          label: labels[i],
-                        ),
-                    ],
-                  ),
           );
         },
       );
@@ -423,7 +455,11 @@ class _FieldOrderComposerState extends State<FieldOrderComposer> {
       }
     }
     _savedSignature = _signature;
+    // Lets the controller keep this order as a draft if access expires.
+    widget.c.unsavedOrder = _unsaved;
   }
+
+  FieldSalesJson? _unsaved() => mounted && dirty ? _input() : null;
 
   Future<bool> saveLocal() async {
     final signature = _signature;
@@ -441,6 +477,7 @@ class _FieldOrderComposerState extends State<FieldOrderComposer> {
 
   @override
   void dispose() {
+    if (widget.c.unsavedOrder == _unsaved) widget.c.unsavedOrder = null;
     for (final c in [
       _date,
       _discount,
@@ -523,8 +560,8 @@ class _FieldOrderComposerState extends State<FieldOrderComposer> {
             Text(
               'Payment terms: ${customer['payment_terms_days']} days · ${customer['delivery_terms']}',
             ),
-            const Text(
-              'Prices and discount ceilings come from your company. Stock availability is currently unavailable.',
+            Text(
+              'Prices and discount ceilings come from your company. ${fieldStockNote(c.products)}',
             ),
             const SizedBox(height: 20),
             DropdownButtonFormField<String>(
@@ -586,6 +623,10 @@ class _FieldOrderComposerState extends State<FieldOrderComposer> {
                   Text(
                     '${p['name']} · ${p['currency_code']} ${p['unit_price']} / ${p['unit']}',
                   ),
+                  Text(
+                    fieldStockLabel(fieldStockState(p, _warehouse)),
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
                   if (!_quantities.containsKey(p['policy_id']))
                     OutlinedButton(
                       onPressed: c.busy || _quantities.length >= 100
@@ -633,6 +674,13 @@ class _FieldOrderComposerState extends State<FieldOrderComposer> {
                       icon: const Icon(Icons.remove_circle_outline),
                     ),
                   ],
+                ),
+              if (_quantities.containsKey(p['policy_id']) &&
+                  _warehouse != null &&
+                  fieldStockState(p, _warehouse) == FieldStockState.outOfStock)
+                Text(
+                  'Out of stock in this warehouse. Your company may not be able to supply this line on time.',
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
             ],
             if (c.products.isEmpty && !c.busy)

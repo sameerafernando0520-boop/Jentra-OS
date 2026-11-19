@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_domain/jentra_people.dart';
+import 'package:jentra_platform/runtime_configuration.dart';
 // The shared barrels also export native SQLite and desktop draft services.
 // Keep this app's dependency graph limited to the installed gateway modules.
 // ignore: implementation_imports
@@ -17,6 +18,8 @@ enum EmployeePhase {
   unconfigured,
   signedOut,
   loading,
+  changeTemporaryPassword,
+  staffUnavailable,
   chooseWorkspace,
   linkRequired,
   ready,
@@ -133,6 +136,17 @@ EmployeeFailure employeeFailure(Object error) {
       ? error.code
       : error is AuthException
       ? 'SIGN_IN_FAILED'
+      : error is AccountSecurityException
+      ? switch (error.code) {
+          'invalid_login' => 'SIGN_IN_FAILED',
+          'invalid_password' || 'weak_password' => 'INVALID_NEW_PASSWORD',
+          'invalid_current_password' ||
+          'incorrect_password' => 'INVALID_CURRENT_PASSWORD',
+          'invalid_code' ||
+          'invalid_or_expired_code' => 'INVALID_PASSWORD_CODE',
+          'try_again_later' => 'PASSWORD_RETRY_LATER',
+          _ => 'ACCOUNT_SECURITY_UNAVAILABLE',
+        }
       : error is PostgrestException
       ? switch (error.code) {
           '42501' => 'PERMISSION_DENIED',
@@ -146,6 +160,13 @@ EmployeeFailure employeeFailure(Object error) {
   return EmployeeFailure(code, switch (code) {
     'SIGN_IN_FAILED' =>
       'Sign-in failed. Check your account details and connection.',
+    'INVALID_NEW_PASSWORD' => 'Choose a password that meets the requirements.',
+    'INVALID_CURRENT_PASSWORD' =>
+      'Check your temporary password and try again.',
+    'INVALID_PASSWORD_CODE' => 'The recovery code is incorrect or has expired.',
+    'PASSWORD_RETRY_LATER' => 'Wait before trying again.',
+    'ACCOUNT_SECURITY_UNAVAILABLE' =>
+      'Account security could not be verified. Try again or contact HR.',
     'SELF_LINK_REQUIRED' =>
       'HR must propose an exact account link before self service is available.',
     'PERMISSION_DENIED' => 'HR access is missing or has changed. Ask HR to check your existing account permissions.',
@@ -257,7 +278,7 @@ final class EmployeePendingCommand {
 abstract interface class EmployeeGateway {
   String? get actorId;
   Stream<String?> get actorChanges;
-  Future<void> signIn(String email, String password);
+  Future<void> signIn(String login, String password);
   Future<void> signOut();
   Future<List<EmployeeWorkspace>> listWorkspaces();
   Future<EmployeeIdentity> resolveIdentity(EmployeeWorkspace workspace);
@@ -270,7 +291,29 @@ abstract interface class EmployeeGateway {
   Future<bool> hasReceipt(EmployeePendingCommand command);
 }
 
-final class SupabaseEmployeeGateway implements EmployeeGateway {
+typedef ManagedEmployeeAccount = ({
+  String kind,
+  String? status,
+  bool mustChangePassword,
+});
+
+abstract interface class ManagedEmployeeIdentityGateway {
+  Future<ManagedEmployeeAccount?> managedAccount();
+  Future<List<EmployeeWorkspace>> listManagedWorkspaces();
+  Future<void> changeTemporaryPassword(
+    String currentPassword,
+    String newPassword,
+  );
+  Future<void> requestManagedPasswordReset(String login);
+  Future<void> resetManagedPassword(
+    String login,
+    String code,
+    String newPassword,
+  );
+}
+
+final class SupabaseEmployeeGateway
+    implements EmployeeGateway, ManagedEmployeeIdentityGateway {
   SupabaseEmployeeGateway(this.client, {this.authStorage})
     : _foundation = SupabaseFoundationGateway(client),
       _hr = SupabasePrivateHrGateway(client);
@@ -321,13 +364,94 @@ final class SupabaseEmployeeGateway implements EmployeeGateway {
   }
 
   @override
-  Future<void> signIn(String email, String password) => _safe(() async {
+  Future<void> signIn(String login, String password) => _safe(() async {
     authStorage?.beginSignIn();
-    await _foundation.signInWithPassword(
-      email: email.trim(),
-      password: password,
+    if (organizationControlCandidateEnabled) {
+      await _foundation.signInWithAccountLogin(
+        login: login,
+        password: password,
+      );
+    } else {
+      await _foundation.signInWithPassword(
+        email: login.trim(),
+        password: password,
+      );
+    }
+  });
+
+  @override
+  Future<ManagedEmployeeAccount?> managedAccount() => _safe(() async {
+    if (!_foundation.usesManagedUsername) return null;
+    final actor = _actor();
+    final profile = await _foundation.accountSecurityProfile();
+    _check(actor);
+    final kind = profile.accountKind;
+    if (kind == null) return null;
+    return (
+      kind: kind,
+      status: profile.staffStatus,
+      mustChangePassword: profile.mustChangePassword,
     );
   });
+
+  @override
+  Future<List<EmployeeWorkspace>> listManagedWorkspaces() => _safe(() async {
+    final actor = await _onlineActor();
+    final response = await client
+        .schema('api')
+        .rpc('managed_employee_workspaces');
+    _check(actor);
+    if (response is! List) {
+      throw const FormatException('Invalid workspace list.');
+    }
+    return [for (final raw in response) _managedWorkspace(hrMap(raw))];
+  });
+
+  EmployeeWorkspace _managedWorkspace(Map<String, Object?> row) {
+    final tenant = row['tenant_id'];
+    final entity = row['legal_entity_id'];
+    final branch = row['branch_id'];
+    calendarUuid(tenant);
+    calendarUuid(entity);
+    calendarUuid(branch);
+    return EmployeeWorkspace(
+      tenantId: tenant as String,
+      legalEntityId: entity as String,
+      branchId: branch as String,
+      tenantName: row['tenant_name'] as String,
+      entityName: row['entity_name'] as String,
+      branchName: row['branch_name'] as String,
+      timeZone: row['timezone'] as String,
+    );
+  }
+
+  @override
+  Future<void> changeTemporaryPassword(
+    String currentPassword,
+    String newPassword,
+  ) => _safe(
+    () => _foundation.changeOrganizationPassword(
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    ),
+  );
+
+  @override
+  Future<void> requestManagedPasswordReset(String login) =>
+      _safe(() => _foundation.requestPasswordReset(login));
+
+  @override
+  Future<void> resetManagedPassword(
+    String login,
+    String code,
+    String newPassword,
+  ) => _safe(
+    () => _foundation.resetPassword(
+      login: login,
+      code: code,
+      newPassword: newPassword,
+    ),
+  );
   @override
   Future<void> signOut() => _safe(() async {
     authStorage?.blockPersistenceForLogout();

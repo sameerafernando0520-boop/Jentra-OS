@@ -68,6 +68,7 @@ CommandEnvelope<Map<String, Object?>> command(
 );
 
 void main() {
+  group('multi-day leave', leaveRangeTests);
   late Wave4GatewayHarness h;
   late SupabaseWorkforceGateway gateway;
   setUp(() async {
@@ -137,6 +138,35 @@ void main() {
       ),
     );
   });
+  test(
+    'a decision about your own record is named, not a generic conflict',
+    () async {
+      for (final message in [
+        'LEAVE_SELF_DECISION_DENIED',
+        'ATTENDANCE_SELF_DECISION_DENIED',
+      ]) {
+        h.status = 409;
+        h.response = {'code': '55000', 'message': message};
+        await expectLater(
+          gateway.execute(
+            WorkforceCommandKind.attendance,
+            command(attendanceForm()),
+          ),
+          throwsA(
+            isA<DomainError>()
+                .having((e) => e.code, 'code', 'SELF_DECISION_DENIED')
+                .having(
+                  (e) => e.message,
+                  'message',
+                  'You cannot decide your own record. Ask another approver.',
+                )
+                .having((e) => e.retryable, 'retryable', isFalse),
+          ),
+        );
+      }
+      h.status = 200;
+    },
+  );
   test('invalid payload is rejected without network traffic', () async {
     final input = attendanceForm()..['compensation'] = '100.00';
     await expectLater(
@@ -455,4 +485,149 @@ void main() {
       );
     },
   );
+}
+
+const _batchId = '50000000-0000-0000-0000-000000000001';
+
+Map<String, Object?> _batchDay(String date, String status, int version) => {
+  'leave_date': date,
+  'request_id':
+      '6000000$version-0000-0000-0000-00000000000${date.substring(9)}',
+  'version': version,
+  'status': status,
+  'start_utc': '${date}T03:30:00+00:00',
+  'end_utc': '${date}T11:30:00+00:00',
+  'charge_seconds': 28800,
+  'unpaid_seconds': 0,
+};
+
+Map<String, Object?> _batchRow(String status, {bool creator = true}) => {
+  'id': _batchId,
+  'employee_id': w4Id,
+  'policy_id': w4Revision,
+  'start_date': '2026-11-26',
+  'end_date': '2026-11-30',
+  'origin': 'staff',
+  if (creator) 'created_by': w4Scope.actorId,
+  'status': status,
+  'charge_seconds': 3 * 28800,
+  'unpaid_seconds': 0,
+  'days': [
+    _batchDay('2026-11-26', status, 1),
+    _batchDay('2026-11-27', status, 1),
+    _batchDay('2026-11-30', status, 1),
+  ],
+};
+
+Map<String, Object?> _rangeForm() => {
+  'batch_id': _batchId,
+  'employee_id': w4Id,
+  'policy_version_id': w4Revision,
+  'calendar_version_id': w4Revision,
+  'start_date': '2026-11-26',
+  'end_date': '2026-11-30',
+  'reason': 'Family travel',
+};
+
+void leaveRangeTests() {
+  late Wave4GatewayHarness h;
+  late SupabaseWorkforceGateway gateway;
+  setUp(() async {
+    h = Wave4GatewayHarness();
+    await h.initialize();
+    gateway = SupabaseWorkforceGateway(h.client);
+  });
+  tearDown(() => h.dispose());
+
+  test('a date range is one command and confirms its working days', () async {
+    final input = _rangeForm();
+    h.gate = Completer<void>();
+    h.response = h.confirmed(_batchRow('draft'));
+    final future = gateway.createLeaveRange(command(input));
+    await Future<void>.delayed(Duration.zero);
+    input['reason'] = 'Changed after submission';
+    h.gate!.complete();
+    final batch = await future;
+    expect(batch.days.map((day) => day.leaveDate.value), [
+      '2026-11-26',
+      '2026-11-27',
+      '2026-11-30',
+    ]);
+    expect(batch.chargeSeconds, 3 * 28800);
+    expect(
+      h.requests.last.url.path,
+      endsWith('/rpc/people_leave_request_range'),
+    );
+    final body = jsonDecode(h.requests.last.body) as Map;
+    expect((body['p_payload'] as Map)['reason'], 'Family travel');
+    expect(body.containsKey('p_expected_version'), isFalse);
+  });
+
+  test(
+    'ranges that cannot be a batch are refused without network traffic',
+    () async {
+      for (final change in <Map<String, Object?>>[
+        {'end_date': '2026-11-25'},
+        {'end_date': '2026-12-27'},
+        {'reason': ' '},
+        {'unpaid': true},
+      ]) {
+        await expectLater(
+          gateway.createLeaveRange(command({..._rangeForm(), ...change})),
+          throwsFormatException,
+        );
+      }
+      expect(h.requests, isEmpty);
+    },
+  );
+
+  test('a batch decision must confirm every day moved together', () async {
+    final action = {
+      'action': 'approve',
+      'batch_id': _batchId,
+      'employee_id': w4Id,
+      'reason': 'Approved',
+    };
+    h.response = h.confirmed(_batchRow('approved'));
+    final approved = await gateway.decideLeaveBatch(command(action));
+    expect(approved.status, 'approved');
+    expect(
+      h.requests.last.url.path,
+      endsWith('/rpc/people_leave_batch_command'),
+    );
+
+    final mixed = _batchRow('approved');
+    (mixed['days'] as List)[2] = _batchDay('2026-11-30', 'submitted', 2);
+    h.response = h.confirmed(mixed);
+    await expectLater(
+      gateway.decideLeaveBatch(command(action)),
+      throwsA(
+        isA<DomainError>().having((e) => e.code, 'code', 'UNCERTAIN_RESULT'),
+      ),
+    );
+  });
+
+  test('a batch page reads each batch as one item with its days', () async {
+    h.response = {
+      ...h.scope(),
+      'employee_id': w4Id,
+      'items': [_batchRow('cancelled')],
+      'next_cursor': null,
+    };
+    final page = await gateway.leaveBatches(w4Scope, w4Id);
+    expect(page.items.single.days, hasLength(3));
+    expect(page.items.single.status, 'cancelled');
+    h.response = {
+      ...h.scope(),
+      'employee_id': w4Id,
+      'items': [
+        {..._batchRow('cancelled'), 'charge_seconds': 28800},
+      ],
+      'next_cursor': null,
+    };
+    await expectLater(
+      gateway.leaveBatches(w4Scope, w4Id),
+      throwsFormatException,
+    );
+  });
 }

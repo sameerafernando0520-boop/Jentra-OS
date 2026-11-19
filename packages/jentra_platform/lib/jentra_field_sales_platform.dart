@@ -14,6 +14,15 @@ abstract interface class FieldSalesGateway {
   Future<FieldSalesJson> preview(FieldSalesScope scope, FieldSalesJson input);
   Future<FieldSalesJson> submit(FieldSalesCommand command);
   Future<FieldSalesJson> receipt(FieldSalesScope scope, String key);
+
+  /// The rep's own visits to customers it is currently assigned.
+  Future<List<FieldSalesJson>> visits(FieldSalesScope scope);
+
+  /// Plans, checks in, completes or cancels a visit. Returns the receipt.
+  Future<FieldSalesJson> visitCommand(FieldSalesVisitCommand command);
+
+  /// `{state: committed, receipt}` or `{state: not_found}` for a visit key.
+  Future<FieldSalesJson> visitReceipt(FieldSalesScope scope, String key);
 }
 
 abstract interface class FieldSalesCompanyGateway {
@@ -21,7 +30,34 @@ abstract interface class FieldSalesCompanyGateway {
   Future<List<FieldSalesJson>> subjects(FieldSalesScope scope);
   Future<FieldSalesJson> receipt(FieldSalesScope scope, String key);
   Future<FieldSalesJson> decide(FieldSalesJson params);
+
+  /// Reps of the branch with HR-derived labels and their order requests
+  /// submitted from [from] to [to], both company local dates.
+  Future<FieldSalesRepList> reps(
+    FieldSalesScope scope, {
+    required DateTime from,
+    required DateTime to,
+  });
+
+  /// The branch's visits planned for, or recorded on, [from] to [to].
+  Future<List<FieldSalesJson>> companyVisits(
+    FieldSalesScope scope, {
+    required DateTime from,
+    required DateTime to,
+  });
 }
+
+/// Visit refusals that need their own wording.
+const _visitMessages = {
+  'VISIT_STATE_INVALID':
+      'This visit has already moved on. Refresh your visits and check its state.',
+  'VISIT_NOT_FOUND': 'This visit is not one of yours in this company.',
+  'VISIT_FIELDS_INVALID':
+      'Add a purpose, an outcome or a reason, and a next action for a follow-up date.',
+  'VISIT_COMMAND_INVALID': 'This visit update could not be accepted.',
+  'LOCATION_INVALID':
+      'Your location could not be used. Try again or continue without it.',
+};
 
 /// Named candidate facades only. Missing endpoints fail closed; no table or
 /// broad commerce/CRM RPC fallback exists.
@@ -65,6 +101,11 @@ final class SupabaseFieldSalesGateway
           'ACCESS_REVOKED',
           'Your session expired. Sign in to recheck your portfolio.',
         );
+      }
+      final visitMessage = _visitMessages[e.message];
+      if (visitMessage != null &&
+          ['22023', '55000', '42501'].contains(e.code)) {
+        throw FieldSalesFailure(e.code!, visitMessage);
       }
       final unavailable = [
         'PGRST202',
@@ -149,6 +190,39 @@ final class SupabaseFieldSalesGateway
   @override
   Future<FieldSalesJson> submit(FieldSalesCommand c) =>
       call('field_sales_command', c.params);
+  @override
+  Future<FieldSalesRepList> reps(
+    FieldSalesScope s, {
+    required DateTime from,
+    required DateTime to,
+  }) async => FieldSalesRepList.fromJson(
+    await call('field_sales_reps', {
+      ...s.params,
+      'p_from': fieldSalesDate(from),
+      'p_to': fieldSalesDate(to),
+    }),
+  );
+  @override
+  Future<List<FieldSalesJson>> visits(FieldSalesScope s) =>
+      _pages('field_sales_visits', s.params);
+  @override
+  Future<FieldSalesJson> visitCommand(FieldSalesVisitCommand c) =>
+      call('field_sales_visit_command', c.params);
+  @override
+  Future<FieldSalesJson> visitReceipt(FieldSalesScope s, String key) => call(
+    'field_sales_visit_receipt',
+    {...s.params, 'p_idempotency_key': key},
+  );
+  @override
+  Future<List<FieldSalesJson>> companyVisits(
+    FieldSalesScope s, {
+    required DateTime from,
+    required DateTime to,
+  }) => _pages('field_sales_company_visits', {
+    ...s.params,
+    'p_from': fieldSalesDate(from),
+    'p_to': fieldSalesDate(to),
+  });
   @override
   Future<FieldSalesJson> receipt(FieldSalesScope s, String key) => call(
     'field_sales_command_receipt',

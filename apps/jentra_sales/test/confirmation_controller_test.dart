@@ -92,6 +92,21 @@ class FakeConfirmationGateway implements FieldConfirmationGateway {
 }
 
 void main() {
+  test('a response recorded during verification completes neutrally', () async {
+    final gateway = FakeConfirmationGateway()..verification = Completer();
+    final c = ConfirmationController(token: 'ab' * 32, gateway: gateway);
+    addTearDown(c.dispose);
+    await c.requestCode();
+    gateway.verification!.complete({'state': 'already_recorded'});
+    await c.verify('482619');
+    expect(c.stage, ConfirmationStage.complete);
+    expect(c.recordedResponse, 'already recorded');
+    expect(c.offer, isNull);
+    expect(c.hasPending, isFalse);
+    await c.respond('accept', '', true);
+    expect(gateway.responses, isEmpty);
+  });
+
   for (final defect in [
     'reference',
     'discount',

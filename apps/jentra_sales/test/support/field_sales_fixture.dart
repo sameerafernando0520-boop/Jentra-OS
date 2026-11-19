@@ -43,8 +43,10 @@ final class FakeFieldSalesGateway implements FieldSalesGateway {
   String? actorId = 'rep';
   Object? failure;
   Object? submitFailure;
-  bool badReceipt = false, multipleScopes = false;
+  Object? receiptFailure;
+  bool badReceipt = false, multipleScopes = false, secondCustomer = false;
   Completer<List<FieldSalesJson>>? catalogueWait;
+  FieldSalesJson stock = const {};
   Completer<FieldSalesJson>? previewWait;
   final commands = <FieldSalesCommand>[];
   FieldSalesJson? committed;
@@ -89,6 +91,14 @@ final class FakeFieldSalesGateway implements FieldSalesGateway {
         'delivery_terms': 'Company delivery',
         'ship_to': {'address': 'Company approved address'},
       },
+      if (secondCustomer)
+        {
+          'id': 'customer2',
+          'name': 'Second assigned customer',
+          'payment_terms_days': '30',
+          'delivery_terms': 'Company delivery',
+          'ship_to': {'address': 'Second approved address'},
+        },
     ];
   }
 
@@ -112,6 +122,7 @@ final class FakeFieldSalesGateway implements FieldSalesGateway {
         'unit_price': '1.250000',
         'max_discount_percent': '10',
         'stock_state': 'unavailable',
+        ...stock,
       },
     ];
   }
@@ -157,8 +168,94 @@ final class FakeFieldSalesGateway implements FieldSalesGateway {
   }
 
   @override
-  Future<FieldSalesJson> receipt(FieldSalesScope s, String key) async =>
-      committed == null
-      ? {'state': 'not_found'}
-      : {'state': 'committed', 'receipt': committed};
+  Future<FieldSalesJson> receipt(FieldSalesScope s, String key) async {
+    if (receiptFailure != null) throw receiptFailure!;
+    return committed == null
+        ? {'state': 'not_found'}
+        : {'state': 'committed', 'receipt': committed};
+  }
+
+  // An in-memory visit service with the server's rules: replay by key,
+  // expected versions and one state step per action.
+  bool visitsRolledOut = true;
+  Object? visitFailure;
+  bool loseVisitResponse = false;
+  final visitCommands = <FieldSalesVisitCommand>[];
+  final visitRows = <String, FieldSalesJson>{};
+  final visitReceipts = <String, FieldSalesJson>{};
+
+  @override
+  Future<List<FieldSalesJson>> visits(FieldSalesScope s) async {
+    if (!visitsRolledOut) {
+      throw const FieldSalesFailure(
+        'FIELD_SALES_ROLLOUT_PENDING',
+        'Your company’s governed Sales service is not enabled yet.',
+      );
+    }
+    return [
+      for (final row in visitRows.values)
+        fieldSalesObject(jsonDecode(jsonEncode(row))),
+    ];
+  }
+
+  @override
+  Future<FieldSalesJson> visitCommand(FieldSalesVisitCommand c) async {
+    visitCommands.add(c);
+    if (visitFailure != null) throw visitFailure!;
+    final replay = visitReceipts[c.key];
+    if (replay != null) return replay;
+    final p = c.payload;
+    final current = visitRows[p['id']];
+    if (c.action == 'plan'
+        ? current != null
+        : current == null || current['version'] != '${c.expectedVersion}') {
+      throw const FieldSalesFailure('40001', 'The visit changed.');
+    }
+    final next = <String, dynamic>{
+      ...?current,
+      'id': p['id'],
+      'tenant_id': c.scope.tenantId,
+      'legal_entity_id': c.scope.entityId,
+      'branch_id': c.scope.branchId,
+      'rep_id': c.actorId,
+      if (c.action == 'plan') ...{
+        'customer_id': p['customer_id'],
+        'customer_name': 'Assigned customer with no transactions',
+        'purpose': p['purpose'],
+        'planned_for': p['planned_for'],
+        'created_at': c.at,
+      },
+      if (c.action == 'check_in' && p['latitude'] != null)
+        'check_in_location': {
+          'latitude': p['latitude'],
+          'longitude': p['longitude'],
+        },
+      if (c.action == 'complete') ...{
+        'outcome': p['outcome'],
+        'next_action': p['next_action'],
+        'next_action_due': p['next_action_due'],
+      },
+      if (c.action == 'cancel') 'cancel_reason': p['reason'],
+      'state': fieldSalesVisitStates[c.action],
+      'version': '${(c.expectedVersion ?? 0) + 1}',
+    };
+    visitRows[p['id'] as String] = next;
+    final receipt = {'command_id': c.commandId, 'entity': next};
+    visitReceipts[c.key] = receipt;
+    if (loseVisitResponse) {
+      throw const FieldSalesFailure(
+        'OUTCOME_UNKNOWN',
+        'The response was interrupted.',
+      );
+    }
+    return receipt;
+  }
+
+  @override
+  Future<FieldSalesJson> visitReceipt(FieldSalesScope s, String key) async {
+    final receipt = visitReceipts[key];
+    return receipt == null
+        ? {'state': 'not_found'}
+        : {'state': 'committed', 'receipt': receipt};
+  }
 }

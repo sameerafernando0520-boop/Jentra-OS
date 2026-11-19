@@ -17,6 +17,7 @@ import 'ui/onboarding_screens.dart';
 import 'ui/settings_screen.dart';
 import 'ui/employee_push_settings.dart';
 import 'ui/sign_in_screen.dart';
+import 'ui/employee_password_screens.dart';
 
 class EmployeeApp extends StatefulWidget {
   const EmployeeApp({
@@ -187,6 +188,40 @@ class _EmployeeAppState extends State<EmployeeApp> with WidgetsBindingObserver {
                 controller: controller,
                 onSettings: () => _settings(context),
               ),
+              EmployeePhase.changeTemporaryPassword =>
+                EmployeeTemporaryPasswordScreen(
+                  busy: controller.busy,
+                  failure: controller.error,
+                  onChange: controller.changeTemporaryPassword,
+                  onSignOut: controller.signOut,
+                ),
+              EmployeePhase.staffUnavailable => Scaffold(
+                body: SafeArea(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            controller.notice == 'staffUseDesktop'
+                                ? EmployeeAccountStrings(context)
+                                      .staffUseDesktop
+                                : EmployeeAccountStrings(context)
+                                      .staffAccessPending,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          FilledButton(
+                            onPressed: controller.signOut,
+                            child: Text(s('signOut')),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               EmployeePhase.loading => Scaffold(
                 body: SafeArea(
                   child: Center(
@@ -270,6 +305,12 @@ class _EmployeeAppState extends State<EmployeeApp> with WidgetsBindingObserver {
                         : EmployeeAccountStrings(context)
                               .notice(widget.accountActions!.notice!),
                     onSignIn: controller.signIn,
+                    onRequestRecovery: controller.canRecoverManagedPassword
+                        ? controller.requestManagedPasswordReset
+                        : null,
+                    onResetPassword: controller.canRecoverManagedPassword
+                        ? controller.resetManagedPassword
+                        : null,
                     onGoogle: widget.accountActions?.google,
                     onResendConfirmation: widget.accountActions?.resend,
                   ),

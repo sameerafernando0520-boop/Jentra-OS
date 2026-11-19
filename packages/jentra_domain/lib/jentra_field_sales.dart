@@ -114,3 +114,236 @@ FieldSalesJson fieldSalesObject(Object? value) {
   }
   return Map<String, dynamic>.from(value);
 }
+
+final _fieldSalesCount = RegExp(r'^\d{1,12}$');
+final _fieldSalesDecimal = RegExp(r'^\d{1,14}\.\d{6}$');
+
+/// A Field Sales rep as the company sees it. The label is the HR employee
+/// name from the rep's accepted account link, or `Unlinked member ····1234`.
+/// A label that could be an e-mail address is refused as a contract fault.
+final class FieldSalesRep {
+  const FieldSalesRep({
+    required this.userId,
+    required this.label,
+    required this.linked,
+    required this.activeCustomerCount,
+    required this.submittedCount,
+    required this.pendingCount,
+    required this.approvedCount,
+    required this.rejectedCount,
+    required this.approvedTotal,
+  });
+  factory FieldSalesRep.fromJson(Object? value) {
+    final json = fieldSalesObject(value);
+    String text(String key, [RegExp? pattern]) {
+      final v = json[key];
+      if (v is! String ||
+          v.trim().isEmpty ||
+          (pattern != null && !pattern.hasMatch(v))) {
+        throw const FieldSalesFailure(
+          'CONTRACT_INVALID',
+          'The rep list returned an unsupported row.',
+        );
+      }
+      return v;
+    }
+
+    final label = text('label');
+    if (label.contains('@') || json['linked'] is! bool) {
+      throw const FieldSalesFailure(
+        'CONTRACT_INVALID',
+        'The rep list returned an unsupported row.',
+      );
+    }
+    return FieldSalesRep(
+      userId: text('user_id'),
+      label: label,
+      linked: json['linked'] as bool,
+      activeCustomerCount: text('active_customer_count', _fieldSalesCount),
+      submittedCount: text('submitted_count', _fieldSalesCount),
+      pendingCount: text('pending_count', _fieldSalesCount),
+      approvedCount: text('approved_count', _fieldSalesCount),
+      rejectedCount: text('rejected_count', _fieldSalesCount),
+      approvedTotal: text('approved_total', _fieldSalesDecimal),
+    );
+  }
+  final String userId, label;
+  final bool linked;
+
+  /// Counts and the approved total stay exact server strings.
+  final String activeCustomerCount,
+      submittedCount,
+      pendingCount,
+      approvedCount,
+      rejectedCount,
+      approvedTotal;
+}
+
+/// Reps of one company branch for a period of company local dates.
+final class FieldSalesRepList {
+  const FieldSalesRepList({
+    required this.items,
+    required this.currencyCode,
+    required this.from,
+    required this.to,
+  });
+  factory FieldSalesRepList.fromJson(Object? value) {
+    final json = fieldSalesObject(value);
+    final items = json['items'];
+    final currency = json['currency_code'];
+    if (items is! List ||
+        currency is! String ||
+        currency.isEmpty ||
+        json['from'] is! String ||
+        json['to'] is! String) {
+      throw const FieldSalesFailure(
+        'CONTRACT_INVALID',
+        'The rep list could not be opened.',
+      );
+    }
+    return FieldSalesRepList(
+      items: List.unmodifiable(items.map(FieldSalesRep.fromJson)),
+      currencyCode: currency,
+      from: json['from'] as String,
+      to: json['to'] as String,
+    );
+  }
+  final List<FieldSalesRep> items;
+  final String currencyCode, from, to;
+
+  /// The label shown for a request's rep. A rep missing from the list is never
+  /// shown by its raw id.
+  String labelFor(String? userId) {
+    for (final rep in items) {
+      if (rep.userId == userId) {
+        return rep.label;
+      }
+    }
+    return 'not listed';
+  }
+}
+
+/// A company local date as the server expects it.
+String fieldSalesDate(DateTime date) =>
+    '${date.year.toString().padLeft(4, '0')}-'
+    '${date.month.toString().padLeft(2, '0')}-'
+    '${date.day.toString().padLeft(2, '0')}';
+
+/// The state a visit reaches after each rep visit action.
+const fieldSalesVisitStates = {
+  'plan': 'planned',
+  'check_in': 'checked_in',
+  'complete': 'completed',
+  'cancel': 'cancelled',
+};
+
+/// A position given at a declared visit action. It is never sampled in the
+/// background; the rep chooses to add it when checking in or completing.
+final class FieldSalesLocation {
+  const FieldSalesLocation(this.latitude, this.longitude);
+
+  /// Rounds to six decimal places, the precision the company stores.
+  factory FieldSalesLocation.fromDegrees(double latitude, double longitude) {
+    if (!latitude.isFinite ||
+        !longitude.isFinite ||
+        latitude.abs() > 90 ||
+        longitude.abs() > 180) {
+      throw const FieldSalesFailure(
+        'LOCATION_INVALID',
+        'Your location could not be read. Try again or continue without it.',
+      );
+    }
+    return FieldSalesLocation(
+      latitude.toStringAsFixed(6),
+      longitude.toStringAsFixed(6),
+    );
+  }
+  final String latitude, longitude;
+  FieldSalesJson get payload => {'latitude': latitude, 'longitude': longitude};
+}
+
+/// One rep visit command. Its exact bytes are kept until the company's
+/// receipt is seen, so a lost response is checked or retried, never re-made.
+final class FieldSalesVisitCommand {
+  FieldSalesVisitCommand({
+    required this.actorId,
+    required this.scope,
+    required this.commandId,
+    required this.key,
+    required this.at,
+    required this.action,
+    required FieldSalesJson payload,
+    this.expectedVersion,
+  }) : _payload = jsonEncode(payload) {
+    if (!fieldSalesVisitStates.containsKey(action) ||
+        payload['id'] is! String ||
+        (action == 'plan') != (expectedVersion == null)) {
+      throw const FieldSalesFailure(
+        'VISIT_COMMAND_INVALID',
+        'This visit update could not be prepared.',
+      );
+    }
+  }
+  factory FieldSalesVisitCommand.fromJson(FieldSalesJson json) {
+    if (json['schema'] != 1) {
+      throw const FormatException('Unsupported visit command.');
+    }
+    return FieldSalesVisitCommand(
+      actorId: json['actor_id'] as String,
+      scope: FieldSalesScope.fromJson(json),
+      commandId: json['command_id'] as String,
+      key: json['key'] as String,
+      at: json['at'] as String,
+      action: json['action'] as String,
+      expectedVersion: json['expected_version'] as int?,
+      payload: Map<String, dynamic>.from(json['payload'] as Map),
+    );
+  }
+  final String actorId, commandId, key, at, action, _payload;
+  final int? expectedVersion;
+  final FieldSalesScope scope;
+  FieldSalesJson get payload => jsonDecode(_payload) as FieldSalesJson;
+  String get visitId => payload['id'] as String;
+  FieldSalesJson get params => {
+    ...scope.params,
+    'p_command_id': commandId,
+    'p_idempotency_key': key,
+    'p_client_timestamp': at,
+    'p_action': action,
+    'p_payload': payload,
+    'p_expected_entity_version': expectedVersion,
+  };
+  FieldSalesJson toJson() => {
+    'schema': 1,
+    'actor_id': actorId,
+    'tenant_id': scope.tenantId,
+    'legal_entity_id': scope.entityId,
+    'branch_id': scope.branchId,
+    'command_id': commandId,
+    'key': key,
+    'at': at,
+    'action': action,
+    'expected_version': expectedVersion,
+    'payload': payload,
+  };
+
+  /// The visit in a receipt, once it matches this exact command.
+  FieldSalesJson validateReceipt(FieldSalesJson receipt) {
+    final entity = receipt['entity'];
+    if (receipt['command_id'] != commandId ||
+        entity is! Map ||
+        entity['id'] != visitId ||
+        entity['tenant_id'] != scope.tenantId ||
+        entity['legal_entity_id'] != scope.entityId ||
+        entity['branch_id'] != scope.branchId ||
+        entity['rep_id'] != actorId ||
+        entity['state'] != fieldSalesVisitStates[action] ||
+        entity['version'] != '${(expectedVersion ?? 0) + 1}') {
+      throw const FieldSalesFailure(
+        'RECEIPT_INVALID',
+        'The server confirmation did not match. Check the visit update again.',
+      );
+    }
+    return Map<String, dynamic>.from(entity);
+  }
+}
