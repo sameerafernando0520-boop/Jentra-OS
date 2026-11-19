@@ -172,6 +172,8 @@ void main() {
       await Future<void>.delayed(Duration.zero);
     });
     await tester.pumpAndSettle();
+    await tester.tap(_rail('Subscriptions'));
+    await tester.pumpAndSettle();
     expect(find.text('Company 1'), findsOneWidget);
     await tester.pump(const Duration(seconds: 15));
     await tester.pumpAndSettle();
@@ -194,6 +196,8 @@ void main() {
       await tester.pumpWidget(_app(client));
       await Future<void>.delayed(Duration.zero);
     });
+    await tester.pumpAndSettle();
+    await tester.tap(_rail('Subscriptions'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Company 1'));
     await tester.pumpAndSettle();
@@ -316,3 +320,9 @@ Map<String, Object?> _session() {
     },
   };
 }
+
+/// A destination in the J panel navigation rail.
+Finder _rail(String label) => find.descendant(
+  of: find.byKey(const ValueKey('jpanel-navigation')),
+  matching: find.text(label),
+);

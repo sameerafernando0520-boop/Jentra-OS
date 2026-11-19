@@ -18,7 +18,7 @@ void main() {
   testWidgets('operator switches a package module on', (tester) async {
     final calls = <String, Map<String, Object?>>{};
     await _open(tester, calls);
-    await tester.tap(find.text('Organizations & plans'));
+    await tester.tap(_rail('Packages'));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.byTooltip('Edit modules'));
     await tester.tap(find.byTooltip('Edit modules'));
@@ -69,7 +69,7 @@ void main() {
   ) async {
     final calls = <String, Map<String, Object?>>{};
     await _open(tester, calls, saveModulesError: 'PACKAGE_CHANGED');
-    await tester.tap(find.text('Organizations & plans'));
+    await tester.tap(_rail('Packages'));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.byTooltip('Edit modules'));
     await tester.tap(find.byTooltip('Edit modules'));
@@ -90,6 +90,8 @@ void main() {
   ) async {
     final calls = <String, Map<String, Object?>>{};
     await _open(tester, calls);
+    await tester.tap(_rail('Subscriptions'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Creation rule'));
     await tester.pumpAndSettle();
     expect(find.text('Who can create an organization'), findsOneWidget);
@@ -268,3 +270,9 @@ Map<String, Object?> _session() {
     },
   };
 }
+
+/// A destination in the J panel navigation rail.
+Finder _rail(String label) => find.descendant(
+  of: find.byKey(const ValueKey('jpanel-navigation')),
+  matching: find.text(label),
+);
