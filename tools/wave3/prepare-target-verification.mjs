@@ -3,7 +3,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
-import { assertRaceClass } from './target_review_guards.mjs';
+import { assertFreshRaceIdentities, assertRaceClass } from './target_review_guards.mjs';
 import { assertOrdinaryReportBinding, ordinaryReportMetrics } from './target_review_aging.mjs';
 import { reviewedCandidateSelection } from './target_review_selection.mjs';
 
@@ -255,6 +255,7 @@ export function raceConfig(input) {
     }), invariants: r.invariants.map(c => ({ ...c, params: { ...c.params,
       ...Object.fromEntries(Object.entries(input.scope).map(([k, v]) => ['p_' + k, v])) } })) };
   });
+  assertFreshRaceIdentities(races);
   return { synthetic: true, is_production: false, project_id: input.fixture.project_id,
     url: input.fixture.url, actors: input.actors, scope: input.scope, races,
     ...(input.fixture.candidate_review?{candidate_review:input.fixture.candidate_review}:{}),

@@ -6,6 +6,8 @@ $salesDelivery = Join-Path $salesRoot ("dist/"+$salesStem)
 $salesApk = Join-Path $salesRoot 'apps/jentra_sales/build/app/outputs/flutter-apk/app-release.apk'
 if (-not (Test-Path -LiteralPath $salesApk -PathType Leaf)) { throw 'Build the Sales APK first.' }
 if (Test-Path -LiteralPath $salesDelivery) { throw 'An existing release handoff will not be overwritten.' }
+. (Join-Path $salesRoot 'scripts/android/assert_flutter_apk_abi.ps1')
+Assert-FlutterApkAbi -Path $salesApk -Abi 'arm64-v8a'
 [IO.Directory]::CreateDirectory($salesDelivery) | Out-Null
 $salesApkName = "$salesStem.apk"
 $salesCopied = Join-Path $salesDelivery $salesApkName

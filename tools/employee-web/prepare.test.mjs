@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, open, readFile, writeFile, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -42,6 +42,26 @@ for (const [name, content] of [
   ['privileged JWT', `${Buffer.from('{"alg":"synthetic"}').toString('base64url')}.${Buffer.from('{"role":"service_role"}').toString('base64url')}.synthetic`],
 ]) test(`rejects ${name} before public staging`, () => {
   assert.throws(() => assertPublicContent(Buffer.from(content), 'main.dart.js'), /rejected/);
+});
+
+test('rejects recognized credentials in uppercase public text extensions', () => {
+  for (const name of ['assets/CONFIG.JSON', 'assets/runtime.JS', 'index.HTML', 'runtime.MJS']) {
+    assert.throws(
+      () => assertPublicContent(Buffer.from('sb_secret_syntheticnotarealkey'), name),
+      /Secret material rejected/,
+    );
+  }
+});
+
+test('rejects an oversized sparse artifact before trying to stage it', async t => {
+  const { build, stages } = await fixture(t);
+  const oversized = await open(path.join(build, 'oversized.wasm'), 'w');
+  try {
+    await oversized.truncate(128 * 1024 * 1024 + 1);
+  } finally {
+    await oversized.close();
+  }
+  await assert.rejects(stageBuild(build, stages), /Oversized public artifact: oversized.wasm/);
 });
 
 test('rejects a Firebase admin credential filename even without readable text content', async t => {

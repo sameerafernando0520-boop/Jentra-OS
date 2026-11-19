@@ -3,10 +3,10 @@ import { crypto as streamingCrypto } from "@std/crypto";
 import { boundedChunks, bucket, handleVerify } from "./handler.mjs";
 
 // Streams the object through SHA-256 instead of buffering up to 100 MiB.
-async function hashStream(stream: ReadableStream<Uint8Array>, limit: number) {
+async function hashStream(stream: ReadableStream<Uint8Array>, limit: number, options: { signal?: AbortSignal } = {}) {
   let size = 0;
   async function* counted() {
-    for await (const chunk of boundedChunks(stream, limit)) { size += chunk.byteLength; yield chunk; }
+    for await (const chunk of boundedChunks(stream, limit, options)) { size += chunk.byteLength; yield chunk; }
   }
   const digest = await streamingCrypto.subtle.digest("SHA-256", counted());
   const sha256 = [...new Uint8Array(digest)].map((x) => x.toString(16).padStart(2, "0")).join("");

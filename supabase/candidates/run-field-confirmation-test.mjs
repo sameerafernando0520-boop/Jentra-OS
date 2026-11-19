@@ -4,9 +4,6 @@ import {readFile,readdir,writeFile,mkdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {resolve} from 'node:path';
-import {PGlite} from '../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/index.js';
-import {pgcrypto} from '../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/contrib/pgcrypto.js';
-import {btree_gist} from '../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/contrib/btree_gist.js';
 import {exercise} from './tests/field_confirmation.test.mjs';
 import {exercise as governanceRegression} from './tests/field_sales_governance.test.mjs';
 
@@ -20,6 +17,9 @@ export function validateCandidate(sql) {
 }
 export async function main(args) {
  assert.deepEqual(args,['--run-isolated'],'Only --run-isolated is supported; no target options.');
+ const {PGlite}=await import('../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/index.js');
+ const {pgcrypto}=await import('../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/contrib/pgcrypto.js');
+ const {btree_gist}=await import('../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/dist/contrib/btree_gist.js');
  const runtime=JSON.parse(await readFile(new URL('../../build/launch-validation-runtime/node_modules/@electric-sql/pglite/package.json',import.meta.url),'utf8'));
  assert.equal(runtime.version,'0.5.12','Use the already-present pinned isolated runtime.');
  const db=new PGlite({extensions:{pgcrypto,btree_gist}}),sources={};

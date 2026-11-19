@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 
-export async function exercise(db,checks){
+export async function exercise(db,checks,{timezone='UTC'}={}){
  await db.exec('reset role');
  const value=async(sql,args=[])=>Object.values((await db.query(sql,args)).rows[0])[0];
  const check=(name,result)=>{assert.ok(result,name);checks.push(name);};
@@ -28,7 +28,9 @@ export async function exercise(db,checks){
  for(const user of [ids.owner,ids.rep,ids.other])await db.query('insert into auth.users(id,email,email_confirmed_at) values($1,$2,now())',[user,user+'@confirmation.invalid']);
  await db.query('insert into auth.sessions(id,user_id) values($1,$2),($3,$4)',[ids.session,ids.owner,ids.repSession,ids.rep]);
  await actor(ids.owner);
- const scope=await value("select api.bootstrap_tenant('Confirmation Sales','confirmation-sales','Confirmation Company','CC','Main','MAIN','Asia/Colombo','LKR',$1)",[randomUUID()]);
+ // This fixture is later posted by the canonical UTC-date delivery workflow.
+ // Keep its business date on the same clock across the Sri Lanka midnight boundary.
+ const scope=await value("select api.bootstrap_tenant('Confirmation Sales','confirmation-sales','Confirmation Company','CC','Main','MAIN',$1,'LKR',$2)",[timezone,randomUUID()]);
  const t=scope.tenant_id,e=scope.legal_entity_id,b=scope.branch_id;
  await db.exec('reset role');
  await db.query("insert into core.memberships(id,tenant_id,user_id,status) values($1,$2,$3,'active')",[ids.membership,t,ids.rep]);

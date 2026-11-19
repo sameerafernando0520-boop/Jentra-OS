@@ -8,6 +8,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:jentra_employee/src/employee_app.dart';
 import 'package:jentra_employee/src/data/employee_gateway.dart';
 import 'package:jentra_employee/src/data/employee_photo.dart';
+import 'package:jentra_employee/src/data/employee_self_service.dart';
+import 'package:jentra_employee/src/ui/employee_private_services.dart';
 import 'package:jentra_employee/src/ui/employee_theme.dart';
 import 'package:jentra_employee/src/ui/sign_in_screen.dart';
 
@@ -286,10 +288,25 @@ void main() {
       } else if (sample.page == 'cases' || sample.page == 'documents') {
         await tester.tap(find.byKey(const Key('employee-nav-more')));
         await tester.pumpAndSettle();
-        final target = find.byKey(Key('employee-more-${sample.page}'));
-        await tester.scrollUntilVisible(target, 180);
+        final target = find
+            .byKey(Key('employee-more-${sample.page}'))
+            .hitTestable();
+        await tester.scrollUntilVisible(
+          target,
+          180,
+          scrollable: find.byType(Scrollable).last,
+        );
+        expect(target, findsOneWidget);
         await tester.tap(target);
         await tester.pumpAndSettle();
+        final screen = find.byType(EmployeePrivateServiceScreen);
+        expect(screen, findsOneWidget);
+        expect(
+          tester.widget<EmployeePrivateServiceScreen>(screen).service,
+          sample.page == 'cases'
+              ? EmployeeService.cases
+              : EmployeeService.documents,
+        );
       } else if (sample.page == 'activity' || sample.page == 'more') {
         await tester.tap(find.byKey(Key('employee-nav-${sample.page}')));
         await tester.pumpAndSettle();

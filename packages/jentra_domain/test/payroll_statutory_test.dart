@@ -96,7 +96,7 @@ void main() {
 
   for (final (label, value) in [
     ('before snapshot', input(month: '2025-03-01')),
-    ('future month', input(month: '2026-11-01')),
+    ('future month', input(month: '2026-12-01')),
     ('unknown coverage', input(coverage: false)),
     ('unknown classification', input(classified: false)),
     ('nonresident noncitizen', input(resident: false)),
@@ -120,6 +120,26 @@ void main() {
       expect(result.blockers, contains(contains('another APIT table')));
     });
   }
+
+  test('November refresh retains a review-only regular-pay estimate', () {
+    final result = previewSriLankaPayroll(input(month: '2026-11-01'));
+    expect(result.hasEstimate, isTrue);
+    expect(result.apitFormula, lkr('18500'));
+    expect(SriLankaPayrollSources.checkedOn, '2026-11-05');
+    expect(
+      SriLankaPayrollPreview.reviewRequirements,
+      contains(contains('Installed server calculation')),
+    );
+  });
+
+  test('salary arrears remain blocked pending the 2026 credit review', () {
+    final result = previewSriLankaPayroll(
+      input(month: '2026-11-01', apitCase: SriLankaApitCase.lumpSumOrArrears),
+    );
+    expect(result.hasEstimate, isFalse);
+    expect(result.apitFormula, isNull);
+    expect(result.blockers, contains(contains('Section 96A')));
+  });
 
   test('exact cumulative boundary does not trigger Table 05', () {
     expect(

@@ -246,6 +246,76 @@ void main() {
       expect(gateway.commands, hasLength(1));
     },
   );
+  for (final denial in ['PERMISSION_DENIED', 'MFA_REQUIRED']) {
+    test('registered retry rechecks $denial after the file chooser', () async {
+      await c.initialize(selection);
+      files.failWrite = true;
+      await c.deliver();
+      expect(c.form['status'], 'registered');
+      files.failWrite = false;
+      files.choosePause = Completer<void>();
+      final choices = files.choices;
+      final task = c.deliver();
+      while (files.choices == choices) {
+        await Future<void>.delayed(Duration.zero);
+      }
+      gateway.readFailure = denial;
+      files.choosePause!.complete();
+      await task;
+      expect(c.denied, isTrue);
+      expect(c.document, isEmpty);
+      expect(files.writes, isEmpty);
+      expect(gateway.commands, hasLength(1));
+      expect(c.form['status'], 'registered');
+      expect(
+        (await drafts.load(scope, ReportExportController.slot))!.form['status'],
+        'registered',
+      );
+    });
+  }
+  test(
+    'registered retry refuses evidence changed while the file chooser is open',
+    () async {
+      await c.initialize(selection);
+      files.failWrite = true;
+      await c.deliver();
+      files.failWrite = false;
+      files.choosePause = Completer<void>();
+      final choices = files.choices;
+      final task = c.deliver();
+      while (files.choices == choices) {
+        await Future<void>.delayed(Duration.zero);
+      }
+      gateway.value = '-0.740000';
+      files.choosePause!.complete();
+      await task;
+      expect(c.error, contains('no longer match'));
+      expect(files.writes, isEmpty);
+      expect(gateway.commands, hasLength(1));
+      expect(c.form['status'], 'registered');
+    },
+  );
+  test(
+    'new registration rechecks access immediately before file delivery',
+    () async {
+      await c.initialize(selection);
+      gateway.registrationPause = Completer<void>();
+      final task = c.deliver();
+      await gateway.registrationEntered.future;
+      gateway.readFailure = 'PERMISSION_DENIED';
+      gateway.registrationPause!.complete();
+      await task;
+      expect(c.denied, isTrue);
+      expect(c.document, isEmpty);
+      expect(files.writes, isEmpty);
+      expect(gateway.commands, hasLength(1));
+      expect(c.form['status'], 'registered');
+      expect(
+        (await drafts.load(scope, ReportExportController.slot))!.form['status'],
+        'registered',
+      );
+    },
+  );
   test(
     'offline acknowledgement persists registration but does not write',
     () async {

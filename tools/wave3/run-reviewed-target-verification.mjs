@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { digest, reviewedSchema, verifySources } from './prepare-target-verification.mjs';
 import { approvedContext, ledgerSql, readDatabase } from './run-target-fixture-generator.mjs';
 import { racePostflightSql } from './prepare-target-race-invariants.mjs';
-import { assertRaceClass, assertRacePostflightBindings } from './target_review_guards.mjs';
+import { assertFreshRaceIdentities, assertRaceClass, assertRacePostflightBindings } from './target_review_guards.mjs';
 
 // Future execution wrapper: refresh the isolated database rather than accepting
 // self-reported actual-ledger/count fields. Existing harnesses remain untouched.
@@ -61,7 +61,10 @@ if (main) {
   const config = JSON.parse(fs.readFileSync(contained(binding.prepared_config_path), 'utf8'));
   if (config.project_id !== fixture.project_id || config.url !== fixture.url) throw Error('Fixture and verification target differ');
   if(digest(config.candidate_review)!==digest(fixture.candidate_review))throw Error('Fixture and verification candidate selections differ.');
-  if (binding.kind === 'races') for (const race of config.races ?? []) assertRaceClass(race.kind, race.commands);
+  if (binding.kind === 'races') {
+    assertFreshRaceIdentities(config.races);
+    for (const race of config.races) assertRaceClass(race.kind, race.commands);
+  }
   const rpcSources = liveRpcSourceSql(config);
   if (!process.argv.includes('--execute')) {
     console.log(JSON.stringify({ executed: false, kind: binding.kind, project_id: config.project_id,

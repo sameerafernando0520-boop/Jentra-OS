@@ -304,6 +304,25 @@ final class ReportExportController extends ChangeNotifier {
     if (_disposed) return;
     form = registeredForm;
     if (!current(epoch)) return;
+    // A save dialog or registration can outlive the permission/MFA grant used
+    // to prepare the file. Recheck the source immediately before delivery.
+    await preview();
+    if (!current(epoch) || !verified) return;
+    final freshArtifact = await const ReportExportCodec().encode(
+      document,
+      format: format,
+      exportId: exportId,
+      preparedAt: prepared,
+      sourceHash: document['source_hash'] as String,
+    );
+    if (!current(epoch)) return;
+    if (document['source_hash'] != hash ||
+        freshArtifact.sha256 != artifact.sha256 ||
+        freshArtifact.bytes.length != artifact.bytes.length) {
+      throw const FormatException(
+        'The saved export bytes no longer match. No file was written.',
+      );
+    }
     await files.write(
       target,
       artifact.bytes,

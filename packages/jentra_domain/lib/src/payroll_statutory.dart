@@ -13,8 +13,8 @@ enum SriLankaApitCase {
 
 /// A researched source snapshot, not a finance-approved production policy.
 abstract final class SriLankaPayrollSources {
-  static const version = 'LK-2025-04-01-review-2026-10-31';
-  static const checkedOn = '2026-10-31';
+  static const version = 'LK-2025-04-01-review-2026-11-05';
+  static const checkedOn = '2026-11-05';
   static const effectiveFrom = '2025-04-01';
   static const apitTable =
       'https://www.ird.gov.lk/en/publications/APIT_Tax_Tables/2025-2026/'
@@ -22,7 +22,15 @@ abstract final class SriLankaPayrollSources {
   static const apitIndex =
       'https://www.ird.gov.lk/en/publications/APIT_Tax_Tables/2025-2026/'
       'Index/01.%20APIT_2526_Index.pdf';
-  static const epf = 'https://epf.lk/?page_id=811';
+  static const apitAmendment =
+      'https://www.ird.gov.lk/en/publications/Acts_Income%20Tax_2017/'
+      'IR_Act_No_11-2026_E.pdf';
+  // The circular is listed by IRD, but its PDF was unavailable at this check.
+  // Salary arrears remain outside this regular-pay preview.
+  static const apitSalaryArrearsCredit =
+      'https://www.ird.gov.lk/en/publications/Circulars_Circulars/'
+      'SEC_2026_E_05_E.pdf';
+  static const epf = 'https://www.cbsl.gov.lk/en/node/147';
   static const etf = 'https://etfb.lk/employer-details/';
 }
 
@@ -125,6 +133,8 @@ SriLankaPayrollPreview previewSriLankaPayroll(SriLankaPayrollInput input) {
       'Classify EPF earnings, ETF earnings and APIT profits separately.',
     if (input.apitCase != SriLankaApitCase.regularPrimary)
       'This payment requires another APIT table; Table 01 cannot be used.',
+    if (input.apitCase == SriLankaApitCase.lumpSumOrArrears)
+      'Salary arrears also require review of Section 96A and IRD circular SEC/2026/E/05; this preview does not calculate the credit.',
     if (!input.residentOrCitizen)
       'Nonresident noncitizens require separate APIT treatment.',
     if (!input.primaryDeclarationOrOnlyEmployment)

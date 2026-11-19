@@ -3,16 +3,21 @@ import { copyFile, lstat, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isReleaseBuildPath } from './source_boundaries.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const [snapshotArgument, outputArgument, configArgument, channel, version, buildNumber, approvedProductionRef = ''] = process.argv.slice(2);
-if (!snapshotArgument || !outputArgument || !configArgument || !['development', 'production'].includes(channel) ||
+const arguments_ = process.argv.slice(2);
+const financeOpeningImport = arguments_.at(-1) === '--finance-opening-import';
+if (financeOpeningImport) arguments_.pop();
+const [snapshotArgument, outputArgument, configArgument, channel, version, buildNumber, approvedProductionRef = ''] = arguments_;
+if (arguments_.length < 6 || arguments_.length > 7 || approvedProductionRef.startsWith('--') ||
+    !snapshotArgument || !outputArgument || !configArgument || !['development', 'production'].includes(channel) ||
     !/^\d+\.\d+\.\d+$/.test(version ?? '') || !/^\d{1,5}$/.test(buildNumber ?? '') || Number(buildNumber) > 65535) {
   throw Error('RELEASE_ARGUMENTS_INVALID');
 }
 const snapshot = path.resolve(snapshotArgument), output = path.resolve(outputArgument);
 for (const target of [snapshot, output]) {
-  if (!target.startsWith(root + path.sep) || !path.relative(root, target).startsWith('build' + path.sep)) throw Error('OUTPUT_MUST_BE_UNDER_WORKSPACE_BUILD');
+  if (!isReleaseBuildPath(root, target)) throw Error('OUTPUT_MUST_BE_UNDER_WORKSPACE_BUILD');
   try { await lstat(target); throw Error('NEW_OUTPUT_DIRECTORY_REQUIRED'); } catch (error) { if (error.code !== 'ENOENT') throw error; }
 }
 const config = JSON.parse(await readFile(path.resolve(configArgument), 'utf8'));
@@ -71,16 +76,23 @@ for (const file of inputs) {
   const bytes = await readFile(path.join(snapshot, file.path));
   buildFiles.push({ path: file.path, bytes: bytes.length, sha256: sha256(bytes) });
 }
+// Bind compile-time features to the source identity, so enabled and disabled
+// bundles cannot share an installer release ID for otherwise identical input.
+const buildFeatures = { FINANCE_OPENING_IMPORT_ENABLED: financeOpeningImport };
+const featureBytes = Buffer.from(JSON.stringify(buildFeatures) + '\n');
+await writeFile(path.join(snapshot, 'build-features.json'), featureBytes);
+buildFiles.push({ path: 'build-features.json', bytes: featureBytes.length, sha256: sha256(featureBytes) });
+buildFiles.sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
 const sourceSha256 = sha256(Buffer.from(buildFiles.map(file => `${file.path}:${file.sha256}\n`).join('')));
 const revision = git(['rev-parse', 'HEAD']).trim();
 const preparedAtUtc = new Date().toISOString();
-const identity = { version: `${version}+${buildNumber}`, versionName: version, buildNumber: Number(buildNumber), revision,
+const identity = { version: `${version}+${buildNumber}`, versionName: version, buildNumber: Number(buildNumber), revision, buildFeatures,
   sourceSha256, preparedAtUtc, channel, projectRef, sourceDirty: git(['status', '--porcelain', '--untracked-files=normal', '--', 'apps/jentra_desktop/lib', 'apps/jentra_desktop/windows', 'apps/jentra_desktop/pubspec.yaml', 'packages/jentra_domain/lib', 'packages/jentra_platform/lib', 'packages/jentra_design_system/lib', 'tools/desktop-release']).trim().length > 0,
   releaseId: `${version}-${buildNumber}-${channel}-${sourceSha256.slice(0, 12)}`, applicationProductName: channel === 'development' ? 'Jentra OS Development' : 'Jentra OS' };
-const defines = { ...config, SUPABASE_PROJECT_REF: projectRef,
+const defines = { ...config, ...buildFeatures, SUPABASE_PROJECT_REF: projectRef,
   JENTRA_BUILD_VERSION: identity.version, JENTRA_BUILD_REVISION: revision, JENTRA_BUILD_SOURCE_SHA256: sourceSha256,
   JENTRA_BUILD_TIME_UTC: preparedAtUtc, JENTRA_RELEASE_CHANNEL: channel, JENTRA_CONFIG_PROJECT_REF: projectRef };
 await writeFile(path.join(snapshot, 'public-build-config.json'), JSON.stringify(defines, null, 2) + '\n');
-await writeFile(path.join(output, 'source-manifest.json'), JSON.stringify({ schemaVersion: 1, identity, hashMethod: 'SHA-256 of sorted path:sha256 LF records for exact allowlisted build-file bytes after recorded overlay', entrypoint: 'apps/jentra_desktop/lib/main.dart', inputs, buildFiles, overlays, excluded: ['secrets and local configuration', 'test fixtures and golden failures', 'existing user data and acceptance stores', 'generated build output'], snapshot }, null, 2) + '\n');
+await writeFile(path.join(output, 'source-manifest.json'), JSON.stringify({ schemaVersion: 1, identity, hashMethod: 'SHA-256 of sorted path:sha256 LF records for exact build-file bytes after recorded overlay, including generated build-features.json', entrypoint: 'apps/jentra_desktop/lib/main.dart', inputs, buildFiles, overlays, excluded: ['secrets and local configuration', 'test fixtures and golden failures', 'existing user data and acceptance stores', 'generated build output'], snapshot }, null, 2) + '\n');
 await writeFile(path.join(output, 'build-identity.json'), JSON.stringify(identity, null, 2) + '\n');
 console.log(JSON.stringify({ snapshot, output, identity, sourceFiles: buildFiles.length, publicConfigValuesPrinted: false }));

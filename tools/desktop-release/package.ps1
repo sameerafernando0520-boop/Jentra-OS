@@ -50,6 +50,7 @@ foreach ($runtimeFile in $vcRuntime.files) {
 }
 $runtimeProvenance = [ordered]@{origin='Visual Studio x64 CRT redistributable';visualStudioInstance=$vcRuntime.visualStudioInstance;version=$vcRuntime.version;redistDirectory=$vcRuntime.redistDirectory;files=$vcRuntimeFiles}
 $manifest = [ordered]@{schemaVersion=1;product='Jentra OS';releaseId=$identity.releaseId;version=$identity.version;buildNumber=$identity.buildNumber;channel=$identity.channel;projectRef=$identity.projectRef;revision=$identity.revision;sourceSha256=$identity.sourceSha256;sourceDirty=$identity.sourceDirty;preparedAtUtc=$identity.preparedAtUtc;packagedAtUtc=[DateTime]::UtcNow.ToString('o');executable='jentra_desktop.exe';authenticode='unsigned';productionReadiness='Not established by build or packaging; production deployment and human acceptance remain separate gates';vcRuntime=$runtimeProvenance;files=$files}
+$manifest['buildFeatures'] = $identity.buildFeatures
 [IO.File]::WriteAllText((Join-Path $payload 'release-manifest.json'), ($manifest | ConvertTo-Json -Depth 10) + "`n", (New-Object Text.UTF8Encoding($false)))
 foreach ($name in @('Install.ps1','Launch.ps1','Rollback.ps1','Uninstall.ps1')) { Copy-Item -LiteralPath (Join-Path $installerSourceRoot $name) -Destination (Join-Path $package $name) }
 [IO.File]::WriteAllText((Join-Path $package 'Install.cmd'), '@echo off' + "`r`n" + 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0Install.ps1"' + "`r`n" + 'pause' + "`r`n", (New-Object Text.ASCIIEncoding))

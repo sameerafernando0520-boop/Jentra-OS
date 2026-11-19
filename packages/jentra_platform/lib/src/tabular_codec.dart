@@ -71,26 +71,41 @@ final class SetupTabularCodec {
   Uint8List encodeXlsx(
     TabularDocument document, {
     String worksheetName = 'Setup data',
+    bool textColumns = false,
   }) {
     _validateDocument(document);
     final safeName = _safeWorksheetName(worksheetName);
     final archive = Archive()
-      ..addFile(ArchiveFile.string('[Content_Types].xml', _contentTypesXml))
+      ..addFile(
+        ArchiveFile.string(
+          '[Content_Types].xml',
+          _contentTypesXml(textColumns),
+        ),
+      )
       ..addFile(ArchiveFile.string('_rels/.rels', _packageRelationshipsXml))
       ..addFile(ArchiveFile.string('xl/workbook.xml', _workbookXml(safeName)))
       ..addFile(
         ArchiveFile.string(
           'xl/_rels/workbook.xml.rels',
-          _workbookRelationshipsXml,
+          _workbookRelationshipsXml(textColumns),
         ),
       )
       ..addFile(
-        ArchiveFile.string('xl/worksheets/sheet1.xml', _worksheetXml(document)),
+        ArchiveFile.string(
+          'xl/worksheets/sheet1.xml',
+          _worksheetXml(document, textColumns: textColumns),
+        ),
       );
+    if (textColumns) {
+      archive.addFile(ArchiveFile.string('xl/styles.xml', _textStylesXml));
+    }
     return ZipEncoder().encodeBytes(archive, modified: DateTime.utc(2026));
   }
 
-  TabularDocument decodeXlsx(Uint8List bytes) {
+  TabularDocument decodeXlsx(
+    Uint8List bytes, {
+    bool padMissingTrailingCells = false,
+  }) {
     _validateByteLimit(bytes);
     if (_looksLikeEncryptedOle(bytes)) {
       throw const TabularFileException(
@@ -194,7 +209,10 @@ final class SetupTabularCodec {
 
       final sharedStrings = _readSharedStrings(archive);
       final grid = _readWorksheetGrid(worksheet, sharedStrings);
-      return _documentFromGrid(grid);
+      return _documentFromGrid(
+        grid,
+        padMissingTrailingCells: padMissingTrailingCells,
+      );
     } on TabularFileException {
       rethrow;
     } on Object {
@@ -292,7 +310,10 @@ final class SetupTabularCodec {
     return rows;
   }
 
-  TabularDocument _documentFromGrid(List<List<String>> rows) {
+  TabularDocument _documentFromGrid(
+    List<List<String>> rows, {
+    bool padMissingTrailingCells = false,
+  }) {
     if (rows.isEmpty) {
       throw const TabularFileException('EMPTY_FILE', 'The file has no rows.');
     }
@@ -323,6 +344,13 @@ final class SetupTabularCodec {
       );
     }
     for (var index = 0; index < dataRows.length; index += 1) {
+      final row = dataRows[index];
+      if (padMissingTrailingCells && row.length < headers.length) {
+        dataRows[index] = [
+          ...row,
+          ...List.filled(headers.length - row.length, ''),
+        ];
+      }
       if (dataRows[index].length != headers.length) {
         throw TabularFileException(
           'COLUMN_COUNT_MISMATCH',
@@ -500,13 +528,21 @@ final class SetupTabularCodec {
     return safe.length <= 31 ? safe : safe.substring(0, 31);
   }
 
-  static String _worksheetXml(TabularDocument document) {
+  static String _worksheetXml(
+    TabularDocument document, {
+    required bool textColumns,
+  }) {
     final rows = <List<String>>[document.headers, ...document.rows];
     final output = StringBuffer(
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-      '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
-      '<sheetData>',
+      '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">',
     );
+    if (textColumns) {
+      output.write(
+        '<cols><col min="1" max="${document.headers.length}" style="1"/></cols>',
+      );
+    }
+    output.write('<sheetData>');
     for (var rowIndex = 0; rowIndex < rows.length; rowIndex += 1) {
       output.write('<row r="${rowIndex + 1}">');
       for (
@@ -553,14 +589,18 @@ final class SetupTabularCodec {
       '<sheets><sheet name="${_escapeXml(worksheetName)}" sheetId="1" r:id="rId1"/>'
       '</sheets></workbook>';
 
-  static const String _contentTypesXml =
+  static String _contentTypesXml(bool textColumns) =>
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
       '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
       '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
       '<Default Extension="xml" ContentType="application/xml"/>'
       '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>'
       '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>'
+      '${textColumns ? _stylesContentTypeXml : ''}'
       '</Types>';
+
+  static const _stylesContentTypeXml =
+      '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>';
 
   static const String _packageRelationshipsXml =
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
@@ -568,9 +608,28 @@ final class SetupTabularCodec {
       '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>'
       '</Relationships>';
 
-  static const String _workbookRelationshipsXml =
+  static String _workbookRelationshipsXml(bool textColumns) =>
       '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
       '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
       '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/>'
+      '${textColumns ? _stylesRelationshipXml : ''}'
       '</Relationships>';
+
+  static const _stylesRelationshipXml =
+      '<Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>';
+
+  // Excel's built-in text format keeps typed ISO dates, leading zeroes and
+  // decimals as entered in the empty cells of the import template.
+  static const _textStylesXml =
+      '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+      '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+      '<fonts count="1"><font><sz val="11"/><name val="Calibri"/></font></fonts>'
+      '<fills count="2"><fill><patternFill patternType="none"/></fill>'
+      '<fill><patternFill patternType="gray125"/></fill></fills>'
+      '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>'
+      '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'
+      '<cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'
+      '<xf numFmtId="49" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/></cellXfs>'
+      '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>'
+      '</styleSheet>';
 }

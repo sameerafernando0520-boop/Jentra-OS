@@ -710,11 +710,44 @@ class _StatementPanelState extends State<_StatementPanel> {
               onTap: c.busy || !c.online
                   ? null
                   : () => c.inspectItem((raw as Map)['id'] as String),
+              trailing:
+                  const bool.fromEnvironment(
+                        'FINANCE_OPENING_IMPORT_ENABLED',
+                      ) &&
+                      const {
+                        'opening_payable',
+                        'opening_payable_reversal',
+                      }.contains((raw as Map)['source_type']) &&
+                      raw['source_id'] is String
+                  ? Consumer(
+                      builder: (context, ref, child) {
+                        final access = ref.watch(businessCapabilitiesProvider);
+                        if (access.isLoading ||
+                            access.hasError ||
+                            !(access.value?.contains('finance.openings.view') ??
+                                false)) {
+                          return const SizedBox.shrink();
+                        }
+                        final sourceId = raw['source_id'] as String;
+                        return IconButton(
+                          tooltip: 'Open opening source',
+                          onPressed: c.busy || !c.online
+                              ? null
+                              : () => context.push<void>(
+                                  '/finance/opening-balances/source/${Uri.encodeComponent(sourceId)}',
+                                ),
+                          icon: const Icon(Icons.description_outlined),
+                        );
+                      },
+                    )
+                  : null,
               title: Text(
                 '${(raw as Map)['document_number']} · ${switch (raw['source_type']) {
                   'supplier_bill' => 'Supplier bill',
                   'supplier_payment' => 'Recorded payment',
                   'purchase_return' => 'Purchase return',
+                  'opening_payable' => 'Opening supplier document',
+                  'opening_payable_reversal' => 'Opening supplier reversal',
                   _ => 'Supplier document',
                 }}',
               ),

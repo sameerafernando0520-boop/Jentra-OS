@@ -1,10 +1,11 @@
 import { createHash } from 'node:crypto';
-import { copyFile, mkdir, readFile, readdir, realpath, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, open, readFile, readdir, realpath, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const toolDirectory = path.dirname(fileURLToPath(import.meta.url));
 const allowedOrigin = 'https://xpdoufauvrbdmxgngetv.supabase.co';
+const maximumPublicBytes = 128 * 1024 * 1024;
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 const forbiddenName = /(^|\/)(\.[^/]+|node_modules)(\/|$)|firebase-adminsdk|service[-_]?account|google-services\.json|\.(?:map|pem|pfx|p12|key|env)$/i;
 export const reviewedApplicationLoad = `_flutter.loader.load({
@@ -16,7 +17,7 @@ export const reviewedApplicationLoad = `_flutter.loader.load({
 
 export function assertPublicContent(bytes, relativeName) {
   if (forbiddenName.test(relativeName)) throw new Error(`Private or debug file rejected: ${relativeName}`);
-  if (!/\.(?:html|js|json|css|txt)$/.test(relativeName)) return;
+  if (!/\.(?:html|m?js|json|css|txt)$/i.test(relativeName)) return;
   const text = bytes.toString('utf8');
   if (/-----BEGIN (?:[A-Z ]+ )?PRIVATE KEY-----|sb_secret_[A-Za-z0-9_-]{8,}/.test(text)) {
     throw new Error(`Secret material rejected in public artifact: ${relativeName}`);
@@ -29,6 +30,27 @@ export function assertPublicContent(bytes, relativeName) {
     } catch (error) {
       if (error.message.startsWith('Privileged server credential')) throw error;
     }
+  }
+}
+
+async function readPublicFile(filePath, relativeName) {
+  const file = await open(filePath, 'r');
+  try {
+    // Reject large files before allocation, and also bound a file that grows
+    // after the metadata check. A public build directory is mutable input.
+    if ((await file.stat()).size > maximumPublicBytes) {
+      throw new Error(`Oversized public artifact: ${relativeName}`);
+    }
+    const chunks = [];
+    let length = 0;
+    for await (const chunk of file.createReadStream({ autoClose: false, highWaterMark: 64 * 1024 })) {
+      length += chunk.length;
+      if (length > maximumPublicBytes) throw new Error(`Oversized public artifact: ${relativeName}`);
+      chunks.push(chunk);
+    }
+    return Buffer.concat(chunks, length);
+  } finally {
+    await file.close();
   }
 }
 
@@ -46,8 +68,7 @@ export async function inspectBuild(buildDirectory) {
         if (forbiddenName.test(`${name}/`)) throw new Error(`Private directory rejected: ${name}`);
         await visit(path.join(directory, entry.name), `${name}/`);
       } else if (entry.isFile()) {
-        const bytes = await readFile(path.join(directory, entry.name));
-        if (bytes.length > 128 * 1024 * 1024) throw new Error(`Oversized public artifact: ${name}`);
+        const bytes = await readPublicFile(path.join(directory, entry.name), name);
         assertPublicContent(bytes, name);
         files.push({ path: name, bytes: bytes.length, sha256: digest(bytes) });
       } else {
@@ -61,7 +82,7 @@ export async function inspectBuild(buildDirectory) {
   for (const required of ['index.html', 'main.dart.js', 'flutter_bootstrap.js', 'manifest.json', '404.html', 'canvaskit/canvaskit.js', 'canvaskit/canvaskit.wasm']) {
     if (!names.has(required)) throw new Error(`Incomplete Flutter web build: ${required}`);
   }
-  const bootstrap = await readFile(path.join(root, 'flutter_bootstrap.js'), 'utf8');
+  const bootstrap = (await readPublicFile(path.join(root, 'flutter_bootstrap.js'), 'flutter_bootstrap.js')).toString('utf8');
   // The bundled Flutter SDK itself defines serviceWorkerSettings. Only the
   // reviewed, final application call determines whether one is configured.
   const applicationLoads = [...bootstrap.matchAll(/_flutter\.loader\.load\s*\(/g)];
@@ -69,11 +90,11 @@ export async function inspectBuild(buildDirectory) {
       !bootstrap.replaceAll('\r\n', '\n').trimEnd().endsWith(reviewedApplicationLoad)) {
     throw new Error('Build must use the reviewed local-engine, noncaching bootstrap.');
   }
-  const index = await readFile(path.join(root, 'index.html'), 'utf8');
+  const index = (await readPublicFile(path.join(root, 'index.html'), 'index.html')).toString('utf8');
   if (index.includes('$FLUTTER_BASE_HREF') || !/<base href="\/">/.test(index)) {
     throw new Error('Build must target the Hosting origin root.');
   }
-  const program = await readFile(path.join(root, 'main.dart.js'), 'utf8');
+  const program = (await readPublicFile(path.join(root, 'main.dart.js'), 'main.dart.js')).toString('utf8');
   if (!program.includes(allowedOrigin)) throw new Error('Compiled app is missing the approved Supabase public origin.');
   const foreignOrigins = [...program.matchAll(/https:\/\/[a-z0-9-]+\.supabase\.co/gi)].map(match => match[0]).filter(origin => origin !== allowedOrigin);
   if (foreignOrigins.length) throw new Error('Compiled app contains a different Supabase project origin.');
@@ -92,7 +113,7 @@ export async function stageBuild(buildDirectory, outputParent = path.join(toolDi
     const destination = path.join(publicDirectory, ...file.path.split('/'));
     await mkdir(path.dirname(destination), { recursive: true });
     await copyFile(path.join(inspected.root, ...file.path.split('/')), destination);
-    if (digest(await readFile(destination)) !== file.sha256) throw new Error('Build changed while being staged.');
+    if (digest(await readPublicFile(destination, file.path)) !== file.sha256) throw new Error('Build changed while being staged.');
   }
   await copyFile(path.join(toolDirectory, 'firebase.json'), path.join(releaseDirectory, 'firebase.json'));
   const manifest = {

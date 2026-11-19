@@ -1,3 +1,5 @@
+import com.flutter.gradle.FlutterPluginConstants.PLATFORM_ARCH_MAP
+
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
@@ -9,6 +11,8 @@ plugins {
 // builds retain their separate application identity and signing requirement.
 val developmentRelease = providers.gradleProperty("jentraDevelopmentRelease").orNull == "true"
 val productionSigning = providers.gradleProperty("jentraProductionSigning").orNull == "true"
+val targetPlatforms = providers.gradleProperty("target-platform").orNull
+val splitPerAbi = providers.gradleProperty("split-per-abi").orNull == "true"
 if (developmentRelease && productionSigning) error("Choose one employee signing identity.")
 fun signingValue(name: String): String = providers.environmentVariable(name).orNull
     ?.takeIf { it.isNotBlank() } ?: error("Employee release signing is not configured: $name")
@@ -36,6 +40,11 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        // Package native plugins only for ABIs with a compiled Flutter engine.
+        if (targetPlatforms != null && !splitPerAbi) {
+            ndk.abiFilters.clear()
+            ndk.abiFilters.addAll(targetPlatforms.split(',').map { PLATFORM_ARCH_MAP.getValue(it) })
+        }
     }
 
     if (productionSigning) {

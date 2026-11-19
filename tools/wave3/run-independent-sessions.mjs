@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import assert from 'node:assert/strict';
 import path from 'node:path';
-import { assertRaceClass, openNewEvidence } from './target_review_guards.mjs';
+import { assertFreshRaceIdentities, assertRaceClass, openNewEvidence } from './target_review_guards.mjs';
 
 const requiredRaces = ['number_reservation','order_allocation','stock_issue','receipt',
  'matching','allocation','posting','close','reversal'];
@@ -33,6 +33,7 @@ function validate(config) {
    || !config.actors.every(a=>uuid.test(a)))throw Error('Two distinct synthetic actors are required');
  if(!config.scope || !['tenant_id','legal_entity_id','branch_id'].every(k=>uuid.test(config.scope[k]??'')))throw Error('Exact approved synthetic scope required');
  if(!Array.isArray(config.races) || config.races.length!==9 || requiredRaces.some(k=>config.races.filter(r=>r.kind===k).length!==1))throw Error('All nine required concurrency classes need concrete cases');
+ assertFreshRaceIdentities(config.races);
  for(const race of config.races) {
   assertRaceClass(race.kind,race.commands);
   if(!Array.isArray(race.commands) || race.commands.length!==2 || !race.invariants?.length || !Number.isInteger(race.expected_successes) || race.expected_successes<0 || race.expected_successes>2)throw Error('Each race requires two commands, expected outcomes and final invariants');

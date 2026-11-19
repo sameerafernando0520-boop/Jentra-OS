@@ -6,6 +6,7 @@ const uuid = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 const digest = /^[a-f0-9]{64}$/;
 export const bucket = "jentra-assurance-evidence";
 export const maxBytes = 104857600;
+const hashTimeoutMs = 30000;
 const privateHeaders = { "cache-control": "private, no-store", pragma: "no-cache", "x-content-type-options": "nosniff" };
 const scopeFields = ["tenant_id", "legal_entity_id", "branch_id", "engagement_id", "evidence_id"];
 const verificationFields = ["evidence_id", "outcome", "observed_sha256", "observed_byte_size", "verified_at", "verifier"];
@@ -84,7 +85,7 @@ function safeError(error) {
 /**
  * d.userRpc / d.adminRpc call `api` functions with the caller's and the
  * service's credentials; d.storage is the service client's bucket handle;
- * d.hashStream(stream, limit) returns { sha256, size } over every byte.
+ * d.hashStream(stream, limit, { signal }) returns { sha256, size } over every byte.
  */
 export async function handleVerify(request, d) {
   try {
@@ -110,7 +111,8 @@ export async function handleVerify(request, d) {
     if (error || !data) fail("ASSURANCE_EVIDENCE_STORAGE_UNAVAILABLE", 503);
     // Hash everything that is stored, whatever its claimed size: a larger or
     // smaller object is a recorded mismatch, not a silent truncation.
-    const observed = await d.hashStream(data.stream(), maxBytes);
+    const signal = AbortSignal.any([request.signal, AbortSignal.timeout(hashTimeoutMs)]);
+    const observed = await d.hashStream(data.stream(), maxBytes, { signal });
     if (!digest.test(observed?.sha256 ?? "") || !Number.isSafeInteger(observed.size)) fail("ASSURANCE_EVIDENCE_UNCERTAIN", 503);
     const recorded = await d.adminRpc("assurance_evidence_service_verify", {
       p_ticket_id: ticket.ticket_id, p_user_id: d.userId,
@@ -124,15 +126,30 @@ export async function handleVerify(request, d) {
   }
 }
 
-// Shared bounded reader: counts bytes and refuses more than `limit`.
-export async function* boundedChunks(stream, limit) {
-  const reader = stream.getReader(); let size = 0;
+// Stop on overflow, abort or early hash exit without awaiting a peer's cancel.
+export async function* boundedChunks(stream, limit, { signal } = {}) {
+  if (!Number.isSafeInteger(limit) || limit < 0 || limit > maxBytes) fail("ASSURANCE_EVIDENCE_LIMIT", 413);
+  const reader = stream.getReader(); let size = 0, complete = false, cancelling = false, rejectAbort;
+  const aborted = new Promise((_, reject) => { rejectAbort = reject; });
+  aborted.catch(() => {});
+  const cancel = () => {
+    if (!cancelling) { cancelling = true; reader.cancel().catch(() => {}); }
+  };
+  const onAbort = () => { cancel(); rejectAbort(Error("ASSURANCE_EVIDENCE_ABORTED")); };
+  signal?.addEventListener("abort", onAbort, { once: true });
+  if (signal?.aborted) onAbort();
   try {
     while (true) {
-      const { done, value } = await reader.read(); if (done) return;
+      const { done, value } = await Promise.race([reader.read(), aborted]);
+      if (signal?.aborted) throw Error("ASSURANCE_EVIDENCE_ABORTED");
+      if (done) { complete = true; return; }
       size += value.byteLength;
-      if (size > limit) { await reader.cancel(); fail("ASSURANCE_EVIDENCE_LIMIT", 413); }
+      if (size > limit) { cancel(); fail("ASSURANCE_EVIDENCE_LIMIT", 413); }
       yield value;
     }
-  } finally { reader.releaseLock(); }
+  } finally {
+    signal?.removeEventListener("abort", onAbort);
+    if (!complete) cancel();
+    reader.releaseLock();
+  }
 }
