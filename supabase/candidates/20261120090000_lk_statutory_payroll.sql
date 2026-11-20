@@ -533,3 +533,13 @@ do $$declare f text;begin
   execute format('revoke all on function %s from public,anon,authenticated',f);
  end loop;
 end $$;
+
+-- Organization lifecycle guards cover every tenant-scoped table; put them on
+-- the four new ones when that candidate is installed.
+do $$begin
+ if to_regprocedure('organization_lifecycle.install_write_guards()') is not null then
+  perform organization_lifecycle.install_write_guards();
+ end if;
+end $$;
+
+notify pgrst,'reload schema';
