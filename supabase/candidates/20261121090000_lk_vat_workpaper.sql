@@ -139,7 +139,7 @@ revoke all on function finance.lk_tax_require_mfa() from public,anon,authenticat
 -- Tax definitions with their approved and pending VAT mappings.
 create function api.lk_vat_mappings(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid)
 returns jsonb language plpgsql stable security definer set search_path='' as $$begin
- perform core.wave3_require_scope(p_tenant_id,'finance.tax_summary',p_legal_entity_id,null);
+ perform core.wave3_require_scope(p_tenant_id,'finance.view',p_legal_entity_id,null);
  return coalesce((select jsonb_agg(jsonb_build_object('tax_definition_id',d.id,'code',d.code,'name',d.name,'kind',d.kind,
   'rate',d.rate::text,'status',d.status,
   'approved',(select finance.lk_vat_mapping_payload(m) from finance.lk_vat_mappings m where m.tenant_id=d.tenant_id
@@ -153,7 +153,7 @@ create function api.lk_vat_mapping_propose(p_tenant_id uuid,p_legal_entity_id uu
  p_id uuid,p_tax_definition_id uuid,p_vat_line text,p_reason text)
 returns jsonb language plpgsql security definer set search_path='' as $$
 declare d finance.tax_definitions%rowtype;m finance.lk_vat_mappings%rowtype;begin
- perform core.wave3_require_scope(p_tenant_id,'finance.tax_summary',p_legal_entity_id,null);
+ perform core.wave3_require_scope(p_tenant_id,'finance.setup.manage',p_legal_entity_id,null);
  perform finance.lk_tax_require_mfa();
  select * into m from finance.lk_vat_mappings where id=p_id;
  if m.id is not null then
@@ -201,7 +201,7 @@ end $$;
 create function api.lk_vat_return(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_from date,p_to_exclusive date)
 returns jsonb language plpgsql stable security definer set search_path='' as $$
 declare entity core.legal_entities%rowtype;months integer;v_rows jsonb;result jsonb;begin
- perform core.wave3_require_scope(p_tenant_id,'finance.tax_summary',p_legal_entity_id,null);
+ perform core.wave3_require_scope(p_tenant_id,'finance.view',p_legal_entity_id,null);
  perform core.wave3_require_scope(p_tenant_id,'finance.reports.export',p_legal_entity_id,null);
  perform finance.lk_tax_require_mfa();
  months:=(extract(year from p_to_exclusive)::integer-extract(year from p_from)::integer)*12

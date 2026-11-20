@@ -63,7 +63,7 @@ select ok(finance.lk_vat_line_valid('zero_rated_supply','zero',0),'zero-rated co
 select ok(not finance.lk_vat_line_valid('input_claimable','output',18),'output codes cannot be input tax');
 select ok(not finance.lk_vat_line_valid('exempt_supply','input',0),'input codes cannot be exempt supplies');
 
--- Tenant fixture: creator and reviewer hold every finance permission; reader none.
+-- Tenant fixture: creator and reviewer hold every finance permission; reader only finance.view.
 insert into auth.users(id,instance_id,aud,role,email,encrypted_password,email_confirmed_at,created_at,updated_at)
 select pg_temp.wid(x),'00000000-0000-0000-0000-000000000000','authenticated','authenticated',
   x||'@lk-vat.rollback.jentra.test','',now(),now(),now()
@@ -140,9 +140,9 @@ select throws_ok($q$select api.lk_vat_return(pg_temp.wid('tenant'),pg_temp.wid('
   '2026-05-01','2026-06-01')$q$,'42501',null,'the workpaper with TINs needs MFA');
 reset role;select pg_temp.wactor('reader');set local role authenticated;
 select throws_ok($q$select api.lk_vat_return(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),
-  '2026-05-01','2026-06-01')$q$,'42501',null,'users without tax access cannot prepare the workpaper');
-select throws_ok($q$select api.lk_vat_mappings(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'))$q$,
-  '42501',null,'users without tax access cannot list mappings');
+  '2026-05-01','2026-06-01')$q$,'42501',null,'finance viewers without export access cannot prepare the workpaper');
+select lives_ok($q$select api.lk_vat_mappings(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'))$q$,
+  'finance viewers can list mappings');
 reset role;select pg_temp.wactor('outsider');set local role authenticated;
 select throws_ok($q$select api.lk_vat_mappings(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'))$q$,
   '42501',null,'another tenant cannot list mappings');

@@ -24,7 +24,7 @@ business's own decision and are not enforced.
   - exempt needs an exempt code;
   - input lines need input codes.
 - Lifecycle:
-  - **Propose** (`api.lk_vat_mapping_propose`): `finance.tax_summary` and MFA.
+  - **Propose** (`api.lk_vat_mapping_propose`): `finance.setup.manage` and MFA.
   - **Approve** (`api.lk_vat_mapping_decide`): `finance.classifications.approve`
     across the whole entity, MFA, and an approver who is not the proposer. Approving
     retires the code's previous approved mapping. At most one mapping per code is
@@ -34,7 +34,7 @@ business's own decision and are not enforced.
 
   Values are immutable and rows cannot be deleted.
 - `api.lk_vat_return(from, to_exclusive)` covers one calendar month or quarter by
-  posting date. It needs `finance.tax_summary`, `finance.reports.export` (the
+  posting date. It needs `finance.view`, `finance.reports.export` (the
   schedules carry counterparty TINs) and MFA.
   - It reads `finance.tax_posted_sources`, converts to LKR (`taxable × rate`, rounded
     to the entity scale, plus the verified base-currency tax), and makes returns
