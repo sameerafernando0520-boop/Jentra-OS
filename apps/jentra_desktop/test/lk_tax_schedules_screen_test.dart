@@ -31,7 +31,76 @@ final class FakeFiles implements ReportExportFiles {
 
 final class FakeTax implements LkTaxRepository {
   bool pending = false;
+  String ssclStatus = 'none';
   final calls = <String>[];
+
+  Map<String, Object?> _settings(String status) => {
+    'id': '80000000-0000-0000-0000-000000000001',
+    'effective_from': '2026-04-01',
+    'effective_to_exclusive': '2027-04-01',
+    'rate_percent': '2.500000',
+    'liable_portion_percent': '50.000000',
+    'include_zero_rated': false,
+    'include_exempt': false,
+    'activity': 'Wholesale and retail',
+    'status': status,
+    'proposed_by': '10000000-0000-0000-0000-000000000009',
+    'sources': {'ird': 'https://www.ird.gov.lk'},
+  };
+
+  @override
+  Future<List<LkSsclSettings>> ssclSettings(TenantContext scope) async => [
+    if (ssclStatus != 'none') LkSsclSettings.fromJson(_settings(ssclStatus)),
+  ];
+
+  @override
+  Future<LkSsclSettings> proposeSsclSettings(
+    TenantContext scope, {
+    required String id,
+    required String effectiveFrom,
+    required String effectiveToExclusive,
+    required String ratePercent,
+    required String liablePortionPercent,
+    required bool includeZeroRated,
+    required bool includeExempt,
+    required String activity,
+    required String reason,
+  }) async {
+    calls.add(
+      'sscl propose $effectiveFrom $effectiveToExclusive $ratePercent $liablePortionPercent $activity',
+    );
+    ssclStatus = 'pending';
+    return LkSsclSettings.fromJson(_settings('pending'));
+  }
+
+  @override
+  Future<LkSsclSettings> decideSsclSettings(
+    TenantContext scope,
+    String id,
+    String action,
+  ) async {
+    calls.add('sscl $action');
+    ssclStatus = action == 'approve' ? 'approved' : 'retired';
+    return LkSsclSettings.fromJson(_settings(ssclStatus));
+  }
+
+  @override
+  Future<LkSsclReturn> ssclReturn(
+    TenantContext scope, {
+    required String quarterStart,
+  }) async {
+    calls.add('sscl return $quarterStart');
+    return LkSsclReturn.fromJson({
+      'quarter_start': quarterStart,
+      'quarter_end_exclusive': '2026-07-01',
+      'turnover': {'standard_rated': '5600000.000000', 'untaxed': '0.000000'},
+      'included_turnover': '5600000.000000',
+      'liable_turnover': '2800000.000000',
+      'sscl_due': '70000.000000',
+      'settings': _settings('approved'),
+      'blockers': const [],
+    });
+  }
 
   Map<String, Object?> _mapping(String status) => {
     'id': mappingId,
@@ -154,6 +223,67 @@ Future<(FakeTax, FakeFiles)> pump(
 }
 
 void main() {
+  testWidgets(
+    'SSCL settings are proposed, approved with confirmation and used',
+    (tester) async {
+      final (fake, files) = await pump(tester);
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Liable portion %'),
+        '50',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Business activity'),
+        'Wholesale and retail',
+      );
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Reason for the SSCL settings'),
+        'SSCL at 2.5%',
+      );
+      await tester.tap(find.text('Propose SSCL settings'));
+      await tester.pumpAndSettle();
+      expect(fake.calls, [
+        'sscl propose 2026-04-01 2027-04-01 2.5 50 Wholesale and retail',
+      ]);
+      await tester.tap(find.text('Approve SSCL'));
+      await tester.pumpAndSettle();
+      final approve = find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.widgetWithText(FilledButton, 'Approve'),
+      );
+      expect(tester.widget<FilledButton>(approve).onPressed, isNull);
+      await tester.tap(find.byType(CheckboxListTile));
+      await tester.pumpAndSettle();
+      await tester.tap(approve);
+      await tester.pumpAndSettle();
+      expect(fake.calls.last, 'sscl approve');
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Quarter start (YYYY-MM)'),
+        '2026-05',
+      );
+      await tester.tap(find.text('Prepare SSCL workpaper'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('YYYY-01, YYYY-04'), findsOneWidget);
+      await tester.enterText(
+        find.widgetWithText(TextField, 'Quarter start (YYYY-MM)'),
+        '2026-04',
+      );
+      await tester.tap(find.text('Prepare SSCL workpaper'));
+      await tester.pumpAndSettle();
+      expect(fake.calls.last, 'sscl return 2026-04-01');
+      expect(
+        find.text('Liable turnover Rs 2800000.00 · SSCL due Rs 70000.00'),
+        findsOneWidget,
+      );
+      await tester.tap(find.text('Save SSCL CSV'));
+      await tester.pumpAndSettle();
+      final bytes = files.written[r'C:\tax\sscl-workpaper-2026-04.csv']!;
+      expect(
+        utf8.decode(bytes.skip(3).toList()),
+        contains('Result,SSCL due,70000.00'),
+      );
+    },
+  );
+
   testWidgets(
     'only suitable VAT lines are offered and proposing calls the server',
     (tester) async {
