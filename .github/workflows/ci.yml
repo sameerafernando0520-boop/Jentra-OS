@@ -248,6 +248,9 @@ jobs:
       - name: Test company and staff administration with local rollback only
         run: node supabase/candidates/run-company-access-test.mjs --run-local
 
+      - name: Test Sri Lanka statutory payroll candidate with local rollback only
+        run: node supabase/candidates/run-lk-statutory-payroll-test.mjs --run-local
+
   secret-scan:
     name: Secret scan
     runs-on: ubuntu-latest
