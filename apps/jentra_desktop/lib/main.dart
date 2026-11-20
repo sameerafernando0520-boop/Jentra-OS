@@ -63,6 +63,7 @@ import 'src/features/period_fx/period_fx_controller.dart';
 import 'src/features/financial_statements/financial_statement_controller.dart';
 import 'src/features/financial_statements/cash_flow_mapping_controller.dart';
 import 'src/features/financial_statements/tax_summary_controller.dart';
+import 'src/features/financial_statements/lk_tax_schedules_screen.dart';
 import 'src/features/budgets/budget_controller.dart';
 
 import 'package:jentra_platform/jentra_people_platform.dart';
@@ -285,6 +286,11 @@ Future<void> launchJentra({
           ),
           taxSummaryGatewayProvider.overrideWithValue(
             client == null ? null : SupabaseTaxSummaryGateway(client),
+          ),
+          lkTaxRepositoryProvider.overrideWithValue(
+            lkTaxCandidateEnabled && client != null
+                ? SupabaseLkTaxGateway(client)
+                : null,
           ),
           cashFlowMappingGatewayProvider.overrideWithValue(
             client == null ? null : SupabaseCashFlowMappingGateway(client),
