@@ -1,0 +1,156 @@
+{
+  "description": "Worked Sri Lanka statutory payroll cases shared by the SQL candidate harness and the Dart port. Amounts are LKR, precision 2, half away from zero. Rule set: EPF 8% employee, 12% employer; ETF 3% employer; APIT Table 01 bands as proposed by api.people_payroll_statutory_propose_lk.",
+  "rule_set": {
+    "id": "7d3f0a52-6a1e-4c55-9b0e-1f6f2b9c4a01",
+    "country_code": "LK",
+    "effective_from": "2025-04-01",
+    "effective_to_exclusive": "2027-04-01",
+    "epf_employee_percent": "8",
+    "epf_employer_percent": "12",
+    "etf_employer_percent": "3",
+    "apit_table": "LK_APIT_TABLE_01",
+    "apit_bands": [
+      {"upto": "150000", "rate": "0", "reduction": "0"},
+      {"upto": "233333", "rate": "6", "reduction": "9000"},
+      {"upto": "275000", "rate": "18", "reduction": "37000"},
+      {"upto": "316667", "rate": "24", "reduction": "53500"},
+      {"upto": "358333", "rate": "30", "reduction": "72500"},
+      {"upto": null, "rate": "36", "reduction": "94000"}
+    ]
+  },
+  "employee": {
+    "version": 1,
+    "coverage": "standard",
+    "apit_case": "regular_primary",
+    "resident_or_citizen": true,
+    "primary_employment_declared": true,
+    "joined_or_left_in_year": false,
+    "has_nic": true,
+    "has_epf_member_number": true
+  },
+  "cases": [
+    {
+      "name": "monthly salary in the 6% APIT band",
+      "earnings": [{"code": "BASIC", "amount": "200000", "epf": true, "etf": true, "apit": true}],
+      "expect": {"lines": {"EPF_EE": "16000", "EPF_ER": "24000", "ETF_ER": "6000", "APIT": "3000"},
+        "gross": "200000", "deductions": "19000", "employer_cost": "30000", "net": "181000"}
+    },
+    {
+      "name": "below the APIT threshold",
+      "earnings": [{"code": "BASIC", "amount": "120000", "epf": true, "etf": true, "apit": true}],
+      "expect": {"lines": {"EPF_EE": "9600", "EPF_ER": "14400", "ETF_ER": "3600", "APIT": "0"},
+        "gross": "120000", "deductions": "9600", "employer_cost": "18000", "net": "110400"}
+    },
+    {
+      "name": "top APIT band",
+      "earnings": [{"code": "BASIC", "amount": "500000", "epf": true, "etf": true, "apit": true}],
+      "expect": {"lines": {"EPF_EE": "40000", "EPF_ER": "60000", "ETF_ER": "15000", "APIT": "86000"},
+        "gross": "500000", "deductions": "126000", "employer_cost": "75000", "net": "374000"}
+    },
+    {
+      "name": "allowance outside EPF and ETF but inside APIT",
+      "earnings": [
+        {"code": "BASIC", "amount": "150000", "epf": true, "etf": true, "apit": true},
+        {"code": "TRAVEL", "amount": "50000", "epf": false, "etf": false, "apit": true}
+      ],
+      "expect": {"lines": {"EPF_EE": "12000", "EPF_ER": "18000", "ETF_ER": "4500", "APIT": "3000"},
+        "gross": "200000", "deductions": "15000", "employer_cost": "22500", "net": "185000"}
+    },
+    {
+      "name": "upper edge of the 6% band",
+      "earnings": [{"code": "BASIC", "amount": "233333", "epf": true, "etf": true, "apit": true}],
+      "expect": {"lines": {"EPF_EE": "18666.64", "EPF_ER": "27999.96", "ETF_ER": "6999.99", "APIT": "4999.98"},
+        "gross": "233333", "deductions": "23666.62", "employer_cost": "34999.95", "net": "209666.38"}
+    },
+    {
+      "name": "cents round half away from zero",
+      "earnings": [{"code": "BASIC", "amount": "100000.55", "epf": true, "etf": true, "apit": true}],
+      "expect": {"lines": {"EPF_EE": "8000.04", "EPF_ER": "12000.07", "ETF_ER": "3000.02", "APIT": "0"},
+        "gross": "100000.55", "deductions": "8000.04", "employer_cost": "15000.09", "net": "92000.51"}
+    },
+    {
+      "name": "EPF and ETF only over a half month",
+      "start_date": "2026-05-01",
+      "end_date_exclusive": "2026-05-16",
+      "statutory_codes": ["EPF_EE", "EPF_ER", "ETF_ER"],
+      "earnings": [{"code": "BASIC", "amount": "50000", "epf": true, "etf": true, "apit": true}],
+      "expect": {"lines": {"EPF_EE": "4000", "EPF_ER": "6000", "ETF_ER": "1500"},
+        "gross": "50000", "deductions": "4000", "employer_cost": "7500", "net": "46000"}
+    },
+    {
+      "name": "no approved rule set",
+      "rule_set": null,
+      "earnings": [{"code": "BASIC", "amount": "200000", "epf": true, "etf": true, "apit": true}],
+      "expect": {"blocked": "STATUTORY_APPROVED_RULE_SET_REQUIRED"}
+    },
+    {
+      "name": "no employee statutory details",
+      "employee": null,
+      "earnings": [{"code": "BASIC", "amount": "200000", "epf": true, "etf": true, "apit": true}],
+      "expect": {"blocked": "STATUTORY_EMPLOYEE_DETAILS_REQUIRED"}
+    },
+    {
+      "name": "missing NIC",
+      "employee_overrides": {"has_nic": false},
+      "earnings": [{"code": "BASIC", "amount": "200000", "epf": true, "etf": true, "apit": true}],
+      "expect": {"blocked": "STATUTORY_NIC_REQUIRED"}
+    },
+    {
+      "name": "exempt EPF coverage needs review",
+      "employee_overrides": {"coverage": "exempt"},
+      "earnings": [{"code": "BASIC", "amount": "200000", "epf": true, "etf": true, "apit": true}],
+      "expect": {"blocked": "STATUTORY_COVERAGE_REVIEW_REQUIRED"}
+    },
+    {
+      "name": "missing EPF member number",
+      "employee_overrides": {"has_epf_member_number": false},
+      "earnings": [{"code": "BASIC", "amount": "200000", "epf": true, "etf": true, "apit": true}],
+      "expect": {"blocked": "STATUTORY_EPF_MEMBER_NUMBER_REQUIRED"}
+    },
+    {
+      "name": "secondary employment needs another APIT table",
+      "employee_overrides": {"apit_case": "secondary_employment"},
+      "earnings": [{"code": "BASIC", "amount": "200000", "epf": true, "etf": true, "apit": true}],
+      "expect": {"blocked": "STATUTORY_APIT_OTHER_TABLE_REQUIRED"}
+    },
+    {
+      "name": "nonresident needs APIT review",
+      "employee_overrides": {"resident_or_citizen": false},
+      "earnings": [{"code": "BASIC", "amount": "200000", "epf": true, "etf": true, "apit": true}],
+      "expect": {"blocked": "STATUTORY_APIT_NONRESIDENT_REVIEW_REQUIRED"}
+    },
+    {
+      "name": "missing primary employment declaration",
+      "employee_overrides": {"primary_employment_declared": false},
+      "earnings": [{"code": "BASIC", "amount": "200000", "epf": true, "etf": true, "apit": true}],
+      "expect": {"blocked": "STATUTORY_APIT_PRIMARY_DECLARATION_REQUIRED"}
+    },
+    {
+      "name": "joined during the year of assessment needs Table 05",
+      "employee_overrides": {"joined_or_left_in_year": true},
+      "earnings": [{"code": "BASIC", "amount": "200000", "epf": true, "etf": true, "apit": true}],
+      "expect": {"blocked": "STATUTORY_APIT_TABLE_05_REQUIRED"}
+    },
+    {
+      "name": "APIT over a half month",
+      "start_date": "2026-05-01",
+      "end_date_exclusive": "2026-05-16",
+      "earnings": [{"code": "BASIC", "amount": "100000", "epf": true, "etf": true, "apit": true}],
+      "expect": {"blocked": "STATUTORY_APIT_MONTHLY_PERIOD_REQUIRED"}
+    },
+    {
+      "name": "low month after high year-to-date profits needs Table 05",
+      "cumulative_regular_profits_before": "1750000",
+      "earnings": [{"code": "BASIC", "amount": "100000", "epf": true, "etf": true, "apit": true}],
+      "expect": {"blocked": "STATUTORY_APIT_TABLE_05_REQUIRED"}
+    },
+    {
+      "name": "unclassified earning",
+      "earnings": [
+        {"code": "BASIC", "amount": "150000", "epf": true, "etf": true, "apit": true},
+        {"code": "BONUS", "amount": "10000", "classified": false}
+      ],
+      "expect": {"blocked": "STATUTORY_EARNINGS_UNCLASSIFIED"}
+    }
+  ]
+}
