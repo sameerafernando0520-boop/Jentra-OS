@@ -1,8 +1,12 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_domain/jentra_payroll.dart';
 import 'package:jentra_domain/jentra_people.dart';
+import 'package:jentra_platform/jentra_payroll_platform.dart' show PayrollFiles;
 import 'package:uuid/uuid.dart';
 
 import '../../app_providers.dart';
@@ -40,8 +44,15 @@ class StatutoryPayrollScreen extends ConsumerWidget {
       repository: repository,
       payroll: ref.watch(payrollRepositoryProvider),
       employees: ref.watch(employeeRepositoryProvider),
+      files: ref.watch(payrollFilesProvider),
     );
   }
+}
+
+String _previousMonth() {
+  final now = DateTime.now();
+  final month = DateTime(now.year, now.month - 1);
+  return '${month.year}-${month.month.toString().padLeft(2, '0')}';
 }
 
 class StatutoryPayrollWorkspace extends StatefulWidget {
@@ -51,6 +62,7 @@ class StatutoryPayrollWorkspace extends StatefulWidget {
     required this.repository,
     this.payroll,
     this.employees,
+    this.files,
     super.key,
   });
 
@@ -59,6 +71,7 @@ class StatutoryPayrollWorkspace extends StatefulWidget {
   final LkStatutoryPayrollRepository repository;
   final PayrollRepository? payroll;
   final EmployeeRepository? employees;
+  final PayrollFiles? files;
 
   @override
   State<StatutoryPayrollWorkspace> createState() =>
@@ -83,11 +96,15 @@ class _StatutoryPayrollWorkspaceState extends State<StatutoryPayrollWorkspace> {
       _search = TextEditingController(),
       _nic = TextEditingController(),
       _member = TextEditingController(),
-      _employeeReason = TextEditingController();
+      _employeeReason = TextEditingController(),
+      _returnMonth = TextEditingController(text: _previousMonth());
+  LkStatutoryReturnKind _returnKind = LkStatutoryReturnKind.epf;
+  LkStatutoryReturn? _return;
 
   bool get _configure =>
       widget.permissions.contains('people.payroll.configure');
   bool get _approve => widget.permissions.contains('people.payroll.approve');
+  bool get _export => widget.permissions.contains('people.payroll.export');
 
   @override
   void initState() {
@@ -106,10 +123,103 @@ class _StatutoryPayrollWorkspaceState extends State<StatutoryPayrollWorkspace> {
       _nic,
       _member,
       _employeeReason,
+      _returnMonth,
     ]) {
       c.dispose();
     }
     super.dispose();
+  }
+
+  Future<void> _prepareReturn() async {
+    final month = _returnMonth.text.trim();
+    if (!RegExp(r'^[0-9]{4}-(0[1-9]|1[0-2])$').hasMatch(month)) {
+      setState(
+        () => _error = 'Enter the month as YYYY-MM, for example 2026-05.',
+      );
+      return;
+    }
+    await _act(() async {
+      final prepared = await widget.repository.statutoryReturn(
+        widget.scope,
+        month: '$month-01',
+        kind: _returnKind,
+      );
+      if (mounted) setState(() => _return = prepared);
+    });
+  }
+
+  Future<void> _saveReturn() => _act(() async {
+    final prepared = _return!;
+    final path = await widget.files!.chooseExport();
+    if (path == null) return;
+    // A byte order mark lets spreadsheet apps read Sinhala and Tamil names.
+    await widget.files!.write(
+      path,
+      Uint8List.fromList([0xEF, 0xBB, 0xBF, ...utf8.encode(prepared.toCsv())]),
+    );
+    if (mounted) setState(() => _notice = 'Return saved to $path.');
+  });
+
+  List<Widget> _returnSection() {
+    final prepared = _return;
+    return [
+      Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          SizedBox(
+            width: 160,
+            child: TextField(
+              controller: _returnMonth,
+              decoration: const InputDecoration(labelText: 'Month (YYYY-MM)'),
+            ),
+          ),
+          for (final kind in LkStatutoryReturnKind.values)
+            ChoiceChip(
+              label: Text(kind.name.toUpperCase()),
+              selected: _returnKind == kind,
+              onSelected: (_) => setState(() {
+                _returnKind = kind;
+                _return = null;
+              }),
+            ),
+          OutlinedButton(
+            onPressed: _busy ? null : _prepareReturn,
+            child: const Text('Prepare return'),
+          ),
+        ],
+      ),
+      if (prepared != null) ...[
+        Text(
+          '${prepared.kind.name.toUpperCase()} ${prepared.month.substring(0, 7)} · '
+          '${prepared.rows.length} employees · '
+          'total due Rs ${prepared.totalDue.toDecimalString()}',
+        ),
+        if (prepared.employerNumber == null)
+          Text(
+            prepared.kind == LkStatutoryReturnKind.apit
+                ? 'Record the company TIN before filing.'
+                : 'Record the employer ${prepared.kind.name.toUpperCase()} number before filing.',
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+        if (prepared.missingIdentifiers.isNotEmpty)
+          Text(
+            'Missing NIC or EPF member number: ${prepared.missingIdentifiers.join(', ')}.',
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
+        if (prepared.rows.isEmpty)
+          const Text('No posted statutory runs start in this month.'),
+        if (prepared.rows.isNotEmpty && widget.files != null)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: FilledButton(
+              onPressed: _busy ? null : _saveReturn,
+              child: const Text('Save CSV'),
+            ),
+          ),
+      ],
+    ];
   }
 
   Future<void> _load() async {
@@ -388,6 +498,14 @@ class _StatutoryPayrollWorkspaceState extends State<StatutoryPayrollWorkspace> {
         ]),
         if (_configure && widget.employees != null)
           _section(context, 'Employee statutory details', _employeeSection()),
+        if (_export)
+          _section(context, 'Monthly returns', [
+            const Text(
+              'EPF C-form, ETF and APIT schedules from posted runs that start in the month. '
+              'They contain NICs; keep saved files private.',
+            ),
+            ..._returnSection(),
+          ]),
       ],
     );
   }

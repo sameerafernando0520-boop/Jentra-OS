@@ -1,7 +1,11 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jentra_domain/jentra_domain.dart';
 import 'package:jentra_domain/jentra_payroll.dart';
+import 'package:jentra_platform/jentra_payroll_platform.dart' show PayrollFiles;
 import 'package:jentra_desktop/src/features/people/statutory_payroll_screen.dart';
 
 const scope = TenantContext(
@@ -31,9 +35,51 @@ Map<String, Object?> setRow(String status) => {
   'approved_by': status == 'pending' ? null : scope.actorId,
 };
 
+final class FakeFiles implements PayrollFiles {
+  final written = <String, Uint8List>{};
+
+  @override
+  Future<String?> chooseExport() async => r'C:\returns\epf-2026-05.csv';
+
+  @override
+  Future<void> write(String path, Uint8List bytes) async =>
+      written[path] = bytes;
+}
+
 final class FakeStatutory implements LkStatutoryPayrollRepository {
   String status = 'pending';
   final calls = <String>[];
+
+  @override
+  Future<LkStatutoryReturn> statutoryReturn(
+    TenantContext scope, {
+    required String month,
+    required LkStatutoryReturnKind kind,
+  }) async {
+    calls.add('return $month ${kind.name}');
+    return LkStatutoryReturn.fromJson({
+      'kind': kind.name,
+      'month': month,
+      'employer_epf_number': 'A/12345',
+      'employer_etf_number': null,
+      'employer_tin': null,
+      'rows': [
+        {
+          'employee_code': 'E1',
+          'name': 'Nimal Perera',
+          'nic': '199012345678',
+          'epf_member_number': null,
+          'epf_base': '200000.000000',
+          'etf_base': '200000.000000',
+          'apit_base': '200000.000000',
+          'epf_employee': '16000.000000',
+          'epf_employer': '24000.000000',
+          'etf_employer': '6000.000000',
+          'apit': '3000.000000',
+        },
+      ],
+    });
+  }
 
   @override
   Future<List<LkStatutoryRuleSetRecord>> ruleSets(TenantContext scope) async =>
@@ -114,6 +160,7 @@ Future<FakeStatutory> pump(
     'people.payroll.configure',
     'people.payroll.approve',
   },
+  PayrollFiles? files,
 }) async {
   tester.view.physicalSize = const Size(1400, 2400);
   tester.view.devicePixelRatio = 1;
@@ -127,6 +174,7 @@ Future<FakeStatutory> pump(
           scope: scope,
           permissions: permissions,
           repository: fake,
+          files: files,
         ),
       ),
     ),
@@ -136,6 +184,51 @@ Future<FakeStatutory> pump(
 }
 
 void main() {
+  testWidgets('exporters prepare a monthly return and save it as CSV', (
+    tester,
+  ) async {
+    final files = FakeFiles();
+    final fake = await pump(
+      tester,
+      permissions: const {'people.payroll.view', 'people.payroll.export'},
+      files: files,
+    );
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Month (YYYY-MM)'),
+      '2026-5',
+    );
+    await tester.tap(find.text('Prepare return'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Enter the month as YYYY-MM'), findsOneWidget);
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Month (YYYY-MM)'),
+      '2026-05',
+    );
+    await tester.tap(find.text('Prepare return'));
+    await tester.pumpAndSettle();
+    expect(fake.calls, ['return 2026-05-01 epf']);
+    expect(
+      find.textContaining('1 employees · total due Rs 40000.000000'),
+      findsOneWidget,
+    );
+    expect(find.text('Missing NIC or EPF member number: E1.'), findsOneWidget);
+    await tester.tap(find.text('Save CSV'));
+    await tester.pumpAndSettle();
+    final bytes = files.written[r'C:\returns\epf-2026-05.csv']!;
+    expect(bytes.take(3), [0xEF, 0xBB, 0xBF]);
+    expect(
+      utf8.decode(bytes.skip(3).toList()),
+      contains('A/12345,2026-05,,199012345678,Nimal Perera'),
+    );
+  });
+
+  testWidgets('users without export do not see monthly returns', (
+    tester,
+  ) async {
+    await pump(tester);
+    expect(find.text('Monthly returns'), findsNothing);
+  });
+
   testWidgets('approving rates needs the sources confirmation', (tester) async {
     final fake = await pump(tester);
     expect(find.textContaining('Pending approval'), findsOneWidget);

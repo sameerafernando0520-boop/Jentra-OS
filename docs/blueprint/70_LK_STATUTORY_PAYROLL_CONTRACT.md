@@ -117,3 +117,26 @@ after insert; the only state changes are pending → approved → retired.
 - A run blocked at preparation shows the plain-language reason for its
   `PAYROLL_STATUTORY_BLOCKED` code (`lkStatutoryBlockerMessage`) instead of a generic
   state error.
+
+## Part C — monthly returns
+- Candidate `supabase/candidates/20261120100000_lk_statutory_returns.sql` adds
+  `api.people_payroll_statutory_return(month, kind)` for `epf`, `etf` or `apit`.
+  - It sums the posted, approved revisions of runs that start in the calendar month.
+    Reversed and cancelled runs are left out.
+  - It lists each employee with an EPF, ETF or APIT base above zero, with their NIC, EPF
+    member number, bases and statutory amounts, plus the employer EPF/ETF numbers and
+    the entity TIN.
+  - It needs `people.payroll.export` across the whole entity and MFA, because it
+    returns identifiers.
+- The desktop **Monthly returns** card prepares a return and warns about a missing
+  employer number, NIC or member number. **Save CSV** writes UTF-8 with a byte order
+  mark, so spreadsheets show Sinhala and Tamil names. The columns follow the official
+  forms:
+  - EPF C-form: member number, NIC, name, total earnings, 8%, 12% and total;
+  - ETF: member number, NIC, name, total earnings, 3%;
+  - APIT: NIC, name, regular profits, tax deducted.
+
+  Amounts have two decimals and there is a total row. Cells a spreadsheet could run as
+  a formula are prefixed with an apostrophe.
+- Not done yet: the exact EPF/ETF e-return upload file layouts and IRD e-filing
+  formats. They need their published specifications confirmed first.
