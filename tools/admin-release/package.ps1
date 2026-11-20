@@ -63,7 +63,7 @@ Each installed runtime file is checked against its recorded SHA-256.
 Portable alternative: extract this whole ZIP and run Launch.cmd. Keep Payload and all its files together.
 This candidate is unsigned. The administrator signs in again after restarting the app.
 Only assigned platform operators can use the panel after authenticator verification.
-A build without a configured development backend opens to a configuration notice.
+If the panel cannot reach its development backend it shows a startup error with a support code.
 The package includes the Microsoft Visual C++ x64 CRT redistributable from the build's installed Visual Studio. Microsoft retains its copyright in those DLLs.
 
 Native recovery: retain the previous installer/ZIP and run its executable from its retained releases directory.
