@@ -2,13 +2,13 @@
 
 J panel is the internal Windows app for assigned platform operators. Its native installer and portable ZIP are built from the shared operator panel with a dedicated entry point.
 
-From the repository root, build a preview with the installed Flutter, Visual Studio and Inno Setup tools. Increase the build number when replacing an earlier installation.
+From the repository root, build with the installed Flutter, Visual Studio and Inno Setup tools. Increase the build number when replacing an earlier installation.
 
 ```powershell
-.\tools\admin-release\build.ps1 -BuildNumber 3
+.\tools\admin-release\build.ps1 -PublicConfigPath <public-config.json> -ApprovedProjectRef <project-ref> -BuildNumber 3
 ```
 
-The default preview has no backend connection. It opens to a configuration notice. A connected development build requires both `-PublicConfigPath` and `-ApprovedProjectRef` for a separately approved development project.
+Both `-PublicConfigPath` and `-ApprovedProjectRef` are required and must name a separately approved development project. A release without its connection could never show the operator sign-in, so the build refuses it. If an installed panel's connection is wrong, it opens to a "could not start" screen with a support code instead of the sign-in. A debug run without configuration (`flutter run -t lib/main_admin.dart`) still opens to a configuration notice.
 
 Apply the operator identity migration and matching `org-identity` Edge function to the approved backend. Configure the transactional sender and identity code secret from the [organization control rollout guide](../../docs/development/organization-control-rollout.md). Provision each operator's Auth account and assign `organization_manage` through the platform operator process.
 

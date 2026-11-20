@@ -51,8 +51,9 @@ if (configPath !== '-') {
   }
   config.SUPABASE_URL = url.origin;
   config.SUPABASE_PUBLISHABLE_KEY = key;
-} else if (approvedProject !== '-') {
-  throw Error('APPROVED_PROJECT_REQUIRES_PUBLIC_CONFIG');
+} else {
+  // A release without its connection cannot show the operator sign-in.
+  throw Error('DEVELOPMENT_PUBLIC_CONFIG_REQUIRED');
 }
 
 const git = (args) => execFileSync('git', args, { cwd: root, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });

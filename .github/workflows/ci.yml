@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - master
+      # Default branch: merged pull requests are tested on the combined tree.
+      - assurance/a1-engagement-core
       - "codex/**"
   pull_request:
   workflow_dispatch:
