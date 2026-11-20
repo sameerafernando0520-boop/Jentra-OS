@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jentra_domain/jentra_payroll.dart';
 import 'package:jentra_domain/jentra_people.dart';
+import 'package:jentra_platform/jentra_platform.dart'
+    show statutoryPayrollCandidateEnabled;
 
 import '../../app_providers.dart';
 import 'organization_screen.dart';
@@ -436,6 +439,13 @@ class PayrollWorkspace extends StatelessWidget {
                           builder: (_) => PayrollReadinessDialog(controller: c),
                         ),
                   child: const Text('Statutory & bank review'),
+                ),
+              if (statutoryPayrollCandidateEnabled)
+                OutlinedButton(
+                  onPressed: c.busy
+                      ? null
+                      : () => context.go('/people/payroll/statutory'),
+                  child: const Text('Statutory payroll'),
                 ),
               if (c.has('people.payroll.view'))
                 OutlinedButton(

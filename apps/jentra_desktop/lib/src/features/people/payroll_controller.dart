@@ -713,6 +713,7 @@ final class PayrollController extends ChangeNotifier {
             'basis': switch (old?.rule.basis) {
               PayrollBasis.hourly => 'hourly',
               PayrollBasis.earningsRatio => 'earnings_ratio',
+              PayrollBasis.statutory => 'statutory',
               _ => 'fixed',
             },
             'proration': switch (old?.rule.proration) {

@@ -88,6 +88,7 @@ import 'src/features/people/organization_controller.dart';
 import 'src/features/people/private_hr_controller.dart';
 import 'src/features/people/workforce_controller.dart';
 import 'src/features/people/payroll_controller.dart';
+import 'src/features/people/statutory_payroll_screen.dart';
 
 import 'package:jentra_platform/jentra_stock_opening_platform.dart';
 
@@ -343,6 +344,11 @@ Future<void> launchJentra({
           ),
           payrollRepositoryProvider.overrideWithValue(
             client == null ? null : SupabasePayrollGateway(client),
+          ),
+          lkStatutoryPayrollRepositoryProvider.overrideWithValue(
+            statutoryPayrollCandidateEnabled && client != null
+                ? SupabaseLkStatutoryPayrollGateway(client)
+                : null,
           ),
           assetsRepositoryProvider.overrideWithValue(
             client == null ? null : SupabaseAssetGateway(client),

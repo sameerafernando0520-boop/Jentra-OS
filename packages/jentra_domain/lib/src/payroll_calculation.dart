@@ -4,7 +4,9 @@ import 'work_time.dart';
 
 enum PayrollClassification { earning, deduction, employerCost }
 
-enum PayrollBasis { fixed, hourly, earningsRatio }
+/// `statutory` amounts (EPF, ETF, APIT) are calculated by the server from frozen
+/// statutory inputs; see `calculateLkStatutory` for the client mirror.
+enum PayrollBasis { fixed, hourly, earningsRatio, statutory }
 
 enum PayrollProration { none, eligibleDays, paidSeconds }
 
@@ -90,8 +92,11 @@ final class PayrollRule {
         basis != PayrollBasis.fixed && proration != PayrollProration.none ||
         basis != PayrollBasis.earningsRatio &&
             (ratioNumerator != 1 || ratioDenominator != 1) ||
-        basis == PayrollBasis.earningsRatio &&
+        (basis == PayrollBasis.earningsRatio ||
+                basis == PayrollBasis.statutory) &&
             amount.minorUnits != BigInt.zero ||
+        basis == PayrollBasis.statutory &&
+            classification == PayrollClassification.earning ||
         cap != null &&
             (cap!.currencyCode != amount.currencyCode ||
                 cap!.minorUnits < BigInt.zero ||
@@ -258,6 +263,10 @@ PayrollCalculation calculatePayroll(
       case PayrollBasis.earningsRatio:
         numerator = gross.minorUnits * BigInt.from(rule.ratioNumerator);
         denominator = BigInt.from(rule.ratioDenominator);
+      case PayrollBasis.statutory:
+        throw const FormatException(
+          'Statutory lines are calculated by the server. Use calculateLkStatutory to explain them.',
+        );
     }
     final roundedUnits = payrollRoundRatio(
       numerator,

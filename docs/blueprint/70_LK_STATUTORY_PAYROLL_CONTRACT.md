@@ -98,3 +98,22 @@ after insert; the only state changes are pending → approved → retired.
   - who may read identifiers, and that identifiers stay out of frozen inputs.
 - `packages/jentra_domain/test/payroll_statutory_lk_test.dart` runs the same cases
   against the Dart mirror `calculateLkStatutory` (`jentra_payroll.dart`).
+
+## Part B — desktop screens
+- Development builds opt in with `JENTRA_STATUTORY_PAYROLL_CANDIDATE=true`.
+  `tools/desktop-release/prepare.mjs` accepts the flag on the development channel only.
+  Without it there is no route, no Payroll button and no gateway.
+- **People → Payroll → Statutory payroll** (`/people/payroll/statutory`) has four parts:
+  - Rates: propose the shipped values, then approve or retire. Approval requires ticking
+    "I checked every rate and APIT band against the official sources". The server
+    still enforces the separate approver and MFA.
+  - Employer EPF and ETF numbers.
+  - Earning classification: EPF, ETF and APIT per earning component.
+  - Employee statutory details: NIC (validated in the form and on the server), EPF member
+    number, coverage, APIT case and declarations.
+- The client parses rule versions with basis `statutory`. The client synthetic calculator
+  refuses them and points to `calculateLkStatutory`; the server result is
+  authoritative.
+- A run blocked at preparation shows the plain-language reason for its
+  `PAYROLL_STATUTORY_BLOCKED` code (`lkStatutoryBlockerMessage`) instead of a generic
+  state error.

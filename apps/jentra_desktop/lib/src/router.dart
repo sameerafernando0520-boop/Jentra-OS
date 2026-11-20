@@ -4,7 +4,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jentra_platform/jentra_platform.dart'
-    show browserAuthReturnWasCaptured, organizationControlCandidateEnabled;
+    show
+        browserAuthReturnWasCaptured,
+        organizationControlCandidateEnabled,
+        statutoryPayrollCandidateEnabled;
 import 'package:jentra_domain/jentra_receivables.dart';
 import 'package:jentra_domain/jentra_projects.dart';
 
@@ -57,6 +60,7 @@ import 'features/people/workforce_controller.dart';
 import 'features/people/workforce_screen.dart';
 import 'features/people/payroll_controller.dart';
 import 'features/people/payroll_screen.dart';
+import 'features/people/statutory_payroll_screen.dart';
 import 'features/assets/assets_controller.dart';
 import 'features/assets/assets_screen.dart';
 import 'features/projects/projects_controller.dart';
@@ -637,6 +641,11 @@ final routerProvider = Provider<GoRouter>((ref) {
             onExit: (context, state) async =>
                 await ref.read(payrollControllerProvider)?.canLeave() ?? true,
           ),
+          if (statutoryPayrollCandidateEnabled)
+            GoRoute(
+              path: '/people/payroll/statutory',
+              builder: (context, state) => const StatutoryPayrollScreen(),
+            ),
           GoRoute(
             path: '/projects',
             builder: (context, state) => const ProjectsScreen(),
