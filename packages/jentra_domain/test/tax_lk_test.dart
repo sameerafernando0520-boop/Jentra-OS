@@ -117,4 +117,59 @@ void main() {
     expect(LkVatLine.exemptSupply.suits('input', pct('0')), isFalse);
     expect(LkVatLine.outsideVat.suits('withholding', pct('5')), isTrue);
   });
+
+  Map<String, Object?> sscl({bool settings = true}) => {
+    'quarter_start': '2026-04-01',
+    'quarter_end_exclusive': '2026-07-01',
+    'entity_tin': '114000002',
+    'turnover': {
+      'standard_rated': '3600000.000000',
+      'zero_rated': '1000000.000000',
+      'exempt': '500000.000000',
+      'untaxed': '2000000.000000',
+      'outside_vat': '0.000000',
+    },
+    'included_turnover': '7100000.000000',
+    'liable_turnover': settings ? '3550000.000000' : null,
+    'sscl_due': settings ? '88750.000000' : null,
+    'settings': settings
+        ? {
+            'id': '80000000-0000-0000-0000-000000000001',
+            'effective_from': '2026-04-01',
+            'effective_to_exclusive': '2027-04-01',
+            'rate_percent': '2.500000',
+            'liable_portion_percent': '50.000000',
+            'include_zero_rated': true,
+            'include_exempt': true,
+            'activity': 'Wholesale and retail',
+            'status': 'approved',
+            'proposed_by': '10000000-0000-0000-0000-000000000009',
+            'sources': {'ird': 'https://www.ird.gov.lk'},
+          }
+        : null,
+    'blockers': settings
+        ? const []
+        : [
+            {'reason': 'SSCL_SETTINGS_REQUIRED'},
+          ],
+  };
+
+  test(
+    'the SSCL workpaper CSV shows turnover, settings and the amount due',
+    () {
+      final csv = LkSsclReturn.fromJson(sscl()).toCsv().split('\r\n');
+      expect(csv, contains('Turnover,Sales without a tax code,2000000.00'));
+      expect(csv, contains('Result,Turnover counted,7100000.00'));
+      expect(csv, contains('Settings,Liable portion 50.000000%,'));
+      expect(csv, contains('Result,Liable turnover,3550000.00'));
+      expect(csv, contains('Result,SSCL due,88750.00'));
+    },
+  );
+
+  test('without approved settings no SSCL is computed', () {
+    final r = LkSsclReturn.fromJson(sscl(settings: false));
+    expect(r.ssclDue, isNull);
+    expect(r.blockers.single.message, contains('No approved SSCL settings'));
+    expect(r.toCsv(), contains('Result,SSCL due,\r\n'));
+  });
 }

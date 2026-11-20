@@ -125,7 +125,14 @@ final class LkTaxBlocker {
     'VAT_RETURN_BASE_UNVERIFIED' =>
       'A return has no verified original tax base.',
     'VAT_JOURNAL_MISSING' => 'A taxed document has no posted journal.',
-    'VAT_BASE_CURRENCY_LKR_REQUIRED' => 'The entity base currency must be LKR.',
+    'VAT_BASE_CURRENCY_LKR_REQUIRED' || 'SSCL_BASE_CURRENCY_LKR_REQUIRED' =>
+      'The entity base currency must be LKR.',
+    'SSCL_SETTINGS_REQUIRED' =>
+      'No approved SSCL settings cover this quarter. Approve the rate and liable portion first.',
+    'SSCL_VAT_MAPPING_REQUIRED' =>
+      'Sale with tax code ${taxCode ?? ''} has no approved VAT line, so its turnover is not counted.',
+    'SSCL_VAT_MAPPING_DIRECTION_MISMATCH' =>
+      'Sale with tax code ${taxCode ?? ''} is mapped to an input line, so its turnover is not counted.',
     _ => 'Review this line before filing.',
   };
 }
@@ -250,6 +257,135 @@ final class LkVatReturn {
   }
 }
 
+final class LkSsclSettings {
+  LkSsclSettings.fromJson(Map<String, Object?> json)
+    : id = _text(json['id'], 'id'),
+      effectiveFrom = _text(json['effective_from'], 'effective_from'),
+      effectiveToExclusive = _text(
+        json['effective_to_exclusive'],
+        'effective_to_exclusive',
+      ),
+      ratePercent = Money.parse(
+        _text(json['rate_percent'], 'rate_percent'),
+        'LKR',
+      ),
+      liablePortionPercent = Money.parse(
+        _text(json['liable_portion_percent'], 'liable_portion_percent'),
+        'LKR',
+      ),
+      includeZeroRated = json['include_zero_rated'] == true,
+      includeExempt = json['include_exempt'] == true,
+      activity = _text(json['activity'], 'activity'),
+      status = _text(json['status'], 'status'),
+      proposedBy = _text(json['proposed_by'], 'proposed_by'),
+      sources = Map.unmodifiable({
+        for (final MapEntry(:key, :value)
+            in (json['sources'] as Map? ?? const {}).entries)
+          '$key': '$value',
+      });
+
+  final String id,
+      effectiveFrom,
+      effectiveToExclusive,
+      activity,
+      status,
+      proposedBy;
+
+  /// Percentages held as exact decimals.
+  final Money ratePercent, liablePortionPercent;
+  final bool includeZeroRated, includeExempt;
+  final Map<String, String> sources;
+}
+
+/// A non-certified SSCL workpaper for one calendar quarter, in LKR.
+final class LkSsclReturn {
+  LkSsclReturn.fromJson(Map<String, Object?> json)
+    : quarterStart = _text(json['quarter_start'], 'quarter_start'),
+      quarterEndExclusive = _text(
+        json['quarter_end_exclusive'],
+        'quarter_end_exclusive',
+      ),
+      entityTin = json['entity_tin'] as String?,
+      turnover = {
+        for (final MapEntry(:key, :value)
+            in (json['turnover'] as Map? ?? const {}).entries)
+          '$key': _lkr(value, 'turnover'),
+      },
+      includedTurnover = _lkr(
+        json['included_turnover'] ?? '0',
+        'included_turnover',
+      ),
+      liableTurnover = json['liable_turnover'] == null
+          ? null
+          : _lkr(json['liable_turnover'], 'liable_turnover'),
+      ssclDue = json['sscl_due'] == null
+          ? null
+          : _lkr(json['sscl_due'], 'sscl_due'),
+      settings = json['settings'] == null
+          ? null
+          : LkSsclSettings.fromJson(
+              Map<String, Object?>.from(json['settings']! as Map),
+            ),
+      blockers = List.unmodifiable([
+        for (final b in json['blockers'] as List<Object?>? ?? const [])
+          LkTaxBlocker.fromJson(Map<String, Object?>.from(b! as Map)),
+      ]);
+
+  final String quarterStart, quarterEndExclusive;
+  final String? entityTin;
+
+  /// Turnover by VAT treatment: standard_rated, zero_rated, exempt, untaxed, outside_vat.
+  final Map<String, Money> turnover;
+  final Money includedTurnover;
+
+  /// Null until approved settings cover the quarter.
+  final Money? liableTurnover, ssclDue;
+  final LkSsclSettings? settings;
+  final List<LkTaxBlocker> blockers;
+
+  static const _labels = {
+    'standard_rated': 'Standard-rated sales',
+    'zero_rated': 'Zero-rated sales (exports)',
+    'exempt': 'Exempt sales',
+    'untaxed': 'Sales without a tax code',
+    'outside_vat': 'Sales outside VAT',
+  };
+
+  String toCsv() {
+    final s = settings;
+    return lkTaxCsv([
+      ['Section', 'Item', 'Amount (LKR)'],
+      ['Quarter', '$quarterStart to $quarterEndExclusive (exclusive)', ''],
+      ['Entity', 'TIN ${entityTin ?? 'not recorded'}', ''],
+      for (final MapEntry(:key, :value) in turnover.entries)
+        ['Turnover', _labels[key] ?? key, lkTaxTwo(value)],
+      ['Result', 'Turnover counted', lkTaxTwo(includedTurnover)],
+      if (s != null) ...[
+        ['Settings', 'Activity: ${s.activity}', ''],
+        [
+          'Settings',
+          'Liable portion ${s.liablePortionPercent.toDecimalString()}%',
+          '',
+        ],
+        ['Settings', 'Rate ${s.ratePercent.toDecimalString()}%', ''],
+        [
+          'Settings',
+          'Exports counted: ${s.includeZeroRated ? 'yes' : 'no'}; exempt sales counted: ${s.includeExempt ? 'yes' : 'no'}',
+          '',
+        ],
+      ],
+      [
+        'Result',
+        'Liable turnover',
+        liableTurnover == null ? '' : lkTaxTwo(liableTurnover!),
+      ],
+      ['Result', 'SSCL due', ssclDue == null ? '' : lkTaxTwo(ssclDue!)],
+      for (final b in blockers)
+        ['Blocker', '${b.reason} ${b.documentNumber ?? ''}'.trim(), ''],
+    ]);
+  }
+}
+
 /// Two decimals, half away from zero.
 String lkTaxTwo(Money value) {
   final units = value.minorUnits.abs();
@@ -299,5 +435,34 @@ abstract interface class LkTaxRepository {
     TenantContext scope, {
     required String from,
     required String toExclusive,
+  });
+
+  Future<List<LkSsclSettings>> ssclSettings(TenantContext scope);
+
+  /// Percentages as exact decimal strings; dates are first days of months.
+  Future<LkSsclSettings> proposeSsclSettings(
+    TenantContext scope, {
+    required String id,
+    required String effectiveFrom,
+    required String effectiveToExclusive,
+    required String ratePercent,
+    required String liablePortionPercent,
+    required bool includeZeroRated,
+    required bool includeExempt,
+    required String activity,
+    required String reason,
+  });
+
+  /// [action] is `approve` or `retire`. Approval needs a second person with MFA.
+  Future<LkSsclSettings> decideSsclSettings(
+    TenantContext scope,
+    String id,
+    String action,
+  );
+
+  /// One calendar quarter starting in January, April, July or October.
+  Future<LkSsclReturn> ssclReturn(
+    TenantContext scope, {
+    required String quarterStart,
   });
 }

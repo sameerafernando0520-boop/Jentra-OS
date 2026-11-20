@@ -251,6 +251,9 @@ jobs:
       - name: Test Sri Lanka VAT workpaper candidate with local rollback only
         run: node supabase/candidates/run-lk-vat-workpaper-test.mjs --run-local
 
+      - name: Test Sri Lanka SSCL workpaper candidate with local rollback only
+        run: node supabase/candidates/run-lk-sscl-workpaper-test.mjs --run-local
+
   secret-scan:
     name: Secret scan
     runs-on: ubuntu-latest
