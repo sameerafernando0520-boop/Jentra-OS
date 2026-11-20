@@ -70,6 +70,7 @@ final class PayrollRuleVersion {
           'fixed': PayrollBasis.fixed,
           'hourly': PayrollBasis.hourly,
           'earnings_ratio': PayrollBasis.earningsRatio,
+          'statutory': PayrollBasis.statutory,
         }),
         proration: _enum(row['proration'], {
           'none': PayrollProration.none,

@@ -5,6 +5,12 @@ const organizationControlCandidateEnabled = bool.fromEnvironment(
   'JENTRA_ORGANIZATION_CONTROL_CANDIDATE',
 );
 
+/// Explicitly opts a development client into the uninstalled Sri Lanka
+/// statutory payroll APIs (EPF, ETF, APIT).
+const statutoryPayrollCandidateEnabled = bool.fromEnvironment(
+  'JENTRA_STATUTORY_PAYROLL_CANDIDATE',
+);
+
 enum RuntimeStartupMode { connected, preview }
 
 enum RuntimeStartupFailure {

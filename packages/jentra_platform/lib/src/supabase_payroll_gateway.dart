@@ -58,6 +58,7 @@ final class SupabasePayrollGateway implements PayrollRepository {
         ('P0002', _) => 'RESOURCE_NOT_FOUND',
         ('55000', 'PERIOD_CLOSED') => 'PERIOD_CLOSED',
         ('55000', 'PAYROLL_NEGATIVE_NET') => 'PAYROLL_NEGATIVE_NET',
+        ('55000', 'PAYROLL_STATUTORY_BLOCKED') => 'PAYROLL_STATUTORY_BLOCKED',
         ('55000', 'PAYROLL_ACTIVE_SETTLEMENT_BLOCKS_REVERSAL') =>
           'PAYROLL_ACTIVE_SETTLEMENT',
         ('55000', 'PAYROLL_SETTLEMENT_EXCEEDS_DUE') =>
@@ -102,6 +103,9 @@ final class SupabasePayrollGateway implements PayrollRepository {
           'PERIOD_CLOSED' => 'The posting period is closed.',
           'PAYROLL_NEGATIVE_NET' =>
             'Configured deductions exceed earned pay. Resolve the rule basis.',
+          'PAYROLL_STATUTORY_BLOCKED' => lkStatutoryBlockerMessage(
+            '${cause.details ?? ''}',
+          ),
           'PAYROLL_ACTIVE_SETTLEMENT' =>
             'Reverse the active recorded settlement before reversing the run.',
           'PAYROLL_SETTLEMENT_EXCEEDS_DUE' =>

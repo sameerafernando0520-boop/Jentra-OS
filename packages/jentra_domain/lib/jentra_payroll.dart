@@ -6,3 +6,4 @@ export 'src/payroll_correction.dart';
 export 'src/payroll_repository.dart';
 export 'src/payroll_correction_repository.dart';
 export 'src/payroll_statutory_lk.dart';
+export 'src/payroll_statutory_lk_repository.dart';
