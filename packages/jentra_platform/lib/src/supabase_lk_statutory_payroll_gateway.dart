@@ -56,8 +56,10 @@ final class SupabaseLkStatutoryPayrollGateway
             'Verify with your authenticator before changing statutory payroll.',
           'SEPARATE_APPROVER_REQUIRED' =>
             'Another payroll approver must approve rates you proposed.',
+          // The shared access check refuses missing permission and missing
+          // MFA with one message, so name both.
           'PERMISSION_DENIED' =>
-            'Current payroll permission and scope are required.',
+            'Payroll permission for this scope and a verified authenticator session are required.',
           'STATUTORY_OVERLAP' =>
             'Approved rates already cover part of this period. Retire them first.',
           'STATE_CONFLICT' =>
