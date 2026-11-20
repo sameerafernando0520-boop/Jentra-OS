@@ -70,7 +70,8 @@ declare r jsonb;sign numeric;line text;sale boolean;value numeric;tax numeric;
  output_tax numeric;input_tax numeric;begin
  if coalesce(jsonb_typeof(p_rows),'null')<>'array' then
   raise exception using errcode='22023',message='TAX_VAT_ROWS_INVALID';end if;
- for r in select value from jsonb_array_elements(p_rows) loop
+ -- Alias the element: a bare "value" would clash with the value variable.
+ for r in select e from jsonb_array_elements(p_rows) e loop
   sale:=r->>'source_type' in('sales_invoice','sales_return');
   sign:=case when r->>'source_type' in('sales_return','purchase_return') then -1 else 1 end;
   line:=r->>'vat_line';value:=coalesce((r->>'value_base')::numeric,0)*sign;tax:=coalesce((r->>'tax_base')::numeric,0)*sign;
