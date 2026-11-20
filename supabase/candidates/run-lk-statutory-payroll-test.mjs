@@ -6,14 +6,16 @@ import { spawn } from "node:child_process";
 
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const include = /^\\ir \.\.\/20261120090000_lk_statutory_payroll\.sql[\t ]*\r?$/m;
+const includeReturns = /^\\ir \.\.\/20261120100000_lk_statutory_returns\.sql[\t ]*\r?$/m;
 const casesMarker = /^-- LK_STATUTORY_CASES[\t ]*\r?$/m;
 
-export function buildSuite(candidate, harness, cases) {
+export function buildSuite(candidate, returns, harness, cases) {
   if (!/^begin;/m.test(harness) || !/rollback;\s*$/i.test(harness)) {
     throw new Error("Candidate harness must wrap all work in a rollback transaction.");
   }
-  if (harness.split(include).length !== 2 || harness.split(casesMarker).length !== 2
-      || /^\s*(?:commit|rollback)\s*;/im.test(candidate)) {
+  if (harness.split(include).length !== 2 || harness.split(includeReturns).length !== 2
+      || harness.split(casesMarker).length !== 2
+      || [candidate, returns].some(sql => /^\s*(?:commit|rollback)\s*;/im.test(sql))) {
     throw new Error("Unexpected candidate include, case marker or transaction control.");
   }
   const parsed = JSON.parse(cases);
@@ -22,6 +24,7 @@ export function buildSuite(candidate, harness, cases) {
   }
   const combined = harness
     .replace(include, () => `-- Inlined candidate; no mounted-path dependency.\n${candidate}`)
+    .replace(includeReturns, () => `-- Inlined returns candidate.\n${returns}`)
     .replace(casesMarker, () => `create temporary table lk_doc as select $lk$${JSON.stringify(parsed)}$lk$::jsonb as body;`);
   if (/^\\(?:i|ir|include|include_relative)\s/m.test(combined)) {
     throw new Error("The staged suite must have no external includes.");
@@ -57,12 +60,13 @@ export async function main(args) {
   if (args.length !== 1 || !["--check", "--run-local"].includes(args[0])) {
     throw new Error("Use exactly --check or --run-local; hosted/linked targets are forbidden.");
   }
-  const [candidate, harness, cases] = await Promise.all([
+  const [candidate, returns, harness, cases] = await Promise.all([
     readFile(new URL("20261120090000_lk_statutory_payroll.sql", import.meta.url), "utf8"),
+    readFile(new URL("20261120100000_lk_statutory_returns.sql", import.meta.url), "utf8"),
     readFile(new URL("tests/lk_statutory_payroll_test.sql", import.meta.url), "utf8"),
     readFile(join(root, "packages", "jentra_domain", "test", "fixtures", "lk_statutory_payroll_cases.json"), "utf8"),
   ]);
-  const suite = buildSuite(candidate, harness, cases);
+  const suite = buildSuite(candidate, returns, harness, cases);
   if (args[0] === "--check") {
     console.log("Candidate harness is self-contained; PostgreSQL has not been executed.");
     return 0;

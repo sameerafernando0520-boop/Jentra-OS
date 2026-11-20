@@ -1,3 +1,4 @@
+import 'money.dart';
 import 'payroll_statutory_lk.dart';
 import 'tenant_context.dart';
 
@@ -158,9 +159,190 @@ final class LkEmployerRegistration {
   final String epfEmployerNumber, etfEmployerNumber;
 }
 
-/// Server API for the Sri Lanka statutory payroll candidate
-/// (supabase/candidates/20261120090000_lk_statutory_payroll.sql).
+enum LkStatutoryReturnKind { epf, etf, apit }
+
+final class LkStatutoryReturnRow {
+  LkStatutoryReturnRow.fromJson(Map<String, Object?> json)
+    : employeeCode = _text(json['employee_code'], 'employee_code'),
+      name = _text(json['name'], 'name'),
+      nic = json['nic'] as String?,
+      epfMemberNumber = json['epf_member_number'] as String?,
+      epfBase = _amount(json['epf_base']),
+      etfBase = _amount(json['etf_base']),
+      apitBase = _amount(json['apit_base']),
+      epfEmployee = _amount(json['epf_employee']),
+      epfEmployer = _amount(json['epf_employer']),
+      etfEmployer = _amount(json['etf_employer']),
+      apit = _amount(json['apit']);
+
+  final String employeeCode, name;
+  final String? nic, epfMemberNumber;
+  final Money epfBase,
+      etfBase,
+      apitBase,
+      epfEmployee,
+      epfEmployer,
+      etfEmployer,
+      apit;
+}
+
+Money _amount(Object? value) => Money.parse(_text(value, 'amount'), 'LKR');
+
+/// A monthly EPF, ETF or APIT schedule built by the server from posted runs.
+final class LkStatutoryReturn {
+  LkStatutoryReturn.fromJson(Map<String, Object?> json)
+    : kind = LkStatutoryReturnKind.values.byName(_text(json['kind'], 'kind')),
+      month = _text(json['month'], 'month'),
+      employerEpfNumber = json['employer_epf_number'] as String?,
+      employerEtfNumber = json['employer_etf_number'] as String?,
+      employerTin = json['employer_tin'] as String?,
+      rows = List.unmodifiable([
+        for (final row in json['rows']! as List<Object?>)
+          LkStatutoryReturnRow.fromJson(Map<String, Object?>.from(row! as Map)),
+      ]);
+
+  final LkStatutoryReturnKind kind;
+
+  /// First day of the month, `YYYY-MM-DD`.
+  final String month;
+  final String? employerEpfNumber, employerEtfNumber, employerTin;
+  final List<LkStatutoryReturnRow> rows;
+
+  String? get employerNumber => switch (kind) {
+    LkStatutoryReturnKind.epf => employerEpfNumber,
+    LkStatutoryReturnKind.etf => employerEtfNumber,
+    LkStatutoryReturnKind.apit => employerTin,
+  };
+
+  /// Employee codes whose identifiers this return needs but are not recorded.
+  List<String> get missingIdentifiers => [
+    for (final row in rows)
+      if (row.nic == null ||
+          kind != LkStatutoryReturnKind.apit && row.epfMemberNumber == null)
+        row.employeeCode,
+  ];
+
+  Money _sum(Money Function(LkStatutoryReturnRow) pick) =>
+      rows.fold(Money.zero('LKR'), (total, row) => total + pick(row));
+
+  /// The amount owed for this return: EPF 8% + 12%, ETF 3%, or APIT deducted.
+  Money get totalDue => switch (kind) {
+    LkStatutoryReturnKind.epf => _sum((r) => r.epfEmployee + r.epfEmployer),
+    LkStatutoryReturnKind.etf => _sum((r) => r.etfEmployer),
+    LkStatutoryReturnKind.apit => _sum((r) => r.apit),
+  };
+
+  /// CSV with the official form's fields, one row per employee and a total row.
+  /// Amounts have two decimals. Text cells that a spreadsheet could run as a
+  /// formula are prefixed with an apostrophe.
+  String toCsv() {
+    final period = month.substring(0, 7);
+    final employer = employerNumber ?? '';
+    final (header, cells, total) = switch (kind) {
+      LkStatutoryReturnKind.epf => (
+        [
+          'Employer EPF number',
+          'Month',
+          'EPF member number',
+          'NIC',
+          'Employee name',
+          'Total earnings',
+          'Employee contribution (8%)',
+          'Employer contribution (12%)',
+          'Total contribution',
+        ],
+        (LkStatutoryReturnRow r) => [
+          r.epfMemberNumber ?? '',
+          r.nic ?? '',
+          r.name,
+          _two(r.epfBase),
+          _two(r.epfEmployee),
+          _two(r.epfEmployer),
+          _two(r.epfEmployee + r.epfEmployer),
+        ],
+        [
+          _two(_sum((r) => r.epfBase)),
+          _two(_sum((r) => r.epfEmployee)),
+          _two(_sum((r) => r.epfEmployer)),
+          _two(totalDue),
+        ],
+      ),
+      LkStatutoryReturnKind.etf => (
+        [
+          'Employer ETF number',
+          'Month',
+          'EPF member number',
+          'NIC',
+          'Employee name',
+          'Total earnings',
+          'ETF contribution (3%)',
+        ],
+        (LkStatutoryReturnRow r) => [
+          r.epfMemberNumber ?? '',
+          r.nic ?? '',
+          r.name,
+          _two(r.etfBase),
+          _two(r.etfEmployer),
+        ],
+        [_two(_sum((r) => r.etfBase)), _two(totalDue)],
+      ),
+      LkStatutoryReturnKind.apit => (
+        [
+          'Employer TIN',
+          'Month',
+          'NIC',
+          'Employee name',
+          'APIT regular profits',
+          'APIT deducted',
+        ],
+        (LkStatutoryReturnRow r) => [
+          r.nic ?? '',
+          r.name,
+          _two(r.apitBase),
+          _two(r.apit),
+        ],
+        [_two(_sum((r) => r.apitBase)), _two(totalDue)],
+      ),
+    };
+    final lines = [
+      header,
+      for (final row in rows) [employer, period, ...cells(row)],
+      [
+        employer,
+        period,
+        'TOTAL',
+        ...List.filled(header.length - 3 - total.length, ''),
+        ...total,
+      ],
+    ];
+    return '${lines.map((line) => line.map(_cell).join(',')).join('\r\n')}\r\n';
+  }
+}
+
+String _two(Money value) {
+  final cents = (value.minorUnits + BigInt.from(5000)) ~/ BigInt.from(10000);
+  final whole = cents ~/ BigInt.from(100);
+  final fraction = (cents % BigInt.from(100)).toString().padLeft(2, '0');
+  return '$whole.$fraction';
+}
+
+String _cell(String value) {
+  final safe = RegExp(r'^[=+\-@\t\r]').hasMatch(value) ? "'$value" : value;
+  return RegExp(r'[",\r\n]').hasMatch(safe)
+      ? '"${safe.replaceAll('"', '""')}"'
+      : safe;
+}
+
+/// Server API for the Sri Lanka statutory payroll candidates
+/// (supabase/candidates/20261120090000_lk_statutory_payroll.sql and
+/// 20261120100000_lk_statutory_returns.sql).
 abstract interface class LkStatutoryPayrollRepository {
+  /// Needs payroll export across the entity and MFA; returns identifiers.
+  Future<LkStatutoryReturn> statutoryReturn(
+    TenantContext scope, {
+    required String month,
+    required LkStatutoryReturnKind kind,
+  });
   Future<List<LkStatutoryRuleSetRecord>> ruleSets(TenantContext scope);
   Future<LkStatutoryRuleSetRecord> proposeLk(
     TenantContext scope, {

@@ -6,6 +6,7 @@ set local lock_timeout='3s';
 set local statement_timeout='90s';
 -- The local-only runner inlines this candidate before staging the suite.
 \ir ../20261120090000_lk_statutory_payroll.sql
+\ir ../20261120100000_lk_statutory_returns.sql
 create extension if not exists pgtap with schema extensions;
 set local search_path=extensions,public,pg_catalog;
 -- The runner replaces the next line with the shared worked cases
@@ -21,7 +22,8 @@ create function pg_temp.wactor(p text,p_aal text default 'aal2') returns void la
 end $$;
 
 -- Worked cases: build frozen inputs and rules, then compare exact amounts or the blocker.
-create function pg_temp.lk_actual(c jsonb) returns jsonb language plpgsql as $$
+-- With p_raw it returns the frozen inputs and full calculation, for posted-run fixtures.
+create function pg_temp.lk_actual(c jsonb,p_raw boolean default false) returns jsonb language plpgsql as $$
 declare doc jsonb:=(select body from lk_doc);s date:=coalesce((c->>'start_date')::date,'2026-05-01'::date);
  x date:=coalesce((c->>'end_date_exclusive')::date,'2026-06-01'::date);rules jsonb:='[]';comps jsonb:='{}';
  e jsonb;code text;emp jsonb;rs jsonb;input jsonb;result jsonb;lines jsonb:='{}';l jsonb;msg text;detail text;begin
@@ -52,6 +54,7 @@ declare doc jsonb:=(select body from lk_doc);s date:=coalesce((c->>'start_date')
   get stacked diagnostics msg=message_text,detail=pg_exception_detail;
   return jsonb_build_object('blocked',case when msg='PAYROLL_STATUTORY_BLOCKED' then detail else msg end);
  end;
+ if p_raw then return jsonb_build_object('inputs',input,'calculation',result);end if;
  for l in select value from jsonb_array_elements(result->'lines') where value->>'basis'='statutory' loop
   lines:=lines||jsonb_build_object(l->>'code',(l->>'amount')::numeric);
  end loop;
@@ -223,6 +226,60 @@ select is((people_payroll.statutory_inputs(pg_temp.wid('tenant'),pg_temp.wid('en
   '2026-05-01','2026-06-01',(select jsonb_build_array(jsonb_build_object('component_id',pg_temp.wid('epf-ee'),
    'code','EPF_EE','classification','deduction','basis','statutory')))))->'rule_set','null'::jsonb,
   'a retired set is no longer frozen into runs');
+
+-- Part C: monthly returns from posted runs. Runs are inserted directly with the
+-- real calculator's output; only posted, approved revisions in the month count.
+insert into finance.accounts(id,tenant_id,legal_entity_id,code,name,account_type,normal_balance,created_by,updated_by)
+values(pg_temp.wid('net'),pg_temp.wid('tenant'),pg_temp.wid('entity'),'NETPAY','Net pay','liability','credit',
+  pg_temp.wid('creator'),pg_temp.wid('creator'));
+insert into people_payroll.settings_versions(id,tenant_id,legal_entity_id,version,net_account_id,reason,published_by)
+values(pg_temp.wid('settings'),pg_temp.wid('tenant'),pg_temp.wid('entity'),1,pg_temp.wid('net'),'Net pay',pg_temp.wid('creator'));
+create function pg_temp.lk_post(p_key text,p_start date,p_amount text,p_status text) returns void language plpgsql as $$
+declare calc jsonb:=pg_temp.lk_actual(jsonb_build_object('name',p_key,'start_date',p_start,
+ 'end_date_exclusive',(p_start+interval '1 month')::date,'earnings',jsonb_build_array(jsonb_build_object(
+  'code','BASIC','amount',p_amount,'epf',true,'etf',true,'apit',true))),true);begin
+ insert into people_payroll.runs(id,tenant_id,legal_entity_id,branch_id,name,start_date,end_date_exclusive,posting_date,currency_code,created_by)
+ values(pg_temp.wid(p_key),pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),p_key,p_start,
+  (p_start+interval '1 month')::date,(p_start+interval '1 month')::date-1,'LKR',pg_temp.wid('creator'));
+ insert into people_payroll.run_employees(tenant_id,legal_entity_id,branch_id,run_id,employee_id)
+ values(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),pg_temp.wid(p_key),pg_temp.wid('employee'));
+ insert into people_payroll.run_revisions(id,tenant_id,legal_entity_id,run_id,version,settings_version_id,digest,employee_count,prepared_by)
+ values(pg_temp.wid(p_key||'.revision'),pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid(p_key),2,pg_temp.wid('settings'),
+  repeat('a',64),1,pg_temp.wid('creator'));
+ insert into people_payroll.employee_calculations(id,tenant_id,legal_entity_id,run_id,revision_id,employee_id,inputs,input_digest,
+  calculation,gross,deductions,employer_cost,net)
+ values(pg_temp.wid(p_key||'.calc'),pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid(p_key),pg_temp.wid(p_key||'.revision'),
+  pg_temp.wid('employee'),calc->'inputs',people_payroll.digest(calc->'inputs'),calc->'calculation',
+  (calc->'calculation'->>'gross')::numeric,(calc->'calculation'->>'deductions')::numeric,
+  (calc->'calculation'->>'employer_cost')::numeric,(calc->'calculation'->>'net')::numeric);
+ update people_payroll.runs set status=p_status,version=2,current_revision_id=pg_temp.wid(p_key||'.revision'),
+  approved_revision_id=pg_temp.wid(p_key||'.revision') where id=pg_temp.wid(p_key);
+end $$;
+select pg_temp.lk_post('run-may','2026-05-01','200000','posted');
+select pg_temp.lk_post('run-may-reversed','2026-05-01','500000','reversed');
+select pg_temp.lk_post('run-june','2026-06-01','120000','posted');
+
+select pg_temp.wactor('creator');set local role authenticated;
+create temporary table lk_returns as select k,api.people_payroll_statutory_return(pg_temp.wid('tenant'),pg_temp.wid('entity'),
+  pg_temp.wid('branch'),'2026-05-01',k) body from unnest(array['epf','etf','apit']) k;
+select is((select body->'totals'->>'epf_employee' from lk_returns where k='epf'),'16000.000000',
+  'the EPF return sums the posted employee contribution and leaves out reversed runs');
+select is((select body->'totals'->>'epf_employer' from lk_returns where k='epf'),'24000.000000','the EPF return sums the employer contribution');
+select is((select body->'totals'->>'etf_employer' from lk_returns where k='etf'),'6000.000000','the ETF return sums the employer contribution');
+select is((select body->'totals'->>'apit' from lk_returns where k='apit'),'3000.000000','the APIT schedule sums tax deducted');
+select is((select body->'totals'->>'employees' from lk_returns where k='epf'),'1','one employee in the May return');
+select is((select body->'rows'->0->>'nic' from lk_returns where k='epf'),'199012345678','returns carry the employee NIC');
+select is((select body->'rows'->0->>'epf_member_number' from lk_returns where k='epf'),'1234','returns carry the EPF member number');
+select is((select body->>'employer_epf_number' from lk_returns where k='epf'),'A/12345','returns carry the employer EPF number');
+select throws_ok($q$select api.people_payroll_statutory_return(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),
+  '2026-05-15','epf')$q$,'22023','PAYROLL_STATUTORY_RETURN_INVALID','a return covers a calendar month');
+reset role;select pg_temp.wactor('creator','aal1');set local role authenticated;
+select throws_ok($q$select api.people_payroll_statutory_return(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),
+  '2026-05-01','epf')$q$,'42501',null,'returns with identifiers need MFA');
+reset role;select pg_temp.wactor('reader');set local role authenticated;
+select throws_ok($q$select api.people_payroll_statutory_return(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),
+  '2026-05-01','epf')$q$,'42501',null,'users without payroll export cannot prepare returns');
+reset role;
 
 select * from finish(true);
 rollback;

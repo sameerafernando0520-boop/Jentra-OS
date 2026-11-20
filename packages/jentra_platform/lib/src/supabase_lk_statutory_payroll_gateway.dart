@@ -84,6 +84,20 @@ final class SupabaseLkStatutoryPayrollGateway
       raw == null ? null : Map<String, Object?>.from(raw as Map);
 
   @override
+  Future<LkStatutoryReturn> statutoryReturn(
+    TenantContext scope, {
+    required String month,
+    required LkStatutoryReturnKind kind,
+  }) async => LkStatutoryReturn.fromJson(
+    _map(
+      await _rpc('people_payroll_statutory_return', scope, {
+        'p_month': month,
+        'p_kind': kind.name,
+      }),
+    )!,
+  );
+
+  @override
   Future<List<LkStatutoryRuleSetRecord>> ruleSets(TenantContext scope) async =>
       [
         for (final row in _list(
