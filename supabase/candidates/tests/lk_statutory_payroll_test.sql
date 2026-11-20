@@ -179,6 +179,8 @@ select lives_ok($q$select api.people_payroll_component_statutory_set(pg_temp.wid
 select throws_ok($q$select api.people_payroll_component_statutory_set(pg_temp.wid('tenant'),pg_temp.wid('entity'),
   pg_temp.wid('branch'),pg_temp.wid('epf-class'),pg_temp.wid('epf-ee'),true,true,true,'Not an earning')$q$,
   '22023','PAYROLL_STATUTORY_CLASSIFICATION_INVALID','only earnings are classified');
+select is((select x->>'epf_liable' from jsonb_array_elements(api.people_payroll_component_statutory(pg_temp.wid('tenant'),
+  pg_temp.wid('entity'),pg_temp.wid('branch'))) x where x->>'code'='BASIC'),'true','the latest classifications are listed');
 select lives_ok($q$select api.people_payroll_employee_statutory_set(pg_temp.wid('tenant'),pg_temp.wid('entity'),
   pg_temp.wid('branch'),pg_temp.wid('employee-statutory'),pg_temp.wid('employee'),
   '{"nic":"199012345678","epf_member_number":"1234","coverage":"standard","apit_case":"regular_primary",

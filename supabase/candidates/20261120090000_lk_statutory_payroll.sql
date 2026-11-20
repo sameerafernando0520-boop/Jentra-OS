@@ -501,8 +501,20 @@ declare s people_payroll.employer_registrations%rowtype;begin
   'etf_employer_number',s.etf_employer_number,'recorded_by',s.recorded_by,'recorded_at',s.recorded_at);
 end $$;
 
+create function api.people_payroll_component_statutory(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid)
+returns jsonb language plpgsql stable security definer set search_path='' as $$begin
+ perform people_payroll.require_access(p_tenant_id,p_legal_entity_id,p_branch_id,'people.payroll.view');
+ return coalesce((select jsonb_agg(jsonb_build_object('component_id',s.component_id,'code',c.code,'version',s.version,
+  'epf_liable',s.epf_liable,'etf_liable',s.etf_liable,'apit_regular_profit',s.apit_regular_profit,
+  'recorded_by',s.recorded_by,'recorded_at',s.recorded_at) order by c.code)
+ from people_payroll.components c cross join lateral(select * from people_payroll.component_statutory s
+  where s.tenant_id=c.tenant_id and s.legal_entity_id=c.legal_entity_id and s.component_id=c.id order by s.version desc limit 1) s
+ where c.tenant_id=p_tenant_id and c.legal_entity_id=p_legal_entity_id),'[]'::jsonb);
+end $$;
+
 do $$declare f text;begin
  foreach f in array array[
+  'api.people_payroll_component_statutory(uuid,uuid,uuid)',
   'api.people_payroll_statutory_rule_sets(uuid,uuid,uuid)',
   'api.people_payroll_statutory_propose_lk(uuid,uuid,uuid,uuid,date,date)',
   'api.people_payroll_statutory_decide(uuid,uuid,uuid,uuid,text)',
