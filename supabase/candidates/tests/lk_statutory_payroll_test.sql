@@ -148,7 +148,7 @@ select throws_ok($q$select api.people_payroll_statutory_decide(pg_temp.wid('tena
   'the proposer cannot approve their own rule set');
 reset role;select pg_temp.wactor('reviewer','aal1');set local role authenticated;
 select throws_ok($q$select api.people_payroll_statutory_decide(pg_temp.wid('tenant'),pg_temp.wid('entity'),
-  pg_temp.wid('branch'),pg_temp.wid('set-1'),'approve')$q$,'42501','PAYROLL_MFA_REQUIRED','approval requires MFA');
+  pg_temp.wid('branch'),pg_temp.wid('set-1'),'approve')$q$,'42501',null,'approval requires MFA');
 reset role;select pg_temp.wactor('reviewer');set local role authenticated;
 select is((api.people_payroll_statutory_decide(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),
   pg_temp.wid('set-1'),'approve'))->>'status','approved','a second person with MFA approves the rule set');

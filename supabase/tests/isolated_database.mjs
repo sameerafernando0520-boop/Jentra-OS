@@ -24,6 +24,7 @@ export const organizationCandidates = [
   "20261114110000_people_leave_range.sql",
   "20261117090000_field_sales_reps.sql",
   "20261117100000_field_sales_visits.sql",
+  "20261120090000_lk_statutory_payroll.sql",
 ];
 
 // Candidates in the list above that build on Field Sales. Suites that install
