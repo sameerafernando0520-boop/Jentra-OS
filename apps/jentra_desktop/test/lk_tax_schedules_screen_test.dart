@@ -191,7 +191,115 @@ final class FakeTax implements LkTaxRepository {
       'input_schedule': const [],
     });
   }
+
+  bool whtRegistered = false;
+
+  @override
+  Future<LkWhtSchedule> whtSchedule(
+    TenantContext scope, {
+    required String month,
+  }) async {
+    calls.add('wht $month');
+    final payment = {
+      'posting_date': '2026-05-05',
+      'document_number': 'MJ-1',
+      'supplier_id': supplierId,
+      'supplier_name': 'Alpha Services',
+      'supplier_tin': '100200300',
+      'payment_type': 'service_fee',
+      'rate': '5',
+      'gross': '200000.000000',
+      'wht': '10000.000000',
+    };
+    return LkWhtSchedule.fromJson({
+      'month': month,
+      'entity_tin': '114000002',
+      'lines': [
+        {
+          'payment_type': 'service_fee',
+          'gross': whtRegistered ? '200000.000000' : '0.000000',
+          'wht': whtRegistered ? '10000.000000' : '0.000000',
+        },
+      ],
+      'total_gross': whtRegistered ? '200000.000000' : '0.000000',
+      'total_wht': whtRegistered ? '10000.000000' : '0.000000',
+      'schedule': [if (whtRegistered) payment],
+      'certificates': [
+        if (whtRegistered)
+          {
+            'supplier_id': supplierId,
+            'supplier_name': 'Alpha Services',
+            'supplier_tin': '100200300',
+            'gross': '200000.000000',
+            'wht': '10000.000000',
+            'payments': [payment],
+          },
+      ],
+      'blockers': [
+        if (!whtRegistered)
+          {
+            'reason': 'WHT_REGISTER_REQUIRED',
+            'manual_journal_id': journalId,
+            'line_id': lineId,
+            'document_number': 'MJ-1',
+            'posting_date': '2026-05-05',
+            'tax_code': 'WHT5',
+            'wht': '10000.000000',
+            'taxable_base': '200000.00',
+          },
+      ],
+      'suppliers': [
+        {
+          'supplier_id': supplierId,
+          'supplier_name': 'Alpha Services',
+          'supplier_tin': '100200300',
+        },
+      ],
+      'register': [if (whtRegistered) _entry('active')],
+    });
+  }
+
+  Map<String, Object?> _entry(String status) => {
+    'id': entryId,
+    'manual_journal_id': journalId,
+    'line_id': lineId,
+    'supplier_id': supplierId,
+    'payment_type': 'service_fee',
+    'gross_amount': '200000.000000',
+    'note': 'Invoice A-17',
+    'status': status,
+  };
+
+  @override
+  Future<LkWhtRegisterEntry> recordWht(
+    TenantContext scope, {
+    required String id,
+    required String manualJournalId,
+    required String lineId,
+    required String supplierId,
+    required LkWhtPaymentType paymentType,
+    required String grossAmount,
+    required String note,
+  }) async {
+    calls.add(
+      'wht record $manualJournalId $lineId $supplierId ${paymentType.wire} $grossAmount $note',
+    );
+    whtRegistered = true;
+    return LkWhtRegisterEntry.fromJson(_entry('active'));
+  }
+
+  @override
+  Future<LkWhtRegisterEntry> retireWht(TenantContext scope, String id) async {
+    calls.add('wht retire $id');
+    whtRegistered = false;
+    return LkWhtRegisterEntry.fromJson(_entry('retired'));
+  }
 }
+
+const journalId = '90000000-0000-0000-0000-000000000001';
+const lineId = '90000000-0000-0000-0000-000000000002';
+const supplierId = '90000000-0000-0000-0000-000000000003';
+const entryId = '90000000-0000-0000-0000-000000000004';
 
 Future<(FakeTax, FakeFiles)> pump(
   WidgetTester tester, {
@@ -199,6 +307,7 @@ Future<(FakeTax, FakeFiles)> pump(
     'finance.view',
     'finance.reports.export',
     'finance.classifications.approve',
+    'finance.journals.post',
   },
 }) async {
   tester.view.physicalSize = const Size(1400, 2400);
@@ -362,9 +471,92 @@ void main() {
     );
   });
 
+  testWidgets('a WHT line is registered, then shows on a certificate and CSV', (
+    tester,
+  ) async {
+    final (fake, files) = await pump(tester);
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Month (YYYY-MM)'),
+      '2026-05',
+    );
+    await tester.tap(find.text('Prepare WHT schedule'));
+    await tester.pumpAndSettle();
+    expect(fake.calls, ['wht 2026-05-01']);
+    expect(
+      find.textContaining('MJ-1 WHT5 WHT Rs 10000.00: not registered'),
+      findsOneWidget,
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Register'));
+    await tester.pumpAndSettle();
+    final register = find.descendant(
+      of: find.byType(AlertDialog),
+      matching: find.widgetWithText(FilledButton, 'Register'),
+    );
+    expect(tester.widget<FilledButton>(register).onPressed, isNull);
+    expect(
+      find.widgetWithText(TextField, 'Gross amount paid (LKR)'),
+      findsOneWidget,
+    );
+    expect(find.text('200000.00'), findsOneWidget);
+    await tester.tap(find.text('Supplier'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Alpha Services (TIN 100200300)').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Payment type'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Service fees').last);
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.widgetWithText(TextField, 'Note, for example the supplier invoice'),
+      'Invoice A-17',
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(register);
+    await tester.pumpAndSettle();
+    expect(fake.calls, [
+      'wht 2026-05-01',
+      'wht record $journalId $lineId $supplierId service_fee 200000.00 Invoice A-17',
+      'wht 2026-05-01',
+    ]);
+    expect(
+      find.text(
+        'Certificate: Alpha Services (TIN 100200300) gross Rs 200000.00 · WHT Rs 10000.00',
+      ),
+      findsOneWidget,
+    );
+    await tester.tap(find.text('Save WHT CSV'));
+    await tester.pumpAndSettle();
+    final bytes = files.written[r'C:\tax\wht-schedule-2026-05.csv']!;
+    expect(
+      utf8.decode(bytes.skip(3).toList()),
+      contains(
+        'Certificate total,Alpha Services,100200300,,,,,200000.00,10000.00',
+      ),
+    );
+    await tester.tap(find.text('Retire entry'));
+    await tester.pumpAndSettle();
+    expect(fake.calls.last, 'wht 2026-05-01');
+    expect(fake.calls, contains('wht retire $entryId'));
+    expect(find.textContaining('not registered'), findsOneWidget);
+  });
+
+  testWidgets('registering WHT needs journal posting permission', (
+    tester,
+  ) async {
+    await pump(
+      tester,
+      permissions: const {'finance.view', 'finance.reports.export'},
+    );
+    await tester.tap(find.text('Prepare WHT schedule'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('not registered'), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, 'Register'), findsNothing);
+  });
+
   testWidgets('the workpaper is hidden without report export', (tester) async {
     await pump(tester, permissions: const {'finance.view'});
     expect(find.text('VAT workpaper'), findsNothing);
+    expect(find.text('WHT monthly schedule'), findsNothing);
     expect(find.widgetWithText(FilledButton, 'Approve'), findsNothing);
   });
 }

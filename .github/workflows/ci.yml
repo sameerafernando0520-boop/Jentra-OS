@@ -254,6 +254,9 @@ jobs:
       - name: Test Sri Lanka SSCL workpaper candidate with local rollback only
         run: node supabase/candidates/run-lk-sscl-workpaper-test.mjs --run-local
 
+      - name: Test Sri Lanka WHT schedule candidate with local rollback only
+        run: node supabase/candidates/run-lk-wht-schedule-test.mjs --run-local
+
   secret-scan:
     name: Secret scan
     runs-on: ubuntu-latest

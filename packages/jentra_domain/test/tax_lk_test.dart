@@ -172,4 +172,144 @@ void main() {
     expect(r.blockers.single.message, contains('No approved SSCL settings'));
     expect(r.toCsv(), contains('Result,SSCL due,\r\n'));
   });
+
+  test('the WHT schedule parses totals, certificates and lines to register', () {
+    final w = LkWhtSchedule.fromJson(wht());
+    expect(lkTaxTwo(w.totals[LkWhtPaymentType.serviceFee]!.wht), '9000.00');
+    expect(lkTaxTwo(w.totalWht), '28000.00');
+    expect(w.certificates.single.payments, hasLength(2));
+    expect(w.unregistered.single.lineId, 'line-4');
+    expect(lkTaxTwo(w.unregistered.single.taxableBase!), '50000.00');
+    expect(w.suppliers.single.tin, '100200300');
+    expect(w.blockers.first.message, contains('Beta Rentals has no TIN'));
+    final csv = w.toCsv();
+    expect(csv, contains('Total,,,,,Service fees,,180000.00,9000.00'));
+    expect(csv, contains('Schedule,Alpha Services,100200300,2026-05-05,MJ-1'));
+    expect(
+      csv,
+      contains(
+        'Certificate total,Alpha Services,100200300,,,,,280000.00,13000.00',
+      ),
+    );
+    expect(
+      csv,
+      contains(
+        'Schedule,Alpha Services,100200300,2026-05-09,MJ-5R,Service fees,5,-20000.00,-1000.00',
+      ),
+    );
+    expect(csv, contains('Blocker,WHT_REGISTER_REQUIRED,,,MJ-4'));
+  });
+
+  test('WHT payment types round-trip and reject unknown values', () {
+    for (final t in LkWhtPaymentType.values) {
+      expect(LkWhtPaymentType.parse(t.wire), t);
+    }
+    expect(() => LkWhtPaymentType.parse('salary'), throwsFormatException);
+  });
 }
+
+Map<String, Object?> payment(
+  String doc,
+  String date,
+  String type,
+  String gross,
+  String wht,
+) => {
+  'posting_date': date,
+  'document_number': doc,
+  'supplier_id': 'alpha',
+  'supplier_name': 'Alpha Services',
+  'supplier_tin': '100200300',
+  'payment_type': type,
+  'tax_code': 'WHT5',
+  'rate': '5',
+  'gross': gross,
+  'wht': wht,
+};
+
+/// Shaped like api.lk_wht_schedule for the SQL harness's worked month.
+Map<String, Object?> wht() => {
+  'month': '2026-05-01',
+  'entity_tin': '114000002',
+  'lines': [
+    {
+      'payment_type': 'service_fee',
+      'gross': '180000.000000',
+      'wht': '9000.000000',
+    },
+    {'payment_type': 'rent', 'gross': '150000.000000', 'wht': '15000.000000'},
+    {
+      'payment_type': 'interest',
+      'gross': '100000.000000',
+      'wht': '4000.000000',
+    },
+  ],
+  'total_gross': '430000.000000',
+  'total_wht': '28000.000000',
+  'schedule': [
+    payment(
+      'MJ-1',
+      '2026-05-05',
+      'service_fee',
+      '200000.000000',
+      '10000.000000',
+    ),
+    payment(
+      'MJ-5R',
+      '2026-05-09',
+      'service_fee',
+      '-20000.000000',
+      '-1000.000000',
+    ),
+  ],
+  'certificates': [
+    {
+      'supplier_id': 'alpha',
+      'supplier_name': 'Alpha Services',
+      'supplier_tin': '100200300',
+      'gross': '280000.000000',
+      'wht': '13000.000000',
+      'payments': [
+        payment(
+          'MJ-1',
+          '2026-05-05',
+          'service_fee',
+          '200000.000000',
+          '10000.000000',
+        ),
+        payment(
+          'MJ-3',
+          '2026-05-07',
+          'interest',
+          '100000.000000',
+          '4000.000000',
+        ),
+      ],
+    },
+  ],
+  'blockers': [
+    {
+      'reason': 'WHT_SUPPLIER_TIN_MISSING',
+      'supplier_name': 'Beta Rentals',
+      'document_number': 'MJ-2',
+    },
+    {
+      'reason': 'WHT_REGISTER_REQUIRED',
+      'manual_journal_id': 'journal-4',
+      'line_id': 'line-4',
+      'document_number': 'MJ-4',
+      'posting_date': '2026-05-08',
+      'tax_code': 'WHT5',
+      'wht': '2500.000000',
+      'taxable_base': '50000.00',
+    },
+  ],
+  'suppliers': [
+    {
+      'supplier_id': 'alpha',
+      'supplier_name': 'Alpha Services',
+      'supplier_tin': '100200300',
+    },
+  ],
+  'register': const [],
+};
