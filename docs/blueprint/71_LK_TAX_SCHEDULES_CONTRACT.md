@@ -55,7 +55,48 @@ business's own decision and are not enforced.
   blockers, **Save CSV**). The CSV is UTF-8 with a byte order mark. Text that could
   run as a spreadsheet formula is neutralized, and negative amounts stay numeric.
 
+## Part B — SSCL quarterly workpaper
+- Candidate `supabase/candidates/20261121100000_lk_sscl_workpaper.sql` (requires part A).
+- `finance.lk_sscl_settings` holds dated settings per entity:
+  - the rate (2.5% at the 2026-11-21 check);
+  - the liable portion of turnover for the entity's activity (for example a
+    wholesale or retail portion);
+  - whether exports and exempt sales count;
+  - the activity and the sources (the SSCL Act No. 25 of 2022 as amended, and
+    ird.gov.lk). The 1 July 2026 amendment's thresholds are recorded as reported, to
+    be confirmed.
+
+  Settings are proposed pending and approved by a second person with MFA
+  (`finance.classifications.approve`). Approved settings may not overlap. Values are
+  immutable.
+- `api.lk_sscl_return(quarter_start)` covers a calendar quarter (January, April, July
+  or October start). It needs `finance.view`, `finance.reports.export` and MFA.
+  - Turnover is `taxable_amount × exchange rate` from **every** posted sales invoice
+    and return line, including lines without a tax code. Approved VAT lines classify
+    them.
+  - The pure `finance.lk_sscl_compute` reports turnover by treatment and the turnover
+    counted. Standard-rated sales, sales without a tax code and sales outside VAT always
+    count. Exports and exempt sales count only if the settings say so.
+  - Liable turnover = counted × portion. SSCL due = liable × rate, both rounded to two
+    decimals.
+- Blockers:
+  - `SSCL_SETTINGS_REQUIRED`: no SSCL is computed.
+  - `SSCL_VAT_MAPPING_REQUIRED` and `SSCL_VAT_MAPPING_DIRECTION_MISMATCH`: the line is
+    not counted.
+  - `SSCL_BASE_CURRENCY_LKR_REQUIRED`.
+- Desktop: an **SSCL quarterly workpaper** card with the settings list (approve with an
+  Act and IRD confirmation, withdraw or retire), the propose form, the quarter workpaper
+  and Save SSCL CSV.
+- Not yet: per-account portions for mixed-activity entities, and turnover from manual
+  journals.
+
 ## Verification
+- `supabase/candidates/tests/lk_sscl_workpaper_test.sql` (run by
+  `run-lk-sscl-workpaper-test.mjs`) covers:
+  - a worked quarter: Rs 3.6 million standard-rated after returns plus Rs 2 million
+    untaxed gives Rs 140,000 at a full portion. With a 50% portion, exports and exempt
+    sales, it gives Rs 88,750;
+  - every blocker, the approval rules, the period, access and MFA.
 - `supabase/candidates/tests/lk_vat_workpaper_test.sql` (run by
   `run-lk-vat-workpaper-test.mjs` in CI, rollback only) covers:
   - a worked month: Rs 1,000,000 at 18% less a Rs 100,000 return gives output tax

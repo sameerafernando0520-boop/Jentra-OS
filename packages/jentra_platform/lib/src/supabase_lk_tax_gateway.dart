@@ -38,10 +38,13 @@ final class SupabaseLkTaxGateway implements LkTaxRepository {
         ('42501', 'TAX_SEPARATE_APPROVER_REQUIRED') =>
           'SEPARATE_APPROVER_REQUIRED',
         ('42501', _) => 'PERMISSION_DENIED',
+        ('55000', 'TAX_SSCL_OVERLAP') => 'SSCL_OVERLAP',
         ('55000', _) => 'STATE_CONFLICT',
         ('23505' || '23P01', _) => 'IDENTITY_EXISTS',
         ('22023', 'TAX_VAT_PERIOD_INVALID') => 'PERIOD_INVALID',
+        ('22023', 'TAX_SSCL_PERIOD_INVALID') => 'SSCL_PERIOD_INVALID',
         ('22023', 'TAX_VAT_MAPPING_INVALID') => 'MAPPING_INVALID',
+        ('22023', 'TAX_SSCL_SETTINGS_INVALID') => 'SSCL_SETTINGS_INVALID',
         ('22023' || '22007' || '22008' || '22P02' || '23503' || '23514', _) =>
           'VALIDATION_ERROR',
         _ => 'UNCERTAIN_RESULT',
@@ -60,6 +63,12 @@ final class SupabaseLkTaxGateway implements LkTaxRepository {
           'IDENTITY_EXISTS' =>
             'An approved mapping already exists for this code. Reload first.',
           'PERIOD_INVALID' => 'Choose one calendar month or one quarter.',
+          'SSCL_OVERLAP' =>
+            'Approved SSCL settings already cover part of this period. Retire them first.',
+          'SSCL_PERIOD_INVALID' =>
+            'An SSCL quarter starts in January, April, July or October.',
+          'SSCL_SETTINGS_INVALID' =>
+            'Enter percentages from 0 to 100, months as first days, an activity and a reason.',
           'MAPPING_INVALID' =>
             'That VAT line does not suit this tax code\'s kind and rate.',
           'VALIDATION_ERROR' => 'Check the period, line and reason.',
@@ -109,6 +118,68 @@ final class SupabaseLkTaxGateway implements LkTaxRepository {
         'p_id': id,
         'p_action': action,
       }),
+    ),
+  );
+
+  @override
+  Future<List<LkSsclSettings>> ssclSettings(TenantContext scope) async => [
+    for (final row
+        in (await _rpc('lk_sscl_settings', scope) as List<Object?>? ??
+            const []))
+      LkSsclSettings.fromJson(_map(row)),
+  ];
+
+  @override
+  Future<LkSsclSettings> proposeSsclSettings(
+    TenantContext scope, {
+    required String id,
+    required String effectiveFrom,
+    required String effectiveToExclusive,
+    required String ratePercent,
+    required String liablePortionPercent,
+    required bool includeZeroRated,
+    required bool includeExempt,
+    required String activity,
+    required String reason,
+  }) async => LkSsclSettings.fromJson(
+    _map(
+      await _rpc('lk_sscl_settings_propose', scope, {
+        'p_id': id,
+        'p_payload': {
+          'effective_from': effectiveFrom,
+          'effective_to_exclusive': effectiveToExclusive,
+          'rate_percent': ratePercent,
+          'liable_portion_percent': liablePortionPercent,
+          'include_zero_rated': includeZeroRated,
+          'include_exempt': includeExempt,
+          'activity': activity,
+          'reason': reason,
+        },
+      }),
+    ),
+  );
+
+  @override
+  Future<LkSsclSettings> decideSsclSettings(
+    TenantContext scope,
+    String id,
+    String action,
+  ) async => LkSsclSettings.fromJson(
+    _map(
+      await _rpc('lk_sscl_settings_decide', scope, {
+        'p_id': id,
+        'p_action': action,
+      }),
+    ),
+  );
+
+  @override
+  Future<LkSsclReturn> ssclReturn(
+    TenantContext scope, {
+    required String quarterStart,
+  }) async => LkSsclReturn.fromJson(
+    _map(
+      await _rpc('lk_sscl_return', scope, {'p_quarter_start': quarterStart}),
     ),
   );
 

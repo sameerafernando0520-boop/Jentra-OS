@@ -75,8 +75,18 @@ class _LkTaxWorkspaceState extends State<LkTaxWorkspace> {
   List<LkVatMappingRow> _rows = const [];
   final Map<String, LkVatLine> _choices = {};
   LkVatReturn? _return;
+  List<LkSsclSettings> _ssclSettings = const [];
+  LkSsclReturn? _sscl;
+  bool _ssclZero = false, _ssclExempt = false;
   final _reason = TextEditingController(),
-      _month = TextEditingController(text: _previousMonth());
+      _month = TextEditingController(text: _previousMonth()),
+      _ssclFrom = TextEditingController(text: '2026-04'),
+      _ssclTo = TextEditingController(text: '2027-04'),
+      _ssclRate = TextEditingController(text: '2.5'),
+      _ssclPortion = TextEditingController(text: '100'),
+      _ssclActivity = TextEditingController(),
+      _ssclReason = TextEditingController(),
+      _ssclQuarter = TextEditingController(text: '2026-04');
 
   bool get _approve =>
       widget.permissions.contains('finance.classifications.approve');
@@ -90,14 +100,250 @@ class _LkTaxWorkspaceState extends State<LkTaxWorkspace> {
 
   @override
   void dispose() {
-    _reason.dispose();
-    _month.dispose();
+    for (final c in [
+      _reason,
+      _month,
+      _ssclFrom,
+      _ssclTo,
+      _ssclRate,
+      _ssclPortion,
+      _ssclActivity,
+      _ssclReason,
+      _ssclQuarter,
+    ]) {
+      c.dispose();
+    }
     super.dispose();
   }
 
   Future<void> _load() async {
     final rows = await widget.repository.vatMappings(widget.scope);
-    if (mounted) setState(() => _rows = rows);
+    final settings = await widget.repository.ssclSettings(widget.scope);
+    if (mounted) {
+      setState(() {
+        _rows = rows;
+        _ssclSettings = settings;
+      });
+    }
+  }
+
+  static final _monthPattern = RegExp(r'^[0-9]{4}-(0[1-9]|1[0-2])$');
+  static final _percentPattern = RegExp(
+    r'^(0|[1-9][0-9]?|100)(\.[0-9]{1,6})?$',
+  );
+
+  Future<void> _proposeSscl() async {
+    final from = _ssclFrom.text.trim(), to = _ssclTo.text.trim();
+    if (!_monthPattern.hasMatch(from) ||
+        !_monthPattern.hasMatch(to) ||
+        !_percentPattern.hasMatch(_ssclRate.text.trim()) ||
+        !_percentPattern.hasMatch(_ssclPortion.text.trim()) ||
+        _ssclActivity.text.trim().isEmpty ||
+        _ssclReason.text.trim().isEmpty) {
+      setState(
+        () => _error = 'Enter months as YYYY-MM, percentages from 0 to 100, the activity and a reason.',
+      );
+      return;
+    }
+    await _act(() async {
+      await widget.repository.proposeSsclSettings(
+        widget.scope,
+        id: _uuid.v4(),
+        effectiveFrom: '$from-01',
+        effectiveToExclusive: '$to-01',
+        ratePercent: _ssclRate.text.trim(),
+        liablePortionPercent: _ssclPortion.text.trim(),
+        includeZeroRated: _ssclZero,
+        includeExempt: _ssclExempt,
+        activity: _ssclActivity.text.trim(),
+        reason: _ssclReason.text.trim(),
+      );
+      await _load();
+    }, done: 'SSCL settings proposed. Another approver must check them.');
+  }
+
+  Future<void> _decideSscl(LkSsclSettings s, String action) async {
+    if (action == 'approve') {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (_) => _ConfirmDialog(
+          title:
+              'Approve SSCL at ${s.ratePercent.toDecimalString()}% on a ${s.liablePortionPercent.toDecimalString()}% portion?',
+          statement: 'I checked the rate, liable portion and treatment of exports and exempt sales against the SSCL Act and IRD guidance.',
+        ),
+      );
+      if (confirmed != true) return;
+    }
+    await _act(
+      () async {
+        await widget.repository.decideSsclSettings(widget.scope, s.id, action);
+        await _load();
+      },
+      done: switch (action) {
+        'approve' => 'SSCL settings approved.',
+        _ => 'SSCL settings retired.',
+      },
+    );
+  }
+
+  Future<void> _prepareSscl() async {
+    final quarter = _ssclQuarter.text.trim();
+    if (!RegExp(r'^[0-9]{4}-(01|04|07|10)$').hasMatch(quarter)) {
+      setState(
+        () => _error =
+            'Enter the quarter start as YYYY-01, YYYY-04, YYYY-07 or YYYY-10.',
+      );
+      return;
+    }
+    await _act(() async {
+      final prepared = await widget.repository.ssclReturn(
+        widget.scope,
+        quarterStart: '$quarter-01',
+      );
+      if (mounted) setState(() => _sscl = prepared);
+    });
+  }
+
+  Future<void> _saveSscl() => _act(() async {
+    final prepared = _sscl!;
+    final path = await widget.files!.choose(
+      'sscl-workpaper-${prepared.quarterStart.substring(0, 7)}.csv',
+    );
+    if (path == null) return;
+    await widget.files!.write(
+      path,
+      Uint8List.fromList([0xEF, 0xBB, 0xBF, ...utf8.encode(prepared.toCsv())]),
+      'text/csv',
+    );
+    if (mounted) setState(() => _notice = 'SSCL workpaper saved to $path.');
+  });
+
+  List<Widget> _ssclSection() {
+    final prepared = _sscl;
+    return [
+      const Text(
+        'SSCL is due on turnover, including sales without a tax code. Settings count only after a second approver confirms them.',
+      ),
+      for (final s in _ssclSettings)
+        Wrap(
+          key: ValueKey(s.id),
+          spacing: 8,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Text(
+              '${s.effectiveFrom} to ${s.effectiveToExclusive}: ${s.ratePercent.toDecimalString()}% on '
+              '${s.liablePortionPercent.toDecimalString()}% of turnover (${s.activity}) · ${s.status}',
+            ),
+            if (_approve && s.status == 'pending')
+              FilledButton(
+                onPressed: _busy ? null : () => _decideSscl(s, 'approve'),
+                child: const Text('Approve SSCL'),
+              ),
+            if (s.status != 'retired')
+              OutlinedButton(
+                onPressed: _busy ? null : () => _decideSscl(s, 'retire'),
+                child: Text(s.status == 'pending' ? 'Withdraw' : 'Retire'),
+              ),
+          ],
+        ),
+      Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          for (final (label, controller) in [
+            ('From (YYYY-MM)', _ssclFrom),
+            ('To, exclusive (YYYY-MM)', _ssclTo),
+            ('Rate %', _ssclRate),
+            ('Liable portion %', _ssclPortion),
+          ])
+            SizedBox(
+              width: 170,
+              child: TextField(
+                controller: controller,
+                decoration: InputDecoration(labelText: label),
+              ),
+            ),
+          SizedBox(
+            width: 260,
+            child: TextField(
+              controller: _ssclActivity,
+              decoration: const InputDecoration(labelText: 'Business activity'),
+            ),
+          ),
+          FilterChip(
+            label: const Text('Count exports'),
+            selected: _ssclZero,
+            onSelected: (v) => setState(() => _ssclZero = v),
+          ),
+          FilterChip(
+            label: const Text('Count exempt sales'),
+            selected: _ssclExempt,
+            onSelected: (v) => setState(() => _ssclExempt = v),
+          ),
+        ],
+      ),
+      TextField(
+        controller: _ssclReason,
+        decoration: const InputDecoration(
+          labelText: 'Reason for the SSCL settings',
+        ),
+      ),
+      Align(
+        alignment: Alignment.centerLeft,
+        child: OutlinedButton(
+          onPressed: _busy ? null : _proposeSscl,
+          child: const Text('Propose SSCL settings'),
+        ),
+      ),
+      if (_export) ...[
+        Wrap(
+          spacing: 8,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            SizedBox(
+              width: 170,
+              child: TextField(
+                controller: _ssclQuarter,
+                decoration: const InputDecoration(
+                  labelText: 'Quarter start (YYYY-MM)',
+                ),
+              ),
+            ),
+            OutlinedButton(
+              onPressed: _busy ? null : _prepareSscl,
+              child: const Text('Prepare SSCL workpaper'),
+            ),
+          ],
+        ),
+        if (prepared != null) ...[
+          Text(
+            '${prepared.quarterStart} to ${prepared.quarterEndExclusive} (exclusive)',
+          ),
+          for (final MapEntry(:key, :value) in prepared.turnover.entries)
+            Text('$key: Rs ${lkTaxTwo(value)}'),
+          Text('Turnover counted Rs ${lkTaxTwo(prepared.includedTurnover)}'),
+          if (prepared.ssclDue != null)
+            Text(
+              'Liable turnover Rs ${lkTaxTwo(prepared.liableTurnover!)} · SSCL due Rs ${lkTaxTwo(prepared.ssclDue!)}',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          for (final b in prepared.blockers)
+            Text(
+              '• ${b.documentNumber ?? ''} ${b.message}'.trim(),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          if (widget.files != null)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: FilledButton(
+                onPressed: _busy ? null : _saveSscl,
+                child: const Text('Save SSCL CSV'),
+              ),
+            ),
+        ],
+      ],
+    ];
   }
 
   Future<void> _act(Future<void> Function() work, {String? done}) async {
@@ -144,7 +390,11 @@ class _LkTaxWorkspaceState extends State<LkTaxWorkspace> {
     if (action == 'approve') {
       final confirmed = await showDialog<bool>(
         context: context,
-        builder: (_) => _ConfirmDialog(code: row.code, line: mapping.line),
+        builder: (_) => _ConfirmDialog(
+          title: 'Approve ${row.code} → ${mapping.line.label}?',
+          statement:
+              'I checked this treatment against the IRD VAT return guidance.',
+        ),
       );
       if (confirmed != true) return;
     }
@@ -288,6 +538,7 @@ class _LkTaxWorkspaceState extends State<LkTaxWorkspace> {
             ),
             if (prepared != null) ..._workpaper(prepared),
           ]),
+        _section(context, 'SSCL quarterly workpaper', _ssclSection()),
       ],
     );
   }
@@ -416,9 +667,8 @@ class _LkTaxWorkspaceState extends State<LkTaxWorkspace> {
 }
 
 class _ConfirmDialog extends StatefulWidget {
-  const _ConfirmDialog({required this.code, required this.line});
-  final String code;
-  final LkVatLine line;
+  const _ConfirmDialog({required this.title, required this.statement});
+  final String title, statement;
 
   @override
   State<_ConfirmDialog> createState() => _ConfirmDialogState();
@@ -429,13 +679,11 @@ class _ConfirmDialogState extends State<_ConfirmDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: Text('Approve ${widget.code} → ${widget.line.label}?'),
+    title: Text(widget.title),
     content: CheckboxListTile(
       value: _checked,
       onChanged: (v) => setState(() => _checked = v ?? false),
-      title: const Text(
-        'I checked this treatment against the IRD VAT return guidance.',
-      ),
+      title: Text(widget.statement),
     ),
     actions: [
       TextButton(
