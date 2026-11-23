@@ -2,7 +2,8 @@
 
 2026-11-21. Candidate contract. Part A (VAT return workpaper) is in
 `supabase/candidates/20261121090000_lk_vat_workpaper.sql`, which is not installed
-anywhere. Parts B (SSCL) and C (WHT) follow. Every output is a **non-certified
+anywhere. Part B (SSCL) is in `20261121100000_lk_sscl_workpaper.sql` and Part C
+(WHT) in `20261121110000_lk_wht_schedule.sql`. Every output is a **non-certified
 workpaper** that an accountant reviews before filing. It builds on the posted tax
 evidence in [38_WAVE3_TAX_SUMMARY_CONTRACT.md](38_WAVE3_TAX_SUMMARY_CONTRACT.md).
 
@@ -90,7 +91,50 @@ business's own decision and are not enforced.
 - Not yet: per-account portions for mixed-activity entities, and turnover from manual
   journals.
 
+## Part C — WHT monthly schedule and certificates
+Withholding can only be posted on manual journal tax lines (supplier bills accept
+input, zero and exempt codes). Posting is unchanged.
+- `finance.lk_wht_register` links one posted WHT journal line to:
+  - a supplier (`crm.parties` of kind supplier or both);
+  - an IRD payment type: service fees, rent, interest, dividends, royalties or other;
+  - the gross amount paid, and a note.
+
+  `api.lk_wht_register_record` and `api.lk_wht_register_retire` need
+  `finance.journals.post` and MFA. One entry per line is active. Values are
+  immutable: a correction retires the entry and records a new one. A reversal journal
+  is never registered; it reuses the original line's entry with the amounts negated.
+- `api.lk_wht_schedule(month)` covers one calendar month by posting date. It needs
+  `finance.view`, `finance.reports.export` (supplier TINs) and MFA.
+  - It reads the withholding lines of `finance.tax_posted_sources`. WHT deducted is
+    the line's verified base-currency tax.
+  - The pure `finance.lk_wht_compute` returns totals by payment type, the schedule,
+    and certificate data per supplier (each payment, gross and WHT).
+  - The result also lists the suppliers that can be chosen and the month's active
+    register entries.
+- Blockers:
+  - `WHT_REGISTER_REQUIRED`: the line is left out. The blocker carries the journal
+    and line ids and the taxable base, so the line can be registered from it.
+  - `WHT_AMOUNT_MISMATCH`: gross × the code's rate, rounded to two decimals, differs
+    from the WHT deducted. The line still counts.
+  - `WHT_SUPPLIER_TIN_MISSING` and `WHT_JOURNAL_MISSING`: the line still counts.
+  - `WHT_BASE_CURRENCY_LKR_REQUIRED`.
+- Rates are the tax codes' own approved rates; nothing is hard-coded.
+- Desktop: a **WHT monthly schedule** card with totals, unregistered lines with a
+  Register form (supplier, payment type, gross prefilled from the taxable base, note),
+  register entries with Retire entry, certificate totals and Save WHT CSV.
+- Not yet: printable certificates and WHT on supplier bills.
+
 ## Verification
+- `supabase/candidates/tests/lk_wht_schedule_test.sql` (run by
+  `run-lk-wht-schedule-test.mjs`) covers:
+  - a worked month: a Rs 200,000 service fee at 5%, Rs 150,000 rent at 10%, Rs 100,000
+    interest with a wrong deduction, an unregistered line and a reversed Rs 20,000
+    service fee give WHT of Rs 28,000 on Rs 430,000 gross;
+  - every row blocker and the certificate totals;
+  - the register rules (idempotent ids, one active entry, reversals, suppliers only,
+    MFA, permission, immutability, retirement);
+  - the schedule API: month rule, reversal in a later month, access, MFA and tenant
+    checks.
 - `supabase/candidates/tests/lk_sscl_workpaper_test.sql` (run by
   `run-lk-sscl-workpaper-test.mjs`) covers:
   - a worked quarter: Rs 3.6 million standard-rated after returns plus Rs 2 million

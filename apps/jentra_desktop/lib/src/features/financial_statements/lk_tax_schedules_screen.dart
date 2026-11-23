@@ -86,11 +86,14 @@ class _LkTaxWorkspaceState extends State<LkTaxWorkspace> {
       _ssclPortion = TextEditingController(text: '100'),
       _ssclActivity = TextEditingController(),
       _ssclReason = TextEditingController(),
-      _ssclQuarter = TextEditingController(text: '2026-04');
+      _ssclQuarter = TextEditingController(text: '2026-04'),
+      _whtMonth = TextEditingController(text: _previousMonth());
+  LkWhtSchedule? _wht;
 
   bool get _approve =>
       widget.permissions.contains('finance.classifications.approve');
   bool get _export => widget.permissions.contains('finance.reports.export');
+  bool get _post => widget.permissions.contains('finance.journals.post');
 
   @override
   void initState() {
@@ -110,6 +113,7 @@ class _LkTaxWorkspaceState extends State<LkTaxWorkspace> {
       _ssclActivity,
       _ssclReason,
       _ssclQuarter,
+      _whtMonth,
     ]) {
       c.dispose();
     }
@@ -346,6 +350,163 @@ class _LkTaxWorkspaceState extends State<LkTaxWorkspace> {
     ];
   }
 
+  Future<void> _prepareWht() async {
+    final month = _whtMonth.text.trim();
+    if (!_monthPattern.hasMatch(month)) {
+      setState(
+        () => _error = 'Enter the month as YYYY-MM, for example 2026-04.',
+      );
+      return;
+    }
+    await _act(() async {
+      final prepared = await widget.repository.whtSchedule(
+        widget.scope,
+        month: '$month-01',
+      );
+      if (mounted) setState(() => _wht = prepared);
+    });
+  }
+
+  Future<void> _registerWht(LkTaxBlocker line) async {
+    final schedule = _wht!;
+    final entry = await showDialog<_WhtEntry>(
+      context: context,
+      builder: (_) =>
+          _WhtRegisterDialog(line: line, suppliers: schedule.suppliers),
+    );
+    if (entry == null) return;
+    await _act(() async {
+      await widget.repository.recordWht(
+        widget.scope,
+        id: _uuid.v4(),
+        manualJournalId: line.manualJournalId!,
+        lineId: line.lineId!,
+        supplierId: entry.supplierId,
+        paymentType: entry.paymentType,
+        grossAmount: entry.gross,
+        note: entry.note,
+      );
+      final prepared = await widget.repository.whtSchedule(
+        widget.scope,
+        month: schedule.month,
+      );
+      if (mounted) setState(() => _wht = prepared);
+    }, done: 'WHT line registered.');
+  }
+
+  Future<void> _retireWht(LkWhtRegisterEntry entry) => _act(() async {
+    final schedule = _wht!;
+    await widget.repository.retireWht(widget.scope, entry.id);
+    final prepared = await widget.repository.whtSchedule(
+      widget.scope,
+      month: schedule.month,
+    );
+    if (mounted) setState(() => _wht = prepared);
+  }, done: 'Register entry retired. Register the line again.');
+
+  Future<void> _saveWht() => _act(() async {
+    final prepared = _wht!;
+    final path = await widget.files!.choose(
+      'wht-schedule-${prepared.month.substring(0, 7)}.csv',
+    );
+    if (path == null) return;
+    await widget.files!.write(
+      path,
+      Uint8List.fromList([0xEF, 0xBB, 0xBF, ...utf8.encode(prepared.toCsv())]),
+      'text/csv',
+    );
+    if (mounted) setState(() => _notice = 'WHT schedule saved to $path.');
+  });
+
+  List<Widget> _whtSection() {
+    final prepared = _wht;
+    final error = TextStyle(color: Theme.of(context).colorScheme.error);
+    String supplierName(String id) =>
+        prepared?.suppliers.where((s) => s.id == id).firstOrNull?.name ?? id;
+    return [
+      const Text(
+        'WHT is posted on manual journals. Register each WHT line with its supplier, payment type and gross amount to include it.',
+      ),
+      Wrap(
+        spacing: 8,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          SizedBox(
+            width: 170,
+            child: TextField(
+              controller: _whtMonth,
+              decoration: const InputDecoration(labelText: 'Month (YYYY-MM)'),
+            ),
+          ),
+          OutlinedButton(
+            onPressed: _busy ? null : _prepareWht,
+            child: const Text('Prepare WHT schedule'),
+          ),
+        ],
+      ),
+      if (prepared != null) ...[
+        for (final MapEntry(:key, :value) in prepared.totals.entries)
+          if (value.gross.minorUnits != BigInt.zero)
+            Text(
+              '${key.label}: gross Rs ${lkTaxTwo(value.gross)} · WHT Rs ${lkTaxTwo(value.wht)}',
+            ),
+        Text(
+          'Total gross Rs ${lkTaxTwo(prepared.totalGross)} · WHT deducted Rs ${lkTaxTwo(prepared.totalWht)}',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        for (final line in prepared.unregistered)
+          Wrap(
+            key: ValueKey('wht-${line.lineId}'),
+            spacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Text(
+                '${line.postingDate ?? ''} ${line.documentNumber ?? ''} '
+                '${line.taxCode ?? ''} WHT Rs ${line.wht == null ? '' : lkTaxTwo(line.wht!)}: not registered',
+                style: error,
+              ),
+              if (_post)
+                FilledButton(
+                  onPressed: _busy ? null : () => _registerWht(line),
+                  child: const Text('Register'),
+                ),
+            ],
+          ),
+        for (final entry in prepared.register)
+          Wrap(
+            key: ValueKey('wht-entry-${entry.id}'),
+            spacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Text(
+                '${supplierName(entry.supplierId)} · ${entry.paymentType.label} · gross Rs ${lkTaxTwo(entry.grossAmount)}',
+              ),
+              if (_post)
+                OutlinedButton(
+                  onPressed: _busy ? null : () => _retireWht(entry),
+                  child: const Text('Retire entry'),
+                ),
+            ],
+          ),
+        for (final c in prepared.certificates)
+          Text(
+            'Certificate: ${c.supplierName} (TIN ${c.supplierTin ?? 'missing'}) gross Rs ${lkTaxTwo(c.gross)} · WHT Rs ${lkTaxTwo(c.wht)}',
+          ),
+        for (final b in prepared.blockers)
+          if (b.reason != 'WHT_REGISTER_REQUIRED')
+            Text('• ${b.message}', style: error),
+        if (widget.files != null)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: FilledButton(
+              onPressed: _busy ? null : _saveWht,
+              child: const Text('Save WHT CSV'),
+            ),
+          ),
+      ],
+    ];
+  }
+
   Future<void> _act(Future<void> Function() work, {String? done}) async {
     setState(() {
       _busy = true;
@@ -539,6 +700,7 @@ class _LkTaxWorkspaceState extends State<LkTaxWorkspace> {
             if (prepared != null) ..._workpaper(prepared),
           ]),
         _section(context, 'SSCL quarterly workpaper', _ssclSection()),
+        if (_export) _section(context, 'WHT monthly schedule', _whtSection()),
       ],
     );
   }
@@ -693,6 +855,118 @@ class _ConfirmDialogState extends State<_ConfirmDialog> {
       FilledButton(
         onPressed: _checked ? () => Navigator.pop(context, true) : null,
         child: const Text('Approve'),
+      ),
+    ],
+  );
+}
+
+typedef _WhtEntry = ({
+  String supplierId,
+  LkWhtPaymentType paymentType,
+  String gross,
+  String note,
+});
+
+class _WhtRegisterDialog extends StatefulWidget {
+  const _WhtRegisterDialog({required this.line, required this.suppliers});
+  final LkTaxBlocker line;
+  final List<LkWhtSupplier> suppliers;
+
+  @override
+  State<_WhtRegisterDialog> createState() => _WhtRegisterDialogState();
+}
+
+class _WhtRegisterDialogState extends State<_WhtRegisterDialog> {
+  static final _amount = RegExp(r'^[0-9]{1,14}(\.[0-9]{1,6})?$');
+  String? _supplier;
+  LkWhtPaymentType? _type;
+  late final _gross = TextEditingController(
+    text: widget.line.taxableBase == null
+        ? ''
+        : lkTaxTwo(widget.line.taxableBase!),
+  );
+  final _note = TextEditingController();
+
+  @override
+  void dispose() {
+    _gross.dispose();
+    _note.dispose();
+    super.dispose();
+  }
+
+  bool get _valid =>
+      _supplier != null &&
+      _type != null &&
+      _amount.hasMatch(_gross.text.trim()) &&
+      RegExp(r'[1-9]').hasMatch(_gross.text) &&
+      _note.text.trim().isNotEmpty;
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+    title: Text('Register WHT on ${widget.line.documentNumber ?? 'journal'}'),
+    content: SizedBox(
+      width: 420,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          DropdownButtonFormField<String>(
+            isExpanded: true,
+            initialValue: _supplier,
+            decoration: const InputDecoration(labelText: 'Supplier'),
+            items: [
+              for (final s in widget.suppliers)
+                DropdownMenuItem(
+                  value: s.id,
+                  child: Text(
+                    '${s.name} (TIN ${s.tin ?? 'missing'})',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+            ],
+            onChanged: (v) => setState(() => _supplier = v),
+          ),
+          DropdownButtonFormField<LkWhtPaymentType>(
+            isExpanded: true,
+            initialValue: _type,
+            decoration: const InputDecoration(labelText: 'Payment type'),
+            items: [
+              for (final t in LkWhtPaymentType.values)
+                DropdownMenuItem(value: t, child: Text(t.label)),
+            ],
+            onChanged: (v) => setState(() => _type = v),
+          ),
+          TextField(
+            controller: _gross,
+            decoration: const InputDecoration(
+              labelText: 'Gross amount paid (LKR)',
+            ),
+            onChanged: (_) => setState(() {}),
+          ),
+          TextField(
+            controller: _note,
+            decoration: const InputDecoration(
+              labelText: 'Note, for example the supplier invoice',
+            ),
+            onChanged: (_) => setState(() {}),
+          ),
+        ],
+      ),
+    ),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: const Text('Cancel'),
+      ),
+      FilledButton(
+        onPressed: _valid
+            ? () => Navigator.pop<_WhtEntry>(context, (
+                supplierId: _supplier!,
+                paymentType: _type!,
+                gross: _gross.text.trim(),
+                note: _note.text.trim(),
+              ))
+            : null,
+        child: const Text('Register'),
       ),
     ],
   );

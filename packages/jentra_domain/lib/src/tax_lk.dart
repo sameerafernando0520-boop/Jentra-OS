@@ -111,10 +111,22 @@ final class LkTaxBlocker {
   LkTaxBlocker.fromJson(Map<String, Object?> json)
     : reason = _text(json['reason'], 'reason'),
       documentNumber = json['document_number'] as String?,
-      taxCode = json['tax_code'] as String?;
+      taxCode = json['tax_code'] as String?,
+      manualJournalId = json['manual_journal_id'] as String?,
+      lineId = json['line_id'] as String?,
+      postingDate = json['posting_date'] as String?,
+      supplierName = json['supplier_name'] as String?,
+      wht = json['wht'] == null ? null : _lkr(json['wht'], 'wht'),
+      taxableBase = json['taxable_base'] == null
+          ? null
+          : _lkr(json['taxable_base'], 'taxable_base');
 
   final String reason;
   final String? documentNumber, taxCode;
+
+  /// Set on WHT_REGISTER_REQUIRED: the journal line to register.
+  final String? manualJournalId, lineId, postingDate, supplierName;
+  final Money? wht, taxableBase;
 
   String get message => switch (reason) {
     'VAT_TAX_CODE_MISSING' => 'A posted tax line has no tax code.',
@@ -133,6 +145,14 @@ final class LkTaxBlocker {
       'Sale with tax code ${taxCode ?? ''} has no approved VAT line, so its turnover is not counted.',
     'SSCL_VAT_MAPPING_DIRECTION_MISMATCH' =>
       'Sale with tax code ${taxCode ?? ''} is mapped to an input line, so its turnover is not counted.',
+    'WHT_REGISTER_REQUIRED' =>
+      'WHT on ${documentNumber ?? 'a journal'} has no supplier, payment type or gross amount. Register it.',
+    'WHT_AMOUNT_MISMATCH' =>
+      'WHT on ${documentNumber ?? 'a journal'} differs from the gross amount at the code rate.',
+    'WHT_SUPPLIER_TIN_MISSING' =>
+      '${supplierName ?? 'A supplier'} has no TIN for the certificate.',
+    'WHT_JOURNAL_MISSING' => 'A WHT line has no posted journal.',
+    'WHT_BASE_CURRENCY_LKR_REQUIRED' => 'The entity base currency must be LKR.',
     _ => 'Review this line before filing.',
   };
 }
@@ -386,6 +406,224 @@ final class LkSsclReturn {
   }
 }
 
+/// IRD payment types for withholding tax.
+enum LkWhtPaymentType {
+  serviceFee('service_fee', 'Service fees'),
+  rent('rent', 'Rent'),
+  interest('interest', 'Interest'),
+  dividend('dividend', 'Dividends'),
+  royalty('royalty', 'Royalties'),
+  other('other', 'Other payments');
+
+  const LkWhtPaymentType(this.wire, this.label);
+  final String wire, label;
+
+  static LkWhtPaymentType parse(Object? value) => values.firstWhere(
+    (t) => t.wire == value,
+    orElse: () => throw FormatException('Unknown WHT payment type $value.'),
+  );
+}
+
+final class LkWhtSupplier {
+  LkWhtSupplier.fromJson(Map<String, Object?> json)
+    : id = _text(json['supplier_id'], 'supplier_id'),
+      name = _text(json['supplier_name'], 'supplier_name'),
+      tin = json['supplier_tin'] as String?;
+
+  final String id, name;
+  final String? tin;
+}
+
+final class LkWhtRegisterEntry {
+  LkWhtRegisterEntry.fromJson(Map<String, Object?> json)
+    : id = _text(json['id'], 'id'),
+      manualJournalId = _text(json['manual_journal_id'], 'manual_journal_id'),
+      lineId = _text(json['line_id'], 'line_id'),
+      supplierId = _text(json['supplier_id'], 'supplier_id'),
+      paymentType = LkWhtPaymentType.parse(json['payment_type']),
+      grossAmount = _lkr(json['gross_amount'], 'gross_amount'),
+      note = _text(json['note'], 'note'),
+      status = _text(json['status'], 'status');
+
+  final String id, manualJournalId, lineId, supplierId, note, status;
+  final LkWhtPaymentType paymentType;
+  final Money grossAmount;
+}
+
+/// One registered WHT payment. Supplier fields are null inside a certificate.
+final class LkWhtPayment {
+  LkWhtPayment.fromJson(Map<String, Object?> json)
+    : postingDate = _text(json['posting_date'], 'posting_date'),
+      documentNumber = _text(json['document_number'], 'document_number'),
+      paymentType = LkWhtPaymentType.parse(json['payment_type']),
+      rate = _text(json['rate'], 'rate'),
+      gross = _lkr(json['gross'], 'gross'),
+      wht = _lkr(json['wht'], 'wht'),
+      supplierName = json['supplier_name'] as String?,
+      supplierTin = json['supplier_tin'] as String?;
+
+  final String postingDate, documentNumber, rate;
+  final LkWhtPaymentType paymentType;
+  final Money gross, wht;
+  final String? supplierName, supplierTin;
+}
+
+/// Certificate data: every registered payment to one supplier in the month.
+final class LkWhtCertificate {
+  LkWhtCertificate.fromJson(Map<String, Object?> json)
+    : supplierId = _text(json['supplier_id'], 'supplier_id'),
+      supplierName = _text(json['supplier_name'], 'supplier_name'),
+      supplierTin = json['supplier_tin'] as String?,
+      gross = _lkr(json['gross'], 'gross'),
+      wht = _lkr(json['wht'], 'wht'),
+      payments = List.unmodifiable([
+        for (final p in json['payments'] as List<Object?>? ?? const [])
+          LkWhtPayment.fromJson(Map<String, Object?>.from(p! as Map)),
+      ]);
+
+  final String supplierId, supplierName;
+  final String? supplierTin;
+  final Money gross, wht;
+  final List<LkWhtPayment> payments;
+}
+
+/// A non-certified monthly WHT schedule with certificate data, in LKR.
+final class LkWhtSchedule {
+  LkWhtSchedule.fromJson(Map<String, Object?> json)
+    : month = _text(json['month'], 'month'),
+      entityTin = json['entity_tin'] as String?,
+      totals = {
+        for (final line in (json['lines'] as List<Object?>? ?? const []).map(
+          (l) => Map<String, Object?>.from(l! as Map),
+        ))
+          LkWhtPaymentType.parse(line['payment_type']): (
+            gross: _lkr(line['gross'], 'gross'),
+            wht: _lkr(line['wht'], 'wht'),
+          ),
+      },
+      totalGross = _lkr(json['total_gross'] ?? '0', 'total_gross'),
+      totalWht = _lkr(json['total_wht'] ?? '0', 'total_wht'),
+      schedule = List.unmodifiable([
+        for (final r in json['schedule'] as List<Object?>? ?? const [])
+          LkWhtPayment.fromJson(Map<String, Object?>.from(r! as Map)),
+      ]),
+      certificates = List.unmodifiable([
+        for (final c in json['certificates'] as List<Object?>? ?? const [])
+          LkWhtCertificate.fromJson(Map<String, Object?>.from(c! as Map)),
+      ]),
+      blockers = List.unmodifiable([
+        for (final b in json['blockers'] as List<Object?>? ?? const [])
+          LkTaxBlocker.fromJson(Map<String, Object?>.from(b! as Map)),
+      ]),
+      suppliers = List.unmodifiable([
+        for (final s in json['suppliers'] as List<Object?>? ?? const [])
+          LkWhtSupplier.fromJson(Map<String, Object?>.from(s! as Map)),
+      ]),
+      register = List.unmodifiable([
+        for (final g in json['register'] as List<Object?>? ?? const [])
+          LkWhtRegisterEntry.fromJson(Map<String, Object?>.from(g! as Map)),
+      ]);
+
+  final String month;
+  final String? entityTin;
+  final Map<LkWhtPaymentType, ({Money gross, Money wht})> totals;
+  final Money totalGross, totalWht;
+  final List<LkWhtPayment> schedule;
+  final List<LkWhtCertificate> certificates;
+  final List<LkTaxBlocker> blockers;
+
+  /// Suppliers that can be chosen when registering a line.
+  final List<LkWhtSupplier> suppliers;
+
+  /// Active register entries for journals dated in the month.
+  final List<LkWhtRegisterEntry> register;
+
+  /// Lines still waiting for a register entry.
+  List<LkTaxBlocker> get unregistered => [
+    for (final b in blockers)
+      if (b.reason == 'WHT_REGISTER_REQUIRED') b,
+  ];
+
+  /// One CSV: totals by payment type, the schedule, certificates, then blockers.
+  String toCsv() => lkTaxCsv([
+    [
+      'Section',
+      'Supplier',
+      'Supplier TIN',
+      'Date',
+      'Document',
+      'Payment type',
+      'Rate %',
+      'Gross (LKR)',
+      'WHT (LKR)',
+    ],
+    ['Month', month, '', '', '', '', '', '', ''],
+    ['Entity', entityTin ?? 'TIN not recorded', '', '', '', '', '', '', ''],
+    for (final MapEntry(:key, :value) in totals.entries)
+      [
+        'Total',
+        '',
+        '',
+        '',
+        '',
+        key.label,
+        '',
+        lkTaxTwo(value.gross),
+        lkTaxTwo(value.wht),
+      ],
+    [
+      'Total',
+      '',
+      '',
+      '',
+      '',
+      'All',
+      '',
+      lkTaxTwo(totalGross),
+      lkTaxTwo(totalWht),
+    ],
+    for (final p in schedule)
+      [
+        'Schedule',
+        p.supplierName ?? '',
+        p.supplierTin ?? '',
+        p.postingDate,
+        p.documentNumber,
+        p.paymentType.label,
+        p.rate,
+        lkTaxTwo(p.gross),
+        lkTaxTwo(p.wht),
+      ],
+    for (final c in certificates) ...[
+      for (final p in c.payments)
+        [
+          'Certificate',
+          c.supplierName,
+          c.supplierTin ?? '',
+          p.postingDate,
+          p.documentNumber,
+          p.paymentType.label,
+          p.rate,
+          lkTaxTwo(p.gross),
+          lkTaxTwo(p.wht),
+        ],
+      [
+        'Certificate total',
+        c.supplierName,
+        c.supplierTin ?? '',
+        '',
+        '',
+        '',
+        '',
+        lkTaxTwo(c.gross),
+        lkTaxTwo(c.wht),
+      ],
+    ],
+    for (final b in blockers)
+      ['Blocker', b.reason, '', '', b.documentNumber ?? '', '', '', '', ''],
+  ]);
+}
+
 /// Two decimals, half away from zero.
 String lkTaxTwo(Money value) {
   final units = value.minorUnits.abs();
@@ -465,4 +703,26 @@ abstract interface class LkTaxRepository {
     TenantContext scope, {
     required String quarterStart,
   });
+
+  /// One calendar month; [month] is its first day. Needs report export and MFA.
+  Future<LkWhtSchedule> whtSchedule(
+    TenantContext scope, {
+    required String month,
+  });
+
+  /// Links a posted WHT journal line to a supplier, payment type and gross
+  /// amount (an exact decimal string). Needs journal posting and MFA.
+  Future<LkWhtRegisterEntry> recordWht(
+    TenantContext scope, {
+    required String id,
+    required String manualJournalId,
+    required String lineId,
+    required String supplierId,
+    required LkWhtPaymentType paymentType,
+    required String grossAmount,
+    required String note,
+  });
+
+  /// Retires an entry so it can be recorded again correctly.
+  Future<LkWhtRegisterEntry> retireWht(TenantContext scope, String id);
 }

@@ -40,11 +40,14 @@ final class SupabaseLkTaxGateway implements LkTaxRepository {
         ('42501', _) => 'PERMISSION_DENIED',
         ('55000', 'TAX_SSCL_OVERLAP') => 'SSCL_OVERLAP',
         ('55000', _) => 'STATE_CONFLICT',
+        ('23505', 'TAX_WHT_ALREADY_REGISTERED') => 'WHT_ALREADY_REGISTERED',
         ('23505' || '23P01', _) => 'IDENTITY_EXISTS',
         ('22023', 'TAX_VAT_PERIOD_INVALID') => 'PERIOD_INVALID',
         ('22023', 'TAX_SSCL_PERIOD_INVALID') => 'SSCL_PERIOD_INVALID',
+        ('22023', 'TAX_WHT_PERIOD_INVALID') => 'WHT_PERIOD_INVALID',
         ('22023', 'TAX_VAT_MAPPING_INVALID') => 'MAPPING_INVALID',
         ('22023', 'TAX_SSCL_SETTINGS_INVALID') => 'SSCL_SETTINGS_INVALID',
+        ('22023', 'TAX_WHT_REGISTER_INVALID') => 'WHT_REGISTER_INVALID',
         ('22023' || '22007' || '22008' || '22P02' || '23503' || '23514', _) =>
           'VALIDATION_ERROR',
         _ => 'UNCERTAIN_RESULT',
@@ -59,7 +62,7 @@ final class SupabaseLkTaxGateway implements LkTaxRepository {
           'PERMISSION_DENIED' =>
             'Tax permission for this entity and a verified authenticator session are required.',
           'STATE_CONFLICT' =>
-            'This mapping changed. Reload and review its current status.',
+            'This record changed. Reload and review its current status.',
           'IDENTITY_EXISTS' =>
             'An approved mapping already exists for this code. Reload first.',
           'PERIOD_INVALID' => 'Choose one calendar month or one quarter.',
@@ -71,6 +74,11 @@ final class SupabaseLkTaxGateway implements LkTaxRepository {
             'Enter percentages from 0 to 100, months as first days, an activity and a reason.',
           'MAPPING_INVALID' =>
             'That VAT line does not suit this tax code\'s kind and rate.',
+          'WHT_ALREADY_REGISTERED' =>
+            'This WHT line is already registered. Reload first.',
+          'WHT_PERIOD_INVALID' => 'Choose one calendar month.',
+          'WHT_REGISTER_INVALID' =>
+            'Choose a posted WHT line, a supplier, a payment type, a gross amount above zero and a note.',
           'VALIDATION_ERROR' => 'Check the period, line and reason.',
           _ => 'The result is uncertain. Reload before trying again.',
         },
@@ -196,4 +204,44 @@ final class SupabaseLkTaxGateway implements LkTaxRepository {
       }),
     ),
   );
+
+  @override
+  Future<LkWhtSchedule> whtSchedule(
+    TenantContext scope, {
+    required String month,
+  }) async => LkWhtSchedule.fromJson(
+    _map(await _rpc('lk_wht_schedule', scope, {'p_month': month})),
+  );
+
+  @override
+  Future<LkWhtRegisterEntry> recordWht(
+    TenantContext scope, {
+    required String id,
+    required String manualJournalId,
+    required String lineId,
+    required String supplierId,
+    required LkWhtPaymentType paymentType,
+    required String grossAmount,
+    required String note,
+  }) async => LkWhtRegisterEntry.fromJson(
+    _map(
+      await _rpc('lk_wht_register_record', scope, {
+        'p_id': id,
+        'p_payload': {
+          'manual_journal_id': manualJournalId,
+          'line_id': lineId,
+          'supplier_id': supplierId,
+          'payment_type': paymentType.wire,
+          'gross_amount': grossAmount,
+          'note': note,
+        },
+      }),
+    ),
+  );
+
+  @override
+  Future<LkWhtRegisterEntry> retireWht(TenantContext scope, String id) async =>
+      LkWhtRegisterEntry.fromJson(
+        _map(await _rpc('lk_wht_register_retire', scope, {'p_id': id})),
+      );
 }
