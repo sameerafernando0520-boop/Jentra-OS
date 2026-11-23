@@ -30,7 +30,7 @@ class LkTaxSchedulesScreen extends ConsumerWidget {
         scope == null ||
         !scope.hasOperationalScope ||
         repository == null ||
-        !caps.value!.contains('finance.tax_summary')) {
+        !caps.value!.contains('finance.view')) {
       return const Center(
         child: Text('Choose an entity and branch with tax review access.'),
       );

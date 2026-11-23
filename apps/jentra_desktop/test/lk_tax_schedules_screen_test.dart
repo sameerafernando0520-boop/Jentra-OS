@@ -196,7 +196,7 @@ final class FakeTax implements LkTaxRepository {
 Future<(FakeTax, FakeFiles)> pump(
   WidgetTester tester, {
   Set<String> permissions = const {
-    'finance.tax_summary',
+    'finance.view',
     'finance.reports.export',
     'finance.classifications.approve',
   },
@@ -363,7 +363,7 @@ void main() {
   });
 
   testWidgets('the workpaper is hidden without report export', (tester) async {
-    await pump(tester, permissions: const {'finance.tax_summary'});
+    await pump(tester, permissions: const {'finance.view'});
     expect(find.text('VAT workpaper'), findsNothing);
     expect(find.widgetWithText(FilledButton, 'Approve'), findsNothing);
   });
