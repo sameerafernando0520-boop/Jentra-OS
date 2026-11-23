@@ -5,6 +5,10 @@ const organizationControlCandidateEnabled = bool.fromEnvironment(
   'JENTRA_ORGANIZATION_CONTROL_CANDIDATE',
 );
 
+/// Explicitly opts a development client into the uninstalled Sri Lanka tax
+/// schedule APIs (VAT, SSCL, WHT workpapers).
+const lkTaxCandidateEnabled = bool.fromEnvironment('JENTRA_LK_TAX_CANDIDATE');
+
 enum RuntimeStartupMode { connected, preview }
 
 enum RuntimeStartupFailure {

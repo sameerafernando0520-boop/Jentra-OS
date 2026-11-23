@@ -4,7 +4,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jentra_platform/jentra_platform.dart'
-    show browserAuthReturnWasCaptured, organizationControlCandidateEnabled;
+    show
+        browserAuthReturnWasCaptured,
+        lkTaxCandidateEnabled,
+        organizationControlCandidateEnabled;
 import 'package:jentra_domain/jentra_receivables.dart';
 import 'package:jentra_domain/jentra_projects.dart';
 
@@ -43,6 +46,7 @@ import 'features/financial_statements/cash_flow_mapping_controller.dart';
 import 'features/financial_statements/cash_flow_mapping_screen.dart';
 import 'features/financial_statements/tax_summary_controller.dart';
 import 'features/financial_statements/tax_summary_screen.dart';
+import 'features/financial_statements/lk_tax_schedules_screen.dart';
 import 'features/budgets/budget_controller.dart';
 import 'features/budgets/budget_screen.dart';
 import 'features/people/employee_controller.dart';
@@ -513,6 +517,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                 await ref.read(taxSummaryControllerProvider)?.canLeave() ??
                 true,
           ),
+          if (lkTaxCandidateEnabled)
+            GoRoute(
+              path: '/finance/tax/lk',
+              builder: (context, state) => const LkTaxSchedulesScreen(),
+            ),
           GoRoute(
             path: '/finance/cash-flow-mappings',
             builder: (context, state) => const CashFlowMappingScreen(),

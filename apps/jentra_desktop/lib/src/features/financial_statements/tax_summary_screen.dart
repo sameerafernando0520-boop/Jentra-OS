@@ -2,6 +2,9 @@ import '../shared/report_wait.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jentra_platform/jentra_platform.dart'
+    show lkTaxCandidateEnabled;
 
 import '../../app_providers.dart';
 import 'tax_summary_controller.dart';
@@ -226,6 +229,11 @@ class TaxSummaryWorkspace extends StatelessWidget {
                   onPressed: c.online && !c.busy ? c.refresh : null,
                   child: const Text('Refresh evidence'),
                 ),
+                if (lkTaxCandidateEnabled)
+                  OutlinedButton(
+                    onPressed: () => context.go('/finance/tax/lk'),
+                    child: const Text('Sri Lanka VAT, SSCL and WHT'),
+                  ),
               ],
             ),
             if (c.periodCursor != null)
