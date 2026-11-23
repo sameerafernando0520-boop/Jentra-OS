@@ -70,7 +70,7 @@ business's own decision and are not enforced.
   (`finance.classifications.approve`). Approved settings may not overlap. Values are
   immutable.
 - `api.lk_sscl_return(quarter_start)` covers a calendar quarter (January, April, July
-  or October start). It needs `finance.tax_summary`, `finance.reports.export` and MFA.
+  or October start). It needs `finance.view`, `finance.reports.export` and MFA.
   - Turnover is `taxable_amount × exchange rate` from **every** posted sales invoice
     and return line, including lines without a tax code. Approved VAT lines classify
     them.

@@ -107,7 +107,7 @@ revoke all on function finance.lk_sscl_settings_payload(finance.lk_sscl_settings
 
 create function api.lk_sscl_settings(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid)
 returns jsonb language plpgsql stable security definer set search_path='' as $$begin
- perform core.wave3_require_scope(p_tenant_id,'finance.tax_summary',p_legal_entity_id,null);
+ perform core.wave3_require_scope(p_tenant_id,'finance.view',p_legal_entity_id,null);
  return coalesce((select jsonb_agg(finance.lk_sscl_settings_payload(s) order by s.effective_from desc,s.proposed_at desc)
   from finance.lk_sscl_settings s where s.tenant_id=p_tenant_id and s.legal_entity_id=p_legal_entity_id),'[]'::jsonb);
 end $$;
@@ -117,7 +117,7 @@ end $$;
 create function api.lk_sscl_settings_propose(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_id uuid,p_payload jsonb)
 returns jsonb language plpgsql security definer set search_path='' as $$
 declare s finance.lk_sscl_settings%rowtype;begin
- perform core.wave3_require_scope(p_tenant_id,'finance.tax_summary',p_legal_entity_id,null);
+ perform core.wave3_require_scope(p_tenant_id,'finance.setup.manage',p_legal_entity_id,null);
  perform finance.lk_tax_require_mfa();
  if p_id is null or coalesce(jsonb_typeof(p_payload),'null')<>'object'
   or exists(select 1 from jsonb_object_keys(p_payload) k where k not in('effective_from','effective_to_exclusive',
@@ -179,7 +179,7 @@ end $$;
 create function api.lk_sscl_return(p_tenant_id uuid,p_legal_entity_id uuid,p_branch_id uuid,p_quarter_start date)
 returns jsonb language plpgsql stable security definer set search_path='' as $$
 declare entity core.legal_entities%rowtype;q_end date;settings jsonb;v_rows jsonb;begin
- perform core.wave3_require_scope(p_tenant_id,'finance.tax_summary',p_legal_entity_id,null);
+ perform core.wave3_require_scope(p_tenant_id,'finance.view',p_legal_entity_id,null);
  perform core.wave3_require_scope(p_tenant_id,'finance.reports.export',p_legal_entity_id,null);
  perform finance.lk_tax_require_mfa();
  if p_quarter_start is null or extract(day from p_quarter_start)<>1 or extract(month from p_quarter_start)::integer not in(1,4,7,10) then

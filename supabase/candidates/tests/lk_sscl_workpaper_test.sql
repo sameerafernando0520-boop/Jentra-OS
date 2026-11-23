@@ -125,8 +125,10 @@ reset role;select pg_temp.wactor('creator','aal1');set local role authenticated;
 select throws_ok($q$select api.lk_sscl_return(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),'2026-04-01')$q$,
   '42501',null,'the workpaper needs MFA');
 reset role;select pg_temp.wactor('reader');set local role authenticated;
-select throws_ok($q$select api.lk_sscl_settings(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'))$q$,
-  '42501',null,'users without tax access cannot list settings');
+select lives_ok($q$select api.lk_sscl_settings(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'))$q$,
+  'finance viewers can list settings');
+select throws_ok($q$select api.lk_sscl_return(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),'2026-04-01')$q$,
+  '42501',null,'finance viewers without export access cannot prepare the workpaper');
 reset role;select pg_temp.wactor('outsider');set local role authenticated;
 select throws_ok($q$select api.lk_sscl_return(pg_temp.wid('tenant'),pg_temp.wid('entity'),pg_temp.wid('branch'),'2026-04-01')$q$,
   '42501',null,'another tenant cannot prepare the workpaper');
